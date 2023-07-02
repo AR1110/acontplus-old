@@ -5,11 +5,11 @@ using Vet.Infrastructure.Data;
 
 namespace Vet.API.Controllers
 {
-    public class PetTypeController : BaseApiController
+    public class PetTypesController : BaseApiController
     {
         private readonly VetContext _context;
 
-        public PetTypeController(VetContext context)
+        public PetTypesController(VetContext context)
         {
             _context = context;
         }

@@ -1,5 +1,5 @@
 <script>
-	import { getEventsAction } from "../../../core/utils/utils.js";
+	import { getEventsAction } from "../utils/utils.js";
 	import { current_component } from "svelte/internal";
 	const events = getEventsAction(current_component);
 	export let value;

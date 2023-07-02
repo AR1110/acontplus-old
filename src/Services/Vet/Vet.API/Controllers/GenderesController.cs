@@ -5,11 +5,11 @@ using Vet.Infrastructure.Data;
 
 namespace Vet.API.Controllers
 {
-    public class GenderController : BaseApiController
+    public class GenderesController : BaseApiController
     {
         private readonly VetContext _context;
 
-        public GenderController(VetContext context)
+        public GenderesController(VetContext context)
         {
             _context = context;
         }

@@ -8,6 +8,17 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Reports\MedicalHistory.rdl" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Reports\MedicalHistory.rdl">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.19" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.8">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
@@ -23,6 +34,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
+		<ProjectReference Include="..\Vet.Application\Vet.Application.csproj" />
 		<ProjectReference Include="..\Vet.Infrastructure\Vet.Infrastructure.csproj" />
 	</ItemGroup>
 

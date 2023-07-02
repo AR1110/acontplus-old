@@ -266,7 +266,7 @@ namespace Vet.Infrastructure.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    PetServiceId = table.Column<int>(type: "int", nullable: false),
+                    MedicalHistoryId = table.Column<int>(type: "int", nullable: false),
                     BehaviorId = table.Column<int>(type: "int", nullable: false),
                     BehaviorStatusId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -292,8 +292,8 @@ namespace Vet.Infrastructure.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BehaviorTest_MedicalHistory_PetServiceId",
-                        column: x => x.PetServiceId,
+                        name: "FK_BehaviorTest_MedicalHistory_MedicalHistoryId",
+                        column: x => x.MedicalHistoryId,
                         principalSchema: "Pet",
                         principalTable: "MedicalHistory",
                         principalColumn: "Id",
@@ -307,7 +307,7 @@ namespace Vet.Infrastructure.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    PetServiceId = table.Column<int>(type: "int", nullable: false),
+                    MedicalHistoryId = table.Column<int>(type: "int", nullable: false),
                     DiseaseId = table.Column<int>(type: "int", nullable: false),
                     DiseaseStatusId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -333,8 +333,8 @@ namespace Vet.Infrastructure.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_HealthCheck_MedicalHistory_PetServiceId",
-                        column: x => x.PetServiceId,
+                        name: "FK_HealthCheck_MedicalHistory_MedicalHistoryId",
+                        column: x => x.MedicalHistoryId,
                         principalSchema: "Pet",
                         principalTable: "MedicalHistory",
                         principalColumn: "Id",
@@ -354,10 +354,10 @@ namespace Vet.Infrastructure.Data.Migrations
                 column: "BehaviorStatusId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BehaviorTest_PetServiceId",
+                name: "IX_BehaviorTest_MedicalHistoryId",
                 schema: "Pet",
                 table: "BehaviorTest",
-                column: "PetServiceId");
+                column: "MedicalHistoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Breed_PetTypeId",
@@ -384,10 +384,10 @@ namespace Vet.Infrastructure.Data.Migrations
                 column: "DiseaseStatusId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HealthCheck_PetServiceId",
+                name: "IX_HealthCheck_MedicalHistoryId",
                 schema: "Pet",
                 table: "HealthCheck",
-                column: "PetServiceId");
+                column: "MedicalHistoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MedicalHistory_PetId",

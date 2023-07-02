@@ -6,11 +6,11 @@ using Vet.Infrastructure.Data;
 
 namespace Vet.API.Controllers
 {
-    public class PetController : BaseApiController
+    public class PetsController : BaseApiController
     {
         private readonly VetContext _context;
 
-        public PetController(VetContext context)
+        public PetsController(VetContext context)
         {
             _context = context;
         }
@@ -31,7 +31,25 @@ namespace Vet.API.Controllers
                 .Where(x => x.CompanyUniqueId == companyId)
                 .ToListAsync();
         }
-
+        // GET: api/Pet
+        [HttpGet("search/{textSearch}")]
+        public async Task<ActionResult<IEnumerable<Pet>>> Search(string textSearch)
+        {
+            var companyId = User.GetCompanyId();
+            if (!_context.Pets.Any(x => x.CompanyUniqueId == companyId))
+            {
+                return NoContent();
+            }
+            return await _context.Pets
+                .Include(t => t.PetType)
+                .Include(b => b.Breed)
+                .Include(s => s.Gender)
+                .Where(x =>
+                        x.CompanyUniqueId == companyId
+                        && (x.Name.Contains(textSearch) || x.ClientUniqueId.Contains(textSearch))
+                 )
+                .ToListAsync();
+        }
         // GET: api/Pet/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Pet>> GetPet(int id)

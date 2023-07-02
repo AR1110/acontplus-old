@@ -1,29 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Services.Common;
 using Vet.Core.Entities;
+using Vet.Core.Interfaces;
 using Vet.Infrastructure.Data;
 
 namespace Vet.API.Controllers
 {
-    public class MedicalHistoryController : BaseApiController
+    public class MedicalHistoriesController : BaseApiController
     {
         private readonly VetContext _context;
+        private readonly IMedicalHistoryReport _medicalHistoryReport;
 
-        public MedicalHistoryController(VetContext context)
+        public MedicalHistoriesController(VetContext context, IMedicalHistoryReport medicalHistoryReport)
         {
             _context = context;
+            _medicalHistoryReport = medicalHistoryReport;
         }
 
         // GET: api/MedicalHistories
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MedicalHistory>>> GetMedicalHistories()
         {
-            return await _context.MedicalHistories.ToListAsync();
+            var companyId = User.GetCompanyId();
+            if (!_context.MedicalHistories.Any(x => x.Pet.CompanyUniqueId == companyId))
+            {
+                return NoContent();
+            }
+            return await _context.MedicalHistories.Include(p=>p.Pet)
+                .Where(x => x.Pet.CompanyUniqueId == companyId)
+                .ToListAsync();
         }
 
         // GET: api/MedicalHistories/5
@@ -38,6 +44,21 @@ namespace Vet.API.Controllers
             }
 
             return medicalHistory;
+        }
+
+        [HttpPost("Report/{id}")]
+        public IActionResult GetReport(int id)
+        {
+            //var medicalHistory = await _context.MedicalHistories.FindAsync(id);
+
+            //if (medicalHistory == null)
+            //{
+            //    return NotFound();
+            //}
+
+            var data = _medicalHistoryReport.Get(id);
+
+            return File(data, "test.pdf", "application/pdf");
         }
 
         // PUT: api/MedicalHistories/5

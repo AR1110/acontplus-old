@@ -5,11 +5,11 @@ using Vet.Infrastructure.Data;
 
 namespace Vet.API.Controllers
 {
-    public class BreedController : BaseApiController
+    public class BreedsController : BaseApiController
     {
         private readonly VetContext _context;
 
-        public BreedController(VetContext context)
+        public BreedsController(VetContext context)
         {
             _context = context;
         }

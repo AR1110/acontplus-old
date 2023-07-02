@@ -12,7 +12,7 @@ using Vet.Infrastructure.Data;
 namespace Vet.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(VetContext))]
-    [Migration("20230630175219_Initial")]
+    [Migration("20230702194559_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -132,7 +132,7 @@ namespace Vet.Infrastructure.Data.Migrations
                     b.Property<bool>("Enabled")
                         .HasColumnType("bit");
 
-                    b.Property<int>("PetServiceId")
+                    b.Property<int>("MedicalHistoryId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -144,7 +144,7 @@ namespace Vet.Infrastructure.Data.Migrations
 
                     b.HasIndex("BehaviorStatusId");
 
-                    b.HasIndex("PetServiceId");
+                    b.HasIndex("MedicalHistoryId");
 
                     b.ToTable("BehaviorTest", "Pet");
                 });
@@ -392,7 +392,7 @@ namespace Vet.Infrastructure.Data.Migrations
                     b.Property<bool>("Enabled")
                         .HasColumnType("bit");
 
-                    b.Property<int>("PetServiceId")
+                    b.Property<int>("MedicalHistoryId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -404,7 +404,7 @@ namespace Vet.Infrastructure.Data.Migrations
 
                     b.HasIndex("DiseaseStatusId");
 
-                    b.HasIndex("PetServiceId");
+                    b.HasIndex("MedicalHistoryId");
 
                     b.ToTable("HealthCheck", "Pet");
                 });
@@ -573,9 +573,9 @@ namespace Vet.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Vet.Core.Entities.MedicalHistory", "PetService")
-                        .WithMany()
-                        .HasForeignKey("PetServiceId")
+                    b.HasOne("Vet.Core.Entities.MedicalHistory", "MedicalHistory")
+                        .WithMany("BehaviorTests")
+                        .HasForeignKey("MedicalHistoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -583,7 +583,7 @@ namespace Vet.Infrastructure.Data.Migrations
 
                     b.Navigation("BehaviorStatus");
 
-                    b.Navigation("PetService");
+                    b.Navigation("MedicalHistory");
                 });
 
             modelBuilder.Entity("Vet.Core.Entities.Breed", b =>
@@ -618,9 +618,9 @@ namespace Vet.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Vet.Core.Entities.MedicalHistory", "PetService")
-                        .WithMany()
-                        .HasForeignKey("PetServiceId")
+                    b.HasOne("Vet.Core.Entities.MedicalHistory", "MedicalHistory")
+                        .WithMany("HealthChecks")
+                        .HasForeignKey("MedicalHistoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -628,7 +628,7 @@ namespace Vet.Infrastructure.Data.Migrations
 
                     b.Navigation("DiseaseStatus");
 
-                    b.Navigation("PetService");
+                    b.Navigation("MedicalHistory");
                 });
 
             modelBuilder.Entity("Vet.Core.Entities.MedicalHistory", b =>
@@ -661,6 +661,13 @@ namespace Vet.Infrastructure.Data.Migrations
                     b.Navigation("Gender");
 
                     b.Navigation("PetType");
+                });
+
+            modelBuilder.Entity("Vet.Core.Entities.MedicalHistory", b =>
+                {
+                    b.Navigation("BehaviorTests");
+
+                    b.Navigation("HealthChecks");
                 });
 #pragma warning restore 612, 618
         }

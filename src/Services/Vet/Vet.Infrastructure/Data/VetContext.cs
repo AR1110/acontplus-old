@@ -64,7 +64,15 @@ namespace Vet.Infrastructure.Data
             modelBuilder.Entity<BehaviorStatus>().ToTable("BehaviorStatus", schema: "Pet");
             modelBuilder.Entity<Behavior>().ToTable("Behavior", schema: "Pet");
             modelBuilder.Entity<BehaviorTest>().ToTable("BehaviorTest", schema: "Pet");
-            modelBuilder.Entity<MedicalHistory>().ToTable("MedicalHistory", schema: "Pet");
+            modelBuilder.Entity<MedicalHistory>().ToTable("MedicalHistory", schema: "Pet")
+           .HasMany(i => i.HealthChecks)
+           .WithOne(d => d.MedicalHistory)
+           .HasForeignKey(d => d.MedicalHistoryId);
+
+            modelBuilder.Entity<MedicalHistory>()
+           .HasMany(i => i.BehaviorTests)
+           .WithOne(d => d.MedicalHistory)
+           .HasForeignKey(d => d.MedicalHistoryId);
 
         }
     }

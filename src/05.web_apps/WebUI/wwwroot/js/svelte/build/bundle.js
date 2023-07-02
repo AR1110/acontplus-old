@@ -274,6 +274,29 @@
 		current_component = component;
 	}
 
+	function get_current_component() {
+		if (!current_component) throw new Error('Function called outside component initialization');
+		return current_component;
+	}
+
+	/**
+	 * The `onMount` function schedules a callback to run as soon as the component has been mounted to the DOM.
+	 * It must be called during the component's initialisation (but doesn't need to live *inside* the component;
+	 * it can be called from an external module).
+	 *
+	 * If a function is returned _synchronously_ from `onMount`, it will be called when the component is unmounted.
+	 *
+	 * `onMount` does not run inside a [server-side component](/docs#run-time-server-side-component-api).
+	 *
+	 * https://svelte.dev/docs/svelte#onmount
+	 * @template T
+	 * @param {() => import('./private.js').NotFunction<T> | Promise<import('./private.js').NotFunction<T>> | (() => any)} fn
+	 * @returns {void}
+	 */
+	function onMount(fn) {
+		get_current_component().$$.on_mount.push(fn);
+	}
+
 	// TODO figure out if we still want to support
 	// shorthand events, or if we want to implement
 	// a real bubbling mechanism
@@ -4379,7 +4402,7 @@
 	var sweetalert2_all = {exports: {}};
 
 	/*!
-	* sweetalert2 v11.7.12
+	* sweetalert2 v11.4.8
 	* Released under the MIT License.
 	*/
 	sweetalert2_all.exports;
@@ -4387,2862 +4410,88 @@
 	(function (module, exports) {
 		(function (global, factory) {
 		  module.exports = factory() ;
-		})(commonjsGlobal, (function () {
-		  const RESTORE_FOCUS_TIMEOUT = 100;
-
-		  /** @type {GlobalState} */
-		  const globalState = {};
-		  const focusPreviousActiveElement = () => {
-		    if (globalState.previousActiveElement instanceof HTMLElement) {
-		      globalState.previousActiveElement.focus();
-		      globalState.previousActiveElement = null;
-		    } else if (document.body) {
-		      document.body.focus();
-		    }
-		  };
-
-		  /**
-		   * Restore previous active (focused) element
-		   *
-		   * @param {boolean} returnFocus
-		   * @returns {Promise<void>}
-		   */
-		  const restoreActiveElement = returnFocus => {
-		    return new Promise(resolve => {
-		      if (!returnFocus) {
-		        return resolve();
-		      }
-		      const x = window.scrollX;
-		      const y = window.scrollY;
-		      globalState.restoreFocusTimeout = setTimeout(() => {
-		        focusPreviousActiveElement();
-		        resolve();
-		      }, RESTORE_FOCUS_TIMEOUT); // issues/900
-
-		      window.scrollTo(x, y);
-		    });
-		  };
-
-		  /**
-		   * This module contains `WeakMap`s for each effectively-"private  property" that a `Swal` has.
-		   * For example, to set the private property "foo" of `this` to "bar", you can `privateProps.foo.set(this, 'bar')`
-		   * This is the approach that Babel will probably take to implement private methods/fields
-		   *   https://github.com/tc39/proposal-private-methods
-		   *   https://github.com/babel/babel/pull/7555
-		   * Once we have the changes from that PR in Babel, and our core class fits reasonable in *one module*
-		   *   then we can use that language feature.
-		   */
-
-		  var privateProps = {
-		    promise: new WeakMap(),
-		    innerParams: new WeakMap(),
-		    domCache: new WeakMap()
-		  };
-
-		  const swalPrefix = 'swal2-';
-
-		  /**
-		   * @typedef
-		   * { | 'container'
-		   *   | 'shown'
-		   *   | 'height-auto'
-		   *   | 'iosfix'
-		   *   | 'popup'
-		   *   | 'modal'
-		   *   | 'no-backdrop'
-		   *   | 'no-transition'
-		   *   | 'toast'
-		   *   | 'toast-shown'
-		   *   | 'show'
-		   *   | 'hide'
-		   *   | 'close'
-		   *   | 'title'
-		   *   | 'html-container'
-		   *   | 'actions'
-		   *   | 'confirm'
-		   *   | 'deny'
-		   *   | 'cancel'
-		   *   | 'default-outline'
-		   *   | 'footer'
-		   *   | 'icon'
-		   *   | 'icon-content'
-		   *   | 'image'
-		   *   | 'input'
-		   *   | 'file'
-		   *   | 'range'
-		   *   | 'select'
-		   *   | 'radio'
-		   *   | 'checkbox'
-		   *   | 'label'
-		   *   | 'textarea'
-		   *   | 'inputerror'
-		   *   | 'input-label'
-		   *   | 'validation-message'
-		   *   | 'progress-steps'
-		   *   | 'active-progress-step'
-		   *   | 'progress-step'
-		   *   | 'progress-step-line'
-		   *   | 'loader'
-		   *   | 'loading'
-		   *   | 'styled'
-		   *   | 'top'
-		   *   | 'top-start'
-		   *   | 'top-end'
-		   *   | 'top-left'
-		   *   | 'top-right'
-		   *   | 'center'
-		   *   | 'center-start'
-		   *   | 'center-end'
-		   *   | 'center-left'
-		   *   | 'center-right'
-		   *   | 'bottom'
-		   *   | 'bottom-start'
-		   *   | 'bottom-end'
-		   *   | 'bottom-left'
-		   *   | 'bottom-right'
-		   *   | 'grow-row'
-		   *   | 'grow-column'
-		   *   | 'grow-fullscreen'
-		   *   | 'rtl'
-		   *   | 'timer-progress-bar'
-		   *   | 'timer-progress-bar-container'
-		   *   | 'scrollbar-measure'
-		   *   | 'icon-success'
-		   *   | 'icon-warning'
-		   *   | 'icon-info'
-		   *   | 'icon-question'
-		   *   | 'icon-error'
-		   * } SwalClass
-		   * @typedef {Record<SwalClass, string>} SwalClasses
-		   */
-
-		  /**
-		   * @typedef {'success' | 'warning' | 'info' | 'question' | 'error'} SwalIcon
-		   * @typedef {Record<SwalIcon, string>} SwalIcons
-		   */
-
-		  /** @type {SwalClass[]} */
-		  const classNames = ['container', 'shown', 'height-auto', 'iosfix', 'popup', 'modal', 'no-backdrop', 'no-transition', 'toast', 'toast-shown', 'show', 'hide', 'close', 'title', 'html-container', 'actions', 'confirm', 'deny', 'cancel', 'default-outline', 'footer', 'icon', 'icon-content', 'image', 'input', 'file', 'range', 'select', 'radio', 'checkbox', 'label', 'textarea', 'inputerror', 'input-label', 'validation-message', 'progress-steps', 'active-progress-step', 'progress-step', 'progress-step-line', 'loader', 'loading', 'styled', 'top', 'top-start', 'top-end', 'top-left', 'top-right', 'center', 'center-start', 'center-end', 'center-left', 'center-right', 'bottom', 'bottom-start', 'bottom-end', 'bottom-left', 'bottom-right', 'grow-row', 'grow-column', 'grow-fullscreen', 'rtl', 'timer-progress-bar', 'timer-progress-bar-container', 'scrollbar-measure', 'icon-success', 'icon-warning', 'icon-info', 'icon-question', 'icon-error'];
-		  const swalClasses = classNames.reduce((acc, className) => {
-		    acc[className] = swalPrefix + className;
-		    return acc;
-		  }, /** @type {SwalClasses} */{});
-
-		  /** @type {SwalIcon[]} */
-		  const icons = ['success', 'warning', 'info', 'question', 'error'];
-		  const iconTypes = icons.reduce((acc, icon) => {
-		    acc[icon] = swalPrefix + icon;
-		    return acc;
-		  }, /** @type {SwalIcons} */{});
-
+		}(commonjsGlobal, function () {
 		  const consolePrefix = 'SweetAlert2:';
+		  /**
+		   * Filter the unique values into a new array
+		   * @param arr
+		   */
 
+		  const uniqueArray = arr => {
+		    const result = [];
+
+		    for (let i = 0; i < arr.length; i++) {
+		      if (result.indexOf(arr[i]) === -1) {
+		        result.push(arr[i]);
+		      }
+		    }
+
+		    return result;
+		  };
 		  /**
 		   * Capitalize the first letter of a string
-		   *
 		   * @param {string} str
 		   * @returns {string}
 		   */
-		  const capitalizeFirstLetter = str => str.charAt(0).toUpperCase() + str.slice(1);
 
+		  const capitalizeFirstLetter = str => str.charAt(0).toUpperCase() + str.slice(1);
+		  /**
+		   * @param {NodeList | HTMLCollection | NamedNodeMap} nodeList
+		   * @returns {array}
+		   */
+
+		  const toArray = nodeList => Array.prototype.slice.call(nodeList);
 		  /**
 		   * Standardize console warnings
-		   *
-		   * @param {string | string[]} message
+		   * @param {string | array} message
 		   */
-		  const warn = message => {
-		    console.warn(`${consolePrefix} ${typeof message === 'object' ? message.join(' ') : message}`);
-		  };
 
+		  const warn = message => {
+		    console.warn("".concat(consolePrefix, " ").concat(typeof message === 'object' ? message.join(' ') : message));
+		  };
 		  /**
 		   * Standardize console errors
-		   *
 		   * @param {string} message
 		   */
-		  const error = message => {
-		    console.error(`${consolePrefix} ${message}`);
-		  };
 
+		  const error = message => {
+		    console.error("".concat(consolePrefix, " ").concat(message));
+		  };
 		  /**
 		   * Private global state for `warnOnce`
-		   *
-		   * @type {string[]}
+		   * @type {Array}
 		   * @private
 		   */
-		  const previousWarnOnceMessages = [];
 
+		  const previousWarnOnceMessages = [];
 		  /**
 		   * Show a console warning, but only if it hasn't already been shown
-		   *
 		   * @param {string} message
 		   */
+
 		  const warnOnce = message => {
 		    if (!previousWarnOnceMessages.includes(message)) {
 		      previousWarnOnceMessages.push(message);
 		      warn(message);
 		    }
 		  };
-
 		  /**
 		   * Show a one-time console warning about deprecated params/methods
-		   *
-		   * @param {string} deprecatedParam
-		   * @param {string} useInstead
 		   */
-		  const warnAboutDeprecation = (deprecatedParam, useInstead) => {
-		    warnOnce(`"${deprecatedParam}" is deprecated and will be removed in the next major release. Please use "${useInstead}" instead.`);
-		  };
 
+		  const warnAboutDeprecation = (deprecatedParam, useInstead) => {
+		    warnOnce("\"".concat(deprecatedParam, "\" is deprecated and will be removed in the next major release. Please use \"").concat(useInstead, "\" instead."));
+		  };
 		  /**
 		   * If `arg` is a function, call it (with no arguments or context) and return the result.
 		   * Otherwise, just pass the value through
-		   *
-		   * @param {Function | any} arg
-		   * @returns {any}
+		   * @param arg
 		   */
+
 		  const callIfFunction = arg => typeof arg === 'function' ? arg() : arg;
-
-		  /**
-		   * @param {any} arg
-		   * @returns {boolean}
-		   */
 		  const hasToPromiseFn = arg => arg && typeof arg.toPromise === 'function';
-
-		  /**
-		   * @param {any} arg
-		   * @returns {Promise<any>}
-		   */
 		  const asPromise = arg => hasToPromiseFn(arg) ? arg.toPromise() : Promise.resolve(arg);
-
-		  /**
-		   * @param {any} arg
-		   * @returns {boolean}
-		   */
 		  const isPromise = arg => arg && Promise.resolve(arg) === arg;
-
-		  /**
-		   * Gets the popup container which contains the backdrop and the popup itself.
-		   *
-		   * @returns {HTMLElement | null}
-		   */
-		  const getContainer = () => document.body.querySelector(`.${swalClasses.container}`);
-
-		  /**
-		   * @param {string} selectorString
-		   * @returns {HTMLElement | null}
-		   */
-		  const elementBySelector = selectorString => {
-		    const container = getContainer();
-		    return container ? container.querySelector(selectorString) : null;
-		  };
-
-		  /**
-		   * @param {string} className
-		   * @returns {HTMLElement | null}
-		   */
-		  const elementByClass = className => {
-		    return elementBySelector(`.${className}`);
-		  };
-
-		  /**
-		   * @returns {HTMLElement | null}
-		   */
-		  const getPopup = () => elementByClass(swalClasses.popup);
-
-		  /**
-		   * @returns {HTMLElement | null}
-		   */
-		  const getIcon = () => elementByClass(swalClasses.icon);
-
-		  /**
-		   * @returns {HTMLElement | null}
-		   */
-		  const getIconContent = () => elementByClass(swalClasses['icon-content']);
-
-		  /**
-		   * @returns {HTMLElement | null}
-		   */
-		  const getTitle = () => elementByClass(swalClasses.title);
-
-		  /**
-		   * @returns {HTMLElement | null}
-		   */
-		  const getHtmlContainer = () => elementByClass(swalClasses['html-container']);
-
-		  /**
-		   * @returns {HTMLElement | null}
-		   */
-		  const getImage = () => elementByClass(swalClasses.image);
-
-		  /**
-		   * @returns {HTMLElement | null}
-		   */
-		  const getProgressSteps = () => elementByClass(swalClasses['progress-steps']);
-
-		  /**
-		   * @returns {HTMLElement | null}
-		   */
-		  const getValidationMessage = () => elementByClass(swalClasses['validation-message']);
-
-		  /**
-		   * @returns {HTMLButtonElement | null}
-		   */
-		  const getConfirmButton = () => /** @type {HTMLButtonElement} */elementBySelector(`.${swalClasses.actions} .${swalClasses.confirm}`);
-
-		  /**
-		   * @returns {HTMLButtonElement | null}
-		   */
-		  const getCancelButton = () => /** @type {HTMLButtonElement} */elementBySelector(`.${swalClasses.actions} .${swalClasses.cancel}`);
-
-		  /**
-		   * @returns {HTMLButtonElement | null}
-		   */
-		  const getDenyButton = () => /** @type {HTMLButtonElement} */elementBySelector(`.${swalClasses.actions} .${swalClasses.deny}`);
-
-		  /**
-		   * @returns {HTMLElement | null}
-		   */
-		  const getInputLabel = () => elementByClass(swalClasses['input-label']);
-
-		  /**
-		   * @returns {HTMLElement | null}
-		   */
-		  const getLoader = () => elementBySelector(`.${swalClasses.loader}`);
-
-		  /**
-		   * @returns {HTMLElement | null}
-		   */
-		  const getActions = () => elementByClass(swalClasses.actions);
-
-		  /**
-		   * @returns {HTMLElement | null}
-		   */
-		  const getFooter = () => elementByClass(swalClasses.footer);
-
-		  /**
-		   * @returns {HTMLElement | null}
-		   */
-		  const getTimerProgressBar = () => elementByClass(swalClasses['timer-progress-bar']);
-
-		  /**
-		   * @returns {HTMLElement | null}
-		   */
-		  const getCloseButton = () => elementByClass(swalClasses.close);
-
-		  // https://github.com/jkup/focusable/blob/master/index.js
-		  const focusable = `
-  a[href],
-  area[href],
-  input:not([disabled]),
-  select:not([disabled]),
-  textarea:not([disabled]),
-  button:not([disabled]),
-  iframe,
-  object,
-  embed,
-  [tabindex="0"],
-  [contenteditable],
-  audio[controls],
-  video[controls],
-  summary
-`;
-		  /**
-		   * @returns {HTMLElement[]}
-		   */
-		  const getFocusableElements = () => {
-		    /** @type {NodeListOf<HTMLElement>} */
-		    const focusableElementsWithTabindex = getPopup().querySelectorAll('[tabindex]:not([tabindex="-1"]):not([tabindex="0"])');
-		    const focusableElementsWithTabindexSorted = Array.from(focusableElementsWithTabindex)
-		    // sort according to tabindex
-		    .sort((a, b) => {
-		      const tabindexA = parseInt(a.getAttribute('tabindex'));
-		      const tabindexB = parseInt(b.getAttribute('tabindex'));
-		      if (tabindexA > tabindexB) {
-		        return 1;
-		      } else if (tabindexA < tabindexB) {
-		        return -1;
-		      }
-		      return 0;
-		    });
-
-		    /** @type {NodeListOf<HTMLElement>} */
-		    const otherFocusableElements = getPopup().querySelectorAll(focusable);
-		    const otherFocusableElementsFiltered = Array.from(otherFocusableElements).filter(el => el.getAttribute('tabindex') !== '-1');
-		    return [...new Set(focusableElementsWithTabindexSorted.concat(otherFocusableElementsFiltered))].filter(el => isVisible$1(el));
-		  };
-
-		  /**
-		   * @returns {boolean}
-		   */
-		  const isModal = () => {
-		    return hasClass(document.body, swalClasses.shown) && !hasClass(document.body, swalClasses['toast-shown']) && !hasClass(document.body, swalClasses['no-backdrop']);
-		  };
-
-		  /**
-		   * @returns {boolean}
-		   */
-		  const isToast = () => {
-		    return getPopup() && hasClass(getPopup(), swalClasses.toast);
-		  };
-
-		  /**
-		   * @returns {boolean}
-		   */
-		  const isLoading = () => {
-		    return getPopup().hasAttribute('data-loading');
-		  };
-
-		  /**
-		   * Securely set innerHTML of an element
-		   * https://github.com/sweetalert2/sweetalert2/issues/1926
-		   *
-		   * @param {HTMLElement} elem
-		   * @param {string} html
-		   */
-		  const setInnerHtml = (elem, html) => {
-		    elem.textContent = '';
-		    if (html) {
-		      const parser = new DOMParser();
-		      const parsed = parser.parseFromString(html, `text/html`);
-		      Array.from(parsed.querySelector('head').childNodes).forEach(child => {
-		        elem.appendChild(child);
-		      });
-		      Array.from(parsed.querySelector('body').childNodes).forEach(child => {
-		        if (child instanceof HTMLVideoElement || child instanceof HTMLAudioElement) {
-		          elem.appendChild(child.cloneNode(true)); // https://github.com/sweetalert2/sweetalert2/issues/2507
-		        } else {
-		          elem.appendChild(child);
-		        }
-		      });
-		    }
-		  };
-
-		  /**
-		   * @param {HTMLElement} elem
-		   * @param {string} className
-		   * @returns {boolean}
-		   */
-		  const hasClass = (elem, className) => {
-		    if (!className) {
-		      return false;
-		    }
-		    const classList = className.split(/\s+/);
-		    for (let i = 0; i < classList.length; i++) {
-		      if (!elem.classList.contains(classList[i])) {
-		        return false;
-		      }
-		    }
-		    return true;
-		  };
-
-		  /**
-		   * @param {HTMLElement} elem
-		   * @param {SweetAlertOptions} params
-		   */
-		  const removeCustomClasses = (elem, params) => {
-		    Array.from(elem.classList).forEach(className => {
-		      if (!Object.values(swalClasses).includes(className) && !Object.values(iconTypes).includes(className) && !Object.values(params.showClass).includes(className)) {
-		        elem.classList.remove(className);
-		      }
-		    });
-		  };
-
-		  /**
-		   * @param {HTMLElement} elem
-		   * @param {SweetAlertOptions} params
-		   * @param {string} className
-		   */
-		  const applyCustomClass = (elem, params, className) => {
-		    removeCustomClasses(elem, params);
-		    if (params.customClass && params.customClass[className]) {
-		      if (typeof params.customClass[className] !== 'string' && !params.customClass[className].forEach) {
-		        warn(`Invalid type of customClass.${className}! Expected string or iterable object, got "${typeof params.customClass[className]}"`);
-		        return;
-		      }
-		      addClass(elem, params.customClass[className]);
-		    }
-		  };
-
-		  /**
-		   * @param {HTMLElement} popup
-		   * @param {import('./renderers/renderInput').InputClass} inputClass
-		   * @returns {HTMLInputElement | null}
-		   */
-		  const getInput$1 = (popup, inputClass) => {
-		    if (!inputClass) {
-		      return null;
-		    }
-		    switch (inputClass) {
-		      case 'select':
-		      case 'textarea':
-		      case 'file':
-		        return popup.querySelector(`.${swalClasses.popup} > .${swalClasses[inputClass]}`);
-		      case 'checkbox':
-		        return popup.querySelector(`.${swalClasses.popup} > .${swalClasses.checkbox} input`);
-		      case 'radio':
-		        return popup.querySelector(`.${swalClasses.popup} > .${swalClasses.radio} input:checked`) || popup.querySelector(`.${swalClasses.popup} > .${swalClasses.radio} input:first-child`);
-		      case 'range':
-		        return popup.querySelector(`.${swalClasses.popup} > .${swalClasses.range} input`);
-		      default:
-		        return popup.querySelector(`.${swalClasses.popup} > .${swalClasses.input}`);
-		    }
-		  };
-
-		  /**
-		   * @param {HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement} input
-		   */
-		  const focusInput = input => {
-		    input.focus();
-
-		    // place cursor at end of text in text input
-		    if (input.type !== 'file') {
-		      // http://stackoverflow.com/a/2345915
-		      const val = input.value;
-		      input.value = '';
-		      input.value = val;
-		    }
-		  };
-
-		  /**
-		   * @param {HTMLElement | HTMLElement[] | null} target
-		   * @param {string | string[] | readonly string[]} classList
-		   * @param {boolean} condition
-		   */
-		  const toggleClass = (target, classList, condition) => {
-		    if (!target || !classList) {
-		      return;
-		    }
-		    if (typeof classList === 'string') {
-		      classList = classList.split(/\s+/).filter(Boolean);
-		    }
-		    classList.forEach(className => {
-		      if (Array.isArray(target)) {
-		        target.forEach(elem => {
-		          condition ? elem.classList.add(className) : elem.classList.remove(className);
-		        });
-		      } else {
-		        condition ? target.classList.add(className) : target.classList.remove(className);
-		      }
-		    });
-		  };
-
-		  /**
-		   * @param {HTMLElement | HTMLElement[] | null} target
-		   * @param {string | string[] | readonly string[]} classList
-		   */
-		  const addClass = (target, classList) => {
-		    toggleClass(target, classList, true);
-		  };
-
-		  /**
-		   * @param {HTMLElement | HTMLElement[] | null} target
-		   * @param {string | string[] | readonly string[]} classList
-		   */
-		  const removeClass = (target, classList) => {
-		    toggleClass(target, classList, false);
-		  };
-
-		  /**
-		   * Get direct child of an element by class name
-		   *
-		   * @param {HTMLElement} elem
-		   * @param {string} className
-		   * @returns {HTMLElement | undefined}
-		   */
-		  const getDirectChildByClass = (elem, className) => {
-		    const children = Array.from(elem.children);
-		    for (let i = 0; i < children.length; i++) {
-		      const child = children[i];
-		      if (child instanceof HTMLElement && hasClass(child, className)) {
-		        return child;
-		      }
-		    }
-		  };
-
-		  /**
-		   * @param {HTMLElement} elem
-		   * @param {string} property
-		   * @param {*} value
-		   */
-		  const applyNumericalStyle = (elem, property, value) => {
-		    if (value === `${parseInt(value)}`) {
-		      value = parseInt(value);
-		    }
-		    if (value || parseInt(value) === 0) {
-		      elem.style[property] = typeof value === 'number' ? `${value}px` : value;
-		    } else {
-		      elem.style.removeProperty(property);
-		    }
-		  };
-
-		  /**
-		   * @param {HTMLElement | null} elem
-		   * @param {string} display
-		   */
-		  const show = function (elem) {
-		    let display = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'flex';
-		    elem && (elem.style.display = display);
-		  };
-
-		  /**
-		   * @param {HTMLElement | null} elem
-		   */
-		  const hide = elem => {
-		    elem && (elem.style.display = 'none');
-		  };
-
-		  /**
-		   * @param {HTMLElement} parent
-		   * @param {string} selector
-		   * @param {string} property
-		   * @param {string} value
-		   */
-		  const setStyle = (parent, selector, property, value) => {
-		    /** @type {HTMLElement} */
-		    const el = parent.querySelector(selector);
-		    if (el) {
-		      el.style[property] = value;
-		    }
-		  };
-
-		  /**
-		   * @param {HTMLElement} elem
-		   * @param {any} condition
-		   * @param {string} display
-		   */
-		  const toggle = function (elem, condition) {
-		    let display = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'flex';
-		    condition ? show(elem, display) : hide(elem);
-		  };
-
-		  /**
-		   * borrowed from jquery $(elem).is(':visible') implementation
-		   *
-		   * @param {HTMLElement} elem
-		   * @returns {boolean}
-		   */
-		  const isVisible$1 = elem => !!(elem && (elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length));
-
-		  /**
-		   * @returns {boolean}
-		   */
-		  const allButtonsAreHidden = () => !isVisible$1(getConfirmButton()) && !isVisible$1(getDenyButton()) && !isVisible$1(getCancelButton());
-
-		  /**
-		   * @param {HTMLElement} elem
-		   * @returns {boolean}
-		   */
-		  const isScrollable = elem => !!(elem.scrollHeight > elem.clientHeight);
-
-		  /**
-		   * borrowed from https://stackoverflow.com/a/46352119
-		   *
-		   * @param {HTMLElement} elem
-		   * @returns {boolean}
-		   */
-		  const hasCssAnimation = elem => {
-		    const style = window.getComputedStyle(elem);
-		    const animDuration = parseFloat(style.getPropertyValue('animation-duration') || '0');
-		    const transDuration = parseFloat(style.getPropertyValue('transition-duration') || '0');
-		    return animDuration > 0 || transDuration > 0;
-		  };
-
-		  /**
-		   * @param {number} timer
-		   * @param {boolean} reset
-		   */
-		  const animateTimerProgressBar = function (timer) {
-		    let reset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-		    const timerProgressBar = getTimerProgressBar();
-		    if (isVisible$1(timerProgressBar)) {
-		      if (reset) {
-		        timerProgressBar.style.transition = 'none';
-		        timerProgressBar.style.width = '100%';
-		      }
-		      setTimeout(() => {
-		        timerProgressBar.style.transition = `width ${timer / 1000}s linear`;
-		        timerProgressBar.style.width = '0%';
-		      }, 10);
-		    }
-		  };
-		  const stopTimerProgressBar = () => {
-		    const timerProgressBar = getTimerProgressBar();
-		    const timerProgressBarWidth = parseInt(window.getComputedStyle(timerProgressBar).width);
-		    timerProgressBar.style.removeProperty('transition');
-		    timerProgressBar.style.width = '100%';
-		    const timerProgressBarFullWidth = parseInt(window.getComputedStyle(timerProgressBar).width);
-		    const timerProgressBarPercent = timerProgressBarWidth / timerProgressBarFullWidth * 100;
-		    timerProgressBar.style.width = `${timerProgressBarPercent}%`;
-		  };
-
-		  /**
-		   * Detect Node env
-		   *
-		   * @returns {boolean}
-		   */
-		  const isNodeEnv = () => typeof window === 'undefined' || typeof document === 'undefined';
-
-		  const sweetHTML = `
- <div aria-labelledby="${swalClasses.title}" aria-describedby="${swalClasses['html-container']}" class="${swalClasses.popup}" tabindex="-1">
-   <button type="button" class="${swalClasses.close}"></button>
-   <ul class="${swalClasses['progress-steps']}"></ul>
-   <div class="${swalClasses.icon}"></div>
-   <img class="${swalClasses.image}" />
-   <h2 class="${swalClasses.title}" id="${swalClasses.title}"></h2>
-   <div class="${swalClasses['html-container']}" id="${swalClasses['html-container']}"></div>
-   <input class="${swalClasses.input}" />
-   <input type="file" class="${swalClasses.file}" />
-   <div class="${swalClasses.range}">
-     <input type="range" />
-     <output></output>
-   </div>
-   <select class="${swalClasses.select}"></select>
-   <div class="${swalClasses.radio}"></div>
-   <label for="${swalClasses.checkbox}" class="${swalClasses.checkbox}">
-     <input type="checkbox" />
-     <span class="${swalClasses.label}"></span>
-   </label>
-   <textarea class="${swalClasses.textarea}"></textarea>
-   <div class="${swalClasses['validation-message']}" id="${swalClasses['validation-message']}"></div>
-   <div class="${swalClasses.actions}">
-     <div class="${swalClasses.loader}"></div>
-     <button type="button" class="${swalClasses.confirm}"></button>
-     <button type="button" class="${swalClasses.deny}"></button>
-     <button type="button" class="${swalClasses.cancel}"></button>
-   </div>
-   <div class="${swalClasses.footer}"></div>
-   <div class="${swalClasses['timer-progress-bar-container']}">
-     <div class="${swalClasses['timer-progress-bar']}"></div>
-   </div>
- </div>
-`.replace(/(^|\n)\s*/g, '');
-
-		  /**
-		   * @returns {boolean}
-		   */
-		  const resetOldContainer = () => {
-		    const oldContainer = getContainer();
-		    if (!oldContainer) {
-		      return false;
-		    }
-		    oldContainer.remove();
-		    removeClass([document.documentElement, document.body], [swalClasses['no-backdrop'], swalClasses['toast-shown'], swalClasses['has-column']]);
-		    return true;
-		  };
-		  const resetValidationMessage$1 = () => {
-		    globalState.currentInstance.resetValidationMessage();
-		  };
-		  const addInputChangeListeners = () => {
-		    const popup = getPopup();
-		    const input = getDirectChildByClass(popup, swalClasses.input);
-		    const file = getDirectChildByClass(popup, swalClasses.file);
-		    /** @type {HTMLInputElement} */
-		    const range = popup.querySelector(`.${swalClasses.range} input`);
-		    /** @type {HTMLOutputElement} */
-		    const rangeOutput = popup.querySelector(`.${swalClasses.range} output`);
-		    const select = getDirectChildByClass(popup, swalClasses.select);
-		    /** @type {HTMLInputElement} */
-		    const checkbox = popup.querySelector(`.${swalClasses.checkbox} input`);
-		    const textarea = getDirectChildByClass(popup, swalClasses.textarea);
-		    input.oninput = resetValidationMessage$1;
-		    file.onchange = resetValidationMessage$1;
-		    select.onchange = resetValidationMessage$1;
-		    checkbox.onchange = resetValidationMessage$1;
-		    textarea.oninput = resetValidationMessage$1;
-		    range.oninput = () => {
-		      resetValidationMessage$1();
-		      rangeOutput.value = range.value;
-		    };
-		    range.onchange = () => {
-		      resetValidationMessage$1();
-		      rangeOutput.value = range.value;
-		    };
-		  };
-
-		  /**
-		   * @param {string | HTMLElement} target
-		   * @returns {HTMLElement}
-		   */
-		  const getTarget = target => typeof target === 'string' ? document.querySelector(target) : target;
-
-		  /**
-		   * @param {SweetAlertOptions} params
-		   */
-		  const setupAccessibility = params => {
-		    const popup = getPopup();
-		    popup.setAttribute('role', params.toast ? 'alert' : 'dialog');
-		    popup.setAttribute('aria-live', params.toast ? 'polite' : 'assertive');
-		    if (!params.toast) {
-		      popup.setAttribute('aria-modal', 'true');
-		    }
-		  };
-
-		  /**
-		   * @param {HTMLElement} targetElement
-		   */
-		  const setupRTL = targetElement => {
-		    if (window.getComputedStyle(targetElement).direction === 'rtl') {
-		      addClass(getContainer(), swalClasses.rtl);
-		    }
-		  };
-
-		  /**
-		   * Add modal + backdrop + no-war message for Russians to DOM
-		   *
-		   * @param {SweetAlertOptions} params
-		   */
-		  const init = params => {
-		    // Clean up the old popup container if it exists
-		    const oldContainerExisted = resetOldContainer();
-
-		    /* istanbul ignore if */
-		    if (isNodeEnv()) {
-		      error('SweetAlert2 requires document to initialize');
-		      return;
-		    }
-		    const container = document.createElement('div');
-		    container.className = swalClasses.container;
-		    if (oldContainerExisted) {
-		      addClass(container, swalClasses['no-transition']);
-		    }
-		    setInnerHtml(container, sweetHTML);
-		    const targetElement = getTarget(params.target);
-		    targetElement.appendChild(container);
-		    setupAccessibility(params);
-		    setupRTL(targetElement);
-		    addInputChangeListeners();
-		  };
-
-		  /**
-		   * @param {HTMLElement | object | string} param
-		   * @param {HTMLElement} target
-		   */
-		  const parseHtmlToContainer = (param, target) => {
-		    // DOM element
-		    if (param instanceof HTMLElement) {
-		      target.appendChild(param);
-		    }
-
-		    // Object
-		    else if (typeof param === 'object') {
-		      handleObject(param, target);
-		    }
-
-		    // Plain string
-		    else if (param) {
-		      setInnerHtml(target, param);
-		    }
-		  };
-
-		  /**
-		   * @param {object} param
-		   * @param {HTMLElement} target
-		   */
-		  const handleObject = (param, target) => {
-		    // JQuery element(s)
-		    if (param.jquery) {
-		      handleJqueryElem(target, param);
-		    }
-
-		    // For other objects use their string representation
-		    else {
-		      setInnerHtml(target, param.toString());
-		    }
-		  };
-
-		  /**
-		   * @param {HTMLElement} target
-		   * @param {HTMLElement} elem
-		   */
-		  const handleJqueryElem = (target, elem) => {
-		    target.textContent = '';
-		    if (0 in elem) {
-		      for (let i = 0; (i in elem); i++) {
-		        target.appendChild(elem[i].cloneNode(true));
-		      }
-		    } else {
-		      target.appendChild(elem.cloneNode(true));
-		    }
-		  };
-
-		  /**
-		   * @returns {'webkitAnimationEnd' | 'animationend' | false}
-		   */
-		  const animationEndEvent = (() => {
-		    // Prevent run in Node env
-		    /* istanbul ignore if */
-		    if (isNodeEnv()) {
-		      return false;
-		    }
-		    const testEl = document.createElement('div');
-		    const transEndEventNames = {
-		      WebkitAnimation: 'webkitAnimationEnd',
-		      // Chrome, Safari and Opera
-		      animation: 'animationend' // Standard syntax
-		    };
-
-		    for (const i in transEndEventNames) {
-		      if (Object.prototype.hasOwnProperty.call(transEndEventNames, i) && typeof testEl.style[i] !== 'undefined') {
-		        return transEndEventNames[i];
-		      }
-		    }
-		    return false;
-		  })();
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {SweetAlertOptions} params
-		   */
-		  const renderActions = (instance, params) => {
-		    const actions = getActions();
-		    const loader = getLoader();
-
-		    // Actions (buttons) wrapper
-		    if (!params.showConfirmButton && !params.showDenyButton && !params.showCancelButton) {
-		      hide(actions);
-		    } else {
-		      show(actions);
-		    }
-
-		    // Custom class
-		    applyCustomClass(actions, params, 'actions');
-
-		    // Render all the buttons
-		    renderButtons(actions, loader, params);
-
-		    // Loader
-		    setInnerHtml(loader, params.loaderHtml);
-		    applyCustomClass(loader, params, 'loader');
-		  };
-
-		  /**
-		   * @param {HTMLElement} actions
-		   * @param {HTMLElement} loader
-		   * @param {SweetAlertOptions} params
-		   */
-		  function renderButtons(actions, loader, params) {
-		    const confirmButton = getConfirmButton();
-		    const denyButton = getDenyButton();
-		    const cancelButton = getCancelButton();
-
-		    // Render buttons
-		    renderButton(confirmButton, 'confirm', params);
-		    renderButton(denyButton, 'deny', params);
-		    renderButton(cancelButton, 'cancel', params);
-		    handleButtonsStyling(confirmButton, denyButton, cancelButton, params);
-		    if (params.reverseButtons) {
-		      if (params.toast) {
-		        actions.insertBefore(cancelButton, confirmButton);
-		        actions.insertBefore(denyButton, confirmButton);
-		      } else {
-		        actions.insertBefore(cancelButton, loader);
-		        actions.insertBefore(denyButton, loader);
-		        actions.insertBefore(confirmButton, loader);
-		      }
-		    }
-		  }
-
-		  /**
-		   * @param {HTMLElement} confirmButton
-		   * @param {HTMLElement} denyButton
-		   * @param {HTMLElement} cancelButton
-		   * @param {SweetAlertOptions} params
-		   */
-		  function handleButtonsStyling(confirmButton, denyButton, cancelButton, params) {
-		    if (!params.buttonsStyling) {
-		      removeClass([confirmButton, denyButton, cancelButton], swalClasses.styled);
-		      return;
-		    }
-		    addClass([confirmButton, denyButton, cancelButton], swalClasses.styled);
-
-		    // Buttons background colors
-		    if (params.confirmButtonColor) {
-		      confirmButton.style.backgroundColor = params.confirmButtonColor;
-		      addClass(confirmButton, swalClasses['default-outline']);
-		    }
-		    if (params.denyButtonColor) {
-		      denyButton.style.backgroundColor = params.denyButtonColor;
-		      addClass(denyButton, swalClasses['default-outline']);
-		    }
-		    if (params.cancelButtonColor) {
-		      cancelButton.style.backgroundColor = params.cancelButtonColor;
-		      addClass(cancelButton, swalClasses['default-outline']);
-		    }
-		  }
-
-		  /**
-		   * @param {HTMLElement} button
-		   * @param {'confirm' | 'deny' | 'cancel'} buttonType
-		   * @param {SweetAlertOptions} params
-		   */
-		  function renderButton(button, buttonType, params) {
-		    toggle(button, params[`show${capitalizeFirstLetter(buttonType)}Button`], 'inline-block');
-		    setInnerHtml(button, params[`${buttonType}ButtonText`]); // Set caption text
-		    button.setAttribute('aria-label', params[`${buttonType}ButtonAriaLabel`]); // ARIA label
-
-		    // Add buttons custom classes
-		    button.className = swalClasses[buttonType];
-		    applyCustomClass(button, params, `${buttonType}Button`);
-		    addClass(button, params[`${buttonType}ButtonClass`]);
-		  }
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {SweetAlertOptions} params
-		   */
-		  const renderCloseButton = (instance, params) => {
-		    const closeButton = getCloseButton();
-		    if (!closeButton) {
-		      return;
-		    }
-		    setInnerHtml(closeButton, params.closeButtonHtml || '');
-
-		    // Custom class
-		    applyCustomClass(closeButton, params, 'closeButton');
-		    toggle(closeButton, params.showCloseButton);
-		    closeButton.setAttribute('aria-label', params.closeButtonAriaLabel || '');
-		  };
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {SweetAlertOptions} params
-		   */
-		  const renderContainer = (instance, params) => {
-		    const container = getContainer();
-		    if (!container) {
-		      return;
-		    }
-		    handleBackdropParam(container, params.backdrop);
-		    handlePositionParam(container, params.position);
-		    handleGrowParam(container, params.grow);
-
-		    // Custom class
-		    applyCustomClass(container, params, 'container');
-		  };
-
-		  /**
-		   * @param {HTMLElement} container
-		   * @param {SweetAlertOptions['backdrop']} backdrop
-		   */
-		  function handleBackdropParam(container, backdrop) {
-		    if (typeof backdrop === 'string') {
-		      container.style.background = backdrop;
-		    } else if (!backdrop) {
-		      addClass([document.documentElement, document.body], swalClasses['no-backdrop']);
-		    }
-		  }
-
-		  /**
-		   * @param {HTMLElement} container
-		   * @param {SweetAlertOptions['position']} position
-		   */
-		  function handlePositionParam(container, position) {
-		    if (position in swalClasses) {
-		      addClass(container, swalClasses[position]);
-		    } else {
-		      warn('The "position" parameter is not valid, defaulting to "center"');
-		      addClass(container, swalClasses.center);
-		    }
-		  }
-
-		  /**
-		   * @param {HTMLElement} container
-		   * @param {SweetAlertOptions['grow']} grow
-		   */
-		  function handleGrowParam(container, grow) {
-		    if (grow && typeof grow === 'string') {
-		      const growClass = `grow-${grow}`;
-		      if (growClass in swalClasses) {
-		        addClass(container, swalClasses[growClass]);
-		      }
-		    }
-		  }
-
-		  /// <reference path="../../../../sweetalert2.d.ts"/>
-
-
-		  /** @type {InputClass[]} */
-		  const inputClasses = ['input', 'file', 'range', 'select', 'radio', 'checkbox', 'textarea'];
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {SweetAlertOptions} params
-		   */
-		  const renderInput = (instance, params) => {
-		    const popup = getPopup();
-		    const innerParams = privateProps.innerParams.get(instance);
-		    const rerender = !innerParams || params.input !== innerParams.input;
-		    inputClasses.forEach(inputClass => {
-		      const inputContainer = getDirectChildByClass(popup, swalClasses[inputClass]);
-
-		      // set attributes
-		      setAttributes(inputClass, params.inputAttributes);
-
-		      // set class
-		      inputContainer.className = swalClasses[inputClass];
-		      if (rerender) {
-		        hide(inputContainer);
-		      }
-		    });
-		    if (params.input) {
-		      if (rerender) {
-		        showInput(params);
-		      }
-		      // set custom class
-		      setCustomClass(params);
-		    }
-		  };
-
-		  /**
-		   * @param {SweetAlertOptions} params
-		   */
-		  const showInput = params => {
-		    if (!renderInputType[params.input]) {
-		      error(`Unexpected type of input! Expected "text", "email", "password", "number", "tel", "select", "radio", "checkbox", "textarea", "file" or "url", got "${params.input}"`);
-		      return;
-		    }
-		    const inputContainer = getInputContainer(params.input);
-		    const input = renderInputType[params.input](inputContainer, params);
-		    show(inputContainer);
-
-		    // input autofocus
-		    if (params.inputAutoFocus) {
-		      setTimeout(() => {
-		        focusInput(input);
-		      });
-		    }
-		  };
-
-		  /**
-		   * @param {HTMLInputElement} input
-		   */
-		  const removeAttributes = input => {
-		    for (let i = 0; i < input.attributes.length; i++) {
-		      const attrName = input.attributes[i].name;
-		      if (!['type', 'value', 'style'].includes(attrName)) {
-		        input.removeAttribute(attrName);
-		      }
-		    }
-		  };
-
-		  /**
-		   * @param {InputClass} inputClass
-		   * @param {SweetAlertOptions['inputAttributes']} inputAttributes
-		   */
-		  const setAttributes = (inputClass, inputAttributes) => {
-		    const input = getInput$1(getPopup(), inputClass);
-		    if (!input) {
-		      return;
-		    }
-		    removeAttributes(input);
-		    for (const attr in inputAttributes) {
-		      input.setAttribute(attr, inputAttributes[attr]);
-		    }
-		  };
-
-		  /**
-		   * @param {SweetAlertOptions} params
-		   */
-		  const setCustomClass = params => {
-		    const inputContainer = getInputContainer(params.input);
-		    if (typeof params.customClass === 'object') {
-		      addClass(inputContainer, params.customClass.input);
-		    }
-		  };
-
-		  /**
-		   * @param {HTMLInputElement | HTMLTextAreaElement} input
-		   * @param {SweetAlertOptions} params
-		   */
-		  const setInputPlaceholder = (input, params) => {
-		    if (!input.placeholder || params.inputPlaceholder) {
-		      input.placeholder = params.inputPlaceholder;
-		    }
-		  };
-
-		  /**
-		   * @param {Input} input
-		   * @param {Input} prependTo
-		   * @param {SweetAlertOptions} params
-		   */
-		  const setInputLabel = (input, prependTo, params) => {
-		    if (params.inputLabel) {
-		      input.id = swalClasses.input;
-		      const label = document.createElement('label');
-		      const labelClass = swalClasses['input-label'];
-		      label.setAttribute('for', input.id);
-		      label.className = labelClass;
-		      if (typeof params.customClass === 'object') {
-		        addClass(label, params.customClass.inputLabel);
-		      }
-		      label.innerText = params.inputLabel;
-		      prependTo.insertAdjacentElement('beforebegin', label);
-		    }
-		  };
-
-		  /**
-		   * @param {SweetAlertOptions['input']} inputType
-		   * @returns {HTMLElement}
-		   */
-		  const getInputContainer = inputType => {
-		    return getDirectChildByClass(getPopup(), swalClasses[inputType] || swalClasses.input);
-		  };
-
-		  /**
-		   * @param {HTMLInputElement | HTMLOutputElement | HTMLTextAreaElement} input
-		   * @param {SweetAlertOptions['inputValue']} inputValue
-		   */
-		  const checkAndSetInputValue = (input, inputValue) => {
-		    if (['string', 'number'].includes(typeof inputValue)) {
-		      input.value = `${inputValue}`;
-		    } else if (!isPromise(inputValue)) {
-		      warn(`Unexpected type of inputValue! Expected "string", "number" or "Promise", got "${typeof inputValue}"`);
-		    }
-		  };
-
-		  /** @type {Record<string, (input: Input | HTMLElement, params: SweetAlertOptions) => Input>} */
-		  const renderInputType = {};
-
-		  /**
-		   * @param {HTMLInputElement} input
-		   * @param {SweetAlertOptions} params
-		   * @returns {HTMLInputElement}
-		   */
-		  renderInputType.text = renderInputType.email = renderInputType.password = renderInputType.number = renderInputType.tel = renderInputType.url = (input, params) => {
-		    checkAndSetInputValue(input, params.inputValue);
-		    setInputLabel(input, input, params);
-		    setInputPlaceholder(input, params);
-		    input.type = params.input;
-		    return input;
-		  };
-
-		  /**
-		   * @param {HTMLInputElement} input
-		   * @param {SweetAlertOptions} params
-		   * @returns {HTMLInputElement}
-		   */
-		  renderInputType.file = (input, params) => {
-		    setInputLabel(input, input, params);
-		    setInputPlaceholder(input, params);
-		    return input;
-		  };
-
-		  /**
-		   * @param {HTMLInputElement} range
-		   * @param {SweetAlertOptions} params
-		   * @returns {HTMLInputElement}
-		   */
-		  renderInputType.range = (range, params) => {
-		    const rangeInput = range.querySelector('input');
-		    const rangeOutput = range.querySelector('output');
-		    checkAndSetInputValue(rangeInput, params.inputValue);
-		    rangeInput.type = params.input;
-		    checkAndSetInputValue(rangeOutput, params.inputValue);
-		    setInputLabel(rangeInput, range, params);
-		    return range;
-		  };
-
-		  /**
-		   * @param {HTMLSelectElement} select
-		   * @param {SweetAlertOptions} params
-		   * @returns {HTMLSelectElement}
-		   */
-		  renderInputType.select = (select, params) => {
-		    select.textContent = '';
-		    if (params.inputPlaceholder) {
-		      const placeholder = document.createElement('option');
-		      setInnerHtml(placeholder, params.inputPlaceholder);
-		      placeholder.value = '';
-		      placeholder.disabled = true;
-		      placeholder.selected = true;
-		      select.appendChild(placeholder);
-		    }
-		    setInputLabel(select, select, params);
-		    return select;
-		  };
-
-		  /**
-		   * @param {HTMLInputElement} radio
-		   * @returns {HTMLInputElement}
-		   */
-		  renderInputType.radio = radio => {
-		    radio.textContent = '';
-		    return radio;
-		  };
-
-		  /**
-		   * @param {HTMLLabelElement} checkboxContainer
-		   * @param {SweetAlertOptions} params
-		   * @returns {HTMLInputElement}
-		   */
-		  renderInputType.checkbox = (checkboxContainer, params) => {
-		    const checkbox = getInput$1(getPopup(), 'checkbox');
-		    checkbox.value = '1';
-		    checkbox.id = swalClasses.checkbox;
-		    checkbox.checked = Boolean(params.inputValue);
-		    const label = checkboxContainer.querySelector('span');
-		    setInnerHtml(label, params.inputPlaceholder);
-		    return checkbox;
-		  };
-
-		  /**
-		   * @param {HTMLTextAreaElement} textarea
-		   * @param {SweetAlertOptions} params
-		   * @returns {HTMLTextAreaElement}
-		   */
-		  renderInputType.textarea = (textarea, params) => {
-		    checkAndSetInputValue(textarea, params.inputValue);
-		    setInputPlaceholder(textarea, params);
-		    setInputLabel(textarea, textarea, params);
-
-		    /**
-		     * @param {HTMLElement} el
-		     * @returns {number}
-		     */
-		    const getMargin = el => parseInt(window.getComputedStyle(el).marginLeft) + parseInt(window.getComputedStyle(el).marginRight);
-
-		    // https://github.com/sweetalert2/sweetalert2/issues/2291
-		    setTimeout(() => {
-		      // https://github.com/sweetalert2/sweetalert2/issues/1699
-		      if ('MutationObserver' in window) {
-		        const initialPopupWidth = parseInt(window.getComputedStyle(getPopup()).width);
-		        const textareaResizeHandler = () => {
-		          const textareaWidth = textarea.offsetWidth + getMargin(textarea);
-		          if (textareaWidth > initialPopupWidth) {
-		            getPopup().style.width = `${textareaWidth}px`;
-		          } else {
-		            getPopup().style.width = null;
-		          }
-		        };
-		        new MutationObserver(textareaResizeHandler).observe(textarea, {
-		          attributes: true,
-		          attributeFilter: ['style']
-		        });
-		      }
-		    });
-		    return textarea;
-		  };
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {SweetAlertOptions} params
-		   */
-		  const renderContent = (instance, params) => {
-		    const htmlContainer = getHtmlContainer();
-		    if (!htmlContainer) {
-		      return;
-		    }
-		    applyCustomClass(htmlContainer, params, 'htmlContainer');
-
-		    // Content as HTML
-		    if (params.html) {
-		      parseHtmlToContainer(params.html, htmlContainer);
-		      show(htmlContainer, 'block');
-		    }
-
-		    // Content as plain text
-		    else if (params.text) {
-		      htmlContainer.textContent = params.text;
-		      show(htmlContainer, 'block');
-		    }
-
-		    // No content
-		    else {
-		      hide(htmlContainer);
-		    }
-		    renderInput(instance, params);
-		  };
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {SweetAlertOptions} params
-		   */
-		  const renderFooter = (instance, params) => {
-		    const footer = getFooter();
-		    if (!footer) {
-		      return;
-		    }
-		    toggle(footer, params.footer);
-		    if (params.footer) {
-		      parseHtmlToContainer(params.footer, footer);
-		    }
-
-		    // Custom class
-		    applyCustomClass(footer, params, 'footer');
-		  };
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {SweetAlertOptions} params
-		   */
-		  const renderIcon = (instance, params) => {
-		    const innerParams = privateProps.innerParams.get(instance);
-		    const icon = getIcon();
-
-		    // if the given icon already rendered, apply the styling without re-rendering the icon
-		    if (innerParams && params.icon === innerParams.icon) {
-		      // Custom or default content
-		      setContent(icon, params);
-		      applyStyles(icon, params);
-		      return;
-		    }
-		    if (!params.icon && !params.iconHtml) {
-		      hide(icon);
-		      return;
-		    }
-		    if (params.icon && Object.keys(iconTypes).indexOf(params.icon) === -1) {
-		      error(`Unknown icon! Expected "success", "error", "warning", "info" or "question", got "${params.icon}"`);
-		      hide(icon);
-		      return;
-		    }
-		    show(icon);
-
-		    // Custom or default content
-		    setContent(icon, params);
-		    applyStyles(icon, params);
-
-		    // Animate icon
-		    addClass(icon, params.showClass.icon);
-		  };
-
-		  /**
-		   * @param {HTMLElement} icon
-		   * @param {SweetAlertOptions} params
-		   */
-		  const applyStyles = (icon, params) => {
-		    for (const iconType in iconTypes) {
-		      if (params.icon !== iconType) {
-		        removeClass(icon, iconTypes[iconType]);
-		      }
-		    }
-		    addClass(icon, iconTypes[params.icon]);
-
-		    // Icon color
-		    setColor(icon, params);
-
-		    // Success icon background color
-		    adjustSuccessIconBackgroundColor();
-
-		    // Custom class
-		    applyCustomClass(icon, params, 'icon');
-		  };
-
-		  // Adjust success icon background color to match the popup background color
-		  const adjustSuccessIconBackgroundColor = () => {
-		    const popup = getPopup();
-		    const popupBackgroundColor = window.getComputedStyle(popup).getPropertyValue('background-color');
-		    /** @type {NodeListOf<HTMLElement>} */
-		    const successIconParts = popup.querySelectorAll('[class^=swal2-success-circular-line], .swal2-success-fix');
-		    for (let i = 0; i < successIconParts.length; i++) {
-		      successIconParts[i].style.backgroundColor = popupBackgroundColor;
-		    }
-		  };
-		  const successIconHtml = `
-  <div class="swal2-success-circular-line-left"></div>
-  <span class="swal2-success-line-tip"></span> <span class="swal2-success-line-long"></span>
-  <div class="swal2-success-ring"></div> <div class="swal2-success-fix"></div>
-  <div class="swal2-success-circular-line-right"></div>
-`;
-		  const errorIconHtml = `
-  <span class="swal2-x-mark">
-    <span class="swal2-x-mark-line-left"></span>
-    <span class="swal2-x-mark-line-right"></span>
-  </span>
-`;
-
-		  /**
-		   * @param {HTMLElement} icon
-		   * @param {SweetAlertOptions} params
-		   */
-		  const setContent = (icon, params) => {
-		    let oldContent = icon.innerHTML;
-		    let newContent;
-		    if (params.iconHtml) {
-		      newContent = iconContent(params.iconHtml);
-		    } else if (params.icon === 'success') {
-		      newContent = successIconHtml;
-		      oldContent = oldContent.replace(/ style=".*?"/g, ''); // undo adjustSuccessIconBackgroundColor()
-		    } else if (params.icon === 'error') {
-		      newContent = errorIconHtml;
-		    } else {
-		      const defaultIconHtml = {
-		        question: '?',
-		        warning: '!',
-		        info: 'i'
-		      };
-		      newContent = iconContent(defaultIconHtml[params.icon]);
-		    }
-		    if (oldContent.trim() !== newContent.trim()) {
-		      setInnerHtml(icon, newContent);
-		    }
-		  };
-
-		  /**
-		   * @param {HTMLElement} icon
-		   * @param {SweetAlertOptions} params
-		   */
-		  const setColor = (icon, params) => {
-		    if (!params.iconColor) {
-		      return;
-		    }
-		    icon.style.color = params.iconColor;
-		    icon.style.borderColor = params.iconColor;
-		    for (const sel of ['.swal2-success-line-tip', '.swal2-success-line-long', '.swal2-x-mark-line-left', '.swal2-x-mark-line-right']) {
-		      setStyle(icon, sel, 'backgroundColor', params.iconColor);
-		    }
-		    setStyle(icon, '.swal2-success-ring', 'borderColor', params.iconColor);
-		  };
-
-		  /**
-		   * @param {string} content
-		   * @returns {string}
-		   */
-		  const iconContent = content => `<div class="${swalClasses['icon-content']}">${content}</div>`;
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {SweetAlertOptions} params
-		   */
-		  const renderImage = (instance, params) => {
-		    const image = getImage();
-		    if (!image) {
-		      return;
-		    }
-		    if (!params.imageUrl) {
-		      hide(image);
-		      return;
-		    }
-		    show(image, '');
-
-		    // Src, alt
-		    image.setAttribute('src', params.imageUrl);
-		    image.setAttribute('alt', params.imageAlt || '');
-
-		    // Width, height
-		    applyNumericalStyle(image, 'width', params.imageWidth);
-		    applyNumericalStyle(image, 'height', params.imageHeight);
-
-		    // Class
-		    image.className = swalClasses.image;
-		    applyCustomClass(image, params, 'image');
-		  };
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {SweetAlertOptions} params
-		   */
-		  const renderPopup = (instance, params) => {
-		    const container = getContainer();
-		    const popup = getPopup();
-		    if (!container || !popup) {
-		      return;
-		    }
-
-		    // Width
-		    // https://github.com/sweetalert2/sweetalert2/issues/2170
-		    if (params.toast) {
-		      applyNumericalStyle(container, 'width', params.width);
-		      popup.style.width = '100%';
-		      const loader = getLoader();
-		      loader && popup.insertBefore(loader, getIcon());
-		    } else {
-		      applyNumericalStyle(popup, 'width', params.width);
-		    }
-
-		    // Padding
-		    applyNumericalStyle(popup, 'padding', params.padding);
-
-		    // Color
-		    if (params.color) {
-		      popup.style.color = params.color;
-		    }
-
-		    // Background
-		    if (params.background) {
-		      popup.style.background = params.background;
-		    }
-		    hide(getValidationMessage());
-
-		    // Classes
-		    addClasses$1(popup, params);
-		  };
-
-		  /**
-		   * @param {HTMLElement} popup
-		   * @param {SweetAlertOptions} params
-		   */
-		  const addClasses$1 = (popup, params) => {
-		    const showClass = params.showClass || {};
-		    // Default Class + showClass when updating Swal.update({})
-		    popup.className = `${swalClasses.popup} ${isVisible$1(popup) ? showClass.popup : ''}`;
-		    if (params.toast) {
-		      addClass([document.documentElement, document.body], swalClasses['toast-shown']);
-		      addClass(popup, swalClasses.toast);
-		    } else {
-		      addClass(popup, swalClasses.modal);
-		    }
-
-		    // Custom class
-		    applyCustomClass(popup, params, 'popup');
-		    if (typeof params.customClass === 'string') {
-		      addClass(popup, params.customClass);
-		    }
-
-		    // Icon class (#1842)
-		    if (params.icon) {
-		      addClass(popup, swalClasses[`icon-${params.icon}`]);
-		    }
-		  };
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {SweetAlertOptions} params
-		   */
-		  const renderProgressSteps = (instance, params) => {
-		    const progressStepsContainer = getProgressSteps();
-		    if (!progressStepsContainer) {
-		      return;
-		    }
-		    const {
-		      progressSteps,
-		      currentProgressStep
-		    } = params;
-		    if (!progressSteps || progressSteps.length === 0 || currentProgressStep === undefined) {
-		      hide(progressStepsContainer);
-		      return;
-		    }
-		    show(progressStepsContainer);
-		    progressStepsContainer.textContent = '';
-		    if (currentProgressStep >= progressSteps.length) {
-		      warn('Invalid currentProgressStep parameter, it should be less than progressSteps.length ' + '(currentProgressStep like JS arrays starts from 0)');
-		    }
-		    progressSteps.forEach((step, index) => {
-		      const stepEl = createStepElement(step);
-		      progressStepsContainer.appendChild(stepEl);
-		      if (index === currentProgressStep) {
-		        addClass(stepEl, swalClasses['active-progress-step']);
-		      }
-		      if (index !== progressSteps.length - 1) {
-		        const lineEl = createLineElement(params);
-		        progressStepsContainer.appendChild(lineEl);
-		      }
-		    });
-		  };
-
-		  /**
-		   * @param {string} step
-		   * @returns {HTMLLIElement}
-		   */
-		  const createStepElement = step => {
-		    const stepEl = document.createElement('li');
-		    addClass(stepEl, swalClasses['progress-step']);
-		    setInnerHtml(stepEl, step);
-		    return stepEl;
-		  };
-
-		  /**
-		   * @param {SweetAlertOptions} params
-		   * @returns {HTMLLIElement}
-		   */
-		  const createLineElement = params => {
-		    const lineEl = document.createElement('li');
-		    addClass(lineEl, swalClasses['progress-step-line']);
-		    if (params.progressStepsDistance) {
-		      applyNumericalStyle(lineEl, 'width', params.progressStepsDistance);
-		    }
-		    return lineEl;
-		  };
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {SweetAlertOptions} params
-		   */
-		  const renderTitle = (instance, params) => {
-		    const title = getTitle();
-		    if (!title) {
-		      return;
-		    }
-		    toggle(title, params.title || params.titleText, 'block');
-		    if (params.title) {
-		      parseHtmlToContainer(params.title, title);
-		    }
-		    if (params.titleText) {
-		      title.innerText = params.titleText;
-		    }
-
-		    // Custom class
-		    applyCustomClass(title, params, 'title');
-		  };
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {SweetAlertOptions} params
-		   */
-		  const render = (instance, params) => {
-		    renderPopup(instance, params);
-		    renderContainer(instance, params);
-		    renderProgressSteps(instance, params);
-		    renderIcon(instance, params);
-		    renderImage(instance, params);
-		    renderTitle(instance, params);
-		    renderCloseButton(instance, params);
-		    renderContent(instance, params);
-		    renderActions(instance, params);
-		    renderFooter(instance, params);
-		    const popup = getPopup();
-		    if (typeof params.didRender === 'function' && popup) {
-		      params.didRender(popup);
-		    }
-		  };
-
-		  /*
-		   * Global function to determine if SweetAlert2 popup is shown
-		   */
-		  const isVisible = () => {
-		    return isVisible$1(getPopup());
-		  };
-
-		  /*
-		   * Global function to click 'Confirm' button
-		   */
-		  const clickConfirm = () => getConfirmButton() && getConfirmButton().click();
-
-		  /*
-		   * Global function to click 'Deny' button
-		   */
-		  const clickDeny = () => getDenyButton() && getDenyButton().click();
-
-		  /*
-		   * Global function to click 'Cancel' button
-		   */
-		  const clickCancel = () => getCancelButton() && getCancelButton().click();
-
-		  /** @typedef {'cancel' | 'backdrop' | 'close' | 'esc' | 'timer'} DismissReason */
-
-		  /** @type {Record<DismissReason, DismissReason>} */
-		  const DismissReason = Object.freeze({
-		    cancel: 'cancel',
-		    backdrop: 'backdrop',
-		    close: 'close',
-		    esc: 'esc',
-		    timer: 'timer'
-		  });
-
-		  /**
-		   * @param {GlobalState} globalState
-		   */
-		  const removeKeydownHandler = globalState => {
-		    if (globalState.keydownTarget && globalState.keydownHandlerAdded) {
-		      globalState.keydownTarget.removeEventListener('keydown', globalState.keydownHandler, {
-		        capture: globalState.keydownListenerCapture
-		      });
-		      globalState.keydownHandlerAdded = false;
-		    }
-		  };
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {GlobalState} globalState
-		   * @param {SweetAlertOptions} innerParams
-		   * @param {*} dismissWith
-		   */
-		  const addKeydownHandler = (instance, globalState, innerParams, dismissWith) => {
-		    removeKeydownHandler(globalState);
-		    if (!innerParams.toast) {
-		      globalState.keydownHandler = e => keydownHandler(instance, e, dismissWith);
-		      globalState.keydownTarget = innerParams.keydownListenerCapture ? window : getPopup();
-		      globalState.keydownListenerCapture = innerParams.keydownListenerCapture;
-		      globalState.keydownTarget.addEventListener('keydown', globalState.keydownHandler, {
-		        capture: globalState.keydownListenerCapture
-		      });
-		      globalState.keydownHandlerAdded = true;
-		    }
-		  };
-
-		  /**
-		   * @param {number} index
-		   * @param {number} increment
-		   */
-		  const setFocus = (index, increment) => {
-		    const focusableElements = getFocusableElements();
-		    // search for visible elements and select the next possible match
-		    if (focusableElements.length) {
-		      index = index + increment;
-
-		      // rollover to first item
-		      if (index === focusableElements.length) {
-		        index = 0;
-
-		        // go to last item
-		      } else if (index === -1) {
-		        index = focusableElements.length - 1;
-		      }
-		      focusableElements[index].focus();
-		      return;
-		    }
-		    // no visible focusable elements, focus the popup
-		    getPopup().focus();
-		  };
-		  const arrowKeysNextButton = ['ArrowRight', 'ArrowDown'];
-		  const arrowKeysPreviousButton = ['ArrowLeft', 'ArrowUp'];
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {KeyboardEvent} event
-		   * @param {Function} dismissWith
-		   */
-		  const keydownHandler = (instance, event, dismissWith) => {
-		    const innerParams = privateProps.innerParams.get(instance);
-		    if (!innerParams) {
-		      return; // This instance has already been destroyed
-		    }
-
-		    // Ignore keydown during IME composition
-		    // https://developer.mozilla.org/en-US/docs/Web/API/Document/keydown_event#ignoring_keydown_during_ime_composition
-		    // https://github.com/sweetalert2/sweetalert2/issues/720
-		    // https://github.com/sweetalert2/sweetalert2/issues/2406
-		    if (event.isComposing || event.keyCode === 229) {
-		      return;
-		    }
-		    if (innerParams.stopKeydownPropagation) {
-		      event.stopPropagation();
-		    }
-
-		    // ENTER
-		    if (event.key === 'Enter') {
-		      handleEnter(instance, event, innerParams);
-		    }
-
-		    // TAB
-		    else if (event.key === 'Tab') {
-		      handleTab(event);
-		    }
-
-		    // ARROWS - switch focus between buttons
-		    else if ([...arrowKeysNextButton, ...arrowKeysPreviousButton].includes(event.key)) {
-		      handleArrows(event.key);
-		    }
-
-		    // ESC
-		    else if (event.key === 'Escape') {
-		      handleEsc(event, innerParams, dismissWith);
-		    }
-		  };
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {KeyboardEvent} event
-		   * @param {SweetAlertOptions} innerParams
-		   */
-		  const handleEnter = (instance, event, innerParams) => {
-		    // https://github.com/sweetalert2/sweetalert2/issues/2386
-		    if (!callIfFunction(innerParams.allowEnterKey)) {
-		      return;
-		    }
-		    if (event.target && instance.getInput() && event.target instanceof HTMLElement && event.target.outerHTML === instance.getInput().outerHTML) {
-		      if (['textarea', 'file'].includes(innerParams.input)) {
-		        return; // do not submit
-		      }
-
-		      clickConfirm();
-		      event.preventDefault();
-		    }
-		  };
-
-		  /**
-		   * @param {KeyboardEvent} event
-		   */
-		  const handleTab = event => {
-		    const targetElement = event.target;
-		    const focusableElements = getFocusableElements();
-		    let btnIndex = -1;
-		    for (let i = 0; i < focusableElements.length; i++) {
-		      if (targetElement === focusableElements[i]) {
-		        btnIndex = i;
-		        break;
-		      }
-		    }
-
-		    // Cycle to the next button
-		    if (!event.shiftKey) {
-		      setFocus(btnIndex, 1);
-		    }
-
-		    // Cycle to the prev button
-		    else {
-		      setFocus(btnIndex, -1);
-		    }
-		    event.stopPropagation();
-		    event.preventDefault();
-		  };
-
-		  /**
-		   * @param {string} key
-		   */
-		  const handleArrows = key => {
-		    const confirmButton = getConfirmButton();
-		    const denyButton = getDenyButton();
-		    const cancelButton = getCancelButton();
-		    /** @type HTMLElement[] */
-		    const buttons = [confirmButton, denyButton, cancelButton];
-		    if (document.activeElement instanceof HTMLElement && !buttons.includes(document.activeElement)) {
-		      return;
-		    }
-		    const sibling = arrowKeysNextButton.includes(key) ? 'nextElementSibling' : 'previousElementSibling';
-		    let buttonToFocus = document.activeElement;
-		    for (let i = 0; i < getActions().children.length; i++) {
-		      buttonToFocus = buttonToFocus[sibling];
-		      if (!buttonToFocus) {
-		        return;
-		      }
-		      if (buttonToFocus instanceof HTMLButtonElement && isVisible$1(buttonToFocus)) {
-		        break;
-		      }
-		    }
-		    if (buttonToFocus instanceof HTMLButtonElement) {
-		      buttonToFocus.focus();
-		    }
-		  };
-
-		  /**
-		   * @param {KeyboardEvent} event
-		   * @param {SweetAlertOptions} innerParams
-		   * @param {Function} dismissWith
-		   */
-		  const handleEsc = (event, innerParams, dismissWith) => {
-		    if (callIfFunction(innerParams.allowEscapeKey)) {
-		      event.preventDefault();
-		      dismissWith(DismissReason.esc);
-		    }
-		  };
-
-		  /**
-		   * This module contains `WeakMap`s for each effectively-"private  property" that a `Swal` has.
-		   * For example, to set the private property "foo" of `this` to "bar", you can `privateProps.foo.set(this, 'bar')`
-		   * This is the approach that Babel will probably take to implement private methods/fields
-		   *   https://github.com/tc39/proposal-private-methods
-		   *   https://github.com/babel/babel/pull/7555
-		   * Once we have the changes from that PR in Babel, and our core class fits reasonable in *one module*
-		   *   then we can use that language feature.
-		   */
-
-		  var privateMethods = {
-		    swalPromiseResolve: new WeakMap(),
-		    swalPromiseReject: new WeakMap()
-		  };
-
-		  // From https://developer.paciellogroup.com/blog/2018/06/the-current-state-of-modal-dialog-accessibility/
-		  // Adding aria-hidden="true" to elements outside of the active modal dialog ensures that
-		  // elements not within the active modal dialog will not be surfaced if a user opens a screen
-		  // reader’s list of elements (headings, form controls, landmarks, etc.) in the document.
-
-		  const setAriaHidden = () => {
-		    const bodyChildren = Array.from(document.body.children);
-		    bodyChildren.forEach(el => {
-		      if (el === getContainer() || el.contains(getContainer())) {
-		        return;
-		      }
-		      if (el.hasAttribute('aria-hidden')) {
-		        el.setAttribute('data-previous-aria-hidden', el.getAttribute('aria-hidden') || '');
-		      }
-		      el.setAttribute('aria-hidden', 'true');
-		    });
-		  };
-		  const unsetAriaHidden = () => {
-		    const bodyChildren = Array.from(document.body.children);
-		    bodyChildren.forEach(el => {
-		      if (el.hasAttribute('data-previous-aria-hidden')) {
-		        el.setAttribute('aria-hidden', el.getAttribute('data-previous-aria-hidden') || '');
-		        el.removeAttribute('data-previous-aria-hidden');
-		      } else {
-		        el.removeAttribute('aria-hidden');
-		      }
-		    });
-		  };
-
-		  /* istanbul ignore file */
-
-		  // Fix iOS scrolling http://stackoverflow.com/q/39626302
-
-		  const iOSfix = () => {
-		    const iOS =
-		    // @ts-ignore
-		    /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream || navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
-		    if (iOS && !hasClass(document.body, swalClasses.iosfix)) {
-		      const offset = document.body.scrollTop;
-		      document.body.style.top = `${offset * -1}px`;
-		      addClass(document.body, swalClasses.iosfix);
-		      lockBodyScroll();
-		      addBottomPaddingForTallPopups();
-		    }
-		  };
-
-		  /**
-		   * https://github.com/sweetalert2/sweetalert2/issues/1948
-		   */
-		  const addBottomPaddingForTallPopups = () => {
-		    const ua = navigator.userAgent;
-		    const iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
-		    const webkit = !!ua.match(/WebKit/i);
-		    const iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
-		    if (iOSSafari) {
-		      const bottomPanelHeight = 44;
-		      if (getPopup().scrollHeight > window.innerHeight - bottomPanelHeight) {
-		        getContainer().style.paddingBottom = `${bottomPanelHeight}px`;
-		      }
-		    }
-		  };
-
-		  /**
-		   * https://github.com/sweetalert2/sweetalert2/issues/1246
-		   */
-		  const lockBodyScroll = () => {
-		    const container = getContainer();
-		    let preventTouchMove;
-		    /**
-		     * @param {TouchEvent} event
-		     */
-		    container.ontouchstart = event => {
-		      preventTouchMove = shouldPreventTouchMove(event);
-		    };
-		    /**
-		     * @param {TouchEvent} event
-		     */
-		    container.ontouchmove = event => {
-		      if (preventTouchMove) {
-		        event.preventDefault();
-		        event.stopPropagation();
-		      }
-		    };
-		  };
-
-		  /**
-		   * @param {TouchEvent} event
-		   * @returns {boolean}
-		   */
-		  const shouldPreventTouchMove = event => {
-		    const target = event.target;
-		    const container = getContainer();
-		    if (isStylus(event) || isZoom(event)) {
-		      return false;
-		    }
-		    if (target === container) {
-		      return true;
-		    }
-		    if (!isScrollable(container) && target instanceof HTMLElement && target.tagName !== 'INPUT' &&
-		    // #1603
-		    target.tagName !== 'TEXTAREA' &&
-		    // #2266
-		    !(isScrollable(getHtmlContainer()) &&
-		    // #1944
-		    getHtmlContainer().contains(target))) {
-		      return true;
-		    }
-		    return false;
-		  };
-
-		  /**
-		   * https://github.com/sweetalert2/sweetalert2/issues/1786
-		   *
-		   * @param {*} event
-		   * @returns {boolean}
-		   */
-		  const isStylus = event => {
-		    return event.touches && event.touches.length && event.touches[0].touchType === 'stylus';
-		  };
-
-		  /**
-		   * https://github.com/sweetalert2/sweetalert2/issues/1891
-		   *
-		   * @param {TouchEvent} event
-		   * @returns {boolean}
-		   */
-		  const isZoom = event => {
-		    return event.touches && event.touches.length > 1;
-		  };
-		  const undoIOSfix = () => {
-		    if (hasClass(document.body, swalClasses.iosfix)) {
-		      const offset = parseInt(document.body.style.top, 10);
-		      removeClass(document.body, swalClasses.iosfix);
-		      document.body.style.top = '';
-		      document.body.scrollTop = offset * -1;
-		    }
-		  };
-
-		  /**
-		   * Measure scrollbar width for padding body during modal show/hide
-		   * https://github.com/twbs/bootstrap/blob/master/js/src/modal.js
-		   *
-		   * @returns {number}
-		   */
-		  const measureScrollbar = () => {
-		    const scrollDiv = document.createElement('div');
-		    scrollDiv.className = swalClasses['scrollbar-measure'];
-		    document.body.appendChild(scrollDiv);
-		    const scrollbarWidth = scrollDiv.getBoundingClientRect().width - scrollDiv.clientWidth;
-		    document.body.removeChild(scrollDiv);
-		    return scrollbarWidth;
-		  };
-
-		  /**
-		   * Remember state in cases where opening and handling a modal will fiddle with it.
-		   * @type {number | null}
-		   */
-		  let previousBodyPadding = null;
-		  const fixScrollbar = () => {
-		    // for queues, do not do this more than once
-		    if (previousBodyPadding !== null) {
-		      return;
-		    }
-		    // if the body has overflow
-		    if (document.body.scrollHeight > window.innerHeight) {
-		      // add padding so the content doesn't shift after removal of scrollbar
-		      previousBodyPadding = parseInt(window.getComputedStyle(document.body).getPropertyValue('padding-right'));
-		      document.body.style.paddingRight = `${previousBodyPadding + measureScrollbar()}px`;
-		    }
-		  };
-		  const undoScrollbar = () => {
-		    if (previousBodyPadding !== null) {
-		      document.body.style.paddingRight = `${previousBodyPadding}px`;
-		      previousBodyPadding = null;
-		    }
-		  };
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {HTMLElement} container
-		   * @param {boolean} returnFocus
-		   * @param {Function} didClose
-		   */
-		  function removePopupAndResetState(instance, container, returnFocus, didClose) {
-		    if (isToast()) {
-		      triggerDidCloseAndDispose(instance, didClose);
-		    } else {
-		      restoreActiveElement(returnFocus).then(() => triggerDidCloseAndDispose(instance, didClose));
-		      removeKeydownHandler(globalState);
-		    }
-		    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-		    // workaround for #2088
-		    // for some reason removing the container in Safari will scroll the document to bottom
-		    if (isSafari) {
-		      container.setAttribute('style', 'display:none !important');
-		      container.removeAttribute('class');
-		      container.innerHTML = '';
-		    } else {
-		      container.remove();
-		    }
-		    if (isModal()) {
-		      undoScrollbar();
-		      undoIOSfix();
-		      unsetAriaHidden();
-		    }
-		    removeBodyClasses();
-		  }
-
-		  /**
-		   * Remove SweetAlert2 classes from body
-		   */
-		  function removeBodyClasses() {
-		    removeClass([document.documentElement, document.body], [swalClasses.shown, swalClasses['height-auto'], swalClasses['no-backdrop'], swalClasses['toast-shown']]);
-		  }
-
-		  /**
-		   * Instance method to close sweetAlert
-		   *
-		   * @param {any} resolveValue
-		   */
-		  function close(resolveValue) {
-		    resolveValue = prepareResolveValue(resolveValue);
-		    const swalPromiseResolve = privateMethods.swalPromiseResolve.get(this);
-		    const didClose = triggerClosePopup(this);
-		    if (this.isAwaitingPromise) {
-		      // A swal awaiting for a promise (after a click on Confirm or Deny) cannot be dismissed anymore #2335
-		      if (!resolveValue.isDismissed) {
-		        handleAwaitingPromise(this);
-		        swalPromiseResolve(resolveValue);
-		      }
-		    } else if (didClose) {
-		      // Resolve Swal promise
-		      swalPromiseResolve(resolveValue);
-		    }
-		  }
-		  const triggerClosePopup = instance => {
-		    const popup = getPopup();
-		    if (!popup) {
-		      return false;
-		    }
-		    const innerParams = privateProps.innerParams.get(instance);
-		    if (!innerParams || hasClass(popup, innerParams.hideClass.popup)) {
-		      return false;
-		    }
-		    removeClass(popup, innerParams.showClass.popup);
-		    addClass(popup, innerParams.hideClass.popup);
-		    const backdrop = getContainer();
-		    removeClass(backdrop, innerParams.showClass.backdrop);
-		    addClass(backdrop, innerParams.hideClass.backdrop);
-		    handlePopupAnimation(instance, popup, innerParams);
-		    return true;
-		  };
-
-		  /**
-		   * @param {any} error
-		   */
-		  function rejectPromise(error) {
-		    const rejectPromise = privateMethods.swalPromiseReject.get(this);
-		    handleAwaitingPromise(this);
-		    if (rejectPromise) {
-		      // Reject Swal promise
-		      rejectPromise(error);
-		    }
-		  }
-
-		  /**
-		   * @param {SweetAlert} instance
-		   */
-		  const handleAwaitingPromise = instance => {
-		    if (instance.isAwaitingPromise) {
-		      delete instance.isAwaitingPromise;
-		      // The instance might have been previously partly destroyed, we must resume the destroy process in this case #2335
-		      if (!privateProps.innerParams.get(instance)) {
-		        instance._destroy();
-		      }
-		    }
-		  };
-
-		  /**
-		   * @param {any} resolveValue
-		   * @returns {SweetAlertResult}
-		   */
-		  const prepareResolveValue = resolveValue => {
-		    // When user calls Swal.close()
-		    if (typeof resolveValue === 'undefined') {
-		      return {
-		        isConfirmed: false,
-		        isDenied: false,
-		        isDismissed: true
-		      };
-		    }
-		    return Object.assign({
-		      isConfirmed: false,
-		      isDenied: false,
-		      isDismissed: false
-		    }, resolveValue);
-		  };
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {HTMLElement} popup
-		   * @param {SweetAlertOptions} innerParams
-		   */
-		  const handlePopupAnimation = (instance, popup, innerParams) => {
-		    const container = getContainer();
-		    // If animation is supported, animate
-		    const animationIsSupported = animationEndEvent && hasCssAnimation(popup);
-		    if (typeof innerParams.willClose === 'function') {
-		      innerParams.willClose(popup);
-		    }
-		    if (animationIsSupported) {
-		      animatePopup(instance, popup, container, innerParams.returnFocus, innerParams.didClose);
-		    } else {
-		      // Otherwise, remove immediately
-		      removePopupAndResetState(instance, container, innerParams.returnFocus, innerParams.didClose);
-		    }
-		  };
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {HTMLElement} popup
-		   * @param {HTMLElement} container
-		   * @param {boolean} returnFocus
-		   * @param {Function} didClose
-		   */
-		  const animatePopup = (instance, popup, container, returnFocus, didClose) => {
-		    globalState.swalCloseEventFinishedCallback = removePopupAndResetState.bind(null, instance, container, returnFocus, didClose);
-		    popup.addEventListener(animationEndEvent, function (e) {
-		      if (e.target === popup) {
-		        globalState.swalCloseEventFinishedCallback();
-		        delete globalState.swalCloseEventFinishedCallback;
-		      }
-		    });
-		  };
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {Function} didClose
-		   */
-		  const triggerDidCloseAndDispose = (instance, didClose) => {
-		    setTimeout(() => {
-		      if (typeof didClose === 'function') {
-		        didClose.bind(instance.params)();
-		      }
-		      // instance might have been destroyed already
-		      if (instance._destroy) {
-		        instance._destroy();
-		      }
-		    });
-		  };
-
-		  /**
-		   * Shows loader (spinner), this is useful with AJAX requests.
-		   * By default the loader be shown instead of the "Confirm" button.
-		   *
-		   * @param {HTMLButtonElement} [buttonToReplace]
-		   */
-		  const showLoading = buttonToReplace => {
-		    let popup = getPopup();
-		    if (!popup) {
-		      new Swal(); // eslint-disable-line no-new
-		    }
-
-		    popup = getPopup();
-		    const loader = getLoader();
-		    if (isToast()) {
-		      hide(getIcon());
-		    } else {
-		      replaceButton(popup, buttonToReplace);
-		    }
-		    show(loader);
-		    popup.setAttribute('data-loading', 'true');
-		    popup.setAttribute('aria-busy', 'true');
-		    popup.focus();
-		  };
-
-		  /**
-		   * @param {HTMLElement} popup
-		   * @param {HTMLButtonElement} [buttonToReplace]
-		   */
-		  const replaceButton = (popup, buttonToReplace) => {
-		    const actions = getActions();
-		    const loader = getLoader();
-		    if (!buttonToReplace && isVisible$1(getConfirmButton())) {
-		      buttonToReplace = getConfirmButton();
-		    }
-		    show(actions);
-		    if (buttonToReplace) {
-		      hide(buttonToReplace);
-		      loader.setAttribute('data-button-to-replace', buttonToReplace.className);
-		    }
-		    loader.parentNode.insertBefore(loader, buttonToReplace);
-		    addClass([popup, actions], swalClasses.loading);
-		  };
-
-		  /**
-		   * @typedef { string | number | boolean } InputValue
-		   */
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {SweetAlertOptions} params
-		   */
-		  const handleInputOptionsAndValue = (instance, params) => {
-		    if (params.input === 'select' || params.input === 'radio') {
-		      handleInputOptions(instance, params);
-		    } else if (['text', 'email', 'number', 'tel', 'textarea'].includes(params.input) && (hasToPromiseFn(params.inputValue) || isPromise(params.inputValue))) {
-		      showLoading(getConfirmButton());
-		      handleInputValue(instance, params);
-		    }
-		  };
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {SweetAlertOptions} innerParams
-		   * @returns {string | number | File | FileList | null}
-		   */
-		  const getInputValue = (instance, innerParams) => {
-		    const input = instance.getInput();
-		    if (!input) {
-		      return null;
-		    }
-		    switch (innerParams.input) {
-		      case 'checkbox':
-		        return getCheckboxValue(input);
-		      case 'radio':
-		        return getRadioValue(input);
-		      case 'file':
-		        return getFileValue(input);
-		      default:
-		        return innerParams.inputAutoTrim ? input.value.trim() : input.value;
-		    }
-		  };
-
-		  /**
-		   * @param {HTMLInputElement} input
-		   * @returns {number}
-		   */
-		  const getCheckboxValue = input => input.checked ? 1 : 0;
-
-		  /**
-		   * @param {HTMLInputElement} input
-		   * @returns {string | null}
-		   */
-		  const getRadioValue = input => input.checked ? input.value : null;
-
-		  /**
-		   * @param {HTMLInputElement} input
-		   * @returns {FileList | File | null}
-		   */
-		  const getFileValue = input => input.files.length ? input.getAttribute('multiple') !== null ? input.files : input.files[0] : null;
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {SweetAlertOptions} params
-		   */
-		  const handleInputOptions = (instance, params) => {
-		    const popup = getPopup();
-		    /**
-		     * @param {Record<string, any>} inputOptions
-		     */
-		    const processInputOptions = inputOptions => {
-		      populateInputOptions[params.input](popup, formatInputOptions(inputOptions), params);
-		    };
-		    if (hasToPromiseFn(params.inputOptions) || isPromise(params.inputOptions)) {
-		      showLoading(getConfirmButton());
-		      asPromise(params.inputOptions).then(inputOptions => {
-		        instance.hideLoading();
-		        processInputOptions(inputOptions);
-		      });
-		    } else if (typeof params.inputOptions === 'object') {
-		      processInputOptions(params.inputOptions);
-		    } else {
-		      error(`Unexpected type of inputOptions! Expected object, Map or Promise, got ${typeof params.inputOptions}`);
-		    }
-		  };
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {SweetAlertOptions} params
-		   */
-		  const handleInputValue = (instance, params) => {
-		    const input = instance.getInput();
-		    hide(input);
-		    asPromise(params.inputValue).then(inputValue => {
-		      input.value = params.input === 'number' ? `${parseFloat(inputValue) || 0}` : `${inputValue}`;
-		      show(input);
-		      input.focus();
-		      instance.hideLoading();
-		    }).catch(err => {
-		      error(`Error in inputValue promise: ${err}`);
-		      input.value = '';
-		      show(input);
-		      input.focus();
-		      instance.hideLoading();
-		    });
-		  };
-		  const populateInputOptions = {
-		    /**
-		     * @param {HTMLElement} popup
-		     * @param {Record<string, any>} inputOptions
-		     * @param {SweetAlertOptions} params
-		     */
-		    select: (popup, inputOptions, params) => {
-		      const select = getDirectChildByClass(popup, swalClasses.select);
-		      /**
-		       * @param {HTMLElement} parent
-		       * @param {string} optionLabel
-		       * @param {string} optionValue
-		       */
-		      const renderOption = (parent, optionLabel, optionValue) => {
-		        const option = document.createElement('option');
-		        option.value = optionValue;
-		        setInnerHtml(option, optionLabel);
-		        option.selected = isSelected(optionValue, params.inputValue);
-		        parent.appendChild(option);
-		      };
-		      inputOptions.forEach(inputOption => {
-		        const optionValue = inputOption[0];
-		        const optionLabel = inputOption[1];
-		        // <optgroup> spec:
-		        // https://www.w3.org/TR/html401/interact/forms.html#h-17.6
-		        // "...all OPTGROUP elements must be specified directly within a SELECT element (i.e., groups may not be nested)..."
-		        // check whether this is a <optgroup>
-		        if (Array.isArray(optionLabel)) {
-		          // if it is an array, then it is an <optgroup>
-		          const optgroup = document.createElement('optgroup');
-		          optgroup.label = optionValue;
-		          optgroup.disabled = false; // not configurable for now
-		          select.appendChild(optgroup);
-		          optionLabel.forEach(o => renderOption(optgroup, o[1], o[0]));
-		        } else {
-		          // case of <option>
-		          renderOption(select, optionLabel, optionValue);
-		        }
-		      });
-		      select.focus();
-		    },
-		    /**
-		     * @param {HTMLElement} popup
-		     * @param {Record<string, any>} inputOptions
-		     * @param {SweetAlertOptions} params
-		     */
-		    radio: (popup, inputOptions, params) => {
-		      const radio = getDirectChildByClass(popup, swalClasses.radio);
-		      inputOptions.forEach(inputOption => {
-		        const radioValue = inputOption[0];
-		        const radioLabel = inputOption[1];
-		        const radioInput = document.createElement('input');
-		        const radioLabelElement = document.createElement('label');
-		        radioInput.type = 'radio';
-		        radioInput.name = swalClasses.radio;
-		        radioInput.value = radioValue;
-		        if (isSelected(radioValue, params.inputValue)) {
-		          radioInput.checked = true;
-		        }
-		        const label = document.createElement('span');
-		        setInnerHtml(label, radioLabel);
-		        label.className = swalClasses.label;
-		        radioLabelElement.appendChild(radioInput);
-		        radioLabelElement.appendChild(label);
-		        radio.appendChild(radioLabelElement);
-		      });
-		      const radios = radio.querySelectorAll('input');
-		      if (radios.length) {
-		        radios[0].focus();
-		      }
-		    }
-		  };
-
-		  /**
-		   * Converts `inputOptions` into an array of `[value, label]`s
-		   *
-		   * @param {Record<string, any>} inputOptions
-		   * @returns {Array<Array<string>>}
-		   */
-		  const formatInputOptions = inputOptions => {
-		    const result = [];
-		    if (typeof Map !== 'undefined' && inputOptions instanceof Map) {
-		      inputOptions.forEach((value, key) => {
-		        let valueFormatted = value;
-		        if (typeof valueFormatted === 'object') {
-		          // case of <optgroup>
-		          valueFormatted = formatInputOptions(valueFormatted);
-		        }
-		        result.push([key, valueFormatted]);
-		      });
-		    } else {
-		      Object.keys(inputOptions).forEach(key => {
-		        let valueFormatted = inputOptions[key];
-		        if (typeof valueFormatted === 'object') {
-		          // case of <optgroup>
-		          valueFormatted = formatInputOptions(valueFormatted);
-		        }
-		        result.push([key, valueFormatted]);
-		      });
-		    }
-		    return result;
-		  };
-
-		  /**
-		   * @param {string} optionValue
-		   * @param {InputValue | Promise<InputValue> | { toPromise: () => InputValue }} inputValue
-		   * @returns {boolean}
-		   */
-		  const isSelected = (optionValue, inputValue) => {
-		    return inputValue && inputValue.toString() === optionValue.toString();
-		  };
-
-		  /**
-		   * @param {SweetAlert} instance
-		   */
-		  const handleConfirmButtonClick = instance => {
-		    const innerParams = privateProps.innerParams.get(instance);
-		    instance.disableButtons();
-		    if (innerParams.input) {
-		      handleConfirmOrDenyWithInput(instance, 'confirm');
-		    } else {
-		      confirm(instance, true);
-		    }
-		  };
-
-		  /**
-		   * @param {SweetAlert} instance
-		   */
-		  const handleDenyButtonClick = instance => {
-		    const innerParams = privateProps.innerParams.get(instance);
-		    instance.disableButtons();
-		    if (innerParams.returnInputValueOnDeny) {
-		      handleConfirmOrDenyWithInput(instance, 'deny');
-		    } else {
-		      deny(instance, false);
-		    }
-		  };
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {Function} dismissWith
-		   */
-		  const handleCancelButtonClick = (instance, dismissWith) => {
-		    instance.disableButtons();
-		    dismissWith(DismissReason.cancel);
-		  };
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {'confirm' | 'deny'} type
-		   */
-		  const handleConfirmOrDenyWithInput = (instance, type) => {
-		    const innerParams = privateProps.innerParams.get(instance);
-		    if (!innerParams.input) {
-		      error(`The "input" parameter is needed to be set when using returnInputValueOn${capitalizeFirstLetter(type)}`);
-		      return;
-		    }
-		    const inputValue = getInputValue(instance, innerParams);
-		    if (innerParams.inputValidator) {
-		      handleInputValidator(instance, inputValue, type);
-		    } else if (!instance.getInput().checkValidity()) {
-		      instance.enableButtons();
-		      instance.showValidationMessage(innerParams.validationMessage);
-		    } else if (type === 'deny') {
-		      deny(instance, inputValue);
-		    } else {
-		      confirm(instance, inputValue);
-		    }
-		  };
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {string | number | File | FileList | null} inputValue
-		   * @param {'confirm' | 'deny'} type
-		   */
-		  const handleInputValidator = (instance, inputValue, type) => {
-		    const innerParams = privateProps.innerParams.get(instance);
-		    instance.disableInput();
-		    const validationPromise = Promise.resolve().then(() => asPromise(innerParams.inputValidator(inputValue, innerParams.validationMessage)));
-		    validationPromise.then(validationMessage => {
-		      instance.enableButtons();
-		      instance.enableInput();
-		      if (validationMessage) {
-		        instance.showValidationMessage(validationMessage);
-		      } else if (type === 'deny') {
-		        deny(instance, inputValue);
-		      } else {
-		        confirm(instance, inputValue);
-		      }
-		    });
-		  };
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {any} value
-		   */
-		  const deny = (instance, value) => {
-		    const innerParams = privateProps.innerParams.get(instance || undefined);
-		    if (innerParams.showLoaderOnDeny) {
-		      showLoading(getDenyButton());
-		    }
-		    if (innerParams.preDeny) {
-		      instance.isAwaitingPromise = true; // Flagging the instance as awaiting a promise so it's own promise's reject/resolve methods doesn't get destroyed until the result from this preDeny's promise is received
-		      const preDenyPromise = Promise.resolve().then(() => asPromise(innerParams.preDeny(value, innerParams.validationMessage)));
-		      preDenyPromise.then(preDenyValue => {
-		        if (preDenyValue === false) {
-		          instance.hideLoading();
-		          handleAwaitingPromise(instance);
-		        } else {
-		          instance.close({
-		            isDenied: true,
-		            value: typeof preDenyValue === 'undefined' ? value : preDenyValue
-		          });
-		        }
-		      }).catch(error => rejectWith(instance || undefined, error));
-		    } else {
-		      instance.close({
-		        isDenied: true,
-		        value
-		      });
-		    }
-		  };
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {any} value
-		   */
-		  const succeedWith = (instance, value) => {
-		    instance.close({
-		      isConfirmed: true,
-		      value
-		    });
-		  };
-
-		  /**
-		   *
-		   * @param {SweetAlert} instance
-		   * @param {string} error
-		   */
-		  const rejectWith = (instance, error) => {
-		    instance.rejectPromise(error);
-		  };
-
-		  /**
-		   *
-		   * @param {SweetAlert} instance
-		   * @param {any} value
-		   */
-		  const confirm = (instance, value) => {
-		    const innerParams = privateProps.innerParams.get(instance || undefined);
-		    if (innerParams.showLoaderOnConfirm) {
-		      showLoading();
-		    }
-		    if (innerParams.preConfirm) {
-		      instance.resetValidationMessage();
-		      instance.isAwaitingPromise = true; // Flagging the instance as awaiting a promise so it's own promise's reject/resolve methods doesn't get destroyed until the result from this preConfirm's promise is received
-		      const preConfirmPromise = Promise.resolve().then(() => asPromise(innerParams.preConfirm(value, innerParams.validationMessage)));
-		      preConfirmPromise.then(preConfirmValue => {
-		        if (isVisible$1(getValidationMessage()) || preConfirmValue === false) {
-		          instance.hideLoading();
-		          handleAwaitingPromise(instance);
-		        } else {
-		          succeedWith(instance, typeof preConfirmValue === 'undefined' ? value : preConfirmValue);
-		        }
-		      }).catch(error => rejectWith(instance || undefined, error));
-		    } else {
-		      succeedWith(instance, value);
-		    }
-		  };
-
-		  /**
-		   * Hides loader and shows back the button which was hidden by .showLoading()
-		   */
-		  function hideLoading() {
-		    // do nothing if popup is closed
-		    const innerParams = privateProps.innerParams.get(this);
-		    if (!innerParams) {
-		      return;
-		    }
-		    const domCache = privateProps.domCache.get(this);
-		    hide(domCache.loader);
-		    if (isToast()) {
-		      if (innerParams.icon) {
-		        show(getIcon());
-		      }
-		    } else {
-		      showRelatedButton(domCache);
-		    }
-		    removeClass([domCache.popup, domCache.actions], swalClasses.loading);
-		    domCache.popup.removeAttribute('aria-busy');
-		    domCache.popup.removeAttribute('data-loading');
-		    domCache.confirmButton.disabled = false;
-		    domCache.denyButton.disabled = false;
-		    domCache.cancelButton.disabled = false;
-		  }
-		  const showRelatedButton = domCache => {
-		    const buttonToReplace = domCache.popup.getElementsByClassName(domCache.loader.getAttribute('data-button-to-replace'));
-		    if (buttonToReplace.length) {
-		      show(buttonToReplace[0], 'inline-block');
-		    } else if (allButtonsAreHidden()) {
-		      hide(domCache.actions);
-		    }
-		  };
-
-		  /**
-		   * Gets the input DOM node, this method works with input parameter.
-		   *
-		   * @returns {HTMLInputElement | null}
-		   */
-		  function getInput() {
-		    const innerParams = privateProps.innerParams.get(this);
-		    const domCache = privateProps.domCache.get(this);
-		    if (!domCache) {
-		      return null;
-		    }
-		    return getInput$1(domCache.popup, innerParams.input);
-		  }
-
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {string[]} buttons
-		   * @param {boolean} disabled
-		   */
-		  function setButtonsDisabled(instance, buttons, disabled) {
-		    const domCache = privateProps.domCache.get(instance);
-		    buttons.forEach(button => {
-		      domCache[button].disabled = disabled;
-		    });
-		  }
-
-		  /**
-		   * @param {HTMLInputElement} input
-		   * @param {boolean} disabled
-		   */
-		  function setInputDisabled(input, disabled) {
-		    if (!input) {
-		      return;
-		    }
-		    if (input.type === 'radio') {
-		      const radiosContainer = input.parentNode.parentNode;
-		      const radios = radiosContainer.querySelectorAll('input');
-		      for (let i = 0; i < radios.length; i++) {
-		        radios[i].disabled = disabled;
-		      }
-		    } else {
-		      input.disabled = disabled;
-		    }
-		  }
-
-		  /**
-		   * Enable all the buttons
-		   */
-		  function enableButtons() {
-		    setButtonsDisabled(this, ['confirmButton', 'denyButton', 'cancelButton'], false);
-		  }
-
-		  /**
-		   * Disable all the buttons
-		   */
-		  function disableButtons() {
-		    setButtonsDisabled(this, ['confirmButton', 'denyButton', 'cancelButton'], true);
-		  }
-
-		  /**
-		   * Enable the input field
-		   */
-		  function enableInput() {
-		    setInputDisabled(this.getInput(), false);
-		  }
-
-		  /**
-		   * Disable the input field
-		   */
-		  function disableInput() {
-		    setInputDisabled(this.getInput(), true);
-		  }
-
-		  /**
-		   * Show block with validation message
-		   *
-		   * @param {string} error
-		   */
-		  function showValidationMessage(error) {
-		    const domCache = privateProps.domCache.get(this);
-		    const params = privateProps.innerParams.get(this);
-		    setInnerHtml(domCache.validationMessage, error);
-		    domCache.validationMessage.className = swalClasses['validation-message'];
-		    if (params.customClass && params.customClass.validationMessage) {
-		      addClass(domCache.validationMessage, params.customClass.validationMessage);
-		    }
-		    show(domCache.validationMessage);
-		    const input = this.getInput();
-		    if (input) {
-		      input.setAttribute('aria-invalid', true);
-		      input.setAttribute('aria-describedby', swalClasses['validation-message']);
-		      focusInput(input);
-		      addClass(input, swalClasses.inputerror);
-		    }
-		  }
-
-		  /**
-		   * Hide block with validation message
-		   */
-		  function resetValidationMessage() {
-		    const domCache = privateProps.domCache.get(this);
-		    if (domCache.validationMessage) {
-		      hide(domCache.validationMessage);
-		    }
-		    const input = this.getInput();
-		    if (input) {
-		      input.removeAttribute('aria-invalid');
-		      input.removeAttribute('aria-describedby');
-		      removeClass(input, swalClasses.inputerror);
-		    }
-		  }
 
 		  const defaultParams = {
 		    title: '',
@@ -7315,7 +4564,6 @@
 		    inputLabel: '',
 		    inputValue: '',
 		    inputOptions: {},
-		    inputAutoFocus: true,
 		    inputAutoTrim: true,
 		    inputAttributes: {},
 		    inputValidator: undefined,
@@ -7335,99 +4583,2506 @@
 		    scrollbarPadding: true
 		  };
 		  const updatableParams = ['allowEscapeKey', 'allowOutsideClick', 'background', 'buttonsStyling', 'cancelButtonAriaLabel', 'cancelButtonColor', 'cancelButtonText', 'closeButtonAriaLabel', 'closeButtonHtml', 'color', 'confirmButtonAriaLabel', 'confirmButtonColor', 'confirmButtonText', 'currentProgressStep', 'customClass', 'denyButtonAriaLabel', 'denyButtonColor', 'denyButtonText', 'didClose', 'didDestroy', 'footer', 'hideClass', 'html', 'icon', 'iconColor', 'iconHtml', 'imageAlt', 'imageHeight', 'imageUrl', 'imageWidth', 'preConfirm', 'preDeny', 'progressSteps', 'returnFocus', 'reverseButtons', 'showCancelButton', 'showCloseButton', 'showConfirmButton', 'showDenyButton', 'text', 'title', 'titleText', 'willClose'];
-
-		  /** @type {Record<string, string>} */
 		  const deprecatedParams = {};
 		  const toastIncompatibleParams = ['allowOutsideClick', 'allowEnterKey', 'backdrop', 'focusConfirm', 'focusDeny', 'focusCancel', 'returnFocus', 'heightAuto', 'keydownListenerCapture'];
-
 		  /**
 		   * Is valid parameter
-		   *
 		   * @param {string} paramName
-		   * @returns {boolean}
 		   */
+
 		  const isValidParameter = paramName => {
 		    return Object.prototype.hasOwnProperty.call(defaultParams, paramName);
 		  };
-
 		  /**
 		   * Is valid parameter for Swal.update() method
-		   *
 		   * @param {string} paramName
-		   * @returns {boolean}
 		   */
+
 		  const isUpdatableParameter = paramName => {
 		    return updatableParams.indexOf(paramName) !== -1;
 		  };
-
 		  /**
 		   * Is deprecated parameter
-		   *
 		   * @param {string} paramName
-		   * @returns {string | undefined}
 		   */
+
 		  const isDeprecatedParameter = paramName => {
 		    return deprecatedParams[paramName];
 		  };
 
-		  /**
-		   * @param {string} param
-		   */
 		  const checkIfParamIsValid = param => {
 		    if (!isValidParameter(param)) {
-		      warn(`Unknown parameter "${param}"`);
+		      warn("Unknown parameter \"".concat(param, "\""));
 		    }
 		  };
 
-		  /**
-		   * @param {string} param
-		   */
 		  const checkIfToastParamIsValid = param => {
 		    if (toastIncompatibleParams.includes(param)) {
-		      warn(`The parameter "${param}" is incompatible with toasts`);
+		      warn("The parameter \"".concat(param, "\" is incompatible with toasts"));
 		    }
 		  };
 
-		  /**
-		   * @param {string} param
-		   */
 		  const checkIfParamIsDeprecated = param => {
-		    const isDeprecated = isDeprecatedParameter(param);
-		    if (isDeprecated) {
-		      warnAboutDeprecation(param, isDeprecated);
+		    if (isDeprecatedParameter(param)) {
+		      warnAboutDeprecation(param, isDeprecatedParameter(param));
 		    }
 		  };
-
 		  /**
 		   * Show relevant warnings for given params
 		   *
-		   * @param {SweetAlertOptions} params
+		   * @param params
 		   */
+
+
 		  const showWarningsForParams = params => {
-		    if (params.backdrop === false && params.allowOutsideClick) {
+		    if (!params.backdrop && params.allowOutsideClick) {
 		      warn('"allowOutsideClick" parameter requires `backdrop` parameter to be set to `true`');
 		    }
+
 		    for (const param in params) {
 		      checkIfParamIsValid(param);
+
 		      if (params.toast) {
 		        checkIfToastParamIsValid(param);
 		      }
+
 		      checkIfParamIsDeprecated(param);
 		    }
 		  };
 
+		  const swalPrefix = 'swal2-';
+		  const prefix = items => {
+		    const result = {};
+
+		    for (const i in items) {
+		      result[items[i]] = swalPrefix + items[i];
+		    }
+
+		    return result;
+		  };
+		  const swalClasses = prefix(['container', 'shown', 'height-auto', 'iosfix', 'popup', 'modal', 'no-backdrop', 'no-transition', 'toast', 'toast-shown', 'show', 'hide', 'close', 'title', 'html-container', 'actions', 'confirm', 'deny', 'cancel', 'default-outline', 'footer', 'icon', 'icon-content', 'image', 'input', 'file', 'range', 'select', 'radio', 'checkbox', 'label', 'textarea', 'inputerror', 'input-label', 'validation-message', 'progress-steps', 'active-progress-step', 'progress-step', 'progress-step-line', 'loader', 'loading', 'styled', 'top', 'top-start', 'top-end', 'top-left', 'top-right', 'center', 'center-start', 'center-end', 'center-left', 'center-right', 'bottom', 'bottom-start', 'bottom-end', 'bottom-left', 'bottom-right', 'grow-row', 'grow-column', 'grow-fullscreen', 'rtl', 'timer-progress-bar', 'timer-progress-bar-container', 'scrollbar-measure', 'icon-success', 'icon-warning', 'icon-info', 'icon-question', 'icon-error']);
+		  const iconTypes = prefix(['success', 'warning', 'info', 'question', 'error']);
+
+		  /**
+		   * Gets the popup container which contains the backdrop and the popup itself.
+		   *
+		   * @returns {HTMLElement | null}
+		   */
+
+		  const getContainer = () => document.body.querySelector(".".concat(swalClasses.container));
+		  const elementBySelector = selectorString => {
+		    const container = getContainer();
+		    return container ? container.querySelector(selectorString) : null;
+		  };
+
+		  const elementByClass = className => {
+		    return elementBySelector(".".concat(className));
+		  };
+
+		  const getPopup = () => elementByClass(swalClasses.popup);
+		  const getIcon = () => elementByClass(swalClasses.icon);
+		  const getTitle = () => elementByClass(swalClasses.title);
+		  const getHtmlContainer = () => elementByClass(swalClasses['html-container']);
+		  const getImage = () => elementByClass(swalClasses.image);
+		  const getProgressSteps = () => elementByClass(swalClasses['progress-steps']);
+		  const getValidationMessage = () => elementByClass(swalClasses['validation-message']);
+		  const getConfirmButton = () => elementBySelector(".".concat(swalClasses.actions, " .").concat(swalClasses.confirm));
+		  const getDenyButton = () => elementBySelector(".".concat(swalClasses.actions, " .").concat(swalClasses.deny));
+		  const getInputLabel = () => elementByClass(swalClasses['input-label']);
+		  const getLoader = () => elementBySelector(".".concat(swalClasses.loader));
+		  const getCancelButton = () => elementBySelector(".".concat(swalClasses.actions, " .").concat(swalClasses.cancel));
+		  const getActions = () => elementByClass(swalClasses.actions);
+		  const getFooter = () => elementByClass(swalClasses.footer);
+		  const getTimerProgressBar = () => elementByClass(swalClasses['timer-progress-bar']);
+		  const getCloseButton = () => elementByClass(swalClasses.close); // https://github.com/jkup/focusable/blob/master/index.js
+
+		  const focusable = "\n  a[href],\n  area[href],\n  input:not([disabled]),\n  select:not([disabled]),\n  textarea:not([disabled]),\n  button:not([disabled]),\n  iframe,\n  object,\n  embed,\n  [tabindex=\"0\"],\n  [contenteditable],\n  audio[controls],\n  video[controls],\n  summary\n";
+		  const getFocusableElements = () => {
+		    const focusableElementsWithTabindex = toArray(getPopup().querySelectorAll('[tabindex]:not([tabindex="-1"]):not([tabindex="0"])')) // sort according to tabindex
+		    .sort((a, b) => {
+		      const tabindexA = parseInt(a.getAttribute('tabindex'));
+		      const tabindexB = parseInt(b.getAttribute('tabindex'));
+
+		      if (tabindexA > tabindexB) {
+		        return 1;
+		      } else if (tabindexA < tabindexB) {
+		        return -1;
+		      }
+
+		      return 0;
+		    });
+		    const otherFocusableElements = toArray(getPopup().querySelectorAll(focusable)).filter(el => el.getAttribute('tabindex') !== '-1');
+		    return uniqueArray(focusableElementsWithTabindex.concat(otherFocusableElements)).filter(el => isVisible(el));
+		  };
+		  const isModal = () => {
+		    return hasClass(document.body, swalClasses.shown) && !hasClass(document.body, swalClasses['toast-shown']) && !hasClass(document.body, swalClasses['no-backdrop']);
+		  };
+		  const isToast = () => {
+		    return getPopup() && hasClass(getPopup(), swalClasses.toast);
+		  };
+		  const isLoading = () => {
+		    return getPopup().hasAttribute('data-loading');
+		  };
+
+		  const states = {
+		    previousBodyPadding: null
+		  };
+		  /**
+		   * Securely set innerHTML of an element
+		   * https://github.com/sweetalert2/sweetalert2/issues/1926
+		   *
+		   * @param {HTMLElement} elem
+		   * @param {string} html
+		   */
+
+		  const setInnerHtml = (elem, html) => {
+		    elem.textContent = '';
+
+		    if (html) {
+		      const parser = new DOMParser();
+		      const parsed = parser.parseFromString(html, "text/html");
+		      toArray(parsed.querySelector('head').childNodes).forEach(child => {
+		        elem.appendChild(child);
+		      });
+		      toArray(parsed.querySelector('body').childNodes).forEach(child => {
+		        elem.appendChild(child);
+		      });
+		    }
+		  };
+		  /**
+		   * @param {HTMLElement} elem
+		   * @param {string} className
+		   * @returns {boolean}
+		   */
+
+		  const hasClass = (elem, className) => {
+		    if (!className) {
+		      return false;
+		    }
+
+		    const classList = className.split(/\s+/);
+
+		    for (let i = 0; i < classList.length; i++) {
+		      if (!elem.classList.contains(classList[i])) {
+		        return false;
+		      }
+		    }
+
+		    return true;
+		  };
+
+		  const removeCustomClasses = (elem, params) => {
+		    toArray(elem.classList).forEach(className => {
+		      if (!Object.values(swalClasses).includes(className) && !Object.values(iconTypes).includes(className) && !Object.values(params.showClass).includes(className)) {
+		        elem.classList.remove(className);
+		      }
+		    });
+		  };
+
+		  const applyCustomClass = (elem, params, className) => {
+		    removeCustomClasses(elem, params);
+
+		    if (params.customClass && params.customClass[className]) {
+		      if (typeof params.customClass[className] !== 'string' && !params.customClass[className].forEach) {
+		        return warn("Invalid type of customClass.".concat(className, "! Expected string or iterable object, got \"").concat(typeof params.customClass[className], "\""));
+		      }
+
+		      addClass(elem, params.customClass[className]);
+		    }
+		  };
+		  /**
+		   * @param {HTMLElement} popup
+		   * @param {string} inputType
+		   * @returns {HTMLInputElement | null}
+		   */
+
+		  const getInput = (popup, inputType) => {
+		    if (!inputType) {
+		      return null;
+		    }
+
+		    switch (inputType) {
+		      case 'select':
+		      case 'textarea':
+		      case 'file':
+		        return popup.querySelector(".".concat(swalClasses.popup, " > .").concat(swalClasses[inputType]));
+
+		      case 'checkbox':
+		        return popup.querySelector(".".concat(swalClasses.popup, " > .").concat(swalClasses.checkbox, " input"));
+
+		      case 'radio':
+		        return popup.querySelector(".".concat(swalClasses.popup, " > .").concat(swalClasses.radio, " input:checked")) || popup.querySelector(".".concat(swalClasses.popup, " > .").concat(swalClasses.radio, " input:first-child"));
+
+		      case 'range':
+		        return popup.querySelector(".".concat(swalClasses.popup, " > .").concat(swalClasses.range, " input"));
+
+		      default:
+		        return popup.querySelector(".".concat(swalClasses.popup, " > .").concat(swalClasses.input));
+		    }
+		  };
+		  /**
+		   * @param {HTMLInputElement} input
+		   */
+
+		  const focusInput = input => {
+		    input.focus(); // place cursor at end of text in text input
+
+		    if (input.type !== 'file') {
+		      // http://stackoverflow.com/a/2345915
+		      const val = input.value;
+		      input.value = '';
+		      input.value = val;
+		    }
+		  };
+		  /**
+		   * @param {HTMLElement | HTMLElement[] | null} target
+		   * @param {string | string[]} classList
+		   * @param {boolean} condition
+		   */
+
+		  const toggleClass = (target, classList, condition) => {
+		    if (!target || !classList) {
+		      return;
+		    }
+
+		    if (typeof classList === 'string') {
+		      classList = classList.split(/\s+/).filter(Boolean);
+		    }
+
+		    classList.forEach(className => {
+		      if (Array.isArray(target)) {
+		        target.forEach(elem => {
+		          condition ? elem.classList.add(className) : elem.classList.remove(className);
+		        });
+		      } else {
+		        condition ? target.classList.add(className) : target.classList.remove(className);
+		      }
+		    });
+		  };
+		  /**
+		   * @param {HTMLElement | HTMLElement[] | null} target
+		   * @param {string | string[]} classList
+		   */
+
+		  const addClass = (target, classList) => {
+		    toggleClass(target, classList, true);
+		  };
+		  /**
+		   * @param {HTMLElement | HTMLElement[] | null} target
+		   * @param {string | string[]} classList
+		   */
+
+		  const removeClass = (target, classList) => {
+		    toggleClass(target, classList, false);
+		  };
+		  /**
+		   * Get direct child of an element by class name
+		   *
+		   * @param {HTMLElement} elem
+		   * @param {string} className
+		   * @returns {HTMLElement | null}
+		   */
+
+		  const getDirectChildByClass = (elem, className) => {
+		    const childNodes = toArray(elem.childNodes);
+
+		    for (let i = 0; i < childNodes.length; i++) {
+		      if (hasClass(childNodes[i], className)) {
+		        return childNodes[i];
+		      }
+		    }
+		  };
+		  /**
+		   * @param {HTMLElement} elem
+		   * @param {string} property
+		   * @param {*} value
+		   */
+
+		  const applyNumericalStyle = (elem, property, value) => {
+		    if (value === "".concat(parseInt(value))) {
+		      value = parseInt(value);
+		    }
+
+		    if (value || parseInt(value) === 0) {
+		      elem.style[property] = typeof value === 'number' ? "".concat(value, "px") : value;
+		    } else {
+		      elem.style.removeProperty(property);
+		    }
+		  };
+		  /**
+		   * @param {HTMLElement} elem
+		   * @param {string} display
+		   */
+
+		  const show = function (elem) {
+		    let display = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'flex';
+		    elem.style.display = display;
+		  };
+		  /**
+		   * @param {HTMLElement} elem
+		   */
+
+		  const hide = elem => {
+		    elem.style.display = 'none';
+		  };
+		  const setStyle = (parent, selector, property, value) => {
+		    const el = parent.querySelector(selector);
+
+		    if (el) {
+		      el.style[property] = value;
+		    }
+		  };
+		  const toggle = (elem, condition, display) => {
+		    condition ? show(elem, display) : hide(elem);
+		  }; // borrowed from jquery $(elem).is(':visible') implementation
+
+		  const isVisible = elem => !!(elem && (elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length));
+		  const allButtonsAreHidden = () => !isVisible(getConfirmButton()) && !isVisible(getDenyButton()) && !isVisible(getCancelButton());
+		  const isScrollable = elem => !!(elem.scrollHeight > elem.clientHeight); // borrowed from https://stackoverflow.com/a/46352119
+
+		  const hasCssAnimation = elem => {
+		    const style = window.getComputedStyle(elem);
+		    const animDuration = parseFloat(style.getPropertyValue('animation-duration') || '0');
+		    const transDuration = parseFloat(style.getPropertyValue('transition-duration') || '0');
+		    return animDuration > 0 || transDuration > 0;
+		  };
+		  const animateTimerProgressBar = function (timer) {
+		    let reset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+		    const timerProgressBar = getTimerProgressBar();
+
+		    if (isVisible(timerProgressBar)) {
+		      if (reset) {
+		        timerProgressBar.style.transition = 'none';
+		        timerProgressBar.style.width = '100%';
+		      }
+
+		      setTimeout(() => {
+		        timerProgressBar.style.transition = "width ".concat(timer / 1000, "s linear");
+		        timerProgressBar.style.width = '0%';
+		      }, 10);
+		    }
+		  };
+		  const stopTimerProgressBar = () => {
+		    const timerProgressBar = getTimerProgressBar();
+		    const timerProgressBarWidth = parseInt(window.getComputedStyle(timerProgressBar).width);
+		    timerProgressBar.style.removeProperty('transition');
+		    timerProgressBar.style.width = '100%';
+		    const timerProgressBarFullWidth = parseInt(window.getComputedStyle(timerProgressBar).width);
+		    const timerProgressBarPercent = timerProgressBarWidth / timerProgressBarFullWidth * 100;
+		    timerProgressBar.style.removeProperty('transition');
+		    timerProgressBar.style.width = "".concat(timerProgressBarPercent, "%");
+		  };
+
+		  /**
+		   * Detect Node env
+		   *
+		   * @returns {boolean}
+		   */
+		  const isNodeEnv = () => typeof window === 'undefined' || typeof document === 'undefined';
+
+		  const RESTORE_FOCUS_TIMEOUT = 100;
+
+		  const globalState = {};
+
+		  const focusPreviousActiveElement = () => {
+		    if (globalState.previousActiveElement && globalState.previousActiveElement.focus) {
+		      globalState.previousActiveElement.focus();
+		      globalState.previousActiveElement = null;
+		    } else if (document.body) {
+		      document.body.focus();
+		    }
+		  }; // Restore previous active (focused) element
+
+
+		  const restoreActiveElement = returnFocus => {
+		    return new Promise(resolve => {
+		      if (!returnFocus) {
+		        return resolve();
+		      }
+
+		      const x = window.scrollX;
+		      const y = window.scrollY;
+		      globalState.restoreFocusTimeout = setTimeout(() => {
+		        focusPreviousActiveElement();
+		        resolve();
+		      }, RESTORE_FOCUS_TIMEOUT); // issues/900
+
+		      window.scrollTo(x, y);
+		    });
+		  };
+
+		  const sweetHTML = "\n <div aria-labelledby=\"".concat(swalClasses.title, "\" aria-describedby=\"").concat(swalClasses['html-container'], "\" class=\"").concat(swalClasses.popup, "\" tabindex=\"-1\">\n   <button type=\"button\" class=\"").concat(swalClasses.close, "\"></button>\n   <ul class=\"").concat(swalClasses['progress-steps'], "\"></ul>\n   <div class=\"").concat(swalClasses.icon, "\"></div>\n   <img class=\"").concat(swalClasses.image, "\" />\n   <h2 class=\"").concat(swalClasses.title, "\" id=\"").concat(swalClasses.title, "\"></h2>\n   <div class=\"").concat(swalClasses['html-container'], "\" id=\"").concat(swalClasses['html-container'], "\"></div>\n   <input class=\"").concat(swalClasses.input, "\" />\n   <input type=\"file\" class=\"").concat(swalClasses.file, "\" />\n   <div class=\"").concat(swalClasses.range, "\">\n     <input type=\"range\" />\n     <output></output>\n   </div>\n   <select class=\"").concat(swalClasses.select, "\"></select>\n   <div class=\"").concat(swalClasses.radio, "\"></div>\n   <label for=\"").concat(swalClasses.checkbox, "\" class=\"").concat(swalClasses.checkbox, "\">\n     <input type=\"checkbox\" />\n     <span class=\"").concat(swalClasses.label, "\"></span>\n   </label>\n   <textarea class=\"").concat(swalClasses.textarea, "\"></textarea>\n   <div class=\"").concat(swalClasses['validation-message'], "\" id=\"").concat(swalClasses['validation-message'], "\"></div>\n   <div class=\"").concat(swalClasses.actions, "\">\n     <div class=\"").concat(swalClasses.loader, "\"></div>\n     <button type=\"button\" class=\"").concat(swalClasses.confirm, "\"></button>\n     <button type=\"button\" class=\"").concat(swalClasses.deny, "\"></button>\n     <button type=\"button\" class=\"").concat(swalClasses.cancel, "\"></button>\n   </div>\n   <div class=\"").concat(swalClasses.footer, "\"></div>\n   <div class=\"").concat(swalClasses['timer-progress-bar-container'], "\">\n     <div class=\"").concat(swalClasses['timer-progress-bar'], "\"></div>\n   </div>\n </div>\n").replace(/(^|\n)\s*/g, '');
+
+		  const resetOldContainer = () => {
+		    const oldContainer = getContainer();
+
+		    if (!oldContainer) {
+		      return false;
+		    }
+
+		    oldContainer.remove();
+		    removeClass([document.documentElement, document.body], [swalClasses['no-backdrop'], swalClasses['toast-shown'], swalClasses['has-column']]);
+		    return true;
+		  };
+
+		  const resetValidationMessage = () => {
+		    globalState.currentInstance.resetValidationMessage();
+		  };
+
+		  const addInputChangeListeners = () => {
+		    const popup = getPopup();
+		    const input = getDirectChildByClass(popup, swalClasses.input);
+		    const file = getDirectChildByClass(popup, swalClasses.file);
+		    const range = popup.querySelector(".".concat(swalClasses.range, " input"));
+		    const rangeOutput = popup.querySelector(".".concat(swalClasses.range, " output"));
+		    const select = getDirectChildByClass(popup, swalClasses.select);
+		    const checkbox = popup.querySelector(".".concat(swalClasses.checkbox, " input"));
+		    const textarea = getDirectChildByClass(popup, swalClasses.textarea);
+		    input.oninput = resetValidationMessage;
+		    file.onchange = resetValidationMessage;
+		    select.onchange = resetValidationMessage;
+		    checkbox.onchange = resetValidationMessage;
+		    textarea.oninput = resetValidationMessage;
+
+		    range.oninput = () => {
+		      resetValidationMessage();
+		      rangeOutput.value = range.value;
+		    };
+
+		    range.onchange = () => {
+		      resetValidationMessage();
+		      range.nextSibling.value = range.value;
+		    };
+		  };
+
+		  const getTarget = target => typeof target === 'string' ? document.querySelector(target) : target;
+
+		  const setupAccessibility = params => {
+		    const popup = getPopup();
+		    popup.setAttribute('role', params.toast ? 'alert' : 'dialog');
+		    popup.setAttribute('aria-live', params.toast ? 'polite' : 'assertive');
+
+		    if (!params.toast) {
+		      popup.setAttribute('aria-modal', 'true');
+		    }
+		  };
+
+		  const setupRTL = targetElement => {
+		    if (window.getComputedStyle(targetElement).direction === 'rtl') {
+		      addClass(getContainer(), swalClasses.rtl);
+		    }
+		  };
+		  /*
+		   * Add modal + backdrop to DOM
+		   */
+
+
+		  const init = params => {
+		    // Clean up the old popup container if it exists
+		    const oldContainerExisted = resetOldContainer();
+		    /* istanbul ignore if */
+
+		    if (isNodeEnv()) {
+		      error('SweetAlert2 requires document to initialize');
+		      return;
+		    }
+
+		    const container = document.createElement('div');
+		    container.className = swalClasses.container;
+
+		    if (oldContainerExisted) {
+		      addClass(container, swalClasses['no-transition']);
+		    }
+
+		    setInnerHtml(container, sweetHTML);
+		    const targetElement = getTarget(params.target);
+		    targetElement.appendChild(container);
+		    setupAccessibility(params);
+		    setupRTL(targetElement);
+		    addInputChangeListeners();
+		  };
+
+		  /**
+		   * @param {HTMLElement | object | string} param
+		   * @param {HTMLElement} target
+		   */
+
+		  const parseHtmlToContainer = (param, target) => {
+		    // DOM element
+		    if (param instanceof HTMLElement) {
+		      target.appendChild(param);
+		    } // Object
+		    else if (typeof param === 'object') {
+		      handleObject(param, target);
+		    } // Plain string
+		    else if (param) {
+		      setInnerHtml(target, param);
+		    }
+		  };
+		  /**
+		   * @param {object} param
+		   * @param {HTMLElement} target
+		   */
+
+		  const handleObject = (param, target) => {
+		    // JQuery element(s)
+		    if (param.jquery) {
+		      handleJqueryElem(target, param);
+		    } // For other objects use their string representation
+		    else {
+		      setInnerHtml(target, param.toString());
+		    }
+		  };
+
+		  const handleJqueryElem = (target, elem) => {
+		    target.textContent = '';
+
+		    if (0 in elem) {
+		      for (let i = 0; (i in elem); i++) {
+		        target.appendChild(elem[i].cloneNode(true));
+		      }
+		    } else {
+		      target.appendChild(elem.cloneNode(true));
+		    }
+		  };
+
+		  const animationEndEvent = (() => {
+		    // Prevent run in Node env
+
+		    /* istanbul ignore if */
+		    if (isNodeEnv()) {
+		      return false;
+		    }
+
+		    const testEl = document.createElement('div');
+		    const transEndEventNames = {
+		      WebkitAnimation: 'webkitAnimationEnd',
+		      // Chrome, Safari and Opera
+		      animation: 'animationend' // Standard syntax
+
+		    };
+
+		    for (const i in transEndEventNames) {
+		      if (Object.prototype.hasOwnProperty.call(transEndEventNames, i) && typeof testEl.style[i] !== 'undefined') {
+		        return transEndEventNames[i];
+		      }
+		    }
+
+		    return false;
+		  })();
+
+		  // https://github.com/twbs/bootstrap/blob/master/js/src/modal.js
+
+		  const measureScrollbar = () => {
+		    const scrollDiv = document.createElement('div');
+		    scrollDiv.className = swalClasses['scrollbar-measure'];
+		    document.body.appendChild(scrollDiv);
+		    const scrollbarWidth = scrollDiv.getBoundingClientRect().width - scrollDiv.clientWidth;
+		    document.body.removeChild(scrollDiv);
+		    return scrollbarWidth;
+		  };
+
+		  const renderActions = (instance, params) => {
+		    const actions = getActions();
+		    const loader = getLoader(); // Actions (buttons) wrapper
+
+		    if (!params.showConfirmButton && !params.showDenyButton && !params.showCancelButton) {
+		      hide(actions);
+		    } else {
+		      show(actions);
+		    } // Custom class
+
+
+		    applyCustomClass(actions, params, 'actions'); // Render all the buttons
+
+		    renderButtons(actions, loader, params); // Loader
+
+		    setInnerHtml(loader, params.loaderHtml);
+		    applyCustomClass(loader, params, 'loader');
+		  };
+
+		  function renderButtons(actions, loader, params) {
+		    const confirmButton = getConfirmButton();
+		    const denyButton = getDenyButton();
+		    const cancelButton = getCancelButton(); // Render buttons
+
+		    renderButton(confirmButton, 'confirm', params);
+		    renderButton(denyButton, 'deny', params);
+		    renderButton(cancelButton, 'cancel', params);
+		    handleButtonsStyling(confirmButton, denyButton, cancelButton, params);
+
+		    if (params.reverseButtons) {
+		      if (params.toast) {
+		        actions.insertBefore(cancelButton, confirmButton);
+		        actions.insertBefore(denyButton, confirmButton);
+		      } else {
+		        actions.insertBefore(cancelButton, loader);
+		        actions.insertBefore(denyButton, loader);
+		        actions.insertBefore(confirmButton, loader);
+		      }
+		    }
+		  }
+
+		  function handleButtonsStyling(confirmButton, denyButton, cancelButton, params) {
+		    if (!params.buttonsStyling) {
+		      return removeClass([confirmButton, denyButton, cancelButton], swalClasses.styled);
+		    }
+
+		    addClass([confirmButton, denyButton, cancelButton], swalClasses.styled); // Buttons background colors
+
+		    if (params.confirmButtonColor) {
+		      confirmButton.style.backgroundColor = params.confirmButtonColor;
+		      addClass(confirmButton, swalClasses['default-outline']);
+		    }
+
+		    if (params.denyButtonColor) {
+		      denyButton.style.backgroundColor = params.denyButtonColor;
+		      addClass(denyButton, swalClasses['default-outline']);
+		    }
+
+		    if (params.cancelButtonColor) {
+		      cancelButton.style.backgroundColor = params.cancelButtonColor;
+		      addClass(cancelButton, swalClasses['default-outline']);
+		    }
+		  }
+
+		  function renderButton(button, buttonType, params) {
+		    toggle(button, params["show".concat(capitalizeFirstLetter(buttonType), "Button")], 'inline-block');
+		    setInnerHtml(button, params["".concat(buttonType, "ButtonText")]); // Set caption text
+
+		    button.setAttribute('aria-label', params["".concat(buttonType, "ButtonAriaLabel")]); // ARIA label
+		    // Add buttons custom classes
+
+		    button.className = swalClasses[buttonType];
+		    applyCustomClass(button, params, "".concat(buttonType, "Button"));
+		    addClass(button, params["".concat(buttonType, "ButtonClass")]);
+		  }
+
+		  function handleBackdropParam(container, backdrop) {
+		    if (typeof backdrop === 'string') {
+		      container.style.background = backdrop;
+		    } else if (!backdrop) {
+		      addClass([document.documentElement, document.body], swalClasses['no-backdrop']);
+		    }
+		  }
+
+		  function handlePositionParam(container, position) {
+		    if (position in swalClasses) {
+		      addClass(container, swalClasses[position]);
+		    } else {
+		      warn('The "position" parameter is not valid, defaulting to "center"');
+		      addClass(container, swalClasses.center);
+		    }
+		  }
+
+		  function handleGrowParam(container, grow) {
+		    if (grow && typeof grow === 'string') {
+		      const growClass = "grow-".concat(grow);
+
+		      if (growClass in swalClasses) {
+		        addClass(container, swalClasses[growClass]);
+		      }
+		    }
+		  }
+
+		  const renderContainer = (instance, params) => {
+		    const container = getContainer();
+
+		    if (!container) {
+		      return;
+		    }
+
+		    handleBackdropParam(container, params.backdrop);
+		    handlePositionParam(container, params.position);
+		    handleGrowParam(container, params.grow); // Custom class
+
+		    applyCustomClass(container, params, 'container');
+		  };
+
+		  /**
+		   * This module contains `WeakMap`s for each effectively-"private  property" that a `Swal` has.
+		   * For example, to set the private property "foo" of `this` to "bar", you can `privateProps.foo.set(this, 'bar')`
+		   * This is the approach that Babel will probably take to implement private methods/fields
+		   *   https://github.com/tc39/proposal-private-methods
+		   *   https://github.com/babel/babel/pull/7555
+		   * Once we have the changes from that PR in Babel, and our core class fits reasonable in *one module*
+		   *   then we can use that language feature.
+		   */
+		  var privateProps = {
+		    awaitingPromise: new WeakMap(),
+		    promise: new WeakMap(),
+		    innerParams: new WeakMap(),
+		    domCache: new WeakMap()
+		  };
+
+		  const inputTypes = ['input', 'file', 'range', 'select', 'radio', 'checkbox', 'textarea'];
+		  const renderInput = (instance, params) => {
+		    const popup = getPopup();
+		    const innerParams = privateProps.innerParams.get(instance);
+		    const rerender = !innerParams || params.input !== innerParams.input;
+		    inputTypes.forEach(inputType => {
+		      const inputClass = swalClasses[inputType];
+		      const inputContainer = getDirectChildByClass(popup, inputClass); // set attributes
+
+		      setAttributes(inputType, params.inputAttributes); // set class
+
+		      inputContainer.className = inputClass;
+
+		      if (rerender) {
+		        hide(inputContainer);
+		      }
+		    });
+
+		    if (params.input) {
+		      if (rerender) {
+		        showInput(params);
+		      } // set custom class
+
+
+		      setCustomClass(params);
+		    }
+		  };
+
+		  const showInput = params => {
+		    if (!renderInputType[params.input]) {
+		      return error("Unexpected type of input! Expected \"text\", \"email\", \"password\", \"number\", \"tel\", \"select\", \"radio\", \"checkbox\", \"textarea\", \"file\" or \"url\", got \"".concat(params.input, "\""));
+		    }
+
+		    const inputContainer = getInputContainer(params.input);
+		    const input = renderInputType[params.input](inputContainer, params);
+		    show(input); // input autofocus
+
+		    setTimeout(() => {
+		      focusInput(input);
+		    });
+		  };
+
+		  const removeAttributes = input => {
+		    for (let i = 0; i < input.attributes.length; i++) {
+		      const attrName = input.attributes[i].name;
+
+		      if (!['type', 'value', 'style'].includes(attrName)) {
+		        input.removeAttribute(attrName);
+		      }
+		    }
+		  };
+
+		  const setAttributes = (inputType, inputAttributes) => {
+		    const input = getInput(getPopup(), inputType);
+
+		    if (!input) {
+		      return;
+		    }
+
+		    removeAttributes(input);
+
+		    for (const attr in inputAttributes) {
+		      input.setAttribute(attr, inputAttributes[attr]);
+		    }
+		  };
+
+		  const setCustomClass = params => {
+		    const inputContainer = getInputContainer(params.input);
+
+		    if (params.customClass) {
+		      addClass(inputContainer, params.customClass.input);
+		    }
+		  };
+
+		  const setInputPlaceholder = (input, params) => {
+		    if (!input.placeholder || params.inputPlaceholder) {
+		      input.placeholder = params.inputPlaceholder;
+		    }
+		  };
+
+		  const setInputLabel = (input, prependTo, params) => {
+		    if (params.inputLabel) {
+		      input.id = swalClasses.input;
+		      const label = document.createElement('label');
+		      const labelClass = swalClasses['input-label'];
+		      label.setAttribute('for', input.id);
+		      label.className = labelClass;
+		      addClass(label, params.customClass.inputLabel);
+		      label.innerText = params.inputLabel;
+		      prependTo.insertAdjacentElement('beforebegin', label);
+		    }
+		  };
+
+		  const getInputContainer = inputType => {
+		    const inputClass = swalClasses[inputType] ? swalClasses[inputType] : swalClasses.input;
+		    return getDirectChildByClass(getPopup(), inputClass);
+		  };
+
+		  const renderInputType = {};
+
+		  renderInputType.text = renderInputType.email = renderInputType.password = renderInputType.number = renderInputType.tel = renderInputType.url = (input, params) => {
+		    if (typeof params.inputValue === 'string' || typeof params.inputValue === 'number') {
+		      input.value = params.inputValue;
+		    } else if (!isPromise(params.inputValue)) {
+		      warn("Unexpected type of inputValue! Expected \"string\", \"number\" or \"Promise\", got \"".concat(typeof params.inputValue, "\""));
+		    }
+
+		    setInputLabel(input, input, params);
+		    setInputPlaceholder(input, params);
+		    input.type = params.input;
+		    return input;
+		  };
+
+		  renderInputType.file = (input, params) => {
+		    setInputLabel(input, input, params);
+		    setInputPlaceholder(input, params);
+		    return input;
+		  };
+
+		  renderInputType.range = (range, params) => {
+		    const rangeInput = range.querySelector('input');
+		    const rangeOutput = range.querySelector('output');
+		    rangeInput.value = params.inputValue;
+		    rangeInput.type = params.input;
+		    rangeOutput.value = params.inputValue;
+		    setInputLabel(rangeInput, range, params);
+		    return range;
+		  };
+
+		  renderInputType.select = (select, params) => {
+		    select.textContent = '';
+
+		    if (params.inputPlaceholder) {
+		      const placeholder = document.createElement('option');
+		      setInnerHtml(placeholder, params.inputPlaceholder);
+		      placeholder.value = '';
+		      placeholder.disabled = true;
+		      placeholder.selected = true;
+		      select.appendChild(placeholder);
+		    }
+
+		    setInputLabel(select, select, params);
+		    return select;
+		  };
+
+		  renderInputType.radio = radio => {
+		    radio.textContent = '';
+		    return radio;
+		  };
+
+		  renderInputType.checkbox = (checkboxContainer, params) => {
+		    /** @type {HTMLInputElement} */
+		    const checkbox = getInput(getPopup(), 'checkbox');
+		    checkbox.value = '1';
+		    checkbox.id = swalClasses.checkbox;
+		    checkbox.checked = Boolean(params.inputValue);
+		    const label = checkboxContainer.querySelector('span');
+		    setInnerHtml(label, params.inputPlaceholder);
+		    return checkboxContainer;
+		  };
+
+		  renderInputType.textarea = (textarea, params) => {
+		    textarea.value = params.inputValue;
+		    setInputPlaceholder(textarea, params);
+		    setInputLabel(textarea, textarea, params);
+
+		    const getMargin = el => parseInt(window.getComputedStyle(el).marginLeft) + parseInt(window.getComputedStyle(el).marginRight); // https://github.com/sweetalert2/sweetalert2/issues/2291
+
+
+		    setTimeout(() => {
+		      // https://github.com/sweetalert2/sweetalert2/issues/1699
+		      if ('MutationObserver' in window) {
+		        const initialPopupWidth = parseInt(window.getComputedStyle(getPopup()).width);
+
+		        const textareaResizeHandler = () => {
+		          const textareaWidth = textarea.offsetWidth + getMargin(textarea);
+
+		          if (textareaWidth > initialPopupWidth) {
+		            getPopup().style.width = "".concat(textareaWidth, "px");
+		          } else {
+		            getPopup().style.width = null;
+		          }
+		        };
+
+		        new MutationObserver(textareaResizeHandler).observe(textarea, {
+		          attributes: true,
+		          attributeFilter: ['style']
+		        });
+		      }
+		    });
+		    return textarea;
+		  };
+
+		  const renderContent = (instance, params) => {
+		    const htmlContainer = getHtmlContainer();
+		    applyCustomClass(htmlContainer, params, 'htmlContainer'); // Content as HTML
+
+		    if (params.html) {
+		      parseHtmlToContainer(params.html, htmlContainer);
+		      show(htmlContainer, 'block');
+		    } // Content as plain text
+		    else if (params.text) {
+		      htmlContainer.textContent = params.text;
+		      show(htmlContainer, 'block');
+		    } // No content
+		    else {
+		      hide(htmlContainer);
+		    }
+
+		    renderInput(instance, params);
+		  };
+
+		  const renderFooter = (instance, params) => {
+		    const footer = getFooter();
+		    toggle(footer, params.footer);
+
+		    if (params.footer) {
+		      parseHtmlToContainer(params.footer, footer);
+		    } // Custom class
+
+
+		    applyCustomClass(footer, params, 'footer');
+		  };
+
+		  const renderCloseButton = (instance, params) => {
+		    const closeButton = getCloseButton();
+		    setInnerHtml(closeButton, params.closeButtonHtml); // Custom class
+
+		    applyCustomClass(closeButton, params, 'closeButton');
+		    toggle(closeButton, params.showCloseButton);
+		    closeButton.setAttribute('aria-label', params.closeButtonAriaLabel);
+		  };
+
+		  const renderIcon = (instance, params) => {
+		    const innerParams = privateProps.innerParams.get(instance);
+		    const icon = getIcon(); // if the given icon already rendered, apply the styling without re-rendering the icon
+
+		    if (innerParams && params.icon === innerParams.icon) {
+		      // Custom or default content
+		      setContent(icon, params);
+		      applyStyles(icon, params);
+		      return;
+		    }
+
+		    if (!params.icon && !params.iconHtml) {
+		      return hide(icon);
+		    }
+
+		    if (params.icon && Object.keys(iconTypes).indexOf(params.icon) === -1) {
+		      error("Unknown icon! Expected \"success\", \"error\", \"warning\", \"info\" or \"question\", got \"".concat(params.icon, "\""));
+		      return hide(icon);
+		    }
+
+		    show(icon); // Custom or default content
+
+		    setContent(icon, params);
+		    applyStyles(icon, params); // Animate icon
+
+		    addClass(icon, params.showClass.icon);
+		  };
+
+		  const applyStyles = (icon, params) => {
+		    for (const iconType in iconTypes) {
+		      if (params.icon !== iconType) {
+		        removeClass(icon, iconTypes[iconType]);
+		      }
+		    }
+
+		    addClass(icon, iconTypes[params.icon]); // Icon color
+
+		    setColor(icon, params); // Success icon background color
+
+		    adjustSuccessIconBackgroundColor(); // Custom class
+
+		    applyCustomClass(icon, params, 'icon');
+		  }; // Adjust success icon background color to match the popup background color
+
+
+		  const adjustSuccessIconBackgroundColor = () => {
+		    const popup = getPopup();
+		    const popupBackgroundColor = window.getComputedStyle(popup).getPropertyValue('background-color');
+		    const successIconParts = popup.querySelectorAll('[class^=swal2-success-circular-line], .swal2-success-fix');
+
+		    for (let i = 0; i < successIconParts.length; i++) {
+		      successIconParts[i].style.backgroundColor = popupBackgroundColor;
+		    }
+		  };
+
+		  const successIconHtml = "\n  <div class=\"swal2-success-circular-line-left\"></div>\n  <span class=\"swal2-success-line-tip\"></span> <span class=\"swal2-success-line-long\"></span>\n  <div class=\"swal2-success-ring\"></div> <div class=\"swal2-success-fix\"></div>\n  <div class=\"swal2-success-circular-line-right\"></div>\n";
+		  const errorIconHtml = "\n  <span class=\"swal2-x-mark\">\n    <span class=\"swal2-x-mark-line-left\"></span>\n    <span class=\"swal2-x-mark-line-right\"></span>\n  </span>\n";
+
+		  const setContent = (icon, params) => {
+		    icon.textContent = '';
+
+		    if (params.iconHtml) {
+		      setInnerHtml(icon, iconContent(params.iconHtml));
+		    } else if (params.icon === 'success') {
+		      setInnerHtml(icon, successIconHtml);
+		    } else if (params.icon === 'error') {
+		      setInnerHtml(icon, errorIconHtml);
+		    } else {
+		      const defaultIconHtml = {
+		        question: '?',
+		        warning: '!',
+		        info: 'i'
+		      };
+		      setInnerHtml(icon, iconContent(defaultIconHtml[params.icon]));
+		    }
+		  };
+
+		  const setColor = (icon, params) => {
+		    if (!params.iconColor) {
+		      return;
+		    }
+
+		    icon.style.color = params.iconColor;
+		    icon.style.borderColor = params.iconColor;
+
+		    for (const sel of ['.swal2-success-line-tip', '.swal2-success-line-long', '.swal2-x-mark-line-left', '.swal2-x-mark-line-right']) {
+		      setStyle(icon, sel, 'backgroundColor', params.iconColor);
+		    }
+
+		    setStyle(icon, '.swal2-success-ring', 'borderColor', params.iconColor);
+		  };
+
+		  const iconContent = content => "<div class=\"".concat(swalClasses['icon-content'], "\">").concat(content, "</div>");
+
+		  const renderImage = (instance, params) => {
+		    const image = getImage();
+
+		    if (!params.imageUrl) {
+		      return hide(image);
+		    }
+
+		    show(image, ''); // Src, alt
+
+		    image.setAttribute('src', params.imageUrl);
+		    image.setAttribute('alt', params.imageAlt); // Width, height
+
+		    applyNumericalStyle(image, 'width', params.imageWidth);
+		    applyNumericalStyle(image, 'height', params.imageHeight); // Class
+
+		    image.className = swalClasses.image;
+		    applyCustomClass(image, params, 'image');
+		  };
+
+		  const createStepElement = step => {
+		    const stepEl = document.createElement('li');
+		    addClass(stepEl, swalClasses['progress-step']);
+		    setInnerHtml(stepEl, step);
+		    return stepEl;
+		  };
+
+		  const createLineElement = params => {
+		    const lineEl = document.createElement('li');
+		    addClass(lineEl, swalClasses['progress-step-line']);
+
+		    if (params.progressStepsDistance) {
+		      lineEl.style.width = params.progressStepsDistance;
+		    }
+
+		    return lineEl;
+		  };
+
+		  const renderProgressSteps = (instance, params) => {
+		    const progressStepsContainer = getProgressSteps();
+
+		    if (!params.progressSteps || params.progressSteps.length === 0) {
+		      return hide(progressStepsContainer);
+		    }
+
+		    show(progressStepsContainer);
+		    progressStepsContainer.textContent = '';
+
+		    if (params.currentProgressStep >= params.progressSteps.length) {
+		      warn('Invalid currentProgressStep parameter, it should be less than progressSteps.length ' + '(currentProgressStep like JS arrays starts from 0)');
+		    }
+
+		    params.progressSteps.forEach((step, index) => {
+		      const stepEl = createStepElement(step);
+		      progressStepsContainer.appendChild(stepEl);
+
+		      if (index === params.currentProgressStep) {
+		        addClass(stepEl, swalClasses['active-progress-step']);
+		      }
+
+		      if (index !== params.progressSteps.length - 1) {
+		        const lineEl = createLineElement(params);
+		        progressStepsContainer.appendChild(lineEl);
+		      }
+		    });
+		  };
+
+		  const renderTitle = (instance, params) => {
+		    const title = getTitle();
+		    toggle(title, params.title || params.titleText, 'block');
+
+		    if (params.title) {
+		      parseHtmlToContainer(params.title, title);
+		    }
+
+		    if (params.titleText) {
+		      title.innerText = params.titleText;
+		    } // Custom class
+
+
+		    applyCustomClass(title, params, 'title');
+		  };
+
+		  const renderPopup = (instance, params) => {
+		    const container = getContainer();
+		    const popup = getPopup(); // Width
+		    // https://github.com/sweetalert2/sweetalert2/issues/2170
+
+		    if (params.toast) {
+		      applyNumericalStyle(container, 'width', params.width);
+		      popup.style.width = '100%';
+		      popup.insertBefore(getLoader(), getIcon());
+		    } else {
+		      applyNumericalStyle(popup, 'width', params.width);
+		    } // Padding
+
+
+		    applyNumericalStyle(popup, 'padding', params.padding); // Color
+
+		    if (params.color) {
+		      popup.style.color = params.color;
+		    } // Background
+
+
+		    if (params.background) {
+		      popup.style.background = params.background;
+		    }
+
+		    hide(getValidationMessage()); // Classes
+
+		    addClasses(popup, params);
+		  };
+
+		  const addClasses = (popup, params) => {
+		    // Default Class + showClass when updating Swal.update({})
+		    popup.className = "".concat(swalClasses.popup, " ").concat(isVisible(popup) ? params.showClass.popup : '');
+
+		    if (params.toast) {
+		      addClass([document.documentElement, document.body], swalClasses['toast-shown']);
+		      addClass(popup, swalClasses.toast);
+		    } else {
+		      addClass(popup, swalClasses.modal);
+		    } // Custom class
+
+
+		    applyCustomClass(popup, params, 'popup');
+
+		    if (typeof params.customClass === 'string') {
+		      addClass(popup, params.customClass);
+		    } // Icon class (#1842)
+
+
+		    if (params.icon) {
+		      addClass(popup, swalClasses["icon-".concat(params.icon)]);
+		    }
+		  };
+
+		  const render = (instance, params) => {
+		    renderPopup(instance, params);
+		    renderContainer(instance, params);
+		    renderProgressSteps(instance, params);
+		    renderIcon(instance, params);
+		    renderImage(instance, params);
+		    renderTitle(instance, params);
+		    renderCloseButton(instance, params);
+		    renderContent(instance, params);
+		    renderActions(instance, params);
+		    renderFooter(instance, params);
+
+		    if (typeof params.didRender === 'function') {
+		      params.didRender(getPopup());
+		    }
+		  };
+
+		  const DismissReason = Object.freeze({
+		    cancel: 'cancel',
+		    backdrop: 'backdrop',
+		    close: 'close',
+		    esc: 'esc',
+		    timer: 'timer'
+		  });
+
+		  // Adding aria-hidden="true" to elements outside of the active modal dialog ensures that
+		  // elements not within the active modal dialog will not be surfaced if a user opens a screen
+		  // reader’s list of elements (headings, form controls, landmarks, etc.) in the document.
+
+		  const setAriaHidden = () => {
+		    const bodyChildren = toArray(document.body.children);
+		    bodyChildren.forEach(el => {
+		      if (el === getContainer() || el.contains(getContainer())) {
+		        return;
+		      }
+
+		      if (el.hasAttribute('aria-hidden')) {
+		        el.setAttribute('data-previous-aria-hidden', el.getAttribute('aria-hidden'));
+		      }
+
+		      el.setAttribute('aria-hidden', 'true');
+		    });
+		  };
+		  const unsetAriaHidden = () => {
+		    const bodyChildren = toArray(document.body.children);
+		    bodyChildren.forEach(el => {
+		      if (el.hasAttribute('data-previous-aria-hidden')) {
+		        el.setAttribute('aria-hidden', el.getAttribute('data-previous-aria-hidden'));
+		        el.removeAttribute('data-previous-aria-hidden');
+		      } else {
+		        el.removeAttribute('aria-hidden');
+		      }
+		    });
+		  };
+
+		  const swalStringParams = ['swal-title', 'swal-html', 'swal-footer'];
+		  const getTemplateParams = params => {
+		    const template = typeof params.template === 'string' ? document.querySelector(params.template) : params.template;
+
+		    if (!template) {
+		      return {};
+		    }
+		    /** @type {DocumentFragment} */
+
+
+		    const templateContent = template.content;
+		    showWarningsForElements(templateContent);
+		    const result = Object.assign(getSwalParams(templateContent), getSwalButtons(templateContent), getSwalImage(templateContent), getSwalIcon(templateContent), getSwalInput(templateContent), getSwalStringParams(templateContent, swalStringParams));
+		    return result;
+		  };
+		  /**
+		   * @param {DocumentFragment} templateContent
+		   */
+
+		  const getSwalParams = templateContent => {
+		    const result = {};
+		    toArray(templateContent.querySelectorAll('swal-param')).forEach(param => {
+		      showWarningsForAttributes(param, ['name', 'value']);
+		      const paramName = param.getAttribute('name');
+		      const value = param.getAttribute('value');
+
+		      if (typeof defaultParams[paramName] === 'boolean' && value === 'false') {
+		        result[paramName] = false;
+		      }
+
+		      if (typeof defaultParams[paramName] === 'object') {
+		        result[paramName] = JSON.parse(value);
+		      }
+		    });
+		    return result;
+		  };
+		  /**
+		   * @param {DocumentFragment} templateContent
+		   */
+
+
+		  const getSwalButtons = templateContent => {
+		    const result = {};
+		    toArray(templateContent.querySelectorAll('swal-button')).forEach(button => {
+		      showWarningsForAttributes(button, ['type', 'color', 'aria-label']);
+		      const type = button.getAttribute('type');
+		      result["".concat(type, "ButtonText")] = button.innerHTML;
+		      result["show".concat(capitalizeFirstLetter(type), "Button")] = true;
+
+		      if (button.hasAttribute('color')) {
+		        result["".concat(type, "ButtonColor")] = button.getAttribute('color');
+		      }
+
+		      if (button.hasAttribute('aria-label')) {
+		        result["".concat(type, "ButtonAriaLabel")] = button.getAttribute('aria-label');
+		      }
+		    });
+		    return result;
+		  };
+		  /**
+		   * @param {DocumentFragment} templateContent
+		   */
+
+
+		  const getSwalImage = templateContent => {
+		    const result = {};
+		    /** @type {HTMLElement} */
+
+		    const image = templateContent.querySelector('swal-image');
+
+		    if (image) {
+		      showWarningsForAttributes(image, ['src', 'width', 'height', 'alt']);
+
+		      if (image.hasAttribute('src')) {
+		        result.imageUrl = image.getAttribute('src');
+		      }
+
+		      if (image.hasAttribute('width')) {
+		        result.imageWidth = image.getAttribute('width');
+		      }
+
+		      if (image.hasAttribute('height')) {
+		        result.imageHeight = image.getAttribute('height');
+		      }
+
+		      if (image.hasAttribute('alt')) {
+		        result.imageAlt = image.getAttribute('alt');
+		      }
+		    }
+
+		    return result;
+		  };
+		  /**
+		   * @param {DocumentFragment} templateContent
+		   */
+
+
+		  const getSwalIcon = templateContent => {
+		    const result = {};
+		    /** @type {HTMLElement} */
+
+		    const icon = templateContent.querySelector('swal-icon');
+
+		    if (icon) {
+		      showWarningsForAttributes(icon, ['type', 'color']);
+
+		      if (icon.hasAttribute('type')) {
+		        result.icon = icon.getAttribute('type');
+		      }
+
+		      if (icon.hasAttribute('color')) {
+		        result.iconColor = icon.getAttribute('color');
+		      }
+
+		      result.iconHtml = icon.innerHTML;
+		    }
+
+		    return result;
+		  };
+		  /**
+		   * @param {DocumentFragment} templateContent
+		   */
+
+
+		  const getSwalInput = templateContent => {
+		    const result = {};
+		    /** @type {HTMLElement} */
+
+		    const input = templateContent.querySelector('swal-input');
+
+		    if (input) {
+		      showWarningsForAttributes(input, ['type', 'label', 'placeholder', 'value']);
+		      result.input = input.getAttribute('type') || 'text';
+
+		      if (input.hasAttribute('label')) {
+		        result.inputLabel = input.getAttribute('label');
+		      }
+
+		      if (input.hasAttribute('placeholder')) {
+		        result.inputPlaceholder = input.getAttribute('placeholder');
+		      }
+
+		      if (input.hasAttribute('value')) {
+		        result.inputValue = input.getAttribute('value');
+		      }
+		    }
+
+		    const inputOptions = templateContent.querySelectorAll('swal-input-option');
+
+		    if (inputOptions.length) {
+		      result.inputOptions = {};
+		      toArray(inputOptions).forEach(option => {
+		        showWarningsForAttributes(option, ['value']);
+		        const optionValue = option.getAttribute('value');
+		        const optionName = option.innerHTML;
+		        result.inputOptions[optionValue] = optionName;
+		      });
+		    }
+
+		    return result;
+		  };
+		  /**
+		   * @param {DocumentFragment} templateContent
+		   * @param {string[]} paramNames
+		   */
+
+
+		  const getSwalStringParams = (templateContent, paramNames) => {
+		    const result = {};
+
+		    for (const i in paramNames) {
+		      const paramName = paramNames[i];
+		      /** @type {HTMLElement} */
+
+		      const tag = templateContent.querySelector(paramName);
+
+		      if (tag) {
+		        showWarningsForAttributes(tag, []);
+		        result[paramName.replace(/^swal-/, '')] = tag.innerHTML.trim();
+		      }
+		    }
+
+		    return result;
+		  };
+		  /**
+		   * @param {DocumentFragment} templateContent
+		   */
+
+
+		  const showWarningsForElements = templateContent => {
+		    const allowedElements = swalStringParams.concat(['swal-param', 'swal-button', 'swal-image', 'swal-icon', 'swal-input', 'swal-input-option']);
+		    toArray(templateContent.children).forEach(el => {
+		      const tagName = el.tagName.toLowerCase();
+
+		      if (allowedElements.indexOf(tagName) === -1) {
+		        warn("Unrecognized element <".concat(tagName, ">"));
+		      }
+		    });
+		  };
+		  /**
+		   * @param {HTMLElement} el
+		   * @param {string[]} allowedAttributes
+		   */
+
+
+		  const showWarningsForAttributes = (el, allowedAttributes) => {
+		    toArray(el.attributes).forEach(attribute => {
+		      if (allowedAttributes.indexOf(attribute.name) === -1) {
+		        warn(["Unrecognized attribute \"".concat(attribute.name, "\" on <").concat(el.tagName.toLowerCase(), ">."), "".concat(allowedAttributes.length ? "Allowed attributes are: ".concat(allowedAttributes.join(', ')) : 'To set the value, use HTML within the element.')]);
+		      }
+		    });
+		  };
+
+		  var defaultInputValidators = {
+		    email: (string, validationMessage) => {
+		      return /^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9.-]+\.[a-zA-Z0-9-]{2,24}$/.test(string) ? Promise.resolve() : Promise.resolve(validationMessage || 'Invalid email address');
+		    },
+		    url: (string, validationMessage) => {
+		      // taken from https://stackoverflow.com/a/3809435 with a small change from #1306 and #2013
+		      return /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-z]{2,63}\b([-a-zA-Z0-9@:%_+.~#?&/=]*)$/.test(string) ? Promise.resolve() : Promise.resolve(validationMessage || 'Invalid URL');
+		    }
+		  };
+
+		  function setDefaultInputValidators(params) {
+		    // Use default `inputValidator` for supported input types if not provided
+		    if (!params.inputValidator) {
+		      Object.keys(defaultInputValidators).forEach(key => {
+		        if (params.input === key) {
+		          params.inputValidator = defaultInputValidators[key];
+		        }
+		      });
+		    }
+		  }
+
+		  function validateCustomTargetElement(params) {
+		    // Determine if the custom target element is valid
+		    if (!params.target || typeof params.target === 'string' && !document.querySelector(params.target) || typeof params.target !== 'string' && !params.target.appendChild) {
+		      warn('Target parameter is not valid, defaulting to "body"');
+		      params.target = 'body';
+		    }
+		  }
+		  /**
+		   * Set type, text and actions on popup
+		   *
+		   * @param params
+		   */
+
+
+		  function setParameters(params) {
+		    setDefaultInputValidators(params); // showLoaderOnConfirm && preConfirm
+
+		    if (params.showLoaderOnConfirm && !params.preConfirm) {
+		      warn('showLoaderOnConfirm is set to true, but preConfirm is not defined.\n' + 'showLoaderOnConfirm should be used together with preConfirm, see usage example:\n' + 'https://sweetalert2.github.io/#ajax-request');
+		    }
+
+		    validateCustomTargetElement(params); // Replace newlines with <br> in title
+
+		    if (typeof params.title === 'string') {
+		      params.title = params.title.split('\n').join('<br />');
+		    }
+
+		    init(params);
+		  }
+
+		  class Timer {
+		    constructor(callback, delay) {
+		      this.callback = callback;
+		      this.remaining = delay;
+		      this.running = false;
+		      this.start();
+		    }
+
+		    start() {
+		      if (!this.running) {
+		        this.running = true;
+		        this.started = new Date();
+		        this.id = setTimeout(this.callback, this.remaining);
+		      }
+
+		      return this.remaining;
+		    }
+
+		    stop() {
+		      if (this.running) {
+		        this.running = false;
+		        clearTimeout(this.id);
+		        this.remaining -= new Date().getTime() - this.started.getTime();
+		      }
+
+		      return this.remaining;
+		    }
+
+		    increase(n) {
+		      const running = this.running;
+
+		      if (running) {
+		        this.stop();
+		      }
+
+		      this.remaining += n;
+
+		      if (running) {
+		        this.start();
+		      }
+
+		      return this.remaining;
+		    }
+
+		    getTimerLeft() {
+		      if (this.running) {
+		        this.stop();
+		        this.start();
+		      }
+
+		      return this.remaining;
+		    }
+
+		    isRunning() {
+		      return this.running;
+		    }
+
+		  }
+
+		  const fixScrollbar = () => {
+		    // for queues, do not do this more than once
+		    if (states.previousBodyPadding !== null) {
+		      return;
+		    } // if the body has overflow
+
+
+		    if (document.body.scrollHeight > window.innerHeight) {
+		      // add padding so the content doesn't shift after removal of scrollbar
+		      states.previousBodyPadding = parseInt(window.getComputedStyle(document.body).getPropertyValue('padding-right'));
+		      document.body.style.paddingRight = "".concat(states.previousBodyPadding + measureScrollbar(), "px");
+		    }
+		  };
+		  const undoScrollbar = () => {
+		    if (states.previousBodyPadding !== null) {
+		      document.body.style.paddingRight = "".concat(states.previousBodyPadding, "px");
+		      states.previousBodyPadding = null;
+		    }
+		  };
+
+		  /* istanbul ignore file */
+
+		  const iOSfix = () => {
+		    const iOS = // @ts-ignore
+		    /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream || navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+
+		    if (iOS && !hasClass(document.body, swalClasses.iosfix)) {
+		      const offset = document.body.scrollTop;
+		      document.body.style.top = "".concat(offset * -1, "px");
+		      addClass(document.body, swalClasses.iosfix);
+		      lockBodyScroll();
+		      addBottomPaddingForTallPopups();
+		    }
+		  };
+		  /**
+		   * https://github.com/sweetalert2/sweetalert2/issues/1948
+		   */
+
+		  const addBottomPaddingForTallPopups = () => {
+		    const ua = navigator.userAgent;
+		    const iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
+		    const webkit = !!ua.match(/WebKit/i);
+		    const iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
+
+		    if (iOSSafari) {
+		      const bottomPanelHeight = 44;
+
+		      if (getPopup().scrollHeight > window.innerHeight - bottomPanelHeight) {
+		        getContainer().style.paddingBottom = "".concat(bottomPanelHeight, "px");
+		      }
+		    }
+		  };
+		  /**
+		   * https://github.com/sweetalert2/sweetalert2/issues/1246
+		   */
+
+
+		  const lockBodyScroll = () => {
+		    const container = getContainer();
+		    let preventTouchMove;
+
+		    container.ontouchstart = e => {
+		      preventTouchMove = shouldPreventTouchMove(e);
+		    };
+
+		    container.ontouchmove = e => {
+		      if (preventTouchMove) {
+		        e.preventDefault();
+		        e.stopPropagation();
+		      }
+		    };
+		  };
+
+		  const shouldPreventTouchMove = event => {
+		    const target = event.target;
+		    const container = getContainer();
+
+		    if (isStylus(event) || isZoom(event)) {
+		      return false;
+		    }
+
+		    if (target === container) {
+		      return true;
+		    }
+
+		    if (!isScrollable(container) && target.tagName !== 'INPUT' && // #1603
+		    target.tagName !== 'TEXTAREA' && // #2266
+		    !(isScrollable(getHtmlContainer()) && // #1944
+		    getHtmlContainer().contains(target))) {
+		      return true;
+		    }
+
+		    return false;
+		  };
+		  /**
+		   * https://github.com/sweetalert2/sweetalert2/issues/1786
+		   *
+		   * @param {*} event
+		   * @returns {boolean}
+		   */
+
+
+		  const isStylus = event => {
+		    return event.touches && event.touches.length && event.touches[0].touchType === 'stylus';
+		  };
+		  /**
+		   * https://github.com/sweetalert2/sweetalert2/issues/1891
+		   *
+		   * @param {TouchEvent} event
+		   * @returns {boolean}
+		   */
+
+
+		  const isZoom = event => {
+		    return event.touches && event.touches.length > 1;
+		  };
+
+		  const undoIOSfix = () => {
+		    if (hasClass(document.body, swalClasses.iosfix)) {
+		      const offset = parseInt(document.body.style.top, 10);
+		      removeClass(document.body, swalClasses.iosfix);
+		      document.body.style.top = '';
+		      document.body.scrollTop = offset * -1;
+		    }
+		  };
+
+		  const SHOW_CLASS_TIMEOUT = 10;
+		  /**
+		   * Open popup, add necessary classes and styles, fix scrollbar
+		   *
+		   * @param params
+		   */
+
+		  const openPopup = params => {
+		    const container = getContainer();
+		    const popup = getPopup();
+
+		    if (typeof params.willOpen === 'function') {
+		      params.willOpen(popup);
+		    }
+
+		    const bodyStyles = window.getComputedStyle(document.body);
+		    const initialBodyOverflow = bodyStyles.overflowY;
+		    addClasses$1(container, popup, params); // scrolling is 'hidden' until animation is done, after that 'auto'
+
+		    setTimeout(() => {
+		      setScrollingVisibility(container, popup);
+		    }, SHOW_CLASS_TIMEOUT);
+
+		    if (isModal()) {
+		      fixScrollContainer(container, params.scrollbarPadding, initialBodyOverflow);
+		      setAriaHidden();
+		    }
+
+		    if (!isToast() && !globalState.previousActiveElement) {
+		      globalState.previousActiveElement = document.activeElement;
+		    }
+
+		    if (typeof params.didOpen === 'function') {
+		      setTimeout(() => params.didOpen(popup));
+		    }
+
+		    removeClass(container, swalClasses['no-transition']);
+		  };
+
+		  const swalOpenAnimationFinished = event => {
+		    const popup = getPopup();
+
+		    if (event.target !== popup) {
+		      return;
+		    }
+
+		    const container = getContainer();
+		    popup.removeEventListener(animationEndEvent, swalOpenAnimationFinished);
+		    container.style.overflowY = 'auto';
+		  };
+
+		  const setScrollingVisibility = (container, popup) => {
+		    if (animationEndEvent && hasCssAnimation(popup)) {
+		      container.style.overflowY = 'hidden';
+		      popup.addEventListener(animationEndEvent, swalOpenAnimationFinished);
+		    } else {
+		      container.style.overflowY = 'auto';
+		    }
+		  };
+
+		  const fixScrollContainer = (container, scrollbarPadding, initialBodyOverflow) => {
+		    iOSfix();
+
+		    if (scrollbarPadding && initialBodyOverflow !== 'hidden') {
+		      fixScrollbar();
+		    } // sweetalert2/issues/1247
+
+
+		    setTimeout(() => {
+		      container.scrollTop = 0;
+		    });
+		  };
+
+		  const addClasses$1 = (container, popup, params) => {
+		    addClass(container, params.showClass.backdrop); // this workaround with opacity is needed for https://github.com/sweetalert2/sweetalert2/issues/2059
+
+		    popup.style.setProperty('opacity', '0', 'important');
+		    show(popup, 'grid');
+		    setTimeout(() => {
+		      // Animate popup right after showing it
+		      addClass(popup, params.showClass.popup); // and remove the opacity workaround
+
+		      popup.style.removeProperty('opacity');
+		    }, SHOW_CLASS_TIMEOUT); // 10ms in order to fix #2062
+
+		    addClass([document.documentElement, document.body], swalClasses.shown);
+
+		    if (params.heightAuto && params.backdrop && !params.toast) {
+		      addClass([document.documentElement, document.body], swalClasses['height-auto']);
+		    }
+		  };
+
+		  /**
+		   * Shows loader (spinner), this is useful with AJAX requests.
+		   * By default the loader be shown instead of the "Confirm" button.
+		   */
+
+		  const showLoading = buttonToReplace => {
+		    let popup = getPopup();
+
+		    if (!popup) {
+		      new Swal(); // eslint-disable-line no-new
+		    }
+
+		    popup = getPopup();
+		    const loader = getLoader();
+
+		    if (isToast()) {
+		      hide(getIcon());
+		    } else {
+		      replaceButton(popup, buttonToReplace);
+		    }
+
+		    show(loader);
+		    popup.setAttribute('data-loading', true);
+		    popup.setAttribute('aria-busy', true);
+		    popup.focus();
+		  };
+
+		  const replaceButton = (popup, buttonToReplace) => {
+		    const actions = getActions();
+		    const loader = getLoader();
+
+		    if (!buttonToReplace && isVisible(getConfirmButton())) {
+		      buttonToReplace = getConfirmButton();
+		    }
+
+		    show(actions);
+
+		    if (buttonToReplace) {
+		      hide(buttonToReplace);
+		      loader.setAttribute('data-button-to-replace', buttonToReplace.className);
+		    }
+
+		    loader.parentNode.insertBefore(loader, buttonToReplace);
+		    addClass([popup, actions], swalClasses.loading);
+		  };
+
+		  const handleInputOptionsAndValue = (instance, params) => {
+		    if (params.input === 'select' || params.input === 'radio') {
+		      handleInputOptions(instance, params);
+		    } else if (['text', 'email', 'number', 'tel', 'textarea'].includes(params.input) && (hasToPromiseFn(params.inputValue) || isPromise(params.inputValue))) {
+		      showLoading(getConfirmButton());
+		      handleInputValue(instance, params);
+		    }
+		  };
+		  const getInputValue = (instance, innerParams) => {
+		    const input = instance.getInput();
+
+		    if (!input) {
+		      return null;
+		    }
+
+		    switch (innerParams.input) {
+		      case 'checkbox':
+		        return getCheckboxValue(input);
+
+		      case 'radio':
+		        return getRadioValue(input);
+
+		      case 'file':
+		        return getFileValue(input);
+
+		      default:
+		        return innerParams.inputAutoTrim ? input.value.trim() : input.value;
+		    }
+		  };
+
+		  const getCheckboxValue = input => input.checked ? 1 : 0;
+
+		  const getRadioValue = input => input.checked ? input.value : null;
+
+		  const getFileValue = input => input.files.length ? input.getAttribute('multiple') !== null ? input.files : input.files[0] : null;
+
+		  const handleInputOptions = (instance, params) => {
+		    const popup = getPopup();
+
+		    const processInputOptions = inputOptions => populateInputOptions[params.input](popup, formatInputOptions(inputOptions), params);
+
+		    if (hasToPromiseFn(params.inputOptions) || isPromise(params.inputOptions)) {
+		      showLoading(getConfirmButton());
+		      asPromise(params.inputOptions).then(inputOptions => {
+		        instance.hideLoading();
+		        processInputOptions(inputOptions);
+		      });
+		    } else if (typeof params.inputOptions === 'object') {
+		      processInputOptions(params.inputOptions);
+		    } else {
+		      error("Unexpected type of inputOptions! Expected object, Map or Promise, got ".concat(typeof params.inputOptions));
+		    }
+		  };
+
+		  const handleInputValue = (instance, params) => {
+		    const input = instance.getInput();
+		    hide(input);
+		    asPromise(params.inputValue).then(inputValue => {
+		      input.value = params.input === 'number' ? parseFloat(inputValue) || 0 : "".concat(inputValue);
+		      show(input);
+		      input.focus();
+		      instance.hideLoading();
+		    }).catch(err => {
+		      error("Error in inputValue promise: ".concat(err));
+		      input.value = '';
+		      show(input);
+		      input.focus();
+		      instance.hideLoading();
+		    });
+		  };
+
+		  const populateInputOptions = {
+		    select: (popup, inputOptions, params) => {
+		      const select = getDirectChildByClass(popup, swalClasses.select);
+
+		      const renderOption = (parent, optionLabel, optionValue) => {
+		        const option = document.createElement('option');
+		        option.value = optionValue;
+		        setInnerHtml(option, optionLabel);
+		        option.selected = isSelected(optionValue, params.inputValue);
+		        parent.appendChild(option);
+		      };
+
+		      inputOptions.forEach(inputOption => {
+		        const optionValue = inputOption[0];
+		        const optionLabel = inputOption[1]; // <optgroup> spec:
+		        // https://www.w3.org/TR/html401/interact/forms.html#h-17.6
+		        // "...all OPTGROUP elements must be specified directly within a SELECT element (i.e., groups may not be nested)..."
+		        // check whether this is a <optgroup>
+
+		        if (Array.isArray(optionLabel)) {
+		          // if it is an array, then it is an <optgroup>
+		          const optgroup = document.createElement('optgroup');
+		          optgroup.label = optionValue;
+		          optgroup.disabled = false; // not configurable for now
+
+		          select.appendChild(optgroup);
+		          optionLabel.forEach(o => renderOption(optgroup, o[1], o[0]));
+		        } else {
+		          // case of <option>
+		          renderOption(select, optionLabel, optionValue);
+		        }
+		      });
+		      select.focus();
+		    },
+		    radio: (popup, inputOptions, params) => {
+		      const radio = getDirectChildByClass(popup, swalClasses.radio);
+		      inputOptions.forEach(inputOption => {
+		        const radioValue = inputOption[0];
+		        const radioLabel = inputOption[1];
+		        const radioInput = document.createElement('input');
+		        const radioLabelElement = document.createElement('label');
+		        radioInput.type = 'radio';
+		        radioInput.name = swalClasses.radio;
+		        radioInput.value = radioValue;
+
+		        if (isSelected(radioValue, params.inputValue)) {
+		          radioInput.checked = true;
+		        }
+
+		        const label = document.createElement('span');
+		        setInnerHtml(label, radioLabel);
+		        label.className = swalClasses.label;
+		        radioLabelElement.appendChild(radioInput);
+		        radioLabelElement.appendChild(label);
+		        radio.appendChild(radioLabelElement);
+		      });
+		      const radios = radio.querySelectorAll('input');
+
+		      if (radios.length) {
+		        radios[0].focus();
+		      }
+		    }
+		  };
+		  /**
+		   * Converts `inputOptions` into an array of `[value, label]`s
+		   * @param inputOptions
+		   */
+
+		  const formatInputOptions = inputOptions => {
+		    const result = [];
+
+		    if (typeof Map !== 'undefined' && inputOptions instanceof Map) {
+		      inputOptions.forEach((value, key) => {
+		        let valueFormatted = value;
+
+		        if (typeof valueFormatted === 'object') {
+		          // case of <optgroup>
+		          valueFormatted = formatInputOptions(valueFormatted);
+		        }
+
+		        result.push([key, valueFormatted]);
+		      });
+		    } else {
+		      Object.keys(inputOptions).forEach(key => {
+		        let valueFormatted = inputOptions[key];
+
+		        if (typeof valueFormatted === 'object') {
+		          // case of <optgroup>
+		          valueFormatted = formatInputOptions(valueFormatted);
+		        }
+
+		        result.push([key, valueFormatted]);
+		      });
+		    }
+
+		    return result;
+		  };
+
+		  const isSelected = (optionValue, inputValue) => {
+		    return inputValue && inputValue.toString() === optionValue.toString();
+		  };
+
+		  /**
+		   * Hides loader and shows back the button which was hidden by .showLoading()
+		   */
+
+		  function hideLoading() {
+		    // do nothing if popup is closed
+		    const innerParams = privateProps.innerParams.get(this);
+
+		    if (!innerParams) {
+		      return;
+		    }
+
+		    const domCache = privateProps.domCache.get(this);
+		    hide(domCache.loader);
+
+		    if (isToast()) {
+		      if (innerParams.icon) {
+		        show(getIcon());
+		      }
+		    } else {
+		      showRelatedButton(domCache);
+		    }
+
+		    removeClass([domCache.popup, domCache.actions], swalClasses.loading);
+		    domCache.popup.removeAttribute('aria-busy');
+		    domCache.popup.removeAttribute('data-loading');
+		    domCache.confirmButton.disabled = false;
+		    domCache.denyButton.disabled = false;
+		    domCache.cancelButton.disabled = false;
+		  }
+
+		  const showRelatedButton = domCache => {
+		    const buttonToReplace = domCache.popup.getElementsByClassName(domCache.loader.getAttribute('data-button-to-replace'));
+
+		    if (buttonToReplace.length) {
+		      show(buttonToReplace[0], 'inline-block');
+		    } else if (allButtonsAreHidden()) {
+		      hide(domCache.actions);
+		    }
+		  };
+
+		  /**
+		   * Gets the input DOM node, this method works with input parameter.
+		   * @returns {HTMLElement | null}
+		   */
+
+		  function getInput$1(instance) {
+		    const innerParams = privateProps.innerParams.get(instance || this);
+		    const domCache = privateProps.domCache.get(instance || this);
+
+		    if (!domCache) {
+		      return null;
+		    }
+
+		    return getInput(domCache.popup, innerParams.input);
+		  }
+
+		  /**
+		   * This module contains `WeakMap`s for each effectively-"private  property" that a `Swal` has.
+		   * For example, to set the private property "foo" of `this` to "bar", you can `privateProps.foo.set(this, 'bar')`
+		   * This is the approach that Babel will probably take to implement private methods/fields
+		   *   https://github.com/tc39/proposal-private-methods
+		   *   https://github.com/babel/babel/pull/7555
+		   * Once we have the changes from that PR in Babel, and our core class fits reasonable in *one module*
+		   *   then we can use that language feature.
+		   */
+		  var privateMethods = {
+		    swalPromiseResolve: new WeakMap(),
+		    swalPromiseReject: new WeakMap()
+		  };
+
+		  /*
+		   * Global function to determine if SweetAlert2 popup is shown
+		   */
+
+		  const isVisible$1 = () => {
+		    return isVisible(getPopup());
+		  };
+		  /*
+		   * Global function to click 'Confirm' button
+		   */
+
+		  const clickConfirm = () => getConfirmButton() && getConfirmButton().click();
+		  /*
+		   * Global function to click 'Deny' button
+		   */
+
+		  const clickDeny = () => getDenyButton() && getDenyButton().click();
+		  /*
+		   * Global function to click 'Cancel' button
+		   */
+
+		  const clickCancel = () => getCancelButton() && getCancelButton().click();
+
+		  const removeKeydownHandler = globalState => {
+		    if (globalState.keydownTarget && globalState.keydownHandlerAdded) {
+		      globalState.keydownTarget.removeEventListener('keydown', globalState.keydownHandler, {
+		        capture: globalState.keydownListenerCapture
+		      });
+		      globalState.keydownHandlerAdded = false;
+		    }
+		  };
+		  const addKeydownHandler = (instance, globalState, innerParams, dismissWith) => {
+		    removeKeydownHandler(globalState);
+
+		    if (!innerParams.toast) {
+		      globalState.keydownHandler = e => keydownHandler(instance, e, dismissWith);
+
+		      globalState.keydownTarget = innerParams.keydownListenerCapture ? window : getPopup();
+		      globalState.keydownListenerCapture = innerParams.keydownListenerCapture;
+		      globalState.keydownTarget.addEventListener('keydown', globalState.keydownHandler, {
+		        capture: globalState.keydownListenerCapture
+		      });
+		      globalState.keydownHandlerAdded = true;
+		    }
+		  }; // Focus handling
+
+		  const setFocus = (innerParams, index, increment) => {
+		    const focusableElements = getFocusableElements(); // search for visible elements and select the next possible match
+
+		    if (focusableElements.length) {
+		      index = index + increment; // rollover to first item
+
+		      if (index === focusableElements.length) {
+		        index = 0; // go to last item
+		      } else if (index === -1) {
+		        index = focusableElements.length - 1;
+		      }
+
+		      return focusableElements[index].focus();
+		    } // no visible focusable elements, focus the popup
+
+
+		    getPopup().focus();
+		  };
+		  const arrowKeysNextButton = ['ArrowRight', 'ArrowDown'];
+		  const arrowKeysPreviousButton = ['ArrowLeft', 'ArrowUp'];
+
+		  const keydownHandler = (instance, e, dismissWith) => {
+		    const innerParams = privateProps.innerParams.get(instance);
+
+		    if (!innerParams) {
+		      return; // This instance has already been destroyed
+		    } // Ignore keydown during IME composition
+		    // https://developer.mozilla.org/en-US/docs/Web/API/Document/keydown_event#ignoring_keydown_during_ime_composition
+		    // https://github.com/sweetalert2/sweetalert2/issues/720
+		    // https://github.com/sweetalert2/sweetalert2/issues/2406
+
+
+		    if (e.isComposing || e.keyCode === 229) {
+		      return;
+		    }
+
+		    if (innerParams.stopKeydownPropagation) {
+		      e.stopPropagation();
+		    } // ENTER
+
+
+		    if (e.key === 'Enter') {
+		      handleEnter(instance, e, innerParams);
+		    } // TAB
+		    else if (e.key === 'Tab') {
+		      handleTab(e, innerParams);
+		    } // ARROWS - switch focus between buttons
+		    else if ([...arrowKeysNextButton, ...arrowKeysPreviousButton].includes(e.key)) {
+		      handleArrows(e.key);
+		    } // ESC
+		    else if (e.key === 'Escape') {
+		      handleEsc(e, innerParams, dismissWith);
+		    }
+		  };
+
+		  const handleEnter = (instance, e, innerParams) => {
+		    // https://github.com/sweetalert2/sweetalert2/issues/2386
+		    if (!callIfFunction(innerParams.allowEnterKey)) {
+		      return;
+		    }
+
+		    if (e.target && instance.getInput() && e.target.outerHTML === instance.getInput().outerHTML) {
+		      if (['textarea', 'file'].includes(innerParams.input)) {
+		        return; // do not submit
+		      }
+
+		      clickConfirm();
+		      e.preventDefault();
+		    }
+		  };
+
+		  const handleTab = (e, innerParams) => {
+		    const targetElement = e.target;
+		    const focusableElements = getFocusableElements();
+		    let btnIndex = -1;
+
+		    for (let i = 0; i < focusableElements.length; i++) {
+		      if (targetElement === focusableElements[i]) {
+		        btnIndex = i;
+		        break;
+		      }
+		    } // Cycle to the next button
+
+
+		    if (!e.shiftKey) {
+		      setFocus(innerParams, btnIndex, 1);
+		    } // Cycle to the prev button
+		    else {
+		      setFocus(innerParams, btnIndex, -1);
+		    }
+
+		    e.stopPropagation();
+		    e.preventDefault();
+		  };
+
+		  const handleArrows = key => {
+		    const confirmButton = getConfirmButton();
+		    const denyButton = getDenyButton();
+		    const cancelButton = getCancelButton();
+
+		    if (![confirmButton, denyButton, cancelButton].includes(document.activeElement)) {
+		      return;
+		    }
+
+		    const sibling = arrowKeysNextButton.includes(key) ? 'nextElementSibling' : 'previousElementSibling';
+		    let buttonToFocus = document.activeElement;
+
+		    for (let i = 0; i < getActions().children.length; i++) {
+		      buttonToFocus = buttonToFocus[sibling];
+
+		      if (!buttonToFocus) {
+		        return;
+		      }
+
+		      if (isVisible(buttonToFocus) && buttonToFocus instanceof HTMLButtonElement) {
+		        break;
+		      }
+		    }
+
+		    if (buttonToFocus instanceof HTMLButtonElement) {
+		      buttonToFocus.focus();
+		    }
+		  };
+
+		  const handleEsc = (e, innerParams, dismissWith) => {
+		    if (callIfFunction(innerParams.allowEscapeKey)) {
+		      e.preventDefault();
+		      dismissWith(DismissReason.esc);
+		    }
+		  };
+
+		  /*
+		   * Instance method to close sweetAlert
+		   */
+
+		  function removePopupAndResetState(instance, container, returnFocus, didClose) {
+		    if (isToast()) {
+		      triggerDidCloseAndDispose(instance, didClose);
+		    } else {
+		      restoreActiveElement(returnFocus).then(() => triggerDidCloseAndDispose(instance, didClose));
+		      removeKeydownHandler(globalState);
+		    }
+
+		    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent); // workaround for #2088
+		    // for some reason removing the container in Safari will scroll the document to bottom
+
+		    if (isSafari) {
+		      container.setAttribute('style', 'display:none !important');
+		      container.removeAttribute('class');
+		      container.innerHTML = '';
+		    } else {
+		      container.remove();
+		    }
+
+		    if (isModal()) {
+		      undoScrollbar();
+		      undoIOSfix();
+		      unsetAriaHidden();
+		    }
+
+		    removeBodyClasses();
+		  }
+
+		  function removeBodyClasses() {
+		    removeClass([document.documentElement, document.body], [swalClasses.shown, swalClasses['height-auto'], swalClasses['no-backdrop'], swalClasses['toast-shown']]);
+		  }
+
+		  function close(resolveValue) {
+		    resolveValue = prepareResolveValue(resolveValue);
+		    const swalPromiseResolve = privateMethods.swalPromiseResolve.get(this);
+		    const didClose = triggerClosePopup(this);
+
+		    if (this.isAwaitingPromise()) {
+		      // A swal awaiting for a promise (after a click on Confirm or Deny) cannot be dismissed anymore #2335
+		      if (!resolveValue.isDismissed) {
+		        handleAwaitingPromise(this);
+		        swalPromiseResolve(resolveValue);
+		      }
+		    } else if (didClose) {
+		      // Resolve Swal promise
+		      swalPromiseResolve(resolveValue);
+		    }
+		  }
+		  function isAwaitingPromise() {
+		    return !!privateProps.awaitingPromise.get(this);
+		  }
+
+		  const triggerClosePopup = instance => {
+		    const popup = getPopup();
+
+		    if (!popup) {
+		      return false;
+		    }
+
+		    const innerParams = privateProps.innerParams.get(instance);
+
+		    if (!innerParams || hasClass(popup, innerParams.hideClass.popup)) {
+		      return false;
+		    }
+
+		    removeClass(popup, innerParams.showClass.popup);
+		    addClass(popup, innerParams.hideClass.popup);
+		    const backdrop = getContainer();
+		    removeClass(backdrop, innerParams.showClass.backdrop);
+		    addClass(backdrop, innerParams.hideClass.backdrop);
+		    handlePopupAnimation(instance, popup, innerParams);
+		    return true;
+		  };
+
+		  function rejectPromise(error) {
+		    const rejectPromise = privateMethods.swalPromiseReject.get(this);
+		    handleAwaitingPromise(this);
+
+		    if (rejectPromise) {
+		      // Reject Swal promise
+		      rejectPromise(error);
+		    }
+		  }
+		  const handleAwaitingPromise = instance => {
+		    if (instance.isAwaitingPromise()) {
+		      privateProps.awaitingPromise.delete(instance); // The instance might have been previously partly destroyed, we must resume the destroy process in this case #2335
+
+		      if (!privateProps.innerParams.get(instance)) {
+		        instance._destroy();
+		      }
+		    }
+		  };
+
+		  const prepareResolveValue = resolveValue => {
+		    // When user calls Swal.close()
+		    if (typeof resolveValue === 'undefined') {
+		      return {
+		        isConfirmed: false,
+		        isDenied: false,
+		        isDismissed: true
+		      };
+		    }
+
+		    return Object.assign({
+		      isConfirmed: false,
+		      isDenied: false,
+		      isDismissed: false
+		    }, resolveValue);
+		  };
+
+		  const handlePopupAnimation = (instance, popup, innerParams) => {
+		    const container = getContainer(); // If animation is supported, animate
+
+		    const animationIsSupported = animationEndEvent && hasCssAnimation(popup);
+
+		    if (typeof innerParams.willClose === 'function') {
+		      innerParams.willClose(popup);
+		    }
+
+		    if (animationIsSupported) {
+		      animatePopup(instance, popup, container, innerParams.returnFocus, innerParams.didClose);
+		    } else {
+		      // Otherwise, remove immediately
+		      removePopupAndResetState(instance, container, innerParams.returnFocus, innerParams.didClose);
+		    }
+		  };
+
+		  const animatePopup = (instance, popup, container, returnFocus, didClose) => {
+		    globalState.swalCloseEventFinishedCallback = removePopupAndResetState.bind(null, instance, container, returnFocus, didClose);
+		    popup.addEventListener(animationEndEvent, function (e) {
+		      if (e.target === popup) {
+		        globalState.swalCloseEventFinishedCallback();
+		        delete globalState.swalCloseEventFinishedCallback;
+		      }
+		    });
+		  };
+
+		  const triggerDidCloseAndDispose = (instance, didClose) => {
+		    setTimeout(() => {
+		      if (typeof didClose === 'function') {
+		        didClose.bind(instance.params)();
+		      }
+
+		      instance._destroy();
+		    });
+		  };
+
+		  function setButtonsDisabled(instance, buttons, disabled) {
+		    const domCache = privateProps.domCache.get(instance);
+		    buttons.forEach(button => {
+		      domCache[button].disabled = disabled;
+		    });
+		  }
+
+		  function setInputDisabled(input, disabled) {
+		    if (!input) {
+		      return false;
+		    }
+
+		    if (input.type === 'radio') {
+		      const radiosContainer = input.parentNode.parentNode;
+		      const radios = radiosContainer.querySelectorAll('input');
+
+		      for (let i = 0; i < radios.length; i++) {
+		        radios[i].disabled = disabled;
+		      }
+		    } else {
+		      input.disabled = disabled;
+		    }
+		  }
+
+		  function enableButtons() {
+		    setButtonsDisabled(this, ['confirmButton', 'denyButton', 'cancelButton'], false);
+		  }
+		  function disableButtons() {
+		    setButtonsDisabled(this, ['confirmButton', 'denyButton', 'cancelButton'], true);
+		  }
+		  function enableInput() {
+		    return setInputDisabled(this.getInput(), false);
+		  }
+		  function disableInput() {
+		    return setInputDisabled(this.getInput(), true);
+		  }
+
+		  function showValidationMessage(error) {
+		    const domCache = privateProps.domCache.get(this);
+		    const params = privateProps.innerParams.get(this);
+		    setInnerHtml(domCache.validationMessage, error);
+		    domCache.validationMessage.className = swalClasses['validation-message'];
+
+		    if (params.customClass && params.customClass.validationMessage) {
+		      addClass(domCache.validationMessage, params.customClass.validationMessage);
+		    }
+
+		    show(domCache.validationMessage);
+		    const input = this.getInput();
+
+		    if (input) {
+		      input.setAttribute('aria-invalid', true);
+		      input.setAttribute('aria-describedby', swalClasses['validation-message']);
+		      focusInput(input);
+		      addClass(input, swalClasses.inputerror);
+		    }
+		  } // Hide block with validation message
+
+		  function resetValidationMessage$1() {
+		    const domCache = privateProps.domCache.get(this);
+
+		    if (domCache.validationMessage) {
+		      hide(domCache.validationMessage);
+		    }
+
+		    const input = this.getInput();
+
+		    if (input) {
+		      input.removeAttribute('aria-invalid');
+		      input.removeAttribute('aria-describedby');
+		      removeClass(input, swalClasses.inputerror);
+		    }
+		  }
+
+		  function getProgressSteps$1() {
+		    const domCache = privateProps.domCache.get(this);
+		    return domCache.progressSteps;
+		  }
+
 		  /**
 		   * Updates popup parameters.
-		   *
-		   * @param {SweetAlertOptions} params
 		   */
+
 		  function update(params) {
 		    const popup = getPopup();
 		    const innerParams = privateProps.innerParams.get(this);
+
 		    if (!popup || hasClass(popup, innerParams.hideClass.popup)) {
-		      warn(`You're trying to update the closed or closing popup, that won't work. Use the update() method in preConfirm parameter or show a new popup.`);
-		      return;
+		      return warn("You're trying to update the closed or closing popup, that won't work. Use the update() method in preConfirm parameter or show a new popup.");
 		    }
+
 		    const validUpdatableParams = filterValidParams(params);
 		    const updatedParams = Object.assign({}, innerParams, validUpdatableParams);
 		    render(this, updatedParams);
@@ -7441,184 +7096,306 @@
 		    });
 		  }
 
-		  /**
-		   * @param {SweetAlertOptions} params
-		   * @returns {SweetAlertOptions}
-		   */
 		  const filterValidParams = params => {
 		    const validUpdatableParams = {};
 		    Object.keys(params).forEach(param => {
 		      if (isUpdatableParameter(param)) {
 		        validUpdatableParams[param] = params[param];
 		      } else {
-		        warn(`Invalid parameter to update: ${param}`);
+		        warn("Invalid parameter to update: \"".concat(param, "\". Updatable params are listed here: https://github.com/sweetalert2/sweetalert2/blob/master/src/utils/params.js\n\nIf you think this parameter should be updatable, request it here: https://github.com/sweetalert2/sweetalert2/issues/new?template=02_feature_request.md"));
 		      }
 		    });
 		    return validUpdatableParams;
 		  };
 
-		  /**
-		   * Dispose the current SweetAlert2 instance
-		   */
 		  function _destroy() {
 		    const domCache = privateProps.domCache.get(this);
 		    const innerParams = privateProps.innerParams.get(this);
+
 		    if (!innerParams) {
 		      disposeWeakMaps(this); // The WeakMaps might have been partly destroyed, we must recall it to dispose any remaining WeakMaps #2335
-		      return; // This instance has already been destroyed
-		    }
 
-		    // Check if there is another Swal closing
+		      return; // This instance has already been destroyed
+		    } // Check if there is another Swal closing
+
+
 		    if (domCache.popup && globalState.swalCloseEventFinishedCallback) {
 		      globalState.swalCloseEventFinishedCallback();
 		      delete globalState.swalCloseEventFinishedCallback;
+		    } // Check if there is a swal disposal defer timer
+
+
+		    if (globalState.deferDisposalTimer) {
+		      clearTimeout(globalState.deferDisposalTimer);
+		      delete globalState.deferDisposalTimer;
 		    }
+
 		    if (typeof innerParams.didDestroy === 'function') {
 		      innerParams.didDestroy();
 		    }
+
 		    disposeSwal(this);
 		  }
 
-		  /**
-		   * @param {SweetAlert} instance
-		   */
 		  const disposeSwal = instance => {
-		    disposeWeakMaps(instance);
-		    // Unset this.params so GC will dispose it (#1569)
-		    delete instance.params;
-		    // Unset globalState props so GC will dispose globalState (#1569)
+		    disposeWeakMaps(instance); // Unset this.params so GC will dispose it (#1569)
+
+		    delete instance.params; // Unset globalState props so GC will dispose globalState (#1569)
+
 		    delete globalState.keydownHandler;
-		    delete globalState.keydownTarget;
-		    // Unset currentInstance
+		    delete globalState.keydownTarget; // Unset currentInstance
+
 		    delete globalState.currentInstance;
 		  };
 
-		  /**
-		   * @param {SweetAlert} instance
-		   */
 		  const disposeWeakMaps = instance => {
 		    // If the current instance is awaiting a promise result, we keep the privateMethods to call them once the promise result is retrieved #2335
-		    if (instance.isAwaitingPromise) {
+		    if (instance.isAwaitingPromise()) {
 		      unsetWeakMaps(privateProps, instance);
-		      instance.isAwaitingPromise = true;
+		      privateProps.awaitingPromise.set(instance, true);
 		    } else {
 		      unsetWeakMaps(privateMethods, instance);
 		      unsetWeakMaps(privateProps, instance);
-		      delete instance.isAwaitingPromise;
-		      // Unset instance methods
-		      delete instance.disableButtons;
-		      delete instance.enableButtons;
-		      delete instance.getInput;
-		      delete instance.disableInput;
-		      delete instance.enableInput;
-		      delete instance.hideLoading;
-		      delete instance.disableLoading;
-		      delete instance.showValidationMessage;
-		      delete instance.resetValidationMessage;
-		      delete instance.close;
-		      delete instance.closePopup;
-		      delete instance.closeModal;
-		      delete instance.closeToast;
-		      delete instance.rejectPromise;
-		      delete instance.update;
-		      delete instance._destroy;
 		    }
 		  };
 
-		  /**
-		   * @param {object} obj
-		   * @param {SweetAlert} instance
-		   */
 		  const unsetWeakMaps = (obj, instance) => {
 		    for (const i in obj) {
 		      obj[i].delete(instance);
 		    }
 		  };
 
+
+
 		  var instanceMethods = /*#__PURE__*/Object.freeze({
-		    __proto__: null,
-		    _destroy: _destroy,
-		    close: close,
-		    closeModal: close,
-		    closePopup: close,
-		    closeToast: close,
-		    disableButtons: disableButtons,
-		    disableInput: disableInput,
-		    disableLoading: hideLoading,
-		    enableButtons: enableButtons,
-		    enableInput: enableInput,
-		    getInput: getInput,
-		    handleAwaitingPromise: handleAwaitingPromise,
 		    hideLoading: hideLoading,
+		    disableLoading: hideLoading,
+		    getInput: getInput$1,
+		    close: close,
+		    isAwaitingPromise: isAwaitingPromise,
 		    rejectPromise: rejectPromise,
-		    resetValidationMessage: resetValidationMessage,
+		    handleAwaitingPromise: handleAwaitingPromise,
+		    closePopup: close,
+		    closeModal: close,
+		    closeToast: close,
+		    enableButtons: enableButtons,
+		    disableButtons: disableButtons,
+		    enableInput: enableInput,
+		    disableInput: disableInput,
 		    showValidationMessage: showValidationMessage,
-		    update: update
+		    resetValidationMessage: resetValidationMessage$1,
+		    getProgressSteps: getProgressSteps$1,
+		    update: update,
+		    _destroy: _destroy
 		  });
+
+		  const handleConfirmButtonClick = instance => {
+		    const innerParams = privateProps.innerParams.get(instance);
+		    instance.disableButtons();
+
+		    if (innerParams.input) {
+		      handleConfirmOrDenyWithInput(instance, 'confirm');
+		    } else {
+		      confirm(instance, true);
+		    }
+		  };
+		  const handleDenyButtonClick = instance => {
+		    const innerParams = privateProps.innerParams.get(instance);
+		    instance.disableButtons();
+
+		    if (innerParams.returnInputValueOnDeny) {
+		      handleConfirmOrDenyWithInput(instance, 'deny');
+		    } else {
+		      deny(instance, false);
+		    }
+		  };
+		  const handleCancelButtonClick = (instance, dismissWith) => {
+		    instance.disableButtons();
+		    dismissWith(DismissReason.cancel);
+		  };
+
+		  const handleConfirmOrDenyWithInput = (instance, type
+		  /* 'confirm' | 'deny' */
+		  ) => {
+		    const innerParams = privateProps.innerParams.get(instance);
+
+		    if (!innerParams.input) {
+		      return error("The \"input\" parameter is needed to be set when using returnInputValueOn".concat(capitalizeFirstLetter(type)));
+		    }
+
+		    const inputValue = getInputValue(instance, innerParams);
+
+		    if (innerParams.inputValidator) {
+		      handleInputValidator(instance, inputValue, type);
+		    } else if (!instance.getInput().checkValidity()) {
+		      instance.enableButtons();
+		      instance.showValidationMessage(innerParams.validationMessage);
+		    } else if (type === 'deny') {
+		      deny(instance, inputValue);
+		    } else {
+		      confirm(instance, inputValue);
+		    }
+		  };
+
+		  const handleInputValidator = (instance, inputValue, type
+		  /* 'confirm' | 'deny' */
+		  ) => {
+		    const innerParams = privateProps.innerParams.get(instance);
+		    instance.disableInput();
+		    const validationPromise = Promise.resolve().then(() => asPromise(innerParams.inputValidator(inputValue, innerParams.validationMessage)));
+		    validationPromise.then(validationMessage => {
+		      instance.enableButtons();
+		      instance.enableInput();
+
+		      if (validationMessage) {
+		        instance.showValidationMessage(validationMessage);
+		      } else if (type === 'deny') {
+		        deny(instance, inputValue);
+		      } else {
+		        confirm(instance, inputValue);
+		      }
+		    });
+		  };
+
+		  const deny = (instance, value) => {
+		    const innerParams = privateProps.innerParams.get(instance || undefined);
+
+		    if (innerParams.showLoaderOnDeny) {
+		      showLoading(getDenyButton());
+		    }
+
+		    if (innerParams.preDeny) {
+		      privateProps.awaitingPromise.set(instance || undefined, true); // Flagging the instance as awaiting a promise so it's own promise's reject/resolve methods doesn't get destroyed until the result from this preDeny's promise is received
+
+		      const preDenyPromise = Promise.resolve().then(() => asPromise(innerParams.preDeny(value, innerParams.validationMessage)));
+		      preDenyPromise.then(preDenyValue => {
+		        if (preDenyValue === false) {
+		          instance.hideLoading();
+		          handleAwaitingPromise(instance);
+		        } else {
+		          instance.closePopup({
+		            isDenied: true,
+		            value: typeof preDenyValue === 'undefined' ? value : preDenyValue
+		          });
+		        }
+		      }).catch(error$$1 => rejectWith(instance || undefined, error$$1));
+		    } else {
+		      instance.closePopup({
+		        isDenied: true,
+		        value
+		      });
+		    }
+		  };
+
+		  const succeedWith = (instance, value) => {
+		    instance.closePopup({
+		      isConfirmed: true,
+		      value
+		    });
+		  };
+
+		  const rejectWith = (instance, error$$1) => {
+		    instance.rejectPromise(error$$1);
+		  };
+
+		  const confirm = (instance, value) => {
+		    const innerParams = privateProps.innerParams.get(instance || undefined);
+
+		    if (innerParams.showLoaderOnConfirm) {
+		      showLoading();
+		    }
+
+		    if (innerParams.preConfirm) {
+		      instance.resetValidationMessage();
+		      privateProps.awaitingPromise.set(instance || undefined, true); // Flagging the instance as awaiting a promise so it's own promise's reject/resolve methods doesn't get destroyed until the result from this preConfirm's promise is received
+
+		      const preConfirmPromise = Promise.resolve().then(() => asPromise(innerParams.preConfirm(value, innerParams.validationMessage)));
+		      preConfirmPromise.then(preConfirmValue => {
+		        if (isVisible(getValidationMessage()) || preConfirmValue === false) {
+		          instance.hideLoading();
+		          handleAwaitingPromise(instance);
+		        } else {
+		          succeedWith(instance, typeof preConfirmValue === 'undefined' ? value : preConfirmValue);
+		        }
+		      }).catch(error$$1 => rejectWith(instance || undefined, error$$1));
+		    } else {
+		      succeedWith(instance, value);
+		    }
+		  };
 
 		  const handlePopupClick = (instance, domCache, dismissWith) => {
 		    const innerParams = privateProps.innerParams.get(instance);
+
 		    if (innerParams.toast) {
 		      handleToastClick(instance, domCache, dismissWith);
 		    } else {
 		      // Ignore click events that had mousedown on the popup but mouseup on the container
 		      // This can happen when the user drags a slider
-		      handleModalMousedown(domCache);
+		      handleModalMousedown(domCache); // Ignore click events that had mousedown on the container but mouseup on the popup
 
-		      // Ignore click events that had mousedown on the container but mouseup on the popup
 		      handleContainerMousedown(domCache);
 		      handleModalClick(instance, domCache, dismissWith);
 		    }
 		  };
+
 		  const handleToastClick = (instance, domCache, dismissWith) => {
 		    // Closing toast by internal click
 		    domCache.popup.onclick = () => {
 		      const innerParams = privateProps.innerParams.get(instance);
+
 		      if (innerParams && (isAnyButtonShown(innerParams) || innerParams.timer || innerParams.input)) {
 		        return;
 		      }
+
 		      dismissWith(DismissReason.close);
 		    };
 		  };
-
 		  /**
 		   * @param {*} innerParams
 		   * @returns {boolean}
 		   */
+
+
 		  const isAnyButtonShown = innerParams => {
 		    return innerParams.showConfirmButton || innerParams.showDenyButton || innerParams.showCancelButton || innerParams.showCloseButton;
 		  };
+
 		  let ignoreOutsideClick = false;
+
 		  const handleModalMousedown = domCache => {
 		    domCache.popup.onmousedown = () => {
 		      domCache.container.onmouseup = function (e) {
-		        domCache.container.onmouseup = undefined;
-		        // We only check if the mouseup target is the container because usually it doesn't
+		        domCache.container.onmouseup = undefined; // We only check if the mouseup target is the container because usually it doesn't
 		        // have any other direct children aside of the popup
+
 		        if (e.target === domCache.container) {
 		          ignoreOutsideClick = true;
 		        }
 		      };
 		    };
 		  };
+
 		  const handleContainerMousedown = domCache => {
 		    domCache.container.onmousedown = () => {
 		      domCache.popup.onmouseup = function (e) {
-		        domCache.popup.onmouseup = undefined;
-		        // We also need to check if the mouseup target is a child of the popup
+		        domCache.popup.onmouseup = undefined; // We also need to check if the mouseup target is a child of the popup
+
 		        if (e.target === domCache.popup || domCache.popup.contains(e.target)) {
 		          ignoreOutsideClick = true;
 		        }
 		      };
 		    };
 		  };
+
 		  const handleModalClick = (instance, domCache, dismissWith) => {
 		    domCache.container.onclick = e => {
 		      const innerParams = privateProps.innerParams.get(instance);
+
 		      if (ignoreOutsideClick) {
 		        ignoreOutsideClick = false;
 		        return;
 		      }
+
 		      if (e.target === domCache.container && callIfFunction(innerParams.allowOutsideClick)) {
 		        dismissWith(DismissReason.backdrop);
 		      }
@@ -7626,35 +7403,36 @@
 		  };
 
 		  const isJqueryElement = elem => typeof elem === 'object' && elem.jquery;
+
 		  const isElement = elem => elem instanceof Element || isJqueryElement(elem);
+
 		  const argsToParams = args => {
 		    const params = {};
+
 		    if (typeof args[0] === 'object' && !isElement(args[0])) {
 		      Object.assign(params, args[0]);
 		    } else {
 		      ['title', 'html', 'icon'].forEach((name, index) => {
 		        const arg = args[index];
+
 		        if (typeof arg === 'string' || isElement(arg)) {
 		          params[name] = arg;
 		        } else if (arg !== undefined) {
-		          error(`Unexpected type of ${name}! Expected "string" or "Element", got ${typeof arg}`);
+		          error("Unexpected type of ".concat(name, "! Expected \"string\" or \"Element\", got ").concat(typeof arg));
 		        }
 		      });
 		    }
+
 		    return params;
 		  };
 
-		  /**
-		   * Main method to create a new SweetAlert2 popup
-		   *
-		   * @param  {...SweetAlertOptions} args
-		   * @returns {Promise<SweetAlertResult>}
-		   */
 		  function fire() {
 		    const Swal = this; // eslint-disable-line @typescript-eslint/no-this-alias
+
 		    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
 		      args[_key] = arguments[_key];
 		    }
+
 		    return new Swal(...args);
 		  }
 
@@ -7674,48 +7452,43 @@
 		   * const {value: firstName} = await TextPrompt('What is your first name?')
 		   * const {value: lastName} = await TextPrompt('What is your last name?')
 		   *
-		   * @param {SweetAlertOptions} mixinParams
-		   * @returns {SweetAlert}
+		   * @param mixinParams
 		   */
 		  function mixin(mixinParams) {
 		    class MixinSwal extends this {
 		      _main(params, priorityMixinParams) {
 		        return super._main(params, Object.assign({}, mixinParams, priorityMixinParams));
 		      }
+
 		    }
-		    // @ts-ignore
+
 		    return MixinSwal;
 		  }
 
 		  /**
 		   * If `timer` parameter is set, returns number of milliseconds of timer remained.
 		   * Otherwise, returns undefined.
-		   *
-		   * @returns {number | undefined}
 		   */
+
 		  const getTimerLeft = () => {
 		    return globalState.timeout && globalState.timeout.getTimerLeft();
 		  };
-
 		  /**
 		   * Stop timer. Returns number of milliseconds of timer remained.
 		   * If `timer` parameter isn't set, returns undefined.
-		   *
-		   * @returns {number | undefined}
 		   */
+
 		  const stopTimer = () => {
 		    if (globalState.timeout) {
 		      stopTimerProgressBar();
 		      return globalState.timeout.stop();
 		    }
 		  };
-
 		  /**
 		   * Resume timer. Returns number of milliseconds of timer remained.
 		   * If `timer` parameter isn't set, returns undefined.
-		   *
-		   * @returns {number | undefined}
 		   */
+
 		  const resumeTimer = () => {
 		    if (globalState.timeout) {
 		      const remaining = globalState.timeout.start();
@@ -7723,25 +7496,20 @@
 		      return remaining;
 		    }
 		  };
-
 		  /**
 		   * Resume timer. Returns number of milliseconds of timer remained.
 		   * If `timer` parameter isn't set, returns undefined.
-		   *
-		   * @returns {number | undefined}
 		   */
+
 		  const toggleTimer = () => {
 		    const timer = globalState.timeout;
 		    return timer && (timer.running ? stopTimer() : resumeTimer());
 		  };
-
 		  /**
 		   * Increase timer. Returns number of milliseconds of an updated timer.
 		   * If `timer` parameter isn't set, returns undefined.
-		   *
-		   * @param {number} n
-		   * @returns {number | undefined}
 		   */
+
 		  const increaseTimer = n => {
 		    if (globalState.timeout) {
 		      const remaining = globalState.timeout.increase(n);
@@ -7749,36 +7517,33 @@
 		      return remaining;
 		    }
 		  };
-
 		  /**
 		   * Check if timer is running. Returns true if timer is running
 		   * or false if timer is paused or stopped.
 		   * If `timer` parameter isn't set, returns undefined
-		   *
-		   * @returns {boolean}
 		   */
+
 		  const isTimerRunning = () => {
-		    return !!(globalState.timeout && globalState.timeout.isRunning());
+		    return globalState.timeout && globalState.timeout.isRunning();
 		  };
 
 		  let bodyClickListenerAdded = false;
 		  const clickHandlers = {};
-
-		  /**
-		   * @param {string} attr
-		   */
 		  function bindClickHandler() {
 		    let attr = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'data-swal-template';
 		    clickHandlers[attr] = this;
+
 		    if (!bodyClickListenerAdded) {
 		      document.body.addEventListener('click', bodyClickListener);
 		      bodyClickListenerAdded = true;
 		    }
 		  }
+
 		  const bodyClickListener = event => {
 		    for (let el = event.target; el && el !== document; el = el.parentNode) {
 		      for (const attr in clickHandlers) {
 		        const template = el.getAttribute(attr);
+
 		        if (template) {
 		          clickHandlers[attr].fire({
 		            template
@@ -7789,627 +7554,164 @@
 		    }
 		  };
 
+
+
 		  var staticMethods = /*#__PURE__*/Object.freeze({
-		    __proto__: null,
+		    isValidParameter: isValidParameter,
+		    isUpdatableParameter: isUpdatableParameter,
+		    isDeprecatedParameter: isDeprecatedParameter,
 		    argsToParams: argsToParams,
-		    bindClickHandler: bindClickHandler,
-		    clickCancel: clickCancel,
+		    isVisible: isVisible$1,
 		    clickConfirm: clickConfirm,
 		    clickDeny: clickDeny,
-		    enableLoading: showLoading,
-		    fire: fire,
-		    getActions: getActions,
-		    getCancelButton: getCancelButton,
-		    getCloseButton: getCloseButton,
-		    getConfirmButton: getConfirmButton,
+		    clickCancel: clickCancel,
 		    getContainer: getContainer,
-		    getDenyButton: getDenyButton,
-		    getFocusableElements: getFocusableElements,
-		    getFooter: getFooter,
-		    getHtmlContainer: getHtmlContainer,
-		    getIcon: getIcon,
-		    getIconContent: getIconContent,
-		    getImage: getImage,
-		    getInputLabel: getInputLabel,
-		    getLoader: getLoader,
 		    getPopup: getPopup,
-		    getProgressSteps: getProgressSteps,
-		    getTimerLeft: getTimerLeft,
-		    getTimerProgressBar: getTimerProgressBar,
 		    getTitle: getTitle,
+		    getHtmlContainer: getHtmlContainer,
+		    getImage: getImage,
+		    getIcon: getIcon,
+		    getInputLabel: getInputLabel,
+		    getCloseButton: getCloseButton,
+		    getActions: getActions,
+		    getConfirmButton: getConfirmButton,
+		    getDenyButton: getDenyButton,
+		    getCancelButton: getCancelButton,
+		    getLoader: getLoader,
+		    getFooter: getFooter,
+		    getTimerProgressBar: getTimerProgressBar,
+		    getFocusableElements: getFocusableElements,
 		    getValidationMessage: getValidationMessage,
-		    increaseTimer: increaseTimer,
-		    isDeprecatedParameter: isDeprecatedParameter,
 		    isLoading: isLoading,
-		    isTimerRunning: isTimerRunning,
-		    isUpdatableParameter: isUpdatableParameter,
-		    isValidParameter: isValidParameter,
-		    isVisible: isVisible,
+		    fire: fire,
 		    mixin: mixin,
-		    resumeTimer: resumeTimer,
 		    showLoading: showLoading,
+		    enableLoading: showLoading,
+		    getTimerLeft: getTimerLeft,
 		    stopTimer: stopTimer,
-		    toggleTimer: toggleTimer
+		    resumeTimer: resumeTimer,
+		    toggleTimer: toggleTimer,
+		    increaseTimer: increaseTimer,
+		    isTimerRunning: isTimerRunning,
+		    bindClickHandler: bindClickHandler
 		  });
 
-		  class Timer {
-		    /**
-		     * @param {Function} callback
-		     * @param {number} delay
-		     */
-		    constructor(callback, delay) {
-		      this.callback = callback;
-		      this.remaining = delay;
-		      this.running = false;
-		      this.start();
-		    }
-
-		    /**
-		     * @returns {number}
-		     */
-		    start() {
-		      if (!this.running) {
-		        this.running = true;
-		        this.started = new Date();
-		        this.id = setTimeout(this.callback, this.remaining);
-		      }
-		      return this.remaining;
-		    }
-
-		    /**
-		     * @returns {number}
-		     */
-		    stop() {
-		      if (this.started && this.running) {
-		        this.running = false;
-		        clearTimeout(this.id);
-		        this.remaining -= new Date().getTime() - this.started.getTime();
-		      }
-		      return this.remaining;
-		    }
-
-		    /**
-		     * @param {number} n
-		     * @returns {number}
-		     */
-		    increase(n) {
-		      const running = this.running;
-		      if (running) {
-		        this.stop();
-		      }
-		      this.remaining += n;
-		      if (running) {
-		        this.start();
-		      }
-		      return this.remaining;
-		    }
-
-		    /**
-		     * @returns {number}
-		     */
-		    getTimerLeft() {
-		      if (this.running) {
-		        this.stop();
-		        this.start();
-		      }
-		      return this.remaining;
-		    }
-
-		    /**
-		     * @returns {boolean}
-		     */
-		    isRunning() {
-		      return this.running;
-		    }
-		  }
-
-		  const swalStringParams = ['swal-title', 'swal-html', 'swal-footer'];
-
-		  /**
-		   * @param {SweetAlertOptions} params
-		   * @returns {SweetAlertOptions}
-		   */
-		  const getTemplateParams = params => {
-		    /** @type {HTMLTemplateElement} */
-		    const template = typeof params.template === 'string' ? document.querySelector(params.template) : params.template;
-		    if (!template) {
-		      return {};
-		    }
-		    /** @type {DocumentFragment} */
-		    const templateContent = template.content;
-		    showWarningsForElements(templateContent);
-		    const result = Object.assign(getSwalParams(templateContent), getSwalFunctionParams(templateContent), getSwalButtons(templateContent), getSwalImage(templateContent), getSwalIcon(templateContent), getSwalInput(templateContent), getSwalStringParams(templateContent, swalStringParams));
-		    return result;
-		  };
-
-		  /**
-		   * @param {DocumentFragment} templateContent
-		   * @returns {SweetAlertOptions}
-		   */
-		  const getSwalParams = templateContent => {
-		    const result = {};
-		    /** @type {HTMLElement[]} */
-		    const swalParams = Array.from(templateContent.querySelectorAll('swal-param'));
-		    swalParams.forEach(param => {
-		      showWarningsForAttributes(param, ['name', 'value']);
-		      const paramName = param.getAttribute('name');
-		      const value = param.getAttribute('value');
-		      if (typeof defaultParams[paramName] === 'boolean') {
-		        result[paramName] = value !== 'false';
-		      } else if (typeof defaultParams[paramName] === 'object') {
-		        result[paramName] = JSON.parse(value);
-		      } else {
-		        result[paramName] = value;
-		      }
-		    });
-		    return result;
-		  };
-
-		  /**
-		   * @param {DocumentFragment} templateContent
-		   * @returns {SweetAlertOptions}
-		   */
-		  const getSwalFunctionParams = templateContent => {
-		    const result = {};
-		    /** @type {HTMLElement[]} */
-		    const swalFunctions = Array.from(templateContent.querySelectorAll('swal-function-param'));
-		    swalFunctions.forEach(param => {
-		      const paramName = param.getAttribute('name');
-		      const value = param.getAttribute('value');
-		      result[paramName] = new Function(`return ${value}`)();
-		    });
-		    return result;
-		  };
-
-		  /**
-		   * @param {DocumentFragment} templateContent
-		   * @returns {SweetAlertOptions}
-		   */
-		  const getSwalButtons = templateContent => {
-		    const result = {};
-		    /** @type {HTMLElement[]} */
-		    const swalButtons = Array.from(templateContent.querySelectorAll('swal-button'));
-		    swalButtons.forEach(button => {
-		      showWarningsForAttributes(button, ['type', 'color', 'aria-label']);
-		      const type = button.getAttribute('type');
-		      result[`${type}ButtonText`] = button.innerHTML;
-		      result[`show${capitalizeFirstLetter(type)}Button`] = true;
-		      if (button.hasAttribute('color')) {
-		        result[`${type}ButtonColor`] = button.getAttribute('color');
-		      }
-		      if (button.hasAttribute('aria-label')) {
-		        result[`${type}ButtonAriaLabel`] = button.getAttribute('aria-label');
-		      }
-		    });
-		    return result;
-		  };
-
-		  /**
-		   * @param {DocumentFragment} templateContent
-		   * @returns {SweetAlertOptions}
-		   */
-		  const getSwalImage = templateContent => {
-		    const result = {};
-		    /** @type {HTMLElement} */
-		    const image = templateContent.querySelector('swal-image');
-		    if (image) {
-		      showWarningsForAttributes(image, ['src', 'width', 'height', 'alt']);
-		      if (image.hasAttribute('src')) {
-		        result.imageUrl = image.getAttribute('src');
-		      }
-		      if (image.hasAttribute('width')) {
-		        result.imageWidth = image.getAttribute('width');
-		      }
-		      if (image.hasAttribute('height')) {
-		        result.imageHeight = image.getAttribute('height');
-		      }
-		      if (image.hasAttribute('alt')) {
-		        result.imageAlt = image.getAttribute('alt');
-		      }
-		    }
-		    return result;
-		  };
-
-		  /**
-		   * @param {DocumentFragment} templateContent
-		   * @returns {SweetAlertOptions}
-		   */
-		  const getSwalIcon = templateContent => {
-		    const result = {};
-		    /** @type {HTMLElement} */
-		    const icon = templateContent.querySelector('swal-icon');
-		    if (icon) {
-		      showWarningsForAttributes(icon, ['type', 'color']);
-		      if (icon.hasAttribute('type')) {
-		        /** @type {SweetAlertIcon} */
-		        // @ts-ignore
-		        result.icon = icon.getAttribute('type');
-		      }
-		      if (icon.hasAttribute('color')) {
-		        result.iconColor = icon.getAttribute('color');
-		      }
-		      result.iconHtml = icon.innerHTML;
-		    }
-		    return result;
-		  };
-
-		  /**
-		   * @param {DocumentFragment} templateContent
-		   * @returns {SweetAlertOptions}
-		   */
-		  const getSwalInput = templateContent => {
-		    const result = {};
-		    /** @type {HTMLElement} */
-		    const input = templateContent.querySelector('swal-input');
-		    if (input) {
-		      showWarningsForAttributes(input, ['type', 'label', 'placeholder', 'value']);
-		      /** @type {SweetAlertInput} */
-		      // @ts-ignore
-		      result.input = input.getAttribute('type') || 'text';
-		      if (input.hasAttribute('label')) {
-		        result.inputLabel = input.getAttribute('label');
-		      }
-		      if (input.hasAttribute('placeholder')) {
-		        result.inputPlaceholder = input.getAttribute('placeholder');
-		      }
-		      if (input.hasAttribute('value')) {
-		        result.inputValue = input.getAttribute('value');
-		      }
-		    }
-		    /** @type {HTMLElement[]} */
-		    const inputOptions = Array.from(templateContent.querySelectorAll('swal-input-option'));
-		    if (inputOptions.length) {
-		      result.inputOptions = {};
-		      inputOptions.forEach(option => {
-		        showWarningsForAttributes(option, ['value']);
-		        const optionValue = option.getAttribute('value');
-		        const optionName = option.innerHTML;
-		        result.inputOptions[optionValue] = optionName;
-		      });
-		    }
-		    return result;
-		  };
-
-		  /**
-		   * @param {DocumentFragment} templateContent
-		   * @param {string[]} paramNames
-		   * @returns {SweetAlertOptions}
-		   */
-		  const getSwalStringParams = (templateContent, paramNames) => {
-		    const result = {};
-		    for (const i in paramNames) {
-		      const paramName = paramNames[i];
-		      /** @type {HTMLElement} */
-		      const tag = templateContent.querySelector(paramName);
-		      if (tag) {
-		        showWarningsForAttributes(tag, []);
-		        result[paramName.replace(/^swal-/, '')] = tag.innerHTML.trim();
-		      }
-		    }
-		    return result;
-		  };
-
-		  /**
-		   * @param {DocumentFragment} templateContent
-		   */
-		  const showWarningsForElements = templateContent => {
-		    const allowedElements = swalStringParams.concat(['swal-param', 'swal-function-param', 'swal-button', 'swal-image', 'swal-icon', 'swal-input', 'swal-input-option']);
-		    Array.from(templateContent.children).forEach(el => {
-		      const tagName = el.tagName.toLowerCase();
-		      if (!allowedElements.includes(tagName)) {
-		        warn(`Unrecognized element <${tagName}>`);
-		      }
-		    });
-		  };
-
-		  /**
-		   * @param {HTMLElement} el
-		   * @param {string[]} allowedAttributes
-		   */
-		  const showWarningsForAttributes = (el, allowedAttributes) => {
-		    Array.from(el.attributes).forEach(attribute => {
-		      if (allowedAttributes.indexOf(attribute.name) === -1) {
-		        warn([`Unrecognized attribute "${attribute.name}" on <${el.tagName.toLowerCase()}>.`, `${allowedAttributes.length ? `Allowed attributes are: ${allowedAttributes.join(', ')}` : 'To set the value, use HTML within the element.'}`]);
-		      }
-		    });
-		  };
-
-		  const SHOW_CLASS_TIMEOUT = 10;
-
-		  /**
-		   * Open popup, add necessary classes and styles, fix scrollbar
-		   *
-		   * @param {SweetAlertOptions} params
-		   */
-		  const openPopup = params => {
-		    const container = getContainer();
-		    const popup = getPopup();
-		    if (typeof params.willOpen === 'function') {
-		      params.willOpen(popup);
-		    }
-		    const bodyStyles = window.getComputedStyle(document.body);
-		    const initialBodyOverflow = bodyStyles.overflowY;
-		    addClasses(container, popup, params);
-
-		    // scrolling is 'hidden' until animation is done, after that 'auto'
-		    setTimeout(() => {
-		      setScrollingVisibility(container, popup);
-		    }, SHOW_CLASS_TIMEOUT);
-		    if (isModal()) {
-		      fixScrollContainer(container, params.scrollbarPadding, initialBodyOverflow);
-		      setAriaHidden();
-		    }
-		    if (!isToast() && !globalState.previousActiveElement) {
-		      globalState.previousActiveElement = document.activeElement;
-		    }
-		    if (typeof params.didOpen === 'function') {
-		      setTimeout(() => params.didOpen(popup));
-		    }
-		    removeClass(container, swalClasses['no-transition']);
-		  };
-
-		  /**
-		   * @param {AnimationEvent} event
-		   */
-		  const swalOpenAnimationFinished = event => {
-		    const popup = getPopup();
-		    if (event.target !== popup) {
-		      return;
-		    }
-		    const container = getContainer();
-		    popup.removeEventListener(animationEndEvent, swalOpenAnimationFinished);
-		    container.style.overflowY = 'auto';
-		  };
-
-		  /**
-		   * @param {HTMLElement} container
-		   * @param {HTMLElement} popup
-		   */
-		  const setScrollingVisibility = (container, popup) => {
-		    if (animationEndEvent && hasCssAnimation(popup)) {
-		      container.style.overflowY = 'hidden';
-		      popup.addEventListener(animationEndEvent, swalOpenAnimationFinished);
-		    } else {
-		      container.style.overflowY = 'auto';
-		    }
-		  };
-
-		  /**
-		   * @param {HTMLElement} container
-		   * @param {boolean} scrollbarPadding
-		   * @param {string} initialBodyOverflow
-		   */
-		  const fixScrollContainer = (container, scrollbarPadding, initialBodyOverflow) => {
-		    iOSfix();
-		    if (scrollbarPadding && initialBodyOverflow !== 'hidden') {
-		      fixScrollbar();
-		    }
-
-		    // sweetalert2/issues/1247
-		    setTimeout(() => {
-		      container.scrollTop = 0;
-		    });
-		  };
-
-		  /**
-		   * @param {HTMLElement} container
-		   * @param {HTMLElement} popup
-		   * @param {SweetAlertOptions} params
-		   */
-		  const addClasses = (container, popup, params) => {
-		    addClass(container, params.showClass.backdrop);
-		    // this workaround with opacity is needed for https://github.com/sweetalert2/sweetalert2/issues/2059
-		    popup.style.setProperty('opacity', '0', 'important');
-		    show(popup, 'grid');
-		    setTimeout(() => {
-		      // Animate popup right after showing it
-		      addClass(popup, params.showClass.popup);
-		      // and remove the opacity workaround
-		      popup.style.removeProperty('opacity');
-		    }, SHOW_CLASS_TIMEOUT); // 10ms in order to fix #2062
-
-		    addClass([document.documentElement, document.body], swalClasses.shown);
-		    if (params.heightAuto && params.backdrop && !params.toast) {
-		      addClass([document.documentElement, document.body], swalClasses['height-auto']);
-		    }
-		  };
-
-		  var defaultInputValidators = {
-		    /**
-		     * @param {string} string
-		     * @param {string} validationMessage
-		     * @returns {Promise<void | string>}
-		     */
-		    email: (string, validationMessage) => {
-		      return /^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9.-]+\.[a-zA-Z0-9-]{2,24}$/.test(string) ? Promise.resolve() : Promise.resolve(validationMessage || 'Invalid email address');
-		    },
-		    /**
-		     * @param {string} string
-		     * @param {string} validationMessage
-		     * @returns {Promise<void | string>}
-		     */
-		    url: (string, validationMessage) => {
-		      // taken from https://stackoverflow.com/a/3809435 with a small change from #1306 and #2013
-		      return /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-z]{2,63}\b([-a-zA-Z0-9@:%_+.~#?&/=]*)$/.test(string) ? Promise.resolve() : Promise.resolve(validationMessage || 'Invalid URL');
-		    }
-		  };
-
-		  /**
-		   * @param {SweetAlertOptions} params
-		   */
-		  function setDefaultInputValidators(params) {
-		    // Use default `inputValidator` for supported input types if not provided
-		    if (!params.inputValidator) {
-		      Object.keys(defaultInputValidators).forEach(key => {
-		        if (params.input === key) {
-		          params.inputValidator = defaultInputValidators[key];
-		        }
-		      });
-		    }
-		  }
-
-		  /**
-		   * @param {SweetAlertOptions} params
-		   */
-		  function validateCustomTargetElement(params) {
-		    // Determine if the custom target element is valid
-		    if (!params.target || typeof params.target === 'string' && !document.querySelector(params.target) || typeof params.target !== 'string' && !params.target.appendChild) {
-		      warn('Target parameter is not valid, defaulting to "body"');
-		      params.target = 'body';
-		    }
-		  }
-
-		  /**
-		   * Set type, text and actions on popup
-		   *
-		   * @param {SweetAlertOptions} params
-		   */
-		  function setParameters(params) {
-		    setDefaultInputValidators(params);
-
-		    // showLoaderOnConfirm && preConfirm
-		    if (params.showLoaderOnConfirm && !params.preConfirm) {
-		      warn('showLoaderOnConfirm is set to true, but preConfirm is not defined.\n' + 'showLoaderOnConfirm should be used together with preConfirm, see usage example:\n' + 'https://sweetalert2.github.io/#ajax-request');
-		    }
-		    validateCustomTargetElement(params);
-
-		    // Replace newlines with <br> in title
-		    if (typeof params.title === 'string') {
-		      params.title = params.title.split('\n').join('<br />');
-		    }
-		    init(params);
-		  }
-
-		  /** @type {SweetAlert} */
 		  let currentInstance;
+
 		  class SweetAlert {
-		    /**
-		     * @param {...any} args
-		     * @this {SweetAlert}
-		     */
 		    constructor() {
 		      // Prevent run in Node env
 		      if (typeof window === 'undefined') {
 		        return;
 		      }
-		      currentInstance = this;
 
-		      // @ts-ignore
+		      currentInstance = this; // @ts-ignore
+
 		      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
 		        args[_key] = arguments[_key];
 		      }
+
 		      const outerParams = Object.freeze(this.constructor.argsToParams(args));
+		      Object.defineProperties(this, {
+		        params: {
+		          value: outerParams,
+		          writable: false,
+		          enumerable: true,
+		          configurable: true
+		        }
+		      }); // @ts-ignore
 
-		      /** @type {Readonly<SweetAlertOptions>} */
-		      this.params = outerParams;
+		      const promise = this._main(this.params);
 
-		      /** @type {boolean} */
-		      this.isAwaitingPromise = false;
-		      const promise = currentInstance._main(currentInstance.params);
 		      privateProps.promise.set(this, promise);
 		    }
+
 		    _main(userParams) {
 		      let mixinParams = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 		      showWarningsForParams(Object.assign({}, mixinParams, userParams));
+
 		      if (globalState.currentInstance) {
 		        globalState.currentInstance._destroy();
+
 		        if (isModal()) {
 		          unsetAriaHidden();
 		        }
 		      }
-		      globalState.currentInstance = currentInstance;
+
+		      globalState.currentInstance = this;
 		      const innerParams = prepareParams(userParams, mixinParams);
 		      setParameters(innerParams);
-		      Object.freeze(innerParams);
+		      Object.freeze(innerParams); // clear the previous timer
 
-		      // clear the previous timer
 		      if (globalState.timeout) {
 		        globalState.timeout.stop();
 		        delete globalState.timeout;
-		      }
+		      } // clear the restore focus timeout
 
-		      // clear the restore focus timeout
+
 		      clearTimeout(globalState.restoreFocusTimeout);
-		      const domCache = populateDomCache(currentInstance);
-		      render(currentInstance, innerParams);
-		      privateProps.innerParams.set(currentInstance, innerParams);
-		      return swalPromise(currentInstance, domCache, innerParams);
-		    }
+		      const domCache = populateDomCache(this);
+		      render(this, innerParams);
+		      privateProps.innerParams.set(this, innerParams);
+		      return swalPromise(this, domCache, innerParams);
+		    } // `catch` cannot be the name of a module export, so we define our thenable methods here instead
 
-		    // `catch` cannot be the name of a module export, so we define our thenable methods here instead
+
 		    then(onFulfilled) {
 		      const promise = privateProps.promise.get(this);
 		      return promise.then(onFulfilled);
 		    }
+
 		    finally(onFinally) {
 		      const promise = privateProps.promise.get(this);
 		      return promise.finally(onFinally);
 		    }
+
 		  }
 
-		  /**
-		   * @param {SweetAlert} instance
-		   * @param {DomCache} domCache
-		   * @param {SweetAlertOptions} innerParams
-		   * @returns {Promise}
-		   */
 		  const swalPromise = (instance, domCache, innerParams) => {
 		    return new Promise((resolve, reject) => {
 		      // functions to handle all closings/dismissals
-		      /**
-		       * @param {DismissReason} dismiss
-		       */
 		      const dismissWith = dismiss => {
-		        instance.close({
+		        instance.closePopup({
 		          isDismissed: true,
 		          dismiss
 		        });
 		      };
+
 		      privateMethods.swalPromiseResolve.set(instance, resolve);
 		      privateMethods.swalPromiseReject.set(instance, reject);
-		      domCache.confirmButton.onclick = () => {
-		        handleConfirmButtonClick(instance);
-		      };
-		      domCache.denyButton.onclick = () => {
-		        handleDenyButtonClick(instance);
-		      };
-		      domCache.cancelButton.onclick = () => {
-		        handleCancelButtonClick(instance, dismissWith);
-		      };
-		      domCache.closeButton.onclick = () => {
-		        dismissWith(DismissReason.close);
-		      };
+
+		      domCache.confirmButton.onclick = () => handleConfirmButtonClick(instance);
+
+		      domCache.denyButton.onclick = () => handleDenyButtonClick(instance);
+
+		      domCache.cancelButton.onclick = () => handleCancelButtonClick(instance, dismissWith);
+
+		      domCache.closeButton.onclick = () => dismissWith(DismissReason.close);
+
 		      handlePopupClick(instance, domCache, dismissWith);
 		      addKeydownHandler(instance, globalState, innerParams, dismissWith);
 		      handleInputOptionsAndValue(instance, innerParams);
 		      openPopup(innerParams);
 		      setupTimer(globalState, innerParams, dismissWith);
-		      initFocus(domCache, innerParams);
+		      initFocus(domCache, innerParams); // Scroll container to top on open (#1247, #1946)
 
-		      // Scroll container to top on open (#1247, #1946)
 		      setTimeout(() => {
 		        domCache.container.scrollTop = 0;
 		      });
 		    });
 		  };
 
-		  /**
-		   * @param {SweetAlertOptions} userParams
-		   * @param {SweetAlertOptions} mixinParams
-		   * @returns {SweetAlertOptions}
-		   */
 		  const prepareParams = (userParams, mixinParams) => {
 		    const templateParams = getTemplateParams(userParams);
 		    const params = Object.assign({}, defaultParams, mixinParams, templateParams, userParams); // precedence is described in #2131
+
 		    params.showClass = Object.assign({}, defaultParams.showClass, params.showClass);
 		    params.hideClass = Object.assign({}, defaultParams.hideClass, params.hideClass);
 		    return params;
 		  };
 
-		  /**
-		   * @param {SweetAlert} instance
-		   * @returns {DomCache}
-		   */
 		  const populateDomCache = instance => {
 		    const domCache = {
 		      popup: getPopup(),
@@ -8427,24 +7729,21 @@
 		    return domCache;
 		  };
 
-		  /**
-		   * @param {GlobalState} globalState
-		   * @param {SweetAlertOptions} innerParams
-		   * @param {Function} dismissWith
-		   */
-		  const setupTimer = (globalState, innerParams, dismissWith) => {
+		  const setupTimer = (globalState$$1, innerParams, dismissWith) => {
 		    const timerProgressBar = getTimerProgressBar();
 		    hide(timerProgressBar);
+
 		    if (innerParams.timer) {
-		      globalState.timeout = new Timer(() => {
+		      globalState$$1.timeout = new Timer(() => {
 		        dismissWith('timer');
-		        delete globalState.timeout;
+		        delete globalState$$1.timeout;
 		      }, innerParams.timer);
+
 		      if (innerParams.timerProgressBar) {
 		        show(timerProgressBar);
 		        applyCustomClass(timerProgressBar, innerParams, 'timerProgressBar');
 		        setTimeout(() => {
-		          if (globalState.timeout && globalState.timeout.running) {
+		          if (globalState$$1.timeout && globalState$$1.timeout.running) {
 		            // timer can be already stopped or unset at this point
 		            animateTimerProgressBar(innerParams.timer);
 		          }
@@ -8453,117 +7752,70 @@
 		    }
 		  };
 
-		  /**
-		   * @param {DomCache} domCache
-		   * @param {SweetAlertOptions} innerParams
-		   */
 		  const initFocus = (domCache, innerParams) => {
 		    if (innerParams.toast) {
 		      return;
 		    }
+
 		    if (!callIfFunction(innerParams.allowEnterKey)) {
-		      blurActiveElement();
-		      return;
+		      return blurActiveElement();
 		    }
+
 		    if (!focusButton(domCache, innerParams)) {
-		      setFocus(-1, 1);
+		      setFocus(innerParams, -1, 1);
 		    }
 		  };
 
-		  /**
-		   * @param {DomCache} domCache
-		   * @param {SweetAlertOptions} innerParams
-		   * @returns {boolean}
-		   */
 		  const focusButton = (domCache, innerParams) => {
-		    if (innerParams.focusDeny && isVisible$1(domCache.denyButton)) {
+		    if (innerParams.focusDeny && isVisible(domCache.denyButton)) {
 		      domCache.denyButton.focus();
 		      return true;
 		    }
-		    if (innerParams.focusCancel && isVisible$1(domCache.cancelButton)) {
+
+		    if (innerParams.focusCancel && isVisible(domCache.cancelButton)) {
 		      domCache.cancelButton.focus();
 		      return true;
 		    }
-		    if (innerParams.focusConfirm && isVisible$1(domCache.confirmButton)) {
+
+		    if (innerParams.focusConfirm && isVisible(domCache.confirmButton)) {
 		      domCache.confirmButton.focus();
 		      return true;
 		    }
+
 		    return false;
 		  };
+
 		  const blurActiveElement = () => {
 		    if (document.activeElement instanceof HTMLElement && typeof document.activeElement.blur === 'function') {
 		      document.activeElement.blur();
 		    }
-		  };
+		  }; // Assign instance methods from src/instanceMethods/*.js to prototype
 
-		  // Dear russian users visiting russian sites. Let's have fun.
-		  if (typeof window !== 'undefined' && /^ru\b/.test(navigator.language) && location.host.match(/\.(ru|su|by|xn--p1ai)$/)) {
-		    const now = new Date();
-		    const initiationDate = localStorage.getItem('swal-initiation');
-		    if (!initiationDate) {
-		      localStorage.setItem('swal-initiation', `${now}`);
-		    } else if ((now.getTime() - Date.parse(initiationDate)) / (1000 * 60 * 60 * 24) > 3) {
-		      setTimeout(() => {
-		        document.body.style.pointerEvents = 'none';
-		        const ukrainianAnthem = document.createElement('audio');
-		        ukrainianAnthem.src = 'https://flag-gimn.ru/wp-content/uploads/2021/09/Ukraina.mp3';
-		        ukrainianAnthem.loop = true;
-		        document.body.appendChild(ukrainianAnthem);
-		        setTimeout(() => {
-		          ukrainianAnthem.play().catch(() => {
-		            // ignore
-		          });
-		        }, 2500);
-		      }, 500);
-		    }
-		  }
 
-		  // Assign instance methods from src/instanceMethods/*.js to prototype
-		  SweetAlert.prototype.disableButtons = disableButtons;
-		  SweetAlert.prototype.enableButtons = enableButtons;
-		  SweetAlert.prototype.getInput = getInput;
-		  SweetAlert.prototype.disableInput = disableInput;
-		  SweetAlert.prototype.enableInput = enableInput;
-		  SweetAlert.prototype.hideLoading = hideLoading;
-		  SweetAlert.prototype.disableLoading = hideLoading;
-		  SweetAlert.prototype.showValidationMessage = showValidationMessage;
-		  SweetAlert.prototype.resetValidationMessage = resetValidationMessage;
-		  SweetAlert.prototype.close = close;
-		  SweetAlert.prototype.closePopup = close;
-		  SweetAlert.prototype.closeModal = close;
-		  SweetAlert.prototype.closeToast = close;
-		  SweetAlert.prototype.rejectPromise = rejectPromise;
-		  SweetAlert.prototype.update = update;
-		  SweetAlert.prototype._destroy = _destroy;
+		  Object.assign(SweetAlert.prototype, instanceMethods); // Assign static methods from src/staticMethods/*.js to constructor
 
-		  // Assign static methods from src/staticMethods/*.js to constructor
-		  Object.assign(SweetAlert, staticMethods);
+		  Object.assign(SweetAlert, staticMethods); // Proxy to instance methods to constructor, for now, for backwards compatibility
 
-		  // Proxy to instance methods to constructor, for now, for backwards compatibility
 		  Object.keys(instanceMethods).forEach(key => {
-		    /**
-		     * @param {...any} args
-		     * @returns {any | undefined}
-		     */
 		    SweetAlert[key] = function () {
-		      if (currentInstance && currentInstance[key]) {
+		      if (currentInstance) {
 		        return currentInstance[key](...arguments);
 		      }
-		      return null;
 		    };
 		  });
 		  SweetAlert.DismissReason = DismissReason;
-		  SweetAlert.version = '11.7.12';
+		  SweetAlert.version = '11.4.8';
 
-		  const Swal = SweetAlert;
-		  // @ts-ignore
+		  const Swal = SweetAlert; // @ts-ignore
+
 		  Swal.default = Swal;
 
 		  return Swal;
 
 		}));
-		if (typeof commonjsGlobal !== 'undefined' && commonjsGlobal.Sweetalert2){commonjsGlobal.swal = commonjsGlobal.sweetAlert = commonjsGlobal.Swal = commonjsGlobal.SweetAlert = commonjsGlobal.Sweetalert2;}
-		"undefined"!=typeof document&&function(e,t){var n=e.createElement("style");if(e.getElementsByTagName("head")[0].appendChild(n),n.styleSheet)n.styleSheet.disabled||(n.styleSheet.cssText=t);else try{n.innerHTML=t;}catch(e){n.innerText=t;}}(document,".swal2-popup.swal2-toast{box-sizing:border-box;grid-column:1/4 !important;grid-row:1/4 !important;grid-template-columns:min-content auto min-content;padding:1em;overflow-y:hidden;background:#fff;box-shadow:0 0 1px rgba(0,0,0,.075),0 1px 2px rgba(0,0,0,.075),1px 2px 4px rgba(0,0,0,.075),1px 3px 8px rgba(0,0,0,.075),2px 4px 16px rgba(0,0,0,.075);pointer-events:all}.swal2-popup.swal2-toast>*{grid-column:2}.swal2-popup.swal2-toast .swal2-title{margin:.5em 1em;padding:0;font-size:1em;text-align:initial}.swal2-popup.swal2-toast .swal2-loading{justify-content:center}.swal2-popup.swal2-toast .swal2-input{height:2em;margin:.5em;font-size:1em}.swal2-popup.swal2-toast .swal2-validation-message{font-size:1em}.swal2-popup.swal2-toast .swal2-footer{margin:.5em 0 0;padding:.5em 0 0;font-size:.8em}.swal2-popup.swal2-toast .swal2-close{grid-column:3/3;grid-row:1/99;align-self:center;width:.8em;height:.8em;margin:0;font-size:2em}.swal2-popup.swal2-toast .swal2-html-container{margin:.5em 1em;padding:0;overflow:initial;font-size:1em;text-align:initial}.swal2-popup.swal2-toast .swal2-html-container:empty{padding:0}.swal2-popup.swal2-toast .swal2-loader{grid-column:1;grid-row:1/99;align-self:center;width:2em;height:2em;margin:.25em}.swal2-popup.swal2-toast .swal2-icon{grid-column:1;grid-row:1/99;align-self:center;width:2em;min-width:2em;height:2em;margin:0 .5em 0 0}.swal2-popup.swal2-toast .swal2-icon .swal2-icon-content{display:flex;align-items:center;font-size:1.8em;font-weight:bold}.swal2-popup.swal2-toast .swal2-icon.swal2-success .swal2-success-ring{width:2em;height:2em}.swal2-popup.swal2-toast .swal2-icon.swal2-error [class^=swal2-x-mark-line]{top:.875em;width:1.375em}.swal2-popup.swal2-toast .swal2-icon.swal2-error [class^=swal2-x-mark-line][class$=left]{left:.3125em}.swal2-popup.swal2-toast .swal2-icon.swal2-error [class^=swal2-x-mark-line][class$=right]{right:.3125em}.swal2-popup.swal2-toast .swal2-actions{justify-content:flex-start;height:auto;margin:0;margin-top:.5em;padding:0 .5em}.swal2-popup.swal2-toast .swal2-styled{margin:.25em .5em;padding:.4em .6em;font-size:1em}.swal2-popup.swal2-toast .swal2-success{border-color:#a5dc86}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-circular-line]{position:absolute;width:1.6em;height:3em;transform:rotate(45deg);border-radius:50%}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-circular-line][class$=left]{top:-0.8em;left:-0.5em;transform:rotate(-45deg);transform-origin:2em 2em;border-radius:4em 0 0 4em}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-circular-line][class$=right]{top:-0.25em;left:.9375em;transform-origin:0 1.5em;border-radius:0 4em 4em 0}.swal2-popup.swal2-toast .swal2-success .swal2-success-ring{width:2em;height:2em}.swal2-popup.swal2-toast .swal2-success .swal2-success-fix{top:0;left:.4375em;width:.4375em;height:2.6875em}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-line]{height:.3125em}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-line][class$=tip]{top:1.125em;left:.1875em;width:.75em}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-line][class$=long]{top:.9375em;right:.1875em;width:1.375em}.swal2-popup.swal2-toast .swal2-success.swal2-icon-show .swal2-success-line-tip{animation:swal2-toast-animate-success-line-tip .75s}.swal2-popup.swal2-toast .swal2-success.swal2-icon-show .swal2-success-line-long{animation:swal2-toast-animate-success-line-long .75s}.swal2-popup.swal2-toast.swal2-show{animation:swal2-toast-show .5s}.swal2-popup.swal2-toast.swal2-hide{animation:swal2-toast-hide .1s forwards}div:where(.swal2-container){display:grid;position:fixed;z-index:1060;inset:0;box-sizing:border-box;grid-template-areas:\"top-start     top            top-end\" \"center-start  center         center-end\" \"bottom-start  bottom-center  bottom-end\";grid-template-rows:minmax(min-content, auto) minmax(min-content, auto) minmax(min-content, auto);height:100%;padding:.625em;overflow-x:hidden;transition:background-color .1s;-webkit-overflow-scrolling:touch}div:where(.swal2-container).swal2-backdrop-show,div:where(.swal2-container).swal2-noanimation{background:rgba(0,0,0,.4)}div:where(.swal2-container).swal2-backdrop-hide{background:rgba(0,0,0,0) !important}div:where(.swal2-container).swal2-top-start,div:where(.swal2-container).swal2-center-start,div:where(.swal2-container).swal2-bottom-start{grid-template-columns:minmax(0, 1fr) auto auto}div:where(.swal2-container).swal2-top,div:where(.swal2-container).swal2-center,div:where(.swal2-container).swal2-bottom{grid-template-columns:auto minmax(0, 1fr) auto}div:where(.swal2-container).swal2-top-end,div:where(.swal2-container).swal2-center-end,div:where(.swal2-container).swal2-bottom-end{grid-template-columns:auto auto minmax(0, 1fr)}div:where(.swal2-container).swal2-top-start>.swal2-popup{align-self:start}div:where(.swal2-container).swal2-top>.swal2-popup{grid-column:2;align-self:start;justify-self:center}div:where(.swal2-container).swal2-top-end>.swal2-popup,div:where(.swal2-container).swal2-top-right>.swal2-popup{grid-column:3;align-self:start;justify-self:end}div:where(.swal2-container).swal2-center-start>.swal2-popup,div:where(.swal2-container).swal2-center-left>.swal2-popup{grid-row:2;align-self:center}div:where(.swal2-container).swal2-center>.swal2-popup{grid-column:2;grid-row:2;align-self:center;justify-self:center}div:where(.swal2-container).swal2-center-end>.swal2-popup,div:where(.swal2-container).swal2-center-right>.swal2-popup{grid-column:3;grid-row:2;align-self:center;justify-self:end}div:where(.swal2-container).swal2-bottom-start>.swal2-popup,div:where(.swal2-container).swal2-bottom-left>.swal2-popup{grid-column:1;grid-row:3;align-self:end}div:where(.swal2-container).swal2-bottom>.swal2-popup{grid-column:2;grid-row:3;justify-self:center;align-self:end}div:where(.swal2-container).swal2-bottom-end>.swal2-popup,div:where(.swal2-container).swal2-bottom-right>.swal2-popup{grid-column:3;grid-row:3;align-self:end;justify-self:end}div:where(.swal2-container).swal2-grow-row>.swal2-popup,div:where(.swal2-container).swal2-grow-fullscreen>.swal2-popup{grid-column:1/4;width:100%}div:where(.swal2-container).swal2-grow-column>.swal2-popup,div:where(.swal2-container).swal2-grow-fullscreen>.swal2-popup{grid-row:1/4;align-self:stretch}div:where(.swal2-container).swal2-no-transition{transition:none !important}div:where(.swal2-container) div:where(.swal2-popup){display:none;position:relative;box-sizing:border-box;grid-template-columns:minmax(0, 100%);width:32em;max-width:100%;padding:0 0 1.25em;border:none;border-radius:5px;background:#fff;color:#545454;font-family:inherit;font-size:1rem}div:where(.swal2-container) div:where(.swal2-popup):focus{outline:none}div:where(.swal2-container) div:where(.swal2-popup).swal2-loading{overflow-y:hidden}div:where(.swal2-container) h2:where(.swal2-title){position:relative;max-width:100%;margin:0;padding:.8em 1em 0;color:inherit;font-size:1.875em;font-weight:600;text-align:center;text-transform:none;word-wrap:break-word}div:where(.swal2-container) div:where(.swal2-actions){display:flex;z-index:1;box-sizing:border-box;flex-wrap:wrap;align-items:center;justify-content:center;width:auto;margin:1.25em auto 0;padding:0}div:where(.swal2-container) div:where(.swal2-actions):not(.swal2-loading) .swal2-styled[disabled]{opacity:.4}div:where(.swal2-container) div:where(.swal2-actions):not(.swal2-loading) .swal2-styled:hover{background-image:linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1))}div:where(.swal2-container) div:where(.swal2-actions):not(.swal2-loading) .swal2-styled:active{background-image:linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2))}div:where(.swal2-container) div:where(.swal2-loader){display:none;align-items:center;justify-content:center;width:2.2em;height:2.2em;margin:0 1.875em;animation:swal2-rotate-loading 1.5s linear 0s infinite normal;border-width:.25em;border-style:solid;border-radius:100%;border-color:#2778c4 rgba(0,0,0,0) #2778c4 rgba(0,0,0,0)}div:where(.swal2-container) button:where(.swal2-styled){margin:.3125em;padding:.625em 1.1em;transition:box-shadow .1s;box-shadow:0 0 0 3px rgba(0,0,0,0);font-weight:500}div:where(.swal2-container) button:where(.swal2-styled):not([disabled]){cursor:pointer}div:where(.swal2-container) button:where(.swal2-styled).swal2-confirm{border:0;border-radius:.25em;background:initial;background-color:#7066e0;color:#fff;font-size:1em}div:where(.swal2-container) button:where(.swal2-styled).swal2-confirm:focus{box-shadow:0 0 0 3px rgba(112,102,224,.5)}div:where(.swal2-container) button:where(.swal2-styled).swal2-deny{border:0;border-radius:.25em;background:initial;background-color:#dc3741;color:#fff;font-size:1em}div:where(.swal2-container) button:where(.swal2-styled).swal2-deny:focus{box-shadow:0 0 0 3px rgba(220,55,65,.5)}div:where(.swal2-container) button:where(.swal2-styled).swal2-cancel{border:0;border-radius:.25em;background:initial;background-color:#6e7881;color:#fff;font-size:1em}div:where(.swal2-container) button:where(.swal2-styled).swal2-cancel:focus{box-shadow:0 0 0 3px rgba(110,120,129,.5)}div:where(.swal2-container) button:where(.swal2-styled).swal2-default-outline:focus{box-shadow:0 0 0 3px rgba(100,150,200,.5)}div:where(.swal2-container) button:where(.swal2-styled):focus{outline:none}div:where(.swal2-container) button:where(.swal2-styled)::-moz-focus-inner{border:0}div:where(.swal2-container) div:where(.swal2-footer){justify-content:center;margin:1em 0 0;padding:1em 1em 0;border-top:1px solid #eee;color:inherit;font-size:1em}div:where(.swal2-container) .swal2-timer-progress-bar-container{position:absolute;right:0;bottom:0;left:0;grid-column:auto !important;overflow:hidden;border-bottom-right-radius:5px;border-bottom-left-radius:5px}div:where(.swal2-container) div:where(.swal2-timer-progress-bar){width:100%;height:.25em;background:rgba(0,0,0,.2)}div:where(.swal2-container) img:where(.swal2-image){max-width:100%;margin:2em auto 1em}div:where(.swal2-container) button:where(.swal2-close){z-index:2;align-items:center;justify-content:center;width:1.2em;height:1.2em;margin-top:0;margin-right:0;margin-bottom:-1.2em;padding:0;overflow:hidden;transition:color .1s,box-shadow .1s;border:none;border-radius:5px;background:rgba(0,0,0,0);color:#ccc;font-family:monospace;font-size:2.5em;cursor:pointer;justify-self:end}div:where(.swal2-container) button:where(.swal2-close):hover{transform:none;background:rgba(0,0,0,0);color:#f27474}div:where(.swal2-container) button:where(.swal2-close):focus{outline:none;box-shadow:inset 0 0 0 3px rgba(100,150,200,.5)}div:where(.swal2-container) button:where(.swal2-close)::-moz-focus-inner{border:0}div:where(.swal2-container) .swal2-html-container{z-index:1;justify-content:center;margin:1em 1.6em .3em;padding:0;overflow:auto;color:inherit;font-size:1.125em;font-weight:normal;line-height:normal;text-align:center;word-wrap:break-word;word-break:break-word}div:where(.swal2-container) input:where(.swal2-input),div:where(.swal2-container) input:where(.swal2-file),div:where(.swal2-container) textarea:where(.swal2-textarea),div:where(.swal2-container) select:where(.swal2-select),div:where(.swal2-container) div:where(.swal2-radio),div:where(.swal2-container) label:where(.swal2-checkbox){margin:1em 2em 3px}div:where(.swal2-container) input:where(.swal2-input),div:where(.swal2-container) input:where(.swal2-file),div:where(.swal2-container) textarea:where(.swal2-textarea){box-sizing:border-box;width:auto;transition:border-color .1s,box-shadow .1s;border:1px solid #d9d9d9;border-radius:.1875em;background:rgba(0,0,0,0);box-shadow:inset 0 1px 1px rgba(0,0,0,.06),0 0 0 3px rgba(0,0,0,0);color:inherit;font-size:1.125em}div:where(.swal2-container) input:where(.swal2-input).swal2-inputerror,div:where(.swal2-container) input:where(.swal2-file).swal2-inputerror,div:where(.swal2-container) textarea:where(.swal2-textarea).swal2-inputerror{border-color:#f27474 !important;box-shadow:0 0 2px #f27474 !important}div:where(.swal2-container) input:where(.swal2-input):focus,div:where(.swal2-container) input:where(.swal2-file):focus,div:where(.swal2-container) textarea:where(.swal2-textarea):focus{border:1px solid #b4dbed;outline:none;box-shadow:inset 0 1px 1px rgba(0,0,0,.06),0 0 0 3px rgba(100,150,200,.5)}div:where(.swal2-container) input:where(.swal2-input)::placeholder,div:where(.swal2-container) input:where(.swal2-file)::placeholder,div:where(.swal2-container) textarea:where(.swal2-textarea)::placeholder{color:#ccc}div:where(.swal2-container) .swal2-range{margin:1em 2em 3px;background:#fff}div:where(.swal2-container) .swal2-range input{width:80%}div:where(.swal2-container) .swal2-range output{width:20%;color:inherit;font-weight:600;text-align:center}div:where(.swal2-container) .swal2-range input,div:where(.swal2-container) .swal2-range output{height:2.625em;padding:0;font-size:1.125em;line-height:2.625em}div:where(.swal2-container) .swal2-input{height:2.625em;padding:0 .75em}div:where(.swal2-container) .swal2-file{width:75%;margin-right:auto;margin-left:auto;background:rgba(0,0,0,0);font-size:1.125em}div:where(.swal2-container) .swal2-textarea{height:6.75em;padding:.75em}div:where(.swal2-container) .swal2-select{min-width:50%;max-width:100%;padding:.375em .625em;background:rgba(0,0,0,0);color:inherit;font-size:1.125em}div:where(.swal2-container) .swal2-radio,div:where(.swal2-container) .swal2-checkbox{align-items:center;justify-content:center;background:#fff;color:inherit}div:where(.swal2-container) .swal2-radio label,div:where(.swal2-container) .swal2-checkbox label{margin:0 .6em;font-size:1.125em}div:where(.swal2-container) .swal2-radio input,div:where(.swal2-container) .swal2-checkbox input{flex-shrink:0;margin:0 .4em}div:where(.swal2-container) label:where(.swal2-input-label){display:flex;justify-content:center;margin:1em auto 0}div:where(.swal2-container) div:where(.swal2-validation-message){align-items:center;justify-content:center;margin:1em 0 0;padding:.625em;overflow:hidden;background:#f0f0f0;color:#666;font-size:1em;font-weight:300}div:where(.swal2-container) div:where(.swal2-validation-message)::before{content:\"!\";display:inline-block;width:1.5em;min-width:1.5em;height:1.5em;margin:0 .625em;border-radius:50%;background-color:#f27474;color:#fff;font-weight:600;line-height:1.5em;text-align:center}div:where(.swal2-container) .swal2-progress-steps{flex-wrap:wrap;align-items:center;max-width:100%;margin:1.25em auto;padding:0;background:rgba(0,0,0,0);font-weight:600}div:where(.swal2-container) .swal2-progress-steps li{display:inline-block;position:relative}div:where(.swal2-container) .swal2-progress-steps .swal2-progress-step{z-index:20;flex-shrink:0;width:2em;height:2em;border-radius:2em;background:#2778c4;color:#fff;line-height:2em;text-align:center}div:where(.swal2-container) .swal2-progress-steps .swal2-progress-step.swal2-active-progress-step{background:#2778c4}div:where(.swal2-container) .swal2-progress-steps .swal2-progress-step.swal2-active-progress-step~.swal2-progress-step{background:#add8e6;color:#fff}div:where(.swal2-container) .swal2-progress-steps .swal2-progress-step.swal2-active-progress-step~.swal2-progress-step-line{background:#add8e6}div:where(.swal2-container) .swal2-progress-steps .swal2-progress-step-line{z-index:10;flex-shrink:0;width:2.5em;height:.4em;margin:0 -1px;background:#2778c4}div:where(.swal2-icon){position:relative;box-sizing:content-box;justify-content:center;width:5em;height:5em;margin:2.5em auto .6em;border:0.25em solid rgba(0,0,0,0);border-radius:50%;border-color:#000;font-family:inherit;line-height:5em;cursor:default;user-select:none}div:where(.swal2-icon) .swal2-icon-content{display:flex;align-items:center;font-size:3.75em}div:where(.swal2-icon).swal2-error{border-color:#f27474;color:#f27474}div:where(.swal2-icon).swal2-error .swal2-x-mark{position:relative;flex-grow:1}div:where(.swal2-icon).swal2-error [class^=swal2-x-mark-line]{display:block;position:absolute;top:2.3125em;width:2.9375em;height:.3125em;border-radius:.125em;background-color:#f27474}div:where(.swal2-icon).swal2-error [class^=swal2-x-mark-line][class$=left]{left:1.0625em;transform:rotate(45deg)}div:where(.swal2-icon).swal2-error [class^=swal2-x-mark-line][class$=right]{right:1em;transform:rotate(-45deg)}div:where(.swal2-icon).swal2-error.swal2-icon-show{animation:swal2-animate-error-icon .5s}div:where(.swal2-icon).swal2-error.swal2-icon-show .swal2-x-mark{animation:swal2-animate-error-x-mark .5s}div:where(.swal2-icon).swal2-warning{border-color:#facea8;color:#f8bb86}div:where(.swal2-icon).swal2-warning.swal2-icon-show{animation:swal2-animate-error-icon .5s}div:where(.swal2-icon).swal2-warning.swal2-icon-show .swal2-icon-content{animation:swal2-animate-i-mark .5s}div:where(.swal2-icon).swal2-info{border-color:#9de0f6;color:#3fc3ee}div:where(.swal2-icon).swal2-info.swal2-icon-show{animation:swal2-animate-error-icon .5s}div:where(.swal2-icon).swal2-info.swal2-icon-show .swal2-icon-content{animation:swal2-animate-i-mark .8s}div:where(.swal2-icon).swal2-question{border-color:#c9dae1;color:#87adbd}div:where(.swal2-icon).swal2-question.swal2-icon-show{animation:swal2-animate-error-icon .5s}div:where(.swal2-icon).swal2-question.swal2-icon-show .swal2-icon-content{animation:swal2-animate-question-mark .8s}div:where(.swal2-icon).swal2-success{border-color:#a5dc86;color:#a5dc86}div:where(.swal2-icon).swal2-success [class^=swal2-success-circular-line]{position:absolute;width:3.75em;height:7.5em;transform:rotate(45deg);border-radius:50%}div:where(.swal2-icon).swal2-success [class^=swal2-success-circular-line][class$=left]{top:-0.4375em;left:-2.0635em;transform:rotate(-45deg);transform-origin:3.75em 3.75em;border-radius:7.5em 0 0 7.5em}div:where(.swal2-icon).swal2-success [class^=swal2-success-circular-line][class$=right]{top:-0.6875em;left:1.875em;transform:rotate(-45deg);transform-origin:0 3.75em;border-radius:0 7.5em 7.5em 0}div:where(.swal2-icon).swal2-success .swal2-success-ring{position:absolute;z-index:2;top:-0.25em;left:-0.25em;box-sizing:content-box;width:100%;height:100%;border:.25em solid rgba(165,220,134,.3);border-radius:50%}div:where(.swal2-icon).swal2-success .swal2-success-fix{position:absolute;z-index:1;top:.5em;left:1.625em;width:.4375em;height:5.625em;transform:rotate(-45deg)}div:where(.swal2-icon).swal2-success [class^=swal2-success-line]{display:block;position:absolute;z-index:2;height:.3125em;border-radius:.125em;background-color:#a5dc86}div:where(.swal2-icon).swal2-success [class^=swal2-success-line][class$=tip]{top:2.875em;left:.8125em;width:1.5625em;transform:rotate(45deg)}div:where(.swal2-icon).swal2-success [class^=swal2-success-line][class$=long]{top:2.375em;right:.5em;width:2.9375em;transform:rotate(-45deg)}div:where(.swal2-icon).swal2-success.swal2-icon-show .swal2-success-line-tip{animation:swal2-animate-success-line-tip .75s}div:where(.swal2-icon).swal2-success.swal2-icon-show .swal2-success-line-long{animation:swal2-animate-success-line-long .75s}div:where(.swal2-icon).swal2-success.swal2-icon-show .swal2-success-circular-line-right{animation:swal2-rotate-success-circular-line 4.25s ease-in}[class^=swal2]{-webkit-tap-highlight-color:rgba(0,0,0,0)}.swal2-show{animation:swal2-show .3s}.swal2-hide{animation:swal2-hide .15s forwards}.swal2-noanimation{transition:none}.swal2-scrollbar-measure{position:absolute;top:-9999px;width:50px;height:50px;overflow:scroll}.swal2-rtl .swal2-close{margin-right:initial;margin-left:0}.swal2-rtl .swal2-timer-progress-bar{right:0;left:auto}@keyframes swal2-toast-show{0%{transform:translateY(-0.625em) rotateZ(2deg)}33%{transform:translateY(0) rotateZ(-2deg)}66%{transform:translateY(0.3125em) rotateZ(2deg)}100%{transform:translateY(0) rotateZ(0deg)}}@keyframes swal2-toast-hide{100%{transform:rotateZ(1deg);opacity:0}}@keyframes swal2-toast-animate-success-line-tip{0%{top:.5625em;left:.0625em;width:0}54%{top:.125em;left:.125em;width:0}70%{top:.625em;left:-0.25em;width:1.625em}84%{top:1.0625em;left:.75em;width:.5em}100%{top:1.125em;left:.1875em;width:.75em}}@keyframes swal2-toast-animate-success-line-long{0%{top:1.625em;right:1.375em;width:0}65%{top:1.25em;right:.9375em;width:0}84%{top:.9375em;right:0;width:1.125em}100%{top:.9375em;right:.1875em;width:1.375em}}@keyframes swal2-show{0%{transform:scale(0.7)}45%{transform:scale(1.05)}80%{transform:scale(0.95)}100%{transform:scale(1)}}@keyframes swal2-hide{0%{transform:scale(1);opacity:1}100%{transform:scale(0.5);opacity:0}}@keyframes swal2-animate-success-line-tip{0%{top:1.1875em;left:.0625em;width:0}54%{top:1.0625em;left:.125em;width:0}70%{top:2.1875em;left:-0.375em;width:3.125em}84%{top:3em;left:1.3125em;width:1.0625em}100%{top:2.8125em;left:.8125em;width:1.5625em}}@keyframes swal2-animate-success-line-long{0%{top:3.375em;right:2.875em;width:0}65%{top:3.375em;right:2.875em;width:0}84%{top:2.1875em;right:0;width:3.4375em}100%{top:2.375em;right:.5em;width:2.9375em}}@keyframes swal2-rotate-success-circular-line{0%{transform:rotate(-45deg)}5%{transform:rotate(-45deg)}12%{transform:rotate(-405deg)}100%{transform:rotate(-405deg)}}@keyframes swal2-animate-error-x-mark{0%{margin-top:1.625em;transform:scale(0.4);opacity:0}50%{margin-top:1.625em;transform:scale(0.4);opacity:0}80%{margin-top:-0.375em;transform:scale(1.15)}100%{margin-top:0;transform:scale(1);opacity:1}}@keyframes swal2-animate-error-icon{0%{transform:rotateX(100deg);opacity:0}100%{transform:rotateX(0deg);opacity:1}}@keyframes swal2-rotate-loading{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}@keyframes swal2-animate-question-mark{0%{transform:rotateY(-360deg)}100%{transform:rotateY(0)}}@keyframes swal2-animate-i-mark{0%{transform:rotateZ(45deg);opacity:0}25%{transform:rotateZ(-25deg);opacity:.4}50%{transform:rotateZ(15deg);opacity:.8}75%{transform:rotateZ(-5deg);opacity:1}100%{transform:rotateX(0);opacity:1}}body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown){overflow:hidden}body.swal2-height-auto{height:auto !important}body.swal2-no-backdrop .swal2-container{background-color:rgba(0,0,0,0) !important;pointer-events:none}body.swal2-no-backdrop .swal2-container .swal2-popup{pointer-events:all}body.swal2-no-backdrop .swal2-container .swal2-modal{box-shadow:0 0 10px rgba(0,0,0,.4)}@media print{body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown){overflow-y:scroll !important}body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown)>[aria-hidden=true]{display:none}body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) .swal2-container{position:static !important}}body.swal2-toast-shown .swal2-container{box-sizing:border-box;width:360px;max-width:100%;background-color:rgba(0,0,0,0);pointer-events:none}body.swal2-toast-shown .swal2-container.swal2-top{inset:0 auto auto 50%;transform:translateX(-50%)}body.swal2-toast-shown .swal2-container.swal2-top-end,body.swal2-toast-shown .swal2-container.swal2-top-right{inset:0 0 auto auto}body.swal2-toast-shown .swal2-container.swal2-top-start,body.swal2-toast-shown .swal2-container.swal2-top-left{inset:0 auto auto 0}body.swal2-toast-shown .swal2-container.swal2-center-start,body.swal2-toast-shown .swal2-container.swal2-center-left{inset:50% auto auto 0;transform:translateY(-50%)}body.swal2-toast-shown .swal2-container.swal2-center{inset:50% auto auto 50%;transform:translate(-50%, -50%)}body.swal2-toast-shown .swal2-container.swal2-center-end,body.swal2-toast-shown .swal2-container.swal2-center-right{inset:50% 0 auto auto;transform:translateY(-50%)}body.swal2-toast-shown .swal2-container.swal2-bottom-start,body.swal2-toast-shown .swal2-container.swal2-bottom-left{inset:auto auto 0 0}body.swal2-toast-shown .swal2-container.swal2-bottom{inset:auto auto 0 50%;transform:translateX(-50%)}body.swal2-toast-shown .swal2-container.swal2-bottom-end,body.swal2-toast-shown .swal2-container.swal2-bottom-right{inset:auto 0 0 auto}"); 
+		if (typeof commonjsGlobal !== 'undefined' && commonjsGlobal.Sweetalert2){  commonjsGlobal.swal = commonjsGlobal.sweetAlert = commonjsGlobal.Swal = commonjsGlobal.SweetAlert = commonjsGlobal.Sweetalert2;}
+
+		"undefined"!=typeof document&&function(e,t){var n=e.createElement("style");if(e.getElementsByTagName("head")[0].appendChild(n),n.styleSheet)n.styleSheet.disabled||(n.styleSheet.cssText=t);else try{n.innerHTML=t;}catch(e){n.innerText=t;}}(document,".swal2-popup.swal2-toast{box-sizing:border-box;grid-column:1/4!important;grid-row:1/4!important;grid-template-columns:1fr 99fr 1fr;padding:1em;overflow-y:hidden;background:#fff;box-shadow:0 0 1px rgba(0,0,0,.075),0 1px 2px rgba(0,0,0,.075),1px 2px 4px rgba(0,0,0,.075),1px 3px 8px rgba(0,0,0,.075),2px 4px 16px rgba(0,0,0,.075);pointer-events:all}.swal2-popup.swal2-toast>*{grid-column:2}.swal2-popup.swal2-toast .swal2-title{margin:.5em 1em;padding:0;font-size:1em;text-align:initial}.swal2-popup.swal2-toast .swal2-loading{justify-content:center}.swal2-popup.swal2-toast .swal2-input{height:2em;margin:.5em;font-size:1em}.swal2-popup.swal2-toast .swal2-validation-message{font-size:1em}.swal2-popup.swal2-toast .swal2-footer{margin:.5em 0 0;padding:.5em 0 0;font-size:.8em}.swal2-popup.swal2-toast .swal2-close{grid-column:3/3;grid-row:1/99;align-self:center;width:.8em;height:.8em;margin:0;font-size:2em}.swal2-popup.swal2-toast .swal2-html-container{margin:.5em 1em;padding:0;font-size:1em;text-align:initial}.swal2-popup.swal2-toast .swal2-html-container:empty{padding:0}.swal2-popup.swal2-toast .swal2-loader{grid-column:1;grid-row:1/99;align-self:center;width:2em;height:2em;margin:.25em}.swal2-popup.swal2-toast .swal2-icon{grid-column:1;grid-row:1/99;align-self:center;width:2em;min-width:2em;height:2em;margin:0 .5em 0 0}.swal2-popup.swal2-toast .swal2-icon .swal2-icon-content{display:flex;align-items:center;font-size:1.8em;font-weight:700}.swal2-popup.swal2-toast .swal2-icon.swal2-success .swal2-success-ring{width:2em;height:2em}.swal2-popup.swal2-toast .swal2-icon.swal2-error [class^=swal2-x-mark-line]{top:.875em;width:1.375em}.swal2-popup.swal2-toast .swal2-icon.swal2-error [class^=swal2-x-mark-line][class$=left]{left:.3125em}.swal2-popup.swal2-toast .swal2-icon.swal2-error [class^=swal2-x-mark-line][class$=right]{right:.3125em}.swal2-popup.swal2-toast .swal2-actions{justify-content:flex-start;height:auto;margin:0;margin-top:.5em;padding:0 .5em}.swal2-popup.swal2-toast .swal2-styled{margin:.25em .5em;padding:.4em .6em;font-size:1em}.swal2-popup.swal2-toast .swal2-success{border-color:#a5dc86}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-circular-line]{position:absolute;width:1.6em;height:3em;transform:rotate(45deg);border-radius:50%}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-circular-line][class$=left]{top:-.8em;left:-.5em;transform:rotate(-45deg);transform-origin:2em 2em;border-radius:4em 0 0 4em}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-circular-line][class$=right]{top:-.25em;left:.9375em;transform-origin:0 1.5em;border-radius:0 4em 4em 0}.swal2-popup.swal2-toast .swal2-success .swal2-success-ring{width:2em;height:2em}.swal2-popup.swal2-toast .swal2-success .swal2-success-fix{top:0;left:.4375em;width:.4375em;height:2.6875em}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-line]{height:.3125em}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-line][class$=tip]{top:1.125em;left:.1875em;width:.75em}.swal2-popup.swal2-toast .swal2-success [class^=swal2-success-line][class$=long]{top:.9375em;right:.1875em;width:1.375em}.swal2-popup.swal2-toast .swal2-success.swal2-icon-show .swal2-success-line-tip{-webkit-animation:swal2-toast-animate-success-line-tip .75s;animation:swal2-toast-animate-success-line-tip .75s}.swal2-popup.swal2-toast .swal2-success.swal2-icon-show .swal2-success-line-long{-webkit-animation:swal2-toast-animate-success-line-long .75s;animation:swal2-toast-animate-success-line-long .75s}.swal2-popup.swal2-toast.swal2-show{-webkit-animation:swal2-toast-show .5s;animation:swal2-toast-show .5s}.swal2-popup.swal2-toast.swal2-hide{-webkit-animation:swal2-toast-hide .1s forwards;animation:swal2-toast-hide .1s forwards}.swal2-container{display:grid;position:fixed;z-index:1060;top:0;right:0;bottom:0;left:0;box-sizing:border-box;grid-template-areas:\"top-start     top            top-end\" \"center-start  center         center-end\" \"bottom-start  bottom-center  bottom-end\";grid-template-rows:minmax(-webkit-min-content,auto) minmax(-webkit-min-content,auto) minmax(-webkit-min-content,auto);grid-template-rows:minmax(min-content,auto) minmax(min-content,auto) minmax(min-content,auto);height:100%;padding:.625em;overflow-x:hidden;transition:background-color .1s;-webkit-overflow-scrolling:touch}.swal2-container.swal2-backdrop-show,.swal2-container.swal2-noanimation{background:rgba(0,0,0,.4)}.swal2-container.swal2-backdrop-hide{background:0 0!important}.swal2-container.swal2-bottom-start,.swal2-container.swal2-center-start,.swal2-container.swal2-top-start{grid-template-columns:minmax(0,1fr) auto auto}.swal2-container.swal2-bottom,.swal2-container.swal2-center,.swal2-container.swal2-top{grid-template-columns:auto minmax(0,1fr) auto}.swal2-container.swal2-bottom-end,.swal2-container.swal2-center-end,.swal2-container.swal2-top-end{grid-template-columns:auto auto minmax(0,1fr)}.swal2-container.swal2-top-start>.swal2-popup{align-self:start}.swal2-container.swal2-top>.swal2-popup{grid-column:2;align-self:start;justify-self:center}.swal2-container.swal2-top-end>.swal2-popup,.swal2-container.swal2-top-right>.swal2-popup{grid-column:3;align-self:start;justify-self:end}.swal2-container.swal2-center-left>.swal2-popup,.swal2-container.swal2-center-start>.swal2-popup{grid-row:2;align-self:center}.swal2-container.swal2-center>.swal2-popup{grid-column:2;grid-row:2;align-self:center;justify-self:center}.swal2-container.swal2-center-end>.swal2-popup,.swal2-container.swal2-center-right>.swal2-popup{grid-column:3;grid-row:2;align-self:center;justify-self:end}.swal2-container.swal2-bottom-left>.swal2-popup,.swal2-container.swal2-bottom-start>.swal2-popup{grid-column:1;grid-row:3;align-self:end}.swal2-container.swal2-bottom>.swal2-popup{grid-column:2;grid-row:3;justify-self:center;align-self:end}.swal2-container.swal2-bottom-end>.swal2-popup,.swal2-container.swal2-bottom-right>.swal2-popup{grid-column:3;grid-row:3;align-self:end;justify-self:end}.swal2-container.swal2-grow-fullscreen>.swal2-popup,.swal2-container.swal2-grow-row>.swal2-popup{grid-column:1/4;width:100%}.swal2-container.swal2-grow-column>.swal2-popup,.swal2-container.swal2-grow-fullscreen>.swal2-popup{grid-row:1/4;align-self:stretch}.swal2-container.swal2-no-transition{transition:none!important}.swal2-popup{display:none;position:relative;box-sizing:border-box;grid-template-columns:minmax(0,100%);width:32em;max-width:100%;padding:0 0 1.25em;border:none;border-radius:5px;background:#fff;color:#545454;font-family:inherit;font-size:1rem}.swal2-popup:focus{outline:0}.swal2-popup.swal2-loading{overflow-y:hidden}.swal2-title{position:relative;max-width:100%;margin:0;padding:.8em 1em 0;color:inherit;font-size:1.875em;font-weight:600;text-align:center;text-transform:none;word-wrap:break-word}.swal2-actions{display:flex;z-index:1;box-sizing:border-box;flex-wrap:wrap;align-items:center;justify-content:center;width:auto;margin:1.25em auto 0;padding:0}.swal2-actions:not(.swal2-loading) .swal2-styled[disabled]{opacity:.4}.swal2-actions:not(.swal2-loading) .swal2-styled:hover{background-image:linear-gradient(rgba(0,0,0,.1),rgba(0,0,0,.1))}.swal2-actions:not(.swal2-loading) .swal2-styled:active{background-image:linear-gradient(rgba(0,0,0,.2),rgba(0,0,0,.2))}.swal2-loader{display:none;align-items:center;justify-content:center;width:2.2em;height:2.2em;margin:0 1.875em;-webkit-animation:swal2-rotate-loading 1.5s linear 0s infinite normal;animation:swal2-rotate-loading 1.5s linear 0s infinite normal;border-width:.25em;border-style:solid;border-radius:100%;border-color:#2778c4 transparent #2778c4 transparent}.swal2-styled{margin:.3125em;padding:.625em 1.1em;transition:box-shadow .1s;box-shadow:0 0 0 3px transparent;font-weight:500}.swal2-styled:not([disabled]){cursor:pointer}.swal2-styled.swal2-confirm{border:0;border-radius:.25em;background:initial;background-color:#7066e0;color:#fff;font-size:1em}.swal2-styled.swal2-confirm:focus{box-shadow:0 0 0 3px rgba(112,102,224,.5)}.swal2-styled.swal2-deny{border:0;border-radius:.25em;background:initial;background-color:#dc3741;color:#fff;font-size:1em}.swal2-styled.swal2-deny:focus{box-shadow:0 0 0 3px rgba(220,55,65,.5)}.swal2-styled.swal2-cancel{border:0;border-radius:.25em;background:initial;background-color:#6e7881;color:#fff;font-size:1em}.swal2-styled.swal2-cancel:focus{box-shadow:0 0 0 3px rgba(110,120,129,.5)}.swal2-styled.swal2-default-outline:focus{box-shadow:0 0 0 3px rgba(100,150,200,.5)}.swal2-styled:focus{outline:0}.swal2-styled::-moz-focus-inner{border:0}.swal2-footer{justify-content:center;margin:1em 0 0;padding:1em 1em 0;border-top:1px solid #eee;color:inherit;font-size:1em}.swal2-timer-progress-bar-container{position:absolute;right:0;bottom:0;left:0;grid-column:auto!important;overflow:hidden;border-bottom-right-radius:5px;border-bottom-left-radius:5px}.swal2-timer-progress-bar{width:100%;height:.25em;background:rgba(0,0,0,.2)}.swal2-image{max-width:100%;margin:2em auto 1em}.swal2-close{z-index:2;align-items:center;justify-content:center;width:1.2em;height:1.2em;margin-top:0;margin-right:0;margin-bottom:-1.2em;padding:0;overflow:hidden;transition:color .1s,box-shadow .1s;border:none;border-radius:5px;background:0 0;color:#ccc;font-family:serif;font-family:monospace;font-size:2.5em;cursor:pointer;justify-self:end}.swal2-close:hover{transform:none;background:0 0;color:#f27474}.swal2-close:focus{outline:0;box-shadow:inset 0 0 0 3px rgba(100,150,200,.5)}.swal2-close::-moz-focus-inner{border:0}.swal2-html-container{z-index:1;justify-content:center;margin:1em 1.6em .3em;padding:0;overflow:auto;color:inherit;font-size:1.125em;font-weight:400;line-height:normal;text-align:center;word-wrap:break-word;word-break:break-word}.swal2-checkbox,.swal2-file,.swal2-input,.swal2-radio,.swal2-select,.swal2-textarea{margin:1em 2em 3px}.swal2-file,.swal2-input,.swal2-textarea{box-sizing:border-box;width:auto;transition:border-color .1s,box-shadow .1s;border:1px solid #d9d9d9;border-radius:.1875em;background:inherit;box-shadow:inset 0 1px 1px rgba(0,0,0,.06),0 0 0 3px transparent;color:inherit;font-size:1.125em}.swal2-file.swal2-inputerror,.swal2-input.swal2-inputerror,.swal2-textarea.swal2-inputerror{border-color:#f27474!important;box-shadow:0 0 2px #f27474!important}.swal2-file:focus,.swal2-input:focus,.swal2-textarea:focus{border:1px solid #b4dbed;outline:0;box-shadow:inset 0 1px 1px rgba(0,0,0,.06),0 0 0 3px rgba(100,150,200,.5)}.swal2-file::-moz-placeholder,.swal2-input::-moz-placeholder,.swal2-textarea::-moz-placeholder{color:#ccc}.swal2-file:-ms-input-placeholder,.swal2-input:-ms-input-placeholder,.swal2-textarea:-ms-input-placeholder{color:#ccc}.swal2-file::placeholder,.swal2-input::placeholder,.swal2-textarea::placeholder{color:#ccc}.swal2-range{margin:1em 2em 3px;background:#fff}.swal2-range input{width:80%}.swal2-range output{width:20%;color:inherit;font-weight:600;text-align:center}.swal2-range input,.swal2-range output{height:2.625em;padding:0;font-size:1.125em;line-height:2.625em}.swal2-input{height:2.625em;padding:0 .75em}.swal2-file{width:75%;margin-right:auto;margin-left:auto;background:inherit;font-size:1.125em}.swal2-textarea{height:6.75em;padding:.75em}.swal2-select{min-width:50%;max-width:100%;padding:.375em .625em;background:inherit;color:inherit;font-size:1.125em}.swal2-checkbox,.swal2-radio{align-items:center;justify-content:center;background:#fff;color:inherit}.swal2-checkbox label,.swal2-radio label{margin:0 .6em;font-size:1.125em}.swal2-checkbox input,.swal2-radio input{flex-shrink:0;margin:0 .4em}.swal2-input-label{display:flex;justify-content:center;margin:1em auto 0}.swal2-validation-message{align-items:center;justify-content:center;margin:1em 0 0;padding:.625em;overflow:hidden;background:#f0f0f0;color:#666;font-size:1em;font-weight:300}.swal2-validation-message::before{content:\"!\";display:inline-block;width:1.5em;min-width:1.5em;height:1.5em;margin:0 .625em;border-radius:50%;background-color:#f27474;color:#fff;font-weight:600;line-height:1.5em;text-align:center}.swal2-icon{position:relative;box-sizing:content-box;justify-content:center;width:5em;height:5em;margin:2.5em auto .6em;border:.25em solid transparent;border-radius:50%;border-color:#000;font-family:inherit;line-height:5em;cursor:default;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.swal2-icon .swal2-icon-content{display:flex;align-items:center;font-size:3.75em}.swal2-icon.swal2-error{border-color:#f27474;color:#f27474}.swal2-icon.swal2-error .swal2-x-mark{position:relative;flex-grow:1}.swal2-icon.swal2-error [class^=swal2-x-mark-line]{display:block;position:absolute;top:2.3125em;width:2.9375em;height:.3125em;border-radius:.125em;background-color:#f27474}.swal2-icon.swal2-error [class^=swal2-x-mark-line][class$=left]{left:1.0625em;transform:rotate(45deg)}.swal2-icon.swal2-error [class^=swal2-x-mark-line][class$=right]{right:1em;transform:rotate(-45deg)}.swal2-icon.swal2-error.swal2-icon-show{-webkit-animation:swal2-animate-error-icon .5s;animation:swal2-animate-error-icon .5s}.swal2-icon.swal2-error.swal2-icon-show .swal2-x-mark{-webkit-animation:swal2-animate-error-x-mark .5s;animation:swal2-animate-error-x-mark .5s}.swal2-icon.swal2-warning{border-color:#facea8;color:#f8bb86}.swal2-icon.swal2-warning.swal2-icon-show{-webkit-animation:swal2-animate-error-icon .5s;animation:swal2-animate-error-icon .5s}.swal2-icon.swal2-warning.swal2-icon-show .swal2-icon-content{-webkit-animation:swal2-animate-i-mark .5s;animation:swal2-animate-i-mark .5s}.swal2-icon.swal2-info{border-color:#9de0f6;color:#3fc3ee}.swal2-icon.swal2-info.swal2-icon-show{-webkit-animation:swal2-animate-error-icon .5s;animation:swal2-animate-error-icon .5s}.swal2-icon.swal2-info.swal2-icon-show .swal2-icon-content{-webkit-animation:swal2-animate-i-mark .8s;animation:swal2-animate-i-mark .8s}.swal2-icon.swal2-question{border-color:#c9dae1;color:#87adbd}.swal2-icon.swal2-question.swal2-icon-show{-webkit-animation:swal2-animate-error-icon .5s;animation:swal2-animate-error-icon .5s}.swal2-icon.swal2-question.swal2-icon-show .swal2-icon-content{-webkit-animation:swal2-animate-question-mark .8s;animation:swal2-animate-question-mark .8s}.swal2-icon.swal2-success{border-color:#a5dc86;color:#a5dc86}.swal2-icon.swal2-success [class^=swal2-success-circular-line]{position:absolute;width:3.75em;height:7.5em;transform:rotate(45deg);border-radius:50%}.swal2-icon.swal2-success [class^=swal2-success-circular-line][class$=left]{top:-.4375em;left:-2.0635em;transform:rotate(-45deg);transform-origin:3.75em 3.75em;border-radius:7.5em 0 0 7.5em}.swal2-icon.swal2-success [class^=swal2-success-circular-line][class$=right]{top:-.6875em;left:1.875em;transform:rotate(-45deg);transform-origin:0 3.75em;border-radius:0 7.5em 7.5em 0}.swal2-icon.swal2-success .swal2-success-ring{position:absolute;z-index:2;top:-.25em;left:-.25em;box-sizing:content-box;width:100%;height:100%;border:.25em solid rgba(165,220,134,.3);border-radius:50%}.swal2-icon.swal2-success .swal2-success-fix{position:absolute;z-index:1;top:.5em;left:1.625em;width:.4375em;height:5.625em;transform:rotate(-45deg)}.swal2-icon.swal2-success [class^=swal2-success-line]{display:block;position:absolute;z-index:2;height:.3125em;border-radius:.125em;background-color:#a5dc86}.swal2-icon.swal2-success [class^=swal2-success-line][class$=tip]{top:2.875em;left:.8125em;width:1.5625em;transform:rotate(45deg)}.swal2-icon.swal2-success [class^=swal2-success-line][class$=long]{top:2.375em;right:.5em;width:2.9375em;transform:rotate(-45deg)}.swal2-icon.swal2-success.swal2-icon-show .swal2-success-line-tip{-webkit-animation:swal2-animate-success-line-tip .75s;animation:swal2-animate-success-line-tip .75s}.swal2-icon.swal2-success.swal2-icon-show .swal2-success-line-long{-webkit-animation:swal2-animate-success-line-long .75s;animation:swal2-animate-success-line-long .75s}.swal2-icon.swal2-success.swal2-icon-show .swal2-success-circular-line-right{-webkit-animation:swal2-rotate-success-circular-line 4.25s ease-in;animation:swal2-rotate-success-circular-line 4.25s ease-in}.swal2-progress-steps{flex-wrap:wrap;align-items:center;max-width:100%;margin:1.25em auto;padding:0;background:inherit;font-weight:600}.swal2-progress-steps li{display:inline-block;position:relative}.swal2-progress-steps .swal2-progress-step{z-index:20;flex-shrink:0;width:2em;height:2em;border-radius:2em;background:#2778c4;color:#fff;line-height:2em;text-align:center}.swal2-progress-steps .swal2-progress-step.swal2-active-progress-step{background:#2778c4}.swal2-progress-steps .swal2-progress-step.swal2-active-progress-step~.swal2-progress-step{background:#add8e6;color:#fff}.swal2-progress-steps .swal2-progress-step.swal2-active-progress-step~.swal2-progress-step-line{background:#add8e6}.swal2-progress-steps .swal2-progress-step-line{z-index:10;flex-shrink:0;width:2.5em;height:.4em;margin:0 -1px;background:#2778c4}[class^=swal2]{-webkit-tap-highlight-color:transparent}.swal2-show{-webkit-animation:swal2-show .3s;animation:swal2-show .3s}.swal2-hide{-webkit-animation:swal2-hide .15s forwards;animation:swal2-hide .15s forwards}.swal2-noanimation{transition:none}.swal2-scrollbar-measure{position:absolute;top:-9999px;width:50px;height:50px;overflow:scroll}.swal2-rtl .swal2-close{margin-right:initial;margin-left:0}.swal2-rtl .swal2-timer-progress-bar{right:0;left:auto}@-webkit-keyframes swal2-toast-show{0%{transform:translateY(-.625em) rotateZ(2deg)}33%{transform:translateY(0) rotateZ(-2deg)}66%{transform:translateY(.3125em) rotateZ(2deg)}100%{transform:translateY(0) rotateZ(0)}}@keyframes swal2-toast-show{0%{transform:translateY(-.625em) rotateZ(2deg)}33%{transform:translateY(0) rotateZ(-2deg)}66%{transform:translateY(.3125em) rotateZ(2deg)}100%{transform:translateY(0) rotateZ(0)}}@-webkit-keyframes swal2-toast-hide{100%{transform:rotateZ(1deg);opacity:0}}@keyframes swal2-toast-hide{100%{transform:rotateZ(1deg);opacity:0}}@-webkit-keyframes swal2-toast-animate-success-line-tip{0%{top:.5625em;left:.0625em;width:0}54%{top:.125em;left:.125em;width:0}70%{top:.625em;left:-.25em;width:1.625em}84%{top:1.0625em;left:.75em;width:.5em}100%{top:1.125em;left:.1875em;width:.75em}}@keyframes swal2-toast-animate-success-line-tip{0%{top:.5625em;left:.0625em;width:0}54%{top:.125em;left:.125em;width:0}70%{top:.625em;left:-.25em;width:1.625em}84%{top:1.0625em;left:.75em;width:.5em}100%{top:1.125em;left:.1875em;width:.75em}}@-webkit-keyframes swal2-toast-animate-success-line-long{0%{top:1.625em;right:1.375em;width:0}65%{top:1.25em;right:.9375em;width:0}84%{top:.9375em;right:0;width:1.125em}100%{top:.9375em;right:.1875em;width:1.375em}}@keyframes swal2-toast-animate-success-line-long{0%{top:1.625em;right:1.375em;width:0}65%{top:1.25em;right:.9375em;width:0}84%{top:.9375em;right:0;width:1.125em}100%{top:.9375em;right:.1875em;width:1.375em}}@-webkit-keyframes swal2-show{0%{transform:scale(.7)}45%{transform:scale(1.05)}80%{transform:scale(.95)}100%{transform:scale(1)}}@keyframes swal2-show{0%{transform:scale(.7)}45%{transform:scale(1.05)}80%{transform:scale(.95)}100%{transform:scale(1)}}@-webkit-keyframes swal2-hide{0%{transform:scale(1);opacity:1}100%{transform:scale(.5);opacity:0}}@keyframes swal2-hide{0%{transform:scale(1);opacity:1}100%{transform:scale(.5);opacity:0}}@-webkit-keyframes swal2-animate-success-line-tip{0%{top:1.1875em;left:.0625em;width:0}54%{top:1.0625em;left:.125em;width:0}70%{top:2.1875em;left:-.375em;width:3.125em}84%{top:3em;left:1.3125em;width:1.0625em}100%{top:2.8125em;left:.8125em;width:1.5625em}}@keyframes swal2-animate-success-line-tip{0%{top:1.1875em;left:.0625em;width:0}54%{top:1.0625em;left:.125em;width:0}70%{top:2.1875em;left:-.375em;width:3.125em}84%{top:3em;left:1.3125em;width:1.0625em}100%{top:2.8125em;left:.8125em;width:1.5625em}}@-webkit-keyframes swal2-animate-success-line-long{0%{top:3.375em;right:2.875em;width:0}65%{top:3.375em;right:2.875em;width:0}84%{top:2.1875em;right:0;width:3.4375em}100%{top:2.375em;right:.5em;width:2.9375em}}@keyframes swal2-animate-success-line-long{0%{top:3.375em;right:2.875em;width:0}65%{top:3.375em;right:2.875em;width:0}84%{top:2.1875em;right:0;width:3.4375em}100%{top:2.375em;right:.5em;width:2.9375em}}@-webkit-keyframes swal2-rotate-success-circular-line{0%{transform:rotate(-45deg)}5%{transform:rotate(-45deg)}12%{transform:rotate(-405deg)}100%{transform:rotate(-405deg)}}@keyframes swal2-rotate-success-circular-line{0%{transform:rotate(-45deg)}5%{transform:rotate(-45deg)}12%{transform:rotate(-405deg)}100%{transform:rotate(-405deg)}}@-webkit-keyframes swal2-animate-error-x-mark{0%{margin-top:1.625em;transform:scale(.4);opacity:0}50%{margin-top:1.625em;transform:scale(.4);opacity:0}80%{margin-top:-.375em;transform:scale(1.15)}100%{margin-top:0;transform:scale(1);opacity:1}}@keyframes swal2-animate-error-x-mark{0%{margin-top:1.625em;transform:scale(.4);opacity:0}50%{margin-top:1.625em;transform:scale(.4);opacity:0}80%{margin-top:-.375em;transform:scale(1.15)}100%{margin-top:0;transform:scale(1);opacity:1}}@-webkit-keyframes swal2-animate-error-icon{0%{transform:rotateX(100deg);opacity:0}100%{transform:rotateX(0);opacity:1}}@keyframes swal2-animate-error-icon{0%{transform:rotateX(100deg);opacity:0}100%{transform:rotateX(0);opacity:1}}@-webkit-keyframes swal2-rotate-loading{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}@keyframes swal2-rotate-loading{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}@-webkit-keyframes swal2-animate-question-mark{0%{transform:rotateY(-360deg)}100%{transform:rotateY(0)}}@keyframes swal2-animate-question-mark{0%{transform:rotateY(-360deg)}100%{transform:rotateY(0)}}@-webkit-keyframes swal2-animate-i-mark{0%{transform:rotateZ(45deg);opacity:0}25%{transform:rotateZ(-25deg);opacity:.4}50%{transform:rotateZ(15deg);opacity:.8}75%{transform:rotateZ(-5deg);opacity:1}100%{transform:rotateX(0);opacity:1}}@keyframes swal2-animate-i-mark{0%{transform:rotateZ(45deg);opacity:0}25%{transform:rotateZ(-25deg);opacity:.4}50%{transform:rotateZ(15deg);opacity:.8}75%{transform:rotateZ(-5deg);opacity:1}100%{transform:rotateX(0);opacity:1}}body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown){overflow:hidden}body.swal2-height-auto{height:auto!important}body.swal2-no-backdrop .swal2-container{background-color:transparent!important;pointer-events:none}body.swal2-no-backdrop .swal2-container .swal2-popup{pointer-events:all}body.swal2-no-backdrop .swal2-container .swal2-modal{box-shadow:0 0 10px rgba(0,0,0,.4)}@media print{body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown){overflow-y:scroll!important}body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown)>[aria-hidden=true]{display:none}body.swal2-shown:not(.swal2-no-backdrop):not(.swal2-toast-shown) .swal2-container{position:static!important}}body.swal2-toast-shown .swal2-container{box-sizing:border-box;width:360px;max-width:100%;background-color:transparent;pointer-events:none}body.swal2-toast-shown .swal2-container.swal2-top{top:0;right:auto;bottom:auto;left:50%;transform:translateX(-50%)}body.swal2-toast-shown .swal2-container.swal2-top-end,body.swal2-toast-shown .swal2-container.swal2-top-right{top:0;right:0;bottom:auto;left:auto}body.swal2-toast-shown .swal2-container.swal2-top-left,body.swal2-toast-shown .swal2-container.swal2-top-start{top:0;right:auto;bottom:auto;left:0}body.swal2-toast-shown .swal2-container.swal2-center-left,body.swal2-toast-shown .swal2-container.swal2-center-start{top:50%;right:auto;bottom:auto;left:0;transform:translateY(-50%)}body.swal2-toast-shown .swal2-container.swal2-center{top:50%;right:auto;bottom:auto;left:50%;transform:translate(-50%,-50%)}body.swal2-toast-shown .swal2-container.swal2-center-end,body.swal2-toast-shown .swal2-container.swal2-center-right{top:50%;right:0;bottom:auto;left:auto;transform:translateY(-50%)}body.swal2-toast-shown .swal2-container.swal2-bottom-left,body.swal2-toast-shown .swal2-container.swal2-bottom-start{top:auto;right:auto;bottom:0;left:0}body.swal2-toast-shown .swal2-container.swal2-bottom{top:auto;right:auto;bottom:0;left:50%;transform:translateX(-50%)}body.swal2-toast-shown .swal2-container.swal2-bottom-end,body.swal2-toast-shown .swal2-container.swal2-bottom-right{top:auto;right:0;bottom:0;left:auto}"); 
 	} (sweetalert2_all, sweetalert2_all.exports));
 
 	var sweetalert2_allExports = sweetalert2_all.exports;
@@ -8571,7 +7823,7 @@
 
 	/* wwwroot\js\svelte\core\components\Search.svelte generated by Svelte v4.0.1 */
 
-	function create_fragment$2(ctx) {
+	function create_fragment$4(ctx) {
 		let div2;
 		let div1;
 		let div0;
@@ -8633,7 +7885,7 @@
 		};
 	}
 
-	function instance$2($$self, $$props, $$invalidate) {
+	function instance$4($$self, $$props, $$invalidate) {
 		let { searchTerm } = $$props;
 		let { placeholder } = $$props;
 
@@ -8657,7 +7909,7 @@
 	class Search extends SvelteComponent {
 		constructor(options) {
 			super();
-			init(this, options, instance$2, create_fragment$2, safe_not_equal, { searchTerm: 0, placeholder: 1 });
+			init(this, options, instance$4, create_fragment$4, safe_not_equal, { searchTerm: 0, placeholder: 1 });
 		}
 
 		get searchTerm() {
@@ -8696,9 +7948,9 @@
 	  };
 	}
 
-	/* wwwroot\js\svelte\app\Pet\components\Input.svelte generated by Svelte v4.0.1 */
+	/* wwwroot\js\svelte\core\components\AdvancedSearch.svelte generated by Svelte v4.0.1 */
 
-	function create_fragment$1(ctx) {
+	function create_fragment$3(ctx) {
 		let input;
 		let mounted;
 		let dispose;
@@ -8740,7 +7992,7 @@
 		};
 	}
 
-	function instance$1($$self, $$props, $$invalidate) {
+	function instance$3($$self, $$props, $$invalidate) {
 		const events = getEventsAction(current_component);
 		let { value } = $$props;
 		let { placeholder } = $$props;
@@ -8753,10 +8005,10 @@
 		return [value, placeholder, events];
 	}
 
-	class Input extends SvelteComponent {
+	class AdvancedSearch extends SvelteComponent {
 		constructor(options) {
 			super();
-			init(this, options, instance$1, create_fragment$1, safe_not_equal, { value: 0, placeholder: 1 });
+			init(this, options, instance$3, create_fragment$3, safe_not_equal, { value: 0, placeholder: 1 });
 		}
 
 		get value() {
@@ -8778,15 +8030,15 @@
 		}
 	}
 
-	create_custom_element(Input, {"value":{},"placeholder":{}}, [], [], true);
+	create_custom_element(AdvancedSearch, {"value":{},"placeholder":{}}, [], [], true);
 
 	/* wwwroot\js\svelte\app\Pet\Pet.svelte generated by Svelte v4.0.1 */
 
-	function add_css(target) {
+	function add_css$1(target) {
 		append_styles(target, "svelte-1q30f93", "@import \"../dist/css/style.css\";@import \"bootstrap-toggle\";.floating-results.svelte-1q30f93.svelte-1q30f93{position:absolute;z-index:1000;width:100%;max-height:300px;overflow-y:auto;background-color:#fff;border:1px solid #ced4da;border-top:none;border-radius:0 0 0.25rem 0.25rem;box-shadow:0px 2px 5px rgba(0, 0, 0, 0.15)}.floating-results.svelte-1q30f93 .list-group-item.svelte-1q30f93{cursor:pointer}.floating-results.svelte-1q30f93 .list-group-item.svelte-1q30f93:hover{background-color:#f8f9fa}");
 	}
 
-	function get_each_context_1(ctx, list, i) {
+	function get_each_context_1$1(ctx, list, i) {
 		const child_ctx = ctx.slice();
 		child_ctx[42] = list[i];
 		child_ctx[45] = list;
@@ -8794,7 +8046,7 @@
 		return child_ctx;
 	}
 
-	function get_each_context(ctx, list, i) {
+	function get_each_context$2(ctx, list, i) {
 		const child_ctx = ctx.slice();
 		child_ctx[42] = list[i];
 		child_ctx[43] = list;
@@ -8802,31 +8054,31 @@
 		return child_ctx;
 	}
 
-	function get_each_context_2(ctx, list, i) {
+	function get_each_context_2$1(ctx, list, i) {
 		const child_ctx = ctx.slice();
 		child_ctx[42] = list[i];
 		return child_ctx;
 	}
 
-	function get_each_context_3(ctx, list, i) {
+	function get_each_context_3$1(ctx, list, i) {
 		const child_ctx = ctx.slice();
 		child_ctx[42] = list[i];
 		return child_ctx;
 	}
 
-	function get_each_context_4(ctx, list, i) {
+	function get_each_context_4$1(ctx, list, i) {
 		const child_ctx = ctx.slice();
 		child_ctx[42] = list[i];
 		return child_ctx;
 	}
 
-	function get_each_context_5(ctx, list, i) {
+	function get_each_context_5$1(ctx, list, i) {
 		const child_ctx = ctx.slice();
 		child_ctx[42] = list[i];
 		return child_ctx;
 	}
 
-	// (302:2) {#if showForm | editStatus}
+	// (301:2) {#if showForm | editStatus}
 	function create_if_block_2(ctx) {
 		let h5;
 		let t0;
@@ -8835,7 +8087,7 @@
 		let div2;
 		let div1;
 		let div0;
-		let input0;
+		let advancedsearch;
 		let t1;
 		let t2;
 		let t3;
@@ -8844,7 +8096,7 @@
 		let div4;
 		let label0;
 		let t5;
-		let input1;
+		let input0;
 		let t6;
 		let div7;
 		let div6;
@@ -8872,13 +8124,13 @@
 		let div13;
 		let label4;
 		let t20;
-		let input2;
+		let input1;
 		let t21;
 		let div16;
 		let div15;
 		let label5;
 		let t23;
-		let input3;
+		let input2;
 		let t24;
 		let button;
 		let i;
@@ -8898,34 +8150,34 @@
 		let current_block_type = select_block_type(ctx);
 		let if_block0 = current_block_type(ctx);
 
-		input0 = new Input({
-				props: { value: /*value*/ ctx[7], placeholder }
+		advancedsearch = new AdvancedSearch({
+				props: { value: /*value*/ ctx[7], placeholder: placeholder$1 }
 			});
 
-		input0.$on("input", /*onInput*/ ctx[18]);
-		input0.$on("focus", /*onFocus*/ ctx[19]);
-		input0.$on("blur", /*onBlur*/ ctx[20]);
+		advancedsearch.$on("input", /*onInput*/ ctx[18]);
+		advancedsearch.$on("focus", /*onFocus*/ ctx[19]);
+		advancedsearch.$on("blur", /*onBlur*/ ctx[20]);
 		let if_block1 = /*clients*/ ctx[8].length > 0 && !/*isClientSelected*/ ctx[9] && create_if_block_6(ctx);
 		let if_block2 = /*isClientSelected*/ ctx[9] && create_if_block_5(ctx);
 		let each_value_4 = ensure_array_like(/*petTypes*/ ctx[2]);
 		let each_blocks_2 = [];
 
 		for (let i = 0; i < each_value_4.length; i += 1) {
-			each_blocks_2[i] = create_each_block_4(get_each_context_4(ctx, each_value_4, i));
+			each_blocks_2[i] = create_each_block_4$1(get_each_context_4$1(ctx, each_value_4, i));
 		}
 
 		let each_value_3 = ensure_array_like(/*breeds*/ ctx[1]);
 		let each_blocks_1 = [];
 
 		for (let i = 0; i < each_value_3.length; i += 1) {
-			each_blocks_1[i] = create_each_block_3(get_each_context_3(ctx, each_value_3, i));
+			each_blocks_1[i] = create_each_block_3$1(get_each_context_3$1(ctx, each_value_3, i));
 		}
 
 		let each_value_2 = ensure_array_like(/*genderes*/ ctx[0]);
 		let each_blocks = [];
 
 		for (let i = 0; i < each_value_2.length; i += 1) {
-			each_blocks[i] = create_each_block_2(get_each_context_2(ctx, each_value_2, i));
+			each_blocks[i] = create_each_block_2$1(get_each_context_2$1(ctx, each_value_2, i));
 		}
 
 		function select_block_type_1(ctx, dirty) {
@@ -8947,7 +8199,7 @@
 				div2 = element("div");
 				div1 = element("div");
 				div0 = element("div");
-				create_component(input0.$$.fragment);
+				create_component(advancedsearch.$$.fragment);
 				t1 = space();
 				if (if_block1) if_block1.c();
 				t2 = space();
@@ -8959,7 +8211,7 @@
 				label0 = element("label");
 				label0.textContent = "Nombre";
 				t5 = space();
-				input1 = element("input");
+				input0 = element("input");
 				t6 = space();
 				div7 = element("div");
 				div6 = element("div");
@@ -9009,14 +8261,14 @@
 				label4 = element("label");
 				label4.textContent = "Edad";
 				t20 = space();
-				input2 = element("input");
+				input1 = element("input");
 				t21 = space();
 				div16 = element("div");
 				div15 = element("div");
 				label5 = element("label");
 				label5.textContent = "Color";
 				t23 = space();
-				input3 = element("input");
+				input2 = element("input");
 				t24 = space();
 				button = element("button");
 				i = element("i");
@@ -9032,11 +8284,11 @@
 				attr(div2, "class", "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12");
 				attr(div3, "class", "row");
 				attr(label0, "for", "pet-name");
-				attr(input1, "type", "text");
-				attr(input1, "class", "form-control");
-				attr(input1, "id", "pet-name");
-				attr(input1, "placeholder", "Nombre");
-				input1.required = true;
+				attr(input0, "type", "text");
+				attr(input0, "class", "form-control");
+				attr(input0, "id", "pet-name");
+				attr(input0, "placeholder", "Nombre");
+				input0.required = true;
 				attr(div4, "class", "form-group");
 				attr(div5, "class", "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12");
 				attr(label1, "for", "petType");
@@ -9076,19 +8328,19 @@
 				attr(div11, "class", "form-group");
 				attr(div12, "class", "col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6");
 				attr(label4, "for", "pet-age");
-				attr(input2, "type", "number");
-				attr(input2, "id", "pet-age");
-				attr(input2, "class", "form-control");
-				attr(input2, "step", "any");
-				input2.required = true;
+				attr(input1, "type", "number");
+				attr(input1, "id", "pet-age");
+				attr(input1, "class", "form-control");
+				attr(input1, "step", "any");
+				input1.required = true;
 				attr(div13, "class", "form-group");
 				attr(div14, "class", "col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6");
 				attr(label5, "for", "pet-color");
-				attr(input3, "type", "text");
-				attr(input3, "id", "pet-color");
-				attr(input3, "class", "form-control");
-				attr(input3, "placeholder", "blanco");
-				input3.required = true;
+				attr(input2, "type", "text");
+				attr(input2, "id", "pet-color");
+				attr(input2, "class", "form-control");
+				attr(input2, "placeholder", "blanco");
+				input2.required = true;
 				attr(div15, "class", "form-group");
 				attr(div16, "class", "col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6");
 				attr(div17, "class", "row");
@@ -9105,7 +8357,7 @@
 				append(div3, div2);
 				append(div2, div1);
 				append(div1, div0);
-				mount_component(input0, div0, null);
+				mount_component(advancedsearch, div0, null);
 				append(div1, t1);
 				if (if_block1) if_block1.m(div1, null);
 				append(form, t2);
@@ -9116,8 +8368,8 @@
 				append(div5, div4);
 				append(div4, label0);
 				append(div4, t5);
-				append(div4, input1);
-				set_input_value(input1, /*pet*/ ctx[4].name);
+				append(div4, input0);
+				set_input_value(input0, /*pet*/ ctx[4].name);
 				append(div10, t6);
 				append(div10, div7);
 				append(div7, div6);
@@ -9169,15 +8421,15 @@
 				append(div14, div13);
 				append(div13, label4);
 				append(div13, t20);
-				append(div13, input2);
-				set_input_value(input2, /*pet*/ ctx[4].age);
+				append(div13, input1);
+				set_input_value(input1, /*pet*/ ctx[4].age);
 				append(div17, t21);
 				append(div17, div16);
 				append(div16, div15);
 				append(div15, label5);
 				append(div15, t23);
-				append(div15, input3);
-				set_input_value(input3, /*pet*/ ctx[4].color);
+				append(div15, input2);
+				set_input_value(input2, /*pet*/ ctx[4].color);
 				append(form, t24);
 				append(form, button);
 				append(button, i);
@@ -9191,12 +8443,12 @@
 
 				if (!mounted) {
 					dispose = [
-						listen(input1, "input", /*input1_input_handler*/ ctx[24]),
+						listen(input0, "input", /*input0_input_handler*/ ctx[24]),
 						listen(select0, "change", /*select0_change_handler*/ ctx[25]),
 						listen(select1, "change", /*select1_change_handler*/ ctx[26]),
 						listen(select2, "change", /*select2_change_handler*/ ctx[27]),
-						listen(input2, "input", /*input2_input_handler*/ ctx[28]),
-						listen(input3, "input", /*input3_input_handler*/ ctx[29]),
+						listen(input1, "input", /*input1_input_handler*/ ctx[28]),
+						listen(input2, "input", /*input2_input_handler*/ ctx[29]),
 						listen(form, "submit", prevent_default(/*onSubmitHandler*/ ctx[16]))
 					];
 
@@ -9214,9 +8466,9 @@
 					}
 				}
 
-				const input0_changes = {};
-				if (dirty[0] & /*value*/ 128) input0_changes.value = /*value*/ ctx[7];
-				input0.$set(input0_changes);
+				const advancedsearch_changes = {};
+				if (dirty[0] & /*value*/ 128) advancedsearch_changes.value = /*value*/ ctx[7];
+				advancedsearch.$set(advancedsearch_changes);
 
 				if (/*clients*/ ctx[8].length > 0 && !/*isClientSelected*/ ctx[9]) {
 					if (if_block1) {
@@ -9244,8 +8496,8 @@
 					if_block2 = null;
 				}
 
-				if (dirty[0] & /*pet, petTypes*/ 20 && input1.value !== /*pet*/ ctx[4].name) {
-					set_input_value(input1, /*pet*/ ctx[4].name);
+				if (dirty[0] & /*pet, petTypes*/ 20 && input0.value !== /*pet*/ ctx[4].name) {
+					set_input_value(input0, /*pet*/ ctx[4].name);
 				}
 
 				if (dirty[0] & /*petTypes*/ 4) {
@@ -9253,12 +8505,12 @@
 					let i;
 
 					for (i = 0; i < each_value_4.length; i += 1) {
-						const child_ctx = get_each_context_4(ctx, each_value_4, i);
+						const child_ctx = get_each_context_4$1(ctx, each_value_4, i);
 
 						if (each_blocks_2[i]) {
 							each_blocks_2[i].p(child_ctx, dirty);
 						} else {
-							each_blocks_2[i] = create_each_block_4(child_ctx);
+							each_blocks_2[i] = create_each_block_4$1(child_ctx);
 							each_blocks_2[i].c();
 							each_blocks_2[i].m(select0, null);
 						}
@@ -9280,12 +8532,12 @@
 					let i;
 
 					for (i = 0; i < each_value_3.length; i += 1) {
-						const child_ctx = get_each_context_3(ctx, each_value_3, i);
+						const child_ctx = get_each_context_3$1(ctx, each_value_3, i);
 
 						if (each_blocks_1[i]) {
 							each_blocks_1[i].p(child_ctx, dirty);
 						} else {
-							each_blocks_1[i] = create_each_block_3(child_ctx);
+							each_blocks_1[i] = create_each_block_3$1(child_ctx);
 							each_blocks_1[i].c();
 							each_blocks_1[i].m(select1, null);
 						}
@@ -9307,12 +8559,12 @@
 					let i;
 
 					for (i = 0; i < each_value_2.length; i += 1) {
-						const child_ctx = get_each_context_2(ctx, each_value_2, i);
+						const child_ctx = get_each_context_2$1(ctx, each_value_2, i);
 
 						if (each_blocks[i]) {
 							each_blocks[i].p(child_ctx, dirty);
 						} else {
-							each_blocks[i] = create_each_block_2(child_ctx);
+							each_blocks[i] = create_each_block_2$1(child_ctx);
 							each_blocks[i].c();
 							each_blocks[i].m(select2, null);
 						}
@@ -9329,12 +8581,12 @@
 					select_option(select2, /*pet*/ ctx[4].genderId);
 				}
 
-				if (dirty[0] & /*pet, petTypes*/ 20 && to_number(input2.value) !== /*pet*/ ctx[4].age) {
-					set_input_value(input2, /*pet*/ ctx[4].age);
+				if (dirty[0] & /*pet, petTypes*/ 20 && to_number(input1.value) !== /*pet*/ ctx[4].age) {
+					set_input_value(input1, /*pet*/ ctx[4].age);
 				}
 
-				if (dirty[0] & /*pet, petTypes*/ 20 && input3.value !== /*pet*/ ctx[4].color) {
-					set_input_value(input3, /*pet*/ ctx[4].color);
+				if (dirty[0] & /*pet, petTypes*/ 20 && input2.value !== /*pet*/ ctx[4].color) {
+					set_input_value(input2, /*pet*/ ctx[4].color);
 				}
 
 				if (current_block_type_1 !== (current_block_type_1 = select_block_type_1(ctx))) {
@@ -9362,11 +8614,11 @@
 			},
 			i(local) {
 				if (current) return;
-				transition_in(input0.$$.fragment, local);
+				transition_in(advancedsearch.$$.fragment, local);
 				current = true;
 			},
 			o(local) {
-				transition_out(input0.$$.fragment, local);
+				transition_out(advancedsearch.$$.fragment, local);
 				current = false;
 			},
 			d(detaching) {
@@ -9379,7 +8631,7 @@
 				}
 
 				if_block0.d();
-				destroy_component(input0);
+				destroy_component(advancedsearch);
 				if (if_block1) if_block1.d();
 				if (if_block2) if_block2.d();
 				destroy_each(each_blocks_2, detaching);
@@ -9393,7 +8645,7 @@
 		};
 	}
 
-	// (304:35) {:else}
+	// (303:35) {:else}
 	function create_else_block_2(ctx) {
 		let t;
 
@@ -9412,7 +8664,7 @@
 		};
 	}
 
-	// (304:4) {#if !editStatus}
+	// (303:4) {#if !editStatus}
 	function create_if_block_7(ctx) {
 		let t;
 
@@ -9431,14 +8683,14 @@
 		};
 	}
 
-	// (336:7) {#if clients.length > 0 && !isClientSelected}
+	// (318:7) {#if clients.length > 0 && !isClientSelected}
 	function create_if_block_6(ctx) {
 		let div;
 		let each_value_5 = ensure_array_like(/*clients*/ ctx[8]);
 		let each_blocks = [];
 
 		for (let i = 0; i < each_value_5.length; i += 1) {
-			each_blocks[i] = create_each_block_5(get_each_context_5(ctx, each_value_5, i));
+			each_blocks[i] = create_each_block_5$1(get_each_context_5$1(ctx, each_value_5, i));
 		}
 
 		return {
@@ -9466,12 +8718,12 @@
 					let i;
 
 					for (i = 0; i < each_value_5.length; i += 1) {
-						const child_ctx = get_each_context_5(ctx, each_value_5, i);
+						const child_ctx = get_each_context_5$1(ctx, each_value_5, i);
 
 						if (each_blocks[i]) {
 							each_blocks[i].p(child_ctx, dirty);
 						} else {
-							each_blocks[i] = create_each_block_5(child_ctx);
+							each_blocks[i] = create_each_block_5$1(child_ctx);
 							each_blocks[i].c();
 							each_blocks[i].m(div, null);
 						}
@@ -9494,8 +8746,8 @@
 		};
 	}
 
-	// (338:9) {#each clients as item}
-	function create_each_block_5(ctx) {
+	// (320:9) {#each clients as item}
+	function create_each_block_5$1(ctx) {
 		let a;
 		let i;
 		let t0;
@@ -9551,7 +8803,7 @@
 		};
 	}
 
-	// (351:4) {#if isClientSelected}
+	// (333:4) {#if isClientSelected}
 	function create_if_block_5(ctx) {
 		let div6;
 		let div1;
@@ -9662,8 +8914,8 @@
 		};
 	}
 
-	// (415:8) {#each petTypes as item}
-	function create_each_block_4(ctx) {
+	// (397:8) {#each petTypes as item}
+	function create_each_block_4$1(ctx) {
 		let option;
 		let t_value = /*item*/ ctx[42].name + "";
 		let t;
@@ -9696,8 +8948,8 @@
 		};
 	}
 
-	// (435:8) {#each breeds as item}
-	function create_each_block_3(ctx) {
+	// (417:8) {#each breeds as item}
+	function create_each_block_3$1(ctx) {
 		let option;
 		let t_value = /*item*/ ctx[42].name + "";
 		let t;
@@ -9730,8 +8982,8 @@
 		};
 	}
 
-	// (456:8) {#each genderes as item}
-	function create_each_block_2(ctx) {
+	// (438:8) {#each genderes as item}
+	function create_each_block_2$1(ctx) {
 		let option;
 		let t_value = /*item*/ ctx[42].name + "";
 		let t;
@@ -9764,7 +9016,7 @@
 		};
 	}
 
-	// (493:31) {:else}
+	// (475:31) {:else}
 	function create_else_block_1(ctx) {
 		let t;
 
@@ -9783,7 +9035,7 @@
 		};
 	}
 
-	// (493:5) {#if !editStatus}
+	// (475:5) {#if !editStatus}
 	function create_if_block_4(ctx) {
 		let t;
 
@@ -9802,7 +9054,7 @@
 		};
 	}
 
-	// (495:4) {#if showForm | editStatus}
+	// (477:4) {#if showForm | editStatus}
 	function create_if_block_3(ctx) {
 		let button;
 		let mounted;
@@ -9835,14 +9087,14 @@
 		};
 	}
 
-	// (573:5) {:else}
+	// (555:5) {:else}
 	function create_else_block(ctx) {
 		let each_1_anchor;
 		let each_value_1 = ensure_array_like(/*pets*/ ctx[3]);
 		let each_blocks = [];
 
 		for (let i = 0; i < each_value_1.length; i += 1) {
-			each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
+			each_blocks[i] = create_each_block_1$1(get_each_context_1$1(ctx, each_value_1, i));
 		}
 
 		return {
@@ -9868,12 +9120,12 @@
 					let i;
 
 					for (i = 0; i < each_value_1.length; i += 1) {
-						const child_ctx = get_each_context_1(ctx, each_value_1, i);
+						const child_ctx = get_each_context_1$1(ctx, each_value_1, i);
 
 						if (each_blocks[i]) {
 							each_blocks[i].p(child_ctx, dirty);
 						} else {
-							each_blocks[i] = create_each_block_1(child_ctx);
+							each_blocks[i] = create_each_block_1$1(child_ctx);
 							each_blocks[i].c();
 							each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
 						}
@@ -9896,14 +9148,14 @@
 		};
 	}
 
-	// (531:39) 
-	function create_if_block_1(ctx) {
+	// (513:39) 
+	function create_if_block_1$1(ctx) {
 		let each_1_anchor;
 		let each_value = ensure_array_like(/*filteredPets*/ ctx[11]);
 		let each_blocks = [];
 
 		for (let i = 0; i < each_value.length; i += 1) {
-			each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
+			each_blocks[i] = create_each_block$2(get_each_context$2(ctx, each_value, i));
 		}
 
 		return {
@@ -9929,12 +9181,12 @@
 					let i;
 
 					for (i = 0; i < each_value.length; i += 1) {
-						const child_ctx = get_each_context(ctx, each_value, i);
+						const child_ctx = get_each_context$2(ctx, each_value, i);
 
 						if (each_blocks[i]) {
 							each_blocks[i].p(child_ctx, dirty);
 						} else {
-							each_blocks[i] = create_each_block(child_ctx);
+							each_blocks[i] = create_each_block$2(child_ctx);
 							each_blocks[i].c();
 							each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
 						}
@@ -9957,8 +9209,8 @@
 		};
 	}
 
-	// (529:5) {#if searchTerm && filteredPets.length === 0}
-	function create_if_block(ctx) {
+	// (511:5) {#if searchTerm && filteredPets.length === 0}
+	function create_if_block$1(ctx) {
 		let h5;
 
 		return {
@@ -9978,8 +9230,8 @@
 		};
 	}
 
-	// (574:6) {#each pets as item}
-	function create_each_block_1(ctx) {
+	// (556:6) {#each pets as item}
+	function create_each_block_1$1(ctx) {
 		let tr;
 		let td0;
 		let t0_value = /*item*/ ctx[42].name + "";
@@ -10152,8 +9404,8 @@
 		};
 	}
 
-	// (532:6) {#each filteredPets as item}
-	function create_each_block(ctx) {
+	// (514:6) {#each filteredPets as item}
+	function create_each_block$2(ctx) {
 		let tr;
 		let td0;
 		let t0_value = /*item*/ ctx[42].name + "";
@@ -10326,7 +9578,7 @@
 		};
 	}
 
-	function create_fragment(ctx) {
+	function create_fragment$2(ctx) {
 		let div3;
 		let div0;
 		let t1;
@@ -10365,8 +9617,8 @@
 		search.$on("input", /*searchPets*/ ctx[22]);
 
 		function select_block_type_2(ctx, dirty) {
-			if (/*searchTerm*/ ctx[12] && /*filteredPets*/ ctx[11].length === 0) return create_if_block;
-			if (/*filteredPets*/ ctx[11].length > 0) return create_if_block_1;
+			if (/*searchTerm*/ ctx[12] && /*filteredPets*/ ctx[11].length === 0) return create_if_block$1;
+			if (/*filteredPets*/ ctx[11].length > 0) return create_if_block_1$1;
 			return create_else_block;
 		}
 
@@ -10507,10 +9759,9 @@
 			}
 		};
 	}
-	let placeholder = "Buscar cliente";
+	let placeholder$1 = "Buscar cliente";
 
-	function instance($$self, $$props, $$invalidate) {
-		console.log("amazing svelte yeyey");
+	function instance$2($$self, $$props, $$invalidate) {
 
 		// onMount(async () => {
 		// 	try {
@@ -10542,22 +9793,22 @@
 			// )
 			// genderes = res.data
 			// console.log(res.data)
-			await client.get("/gateway/Pet/").then(response => {
+			await client.get("/gateway/Pets/").then(response => {
 				$$invalidate(3, pets = response);
 				console.log("pets =>", pets);
 			});
 
-			await client.get("/gateway/Gender/").then(response => {
+			await client.get("/gateway/Genderes/").then(response => {
 				$$invalidate(0, genderes = response);
 				console.log("genderes =>", genderes);
 			});
 
-			await client.get("/gateway/PetType/").then(response => {
+			await client.get("/gateway/PetTypes/").then(response => {
 				$$invalidate(2, petTypes = response);
 				console.log("petTypes =>", petTypes);
 			});
 
-			await client.get("/gateway/Breed/").then(response => {
+			await client.get("/gateway/Breeds/").then(response => {
 				$$invalidate(1, breeds = response);
 				console.log("breeds => ", breeds);
 			});
@@ -10633,7 +9884,7 @@
 				color: pet.color
 			};
 
-			await client.post("/gateway/Pet/", newPet).then(response => {
+			await client.post("/gateway/Pets/", newPet).then(response => {
 				console.log(response);
 
 				toast({
@@ -10662,7 +9913,7 @@
 			});
 
 			if (isConfirmed) {
-				await client.delete("/gateway/Pet/" + id).then(response => {
+				await client.delete("/gateway/Pets/" + id).then(response => {
 					console.log(response);
 
 					toast({
@@ -10699,7 +9950,7 @@
 				enabled: pet.enabled
 			};
 
-			await client.put("/gateway/Pet/" + updatedpet.id, updatedpet).then(response => {
+			await client.put("/gateway/Pets/" + updatedpet.id, updatedpet).then(response => {
 				const petIndex = pets.findIndex(p => p.id === pet.id);
 				$$invalidate(3, pets[petIndex] = updatedpet, pets);
 				console.log(response);
@@ -10779,7 +10030,7 @@
 
 		const click_handler = () => openNew(true);
 
-		function input1_input_handler() {
+		function input0_input_handler() {
 			pet.name = this.value;
 			$$invalidate(4, pet);
 			$$invalidate(2, petTypes);
@@ -10803,13 +10054,13 @@
 			$$invalidate(2, petTypes);
 		}
 
-		function input2_input_handler() {
+		function input1_input_handler() {
 			pet.age = to_number(this.value);
 			$$invalidate(4, pet);
 			$$invalidate(2, petTypes);
 		}
 
-		function input3_input_handler() {
+		function input2_input_handler() {
 			pet.color = this.value;
 			$$invalidate(4, pet);
 			$$invalidate(2, petTypes);
@@ -10861,12 +10112,12 @@
 			selectClient,
 			searchPets,
 			click_handler,
-			input1_input_handler,
+			input0_input_handler,
 			select0_change_handler,
 			select1_change_handler,
 			select2_change_handler,
+			input1_input_handler,
 			input2_input_handler,
-			input3_input_handler,
 			click_handler_1,
 			search_searchTerm_binding,
 			input_change_handler,
@@ -10879,11 +10130,1595 @@
 	class Pet extends SvelteComponent {
 		constructor(options) {
 			super();
-			init(this, options, instance, create_fragment, safe_not_equal, {}, add_css, [-1, -1]);
+			init(this, options, instance$2, create_fragment$2, safe_not_equal, {}, add_css$1, [-1, -1]);
 		}
 	}
 
 	customElements.define("pet-app", create_custom_element(Pet, {}, [], [], true));
+
+	/* wwwroot\js\svelte\app\PetMedicalHistory\components\Add.svelte generated by Svelte v4.0.1 */
+
+	function get_each_context$1(ctx, list, i) {
+		const child_ctx = ctx.slice();
+		child_ctx[29] = list[i];
+		return child_ctx;
+	}
+
+	function get_each_context_1(ctx, list, i) {
+		const child_ctx = ctx.slice();
+		child_ctx[32] = list[i];
+		return child_ctx;
+	}
+
+	function get_each_context_2(ctx, list, i) {
+		const child_ctx = ctx.slice();
+		child_ctx[35] = list[i];
+		return child_ctx;
+	}
+
+	function get_each_context_3(ctx, list, i) {
+		const child_ctx = ctx.slice();
+		child_ctx[29] = list[i];
+		return child_ctx;
+	}
+
+	function get_each_context_4(ctx, list, i) {
+		const child_ctx = ctx.slice();
+		child_ctx[32] = list[i];
+		return child_ctx;
+	}
+
+	function get_each_context_5(ctx, list, i) {
+		const child_ctx = ctx.slice();
+		child_ctx[35] = list[i];
+		return child_ctx;
+	}
+
+	function get_each_context_6(ctx, list, i) {
+		const child_ctx = ctx.slice();
+		child_ctx[35] = list[i];
+		return child_ctx;
+	}
+
+	// (166:3) {#if pets.length > 0 && !isPetSelected}
+	function create_if_block_1(ctx) {
+		let div;
+		let each_value_6 = ensure_array_like(/*pets*/ ctx[6]);
+		let each_blocks = [];
+
+		for (let i = 0; i < each_value_6.length; i += 1) {
+			each_blocks[i] = create_each_block_6(get_each_context_6(ctx, each_value_6, i));
+		}
+
+		return {
+			c() {
+				div = element("div");
+
+				for (let i = 0; i < each_blocks.length; i += 1) {
+					each_blocks[i].c();
+				}
+
+				attr(div, "class", "floating-results list-group");
+			},
+			m(target, anchor) {
+				insert(target, div, anchor);
+
+				for (let i = 0; i < each_blocks.length; i += 1) {
+					if (each_blocks[i]) {
+						each_blocks[i].m(div, null);
+					}
+				}
+			},
+			p(ctx, dirty) {
+				if (dirty[0] & /*selectPet, pets*/ 16448) {
+					each_value_6 = ensure_array_like(/*pets*/ ctx[6]);
+					let i;
+
+					for (i = 0; i < each_value_6.length; i += 1) {
+						const child_ctx = get_each_context_6(ctx, each_value_6, i);
+
+						if (each_blocks[i]) {
+							each_blocks[i].p(child_ctx, dirty);
+						} else {
+							each_blocks[i] = create_each_block_6(child_ctx);
+							each_blocks[i].c();
+							each_blocks[i].m(div, null);
+						}
+					}
+
+					for (; i < each_blocks.length; i += 1) {
+						each_blocks[i].d(1);
+					}
+
+					each_blocks.length = each_value_6.length;
+				}
+			},
+			d(detaching) {
+				if (detaching) {
+					detach(div);
+				}
+
+				destroy_each(each_blocks, detaching);
+			}
+		};
+	}
+
+	// (168:5) {#each pets as item}
+	function create_each_block_6(ctx) {
+		let a;
+		let i;
+		let t0;
+		let t1_value = /*item*/ ctx[35].name + "";
+		let t1;
+		let t2;
+		let t3_value = /*item*/ ctx[35].clientUniqueId + "";
+		let t3;
+		let mounted;
+		let dispose;
+
+		return {
+			c() {
+				a = element("a");
+				i = element("i");
+				t0 = text(" - ");
+				t1 = text(t1_value);
+				t2 = text("\n\t\t\t\t\t\t\t- ");
+				t3 = text(t3_value);
+				attr(i, "class", "ti-user");
+				attr(a, "href", "#");
+				attr(a, "class", "list-group-item");
+			},
+			m(target, anchor) {
+				insert(target, a, anchor);
+				append(a, i);
+				append(a, t0);
+				append(a, t1);
+				append(a, t2);
+				append(a, t3);
+
+				if (!mounted) {
+					dispose = listen(a, "click", function () {
+						if (is_function(/*selectPet*/ ctx[14](/*item*/ ctx[35]))) /*selectPet*/ ctx[14](/*item*/ ctx[35]).apply(this, arguments);
+					});
+
+					mounted = true;
+				}
+			},
+			p(new_ctx, dirty) {
+				ctx = new_ctx;
+				if (dirty[0] & /*pets*/ 64 && t1_value !== (t1_value = /*item*/ ctx[35].name + "")) set_data(t1, t1_value);
+				if (dirty[0] & /*pets*/ 64 && t3_value !== (t3_value = /*item*/ ctx[35].clientUniqueId + "")) set_data(t3, t3_value);
+			},
+			d(detaching) {
+				if (detaching) {
+					detach(a);
+				}
+
+				mounted = false;
+				dispose();
+			}
+		};
+	}
+
+	// (183:0) {#if petSelected.id > 0}
+	function create_if_block(ctx) {
+		let form;
+		let div1;
+		let div0;
+		let label0;
+		let t1;
+		let input0;
+		let t2;
+		let div8;
+		let div3;
+		let t4;
+		let div5;
+		let div4;
+		let label2;
+		let t6;
+		let input1;
+		let input1_value_value;
+		let t7;
+		let div7;
+		let t9;
+		let div13;
+		let div10;
+		let div9;
+		let label4;
+		let t11;
+		let input2;
+		let t12;
+		let div12;
+		let div11;
+		let label5;
+		let t14;
+		let input3;
+		let t15;
+		let table0;
+		let caption0;
+		let t17;
+		let thead0;
+		let tr0;
+		let th0;
+		let t18;
+		let t19;
+		let tbody0;
+		let t20;
+		let table1;
+		let caption1;
+		let t22;
+		let thead1;
+		let tr1;
+		let th1;
+		let t23;
+		let t24;
+		let tbody1;
+		let t25;
+		let div15;
+		let div14;
+		let label6;
+		let t27;
+		let textarea;
+		let t28;
+		let button;
+		let mounted;
+		let dispose;
+		let each_value_5 = ensure_array_like(/*diseasesStatuses*/ ctx[1]);
+		let each_blocks_3 = [];
+
+		for (let i = 0; i < each_value_5.length; i += 1) {
+			each_blocks_3[i] = create_each_block_5(get_each_context_5(ctx, each_value_5, i));
+		}
+
+		let each_value_3 = ensure_array_like(/*diseases*/ ctx[0]);
+		let each_blocks_2 = [];
+
+		for (let i = 0; i < each_value_3.length; i += 1) {
+			each_blocks_2[i] = create_each_block_3(get_each_context_3(ctx, each_value_3, i));
+		}
+
+		let each_value_2 = ensure_array_like(/*behaviorsStatuses*/ ctx[3]);
+		let each_blocks_1 = [];
+
+		for (let i = 0; i < each_value_2.length; i += 1) {
+			each_blocks_1[i] = create_each_block_2(get_each_context_2(ctx, each_value_2, i));
+		}
+
+		let each_value = ensure_array_like(/*behaviors*/ ctx[2]);
+		let each_blocks = [];
+
+		for (let i = 0; i < each_value.length; i += 1) {
+			each_blocks[i] = create_each_block$1(get_each_context$1(ctx, each_value, i));
+		}
+
+		return {
+			c() {
+				form = element("form");
+				div1 = element("div");
+				div0 = element("div");
+				label0 = element("label");
+				label0.textContent = "Fecha";
+				t1 = space();
+				input0 = element("input");
+				t2 = space();
+				div8 = element("div");
+				div3 = element("div");
+				div3.innerHTML = `<div class="form-group"><label for="">Cliente</label></div>`;
+				t4 = space();
+				div5 = element("div");
+				div4 = element("div");
+				label2 = element("label");
+				label2.textContent = "Ruc";
+				t6 = space();
+				input1 = element("input");
+				t7 = space();
+				div7 = element("div");
+				div7.innerHTML = `<div class="form-group"><label for="">Email</label></div>`;
+				t9 = space();
+				div13 = element("div");
+				div10 = element("div");
+				div9 = element("div");
+				label4 = element("label");
+				label4.textContent = "Nombre";
+				t11 = space();
+				input2 = element("input");
+				t12 = space();
+				div12 = element("div");
+				div11 = element("div");
+				label5 = element("label");
+				label5.textContent = "Edad";
+				t14 = space();
+				input3 = element("input");
+				t15 = space();
+				table0 = element("table");
+				caption0 = element("caption");
+				caption0.innerHTML = `<h5>Test de Salud:</h5>`;
+				t17 = space();
+				thead0 = element("thead");
+				tr0 = element("tr");
+				th0 = element("th");
+				t18 = space();
+
+				for (let i = 0; i < each_blocks_3.length; i += 1) {
+					each_blocks_3[i].c();
+				}
+
+				t19 = space();
+				tbody0 = element("tbody");
+
+				for (let i = 0; i < each_blocks_2.length; i += 1) {
+					each_blocks_2[i].c();
+				}
+
+				t20 = space();
+				table1 = element("table");
+				caption1 = element("caption");
+				caption1.innerHTML = `<h5>Test de Comportamiento:</h5>`;
+				t22 = space();
+				thead1 = element("thead");
+				tr1 = element("tr");
+				th1 = element("th");
+				t23 = space();
+
+				for (let i = 0; i < each_blocks_1.length; i += 1) {
+					each_blocks_1[i].c();
+				}
+
+				t24 = space();
+				tbody1 = element("tbody");
+
+				for (let i = 0; i < each_blocks.length; i += 1) {
+					each_blocks[i].c();
+				}
+
+				t25 = space();
+				div15 = element("div");
+				div14 = element("div");
+				label6 = element("label");
+				label6.textContent = "Corte y Estilo";
+				t27 = space();
+				textarea = element("textarea");
+				t28 = space();
+				button = element("button");
+
+				button.innerHTML = `<i class="ti-save"></i>
+			Guardar`;
+
+				attr(label0, "for", "");
+				attr(input0, "type", "date");
+				attr(input0, "name", "");
+				attr(input0, "id", "");
+				attr(input0, "class", "form-control");
+				attr(div0, "class", "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12");
+				attr(div1, "class", "row");
+				attr(div3, "class", "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12");
+				attr(label2, "for", "");
+				attr(input1, "type", "text");
+				attr(input1, "class", "form-control");
+				input1.disabled = true;
+				input1.value = input1_value_value = /*petSelected*/ ctx[8].clientUniqueId;
+				attr(div4, "class", "form-group");
+				attr(div5, "class", "col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6");
+				attr(div7, "class", "col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6");
+				attr(div8, "class", "row");
+				attr(label4, "for", "pet-name");
+				attr(input2, "type", "text");
+				attr(input2, "class", "form-control");
+				attr(input2, "id", "pet-name");
+				attr(input2, "placeholder", "Nombre");
+				input2.disabled = true;
+				input2.required = true;
+				attr(div9, "class", "form-group");
+				attr(div10, "class", "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12");
+				attr(label5, "for", "pet-age");
+				attr(input3, "type", "number");
+				attr(input3, "id", "pet-age");
+				attr(input3, "class", "form-control");
+				attr(input3, "step", "any");
+				input3.required = true;
+				input3.disabled = true;
+				attr(div11, "class", "form-group");
+				attr(div12, "class", "col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6");
+				attr(div13, "class", "row");
+				attr(table0, "class", "table table-bordered");
+				attr(table1, "class", "table table-bordered");
+				attr(label6, "for", "");
+				attr(textarea, "name", "");
+				attr(textarea, "id", "");
+				attr(textarea, "class", "form-control");
+				attr(div14, "class", "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12");
+				attr(div15, "class", "row");
+				attr(button, "type", "submit");
+				attr(button, "class", "btn btn-success");
+			},
+			m(target, anchor) {
+				insert(target, form, anchor);
+				append(form, div1);
+				append(div1, div0);
+				append(div0, label0);
+				append(div0, t1);
+				append(div0, input0);
+				set_input_value(input0, /*medicalHistory*/ ctx[4].date);
+				append(form, t2);
+				append(form, div8);
+				append(div8, div3);
+				append(div8, t4);
+				append(div8, div5);
+				append(div5, div4);
+				append(div4, label2);
+				append(div4, t6);
+				append(div4, input1);
+				append(div8, t7);
+				append(div8, div7);
+				append(form, t9);
+				append(form, div13);
+				append(div13, div10);
+				append(div10, div9);
+				append(div9, label4);
+				append(div9, t11);
+				append(div9, input2);
+				set_input_value(input2, /*petSelected*/ ctx[8].name);
+				append(div13, t12);
+				append(div13, div12);
+				append(div12, div11);
+				append(div11, label5);
+				append(div11, t14);
+				append(div11, input3);
+				set_input_value(input3, /*petSelected*/ ctx[8].age);
+				append(form, t15);
+				append(form, table0);
+				append(table0, caption0);
+				append(table0, t17);
+				append(table0, thead0);
+				append(thead0, tr0);
+				append(tr0, th0);
+				append(tr0, t18);
+
+				for (let i = 0; i < each_blocks_3.length; i += 1) {
+					if (each_blocks_3[i]) {
+						each_blocks_3[i].m(tr0, null);
+					}
+				}
+
+				append(table0, t19);
+				append(table0, tbody0);
+
+				for (let i = 0; i < each_blocks_2.length; i += 1) {
+					if (each_blocks_2[i]) {
+						each_blocks_2[i].m(tbody0, null);
+					}
+				}
+
+				append(form, t20);
+				append(form, table1);
+				append(table1, caption1);
+				append(table1, t22);
+				append(table1, thead1);
+				append(thead1, tr1);
+				append(tr1, th1);
+				append(tr1, t23);
+
+				for (let i = 0; i < each_blocks_1.length; i += 1) {
+					if (each_blocks_1[i]) {
+						each_blocks_1[i].m(tr1, null);
+					}
+				}
+
+				append(table1, t24);
+				append(table1, tbody1);
+
+				for (let i = 0; i < each_blocks.length; i += 1) {
+					if (each_blocks[i]) {
+						each_blocks[i].m(tbody1, null);
+					}
+				}
+
+				append(form, t25);
+				append(form, div15);
+				append(div15, div14);
+				append(div14, label6);
+				append(div14, t27);
+				append(div14, textarea);
+				set_input_value(textarea, /*medicalHistory*/ ctx[4].style);
+				append(form, t28);
+				append(form, button);
+
+				if (!mounted) {
+					dispose = [
+						listen(input0, "input", /*input0_input_handler*/ ctx[16]),
+						listen(input2, "input", /*input2_input_handler*/ ctx[17]),
+						listen(input3, "input", /*input3_input_handler*/ ctx[18]),
+						listen(textarea, "input", /*textarea_input_handler*/ ctx[21]),
+						listen(form, "submit", prevent_default(/*onSubmitHandler*/ ctx[15]))
+					];
+
+					mounted = true;
+				}
+			},
+			p(ctx, dirty) {
+				if (dirty[0] & /*medicalHistory*/ 16) {
+					set_input_value(input0, /*medicalHistory*/ ctx[4].date);
+				}
+
+				if (dirty[0] & /*petSelected*/ 256 && input1_value_value !== (input1_value_value = /*petSelected*/ ctx[8].clientUniqueId) && input1.value !== input1_value_value) {
+					input1.value = input1_value_value;
+				}
+
+				if (dirty[0] & /*petSelected*/ 256 && input2.value !== /*petSelected*/ ctx[8].name) {
+					set_input_value(input2, /*petSelected*/ ctx[8].name);
+				}
+
+				if (dirty[0] & /*petSelected*/ 256 && to_number(input3.value) !== /*petSelected*/ ctx[8].age) {
+					set_input_value(input3, /*petSelected*/ ctx[8].age);
+				}
+
+				if (dirty[0] & /*diseasesStatuses*/ 2) {
+					each_value_5 = ensure_array_like(/*diseasesStatuses*/ ctx[1]);
+					let i;
+
+					for (i = 0; i < each_value_5.length; i += 1) {
+						const child_ctx = get_each_context_5(ctx, each_value_5, i);
+
+						if (each_blocks_3[i]) {
+							each_blocks_3[i].p(child_ctx, dirty);
+						} else {
+							each_blocks_3[i] = create_each_block_5(child_ctx);
+							each_blocks_3[i].c();
+							each_blocks_3[i].m(tr0, null);
+						}
+					}
+
+					for (; i < each_blocks_3.length; i += 1) {
+						each_blocks_3[i].d(1);
+					}
+
+					each_blocks_3.length = each_value_5.length;
+				}
+
+				if (dirty[0] & /*diseasesStatuses, diseases, addDiseaseStatus*/ 515) {
+					each_value_3 = ensure_array_like(/*diseases*/ ctx[0]);
+					let i;
+
+					for (i = 0; i < each_value_3.length; i += 1) {
+						const child_ctx = get_each_context_3(ctx, each_value_3, i);
+
+						if (each_blocks_2[i]) {
+							each_blocks_2[i].p(child_ctx, dirty);
+						} else {
+							each_blocks_2[i] = create_each_block_3(child_ctx);
+							each_blocks_2[i].c();
+							each_blocks_2[i].m(tbody0, null);
+						}
+					}
+
+					for (; i < each_blocks_2.length; i += 1) {
+						each_blocks_2[i].d(1);
+					}
+
+					each_blocks_2.length = each_value_3.length;
+				}
+
+				if (dirty[0] & /*behaviorsStatuses*/ 8) {
+					each_value_2 = ensure_array_like(/*behaviorsStatuses*/ ctx[3]);
+					let i;
+
+					for (i = 0; i < each_value_2.length; i += 1) {
+						const child_ctx = get_each_context_2(ctx, each_value_2, i);
+
+						if (each_blocks_1[i]) {
+							each_blocks_1[i].p(child_ctx, dirty);
+						} else {
+							each_blocks_1[i] = create_each_block_2(child_ctx);
+							each_blocks_1[i].c();
+							each_blocks_1[i].m(tr1, null);
+						}
+					}
+
+					for (; i < each_blocks_1.length; i += 1) {
+						each_blocks_1[i].d(1);
+					}
+
+					each_blocks_1.length = each_value_2.length;
+				}
+
+				if (dirty[0] & /*behaviorsStatuses, behaviors, addBehaviorStatus*/ 1036) {
+					each_value = ensure_array_like(/*behaviors*/ ctx[2]);
+					let i;
+
+					for (i = 0; i < each_value.length; i += 1) {
+						const child_ctx = get_each_context$1(ctx, each_value, i);
+
+						if (each_blocks[i]) {
+							each_blocks[i].p(child_ctx, dirty);
+						} else {
+							each_blocks[i] = create_each_block$1(child_ctx);
+							each_blocks[i].c();
+							each_blocks[i].m(tbody1, null);
+						}
+					}
+
+					for (; i < each_blocks.length; i += 1) {
+						each_blocks[i].d(1);
+					}
+
+					each_blocks.length = each_value.length;
+				}
+
+				if (dirty[0] & /*medicalHistory*/ 16) {
+					set_input_value(textarea, /*medicalHistory*/ ctx[4].style);
+				}
+			},
+			d(detaching) {
+				if (detaching) {
+					detach(form);
+				}
+
+				destroy_each(each_blocks_3, detaching);
+				destroy_each(each_blocks_2, detaching);
+				destroy_each(each_blocks_1, detaching);
+				destroy_each(each_blocks, detaching);
+				mounted = false;
+				run_all(dispose);
+			}
+		};
+	}
+
+	// (269:5) {#each diseasesStatuses as item}
+	function create_each_block_5(ctx) {
+		let th;
+		let t_value = /*item*/ ctx[35].name + "";
+		let t;
+
+		return {
+			c() {
+				th = element("th");
+				t = text(t_value);
+			},
+			m(target, anchor) {
+				insert(target, th, anchor);
+				append(th, t);
+			},
+			p(ctx, dirty) {
+				if (dirty[0] & /*diseasesStatuses*/ 2 && t_value !== (t_value = /*item*/ ctx[35].name + "")) set_data(t, t_value);
+			},
+			d(detaching) {
+				if (detaching) {
+					detach(th);
+				}
+			}
+		};
+	}
+
+	// (278:6) {#each diseasesStatuses as ds}
+	function create_each_block_4(ctx) {
+		let td;
+		let input;
+		let input_id_value;
+		let input_name_value;
+		let mounted;
+		let dispose;
+
+		function change_handler() {
+			return /*change_handler*/ ctx[19](/*d*/ ctx[29], /*ds*/ ctx[32]);
+		}
+
+		return {
+			c() {
+				td = element("td");
+				input = element("input");
+				attr(input, "type", "radio");
+				attr(input, "id", input_id_value = "" + (/*d*/ ctx[29].id + "-chkdds"));
+				attr(input, "name", input_name_value = "" + (/*d*/ ctx[29].id + "-chkdds"));
+			},
+			m(target, anchor) {
+				insert(target, td, anchor);
+				append(td, input);
+
+				if (!mounted) {
+					dispose = listen(input, "change", change_handler);
+					mounted = true;
+				}
+			},
+			p(new_ctx, dirty) {
+				ctx = new_ctx;
+
+				if (dirty[0] & /*diseases*/ 1 && input_id_value !== (input_id_value = "" + (/*d*/ ctx[29].id + "-chkdds"))) {
+					attr(input, "id", input_id_value);
+				}
+
+				if (dirty[0] & /*diseases*/ 1 && input_name_value !== (input_name_value = "" + (/*d*/ ctx[29].id + "-chkdds"))) {
+					attr(input, "name", input_name_value);
+				}
+			},
+			d(detaching) {
+				if (detaching) {
+					detach(td);
+				}
+
+				mounted = false;
+				dispose();
+			}
+		};
+	}
+
+	// (275:4) {#each diseases as d}
+	function create_each_block_3(ctx) {
+		let tr;
+		let th;
+		let t0_value = /*d*/ ctx[29].name + "";
+		let t0;
+		let t1;
+		let t2;
+		let each_value_4 = ensure_array_like(/*diseasesStatuses*/ ctx[1]);
+		let each_blocks = [];
+
+		for (let i = 0; i < each_value_4.length; i += 1) {
+			each_blocks[i] = create_each_block_4(get_each_context_4(ctx, each_value_4, i));
+		}
+
+		return {
+			c() {
+				tr = element("tr");
+				th = element("th");
+				t0 = text(t0_value);
+				t1 = space();
+
+				for (let i = 0; i < each_blocks.length; i += 1) {
+					each_blocks[i].c();
+				}
+
+				t2 = space();
+			},
+			m(target, anchor) {
+				insert(target, tr, anchor);
+				append(tr, th);
+				append(th, t0);
+				append(tr, t1);
+
+				for (let i = 0; i < each_blocks.length; i += 1) {
+					if (each_blocks[i]) {
+						each_blocks[i].m(tr, null);
+					}
+				}
+
+				append(tr, t2);
+			},
+			p(ctx, dirty) {
+				if (dirty[0] & /*diseases*/ 1 && t0_value !== (t0_value = /*d*/ ctx[29].name + "")) set_data(t0, t0_value);
+
+				if (dirty[0] & /*diseases, addDiseaseStatus, diseasesStatuses*/ 515) {
+					each_value_4 = ensure_array_like(/*diseasesStatuses*/ ctx[1]);
+					let i;
+
+					for (i = 0; i < each_value_4.length; i += 1) {
+						const child_ctx = get_each_context_4(ctx, each_value_4, i);
+
+						if (each_blocks[i]) {
+							each_blocks[i].p(child_ctx, dirty);
+						} else {
+							each_blocks[i] = create_each_block_4(child_ctx);
+							each_blocks[i].c();
+							each_blocks[i].m(tr, t2);
+						}
+					}
+
+					for (; i < each_blocks.length; i += 1) {
+						each_blocks[i].d(1);
+					}
+
+					each_blocks.length = each_value_4.length;
+				}
+			},
+			d(detaching) {
+				if (detaching) {
+					detach(tr);
+				}
+
+				destroy_each(each_blocks, detaching);
+			}
+		};
+	}
+
+	// (299:5) {#each behaviorsStatuses as item}
+	function create_each_block_2(ctx) {
+		let th;
+		let t_value = /*item*/ ctx[35].name + "";
+		let t;
+
+		return {
+			c() {
+				th = element("th");
+				t = text(t_value);
+			},
+			m(target, anchor) {
+				insert(target, th, anchor);
+				append(th, t);
+			},
+			p(ctx, dirty) {
+				if (dirty[0] & /*behaviorsStatuses*/ 8 && t_value !== (t_value = /*item*/ ctx[35].name + "")) set_data(t, t_value);
+			},
+			d(detaching) {
+				if (detaching) {
+					detach(th);
+				}
+			}
+		};
+	}
+
+	// (308:6) {#each behaviorsStatuses as ds}
+	function create_each_block_1(ctx) {
+		let td;
+		let input;
+		let input_id_value;
+		let input_name_value;
+		let mounted;
+		let dispose;
+
+		function change_handler_1() {
+			return /*change_handler_1*/ ctx[20](/*d*/ ctx[29], /*ds*/ ctx[32]);
+		}
+
+		return {
+			c() {
+				td = element("td");
+				input = element("input");
+				attr(input, "type", "radio");
+				attr(input, "id", input_id_value = "" + (/*d*/ ctx[29].id + "-chkbbs"));
+				attr(input, "name", input_name_value = "" + (/*d*/ ctx[29].id + "-chkbbs"));
+			},
+			m(target, anchor) {
+				insert(target, td, anchor);
+				append(td, input);
+
+				if (!mounted) {
+					dispose = listen(input, "change", change_handler_1);
+					mounted = true;
+				}
+			},
+			p(new_ctx, dirty) {
+				ctx = new_ctx;
+
+				if (dirty[0] & /*behaviors*/ 4 && input_id_value !== (input_id_value = "" + (/*d*/ ctx[29].id + "-chkbbs"))) {
+					attr(input, "id", input_id_value);
+				}
+
+				if (dirty[0] & /*behaviors*/ 4 && input_name_value !== (input_name_value = "" + (/*d*/ ctx[29].id + "-chkbbs"))) {
+					attr(input, "name", input_name_value);
+				}
+			},
+			d(detaching) {
+				if (detaching) {
+					detach(td);
+				}
+
+				mounted = false;
+				dispose();
+			}
+		};
+	}
+
+	// (305:4) {#each behaviors as d}
+	function create_each_block$1(ctx) {
+		let tr;
+		let th;
+		let t0_value = /*d*/ ctx[29].name + "";
+		let t0;
+		let t1;
+		let t2;
+		let each_value_1 = ensure_array_like(/*behaviorsStatuses*/ ctx[3]);
+		let each_blocks = [];
+
+		for (let i = 0; i < each_value_1.length; i += 1) {
+			each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
+		}
+
+		return {
+			c() {
+				tr = element("tr");
+				th = element("th");
+				t0 = text(t0_value);
+				t1 = space();
+
+				for (let i = 0; i < each_blocks.length; i += 1) {
+					each_blocks[i].c();
+				}
+
+				t2 = space();
+			},
+			m(target, anchor) {
+				insert(target, tr, anchor);
+				append(tr, th);
+				append(th, t0);
+				append(tr, t1);
+
+				for (let i = 0; i < each_blocks.length; i += 1) {
+					if (each_blocks[i]) {
+						each_blocks[i].m(tr, null);
+					}
+				}
+
+				append(tr, t2);
+			},
+			p(ctx, dirty) {
+				if (dirty[0] & /*behaviors*/ 4 && t0_value !== (t0_value = /*d*/ ctx[29].name + "")) set_data(t0, t0_value);
+
+				if (dirty[0] & /*behaviors, addBehaviorStatus, behaviorsStatuses*/ 1036) {
+					each_value_1 = ensure_array_like(/*behaviorsStatuses*/ ctx[3]);
+					let i;
+
+					for (i = 0; i < each_value_1.length; i += 1) {
+						const child_ctx = get_each_context_1(ctx, each_value_1, i);
+
+						if (each_blocks[i]) {
+							each_blocks[i].p(child_ctx, dirty);
+						} else {
+							each_blocks[i] = create_each_block_1(child_ctx);
+							each_blocks[i].c();
+							each_blocks[i].m(tr, t2);
+						}
+					}
+
+					for (; i < each_blocks.length; i += 1) {
+						each_blocks[i].d(1);
+					}
+
+					each_blocks.length = each_value_1.length;
+				}
+			},
+			d(detaching) {
+				if (detaching) {
+					detach(tr);
+				}
+
+				destroy_each(each_blocks, detaching);
+			}
+		};
+	}
+
+	function create_fragment$1(ctx) {
+		let div3;
+		let div2;
+		let div1;
+		let div0;
+		let advancedsearch;
+		let t0;
+		let t1;
+		let hr;
+		let t2;
+		let if_block1_anchor;
+		let current;
+
+		advancedsearch = new AdvancedSearch({
+				props: { value: /*value*/ ctx[5], placeholder }
+			});
+
+		advancedsearch.$on("input", /*onInput*/ ctx[11]);
+		advancedsearch.$on("focus", /*onFocus*/ ctx[12]);
+		advancedsearch.$on("blur", /*onBlur*/ ctx[13]);
+		let if_block0 = /*pets*/ ctx[6].length > 0 && !/*isPetSelected*/ ctx[7] && create_if_block_1(ctx);
+		let if_block1 = /*petSelected*/ ctx[8].id > 0 && create_if_block(ctx);
+
+		return {
+			c() {
+				div3 = element("div");
+				div2 = element("div");
+				div1 = element("div");
+				div0 = element("div");
+				create_component(advancedsearch.$$.fragment);
+				t0 = space();
+				if (if_block0) if_block0.c();
+				t1 = space();
+				hr = element("hr");
+				t2 = space();
+				if (if_block1) if_block1.c();
+				if_block1_anchor = empty();
+				attr(div0, "class", "input-group");
+				attr(div1, "class", "form-group");
+				attr(div2, "class", "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12");
+				attr(div3, "class", "row");
+			},
+			m(target, anchor) {
+				insert(target, div3, anchor);
+				append(div3, div2);
+				append(div2, div1);
+				append(div1, div0);
+				mount_component(advancedsearch, div0, null);
+				append(div1, t0);
+				if (if_block0) if_block0.m(div1, null);
+				insert(target, t1, anchor);
+				insert(target, hr, anchor);
+				insert(target, t2, anchor);
+				if (if_block1) if_block1.m(target, anchor);
+				insert(target, if_block1_anchor, anchor);
+				current = true;
+			},
+			p(ctx, dirty) {
+				const advancedsearch_changes = {};
+				if (dirty[0] & /*value*/ 32) advancedsearch_changes.value = /*value*/ ctx[5];
+				advancedsearch.$set(advancedsearch_changes);
+
+				if (/*pets*/ ctx[6].length > 0 && !/*isPetSelected*/ ctx[7]) {
+					if (if_block0) {
+						if_block0.p(ctx, dirty);
+					} else {
+						if_block0 = create_if_block_1(ctx);
+						if_block0.c();
+						if_block0.m(div1, null);
+					}
+				} else if (if_block0) {
+					if_block0.d(1);
+					if_block0 = null;
+				}
+
+				if (/*petSelected*/ ctx[8].id > 0) {
+					if (if_block1) {
+						if_block1.p(ctx, dirty);
+					} else {
+						if_block1 = create_if_block(ctx);
+						if_block1.c();
+						if_block1.m(if_block1_anchor.parentNode, if_block1_anchor);
+					}
+				} else if (if_block1) {
+					if_block1.d(1);
+					if_block1 = null;
+				}
+			},
+			i(local) {
+				if (current) return;
+				transition_in(advancedsearch.$$.fragment, local);
+				current = true;
+			},
+			o(local) {
+				transition_out(advancedsearch.$$.fragment, local);
+				current = false;
+			},
+			d(detaching) {
+				if (detaching) {
+					detach(div3);
+					detach(t1);
+					detach(hr);
+					detach(t2);
+					detach(if_block1_anchor);
+				}
+
+				destroy_component(advancedsearch);
+				if (if_block0) if_block0.d();
+				if (if_block1) if_block1.d(detaching);
+			}
+		};
+	}
+
+	let placeholder = "Buscar cliente/mascota";
+
+	function instance$1($$self, $$props, $$invalidate) {
+		let diseases = [], diseasesStatuses = [], behaviors = [], behaviorsStatuses = [];
+		let healthChecks = [];
+
+		onMount(async () => {
+			console.log("starting");
+
+			await client.get("/gateway/Diseases/").then(response => {
+				$$invalidate(0, diseases = response);
+			}); //console.log("diseases =>", diseases);
+
+			await client.get("/gateway/DiseaseStatus/").then(response => {
+				$$invalidate(1, diseasesStatuses = response);
+			}); //console.log("diseasesStatuses =>", diseasesStatuses);
+
+			await client.get("/gateway/Behaviors/").then(response => {
+				$$invalidate(2, behaviors = response);
+			}); //console.log("behaviors =>", behaviors);
+
+			await client.get("/gateway/BehaviorStatus/").then(response => {
+				$$invalidate(3, behaviorsStatuses = response);
+			}); //console.log("behaviorsStatuses => ", behaviorsStatuses);
+		});
+
+		let medicalHistory = {
+			petId: "",
+			date: "",
+			healthChecks: [],
+			behaviorTests: [],
+			style: ""
+		};
+
+		function addDesease(d, ds) {
+			healthChecks.push({ diseaseId: d, diseaseStatusId: ds });
+		}
+
+		function addDiseaseStatus(d, ds) {
+			if (healthChecks.some(check => check.diseaseId === d)) {
+				healthChecks.find(check => check.diseaseId === d).diseaseStatusId = ds;
+			} else {
+				addDesease(d, ds);
+			}
+		} //console.log(healthChecks);
+
+		let behaviorTests = [];
+
+		function addBehavior(d, ds) {
+			behaviorTests.push({ behaviorId: d, behaviorStatusId: ds });
+		}
+
+		function addBehaviorStatus(d, ds) {
+			if (behaviorTests.some(test => test.behaviorId === d)) {
+				behaviorTests.find(test => test.behaviorId === d).behaviorStatusId = ds;
+			} else {
+				addBehavior(d, ds);
+			}
+		} //console.log(behaviorTests);
+
+		let value = "";
+
+		//const onInput = (e) => (value = e.target.value)
+		let pets = [];
+
+		const onInput = async e => {
+			$$invalidate(5, value = e.target.value);
+			console.log(value);
+
+			if (value.length >= 3) {
+
+				await client.get(`/gateway/pets/search/` + value).then(response => {
+					$$invalidate(6, pets = response);
+					console.log(pets);
+				});
+			}
+		};
+
+		const onFocus = () => true;
+		const onBlur = () => false;
+		let isPetSelected = false;
+		let petSelected = {};
+
+		const selectPet = e => {
+			$$invalidate(7, isPetSelected = true);
+			$$invalidate(8, petSelected = e);
+			console.log(e);
+		};
+
+		const addHistory = async () => {
+			if (!petSelected.id) {
+				toast({
+					type: "warning",
+					message: "Debe asignar un cliente"
+				});
+
+				return;
+			}
+
+			// if (!pet.petTypeId) {
+			// 	toast({ type: "warning", message: "Debe seleccionar una especie" });
+			// 	return;
+			// }
+			// if (!pet.genderId) {
+			// 	toast({ type: "warning", message: "Debe seleccionar el sexo" });
+			// 	return;
+			// }
+			const newHistory = {
+				petId: petSelected.id,
+				date: medicalHistory.date,
+				healthChecks,
+				behaviorTests,
+				style: medicalHistory.style
+			};
+
+			console.log(newHistory);
+
+			await client.post("/gateway/MedicalHistories/", newHistory).then(response => {
+				console.log(response);
+
+				toast({
+					type: "success",
+					message: "Registrada exitosamente"
+				});
+
+				openNew(false);
+				initialLoad();
+			}).catch(error => {
+				console.log(error);
+			});
+
+			$$invalidate(4, medicalHistory = {});
+		};
+
+		const onSubmitHandler = () => {
+			addHistory();
+		};
+
+		function input0_input_handler() {
+			medicalHistory.date = this.value;
+			$$invalidate(4, medicalHistory);
+		}
+
+		function input2_input_handler() {
+			petSelected.name = this.value;
+			$$invalidate(8, petSelected);
+		}
+
+		function input3_input_handler() {
+			petSelected.age = to_number(this.value);
+			$$invalidate(8, petSelected);
+		}
+
+		const change_handler = (d, ds) => addDiseaseStatus(d.id, ds.id);
+		const change_handler_1 = (d, ds) => addBehaviorStatus(d.id, ds.id);
+
+		function textarea_input_handler() {
+			medicalHistory.style = this.value;
+			$$invalidate(4, medicalHistory);
+		}
+
+		return [
+			diseases,
+			diseasesStatuses,
+			behaviors,
+			behaviorsStatuses,
+			medicalHistory,
+			value,
+			pets,
+			isPetSelected,
+			petSelected,
+			addDiseaseStatus,
+			addBehaviorStatus,
+			onInput,
+			onFocus,
+			onBlur,
+			selectPet,
+			onSubmitHandler,
+			input0_input_handler,
+			input2_input_handler,
+			input3_input_handler,
+			change_handler,
+			change_handler_1,
+			textarea_input_handler
+		];
+	}
+
+	class Add extends SvelteComponent {
+		constructor(options) {
+			super();
+			init(this, options, instance$1, create_fragment$1, safe_not_equal, {}, null, [-1, -1]);
+		}
+	}
+
+	create_custom_element(Add, {}, [], [], true);
+
+	/* wwwroot\js\svelte\app\PetMedicalHistory\PetMedicalHistory.svelte generated by Svelte v4.0.1 */
+
+	function add_css(target) {
+		append_styles(target, "svelte-1xy5iyo", "@import \"../dist/css/style.css\";");
+	}
+
+	function get_each_context(ctx, list, i) {
+		const child_ctx = ctx.slice();
+		child_ctx[7] = list[i];
+		return child_ctx;
+	}
+
+	// (93:20) {#each medicalHistories as item}
+	function create_each_block(ctx) {
+		let tr;
+		let td0;
+		let t0_value = /*item*/ ctx[7].pet.name + "";
+		let t0;
+		let t1;
+		let td1;
+		let t2_value = /*item*/ ctx[7].date + "";
+		let t2;
+		let t3;
+		let td2;
+		let button0;
+		let t4;
+		let button1;
+		let t5;
+		let button2;
+		let t6;
+		let mounted;
+		let dispose;
+
+		return {
+			c() {
+				tr = element("tr");
+				td0 = element("td");
+				t0 = text(t0_value);
+				t1 = space();
+				td1 = element("td");
+				t2 = text(t2_value);
+				t3 = space();
+				td2 = element("td");
+				button0 = element("button");
+				button0.innerHTML = `<i class="ti-trash"></i>`;
+				t4 = space();
+				button1 = element("button");
+				button1.innerHTML = `<i class="ti-pencil"></i>`;
+				t5 = space();
+				button2 = element("button");
+				button2.innerHTML = `<i class="fa fa-file-pdf"></i>`;
+				t6 = space();
+				attr(button0, "class", "btn btn-outline-danger btn-sm");
+				attr(button1, "class", "btn btn-outline-warning btn-sm");
+				attr(button2, "class", "btn btn-outline-danger btn-sm");
+				attr(button2, "title", "Obtener Reporte");
+			},
+			m(target, anchor) {
+				insert(target, tr, anchor);
+				append(tr, td0);
+				append(td0, t0);
+				append(tr, t1);
+				append(tr, td1);
+				append(td1, t2);
+				append(tr, t3);
+				append(tr, td2);
+				append(td2, button0);
+				append(td2, t4);
+				append(td2, button1);
+				append(td2, t5);
+				append(td2, button2);
+				append(tr, t6);
+
+				if (!mounted) {
+					dispose = [
+						listen(button0, "click", function () {
+							if (is_function(/*deleteHistory*/ ctx[3](/*item*/ ctx[7].id))) /*deleteHistory*/ ctx[3](/*item*/ ctx[7].id).apply(this, arguments);
+						}),
+						listen(button1, "click", function () {
+							if (is_function(/*editHistory*/ ctx[4](/*item*/ ctx[7]))) /*editHistory*/ ctx[4](/*item*/ ctx[7]).apply(this, arguments);
+						}),
+						listen(button2, "click", function () {
+							if (is_function(/*getReport*/ ctx[2](/*item*/ ctx[7].id))) /*getReport*/ ctx[2](/*item*/ ctx[7].id).apply(this, arguments);
+						})
+					];
+
+					mounted = true;
+				}
+			},
+			p(new_ctx, dirty) {
+				ctx = new_ctx;
+				if (dirty & /*medicalHistories*/ 1 && t0_value !== (t0_value = /*item*/ ctx[7].pet.name + "")) set_data(t0, t0_value);
+				if (dirty & /*medicalHistories*/ 1 && t2_value !== (t2_value = /*item*/ ctx[7].date + "")) set_data(t2, t2_value);
+			},
+			d(detaching) {
+				if (detaching) {
+					detach(tr);
+				}
+
+				mounted = false;
+				run_all(dispose);
+			}
+		};
+	}
+
+	function create_fragment(ctx) {
+		let div3;
+		let div0;
+		let t1;
+		let div2;
+		let div1;
+		let button;
+		let t3;
+		let div6;
+		let div5;
+		let add;
+		let t4;
+		let hr;
+		let t5;
+		let div4;
+		let table;
+		let caption;
+		let t7;
+		let thead;
+		let t11;
+		let tbody;
+		let current;
+		let mounted;
+		let dispose;
+		add = new Add({});
+		let each_value = ensure_array_like(/*medicalHistories*/ ctx[0]);
+		let each_blocks = [];
+
+		for (let i = 0; i < each_value.length; i += 1) {
+			each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
+		}
+
+		return {
+			c() {
+				div3 = element("div");
+				div0 = element("div");
+				div0.innerHTML = `<h5 class="text-themecolor">Registro Informado de Estetica Canina</h5>`;
+				t1 = space();
+				div2 = element("div");
+				div1 = element("div");
+				button = element("button");
+				button.innerHTML = `<i class="fa fa-plus-circle"></i> Nuevo`;
+				t3 = space();
+				div6 = element("div");
+				div5 = element("div");
+				create_component(add.$$.fragment);
+				t4 = space();
+				hr = element("hr");
+				t5 = space();
+				div4 = element("div");
+				table = element("table");
+				caption = element("caption");
+				caption.textContent = "Registros";
+				t7 = space();
+				thead = element("thead");
+				thead.innerHTML = `<tr><th>Mascota</th> <th>Fecha</th></tr>`;
+				t11 = space();
+				tbody = element("tbody");
+
+				for (let i = 0; i < each_blocks.length; i += 1) {
+					each_blocks[i].c();
+				}
+
+				attr(div0, "class", "col-md-5 align-self-center");
+				attr(button, "type", "button");
+				attr(button, "class", "btn btn-info d-block d-lg-inline-block m-l-15");
+				attr(div1, "class", "d-flex justify-content-end align-items-center");
+				attr(div2, "class", "col-md-7 align-self-center text-right");
+				attr(div3, "class", "row page-titles");
+				attr(table, "class", "table");
+				attr(div4, "class", "table-responsive");
+				attr(div5, "class", "card-body");
+				attr(div6, "class", "card");
+			},
+			m(target, anchor) {
+				insert(target, div3, anchor);
+				append(div3, div0);
+				append(div3, t1);
+				append(div3, div2);
+				append(div2, div1);
+				append(div1, button);
+				insert(target, t3, anchor);
+				insert(target, div6, anchor);
+				append(div6, div5);
+				mount_component(add, div5, null);
+				append(div5, t4);
+				append(div5, hr);
+				append(div5, t5);
+				append(div5, div4);
+				append(div4, table);
+				append(table, caption);
+				append(table, t7);
+				append(table, thead);
+				append(table, t11);
+				append(table, tbody);
+
+				for (let i = 0; i < each_blocks.length; i += 1) {
+					if (each_blocks[i]) {
+						each_blocks[i].m(tbody, null);
+					}
+				}
+
+				current = true;
+
+				if (!mounted) {
+					dispose = listen(button, "click", /*click_handler*/ ctx[5]);
+					mounted = true;
+				}
+			},
+			p(ctx, [dirty]) {
+				if (dirty & /*getReport, medicalHistories, editHistory, deleteHistory*/ 29) {
+					each_value = ensure_array_like(/*medicalHistories*/ ctx[0]);
+					let i;
+
+					for (i = 0; i < each_value.length; i += 1) {
+						const child_ctx = get_each_context(ctx, each_value, i);
+
+						if (each_blocks[i]) {
+							each_blocks[i].p(child_ctx, dirty);
+						} else {
+							each_blocks[i] = create_each_block(child_ctx);
+							each_blocks[i].c();
+							each_blocks[i].m(tbody, null);
+						}
+					}
+
+					for (; i < each_blocks.length; i += 1) {
+						each_blocks[i].d(1);
+					}
+
+					each_blocks.length = each_value.length;
+				}
+			},
+			i(local) {
+				if (current) return;
+				transition_in(add.$$.fragment, local);
+				current = true;
+			},
+			o(local) {
+				transition_out(add.$$.fragment, local);
+				current = false;
+			},
+			d(detaching) {
+				if (detaching) {
+					detach(div3);
+					detach(t3);
+					detach(div6);
+				}
+
+				destroy_component(add);
+				destroy_each(each_blocks, detaching);
+				mounted = false;
+				dispose();
+			}
+		};
+	}
+
+	function instance($$self, $$props, $$invalidate) {
+
+		function openNew(open) {
+		}
+
+		let medicalHistories = [];
+
+		onMount(async () => {
+			await client.get("/gateway/MedicalHistories/").then(response => {
+				$$invalidate(0, medicalHistories = response);
+			}); //console.log("behaviorsStatuses => ", behaviorsStatuses);
+		});
+
+		const getReport = async id => {
+			await client.post(`/gateway/MedicalHistories/Report/` + id).then(response => {
+				console.log(response);
+			}).catch(error => {
+				console.log(error);
+			});
+		};
+
+		const deleteHistory = async id => {
+			
+		}; // let { isConfirmed } = await Swal.fire({
+		// 	text: "Esta seguro de eliminar esta mascota",
+		// 	icon: "warning",
+		// 	showCancelButton: true,
+
+		// 	confirmButtonColor: "#3085d6",
+		// 	cancelButtonColor: "#d33",
+		// 	confirmButtonText: "Si, proceder!",
+		// 	cancelButtonText: "No, cancelar",
+		// });
+		// if (isConfirmed) {
+		// 	await client
+		// 		.delete("/gateway/Pets/" + id)
+		// 		.then((response) => {
+		// 			console.log(response);
+		// 			toast({
+		// 				type: "success",
+		// 				message: "Eliminada exitosamente",
+		// 			});
+		// 			pets = pets.filter((pet) => pet.id !== id);
+		// 		})
+		// 		.catch((error) => {
+		// 			console.log(error);
+		// 		});
+		// }
+		const editHistory = historyEdited => {
+			
+		}; // editStatus = true;
+		// pet = petEdited;
+
+		const click_handler = () => openNew();
+
+		return [
+			medicalHistories,
+			openNew,
+			getReport,
+			deleteHistory,
+			editHistory,
+			click_handler
+		];
+	}
+
+	class PetMedicalHistory extends SvelteComponent {
+		constructor(options) {
+			super();
+			init(this, options, instance, create_fragment, safe_not_equal, {}, add_css);
+		}
+	}
+
+	customElements.define("pet-medical-history-app", create_custom_element(PetMedicalHistory, {}, [], [], true));
 
 })();
 //# sourceMappingURL=bundle.js.map

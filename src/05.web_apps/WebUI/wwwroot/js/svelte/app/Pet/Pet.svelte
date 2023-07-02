@@ -9,8 +9,7 @@
 	import toast from "../../core/utils/toast";
 	import Swal from "sweetalert2";
 	import Search from "../../core/components/Search.svelte";
-	import Input from "./components/Input.svelte";
-	console.log("amazing svelte yeyey");
+	import AdvancedSearch from "../../core/components/AdvancedSearch.svelte";
 	let quotes = [];
 	let error = null;
 	// onMount(async () => {
@@ -46,19 +45,19 @@
 		// )
 		// genderes = res.data
 		// console.log(res.data)
-		await client.get("/gateway/Pet/").then((response) => {
+		await client.get("/gateway/Pets/").then((response) => {
 			pets = response;
 			console.log("pets =>", pets);
 		});
-		await client.get("/gateway/Gender/").then((response) => {
+		await client.get("/gateway/Genderes/").then((response) => {
 			genderes = response;
 			console.log("genderes =>", genderes);
 		});
-		await client.get("/gateway/PetType/").then((response) => {
+		await client.get("/gateway/PetTypes/").then((response) => {
 			petTypes = response;
 			console.log("petTypes =>", petTypes);
 		});
-		await client.get("/gateway/Breed/").then((response) => {
+		await client.get("/gateway/Breeds/").then((response) => {
 			breeds = response;
 			console.log("breeds => ", breeds);
 		});
@@ -116,7 +115,7 @@
 			color: pet.color,
 		};
 		await client
-			.post("/gateway/Pet/", newPet)
+			.post("/gateway/Pets/", newPet)
 			.then((response) => {
 				console.log(response);
 				toast({
@@ -144,12 +143,12 @@
 		});
 		if (isConfirmed) {
 			await client
-				.delete("/gateway/Pet/" + id)
+				.delete("/gateway/Pets/" + id)
 				.then((response) => {
 					console.log(response);
 					toast({
 						type: "success",
-						message: "Eliminada exitosamente"
+						message: "Eliminada exitosamente",
 					});
 					pets = pets.filter((pet) => pet.id !== id);
 				})
@@ -182,7 +181,7 @@
 		};
 
 		await client
-			.put("/gateway/Pet/" + updatedpet.id, updatedpet)
+			.put("/gateway/Pets/" + updatedpet.id, updatedpet)
 			.then((response) => {
 				const petIndex = pets.findIndex((p) => p.id === pet.id);
 				pets[petIndex] = updatedpet;
@@ -285,19 +284,19 @@
 <div class="card">
 	<div class="card-body">
 		<!-- <iframe sandbox="allow-same-origin allow-scripts allow-popups allow-forms" src="http://205.209.99.71:8006/"
-                    width="100%"
-                    height="500"
-                    allowfullscreen
-                    sandbox>
-                <p>
-                    <a href="/en-US/docs/Glossary">
-                        Fallback link for browsers that don't support iframes
-                    </a>
-                </p>
-            </iframe>
-        <svelte-app id="khalid" name="Khalid"></svelte-app>
-        <svelte-app id="paul" name="Paul"></svelte-app>
-        <test-counter></test-counter> -->
+					width="100%"
+					height="500"
+					allowfullscreen
+					sandbox>
+				<p>
+					<a href="/en-US/docs/Glossary">
+						Fallback link for browsers that don't support iframes
+					</a>
+				</p>
+			</iframe>
+		<svelte-app id="khalid" name="Khalid"></svelte-app>
+		<svelte-app id="paul" name="Paul"></svelte-app>
+		<test-counter></test-counter> -->
 
 		{#if showForm | editStatus}
 			<h5 class="card-title">
@@ -307,25 +306,8 @@
 				<div class="row">
 					<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
 						<div class="form-group">
-							<!-- <Input
-				on:input={onInput}
-				on:focus={onFocus}
-				on:blur={onBlur}
-				{value}
-				{placeholder}
-			/>
-			<div>
-				Focus: {isFocused}
-			</div>
-			<div>
-				Value: {value}
-			</div> -->
 							<div class="input-group">
-								<!-- <input type="text" class="form-control" placeholder="Search" />
-				<div class="input-group-append">
-					<button class="btn btn-primary" type="button">Search</button>
-				</div> -->
-								<Input
+								<AdvancedSearch
 									on:input={onInput}
 									on:focus={onFocus}
 									on:blur={onBlur}
