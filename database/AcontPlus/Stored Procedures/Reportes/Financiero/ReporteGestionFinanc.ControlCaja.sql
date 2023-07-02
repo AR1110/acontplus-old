@@ -9,7 +9,7 @@ GO
 -- Author:		<Author,,Name>
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
--- exec ReporteGestionFinanc.ControlCaja '{"id":125,"idUsuarioRol":28}'
+-- exec ReporteGestionFinanc.ControlCaja '{"id":2082,"idUsuarioRol":28}'
 -- =============================================
 IF OBJECT_ID(N'ReporteGestionFinanc.ControlCaja', N'P') IS NOT NULL
 DROP PROCEDURE ReporteGestionFinanc.ControlCaja
@@ -46,7 +46,8 @@ BEGIN
 	)
 
 	DECLARE @tbDocuments AS TABLE(
-		 tipDoc VARCHAR(5) NOT NULL
+		 serieComprobante VARCHAR(25) NOT NULL
+		,tipDoc VARCHAR(5) NOT NULL
 		,total NUMERIC(18,5) NOT NULL
 		,abono NUMERIC(18,5) NOT NULL
 	)
@@ -212,8 +213,8 @@ BEGIN
 	INNER JOIN dbo.TipoDocumento   td WITH (NOLOCK) ON td.idTipoDocumento      = pd.idTipoDocumento
 	WHERE td.codigo = 'EC' AND ce.estado = 1 AND ce.idControlCaja = @idControlCaja
 
-	INSERT INTO @tbDocuments (tipDoc,abono,total)
-	SELECT tipDoc,SUM(abono),total FROM @tbDetalleCaja WHERE cobro = 1 GROUP BY tipDoc,total 
+	INSERT INTO @tbDocuments (serieComprobante,tipDoc,abono,total)
+	SELECT nroDoc,tipDoc,SUM(abono),total FROM @tbDetalleCaja WHERE cobro = 1 GROUP BY tipDoc,total,nroDoc
 
 	-- ================================ FORMAS DE PAGOS TOTALIZADAS ========================================
 	SELECT @chequesPosf     = SUM(td.abono) FROM @tbDetalleCaja td INNER JOIN dbo.EntidadFinanciera ef WITH (NOLOCK) ON ef.idEntidadFinanciera = td.idEntidadFinanciera WHERE cobro = 0 AND ef.codigo = 'CHE'
@@ -290,12 +291,12 @@ BEGIN
 
 	 -----------------------------HISTORIAL DE MOVIMIENTO POR DOCUMENTO DEL CONTROL DE CAJA-----------------------------
 	  SELECT tipoDoc = td.codigo
-	       ,nroDoc  = JSON_VALUE(dbo.f_sanitize_json(co.infoCobro),'$.nro')
-		   ,fechaEmision = CASE td.codigo WHEN 'NC' THEN (SELECT TOP 1 FORMAT(de.fechaEmision, 'dd/MM/yyyy HH:mm') FROM dbo.DocumentoElectronico de WITH (NOLOCK) WHERE de.idDocumento = co.idComprobante)
-								          WHEN 'RV' THEN (SELECT TOP 1 FORMAT(rv.fechaEmision, 'dd/MM/yyyy HH:mm') FROM dbo.RetencionVenta       rv WITH (NOLOCK) WHERE rv.idRetencionVenta  = co.idComprobante)
-								          WHEN 'RC' THEN (SELECT TOP 1 dd.fechaEmision                             FROM FactElect.DocRelacionado dr WITH (NOLOCK) INNER JOIN Recepcion.DocumentoRecibido dd WITH (NOLOCK) ON dd.idDocumento = dr.idDocumentoRecibido WHERE dr.idDocRelacionado = co.idComprobante)
-								          WHEN 'A'  THEN (SELECT TOP 1 FORMAT(an.fechaEmision, 'dd/MM/yyyy HH:mm') FROM dbo.Anticipo             an WITH (NOLOCK) WHERE an.idAnticipo = co.idComprobante)
-						  END
+	        ,nroDoc  = JSON_VALUE(dbo.f_sanitize_json(co.infoCobro),'$.nro')
+		    ,fechaEmision = CASE td.codigo WHEN 'NC' THEN (SELECT TOP 1 FORMAT(de.fechaEmision, 'dd/MM/yyyy HH:mm') FROM dbo.DocumentoElectronico de WITH (NOLOCK) WHERE de.idDocumento = co.idComprobante)
+								           WHEN 'RV' THEN (SELECT TOP 1 FORMAT(rv.fechaEmision, 'dd/MM/yyyy HH:mm') FROM dbo.RetencionVenta       rv WITH (NOLOCK) WHERE rv.idRetencionVenta  = co.idComprobante)
+								           WHEN 'RC' THEN (SELECT TOP 1 dd.fechaEmision                             FROM FactElect.DocRelacionado dr WITH (NOLOCK) INNER JOIN Recepcion.DocumentoRecibido dd WITH (NOLOCK) ON dd.idDocumento = dr.idDocumentoRecibido WHERE dr.idDocRelacionado = co.idComprobante)
+								           WHEN 'A'  THEN (SELECT TOP 1 FORMAT(an.fechaEmision, 'dd/MM/yyyy HH:mm') FROM dbo.Anticipo             an WITH (NOLOCK) WHERE an.idAnticipo = co.idComprobante)
+							END
 		  ,cliente = ci.nombreFiscal
 		  ,total = co.abono
 	 FROM dbo.ComprobanteIngreso       ci WITH (NOLOCK)
@@ -318,7 +319,7 @@ BEGIN
 		  ,saldo = CAST(saldo AS numeric(15,2))
 		  ,pay =   pay
 	 FROM @tbDetalleCaja
-	 ORDER BY nroDoc,nroComprobante ASC 
+	 ORDER BY pay,nroDoc,nroComprobante ASC 
 
 	 SELECT ISNULL(@chequesPosf,0) as chequePosfechado
 	 
