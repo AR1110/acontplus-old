@@ -280,10 +280,11 @@ class MovimientoCajaCtrl {
             fechaInicio: new Date(),
             fechaFin: new Date(),
         };
-        this.dataSearchAnticipo = {};
-        this.meses = _form.meses();
-        this.dataSearch.mes = new Date().getMonth() + 1;
-        this.dataSearchAnticipo.mes = new Date().getMonth() + 1;
+
+        this.dataSearchAnticipo = {
+            fechaInicio: new Date(),
+            fechaFin: new Date(),
+        }
 
 
         this.estados = [];
@@ -292,6 +293,7 @@ class MovimientoCajaCtrl {
 
         this.searchEmpleado = ModalMovimientoCajaCtrl.searchEmpleado
         this.clienteSearch = ModalAnticipoCtrl.clienteSearch;
+        this.clienteSearchAnticipo = ModalAnticipoCtrl.clienteSearch;
 
         //Filter 
         // this.moreSearchOptions = false;
@@ -299,8 +301,9 @@ class MovimientoCajaCtrl {
 
         let thisMoment = moment(new Date())
         
+         
         //https://www.daterangepicker.com/
-        this.dateRangePicker = {
+        const dateRangePicker = {
             date: { startDate: thisMoment, endDate: thisMoment },
             picker: null,
             options: {
@@ -324,15 +327,26 @@ class MovimientoCajaCtrl {
                     'Ultimos 15 Días': [moment().subtract(14, 'days'), moment()],
                     'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
                     'Este Mes': [moment().startOf('month'), moment().endOf('month')],
-                },
-                eventHandlers: {
-                    'apply.daterangepicker':  (event, picker)=> {
-                        this.getMovCajas()
-                        console.log('applied')
-                    }
                 }
             }
         }; 
+
+        this.dateRangePicker = Object.assign({}, dateRangePicker)
+        
+        this.dateRangePicker.options.eventHandlers = {
+                "apply.daterangepicker": (event, picker)=> {
+                    this.getMovCajas()
+                    console.log('applied')
+                }
+            }
+        this.dateRangePickerAnticipo = Object.assign({}, dateRangePicker)
+        this.dateRangePickerAnticipo.options.eventHandlers = {
+            "apply.daterangepicker": (event, picker)=> {
+
+                this.getAnticipos()
+                console.log('applied')
+            }
+        }
 
     }
 
@@ -352,8 +366,7 @@ class MovimientoCajaCtrl {
                 this.dataSearchAnticipo.codEstab = this.establecimientos[0].codEstab;
             } else {
                 this._tS.toastr('warning', 'No tienes Asignado Ningún Establecimiento')
-            }
-            console.log(response)
+            }            
         })
 
         this.getMovCajas();
@@ -369,6 +382,15 @@ class MovimientoCajaCtrl {
     }
     onClickBtnMore() {
         this.moreSearchOptions = !this.moreSearchOptions;
+    }
+
+    resultRangeFilter (item) {
+        this.dataSearch.fechaInicio = item.startDate,
+        this.dataSearch.fechaFin = item.endDate
+        this.getMovCajas();
+    }
+    onClickBtnMoreAnticipo() {
+        this.moreSearchOptionsAnticipo = !this.moreSearchOptionsAnticipo;
     }
 
 
@@ -391,7 +413,7 @@ class MovimientoCajaCtrl {
             this._mS.getData('get', '/MovimientoCaja/Get?json=' + JSON.stringify(dataSearch)).then(response => {
                 if (response.id === "0") {
                     hideLoader();
-                    toastr.warning(response.message, response.titleSms);
+                    console.log(response)
                     return
                 }
 
@@ -409,17 +431,37 @@ class MovimientoCajaCtrl {
 
     //Get Anticipos 
     getAnticipos() {
-        this._mS.getData('get', '/Anticipo/Get?json=' + JSON.stringify(this.dataSearchAnticipo)).then(response => {
-            if (response.id === "0") {
-                toastr.warning(response.message, response.titleSms);
-                return
+        try {
+            let dataSearch = {
+                codEstab:this.dataSearchAnticipo.codEstab,                   
+                checkBoxEstado: this.dataSearchAnticipo.codEstado ? true : false,
+                checkBoxCliente: this.dataSearchAnticipo.byCliente > 0,
+                byCliente: this.dataSearchAnticipo.byCliente,
+                fechaInicio: this._form.formatDateMoment(this.dateRangePickerAnticipo.date.startDate),
+                fechaFin: this._form.formatDateMoment(this.dateRangePickerAnticipo.date.endDate), 
             }
-            this.anticipos = JSON.parse(response.data) || []
-        })
+            showLoader();
+            this.anticipos = [];
+            this._mS.getData('get', '/Anticipo/Get?json=' + JSON.stringify(dataSearch)).then(response => {
+                hideLoader();
+                if (response.id === "0") {
+                    console.log(response)                    
+                }
+                if(response.id === "1") {
+                    this.anticipos = JSON.parse(response.data) || []
+                }
+            }).catch(error => {
+                hideLoader();
+                console.log(error)
+            })
+        } catch (error) {
+            hideLoader();
+            console.log(error)
+        }
     };
 
     getAllEstado() {
-        this._commonSvc.getEstadoDocByCodDoc('FV').then(response => {
+        this._commonSvc.getEstadoDocByCodDoc('EC').then(response => {
             this.estados = response;
         })
     }
@@ -437,39 +479,7 @@ class MovimientoCajaCtrl {
             }
         })
     }
-
-    openModalFiltroMovCaja() {
-        $("#modalFiltroMovimientoCaja").modal('show');
-    }
-
-    onChangeFechaFilter() {
-        this.mes = new Date().getMonth() + 1;
-        this.getFechaInicioFinFilter('fechaAnticipo');
-    }
-
-    onChangeFechaFilterMovimientoCaja() {
-        this.mes = new Date().getMonth() + 1;
-        this.getFechaInicioFinFilter();
-    }
-
-
-    getFechaInicioFinFilter(tipo) {
-        if (tipo === "fechaAnticipo") {
-            let {
-                fechaInicio,
-                fechaFin
-            } = this._form.getFechaInicioFinFilter(this.dataSearchAnticipo.mes);
-            this.dataSearchAnticipo.fechaInicio = fechaInicio;
-            this.dataSearchAnticipo.fechaFin = fechaFin;
-            return
-        }
-        let {
-            fechaInicio,
-            fechaFin
-        } = this._form.getFechaInicioFinFilter(this.dataSearch.mes);
-        this.dataSearch.fechaInicio = fechaInicio;
-        this.dataSearch.fechaFin = fechaFin;
-    }
+ 
 
     // //Buscar Empleado 
     // searchEmpleado(busqueda){
@@ -479,7 +489,7 @@ class MovimientoCajaCtrl {
     // }
 
     onKeyupSearchEmpleado(text) {
-        if (text === null || text === undefined || text === "") {
+        if (!text) {
             this.dataSearch.byEmpleado = '';
         }
     }
@@ -488,36 +498,7 @@ class MovimientoCajaCtrl {
         this.dataSearch.byEmpleado = item.idEmpleado;
     }
 
-    filtrarMovimientoCaja() {
-        if (this.dataSearch.checkBoxFecha) {
-            if (this._form.campo(this.dataSearch.fechaInicio)) {
-                toastr.warning('Ingrese Fecha de Inicio');
-                return
-            }
-            if (this._form.campo(this.dataSearch.fechaFin)) {
-                toastr.warning('Ingrese Fecha Fin')
-            }
-        }
-
-        if (this.dataSearch.checkBoxEmpleado) {
-            if (this._form.campo(this.dataSearch.byEmpleado)) {
-                toastr.warning('Seleccione el Empleado');
-                return
-            }
-        }
-
-        if (this.dataSearch.checkBoxEstado) {
-            if (this._form.campo(this.dataSearch.byEstado)) {
-                toastr.warning('Seleccione el Estado');
-                return
-            }
-        }
-
-        this.getMovCajas();
-        $("#modalFiltroMovimientoCaja").modal('hide');
-    }
-
-
+     
     getPrint(item) {
         let parameters = { 
             idDocument: item.idMovimientoCaja,
@@ -584,14 +565,10 @@ class MovimientoCajaCtrl {
             }
         })
     }
+ 
 
-
-    openModalFiltroAnticipo() {
-        $("#modalFiltroAnticipo").modal('show');
-    }
-
-    onKeyupSearchCliente(text) {
-        if (text === '') {
+    onKeyupSearchCliente() {
+        if (!this.dataSearchAnticipo.selelectedCliente) {
             this.selectedCliente = '';
             this.dataSearchAnticipo.byCliente;
         }
@@ -599,49 +576,41 @@ class MovimientoCajaCtrl {
 
     selectedClienteChange(item) {
         this.dataSearchAnticipo.byCliente = item.idCliente;
-    }
-
-    filtrarAnticipo() {
-
-        if (!this.dataSearchAnticipo.codEstab) {
-            toastr.warning('Seleccione el Establecimiento');
-            return
-        }
-
-        if (this.dataSearchAnticipo.checkBoxFecha) {
-            if (this._form.campo(this.dataSearchAnticipo.fechaInicio)) {
-                toastr.warning('Ingrese Fecha de Inicio');
-                return
-            }
-            if (this._form.campo(this.dataSearchAnticipo.fechaFin)) {
-                toastr.warning('Ingrese Fecha Fin');
-                return
-            }
-        }
-
-        if (this.dataSearchAnticipo.checkBoxCliente) {
-            if (this._form.campo(this.dataSearchAnticipo.byCliente)) {
-                toastr.warning('Seleccione el Cliente');
-                return
-            }
-        }
-
-        if (this.dataSearchAnticipo.checkBoxEstado) {
-            if (this._form.campo(this.dataSearchAnticipo.byEstado) || this.dataSearchAnticipo.byEstado === 0) {
-                toastr.warning('Seleccione el Estado');
-                return
-            }
-        }
-
         this.getAnticipos();
-        $("#modalFiltroAnticipo").modal('hide');
-
     }
 
 
+    getReportAnticipo(item) {
+        try {
+            let format = 'pdf';
+
+            let dataParms = {
+                id: item.idAnticipo,
+            }
 
 
 
+            const parameters = {
+                hasService: true,                
+                reportParams: JSON.stringify({
+                    hasParams: false,
+                    codigo: 'RA',
+                    format,
+                    codEstab: item.codEstab,
+                    aditionalParams: []
+                }),
+                dataParams: JSON.stringify(dataParms)
+            }
+
+            this._commonSvc.getReport({
+                parameters,
+                formatType: format
+            })
+        } catch (error) {
+            console.log(error)
+        }      
+    }
+     
 }
 
 app.controller('movimientoCajaCtrl', MovimientoCajaCtrl).name

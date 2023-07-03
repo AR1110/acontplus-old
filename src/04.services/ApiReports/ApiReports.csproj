@@ -24,11 +24,11 @@
 		<None Remove="Reports\FactElect\Factura.rdl" />
 		<None Remove="Reports\Factura.rdlc" />
 		<None Remove="Reports\FacturaAutomatica.rdlc" />
+		<None Remove="Reports\GestionFinanciera\Anticipo.rdl" />
 		<None Remove="Reports\GestionFinanciera\Cheque.rdlc" />
 		<None Remove="Reports\GestionFinanciera\ComprobanteEgreso.rdlc" />
 		<None Remove="Reports\GestionFinanciera\ComprobanteIngreso.rdlc" />
 		<None Remove="Reports\GestionFinanciera\ControlCaja.rdl" />
-		<None Remove="Reports\GestionFinanciera\ControlCaja.rdlc" />
 		<None Remove="Reports\GestionFinanciera\IngresoEgresoCaja.rdl" />
 		<None Remove="Reports\GestionReporte\ArticuloTarifa.rdl" />
 		<None Remove="Reports\GestionReporte\ArticuloValoracion.rdl" />
@@ -78,6 +78,9 @@
 		<Content Include="Reports\FacturaAutomatica.rdlc">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
+		<Content Include="Reports\GestionFinanciera\Anticipo.rdl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 		<Content Include="Reports\GestionFinanciera\Cheque.rdlc">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
@@ -88,9 +91,6 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Reports\GestionFinanciera\ControlCaja.rdl">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</Content>
-		<Content Include="Reports\GestionFinanciera\ControlCaja.rdlc">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Reports\GestionFinanciera\IngresoEgresoCaja.rdl">
