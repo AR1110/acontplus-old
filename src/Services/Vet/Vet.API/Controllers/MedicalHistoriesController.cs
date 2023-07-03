@@ -58,7 +58,7 @@ namespace Vet.API.Controllers
 
             var data = _medicalHistoryReport.Get(id);
 
-            return File(data, "test.pdf", "application/pdf");
+            return File(data, "application/pdf", "test.pdf");
         }
 
         // PUT: api/MedicalHistories/5
