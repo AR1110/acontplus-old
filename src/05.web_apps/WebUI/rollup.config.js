@@ -12,7 +12,7 @@ export default {
     // This `main.js` file we wrote
     input: 'wwwroot/js/svelte/main.js',
     output: {
-        sourcemap: true,
+        sourcemap: 'inline',
         // The destination for our bundled JavaScript
         file: 'wwwroot/js/svelte/build/bundle.js',
         // Our bundle will be an Immediately-Invoked Function Expression
