@@ -1,43 +1,52 @@
 
-    import { createAxiosClient } from "./createAxiosClient";
-	
-    import jwt_decode from "jwt-decode";
+import { createAxiosClient } from "./createAxiosClient";
 
-    function getCurrentAccessToken() {
-        const cat = localStorage.getItem("ngStorage-currentUser");
-        const objToken = JSON.parse(cat);
-        return objToken.token;
-        // this is how you access the zustand store outside of React.
-        //return useAuthStore.getState().accessToken;
-    }
+import jwt_decode from "jwt-decode";
 
-    function getCurrentRefreshToken() {
-        // this is how you access the zustand store outside of React.
-        //return useAuthStore.getState().refreshToken;
-    }
+function getCurrentAccessToken() {
+    const cat = localStorage.getItem("ngStorage-currentUser");
+    const objToken = JSON.parse(cat);
+    return objToken.token;
+    // this is how you access the zustand store outside of React.
+    //return useAuthStore.getState().accessToken;
+}
 
-    function setRefreshedTokens(tokens) {
-        console.log("set tokens...");
-    }
+function getCurrentRefreshToken() {
+    // this is how you access the zustand store outside of React.
+    //return useAuthStore.getState().refreshToken;
+}
 
-    async function logout() {
-        console.log("logout...");
-    }
-    console.log(getCurrentAccessToken());
-    var decodedJwt = jwt_decode(getCurrentAccessToken());
-	console.log(decodedJwt);
+function setRefreshedTokens(tokens) {
+    console.log("set tokens...");
+}
 
-    export const client = createAxiosClient({
-        options: {
-            baseURL: `${decodedJwt.urlGateway}`,
-            timeout: 300000,
-            headers: {
-                "Content-Type": "application/json",
-            },
+async function logout() {
+    console.log("logout...");
+}
+console.log(getCurrentAccessToken());
+var decodedJwt = jwt_decode(getCurrentAccessToken());
+console.log(decodedJwt);
+
+export const client = createAxiosClient({
+    options: {
+        baseURL: `${decodedJwt.urlGateway}`,
+        timeout: 300000,
+        headers: {
+            "Content-Type": "application/json",
         },
-        getCurrentAccessToken,
-        getCurrentRefreshToken,
-        refreshTokenUrl: null,//refreshTokenUrl: REFRESH_TOKEN_URL,
-        logout,
-        setRefreshedTokens,
-    });
+    },
+    getCurrentAccessToken,
+    getCurrentRefreshToken,
+    refreshTokenUrl: null,//refreshTokenUrl: REFRESH_TOKEN_URL,
+    logout,
+    setRefreshedTokens,
+});
+
+export const clientFile = (url) => {
+   return axios({
+        url: `${decodedJwt.urlGateway}` + url,
+        method: 'POST',
+        responseType: 'blob',
+        headers: { 'Authorization': 'Bearer ' + getCurrentAccessToken() }
+    })
+};

@@ -10,6 +10,8 @@
     "@rollup/plugin-commonjs": "^24.1.0",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.1.0",
+    "@rollup/plugin-typescript": "^11.1.2",
+    "@types/file-saver": "^2.0.5",
     "@types/rollup-plugin-node-builtins": "^2.1.2",
     "@types/toastr": "^2.1.40",
     "browser-sync": "^2.29.3",
@@ -23,6 +25,7 @@
   "dependencies": {
     "@rollup/plugin-replace": "^5.0.2",
     "axios": "^1.4.0",
+    "file-saver": "^2.0.5",
     "jquery": "^3.7.0",
     "jwt-decode": "^3.1.2",
     "react-hot-toast": "^2.4.1",
