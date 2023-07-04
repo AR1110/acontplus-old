@@ -1,9 +1,13 @@
-﻿
+﻿@page
+@model WebUI.Areas.Login.Pages.IndexModel
 @{
     ViewData["Title"] = "Index";
     Layout = "";
-    var returnUrl = ViewData["ReturnUrl"] as string;
+    //var returnUrl = ViewData["ReturnUrl"] as string;
+    @RouteData.Values["returnUrl"]
 }
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
 <!DOCTYPE html>
 <html lang="es-ec">
 <head>
@@ -49,7 +53,7 @@
                     <h4 class="text-center m-b-20"> Inicio de Sesión</h4>
                     <div class="form-group m-t-40">
                         <div class="col-12">
-                            <input class="form-control" type="text" ng-model="data.userName" required="" placeholder="Usuario">
+                            <input class="form-control" type="text" ng-model="data.username" required="" placeholder="Usuario">
                         </div>
                     </div>
                     <div class="form-group">
@@ -64,16 +68,16 @@
                         </div>
                     </div>
                     @* <div class="form-group row">
-                        <div class="col-md-12">
-                            <div class="d-flex no-block align-items-center">
-                                <div class="icheck-info">
-                                    <input type="checkbox" id="rememberMe" ng-model="data.rememberMe" />
-                                    <label for="rememberMe"> Recordarme </label>
+                            <div class="col-md-12">
+                                <div class="d-flex no-block align-items-center">
+                                    <div class="icheck-info">
+                                        <input type="checkbox" id="rememberMe" ng-model="data.rememberMe" />
+                                        <label for="rememberMe"> Recordarme </label>
+                                    </div>
+                                    <input type="text" ng-model="data.returnUrl" id="returnUrl" hidden />
                                 </div>
-                                <input type="text" ng-model="data.returnUrl" id="returnUrl" hidden />
                             </div>
-                        </div>
-                    </div> *@
+                        </div> *@
                     <div class="form-group text-center m-t-20">
                         <div class="col-12">
                             <button class="btn btn-block btn-lg btn-info btn-rounded" type="submit">Ingresar <i class="fa fa-sign-in-alt"></i></button>
@@ -103,7 +107,10 @@
         </div>
     </section>
 
-    <partial name="_LoginUsuarioEntidad" />
+    @*<partial name="_LoginUsuarioEntidad" />*@
+
+    @await Html.PartialAsync("~/Areas/Login/Pages/Shared/_LoginUsuarioEntidad.cshtml")
+
 
     <script src="~/lib/jquery/jquery.min.js" asp-append-version="true"></script>
     <script src="~/lib/bootstrap/js/bootstrap.min.js" asp-append-version="true"></script>
@@ -138,7 +145,3 @@
     }
 </body>
 </html>
-
-
-
-

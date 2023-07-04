@@ -1,4 +1,5 @@
 using BL.JwtAuthenticationManger;
+using Helpers;
 using System.Reflection;
 
 namespace ApiAuth
@@ -17,6 +18,8 @@ namespace ApiAuth
 
             builder.Services.AddSingleton<JwtTokenHandler>();
             builder.Services.AddHttpContextAccessor();
+            builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
+            ConfigHelper.AddJsonFiles(builder.Configuration);
 
             var app = builder.Build();
 

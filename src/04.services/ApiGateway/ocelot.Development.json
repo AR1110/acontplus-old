@@ -25,7 +25,7 @@
       "DownstreamPathTemplate": "/api/Account",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Post" ],
-      "UpstreamPathTemplate": "/gateway/Account"
+      "UpstreamPathTemplate": "/gateway/Account{everything}"
     },
     {
       "AuthenticationOptions": {

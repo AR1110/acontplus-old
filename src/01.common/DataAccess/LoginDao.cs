@@ -39,7 +39,7 @@ namespace DataAccess
                     using (var cmd = new SqlCommand("Seguridad.Login_Start", con))
                     {
                         cmd.Parameters.AddWithValue("id", data.id);
-                        cmd.Parameters.AddWithValue("nombreUsuario", data.userName);
+                        cmd.Parameters.AddWithValue("nombreUsuario", data.username);
                         cmd.Parameters.AddWithValue("contrasenia", data.password);
                         cmd.CommandType = CommandType.StoredProcedure;
                         await con.OpenAsync();
