@@ -613,8 +613,6 @@
 		<None Include="wwwroot\js\controllers\admin\usuarioCtrl.min.js" />
 		<None Include="wwwroot\js\controllers\financiera\chequeCtrl.js" />
 		<None Include="wwwroot\js\controllers\financiera\chequeCtrl.min.js" />
-		<None Include="wwwroot\js\controllers\financiera\cobroCtrl.js" />
-		<None Include="wwwroot\js\controllers\financiera\cobroCtrl.min.js" />
 		<None Include="wwwroot\js\controllers\financiera\movimientoCajaCtrl.js" />
 		<None Include="wwwroot\js\controllers\financiera\pagoCtrl.js" />
 		<None Include="wwwroot\js\controllers\financiera\pagoCtrl.min.js" />
