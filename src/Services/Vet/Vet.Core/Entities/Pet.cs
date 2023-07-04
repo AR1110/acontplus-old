@@ -9,7 +9,7 @@ namespace Vet.Core.Entities
     {
         [Required]
         [MaxLength(25)]
-        public string ClientUniqueId { get; set; }
+        public string CustomerUniqueId { get; set; }
         [Required]
         [MaxLength(25)]
         public string CompanyUniqueId { get; set; }

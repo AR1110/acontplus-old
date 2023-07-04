@@ -3,7 +3,8 @@
 	import { client } from "../../../core/api/axiosClient";
 	import AdvancedSearch from "../../../core/components/AdvancedSearch.svelte";
 	import toast from "../../../core/utils/toast";
-
+	export let newRecord
+	
 	let diseases = [],
 		diseasesStatuses = [],
 		behaviors = [],
@@ -38,7 +39,7 @@
 		date: "",
 		healthChecks: [],
 		behaviorTests: [],
-		style: "",
+		observations: "",
 	};
 
 	function addDesease(d, ds) {
@@ -126,19 +127,20 @@
 			date: medicalHistory.date,
 			healthChecks: healthChecks,
 			behaviorTests: behaviorTests,
-			style: medicalHistory.style,
+			observations: medicalHistory.observations,
 		};
 		console.log(newHistory);
 		await client
 			.post("/gateway/MedicalHistories/", newHistory)
 			.then((response) => {
-				console.log(response);
 				toast({
 					type: "success",
 					message: "Registrada exitosamente",
 				});
-				openNew(false);
-				initialLoad();
+				newRecord = false
+				setTimeout(() => {
+					window.location.reload()
+				}, 500);
 			})
 			.catch((error) => {
 				console.log(error);
@@ -171,7 +173,7 @@
 							class="list-group-item"
 							on:click={selectPet(item)}
 							><i class="ti-user" /> - {item.name}
-							- {item.clientUniqueId}</a
+							- {item.customerUniqueId}</a
 						>
 					{/each}
 				</div>{/if}
@@ -213,7 +215,7 @@
 						type="text"
 						class="form-control"
 						disabled
-						value={petSelected.clientUniqueId}
+						value={petSelected.customerUniqueId}
 					/>
 				</div>
 			</div>
@@ -328,7 +330,7 @@
 					name=""
 					id=""
 					class="form-control"
-					bind:value={medicalHistory.style}
+					bind:value={medicalHistory.observations}
 				/>
 			</div>
 		</div>

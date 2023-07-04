@@ -1,14 +1,17 @@
 [
   {
     "Code": "S",
-    "Name": "Si"
+    "Name": "Si",
+    "Order": 1
   },
   {
     "Code": "N",
-    "Name": "No"
+    "Name": "No",
+    "Order": 2
   },
   {
     "Code": "M",
-    "Name": "Medio"
+    "Name": "Medio",
+    "Order": 3
   }
 ]

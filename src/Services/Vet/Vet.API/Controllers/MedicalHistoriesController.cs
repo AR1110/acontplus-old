@@ -23,12 +23,15 @@ namespace Vet.API.Controllers
         public async Task<ActionResult<IEnumerable<MedicalHistory>>> GetMedicalHistories()
         {
             var companyId = User.GetCompanyId();
-            if (!_context.MedicalHistories.Any(x => x.Pet.CompanyUniqueId == companyId))
+            if (!_context.MedicalHistories.Any(x =>
+                                            x.Pet.CompanyUniqueId == companyId
+                                            && x.Enabled
+                                            ))
             {
                 return NoContent();
             }
-            return await _context.MedicalHistories.Include(p=>p.Pet)
-                .Where(x => x.Pet.CompanyUniqueId == companyId)
+            return await _context.MedicalHistories.Include(p => p.Pet)
+                .Where(x => x.Pet.CompanyUniqueId == companyId && x.Enabled)
                 .ToListAsync();
         }
 
@@ -113,7 +116,13 @@ namespace Vet.API.Controllers
                 return NotFound();
             }
 
-            _context.MedicalHistories.Remove(medicalHistory);
+            //_context.MedicalHistories.Remove(medicalHistory);
+            //await _context.SaveChangesAsync();
+
+            medicalHistory.Deleted = true;
+            medicalHistory.Enabled = false;
+
+            _context.Entry(medicalHistory).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
             return NoContent();
