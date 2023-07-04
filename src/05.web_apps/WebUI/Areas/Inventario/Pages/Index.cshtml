@@ -22,23 +22,190 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
-                    <button class="btn btn-info" ng-click="openModalReporte()">
-                        <i class="mdi mdi-file-find fa-lg"></i> Nuevo Reporte
-                    </button>
+                    <div class="row justify-content-between">
+
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <select class="form-control" ng-model="dataSearch.byTipoReporte"
+                                    ng-change="onChangeTipoReporte()">
+                                    <option ng-value="item.codigo" ng-repeat="item in tipoReportes">{{item.descripcion}}</option> 
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12" ng-hide="hideCheckbox">
+                            <div class="icheck-info">
+                                <input type="checkbox" ng-model="dataSearch.chkProveedor" class="form-control"
+                                    name="chkProveedor" id="chkProveedor">
+                                <label for="chkProveedor">Proveedor</label>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12" ng-hide="hideCheckbox" >
+                            <div class="icheck-info" ng-show="!dataSearch.chkProveedor" >
+                                <input type="checkbox" ng-model="dataSearch.checkboxSubFamiliaFiltro" class="form-control"
+                                    name="checkboxSubFamiliaFiltro" id="checkboxSubFamiliaFiltro">
+                                <label for="checkboxSubFamiliaFiltro">SubFamilia</label>
+                            </div>
+                        </div> 
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12" ng-if="dataSearch.byTipoReporte==3">
+                            <div class="icheck-info">
+                                <input type="checkbox" ng-model="dataSearch.checkboxArticuloFiltro" class="form-control"
+                                    name="checkboxArticuloFiltro" id="checkboxArticuloFiltro">
+                                <label for="checkboxArticuloFiltro">Articulo</label>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12" ng-if="dataSearch.byTipoReporte==3">
+                            <div class="icheck-info">
+                                <input type="checkbox" ng-model="dataSearch.checkboxUsuarioFiltro" class="form-control"
+                                    name="checkboxUsuarioFiltro" id="checkboxUsuarioFiltro">
+                                <label for="checkboxUsuarioFiltro">Usuario</label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12"
+                            ng-if="(!dataSearch.chkProveedor && dataSearch.checkboxSubFamiliaFiltro)">
+                            <div class="form-group">
+                                <label for="">SubFamilia</label>
+                                <select class="form-control border-select" ng-model="dataSearch.bySubFamilia"
+                                    ng-options="sf.subFamilia.idSubFamilia as sf.subFamilia.descripcion group by sf.nombreFamilia  for sf in subFamilias">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12"  ng-if="dataSearch.chkProveedor">
+                            @await Html.PartialAsync("~/Views/Proveedor/_ProveedorAutocompleteFiltro.cshtml")
+                        </div>                       
+                    </div>
+
+                    <div class="row" ng-show="dataSearch.byTipoReporte===3">
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12" ng-show="dataSearch.checkboxArticuloFiltro">
+                            <div class="form-group">
+                                <label class="form-control-label">Buscar Articulo</label>
+                                    <input type="text" 
+                                           id="articleInputSearch" 
+                                           class="form-control border-select" 
+                                           article-search-drtv 
+                                           on-select="onSelectArticle(result)" 
+                                           on-keyup-article="onKeyupArticle()" 
+                                           ng-model="dataSearchArticle" 
+                                           placeholder="..."
+                                            onclick="select();"/>
+                                <script type="text/ng-template" id="autocompleteArticleTemplate.html">
+                                    <div class="autocomplete-suggestion-cliente">
+                                        <span class="item-title">
+                                            <small> {{match.model.descripcion}}</small><br>
+                                            <small><b>Medida: </b>{{match.model.medida}}</small>
+                                        </span>
+                                    </div>
+                                </script>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12" ng-show="dataSearch.checkboxUsuarioFiltro">
+                            <div class="form-group">
+                                <label class="form-control-label">Buscar Usuario</label>
+                                    <input type="text" 
+                                           id="userInputSearch" 
+                                           class="form-control border-select" 
+                                           user-search-drtv 
+                                           on-select="onSelectUser(result)" 
+                                           onKeyup-search="onKeyupUser()" 
+                                           ng-model="dataSearchUser.nombreCompleto" 
+                                           placeholder="..."
+                                            onclick="select();"/>
+                                <script type="text/ng-template" id="autocompleteUserTemplate.html">
+                                    <div class="autocomplete-suggestion-cliente">
+                                        <span class="item-title">
+                                            <small> {{match.model.nombreCompleto}}</small><br>
+                                            <small><b>C.I: </b>{{match.model.nroIdentificacion}}</small>
+                                        </span>
+                                    </div>
+                                </script>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label>Rango Fechas</label>
+                            <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
+                            end-date="dataSearch.fechaFin"
+                            result-range-date="resultRangeFilter(result)"></date-range-filter>
+                            </div>
+                        </div>
+                        <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label for="ordenar">Tipo Transacción:</label>
+                                <select class="form-control border-select" ng-model="dataSearch.codTransaccion">
+                                    <option value="S">Salida</option>
+                                    <option value="E">Entrada</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row justify-content-between">
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12" ng-if="dataSearch.byTipoReporte!==3">
+                            <div class="form-group">
+                                <label for="ordenar">Ordenar por:</label>
+                                <select class="form-control border-select" ng-model="dataSearch.byOrderCampo">
+                                    <option value="ar.codigo">Codigo</option>
+                                    <option value="ar.descripcion">Descripción</option>
+                                    <option value="ar.idSubFamilia">SubFamilia</option>
+                                    <option value="ar.stock">Stock</option>
+                                </select>
+                            </div>
+                        </div>
+
+                       
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12" ng-if="dataSearch.byTipoReporte!==3">
+                            <div class="icheck-info mt-3">
+                                <input type="radio" ng-model="dataSearch.byOrder" value='ASC' name="radioByOrder"
+                                    id="byOrderAsc">
+                                <label for="byOrderAsc">Ascendente</label>
+                            </div>
+                            <div class="icheck-info">
+                                <input type="radio" ng-model="dataSearch.byOrder" value="DESC" name="radioByOrder"
+                                    id="byOrderDesc">
+                                <label for="byOrderDesc">Descendente</label>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-4 col-12">
+                            <div class="form-group">
+                                <label for="tipoFormato">Tipo Formato</label>
+                                <div class="icheck-info">
+                                    <input type="radio" ng-model="dataSearch.byTipoFormato" value="pdf" name="tipoFormato"
+                                        id="pdf">
+                                    <label for="pdf">PDF</label>
+                                </div>
+                                <div class="icheck-info">
+                                    <input type="radio" ng-model="dataSearch.byTipoFormato" value="excel" name="tipoFormato"
+                                        id="excel">
+                                    <label for="excel">EXCEL</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                 
                 </div>
                 <md-divider></md-divider>
-                <div class="card-body">
+                @* <div class="card-body">
                     <div class="jumbotron text-center">
-                        <br><br><br><br><br><br><br><br><br>
+                        <br><br> <br><br><br><br>
                         <h2>Aquí se mostrará el reporte creado!</h2>
-                        <br><br><br><br><br><br><br><br><br>
+                        <br><br> <br><br><br><br>
                     </div>
+                </div> *@
+                <div class="card-footer">
+                    <button class="btn btn-success" ng-click="filtrar()">
+                        <i class="ti-file"></i> Descargar
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
-    @await Html.PartialAsync("_ModalFiltroInventario")
 
 </div>
 

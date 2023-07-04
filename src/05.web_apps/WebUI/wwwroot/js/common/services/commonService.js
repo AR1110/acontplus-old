@@ -315,6 +315,9 @@ export class CommonService {
 
 
     //-------------------------------------Usuario--------------------------------
+    /***
+     *  json = {busqueda, idRol}
+     */
     usuarioSearch(json) {
         return this.mS.getData('get', 'Usuario/Search/' + JSON.stringify(json), null, true).then(response => {
             if (response.code === "0") {

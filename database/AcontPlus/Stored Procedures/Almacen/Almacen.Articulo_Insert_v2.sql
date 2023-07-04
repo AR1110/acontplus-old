@@ -6,7 +6,7 @@ GO
 -- Description:	SP para registrar los aritculos desde la app
 -- =============================================
 CREATE OR ALTER PROCEDURE Almacen.Articulo_Insert_v2
-	 @idUsuarioRol INT 
+	  @idUsuarioRol INT 
 	 ,@json VARCHAR(max)
 	--,@jsonArticulo VARCHAR(max)	
 	--,@idBodega INT 
@@ -28,7 +28,7 @@ BEGIN
 	DECLARE @codigoAuxiliar VARCHAR(50)
 	DECLARE @code VARCHAR(15)
 	DECLARE @payload VARCHAR(MAX)
-			,@fechaCreacion DATETIME = (SELECT dbo.ufnGetDateEcuador())
+		   ,@fechaCreacion DATETIME = (SELECT dbo.ufnGetDateEcuador())
 
 	DECLARE @inventory VARCHAR(5)
 

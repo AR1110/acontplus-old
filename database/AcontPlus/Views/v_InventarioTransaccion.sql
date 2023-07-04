@@ -10,6 +10,7 @@ SELECT t.idTransaccion
 	,t.idBodega
 	,t.idTipoDocumento
 	,t.idDocumento
+	,t.idTarifa
 	,t.cantidad
 	,t.precioUnitario
 	,t.precioCosto
@@ -235,13 +236,14 @@ SELECT t.idTransaccion
 END particion
 --,SUM(IIF(tt.codigo = 'S', -1, 1) * IIF(t.estado = 0, 0, t.cantidad)) OVER (PARTITION BY IIF(td.codigo = 'CI', t.idDocumento, dbo.AFTMovimientoKardex(t.fechaRegistro, t.idArticulo, t.idBodega)) ORDER BY t.fechaRegistro, t.idTransaccion ASC) saldo
 ,e.nombreComercial establecimiento
-FROM Inventario.Transaccion t WITH (NOLOCK)
+,tarifa = ta.descripcion
+FROM Inventario.Transaccion            t WITH (NOLOCK)
 INNER JOIN Inventario.TipoTransaccion tt WITH (NOLOCK) ON t.idTipoTransaccion = tt.idTipoTransaccion
-INNER JOIN Inventario.TipoDocumento td WITH (NOLOCK) ON t.idTipoDocumento = td.idTipoDocumento
-INNER JOIN Bodega b WITH (NOLOCK) ON t.idBodega = b.idBodega
-INNER JOIN Sri.Establecimiento e ON b.codEstab = e.codEstab
-INNER JOIN Articulo a WITH (NOLOCK) ON t.idArticulo = a.idArticulo
-LEFT JOIN Medida m  WITH (NOLOCK) ON a.idMedida = m.idMedida
-LEFT JOIN Usuario u WITH (NOLOCK) ON t.idUsuario = u.idUsuario
-
+INNER JOIN Inventario.TipoDocumento   td WITH (NOLOCK) ON t.idTipoDocumento   = td.idTipoDocumento
+INNER JOIN dbo.Bodega                  b WITH (NOLOCK) ON t.idBodega          = b.idBodega
+INNER JOIN Sri.Establecimiento         e WITH (NOLOCK) ON b.codEstab          = e.codEstab
+INNER JOIN dbo.Articulo                a WITH (NOLOCK) ON t.idArticulo        = a.idArticulo
+ LEFT JOIN dbo.Medida                  m WITH (NOLOCK) ON a.idMedida          = m.idMedida
+ LEFT JOIN dbo.Usuario                 u WITH (NOLOCK) ON t.idUsuario         = u.idUsuario
+ LEFT JOIN dbo.Tarifa                 ta WITH (NOLOCK) ON ta.idTarifa         = t.idTarifa
 )
