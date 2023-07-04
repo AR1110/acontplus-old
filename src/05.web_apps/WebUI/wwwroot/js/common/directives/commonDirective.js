@@ -578,6 +578,9 @@
             }
         };
     });
+
+
+
     
 
     app.directive('btnEmpresa', function (modalService, nombreModalVenta) {
@@ -1006,5 +1009,130 @@
             }
         }
     })
+
+
+    //==================================================ineventario=================================
+    app.directive('articleSearchDrtv', function ($compile, articuloService) {
+        return {
+            restrict: 'A',
+            scope: {
+                onSelect: '&',
+                onKeyupArticle:'&',
+                ngModel: '='
+            },
+            link: function (scope, element, attrs) {
+                scope.cliente = {
+                    descripcion: scope.ngModel
+                }
+                scope.searchArticle = function (textSearch) {
+                    if (textSearch.length > 1) {
+                        let json = {
+                            busqueda: textSearch,
+                            condicion: false,
+                            fraccionado: false
+                        }
+                        return articuloService.search(json)
+                        .catch(error=>{
+                            console.log(error);
+                        })
+                    }
+                }
+    
+                element.attr('uib-typeahead', 'item as item.descripcion for item in searchArticle($viewValue)');
+                element.attr('typeahead-on-select', 'onSelect({result: $item})');
+                element.attr('typeahead-template-url', 'autocompleteArticleTemplate.html');
+                element.attr('ng-keyup', 'onKeyupArticle()');
+                element.attr('typeahead-editable', 'false');
+
+                 
+                // element.attr('ng-model', 'ngModel')
+                element.removeAttr('article-search-drtv');
+
+                // Add CSS styles dynamically
+                element.attr('style', 'position:relative;');
+                element.attr('popover-append-to-body', 'true');
+                element.attr('popover-placement', 'bottom-left');
+                element.attr('popover-popup-delay', '200');
+                element.attr('popover-trigger', 'mouseenter');
+
+                // Create a style element to apply custom CSS styles
+                var customStyle = document.createElement('style');
+                customStyle.innerHTML = `
+                    [uib-typeahead-popup].dropdown-menu {
+                        z-index: 999999 !important;
+                        max-height: 250px;
+                        overflow-y: auto;
+                        width: auto;
+                    }
+                `;
+                
+                console.log('rendered')
+                document.head.appendChild(customStyle);
+                $compile(element)(scope);
+            }
+        };
+    });
+
+
+    app.directive('userSearchDrtv', function ($compile, commonService, decodeToken) {
+        return {
+            restrict: 'A',
+            scope: {
+                onSelect: '&',
+                onKeyupSearch:'&',
+                ngModel: '='
+            },
+            link: function (scope, element, attrs) {
+                scope.dataSearchUser = {
+                    nombreCompleto: scope.ngModel
+                }
+                scope.search = function (textSearch) {
+                    if (textSearch.length > 1) {
+                        let json = {
+                            busqueda: textSearch,
+                            idRol: decodeToken.idUsuarioRol
+                        }
+                        return commonService.usuarioSearch(json)
+                        .catch(error=>{
+                            console.log(error);
+                        })
+                    }
+                }
+    
+                element.attr('uib-typeahead', 'item as item.nombreCompleto for item in search($viewValue)');
+                element.attr('typeahead-on-select', 'onSelect({result: $item})');
+                element.attr('typeahead-template-url', 'autocompleteUserTemplate.html');
+                element.attr('ng-keyup', 'onKeyupSearch()');
+                element.attr('typeahead-editable', 'false');
+
+                 
+                // element.attr('ng-model', 'ngModel')
+                element.removeAttr('user-search-drtv');
+
+                // Add CSS styles dynamically
+                element.attr('style', 'position:relative;');
+                element.attr('popover-append-to-body', 'true');
+                element.attr('popover-placement', 'bottom-left');
+                element.attr('popover-popup-delay', '200');
+                element.attr('popover-trigger', 'mouseenter');
+
+                // Create a style element to apply custom CSS styles
+                var customStyle = document.createElement('style');
+                customStyle.innerHTML = `
+                    [uib-typeahead-popup].dropdown-menu {
+                        z-index: 999999 !important;
+                        max-height: 250px;
+                        overflow-y: auto;
+                        width: auto;
+                    }
+                `;
+                
+                console.log('rendered')
+                document.head.appendChild(customStyle);
+                $compile(element)(scope);
+            }
+        };
+    });
+
 
 })(window.angular)

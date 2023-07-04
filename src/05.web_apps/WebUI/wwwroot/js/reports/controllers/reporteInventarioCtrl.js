@@ -1,16 +1,30 @@
+(function(){
 
+    'use strict';
+
+    
 
 app.controller('reporteInventarioCtrl', reporteInventarioCtrl);
 
-reporteInventarioCtrl.$inject = ['$scope', 'commonService', 'mainService', 'formulario', 'toastService', 'FileSaver', 'Blob'];
+reporteInventarioCtrl.$inject = ['$scope', 'commonService', 'mainService', 'formulario', 'toastService'];
 
-function reporteInventarioCtrl($scope, _commonSvc, mS, form, toast, FileSaver, Blob) {
+function reporteInventarioCtrl($scope, _commonSvc, mS, fS, tS) {
 
     $scope.dataSearch = {};
     $scope.dataSearch.byOrderCampo = 'ar.descripcion';
     $scope.dataSearch.byOrder = 'ASC';
-    $scope.dataSearch.byTipoReporte = 1; //Tipo Reporte con Valoración
+    $scope.dataSearch.byTipoReporte = 3 //Tipo Reporte con Valoración
     $scope.dataSearch.byTipoFormato = 'pdf';
+    $scope.dataSearch.codTransaccion = 'S';
+
+    $scope.tipoReportes = [
+        {codigo: 1, descripcion: 'Con Valoración', codigoReporte: 'INVRV'},
+        {codigo: 2, descripcion: 'Con Lista de Precios', codigoReporte: 'INVAT'},
+        {codigo: 3, descripcion: 'Consumo Diario', codigoReporte: 'CDA'}
+    ] 
+
+    $scope.hideCheckbox = true; //Oculta: chechboxk proveedor, subfamilia si es tipo-reporte 2
+
 
 
     $scope.getAsignaciones = function () {
@@ -66,9 +80,13 @@ function reporteInventarioCtrl($scope, _commonSvc, mS, form, toast, FileSaver, B
     }
 
     $scope.onChangeTipoReporte = function () {
+        $scope.hideCheckbox= false;
         if ($scope.dataSearch.byTipoReporte === 2) {
             $scope.dataSearch.checkboxDetalleBodegaFiltro = false;
             return
+        }
+        if($scope.dataSearch.byTipoReporte ===3){
+            $scope.hideCheckbox = true;
         }
     }
 
@@ -77,6 +95,30 @@ function reporteInventarioCtrl($scope, _commonSvc, mS, form, toast, FileSaver, B
     $scope.selectProveedorFiltro = (item) => {
         $scope.dataSearch.numeroIdentificacion = item.proveedor.numeroIdentificacion
         console.log($scope.dataSearch)
+    }
+
+
+
+    $scope.onKeyupArticle = function(){
+        if(!$scope.dataSearchArticle){
+            $scope.dataSearch.idArticulo = 0;
+        }
+        console.log($scope.dataSearchArticle)
+    }
+    $scope.onSelectArticle = function(item){
+        console.log(item); 
+        $scope.dataSearchArticle = item.descripcion;
+        $scope.dataSearch.idArticulo = item.idArticulo;
+    }
+
+
+    $scope.onSelectUser = function(item){
+        $scope.dataSearch.idUsuario = item.idUsuario;
+    }
+    $scope.onKeyupUser = function(){
+        if(!$scope.dataSearchUser.nombreCompleto){
+            $scope.dataSearch.idUsuario = 0;
+        }
     }
 
     $scope.filtrar = async function () {
@@ -122,6 +164,13 @@ function reporteInventarioCtrl($scope, _commonSvc, mS, form, toast, FileSaver, B
             }
         }
 
+        if($scope.dataSearch.checkboxUsuarioFiltro){
+            if(!($scope.dataSearch.idUsuario>0)){
+                tS.toastr('warning', 'Seleccione el Usuario');
+                return;
+            }
+        }
+
         $scope.getReport();
     }
 
@@ -130,10 +179,26 @@ function reporteInventarioCtrl($scope, _commonSvc, mS, form, toast, FileSaver, B
         let fecha = fechaHoy.getDate() + '-' + (fechaHoy.getMonth() + 1) + '-' + fechaHoy.getFullYear();
         let hora = fechaHoy.getHours() + ':' + fechaHoy.getMinutes();
 
-        let codigo = $scope.dataSearch.byTipoReporte === 1 ? 'INVRV' : 'INVAT'
+        let codigo = $scope.tipoReportes.find(item=>item.codigo===$scope.dataSearch.byTipoReporte).codigoReporte;
 
         $scope.dataSearch.filtroFecha = fecha + ' ' + hora;
 
+        let dataSearch = {}
+
+        if($scope.dataSearch.byTipoReporte===3){
+            dataSearch = {
+                checkBoxArticulo : $scope.dataSearch.checkboxArticuloFiltro,
+                checkBoxUsuario : $scope.dataSearch.checkboxUsuarioFiltro,
+                checkBoxFecha : true,
+                checkBoxTransaccion : true,
+                idUsuario : 0,
+                idArticulo : $scope.dataSearch.idArticulo,
+                codTransaccion : $scope.dataSearch.codTransaccion,
+                fechaInicio : fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
+                fechaFin : fS.formatDateTimeZone($scope.dataSearch.fechaFin)
+            }
+
+        }
 
         const parameters = {
             reportParams: JSON.stringify({
@@ -141,7 +206,7 @@ function reporteInventarioCtrl($scope, _commonSvc, mS, form, toast, FileSaver, B
                 format: $scope.dataSearch.byTipoFormato,
                 aditionalParams: []
             }),
-            dataParams: JSON.stringify($scope.dataSearch)
+            dataParams: JSON.stringify(dataSearch)
         }
 
         const params = {
@@ -153,3 +218,7 @@ function reporteInventarioCtrl($scope, _commonSvc, mS, form, toast, FileSaver, B
     }
 }
 
+
+
+
+})(window.angular)
