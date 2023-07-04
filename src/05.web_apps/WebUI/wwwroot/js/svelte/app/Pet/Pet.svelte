@@ -67,7 +67,7 @@
 
 	let pet = {
 		id: "",
-		clientUniqueId: "",
+		customerUniqueId: "",
 		companyUniqueId: "",
 		name: "",
 		petTypeId: "",
@@ -105,7 +105,7 @@
 			return;
 		}
 		const newPet = {
-			clientUniqueId: clientSelected.numeroIdentificacion,
+			customerUniqueId: clientSelected.numeroIdentificacion,
 			companyUniqueId: clientSelected.rucEmpresa,
 			name: pet.name,
 			petTypeId: pet.petTypeId,
@@ -133,7 +133,7 @@
 
 	const deletePet = async (id) => {
 		let { isConfirmed } = await Swal.fire({
-			text: "Esta seguro de eliminar esta mascota",
+			text: "Esta seguro de eliminar esta mascota?",
 			icon: "warning",
 			showCancelButton: true,
 			confirmButtonColor: "#3085d6",
@@ -166,7 +166,7 @@
 	const updatePet = async () => {
 		let updatedpet = {
 			id: pet.id,
-			clientUniqueId: pet.clientUniqueId,
+			customerUniqueId: pet.customerUniqueId,
 			companyUniqueId: pet.companyUniqueId,
 			name: pet.name,
 			petType: pet.petType,

@@ -21,6 +21,8 @@ namespace BL.Reports
                 if (dsParams.Tables[0].Rows.Count == 0)
                     return null;
 
+                string mainPath = Directory.GetCurrentDirectory() + "\\Reports\\";
+
                 if (ds.Tables[0].Rows.Count > 0)
                 {
                     if (fromService)
@@ -37,13 +39,13 @@ namespace BL.Reports
                         switch (paths.Length)
                         {
                             case 1:
-                                lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0])));
+                                lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(mainPath, paths[0])));
                                 break;
                             case 2:
-                                lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0], paths[1])));
+                                lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(mainPath, paths[0], paths[1])));
                                 break;
                             default:
-                                lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(_configuration.GetSection("dirReports").Value + dsParams.Tables[0].Rows[0].Field<string>("reportPath")));
+                                lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(mainPath + dsParams.Tables[0].Rows[0].Field<string>("reportPath")));
                                 break;
                         }
                     }
@@ -119,7 +121,8 @@ namespace BL.Reports
                         //        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(_configuration.GetSection("dirReports").Value + item.Value.ToString()));
                         //        break;
                         //}
-                        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(_configuration.GetSection("dirReports").Value + item.Value.ToString()));
+                        string path = Directory.GetCurrentDirectory() + "\\Reports\\" + item.Value.ToString();
+                        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(path));
                     }
                     if (item.Key == "format")
                     {

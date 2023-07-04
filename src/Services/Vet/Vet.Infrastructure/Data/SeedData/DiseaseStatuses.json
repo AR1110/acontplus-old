@@ -1,18 +1,22 @@
 [
   {
     "Code": "NT",
-    "Name": "No Tiene"
+    "Name": "No Tiene",
+    "Order": 1
   },
   {
     "Code": "S",
-    "Name": "Suave"
+    "Name": "Suave",
+    "Order": 2
   },
   {
     "Code": "M",
-    "Name": "Medio"
+    "Name": "Medio",
+    "Order": 3
   },
   {
     "Code": "SV",
-    "Name": "Severo"
+    "Name": "Severo",
+    "Order": 4
   }
 ]

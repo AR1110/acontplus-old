@@ -88,7 +88,7 @@ BEGIN
 		razonSocialComprador varchar(100),
 		direccionComprador  varchar(100),
 		telefonoComprador   varchar(50),
-		emailComprador      varchar(50),
+		emailComprador      varchar(300),
 		porcentajeIva       varchar(50),
 		totalSinImpuestos   decimal(18, 2),
 		subTotalIva12       decimal(18, 2),

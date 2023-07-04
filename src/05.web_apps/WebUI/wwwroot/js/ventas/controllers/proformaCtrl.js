@@ -143,7 +143,9 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
                 checkBoxEstado: $scope.dataSearch.byEstado ? true : false,
                 byEstado: $scope.dataSearch.byEstado,
                 fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
-                fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin)
+                fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
+                isSearchNroSequential: $scope.dataSearch.nroSecuencial? true: false,
+                nroSecuencial: $scope.dataSearch.nroSecuencial
             }
            
             proformaSvc.getAll(dataSearch).then(response => {

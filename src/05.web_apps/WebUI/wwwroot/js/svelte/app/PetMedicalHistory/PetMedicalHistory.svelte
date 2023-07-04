@@ -3,9 +3,12 @@
 <script>
     import { onMount } from "svelte";
     import { client, clientFile } from "../../core/api/axiosClient";
-    import { saveAs } from "file-saver";
+    import Swal from "sweetalert2";
+    import toast from "../../core/utils/toast";
     import FileSaver from "file-saver";
+	import Search from "../../core/components/Search.svelte";
     import Add from "./components/Add.svelte";
+
     let newRecord = false;
     function openNew(open) {
         newRecord = open;
@@ -18,13 +21,34 @@
         });
     });
     const getReport = async (id) => {
+        //Add authentication headers as params
+        // var params = {
+        //     access_token: "An access_token",
+        //     other_header: "other_header",
+        // };
+
+        //Add authentication headers in URL
+        //var url = [url_generating_pdf, $.param(params)].join("?");
+
+        //Open window
+        //window.open(url);
         await clientFile(`/gateway/MedicalHistories/Report/` + id)
             .then((response) => {
-                // var file = new File([response], "hello world.pdf", {
-                //     type: "application/pdf",
-                // });
-                // FileSaver.saveAs(file);
+                var ieEDGE = navigator.userAgent.match(/Edge/g);
+                var ie = navigator.userAgent.match(/.NET/g); // IE 11+
+                var oldIE = navigator.userAgent.match(/MSIE/g);
 
+                var blob = new window.Blob([response.data], {
+                    type: "application/pdf",
+                });
+
+                if (ie || oldIE || ieEDGE) {
+                    window.navigator.msSaveBlob(blob, fileName);
+                } else {
+                    var fileURL = URL.createObjectURL(blob);
+                    window.open(fileURL);
+                }
+                return;
                 let fileBlob = new Blob([response.data], {
                     type: response.headers["content-type"],
                 });
@@ -62,36 +86,56 @@
             });
     };
     const deleteHistory = async (id) => {
-        // let { isConfirmed } = await Swal.fire({
-        // 	text: "Esta seguro de eliminar esta mascota",
-        // 	icon: "warning",
-        // 	showCancelButton: true,
-        // 	confirmButtonColor: "#3085d6",
-        // 	cancelButtonColor: "#d33",
-        // 	confirmButtonText: "Si, proceder!",
-        // 	cancelButtonText: "No, cancelar",
-        // });
-        // if (isConfirmed) {
-        // 	await client
-        // 		.delete("/gateway/Pets/" + id)
-        // 		.then((response) => {
-        // 			console.log(response);
-        // 			toast({
-        // 				type: "success",
-        // 				message: "Eliminada exitosamente",
-        // 			});
-        // 			pets = pets.filter((pet) => pet.id !== id);
-        // 		})
-        // 		.catch((error) => {
-        // 			console.log(error);
-        // 		});
-        // }
+        let { isConfirmed } = await Swal.fire({
+            text: "Esta seguro de eliminar este registro?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Si, proceder!",
+            cancelButtonText: "No, cancelar",
+        });
+        if (isConfirmed) {
+            await client
+                .delete("/gateway/MedicalHistories/" + id)
+                .then((response) => {
+                    console.log(response);
+                    toast({
+                        type: "success",
+                        message: "Eliminada exitosamente",
+                    });
+                    pets = pets.filter((pet) => pet.id !== id);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
     };
 
     const editHistory = (historyEdited) => {
         // editStatus = true;
         // pet = petEdited;
     };
+
+    const formatDate = (inputDate) => {
+        let date = new Date(inputDate)
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const year = String(date.getFullYear());
+
+        return `${day}/${month}/${year}`;
+    };
+
+    let searchTerm = ""
+    let filteredRecords = [];
+
+    const searchRecords = () => {
+		return (filteredRecords = medicalHistories.filter((item) => {
+			let petName = item.pet.name.toLowerCase();
+			return petName.includes(searchTerm.toLowerCase());
+		}));
+	};
+
 </script>
 
 <div class="row page-titles">
@@ -113,13 +157,21 @@
 
 <div class="card">
     <div class="card-body">
-        <Add />
+        {#if newRecord}
+            <Add newRecord />
+        {/if}
         <hr />
+        <Search
+			bind:searchTerm
+			on:input={searchRecords}
+			placeholder="Buscar Mascota"
+		/>
         <div class="table-responsive">
             <table class="table">
                 <caption>Registros</caption>
                 <thead>
                     <tr>
+                        <th>Cliente</th>
                         <th>Mascota</th>
                         <th>Fecha</th>
                     </tr>
@@ -127,8 +179,9 @@
                 <tbody>
                     {#each medicalHistories as item}
                         <tr>
+                            <td>{item.pet.customerUniqueId}</td>
                             <td>{item.pet.name}</td>
-                            <td>{item.date}</td>
+                            <td> {formatDate(item.date)} </td>
                             <td>
                                 <button
                                     class="btn btn-outline-danger btn-sm"

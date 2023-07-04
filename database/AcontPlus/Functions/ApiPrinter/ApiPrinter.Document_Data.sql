@@ -289,14 +289,43 @@ BEGIN
 								,dirMatriz = mc.dirEstablecimiento
 								,fechaEmision =  CONVERT(NVARCHAR, FORMAT(mc.fechaEmision, 'dd/MM/yyyy hh:mm')) 						
 								,nroDoc= UPPER(mc.tipoDoc) + ' : ' + mc.codDoc + '-'+ mc.estab+ '-'+ dbo.AFTAutoComplete(mc.nroDoc)
-								,mc.entregadoPor
-								,mc.recibidoPor
+								--,mc.entregadoPor
+								-- mc.recibidoPor
+								,labelEmpleado = IIF(mc.codDoc='IC', 'Recib. por: ', 'Entrg. por: ') 
+								,empleado =  mc.empleado
 								,entidadFinanciera = UPPER(mc.entidadFinanciera)
 								,valorTotal = convert(numeric(18,2), mc.valor)
 								,observacion = UPPER(mc.observacion)
 								,usuario	
 							FROM v_movimiento_caja mc
 							WHERE idMovimientoCaja = @idDocument
+							FOR JSON PATH
+				
+			)
+		END 
+
+	IF @codDoc = 'A'
+		BEGIN
+			SET @header = (	
+							SELECT 
+								a.entidad
+								,a.establecimiento
+								,a.ruc
+								,dirMatriz = a.dirEstablecimiento
+								,a.idAnticipo
+								,nroDocumento = a.estab+ '-'+ dbo.AFTAutoComplete(a.nroDoc)
+								,fechaEmision = CONVERT(NVARCHAR, FORMAT(a.fechaEmision, 'dd/MM/yyyy hh:mm')) 
+								,valorTotal = CAST(a.valor AS numeric(18,2))
+								,observacion = a.observaciones
+								,identificacionComprador = a.numeroIdentificacion
+								,a.cliente
+								,a.direccionCliente
+								,a.entidadFinanciera 
+								,a.estadoDoc  
+								,a.codDoc 
+								,usuario = a.nombreUsuario
+							FROM v_Anticipo a
+							WHERE a.idAnticipo = @idDocument
 							FOR JSON PATH
 				
 			)
