@@ -28,7 +28,9 @@ namespace Vet.API.Controllers
                 .Include(t => t.PetType)
                 .Include(b => b.Breed)
                 .Include(s => s.Gender)
-                .Where(x => x.CompanyUniqueId == companyId)
+                .Where(x => x.CompanyUniqueId == companyId
+                && x.Enabled
+                )
                 .ToListAsync();
         }
         // GET: api/Pet
@@ -45,8 +47,9 @@ namespace Vet.API.Controllers
                 .Include(b => b.Breed)
                 .Include(s => s.Gender)
                 .Where(x =>
+                        x.Enabled &&
                         x.CompanyUniqueId == companyId
-                        && (x.Name.Contains(textSearch) || x.ClientUniqueId.Contains(textSearch))
+                        && (x.Name.Contains(textSearch) || x.CustomerUniqueId.Contains(textSearch))
                  )
                 .ToListAsync();
         }
@@ -110,15 +113,18 @@ namespace Vet.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePet(int id)
         {
+            // _context.Pets.Remove(pet);
+            //await _context.SaveChangesAsync();
+
             var pet = await _context.Pets.FindAsync(id);
             if (pet == null)
             {
                 return NotFound();
             }
 
-            // _context.Pets.Remove(pet);
-            //await _context.SaveChangesAsync();
+           
             pet.Deleted = true;
+            pet.Enabled = false;
             _context.Entry(pet).State = EntityState.Modified;
 
             try

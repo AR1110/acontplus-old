@@ -3,8 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Reporting.NETCore;
 using System.Data;
+using System.IO;
+using System.Reflection;
 using Vet.Core.Entities;
 using Vet.Core.Interfaces;
+using Vet.Core.Utils;
 using Vet.Infrastructure.Data;
 
 namespace Vet.Application.Reports
@@ -46,22 +49,24 @@ namespace Vet.Application.Reports
 
                 if (ds.Tables[0].Rows.Count > 0)
                 {
-                        lr.ReportPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", "MedicalHistory.rdl");
-                        //var paths = dsParams.Tables[0].Rows[0].Field<string>("reportPath").Split("/");
-                        //paths = paths.Where(s => !string.IsNullOrEmpty(s)).ToArray();
+                    var path = System.IO.Directory.GetCurrentDirectory() + "\\Reports\\" + "MedicalHistory.rdl";
+                    lr.ReportPath = path;
+                    //lr.ReportPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", "MedicalHistory.rdl");
+                    //var paths = dsParams.Tables[0].Rows[0].Field<string>("reportPath").Split("/");
+                    //paths = paths.Where(s => !string.IsNullOrEmpty(s)).ToArray();
 
-                        //switch (paths.Length)
-                        //{
-                        //    case 1:
-                        //        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0])));
-                        //        break;
-                        //    case 2:
-                        //        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0], paths[1])));
-                        //        break;
-                        //    default:
-                        //        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(_configuration.GetSection("dirReports").Value + dsParams.Tables[0].Rows[0].Field<string>("reportPath")));
-                        //        break;
-                        //}
+                    //switch (paths.Length)
+                    //{
+                    //    case 1:
+                    //        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0])));
+                    //        break;
+                    //    case 2:
+                    //        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0], paths[1])));
+                    //        break;
+                    //    default:
+                    //        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(_configuration.GetSection("dirReports").Value + dsParams.Tables[0].Rows[0].Field<string>("reportPath")));
+                    //        break;
+                    //}
                 }
                 else
                 {
@@ -69,16 +74,21 @@ namespace Vet.Application.Reports
                 }
                 //Recorremos los datatbles con sus respectivas posiciones,para llenar la información
                 lr.DataSources.Add(new ReportDataSource("mainDataSet", ds.Tables[0]));
-                lr.DataSources.Add(new ReportDataSource("behaviorTests", ds.Tables[1]));
-                lr.DataSources.Add(new ReportDataSource("healthChecks", ds.Tables[2]));
-                            //if (Convert.ToBoolean(item["isByte"]))
-                            //{
-                            //    lr.SetParameters(new[] { new ReportParameter(item["paramName"].ToString(), FileExtensions.GetBase64FromByte((byte[])item["paramByte"])) });
-                            //}
-                            //else
-                            //{
-                            //    lr.SetParameters(new[] { new ReportParameter(item["paramName"].ToString(), item["paramValue"].ToString()) });
-                            //}
+                lr.DataSources.Add(new ReportDataSource("healthChecks", ds.Tables[1]));
+                lr.DataSources.Add(new ReportDataSource("behaviorTests", ds.Tables[2]));
+
+                if (ds.Tables[3].Rows.Count > 0)
+                {
+                    //if (Convert.ToBoolean(item["isByte"]))
+                    //{
+                    lr.SetParameters(new[] { new ReportParameter("logo", FileExtensions.GetBase64FromByte((byte[])ds.Tables[3].Rows[0]["imagen"])) });
+                    //}
+                    //else
+                    //{
+                    lr.SetParameters(new[] { new ReportParameter("mimeType", ds.Tables[3].Rows[0]["mimeType"].ToString()) });
+                    //}
+                }
+
 
                 return lr.Render("pdf", null, out _, out _, out _, out _, out _);
             }
