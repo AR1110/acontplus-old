@@ -12,8 +12,8 @@ using Vet.Infrastructure.Data;
 namespace Vet.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(VetContext))]
-    [Migration("20230702194559_Initial")]
-    partial class Initial
+    [Migration("20230704023516_AlterMH")]
+    partial class AlterMH
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -100,6 +100,9 @@ namespace Vet.Infrastructure.Data.Migrations
                         .HasMaxLength(50)
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
+
+                    b.Property<int?>("Order")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -277,6 +280,9 @@ namespace Vet.Infrastructure.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
 
+                    b.Property<int?>("Order")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -429,13 +435,13 @@ namespace Vet.Infrastructure.Data.Migrations
                     b.Property<bool>("Enabled")
                         .HasColumnType("bit");
 
-                    b.Property<int>("PetId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Style")
+                    b.Property<string>("Observations")
                         .HasMaxLength(300)
                         .IsUnicode(false)
                         .HasColumnType("varchar(300)");
+
+                    b.Property<int>("PetId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -464,12 +470,6 @@ namespace Vet.Infrastructure.Data.Migrations
                     b.Property<int?>("BreedId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ClientUniqueId")
-                        .IsRequired()
-                        .HasMaxLength(25)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(25)");
-
                     b.Property<string>("Color")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -484,6 +484,12 @@ namespace Vet.Infrastructure.Data.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("CustomerUniqueId")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(25)");
 
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");

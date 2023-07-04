@@ -11,7 +11,7 @@ namespace Vet.Core.Entities
         public Pet Pet { get; set; }
         public int PetId { get; set; }
         [MaxLength(300)]
-        public string Style { get; set; }
+        public string Observations { get; set; }
         public List<HealthCheck> HealthChecks { get; set; }
         public List<BehaviorTest> BehaviorTests { get; set; }
     }

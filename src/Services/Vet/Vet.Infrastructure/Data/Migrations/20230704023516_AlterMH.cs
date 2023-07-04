@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Vet.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class AlterMH : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -44,6 +44,7 @@ namespace Vet.Infrastructure.Data.Migrations
                     Code = table.Column<string>(type: "varchar(2)", unicode: false, maxLength: 2, nullable: false),
                     Name = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     Description = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
+                    Order = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Enabled = table.Column<bool>(type: "bit", nullable: false),
@@ -64,6 +65,7 @@ namespace Vet.Infrastructure.Data.Migrations
                     Code = table.Column<string>(type: "varchar(2)", unicode: false, maxLength: 2, nullable: false),
                     Name = table.Column<string>(type: "varchar(50)", unicode: false, maxLength: 50, nullable: false),
                     Description = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
+                    Order = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Enabled = table.Column<bool>(type: "bit", nullable: false),
@@ -195,7 +197,7 @@ namespace Vet.Infrastructure.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ClientUniqueId = table.Column<string>(type: "varchar(25)", unicode: false, maxLength: 25, nullable: false),
+                    CustomerUniqueId = table.Column<string>(type: "varchar(25)", unicode: false, maxLength: 25, nullable: false),
                     CompanyUniqueId = table.Column<string>(type: "varchar(25)", unicode: false, maxLength: 25, nullable: false),
                     Name = table.Column<string>(type: "varchar(150)", unicode: false, maxLength: 150, nullable: false),
                     PetTypeId = table.Column<int>(type: "int", nullable: true),
@@ -241,7 +243,7 @@ namespace Vet.Infrastructure.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PetId = table.Column<int>(type: "int", nullable: false),
-                    Style = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: true),
+                    Observations = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Enabled = table.Column<bool>(type: "bit", nullable: false),
