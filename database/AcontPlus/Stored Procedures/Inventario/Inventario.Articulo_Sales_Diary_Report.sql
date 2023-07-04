@@ -33,6 +33,7 @@ BEGIN
 	DECLARE @fechaInicio DATETIME
 	DECLARE @fechaFin DATETIME
 	DECLARE @params NVARCHAR(max) = '@idArticulo INT
+	                                ,@idUsuario INT
 									,@fechaInicio DATETIME
 									,@fechaFin DATETIME
 									,@idEntidad INT
@@ -41,7 +42,6 @@ BEGIN
 
 	SET @sql = 'SELECT tt.articulo
 					  ,tt.codArticulo
-					  ,medida = ''''
 					  ,cantidad                = CAST(tt.cantidad as numeric(18,2))
 					  ,precioUnitario          = CAST(tt.precioUnitario as numeric(18,2))
 					  ,precioTotalSinImpuestos = CAST(tt.totalSalida as numeric(18,2))
@@ -51,8 +51,6 @@ BEGIN
 					  ,tt.codDoc
 					  ,serieComprobante = tt.nroDocumento
 				FROM v_InventarioTransaccion tt
-				INNER JOIN dbo.Articulo   ar WITH (NOLOCK) ON ar.idArticulo   = tt.idArticulo
-				INNER JOIN dbo.SubFamilia sf WITH (NOLOCK) ON sf.idSubFamilia = ar.idSubFamilia
 				WHERE tt.idEntidad = @idEntidad AND tt.estado = 1 '
 
 	SELECT @idEntidad = idEntidad FROM v_usuario WHERE idUsuarioRol = @idRol
@@ -62,6 +60,7 @@ BEGIN
 		  ,@checkBoxTransaccion = checkBoxTransaccion
 		  ,@checkBoxUsuario     = checkBoxUsuario
 		  ,@idArticulo          = idArticulo
+		  ,@idUsuario           = idUsuario
 		  ,@codTransaccion      = codTransaccion
 		  ,@fechaFin            = fechaFin
 		  ,@fechaInicio         = fechaInicio
@@ -71,6 +70,7 @@ BEGIN
 				,checkBoxTransaccion   BIT '$.checkBoxTransaccion'
 				,checkBoxUsuario       BIT '$.checkBoxUsuario'
 				,idArticulo            INT '$.idArticulo'
+				,idUsuario             INT '$.idUsuario'
 				,codTransaccion VARCHAR(5) '$.codTransaccion'
 				,fechaInicio      DATETIME '$.fechaInicio'
 				,fechaFin         DATETIME '$.fechaFin'
@@ -113,6 +113,7 @@ BEGIN
 		              ,@params
 		              ,@idArticulo     = @idArticulo
 		              ,@idEntidad      = @idEntidad
+					  ,@idUsuario      = @idUsuario
 					  ,@codTransaccion = @codTransaccion
 		              ,@fechaInicio    = @fechaInicio
 		              ,@fechaFin       = @fechaFin
