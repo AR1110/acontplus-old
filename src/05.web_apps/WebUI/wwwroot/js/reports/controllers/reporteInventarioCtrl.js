@@ -191,7 +191,7 @@ function reporteInventarioCtrl($scope, _commonSvc, mS, fS, tS) {
                 checkBoxUsuario : $scope.dataSearch.checkboxUsuarioFiltro,
                 checkBoxFecha : true,
                 checkBoxTransaccion : true,
-                idUsuario : 0,
+                idUsuario : $scope.dataSearch.idUsuario,
                 idArticulo : $scope.dataSearch.idArticulo,
                 codTransaccion : $scope.dataSearch.codTransaccion,
                 fechaInicio : fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
