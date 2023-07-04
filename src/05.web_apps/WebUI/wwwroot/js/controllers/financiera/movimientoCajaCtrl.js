@@ -580,6 +580,20 @@ class MovimientoCajaCtrl {
     }
 
 
+    printAnticipo(item) {
+        let parameters = {            
+            idDocument: item.idAnticipo,
+            idTipoDocumento: item.idTipoDocumento,
+            codEstab: item.codEstab,
+            codDoc: item.codDoc,
+            nroIdentificacion: item.identificacionUsuario,            
+        }
+        this._commonSvc.askToPrint({
+            parameters: JSON.stringify(parameters)
+        })
+
+    }
+
     getReportAnticipo(item) {
         try {
             let format = 'pdf';

@@ -98,10 +98,16 @@
                             </script>
                     </div>
                 </div>
-                <div class="col-xl-3">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>Buscar por Nro. Documento:</span>
+                        <input type="text" class="form-control border-select"  ng-model="dataSearch.nroSecuencial" placeholder="Ej: 123"/>                       
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <span>Estado:</span>
-                        <select id="estadoDocumentos" class="form-control" ng-model="dataSearch.byEstado"
+                        <select id="estadoDocumentos" class="form-control border-select" ng-model="dataSearch.byEstado"
                             ng-change="getAprobComprobantes()">
                             <option value="">Todos</option>
                             <option ng-value="item.codigo" ng-repeat="item in estadoDocumentos">

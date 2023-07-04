@@ -53,6 +53,6 @@ BEGIN
 		descripcion = UPPER(descripcion),
 		estado = CAST(1 AS BIT),
 		copyPrint = CAST(0 AS BIT)
-	FROM TipoDocumento WHERE codigo IN ('FV', 'NE', 'PR', 'IC', 'EC')
+	FROM TipoDocumento WHERE codigo IN ('FV', 'NE', 'PR', 'IC', 'EC', 'A')
 END
 GO

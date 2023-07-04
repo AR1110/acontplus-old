@@ -15,8 +15,9 @@ CREATE VIEW v_movimiento_caja AS (
 	,mc.nroDoc
 	,tipoDoc = tdoc.descripcion
 	,codDoc = tdoc.codigo
-	,entregadoPor = u.nombreCompleto
-	,recibidoPor = em.nombreCompleto
+	,entregadoPor = u.nombreCompleto -- quitar
+	,recibidoPor = em.nombreCompleto --quitar
+	,empleado = em.nombreCompleto
 	,entidadFinanciera = sef.descripcion
 	,valor = mc.valor
 	,observacion = mc.observaciones

@@ -5,6 +5,7 @@ DROP VIEW v_Anticipo
 GO
 CREATE VIEW v_Anticipo AS (
 	SELECT 
+		 
 		entidad    = e.razonSocial
 		,establecimiento  = s.nombreComercial
 		,e.ruc
@@ -22,6 +23,7 @@ CREATE VIEW v_Anticipo AS (
 		,estadoDoc = ep.descripcion
 		,codDoc = ep.codigo
 		,u.nombreUsuario
+		,identificacionUsuario = u.nroIdentificacion
 	FROM dbo.Anticipo a WITH (NOLOCK)
 	INNER JOIN dbo.Entidad e WITH(NOLOCK) ON e.idEntidad = a.idEntidad 
 	INNER JOIN dbo.EstadoPago            ep WITH (NOLOCK) ON ep.idEstadoPago            = a.idEstadoDocumento
