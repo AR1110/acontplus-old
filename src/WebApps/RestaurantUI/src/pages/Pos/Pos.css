@@ -1,0 +1,130 @@
+.category-list {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .category-item {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 10px;
+    background-color: #f0f0f0;
+    color: #333;
+  }
+
+  .category-item i {
+    margin-right: 5px;
+  }
+
+  .card {
+    min-height: 460px;
+  }
+  .categories {
+    display: block;
+    overflow: auto;
+    white-space: nowrap;
+  }
+  .categories .list-group-item {
+    display: inline-block;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    padding: 5px 15px;
+    border-radius: 5px;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-bottom: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    user-select: none;
+  }
+  .product-list {
+    margin-top: 10px;
+    height: 363px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    padding-right: 5px;
+  }
+  .product {
+    border: 1px solid #c4c4c4;
+    text-align: center;
+    margin-bottom: 10px;
+    padding: 10px 10px 5px;
+    cursor: pointer;
+    position: relative;
+  }
+  .product img {
+    width: 100%;
+    height: 100px;
+    object-fit: contain;
+    margin-bottom: 10px;
+  }
+  .product h5 {
+    font-size: 15px;
+    font-weight: bold;
+    color: #4d4d4d;
+    line-height: 1;
+    height: 17px;
+    overflow: hidden;
+  }
+  .product h6 {
+    font-weight: bold;
+    color: #254dc1;
+    line-height: 1;
+  }
+  .product .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.63);
+  }
+  .product .overlay i {
+    color: #ffffff;
+    font-size: 40px;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .cart-wrapper {
+    height: 100px !important;
+    padding-right: 8px;
+  }
+  .cart-table {
+    width: 100%;
+  }
+  .cart-table tr {
+    border-bottom: 1px solid #e4e3e3;
+  }
+  .cart-table td {
+    padding: 8px 0;
+    vertical-align: middle;
+  }
+  .cart-product h6 {
+    line-height: 1;
+    font-size: 14px;
+    margin-left: 5px;
+    margin-bottom: 5px;
+  }
+  .btn-qty {
+    border-radius: 50%;
+    padding: 1px 5px;
+    font-size: 12px;
+  }
+  .amount-table {
+    width: 100%;
+    margin: 15px 0;
+  }
+  .amount-table tr {
+    border-bottom: 1px solid #e4e3e3;
+  }
+  .amount-input {
+    width: 80px;
+    text-align: center;
+    display: inline-block;
+    margin-left: 5px;
+  }
+  
+ 
