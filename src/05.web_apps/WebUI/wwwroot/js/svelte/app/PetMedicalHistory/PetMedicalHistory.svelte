@@ -2,8 +2,9 @@
 
 <script>
     import { onMount } from "svelte";
-    import { client } from "../../core/api/axiosClient";
-
+    import { client, clientFile } from "../../core/api/axiosClient";
+    import { saveAs } from "file-saver";
+    import FileSaver from "file-saver";
     import Add from "./components/Add.svelte";
     let newRecord = false;
     function openNew(open) {
@@ -17,10 +18,44 @@
         });
     });
     const getReport = async (id) => {
-        await client
-            .post(`/gateway/MedicalHistories/Report/` + id)
+        await clientFile(`/gateway/MedicalHistories/Report/` + id)
             .then((response) => {
-                console.log(response);
+                // var file = new File([response], "hello world.pdf", {
+                //     type: "application/pdf",
+                // });
+                // FileSaver.saveAs(file);
+
+                let fileBlob = new Blob([response.data], {
+                    type: response.headers["content-type"],
+                });
+                let objectUrl = window.URL || window.webkitURL;
+                let urlFile = objectUrl.createObjectURL(fileBlob);
+                // Ajuste horizontal
+                let x = parseInt((screen.width - 1200) / 2);
+                // Ajustae vertical
+                let y = parseInt((screen.height - 650) / 4);
+                window.open(
+                    urlFile,
+                    "_blank",
+                    `resizable=yes
+                    width=1200
+                    height=650
+                    screenY=${y}
+                    screenX=${x}`
+                );
+                return;
+                let serverData = new Blob([response.data], {
+                    type: response.headers["content-type"],
+                });
+                // let fileName = response
+                //     .headers()["content-disposition"].split(";")[1]
+                //     .split("=")[1];
+                let fileName = response.headers["content-disposition"]
+                    .split(";")[1]
+                    .split("=")[1]
+                    .replace('"', "");
+                fileName = fileName.replace('"', "");
+                FileSaver.saveAs(serverData, fileName);
             })
             .catch((error) => {
                 console.log(error);
