@@ -12,16 +12,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddCors();
-builder.Services.AddIdentityServices(builder.Configuration);
 builder.Services.AddCustomJwtAuthentication(builder.Configuration);
-builder.Services.Configure<IdentityOptions>(options =>
-{
-    options.Password.RequiredLength = 6;
-    options.Password.RequireUppercase = false;
-    options.Password.RequireLowercase = false;
-    options.Password.RequireDigit = false;
-    options.Password.RequireNonAlphanumeric = false;
-});
+//builder.Services.Configure<IdentityOptions>(options =>
+//{
+//    options.Password.RequiredLength = 6;
+//    options.Password.RequireUppercase = false;
+//    options.Password.RequireLowercase = false;
+//    options.Password.RequireDigit = false;
+//    options.Password.RequireNonAlphanumeric = false;
+//});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddSwaggerDocumentation();
 
@@ -58,21 +57,21 @@ app.MapControllers().RequireAuthorization();
 app.MapFallbackToFile("index.html");
 
 
-using var scope = app.Services.CreateScope();
-var services = scope.ServiceProvider;
-try
-{
-    var context = services.GetRequiredService<RestaurantContext>();
-    var userManager = services.GetRequiredService<UserManager<AppUser>>();
-    var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
-    await context.Database.MigrateAsync();
-    await Seed.SeedUsers(userManager, roleManager);
-}
-catch (Exception ex)
-{
-    var logger = services.GetRequiredService<ILogger<Program>>();
-    logger.LogError(ex, "An error occurred during migration");
-}
+//using var scope = app.Services.CreateScope();
+//var services = scope.ServiceProvider;
+//try
+//{
+//    var context = services.GetRequiredService<RestaurantContext>();
+//    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+//    var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
+//    await context.Database.MigrateAsync();
+//    await Seed.SeedUsers(userManager, roleManager);
+//}
+//catch (Exception ex)
+//{
+//    var logger = services.GetRequiredService<ILogger<Program>>();
+//    logger.LogError(ex, "An error occurred during migration");
+//}
 
 
 await app.RunAsync();
