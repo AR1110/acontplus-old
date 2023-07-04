@@ -1,9 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using Restaurant.API.Application;
 using Restaurant.Application;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
-using AutoMapper;
 using Restaurant.API.Helpers;
 
 namespace Restaurant.API.Extensions
@@ -20,7 +18,7 @@ namespace Restaurant.API.Extensions
             //    optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultConnection"), builder => builder.MigrationsAssembly("Restaurant.Infrastructure"));
             //    return new RestaurantContext(optionsBuilder.Options);
             //});
-            services.AddScoped<ITokenService, TokenService>();
+            //services.AddScoped<ITokenService, TokenService>();
             //services.AddScoped<RestaurantContext, RestaurantContext>();
             services.AddScoped<IRecipe, RecipeService>();
             //services.AddScoped<DbAccess, DbAccess>();
