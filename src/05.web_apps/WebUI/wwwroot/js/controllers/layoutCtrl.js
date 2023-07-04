@@ -1,9 +1,9 @@
 ﻿angular.module('acontPlusApp')
     .controller('layoutCtrl', layoutCtrl);
 
-layoutCtrl.$inject = ['$scope', '$rootScope', '$window', 'mainService', 'modalService', 'toastService', 'formulario'];
+layoutCtrl.$inject = ['$scope', '$http', '$rootScope', '$window', 'mainService', 'modalService', 'toastService', 'formulario'];
 
-function layoutCtrl($scope, $rootScope, $window, mS, _modalSvc, toast, form) {
+function layoutCtrl($scope, $http, $rootScope, $window, mS, _modalSvc, toast, form) {
     'use strict';
 
     // $scope.IsVisible = false;
@@ -60,7 +60,7 @@ function layoutCtrl($scope, $rootScope, $window, mS, _modalSvc, toast, form) {
     // });
 
     if (JSON.parse(localStorage.getItem('userData')) === null) {
-        location.href = '/Login/Logout';
+        location.href = '/Login';
         return
     }
 
@@ -229,6 +229,6 @@ function layoutCtrl($scope, $rootScope, $window, mS, _modalSvc, toast, form) {
         Object.keys(localStorage).forEach(function (key) {
             localStorage.removeItem(key);
         })
-        location.href = '/Login/Logout';
+        location.href = '/Login';
     }
 }

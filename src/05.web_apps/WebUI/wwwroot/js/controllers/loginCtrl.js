@@ -16,11 +16,12 @@
         };
 
         return service;
-
         function getData(method, url, data = null) {
+            let urlService = "http://localhost:57340/gateway/"
+
             let serviceData = $http({
                 method: method,
-                url: url,
+                url: urlService + url,
                 data: data
             }).then(response => {
                 console.log(response)
@@ -67,7 +68,7 @@
                 if ($scope.data.returnUrl == undefined || $scope.data.returnUrl === "" || $scope.data.returnUrl == null) {
                     $scope.data.returnUrl = '/';
                 }
-                mS.getData('post', '/Login/Login', $scope.data).then(response => {
+                mS.getData('post', 'Account/Login', $scope.data).then(response => {
                     if (response.id === "0" || response.code === "0") {
                         hideLoader();
                         toastr.warning(response.message, response.titleSms, { closeButton: true, progressBar: true });
