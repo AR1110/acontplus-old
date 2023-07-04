@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ApiVentas.Controllers
 {
-   [ApiController]
+    [ApiController]
     [Route("api/[controller]")]
     public class EstadisticasController : ControllerBase
     {
