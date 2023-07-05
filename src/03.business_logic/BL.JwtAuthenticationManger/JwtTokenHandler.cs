@@ -20,11 +20,12 @@ namespace BL.JwtAuthenticationManger
                     new Claim(JwtRegisteredClaimNames.Name, authRequest.fullName),
                     new Claim(JwtRegisteredClaimNames.GivenName, authRequest.fullName),
                     new Claim(JwtRegisteredClaimNames.UniqueName, authRequest.userName),
-                    //new Claim(ClaimTypes.Name, authRequest.fullName),
                     new Claim(ClaimTypes.Role, authRequest.role),
                     new Claim("idUsuarioRol", Convert.ToString(authRequest.idUsuarioRol)),
+                    new Claim("userRoleId", Convert.ToString(authRequest.idUsuarioRol)),
                     new Claim("nroIdentificacion", authRequest.nroIdentificacion),
                     new Claim("companyUniqueId", authRequest.rucEmpresa),
+                    new Claim("companyId", Convert.ToString(authRequest.companyId)),
                     new Claim("razonSocial", authRequest.razonSocial),
                     new Claim("urlGateway", authRequest.urlGateway)
                 });

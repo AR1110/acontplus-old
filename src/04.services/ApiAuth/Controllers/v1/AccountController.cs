@@ -7,17 +7,18 @@ using DataAccess;
 using Domain.ViewModels;
 using Domain.Dtos;
 
-namespace ApiAuth.Controllers
+namespace ApiAuth.Controllers.v1
 {
-    [Route("api/[controller]")]
+    [Route("api/account/[action]")]
     [ApiController]
+    [ApiVersion("1.0")]
     public class AccountController : ControllerBase
     {
         private readonly IConfiguration _config;
         private readonly JwtTokenHandler _jwtTokenHandler;
         public AccountController(JwtTokenHandler jwtTokenHandler, IConfiguration config) => (_jwtTokenHandler, _config) = (jwtTokenHandler, config);
 
-        [HttpPost("login")]
+        [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginDto authRequest)
         {
             LogWriter _logs = new LogWriter(_config);
