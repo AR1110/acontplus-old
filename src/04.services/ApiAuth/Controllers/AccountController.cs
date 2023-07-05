@@ -53,19 +53,6 @@ namespace ApiAuth.Controllers
                     }
                     loginData.jwtToken = _authService.jwtToken;
                 }
-
-                if (authRequest.external)
-                {
-                    if (_gr.code == "0")
-                    {
-                        _gr.code = "-1";
-                    }
-                    if (_gr.code == "1" || _gr.code == "2")
-                    {
-                        _gr.code = "0";
-                    }
-                }
-
                 return Ok(_gr);
             }
             catch (Exception ex)
