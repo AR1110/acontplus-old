@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace Services.Common
 {
@@ -14,7 +10,11 @@ namespace Services.Common
         }
         public static string GetCompanyId(this ClaimsPrincipal user)
         {
-            return user.FindFirst("companyUniqueId")?.Value;
+            return user.FindFirst("companyId")?.Value;
+        }
+        public static int GetUserRolId(this ClaimsPrincipal user)
+        {
+            return Convert.ToInt32(user.FindFirst("userRoleId")?.Value);
         }
         public static int GetUserId(this ClaimsPrincipal user)
         {
