@@ -28,6 +28,7 @@ BEGIN
 	DECLARE @checkBoxTransaccion BIT
 	DECLARE @checkBoxUsuario BIT
 	DECLARE @codTransaccion VARCHAR(5)
+	DECLARE @usuario VARCHAR(150)
 	DECLARE @idUsuario INT
 	DECLARE @idArticulo INT
 	DECLARE @fechaInicio DATETIME
@@ -44,8 +45,14 @@ BEGIN
 					  ,tt.codArticulo
 					  ,cantidad                = CAST(tt.cantidad as numeric(18,2))
 					  ,precioUnitario          = CAST(tt.precioUnitario as numeric(18,2))
-					  ,precioTotalSinImpuestos = CAST(tt.totalSalida as numeric(18,2))
-					  ,tt.tarifa
+					  ,precioTotalSinImpuestos = CASE WHEN tt.codTransaccion = ''S'' THEN CAST(tt.totalSalida as numeric(18,2)) 
+					                                  WHEN tt.codTransaccion = ''E'' THEN CAST(tt.totalEntrada as numeric(18,2)) 
+													  ELSE 0
+												 END 
+					  ,tarifa                  = CASE tt.codTransaccion WHEN ''S'' THEN tt.tarifa
+													                    WHEN ''E'' THEN ''COSTO''
+																		ELSE ''''
+												 END 
 					  ,tt.clienteProveedor
 					  ,fechaRegistro           = FORMAT(tt.fechaRegistro, ''dd/MM/yyyy HH:mm'')
 					  ,tt.codDoc
@@ -76,6 +83,8 @@ BEGIN
 				,fechaFin         DATETIME '$.fechaFin'
 			    )
 
+	SELECT TOP 1 @usuario = 'Usuario : ' + nombreUsuario FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @idUsuario
+
 	IF @checkBoxFecha = 1
 		BEGIN
 			SET @sql = @sql + 'AND CAST(tt.fechaRegistro as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
@@ -105,6 +114,7 @@ BEGIN
 		  ,ISNULL(e.telefono, '')telefonoEntidad
 		  ,ISNULL(e.direccion, '')direccionEntidad			
 		  ,tituloReporte = 'CONSUMO POR ARTICULOS'
+		  ,usuario       = @usuario
 		  ,CONVERT(NVARCHAR,FORMAT(@fechaInicio, 'dd/MM/yyyy') +' - ' +  FORMAT(@fechaFin, 'dd/MM/yyyy')) as filtroFecha			
 	FROM Entidad e WITH (NOLOCK)
 	WHERE e.idEntidad = @idEntidad 
