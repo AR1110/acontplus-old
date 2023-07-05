@@ -483,7 +483,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 44354
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte/Post",
@@ -499,7 +499,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44354
+          "Port": 44320
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte/{method}/{everything}",
@@ -563,30 +563,14 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 44354
         }
       ],
       "DownstreamPathTemplate": "/api/Usuario/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "POST", "PUT", "Delete" ],
       "UpstreamPathTemplate": "/gateway/Usuario/{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7074
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Usuario/Search/{everything}",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [ "Get" ],
-      "UpstreamPathTemplate": "/gateway/Usuario/Search/{everything}"
-    },
+    },    
     {
       "AuthenticationOptions": {
         "AllowedScopes": [],

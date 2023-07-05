@@ -112,6 +112,11 @@
             })
         }
 
+        /**
+         * 
+         * @param {json} query  { busqueda: "com", condicion: false, fraccionado: false}
+         * @returns 
+         */
         service.search = function(query){
             return mainService.getData('get', url + 'Search?json=' + JSON.stringify(query), null, true).then(response=>{
                 if(response.code==="0"){
