@@ -13,11 +13,9 @@ namespace BL.JwtAuthenticationManger
         private const int JWT_TOKEN_VALIDITY_MINS = 840;
         public AuthResponse? GenerateJwtToken(LoginDataDto authRequest)
         {
-            try
-            {
-                var tokenKey = Encoding.ASCII.GetBytes(JWT_SECURITY_KEY);
-                var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256Signature);
-                var claimsIdentiy = new ClaimsIdentity(new List<Claim>
+            var tokenKey = Encoding.ASCII.GetBytes(JWT_SECURITY_KEY);
+            var signingCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256Signature);
+            var claimsIdentiy = new ClaimsIdentity(new List<Claim>
                 {
                     new Claim(JwtRegisteredClaimNames.Name, authRequest.fullName),
                     new Claim(JwtRegisteredClaimNames.GivenName, authRequest.fullName),
@@ -30,24 +28,18 @@ namespace BL.JwtAuthenticationManger
                     new Claim("razonSocial", authRequest.razonSocial),
                     new Claim("urlGateway", authRequest.urlGateway)
                 });
-                var securityTokenDescriptor = new SecurityTokenDescriptor
-                {
-                    Subject = claimsIdentiy,
-                    Expires = DateTime.UtcNow.AddMinutes(JWT_TOKEN_VALIDITY_MINS),
-                    SigningCredentials = signingCredentials
-                };
-                var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
-                var securityToken = jwtSecurityTokenHandler.CreateToken(securityTokenDescriptor);
-                return new AuthResponse
-                {
-                    jwtToken = jwtSecurityTokenHandler.WriteToken(securityToken)
-                };
-            }
-            catch (Exception ex)
+            var securityTokenDescriptor = new SecurityTokenDescriptor
             {
-                _ = ex.Message;
-                return null;
-            }
+                Subject = claimsIdentiy,
+                Expires = DateTime.UtcNow.AddMinutes(JWT_TOKEN_VALIDITY_MINS),
+                SigningCredentials = signingCredentials
+            };
+            var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
+            var securityToken = jwtSecurityTokenHandler.CreateToken(securityTokenDescriptor);
+            return new AuthResponse
+            {
+                jwtToken = jwtSecurityTokenHandler.WriteToken(securityToken)
+            };
         }
     }
 }
