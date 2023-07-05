@@ -24,7 +24,7 @@ namespace ApiAuth.Controllers.v2
         {
             LogWriter _logs = new LogWriter(_config);
             LoginDao _l = new LoginDao(_config);
-            GenericResponse _gr = await _l.LoginAsync(authRequest);
+            GenericResponse _gr = await _l.LoginRestaurantAsync(authRequest);
             var codSms = _gr.id as string;
             try
             {

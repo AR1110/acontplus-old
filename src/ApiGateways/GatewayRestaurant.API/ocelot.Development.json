@@ -14,7 +14,7 @@
     },
     "RequestIdKey": "OcRequestId"
   },
-  "Routes": [
+  "Routes": [    
     {
       "DownstreamHostAndPorts": [
         {
@@ -22,7 +22,7 @@
           "Port": 5415
         }
       ],
-      "DownstreamPathTemplate": "/api/Account{everything}",
+      "DownstreamPathTemplate": "/api/v2/Account{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Post" ],
       "UpstreamPathTemplate": "/gateway/Account{everything}"
