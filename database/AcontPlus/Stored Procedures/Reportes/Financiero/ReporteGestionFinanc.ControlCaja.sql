@@ -270,7 +270,7 @@ BEGIN
 	    ,ingreso   = CAST(ISNULL((SELECT sum(abono) FROM @tbDetalleCaja WHERE tipDoc != 'EC' AND idEntidadFinanciera = ef.idEntidadFinanciera AND cobro = 1),0) AS numeric(15,2))
 		,egreso    = CAST(ISNULL((SELECT sum(abono) FROM @tbDetalleCaja WHERE tipDoc  = 'EC' AND idEntidadFinanciera = ef.idEntidadFinanciera AND cobro = 1),0) * -1 AS numeric(15,2))		
 	 FROM EntidadFinanciera ef WITH (NOLOCK)
-	 WHERE ef.estado = 1
+	 WHERE ef.estado = 1 AND ef.codigo NOT IN ('DOC')
 	 ORDER BY ef.fechaRegistro ASC
 	 -------------------------------------------------END----------------------------------------------------------------
 

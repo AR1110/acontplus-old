@@ -13,20 +13,20 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 
-	DECLARE @idEntidad INT;
+	DECLARE @idEntidad INT
 
 	DECLARE @isViewOtherDocs BIT = (SELECT JSON_VALUE(jsonPermission, '$.additional.viewOthersDocs.view') FROM Config.UserPermission WHERE codModule='V' AND idUsuarioRol = @idRol)
 	
-	DECLARE @idUsuario INT;
-	DECLARE @isCurrentDate BIT;
+	DECLARE @idUsuario INT
+	DECLARE @isCurrentDate BIT
 
-	DECLARE @codDoc VARCHAR(10);
-	DECLARE @checkBoxEstadoServicio BIT;
+	DECLARE @codDoc VARCHAR(10)
+	DECLARE @checkBoxEstadoServicio BIT
 	DECLARE @checkBoxComprobante BIT
-	DECLARE @codEstado INT;
-	DECLARE @checkBoxDate BIT;
-	DECLARE @dateStart DATETIME;
-	DECLARE @dateEnd DATETIME;
+	DECLARE @codEstado INT
+	DECLARE @checkBoxDate BIT
+	DECLARE @dateStart DATETIME
+	DECLARE @dateEnd DATETIME
 	DECLARE @tipo VARCHAR(2)
 	DECLARE @textSearch VARCHAR(15)
 
@@ -39,39 +39,50 @@ BEGIN
 	DECLARE @identificacionReceptor VARCHAR(20)
 
 	DECLARE @isSearchUser BIT
-	DECLARE @idUsuarioSearch INT;
+	DECLARE @idUsuarioSearch INT
+	
+	DECLARE @pageSize INT
+	DECLARE @pageIndex INT 
+	DECLARE @totalRecords INT 
 
 	DECLARE @tblMain AS TABLE(
-		idDocumentoElectronico BIGINT NOT NULL
+		 idDocumentoElectronico BIGINT NOT NULL
 		,idDocumento BIGINT NOT NULL
 		,codDoc VARCHAR(2) NOT NULL
 		,comprobante VARCHAR(100) NOT NULL
-		,numeroDocumento VARCHAR(50) NOT NULL
-		,ruc VARCHAR(20) NOT NULL
+		,serieComprobante VARCHAR(50) NOT NULL
+		,rucReceptor VARCHAR(20) NOT NULL
 		,razonSocial VARCHAR(200) NOT NULL
-		,correo VARCHAR(200) NOT NULL
-		,fechaEmision DATETIME NOT NULL
+		,correo VARCHAR(200) NULL
+		,fechaEmision VARCHAR(150) NOT NULL
 		,claveAcceso VARCHAR(200) NOT NULL
-		,fechaAutorizacion DATETIME NOT NULL
+		,fechaAutorizacion DATETIME  NULL
 		,estado VARCHAR(50) NOT NULL
 		,codEstado INT NOT NULL
-		,style VARCHAR(200) NOT NULL
+		,style VARCHAR(200) NULL
+		,versionComp VARCHAR(50) NOT NULL
+		,ambiente VARCHAR(50) NOT NULL
+		,usuario VARCHAR(100) NOT NULL
+		,codEstab VARCHAR(50) NOT NULL
+		,telefono VARCHAR(150) NULL
+		,telefonoEstablecimiento VARCHAR(150) NULL
+		,entidad VARCHAR(150) NOT NULL
+		,nombreComercial VARCHAR(150) NOT NULL
 	)
 
 	
-	DECLARE @params NVARCHAR(MAX) = '@idEntidad INT,
-									 @estab VARCHAR(5),
-									 @ptoEmi VARCHAR(5),
-	                                 @codDoc VARCHAR(10),
-									 @identificacionReceptor VARCHAR(20),
-									 @codEstado VARCHAR(5),
-									 @dateStart DATETIME,
-									 @dateEnd DATETIME,
-									 @idUsuario INT,
-									 @idUsuarioSearch INT';
+	DECLARE @params NVARCHAR(MAX) = '@idEntidad INT
+									,@estab VARCHAR(5)
+									,@ptoEmi VARCHAR(5)
+	                                ,@codDoc VARCHAR(10)
+									,@identificacionReceptor VARCHAR(20)
+									,@codEstado VARCHAR(5)
+									,@dateStart DATETIME
+									,@dateEnd DATETIME
+									,@idUsuario INT
+									,@idUsuarioSearch INT'
 
-	DECLARE @sql NVARCHAR(MAX) = 'SELECT TOP 70
-	                                     de.idDocumentoElectronico
+	DECLARE @sql NVARCHAR(MAX) = 'SELECT de.idDocumentoElectronico
 										,de.idDocumento
 										,de.codDoc
 										,comprobante = de.comprobante + '' - '' + de.versionComp
@@ -98,53 +109,53 @@ BEGIN
 										,de.entidad
 										,de.nombreComercial
 									 FROM v_DocElectronico de WITH (NOLOCK)
-									 INNER JOIN Usuario u WITH(NOLOCK) ON u.idUsuario = de.idUsuario
-									 WHERE de.idEntidad = @idEntidad   ';
+									 INNER JOIN Usuario     u WITH (NOLOCK) ON u.idUsuario = de.idUsuario
+									 WHERE de.idEntidad = @idEntidad   '
 
-	SELECT @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idRol ;
+	SELECT @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
 	
 	--Filtros 
-	SELECT 
-		@codDoc        = codDoc,
-		@isCurrentDate = isCurrentDate,
-		@checkBoxEstadoServicio = checkBoxEstadoServicio,
-		@checkBoxComprobante = checkBoxComprobante,
-		@codEstado     = codEstado,
-		@checkBoxDate  = checkBoxDate,
-		@dateStart     = dateStart,
-		@dateEnd       = dateEnd
-		,@tipo = tipo
-		,@textSearch = textSearch
-
-		,@checkboxEstablecimiento = checkboxEstablecimiento
-		,@estab = estab
-		,@checkboxPuntoEmision = checkboxPuntoEmision
-		,@ptoEmi = ptoEmi
-
-		,@isSearchCustomerProvider = isSearchCustomerProvider
-		,@identificacionReceptor = identificacionReceptor
-		,@isSearchUser = isSearchUser
-		,@idUsuarioSearch  = idUsuarioSearch
+	SELECT @codDoc                   = codDoc
+	      ,@isCurrentDate            = isCurrentDate
+	      ,@checkBoxEstadoServicio   = checkBoxEstadoServicio
+	      ,@checkBoxComprobante      = checkBoxComprobante
+	      ,@codEstado                = codEstado
+	      ,@checkBoxDate             = checkBoxDate
+	      ,@dateStart                = dateStart
+	      ,@dateEnd                  = dateEnd
+	      ,@tipo                     = tipo
+	      ,@textSearch               = textSearch
+	      ,@checkboxEstablecimiento  = checkboxEstablecimiento
+	      ,@estab                    = estab
+	      ,@checkboxPuntoEmision     = checkboxPuntoEmision
+	      ,@ptoEmi                   = ptoEmi
+	      ,@isSearchCustomerProvider = isSearchCustomerProvider
+	      ,@identificacionReceptor   = identificacionReceptor
+	      ,@isSearchUser             = isSearchUser
+	      ,@idUsuarioSearch          = idUsuarioSearch
+		  ,@pageSize                 = pageSize
+		  ,@pageIndex                = pageIndex
 	FROM OPENJSON(@json)
-	WITH(codDoc VARCHAR(10) '$.codDoc'
-		 ,checkBoxEstadoServicio BIT '$.checkBoxEstadoServicio'
-		 ,checkBoxComprobante BIT '$.checkBoxComprobante'
-		 ,codEstado INT '$.codEstado'
-		 ,isCurrentDate BIT  '$.isCurrentDate'
-		 ,checkBoxDate BIT   '$.checkBoxDate'
-		 ,dateStart DATETIME '$.dateStart'
-		 ,dateEnd   DATETIME '$.dateEnd'
-		 ,tipo VARCHAR(2) '$.tipo'
-		 ,textSearch VARCHAR(15) '$.textSearch'
-		 ,checkboxEstablecimiento BIT '$.checkBoxEstab'
-		 ,estab VARCHAR(10) '$.estab'
-		 ,checKboxPuntoEmision BIT '$.checKboxPuntoEmision'
-		 ,ptoEmi VARCHAR(10) '$.ptoEmi'
-
-		 ,isSearchCustomerProvider BIT '$.isSearchCustomerProvider'
+	WITH (codDoc                 VARCHAR(10) '$.codDoc'
+		 ,checkBoxEstadoServicio         BIT '$.checkBoxEstadoServicio'
+		 ,checkBoxComprobante            BIT '$.checkBoxComprobante'
+		 ,codEstado                      INT '$.codEstado'
+		 ,isCurrentDate                  BIT '$.isCurrentDate'
+		 ,checkBoxDate                   BIT '$.checkBoxDate'
+		 ,dateStart                 DATETIME '$.dateStart'
+		 ,dateEnd                   DATETIME '$.dateEnd'
+		 ,tipo                    VARCHAR(2) '$.tipo'
+		 ,textSearch             VARCHAR(15) '$.textSearch'
+		 ,checkboxEstablecimiento        BIT '$.checkBoxEstab'
+		 ,estab                  VARCHAR(10) '$.estab'
+		 ,checKboxPuntoEmision           BIT '$.checKboxPuntoEmision'
+		 ,ptoEmi                 VARCHAR(10) '$.ptoEmi'
+		 ,isSearchCustomerProvider       BIT '$.isSearchCustomerProvider'
 		 ,identificacionReceptor VARCHAR(20) '$.identificacionReceptor'
-		 ,isSearchUser BIT '$.isSearchUser'
-		 ,idUsuarioSearch INT '$.idUsuario'
+		 ,isSearchUser                   BIT '$.isSearchUser'
+		 ,idUsuarioSearch                INT '$.idUsuario'
+		 ,pageIndex                      INT '$.pageIndex'
+		 ,pageSize                       INT '$.pageSize'
 		)
 
 	
@@ -164,10 +175,6 @@ BEGIN
 			SET @sql = @sql + ' AND CAST(de.fechaEmision AS date) BETWEEN CAST(@dateStart AS date) AND CAST(@dateEnd AS date) '
 		END 
 
-	--IF @isCurrentDate = 1
-	--	BEGIN
-	--		SET @sql = @sql + ' AND CAST(de.fechaRegistro AS DATE) = CAST(dbo.ufnGetDateEcuador() AS DATE) '
-	--	END
 
 	IF @checkBoxComprobante = 1
 		BEGIN
@@ -196,6 +203,7 @@ BEGIN
 		BEGIN
 			SET @sql = @sql + ' AND de.idUsuario = @idUsuario'
 		END 
+	 
 	 ELSE
 		BEGIN 
 			IF @isSearchUser = 1
@@ -204,18 +212,44 @@ BEGIN
 				END 
 		END 
 
-	SET @sql = @sql + ' ORDER BY de.idDocumentoElectronico DESC';
 	
-	print @sql 
+	INSERT INTO @tblMain 
+		(    idDocumentoElectronico
+		    ,idDocumento
+		    ,codDoc
+		    ,comprobante
+		    ,serieComprobante
+		    ,rucReceptor
+		    ,razonSocial
+		    ,correo
+		    ,fechaEmision
+		    ,claveAcceso
+		    ,fechaAutorizacion
+		    ,estado
+		    ,codEstado
+		    ,style
+		    ,versionComp
+		    ,ambiente 
+		    ,usuario
+		    ,codEstab
+		    ,telefono
+		    ,telefonoEstablecimiento
+		    ,entidad
+		    ,nombreComercial
+		)
+
 	EXEC sp_executesql @sql,@params
-				           ,@idEntidad = @idEntidad
-						   ,@estab = @estab
-						   ,@ptoEmi = @ptoEmi
-						   ,@codDoc = @codDoc 
+				           ,@idEntidad              = @idEntidad
+						   ,@estab                  = @estab
+						   ,@ptoEmi                 = @ptoEmi
+						   ,@codDoc                 = @codDoc 
 						   ,@identificacionReceptor = @identificacionReceptor
-						   ,@codEstado = @codEstado
-						   ,@dateStart = @dateStart
-						   ,@dateEnd = @dateEnd
-						   ,@idUsuario =  @idUsuario
-						   ,@idUsuarioSearch = @idUsuarioSearch
+						   ,@codEstado              = @codEstado
+						   ,@dateStart              = @dateStart
+						   ,@dateEnd                = @dateEnd
+						   ,@idUsuario              = @idUsuario
+						   ,@idUsuarioSearch        = @idUsuarioSearch
+	SELECT @totalRecords = COUNT(*) FROM @tblMain
+
+	SELECT *, totalRecords = @totalRecords  FROM @tblMain ORDER BY idDocumentoElectronico DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY
 END 
