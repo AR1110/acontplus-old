@@ -320,6 +320,7 @@ BEGIN
 								,identificacionComprador = a.numeroIdentificacion
 								,a.cliente
 								,a.direccionCliente
+								,a.telefonoCliente
 								,a.entidadFinanciera 
 								,a.estadoDoc  
 								,a.codDoc 

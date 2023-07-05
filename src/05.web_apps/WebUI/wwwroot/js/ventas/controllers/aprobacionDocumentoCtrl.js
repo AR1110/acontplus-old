@@ -246,7 +246,8 @@
                     fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
                     isSearchNroSequential: $scope.dataSearch.nroSecuencial? true: false,
-                    nroSecuencial: $scope.dataSearch.nroSecuencial
+                    nroSecuencial: $scope.dataSearch.nroSecuencial,
+                  
                 }
 
                  
@@ -890,6 +891,7 @@
             try {
                 $scope.documentos = [];
                 $scope.dataSearch.byCliente = $scope.cliente.idCliente;
+              
                 if ($scope.docOrigen.codDoc === 'NE') {
                     $scope.getNotaEntregas();
                 }
@@ -920,7 +922,8 @@
                     codEstado: $scope.dataSearch.codEstado,
                     fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
-                    typeList: 2
+                    typeList: 2,
+                    tipoFecha: 'FE'
                 }
                
                 notaEntregaSvc.getAll(dataSearch).then(async response => {

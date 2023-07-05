@@ -19,6 +19,7 @@ CREATE VIEW v_Anticipo AS (
 		,cl.numeroIdentificacion
 		,cliente = cl.nombreFiscal
 		,direccionCliente = cl.direccion
+		,telefonoCliente = cl.telefono
 		,entidadFinanciera = sef.descripcion
 		,estadoDoc = ep.descripcion
 		,codDoc = ep.codigo
