@@ -1,4 +1,4 @@
-﻿using Customer.Infrastructure.Data;
+﻿using Customer.API.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Customer.API.Extensions
