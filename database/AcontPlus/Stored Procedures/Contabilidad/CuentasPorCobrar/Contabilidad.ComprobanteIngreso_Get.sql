@@ -24,6 +24,8 @@ GO
 IF OBJECT_ID(N'Contabilidad.ComprobanteIngreso_Get', N'P') IS NOT NULL
 DROP PROCEDURE Contabilidad.ComprobanteIngreso_Get
 GO
+
+-- Contabilidad.ComprobanteIngreso_Get 25, '{"tipo":1,"codEstab":"ESTAB-000000002","checkBoxFecha":true,"fechaInicio":"05-05-2022 12:00 AM","fechaFin":"04-07-2023 11:59 PM","checkBoxEstado":false,"byEstado":""}'
 CREATE PROCEDURE Contabilidad.ComprobanteIngreso_Get @idUsuarioRol INT, @json VARCHAR(MAX)
 AS
 BEGIN
@@ -53,7 +55,7 @@ BEGIN
 			DECLARE @checkBoxUsuario BIT
 			DECLARE @fechaInicio DATETIME 
 			DECLARE @fechaFin DATETIME
-			DECLARE @byPersona NVARCHAR(100)
+			DECLARE @nroIdentificacion NVARCHAR(100)
 			DECLARE @byUsuarioSearch INT
 			DECLARE @byTipoDocumento INT
 			DECLARE @byComprobante INT
@@ -100,21 +102,21 @@ BEGIN
 				,@checkBoxUsuario   = checkBoxUsuario
 				,@byComprobante     = byComprobante
 				,@byUsuarioSearch   = byUsuario
-				,@byPersona         = byPersona
+				,@nroIdentificacion = nroIdentificacion
 				,@codEstab          = codEstab
 				,@byTipoDocumento   = byTipoDocumento
 				,@byEstado          = byEstado
-				,@fechaFin          = fechaFin
-				,@fechaInicio       = fechaInicio
+				,@fechaInicio       = CONVERT(DATETIME, fechaInicio, 105)
+				,@fechaFin          = CONVERT(DATETIME, fechaFin, 105)
 			FROM OPENJSON(@json)
 			WITH (checkBoxFecha     BIT           '$.checkBoxFecha'
 				 ,checkBoxPersona   BIT           '$.checkBoxPersona'
 				 ,checkBoxEstado    BIT           '$.checkBoxEstado'
 				 ,checkBoxDocumento BIT           '$.checkBoxDocumento'
 				 ,checkBoxUsuario   BIT           '$.checkBoxUsuario'
-				 ,fechaInicio       DATETIME      '$.fechaInicio'
-				 ,fechaFin          DATETIME      '$.fechaFin'
-				 ,byPersona         NVARCHAR(100) '$.byPersona'
+				 ,fechaInicio       VARCHAR(60)   '$.fechaInicio'
+				 ,fechaFin          VARCHAR(60)   '$.fechaFin'
+				 ,nroIdentificacion NVARCHAR(100) '$.nroIdentificacion'
 				 ,codEstab          VARCHAR(100)  '$.codEstab'
 				 ,byTipoDocumento   INT           '$.byTipoDocumento'
 				 ,byComprobante     INT           '$.byComprobante'
@@ -156,13 +158,13 @@ BEGIN
 				END 		
 
 			SET @sql = @sql + ' ORDER BY ci.nroDocumento DESC'
-
+			print @sql
 			EXEC sp_executesql  @sql
 					           ,@params
 					           ,@idEntidad         = @idEntidad
 					           ,@fechaI            = @fechaInicio
 					           ,@fechaF            = @fechaFin
-					           ,@nroIdentificacion = @byPersona
+					           ,@nroIdentificacion = @nroIdentificacion
 					           ,@idTipoDocumento   = @byTipoDocumento
 					           ,@idComprobante     = @byComprobante
 					           ,@estado            = @byEstado

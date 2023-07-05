@@ -35,6 +35,17 @@
         $scope.meses = _form.meses();
         $scope.mes = new Date().getMonth() + 1;
 
+        $scope.moreSearchOptions = false;
+
+        $scope.tiposPersona = [
+            {codigo: 1, descripcion: 'Cliente'},
+            {codigo: 2, descripcion: 'Empleado'},
+        ]
+
+        $scope.tiposDoc = [
+            {codigo: 'FV', descripcion: 'Factura Venta'},
+            {codigo: 'NE', descripcion: 'Nota Entrega'},
+        ]
 
 
         $scope.dataSearch = {
@@ -72,7 +83,39 @@
         }
 
 
+        $scope.resultRangeFilter = function (item) {
+            $scope.dataSearch.fechaInicio = item.startDate,
+            $scope.dataSearch.fechaFin = item.endDate
+            $scope.getCobros();
+        }
 
+        //Filters 
+        $scope.onClickBtnMore = function () {
+            $scope.moreSearchOptions = !$scope.moreSearchOptions;
+        }
+
+        $scope.onChangePersona = function () {
+            
+            if($scope.dataSearch.byTipoPersona===1){
+
+            }
+            if($scope.dataSearch.byTipoPersona===1){
+                
+            }
+        }
+
+
+        $scope.setTotalsColumn = function(){
+            let total = 0, abono = 0, cambio = 0;
+            for(let item of $scope.cobros){
+                total+=item.total;
+                abono+=item.abono;
+                cambio+=item.cambio;
+            }
+            $scope.total = _form.roundNumber(total);
+            $scope.abono = _form.roundNumber(abono);
+            $scope.cambio = _form.roundNumber(cambio);
+        }
 
 
 
@@ -80,19 +123,33 @@
             try {
                 showLoader();
                 $scope.cobros = [];
-                _mS.getData('get', 'ComprobanteIngreso/?json=' + JSON.stringify($scope.dataSearch), null, true).then(response => {
+                $scope.setTotalsColumn();
+
+                const dataSearch = {
+                    tipo: 1,
+                    codEstab: $scope.dataSearch.codEstab,
+                    checkBoxFecha: true,
+                    fechaInicio: _form.formatDateTimeZone($scope.dataSearch.fechaInicio),
+                    fechaFin: _form.formatDateTimeZone($scope.dataSearch.fechaFin),
+                    checkBoxEstado: [0, 1].includes($scope.dataSearch.byEstado),
+                    byEstado: $scope.dataSearch.byEstado,
+                    checkBoxPersona: $scope.tiposPersona.some(item=>item.codigo===$scope.dataSearch.byTipoPersona),
+                    nroIdentificacion: $scope.dataSearch.nroIdentificacion
+                }
+                console.log(dataSearch)
+                _mS.getData('get', 'ComprobanteIngreso/?json=' + JSON.stringify(dataSearch), null, true).then(response => {
+                    hideLoader();
                     if (response.code === "0") {
-                        hideLoader();
                         console.warn(response)
                     }
-                    if (response.id === "1") {
-                        hideLoader();
+                    if (response.id === "1") {                        
                         let tempCobros = JSON.parse(response.payload)[0] || [];
                         $scope.cobros = tempCobros.map(item=>({ 
                             ...item,
                             codDoc: 'CI',
                             esAnulado: item.color==='table-danger'
                         }))
+                        $scope.setTotalsColumn();
                     }
 
                 }).catch(error => {
