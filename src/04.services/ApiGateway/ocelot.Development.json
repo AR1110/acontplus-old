@@ -22,7 +22,7 @@
           "Port": 5415
         }
       ],
-      "DownstreamPathTemplate": "/api/Account",
+      "DownstreamPathTemplate": "/api/Account{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Post" ],
       "UpstreamPathTemplate": "/gateway/Account{everything}"

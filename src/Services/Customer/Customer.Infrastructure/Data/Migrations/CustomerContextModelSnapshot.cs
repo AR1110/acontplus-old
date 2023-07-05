@@ -42,13 +42,22 @@ namespace Customer.Infrastructure.Data.Migrations
                         .HasColumnType("varchar(300)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Email")
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(500)");
+
                     b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValueSql("1");
 
                     b.Property<string>("IDCard")
                         .IsRequired()
@@ -62,8 +71,13 @@ namespace Customer.Infrastructure.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(2)");
 
-                    b.Property<bool>("IsValid")
+                    b.Property<bool?>("SriValidation")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Telephone")
+                        .HasMaxLength(300)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(300)");
 
                     b.Property<string>("TradeName")
                         .HasMaxLength(300)

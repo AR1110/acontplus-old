@@ -18,7 +18,11 @@ namespace Customer.Core.Entities
         [MaxLength(300)]
         public string TradeName { get; set; }
         [MaxLength(500)]
+        public string Email { get; set; }
+        [MaxLength(300)]
+        public string Telephone { get; set; }
+        [MaxLength(500)]
         public string Address { get; set; }
-        public bool IsValid { get; set; }
+        public bool? SriValidation { get; set; }
     }
 }
