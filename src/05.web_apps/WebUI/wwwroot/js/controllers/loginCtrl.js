@@ -68,7 +68,7 @@
                 if ($scope.data.returnUrl == undefined || $scope.data.returnUrl === "" || $scope.data.returnUrl == null) {
                     $scope.data.returnUrl = '/';
                 }
-                mS.getData('post', 'Account/Login', $scope.data).then(response => {
+                mS.getData('post', 'account/login', $scope.data).then(response => {
                     if (response.id === "0" || response.code === "0") {
                         hideLoader();
                         toastr.warning(response.message, response.titleSms, { closeButton: true, progressBar: true });

@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Customer.Core.Entities;
-using Customer.Infrastructure.Data;
+using Customer.API.Entities;
+using Customer.API.Data;
 
 namespace Customer.API.Controllers
 {
@@ -25,21 +25,30 @@ namespace Customer.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppCustomer>>> GetCustomers()
         {
-          if (_context.Customers == null)
-          {
-              return NotFound();
-          }
-            return await _context.Customers.ToListAsync();
+            if (_context.Customers == null)
+            {
+                return NotFound();
+            }
+            // Get the current page number
+            int pageNumber = 1;
+
+            // Get the number of products per page
+            int pageSize = 50;
+
+            // Get the products for the current page
+
+            return await _context.Customers.Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize).ToListAsync();
         }
 
         // GET: api/Customers/5
         [HttpGet("{id}")]
         public async Task<ActionResult<AppCustomer>> GetAppCustomer(int id)
         {
-          if (_context.Customers == null)
-          {
-              return NotFound();
-          }
+            if (_context.Customers == null)
+            {
+                return NotFound();
+            }
             var appCustomer = await _context.Customers.FindAsync(id);
 
             if (appCustomer == null)
@@ -86,10 +95,10 @@ namespace Customer.API.Controllers
         [HttpPost]
         public async Task<ActionResult<AppCustomer>> PostAppCustomer(AppCustomer appCustomer)
         {
-          if (_context.Customers == null)
-          {
-              return Problem("Entity set 'CustomerContext.Customers'  is null.");
-          }
+            if (_context.Customers == null)
+            {
+                return Problem("Entity set 'CustomerContext.Customers'  is null.");
+            }
             _context.Customers.Add(appCustomer);
             await _context.SaveChangesAsync();
 
