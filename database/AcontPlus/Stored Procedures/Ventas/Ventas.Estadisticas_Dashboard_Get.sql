@@ -27,12 +27,13 @@ DECLARE @year SMALLINT
 							@byTipoDocRG VARCHAR(10),
 							@year SMALLINT'
 
-,@groupBy NVARCHAR(MAX) = ' GROUP BY gm.codMes, gm.mes, td.descripcion, td.idTipoDocumento, td.fechaRegistro ORDER BY gm.codMes ASC '
+,@groupBy NVARCHAR(MAX) = ' GROUP BY gm.codMes, gm.mes, td.descripcion,  td.codigo,td.idTipoDocumento, td.fechaRegistro ORDER BY gm.codMes ASC '
 
 ,@sql NVARCHAR(MAX) = 'SELECT 
 							gm.codMes, 
 							nombreMes = gm.mes, 
 							doc       = td.descripcion,
+							tipoDoc   = td.codigo,
 							total     = ISNULL((SELECT SUM(docs.total) FROM #tempDocEstadistica docs WHERE docs.idTipoDocumento = td.idTipoDocumento AND docs.idEntidad = @byEntidad AND docs.codMes = gm.codMes AND YEAR(docs.fechaRegistro) = @year), 0)								
 						FROM dbo.afnGetMonth()  gm
 						CROSS JOIN TipoDocumento td '
@@ -169,6 +170,7 @@ DECLARE @year SMALLINT
 								gm.codMes, 
 								nombreMes = gm.mes, 
 								doc = td.descripcion,
+								tipoDoc = td.codigo,
 								total = ISNULL((SELECT SUM(docs.total) FROM  #tempDocEstadistica docs WHERE docs.idTipoDocumento = td.idTipoDocumento AND docs.idEntidad = @byEntidad AND docs.codMes = gm.codMes AND YEAR(docs.fechaRegistro) = @year AND docs.codEstab = @codEstab), 0)								
 								FROM dbo.afnGetMonth() gm
 								CROSS JOIN TipoDocumento td '
@@ -180,6 +182,7 @@ DECLARE @year SMALLINT
 								gm.codMes, 
 								nombreMes = gm.mes, 
 								doc = td.descripcion,
+								tipoDoc = td.codigo,
 								total = ISNULL((SELECT SUM(docs.total) FROM  #tempDocEstadistica docs WHERE docs.idTipoDocumento = td.idTipoDocumento AND docs.idEntidad = @byEntidad AND docs.codMes = gm.codMes AND YEAR(docs.fechaRegistro) = @year AND docs.codEstab = @codEstab AND idPuntoEmision = @byPtoEmisionRG), 0)								
 								FROM dbo.afnGetMonth() gm
 								CROSS JOIN TipoDocumento td '

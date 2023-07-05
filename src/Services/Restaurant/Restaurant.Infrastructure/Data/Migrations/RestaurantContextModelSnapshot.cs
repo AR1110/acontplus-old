@@ -42,12 +42,54 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
+                    b.Property<int>("ProductionAreaId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ProductionAreaId");
+
                     b.ToTable("Dish", "Restaurant");
+                });
+
+            modelBuilder.Entity("Restaurant.Core.Entities.ProductionArea", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(5)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProductionArea", "Restaurant");
                 });
 
             modelBuilder.Entity("Restaurant.Core.Entities.Recipe", b =>
@@ -87,6 +129,17 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.HasIndex("DishId");
 
                     b.ToTable("Recipe", "Restaurant");
+                });
+
+            modelBuilder.Entity("Restaurant.Core.Entities.Dish", b =>
+                {
+                    b.HasOne("Restaurant.Core.Entities.ProductionArea", "ProductionArea")
+                        .WithMany()
+                        .HasForeignKey("ProductionAreaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProductionArea");
                 });
 
             modelBuilder.Entity("Restaurant.Core.Entities.Recipe", b =>
