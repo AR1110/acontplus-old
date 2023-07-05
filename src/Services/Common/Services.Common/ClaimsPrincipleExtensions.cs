@@ -12,7 +12,7 @@ namespace Services.Common
         {
             return user.FindFirst("companyId")?.Value;
         }
-        public static int GetUserRolId(this ClaimsPrincipal user)
+        public static int GetUserRoleId(this ClaimsPrincipal user)
         {
             return Convert.ToInt32(user.FindFirst("userRoleId")?.Value);
         }

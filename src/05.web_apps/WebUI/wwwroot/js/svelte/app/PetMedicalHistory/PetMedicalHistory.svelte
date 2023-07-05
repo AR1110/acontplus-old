@@ -179,7 +179,7 @@
                 <tbody>
                     {#each medicalHistories as item}
                         <tr>
-                            <td>{item.pet.customerUniqueId}</td>
+                            <td>{item.pet.customerId}</td>
                             <td>{item.pet.name}</td>
                             <td> {formatDate(item.date)} </td>
                             <td>

@@ -45,7 +45,17 @@ BEGIN
 		END 
 	
 	BEGIN TRY 
-		BEGIN TRAN 
+		BEGIN TRAN
+			DECLARE @IDType VARCHAR(2)
+			,@customerId INT
+
+			SET @IDType = (SELECT codigoSri FROM TipoIdentificacion t WHERE t.idTipoIdentificacion = @idTipoIdentificacion)
+
+			INSERT INTO Customer.Customer(IDType, IDCard, BusinessName, TradeName, email, telephone, [Address], SriValidation)
+			SELECT @IDType, LTRIM(RTRIM(@numeroIdentificacion)), LTRIM(RTRIM(@nombreFiscal)), LTRIM(RTRIM(@nombreComercial)),  LTRIM(RTRIM(@correo)), LTRIM(RTRIM(@telefono)), LTRIM(RTRIM(@direccion)), @validationSri
+
+			SET @customerId = @@IDENTITY
+
 			INSERT INTO Proveedor 
 					(idCiudad 
 					,idTipoIdentificacion
@@ -81,6 +91,9 @@ BEGIN
 
 		----- Set data idProveedor after of insert -----
 		SET @idProveedor = @@IDENTITY
+
+
+		UPDATE Proveedor SET CustomerId = @customerId WHERE idProveedor = @idProveedor
 
 		COMMIT TRAN 
 

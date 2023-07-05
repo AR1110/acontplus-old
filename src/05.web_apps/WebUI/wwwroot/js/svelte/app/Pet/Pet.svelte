@@ -67,8 +67,8 @@
 
 	let pet = {
 		id: "",
-		customerUniqueId: "",
-		companyUniqueId: "",
+		customerId: "",
+		companyId: "",
 		name: "",
 		petTypeId: "",
 		breedId: "",
@@ -105,8 +105,8 @@
 			return;
 		}
 		const newPet = {
-			customerUniqueId: clientSelected.numeroIdentificacion,
-			companyUniqueId: clientSelected.rucEmpresa,
+			customerId: clientSelected.numeroIdentificacion,
+			companyId: clientSelected.rucEmpresa,
 			name: pet.name,
 			petTypeId: pet.petTypeId,
 			breedId: pet.breedId,
@@ -166,8 +166,8 @@
 	const updatePet = async () => {
 		let updatedpet = {
 			id: pet.id,
-			customerUniqueId: pet.customerUniqueId,
-			companyUniqueId: pet.companyUniqueId,
+			customerId: pet.customerId,
+			companyId: pet.companyId,
 			name: pet.name,
 			petType: pet.petType,
 			petTypeId: pet.petTypeId,
