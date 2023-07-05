@@ -695,6 +695,7 @@
     })
 
 
+    //https://www.daterangepicker.com/
     app.directive('dateRangeFilter', function (formulario) {
         return {
             template: `<div><input date-range-picker class="form-control date-picker border-select" type="text"
