@@ -7,6 +7,7 @@ import { RoutesWithNotFound, SnackbarUtilsConfigurator } from "@/core/utils";
 import { PrivateRoutes, PublicRoutes } from "@/core/models/";
 import AuthGuard from "@/core/guards/auth.guard.tsx";
 import RecipeComponent from "./pages/Recipe/RecipeComponent.tsx";
+import Dish from "./pages/Dish/Dish.tsx";
 
 const Login = lazy(() => import("@/pages/Auth/components/Login"));
 const Home = lazy(() => import("@/pages/Home/Home"));
@@ -31,6 +32,7 @@ function App() {
                 <Route path={PrivateRoutes.HOME} element={<Home />}></Route>
                 <Route path={PrivateRoutes.POS} element={<Pos />}></Route>
                 <Route path={PrivateRoutes.RECIPE} element={<RecipeComponent />}></Route>
+                <Route path={PrivateRoutes.DISH} element={<Dish />}></Route>
                 <Route
                   path={PrivateRoutes.CATEGORIA}
                   element={<Categoria />}

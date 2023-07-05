@@ -191,12 +191,12 @@ namespace DataAccess
                                 }
                             }
                         }
-
                         loginData.userData = userData;
                         loginData.menus = menus;
                         loginData.subMenus = subMenus;
                         loginData.returnUrl = returnUrl ?? "/Home/Index";
                         _gr.data = loginData;
+                        _gr.payload = loginData;
                     }
                 }
             }
