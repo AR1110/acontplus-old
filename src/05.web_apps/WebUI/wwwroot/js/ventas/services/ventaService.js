@@ -112,6 +112,7 @@
         let url = 'Cliente/';
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
+        let tS = $injector.get('toastService');
 
         let service = {};
 
