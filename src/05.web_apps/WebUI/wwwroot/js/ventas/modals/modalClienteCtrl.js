@@ -227,13 +227,18 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
 
                     let {
                         razonSocial,
-                        establecimientos
+                        establecimientos,
+                        direccion,
+                        telefono,
+                        email
                     } = response;
 
                     $scope.data.nombreComercial = razonSocial.replaceAll('"', '');
                     $scope.data.nombreFiscal = razonSocial.replaceAll('"', '');
-                    $scope.data.direccion = establecimientos.find(item => item.matriz === 'SI').direccionCompleta
-
+                    //$scope.data.direccion = establecimientos.find(item => item.matriz === 'SI').direccionCompleta
+                    $scope.data.direccion = direccion
+                    $scope.data.telefono = telefono
+                    $scope.data.correo = email
                     $scope.data.validationSri = true;
 
                     $scope.typeNotify = 'is-valid';

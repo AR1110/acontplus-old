@@ -358,5 +358,11 @@
     "inputFiles": [
       "wwwroot/js/controllers/loginCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/ventas/modals/modalClienteCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/ventas/modals/modalClienteCtrl.js"
+    ]
   }
 ]

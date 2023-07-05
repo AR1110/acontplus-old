@@ -19,8 +19,8 @@ namespace Vet.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Pet>>> GetPets()
         {
-            var companyId = User.GetCompanyId();
-            if (!_context.Pets.Any(x => x.CompanyUniqueId == companyId))
+            int companyId = Convert.ToInt32(User.GetCompanyId());
+            if (!_context.Pets.Any(x => x.CompanyId == companyId))
             {
                 return NoContent();
             }
@@ -28,7 +28,7 @@ namespace Vet.API.Controllers
                 .Include(t => t.PetType)
                 .Include(b => b.Breed)
                 .Include(s => s.Gender)
-                .Where(x => x.CompanyUniqueId == companyId
+                .Where(x => x.CompanyId == companyId
                 && x.Enabled
                 )
                 .ToListAsync();
@@ -37,8 +37,8 @@ namespace Vet.API.Controllers
         [HttpGet("search/{textSearch}")]
         public async Task<ActionResult<IEnumerable<Pet>>> Search(string textSearch)
         {
-            var companyId = User.GetCompanyId();
-            if (!_context.Pets.Any(x => x.CompanyUniqueId == companyId))
+            int companyId = Convert.ToInt32(User.GetCompanyId());
+            if (!_context.Pets.Any(x => x.CompanyId == companyId))
             {
                 return NoContent();
             }
@@ -48,8 +48,8 @@ namespace Vet.API.Controllers
                 .Include(s => s.Gender)
                 .Where(x =>
                         x.Enabled &&
-                        x.CompanyUniqueId == companyId
-                        && (x.Name.Contains(textSearch) || x.CustomerUniqueId.Contains(textSearch))
+                        x.CompanyId == companyId
+                        && (x.Name.Contains(textSearch))
                  )
                 .ToListAsync();
         }

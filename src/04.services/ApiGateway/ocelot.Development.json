@@ -638,12 +638,12 @@
     {
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8002
+          "Host": "localhost",
+          "Port": 7290
         }
       ],
       "DownstreamPathTemplate": "/api/Consultas/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get" ],
       "UpstreamPathTemplate": "/gateway/Consultas/{everything}"
     },
