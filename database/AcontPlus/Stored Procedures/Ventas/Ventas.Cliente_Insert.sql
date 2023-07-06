@@ -93,7 +93,24 @@ BEGIN
 		END 
 
 	BEGIN TRY 
-		BEGIN TRAN 
+		BEGIN TRAN
+
+		DECLARE @IDType VARCHAR(2)
+			,@customerId INT
+
+			IF NOT EXISTS(SELECT 1 FROM Customer.Customer WHERE IDCard = LTRIM(RTRIM(@numeroIdentificacion)))
+				BEGIN
+					SET @IDType = (SELECT codigoSri FROM TipoIdentificacion t WHERE t.idTipoIdentificacion = @idTipoIdentificacion)
+
+					INSERT INTO Customer.Customer(IDType, IDCard, BusinessName, TradeName, email, telephone, [Address], SriValidation)
+					SELECT @IDType, LTRIM(RTRIM(@numeroIdentificacion)), LTRIM(RTRIM(@nombreFiscal)), LTRIM(RTRIM(@nombreComercial)),  LTRIM(RTRIM(@correo)), LTRIM(RTRIM(@telefono)), LTRIM(RTRIM(@direccion)), @validationSri
+					SET @customerId = @@IDENTITY
+				END
+			ELSE
+				BEGIN 
+					SET @customerId = (SELECT ID FROM Customer.Customer WHERE IDCard = LTRIM(RTRIM(@numeroIdentificacion)))
+				END
+			
 			INSERT INTO Cliente 
 			        (idTipoIdentificacion
 					,idEmpleado
@@ -140,6 +157,9 @@ BEGIN
 					,@validationSri)
 
 		SET @idCliente = @@IDENTITY;
+
+
+		UPDATE Cliente  SET customerId = @customerId WHERE idCliente = @idCliente
 
 		COMMIT TRAN 
 			SELECT '1'code, 'Registrado Correctamente' as 'message',payload =  @idCliente

@@ -124,7 +124,7 @@ app.constant('nombreModalFactElect', {
 app.constant('nombreModalVenta', {
     CLIENTE: {
         //fileCtrl: '/js/modal/common/modalClienteProveedorCtrl.min.js' + CHANGE_VERSION(),
-        fileCtrl: '/js/ventas/modals/modalClienteCtrl.js',
+        fileCtrl: '/js/ventas/modals/modalClienteCtrl.js' + CHANGE_VERSION(),
         controllers: {
             M: 'ModalClienteCtrl',
             ML: 'ModalClienteListaCtrl'

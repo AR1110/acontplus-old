@@ -108,12 +108,21 @@ export class ModalBaseCtrl {
                         hideLoader()
                         if (!result.numeroRuc) return;
 
-                        let {razonSocial,establecimientos} = result;
+                        let {razonSocial,establecimientos, direccion, telefono, email} = result;
         
                         this.cliente.identificacionComprador = textSearch;
                         this.cliente.razonSocialComprador = razonSocial.replaceAll('"', '');
                         this.cliente.nombreComercial = razonSocial.replaceAll('"', '');
-                        this.cliente.direccionComprador = establecimientos.find(item => item.matriz === 'SI').direccionCompleta;
+                        //this.cliente.direccionComprador = establecimientos.find(item => item.matriz === 'SI').direccionCompleta;
+                        if (direccion) {
+                            this.cliente.direccionComprador = direccion
+                        }
+                        if (telefono) {
+                            this.cliente.telefono = telefono
+                        }
+                        if (email) {
+                            this.cliente.email = email
+                        }
                         this.cliente.idCliente = 0;
         
                         

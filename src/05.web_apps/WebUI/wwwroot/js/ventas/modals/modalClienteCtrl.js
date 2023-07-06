@@ -236,9 +236,15 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                     $scope.data.nombreComercial = razonSocial.replaceAll('"', '');
                     $scope.data.nombreFiscal = razonSocial.replaceAll('"', '');
                     //$scope.data.direccion = establecimientos.find(item => item.matriz === 'SI').direccionCompleta
-                    $scope.data.direccion = direccion
-                    $scope.data.telefono = telefono
-                    $scope.data.correo = email
+                    if (direccion) {
+                        $scope.data.direccion = direccion
+                    }
+                    if (telefono) {
+                        $scope.telefonos = new Array(telefono)
+                    }
+                    if (email) {
+                        $scope.correos = new Array(email)
+                    }
                     $scope.data.validationSri = true;
 
                     $scope.typeNotify = 'is-valid';
@@ -263,10 +269,23 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                 if (response.numeroRuc || response.nombreCompleto) {
 
                     let {
-                        nombreCompleto
+                        nombreCompleto,
+                        direccion,
+                        telefono,
+                        email
                     } = response;
                     $scope.data.nombreComercial = nombreCompleto.replaceAll('"', '');
                     $scope.data.nombreFiscal = nombreCompleto.replaceAll('"', '');
+                    if (direccion) {
+                        $scope.data.direccion = direccion
+                    }
+                    if (telefono) {
+                        $scope.telefonos = new Array(telefono)
+                    }
+                    if (email) {
+                        $scope.correos = new Array(email)
+                    }
+                    $scope.data.validationSri = true;
                     $scope.data.validationSri = true;
 
                     $scope.typeNotify = 'is-valid';

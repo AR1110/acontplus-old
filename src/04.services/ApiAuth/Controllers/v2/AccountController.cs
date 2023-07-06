@@ -64,6 +64,5 @@ namespace ApiAuth.Controllers.v2
                 return BadRequest("Error on login");
             }
         }
-
     }
 }
