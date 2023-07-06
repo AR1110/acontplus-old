@@ -1,7 +1,7 @@
 export interface ApiResponse {
   code: string;
   message: string;
-  payload: string;
+  payload: unknown;
   title?: string;
 }
 
