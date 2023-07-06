@@ -15,7 +15,6 @@ import {
 } from "@mui/material";
 
 import React from "react";
-import categoryService from "@/core/services/category.service";
 import { Category, Product } from "@/core/models";
 import { productService } from "@/core/services";
 
@@ -53,7 +52,6 @@ export default function Pos() {
     console.log(categories[newValue]);
     console.log(event.target);
     setSelectedTab(newValue);
-    getProductsByCategoryId(categories[newValue].id);
   };
 
   // const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -63,21 +61,6 @@ export default function Pos() {
   // const handleToggleClass = () => {
   //   setIsClassActive((prevState) => !prevState);
   // };
-  const getProductsByCategoryId = (categoryId: number) => {
-    productService.getProducts(categoryId).then((response) => {
-      console.log(response);
-      setProducts(response);
-    });
-  };
-  const getCateries = () => {
-    categoryService.getAll().then((response) => {
-      setCategories(response);
-    });
-  };
-
-  useEffect(() => {
-    getCateries();
-  }, []);
 
   return (
     <>
@@ -138,7 +121,7 @@ export default function Pos() {
               <ProductSearch />
               <div className="product-list">
                 <Grid container spacing={3}>
-                  {products.map((product) => (
+                  {/* {products.map((product) => (
                     <Grid item xs={12} sm={6} md={4} key={product.id}>
                       <div
                         className={`product ${
@@ -156,7 +139,7 @@ export default function Pos() {
                         )}
                       </div>
                     </Grid>
-                  ))}
+                  ))} */}
                 </Grid>
               </div>
             </Box>
