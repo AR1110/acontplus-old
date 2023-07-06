@@ -142,6 +142,16 @@
                 </div>
             </div>
 
+            <div class="row justify-contend-start">
+                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                    <span class="form-group pull-left page-size form-inline">
+                        <select class="form-control control-color" ng-model="dataSearch.pageSize"
+                            ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                        </select>
+                    </span>
+                </div>
+            </div>
+
             <!--Lista Nota de Entregas-->
 
             <div id="upperScroll" style="overflow-x:scroll; overflow-y: hidden; max-height:20px; width:100%">
@@ -285,7 +295,7 @@
                         </tbody>
                         <tfoot md-foot fixed-tfoot>
                             <tr md-row>
-                                <td md-cell colspan="2"><span class="font-weight-bold">{{notaEntregas.length}}
+                                <td md-cell colspan="2"><span class="font-weight-bold">{{dataSearch.totalRecords}}
                                         Notas de Entregas</span></td>
                                 <td md-cell colspan="3"><span class="font-weight-bold">Total: </span></td>
                                 <td md-cell totales-venta-view="ventaPermiso"><span
@@ -300,6 +310,11 @@
                     </table>
                 </md-table-container>
             </div>
+        </div>
+         <div class="card-body">
+             <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+                ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                class="pagination" boundary-links="true" rotate="false"></ul>
         </div>
     </div>
 

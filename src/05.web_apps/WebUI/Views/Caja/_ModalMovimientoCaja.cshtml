@@ -3,7 +3,50 @@
     <button class="close" ng-click="$ctrl.closeModal()">&times;</button>
 </div>
 <div class="modal-body">
-
+    <div class="row">
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>Rango de Fechas</span>
+                        <date-range-filter current-date="$ctrl.dataSearch.dateStart" start-date="$ctrl.dataSearch.dateStart"
+                        end-date="$ctrl.dataSearch.dateEnd"
+                        result-range-date="$ctrl.resultRangeFilter(result)"></date-range-filter>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span for="">Estado</label>
+                        <select name="" id="" class="form-control border-select" ng-model="$ctrl.dataSearch.statusMovement" ng-change="getMovimientosCaja()">
+                            <option value="">Todos</option>
+                            <option ng-value="item.statusMovement" ng-repeat="item in $ctrl.estadoMovimientos">
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+            <div class="row justify-content-end">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                    <form autocomplete="off">
+                        <div class="form-group">
+                            <span>Buscar</span>
+                            <div class="input-group">
+                                <input type="text" class="form-control border-select" ng-model="$ctrl.dataSearch.bySearch" ng-keyup="$ctrl.searchFilterLocal()" placeholder="Buscar">
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-secondary" ng-click="$ctrl.reloadMovimientoCaja()">
+                                        <i class="fa fa-redo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     @* <div class="row justify-content-center">
         <div class="row col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
             <div class="form-group">
@@ -23,7 +66,7 @@
         </div>
     </div> *@
 
-    <div class="row justify-content-between justify-content-sm-around">
+    @* <div class="row justify-content-between justify-content-sm-around">
         <div class="col-xl-6 col-lg-6 col-md-5 col-sm-12 col-12">
             <button type="button" class="btn btn-info" ng-click="$ctrl.openModalFiltro()">
                 <i class="fa fa-filter"></i> Filtro
@@ -44,7 +87,7 @@
                 </div>
             </form>
         </div>
-    </div>
+    </div> *@
 
     <!--Include Table Movimiento Caja-->
     <div ng-include="$ctrl.theURLTableMovimientoCaja()"></div>           

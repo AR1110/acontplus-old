@@ -62,7 +62,8 @@
                             nroIdentificacion: item.nroIdentificacion,
                             anulada: item.anulada,
                             codEstado: item.codEstado,
-                            esContado: item.tiempoCredito
+                            esContado: item.tiempoCredito,
+                            totalRecords : item.totalRecords
                         }
                     })
                 }

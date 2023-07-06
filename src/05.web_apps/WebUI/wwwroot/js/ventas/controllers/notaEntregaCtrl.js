@@ -27,17 +27,24 @@
             A: 'A',
         }
 
+        $scope.recordsQuantity = [10, 25, 50, 100];
+        $scope.dataSearch = {
+            tipo: 1,
+            pageSize: 50,
+            pageIndex: 1,
+            maxSize: 5,
+            totalRecords: 0,
+            busqueda: "",
+            byStock: 0,
+        };
+
         $scope.typeSend = 'GenericFile';
 
         $scope.jsonPermission = {}
 
         $scope.isPrintDocument = false; //Para impresiones termicas al registra el documento 
         $scope.parametersPrint = {};
-
-        $scope.dataSearch = {
-            pageIndex: 1,
-            pageSize: 1000
-        }
+ 
 
         $scope.cliente = {}
         $scope.notaEntregas = [];
@@ -140,11 +147,12 @@
                 // }
                 let dataSearch = {
                     codEstab: $scope.dataSearch.codEstab,
+                    pageIndex: $scope.dataSearch.pageIndex,
+                    pageSize: $scope.dataSearch.pageSize,
                     checkBoxDefault: false,
                     checkBoxCliente: $scope.dataSearch.idCliente > 0,
                     byCliente: $scope.dataSearch.idCliente,
                     checkBoxFecha: true,
-                    tipoFecha: 'FE',
                     checkBoxUsuario: $scope.dataSearch.byUsuario > 0,
                     byUsuario: $scope.dataSearch.byUsuario,
                     checkBoxEstado: $scope.dataSearch.codEstado ? true : false,
@@ -165,6 +173,7 @@
                     hideLoader();
                     $scope.notaEntregas = response;
                     $scope.cloneNotaEntregas = JSON.parse(JSON.stringify($scope.notaEntregas));
+                    $scope.dataSearch.totalRecords = $scope.notaEntregas.length > 0 && $scope.notaEntregas[0].totalRecords;
                     $scope.getTotales();
                     
                 }).catch(error => {
@@ -202,7 +211,14 @@
         }
         $scope.initiload();
 
+        $scope.pagechanged = function () {
+            $scope.getNotaEntregas();
+        };
 
+        $scope.changePageSize = function () {
+            $scope.dataSearch.pageIndex = 1;
+            $scope.getNotaEntregas();
+        };
         //Filtro de Nota de Entregas localmente 
         $scope.searchFilterLocal = function () {
             let notaEntregas = JSON.parse(JSON.stringify($scope.cloneNotaEntregas));

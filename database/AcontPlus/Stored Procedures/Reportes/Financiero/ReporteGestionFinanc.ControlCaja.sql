@@ -43,6 +43,7 @@ BEGIN
 	   ,saldo NUMERIC(18,5) DEFAULT 0 NOT NULL
 	   ,pay  VARCHAR(150) NOT NULL
 	   ,cobro BIT NOT NULL DEFAULT 1 
+	   ,observacion VARCHAR(300) NULL
 	)
 
 	DECLARE @tbDocuments AS TABLE(
@@ -261,9 +262,6 @@ BEGIN
 	 WHERE cc.idControlCaja = @idControlCaja
 
 	
-
-
-
 	 -----------------------------------RESUMEN TOTALIZADO EN LAS FORMAS DE PAGO----------------------------------------
 	 SELECT  
 		 formaPago = ef.descripcion
@@ -273,7 +271,6 @@ BEGIN
 	 WHERE ef.estado = 1 AND ef.codigo NOT IN ('DOC')
 	 ORDER BY ef.fechaRegistro ASC
 	 -------------------------------------------------END----------------------------------------------------------------
-
 
 
 	 -----------------------------------RESUMEN TOTALIZADO DE DOCUMENTOS--------------------------------------------------

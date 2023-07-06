@@ -46,11 +46,17 @@ function facturaVentaCtrl(
         A: 'A',
     }
 
-
+    $scope.recordsQuantity = [10, 25, 50, 100];
     $scope.dataSearch = {
+        tipo: 1,
+        pageSize: 50,
         pageIndex: 1,
-        pageSize: 10000
-    }
+        maxSize: 5,
+        totalRecords: 0,
+        busqueda: "",
+        byStock: 0,
+    };
+
     $scope.cliente = {
         nombreCliente: ''
     }
@@ -166,6 +172,8 @@ function facturaVentaCtrl(
             //     $scope.dataSearch.checkBoxDefault = true;
             // }
             let dataSearch = {
+                pageIndex: $scope.dataSearch.pageIndex,
+                pageSize: $scope.dataSearch.pageSize,
                 codEstab: $scope.dataSearch.codEstab,
                 checkBoxDefault: false,
                 checkBoxCliente: $scope.dataSearch.idCliente > 0,
@@ -187,8 +195,8 @@ function facturaVentaCtrl(
             $scope.getTotales();
             facturaSvc.getAll(dataSearch).then(response=>{
                 $scope.facturas = response;
-                
                 $scope.cloneFacturas = JSON.parse(JSON.stringify($scope.facturas));
+                $scope.dataSearch.totalRecords = $scope.facturas.length > 0 && $scope.facturas[0].totalRecords;
                 $scope.getTotales();
                 hideLoader();
             }).catch(error => {
@@ -220,7 +228,15 @@ function facturaVentaCtrl(
     }
     $scope.initiload();
 
-
+    
+    $scope.pagechanged = function () {
+        $scope.getFacturas();
+    };
+    
+    $scope.changePageSize = function () {
+        $scope.dataSearch.pageIndex = 1;
+        $scope.getFacturas();
+    };
 
     $scope.validateOperationPrintAndPayment = (result) => {
         //Verificamos 

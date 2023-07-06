@@ -41,28 +41,7 @@
                         @* <div class="input-group"> *@
                         <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
                             end-date="dataSearch.fechaFin"
-                            result-range-date="resultRangeFilter(result)"></date-range-filter>
-                        @* <div class="input-group-append">
-                        <div class="btn-group" data-toggle="buttons" role="group">
-                        <label class="btn btn-outline btn-info">
-                        <div class="custom-control custom-radio">
-                        <input type="radio" id="customRadio1" name="options" value="male"
-                        class="custom-control-input">
-                        <label class="custom-control-label" for="customRadio1"> <i
-                        class="ti-check text-active" aria-hidden="true"></i></label>
-                        </div>
-                        </label>
-                        <label class="btn btn-outline btn-info active">
-                        <div class="custom-control custom-radio">
-                        <input type="radio" id="customRadio2" name="options" value="female"
-                        class="custom-control-input">
-                        <label class="custom-control-label" for="customRadio2"> <i
-                        class="ti-check text-active" aria-hidden="true"></i></label>
-                        </div>
-                        </label>
-                        </div>
-                        </div>
-                        </div> *@
+                            result-range-date="resultRangeFilter(result)"></date-range-filter>                       
                     </div>
                 </div>
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
@@ -144,6 +123,16 @@
                         <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
                             ng-model="dataSearch.bySearch" placeholder="Ej: 001-002">
                     </div>
+                </div>
+            </div>
+
+            <div class="row justify-contend-start">
+                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                    <span class="form-group pull-left page-size form-inline">
+                        <select class="form-control control-color" ng-model="dataSearch.pageSize"
+                            ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                        </select>
+                    </span>
                 </div>
             </div>
 
@@ -293,7 +282,7 @@
                         </tbody>
                         <tfoot md-foot fixed-tfoot>
                             <tr md-row>
-                                <td md-cell colspan="2"><span class="font-weight-bold">{{facturas.length}}
+                                <td md-cell colspan="2"><span class="font-weight-bold">{{dataSearch.totalRecords}}
                                         Facturas</span></td>
                                 <td md-cell colspan="3"><span class="font-weight-bold">Total</span></td>
                                 <td md-cell totales-venta-view="ventaPermiso"><span
@@ -308,7 +297,11 @@
                     </table>
                 </md-table-container>
             </div>
-
+        </div>
+        <div class="card-body">
+             <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+                ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                class="pagination" boundary-links="true" rotate="false"></ul>
         </div>
     </div>
 
