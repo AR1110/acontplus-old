@@ -16,3 +16,18 @@ export const UserEmptyState: User = {
   email: "",
   roles: [],
 };
+
+export interface UseAuth {
+  actividad: string;
+  companyId: number;
+  entidad: string;
+  fullName: string;
+  idRol: number;
+  image: string;
+  jwtToken: string;
+  nombreComercial: string;
+  nroIdentificacion: string;
+  role: string;
+  ruc: string;
+  userName: string;
+}
