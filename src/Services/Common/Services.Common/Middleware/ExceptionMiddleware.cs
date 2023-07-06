@@ -1,8 +1,11 @@
-﻿using Identity.API.Errors;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Services.Common.Errors;
 using System.Net;
 using System.Text.Json;
 
-namespace Identity.API.Middleware
+namespace Services.Common.Middleware
 {
     public class ExceptionMiddleware
     {
@@ -30,8 +33,8 @@ namespace Identity.API.Middleware
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
                 var response = _env.IsDevelopment()
-                    ? new ApiException((int)HttpStatusCode.InternalServerError, ex.Message, ex.StackTrace.ToString())
-                    : new ApiException((int)HttpStatusCode.InternalServerError);
+                    ? new ApiException(context.Response.StatusCode, ex.Message, ex.StackTrace?.ToString())
+                    : new ApiException(context.Response.StatusCode, "Internal Server Error");
 
                 var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 

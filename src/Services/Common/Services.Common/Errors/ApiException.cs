@@ -1,4 +1,4 @@
-﻿namespace Restaurant.API.Errors
+﻿namespace Services.Common.Errors
 {
     public class ApiException
     {

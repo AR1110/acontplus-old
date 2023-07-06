@@ -1,6 +1,7 @@
 using Lib.Common;
 using Microsoft.EntityFrameworkCore;
 using Services.Common;
+using Services.Common.Middleware;
 using Vet.API.Extensions;
 using Vet.Infrastructure.Data;
 
@@ -22,6 +23,8 @@ builder.Services.AddSwaggerDocumentation();
 //builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 app.UseSwaggerDocumentation();
