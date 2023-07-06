@@ -10,7 +10,7 @@ export default function Dish() {
               </div>
               <div className="col-md-2">
                 <button className="btn btn-lg btn-primary">
-                  Agregar
+                  Nuevo Plato
                 </button>
               </div>
             </div>
