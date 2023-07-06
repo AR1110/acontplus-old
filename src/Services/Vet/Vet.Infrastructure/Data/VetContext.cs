@@ -52,19 +52,20 @@ namespace Vet.Infrastructure.Data
                     property.SetIsUnicode(false);
                 }
             }
+            //modelBuilder.Entity<t>().ToTable("TableName", schema: "Schema")
+            modelBuilder.Entity<PetType>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<Breed>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<Gender>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<Pet>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<DiseaseStatus>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<DiseaseType>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()"); ;
+            modelBuilder.Entity<Disease>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<HealthCheck>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<BehaviorStatus>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<Behavior>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<BehaviorTest>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
 
-            modelBuilder.Entity<PetType>().ToTable("PetType", schema: "Pet");
-            modelBuilder.Entity<Breed>().ToTable("Breed", schema: "Pet");
-            modelBuilder.Entity<Gender>().ToTable("Gender", schema: "Pet");
-            modelBuilder.Entity<Pet>().ToTable("Pet", schema: "Pet");
-            modelBuilder.Entity<DiseaseStatus>().ToTable("DiseaseStatus", schema: "Pet");
-            modelBuilder.Entity<DiseaseType>().ToTable("DiseaseType", schema: "Pet");
-            modelBuilder.Entity<Disease>().ToTable("Disease", schema: "Pet");
-            modelBuilder.Entity<HealthCheck>().ToTable("HealthCheck", schema: "Pet");
-            modelBuilder.Entity<BehaviorStatus>().ToTable("BehaviorStatus", schema: "Pet");
-            modelBuilder.Entity<Behavior>().ToTable("Behavior", schema: "Pet");
-            modelBuilder.Entity<BehaviorTest>().ToTable("BehaviorTest", schema: "Pet");
-            modelBuilder.Entity<MedicalHistory>().ToTable("MedicalHistory", schema: "Pet")
+            modelBuilder.Entity<MedicalHistory>()
            .HasMany(i => i.HealthChecks)
            .WithOne(d => d.MedicalHistory)
            .HasForeignKey(d => d.MedicalHistoryId);
@@ -73,6 +74,9 @@ namespace Vet.Infrastructure.Data
            .HasMany(i => i.BehaviorTests)
            .WithOne(d => d.MedicalHistory)
            .HasForeignKey(d => d.MedicalHistoryId);
+
+            modelBuilder.Entity<MedicalHistory>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+
 
         }
     }
