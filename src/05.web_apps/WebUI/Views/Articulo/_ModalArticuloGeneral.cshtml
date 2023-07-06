@@ -1,20 +1,25 @@
 <form autocomplete="off">
     <div class="modal-header">
         <h4 class="modal-title" >Lista de Articulos</h4>
-        <button type="button" class="close" ng-click="$ctrl.closeModal()" >&times;</button>
-        @* <input type="text" id="buscarArticuloG" ng-model="$ctrl.seachTextArticulo" autocomplete="off"
-            ng-change="$ctrl.consultarPrecioText()" name="inputSearchArticuloGeneral" class="form-control border-select col-lg-5 col-md-5 col-sm-12 col-12" placeholder="Ingrese la Descripcion o Código del Articulo" /> *@
+        <button type="button" class="close" ng-click="closeModal()" >&times;</button>
+        @* <input type="text" id="buscarArticuloG" ng-model="seachTextArticulo" autocomplete="off"
+            ng-change="consultarPrecioText()" name="inputSearchArticuloGeneral" class="form-control border-select col-lg-5 col-md-5 col-sm-12 col-12" placeholder="Ingrese la Descripcion o Código del Articulo" /> *@
     </div>
     
     <div class="modal-body">
         <div class="row justify-content-between">
             <div class="col-lg-2 col-md-2 col-sm-6 col-12">
-                <div class="form-group"> 
+                <span class="form-group pull-left page-size form-inline">
+                    <select class="form-control control-color" ng-model="dataSearch.pageSize"
+                        ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                    </select>
+                </span>
+                @* <div class="form-group"> 
                     <label for=""></label>                
-                    <button type="button" class="btn btn-info mt-4" ng-click="$ctrl.openModalFiltro()">
+                    <button type="button" class="btn btn-info mt-4" ng-click="openModalFiltro()">
                         <i class="fas fa-filter"></i> Filtrar
                     </button>                
-                </div>
+                </div> *@
             </div>
             
             <div class="col-lg-6 col-md-6 col-sm-6 col-12">
@@ -22,9 +27,9 @@
                     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="inputTextSearch">Buscar Artículo</label>
-                            <input type="text" id="inputTextSearch" class="form-control border-select" ng-model="$ctrl.dataSearch.busqueda"
-                                ng-keyup="$ctrl.consultarPrecioSearchText()"
-                                ng-keypress="$ctrl.consultarPrecioEnter($event)" 
+                            <input type="text" id="inputTextSearch" class="form-control border-select" ng-model="dataSearch.bySearch"
+                                ng-keyup="consultarPrecioSearchText()"
+                                ng-keypress="consultarPrecioEnter($event)" 
                                 placeholder="Ingrese la Descripcion o Código del Articulo" />
                         </div>                                                                
                     </div>
@@ -32,8 +37,8 @@
                     <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="">Buscar por:</label>
-                            <select class="form-control border-select" ng-model="$ctrl.dataSearch.byColumn" ng-change="$ctrl.querySearchArticulo()">
-                                <option ng-value="item.codigo" ng-repeat="item in $ctrl.tipoBusquedas">
+                            <select class="form-control border-select" ng-model="dataSearch.byColumn" ng-change="querySearchArticulo()">
+                                <option ng-value="item.codigo" ng-repeat="item in tipoBusquedas">
                                     {{item.descripcion}}
                                 </option>
                             </select>
@@ -43,7 +48,7 @@
                     <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="opcion">Opción</label>
-                            <select class="form-control border-select" ng-model="$ctrl.dataSearch.stock" ng-change="$ctrl.querySearchArticulo()">                                        
+                            <select class="form-control border-select" ng-model="dataSearch.byStock" ng-change="querySearchArticulo()">                                        
                                 <option ng-value="0">Todos</option>
                                 <option ng-value="1">Con Stock</option>
                                 <option ng-value="2">Sin Stock</option>
@@ -53,12 +58,12 @@
                 </div>
                 @* <div class="input-group">
                     <div class="input-group-append">
-                        <button type="button" class="btn btn-info" ng-click="$ctrl.openModalFiltro()">
+                        <button type="button" class="btn btn-info" ng-click="openModalFiltro()">
                             <i class="fas fa-filter"></i> Filtrar
                         </button>
                     </div>
-                    <input  type="text" ng-model="$ctrl.dataSearch.busqueda" 
-                            autocomplete="off" ng-change="$ctrl.consultarPrecioText()" 
+                    <input  type="text" ng-model="dataSearch.busqueda" 
+                            autocomplete="off" ng-change="consultarPrecioText()" 
                             class="form-control border-select" 
                             placeholder="Ingrese la Descripcion o Código del Articulo" /> 
 
@@ -70,6 +75,6 @@
 
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
+        <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
     </div>
 </form>
