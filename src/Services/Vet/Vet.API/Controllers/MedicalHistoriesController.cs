@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Lib.Common.Api;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services.Common;
 using Vet.Core.Entities;
@@ -11,11 +12,14 @@ namespace Vet.API.Controllers
     {
         private readonly VetContext _context;
         private readonly IMedicalHistoryReport _medicalHistoryReport;
-
-        public MedicalHistoriesController(VetContext context, IMedicalHistoryReport medicalHistoryReport)
+        private IMedicalHistory _medicalHistory;
+        public MedicalHistoriesController(VetContext context,
+            IMedicalHistoryReport medicalHistoryReport,
+            IMedicalHistory medicalHistory)
         {
             _context = context;
             _medicalHistoryReport = medicalHistoryReport;
+            _medicalHistory = medicalHistory;
         }
 
         // GET: api/MedicalHistories
@@ -23,6 +27,11 @@ namespace Vet.API.Controllers
         public async Task<ActionResult<IEnumerable<MedicalHistory>>> GetMedicalHistories()
         {
             int companyId = Convert.ToInt32(User.GetCompanyId());
+            var apiRequest = new ApiRequest();
+
+            apiRequest.Data.Add("companyId", companyId);
+
+            var result = _medicalHistory.Get(apiRequest);
             if (!_context.MedicalHistories.Any(x =>
                                             x.Pet.CompanyId == companyId
                                             && x.Enabled

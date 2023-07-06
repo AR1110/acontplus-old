@@ -5,7 +5,7 @@ using System.Text.Json;
 using System.Text.Unicode;
 using Newtonsoft.Json;
 
-namespace Services.Common.Utils
+namespace Lib.Common
 {
     public static class Converters
     {
