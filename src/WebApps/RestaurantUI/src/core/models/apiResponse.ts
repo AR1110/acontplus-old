@@ -1,7 +1,7 @@
-export interface PayloadResponse {
+export interface ApiResponse {
   code: string;
   message: string;
-  payload: any;
+  payload: string;
   title?: string;
 }
 
@@ -11,9 +11,3 @@ export interface PayloadResponse {
 //   statusText: string;
 
 // }
-
-export interface AxiosResponseApi {
-  data: PayloadResponse | any;
-  status: number;
-  statusText: string;
-}

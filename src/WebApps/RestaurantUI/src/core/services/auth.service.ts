@@ -9,8 +9,6 @@ const login = (username: string, password: string) => {
       password,
       external: true,
     },
-  }).then((response) => {
-    return response.data;
   });
 };
 

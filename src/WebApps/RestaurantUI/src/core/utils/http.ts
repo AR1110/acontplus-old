@@ -1,11 +1,8 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import { getValidationError, SnackbarUtils } from "@/core/utils/";
-import { AxiosResponseApi, PublicRoutes } from "../models";
+import { ApiResponse, PublicRoutes } from "../models";
 import { AuthService } from "@/core/services";
-import {
-  getAcontPlusApiUrl,
-  getRestaurantApiUrl,
-} from "@/core/config/url.config";
+import { getRestaurantApiUrl } from "@/core/config/url.config";
 
 const POSInstance = axios.create({
   baseURL: getRestaurantApiUrl(),
@@ -77,9 +74,9 @@ addResponseInterceptor(POSInstance);
 // const axios = <T>(cfg: AxiosRequestConfig): Promise<ApiResponse> =>
 //   instance.request<any, T>(cfg);
 
-const POSHttp = async (config: AxiosRequestConfig) => {
-  return POSInstance.request(config).then((response: AxiosResponseApi) => {
-    return response;
+const POSHttp = async (config: AxiosRequestConfig): Promise<ApiResponse> => {
+  return POSInstance.request(config).then((response) => {
+    return response.data;
   });
 };
 

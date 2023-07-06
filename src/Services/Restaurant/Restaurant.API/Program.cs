@@ -39,7 +39,7 @@ app.UseCors(options =>
     options.AllowAnyHeader();
     options.AllowAnyMethod();
     options.AllowCredentials();
-    options.WithOrigins("http://localhost:5173");
+    options.WithOrigins("https://localhost:7111");
 });
 
 app.UseHttpsRedirection();

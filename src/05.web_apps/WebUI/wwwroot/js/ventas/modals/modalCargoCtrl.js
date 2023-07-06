@@ -8,7 +8,7 @@ function ModalCargoCtrl($scope, $uibModalInstance, mS, tS, params) {
         
         $scope.tipoRegistro = 1;
         $scope.data = {};
-
+         
 
     onInit();
     function onInit() {
