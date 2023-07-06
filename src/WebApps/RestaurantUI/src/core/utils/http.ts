@@ -1,6 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
-import { getValidationError, SnackbarUtils } from "@/core/utils/";
-import { ApiResponse, PublicRoutes } from "../models";
+import { ApiResponse } from "../models";
 import { AuthService } from "@/core/services";
 import { getRestaurantApiUrl } from "@/core/config/url.config";
 
