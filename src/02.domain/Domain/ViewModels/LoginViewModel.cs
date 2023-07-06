@@ -38,4 +38,14 @@
         public List<LoginSubMenu> subMenus { get; set; }
         public string returnUrl { get; set; }
     }
+
+
+    public class LoginViewModelV2
+    {
+        public List<LoginData> userData { get; set; }
+        public string menus { get; set; }
+        public string subMenus { get; set; }
+        public string establecimientos { get; set; }
+        public string returnUrl { get; set; }
+    }
 }

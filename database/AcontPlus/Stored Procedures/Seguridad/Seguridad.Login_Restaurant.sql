@@ -6,7 +6,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
---- EXEC Seguridad.Login_Restaurant 0,'edinson.romero','edi12345'
+--- EXEC Seguridad.Login_Restaurant 0,'fatima.macias','edi12345'
 CREATE OR ALTER PROCEDURE [Seguridad].[Login_Restaurant] 
 	@id INT,
 	@nombreUsuario nvarchar (150)
@@ -22,30 +22,32 @@ BEGIN
 	DECLARE @count INT
 	DECLARE @params NVARCHAR(MAX) = '@idUsuarioRol INT
 	                                ,@idUsuario INT
-									,@count VARCHAR(5)'
+									,@count VARCHAR(5)
+									,@rucEmpresa VARCHAR(13)'
+									
 
 
-	DECLARE @sql NVARCHAR(MAX) = 'SELECT 
-									 id = IIF(@count = 1,''2'',''1'')
-									,mensaje = IIF(@count = 1,''Iniciando Session....'','''')
-									,title = ''login''
-									,idRol = r.idUsuarioRol
-									,userName = u.nombreUsuario
-									,fullName = u.nombreCompleto
-									,nroIdentificacion = ISNULL(u.nroIdentificacion,'''')
-									,imagen = '''' 
-									,entidad = e.razonSocial
-									,nombreComercial = e.nombreComercial
-									,rol = p.codigo
-									,actividad = ISNULL(ec.actividad,'''')
-									,rucEmpresa = e.ruc
-									,e.idEntidad companyId
-								 FROM App.UsuarioRol r 
-								 INNER JOIN dbo.Entidad e ON e.idEntidad = r.idEntidad
-								 INNER JOIN dbo.Usuario u ON u.idUsuario = r.idUsuario
-								 INNER JOIN dbo.Politica p ON p.idPolitica = r.idRol
-								 INNER JOIN Config.EntidadConfigSri ec ON ec.idEntidad = e.idEntidad
-								 WHERE r.estado = 1 '
+	--DECLARE @sql NVARCHAR(MAX) = 'SELECT 
+	--								 id = IIF(@count = 1,''2'',''1'')
+	--								,mensaje = IIF(@count = 1,''Iniciando Session....'','''')
+	--								,title = ''login''
+	--								,idRol = r.idUsuarioRol
+	--								,userName = u.nombreUsuario
+	--								,fullName = u.nombreCompleto
+	--								,nroIdentificacion = ISNULL(u.nroIdentificacion,'''')
+	--								,imagen = '''' 
+	--								,entidad = e.razonSocial
+	--								,nombreComercial = e.nombreComercial
+	--								,rol = p.codigo
+	--								,actividad = ISNULL(ec.actividad,'''')
+	--								,rucEmpresa = e.ruc
+	--								,e.idEntidad companyId
+	--							 FROM App.UsuarioRol r 
+	--							 INNER JOIN dbo.Entidad e ON e.idEntidad = r.idEntidad
+	--							 INNER JOIN dbo.Usuario u ON u.idUsuario = r.idUsuario
+	--							 INNER JOIN dbo.Politica p ON p.idPolitica = r.idRol
+	--							 INNER JOIN Config.EntidadConfigSri ec ON ec.idEntidad = e.idEntidad
+	--							 WHERE r.estado = 1 '
 
 	/*Add by Ignacio */
 	/* 01: Restaurante */
@@ -69,43 +71,27 @@ BEGIN
 					, idEntidad
 					, rucEmpresa 
 			FROM v_usuario WHERE nombreUsuario = @nombreUsuario
-						
+												
 			SELECT * 
 			INTO #Estab_Asign
 			FROM v_Estab_Asign v_a 
 			WHERE v_a.ruc IN (SELECT rucEmpresa FROM #UserTemp)
 			AND  v_a.actividad = '01'
-						
-			IF (SELECT COUNT(*) FROM #Estab_Asign) = 0
-				BEGIN
-					SELECT '0', 'No se ha encontrado RESTAURANTE', ''
-					RETURN
-				END
-			
-			IF @id > 0 
-				BEGIN
-					SET @count = 1
-					SET @sql = @sql+'AND r.idUsuarioRol = @idUsuarioRol '
-					SELECT @idPolitica = idRol FROM App.UsuarioRol WHERE idUsuarioRol = @id
-				END 
 
-			ELSE IF @id = 0
-				BEGIN
-					SELECT @idUsuario = idUsuario FROM dbo.Usuario WHERE nombreUsuario = @nombreUsuario AND contrasenia = @contraseniaEncryptada
-					SELECT @count = COUNT(*) FROM App.UsuarioRol WHERE idUsuario = @idUsuario and estado = 1
-					SET @sql = @sql+'AND r.idUsuario = @idUsuario '
-					SELECT @idPolitica = idRol FROM App.UsuarioRol WHERE idUsuario = @idUsuario
-				END 
-
-			  IF @count >= 1 
-				BEGIN
-					EXEC sp_executesql 
+			SELECT @rucEmpresa = ruc FROM #Estab_Asign
+									
+			EXEC sp_executesql 
 						@sql
 						,@params 
 						,@idUsuarioRol = @id
 						,@idUsuario = @idUsuario
 						,@count = @count
+						,@rucEmpresa = @rucEmpresa
+						
 
+						PRINT (@SQL)
+								
+						/* Menus */
 						SELECT m.idMenu,m.subMenu,m.url,m.icono,m.descripcion
 						FROM Acceso a
 						INNER JOIN dbo.SubMenu sm ON sm.idSubMenu = a.idSubMenu
@@ -113,14 +99,13 @@ BEGIN
 						WHERE idPolitica = @idPolitica AND a.leer = 1
 						GROUP BY m.idMenu,m.subMenu,m.url,m.icono,m.descripcion, m.orden
 						ORDER BY CAST(m.orden AS INT) ASC
-          
+			
+						/*Accesos */
 						SELECT sm.idMenu,sm.idSubMenu,sm.url,sm.icono,sm.descripcion 
 						FROM Acceso a
 						INNER JOIN dbo.SubMenu sm ON sm.idSubMenu = a.idSubMenu
 						INNER JOIN dbo.Menu m ON m.idMenu = sm.idMenu
 						WHERE idPolitica = @idPolitica AND a.leer = 1
-				END
-			  ELSE IF @count = 0 SELECT '0','No tienes acceso',''
 						
 
 		END 
