@@ -60,9 +60,11 @@ export default function Login() {
         return;
       }
 
-      const { token, ...user } = response.data;
+      const { ...user } = response.data;
 
-      AuthSvc.setPersistent("ACCESS_TOKEN", token);
+      const jwtToken = user["userData"][0].jwtToken;
+
+      AuthSvc.setPersistent("ACCESS_TOKEN", jwtToken);
       AuthSvc.setPersistent("USER", JSON.stringify(user));
       dispatch(setCredentials(user));
       navigate(`/`, { replace: true });

@@ -6,7 +6,6 @@ namespace Restaurant.Core.Entities
     public class Dish : BaseEntity
     {
         public int ProductId { get; set; }
-
         public ProductionArea ProductionArea { get; set; }
         public int ProductionAreaId { get; set; }
     }

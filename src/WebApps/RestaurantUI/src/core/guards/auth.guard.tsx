@@ -1,14 +1,14 @@
-import { AppStore } from "@/redux/store";
-import { useSelector } from "react-redux";
+// import { AppStore } from "@/redux/store";
+// import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 import { PublicRoutes } from "../models";
 import RootLayout from "@/layouts/RootLayout";
 const AuthGuard = () => {
-  const userState = useSelector((store: AppStore) => store.user);
-  console.log(userState);
-  // const userState = localStorage.getItem("user") ? true : false;
+  //const userState = useSelector((store: AppStore) => store.user);
+  const userState = localStorage.getItem("ACCESS_TOKEN") ? true : false;
 
-  return userState.username ? (
+
+  return userState ? (
     <RootLayout />
   ) : (
     <Navigate replace to={PublicRoutes.LOGIN}></Navigate>
