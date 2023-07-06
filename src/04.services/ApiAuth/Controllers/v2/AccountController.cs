@@ -30,7 +30,7 @@ namespace ApiAuth.Controllers.v2
             {
                 if (codSms == "1")
                 {
-                    var response = _gr.data as LoginViewModel;
+                    var response = _gr.data as LoginViewModelV2;
 
                     var loginData = response.userData[0];
                     var loginDataDto = new LoginDataDto();
