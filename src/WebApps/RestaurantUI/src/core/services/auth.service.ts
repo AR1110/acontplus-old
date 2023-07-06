@@ -3,7 +3,7 @@ import { POSHttp } from "@/core/utils";
 const login = (username: string, password: string) => {
   return POSHttp({
     method: "post",
-    url: "Account/login",
+    url: "Account/",
     data: {
       username,
       password,

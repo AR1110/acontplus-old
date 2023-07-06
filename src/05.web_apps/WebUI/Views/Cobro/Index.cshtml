@@ -19,140 +19,259 @@
 
         @await Html.PartialAsync("~/Views/Cobro/_ModalFiltro.cshtml")
 
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-body">
-                        <md-toolbar class="md-table-toolbar md-default">
-                            <div class="md-toolbar-tools">
-                                <div class="col-lg-9 col-md-9 col-sm-1">
-                                    <button type="button" class="btn btn-info" ng-click="openModalFiltro()"><i
-                                            class="fa fa-filter"></i> Filtro</button>
-                                </div>
-                                <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-                                    <form class="form-material">
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" ng-model="buscar"
-                                                placeholder="Buscar cobros" />
-                                            <div class="input-group-append">
-                                                <button class="btn btn-secondary btn-xs" ng-click="getCobros()">
-                                                    <i class="fas fa-redo"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </form>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12">
+                        <div class="row">
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                                <div class="form-gorup">
+                                    <span for="establecimiento">Establecimiento</span>
+                                    <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
+                                        class="form-control  border-select" ng-change="getCobros()">
+                                        <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
+                                            {{item.nombreComercial}}
+                                        </option>
+                                    </select>
                                 </div>
                             </div>
-                        </md-toolbar>
-                        <md-divider></md-divider>
-                        <md-table-container style="max-height: 400px;">
-                            <table resize md-table>
-                                <thead fix-head md-head>
-                                    <tr md-row>
-                                        <th md-column>Op.</th>
-                                        @* <th md-column>N°</th> *@
-                                        <th md-column>N°. Doc. </th>
-                                        <th md-column md-order-by="fechaEmision">F. Emision</th>
-                                        @* <th md-column>N°. Identificación</th> *@
-                                        <th md-column>Cliente</th>
-                                        <th md-column>Total</th>
-                                        <th md-column>Abono</th>
-                                        <th md-column>Cambio</th>
-                                        <th md-column>Estado</th>
-                                        <th md-column>Usuario</th>
-                                    </tr>
-                                </thead>
-                                <tbody md-body>
-                                    <tr md-row ng-repeat="c in cobros | filter: buscar" ng-class="c.style">
-                                        <td md-cell>
-                                            <md-menu>
-                                                <md-button aria-label="Open demo menu" class="md-icon-button"
-                                                    ng-click="$mdMenu.open($event)">
-                                                    <icon class="mdi mdi-menu"></icon>
-                                                </md-button>
-                                                <md-menu-content class="md-dense">
-                                                    <md-menu-item>
-                                                        <md-button ng-click="openModalCobroDetalle($event, c)">
-                                                            <span md-menu-align-target><i class="ti-menu"></i>
-                                                                Detalle</span>
-                                                        </md-button>
-                                                    </md-menu-item>
-
-                                                    <md-menu-item>
-                                                        <md-button ng-if="accion.anular" ng-click="askToDelete(c)"
-                                                            ng-disabled="c.esAnulado">
-                                                            <span md-menu-align-target>
-                                                                <i class="ti-na"></i> Anular
-                                                            </span>
-                                                        </md-button>
-                                                    </md-menu-item>
-
-                                                    <md-menu-item>
-                                                        <md-button ng-if="accion.reporte" ng-click="getReport(c)"
-                                                            ng-disabled="c.esAnulado">
-                                                            <span md-menu-align-target>
-                                                                <i class="ti-file"></i> Reporte
-                                                            </span>
-                                                        </md-button>
-                                                    </md-menu-item>
-
-                                                    <md-menu-item ng-if="accion.enviarCorreo">
-                                                        <md-button btn-send-to-email params="c" type-send="typeSend"
-                                                            get-param-to-send-mail="getParamToSendMail(params)">
-                                                            <span md-menu-align-target><i class="far fa-envelope"></i>
-                                                                Enviar Correo</span>
-                                                        </md-button>
-                                                    </md-menu-item>
-
-                                                    <md-menu-item>
-                                                        <md-button uib-tooltip="Enviar por Whatsapp"
-                                                            tooltip-placement="top" btn-send-to-whats-app params="c"
-                                                            has-permission="hasPermissions" type-send="typeSend">
-                                                            <span md-menu-align-target>
-                                                                <i class="mdi mdi-whatsapp"></i> Enviar por Whatsapp
-                                                            </span>
-                                                        </md-button>
-                                                    </md-menu-item>
-
-                                                </md-menu-content>
-                                            </md-menu>
-                                        </td>
-                                        @* <td md-cell>{{$index+1}}</td> *@
-                                        <td md-cell>{{c.nroDoc}}</td>
-                                        <td md-cell>{{c.fechaRegistro}}</td>
-                                        @* <td md-cell>{{c.nroIdentificacion}}</td> *@
-                                        <td md-cell>{{c.cliente|uppercase}}</td>
-                                        <td md-cell>${{c.total}}</td>
-                                        <td md-cell>${{c.abono}}</td>
-                                        <td md-cell>${{c.cambio}}</td>
-                                        <td md-cell>{{c.estado}}</td>
-                                        <td md-cell>{{c.usuario}}</td>
-                                    </tr>
-                                    <tr ng-show="cobros.length==0" class="text-center">
-                                        <td colspan="8">
-                                            <span>No hay registros en esta tabla:)</span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                                <tfoot md-foot>
-                                    <tr md-row>
-                                        <td md-cell colspan="6">Total:</td>
-                                        <td md-cell></td>
-                                        <td md-cell></td>
-                                        <td md-cell></td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </md-table-container>
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <span for="">Rango de Fechas</span>
+                                    <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
+                                        end-date="dataSearch.fechaFin"
+                                        result-range-date="resultRangeFilter(result)"></date-range-filter>
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <span for="usuarioFiltro">Usuario</span>
+                                    @await Html.PartialAsync("~/Views/Usuario/_UsuarioSearchFilter.cshtml")                                   
+                                </div>
+                            </div>                            
+                        </div>
                     </div>
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                        <div class="row">
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <span>Estado</span>
+                                    <select name="estado" id="estado" class="form-control border-select" ng-model="dataSearch.byEstado" ng-change="getCobros()">
+                                        <option value="">Todos</option>
+                                        <option ng-value="1">Activo</option>
+                                        <option ng-value="0">Anulado</option>
+                                    </select>
+                                </div>
+                            </div>                  
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <button type="button" class="btn btn-info btn-sm" data-toggle="button" data-more="#sh"
+                                    aria-pressed="false" ng-click="onClickBtnMore()">
+                                    <span class="text"><i class="mdi mdi-eye" aria-hidden="true"
+                                            uib-tooltip="Más opciones"></i></span>
+                                    <span class="text-active"><i class="mdi mdi-eye-off" aria-hidden="true"
+                                            uib-tooltip="Ocultar opciones"></i></span>
+                                </button>
+                                <button type="button" class="btn btn-success btn-sm" ng-click="getCobros()"
+                                    uib-tooltip="Recargar">
+                                    <i class="mdi mdi-refresh"></i>
+                                </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+
+                <div class="row" ng-if="moreSearchOptions">
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                        <div class="row">
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-12">
+                                <div class="form-group">
+                                    <span>Persona</span>
+                                    <select name="cliente-empleado" id="cliente-empleado" class="form-control" ng-model="dataSearch.byTipoPersona" ng-change="onChangePersona()">
+                                        <option value="">Todos</option>
+                                        <option ng-value="item.codigo" ng-repeat="item in tiposPersona">{{item.descripcion}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xl-8 col-lg-8 col-md-12 col-12">
+                                <div class="form-group">
+                                    <span>Cliente/Empleado</span>
+                                    <input type="text" class="form-control border">                                   
+                                </div>
+                            </div>                            
+                        </div>                       
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                        <div class="row">
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-12">
+                                <div class="form-group">
+                                    <div class="form-group">
+                                        <span>Tipo Doc.</span>                                        
+                                        <select name="tipos-doc" id="tipos-doc" class="form-control border-select" ng-model="dataSearch.tipoDocumento">
+                                            <option value="">Todos</option>
+                                            <option ng-value="item.codigo" ng-repeat="item in tiposDoc">{{item.descripcion}}</option>
+                                        </select>
+                                    </div>                                   
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-12">
+                                <div class="form-group">
+                                    <span>Buscar por Nro. Doc:</span>
+                                    <input type="text" class="form-control border-select"  ng-model="dataSearch.nroSecuencial" placeholder="Ej: 123"/>                       
+                                </div>                                
+                            </div>      
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-12">
+                                <div class="form-group">
+                                    <span>Buscar por Nro. Cobro:</span>
+                                    <input type="text" class="form-control border-select"  ng-model="dataSearch.nroSecuencial" placeholder="Ej: 123"/>                       
+                                </div>                                
+                            </div>                            
+                        </div>
+                    </div>                    
                 </div>
+
+
+                @* <md-toolbar class="md-table-toolbar md-default">
+                    <div class="md-toolbar-tools">
+                        <div class="col-lg-9 col-md-9 col-sm-1">
+                            <button type="button" class="btn btn-info" ng-click="openModalFiltro()"><i
+                                    class="fa fa-filter"></i> Filtro</button>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                            <form class="form-material">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" ng-model="buscar"
+                                        placeholder="Buscar cobros" />
+                                    <div class="input-group-append">
+                                        <button class="btn btn-secondary btn-xs" ng-click="getCobros()">
+                                            <i class="fas fa-redo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </md-toolbar> *@
+                <div class="row justify-content-end">
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                            <form class="form-material">
+                                <input type="text" class="form-control" ng-model="buscar"
+                                        placeholder="Buscar cobros" />                                
+                            </form>
+                        </div>
+                </div>              
+                <md-table-container style="max-height: 400px;">
+                    <table resize md-table>
+                        <thead fix-head md-head>
+                             <tr class="border-bottom">
+                                <th md-column colspan="3"></span></th>
+                                <th md-column><i>Total:</span></th>
+                                <th md-column md-numeric><i>{{total}}</span></th>
+                                <th md-column md-numeric><i>{{abono}}</span></th>
+                                <th md-column md-numeric><i>{{cambio}}</span></th>
+                                <th md-column md-numeric><i></span></th>
+                                <th md-column md-numeric><span></span></th>
+                            </tr>
+                            <tr md-row>
+                                <th md-column>Op.</th>
+                                @* <th md-column>N°</th> *@
+                                <th md-column>N°. Doc. </th>
+                                <th md-column md-order-by="fechaEmision">F. Emision</th>
+                                @* <th md-column>N°. Identificación</th> *@
+                                <th md-column>Cliente</th>
+                                <th md-column>Total</th>
+                                <th md-column>Abono</th>
+                                <th md-column>Cambio</th>
+                                <th md-column>Estado</th>
+                                <th md-column>Usuario</th>
+                            </tr>
+                        </thead>
+                        <tbody md-body>
+                            <tr md-row ng-repeat="c in cobros | filter: buscar" ng-class="c.style">
+                                <td md-cell>
+                                    <md-menu>
+                                        <md-button aria-label="Open demo menu" class="md-icon-button"
+                                            ng-click="$mdMenu.open($event)">
+                                            <icon class="mdi mdi-menu"></icon>
+                                        </md-button>
+                                        <md-menu-content class="md-dense">
+                                            <md-menu-item>
+                                                <md-button ng-click="openModalCobroDetalle($event, c)">
+                                                    <span md-menu-align-target><i class="ti-menu"></i>
+                                                        Detalle</span>
+                                                </md-button>
+                                            </md-menu-item>
+
+                                            <md-menu-item>
+                                                <md-button ng-if="accion.anular" ng-click="askToDelete(c)"
+                                                    ng-disabled="c.esAnulado">
+                                                    <span md-menu-align-target>
+                                                        <i class="ti-na"></i> Anular
+                                                    </span>
+                                                </md-button>
+                                            </md-menu-item>
+
+                                            <md-menu-item>
+                                                <md-button ng-if="accion.reporte" ng-click="getReport(c)"
+                                                    ng-disabled="c.esAnulado">
+                                                    <span md-menu-align-target>
+                                                        <i class="ti-file"></i> Reporte
+                                                    </span>
+                                                </md-button>
+                                            </md-menu-item>
+
+                                            <md-menu-item ng-if="accion.enviarCorreo">
+                                                <md-button btn-send-to-email params="c" type-send="typeSend"
+                                                    get-param-to-send-mail="getParamToSendMail(params)">
+                                                    <span md-menu-align-target><i class="far fa-envelope"></i>
+                                                        Enviar Correo</span>
+                                                </md-button>
+                                            </md-menu-item>
+
+                                            <md-menu-item>
+                                                <md-button uib-tooltip="Enviar por Whatsapp"
+                                                    tooltip-placement="top" btn-send-to-whats-app params="c"
+                                                    has-permission="hasPermissions" type-send="typeSend">
+                                                    <span md-menu-align-target>
+                                                        <i class="mdi mdi-whatsapp"></i> Enviar por Whatsapp
+                                                    </span>
+                                                </md-button>
+                                            </md-menu-item>
+
+                                        </md-menu-content>
+                                    </md-menu>
+                                </td>
+                                @* <td md-cell>{{$index+1}}</td> *@
+                                <td md-cell>{{c.nroDoc}}</td>
+                                <td md-cell>{{c.fechaRegistro}}</td>
+                                @* <td md-cell>{{c.nroIdentificacion}}</td> *@
+                                <td md-cell>{{c.cliente|uppercase}}</td>
+                                <td md-cell>${{c.total}}</td>
+                                <td md-cell>${{c.abono}}</td>
+                                <td md-cell>${{c.cambio}}</td>
+                                <td md-cell>{{c.estado}}</td>
+                                <td md-cell>{{c.usuario}}</td>
+                            </tr>
+                            <tr ng-show="cobros.length==0" class="text-center">
+                                <td colspan="8">
+                                    <span>No hay registros en esta tabla:)</span>
+                                </td>
+                            </tr>
+                        </tbody>                        
+                    </table>
+                </md-table-container>
             </div>
         </div>
+
     </div>
 </div>
 
 
 
 @section Scripts{
-    <script src="~/js/contabilidad/controllers/cobroCtrl.min.js" asp-append-version="true"></script>
+                                            <script src="~/js/contabilidad/controllers/cobroCtrl.min.js" asp-append-version="true"></script>
 }

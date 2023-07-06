@@ -1,4 +1,5 @@
 ﻿using Customer.API.Data;
+using Customer.API.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Customer.API.Extensions
@@ -9,6 +10,9 @@ namespace Customer.API.Extensions
         {
             services.AddDbContext<CustomerContext>(options =>
             options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+
+            services.AddScoped<RucService>();
+            services.AddScoped<CedulaService>();
             return services;
         }
     }

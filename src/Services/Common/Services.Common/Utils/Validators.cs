@@ -1,7 +1,7 @@
 using System.Data;
 using System.Xml;
 
-namespace Restaurant.Core.Utils
+namespace Services.Common.Utils
 {
     public static class Validators
     {

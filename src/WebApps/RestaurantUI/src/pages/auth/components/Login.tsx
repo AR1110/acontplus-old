@@ -5,7 +5,6 @@ import { SnackbarUtils as tS } from "@/core/utils";
 import { AuthService as AuthSvc } from "@/core/services/auth.service";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "@/redux/slices/user.slice";
-import { User } from "@/core/models";
 
 type Data = {
   username: string;
@@ -56,6 +55,11 @@ export default function Login() {
       return;
     }
     AuthSvc.login(data.username, data.password).then((response) => {
+      if(response.code === "0") {
+        tS.error(response.message);
+        return;
+      }
+
       const { token, ...user } = response.data;
 
       AuthSvc.setPersistent("ACCESS_TOKEN", token);

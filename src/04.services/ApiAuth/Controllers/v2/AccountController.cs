@@ -1,32 +1,34 @@
 ﻿using BL.JwtAuthenticationManger;
 using Common.Logs;
-using Domain.Auth.Dtos;
-using Microsoft.AspNetCore.Mvc;
-using Helpers;
 using DataAccess;
-using Domain.ViewModels;
+using Domain.Auth.Dtos;
 using Domain.Dtos;
+using Domain.ViewModels;
+using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
-namespace ApiAuth.Controllers
+namespace ApiAuth.Controllers.v2
 {
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
+    [ApiVersion("2.0")]
     public class AccountController : ControllerBase
     {
         private readonly IConfiguration _config;
         private readonly JwtTokenHandler _jwtTokenHandler;
         public AccountController(JwtTokenHandler jwtTokenHandler, IConfiguration config) => (_jwtTokenHandler, _config) = (jwtTokenHandler, config);
 
-        [HttpPost("login")]
+
+        [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginDto authRequest)
         {
             LogWriter _logs = new LogWriter(_config);
             LoginDao _l = new LoginDao(_config);
-            GenericResponse _gr = await _l.LoginAsync(authRequest);
+            GenericResponse _gr = await _l.LoginRestaurantAsync(authRequest);
             var codSms = _gr.id as string;
             try
             {
-                if (codSms == "2")
+                if (codSms == "1")
                 {
                     var response = _gr.data as LoginViewModel;
 
@@ -40,6 +42,7 @@ namespace ApiAuth.Controllers
                     loginDataDto.role = loginData.role;
                     loginDataDto.razonSocial = loginData.entidad;
                     loginDataDto.rucEmpresa = loginData.ruc ?? "";
+                    loginData.companyId = loginData.companyId;
                     loginDataDto.urlGateway = _config.GetSection("UrlApis").GetSection("UrlGateway").Value;
 
                     var _authService = _jwtTokenHandler.GenerateJwtToken(loginDataDto);
@@ -53,19 +56,6 @@ namespace ApiAuth.Controllers
                     }
                     loginData.jwtToken = _authService.jwtToken;
                 }
-
-                if (authRequest.external)
-                {
-                    if (_gr.code == "0")
-                    {
-                        _gr.code = "-1";
-                    }
-                    if (_gr.code == "1" || _gr.code == "2")
-                    {
-                        _gr.code = "0";
-                    }
-                }
-
                 return Ok(_gr);
             }
             catch (Exception ex)

@@ -15,6 +15,8 @@ CREATE VIEW v_Estab_Asign AS (
 	,e.obligadoContabilidad
 	,e.dirEstablecimiento
 	,e.contribuyenteRimpe
+	,e.actividad
 	FROM Config.Estab_Asig ea WITH (NOLOCK)
 	INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON ea.codEstab = e.codEstab
+	
 )

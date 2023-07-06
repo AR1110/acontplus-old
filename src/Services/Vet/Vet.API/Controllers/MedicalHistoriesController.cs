@@ -22,16 +22,16 @@ namespace Vet.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MedicalHistory>>> GetMedicalHistories()
         {
-            var companyId = User.GetCompanyId();
+            int companyId = Convert.ToInt32(User.GetCompanyId());
             if (!_context.MedicalHistories.Any(x =>
-                                            x.Pet.CompanyUniqueId == companyId
+                                            x.Pet.CompanyId == companyId
                                             && x.Enabled
                                             ))
             {
                 return NoContent();
             }
             return await _context.MedicalHistories.Include(p => p.Pet)
-                .Where(x => x.Pet.CompanyUniqueId == companyId && x.Enabled)
+                .Where(x => x.Pet.CompanyId == companyId && x.Enabled)
                 .ToListAsync();
         }
 

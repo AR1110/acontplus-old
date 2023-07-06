@@ -1,8 +1,8 @@
 using System.Data;
 
-namespace Restaurant.Core.Utils
+namespace Services.Common.Utils
 {
-    public class Mappers
+    public class DataTableMapper
     {
         //use Foo foo = BindData<Foo>(dt);
         public static T BindData<T>(DataTable dt)
