@@ -1,9 +1,9 @@
  
- <center ng-if="$ctrl.activated"><md-progress-circular  ng-disabled="!$ctrl.activated" md-diameter="96"></md-progress-circular></center>
-<div ng-show="$ctrl.listaArticulos.length>0">
+ <center ng-if="activated"><md-progress-circular  ng-disabled="!activated" md-diameter="96"></md-progress-circular></center>
+<div ng-show="articulos.length>0">
     <md-table-container style="max-height: 400px;">
-        <table resize master md-table md-row-select="$ctrl.options.rowSelection"
-            multiple="{{$ctrl.options.multiSelect}}" ng-model="$ctrl.selectedArticulos">
+        <table resize master md-table md-row-select="options.rowSelection"
+            multiple="{{options.multiSelect}}" ng-model="selectedArticulos">
             <thead md-head>
                 <tr md-row>
                     <th md-column><span>Img</span></th>
@@ -13,7 +13,7 @@
                     <th md-column>Medida</th>
                     <th md-column><span>Iva</span></th>
                     <th md-column>Stock</th>
-                    <th md-column ng-repeat="item in $ctrl.tarifas">
+                    <th md-column ng-repeat="item in tarifas">
                         {{item.tarifa}}
                     </th>
                     <th md-column>Marca</th>
@@ -22,10 +22,10 @@
                 </tr>
             </thead>
             <tbody md-body>
-                <tr md-row md-select="item" md-on-select="$ctrl.onChangeCheckBoxItem"
-                    md-auto-select="$ctrl.options.autoSelect" ng-repeat="item in $ctrl.listaArticulos track by $index">
+                <tr md-row md-select="item" md-on-select="onChangeCheckBoxItem"
+                    md-auto-select="options.autoSelect" ng-repeat="item in articulos track by $index">
                     <td md-cell>
-                        <span ng-click="$ctrl.getImagen(item)" ng-show="item.imagen">
+                        <span ng-click="getImagen(item)" ng-show="item.imagen">
                             <i class="text-success fas fa-file-image fa-lg"></i>
                         </span>
                         <view-kardex params="item"></view-kardex>
@@ -51,13 +51,13 @@
 
 
                     </td>
-                    <td md-cell ng-repeat="pvp in item.tarifa">{{pvp.precioConIva}}</td>
+                    <td md-cell ng-repeat="pvp in item.tarifas">{{pvp.precioConIva}}</td>
                     <td md-cell>{{item.marca}}</td>
                     <td md-cell>{{item.modelo}}</td>
                     <td md-cell>{{item.observaciones}}</td>
 
                 </tr>
-                <tr ng-show="$ctrl.listaArticulos.length==0" class="text-center">
+                <tr ng-show="articulos.length==0" class="text-center">
                     <td colspan="16">
                         No hay registros en esta tabla :)
                     </td>
@@ -66,3 +66,13 @@
         </table>
     </md-table-container>
 </div>
+    <div class="row justify-content-between mt-1">
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+             <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+                    ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                    class="pagination" boundary-links="true" rotate="false"></ul>
+        </div>
+        <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+            <span class="text-dark">Total {{dataSearch.totalRecords}} Artículos</span>
+        </div>
+    </div>
