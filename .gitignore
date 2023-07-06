@@ -380,4 +380,4 @@ bin-release/
 /src/04.services/ApiAdmin/bin
 /src/05.web_apps/AdminUI/bin/Release/net6.0
 /.gitignore
-/src/05.web_apps/WebUI/wwwroot/js/slvelte/build/build.js
+/src/05.web_apps/WebUI/wwwroot/js/svelte/build/bundle.js

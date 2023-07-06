@@ -7,10 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="ReportViewerCore.NETCore" Version="15.1.17" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Lib.Common\Lib.Common.csproj" />
     <ProjectReference Include="..\Vet.Core\Vet.Core.csproj" />
     <ProjectReference Include="..\Vet.Infrastructure\Vet.Infrastructure.csproj" />
   </ItemGroup>

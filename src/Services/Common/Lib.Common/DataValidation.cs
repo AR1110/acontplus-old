@@ -1,9 +1,9 @@
 using System.Data;
 using System.Xml;
 
-namespace Services.Common.Utils
+namespace Lib.Common
 {
-    public static class Validators
+    public static class DataValidation
     {
         public static object ToDBNullOrDefault(this object obj)
         {

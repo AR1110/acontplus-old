@@ -37,7 +37,9 @@ namespace Vet.Infrastructure.Data.Migrations
                         .HasColumnType("varchar(5)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
@@ -79,7 +81,9 @@ namespace Vet.Infrastructure.Data.Migrations
                         .HasColumnType("varchar(2)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
@@ -124,7 +128,9 @@ namespace Vet.Infrastructure.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
@@ -164,7 +170,9 @@ namespace Vet.Infrastructure.Data.Migrations
                         .HasColumnType("varchar(2)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
@@ -211,7 +219,9 @@ namespace Vet.Infrastructure.Data.Migrations
                         .HasColumnType("varchar(5)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
@@ -258,7 +268,9 @@ namespace Vet.Infrastructure.Data.Migrations
                         .HasColumnType("varchar(2)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
@@ -303,7 +315,9 @@ namespace Vet.Infrastructure.Data.Migrations
                         .HasColumnType("varchar(5)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
@@ -345,7 +359,9 @@ namespace Vet.Infrastructure.Data.Migrations
                         .HasColumnType("varchar(2)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
@@ -381,7 +397,9 @@ namespace Vet.Infrastructure.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
@@ -421,7 +439,9 @@ namespace Vet.Infrastructure.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
@@ -473,20 +493,16 @@ namespace Vet.Infrastructure.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<string>("CompanyUniqueId")
-                        .IsRequired()
-                        .HasMaxLength(25)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(25)");
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<string>("CustomerUniqueId")
-                        .IsRequired()
-                        .HasMaxLength(25)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(25)");
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
 
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
@@ -535,7 +551,9 @@ namespace Vet.Infrastructure.Data.Migrations
                         .HasColumnType("varchar(2)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
