@@ -364,5 +364,29 @@
     "inputFiles": [
       "wwwroot/js/ventas/modals/modalClienteCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/common/constants/namePathsModal.min.js",
+    "inputFiles": [
+      "wwwroot/js/common/constants/namePathsModal.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/common/modalClienteProveedorCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/common/modalClienteProveedorCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/ventas/modalBaseCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/ventas/modalBaseCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/ventas/modalFacturaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/ventas/modalFacturaCtrl.js"
+    ]
   }
 ]
