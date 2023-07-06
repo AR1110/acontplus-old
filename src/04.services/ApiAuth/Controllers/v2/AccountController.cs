@@ -28,7 +28,7 @@ namespace ApiAuth.Controllers.v2
             var codSms = _gr.id as string;
             try
             {
-                if (codSms == "1")
+                if (codSms == "2" || codSms == "1")
                 {
                     var response = _gr.data as LoginViewModelV2;
 

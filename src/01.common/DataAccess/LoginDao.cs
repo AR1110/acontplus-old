@@ -120,6 +120,9 @@ namespace DataAccess
         {
             var loginData = new LoginViewModelV2();
             var userData = new List<LoginData>();
+            string menus = "";
+            string subMenus = "";
+            string establecmientos = "";
             var returnUrl = data.returnUrl;
             if (returnUrl == "/")
             {
@@ -159,12 +162,12 @@ namespace DataAccess
                                     userData.Add(item);
                                 }
                             }
-                            if (_gr.id == "2")
+                            if (_gr.id == "2" || _gr.id == "1")
                             {
                                 reader.NextResult();
                                 while (reader.Read())
-                                {
-                                    loginData.menus= reader.GetString(0);
+                                {                                    
+                                    loginData.menus = reader.GetString(0);                                    
                                 }
                                 reader.NextResult();
                                 while (reader.Read())
