@@ -1,13 +1,12 @@
-import { POSHttp } from "@/core/utils";
-import { PayloadResponse } from "../models";
+import { Http } from "@/core/utils";
 
-const getRecipes = (): Promise<PayloadResponse> => {
-  return POSHttp({
+const getRecipes = () => {
+  return Http({
     method: "get",
     url: "Recipe",
   }).then((response) => {
     console.log(response);
-    return response.data;
+    return response.payload;
   });
 };
 

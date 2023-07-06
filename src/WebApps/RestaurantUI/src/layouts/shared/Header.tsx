@@ -206,7 +206,7 @@ export default function Header() {
                 >
                   <i className="ti-user"></i>{" "}
                   <span className="hidden-md-down">
-                    {userState.username} &nbsp;
+                    {userState.userName} &nbsp;
                     <i className="fa fa-angle-down"></i>
                   </span>{" "}
                 </a>
