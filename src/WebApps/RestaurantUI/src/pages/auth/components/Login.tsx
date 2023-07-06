@@ -55,19 +55,20 @@ export default function Login() {
       return;
     }
     AuthSvc.login(data.username, data.password).then((response) => {
-      if(response.code === "0") {
+      console.log(response);
+      if (response.code === "0") {
         tS.error(response.message);
         return;
       }
 
-      const { ...user } = response.data;
+      // const { ...user } = response.payload;
 
-      const jwtToken = user["userData"][0].jwtToken;
+      // const jwtToken = user["userData"][0].jwtToken;
 
-      AuthSvc.setPersistent("ACCESS_TOKEN", jwtToken);
-      AuthSvc.setPersistent("USER", JSON.stringify(user));
-      dispatch(setCredentials(user));
-      navigate(`/`, { replace: true });
+      // AuthSvc.setPersistent("ACCESS_TOKEN", jwtToken);
+      // AuthSvc.setPersistent("USER", JSON.stringify(user));
+      // dispatch(setCredentials(user));
+      // navigate(`/`, { replace: true });
     });
   };
 
