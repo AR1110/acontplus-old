@@ -57,7 +57,7 @@ export default function Login() {
     AuthSvc.login(data.username, data.password).then((response) => {
       console.log(response);
       if (response.code === "0") {
-        tS.error(response.message);
+        tS.warning(response.message);
         return;
       }
 
