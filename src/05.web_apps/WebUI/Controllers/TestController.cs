@@ -33,25 +33,25 @@ namespace WebUI.Controllers
             textToEncrypt = Request.Form["txtToEncrypt"].ToString();
             var encrypted = Encryption.EncryptString(_config.GetSection("keyEncrypt").Value, textToEncrypt);
 
-            var client = new HttpClient(new HttpClientHandler()
-            {
+            //var client = new HttpClient(new HttpClientHandler()
+            //{
 
-                AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip,
-                Credentials = CredentialCache.DefaultCredentials,
-                UseDefaultCredentials = true
+            //    AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip,
+            //    Credentials = CredentialCache.DefaultCredentials,
+            //    UseDefaultCredentials = true
 
-            })
-            { Timeout = TimeSpan.FromSeconds(90) };
+            //})
+            //{ Timeout = TimeSpan.FromSeconds(90) };
 
-            var request = new HttpRequestMessage(HttpMethod.Get, _config.GetSection("urlSriCatastro").Value + "2200386874001");
-            client.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", "gzip, deflate");
-            client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:19.0) Gecko/20100101 Firefox/19.0");
-            client.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Charset", "ISO-8859-1");
-            var response = await client.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            client.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/html,application/xhtml+xml,application/xml");
+            //var request = new HttpRequestMessage(HttpMethod.Get, _config.GetSection("urlSriCatastro").Value + "2200386874001");
+            //client.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", "gzip, deflate");
+            //client.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:19.0) Gecko/20100101 Firefox/19.0");
+            //client.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Charset", "ISO-8859-1");
+            //var response = await client.SendAsync(request);
+            //response.EnsureSuccessStatusCode();
+            //client.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/html,application/xhtml+xml,application/xml");
 
-            Console.WriteLine(await response.Content.ReadAsStringAsync());
+            //Console.WriteLine(await response.Content.ReadAsStringAsync());
             return Ok(encrypted);
         }
         [HttpPost]

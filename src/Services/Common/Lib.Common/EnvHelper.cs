@@ -1,4 +1,6 @@
-﻿namespace Services.Common.Utils
+﻿using Lib.Common.Enums;
+
+namespace Lib.Common
 {
     public static class EnvHelper
     {

@@ -7,7 +7,8 @@ namespace Restaurant.Core.Entities
     public class Floor : BaseEntity
     {
         [Required]
-        public string EstabCod { get; set; }
+        [MaxLength(50)]
+        public string CodEstab { get; set; }
 
         [Required]
         [MaxLength(5)]
@@ -16,8 +17,6 @@ namespace Restaurant.Core.Entities
         [Required]
         [MaxLength(50)]
         public string Description { get; set; }
-
-        [Required]
         public int Capacity { get; set; }
     }
 }

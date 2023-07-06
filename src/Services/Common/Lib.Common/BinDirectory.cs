@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Services.Common.Utils
+namespace Lib.Common
 {
     public static class BinDirectory
     {

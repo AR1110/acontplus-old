@@ -1,12 +1,14 @@
-using Microsoft.AspNetCore.Identity;
+using Lib.Common;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.API.Extensions;
 using Restaurant.API.Middleware;
-using Restaurant.Core.Entities;
 using Restaurant.Infrastructure.Data;
 using Services.Common;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.SetBasePath(BinDirectory.GetBinRunDir());
+ConfigHelper.AddJsonFiles(builder.Configuration);
 
 // Add services to the container.
 builder.Services.AddApplicationServices(builder.Configuration);
@@ -57,21 +59,20 @@ app.MapControllers().RequireAuthorization();
 app.MapFallbackToFile("index.html");
 
 
-//using var scope = app.Services.CreateScope();
-//var services = scope.ServiceProvider;
-//try
-//{
-//    var context = services.GetRequiredService<RestaurantContext>();
-//    var userManager = services.GetRequiredService<UserManager<AppUser>>();
-//    var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
-//    await context.Database.MigrateAsync();
-//    await Seed.SeedUsers(userManager, roleManager);
-//}
-//catch (Exception ex)
-//{
-//    var logger = services.GetRequiredService<ILogger<Program>>();
-//    logger.LogError(ex, "An error occurred during migration");
-//}
+using var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
+var context = services.GetRequiredService<RestaurantContext>();
+var logger = services.GetRequiredService<ILogger<Program>>();
+
+try
+{
+    await context.Database.MigrateAsync();
+    await RestaurantContextSeed.SeedAsync(context);
+}
+catch (Exception ex)
+{
+    logger.LogError(ex, "An error occured during migration");
+}
 
 
 await app.RunAsync();

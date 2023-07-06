@@ -23,16 +23,16 @@ namespace Restaurant.API.Controllers
 
         // GET: api/Tables
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Table>>> Gettables()
+        public async Task<ActionResult<IEnumerable<AppTable>>> GetTables()
         {
-            return await _context.tables.ToListAsync();
+            return await _context.Tables.ToListAsync();
         }
 
         // GET: api/Tables/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Table>> GetTable(int id)
+        public async Task<ActionResult<AppTable>> GetTable(int id)
         {
-            var table = await _context.tables.FindAsync(id);
+            var table = await _context.Tables.FindAsync(id);
 
             if (table == null)
             {
@@ -45,7 +45,7 @@ namespace Restaurant.API.Controllers
         // PUT: api/Tables/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTable(int id, Table table)
+        public async Task<IActionResult> PutTable(int id, AppTable table)
         {
             if (id != table.Id)
             {
@@ -76,9 +76,9 @@ namespace Restaurant.API.Controllers
         // POST: api/Tables
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Table>> PostTable(Table table)
+        public async Task<ActionResult<AppTable>> PostTable(AppTable table)
         {
-            _context.tables.Add(table);
+            _context.Tables.Add(table);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetTable", new { id = table.Id }, table);
@@ -88,13 +88,13 @@ namespace Restaurant.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTable(int id)
         {
-            var table = await _context.tables.FindAsync(id);
+            var table = await _context.Tables.FindAsync(id);
             if (table == null)
             {
                 return NotFound();
             }
 
-            _context.tables.Remove(table);
+            _context.Tables.Remove(table);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -102,7 +102,7 @@ namespace Restaurant.API.Controllers
 
         private bool TableExists(int id)
         {
-            return _context.tables.Any(e => e.Id == id);
+            return _context.Tables.Any(e => e.Id == id);
         }
     }
 }

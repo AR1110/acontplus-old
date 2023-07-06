@@ -16,9 +16,9 @@ namespace Restaurant.Infrastructure.Data
         public DbSet<Dish> Dishes { get; set; }
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<ProductionArea> ProductionAreas { get; set; }
-        public DbSet<Floor> floors { get; set; }
-        public DbSet<Room> rooms { get; set; }
-        public DbSet<Table> tables { get; set; }
+        public DbSet<Floor> Floors { get; set; }
+        public DbSet<Room> Rooms { get; set; }
+        public DbSet<AppTable> Tables { get; set; }
 
 
 
@@ -55,12 +55,12 @@ namespace Restaurant.Infrastructure.Data
 
             builder.ApplyUtcDateTimeConverter();
 
-            builder.Entity<Dish>().ToTable("Dish", schema: "Restaurant");
-            builder.Entity<Recipe>().ToTable("Recipe", schema: "Restaurant");
-            builder.Entity<ProductionArea>().ToTable("ProductionArea", schema: "Restaurant");
-            builder.Entity<Floor>().ToTable("Floor", schema: "Restaurant");
-            builder.Entity<Room>().ToTable("Room", schema: "Restaurant");
-            builder.Entity<Table>().ToTable("Table", schema: "Restaurant");
+            builder.Entity<Dish>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<Recipe>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<ProductionArea>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<Floor>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<Room>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<AppTable>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
         }
     }
     public static class UtcDateAnnotation

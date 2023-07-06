@@ -1,6 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Lib.Common.Enums;
+using Microsoft.Extensions.Configuration;
 
-namespace Services.Common.Utils
+namespace Lib.Common
 {
     public class ConfigHelper
     {

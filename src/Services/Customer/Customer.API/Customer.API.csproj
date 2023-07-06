@@ -22,16 +22,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\Common\Lib.Common\Lib.Common.csproj" />
 		<ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Content Include="..\..\..\SharedSettings\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="..\..\..\SharedSettings\sharedsettings.Staging.json" Link="SharedSettings\sharedsettings.Staging.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="..\..\..\SharedSettings\sharedsettings.Production.json" Link="SharedSettings\sharedsettings.Production.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>

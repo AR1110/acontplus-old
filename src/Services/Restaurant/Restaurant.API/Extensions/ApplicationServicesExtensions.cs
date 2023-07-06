@@ -3,15 +3,17 @@ using Restaurant.Application;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
 using Restaurant.API.Helpers;
+using System.Configuration;
+using Lib.Common;
 
 namespace Restaurant.API.Extensions
 {
     public static class ApplicationServicesExtensions
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<RestaurantContext>(options =>
-            options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+            options.UseSqlServer(Encryption.DecryptString(configuration.GetSection("KeyEncryption").Value, configuration.GetConnectionString("DefaultConnection"))));
             //services.AddTransient(provider =>
             //{
             //    var optionsBuilder = new DbContextOptionsBuilder<RestaurantContext>();

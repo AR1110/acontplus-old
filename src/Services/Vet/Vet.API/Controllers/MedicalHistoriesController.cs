@@ -29,7 +29,11 @@ namespace Vet.API.Controllers
             int companyId = Convert.ToInt32(User.GetCompanyId());
             var apiRequest = new ApiRequest();
 
-            apiRequest.Data.Add("companyId", companyId);
+            var dictionary = new Dictionary<string, object>
+            {
+                { "id", companyId }
+            };
+            apiRequest.Data = dictionary;
 
             var result = _medicalHistory.Get(apiRequest);
             if (!_context.MedicalHistories.Any(x =>

@@ -1,6 +1,6 @@
+using Lib.Common;
 using Microsoft.EntityFrameworkCore;
 using Services.Common;
-using System.Text.Json.Serialization;
 using Vet.API.Extensions;
 using Vet.Infrastructure.Data;
 
@@ -10,6 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers().AddNewtonsoftJson(x =>
  x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+builder.Configuration.SetBasePath(BinDirectory.GetBinRunDir());
+ConfigHelper.AddJsonFiles(builder.Configuration);
 
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddCustomJwtAuthentication(builder.Configuration);

@@ -5,11 +5,10 @@ namespace Restaurant.Core.Entities
 {
 
     [Table("Table", Schema = "Restaurant")]
-    public class Table : BaseEntity
+    public class AppTable : BaseEntity
     {
-       
         public Room Room { get; set; }
-        public int  RoomId { get; set; }
+        public int RoomId { get; set; }
 
         [Required]
         public int NumberTable { get; set; }
@@ -20,8 +19,5 @@ namespace Restaurant.Core.Entities
 
         [Required]
         public int Capacity { get; set; }
-
-
-        public bool UpTable { get; set; }  // Ocupado, Disponible, Reservada.
     }
 }

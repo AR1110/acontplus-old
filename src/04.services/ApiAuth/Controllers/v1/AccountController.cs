@@ -41,6 +41,7 @@ namespace ApiAuth.Controllers.v1
                     loginDataDto.role = loginData.role;
                     loginDataDto.razonSocial = loginData.entidad;
                     loginDataDto.rucEmpresa = loginData.ruc ?? "";
+                    loginDataDto.companyId  = loginData.companyId;
                     loginDataDto.urlGateway = _config.GetSection("UrlApis").GetSection("UrlGateway").Value;
 
                     var _authService = _jwtTokenHandler.GenerateJwtToken(loginDataDto);

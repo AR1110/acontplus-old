@@ -23,16 +23,16 @@ namespace Restaurant.API.Controllers
 
         // GET: api/Rooms
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Room>>> Getrooms()
+        public async Task<ActionResult<IEnumerable<Room>>> GetRooms()
         {
-            return await _context.rooms.ToListAsync();
+            return await _context.Rooms.ToListAsync();
         }
 
         // GET: api/Rooms/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Room>> GetRoom(int id)
         {
-            var room = await _context.rooms.FindAsync(id);
+            var room = await _context.Rooms.FindAsync(id);
 
             if (room == null)
             {
@@ -78,7 +78,7 @@ namespace Restaurant.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Room>> PostRoom(Room room)
         {
-            _context.rooms.Add(room);
+            _context.Rooms.Add(room);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetRoom", new { id = room.Id }, room);
@@ -88,13 +88,13 @@ namespace Restaurant.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRoom(int id)
         {
-            var room = await _context.rooms.FindAsync(id);
+            var room = await _context.Rooms.FindAsync(id);
             if (room == null)
             {
                 return NotFound();
             }
 
-            _context.rooms.Remove(room);
+            _context.Rooms.Remove(room);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -102,7 +102,7 @@ namespace Restaurant.API.Controllers
 
         private bool RoomExists(int id)
         {
-            return _context.rooms.Any(e => e.Id == id);
+            return _context.Rooms.Any(e => e.Id == id);
         }
     }
 }

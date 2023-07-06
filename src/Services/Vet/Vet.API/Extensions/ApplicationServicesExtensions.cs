@@ -1,16 +1,21 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Lib.Common;
+using Microsoft.EntityFrameworkCore;
+using System.Configuration;
 using Vet.Application.Reports;
+using Vet.Application.Services;
+using Vet.Core.Entities;
 using Vet.Core.Interfaces;
 using Vet.Infrastructure.Data;
+using Vet.Infrastructure.Repositories;
 
 namespace Vet.API.Extensions
 {
     public static class ApplicationServicesExtensions
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<VetContext>(options =>
-            options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+            options.UseSqlServer(Encryption.DecryptString(configuration.GetSection("KeyEncryption").Value, configuration.GetConnectionString("DefaultConnection"))));
             //services.AddTransient(provider =>
             //{
             //    var optionsBuilder = new DbContextOptionsBuilder<RestaurantContext>();
@@ -18,7 +23,8 @@ namespace Vet.API.Extensions
             //    return new RestaurantContext(optionsBuilder.Options);
             //});
             services.AddScoped<IMedicalHistoryReport, MedicalHistoryReport>();
-            //services.AddScoped<RestaurantContext, RestaurantContext>(); 
+            services.AddScoped<IMedicalHistory, MedicalHistoryService>();
+            services.AddScoped<IGenericRepository, GenericRepository>();
             return services;
         }
     }

@@ -92,7 +92,7 @@
 	};
 
 	const addPet = async () => {
-		if (!clientSelected.numeroIdentificacion) {
+		if (!clientSelected.customerId) {
 			toast({ type: "warning", message: "Debe asignar un cliente" });
 			return;
 		}
@@ -105,8 +105,8 @@
 			return;
 		}
 		const newPet = {
-			customerId: clientSelected.numeroIdentificacion,
-			companyId: clientSelected.rucEmpresa,
+			customerId: clientSelected.customerId,
+			companyId: clientSelected.companyId,
 			name: pet.name,
 			petTypeId: pet.petTypeId,
 			breedId: pet.breedId,
@@ -322,7 +322,7 @@
 											href="#"
 											class="list-group-item"
 											on:click={selectClient(item)}
-											><i class="ti-user" /> - {item.numeroIdentificacion}
+											><i class="ti-user" /> - {item.customerId}
 											- {item.nombreFiscal}</a
 										>
 									{/each}
@@ -350,7 +350,7 @@
 									type="text"
 									class="form-control"
 									disabled
-									value={clientSelected.numeroIdentificacion}
+									value={clientSelected.customerId}
 								/>
 							</div>
 						</div>
