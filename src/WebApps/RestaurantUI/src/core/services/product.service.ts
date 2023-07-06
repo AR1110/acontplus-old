@@ -1,14 +1,28 @@
-import { ApiProductAdapter } from "../adapters";
-import { ApiProduct, Product } from "../models";
-import { POSHttp } from "@/core/utils";
+import { Http } from "@/core/utils";
 
-const getProducts = (categoryId: number): Promise<Array<Product>> => {
-  return POSHttp({
+// Doc: get all product
+const getProduct  = () => {
+  return Http({
     method: "get",
-    url: "products/?categoryId=" + categoryId,
-  }).then((response) => {
-    return response.data.map((product: ApiProduct) => ApiProductAdapter(product));
+    url: "Articulo/Search?json={'busqueda': ''}",
   });
 };
 
-export default { getProducts };
+// Doc: get product by id
+const getProductById = (id: number) => {
+  return Http({
+    method: "get",
+    url: `Articulo/${id}`,
+  });
+};
+
+// Doc: search product
+const searchProduct = (search: string) => {
+  return Http({
+    method: "get",
+    url: `Articulo/Search?json={'busqueda': '${search}'}`,
+  });
+};
+
+
+export default { getProduct, getProductById, searchProduct };

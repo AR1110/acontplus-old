@@ -1,12 +1,17 @@
 export interface ApiProduct {
-  id: number;
-  title: string;
-  price: number;
+  idProduct: number;
   description: string;
-  images: string[];
-  creationAt: string;
-  updatedAt: string;
-  category: Array<ProductCategory>;
+  iva: string;
+  stock: number;
+  stockMinimo: number;
+  subFamilia: string;
+  marca: string;
+  medidad: string;
+  style: string;
+  precio?: number;
+  images?: string;
+  creationAt?: string;
+  updatedAt?: string;
 }
 
 export interface ProductCategory {
@@ -18,9 +23,22 @@ export interface ProductCategory {
 }
 
 export interface Product {
-  id: number;
-  title: string;
-  price: number;
+  idProduct: number;
   description: string;
-  images: string[];
+  iva: string;
+  stock: number;
+  stockMinimo: number;
+  subFamilia: string;
+  marca: string;
+  medidad: string;
+  style: string;
+  precio?: number;
+  images?: string[];
+  creationAt?: string;
+  updatedAt?: string;
+}
+
+export interface PriceSale  {
+  string: string;
+  precio: number;
 }

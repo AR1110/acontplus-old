@@ -74,10 +74,10 @@ addResponseInterceptor(POSInstance);
 // const axios = <T>(cfg: AxiosRequestConfig): Promise<ApiResponse> =>
 //   instance.request<any, T>(cfg);
 
-const POSHttp = async (config: AxiosRequestConfig): Promise<ApiResponse> => {
+const Http = async (config: AxiosRequestConfig): Promise<ApiResponse> => {
   return POSInstance.request(config).then((response) => {
     return response.data;
   });
 };
 
-export { POSHttp };
+export { Http };
