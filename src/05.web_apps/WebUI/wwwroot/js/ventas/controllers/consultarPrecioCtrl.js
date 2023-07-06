@@ -1,207 +1,186 @@
-class ConsultarPrecioCtrl {
-    static $inject = ['$scope', '$rootScope', '$timeout', 'mainService', 'modalService', 'nombreModal', 'toastService'];
-    constructor($scope, $rootScope, $timeout, _mS, _modalSvc, _nombreModal, _tS) {
-        // [{"busqueda":"m","cantidadRegistro":"10","numeroPagina":"1","stock":"2"}]
-        this.$scope = $scope;
-        this.$rootScope = $rootScope;
-        this.$timeout = $timeout;
-        this._mS = _mS;
-        this._modalSvc = _modalSvc;
-        this._nombreModal = _nombreModal;
-        this._tS = _tS;
-
-        this.dataSearch = {};
-        this.dataSearch.busqueda;
-        this.dataSearch.numeroPagina = 0;
-        this.dataSearch.cantidadRegistro = 15;
-        this.dataSearch.stock = 0;
-        this.dataSearch.byColumn = "DESC";
-
-        this.listaArticulos = [];
-        this.selectedArticulos = [];
-
-        //Permiso 
-        // let {
-        //     ventaPermiso
-        // } = $rootScope.usuarioPermiso;
 
 
+(function(){
+    
+    'use strict';
 
-
-        this.tipoBusquedas = [{
-                codigo: 'DESC',
-                descripcion: "Descripción"
-            },
-            {
-                codigo: 'COD',
-                descripcion: "Código"
-            },
-            {
-                codigo: 'AUX',
-                descripcion: "Código Auxiliar"
-            },
-            {
-                codigo: 'BAR',
-                descripcion: "Código Barra"
+    app.controller('consultarPrecioCtrl', consultarPrecioCtrl)
+    
+    consultarPrecioCtrl.$inject = [
+        "$scope",
+        
+        "articuloService",
+        "modalService",
+        "nombreModal",
+      ];
+      
+      function consultarPrecioCtrl(
+        $scope,
+       
+        artSvc,
+        modalSvc,
+        nombreModal
+      ) {
+        console.log("init");
+        $scope.articulos = [];
+        $scope.selectedArticulos = [];
+        //Filtro
+        $scope.recordsQuantity = [10, 25, 50, 100];
+        $scope.dataSearch = {
+          pageSize: 50,
+          pageIndex: 1,
+          maxSize: 5,
+          totalRecords: 0,
+          busqueda: "",
+          byStock: 0,
+          byColumn: "DESC",
+        };
+      
+        $scope.activated = false;
+      
+        $scope.tipoBusquedas = [
+          {
+            codigo: "DESC",
+            descripcion: "Descripción",
+          },
+          {
+            codigo: "COD",
+            descripcion: "Código",
+          },
+          {
+            codigo: "AUX",
+            descripcion: "Código Auxiliar",
+          },
+          {
+            codigo: "BAR",
+            descripcion: "Código Barra",
+          },
+        ];
+      
+        $scope.dynamicPopover = {
+          content: "Hello, World!",
+          templateUrl: "myPopoverTemplate.html",
+          title: "Title",
+        };
+      
+        $scope.options = {
+          rowSelection: false,
+          multiSelect: false,
+          autoSelect: false,
+          decapitate: false,
+          largeEditDialog: false,
+          boundaryLinks: false,
+          limitSelect: false,
+          pageSelect: false,
+        }; 
+      
+        $scope.consultarPrecioSearchText = function () {
+          $scope.articulos = []; //Vaciar el array (Lista de Articulos);
+          if ($scope.dataSearch.busqueda && $scope.dataSearch.busqueda.length < 2)
+            return;
+          $scope.querySearchArticulo();
+        };
+      
+        $scope.querySearchArticulo = function () {
+          try {
+            $scope.articulos = [];
+            if ($scope.dataSearch.bySearch.length < 2) {
+              $scope.dataSearch.totalRecords = 0;
+              return;
             }
-        ]
-
-        this.dynamicPopover = {
-            content: 'Hello, World!',
-            templateUrl: 'myPopoverTemplate.html',
-            title: 'Title'
-        }
-
-        this.options = {
-            rowSelection: false,
-            multiSelect: true,
-            autoSelect: true,
-            decapitate: false,
-            largeEditDialog: false,
-            boundaryLinks: false,
-            limitSelect: true,
-            pageSelect: true
-        }
-
-        // Cargar Articulos por scroll 
-        // $(window).on("scroll", () => {
-        //     if (this.listaArticulos.length === 0 || this.validarCampoText(this.dataSearch.busqueda)) return;
-
-        //     let scrollHeight = $(document).height();
-        //     let scrollPosition = $(window).height() + $(window).scrollTop();            
-
-        //     if (Number(((scrollHeight - scrollPosition) / scrollHeight).toFixed(1)) === 0.2) {      
-
-        //         this.dataSearch.numeroPagina = this.dataSearch.numeroPagina + 1;                               
-        //         _mS.getData('get','/Articulo/List?json=' + JSON.stringify(this.dataSearch)).then(response=>{
-        //             if(response.id==="0"){
-        //                 toast.toastr('warning', response.message, response.titleSms);
-        //                 return
-        //             }
-        //             if(response.id==="1"){   
-        //                 let parseArticulos = JSON.parse(response.payload)                                                        
-        //                 let listaArticulos = parseArticulos.map(item=>{
-        //                     item.tarifa = JSON.parse(item.tarifa);
-        //                     return item;
-        //                 })  
-        //                 this.tarifas = listaArticulos.length>0?listaArticulos[0].tarifa: [];   
-
-        //                 for(let item of listaArticulos){
-        //                     this.listaArticulos.push(item);
-        //                 }                                                                                                                      
-        //             }
-        //         });                
-        //     }
-
-        // })
-    }
-
-    // $onOnit(){
-    //     let accion = JSON.parse(localStorage.getItem("accion"));
-    //     if(accion===null){
-    //         location.href = "/Home/Index";
-    //     }else{
-    //         this.accion = accion[0];
-    //     }
-    // }
-
-
-    validarCampoText(text) {
-        return [null, undefined, ""].includes(text);
-    }
-
-    consultarPrecioSearchText() {
-        this.listaArticulos = []; //Vaciar el array (Lista de Articulos);                                          
-        if (this.validarCampoText(this.dataSearch.busqueda) && this.dataSearch.busqueda.length < 2) return
-        this.querySearchArticulo();
-    }
-
-    querySearchArticulo() {
-        this.dataSearch.numeroPagina = 1;
-
-        this.$timeout(() => {
-            console.log(this.dataSearch)
-            this._mS.getData('get', '/Articulo/List?json=' + JSON.stringify(this.dataSearch)).then(response => {
-                console.log("procesando.................")
-                if (response.code === "0") {
-                    this.listaArticulos = []; //Vaciar el array (Lista de Articulos);  
-                    this._tS.toastr('warning', response.message, response.titleSms);
-                    return
-                }
-
-                let parseArticulos = JSON.parse(response.payload)
-                this.listaArticulos = parseArticulos.map(item => {
-                    item.tarifa = JSON.parse(item.tarifa);
-                    return item;
-                })
-                this.tarifas = this.listaArticulos.length > 0 ? this.listaArticulos[0].tarifa : [];
-            })
-        }, 500)
-    }
-
-
-    consultarPrecioEnter($event) {
-        if (!this.validarCampoText(this.searchText) && $event.key === "Enter") {
-            this.querySearchArticulo();
-            this.dataSearch.busqueda = '';
-        }
-    }
-
-    onChangeCheckBoxItem(item) {
-        console.log(true)
-    }
-
-    showBodegas(item) {
-        this._mS.getData('get', '/Articulo/GetId?id=' + item.idArticulo).then(response => {
-            const results = JSON.parse(response.payload) || [];
-            this.branchs = results[4].map(val => {
-                val.warehouses = JSON.parse(val.warehouses)
-                return val;
-            })
-        })
-    }
-
-
-    //Presentacion del imagen 
-    async getImagen(item) {
-        const {
-            MODAL_CTRL,
-            MODAL_IMAGEN_DETALLE_CSHTML
-        } = this._nombreModal.articulo;
-        const {
-            ModalArticuloImagenDetalleCtrl
-        } = await import('./../../modal/' + MODAL_CTRL);
-        this._modalSvc.openModalCustom({
+      
+            const dataSearch = {
+              tipo: 1,
+              module: "CP",
+              bySearch: $scope.dataSearch.bySearch,
+              pageIndex: $scope.dataSearch.pageIndex,
+              pageSize: $scope.dataSearch.pageSize,
+              byColumn: $scope.dataSearch.byColumn,
+            };
+            $scope.activated = true;
+      
+            artSvc
+              .getAll(dataSearch)
+              .then((response) => {
+                let { articulos, totalRecords } = response;
+                $scope.activated = false;
+      
+                $scope.articulos = articulos;
+                $scope.dataSearch.totalRecords = totalRecords;
+                $scope.tarifas =
+                  $scope.articulos.length > 0 ? $scope.articulos[0].tarifas : [];
+              })
+              .catch((err) => {
+                $scope.activated = false;
+                console.log(err);
+              });
+          } catch (error) {
+            $scope.activated = false;
+            console.log(error);
+          }
+        };
+      
+        $scope.pagechanged = function () {
+          $scope.querySearchArticulo();
+        };
+      
+        $scope.changePageSize = function () {
+          $scope.dataSearch.pageIndex = 1;
+          $scope.querySearchArticulo();
+        };
+      
+        $scope.consultarPrecioEnter = function ($event) {
+          if ($scope.dataSearch.bySearch && $event.key === "Enter") {
+            $scope.querySearchArticulo();
+            $scope.dataSearch.bySearch = "";
+          }
+        };
+      
+        //   async openModalFiltro() {
+        //     const { MODAL_CTRL, MODAL_FILTRO_CSHTML } = this._nombreModal.articulo;
+        //     const { ModalFiltroCtrl } = await import("./../modal/" + MODAL_CTRL);
+      
+        //     const modalDialogRef = this._modalSvc.openModalCustom({
+        //       controller: ModalFiltroCtrl,
+        //       template: "Articulo/" + MODAL_FILTRO_CSHTML,
+        //       size: "lg",
+        //       params: this.dataSearch,
+        //     });
+        //     modalDialogRef.result.then(async (result) => {
+        //       this.dataSearch = Object.assign(this.dataSearch, result);
+        //       if (result.isSearch) {
+        //         this.dataSearch.busqueda = null;
+        //         this.querySearchArticulo();
+        //       }
+        //     });
+        //   }
+      
+        $scope.onChangeCheckBoxItem = (item) => {
+          const data = {
+            idArticulo: item.idArticulo,
+            idPresentacion: item.idPresentacion,
+            presentacion: item.presentacion,
+            tipoRegistro: 1,
+          };
+          $uibModalInstance.close(data);
+        };
+      
+        //   //Presentacion del imagen
+        $scope.getImagen = async function (item) {
+          const { MODAL_CTRL, MODAL_IMAGEN_DETALLE_CSHTML } = nombreModal.articulo;
+          const { ModalArticuloImagenDetalleCtrl } = await import(
+            "./../modal/" + MODAL_CTRL
+          );
+          modalSvc.openModalCustom({
             controller: ModalArticuloImagenDetalleCtrl,
             template: `Articulo/${MODAL_IMAGEN_DETALLE_CSHTML}`,
-            size: 'xl',
-            params: item
-        })
-    }
+            size: "xl",
+            params: item,
+          });
+        };
+      
+        
+      }
+      
 
-    async openModalKardex(item) {
-        const articulo = {
-            idArticulo: item.idArticulo,
-            codigo: item.codigo,
-            descripcion: item.descripcion,
-        }
-
-        const {
-            MODAL_CTRL,
-            MODAL_CSHTML
-        } = this._nombreModal.kardex;
-        const {
-            ModalKardexCtrl
-        } = await import('./../../modal/' + MODAL_CTRL);
-        this._modalSvc.openModalCustom({
-            controller: ModalKardexCtrl,
-            template: `Kardex/${MODAL_CSHTML}`,
-            size: 'xl',
-            params: articulo,
-            windowClass: 'uibModalFullScreen'
-        })
-    }
-
-}
-
-app.controller('consultarPrecioCtrl', ConsultarPrecioCtrl)
+})(window.angular);

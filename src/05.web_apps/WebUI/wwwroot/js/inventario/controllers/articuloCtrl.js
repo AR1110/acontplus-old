@@ -26,20 +26,19 @@
             MODAL_IMAGEN_DETALLE
         } = nombreModalConst.articulo;
 
+        $scope.recordsQuantity = [10, 25, 50, 100];
         $scope.dataSearch = {
             tipo: 1,
-            bySearch: '',
+            pageSize: 50,
             pageIndex: 1,
-            pageSize: 20
+            maxSize: 5,
+            totalRecords: 0,
+            busqueda: "",
+            byStock: 0,
         };
 
-        $scope.articulos = [];
 
-        $scope.dynamicPopover = {
-            content: 'Hello, World!',
-            templateUrl: 'myPopoverTemplate.html',
-            title: 'Title'
-        }
+        $scope.articulos = [];
 
 
         //Nuevo Articulo
@@ -99,20 +98,51 @@
                 showLoader();
                 $scope.articulos = [];
 
-                articuloSvc.getAll($scope.dataSearch).then(response=>{
+                const dataSearch = {
+                    tipo: 1, 
+                    bySearch: $scope.dataSearch.bySearch,
+                    pageIndex: $scope.dataSearch.pageIndex,
+                    pageSize: $scope.dataSearch.pageSize, 
+                    checkBoxFraccionado: $scope.dataSearch.checkBoxFraccionado,
+                    checkBoxStock: $scope.dataSearch.checkBoxStock,
+                    checkBoxSubFamilia: $scope.dataSearch.checkBoxSubFamilia,
+                    checkBoxTipoIva: $scope.dataSearch.checkBoxTipoIva,
+                    checkBoxInventario: $scope.dataSearch.checkBoxInventario,
+                    bySubFamilia: $scope.dataSearch.bySubFamilia,
+                    byTipoIva: $scope.dataSearch.byTipoIva,
+                    byStock: $scope.dataSearch.byStock,
+                    
+                  };
+    
+
+                articuloSvc.getAll(dataSearch).then(response=>{
                     hideLoader();
-                    $scope.articulos = response;
+                    let {totalRecords, articulos} = response;
+                    $scope.articulos = articulos;
+                    $scope.dataSearch.totalRecords = totalRecords;
+                    
                 }).catch(error=>{
                     hideLoader();
+                    $scope.dataSearch.totalRecords = 0;
                     console.log(error);
                 })              
             } catch (error) {
+                $scope.dataSearch.totalRecords = 0;
                 hideLoader();                
                 console.log(error);
             }
         }
 
         $scope.getArticulos();
+
+        $scope.pagechanged = function () {
+            $scope.getArticulos();
+          };
+        
+          $scope.changePageSize = function () {
+            $scope.dataSearch.pageIndex = 1;
+            $scope.getArticulos();
+          };
 
 
         $scope.openModalEditar = async (params) => {
@@ -403,29 +433,7 @@
 
 })(window.angular)
 
-
-// app.controller('articuloCtrl', articuloCtrl);
-
-// articuloCtrl.$inject = ['$scope', 'mainService', 'modalService', 'nombreModal', 'toastService', 'formulario'];
-
-// function articuloCtrl($scope, _mS, _modalSvc, _nombreModal, toast, form) {
-//     'use strict';
-
-//     let accion = JSON.parse(localStorage.getItem("accion"));
-//     if (accion === null) {
-//         location.href = "/Home/Index";
-//     } else {
-//         $scope.accion = accion[0];
-//     }
-
-//     $scope.articulos = [];
-//     $scope.dataSearch = {        
-//         tipo: 1,
-//         bySearch : '',
-//         pageIndex: 1,
-//         pageSize: 20
-//     }
-//     $scope.totalRecords = 0;
+ 
 
 
 
