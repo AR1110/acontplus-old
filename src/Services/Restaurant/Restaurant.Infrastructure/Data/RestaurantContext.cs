@@ -16,6 +16,10 @@ namespace Restaurant.Infrastructure.Data
         public DbSet<Dish> Dishes { get; set; }
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<ProductionArea> ProductionAreas { get; set; }
+        public DbSet<Floor> floors { get; set; }
+        public DbSet<Room> rooms { get; set; }
+        public DbSet<Table> tables { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -54,6 +58,9 @@ namespace Restaurant.Infrastructure.Data
             builder.Entity<Dish>().ToTable("Dish", schema: "Restaurant");
             builder.Entity<Recipe>().ToTable("Recipe", schema: "Restaurant");
             builder.Entity<ProductionArea>().ToTable("ProductionArea", schema: "Restaurant");
+            builder.Entity<Floor>().ToTable("Floor", schema: "Restaurant");
+            builder.Entity<Room>().ToTable("Room", schema: "Restaurant");
+            builder.Entity<Table>().ToTable("Table", schema: "Restaurant");
         }
     }
     public static class UtcDateAnnotation

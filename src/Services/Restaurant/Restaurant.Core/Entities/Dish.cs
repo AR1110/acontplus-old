@@ -2,7 +2,7 @@
 
 namespace Restaurant.Core.Entities
 {
-    [Table("Recipe", Schema = "Restaurant")]
+    [Table("Dish", Schema = "Restaurant")]
     public class Dish : BaseEntity
     {
         public int ProductId { get; set; }
