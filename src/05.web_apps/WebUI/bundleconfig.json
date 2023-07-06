@@ -364,6 +364,7 @@
     "inputFiles": [
       "wwwroot/js/ventas/modals/modalClienteCtrl.js"
     ]
+<<<<<<< HEAD
   },
   {
     "outputFileName": "wwwroot/js/common/constants/namePathsModal.min.js",
@@ -388,5 +389,7 @@
     "inputFiles": [
       "wwwroot/js/modal/ventas/modalFacturaCtrl.js"
     ]
+=======
+>>>>>>> origin/alexis_work
   }
 ]

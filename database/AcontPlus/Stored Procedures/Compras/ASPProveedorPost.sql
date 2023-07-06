@@ -49,6 +49,7 @@ BEGIN
 			DECLARE @IDType VARCHAR(2)
 			,@customerId INT
 
+<<<<<<< HEAD
 			IF NOT EXISTS(SELECT 1 FROM Customer.Customer WHERE IDCard = LTRIM(RTRIM(@numeroIdentificacion)))
 				BEGIN
 					SET @IDType = (SELECT codigoSri FROM TipoIdentificacion t WHERE t.idTipoIdentificacion = @idTipoIdentificacion)
@@ -64,6 +65,14 @@ BEGIN
 				END
 
 			
+=======
+			SET @IDType = (SELECT codigoSri FROM TipoIdentificacion t WHERE t.idTipoIdentificacion = @idTipoIdentificacion)
+
+			INSERT INTO Customer.Customer(IDType, IDCard, BusinessName, TradeName, email, telephone, [Address], SriValidation)
+			SELECT @IDType, LTRIM(RTRIM(@numeroIdentificacion)), LTRIM(RTRIM(@nombreFiscal)), LTRIM(RTRIM(@nombreComercial)),  LTRIM(RTRIM(@correo)), LTRIM(RTRIM(@telefono)), LTRIM(RTRIM(@direccion)), @validationSri
+
+			SET @customerId = @@IDENTITY
+>>>>>>> origin/alexis_work
 
 			INSERT INTO Proveedor 
 					(idCiudad 

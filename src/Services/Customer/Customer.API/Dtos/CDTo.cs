@@ -6,9 +6,12 @@
         public string nombreCompleto { get; set; }
         public object fechaDefuncion { get; set; }
         public string Error { get; set; }
+<<<<<<< HEAD
         public string direccion { get; set; }
         public string email { get; set; }
         public string telefono { get; set; }
+=======
+>>>>>>> origin/alexis_work
     }
     public class CaptchaImage
     {

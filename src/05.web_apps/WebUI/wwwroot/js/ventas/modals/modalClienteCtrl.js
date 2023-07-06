@@ -236,6 +236,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                     $scope.data.nombreComercial = razonSocial.replaceAll('"', '');
                     $scope.data.nombreFiscal = razonSocial.replaceAll('"', '');
                     //$scope.data.direccion = establecimientos.find(item => item.matriz === 'SI').direccionCompleta
+<<<<<<< HEAD
                     if (direccion) {
                         $scope.data.direccion = direccion
                     }
@@ -245,6 +246,11 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                     if (email) {
                         $scope.correos = new Array(email)
                     }
+=======
+                    $scope.data.direccion = direccion
+                    $scope.data.telefono = telefono
+                    $scope.data.correo = email
+>>>>>>> origin/alexis_work
                     $scope.data.validationSri = true;
 
                     $scope.typeNotify = 'is-valid';

@@ -47,11 +47,19 @@ namespace Customer.API.Controllers
                     var query = @"SELECT IDCard numeroRuc, BusinessName razonSocial, ISNULL(TradeName, '') nombreComercial, ISNULL([Address], '') direccion,
                                 ISNULL(telephone,'') telefono, ISNULL(email, '') email
                                 FROM Customer.Customer WHERE IDCard = @ruc AND SriValidation = 1";
+<<<<<<< HEAD
                     command.CommandText = "Customer.Customer_IDCard_Get";
                     SqlParameter paramId = new SqlParameter("@id", SqlDbType.VarChar);
                     paramId.Value = rUCSriDTo.Ruc;
                     command.Parameters.Add(paramId);
                     command.CommandType = CommandType.StoredProcedure;
+=======
+                    command.CommandText = query;
+                    SqlParameter paramId = new SqlParameter("ruc", SqlDbType.VarChar);
+                    paramId.Value = rUCSriDTo.Ruc;
+                    command.Parameters.Add(paramId);
+                    command.CommandType = CommandType.Text;
+>>>>>>> origin/alexis_work
                     _customerContext.Database.OpenConnection();
                     using (SqlDataAdapter adapter = new SqlDataAdapter())
                     {
@@ -99,8 +107,13 @@ namespace Customer.API.Controllers
                     {
                         _response.nombreComercial = _response.Establecimientos[0].nombreFantasiaComercial.ToString();
                     }
+<<<<<<< HEAD
                     //_response.email = "";
                     //_response.telefono = "";
+=======
+                    _response.email = "";
+                    _response.telefono = "";
+>>>>>>> origin/alexis_work
                 }
             }
             catch (Exception ex)
@@ -114,12 +127,17 @@ namespace Customer.API.Controllers
         [HttpGet("GetCedulaSri")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+<<<<<<< HEAD
         public ActionResult<CCedulaSriDto> GetCedulaSri([FromQuery] RUCSriDTo rUCSriDTo)
+=======
+        public ActionResult<CCedulaSriDto> GetCedulaSri([FromQuery] RUCSriDTo cedula)
+>>>>>>> origin/alexis_work
         {
             LogWriter _log = new LogWriter(_configuration);
             CCedulaSriDto _response = new CCedulaSriDto();
             try
             {
+<<<<<<< HEAD
                 DataTable dt = new DataTable();
                 using (var command = _customerContext.Database.GetDbConnection().CreateCommand())
                 {
@@ -147,6 +165,9 @@ namespace Customer.API.Controllers
                 }
 
                 if (!_cedulasSri.CheckExistence(rUCSriDTo.Ruc))
+=======
+                if (!_cedulasSri.CheckExistence(cedula.Ruc))
+>>>>>>> origin/alexis_work
                 {
                     _response.Error = "Cedula No existe";
                     return _response;
@@ -173,7 +194,11 @@ namespace Customer.API.Controllers
                     return _response;
                 }
 
+<<<<<<< HEAD
                 _response = _cedulasSri.GetCedulaSri(rUCSriDTo.Ruc, cookieContainer, htmlResponse);
+=======
+                _response = _cedulasSri.GetCedulaSri(cedula.Ruc, cookieContainer, htmlResponse);
+>>>>>>> origin/alexis_work
             }
             catch (Exception ex)
             {
@@ -182,6 +207,7 @@ namespace Customer.API.Controllers
             }
             return _response;
         }
+<<<<<<< HEAD
         //private static void AddSqlParameter(SqlCommand command, string paramValue)
         //{
         //    SqlParameter parameter = new SqlParameter("@Description", SqlDbType.VarChar);
@@ -192,5 +218,7 @@ namespace Customer.API.Controllers
 
         //    command.Parameters.Add(parameter);
         //}
+=======
+>>>>>>> origin/alexis_work
     }
 }
