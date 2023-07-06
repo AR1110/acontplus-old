@@ -83,12 +83,33 @@ BEGIN
 
 	BEGIN TRY
 		BEGIN TRAN
+
+			DECLARE @IDType VARCHAR(2)
+			,@customerId INT
+
+			IF NOT EXISTS(SELECT 1 FROM Customer.Customer c INNER JOIN @tmp t ON c.IDCard = t.numeroIdentificacion)
+				BEGIN
+					SET @IDType = (SELECT codigoSri FROM TipoIdentificacion t INNER JOIN @tmp tt ON t.idTipoIdentificacion = tt.idTipoIdentificacion )
+
+					INSERT INTO Customer.Customer(IDType, IDCard, BusinessName, TradeName, email, telephone, [Address], SriValidation)
+					SELECT @IDType, LTRIM(RTRIM(numeroIdentificacion)), LTRIM(RTRIM(razonSocial)), LTRIM(RTRIM(nombreComercial)),  LTRIM(RTRIM(correo)), LTRIM(RTRIM(telefono)), LTRIM(RTRIM(direccion)), 1
+					FROM @tmp
+					SET @customerId = @@IDENTITY
+				END
+			ELSE
+				BEGIN 
+					SET @customerId = (SELECT ID FROM Customer.Customer c INNER JOIN @tmp t ON c.IDCard = t.numeroIdentificacion)
+				END
+			
 			INSERT INTO Proveedor(idEntidad, idTipoIdentificacion, idTipoClienteProveedor, idTipoEntidad, idSubContribuyente,
 							idTiempoCredito, numeroIdentificacion, nombreComercial, nombreFiscal, direccion, telefono, correo, idUsuario)
 			SELECT @idEntidad, idTipoIdentificacion, idTipoClienteProveedor, idTipoEntidad, idSubContribuyente,
 							idTiempoCredito, numeroIdentificacion, nombreComercial, razonSocial, direccion, telefono, correo, @idUsuario 
 			FROM @tmp
 			SET @idProveedor = @@IDENTITY
+
+			UPDATE Proveedor SET CustomerId = @customerId WHERE idProveedor = @idProveedor
+
 			SELECT @idProveedor idProveedor, idTiempoCredito FROM @tmp
 		COMMIT TRAN
 	END TRY

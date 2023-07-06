@@ -10,9 +10,7 @@ using Customer.API.Data;
 
 namespace Customer.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CustomersController : ControllerBase
+    public class CustomersController : BaseApiController
     {
         private readonly CustomerContext _context;
 

@@ -149,19 +149,29 @@ export class ModalBaseCtrl {
         try {
 
             showLoader();
-            this._mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + this.data.numeroIdentificacion, null, true).then(result => {
+            this._mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + this.data.numeroIdentificacion, null, true).then(response => {
                 hideLoader();
-                if (result.numeroRuc) {
+                if (response.numeroRuc) {
 
                     let {
                         razonSocial,
                         establecimientos,
+                        direccion,
+                        telefono,
+                        email,
                         tipoContribuyente
-                    } = result;
+                    } = response;
+
                     this.data.nombreComercial = razonSocial.replaceAll('"', '');
                     this.data.nombreFiscal = razonSocial.replaceAll('"', '');
-                    this.data.direccion = establecimientos.find(item => item.matriz === 'SI').direccionCompleta
-
+                    //$scope.data.direccion = establecimientos.find(item => item.matriz === 'SI').direccionCompleta
+                    this.data.direccion = direccion
+                    if (telefono) {
+                        this.telefonos = new Array(telefono)
+                    }
+                    if (email) {
+                        this.correos = new Array(email)
+                    }
                     this.data.validationSri = true;
 
                     this.typeNotify = 'is-valid';
@@ -199,10 +209,22 @@ export class ModalBaseCtrl {
 
                     let {
                         nombreCompleto,
-                        establecimientos
+                        establecimientos,
+                        direccion,
+                        telefono,
+                        email
                     } = result;
                     this.data.nombreComercial = nombreCompleto.replaceAll('"', '');
                     this.data.nombreFiscal = nombreCompleto.replaceAll('"', '');
+                    if (direccion) {
+                        this.data.direccion = direccion
+                    }
+                    if (telefono) {
+                        this.telefonos = new Array(telefono)
+                    }
+                    if (email) {
+                        this.correos = new Array(email)
+                    }
                     this.data.validationSri = true;
                     // this.data.direccion = establecimientos[0].direccionCompleta
                     this.typeNotify = 'is-valid';

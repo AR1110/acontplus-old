@@ -5,7 +5,7 @@ using System.Text.Json;
 using System.Text.Unicode;
 using Newtonsoft.Json;
 
-namespace Restaurant.Core.Utils
+namespace Services.Common.Utils
 {
     public static class Converters
     {

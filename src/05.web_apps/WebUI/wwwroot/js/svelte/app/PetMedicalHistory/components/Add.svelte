@@ -173,7 +173,7 @@
 							class="list-group-item"
 							on:click={selectPet(item)}
 							><i class="ti-user" /> - {item.name}
-							- {item.customerUniqueId}</a
+							- {item.customerId}</a
 						>
 					{/each}
 				</div>{/if}
@@ -215,7 +215,7 @@
 						type="text"
 						class="form-control"
 						disabled
-						value={petSelected.customerUniqueId}
+						value={petSelected.customerId}
 					/>
 				</div>
 			</div>

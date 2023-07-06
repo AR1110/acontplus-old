@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Restaurant.Core.Utils
+namespace Services.Common.Utils
 {
     public static class Encryption
     {
