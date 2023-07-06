@@ -5,6 +5,7 @@ import { SnackbarUtils as tS } from "@/core/utils";
 import { AuthService as AuthSvc } from "@/core/services/auth.service";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "@/redux/slices/user.slice";
+import { DataLogin } from "@/core/models";
 
 type Data = {
   username: string;
@@ -57,18 +58,21 @@ export default function Login() {
     AuthSvc.login(data.username, data.password).then((response) => {
       console.log(response);
       if (response.code === "0") {
-        tS.error(response.message);
+        tS.warning(response.message);
         return;
       }
+      if (response.code === "1") {
+        tS.success(response.message);
 
-      // const { ...user } = response.payload;
+        const userData = response.payload as DataLogin;
 
-      // const jwtToken = user["userData"][0].jwtToken;
+        const jwtToken = userData["userData"][0].jwtToken;
 
-      // AuthSvc.setPersistent("ACCESS_TOKEN", jwtToken);
-      // AuthSvc.setPersistent("USER", JSON.stringify(user));
-      // dispatch(setCredentials(user));
-      // navigate(`/`, { replace: true });
+        AuthSvc.setPersistent("ACCESS_TOKEN", jwtToken);
+        AuthSvc.setPersistent("USER", JSON.stringify(userData));
+        dispatch(setCredentials(userData));
+        navigate(`/`, { replace: true });
+      }
     });
   };
 

@@ -7,7 +7,6 @@ const AuthGuard = () => {
   //const userState = useSelector((store: AppStore) => store.user);
   const userState = localStorage.getItem("ACCESS_TOKEN") ? true : false;
 
-
   return userState ? (
     <RootLayout />
   ) : (
