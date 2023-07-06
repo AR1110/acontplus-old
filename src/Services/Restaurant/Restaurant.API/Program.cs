@@ -1,9 +1,9 @@
 using Lib.Common;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.API.Extensions;
-using Restaurant.API.Middleware;
 using Restaurant.Infrastructure.Data;
 using Services.Common;
+using Services.Common.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 

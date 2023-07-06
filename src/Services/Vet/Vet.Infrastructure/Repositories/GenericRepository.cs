@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Data;
-using System.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System.Data; 
 using Vet.Core.Interfaces;
 using Vet.Infrastructure.Data;
 
@@ -21,7 +21,15 @@ namespace Vet.Infrastructure.Repositories
                 command.CommandText = spName;
                 foreach (var parameter in parameters)
                 {
-                    AddSqlParameter((SqlCommand)command, parameter.Key, parameter.Value);
+                    //AddSqlParameter(parameter.Key, parameter.Value);
+                    if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                    {
+                        SqlParameter sqlParam = new SqlParameter();
+                        sqlParam.ParameterName = parameter.Key;
+                        sqlParam.SqlDbType = GetDbType(parameter.Value);
+                        sqlParam.Direction = ParameterDirection.Output;
+                        command.Parameters.Add(sqlParam);
+                    }
                 }
                 command.CommandType = CommandType.StoredProcedure;
                 await _context.Database.OpenConnectionAsync();
@@ -42,7 +50,7 @@ namespace Vet.Infrastructure.Repositories
                 command.CommandText = spName;
                 foreach (var parameter in parameters)
                 {
-                    AddSqlParameter((SqlCommand)command, parameter.Key, parameter.Value);
+                    //AddSqlParameter((SqlCommand)command, parameter.Key, parameter.Value);
                 }
                 command.CommandType = CommandType.StoredProcedure;
                 await _context.Database.OpenConnectionAsync();
@@ -55,16 +63,18 @@ namespace Vet.Infrastructure.Repositories
             }
             return ds;
         }
-        private void AddSqlParameter(SqlCommand command, string paramName, object paramValue)
+        private List<SqlParameter> AddSqlParameter(string paramName, object paramValue)
         {
-            if (!string.IsNullOrEmpty(paramName) && paramValue != null && command != null)
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            if (!string.IsNullOrEmpty(paramName) && paramValue != null)
             {
                 SqlParameter sqlParam = new SqlParameter();
                 sqlParam.ParameterName = paramName;
                 sqlParam.SqlDbType = GetDbType(paramValue);
                 sqlParam.Direction = ParameterDirection.Output;
-                command.Parameters.Add(sqlParam);
+                parameters.Add(sqlParam);
             }
+            return parameters;
         }
         //https://ajaxhispano.com/ask/alguien-tiene-una-funcion-c-que-mapee-el-tipo-de-datos-sql-de-una-columna-a-su-equivalente-clr-58667/
         public static SqlDbType GetDbType(object obj)

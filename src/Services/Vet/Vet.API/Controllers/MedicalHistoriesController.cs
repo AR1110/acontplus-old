@@ -26,26 +26,34 @@ namespace Vet.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MedicalHistory>>> GetMedicalHistories()
         {
-            int companyId = Convert.ToInt32(User.GetCompanyId());
-            var apiRequest = new ApiRequest();
-
-            var dictionary = new Dictionary<string, object>
+            try
             {
-                { "id", companyId }
+                int companyId = Convert.ToInt32(User.GetCompanyId());
+                var apiRequest = new ApiRequest();
+
+                var dictionary = new Dictionary<string, object>
+            {
+                { "companyId", companyId }
             };
-            apiRequest.Data = dictionary;
+                apiRequest.Data = dictionary;
 
-            var result = _medicalHistory.Get(apiRequest);
-            if (!_context.MedicalHistories.Any(x =>
-                                            x.Pet.CompanyId == companyId
-                                            && x.Enabled
-                                            ))
-            {
-                return NoContent();
+                var result = _medicalHistory.Get(apiRequest);
+                if (!_context.MedicalHistories.Any(x =>
+                                                x.Pet.CompanyId == companyId
+                                                && x.Enabled
+                                                ))
+                {
+                    return NoContent();
+                }
+                return await _context.MedicalHistories.Include(p => p.Pet)
+                    .Where(x => x.Pet.CompanyId == companyId && x.Enabled)
+                    .ToListAsync();
             }
-            return await _context.MedicalHistories.Include(p => p.Pet)
-                .Where(x => x.Pet.CompanyId == companyId && x.Enabled)
-                .ToListAsync();
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
 
         // GET: api/MedicalHistories/5

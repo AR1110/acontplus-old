@@ -21,8 +21,8 @@ namespace Vet.Application.Services
         }
         public async Task<APIResponse> Get(ApiRequest parameters)
         {
-            var sqlParam = new SqlParameter("json", Converters.SerializeDictionary(parameters.Data));
-            var result = _context.MedicalHistories.FromSqlRaw($"Pet.MedicalHistory_Get {sqlParam}");
+            //var sqlParam = new SqlParameter("@json", Converters.SerializeDictionary(parameters.Data));
+            //var result = _context.MedicalHistories.FromSqlRaw($"Pet.MedicalHistory_Get {sqlParam}");
             var dt = await _generic.GetDataTable("Pet.MedicalHistory_Get", parameters.Data);
 
             if (DataValidation.DataTableIsNull(dt))

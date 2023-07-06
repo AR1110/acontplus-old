@@ -2,10 +2,10 @@ using Identity.API.Data.Identity;
 using Identity.API.Identity;
 using Identity.API.Entities;
 using Identity.API.Extensions;
-using Identity.API.Middleware;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Services.Common;
+using Services.Common.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
