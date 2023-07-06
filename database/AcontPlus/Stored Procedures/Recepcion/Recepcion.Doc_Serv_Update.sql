@@ -150,6 +150,9 @@ BEGIN
 
 			IF (@codDoc != '07')
 				BEGIN
+					DECLARE @IDType VARCHAR(2)
+					,@customerId INT
+
 					SET @identificacionCliProv = (SELECT LTRIM(RTRIM(@identificacionCliProv)))
 
 					SET @idTipoIdentificacion = (SELECT CASE 
@@ -160,7 +163,20 @@ BEGIN
 													WHEN LEN(@identificacionCliProv) < 10 OR LEN(@identificacionCliProv) > 13 THEN (SELECT TOP 1 idTipoIdentificacion FROM TipoIdentificacion
 																																WHERE codigoSri = '06')
 												END)
-
+						
+					IF NOT EXISTS(SELECT 1 FROM Customer.Customer WHERE IDCard = LTRIM(RTRIM(@identificacionCliProv)))
+						BEGIN
+							 SET @IDType = (SELECT codigoSri FROM TipoIdentificacion t WHERE t.idTipoIdentificacion = @idTipoIdentificacion)
+							 
+							 INSERT INTO Customer.Customer(IDType, IDCard, BusinessName, TradeName, [Address], SriValidation)
+							 SELECT @IDType, LTRIM(RTRIM(@identificacionCliProv)), LTRIM(RTRIM(@razonSocial)), LTRIM(RTRIM(@nombreComercial)), LTRIM(RTRIM(@direccion)), 1
+							 
+							 SET @customerId = @@IDENTITY
+						END
+					ELSE
+						BEGIN 
+							SET @customerId = (SELECT ID FROM Customer.Customer WHERE IDCard = LTRIM(RTRIM(@identificacionCliProv)))
+						END
 
 					IF LEN(LTRIM(RTRIM(@rucReceptor))) = 13
 						BEGIN
@@ -172,6 +188,13 @@ BEGIN
 										BEGIN
 											INSERT INTO Proveedor(idTipoIdentificacion, nombreFiscal, nombreComercial, numeroIdentificacion, direccion, idEntidad)
 											VALUES (@idTipoIdentificacion,@razonSocial, @nombreComercial, @identificacionCliProv, @direccion, @idEntidad)
+											SET @idProveedor = @@IDENTITY
+
+
+											UPDATE Proveedor SET CustomerId = @customerId WHERE idProveedor = @idProveedor
+
+
+										
 										END
 								END
 						END
@@ -186,6 +209,10 @@ BEGIN
 										BEGIN
 											INSERT INTO Proveedor(idTipoIdentificacion, nombreFiscal, nombreComercial, numeroIdentificacion, direccion, idEntidad)
 											VALUES (@idTipoIdentificacion,@razonSocial, @nombreComercial, @identificacionCliProv, @direccion, @idEntidad)
+											SET @idProveedor = @@IDENTITY
+
+
+											UPDATE Proveedor SET CustomerId = @customerId WHERE idProveedor = @idProveedor
 										END
 								END
 							IF EXISTS (SELECT 1 FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor+'001')))
@@ -197,6 +224,10 @@ BEGIN
 										BEGIN
 											INSERT INTO Proveedor(idTipoIdentificacion, nombreFiscal, nombreComercial, numeroIdentificacion, direccion, idEntidad)
 											VALUES (@idTipoIdentificacion,@razonSocial, @nombreComercial, @identificacionCliProv, @direccion, @idEntidad)
+											SET @idProveedor = @@IDENTITY
+
+
+											UPDATE Proveedor SET CustomerId = @customerId WHERE idProveedor = @idProveedor
 										END
 								END
 						END

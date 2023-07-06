@@ -47,11 +47,11 @@ namespace Customer.API.Controllers
                     var query = @"SELECT IDCard numeroRuc, BusinessName razonSocial, ISNULL(TradeName, '') nombreComercial, ISNULL([Address], '') direccion,
                                 ISNULL(telephone,'') telefono, ISNULL(email, '') email
                                 FROM Customer.Customer WHERE IDCard = @ruc AND SriValidation = 1";
-                    command.CommandText = query;
-                    SqlParameter paramId = new SqlParameter("ruc", SqlDbType.VarChar);
+                    command.CommandText = "Customer.Customer_IDCard_Get";
+                    SqlParameter paramId = new SqlParameter("@id", SqlDbType.VarChar);
                     paramId.Value = rUCSriDTo.Ruc;
                     command.Parameters.Add(paramId);
-                    command.CommandType = CommandType.Text;
+                    command.CommandType = CommandType.StoredProcedure;
                     _customerContext.Database.OpenConnection();
                     using (SqlDataAdapter adapter = new SqlDataAdapter())
                     {
@@ -99,8 +99,8 @@ namespace Customer.API.Controllers
                     {
                         _response.nombreComercial = _response.Establecimientos[0].nombreFantasiaComercial.ToString();
                     }
-                    _response.email = "";
-                    _response.telefono = "";
+                    //_response.email = "";
+                    //_response.telefono = "";
                 }
             }
             catch (Exception ex)
@@ -114,13 +114,39 @@ namespace Customer.API.Controllers
         [HttpGet("GetCedulaSri")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<CCedulaSriDto> GetCedulaSri([FromQuery] RUCSriDTo cedula)
+        public ActionResult<CCedulaSriDto> GetCedulaSri([FromQuery] RUCSriDTo rUCSriDTo)
         {
             LogWriter _log = new LogWriter(_configuration);
             CCedulaSriDto _response = new CCedulaSriDto();
             try
             {
-                if (!_cedulasSri.CheckExistence(cedula.Ruc))
+                DataTable dt = new DataTable();
+                using (var command = _customerContext.Database.GetDbConnection().CreateCommand())
+                {
+                    var query = @"SELECT IDCard numeroRuc, BusinessName razonSocial, ISNULL(TradeName, '') nombreComercial, ISNULL([Address], '') direccion,
+                                ISNULL(telephone,'') telefono, ISNULL(email, '') email
+                                FROM Customer.Customer WHERE IDCard = @ruc AND SriValidation = 1";
+                    command.CommandText = "Customer.Customer_IDCard_Get";
+                    SqlParameter paramId = new SqlParameter("id", SqlDbType.VarChar);
+                    paramId.Value = rUCSriDTo.Ruc;
+                    command.Parameters.Add(paramId);
+                    SqlParameter pIdT = new SqlParameter("IDType", SqlDbType.VarChar);
+                    pIdT.Value = "05";
+                    command.Parameters.Add(pIdT);
+                    command.CommandType = CommandType.StoredProcedure;
+                    _customerContext.Database.OpenConnection();
+                    using (SqlDataAdapter adapter = new SqlDataAdapter())
+                    {
+                        adapter.SelectCommand = (SqlCommand)command;
+                        adapter.Fill(dt);
+                    }
+                    if (dt.Rows.Count > 0)
+                    {
+                        return DataTableMapper.BindData<CCedulaSriDto>(dt);
+                    }
+                }
+
+                if (!_cedulasSri.CheckExistence(rUCSriDTo.Ruc))
                 {
                     _response.Error = "Cedula No existe";
                     return _response;
@@ -147,7 +173,7 @@ namespace Customer.API.Controllers
                     return _response;
                 }
 
-                _response = _cedulasSri.GetCedulaSri(cedula.Ruc, cookieContainer, htmlResponse);
+                _response = _cedulasSri.GetCedulaSri(rUCSriDTo.Ruc, cookieContainer, htmlResponse);
             }
             catch (Exception ex)
             {
@@ -156,5 +182,15 @@ namespace Customer.API.Controllers
             }
             return _response;
         }
+        //private static void AddSqlParameter(SqlCommand command, string paramValue)
+        //{
+        //    SqlParameter parameter = new SqlParameter("@Description", SqlDbType.VarChar);
+        //    parameter.IsNullable = true;
+        //    parameter.Direction = ParameterDirection.Output;
+        //    parameter.Size = 88;
+        //    parameter.Value = paramValue;
+
+        //    command.Parameters.Add(parameter);
+        //}
     }
 }
