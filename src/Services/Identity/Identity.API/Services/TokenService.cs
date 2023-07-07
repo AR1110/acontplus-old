@@ -1,4 +1,5 @@
-﻿using Identity.API.Entities;
+﻿using Identity.API.Dtos;
+using Identity.API.Entities;
 using Identity.API.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -12,11 +13,12 @@ namespace Identity.Services
     {
         private readonly SymmetricSecurityKey _key;
         private readonly UserManager<AppUser> _userManager;
-
+        public int _tokenExp;
         public TokenService(IConfiguration configuration, UserManager<AppUser> userManager)
         {
             //var tokenKey = Encoding.UTF8.GetBytes((_configuration["Token:Key"]).PadRight((512 / 8), '\0'));
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:Key"]));
+            _tokenExp = Convert.ToInt32(configuration["Token:Exp"]);
             _userManager = userManager;
         }
 
@@ -46,6 +48,35 @@ namespace Identity.Services
             var tokenhandler = new JwtSecurityTokenHandler();
             var token = tokenhandler.CreateToken(TokenDesc);
             return tokenhandler.WriteToken(token);
+        }
+
+        public string GenerateJwtToken(LoginDataDto authRequest)
+        {
+            //var tokenKey = Encoding.ASCII.GetBytes(JWT_SECURITY_KEY);
+            var signingCredentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256Signature);
+            var claimsIdentiy = new ClaimsIdentity(new List<Claim>
+                {
+                    new Claim(JwtRegisteredClaimNames.Name, authRequest.fullName),
+                    new Claim(JwtRegisteredClaimNames.GivenName, authRequest.fullName),
+                    new Claim(JwtRegisteredClaimNames.UniqueName, authRequest.userName),
+                    new Claim(ClaimTypes.Role, authRequest.role),
+                    new Claim("idUsuarioRol", Convert.ToString(authRequest.idUsuarioRol)),
+                    new Claim("userRoleId", Convert.ToString(authRequest.idUsuarioRol)),
+                    new Claim("nroIdentificacion", authRequest.nroIdentificacion),
+                    new Claim("companyUniqueId", authRequest.rucEmpresa),
+                    new Claim("companyId", Convert.ToString(authRequest.companyId)),
+                    new Claim("razonSocial", authRequest.razonSocial),
+                    new Claim("urlGateway", authRequest.urlGateway)
+                });
+            var securityTokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = claimsIdentiy,
+                Expires = DateTime.UtcNow.AddDays(_tokenExp),
+                SigningCredentials = signingCredentials
+            };
+            var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
+            var securityToken = jwtSecurityTokenHandler.CreateToken(securityTokenDescriptor);
+            return jwtSecurityTokenHandler.WriteToken(securityToken); 
         }
     }
 }
