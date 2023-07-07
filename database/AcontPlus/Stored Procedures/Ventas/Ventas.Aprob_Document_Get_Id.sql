@@ -77,7 +77,7 @@ BEGIN
 	   ,medida = m.descripcion
 	   ,dt.cantidad
 	   ,dt.precioUnitario	
-	   ,precioConIva = dt.precioUnitario + dt.valor
+	   ,precioConIva = CAST(((dt.precioUnitario * (dt.tarifa / 100)) + dt.precioUnitario) AS decimal(18, 2)) -- dt.precioUnitario + dt.valor
 	   ,porcentajeDescuento = CASE WHEN dt.precioUnitario=0 THEN 0 ELSE  (dt.descuento / dt.precioUnitario) * 100   END   
 	   ,precioTotalSinImpuesto = (dt.precioUnitario - dt.descuento) * dt.cantidad
 	   ,dt.descuento
