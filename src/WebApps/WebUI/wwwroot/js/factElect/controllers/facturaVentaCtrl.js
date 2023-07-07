@@ -163,14 +163,6 @@ function facturaVentaCtrl(
     $scope.getFacturas = function () {
 
         try {
-            // if ($scope.dataSearch.checkBoxCliente ||
-            //     $scope.dataSearch.checkBoxFecha ||
-            //     $scope.dataSearch.checkBoxUsuario ||
-            //     $scope.dataSearch.checkBoxEstado) {
-            //         $scope.dataSearch.checkBoxDefault = false
-            // } else {
-            //     $scope.dataSearch.checkBoxDefault = true;
-            // }
             let dataSearch = {
                 pageIndex: $scope.dataSearch.pageIndex,
                 pageSize: $scope.dataSearch.pageSize,
@@ -194,10 +186,17 @@ function facturaVentaCtrl(
             $scope.facturas = [];
             $scope.getTotales();
             facturaSvc.getAll(dataSearch).then(response=>{
-                $scope.facturas = response;
+                let {facturas, dataTotals} = response;
+
+                $scope.facturas = facturas;
                 $scope.cloneFacturas = JSON.parse(JSON.stringify($scope.facturas));
-                $scope.dataSearch.totalRecords = $scope.facturas.length > 0 && $scope.facturas[0].totalRecords;
-                $scope.getTotales();
+
+                //Totales
+                $scope.dataSearch.totalRecords = dataTotals.totalRecords;
+                $scope.total = _fS.roundNumber(dataTotals.total, 5);
+                $scope.totalAbono = _fS.roundNumber(dataTotals.totalAbono, 5);
+                $scope.totalSaldo = _fS.roundNumber(dataTotals.totalSaldo, 5);
+                // $scope.getTotales();
                 hideLoader();
             }).catch(error => {
                 hideLoader();

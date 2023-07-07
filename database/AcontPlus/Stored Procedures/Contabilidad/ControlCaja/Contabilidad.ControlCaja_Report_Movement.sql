@@ -30,6 +30,47 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
+	IF (OBJECT_ID(N'tempdb..#tableDocument') IS NOT NULL)
+	BEGIN
+	  DROP TABLE #tableDocument;
+	END;
+
+	DECLARE @idEntidad INT
+	DECLARE @tipoDoc VARCHAR(5)
+	DECLARE @fechaInicio DATETIME 
+	DECLARE @fechaFin DATETIME
+	
+
+	CREATE TABLE #tableDocument(
+		 idUsuario INT NOT NULL
+		,idSubEntidadFinanciiera INT NULL
+		,idCliente INT NULL
+		,idEmpleado INT NULL
+		,idUsario INT NOT NULL
+		,tipoDoc VARCHAR(5) NOT NULL
+		,fechaEmison DATETIME NOT NULL
+		,serieComprobante VARCHAR(20) NOT NULL
+		,clienteEmpleado VARCHAR(150) NOT NULL
+		,valor NUMERIC(18,2) NOT NULL
+		,entidadFinenaciera VARCHAR(100) NOT NULL
+		,observaciones VARCHAR(300) NULL
+		,usuario VARCHAR(150) NOT NULL
+    )
+
+	SELECT TOP 1 @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+
+	SELECT @tipoDoc     = tipoDoc
+	      ,@fechaInicio = fechaInicio
+		  ,@fechaFin    = fechaFin
+	FROM OPENJSON(@json) 
+	WITH (tipoDoc      VARCHAR(10) '$.tipoDoc'
+		 ,fechaInicio VARCHAR(100) '$.fechaInicio'
+		 ,fechaFin    VARCHAR(100) '$.fechaFin'
+	)
+
+	SELECT * 
+	FROM dbo.Anticipo an WITH (NOLOCK) 
+	WHERE an.idEntidad = @idEntidad 
 
 END
 GO
