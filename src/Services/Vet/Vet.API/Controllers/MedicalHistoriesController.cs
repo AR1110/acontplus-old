@@ -1,4 +1,5 @@
-﻿using Lib.Common.Api;
+﻿using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services.Common;
@@ -32,10 +33,10 @@ namespace Vet.API.Controllers
                 var apiRequest = new ApiRequest();
 
                 var dictionary = new Dictionary<string, object>
-            {
-                { "companyId", companyId }
-            };
-                apiRequest.Data = dictionary;
+                {
+                    { "companyId", companyId }
+                };
+                apiRequest.Data = new Dictionary<string, object> { { "json", Converters.SerializeDictionary(dictionary)} };
 
                 var result = _medicalHistory.Get(apiRequest);
                 if (!_context.MedicalHistories.Any(x =>

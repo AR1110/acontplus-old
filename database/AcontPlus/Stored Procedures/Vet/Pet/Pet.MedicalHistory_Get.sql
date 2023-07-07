@@ -35,5 +35,6 @@ BEGIN
 		INNER JOIN Pet.Pet p ON mh.PetId = p.Id
 		INNER JOIN Customer.Customer c ON p.CustomerId = c.Id
 	WHERE p.CompanyId = @companyId
+	--Select * from pet.Behavior
 END
 GO
