@@ -39,18 +39,32 @@
     <link href="~/lib/limonte-sweetalert2/sweetalert2.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/lib/toastr/toastr.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/css/spinners.min.css" rel="stylesheet" asp-append-version="true" />
+     <style>
+        .btn-login {
+            background-color: #d71365;
+            color: #fff;
+            border-color: #d71365;
+        }
+
+            .btn-login:hover, .btn-login:active {
+                background-color: #be1a5e;
+                color: #fff;
+                border-color: #be1a5e;
+            }
+    </style>
 </head>
 <body class="skin-blue card-no-border" ng-cloak ng-app="loginApp" ng-controller="loginCtrl">
     <div id="loaderCss"></div>
-    <section id="wrapper" class="login-register">
-        @* style="background-image:url(../assets/images/background/login-register.jpg);" *@
+    <section id="wrapper" class="login-register" style="background-image:url(../assets/images/background/fondo.jpg);">
+        
         <div class="login-box card">
+             <img class="card-img-top img-fluid" src="~/assets/images/logo/logo.jpg" alt="Img logo">
             <div class="card-body">
                 <form class="form-horizontal form-material text-center" ng-submit="login()" id="loginform">
-                    <a href="javascript:void(0)" class="db">
+                    @* <a href="javascript:void(0)" class="db">
                         <img class="img-fluid rounded mx-auto d-block" src="~/assets/images/logo/imgLogoTipoAcontplus.jpg" alt="logo" width="90%" height="90%">
                         <br>
-                    </a>
+                    </a> *@
                     <h4 class="text-center m-b-20"> Inicio de Sesión</h4>
                     <div class="form-group m-t-40">
                         <div class="col-12">
@@ -62,8 +76,8 @@
                             <div class="input-group">
                                 <input id="password" ng-model="data.password" type="password" class="form-control text-primary" placeholder="Contraseña" required>
                                 <div class="input-group-btn">
-                                    <button ng-show="!ver" type="button" class="btn btn-info fa fa-eye" ng-click="verContrasenia(ver)"></button>
-                                    <button ng-show="ver" type="button" class="btn btn-info fa fa-eye-slash" ng-click="verContrasenia(ver)"></button>
+                                    <button ng-show="!ver" type="button" class="btn btn-warning fa fa-eye" ng-click="verContrasenia(ver)"></button>
+                                    <button ng-show="ver" type="button" class="btn btn-warning fa fa-eye-slash" ng-click="verContrasenia(ver)"></button>
                                 </div>
                             </div>
                         </div>
@@ -81,7 +95,7 @@
                         </div> *@
                     <div class="form-group text-center m-t-20">
                         <div class="col-12">
-                            <button class="btn btn-block btn-lg btn-info btn-rounded" type="submit">Ingresar <i class="fa fa-sign-in-alt"></i></button>
+                            <button class="btn btn-block btn-lg btn-default btn-rounded btn-login" type="submit">Ingresar <i class="fa fa-sign-in-alt"></i></button>
                         </div>
                     </div>
 
