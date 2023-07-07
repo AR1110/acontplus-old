@@ -82,20 +82,20 @@ app.UseAuthorization();
 app.MapControllers();
 
 
-using var scope = app.Services.CreateScope();
-var services = scope.ServiceProvider;
-var identityContext = services.GetRequiredService<ApplicationDbContext>();
-var userManager = services.GetRequiredService<UserManager<AppUser>>();
-var logger = services.GetRequiredService<ILogger<Program>>();
-try
-{
-    await identityContext.Database.MigrateAsync();
-    await IdentityDbContextSeed.SeedUsersAsync(userManager);
-}
-catch (Exception ex)
-{
-    logger.LogError(ex, "An error occured during migration");
-}
+//using var scope = app.Services.CreateScope();
+//var services = scope.ServiceProvider;
+//var identityContext = services.GetRequiredService<ApplicationDbContext>();
+//var userManager = services.GetRequiredService<UserManager<AppUser>>();
+//var logger = services.GetRequiredService<ILogger<Program>>();
+//try
+//{
+//    await identityContext.Database.MigrateAsync();
+//    await IdentityDbContextSeed.SeedUsersAsync(userManager);
+//}
+//catch (Exception ex)
+//{
+//    logger.LogError(ex, "An error occured during migration");
+//}
 
 
 app.Run();

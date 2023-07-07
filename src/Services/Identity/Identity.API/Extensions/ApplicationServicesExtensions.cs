@@ -6,19 +6,19 @@ using Identity.API.Data.Identity;
 using Microsoft.EntityFrameworkCore;
 using Identity.API.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Lib.Common;
 
 namespace Identity.API.Extensions
 {
     public static class ApplicationServicesExtensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services,
-            IConfiguration config)
+            IConfiguration configuration)
         {
-            services.AddDbContext<ApplicationDbContext>(opt =>
-            {
-                opt.UseSqlServer(config.GetConnectionString("DefaultConnection"));
-            });
-
+            services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(Encryption.DecryptString(configuration.GetSection("KeyEncryption").Value, configuration.GetConnectionString("DefaultConnection"))));
+            
             services.AddIdentityCore<AppUser>(opt =>
             {
                 // add identity options here

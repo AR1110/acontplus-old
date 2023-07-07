@@ -27,7 +27,7 @@ namespace Vet.Infrastructure.Repositories
                         SqlParameter sqlParam = new SqlParameter();
                         sqlParam.ParameterName = parameter.Key;
                         sqlParam.SqlDbType = GetDbType(parameter.Value);
-                        sqlParam.Direction = ParameterDirection.Output;
+                        sqlParam.Value = parameter.Value ?? (object)DBNull.Value;
                         command.Parameters.Add(sqlParam);
                     }
                 }

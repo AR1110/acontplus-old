@@ -21,9 +21,11 @@
                 }
                 
                 if(response.code==="1"){
-                    
-                    let facturas = JSON.parse(response.payload) || [];
-                    return facturas.map(item=>{
+
+                    let mainData = JSON.parse(response.payload);
+                    let facturasRepository = mainData[0];
+                    let dataTotals = mainData[1][0];
+                    let facturas = facturasRepository.map(item=>{
                         return {
                             codigoTipoDoc:'FV',
                             comprobante: 'Factura',
@@ -66,6 +68,13 @@
                             totalRecords : item.totalRecords
                         }
                     })
+
+
+                    return {
+                        facturas,
+                        dataTotals
+                    }
+
                 }
             })
         }
