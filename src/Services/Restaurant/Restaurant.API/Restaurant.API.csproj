@@ -6,6 +6,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\..\Common\Lib.Common\Lib.Common.csproj" />
 		<ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
 		<ProjectReference Include="..\Restaurant.Application\Restaurant.Application.csproj" />
 		<ProjectReference Include="..\Restaurant.Infrastructure\Restaurant.Infrastructure.csproj" />

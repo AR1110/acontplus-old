@@ -1,6 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
-import { getValidationError, SnackbarUtils } from "@/core/utils/";
-import { ApiResponse, PublicRoutes } from "../models";
+import { ApiResponse } from "../models";
 import { AuthService } from "@/core/services";
 import { getRestaurantApiUrl } from "@/core/config/url.config";
 
@@ -74,10 +73,10 @@ addResponseInterceptor(POSInstance);
 // const axios = <T>(cfg: AxiosRequestConfig): Promise<ApiResponse> =>
 //   instance.request<any, T>(cfg);
 
-const POSHttp = async (config: AxiosRequestConfig): Promise<ApiResponse> => {
+const Http = async (config: AxiosRequestConfig): Promise<ApiResponse> => {
   return POSInstance.request(config).then((response) => {
     return response.data;
   });
 };
 
-export { POSHttp };
+export { Http };
