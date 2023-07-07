@@ -1,9 +1,13 @@
+using Lib.Common;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Services.Common;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.SetBasePath(BinDirectory.GetBinRunDir());
+ConfigHelper.AddJsonFiles(builder.Configuration);
 
 // Add services to the container.
 string[] origins = builder.Configuration.GetSection("SafeOrigins").Value.Split('|');
