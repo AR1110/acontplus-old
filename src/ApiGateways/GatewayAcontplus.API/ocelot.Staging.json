@@ -256,7 +256,7 @@
                     "Port": 8097
                 }
             ],
-            "DownstreamPathTemplate": "/api/DocumentoElectronico/{everything}",
+            "DownstreamPathTemplate": "/api/DocumentoElectronico{everything}",
             "DownstreamScheme": "http",
             "UpstreamHttpMethod": [
                 "Get",
@@ -264,7 +264,7 @@
                 "Delete",
                 "Options"
             ],
-            "UpstreamPathTemplate": "/gateway/DocumentoElectronico/{everything}"
+            "UpstreamPathTemplate": "/gateway/DocumentoElectronico{everything}"
         },
         {
             "AuthenticationOptions": {
