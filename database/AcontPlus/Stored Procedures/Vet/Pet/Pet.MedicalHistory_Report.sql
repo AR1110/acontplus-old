@@ -1,6 +1,6 @@
 -- ================================================
 -- Template generated from Template Explorer using:
-USE AcontplusVet
+USE Acontplus
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -25,12 +25,16 @@ BEGIN
 		,[b].[Name] petBreed
 		,[g].[Name] petGender
 		,[mh].[Date]
-		,p.ClientUniqueId numeroIdentificacion
+		,c.businessName responsable
+		,c.email
+		,c.IDCard numeroIdentificacion
+		,c.Telephone telefono
+		,c.[address] direccion
 	FROM Pet.MedicalHistory mh WITH(NOLOCK)
 		INNER JOIN Pet.Pet p WITH(NOLOCK) ON mh.PetId = p.Id
 		INNER JOIN Pet.Breed b WITH(NOLOCK) ON p.BreedId = b.Id
 		INNER JOIN Pet.Gender g WITH(NOLOCK) ON p.GenderId = g.Id
-
+		LEFT JOIN Customer.Customer c WITH(NOLOCK) ON p.CustomerId = c.Id 
 	WHERE mh.Id = @id
 
     SELECT [d].[Name] disease
@@ -56,7 +60,7 @@ BEGIN
 	SELECT TOP 1 imagen
 		,mimeType
 	FROM AcontPlus.Config.Estab_Logo
-	WHERE ruc = (SELECT CompanyUniqueId FROM Pet.Pet WHERE id = @petId)
+	WHERE ruc = (SELECT TOP 1 e.ruc FROM Pet.Pet p INNER JOIN Entidad e ON p.CompanyId = e.idEntidad WHERE id = @petId)
 	ORDER BY idEstab_Logo DESC
 END
 GO

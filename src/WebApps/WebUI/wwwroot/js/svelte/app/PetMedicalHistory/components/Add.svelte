@@ -3,8 +3,13 @@
 	import { client } from "../../../core/api/axiosClient";
 	import AdvancedSearch from "../../../core/components/AdvancedSearch.svelte";
 	import toast from "../../../core/utils/toast";
-	export let newRecord
-	
+	import {
+		showLoader,
+		hideLoader,
+	} from "../../../core/utils/loading-spinner";
+
+	export let newRecord;
+
 	let diseases = [],
 		diseasesStatuses = [],
 		behaviors = [],
@@ -12,7 +17,7 @@
 
 	let healthChecks = [];
 
-	let medicalHistories = []
+	let medicalHistories = [];
 
 	onMount(async () => {
 		console.log("starting");
@@ -87,14 +92,23 @@
 		value = e.target.value;
 		console.log(value);
 		if (value.length >= 3) {
+			showLoader();
 			let data = {
+				tipo: 2,
 				textSearch: value,
 			};
 			await client
-				.get(`/gateway/pets/search/` + value)
+				.get(`/gateway/pets/search?json=` + JSON.stringify(data))
 				.then((response) => {
-					pets = response;
-					console.log(pets);
+					hideLoader();
+					if (response.code == 1) {
+						pets = JSON.parse(response.payload);
+						console.log(pets);
+					}
+				})
+				.catch((error) => {
+					hideLoader();
+					console.log(error);
 				});
 		}
 	};
@@ -137,9 +151,9 @@
 					type: "success",
 					message: "Registrada exitosamente",
 				});
-				newRecord = false
+				newRecord = false;
 				setTimeout(() => {
-					window.location.reload()
+					window.location.reload();
 				}, 500);
 			})
 			.catch((error) => {
@@ -173,7 +187,7 @@
 							class="list-group-item"
 							on:click={selectPet(item)}
 							><i class="ti-user" /> - {item.name}
-							- {item.customerId}</a
+							- {item.customer}</a
 						>
 					{/each}
 				</div>{/if}
@@ -195,17 +209,19 @@
 					bind:value={medicalHistory.date}
 				/>
 			</div>
-		</div>
+		</div> 
+		<br>
+		<h5 class="text-info">Datos del Responsable</h5>
 		<div class="row">
 			<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
 				<div class="form-group">
 					<label for="">Cliente</label>
-					<!-- <input
-					type="text"
-					class="form-control"
-					disabled
-					value={clientSelected.nombreFiscal}
-				/> -->
+					<input
+						type="text"
+						class="form-control"
+						disabled
+						value={petSelected.customer}
+					/>
 				</div>
 			</div>
 			<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
@@ -215,23 +231,24 @@
 						type="text"
 						class="form-control"
 						disabled
-						value={petSelected.customerId}
+						value={petSelected.customerIdCard}
 					/>
 				</div>
 			</div>
 			<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
 				<div class="form-group">
 					<label for="">Email</label>
-					<!-- <input
-					type="text"
-					class="form-control"
-					disabled
-					value={clientSelected.correo}
-				/> -->
+					<input
+						type="text"
+						class="form-control"
+						disabled
+						value={petSelected.email}
+					/>
 				</div>
 			</div>
 		</div>
-
+		<br>
+		<h5 class="">Datos de la mascota</h5>
 		<div class="row">
 			<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
 				<div class="form-group">

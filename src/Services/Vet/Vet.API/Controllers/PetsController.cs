@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Lib.Common;
+using Lib.Common.Api;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services.Common;
 using Vet.Core.Entities;
+using Vet.Core.Interfaces;
 using Vet.Infrastructure.Data;
 
 namespace Vet.API.Controllers
@@ -9,10 +12,12 @@ namespace Vet.API.Controllers
     public class PetsController : BaseApiController
     {
         private readonly VetContext _context;
+        private readonly IPetService _petService;
 
-        public PetsController(VetContext context)
+        public PetsController(VetContext context, IPetService petService)
         {
             _context = context;
+            _petService = petService;
         }
 
         // GET: api/Pet
@@ -34,24 +39,38 @@ namespace Vet.API.Controllers
                 .ToListAsync();
         }
         // GET: api/Pet
-        [HttpGet("search/{textSearch}")]
-        public async Task<ActionResult<IEnumerable<Pet>>> Search(string textSearch)
+        [HttpGet("search")]
+        public async Task<ActionResult<APIResponse>> Search(string json)
         {
             int companyId = Convert.ToInt32(User.GetCompanyId());
             if (!_context.Pets.Any(x => x.CompanyId == companyId))
             {
-                return NoContent();
+                //return NoContent();
             }
-            return await _context.Pets
-                .Include(t => t.PetType)
-                .Include(b => b.Breed)
-                .Include(s => s.Gender)
-                .Where(x =>
-                        x.Enabled &&
-                        x.CompanyId == companyId
-                        && (x.Name.Contains(textSearch))
-                 )
-                .ToListAsync();
+            try
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    { "companyId", companyId },
+                    { "json", json}
+                };
+
+                return await _petService.SearchAsync(parameters);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Error al buscar las mascotas:" + ex.Message);
+            }
+            //return await _context.Pets
+            //    .Include(t => t.PetType)
+            //    .Include(b => b.Breed)
+            //    .Include(s => s.Gender)
+            //    .Where(x =>
+            //            x.Enabled &&
+            //            x.CompanyId == companyId
+            //            && (x.Name.Contains(textSearch))
+            //     )
+            //    .ToListAsync();
         }
         // GET: api/Pet/5
         [HttpGet("{id}")]
@@ -122,7 +141,7 @@ namespace Vet.API.Controllers
                 return NotFound();
             }
 
-           
+
             pet.Deleted = true;
             pet.Enabled = false;
             _context.Entry(pet).State = EntityState.Modified;

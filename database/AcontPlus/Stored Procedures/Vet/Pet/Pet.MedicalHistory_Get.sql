@@ -19,18 +19,20 @@ GO
 -- Create date: 2022-07-06
 -- Description:	sp for get medical histories
 -- =============================================
-CREATE OR ALTER PROCEDURE Pet.MedicalHistory_Get @json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Pet.MedicalHistory_Get @companyId INT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @companyId INT
+	--DECLARE @companyId INT
 
-	SELECT @companyId = companyId FROM OPENJSON(@json) WITH(
-		companyId INT '$.companyId'
-	)
+	--SELECT @companyId = companyId FROM OPENJSON(@json) WITH(
+	--	companyId INT '$.companyId'
+	--)
 
 	SELECT mh.Id, mh.Observations, p.Name petName, p.Age, p.Color
+		,c.businessName customer
+		,[mh].[Date]
 	FROM Pet.MedicalHistory mh
 		INNER JOIN Pet.Pet p ON mh.PetId = p.Id
 		INNER JOIN Customer.Customer c ON p.CustomerId = c.Id

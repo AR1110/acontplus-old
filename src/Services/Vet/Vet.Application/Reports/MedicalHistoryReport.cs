@@ -19,7 +19,7 @@ namespace Vet.Application.Reports
         {
             _context = context;
         }
-        public byte[] Get(int id)
+        public async Task<byte[]> GetAsync(int id)
         {
             byte[] data = null;
             DataSet ds = null;
@@ -34,7 +34,7 @@ namespace Vet.Application.Reports
                 paramId.Value = id;
                 command.Parameters.Add(paramId);
                 command.CommandType = CommandType.StoredProcedure;
-                _context.Database.OpenConnection();
+                await  _context.Database.OpenConnectionAsync();
                 using (SqlDataAdapter adapter = new SqlDataAdapter())
                 {
                     adapter.SelectCommand = (SqlCommand)command;

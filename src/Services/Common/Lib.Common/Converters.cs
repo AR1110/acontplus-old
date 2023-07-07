@@ -4,6 +4,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Unicode;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Lib.Common
 {
@@ -11,7 +12,15 @@ namespace Lib.Common
     {
         public static string DataTableToJSON(DataTable table)
         {
-            string JSONString = JsonConvert.SerializeObject(table);
+            DefaultContractResolver contractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new CamelCaseNamingStrategy()
+            };
+            string JSONString = JsonConvert.SerializeObject(table, new JsonSerializerSettings
+            {
+                ContractResolver = contractResolver,
+                Formatting = Formatting.Indented
+            });
             return JSONString;
         }
         public static object DataSetToJSON(DataSet ds)

@@ -2,6 +2,6 @@
 {
     public interface IMedicalHistoryReport
     {
-        public byte[] Get(int id);
+        public Task<byte[]> GetAsync(int id);
     }
 }

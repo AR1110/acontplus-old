@@ -11,19 +11,19 @@ namespace Vet.Application.Services
     public class MedicalHistoryService : IMedicalHistory
     {
         private readonly VetContext _context;
-        private readonly IGenericRepository _generic;
+        private readonly IADORepository _generic;
         private readonly APIResponse _response;
-        public MedicalHistoryService(VetContext vetContext, IGenericRepository genericRepository)
+        public MedicalHistoryService(VetContext vetContext, IADORepository genericRepository)
         {
             _context = vetContext;
             _response = new APIResponse();
             _generic = genericRepository;
         }
-        public async Task<APIResponse> Get(ApiRequest parameters)
+        public async Task<APIResponse> GetAsync(Dictionary<string, object> parameters)
         {
             //var sqlParam = new SqlParameter("@json", Converters.SerializeDictionary(parameters.Data));
             //var result = _context.MedicalHistories.FromSqlRaw($"Pet.MedicalHistory_Get {sqlParam}");
-            var dt = await _generic.GetDataTable("Pet.MedicalHistory_Get", parameters.Data);
+            var dt = await _generic.GetDataTableAsync("Pet.MedicalHistory_Get", parameters);
 
             if (DataValidation.DataTableIsNull(dt))
             {
@@ -35,19 +35,19 @@ namespace Vet.Application.Services
             }
             return _response;
         }
-        public async Task<APIResponse> GetById(int id)
+        public async Task<APIResponse> GetByIdAsync(int id)
         {
             return _response;
         }
-        public async Task<APIResponse> Insert(MedicalHistory medicalHistory)
+        public async Task<APIResponse> AddAsync(MedicalHistory medicalHistory)
         {
             return _response;
         }
-        public async Task<APIResponse> Update(int id, MedicalHistory medicalHistory)
+        public async Task<APIResponse> UpdateAsync(int id, MedicalHistory medicalHistory)
         {
             return _response;
         }
-        public async Task<APIResponse> Delete(int id)
+        public async Task<APIResponse> DeleteAsync(int id)
         {
             return _response;
         }
