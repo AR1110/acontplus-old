@@ -50,7 +50,7 @@
                             tiempoCredito: item.tiempoCredito,
                             esContado: item.tiempoCredito,
                             nroIdentificacion: item.nroIdentificacion,
-                            
+                            totalRecords : item.totalRecords
                         }
                     })
                 }

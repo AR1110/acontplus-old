@@ -61,26 +61,6 @@ BEGIN
 			codEstado VARCHAR(15),
 			fechaRegistro VARCHAR(20),
 			usuario VARCHAR(100)		
-		);
-
-	DECLARE @tempTbl as TABLE(					
-			idPuntoEmision INT,
-			idEstadoPago INT,
-			idTipoClienteProveedor INT,
-			idUsuario INT,
-			codEstab VARCHAR(150),
-			tipoDoc VARCHAR(100),
-			nroDocumento VARCHAR(150),
-			fechaEmision VARCHAR(20),
-			fechaVencimiento VARCHAR(20),
-			cliente VARCHAR(200),
-			total DECIMAL(15, 2),
-			abono DECIMAL(15, 2),
-			saldo DECIMAL(15, 2),
-			estado VARCHAR(150),
-			codEstado VARCHAR(15),
-			fechaRegistro VARCHAR(20),
-			usuario VARCHAR(100)
 		)
 
 	DECLARE @sqlQuery NVARCHAR(MAX)	
@@ -142,7 +122,7 @@ BEGIN
 
 
 
-	INSERT INTO #tableDocument(
+		INSERT INTO #tableDocument(
 								idPuntoEmision, 
 								idEstadoPago, 
 								idTipoClienteProveedor, 
@@ -270,18 +250,15 @@ BEGIN
 				FROM Entidad e		
 				WHERE e.idEntidad = @byEntidad	 
 
-	 INSERT INTO  @tempTbl (idPuntoEmision, idEstadoPago, idTipoClienteProveedor, idUsuario, codEstab, tipoDoc, nroDocumento, fechaEmision, fechaVencimiento, cliente, total, abono, saldo, estado, codEstado, fechaRegistro, usuario)
-	 
-	 EXECUTE sp_Executesql @SqlQuery, @params,						  
+	 EXECUTE sp_Executesql @sqlQuery, 
+	                       @params,						  
 						   @codEstab     = @codEstab,
 						   @byPuntoEmision= @byPuntoEmision,						   
 						   @byUsuario     = @byUsuario,						  
 						   @byEstado      = @byEstado,
 						   @byOrder       = @byOrder,						   						   
 						   @byOrderCampo  = @byOrderCampo,
-						   @byTipoCliente = @byTipoCliente													
-
-	 SELECT tipoDoc, nroDocumento, fechaEmision, fechaVencimiento, cliente, total, abono, saldo, estado, usuario FROM @tempTbl;	 
+						   @byTipoCliente = @byTipoCliente			
 
 END 
 GO

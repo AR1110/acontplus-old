@@ -1,4 +1,4 @@
-export class ModalCajaCtrl {
+ class ModalCajaCtrl {
     static $inject = ['mainService', '$uibModalInstance', 'formulario', 'params'];
     constructor(_mS, $uibModalInstance, _form, _params) {
         this._mS = _mS;
@@ -57,7 +57,7 @@ export class ModalCajaCtrl {
  * ---------------------------------------Start Modal Apertura Caja 
  */
 
-export class ModalAperturaCtrl {
+ class ModalAperturaCtrl {
     static $inject = ['mainService', '$uibModalInstance', 'formulario', 'params'];
 
     constructor(_mS, $uibModalInstance, _form, _params) {
@@ -129,7 +129,7 @@ export class ModalAperturaCtrl {
  * Class Modal Asignacion Usuario/Turno
  */
 
-export class ModalAsignacionUsuarioTurnoCtrl {
+class ModalAsignacionUsuarioTurnoCtrl {
     static $inject = ['mainService', 'commonService', '$uibModalInstance', 'formulario', 'params', 'decodeToken'];
 
     constructor(_mS, _comonSvc, $uibModalInstance, _form, _params, decodeToken) {
@@ -264,17 +264,12 @@ export class ModalAsignacionUsuarioTurnoCtrl {
 
 
 
-
-
-
-
-
 /**
  * Class Modal Movimiento Caja
  */
-export class MovimientoCajaCtrl {
-    static $inject = ['$rootScope', '$filter', 'mainService', 'commonService', 'decodeToken', 'modalService', '$uibModalInstance', 'toastService', 'params']
-    constructor($rootScope, $filter, _mS, _commonSvc, decodeToken, _modalSvc, $uibModalInstance, _tS, _params) {
+class MovimientoCajaCtrl {
+    static $inject = ['$rootScope', '$filter', 'mainService', 'commonService', 'decodeToken', 'modalService', '$uibModalInstance', 'toastService', 'params', 'formulario']
+    constructor($rootScope, $filter, _mS, _commonSvc, decodeToken, _modalSvc, $uibModalInstance, _tS, _params, fS) {
 
         const self = this
         this.$rootScope = $rootScope;
@@ -286,53 +281,29 @@ export class MovimientoCajaCtrl {
         this.$uibModalInstance = $uibModalInstance;
         this._tS = _tS;
         this._params = _params;
+        this.fS = fS;
         this.totalArqueo = 0;
 
         //Filtro 
-        this.dataSearch = {};
+        this.dataSearch = {
+            dateStart: new Date(),
+            dateEnd: new Date()
+        };
         this.dataSearch.idCaja = this._params.idCaja;
         this.dataSearch.checkBoxDefault = true;
 
-
-        let thisMoment = moment();
-        let endOfMonth = moment(thisMoment).endOf('month');
-        let startOfMonth = moment(thisMoment).startOf('month');
-        //https://www.daterangepicker.com/
-        this.dateRangePicker = {
-            date: {
-                startDate: startOfMonth,
-                endDate: endOfMonth
+        this.estadoMovimientos = [{
+                statusMovement: 0,
+                descripcion: "CERRADO"
             },
-            picker: null,
-            options: {
-                pickerClasses: 'custom-display', //angular-daterangepicker extra
-                buttonClasses: 'btn',
-                applyButtonClasses: 'btn-success',
-                cancelButtonClasses: 'btn-danger',
-                locale: {
-                    applyLabel: "Aplicar",
-                    cancelLabel: 'Cancelar',
-                    customRangeLabel: 'Rango Personalizado',
-                    separator: ' - ',
-                    format: "YYYY-MM-DD", //will give you 2017-01-06
-                    //format: "D-MMM-YY", //will give you 6-Jan-17
-                    //format: "D-MMMM-YY", //will give you 6-January-17
-                },
-                ranges: {
-                    'Ultimos 15 Días': [moment().subtract(14, 'days'), moment()],
-                    'Ultimos 30 Días': [moment().subtract(29, 'days'), moment()]
-                },
-                eventHandlers: {
-                    'apply.daterangepicker': function (event, picker) {
+            {
+                statusMovement: 1,
+                descripcion: "ABIERTO"
+            },
+        ]
 
-                        self.getMovimientosCaja()
-                        console.log('applied')
-                    }
-                }
-            }
-        }
 
-        this.dataPermissions = {}
+        this.dataPermissions = {};
     }
 
     $onInit() {
@@ -364,7 +335,14 @@ export class MovimientoCajaCtrl {
             // this.dataSearch.dateStart = this.dateRangePicker.date.startDate
             // this.dataSearch.dateEnd = this.dateRangePicker.date.endDate
             this.movimientosCaja = [];
-            this._mS.getData('get', '/ControlCaja/Get?json=' + JSON.stringify(this.dataSearch)).then(response => {
+            const dataSearch = {
+                idCaja: this.dataSearch.idCaja,
+                dateStart: this.fS.formatDateMoment(this.dataSearch.dateStart) ,
+                dateEnd: this.fS.formatDateMoment(this.dataSearch.dateEnd),
+                checkBoxStatus: this.dataSearch.statusMovement?true: false,
+                checkBoxDate: true
+            }
+            this._mS.getData('get', '/ControlCaja/Get?json=' + JSON.stringify(dataSearch)).then(response => {
                 if (response.code === "0") {
                     hideLoader();
                     this._tS.toastr('warning', response.message, response.titleSms);
@@ -374,12 +352,22 @@ export class MovimientoCajaCtrl {
                     this.cloneMovimientosCaja = JSON.parse(JSON.stringify(this.movimientosCaja));
                     hideLoader();
                 }
+            }).catch(error=>{
+                this.movimientosCaja = [];
+                hideLoader();
+                console.error(error)                
             })
         } catch (error) {
             this.movimientosCaja = [];
             hideLoader();
             console.error(error)
         }
+    }
+
+    resultRangeFilter(item) {
+        this.dataSearch.dateStart = item.startDate,
+        this.dataSearch.dateEnd = item.endDate
+        this.getMovimientosCaja();
     }
 
     theURLTableMovimientoCaja() {
@@ -403,21 +391,21 @@ export class MovimientoCajaCtrl {
     }
 
 
-    openModalFiltro() {
-        const modalRef = this._modalSvc.openModalCustom({
-            controller: ModalFiltroMovimientoCajaCtrl,
-            template: 'Caja/_ModalFiltroMovimientoCaja.cshtml',
-            size: 'md',
-            params: this.dataSearch
-        })
+    // openModalFiltro() {
+    //     const modalRef = this._modalSvc.openModalCustom({
+    //         controller: ModalFiltroMovimientoCajaCtrl,
+    //         template: 'Caja/_ModalFiltroMovimientoCaja.cshtml',
+    //         size: 'md',
+    //         params: this.dataSearch
+    //     })
 
-        modalRef.result.then(response => {
-            this.dataSearch = response;
-            if (typeof response === 'object' && response.isSearch) {
-                this.getMovimientosCaja();
-            }
-        })
-    }
+    //     modalRef.result.then(response => {
+    //         this.dataSearch = response;
+    //         if (typeof response === 'object' && response.isSearch) {
+    //             this.getMovimientosCaja();
+    //         }
+    //     })
+    // }
 
 
     async openModalCierreCaja(item) {
@@ -481,6 +469,7 @@ export class MovimientoCajaCtrl {
             })
         }
 
+        
 
         item.idCaja = this._params.idCaja;
 
@@ -576,14 +565,40 @@ export class MovimientoCajaCtrl {
         } else {
             this.generateReport(idControlCaja)
         }
-
-
     }
 
-    generateReport(idControlCaja) {
+
+
+
+    async generateReport(idControlCaja) {
+
+        const {  value: tipo } = await Swal.fire({
+            title: 'Seleccione el formato de reporte',
+            input: 'select',
+            inputOptions: {
+              1: "...",
+              2:".kjg"
+            },
+            inputPlaceholder: 'Select a fruit',
+            showCancelButton: true,
+            inputValidator: (value) => {
+              return new Promise((resolve) => {
+                if (value) {
+                  resolve()
+                } else {
+                  resolve('Seleccione formato de reporte :)')
+                }
+              })
+            }
+        })
+
+        if(!tipo) return
+
+
         let dataParms = {
             id: idControlCaja,
             idUsuarioRol: Number(this.decodeToken.idUsuarioRol),
+            tipo
         }
         const parameters = {
             hasService: true, //reporte sin idRol, si es true el idRol(idUsuariol) enviamos en un json
@@ -631,7 +646,7 @@ export class MovimientoCajaCtrl {
 
 
 //-------------------------Filtro de Movimiento Caja-----------------------
-export class ModalFiltroMovimientoCajaCtrl {
+ class ModalFiltroMovimientoCajaCtrl {
     static $inject = ["$uibModalInstance", "commonService", "toastService", "formulario", "params"];
     constructor($uibModalInstance, _commonSvc, _tS, _formS, _params) {
         this.$uibModalInstance = $uibModalInstance;
@@ -723,7 +738,7 @@ export class ModalFiltroMovimientoCajaCtrl {
  * Modal Cierre Caja
  */
 
-export class ModalCierreCajaCtrl {
+ class ModalCierreCajaCtrl {
     static $inject = ["$uibModalInstance", "mainService", "params", 'decodeToken']
     constructor($uibModalInstance, _mS, _params, decodeToken) {
         this.$uibModalInstance = $uibModalInstance;
@@ -875,4 +890,15 @@ export class ModalCierreCajaCtrl {
         this.$uibModalInstance.close();
     }
 
+}
+
+
+export {
+    ModalCajaCtrl,
+    ModalAperturaCtrl,
+    ModalAsignacionUsuarioTurnoCtrl,
+
+    MovimientoCajaCtrl,
+    ModalFiltroMovimientoCajaCtrl,
+    ModalCierreCajaCtrl
 }
