@@ -2201,7 +2201,7 @@
                     }
 
 
-                    if (codDoc = '01') {
+                    if (codDoc === '01') {
                         parameters.hasService = true;
                         parameters.dataParams = JSON.stringify(dataParms);
                         _commonSvc.getReport({
