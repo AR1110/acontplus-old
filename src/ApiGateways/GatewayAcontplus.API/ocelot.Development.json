@@ -483,7 +483,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44354
+          "Port": 44320
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte/Post",
@@ -735,7 +735,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7079
+          "Port": 44358
         }
       ],
       "DownstreamPathTemplate": "/api/Cliente{everything}",

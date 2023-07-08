@@ -25,27 +25,27 @@
     </div>
 
     <div class="card">
-        <div class="card-body">  
+        <div class="card-body">
             <div class="row">
-                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                     <div class="input-group input-group-sm mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Estab.:</span>
                         </div>
-                         <select name="" id="" class="form-control border-select" ng-model="dataSearch.codEstab">
+                        <select name="" id="" class="form-control border-select" ng-model="dataSearch.codEstab">
                             <option ng-value="item.codEstab" ng-repeat="item in establecimientos">{{item.nombreComercial}}</option>
                         </select>
-                    </div> 
+                    </div>
                 </div>
                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                     <div class="input-group input-group-sm mb-3">
                         <div class="input-group-prepend">
-                            <span class="input-group-text" id="inputGroup-sizing-sm">Tipo Doc.</span>
+                            <span class="input-group-text" id="inputGroup-sizing-sm">Tipo Doc. </span>
                         </div>
-                         <select name="" id="" class="form-control border-select" ng-model='dataSearch.tipoDoc'>
-                            <option ng-value="item.codigo" ng-repeat="item in tiposDoc">{{item.descripcion}}</option>
+                        <select name="" id="" class="form-control border-select" ng-model='dataSearch.codDoc' ng-change="onChangeTipoDoc()">
+                            <option ng-value="item.codDoc" ng-repeat="item in tiposDoc">{{item.descripcion}}</option>
                         </select>
-                    </div> 
+                    </div>
                 </div>
                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                     <div class="input-group input-group-sm mb-3">
@@ -53,45 +53,46 @@
                             <span class="input-group-text" id="inputGroup-sizing-sm">Rango de Fecha.</span>
                         </div>
                         <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
-                            end-date="dataSearch.fechaFin"
-                            result-range-date="resultRangeFilter(result)"></date-range-filter>    
-                    </div> 
+                                           end-date="dataSearch.fechaFin"
+                                           result-range-date="resultRangeFilter(result)"></date-range-filter>
+                    </div>
                 </div>
             </div>
+      
             <div class="row">
-                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12" ng-if="showCliente">
                     <div class="input-group input-group-sm mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Cliente.:</span>
                         </div>
                         <input type="text" id="customerInputSearch" class="form-control border-select"
-                            ng-model="cliente.nombreCliente" cliente-search-drtv on-select="onSelectCliente(result)"
-                            on-keyup-cliente="onKeyupCliente()" placeholder="Ingrese C.I o Nombre Comercial"
-                            onclick="select();">
+                               ng-model="searchCliente.nombreCliente" cliente-search-drtv on-select="onSelectCliente(result)"
+                               on-keyup-cliente="onKeyupCliente()" placeholder="Ingrese C.I o Nombre Comercial"
+                               onclick="select();">
 
                         <script type="text/ng-template" id="autocompleteClienteTemplate.html">
                             <div class="autocomplete-suggestion-uib-typeahead">
                                 <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
                             </div>
                         </script>
-                    </div> 
+                    </div>
                 </div>
-                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12" ng-if="showEmpleado">
                     <div class="input-group input-group-sm mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="inputGroup-sizing-sm">Empleado.:</span>
                         </div>
                         <input type="text" id="customerInputSearch" class="form-control border-select"
-                            ng-model="cliente.nombreCliente" cliente-search-drtv on-select="onSelectCliente(result)"
-                            on-keyup-cliente="onKeyupCliente()" placeholder="Ingrese C.I o Nombre Comercial"
-                            onclick="select();">
+                               ng-model="cliente.nombreCliente" empleado-search-drtv on-select="onSelectCliente(result)"
+                               on-keyup="onKeyupCliente()" placeholder="Ingrese C.I o Nombre Comercial"
+                               onclick="select();">
 
-                        <script type="text/ng-template" id="autocompleteClienteTemplate.html">
+                        <script type="text/ng-template" id="autocompleteEmpleadoTemplate.html">
                             <div class="autocomplete-suggestion-uib-typeahead">
-                                <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
+                                <span class="item-title"><b> {{match.model.nroIdentificacion}}</b> - {{match.model.nombreCompleto}}</span>
                             </div>
                         </script>
-                    </div> 
+                    </div>
                 </div>
                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
                     <div class="input-group input-group-sm mb-3">
@@ -99,19 +100,25 @@
                             <span class="input-group-text" id="inputGroup-sizing-sm">Usuario.:</span>
                         </div>
                         <input type="text" id="customerInputSearch" class="form-control border-select"
-                            ng-model="cliente.nombreCliente" cliente-search-drtv on-select="onSelectCliente(result)"
-                            on-keyup-cliente="onKeyupCliente()" placeholder="Ingrese C.I o Nombre Comercial"
-                            onclick="select();">
+                               ng-model="searchUser.nombreCompleto" user-search-drtv on-select="onSelectUser(result)"
+                               on-keyup="onKeyupUser()" placeholder="..."
+                               onclick="select();">
 
-                        <script type="text/ng-template" id="autocompleteClienteTemplate.html">
+                        <script type="text/ng-template" id="autocompleteUserTemplate.html">
                             <div class="autocomplete-suggestion-uib-typeahead">
-                                <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
+                                <span class="item-title"><b> {{match.model.nroIdentificacion}}</b> - {{match.model.nombreCompleto}}</span>
                             </div>
                         </script>
-                    </div> 
+                    </div>
                 </div>
-               
             </div>
+            <span>
+                <label id="formatos">Formato:</label>
+            </span>
+            <md-radio-group ng-model="dataSearch.format" aria-labelledby="formatos">
+                <md-radio-button value="pdf" class="md-primary">PDF</md-radio-button>
+                <md-radio-button value="excel" class="md-primary">EXCEL</md-radio-button>              
+            </md-radio-group>
         </div>
         <md-divider></md-divider>
         <div class="card-body">
