@@ -6,19 +6,21 @@
     import Swal from "sweetalert2";
     import toast from "../../core/utils/toast";
     import FileSaver from "file-saver";
-	import Search from "../../core/components/Search.svelte";
+    import Search from "../../core/components/Search.svelte";
     import Add from "./components/Add.svelte";
-
+    import { showLoader, hideLoader } from "../../core/utils/loading-spinner";
     let newRecord = false;
     function openNew(open) {
         newRecord = open;
     }
     let medicalHistories = [];
     onMount(async () => {
+        showLoader();
         await client.get("/gateway/MedicalHistories/").then((response) => {
-            medicalHistories = response;
-            //console.log("behaviorsStatuses => ", behaviorsStatuses);
+            medicalHistories = JSON.parse(response.payload);
+            console.log("histories => ", medicalHistories);
         });
+        hideLoader();
     });
     const getReport = async (id) => {
         //Add authentication headers as params
@@ -32,6 +34,7 @@
 
         //Open window
         //window.open(url);
+        showLoader();
         await clientFile(`/gateway/MedicalHistories/Report/` + id)
             .then((response) => {
                 var ieEDGE = navigator.userAgent.match(/Edge/g);
@@ -48,6 +51,7 @@
                     var fileURL = URL.createObjectURL(blob);
                     window.open(fileURL);
                 }
+                hideLoader();
                 return;
                 let fileBlob = new Blob([response.data], {
                     type: response.headers["content-type"],
@@ -82,6 +86,7 @@
                 FileSaver.saveAs(serverData, fileName);
             })
             .catch((error) => {
+                hideLoader();
                 console.log(error);
             });
     };
@@ -118,7 +123,7 @@
     };
 
     const formatDate = (inputDate) => {
-        let date = new Date(inputDate)
+        let date = new Date(inputDate);
         const day = String(date.getDate()).padStart(2, "0");
         const month = String(date.getMonth() + 1).padStart(2, "0");
         const year = String(date.getFullYear());
@@ -126,16 +131,15 @@
         return `${day}/${month}/${year}`;
     };
 
-    let searchTerm = ""
+    let searchTerm = "";
     let filteredRecords = [];
 
     const searchRecords = () => {
-		return (filteredRecords = medicalHistories.filter((item) => {
-			let petName = item.pet.name.toLowerCase();
-			return petName.includes(searchTerm.toLowerCase());
-		}));
-	};
-
+        return (filteredRecords = medicalHistories.filter((item) => {
+            let petName = item.pet.name.toLowerCase();
+            return petName.includes(searchTerm.toLowerCase());
+        }));
+    };
 </script>
 
 <div class="row page-titles">
@@ -159,13 +163,15 @@
     <div class="card-body">
         {#if newRecord}
             <Add newRecord />
+        {:else}
+            <Search
+                bind:searchTerm
+                on:input={searchRecords}
+                placeholder="Buscar Mascota"
+            />
         {/if}
         <hr />
-        <Search
-			bind:searchTerm
-			on:input={searchRecords}
-			placeholder="Buscar Mascota"
-		/>
+
         <div class="table-responsive">
             <table class="table">
                 <caption>Registros</caption>
@@ -174,14 +180,16 @@
                         <th>Cliente</th>
                         <th>Mascota</th>
                         <th>Fecha</th>
+                        <th>Obs</th>
                     </tr>
                 </thead>
                 <tbody>
                     {#each medicalHistories as item}
                         <tr>
-                            <td>{item.pet.customerId}</td>
-                            <td>{item.pet.name}</td>
+                            <td>{item.customer}</td>
+                            <td>{item.petName}</td>
                             <td> {formatDate(item.date)} </td>
+                            <td> {item.observations} </td>
                             <td>
                                 <button
                                     class="btn btn-outline-danger btn-sm"
@@ -189,12 +197,12 @@
                                 >
                                     <i class="ti-trash" />
                                 </button>
-                                <button
+                                <!-- <button
                                     class="btn btn-outline-warning btn-sm"
                                     on:click={editHistory(item)}
                                 >
                                     <i class="ti-pencil" />
-                                </button>
+                                </button> -->
                                 <button
                                     class="btn btn-outline-danger btn-sm"
                                     on:click={getReport(item.id)}

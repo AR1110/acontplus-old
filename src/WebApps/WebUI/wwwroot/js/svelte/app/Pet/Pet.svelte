@@ -10,20 +10,36 @@
 	import Swal from "sweetalert2";
 	import Search from "../../core/components/Search.svelte";
 	import AdvancedSearch from "../../core/components/AdvancedSearch.svelte";
+
+	import { showLoader, hideLoader } from "../../core/utils/loading-spinner";
+
 	let quotes = [];
 	let error = null;
-	// onMount(async () => {
-	// 	try {
-	// 		console.log("inside axios request")
-	// 		const res = await axios.get(
-	// 			`https://localhost:7060gateway/Genderes/`
-	// 		)
-	// 		quotes = res.data
-	// 		console.log(quotes)
-	// 	} catch (e) {
-	// 		error = e
-	// 	}
-	// })
+	onMount(async () => {
+		showLoader();
+		try {
+			await client.get("/gateway/Pets/").then((response) => {
+				pets = response;
+				console.log("pets =>", pets);
+			});
+			await client.get("/gateway/Genderes/").then((response) => {
+				genderes = response;
+				console.log("genderes =>", genderes);
+			});
+			await client.get("/gateway/PetTypes/").then((response) => {
+				petTypes = response;
+				console.log("petTypes =>", petTypes);
+			});
+			await client.get("/gateway/Breeds/").then((response) => {
+				breeds = response;
+				console.log("breeds => ", breeds);
+			});
+		} catch (error) {
+			console.log(error)
+		} finally {
+			hideLoader();
+		}
+	});
 	let genderes = [],
 		breeds = [],
 		petTypes = [],
@@ -34,36 +50,6 @@
 	// console.log(objToken.token)
 	// var decodedJwt = jwt_decode(objToken.token)
 	// console.log(decodedJwt)
-	const initialLoad = async () => {
-		// console.log("inside axios request")
-		// const res = await axios.get(
-		// 	`${decodedJwt.urlGateway}/gateway/Genderes/`,
-		// 	{
-		// 		headers: {},
-		// 		params: {},
-		// 	}
-		// )
-		// genderes = res.data
-		// console.log(res.data)
-		await client.get("/gateway/Pets/").then((response) => {
-			pets = response;
-			console.log("pets =>", pets);
-		});
-		await client.get("/gateway/Genderes/").then((response) => {
-			genderes = response;
-			console.log("genderes =>", genderes);
-		});
-		await client.get("/gateway/PetTypes/").then((response) => {
-			petTypes = response;
-			console.log("petTypes =>", petTypes);
-		});
-		await client.get("/gateway/Breeds/").then((response) => {
-			breeds = response;
-			console.log("breeds => ", breeds);
-		});
-	};
-
-	initialLoad();
 
 	let pet = {
 		id: "",

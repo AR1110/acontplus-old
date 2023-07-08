@@ -8,7 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-
 builder.Configuration.SetBasePath(BinDirectory.GetBinRunDir());
 ConfigHelper.AddJsonFiles(builder.Configuration);
 

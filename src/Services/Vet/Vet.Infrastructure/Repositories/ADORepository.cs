@@ -6,14 +6,14 @@ using Vet.Infrastructure.Data;
 
 namespace Vet.Infrastructure.Repositories
 {
-    public class GenericRepository : IGenericRepository
+    public class ADORepository : IADORepository
     {
         private readonly VetContext _context;
-        public GenericRepository(VetContext context)
+        public ADORepository(VetContext context)
         {
             _context = context;
         }
-        public async Task<DataTable> GetDataTable(string spName, Dictionary<string, object> parameters)
+        public async Task<DataTable> GetDataTableAsync(string spName, Dictionary<string, object> parameters)
         {
             DataTable dt = null;
             using (var command = _context.Database.GetDbConnection().CreateCommand())
@@ -27,7 +27,7 @@ namespace Vet.Infrastructure.Repositories
                         SqlParameter sqlParam = new SqlParameter();
                         sqlParam.ParameterName = parameter.Key;
                         sqlParam.SqlDbType = GetDbType(parameter.Value);
-                        sqlParam.Direction = ParameterDirection.Output;
+                        sqlParam.Value = parameter.Value ?? (object)DBNull.Value;
                         command.Parameters.Add(sqlParam);
                     }
                 }
@@ -42,7 +42,7 @@ namespace Vet.Infrastructure.Repositories
             }
             return dt;
         }
-        public async Task<DataSet> GetDataSet(string spName, Dictionary<string, object> parameters)
+        public async Task<DataSet> GetDataSetAsync(string spName, Dictionary<string, object> parameters)
         {
             DataSet ds = null;
             using (var command = _context.Database.GetDbConnection().CreateCommand())

@@ -1548,7 +1548,7 @@
 
                 let { isConfirmed } = await Swal.fire({
                     //title: 'Are you sure?',
-                    text: "Está seguro de guardar el Documento de Aprobación Documnento!",
+                    text: "Está seguro de guardar el Documento de Aprobación Documento!",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',

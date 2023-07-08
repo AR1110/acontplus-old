@@ -1,7 +1,10 @@
 using Lib.Common;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Serialization;
 using Services.Common;
 using Services.Common.Middleware;
+using System.Text.Json;
 using Vet.API.Extensions;
 using Vet.Infrastructure.Data;
 
@@ -9,8 +12,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers().AddNewtonsoftJson(x =>
- x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+builder.Services.AddControllers()
+                .AddNewtonsoftJson(x =>
+                {
+                    x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                    x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
+                }
+                 )
+                .AddJsonOptions(options =>
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
 
 builder.Configuration.SetBasePath(BinDirectory.GetBinRunDir());
 ConfigHelper.AddJsonFiles(builder.Configuration);

@@ -1,4 +1,5 @@
-﻿using Lib.Common.Api;
+﻿using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services.Common;
@@ -24,30 +25,30 @@ namespace Vet.API.Controllers
 
         // GET: api/MedicalHistories
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MedicalHistory>>> GetMedicalHistories()
+        public async Task<ActionResult<APIResponse>> GetMedicalHistories()
         {
             try
             {
                 int companyId = Convert.ToInt32(User.GetCompanyId());
                 var apiRequest = new ApiRequest();
 
-                var dictionary = new Dictionary<string, object>
-            {
-                { "companyId", companyId }
-            };
-                apiRequest.Data = dictionary;
-
-                var result = _medicalHistory.Get(apiRequest);
-                if (!_context.MedicalHistories.Any(x =>
-                                                x.Pet.CompanyId == companyId
-                                                && x.Enabled
-                                                ))
+                var parameters = new Dictionary<string, object>
                 {
-                    return NoContent();
-                }
-                return await _context.MedicalHistories.Include(p => p.Pet)
-                    .Where(x => x.Pet.CompanyId == companyId && x.Enabled)
-                    .ToListAsync();
+                    { "companyId", companyId }
+                };
+                //apiRequest.Data = new Dictionary<string, object> { { "json", Converters.SerializeDictionary(dictionary)} };
+
+                return await _medicalHistory.GetAsync(parameters);
+                //if (!_context.MedicalHistories.Any(x =>
+                //                                x.Pet.CompanyId == companyId
+                //                                && x.Enabled
+                //                                ))
+                //{
+                //    return NoContent();
+                //}
+                //return await _context.MedicalHistories.Include(p => p.Pet)
+                //    .Where(x => x.Pet.CompanyId == companyId && x.Enabled)
+                //    .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -71,7 +72,7 @@ namespace Vet.API.Controllers
         }
 
         [HttpPost("Report/{id}")]
-        public IActionResult GetReport(int id)
+        public async Task<IActionResult> GetReport(int id)
         {
             //var medicalHistory = await _context.MedicalHistories.FindAsync(id);
 
@@ -80,7 +81,7 @@ namespace Vet.API.Controllers
             //    return NotFound();
             //}
 
-            var data = _medicalHistoryReport.Get(id);
+            var data = await _medicalHistoryReport.GetAsync(id);
 
             return File(data, "application/pdf", "test.pdf");
         }

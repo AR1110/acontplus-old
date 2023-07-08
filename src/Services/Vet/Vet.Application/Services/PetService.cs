@@ -1,3 +1,5 @@
+using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.EntityFrameworkCore;
 using Vet.Core.Entities;
 using Vet.Core.Interfaces;
@@ -5,12 +7,14 @@ using Vet.Infrastructure.Data;
 
 namespace Vet.Application.Services
 {
-    public class PetService : IPet
+    public class PetService : IPetService
     {
         private readonly VetContext _context;
-        public PetService(VetContext context)
+        private readonly IADORepository _repository;
+        public PetService(VetContext context, IADORepository repository)
         {
             _context = context;
+            _repository = repository;
         }
         public async Task<List<Pet>> GetAsync()
         {
@@ -22,7 +26,7 @@ namespace Vet.Application.Services
             var response = await _context.Pets.SingleOrDefaultAsync(x => x.Id == id);
             return response;
         }
-        public async Task<Pet> CreateAsync(Pet recipe)
+        public async Task<Pet> AddAsync(Pet recipe)
         {
             await _context.Pets.AddAsync(recipe);
             _context.SaveChanges();
@@ -38,6 +42,21 @@ namespace Vet.Application.Services
         {
             _context.Pets.Remove(recipe);
             _context.SaveChanges();
+        }
+
+        public async Task<APIResponse> SearchAsync(Dictionary<string, object> parameters)
+        {
+            var _response = new APIResponse();
+            var dt = await _repository.GetDataTableAsync("Pet.Pet_Get", parameters);
+            if (DataValidation.DataTableIsNull(dt))
+            {
+                _response.Create(code: "0", "La transacción no devolvio respuesta");
+            }
+            else
+            {
+                _response.Create(code: "1", payload: Converters.DataTableToJSON(dt));
+            }
+            return _response;
         }
     }
 }

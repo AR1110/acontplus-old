@@ -39,6 +39,28 @@ File: scss
     display: inline-block;
     color: rgba(255, 255, 255, 0.8); }
 
+
+.skin-custom {
+  /*Theme Colors*/ }
+  .skin-custom .topbar {
+    background: #D61672; }
+    .skin-custom .topbar .top-navbar .navbar-header .navbar-brand .dark-logo {
+      display: none; }
+    .skin-custom .topbar .top-navbar .navbar-header .navbar-brand .light-logo {
+      display: inline-block;
+      color: rgba(255, 255, 255, 0.8); }
+  .skin-custom .sidebar-nav ul li a.active, .skin-custom .sidebar-nav ul li a:hover {
+    color: #D61672; }
+    .skin-custom .sidebar-nav ul li a.active i, .skin-custom .sidebar-nav ul li a:hover i {
+      color: #D61672; }
+  .skin-custom .sidebar-nav > ul > li.active > a {
+    color: #D61672;
+    border-left: 3px solid #D61672; }
+    .skin-custom .sidebar-nav > ul > li.active > a i {
+      color: #D61672; }
+  .skin-custom .page-titles .breadcrumb .breadcrumb-item.active {
+    color: #D61672; }
+    
 .skin-green {
   /*Theme Colors*/ }
   .skin-green .topbar {
@@ -20587,7 +20609,7 @@ Table-Data Table
   text-align: center;
   text-decoration: none;
   cursor: pointer;
-  *cursor: hand;
+  cursor: hand;
   color: #212529;
   border: 1px solid #ddd; }
 

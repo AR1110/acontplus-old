@@ -281,9 +281,15 @@
             let [subTotalExentoIva, subTotalNetoExentoIva]     = obj.getTotalIva(CODIGO_PORCENTAJE_IVA_EXENTO);
             let [subTotalNoObjetoIva, subTotalNetoNoObjetoIva] = obj.getTotalIva(CODIGO_PORCENTAJE_IVA_NO_OBJETO);
             
-            let iva = subTotalNetoIva * dataTarifaImpuesto.tarifa / 100;                
+            // let iva = subTotalNetoIva * dataTarifaImpuesto.tarifa / 100;                
           
-            let total = iva + obj.getTotalDetalle();
+            // let total = iva + obj.getTotalDetalle();
+
+            //--------------------------
+            let iva = subTotalNetoIva * dataTarifaImpuesto.tarifa / 100;  
+       
+            let total = obj.getSubTotalSinImpuesto() + iva  +  obj.getTotalIce();
+            let importeTotal = total - obj.getTotalDescuento();
 
             return {
                 subTotalSinImpuestos: fS.roundNumber(obj.getSubTotalSinImpuesto(), decimal.nroTotalSubTotal),
@@ -309,7 +315,7 @@
                 irbpnr : 0,
                 propina : 0,
                 iva:  fS.roundNumber(iva, decimal.nroIva),
-                total: fS.roundNumber(total, decimal.importeTotal)
+                total: fS.roundNumber(importeTotal, decimal.importeTotal)
             }       
 
         }

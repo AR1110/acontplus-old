@@ -197,7 +197,8 @@
         service.findByEnterCode = function(objSearch) {
             const query = {
                 bySearch: objSearch.textSearch,
-                code: objSearch.isSearchByCode 
+                code: objSearch.isSearchByCode,
+                tipo: 1 
             }
             return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
                 if(response.code==="0"){
@@ -205,7 +206,7 @@
                 }
 
                 if(response.code==="1"){
-                    const dataRepository = JSON.parse(response.payload)[0];
+                    const dataRepository = JSON.parse(response.payload)[0][0]
                     return dataRepository;
                 }
             })

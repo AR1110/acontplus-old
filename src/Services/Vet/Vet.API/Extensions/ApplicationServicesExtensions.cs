@@ -1,9 +1,7 @@
 ﻿using Lib.Common;
 using Microsoft.EntityFrameworkCore;
-using System.Configuration;
 using Vet.Application.Reports;
 using Vet.Application.Services;
-using Vet.Core.Entities;
 using Vet.Core.Interfaces;
 using Vet.Infrastructure.Data;
 using Vet.Infrastructure.Repositories;
@@ -24,7 +22,8 @@ namespace Vet.API.Extensions
             //});
             services.AddScoped<IMedicalHistoryReport, MedicalHistoryReport>();
             services.AddScoped<IMedicalHistory, MedicalHistoryService>();
-            services.AddScoped<IGenericRepository, GenericRepository>();
+            services.AddScoped<IPetService, PetService>();
+            services.AddScoped<IADORepository, ADORepository>();
             return services;
         }
     }
