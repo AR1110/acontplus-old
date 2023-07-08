@@ -99,7 +99,7 @@ BEGIN
 	INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente       = an.idCliente
 	INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab        = an.codEstab
 	WHERE an.idEntidad = @idEntidad 
-	  --AND CAST(an.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date)
+	  AND CAST(an.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date)
 	
 	INSERT INTO #tableDocument (idUsuario,idSubEntidadFinanciera,idEmpleado,codEstab,clienteEmpleado,serieComprobante,tipoDoc,fechaEmision,valor,observaciones)
 	SELECT mc.idUsuarioRegister
@@ -117,7 +117,7 @@ BEGIN
 	INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab   = mc.codEstab
 	INNER JOIN dbo.TipoDocumento   td WITH (NOLOCK) ON td.idTipoDocumento = mc.idTipoDocumento
 	WHERE mc.idEntidad = @idEntidad
-	  --AND CAST(mc.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date)
+	  AND CAST(mc.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date)
 	
 	SET @params = '@tipoDoc AS VARCHAR(5)
 	              ,@idCliente AS INT 
@@ -127,15 +127,28 @@ BEGIN
 	SET @sql = 'SELECT fechaEmison = FORMAT(tb.fechaEmision, ''dd/MM/yyyy HH:mm'')
 					  ,tb.serieComprobante
 					  ,tb.clienteEmpleado
-					  ,tb.valor
+					  ,ingreso = CASE tb.tipoDoc WHEN ''IC'' THEN tb.valor 
+					                             WHEN ''A''  THEN tb.valor
+									             ELSE 0
+								 END 
+					  ,egreso  = (CASE WHEN tb.tipoDoc = ''EC'' THEN tb.valor ELSE 0 END) * -1
 					  ,entidadFinanciera = sf.descripcion
 					  ,tb.observaciones
 					  ,usuario = us.nombreUsuario
 				FROM #tableDocument                 tb WITH (NOLOCK)
 				INNER JOIN dbo.Usuario              us WITH (NOLOCK) ON us.idUsuario              = tb.idUsuario
 				INNER JOIN dbo.SubEntidadFinanciera sf WITH (NOLOCK) ON sf.idSubEntidadFinanciera = tb.idSubEntidadFinanciera
-				WHERE tb.tipoDoc = @tipoDoc '
+				WHERE tb.idUsuario > 0 '
 	
+	IF @tipoDoc = 'MC'
+		BEGIN
+			SET @sql = @sql + 'AND tb.tipoDoc IN (''EC'',''IC'') '
+		END
+	ELSE 
+		BEGIN
+			SET @sql = @sql + 'AND tb.tipoDoc = ''A'' '
+		END 
+
 	IF @checkBoxCliente = 1
 		BEGIN
 			SET @sql = @sql + 'AND tb.idCliente = @idCliente '
@@ -159,8 +172,9 @@ BEGIN
 		   ,e.nombreComercial	
 		   ,ISNULL(e.telefono, '')telefonoEntidad
 		   ,ISNULL(e.direccion, '')direccionEntidad			
-		   ,tituloReporte = 'Gestión del Control de Caja'
-		   ,CONVERT(NVARCHAR,FORMAT(@fechaInicio, 'dd/MM/yyyy') +' - ' +  FORMAT(@fechaFin, 'dd/MM/yyyy')) as filtroFecha			
+		   ,tituloReporte = CASE WHEN @tipoDoc = 'MC' THEN 'Movimientos de Caja' ELSE 'Anticipo de Clientes' END  
+		   ,CONVERT(NVARCHAR,FORMAT(@fechaInicio, 'dd/MM/yyyy') +' - ' +  FORMAT(@fechaFin, 'dd/MM/yyyy')) as filtroFecha	
+		   ,nameColumn = CASE WHEN @tipoDoc = 'MC' THEN 'Responsable' ELSE 'Cliente' END 
 	 FROM Entidad e WITH (NOLOCK)
 	 WHERE e.idEntidad = @idEntidad 
 

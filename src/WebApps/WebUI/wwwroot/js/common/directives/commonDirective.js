@@ -1080,7 +1080,7 @@
             restrict: 'A',
             scope: {
                 onSelect: '&',
-                onKeyupSearch:'&',
+                onKeyup:'&',
                 ngModel: '='
             },
             link: function (scope, element, attrs) {
@@ -1093,7 +1093,15 @@
                             busqueda: textSearch,
                             idRol: decodeToken.idUsuarioRol
                         }
-                        return commonService.usuarioSearch(json)
+                        return commonService.usuarioSearch(json).then(response=>{
+                           let usuarios = response;
+                           return usuarios.map(item=>({
+                                idUsuario: item.idUsuario,
+                                nombreCompleto: item.nombreCompleto,
+                                nombreUsuario: item.nombreUsuario,
+                                nroIdentificacion: item.nroIdentificacion,
+                            }))
+                        })
                         .catch(error=>{
                             console.log(error);
                         })
@@ -1103,7 +1111,7 @@
                 element.attr('uib-typeahead', 'item as item.nombreCompleto for item in search($viewValue)');
                 element.attr('typeahead-on-select', 'onSelect({result: $item})');
                 element.attr('typeahead-template-url', 'autocompleteUserTemplate.html');
-                element.attr('ng-keyup', 'onKeyupSearch()');
+                element.attr('ng-keyup', 'onKeyup()');
                 element.attr('typeahead-editable', 'false');
 
                  
@@ -1129,6 +1137,73 @@
                 `;
                 
                 console.log('rendered')
+                document.head.appendChild(customStyle);
+                $compile(element)(scope);
+            }
+        };
+    });
+
+
+
+    app.directive('empleadoSearchDrtv', function ($compile,mainService) {
+        return {
+            restrict: 'A',
+            scope: {
+                onSelect: '&',
+                onKeyup:'&',
+                ngModel: '='
+            },
+            link: function (scope, element, attrs) {
+                scope.cliente = {
+                    nombreCliente: scope.ngModel
+                }
+                scope.search = function (textSearch) {
+                    if (textSearch.length > 1) {
+                        return mainService.getData('get', '/Empleado/Search?busqueda=' + textSearch).then(response => {
+                            let empleados = response.data || [];
+                            return empleados.map(item=>(
+                                {
+                                    idEmpleado: item.idEmpleado,
+                                    idTipoIdentificacion: item.idTipoIdentificacion,
+                                    nroIdentificacion: item.nroIdentificacion,
+                                    nombreCompleto: item.nombreCompleto,
+                                    estado: item.estado,
+                                }
+                            )) 
+                        }).catch(error=>{
+                            console.log(error)
+                        })
+                    }
+                }
+    
+                element.attr('uib-typeahead', 'item as item.nombreCompleto for item in search($viewValue)');
+                element.attr('typeahead-on-select', 'onSelect({result: $item})');
+                element.attr('typeahead-template-url', 'autocompleteEmpleadoTemplate.html');
+                element.attr('ng-keyup', 'onKeyup()');
+                element.attr('typeahead-editable', 'false');
+
+                 
+                // element.attr('ng-model', 'ngModel')
+                element.removeAttr('empleado-search-drtv');
+
+                // Add CSS styles dynamically
+                element.attr('style', 'position:relative;');
+                element.attr('popover-append-to-body', 'true');
+                element.attr('popover-placement', 'bottom-left');
+                element.attr('popover-popup-delay', '200');
+                element.attr('popover-trigger', 'mouseenter');
+
+                // Create a style element to apply custom CSS styles
+                var customStyle = document.createElement('style');
+                customStyle.innerHTML = `
+                    [uib-typeahead-popup].dropdown-menu {
+                        z-index: 999999 !important;
+                        max-height: 250px;
+                        overflow-y: auto;
+                        width: auto;
+                    }
+                `;
+                
                 document.head.appendChild(customStyle);
                 $compile(element)(scope);
             }

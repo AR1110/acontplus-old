@@ -21,6 +21,7 @@
 		<None Remove="Reports\ConsumoEmpresaTpv.rdl" />
 		<None Remove="Reports\ConsumoGeneralTpv.rdl" />
 		<None Remove="Reports\ConsumoIndividualTpv.rdl" />
+		<None Remove="Reports\Contabilidad\GestionCaja.rdl" />
 		<None Remove="Reports\FactElect\ComprobanteRetencion.rdl" />
 		<None Remove="Reports\FactElect\Factura.rdl" />
 		<None Remove="Reports\Factura.rdlc" />
@@ -69,6 +70,9 @@
 		</Content>
 		<Content Include="Reports\ConsumoIndividualTpv.rdl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Reports\Contabilidad\GestionCaja.rdl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Reports\FactElect\Factura.rdl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -242,10 +246,6 @@
 	  <ProjectReference Include="..\..\Common\DataAccess\DataAccess.csproj" />
 	  <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
 	  <ProjectReference Include="..\Reports.Application\Reports.Application.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Reports\Contabilidad\" />
 	</ItemGroup>
 
 </Project>
