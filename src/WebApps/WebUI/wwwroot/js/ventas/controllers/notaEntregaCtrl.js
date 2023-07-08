@@ -134,17 +134,7 @@
 
 
         $scope.getNotaEntregas = async () => {
-            try {
-
-                // if ($scope.dataSearch.checkBoxCliente ||
-                //     $scope.dataSearch.checkBoxFecha ||
-                //     $scope.dataSearch.checkBoxUsuario ||
-                //     $scope.dataSearch.checkBoxEstado
-                // ) {
-                //     $scope.dataSearch.checkBoxDefault = false
-                // } else {
-                //     $scope.dataSearch.checkBoxDefault = true;
-                // }
+            try { 
                 let dataSearch = {
                     codEstab: $scope.dataSearch.codEstab,
                     pageIndex: $scope.dataSearch.pageIndex,
@@ -171,10 +161,15 @@
 
                 notaEntregaSvc.getAll(dataSearch).then(response => {
                     hideLoader();
-                    $scope.notaEntregas = response;
+                    let {notaEntregas, dataTotals} = response;
+                    $scope.notaEntregas = notaEntregas;
                     $scope.cloneNotaEntregas = JSON.parse(JSON.stringify($scope.notaEntregas));
-                    $scope.dataSearch.totalRecords = $scope.notaEntregas.length > 0 && $scope.notaEntregas[0].totalRecords;
-                    $scope.getTotales();
+
+                    //Totals 
+                    $scope.dataSearch.totalRecords = dataTotals.totalRecords;
+                    $scope.total = _fS.roundNumber(dataTotals.total, 5);
+                    $scope.totalAbono = _fS.roundNumber(dataTotals.totalAbono, 5);
+                    $scope.totalSaldo = _fS.roundNumber(dataTotals.totalSaldo, 5);
                     
                 }).catch(error => {
                     hideLoader();                    

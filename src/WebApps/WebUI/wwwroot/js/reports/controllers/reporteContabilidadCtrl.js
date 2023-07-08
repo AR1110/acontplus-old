@@ -1,0 +1,93 @@
+(function(){
+
+    'use strict';
+
+    app.controller('reporteContabilidadCtrl', reporteContabilidadCtrl);
+
+    reporteContabilidadCtrl.$inject = ['$scope', 'commonService', 'toastService', 'formulario']
+
+    function reporteContabilidadCtrl($scope, commonSvc, tS, fS){
+
+
+        $scope.tiposDoc = [
+            {codDoc: 'MC', descripcion: 'Movimiento Caja'},
+            {codDoc: 'A', descripcion: 'Anticipo'},
+        ]
+
+
+        $scope.dataSearch = {
+            tipoDoc : 'MC',
+            fechaInicio : new Date(),
+            fechaFin : new Date()
+        }
+
+
+        $scope.onload = function(){
+            try {
+                commonSvc.getEstabAsign().then(response=>{
+                    $scope.establecimientos = response;
+                    $scope.dataSearch.codEstab = $scope.establecimientos.length>0 && $scope.establecimientos[0].codEstab;
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        $scope.onload();
+
+
+
+
+
+        $scope.resultRangeFilter = function (item) {
+            $scope.dataSearch.fechaInicio = item.startDate,
+            $scope.dataSearch.fechaFin = item.endDate 
+        }
+
+
+        $scope.getReport = function(){
+            try {
+
+                if(!$scope.dataSearch.codEstab){
+                    tS.toatsr('warning', 'Establecimiento es requerido!')
+                    return
+                }
+                
+
+                const dataParams = {
+                    codEstab: $scope.dataSearch.codEstab,
+                    tipoDoc: $scope.dataSearch.tipoDoc,
+                    checkBoxCliente: $scope.dataSearch.idCliente > 0 ,
+                    idCliente: $scope.dataSearch.idCliente,
+                    checkBoxEmpleado: $scope.dataSearch.idEmpleado > 0,
+                    idEmpleado: $scope.dataSearch.idEmpleado,
+                    checkBoxUsuario: $scope.dataSearch.idUsuario > 0,
+                    idUsuario: $scope.dataSearch.idUsuario,
+                    fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
+                    fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
+
+                } 
+
+                const parameters = {
+                    reportParams: JSON.stringify({
+                        codigo: 'RTEST',
+                        format: $scope.dataSearch.format,
+                        aditionalParams: []
+                    }),
+                    dataParams: JSON.stringify(dataParams)
+                }
+        
+                commonSvc.getReport({
+                    formatType: $scope.dataSearch.format,
+                    parameters
+                })
+
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+    }
+
+
+})(window.angular)

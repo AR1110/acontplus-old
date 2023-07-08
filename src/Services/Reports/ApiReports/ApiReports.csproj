@@ -243,4 +243,8 @@
 	  <ProjectReference Include="..\Reports.Application\Reports.Application.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Reports\Contabilidad\" />
+	</ItemGroup>
+
 </Project>

@@ -475,7 +475,7 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
                     console.warn(response)
                 }
                 if (response.code === "1") {
-                    this.facturas = JSON.parse(response.payload) || [];
+                    this.facturas = JSON.parse(response.payload)[0] || [];
 
                 }
             })

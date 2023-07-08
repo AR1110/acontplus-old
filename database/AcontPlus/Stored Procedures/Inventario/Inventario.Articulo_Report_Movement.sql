@@ -8,13 +8,13 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-IF OBJECT_ID('Inventario.Articulo_Sales_Diary_Report') IS NOT NULL
+IF OBJECT_ID('Inventario.Articulo_Report_Movement') IS NOT NULL
 BEGIN
-	DROP PROCEDURE Inventario.Articulo_Sales_Diary_Report
+	DROP PROCEDURE Inventario.Articulo_Report_Movement
 END
 GO
 
-CREATE PROCEDURE Inventario.Articulo_Sales_Diary_Report @idRol INT,@json NVARCHAR(MAX)
+CREATE PROCEDURE Inventario.Articulo_Report_Movement @idRol INT,@json NVARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from

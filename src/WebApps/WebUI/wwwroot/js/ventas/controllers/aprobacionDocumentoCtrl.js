@@ -926,8 +926,7 @@
                     tipoFecha: 'FE'
                 }
                
-                notaEntregaSvc.getAll(dataSearch).then(async response => {
-
+                notaEntregaSvc.getAll(dataSearch).then(async ({notaEntregas}) => { 
                     $scope.gridOptionsSelectedDocs.columnDefs = [{
                         name: 'Nro. Doc',
                         field: 'nroDocumento'
@@ -971,7 +970,7 @@
                     },
                     ];
 
-                    $scope.documentos = response;
+                    $scope.documentos = notaEntregas;
                     await $scope.setDataGridOptionsChildren();
 
                 }).catch(error => {

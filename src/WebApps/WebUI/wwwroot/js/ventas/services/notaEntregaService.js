@@ -15,9 +15,11 @@
                     throw response;
                 }
                 if(response.code==="1"){
-                    let notaEntregas = JSON.parse(response.payload) || []
+                    let mainData = JSON.parse(response.payload) ;
+                    let notaEntregaRepos = mainData[0];
+                    let dataTotals = mainData[1][0]; 
                     
-                    return notaEntregas.map(item=>{
+                    let notaEntregas = notaEntregaRepos.map(item=>{
                         return {
                             comprobante: 'Nota de Entrega',
                             idDocumento: item.idDocumento,
@@ -49,10 +51,13 @@
                             codEstado: item.codEstado,
                             tiempoCredito: item.tiempoCredito,
                             esContado: item.tiempoCredito,
-                            nroIdentificacion: item.nroIdentificacion,
-                            totalRecords : item.totalRecords
+                            nroIdentificacion: item.nroIdentificacion
                         }
                     })
+                    return {
+                        notaEntregas,
+                        dataTotals
+                    }
                 }
             })
         }
