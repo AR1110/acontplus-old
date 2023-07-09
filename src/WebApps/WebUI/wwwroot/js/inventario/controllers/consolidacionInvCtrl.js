@@ -484,11 +484,11 @@
                     $scope.puntosEmision = puntosEmision
 
                     if ($scope.puntosEmision.length > 0) {
-                        $scope.data.idPuntoEmision = $scope.puntosEmision.find(x => x.defaultPtoEmi == true).idPuntoEmision
+                        $scope.data.idPuntoEmision = $scope.puntosEmision.find(x => (x.defaultPtoEmi)).idPuntoEmision
                     }
 
                     $scope.bodegas = bodegas
-                    $scope.idBodega = $scope.bodegas.length > 0 ? $scope.bodegas.find(x => x.defaultBodega == true).idBodega : 0
+                    $scope.idBodega = $scope.bodegas.length > 0 ? $scope.bodegas.find(x => (x.defaultBodega)).idBodega : 0
                     $scope.cloneIdBodega = $scope.idBodega
 
                 } else {
@@ -1105,11 +1105,11 @@
             $scope.puntosEmision = puntosEmision
 
             if ($scope.puntosEmision.length > 0) {
-                $scope.data.idPuntoEmision = $scope.puntosEmision.find(x => x.defaultPtoEmi == true).idPuntoEmision
+                $scope.data.idPuntoEmision = $scope.puntosEmision.find(x => (x.defaultPtoEmi)).idPuntoEmision
             }
 
             $scope.bodegas = bodegas
-            $scope.idBodega = $scope.bodegas.length > 0 ? $scope.bodegas.find(x => x.defaultBodega == true).idBodega : 0
+            $scope.idBodega = $scope.bodegas.length > 0 ? $scope.bodegas.find(x => (x.defaultBodega)).idBodega : 0
             $scope.cloneIdBodega = $scope.idBodega;
 
 
@@ -1339,7 +1339,8 @@
                 precioCosto: dc.precioCosto
             })
             if (dc.fraccionado) {
-                let tempArray = JSON.parse(dc.medidasTemp)
+                console.log(dc.medidasTemp)
+                let tempArray =  dc.medidasTemp && JSON.parse(dc.medidasTemp) || []
                 for (const tm of tempArray) {
                     tempMedidas.push(tm)
                 }
@@ -1357,11 +1358,11 @@
             $scope.puntosEmision = puntosEmision
 
             if ($scope.puntosEmision.length > 0) {
-                $scope.data.idPuntoEmision = $scope.puntosEmision.find(x => x.defaultPtoEmi == true).idPuntoEmision
+                $scope.data.idPuntoEmision = $scope.puntosEmision.find(x => (x.defaultPtoEmi)).idPuntoEmision
             }
 
             $scope.bodegas = bodegas
-            $scope.idBodega = $scope.bodegas.length > 0 ? $scope.bodegas.find(x => x.defaultBodega == true).idBodega : 0
+            $scope.idBodega = $scope.bodegas.length > 0 ? $scope.bodegas.find(x => (x.defaultBodega)).idBodega : 0
             $scope.cloneIdBodega = $scope.idBodega
 
         } else {
@@ -1935,11 +1936,11 @@
             $scope.puntosEmision = puntosEmision
 
             if ($scope.puntosEmision.length > 0) {
-                $scope.data.idPuntoEmision = $scope.puntosEmision.find(x => x.defaultPtoEmi == true).idPuntoEmision
+                $scope.data.idPuntoEmision = $scope.puntosEmision.find(x => (x.defaultPtoEmi)).idPuntoEmision
             }
 
             $scope.bodegas = bodegas
-            $scope.idBodega = $scope.bodegas.length > 0 ? $scope.bodegas.find(x => x.defaultBodega == true).idBodega : 0
+            $scope.idBodega = $scope.bodegas.length > 0 ? $scope.bodegas.find(x => (x.defaultBodega)).idBodega : 0
             $scope.cloneIdBodega = $scope.idBodega
 
         } else {

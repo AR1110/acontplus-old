@@ -432,7 +432,7 @@
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value>Sucursal</Value>
+                                <Value>Establecimiento</Value>
                                 <Style>
                                   <FontSize>7pt</FontSize>
                                   <Color>White</Color>
@@ -504,7 +504,7 @@
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value>Nro Autorizacion</Value>
+                                <Value>Clave Acceso</Value>
                                 <Style>
                                   <FontSize>7pt</FontSize>
                                   <Color>White</Color>

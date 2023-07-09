@@ -496,7 +496,7 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
     }
 
     selectedInvoiceChange(item) {
-        this.data.idFactura = item.idFactura;
+        this.data.idFactura = item.idDocumento;
         this.nroFactura = item.nroFactura;
         this.getDataFactura();
     }
