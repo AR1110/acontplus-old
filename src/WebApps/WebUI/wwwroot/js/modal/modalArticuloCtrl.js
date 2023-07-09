@@ -280,7 +280,7 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
       hideLoader();
     }
 
-    this.$uibModalInstance.rendered.then((resolve) => {});
+    this.$uibModalInstance.rendered.then((resolve) => { });
   }
 
   getEstablecimientos() {
@@ -1001,7 +1001,7 @@ class ArticuloCodigoBarra {
       this.tipoRegistro == 1
         ? "/CodigoBarraArticulo/Post"
         : "/CodigoBarraArticulo/Put?idArticuloCodigoBarra=" +
-          this.data.idArticuloCodigoBarra;
+        this.data.idArticuloCodigoBarra;
 
     this._mS.getData("post", URL, this.data).then(
       (response) => {
@@ -1051,7 +1051,7 @@ class ArticuloCodigoBarra {
         .getData(
           "get",
           "/CodigoBarraArticulo/Delete?idArticuloCodigoBarra=" +
-            item.idArticuloCodigoBarra
+          item.idArticuloCodigoBarra
         )
         .then((response) => {
           if (response.id == "0") {
@@ -1505,7 +1505,7 @@ class ModalArticuloImpuestoCtrl {
     this.load();
   }
 
-  $onDestroy() {}
+  $onDestroy() { }
 
   load() {
     this._mS
@@ -1528,7 +1528,7 @@ class ModalArticuloImpuestoCtrl {
       .getData(
         "get",
         "/ImpuestoRenta/GetByIdTipoImpuesto?idTipoImpuestoRenta=" +
-          this.data.idTipoImpuestoRenta
+        this.data.idTipoImpuestoRenta
       )
       .then((response) => {
         if (response.id === "0") {
@@ -1571,7 +1571,7 @@ class ModalArticuloImpuestoCtrl {
       this.data.tipoRegistro == 1
         ? "/ImpuestoArticulo/Post"
         : "/ImpuestoArticulo/Update?idImpuestoArticulo=" +
-          this.data.idImpuestoArticulo;
+        this.data.idImpuestoArticulo;
     this._mS.getData("post", url, this.data).then((response) => {
       if (response.id === "0") {
         toastr.warning(response.message, response.titleSms);
@@ -1668,7 +1668,7 @@ class ModalArticuloImagenCtrl {
       .getData(
         "get",
         "/ArticuloImagen/GetArticuloImagen?idArticulo=" +
-          this._params.idArticulo
+        this._params.idArticulo
       )
       .then((response) => {
         if (response.id === "0") {
@@ -1801,7 +1801,7 @@ class ModalArticuloImagenDetalleCtrl {
         this._mS.getData(
           "get",
           "/ArticuloImagen/GetArticuloImagen?idArticulo=" +
-            this._params.idArticulo
+          this._params.idArticulo
         ),
         this._mS.getData(
           "get",
@@ -1924,10 +1924,13 @@ class ModalArticuloFraccionadoCtrl extends ModalBaseCtrl {
   }
 
   searchArticuloFraccionadoFilter(textSearch) {
-    return this._commonSvc.articuloSearchGeneral({
-      textSearch,
-      fraccionado: true,
-    });
+    let query = {
+      checkBoxFraccionado: true,
+      bySearch: textSearch,
+
+    }
+    let articulos = this.articuloSvc.searchForFraccionado(query)
+    return articulos;
   }
 
   onKeyupSearchArticulo() {

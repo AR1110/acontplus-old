@@ -19,7 +19,6 @@
 
         @await Html.PartialAsync("~/Views/Cobro/_ModalFiltro.cshtml")
 
-
         <div class="card">
             <div class="card-body">
                 <div class="row">
@@ -47,7 +46,16 @@
                             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                                 <div class="form-group">
                                     <span for="usuarioFiltro">Usuario</span>
-                                    @await Html.PartialAsync("~/Views/Usuario/_UsuarioSearchFilter.cshtml")                                   
+                                    <input type="text" id="customerInputSearchUser" class="form-control border-select"
+                               ng-model="searchUser.nombreCompleto" user-search-drtv on-select="onSelectUser(result)"
+                               on-keyup="onKeyupUser()" placeholder="..."
+                               onclick="select();">
+
+                                    <script type="text/ng-template" id="autocompleteUserTemplate.html">
+                                        <div class="autocomplete-suggestion-uib-typeahead">
+                                            <span class="item-title"><b> {{match.model.nroIdentificacion}}</b> - {{match.model.nombreCompleto}}</span>
+                                        </div>
+                                    </script>                                                                      
                                 </div>
                             </div>                            
                         </div>
@@ -98,9 +106,32 @@
                                 </div>
                             </div>
                             <div class="col-xl-8 col-lg-8 col-md-12 col-12">
-                                <div class="form-group">
-                                    <span>Cliente/Empleado</span>
-                                    <input type="text" class="form-control border">                                   
+                                <div class="form-group" ng-if="showCliente">
+                                    <span>Cliente</span>
+                                    <input type="text" id="customerInputSearchCliente" class="form-control border-select"
+                               ng-model="searchCliente.nombreCliente" cliente-search-drtv on-select="onSelectCliente(result)"
+                               on-keyup-cliente="onKeyupCliente()" placeholder="Ingrese C.I o Nombre Comercial"
+                               onclick="select();">
+
+                                    <script type="text/ng-template" id="autocompleteClienteTemplate.html">
+                                        <div class="autocomplete-suggestion-uib-typeahead">
+                                            <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
+                                        </div>
+                                    </script>                                
+                                </div>
+
+                                <div class="form-group" ng-if="showEmpleado">
+                                     <span>Empleado</span>
+                                    <input type="text" id="customerInputSearchEmpleado" class="form-control border-select"
+                                        ng-model="searchEmpleado.nombreCompleto" empleado-search-drtv on-select="onSelectEmpleado(result)"
+                                        on-keyup="onKeyupEmpleado()" placeholder="..."
+                                        onclick="select();">
+
+                                    <script type="text/ng-template" id="autocompleteEmpleadoTemplate.html">
+                                        <div class="autocomplete-suggestion-uib-typeahead">
+                                            <span class="item-title"><b> {{match.model.nroIdentificacion}}</b> - {{match.model.nombreCompleto}}</span>
+                                        </div>
+                                    </script>
                                 </div>
                             </div>                            
                         </div>                       
@@ -111,7 +142,7 @@
                                 <div class="form-group">
                                     <div class="form-group">
                                         <span>Tipo Doc.</span>                                        
-                                        <select name="tipos-doc" id="tipos-doc" class="form-control border-select" ng-model="dataSearch.tipoDocumento">
+                                        <select name="tipos-doc" id="tipos-doc" class="form-control border-select" ng-model="dataSearch.codTipoDoc" ng-change="onChangeTipoDoc()">
                                             <option value="">Todos</option>
                                             <option ng-value="item.codigo" ng-repeat="item in tiposDoc">{{item.descripcion}}</option>
                                         </select>
@@ -120,19 +151,24 @@
                             </div>
                             <div class="col-xl-4 col-lg-4 col-md-12 col-12">
                                 <div class="form-group">
-                                    <span>Buscar por Nro. Doc:</span>
-                                    <input type="text" class="form-control border-select"  ng-model="dataSearch.nroSecuencial" placeholder="Ej: 123"/>                       
+                                    <span>Nro. Doc:</span>
+                                    <input type="text" class="form-control border-select"  ng-model="dataSearch.nroSecuencialTipoDoc" uib-popover="Ingrese Número de Documento de Factura o Nota de Entrega!"  popover-trigger="'focus'" placeholder="Ej: 123"/>                       
                                 </div>                                
                             </div>      
                             <div class="col-xl-4 col-lg-4 col-md-12 col-12">
                                 <div class="form-group">
-                                    <span>Buscar por Nro. Cobro:</span>
-                                    <input type="text" class="form-control border-select"  ng-model="dataSearch.nroSecuencial" placeholder="Ej: 123"/>                       
+                                    <span>Nro. Doc. Ingreso:</span>
+                                    <input type="text" class="form-control border-select"  ng-model="dataSearch.nroSecuencialDoc"  uib-popover="Ingrese Número de Documento del cobro!"  popover-trigger="'focus'"  placeholder="Ej: 123"/>                       
                                 </div>                                
                             </div>                            
                         </div>
                     </div>                    
                 </div>
+
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
 
 
                 @* <md-toolbar class="md-table-toolbar md-default">
@@ -273,5 +309,5 @@
 
 
 @section Scripts{
-                                            <script src="~/js/contabilidad/controllers/cobroCtrl.min.js" asp-append-version="true"></script>
+                                                                                                                                                        <script src="~/js/contabilidad/controllers/cobroCtrl.min.js" asp-append-version="true"></script>
 }

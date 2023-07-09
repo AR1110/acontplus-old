@@ -31,10 +31,7 @@
         let idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
 
 
-        //Filtro y Pagination 
-        $scope.meses = _form.meses();
-        $scope.mes = new Date().getMonth() + 1;
-
+        //Filtro y Pagination  
         $scope.moreSearchOptions = false;
 
         $scope.tiposPersona = [
@@ -47,6 +44,19 @@
             {codigo: 'NE', descripcion: 'Nota Entrega'},
         ]
 
+        $scope.showCliente = false;
+        $scope.showEmpleado = false;
+
+        $scope.searchCliente = {
+            nombreCliente: ''
+        }
+        $scope.searchEmpleado = {
+            nombreCompleto: ''
+        }
+
+        $scope.searchUser = {
+            nombreCompleto: ''
+        }
 
         $scope.dataSearch = {
             pageIndex: 1,
@@ -89,19 +99,62 @@
             $scope.getCobros();
         }
 
+        $scope.onKeyupUser = function(){
+            if(!$scope.searchUser.nombreCompleto){
+                $scope.dataSearch.byUsuario = 0;
+            }
+        }
+        $scope.onSelectUser = function(item) {
+            $scope.dataSearch.byUsuario = item.idUsuario;
+        }
+
+        
         //Filters 
         $scope.onClickBtnMore = function () {
             $scope.moreSearchOptions = !$scope.moreSearchOptions;
         }
 
-        $scope.onChangePersona = function () {
-            
+        $scope.onChangePersona = function () { 
+            $scope.showCliente = false;
+            $scope.showEmpleado = false;  
+            $scope.dataSearch.nroIdentificacion = null;         
             if($scope.dataSearch.byTipoPersona===1){
+                $scope.showCliente = true;
+                $scope.showEmpleado = false;
+            }
+            if($scope.dataSearch.byTipoPersona===2){
+                $scope.showCliente = false;
+                $scope.showEmpleado = true;
+            }
+        }
 
+        //====================Cliente===========
+        $scope.onKeyupCliente= function(){
+            if(!$scope.searchCliente.nombreCompleto){
+                $scope.dataSearch.nroIdentificacion = nullk;
             }
-            if($scope.dataSearch.byTipoPersona===1){
-                
+        }
+        $scope.onSelectCliente= function(item){
+            $scope.dataSearch.nroIdentificacion = item.numeroIdentificacion;
+        }
+        //====================Cliente===========
+
+        //====================Empleado===========
+        $scope.onKeyupEmpleado= function(){
+            if(!$scope.searchEmpleado.nombreCompleto){
+                $scope.dataSearch.nroIdentificacion = null;
             }
+        }
+        $scope.onSelectEmpleado= function(item){
+            $scope.dataSearch.nroIdentificacion = item.nroIdentificacion;
+        }
+        //====================Empleado===========
+
+
+        $scope.onChangeTipoDoc = function(){
+            if(!$scope.dataSearch.nroSecuencialTipoDoc) return;
+
+            $scope.getCobros();
         }
 
 
@@ -169,260 +222,8 @@
                 $scope.getCobros();
             })
         }
-        $scope.initiload();
-
-
-
-
-
-
-        $scope.openModalFiltro = function () {
-            $("#modalCobroFiltro").modal('show');
-        }
-
-
-        $scope.clienteSearch = (textSearch) => {
-            return _commonSvc.clienteSearch(textSearch);
-        }
-
-        $scope.onChangeFechaFiltro = () => {
-            $scope.mes = new Date().getMonth() + 1;
-            $scope.getFechaInicioFinFilter($scope.mes)
-        }
-
-        //Fecha Inicial y Final dependiendo el Mes que seleccione el usuario en el Buscador AVanzado
-        $scope.getFechaInicioFinFilter = (mes) => {
-            let {
-                fechaInicio,
-                fechaFin
-            } = _form.getFechaInicioFinFilter(mes);
-            $scope.dataSearch.fechaInicio = fechaInicio;
-            $scope.dataSearch.fechaFin = fechaFin;
-        }
-
-        $scope.onKeyupSearchClienteFilter = () => {
-            if (_form.campo($scope.selectedClienteFilter)) {
-                $scope.dataSearch.byPersona = null;
-            }
-        }
-
-        $scope.selectedClienteFiltroChange = (item) => {
-            $scope.dataSearch.byPersona = item.numeroIdentificacion
-        }
-
-        $scope.onKeyupSearchEmpleadoFiltro = () => {
-            if (_form.campo($scope.selectedEmpleadoFiltro)) {
-                $scope.dataSearch.byPersona = null;
-            }
-        }
-
-        $scope.searchEmpleadoFilter = (textSearch) => {
-            return _mS.getData('get', '/Empleado/Search?busqueda=' + textSearch).then(response => {
-                return response.data;
-            })
-        }
-
-
-        $scope.selectedEmpleadoFiltroChange = (item) => {
-            $scope.dataSearch.byPersona = item.nroIdentificacion;
-        }
-
-        //------------------------Usuario-----------------------------------------------
-        $scope.dataUsuarioSearch = {}
-        $scope.usuarioSearch = (textSearch) => {
-            return _commonSvc.usuarioSearch({
-                idRol: idUsuarioRol,
-                busqueda: textSearch
-            })
-        }
-
-        $scope.onKeyupUsuarioSearchFilter = () => {
-            if (_form.campo($scope.dataUsuarioFilter.nombreCompleto)) {
-                $scope.dataSearch.byUsuario = null;
-            }
-        }
-
-        $scope.selectedUsuarioSearchFilter = (item) => {
-            $scope.dataSearch.byUsuario = item.idUsuario;
-        }
-
-        $scope.onChangeDocumentoFiltro = () => {
-            $scope.dataSearch.checkBoxPersona = false;
-        }
-
-        $scope.onChangeTipoDocumento = () => {
-            $scope.dataSearch.byComprobante = null
-            $scope.dataSearch.byTipoDocumento = null;
-
-            if ($scope.dataSearch.tipoDocumento === 'FV') {
-                $scope.getFacturas();
-            }
-
-            if ($scope.dataSearch.tipoDocumento === 'NE') {
-                $scope.getNotaEntregas();
-            }
-
-        }
-
-        //Get Facturas 
-        $scope.getFacturas = () => {
-            try {
-                showLoader();
-                $scope.facturas = [];
-                _mS.getData('get', 'Factura/' +'Get?json=' + JSON.stringify($scope.dataSearch), null, true ).then(response => {
-                    if (response.id === "0") {
-                        hideLoader();
-                        _form.sweetAlert('warning', response.message, response.titleSms);
-                        return
-                    }
-                    $scope.facturas = JSON.parse(response.data) || [];
-                    hideLoader();
-                }).catch(error => {
-                    hideLoader();
-                    const msg = error.config ? error.config.url : error;
-                    toastr.error(msg)
-                })
-            } catch (error) {
-                hideLoader();
-            }
-        }
-
-        $scope.getNotaEntregas = () => {
-            try {
-                showLoader();
-                $scope.notaEntregas = [];
-                _mS.getData('get', 'NotaEntrega/' + 'Get?json=' + JSON.stringify($scope.dataSearch), null, true).then(response => {
-                    if (response.id === "0") {
-                        hideLoader();
-                        Swal.fire({
-                            icon: 'warning',
-                            html: `<small>${response.message}</small>`
-                        })
-                        return
-                    }
-
-                    $scope.notaEntregas = JSON.parse(response.data) || [];
-                    hideLoader();
-                }).catch(error => {
-                    hideLoader();
-                    const msg = error.config ? error.config.url : error
-                    toastr.error(msg)
-                })
-            } catch (error) {
-                hideLoader();
-            }
-        };
-
-
-
-        $scope.onChangeSelectDocumentoFiltro = (item) => {
-            $scope.dataSearch.byTipoDocumento = item.idTipoDocumento;
-
-            if ($scope.dataSearch.tipoDocumento === 'FV') {
-                $scope.dataSearch.byComprobante = item.idFactura;
-            }
-
-            if ($scope.dataSearch.tipoDocumento === 'NE') {
-                $scope.dataSearch.byComprobante = item.idNotaEntrega;
-            }
-        }
-
-        $scope.buscarCobro = () => {
-            if ($scope.dataSearch.checkBoxFecha) {
-                if (_form.campo($scope.dataSearch.fechaInicio)) {
-                    toastr.warning('Seleccione la Fecha de Inicio');
-                    return
-                }
-                if (_form.campo($scope.dataSearch.fechaFin)) {
-                    toastr.warning('Seleccione la Fecha Fin');
-                    return
-                }
-            }
-
-            if ($scope.dataSearch.checkBoxPersona) {
-                if (_form.campo($scope.dataSearch.byTipoPersona)) {
-                    toastr.warning('Seleccione el Tipo Persona (Cliente/Empleado)');
-                    return
-                }
-
-                if (_form.campo($scope.dataSearch.byPersona)) {
-                    toastr.warning('Seleccione la Persona');
-                    return
-                }
-            }
-
-            if ($scope.dataSearch.checkBoxUsuario) {
-                if (_form.campo($scope.dataSearch.byUsuario)) {
-                    toastr.warning('Seleccione el Usuario');
-                    return
-                }
-            }
-
-            if ($scope.dataSearch.checkBoxEstado) {
-                if (_form.campo($scope.dataSearch.byEstado)) {
-                    toastr.warning('Seleccione el Estado');
-                    return
-                }
-            }
-
-            if ($scope.dataSearch.checkBoxDocumento) {
-                if (_form.campo($scope.dataSearch.tipoDocumento)) {
-                    toastr.warning('Seleccione el Tipo Documento');
-                    return
-                }
-
-                if (_form.campo($scope.dataSearch.byTipoDocumento)) {
-                    toastr.warning('Seleccione el Documento');
-                    return
-                }
-
-
-            }
-
-            $scope.getCobros();
-            $("#modalCobroFiltro").modal('hide');
-
-        }
-
-
-
-
-        $scope.openModalDetalle = async (item) => {
-            try {
-                showLoader();
-                let {
-                    MODAL_FILE_CTRL,
-                    MODAL_DETALLE
-                } = _nombreModalConst.factura_compra;
-                let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_DETALLE['controller']];
-                let template = MODAL_DETALLE['template'];
-
-                let response = await _commonSvc.getDataTipoDocCompra({
-                    id: item.idFacturaCompra,
-                    codigoDocumento: TIPO_DOC.codigo
-                })
-
-                if (!response.isComplete) return
-
-                let params = {
-                    TIPO_REGISTRO: 'DETALLE',
-                    data: response
-                }
-
-                $scope.openModalParam({
-                    controller,
-                    template,
-                    params
-                })
-            } catch (error) {
-                console.log(error)
-            } finally {
-                hideLoader();
-            }
-        }
-
-    
-
+        $scope.initiload(); 
+        
         $scope.openModalParam = async ({
             controller,
             template,

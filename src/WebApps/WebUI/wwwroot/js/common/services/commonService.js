@@ -1011,7 +1011,7 @@ export class CommonService {
                     item.datosAdicionalesArticulo = datosAdicionalesArticulo;
 
                     let dataMedida = medidas.find(m => m.idMedida === item.idMedida) || {};
-                    item.articuloTarifas = JSON.parse(dataMedida.tarifas);
+                    item.articuloTarifas = dataMedida.tarifas && JSON.parse(dataMedida.tarifas) || [];
 
                     item.cantMinimaVentaPorMayor = articulo.cantMinimaVentaPorMayor;
                 }).catch(err => {
@@ -1127,7 +1127,7 @@ export class CommonService {
                             idArticulo: item.idArticulo,
                             idEtiqueta: item.idEtiqueta,
                             idInfoAdicional: item.idInfoAdicional,
-                            jsonAdicional: JSON.parse(item.jsonAdicional),
+                            jsonAdicional: tem.jsonAdicional && JSON.parse(item.jsonAdicional) || [],
                             selected: item.selected,
                             estado: item.estado
                         }))

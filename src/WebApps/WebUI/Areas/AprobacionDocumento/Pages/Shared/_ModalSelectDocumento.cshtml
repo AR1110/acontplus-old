@@ -51,9 +51,9 @@
                                     <div class="input-group">
                                         <input type="text" id="clienteSearch" autocomplete="off" name="clienteSearch"
                                             class="form-control border-select" placeholder="Ingrese C.I o Nombre Fiscal"
-                                            ng-model="cliente.nombreComercial" typeahead-wait-ms="10"
+                                            ng-model="cliente.nombreFiscal" typeahead-wait-ms="10"
                                             ng-keyup="onKeyupClienteSearch()"
-                                            uib-typeahead="a as a.nombreComercial for a in clienteSearch($viewValue)"
+                                            uib-typeahead="a as a.nombreFiscal for a in clienteSearch($viewValue)"
                                             typeahead-loading="cliente.loading" typeahead-no-results="cliente.noResults"
                                             typeahead-template-url="clienteSearchTemplate.html"
                                             typeahead-editable="false"

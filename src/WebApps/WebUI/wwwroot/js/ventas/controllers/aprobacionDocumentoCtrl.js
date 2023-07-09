@@ -923,7 +923,9 @@
                     fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
                     typeList: 2,
-                    tipoFecha: 'FE'
+                    tipoFecha: 'FE',
+                    pageIndex: 1,
+                    pageSize: 100,
                 }
                
                 notaEntregaSvc.getAll(dataSearch).then(async ({notaEntregas}) => { 
@@ -2585,7 +2587,7 @@
                     return
                 }
                   
-                let {isConfirmed} = await Swal.fire({
+                let {isConfirmed} = await Swal.fire({ 
                     // title: 'Are you sure?',
                     html: `<small>Esta Ud. seguro de <b>actualizar</b> este Aprobación Documento <b>N° ${$scope.data.serieComprobante}</b></small>?`,
                     icon: 'warning',
