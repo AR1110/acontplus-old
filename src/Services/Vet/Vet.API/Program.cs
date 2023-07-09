@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
 using Services.Common.Middleware;
+using System.Reflection;
 using System.Text.Json;
 using Vet.API.Extensions;
 using Vet.Infrastructure.Data;
@@ -39,11 +40,24 @@ app.UseMiddleware<ExceptionMiddleware>();
 // Configure the HTTP request pipeline.
 app.UseSwaggerDocumentation();
 
+app.UseRouting();
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapGet("/", async context =>
+    {
+        string projectName = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
+        //await context.Response.WriteAsync($"{projectName} is running at {string.Join(", ", app.Urls)}");
+        context.Response.Redirect("swagger");
+    });
+});
+
 
 app.MapControllers().RequireAuthorization();
 

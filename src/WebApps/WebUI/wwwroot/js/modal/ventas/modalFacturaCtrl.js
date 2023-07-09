@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.103";
+} from "./modalBaseCtrl.js?v=0.104";
 
 class ModalFacturaCtrl extends ModalBaseCtrl {
 
@@ -41,6 +41,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
         this.datosAdicionalesArticulo = [];
         this.infoAdicionalDocumento = [];
         this.cliente = {};
+        this.newCustomer = false
 
         this.gridOptions = {
             enableColumnMenus: false,

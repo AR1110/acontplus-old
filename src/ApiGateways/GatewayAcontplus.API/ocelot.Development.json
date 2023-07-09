@@ -403,11 +403,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 55793
+          "Port": 7152
         }
       ],
       "DownstreamPathTemplate": "/api/CompraNoHabitual/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/CompraNoHabitual/{everything}"
     },
@@ -419,11 +419,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 55793
+          "Port": 7152
         }
       ],
       "DownstreamPathTemplate": "/api/FacturaCompra{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/IngresoFacturaCompra{everything}"
     },
@@ -435,11 +435,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 55793
+          "Port": 7152
         }
       ],
       "DownstreamPathTemplate": "/api/CompraNoHabitual",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Post" ],
       "UpstreamPathTemplate": "/gateway/CompraNoHabitual"
     },
@@ -483,7 +483,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44320
+          "Port": 7097
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte/Post",
@@ -499,7 +499,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44320
+          "Port": 7097
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte/{method}/{everything}",
@@ -547,7 +547,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44320
+          "Port": 7097
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte{everything}",
@@ -1103,7 +1103,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44320
+          "Port": 7097
         }
       ],
       "DownstreamPathTemplate": "/api/Dashboard{everything}",
