@@ -570,35 +570,11 @@ class MovimientoCajaCtrl {
 
 
 
-    async generateReport(idControlCaja) {
-
-        const {  value: tipo } = await Swal.fire({
-            title: 'Seleccione el formato de reporte',
-            input: 'select',
-            inputOptions: {
-              1: "...",
-              2:".kjg"
-            },
-            inputPlaceholder: 'Select a fruit',
-            showCancelButton: true,
-            inputValidator: (value) => {
-              return new Promise((resolve) => {
-                if (value) {
-                  resolve()
-                } else {
-                  resolve('Seleccione formato de reporte :)')
-                }
-              })
-            }
-        })
-
-        if(!tipo) return
-
+    async generateReport(idControlCaja) { 
 
         let dataParms = {
             id: idControlCaja,
-            idUsuarioRol: Number(this.decodeToken.idUsuarioRol),
-            tipo
+            idUsuarioRol: Number(this.decodeToken.idUsuarioRol), 
         }
         const parameters = {
             hasService: true, //reporte sin idRol, si es true el idRol(idUsuariol) enviamos en un json
