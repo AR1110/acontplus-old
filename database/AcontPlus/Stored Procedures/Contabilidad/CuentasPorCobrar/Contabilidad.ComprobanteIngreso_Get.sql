@@ -47,8 +47,7 @@ BEGIN
 	-- ====================== Lista Principal de Comprobantes de Ingreso ===============================================
 	IF @tipo = 1
 		BEGIN
-			DECLARE @codEstab VARCHAR(50)
-			DECLARE @checkBoxFecha BIT
+			DECLARE @codEstab VARCHAR(50)			 
 			DECLARE @checkBoxPersona  BIT
 			DECLARE @checkBoxEstado BIT 
 			DECLARE @checkBoxDocumento BIT
@@ -57,9 +56,14 @@ BEGIN
 			DECLARE @fechaFin DATETIME
 			DECLARE @nroIdentificacion NVARCHAR(100)
 			DECLARE @byUsuarioSearch INT
-			DECLARE @byTipoDocumento INT
+			DECLARE @idTipoDocumento INT
 			DECLARE @byComprobante INT
 			DECLARE @byEstado INT 
+
+			DECLARE @codTipoDoc CHAR(2)
+			DECLARE @nroSecuencialTipoDoc VARCHAR(13)
+			DECLARE @isSearchNroDoc BIT 
+			DECLARE @nroSecuencialDoc VARCHAR(13)
 
 			DECLARE @isViewOtherDocs BIT 
 			
@@ -73,7 +77,9 @@ BEGIN
 											,@estado            INT
 											,@idUsuario         INT
 											,@byUsuarioSearch	INT
-											,@codEstab          VARCHAR(50)'
+											,@codEstab          VARCHAR(50)
+											,@nroSecuencialTipoDoc VARCHAR(13)
+											,@nroSecuencialDoc  VARCHAR(13)'
 			DECLARE @sql NVARCHAR(MAX) = 'SELECT TOP 50
 													 idComprobanteIngreso = ci.idComprobanteIngreso
 													,s.codEstab
@@ -96,21 +102,24 @@ BEGIN
 
 			SELECT 
 				 @checkBoxDocumento = checkBoxDocumento
-				,@checkBoxEstado    = checkBoxEstado
-				,@checkBoxFecha     = checkBoxFecha
+				,@checkBoxEstado    = checkBoxEstado 
 				,@checkBoxPersona   = checkBoxPersona
 				,@checkBoxUsuario   = checkBoxUsuario
-				,@byComprobante     = byComprobante
+			--	,@byComprobante     = byComprobante
 				,@byUsuarioSearch   = byUsuario
 				,@nroIdentificacion = nroIdentificacion
 				,@codEstab          = codEstab
-				,@byTipoDocumento   = byTipoDocumento
+			--	,@byTipoDocumento   = byTipoDocumento
 				,@byEstado          = byEstado
 				,@fechaInicio       = CONVERT(DATETIME, fechaInicio, 105)
 				,@fechaFin          = CONVERT(DATETIME, fechaFin, 105)
+				,@codTipoDoc        = codTipoDoc
+				,@nroSecuencialTipoDoc = LTRIM(TRIM(nroSecuencialTipoDoc))
+				,@isSearchNroDoc    = isSearchNroDoc
+				,@nroSecuencialDoc  = LTRIM(RTRIM(TRIM(nroSecuencialDoc)))
 			FROM OPENJSON(@json)
-			WITH (checkBoxFecha     BIT           '$.checkBoxFecha'
-				 ,checkBoxPersona   BIT           '$.checkBoxPersona'
+			WITH ( 
+				  checkBoxPersona   BIT           '$.checkBoxPersona'
 				 ,checkBoxEstado    BIT           '$.checkBoxEstado'
 				 ,checkBoxDocumento BIT           '$.checkBoxDocumento'
 				 ,checkBoxUsuario   BIT           '$.checkBoxUsuario'
@@ -118,32 +127,46 @@ BEGIN
 				 ,fechaFin          VARCHAR(60)   '$.fechaFin'
 				 ,nroIdentificacion NVARCHAR(100) '$.nroIdentificacion'
 				 ,codEstab          VARCHAR(100)  '$.codEstab'
-				 ,byTipoDocumento   INT           '$.byTipoDocumento'
-				 ,byComprobante     INT           '$.byComprobante'
+				-- ,byTipoDocumento   INT           '$.byTipoDocumento'
+				-- ,byComprobante     INT           '$.byComprobante'
 				 ,byUsuario         INT           '$.byUsuario'
-				 ,byEstado          INT           '$.byEstado')
+				 ,byEstado          INT           '$.byEstado'
+				 ,codTipoDoc        CHAR(2)       '$.codTipoDoc'
+				 ,nroSecuencialTipoDoc VARCHAR(13) '$.nroSecuencialTipoDoc'
+				 ,isSearchNroDoc   BIT            '$.isSearchNroDoc'
+				 ,nroSecuencialDoc VARCHAR(13)    '$.nroSecuencialDoc'
+				 )
+
 
 			SELECT @isViewOtherDocs = JSON_VALUE(jsonPermission, '$.additional.viewOthersDocs.view') FROM Config.UserPermission WITH (NOLOCK) WHERE codModule ='V' AND idUsuarioRol = @idUsuarioRol
 		
-			IF @checkBoxDocumento = 1
+			SET @sql = @sql+'AND CAST(ci.fechaRegistro as date) BETWEEN CAST(@fechaI as date) AND CAST(@fechaF as date) '
+
+
+			IF @codTipoDoc = 'FV' OR @codTipoDoc = 'NE' OR @isSearchNroDoc = 1
 				BEGIN
-					SET @sql = @sql+'AND ci.idComprobanteIngreso IN (SELECT cd.idComprobanteIngreso FROM CobroDocumento cd WHERE cd.idTipoDocumento = @idTipoDocumento AND cd.idComprobante = @idComprobante) '
+				  
+					--SET @sql = @sql + ' AND ci.idComprobanteIngreso IN (SELECT cd.idComprobanteIngreso FROM CobroDocumento cd WHERE cd.idTipoDocumento = @idTipoDocumento AND cd.idComprobante = @idComprobante) '
+					SET @sql = @sql + ' AND ci.nroDocumento = @nroSecuencialDoc '
 				END 
+
+			--IF @checkBoxDocumento = 1
+			--	BEGIN
+			--		SET @sql = @sql+'AND ci.idComprobanteIngreso IN (SELECT cd.idComprobanteIngreso FROM CobroDocumento cd WHERE cd.idTipoDocumento = @idTipoDocumento AND cd.idComprobante = @idComprobante) '
+			--	END 
 
 			IF @checkBoxEstado = 1
 				BEGIN
 					SET @sql = @sql+'AND ci.estado = @estado '
 				END 
 
-			IF @checkBoxFecha = 1
-				BEGIN
-					SET @sql = @sql+'AND CAST(ci.fechaRegistro as date) BETWEEN CAST(@fechaI as date) AND CAST(@fechaF as date) '
-				END 
+		 
 			
 			IF @checkBoxPersona = 1
 				BEGIN
 					SET @sql = @sql + ' AND ci.nroIdentificacion = @nroIdentificacion '
 				END 
+
 
 			IF @isViewOtherDocs = 0
 				BEGIN
@@ -158,19 +181,21 @@ BEGIN
 				END 		
 
 			SET @sql = @sql + ' ORDER BY ci.nroDocumento DESC'
-			print @sql
+		 
 			EXEC sp_executesql  @sql
 					           ,@params
 					           ,@idEntidad         = @idEntidad
+					           ,@codEstab          = @codEstab
 					           ,@fechaI            = @fechaInicio
 					           ,@fechaF            = @fechaFin
 					           ,@nroIdentificacion = @nroIdentificacion
-					           ,@idTipoDocumento   = @byTipoDocumento
-					           ,@idComprobante     = @byComprobante
-					           ,@estado            = @byEstado
 					           ,@idUsuario         = @idUsuario
 					           ,@byUsuarioSearch   = @byUsuarioSearch
-					           ,@codEstab          = @codEstab
+					           ,@estado            = @byEstado
+					           ,@idTipoDocumento   = @idTipoDocumento
+					           ,@idComprobante     = @byComprobante
+							   ,@nroSecuencialTipoDoc = @nroSecuencialTipoDoc
+							   ,@nroSecuencialDoc  = @nroSecuencialDoc
 		END 
 
 	-- ====================== Historial para mostrar los detalles del comprobante de ingreso ===========================
