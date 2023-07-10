@@ -124,7 +124,7 @@ export class ModalBaseCtrl {
                             this.cliente.email = email
                         }
                         this.cliente.idCliente = 0;
-        
+                        this.newCustomer = true
                         
                     }).catch(error =>{
                         console.log(error)

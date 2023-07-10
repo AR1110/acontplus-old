@@ -20,7 +20,7 @@ namespace ApiRecepcion
             builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerDocumentation();
 
             //builder.Services.AddTransient<IConfiguration>(config =>
             //{
@@ -35,6 +35,10 @@ namespace ApiRecepcion
             builder.Services.AddScoped<FileTxt>();
 
             var app = builder.Build();
+
+            app.UseHttpsRedirection();
+
+            app.UseSwaggerDocumentation();
             
             app.UseRouting();
 
@@ -51,7 +55,8 @@ namespace ApiRecepcion
                 endpoints.MapGet("/", async context =>
                 {
                     string projectName = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-                    await context.Response.WriteAsync($"{projectName} is running at {string.Join(", ", app.Urls)}");
+                    //await context.Response.WriteAsync($"{projectName} is running at {string.Join(", ", app.Urls)}");
+                    context.Response.Redirect("swagger");
                 });
             });
 

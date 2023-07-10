@@ -13,7 +13,6 @@ builder.Services.AddControllers();
 builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
 
 //builder.Services.AddTransient<IConfiguration>(config =>
 //{
@@ -25,7 +24,11 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSingleton<ReportService>();
 
+builder.Services.AddSwaggerDocumentation();
+
 var app = builder.Build();
+
+app.UseSwaggerDocumentation();
 
 app.UseRouting();
 
@@ -42,7 +45,8 @@ app.UseEndpoints(endpoints =>
     endpoints.MapGet("/", async context =>
     {
         string projectName = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-        await context.Response.WriteAsync($"{projectName} is running at {string.Join(", ", app.Urls)}");
+        //await context.Response.WriteAsync($"{projectName} is running at {string.Join(", ", app.Urls)}");
+        context.Response.Redirect("swagger");
     });
 });
 

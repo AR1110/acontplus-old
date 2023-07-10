@@ -171,14 +171,13 @@
             </div>
         </div>
     </div>
-    <div class="row">
+    <div class="row" ng-show="$ctrl.newCustomer">
         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
             <div class="form-group">
                 <label>Razon Social Comprador</label>
                 <input type="text" name="name" class="form-control border-select"
                     ng-model="$ctrl.cliente.razonSocialComprador" value="" />
             </div>
-
         </div>
         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
             <div class="form-group">
@@ -186,7 +185,6 @@
                 <input type="text" name="name" ng-model="$ctrl.cliente.direccionComprador"
                     class="form-control border-select" value="" />
             </div>
-
         </div>
         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
             <div class="form-group">
@@ -196,13 +194,21 @@
             </div>
         </div>
         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
-            <div class="form-group">
+            @*<div class="form-inline">
                 <label>Teléfono</label>
                 <input type="tel" name="name" autocomplete="off" ng-model="$ctrl.cliente.telefono"
-                    class="form-control border-select" maxlength="10" value="" />
+                       class="form-control border-select" maxlength="10" value="" />
+                <button class="btn btn-primary"><i class="ti-edit"></i></button>
+            </div>*@
+            <div class="container">
+                <label>Teléfono</label>
+                <div class="form-inline">
+                    <input type="tel" name="name" autocomplete="off" ng-model="$ctrl.cliente.telefono"
+                           class="form-control mr-1 border-select" maxlength="10" value="" />
+                    <button type="button" class="btn btn-default btn-sm" title="Editar Datos" hidden><i class="ti-pencil text-warning"></i></button>
+                </div>
             </div>
         </div>
-
     </div>
     <div class="row">
         <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12">

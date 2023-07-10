@@ -17,7 +17,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vet.Application", "Services
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{8489F03A-21B6-4434-9151-E11DF256305C}"
 	ProjectSection(SolutionItems) = preProject
-		Services\Common\Domain\Domain.csproj = Services\Common\Domain\Domain.csproj
 		Services\Vet\Vet.Core\Utils\FileExtensions.cs = Services\Vet\Vet.Core\Utils\FileExtensions.cs
 	EndProjectSection
 EndProject
@@ -102,13 +101,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApps", "WebApps", "{DF6E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebUI", "WebApps\WebUI\WebUI.csproj", "{A7FAB2AA-1885-4D90-B09F-170133D49E08}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reports.Application", "Services\Reports\Reports.Application\Reports.Application.csproj", "{1C384A05-4CEC-4D89-9ADA-BF3C3719D480}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reports.Application", "Services\Reports\Reports.Application\Reports.Application.csproj", "{1C384A05-4CEC-4D89-9ADA-BF3C3719D480}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FactElect.Application", "Services\Facturacion\FactElect.Application\FactElect.Application.csproj", "{CFE08238-D52F-48BB-BF01-BEB68481D32E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FactElect.Application", "Services\Facturacion\FactElect.Application\FactElect.Application.csproj", "{CFE08238-D52F-48BB-BF01-BEB68481D32E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FactElect.Core", "Services\Facturacion\FactElect.Core\FactElect.Core.csproj", "{DE81B084-8509-4F4A-BA95-643136D46668}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FactElect.Core", "Services\Facturacion\FactElect.Core\FactElect.Core.csproj", "{DE81B084-8509-4F4A-BA95-643136D46668}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compras.Application", "Services\Compras\Compras.Application\Compras.Application.csproj", "{00D2F259-78BC-434B-A655-208B5DA63537}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compras.Application", "Services\Compras\Compras.Application\Compras.Application.csproj", "{00D2F259-78BC-434B-A655-208B5DA63537}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
