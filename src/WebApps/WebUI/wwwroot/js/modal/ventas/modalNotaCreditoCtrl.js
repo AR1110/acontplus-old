@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.39";
+} from "./modalBaseCtrl.js?v=0.40";
 
 class ModalNotaCreditoCtrl extends ModalBaseCtrl {
     constructor({
@@ -260,6 +260,24 @@ class ModalNotaCreditoCtrl extends ModalBaseCtrl {
     }
 
 
+    async getDetalleDoc(item) {
+        try {
+            if(!(this.data.idFactura > 0)) return
+           
+
+            this._commonSvc.viewDetailDocument({
+                id: this.data.idFactura,
+                codigoDocumento: 'FV',
+                size: 'xl',
+                windowClass: 'uibModalFullScreen'
+            })
+
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+
     /**
      * 
      * @param {*} id 
@@ -441,10 +459,7 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
             let dataCliente = await this.getClienteById(item);
             this.cliente = dataCliente;
 
-            this.facturas = [];
-            this.data.idFactura = 0;
-            this.nroFactura = '';
-            this.gridOptions.data = [];
+            
 
             this.getInvoiceByCustomer();
             this.$scope.$apply();
@@ -459,8 +474,14 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
     async getInvoiceByCustomer() {
         try {
             showLoader();
+            this.facturas = [];
+            this.data.idFactura = 0;
+            this.nroFactura = '';
+            this.gridOptions.data = [];
+
             let json = {  
                 byCliente: this.cliente.idCliente, 
+                codEstab: this.data.codEstab, 
             }
 
             this.facturaSvc.getForCreditNote(json).then(response => { 

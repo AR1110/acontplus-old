@@ -84,6 +84,10 @@
                 formSvc.sweetAlert('warning', 'No se ha proporcionado el idCliente')
                 throw ''
             }
+            if (!query.hasOwnProperty("codEstab")){
+                formSvc.sweetAlert('warning', 'No se ha proporcionado el codEstab')
+                throw ''
+            }
             query.tipo = 2;
             query.paraNotaCredito = true;
             query.checkBoxCliente = true;
@@ -93,8 +97,8 @@
                 }
                 
                 if(response.code==="1"){ 
-                    let mainData = JSON.parse(response.payload); 
-                     
+                    let mainData = JSON.parse(response.payload) || [];
+                    let facturasRepository = mainData[0];
                     let facturas = facturasRepository.map(item=>{
                         return { 
                             idDocumento: item.idDocumento, 
