@@ -148,25 +148,19 @@ BEGIN
 				  
 					--SET @sql = @sql + ' AND ci.idComprobanteIngreso IN (SELECT cd.idComprobanteIngreso FROM CobroDocumento cd WHERE cd.idTipoDocumento = @idTipoDocumento AND cd.idComprobante = @idComprobante) '
 					SET @sql = @sql + ' AND ci.nroDocumento = @nroSecuencialDoc '
-				END 
-
-			--IF @checkBoxDocumento = 1
-			--	BEGIN
-			--		SET @sql = @sql+'AND ci.idComprobanteIngreso IN (SELECT cd.idComprobanteIngreso FROM CobroDocumento cd WHERE cd.idTipoDocumento = @idTipoDocumento AND cd.idComprobante = @idComprobante) '
-			--	END 
-
-			IF @checkBoxEstado = 1
+				END  
+			ELSE 
 				BEGIN
-					SET @sql = @sql+'AND ci.estado = @estado '
-				END 
-
-		 
+					IF @checkBoxEstado = 1
+						BEGIN
+							SET @sql = @sql+'AND ci.estado = @estado '
+						END 		 
 			
-			IF @checkBoxPersona = 1
-				BEGIN
-					SET @sql = @sql + ' AND ci.nroIdentificacion = @nroIdentificacion '
-				END 
-
+					IF @checkBoxPersona = 1
+						BEGIN
+							SET @sql = @sql + ' AND ci.nroIdentificacion = @nroIdentificacion '
+						END 
+				END
 
 			IF @isViewOtherDocs = 0
 				BEGIN

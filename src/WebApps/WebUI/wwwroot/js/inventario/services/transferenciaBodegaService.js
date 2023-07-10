@@ -42,7 +42,7 @@
         }
 
         function insert(query){
-            return mS.getData('post', `${url}Insert`, query).then(response=>{
+            return mS.getData('post', `${url}`, query, true).then(response=>{
                 if(response.code=="0"){
                     throw response;
                 }
@@ -54,7 +54,7 @@
 
 
         function update(id, query){
-            return mS.getData('put', `${url}Update?id=` + id, query).then(response=>{
+            return mS.getData('put', `${url}?id=` + id, query, true).then(response=>{
                 if(response.code=="0"){
                     throw response;
                 }
@@ -65,10 +65,10 @@
         }
 
         function anular(id){
-            return mS.getData('delete', `${url}Delete?id=` + id).then(response=>{
-                if(response.code=="0"){
-                    throw response;
-                }
+            return mS.getData('delete', `${url}?id=` + id, null, true).then(response=>{
+                // if(response.code=="0"){
+                //     throw response;
+                // }
                 return response;
             }).catch(err=>{
                 throw err;

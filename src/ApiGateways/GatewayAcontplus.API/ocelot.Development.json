@@ -570,7 +570,7 @@
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "POST", "PUT", "Delete" ],
       "UpstreamPathTemplate": "/gateway/Usuario/{everything}"
-    },    
+    },
     {
       "AuthenticationOptions": {
         "AllowedScopes": [],
@@ -1519,6 +1519,28 @@
         "Delete"
       ],
       "UpstreamPathTemplate": "/gateway/MedicalHistories{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8003
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v3/Articulo{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/gateway/v3/Articulo{everything}"
     },
     {
       "AuthenticationOptions": {
