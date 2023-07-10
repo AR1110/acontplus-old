@@ -1547,6 +1547,7 @@ function ModalFormaCobroCtrl ($scope, $uibModalInstance, fS, tS, params){
         let ciudad = $scope.ciudades.find(item=>item.idCiudad===$scope.data.idCiudad);
         let banco = $scope.bancos.find(item=>item.idBanco===$scope.data.idBanco);
 
+        var formattedDateTime = moment($scope.data.fechaEmision).tz("America/Guayaquil").format("YYYY-MM-DD HH:mm:ss");
         return {
            //Info
             entidadFinanciera: entidadFinanciera.descripcion,
@@ -1561,7 +1562,7 @@ function ModalFormaCobroCtrl ($scope, $uibModalInstance, fS, tS, params){
             codEntidadFinanciera: entidadFinanciera.codigo,
             idBanco: $scope.data.idBanco,
             idCiudad: $scope.data.idCiudad,
-            fechaEmision: new Date(),
+            fechaEmision: new Date(formattedDateTime),
             posFechado: $scope.data.posFechado,
             referencia: $scope.data.referencia,
             aprobacion: $scope.data.aprobacion,
