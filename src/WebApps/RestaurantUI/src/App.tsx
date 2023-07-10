@@ -6,13 +6,14 @@ import { store } from "./redux/store.ts";
 import { RoutesWithNotFound, SnackbarUtilsConfigurator } from "@/core/utils";
 import { PrivateRoutes, PublicRoutes } from "@/core/models/";
 import AuthGuard from "@/core/guards/auth.guard.tsx";
-import RecipeComponent from "./pages/Recipe/RecipeComponent.tsx";
+import RecipeComponent from "./pages/recipe/RecipeComponent.tsx";
 import Dish from "./pages/Dish/Dish.tsx";
 
-const Login = lazy(() => import("@/pages/Auth/components/Login"));
+const Login = lazy(() => import("@/pages/auth/components/Login"));
 const Home = lazy(() => import("@/pages/Home/Home"));
 const Pos = lazy(() => import("@/pages/Pos/Pos"));
 const Categoria = lazy(() => import("@/pages/Categoria/Categoria"));
+const TableComponent = lazy(() => import("@/pages/table/Table"));
 
 function App() {
   return (
@@ -31,11 +32,18 @@ function App() {
               <Route element={<AuthGuard />}>
                 <Route path={PrivateRoutes.HOME} element={<Home />}></Route>
                 <Route path={PrivateRoutes.POS} element={<Pos />}></Route>
-                <Route path={PrivateRoutes.RECIPE} element={<RecipeComponent />}></Route>
+                <Route
+                  path={PrivateRoutes.RECIPE}
+                  element={<RecipeComponent />}
+                ></Route>
                 <Route path={PrivateRoutes.DISH} element={<Dish />}></Route>
                 <Route
                   path={PrivateRoutes.CATEGORIA}
                   element={<Categoria />}
+                ></Route>
+                <Route
+                  path={PrivateRoutes.TABLE}
+                  element={<TableComponent />}
                 ></Route>
               </Route>
             </RoutesWithNotFound>
