@@ -115,21 +115,13 @@
     </div>
     <div class="card"> 
         <div class="card-body">
-            <md-toolbar class="md-table-toolbar md-default">
-                <div class="md-toolbar-tools">
-
-                    <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                        <button type="button"  class="btn btn-info" ng-click="openModalFiltro()"><i class=" fas fa-filter"></i> Filtrar</button>            
-                    </div>
-                    <div class="col-lg-6 col"></div>
-                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-                        <form class="form-material">
+            <div class="row justify-content-end">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                     <form class="form-material">
                             <input type="text" class="form-control" ng-keyup="filterLocalLCompras()" ng-model="txtFilter" placeholder="Buscar">
                         </form>
-                    </div>
                 </div>
-            </md-toolbar>
-
+            </div> 
             <md-table-container style="max-height: 400px;">
                 <table resize md-table class="table-condensed table-sm">
                     <thead fix-head md-head md-order="query.order" md-on-reorder="liqCompras">
