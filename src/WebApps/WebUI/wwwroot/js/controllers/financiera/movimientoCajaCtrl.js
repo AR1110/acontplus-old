@@ -331,7 +331,7 @@ class MovimientoCajaCtrl {
             }
         }; 
 
-        this.dateRangePicker = Object.assign({}, dateRangePicker)
+        this.dateRangePicker = JSON.parse(JSON.stringify(dateRangePicker))
         
         this.dateRangePicker.options.eventHandlers = {
                 "apply.daterangepicker": (event, picker)=> {
@@ -339,7 +339,7 @@ class MovimientoCajaCtrl {
                     console.log('applied')
                 }
             }
-        this.dateRangePickerAnticipo = Object.assign({}, dateRangePicker)
+        this.dateRangePickerAnticipo = JSON.parse(JSON.stringify(dateRangePicker))
         this.dateRangePickerAnticipo.options.eventHandlers = {
             "apply.daterangepicker": (event, picker)=> {
 
@@ -406,6 +406,7 @@ class MovimientoCajaCtrl {
                 codEstado: this.dataSearch.codEstado,
                 fechaInicio: this._form.formatDateMoment(this.dateRangePicker.date.startDate),
                 fechaFin: this._form.formatDateMoment(this.dateRangePicker.date.endDate), 
+                checkBoxFecha: true
             }
 
             showLoader();
@@ -439,6 +440,7 @@ class MovimientoCajaCtrl {
                 byCliente: this.dataSearchAnticipo.byCliente,
                 fechaInicio: this._form.formatDateMoment(this.dateRangePickerAnticipo.date.startDate),
                 fechaFin: this._form.formatDateMoment(this.dateRangePickerAnticipo.date.endDate), 
+                checkBoxFecha: true
             }
             showLoader();
             this.anticipos = [];
