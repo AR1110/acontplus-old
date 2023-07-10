@@ -301,9 +301,9 @@ class ModalNotaCreditoCtrl extends ModalBaseCtrl {
 
 
 export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params', 'facturaService']
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params) {
+    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params, facturaSvc) {
         super({
             $scope,
             $timeout,
@@ -316,6 +316,8 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
             _tS
         })
         const self = this;
+
+        this.facturaSvc = facturaSvc;
 
         let {
             TIPO_REGISTRO
@@ -457,27 +459,15 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
     async getInvoiceByCustomer() {
         try {
             showLoader();
-            let json = {
-                checkBoxNotaCredito: true,
-                byNotaCredito: false,
-                checkBoxEstado: true,
-                byEstado: 15, //Autorizadas 13 en desarrollo
-                checkBoxCliente: true,
-                byCliente: this.cliente.idCliente,
-                checkBoxDefault: false,
-                codEstab: this.data.codEstab,
-                typeList: 2
+            let json = {  
+                byCliente: this.cliente.idCliente, 
             }
 
-
-            this._mS.getData('get', 'Factura/Get?json=' + JSON.stringify(json), null, true).then(response => {
-                if (response.code === "0") {
-                    console.warn(response)
-                }
-                if (response.code === "1") {
-                    this.facturas = JSON.parse(response.payload)[0] || [];
-
-                }
+            this.facturaSvc.getForCreditNote(json).then(response => { 
+                    this.facturas = response.facturas || [];                  
+            }).catch(error=>{
+                hideLoader();
+                console.log(error)
             })
         } catch (error) {
             console.log(error)

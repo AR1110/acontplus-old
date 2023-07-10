@@ -79,6 +79,37 @@
             })
         }
 
+        service.getForCreditNote = function(query){ 
+            if (!query.hasOwnProperty("byCliente")){
+                formSvc.sweetAlert('warning', 'No se ha proporcionado el idCliente')
+                throw ''
+            }
+            query.tipo = 2;
+            query.paraNotaCredito = true;
+            query.checkBoxCliente = true;
+            return mainService.getData('get', url +'Get?json=' + JSON.stringify(query), null, true ).then(response =>{
+                if(response.code==="0"){
+                    throw response;
+                }
+                
+                if(response.code==="1"){ 
+                    let mainData = JSON.parse(response.payload); 
+                     
+                    let facturas = facturasRepository.map(item=>{
+                        return { 
+                            idDocumento: item.idDocumento, 
+                            nroFactura: item.nroFactura,
+                            serieComprobante: item.nroFactura,                           
+                        }
+                    }) 
+                    return {
+                        facturas, 
+                    }
+
+                }
+            })
+        }
+
         service.save = function(data){         
             return mainService.getData('post', url +'Insert', data, true ).then(response =>{
                 if(response.code==="0"){
