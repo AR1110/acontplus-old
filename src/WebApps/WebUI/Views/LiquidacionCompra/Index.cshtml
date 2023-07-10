@@ -45,7 +45,7 @@
                         <span for="proveedorFiltro">Proveedor:</span>
                         <input type="text" id="providerInputSearch" class="form-control border-select"
                             ng-model="proveedor.nombreProveedor" provider-search-drtv on-select="onSelectProveedor(result)"
-                            on-keyup-cliente="onKeyupProveedor()" placeholder="Ingrese C.I o Nombre Comercial"
+                            on-keyup="onKeyupProveedor()" placeholder="Ingrese C.I o Nombre Comercial"
                             onclick="select();">
 
                         <script type="text/ng-template" id="autocompleteProviderTemplate.html">
