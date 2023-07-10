@@ -6,31 +6,18 @@
 
     cobroCtrl.$inject = [
         '$scope', 
+        '$filter',
         'mainService', 
         'commonService', 
         'modalService', 
         'nombreModal',
         'nombreModalContabilidad' ,
         'formulario', 
-        'toastService', 
-        'decodeToken',
+        'toastService',  
         '$mdDialog'
     ]
 
-    function cobroCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, nombreModalContabilidad, _form, _tS, decodeToken, $mdDialog) {
-
-        // let accion = JSON.parse(localStorage.getItem("accion"));  
-        // if(accion===null){
-        //     location.href ="/Home/Index";
-        //     return
-        // }else{
-        //     $scope.accion = accion[0];
-        // }
-
-        const TIPO_DOC = _commonSvc.tipoDoc['FC'];
-        let idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
-
-
+    function cobroCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalConst, nombreModalContabilidad, _form, tS, $mdDialog) { 
         //Filtro y Pagination  
         $scope.moreSearchOptions = false;
 
@@ -65,6 +52,7 @@
         }
 
         $scope.typeSend = 'GenericFile';
+        $scope.typeSend = 'N';
 
         
         $scope.openModalCobroLote = async function() {
@@ -93,10 +81,11 @@
         }
 
 
+        //Filters 
         $scope.resultRangeFilter = function (item) {
             $scope.dataSearch.fechaInicio = item.startDate,
             $scope.dataSearch.fechaFin = item.endDate
-            $scope.getCobros();
+            $scope.filterValidation();
         }
 
         $scope.onKeyupUser = function(){
@@ -106,10 +95,11 @@
         }
         $scope.onSelectUser = function(item) {
             $scope.dataSearch.byUsuario = item.idUsuario;
+            $scope.filterValidation();
         }
 
         
-        //Filters 
+        
         $scope.onClickBtnMore = function () {
             $scope.moreSearchOptions = !$scope.moreSearchOptions;
         }
@@ -131,11 +121,12 @@
         //====================Cliente===========
         $scope.onKeyupCliente= function(){
             if(!$scope.searchCliente.nombreCompleto){
-                $scope.dataSearch.nroIdentificacion = nullk;
+                $scope.dataSearch.nroIdentificacion = null;
             }
         }
         $scope.onSelectCliente= function(item){
             $scope.dataSearch.nroIdentificacion = item.numeroIdentificacion;
+            $scope.filterValidation();
         }
         //====================Cliente===========
 
@@ -147,14 +138,47 @@
         }
         $scope.onSelectEmpleado= function(item){
             $scope.dataSearch.nroIdentificacion = item.nroIdentificacion;
+            $scope.filterValidation();
         }
         //====================Empleado===========
 
 
+
         $scope.onChangeTipoDoc = function(){
+            if($scope.dataSearch.codTipoDoc)        {
+                $scope.disabledTempInputPersona = true; //Bloqueamos tipo persona(buscador cliente y empleado)
+            }else{
+                $scope.disabledTempInputPersona = false;
+                $scope.dataSearch.nroSecuencialTipoDoc = null;
+            }
             if(!$scope.dataSearch.nroSecuencialTipoDoc) return;
 
             $scope.getCobros();
+        }
+
+        $scope.filterValidation = function(){
+            if($scope.dataSearch.byTipoPersona){
+                if(!$scope.dataSearch.nroIdentificacion){
+                    tS.toastr('warning', 'Seleccione el cliente o el empleado');
+                    return
+                }
+            }
+
+            if(['FV', 'NE'].includes($scope.dataSearch.codTipoDoc)){
+                if(!$scope.dataSearch.nroSecuencialTipoDoc){
+                    tS.toastr('warning', 'Ingrese número secuencial de tipo documento (Nota Entrega o Factura)')
+                    return
+                }
+            }
+
+            $scope.getCobros();
+        }
+
+
+        $scope.filterLocal= function(){
+            let cobros = JSON.parse(JSON.stringify($scope.cloneCobros));
+            $scope.cobros = $filter("filter")(cobros, $scope.dataSearch.bySearch);
+            $scope.setTotalsColumn();
         }
 
 
@@ -176,32 +200,41 @@
             try {
                 showLoader();
                 $scope.cobros = [];
+                $scope.cloneCobros  = [];
                 $scope.setTotalsColumn();
 
                 const dataSearch = {
                     tipo: 1,
-                    codEstab: $scope.dataSearch.codEstab,
-                    checkBoxFecha: true,
+                    codEstab: $scope.dataSearch.codEstab, 
                     fechaInicio: _form.formatDateTimeZone($scope.dataSearch.fechaInicio),
                     fechaFin: _form.formatDateTimeZone($scope.dataSearch.fechaFin),
+                    checkBoxPersona: $scope.tiposPersona.some(item=>item.codigo===$scope.dataSearch.byTipoPersona),
+                    nroIdentificacion: $scope.dataSearch.nroIdentificacion,
+                    checkBoxUsuario: $scope.dataSearch.byUsuario > 0,
+                    byUsuario: $scope.dataSearch.byUsuario,
                     checkBoxEstado: [0, 1].includes($scope.dataSearch.byEstado),
                     byEstado: $scope.dataSearch.byEstado,
-                    checkBoxPersona: $scope.tiposPersona.some(item=>item.codigo===$scope.dataSearch.byTipoPersona),
-                    nroIdentificacion: $scope.dataSearch.nroIdentificacion
+                    codTipoDoc: $scope.dataSearch.codTipoDoc,
+                    nroSecuencialTipoDoc: $scope.dataSearch.nroSecuencialTipoDoc,
+                    isSearchNroDoc: $scope.dataSearch.nroSecuencialDoc ? true:false,
+                    nroSecuencialDoc: $scope.dataSearch.nroSecuencialDoc
                 }
-                console.log(dataSearch)
+          
                 _mS.getData('get', 'ComprobanteIngreso/?json=' + JSON.stringify(dataSearch), null, true).then(response => {
                     hideLoader();
                     if (response.code === "0") {
                         console.warn(response)
                     }
-                    if (response.id === "1") {                        
+                    if (response.code === "1") {                        
                         let tempCobros = JSON.parse(response.payload)[0] || [];
                         $scope.cobros = tempCobros.map(item=>({ 
                             ...item,
                             codDoc: 'CI',
+                            serieComprobante: item.nroDoc,
+                            comprobante: 'Comprobante Ingreso',
                             esAnulado: item.color==='table-danger'
                         }))
+                        $scope.cloneCobros = JSON.parse(JSON.stringify(tempCobros))
                         $scope.setTotalsColumn();
                     }
 
@@ -276,10 +309,10 @@
                 _mS.getData('put', `ComprobanteIngreso/Cancel`, {data}, true).then(response => {
                     hideLoader();
                     if (response.code == "0") {
-                        _tS.toastr('warning', response.message, response.titleSms);
+                        tS.toastr('warning', response.message, response.titleSms);
                     }
                     if (response.code == "1") {
-                        _tS.toastr('success', response.message, response.titleSms);
+                        tS.toastr('success', response.message, response.titleSms);
                         $scope.getCobros();
                     }
                 }).catch(error=>{
@@ -325,23 +358,23 @@
 
             let format = 'pdf';
 
-        let dataParms = {
-            id: item.idComprobanteIngreso,
-        }
+            let dataParms = {
+                id: item.idComprobanteIngreso,
+            }
 
 
 
-        const parameters = {
-            hasService: true,
-            reportParams: JSON.stringify({
-                hasParams: true,
-                codigo: 'RCINGR',
-                format,
-                codEstab: item.codEstab,
-                aditionalParams: []
-            }),
-            dataParams: JSON.stringify(dataParms)
-        }
+            const parameters = {
+                hasService: true,
+                reportParams: JSON.stringify({
+                    hasParams: true,
+                    codigo: 'RCINGR',
+                    format,
+                    codEstab: item.codEstab,
+                    aditionalParams: []
+                }),
+                dataParams: JSON.stringify(dataParms)
+            }
 
 
             _commonSvc.getReport({
@@ -350,7 +383,7 @@
             })
         }
 
-        $scope.typeSend = 'N';
+        
         $scope.getParamToSendMail = function(item){
             return {
                 codDoc: 'CI',

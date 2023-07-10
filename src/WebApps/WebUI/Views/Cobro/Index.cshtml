@@ -22,20 +22,20 @@
         <div class="card">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12">
+                    <div class="col-xl-10 col-lg-10 col-md-6 col-sm-12 col-12">
                         <div class="row">
                             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                                 <div class="form-gorup">
                                     <span for="establecimiento">Establecimiento</span>
                                     <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
-                                        class="form-control  border-select" ng-change="getCobros()">
+                                        class="form-control  border-select" ng-change="filterValidation()">
                                         <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                                             {{item.nombreComercial}}
                                         </option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                                 <div class="form-group">
                                     <span for="">Rango de Fechas</span>
                                     <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
@@ -43,75 +43,22 @@
                                         result-range-date="resultRangeFilter(result)"></date-range-filter>
                                 </div>
                             </div>
-                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                                <div class="form-group">
-                                    <span for="usuarioFiltro">Usuario</span>
-                                    <input type="text" id="customerInputSearchUser" class="form-control border-select"
-                               ng-model="searchUser.nombreCompleto" user-search-drtv on-select="onSelectUser(result)"
-                               on-keyup="onKeyupUser()" placeholder="..."
-                               onclick="select();">
-
-                                    <script type="text/ng-template" id="autocompleteUserTemplate.html">
-                                        <div class="autocomplete-suggestion-uib-typeahead">
-                                            <span class="item-title"><b> {{match.model.nroIdentificacion}}</b> - {{match.model.nombreCompleto}}</span>
-                                        </div>
-                                    </script>                                                                      
-                                </div>
-                            </div>                            
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                        <div class="row">
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-                                <div class="form-group">
-                                    <span>Estado</span>
-                                    <select name="estado" id="estado" class="form-control border-select" ng-model="dataSearch.byEstado" ng-change="getCobros()">
-                                        <option value="">Todos</option>
-                                        <option ng-value="1">Activo</option>
-                                        <option ng-value="0">Anulado</option>
-                                    </select>
-                                </div>
-                            </div>                  
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <button type="button" class="btn btn-info btn-sm" data-toggle="button" data-more="#sh"
-                                    aria-pressed="false" ng-click="onClickBtnMore()">
-                                    <span class="text"><i class="mdi mdi-eye" aria-hidden="true"
-                                            uib-tooltip="Más opciones"></i></span>
-                                    <span class="text-active"><i class="mdi mdi-eye-off" aria-hidden="true"
-                                            uib-tooltip="Ocultar opciones"></i></span>
-                                </button>
-                                <button type="button" class="btn btn-success btn-sm" ng-click="getCobros()"
-                                    uib-tooltip="Recargar">
-                                    <i class="mdi mdi-refresh"></i>
-                                </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> 
-
-                <div class="row" ng-if="moreSearchOptions">
-                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-                        <div class="row">
-                            <div class="col-xl-4 col-lg-4 col-md-12 col-12">
+                            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                                 <div class="form-group">
                                     <span>Persona</span>
-                                    <select name="cliente-empleado" id="cliente-empleado" class="form-control" ng-model="dataSearch.byTipoPersona" ng-change="onChangePersona()">
+                                    <select name="cliente-empleado" id="cliente-empleado" class="form-control" ng-model="dataSearch.byTipoPersona" ng-change="onChangePersona()" ng-disabled="disabledTempInputPersona">
                                         <option value="">Todos</option>
                                         <option ng-value="item.codigo" ng-repeat="item in tiposPersona">{{item.descripcion}}</option>
                                     </select>
-                                </div>
-                            </div>
-                            <div class="col-xl-8 col-lg-8 col-md-12 col-12">
+                                </div> 
+                            </div> 
+                            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                                 <div class="form-group" ng-if="showCliente">
                                     <span>Cliente</span>
                                     <input type="text" id="customerInputSearchCliente" class="form-control border-select"
                                ng-model="searchCliente.nombreCliente" cliente-search-drtv on-select="onSelectCliente(result)"
                                on-keyup-cliente="onKeyupCliente()" placeholder="Ingrese C.I o Nombre Comercial"
-                               onclick="select();">
+                               onclick="select();" ng-disabled="disabledTempInputPersona">
 
                                     <script type="text/ng-template" id="autocompleteClienteTemplate.html">
                                         <div class="autocomplete-suggestion-uib-typeahead">
@@ -125,7 +72,7 @@
                                     <input type="text" id="customerInputSearchEmpleado" class="form-control border-select"
                                         ng-model="searchEmpleado.nombreCompleto" empleado-search-drtv on-select="onSelectEmpleado(result)"
                                         on-keyup="onKeyupEmpleado()" placeholder="..."
-                                        onclick="select();">
+                                        onclick="select();" ng-disabled="disabledTempInputPersona">
 
                                     <script type="text/ng-template" id="autocompleteEmpleadoTemplate.html">
                                         <div class="autocomplete-suggestion-uib-typeahead">
@@ -133,10 +80,63 @@
                                         </div>
                                     </script>
                                 </div>
+                            </div>                           
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <button type="button" class="btn btn-info btn-sm" data-toggle="button" data-more="#sh"
+                            aria-pressed="false" ng-click="onClickBtnMore()">
+                            <span class="text">
+                                <i class="mdi mdi-eye" aria-hidden="true"
+                                    uib-tooltip="Más opciones"></i>
+                                    </span>
+                                    <span class="text-active">
+                                        <i class="mdi mdi-eye-off" aria-hidden="true"
+                                    uib-tooltip="Ocultar opciones"></i>
+                                    </span>
+                                    </button>
+                                    <button type="button" class="btn btn-success btn-sm" ng-click="filterValidation()"
+                                        uib-tooltip="Recargar">
+                                        <i class="mdi mdi-refresh"></i>
+                                    </button>
+                            </div>
+                        </div> 
+                    </div>
+                </div> 
+
+                <div class="row" ng-if="moreSearchOptions">
+                    <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12 col-12">
+                        <div class="row">
+                            <div class="col-xl-8 col-lg-8 col-md-12 col-12">
+                                <div class="form-group">
+                                    <span for="usuarioFiltro">Usuario</span>
+                                    <input type="text" id="customerInputSearchUser" class="form-control border-select"
+                               ng-model="searchUser.nombreCompleto" user-search-drtv on-select="onSelectUser(result)"
+                               on-keyup="onKeyupUser()" placeholder="..."
+                               onclick="select();" >
+
+                                    <script type="text/ng-template" id="autocompleteUserTemplate.html">
+                                        <div class="autocomplete-suggestion-uib-typeahead">
+                                            <span class="item-title"><b> {{match.model.nroIdentificacion}}</b> - {{match.model.nombreCompleto}}</span>
+                                        </div>
+                                    </script>                                                                      
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-lg-4 col-md-12 col-12">
+                                <div class="form-group">
+                                    <span>Estado</span>
+                                    <select name="estado" id="estado" class="form-control border-select" ng-model="dataSearch.byEstado" ng-change="filterValidation()">
+                                        <option value="">Todos</option>
+                                        <option ng-value="1">Activo</option>
+                                        <option ng-value="0">Anulado</option>
+                                    </select>
+                                </div>
                             </div>                            
                         </div>                       
                     </div>
-                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                    <div class="col-xl-7 col-lg-7 col-md-12 col-sm-12 col-12">
                         <div class="row">
                             <div class="col-xl-4 col-lg-4 col-md-12 col-12">
                                 <div class="form-group">
@@ -195,7 +195,7 @@
                 <div class="row justify-content-end">
                     <div class="col-lg-3 col-md-3 col-sm-12 col-12">
                             <form class="form-material">
-                                <input type="text" class="form-control" ng-model="buscar"
+                                <input type="text" class="form-control" ng-change="filterLocal()" ng-model="dataSearch.bySearch"
                                         placeholder="Buscar cobros" />                                
                             </form>
                         </div>
@@ -227,7 +227,7 @@
                             </tr>
                         </thead>
                         <tbody md-body>
-                            <tr md-row ng-repeat="c in cobros | filter: buscar" ng-class="c.style">
+                            <tr md-row ng-repeat="c in cobros" ng-class="c.style">
                                 <td md-cell>
                                     <md-menu>
                                         <md-button aria-label="Open demo menu" class="md-icon-button"
@@ -309,5 +309,5 @@
 
 
 @section Scripts{
-                                                                                                                                                        <script src="~/js/contabilidad/controllers/cobroCtrl.min.js" asp-append-version="true"></script>
+                                                                                                                                                                                                                                                                                                                                                <script src="~/js/contabilidad/controllers/cobroCtrl.min.js" asp-append-version="true"></script>
 }
