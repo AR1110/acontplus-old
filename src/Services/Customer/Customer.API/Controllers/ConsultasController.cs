@@ -30,7 +30,7 @@ namespace Customer.API.Controllers
             _configuration = configuration;
             _customerContext = customerContext;
         }
-
+        [AllowAnonymous]
         [HttpGet("GetRucSRI")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -41,26 +41,26 @@ namespace Customer.API.Controllers
             DatosPersonaSriUpdate _response = new DatosPersonaSriUpdate();
             try
             {
-                DataTable dt = new DataTable();
-                using (var command = _customerContext.Database.GetDbConnection().CreateCommand())
+                if (!rUCSriDTo.SriOnly)
                 {
-                    var query = @"SELECT IDCard numeroRuc, BusinessName razonSocial, ISNULL(TradeName, '') nombreComercial, ISNULL([Address], '') direccion,
-                                ISNULL(telephone,'') telefono, ISNULL(email, '') email
-                                FROM Customer.Customer WHERE IDCard = @ruc AND SriValidation = 1";
-                    command.CommandText = "Customer.Customer_IDCard_Get";
-                    SqlParameter paramId = new SqlParameter("@id", SqlDbType.VarChar);
-                    paramId.Value = rUCSriDTo.Ruc;
-                    command.Parameters.Add(paramId);
-                    command.CommandType = CommandType.StoredProcedure;
-                    _customerContext.Database.OpenConnection();
-                    using (SqlDataAdapter adapter = new SqlDataAdapter())
+                    DataTable dt = new DataTable();
+                    using (var command = _customerContext.Database.GetDbConnection().CreateCommand())
                     {
-                        adapter.SelectCommand = (SqlCommand)command;
-                        adapter.Fill(dt);
-                    }
-                    if (dt.Rows.Count > 0)
-                    {
-                        return DataTableMapper.BindData<DatosPersonaSriUpdate>(dt);
+                        command.CommandText = "Customer.Customer_IDCard_Get";
+                        SqlParameter paramId = new SqlParameter("@id", SqlDbType.VarChar);
+                        paramId.Value = rUCSriDTo.Ruc;
+                        command.Parameters.Add(paramId);
+                        command.CommandType = CommandType.StoredProcedure;
+                        _customerContext.Database.OpenConnection();
+                        using (SqlDataAdapter adapter = new SqlDataAdapter())
+                        {
+                            adapter.SelectCommand = (SqlCommand)command;
+                            adapter.Fill(dt);
+                        }
+                        if (dt.Rows.Count > 0)
+                        {
+                            return DataTableMapper.BindData<DatosPersonaSriUpdate>(dt);
+                        }
                     }
                 }
 
@@ -107,10 +107,11 @@ namespace Customer.API.Controllers
             {
                 _log.LogError("Error GetRucSRI: " + ex.ToString());
                 _response.Error = ex.Message;
+                _response.NetworkError = true;
             }
             return _response;
         }
-
+        [AllowAnonymous]
         [HttpGet("GetCedulaSri")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -120,30 +121,31 @@ namespace Customer.API.Controllers
             CCedulaSriDto _response = new CCedulaSriDto();
             try
             {
-                DataTable dt = new DataTable();
-                using (var command = _customerContext.Database.GetDbConnection().CreateCommand())
+                if (!rUCSriDTo.SriOnly)
                 {
-                    var query = @"SELECT IDCard numeroRuc, BusinessName razonSocial, ISNULL(TradeName, '') nombreComercial, ISNULL([Address], '') direccion,
-                                ISNULL(telephone,'') telefono, ISNULL(email, '') email
-                                FROM Customer.Customer WHERE IDCard = @ruc AND SriValidation = 1";
-                    command.CommandText = "Customer.Customer_IDCard_Get";
-                    SqlParameter paramId = new SqlParameter("id", SqlDbType.VarChar);
-                    paramId.Value = rUCSriDTo.Ruc;
-                    command.Parameters.Add(paramId);
-                    SqlParameter pIdT = new SqlParameter("IDType", SqlDbType.VarChar);
-                    pIdT.Value = "05";
-                    command.Parameters.Add(pIdT);
-                    command.CommandType = CommandType.StoredProcedure;
-                    _customerContext.Database.OpenConnection();
-                    using (SqlDataAdapter adapter = new SqlDataAdapter())
+                    DataTable dt = new DataTable();
+                    using (var command = _customerContext.Database.GetDbConnection().CreateCommand())
                     {
-                        adapter.SelectCommand = (SqlCommand)command;
-                        adapter.Fill(dt);
+                        command.CommandText = "Customer.Customer_IDCard_Get";
+                        SqlParameter paramId = new SqlParameter("id", SqlDbType.VarChar);
+                        paramId.Value = rUCSriDTo.Ruc;
+                        command.Parameters.Add(paramId);
+                        SqlParameter pIdT = new SqlParameter("IDType", SqlDbType.VarChar);
+                        pIdT.Value = "05";
+                        command.Parameters.Add(pIdT);
+                        command.CommandType = CommandType.StoredProcedure;
+                        _customerContext.Database.OpenConnection();
+                        using (SqlDataAdapter adapter = new SqlDataAdapter())
+                        {
+                            adapter.SelectCommand = (SqlCommand)command;
+                            adapter.Fill(dt);
+                        }
+                        if (dt.Rows.Count > 0)
+                        {
+                            return DataTableMapper.BindData<CCedulaSriDto>(dt);
+                        }
                     }
-                    if (dt.Rows.Count > 0)
-                    {
-                        return DataTableMapper.BindData<CCedulaSriDto>(dt);
-                    }
+
                 }
 
                 if (!_cedulasSri.CheckExistence(rUCSriDTo.Ruc))
@@ -179,6 +181,7 @@ namespace Customer.API.Controllers
             {
                 _log.LogError("Error GetCedulaSri: " + ex.ToString());
                 _response.Error = ex.Message;
+                _response.NetworkError = true;
             }
             return _response;
         }

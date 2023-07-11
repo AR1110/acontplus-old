@@ -29,7 +29,7 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl {
         this._fS = _fS;
 
         this.TIPO_DOC_NE = _commonSvc.tipoDoc['NE']
-        this.CAMPOS = ["idSucursal", "idCliente", "idPuntoEmision", "fechaEmision", "fechaVencimiento", "validFechaVcto", "gridOptions", "gridOptionsBodega"];
+        this.CAMPOS = ["idSucursal", "idPuntoEmision", "fechaEmision", "fechaVencimiento", "validFechaVcto", "gridOptions", "gridOptionsBodega"];
 
         this.datosAdicionalesArticulo = [];
         this.infoAdicionalDocumento = [];
