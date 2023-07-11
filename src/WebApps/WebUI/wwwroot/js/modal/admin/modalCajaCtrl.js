@@ -314,8 +314,7 @@ class MovimientoCajaCtrl {
         this._mS.getData('get', 'UsuarioPermiso/Get/' + jsonParams, null, true).then(response => {
             let mainData = JSON.parse(response.payload)[2].jsonPermission
 
-            this.dataPermissions = JSON.parse(mainData);
-            console.log(this.dataPermissions)
+            this.dataPermissions = JSON.parse(mainData); 
         })
 
         if (this._params) {
@@ -339,7 +338,8 @@ class MovimientoCajaCtrl {
                 idCaja: this.dataSearch.idCaja,
                 dateStart: this.fS.formatDateMoment(this.dataSearch.dateStart) ,
                 dateEnd: this.fS.formatDateMoment(this.dataSearch.dateEnd),
-                checkBoxStatus: this.dataSearch.statusMovement?true: false,
+                checkBoxStatus: [0, 1].includes(this.dataSearch.statusMovement),
+                statusMovement: this.dataSearch.statusMovement,
                 checkBoxDate: true
             }
             this._mS.getData('get', '/ControlCaja/Get?json=' + JSON.stringify(dataSearch)).then(response => {
@@ -435,7 +435,7 @@ class MovimientoCajaCtrl {
                     })
                     return this._mS.getData('get', 'UsuarioPermiso/CheckHasPermission/' + obj, null, true)
                         .then(response => {
-                            console.log(response)
+                            
                             if (response.code === "0") {
                                 Swal.showValidationMessage(
                                     `${response.message}`
@@ -495,16 +495,10 @@ class MovimientoCajaCtrl {
         let movimientosCaja = JSON.parse(JSON.stringify(this.cloneMovimientosCaja));
         this.movimientosCaja = this.$filter("filter")(movimientosCaja, this.dataSearch.bySearch);
     }
-
-    reloadMovimientoCaja() {
-        this.dataSearch = {};
-        this.dataSearch.idCaja = this._params.idCaja;
-        this.getMovimientosCaja();
-    }
+ 
 
 
-    getReport(idControlCaja) {
-        console.log(idControlCaja);
+    getReport(idControlCaja) { 
         let {
             cajaPermiso
         } = this.$rootScope.usuarioPermiso;
@@ -530,7 +524,7 @@ class MovimientoCajaCtrl {
                     })
                     return this._mS.getData('get', 'UsuarioPermiso/CheckHasPermission/' + obj, null, true)
                         .then(response => {
-                            console.log(response)
+                             
                             if (response.code === "0") {
                                 Swal.showValidationMessage(
                                     `${response.message}`
@@ -842,8 +836,7 @@ class MovimientoCajaCtrl {
                 }
             }
         }
-        this._mS.getData('post', '/Notificacion/Post?json=' + JSON.stringify(data)).then(response => {
-            console.log(response);
+        this._mS.getData('post', '/Notificacion/Post?json=' + JSON.stringify(data)).then(response => { 
             // if(response.code==="0"){
             //     this._form.sweetAlert('warning', response.message, response.titleSms);                
             // }

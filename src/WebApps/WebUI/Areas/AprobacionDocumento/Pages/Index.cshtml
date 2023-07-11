@@ -1,9 +1,11 @@
 @page
 @model WebUI.Areas.AprobacionDocumento.Pages.Index
+
 @{
-    ViewBag.title = "Aprob. Documento";
+    ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <div ng-controller="aprobacionDocumentoCtrl">
     <div class="row page-titles">
@@ -244,5 +246,5 @@
 
     <script src="~/js/common/services/gridOptionsService.min.js" asp-append-version="true"></script>
 
-    <script src="~/js/ventas/controllers/aprobacionDocumentoCtrl.min.js" asp-append-version="true"></script>
+    <script src="~/js/ventas/controllers/aprobacionDocumentoCtrl.js" asp-append-version="true"></script>
 }

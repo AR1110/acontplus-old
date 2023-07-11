@@ -169,7 +169,8 @@
                     baseImponible: fS.roundNumber(precioTotalSinImpuesto, decimal.nroTotalDetalle),
                     nota: item.nota,
                     codigoPorcentaje: item.codigoPorcentaje,
-                    tarifa: item.tarifa
+                    tarifa: item.tarifa,
+                    idBodega: item.idBodega,
                 }
                 tempDetail.push(obj);
             }
@@ -208,7 +209,7 @@
                         item.articuloTarifas = JSON.parse(dataMedida.tarifas);
                     })
 
-                    item.idBodega = idBodega
+                    // item.idBodega = idBodega
                 }
                 
             return detalles;

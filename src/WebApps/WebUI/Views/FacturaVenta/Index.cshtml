@@ -144,15 +144,15 @@
                 <md-table-container name="wireTable" infinite-scroll="loadMore($index)" infinite-scroll-distance="1"
                     infinite-scroll-parent="true" ng-init="isShow=true" ng-show="isShow"
                     style=" max-height: 400px; overflow-x: hidden">
-                    <table resize master md-table name="innerWireTable">
-                        <thead md-trim-column-names fix-head md-head>
+                    <table resize master md-table name="innerWireTable" >
+                        <thead md-trim-column-names fix-head md-head  md-on-reorder="onOrderInvoice" md-order="dataSearch.order">
                             <tr md-row>
                                 <th md-column><span>Op</span></th>
-                                <th md-column><span>Nro. Doc</span></th>
-                                <th md-column><span>F. Emisión</span></th>
+                                <th md-column md-order-by="nroFactura"><span>Nro. Doc</span></th>
+                                <th md-column md-order-by="fechaEmision"><span>F. Emisión</span></th>
                                 <th md-column><span>F. Vcto</span></th>
-                                <th md-column><span>Cliente</span></th>
-                                <th md-column totales-venta-view="ventaPermiso"><span>Total</span></th>
+                                <th md-column md-order-by="nombreFiscal"><span>Cliente</span></th>
+                                <th md-column md-numeric md-order-by="total" totales-venta-view="ventaPermiso"><span>Total</span></th>
                                 <th md-column totales-venta-view="ventaPermiso"><span>Abono</span></th>
                                 <th md-column totales-venta-view="ventaPermiso"><span>Saldo</span></th>
                                 <th md-column><span>Nro. Ret</span></th>
@@ -164,7 +164,7 @@
                             </tr>
                         </thead>
                         <tbody md-body>
-                            <tr md-row ng-repeat="item in facturas track by $index" ng-class="item.style">
+                            <tr md-row ng-repeat="item in facturas | orderBy: dataSearch.order track by $index" ng-class="item.style">
                                 <td md-cell>
                                     <md-menu>
                                         <md-button aria-label="Open demo menu" class="md-icon-button"
