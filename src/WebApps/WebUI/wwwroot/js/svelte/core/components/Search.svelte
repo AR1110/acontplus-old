@@ -5,12 +5,13 @@
 </script>
 
 <div class="row">
-    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-        <div id="search-input-cont" class="form-group">
+    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 offset-xl-8 offset-lg-8 offset-md-8 offset-sm-8">
+        <div id="search-input-cont" class="form-group pull-right">
             <input
                 type="text"
                 id="search-field"
                 class="form-control"
+                onclick="this.select()"
                 {placeholder}
                 autocomplete="off"
                 bind:value={searchTerm}

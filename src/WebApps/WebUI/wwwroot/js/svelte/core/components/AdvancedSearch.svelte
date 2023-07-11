@@ -5,4 +5,4 @@
 	export let value;
     export let placeholder;
 </script>
-<input class="form-control" placeholder="{placeholder}" use:events {value}/>
+<input class="form-control" onclick="this.select()" placeholder="{placeholder}" use:events {value}/>

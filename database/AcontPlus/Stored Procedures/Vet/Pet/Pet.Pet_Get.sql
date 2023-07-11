@@ -36,12 +36,21 @@ BEGIN
 	IF (@tipo = 2)
 		BEGIN
 
-			SELECT p.Id, p.Name, p.Age, p.Color
+			SELECT p.Id
+				,p.[Name]
+				,p.Age
+				,p.Color
+				,g.[Name] gender
+				,pt.[Name] petType
+				,b.[Name] breed
 				,c.businessName customer
 				,c.IDCard customerIdCard
 				,c.email
 			FROM Pet.Pet p
 				INNER JOIN Customer.Customer c ON p.CustomerId = c.Id
+				LEFT JOIN Pet.Gender g ON p.genderId = g.Id
+				LEFT JOIN Pet.PetType pt ON p.petTypeId = pt.Id
+				LEFT JOIN Pet.Breed b ON p.breedId = b.Id
 			WHERE p.CompanyId = @companyId
 				AND (
 					c.BusinessName LIKE '%' + @textSearch + '%' OR
