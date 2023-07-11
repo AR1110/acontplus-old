@@ -31,15 +31,12 @@ BEGIN
 	SELECT 
 		d.idAprob_Document
 	   ,d.uniqueId
-	--   ,d.idCliente
 	   ,idTiempoCredito = ISNULL(cl.idTiempoCredito, 0)
 	   ,d.idPuntoEmision
 	   ,d.estab
 	   ,d.ptoEmi
 	   ,serieComprobante = d.estab+'-'+d.ptoEmi+'-'+Helper.F_Auto_Sequential(d.secuencial)
-	  -- ,cliente = cl.nombreFiscal
 	   ,d.identificacionComprador
-	 --  ,direccion = ISNULL(cl.direccion, NULL)
 	   ,d.codDoc
 	   ,d.docOrigen
 	   ,d.fechaEmision	 
@@ -72,6 +69,7 @@ BEGIN
 	   ,m.idMedida
 	   ,t.idTipoIva
 	   ,dt.idTarifa
+	   ,dt.idBodega
 	   ,a.codigo
 	   ,dt.descripcion
 	   ,medida = m.descripcion
@@ -95,9 +93,9 @@ BEGIN
 	WHERE dt.uniqueId = @uniqueId AND dt.estado = 1 ORDER BY dt.idAprob_Document_Detailt ASC 
 
 	SELECT 
-		tipoDoc  = CASE WHEN codDocumento = 'PR' THEN 'Proforma' 
-			  WHEN codDocumento = 'NE' THEN 'NotaEntrega' 
-			  ELSE '' END 
+		 tipoDoc  = CASE WHEN codDocumento = 'PR' THEN 'Proforma' 
+			             WHEN codDocumento = 'NE' THEN 'NotaEntrega' 
+			             ELSE '' END 
 		,serieComprobante = serie
 	FROM Ventas.Aprob_Document_Hist WHERE uniqueId = @uniqueId
 	
