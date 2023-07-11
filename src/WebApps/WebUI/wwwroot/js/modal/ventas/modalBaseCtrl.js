@@ -94,83 +94,14 @@ export class ModalBaseCtrl {
     async clienteSearchDynamic(textSearch) {
         try {
 
-            if(textSearch.length<3) return;
-            let isSearchDataInSRI = this.isSearchDataInSRI || false;            
+            if(textSearch.length<3) return;         
             let response = await  this._commonSvc.clienteSearch(textSearch)
             
-            if(response) return response;
-
-            if(isSearchDataInSRI && this.verificarNumero(textSearch) && !response) {
-               
-                if(textSearch.length===13){
-                    showLoader()
-                    this._commonSvc.checkClientSRIByRUC(textSearch).then(result => {
-                        hideLoader()
-                        if (!result.numeroRuc) return;
-
-                        let {razonSocial,establecimientos, direccion, telefono, email} = result;
-        
-                        this.cliente.identificacionComprador = textSearch;
-                        this.cliente.razonSocialComprador = razonSocial.replaceAll('"', '');
-                        this.cliente.nombreComercial = razonSocial.replaceAll('"', '');
-                        //this.cliente.direccionComprador = establecimientos.find(item => item.matriz === 'SI').direccionCompleta;
-                        if (direccion) {
-                            this.cliente.direccionComprador = direccion
-                        }
-                        if (telefono) {
-                            this.cliente.telefono = telefono
-                        }
-                        if (email) {
-                            this.cliente.email = email
-                        }
-                        this.cliente.idCliente = 0;
-                        this.newCustomer = true
-                        
-                    }).catch(error =>{
-                        console.log(error)
-                        hideLoader();
-                    })
-                }
- 
-                if(textSearch.length===10){
-                    showLoader();
-                    this._commonSvc.checkClientSRIByCedula(textSearch).then(result => {
-                        hideLoader();
-                        if (result.numeroRuc || result.nombreCompleto) {
-        
-                            let {nombreCompleto} = result;
-                            this.cliente.identificacionComprador = textSearch;
-                            this.cliente.razonSocialComprador = nombreCompleto.replaceAll('"', '');
-                            this.cliente.nombreComercial = nombreCompleto.replaceAll('"', '');                           
-                            this.cliente.idCliente = 0;
-                        } 
-                    }).catch(error => {                        
-                        hideLoader();  
-                        console.log(error);                    
-                    })
-                }
-                
-            }
-
-
+            if(response) return response; 
         } catch (error) {
             console.log('Error search cliente',error)
         }
-    }
-
-    verificarNumero(numero) {
-         // Eliminar espacios en blanco
-         numero = numero?   numero.trim(): ""
-        
-         if (![10, 13].includes(numero.length)) return;
-  
-         if(isNaN(numero)) return
-  
-         if(numero.length===13 && numero.slice(-3) !=="001") return; 
- 
-         return true;
-    }
-
+    } 
     
 
 
@@ -1326,63 +1257,6 @@ export class ModalBaseCtrl {
         }
 
     }
-
-
-
-
-
-
-
-
-
-
-    async openModalCobroDocumento(params) {
-        let {
-            MODAL_FILE_CTRL,
-            MODAL_COBRO_DOCUMENTO
-        } = this._nombreModalConst.cobro;
-        let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_COBRO_DOCUMENTO['controller']];
-        let template = MODAL_COBRO_DOCUMENTO['template'];
-
-        let $modalRef = this._modalSvc.openModalCustom({
-            controller,
-            template,
-            size: 'xl',
-            params
-        })
-
-        $modalRef.result.then(result => {
-            this.$uibModalInstance.close(params)
-        })
-
-    }
-
-
-    async openModalRapido(params) {
-
-        let {
-            MODAL_FILE_CTRL,
-            MODAL_COBRO_RAPIDO
-        } = this._nombreModalConst.cobro;
-        let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_COBRO_RAPIDO['controller']];
-        let template = MODAL_COBRO_RAPIDO['template'];
-
-        let $modalRef = this._modalSvc.openModalCustom({
-            controller,
-            template,
-            size: 'lg',
-            params
-        })
-
-        $modalRef.result.then(result => {
-            this.$uibModalInstance.close(params)
-        })
-
-    }
-
-
-
-
     //Event Formulario Invoice, Nota Entrega
     onBlurBtnNewCustomerInvoice(e) {
         var keyCode = e.keyCode || e.which;
@@ -1398,10 +1272,9 @@ export class ModalBaseCtrl {
         Swal.fire({
             icon: 'warning',
             title: 'Datos Incorrectos',
-            html: 'Número de identificación inválido, desea editar?',
+            html: 'Número de identificación no validado!',
             showConfirmButton: true,
-            showCancelButton: true,
-            confirmButtonText: 'Editar',
+            showCancelButton: true, 
             cancelButtonText: 'Cancelar'
         }).then(async result => {
             if (result.isConfirmed) {
@@ -1412,33 +1285,6 @@ export class ModalBaseCtrl {
         })
 
     }
-
-
-
-
-    //------------------------------------CRUD INVOICE----------------------------------
-
-    createInvoice(params) {
-        return this._mS.getData('post', `Factura`, params, true)
-            .catch(errorResponse => {
-                console.error('Error al crear una factura -> fact_service:');
-                throw new Error(errorResponse);
-            });
-    }
-
-    updateInvoice(id, params) {
-        return this._mS.getData('put', 'Factura/' + id, params, true)
-            .catch(errorResponse => {
-                console.error('Error al actualizar una factura -> fact_service:');
-                throw new Error(errorResponse);
-            });
-    }
-    //------------------------------------END INVOICE------------------------------
-
-
-
-
-
 
 
 

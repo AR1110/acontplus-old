@@ -2131,12 +2131,14 @@ export class CommonService {
     //========================================END POINT EXTERNOS================== 
     checkClientSRIByRUC = function (identificacion) {
         return this.mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + identificacion, null, true).then(response=>{
+            console.log(response)
             return response;
         })
     }
 
     checkClientSRIByCedula = function (identificacion) {
         return this.mS.getData('get', 'Consultas/GetCedulaSri?Ruc=' + identificacion, null, true).then(response => {
+            console.log(response)
             return response;
         })
     }

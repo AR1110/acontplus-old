@@ -95,7 +95,7 @@ namespace Customer.API.Controllers
                 if (_response.Establecimientos.Count > 0)
                 {
                    _response.direccion = _response.Establecimientos[0].direccionCompleta;
-                    if (!string.IsNullOrEmpty(_response.Establecimientos[0].nombreFantasiaComercial.ToString()))
+                    if (_response.Establecimientos[0].nombreFantasiaComercial!=null)
                     {
                         _response.nombreComercial = _response.Establecimientos[0].nombreFantasiaComercial.ToString();
                     }

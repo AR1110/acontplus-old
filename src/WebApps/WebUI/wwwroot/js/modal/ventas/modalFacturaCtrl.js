@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.104";
+} from "./modalBaseCtrl.js?v=0.108";
 
 class ModalFacturaCtrl extends ModalBaseCtrl {
 
@@ -692,6 +692,15 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
         }
     }
 
+    receiveDataCustomerSRI(result) {
+        if(result.idCliente===0) {
+            this.newCustomer = true;
+        }else{
+            this.newCustomer = false;
+        }
+        this.cliente = result;
+    }
+
     
 
     async onSave() {
@@ -699,6 +708,11 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
 
 
             if (!this.isValidaForm()) return
+
+            if(!(this.data.idTiempoCredito) > 0){
+                this._fS.sweetAlert('warning', 'Seleccione el tiempo crédito');
+                return
+            }
 
             if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
                 for(let item of this.gridOptions.data){
