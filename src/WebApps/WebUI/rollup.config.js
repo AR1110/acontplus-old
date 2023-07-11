@@ -4,7 +4,6 @@ import commonjs from '@rollup/plugin-commonjs';
 import replace from "@rollup/plugin-replace";
 import json from "@rollup/plugin-json";
 import builtins from 'rollup-plugin-node-builtins';
-import { terser } from "rollup-plugin-terser";
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -23,7 +22,6 @@ export default {
     },
     plugins: [
         svelte({
-            dev: !production,
             // Tell the svelte plugin where our svelte files are located
             include: 'wwwroot/**/*.svelte',
             emitCss: false,
@@ -44,7 +42,7 @@ export default {
         // Tell any third-party plugins that we're building for the browser
         resolve({
             browser: true,
-            //dedupe: ['svelte']
+            dedupe: ['svelte']
         }),
         //production && terser(),
     ]

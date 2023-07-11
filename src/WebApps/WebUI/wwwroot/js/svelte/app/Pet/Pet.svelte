@@ -15,6 +15,13 @@
 
 	let quotes = [];
 	let error = null;
+
+	let genderes = [],
+		breeds = [],
+		breedsFiltered = [],
+		petTypes = [],
+		pets = [];
+
 	onMount(async () => {
 		showLoader();
 		try {
@@ -35,21 +42,21 @@
 				console.log("breeds => ", breeds);
 			});
 		} catch (error) {
-			console.log(error)
+			console.log(error);
 		} finally {
 			hideLoader();
 		}
 	});
-	let genderes = [],
-		breeds = [],
-		petTypes = [],
-		pets = [];
 
 	// const cat = localStorage.getItem("ngStorage-currentUser")
 	// const objToken = JSON.parse(cat)
 	// console.log(objToken.token)
 	// var decodedJwt = jwt_decode(objToken.token)
 	// console.log(decodedJwt)
+
+	const filterBreed = (id) => {
+		breedsFiltered = breeds.filter((x) => x.petTypeId == id);
+	};
 
 	let pet = {
 		id: "",
@@ -75,10 +82,13 @@
 			editStatus = false;
 			cleanPet();
 		}
+		if (!open) {
+			isCustomerSelected = false
+		}
 	};
 
 	const addPet = async () => {
-		if (!clientSelected.customerId) {
+		if (!customerSelected.customerId) {
 			toast({ type: "warning", message: "Debe asignar un cliente" });
 			return;
 		}
@@ -91,8 +101,8 @@
 			return;
 		}
 		const newPet = {
-			customerId: clientSelected.customerId,
-			companyId: clientSelected.companyId,
+			customerId: customerSelected.customerId,
+			companyId: customerSelected.companyId,
 			name: pet.name,
 			petTypeId: pet.petTypeId,
 			breedId: pet.breedId,
@@ -147,6 +157,9 @@
 	const editPet = (petEdited) => {
 		editStatus = true;
 		pet = petEdited;
+		breedsFiltered = breeds.filter(
+			(b) => b.petTypeId == petEdited.petTypeId
+		);
 	};
 
 	const updatePet = async () => {
@@ -207,7 +220,6 @@
 	let clients = [];
 	const onInput = async (e) => {
 		value = e.target.value;
-		console.log(value);
 		if (value.length >= 3) {
 			let data = {
 				textSearch: value,
@@ -221,7 +233,6 @@
 				.then((response) => {
 					if (response.code == "1") {
 						clients = JSON.parse(response.payload);
-						console.log(clients);
 					}
 				});
 		}
@@ -229,11 +240,11 @@
 	const onFocus = () => (isFocused = true);
 	const onBlur = () => (isFocused = false);
 	let placeholder = "Buscar cliente";
-	let isClientSelected = false;
-	let clientSelected = {};
+	let isCustomerSelected = false;
+	let customerSelected = {};
 	const selectClient = (e) => {
-		isClientSelected = true;
-		clientSelected = e;
+		isCustomerSelected = true;
+		customerSelected = e;
 		console.log(e);
 	};
 
@@ -267,9 +278,7 @@
 	</div>
 </div>
 
-<div class="card">
-	<div class="card-body">
-		<!-- <iframe sandbox="allow-same-origin allow-scripts allow-popups allow-forms" src="http://205.209.99.71:8006/"
+<!-- <iframe sandbox="allow-same-origin allow-scripts allow-popups allow-forms" src="http://205.209.99.71:8006/"
 					width="100%"
 					height="500"
 					allowfullscreen
@@ -284,48 +293,48 @@
 		<svelte-app id="paul" name="Paul"></svelte-app>
 		<test-counter></test-counter> -->
 
-		{#if showForm | editStatus}
-			<h5 class="card-title">
-				{#if !editStatus}Añadir Mascota{:else}Editar Mascota{/if}
-			</h5>
-			<form on:submit|preventDefault={onSubmitHandler}>
-				<div class="row">
-					<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-						<div class="form-group">
-							<div class="input-group">
-								<AdvancedSearch
-									on:input={onInput}
-									on:focus={onFocus}
-									on:blur={onBlur}
-									{value}
-									{placeholder}
-								/>
-							</div>
-							{#if clients.length > 0 && !isClientSelected}
-								<div class="floating-results list-group">
-									{#each clients as item}
-										<a
-											href="#"
-											class="list-group-item"
-											on:click={selectClient(item)}
-											><i class="ti-user" /> - {item.customerId}
-											- {item.nombreFiscal}</a
-										>
-									{/each}
-								</div>{/if}
-						</div>
+{#if showForm | editStatus}
+	<form on:submit|preventDefault={onSubmitHandler}>
+		<div class="row">
+			<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+				<div class="form-group">
+					<div class="input-group">
+						<AdvancedSearch
+							on:input={onInput}
+							on:focus={onFocus}
+							on:blur={onBlur}
+							{value}
+							{placeholder}
+						/>
 					</div>
+					{#if clients.length > 0 && !isCustomerSelected}
+						<div class="floating-results list-group">
+							{#each clients as item}
+								<a
+									href={null}
+									class="list-group-item"
+									on:click={selectClient(item)}
+									><i class="ti-user" /> - {item.customerId}
+									- {item.nombreFiscal}</a
+								>
+							{/each}
+						</div>{/if}
 				</div>
-				{#if isClientSelected}
+			</div>
+		</div>
+		{#if isCustomerSelected}
+			<div class="card">
+				<div class="card-body">
+					<h5 class="card-title">Datos del Cliente</h5>
 					<div class="row">
 						<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
 							<div class="form-group">
-								<label for="">Cliente</label>
+								<label for="">Razón Social</label>
 								<input
 									type="text"
 									class="form-control"
 									disabled
-									value={clientSelected.nombreFiscal}
+									value={customerSelected.nombreFiscal}
 								/>
 							</div>
 						</div>
@@ -336,7 +345,7 @@
 									type="text"
 									class="form-control"
 									disabled
-									value={clientSelected.customerId}
+									value={customerSelected.numeroIdentificacion}
 								/>
 							</div>
 						</div>
@@ -347,138 +356,155 @@
 									type="text"
 									class="form-control"
 									disabled
-									value={clientSelected.correo}
+									value={customerSelected.correo}
 								/>
 							</div>
 						</div>
 					</div>
-				{/if}
-				<div class="row">
-					<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-						<div class="form-group">
-							<label for="pet-name">Nombre</label>
-							<input
-								bind:value={pet.name}
-								type="text"
-								class="form-control"
-								id="pet-name"
-								placeholder="Nombre"
-								required
-							/>
-						</div>
-					</div>
-					<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3">
-						<div class="form-group">
-							<label for="petType">Tipo:</label>
-							<select
-								name="petType"
-								id="petType"
-								class="form-control"
-								required
-								bind:value={pet.petTypeId}
-							>
-								<option selected disabled
-									>Seleccione el tipo</option
-								>
-								{#each petTypes as item}
-									<option value={item.id}>{item.name}</option>
-								{/each}
-							</select>
-						</div>
-					</div>
-
-					<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-						<div class="form-group">
-							<label for="breed">Raza:</label>
-							<select
-								name="breed"
-								id="breed"
-								class="form-control"
-								required
-								bind:value={pet.breedId}
-							>
-								<option selected disabled
-									>Seleccione la raza</option
-								>
-								{#each breeds as item}
-									<option value={item.id}>{item.name}</option>
-								{/each}
-							</select>
-						</div>
-					</div>
 				</div>
-
-				<div class="row">
-					<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-						<div class="form-group">
-							<label for="gender">Sexo:</label>
-							<select
-								name="gender"
-								id="gender"
-								class="form-control"
-								bind:value={pet.genderId}
-							>
-								<option selected disabled
-									>Seleccione el sexo</option
+			</div>
+			<div class="card">
+				<div class="card-body">
+					<h5 class="card-title">
+						{#if !editStatus}Datos de la Mascota{:else}Editar
+							Mascota{/if}
+					</h5>
+					<div class="row">
+						<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+							<div class="form-group">
+								<label for="pet-name">Nombre</label>
+								<input
+									bind:value={pet.name}
+									type="text"
+									class="form-control"
+									id="pet-name"
+									placeholder="Nombre"
+									required
+								/>
+							</div>
+						</div>
+						<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3">
+							<div class="form-group">
+								<label for="petType">Tipo:</label>
+								<select
+									name="petType"
+									id="petType"
+									class="form-control"
+									required
+									bind:value={pet.petTypeId}
+									on:change={(e) =>
+										filterBreed(e.target.value)}
 								>
-								{#each genderes as item}
-									<option value={item.id}>{item.name}</option>
-								{/each}
-							</select>
+									<option selected disabled
+										>Seleccione el tipo</option
+									>
+									{#each petTypes as item}
+										<option value={item.id}
+											>{item.name}</option
+										>
+									{/each}
+								</select>
+							</div>
+						</div>
+						{#if breedsFiltered.length > 0}
+							<div
+								class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6"
+							>
+								<div class="form-group">
+									<label for="breed">Raza:</label>
+									<select
+										name="breed"
+										id="breed"
+										class="form-control"
+										required
+										bind:value={pet.breedId}
+									>
+										<option selected disabled
+											>Seleccione la raza</option
+										>
+										{#each breedsFiltered as item}
+											<option value={item.id}
+												>{item.name}</option
+											>
+										{/each}
+									</select>
+								</div>
+							</div>
+						{/if}
+					</div>
+
+					<div class="row">
+						<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+							<div class="form-group">
+								<label for="gender">Sexo:</label>
+								<select
+									name="gender"
+									id="gender"
+									class="form-control"
+									bind:value={pet.genderId}
+								>
+									<option selected disabled
+										>Seleccione el sexo</option
+									>
+									{#each genderes as item}
+										<option value={item.id}
+											>{item.name}</option
+										>
+									{/each}
+								</select>
+							</div>
+						</div>
+
+						<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+							<div class="form-group">
+								<label for="pet-age">Edad</label>
+								<input
+									type="number"
+									id="pet-age"
+									class="form-control"
+									step="any"
+									required
+									bind:value={pet.age}
+								/>
+							</div>
+						</div>
+						<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+							<div class="form-group">
+								<label for="pet-color">Color</label>
+								<input
+									type="text"
+									id="pet-color"
+									class="form-control"
+									placeholder="blanco"
+									required
+									bind:value={pet.color}
+								/>
+							</div>
 						</div>
 					</div>
 
-					<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-						<div class="form-group">
-							<label for="pet-age">Edad</label>
-							<input
-								type="number"
-								id="pet-age"
-								class="form-control"
-								step="any"
-								required
-								bind:value={pet.age}
-							/>
-						</div>
-					</div>
-					<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-						<div class="form-group">
-							<label for="pet-color">Color</label>
-							<input
-								type="text"
-								id="pet-color"
-								class="form-control"
-								placeholder="blanco"
-								required
-								bind:value={pet.color}
-							/>
-						</div>
-					</div>
-				</div>
-
-				<button type="submit" class="btn btn-success">
-					<i class="ti-save" />
-					{#if !editStatus} Guardar {:else} Actualizar{/if}
-				</button>
-				{#if showForm | editStatus}
-					<button
-						type="button"
-						class="btn btn-warning"
-						on:click={() => openNew(false)}
-					>
-						<i class="ti-close" />Cancelar
+					<button type="submit" class="btn btn-success">
+						<i class="ti-save" />
+						{#if !editStatus} Guardar {:else} Actualizar{/if}
 					</button>
-				{/if}
-			</form>
-			<hr />
+					{#if showForm | editStatus}
+						<button
+							type="button"
+							class="btn btn-warning"
+							on:click={() => openNew(false)}
+						>
+							<i class="ti-close" />Cancelar
+						</button>
+					{/if}
+				</div>
+			</div>
 		{/if}
+	</form>
+{/if}
 
-		<Search
-			bind:searchTerm
-			on:input={searchPets}
-			placeholder="Buscar Mascota"
-		/>
-
+<Search bind:searchTerm on:input={searchPets} placeholder="Buscar Mascota" />
+<div class="card">
+	<div class="card-body">
 		<div class="table-responsive">
 			<table class="table table-bordered">
 				<thead>

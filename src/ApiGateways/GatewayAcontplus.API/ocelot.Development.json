@@ -735,7 +735,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44358
+          "Port": 7079
         }
       ],
       "DownstreamPathTemplate": "/api/Cliente{everything}",
@@ -991,7 +991,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44358
+          "Port": 7079
         }
       ],
       "DownstreamPathTemplate": "/api/NotaEntrega{everything}",
