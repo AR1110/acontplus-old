@@ -65,7 +65,7 @@ BEGIN
 		  ,total           = cc.importeTotal
 		  ,abono           = CASE WHEN co.cobro = 1 THEN IIF(co.abono >= cc.importeTotal,hc.abono,co.abono) ELSE 0 END
 		  ,saldo           = cc.importeTotal - SUM(CASE WHEN co.cobro = 1 THEN IIF(co.abono >= cc.importeTotal,hc.abono,co.abono) ELSE 0 END) OVER (PARTITION BY cc.idCuentaPorCobrar ORDER BY co.idCobro ROWS UNBOUNDED PRECEDING)    
-		  ,pay             = ISNULL(sf.descripcion,ef.descripcion)
+		  ,pay             = ISNULL(sf.descripcion,ef.descripcion) + ' ' +  IIF(co.posfechado = 1,'POSFECHADO','')
 		  ,ef.idEntidadFinanciera
 		  ,co.cobro
 	FROM dbo.ComprobanteIngreso             ci WITH (NOLOCK)
@@ -125,7 +125,7 @@ BEGIN
 														SELECT mc.valor FROM dbo.MovimientoCaja mc WITH (NOLOCK) WHERE mc.idMovimientoCaja = cd.idComprobante
 														)
 							END 
-		,cd.abono
+		,cd.abono 
 		,pay              = CASE td.codigo WHEN 'A'  THEN 
 														(
 														SELECT sf.descripcion
@@ -222,7 +222,7 @@ BEGIN
 	
 	SELECT @efectivoSistema = SUM(abono)    FROM @tbDetalleCaja td INNER JOIN dbo.EntidadFinanciera ef WITH (NOLOCK) ON ef.idEntidadFinanciera = td.idEntidadFinanciera WHERE cobro = 1 AND ef.codigo = 'EFE'
 	
-	SELECT @otros           = SUM(abono)    FROM @tbDetalleCaja td INNER JOIN dbo.EntidadFinanciera ef WITH (NOLOCK) ON ef.idEntidadFinanciera = td.idEntidadFinanciera WHERE cobro = 1 AND ef.codigo != 'EFE'
+	SELECT @otros           = SUM(abono)    FROM @tbDetalleCaja td INNER JOIN dbo.EntidadFinanciera ef WITH (NOLOCK) ON ef.idEntidadFinanciera = td.idEntidadFinanciera WHERE cobro = 1 AND ef.codigo NOT IN ('EFE','DOC')
 
 
 	-- ============================== CUADRES DE CAJA  ========================================================
@@ -282,7 +282,7 @@ BEGIN
 	   ,saldo    = CAST(ISNULL((SELECT SUM(ac.total) FROM @tbDocuments ac WHERE ac.tipDoc = td.codigo),0)  - ISNULL((SELECT SUM(ac.abono) FROM @tbDocuments ac WHERE ac.tipDoc = td.codigo),0) AS numeric(18,5))
 	   ,cantidad = (ISNULL((    SELECT COUNT(*)      FROM @tbDocuments ac WHERE ac.tipDoc = td.codigo),0))
 	 FROM dbo.TipoDocumento td WITH (NOLOCK)
-	 WHERE td.codigo IN ('FV','NE','IC','EC','A')
+	 WHERE td.codigo IN ('FV','NE','IC','EC')
 	 
 	  -------------------------------------------------END-----------------------------------------------------------------
 
@@ -316,8 +316,10 @@ BEGIN
 		  ,saldo = CAST(saldo AS numeric(15,2))
 		  ,pay =   pay
 	 FROM @tbDetalleCaja
+	 WHERE cobro = 1
 	 ORDER BY pay,nroDoc,nroComprobante ASC 
 
-	 SELECT ISNULL(@chequesPosf,0) as chequePosfechado
+	 SELECT chequePosfechado = ISNULL(@chequesPosf,0)
+	       ,anticipos        = ISNULL((SELECT SUM(dc.total) FROM @tbDetalleCaja dc WHERE dc.tipDoc = 'A' ),0)
 	 
 END 
