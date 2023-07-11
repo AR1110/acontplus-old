@@ -17,7 +17,7 @@
                 <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
                         <span for="">Estado</label>
-                        <select name="" id="" class="form-control border-select" ng-model="$ctrl.dataSearch.statusMovement" ng-change="getMovimientosCaja()">
+                        <select name="" id="" class="form-control border-select" ng-model="$ctrl.dataSearch.statusMovement" ng-change="$ctrl.getMovimientosCaja()">
                             <option value="">Todos</option>
                             <option ng-value="item.statusMovement" ng-repeat="item in $ctrl.estadoMovimientos">
                                 {{item.descripcion}}
@@ -36,7 +36,7 @@
                             <div class="input-group">
                                 <input type="text" class="form-control border-select" ng-model="$ctrl.dataSearch.bySearch" ng-keyup="$ctrl.searchFilterLocal()" placeholder="Buscar">
                                 <div class="input-group-append">
-                                    <button type="button" class="btn btn-secondary" ng-click="$ctrl.reloadMovimientoCaja()">
+                                    <button type="button" class="btn btn-secondary" ng-click="$ctrl.getMovimientosCaja()">
                                         <i class="fa fa-redo"></i>
                                     </button>
                                 </div>
@@ -71,7 +71,7 @@
             <button type="button" class="btn btn-info" ng-click="$ctrl.openModalFiltro()">
                 <i class="fa fa-filter"></i> Filtro
             </button>
-           
+
         </div>
         <div class="col-xl-6 col-lg-6 col-md-5 col-sm-12 col-12">
             <form autocomplete="off">
@@ -96,4 +96,3 @@
 <div class="modal-footer">
     <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
 </div>
-        

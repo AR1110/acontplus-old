@@ -282,7 +282,7 @@
                     mainDataForm = response;
                     $scope.establecimientos = mainDataForm.establecimientos;
                     
-                    $scope.dataSearch.codEstab = $scope.establecimientos[0].codEstab;
+                    $scope.dataSearch.codEstab = $scope.establecimientos.find(item=>(item.predeterminado)).codEstab;
                     $scope.getAprobComprobantes();
                 }).catch((errorResponse) => {
                     hideLoader();
@@ -702,7 +702,7 @@
                 //Agregamos Bodega e Indice
                 let index = 1;
                 $scope.gridOptionsDetalle.data = resultJoinDetails.map(item => {
-                    item.idBodega = $scope.idBodega;
+                    // item.idBodega = $scope.idBodega;
                     item.n = index++;
                     return item;
                 })
@@ -1526,6 +1526,12 @@
                     $scope.idBodega = dataBodega.idBodega;
 
                     $scope.dataClone.codEstab = $scope.data.codEstab;
+                    
+                    $scope.setWarehouseAndIVA();
+                    for(let dd of $scope.gridOptionsDetalle.data){
+                        dd.idBodega = $scope.idBodega;
+                    }
+                    $scope.$apply();
                 } else {
                     $scope.data.codEstab = $scope.dataClone.codEstab;
                     $scope.$apply();
@@ -1908,26 +1914,26 @@
                 //     width: '15%',
                 //     minWidth:'100'
                 // },
-                // {
-                //     name: 'bodega',
-                //     field: 'idBodega',   
-                //     enableCellEdit: true,
-                //     allowCellFocus: true,
-                //     enableCellEditOnFocus: true,                 
-                //     editableCellTemplate: 'ui-grid/dropdownEditor',
-                //     cellFilter: 'cellFilterBodega:this',
-                //     editDropdownValueLabel: 'descripcion',
-                //     editDropdownIdLabel: 'idBodega',                
-                //     type: 'number',
-                //     width: '11%',
-                //     minWidth:'100'
-                // }, 
+                {
+                    name: 'bodega',
+                    field: 'idBodega',   
+                    enableCellEdit: false,
+                    allowCellFocus: false,
+                    enableCellEditOnFocus: false,                 
+                    editableCellTemplate: 'ui-grid/dropdownEditor',
+                    cellFilter: 'cellFilterBodega:this',
+                    editDropdownValueLabel: 'descripcion',
+                    editDropdownIdLabel: 'idBodega',                
+                    type: 'number',
+                    width: '11%',
+                    minWidth:'100'
+                }, 
             ]
 
             let indexTipoIva = $scope.gridOptionsDetalle.columnDefs.findIndex(item => item.field === 'idTipoIva');
-            // let indexBodega  = this.gridOptionsDetailDocument.columnDefs.findIndex(item=>item.field==='idBodega');
+            let indexBodega  = $scope.gridOptionsDetalle.columnDefs.findIndex(item=>item.field==='idBodega');
             $scope.gridOptionsDetalle.columnDefs[indexTipoIva].editDropdownOptionsArray = $scope.tipoIvas;
-            // this.gridOptionsDetailDocument.columnDefs[indexBodega].editDropdownOptionsArray = this.bodegas;             
+            $scope.gridOptionsDetalle.columnDefs[indexBodega].editDropdownOptionsArray = $scope.bodegas;             
         }
 
         $scope.showHistorialDocumento = function () {
@@ -2317,26 +2323,26 @@
                 //     width: '15%',
                 //     minWidth:'100'
                 // },
-                // {
-                //     name: 'bodega',
-                //     field: 'idBodega',   
-                //     enableCellEdit: true,
-                //     allowCellFocus: true,
-                //     enableCellEditOnFocus: true,                 
-                //     editableCellTemplate: 'ui-grid/dropdownEditor',
-                //     cellFilter: 'cellFilterBodega:this',
-                //     editDropdownValueLabel: 'descripcion',
-                //     editDropdownIdLabel: 'idBodega',                
-                //     type: 'number',
-                //     width: '11%',
-                //     minWidth:'100'
-                // }, 
+                {
+                    name: 'bodega',
+                    field: 'idBodega',   
+                    enableCellEdit: false,
+                    allowCellFocus: false,
+                    enableCellEditOnFocus: false,                 
+                    editableCellTemplate: 'ui-grid/dropdownEditor',
+                    cellFilter: 'cellFilterBodega:this',
+                    editDropdownValueLabel: 'descripcion',
+                    editDropdownIdLabel: 'idBodega',                
+                    type: 'number',
+                    width: '11%',
+                    minWidth:'100'
+                }, 
             ]
 
             let indexTipoIva = $scope.gridOptionsDetalle.columnDefs.findIndex(item => item.field === 'idTipoIva');
-            // let indexBodega  = this.gridOptionsDetailDocument.columnDefs.findIndex(item=>item.field==='idBodega');
+            let indexBodega  = $scope.gridOptionsDetalle.columnDefs.findIndex(item=>item.field==='idBodega');
             $scope.gridOptionsDetalle.columnDefs[indexTipoIva].editDropdownOptionsArray = $scope.tipoIvas;
-            // this.gridOptionsDetailDocument.columnDefs[indexBodega].editDropdownOptionsArray = this.bodegas;             
+            $scope.gridOptionsDetalle.columnDefs[indexBodega].editDropdownOptionsArray = $scope.bodegas;             
         }
 
 
@@ -2788,8 +2794,7 @@
                 $scope.gridOptionsDetalle.data = await aprobacionDocSvc.detalleMapperFrom({
                     detalles,
                     fS,
-                    decimal,
-                    idBodega: $scope.data.idBodega,
+                    decimal, 
                     findForSale: articuloSvc.findForSale
                 })
 

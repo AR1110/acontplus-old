@@ -48,6 +48,7 @@ function facturaVentaCtrl(
 
     $scope.recordsQuantity = [10, 25, 50, 100];
     $scope.dataSearch = {
+        order: '',
         tipo: 1,
         pageSize: 50,
         pageIndex: 1,
@@ -236,6 +237,20 @@ function facturaVentaCtrl(
         $scope.dataSearch.pageIndex = 1;
         $scope.getFacturas();
     };
+
+
+    $scope.onOrderInvoice = function (item) {
+        console.log('test order', item)
+        console.log($scope.dataSearch.order)
+    }
+
+
+
+
+
+
+
+
 
     $scope.validateOperationPrintAndPayment = (result) => {
         //Verificamos 
