@@ -17,7 +17,20 @@
 
 	let healthChecks = [];
 
-	let medicalHistories = [];
+	let medicalHistory = {
+		petId: "",
+		date: "",
+		healthChecks: [],
+		behaviorTests: [],
+		observations: "",
+	};
+
+	let now = new Date(),
+		month,
+		day,
+		year;
+
+	let dateString;
 
 	onMount(async () => {
 		console.log("starting");
@@ -37,17 +50,19 @@
 			behaviorsStatuses = response;
 			//console.log("behaviorsStatuses => ", behaviorsStatuses);
 		});
+
+		(month = "" + (now.getMonth() + 1)),
+			(day = "" + now.getDate()),
+			(year = now.getFullYear());
+
+		if (month.length < 2) month = "0" + month;
+		if (day.length < 2) day = "0" + day;
+
+		dateString = [year, month, day].join("-");
+		medicalHistory.date = dateString;
 	});
 
-	let medicalHistory = {
-		petId: "",
-		date: "",
-		healthChecks: [],
-		behaviorTests: [],
-		observations: "",
-	};
-
-	function addDesease(d, ds) {
+	function addDisease(d, ds) {
 		healthChecks.push({
 			diseaseId: d,
 			diseaseStatusId: ds,
@@ -60,7 +75,7 @@
 				(check) => check.diseaseId === d
 			).diseaseStatusId = ds;
 		} else {
-			addDesease(d, ds);
+			addDisease(d, ds);
 		}
 		//console.log(healthChecks);
 	}
@@ -128,14 +143,20 @@
 			toast({ type: "warning", message: "Debe asignar un cliente" });
 			return;
 		}
-		// if (!pet.petTypeId) {
-		// 	toast({ type: "warning", message: "Debe seleccionar una especie" });
-		// 	return;
-		// }
-		// if (!pet.genderId) {
-		// 	toast({ type: "warning", message: "Debe seleccionar el sexo" });
-		// 	return;
-		// }
+		if (healthChecks.length == 0) {
+			toast({
+				type: "warning",
+				message: "Debe registrar el test de salud",
+			});
+			return;
+		}
+		if (behaviorTests.length == 0) {
+			toast({
+				type: "warning",
+				message: "Debe de registrar los test de comportamiento",
+			});
+			return;
+		}
 		const newHistory = {
 			petId: petSelected.id,
 			date: medicalHistory.date,
@@ -149,7 +170,7 @@
 			.then((response) => {
 				toast({
 					type: "success",
-					message: "Registrada exitosamente",
+					message: "Registrado exitosamente",
 				});
 				newRecord = false;
 				setTimeout(() => {
@@ -167,194 +188,219 @@
 	};
 </script>
 
-<div class="row">
-	<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-		<div class="form-group">
-			<div class="input-group">
-				<AdvancedSearch
-					on:input={onInput}
-					on:focus={onFocus}
-					on:blur={onBlur}
-					{value}
-					{placeholder}
-				/>
+<div class="card">
+	<div class="card-body">
+		<div class="row">
+			<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+				<div class="form-group">
+					<div class="input-group">
+						<AdvancedSearch
+							on:input={onInput}
+							on:focus={onFocus}
+							on:blur={onBlur}
+							{value}
+							{placeholder}
+						/>
+					</div>
+					{#if pets.length > 0 && !isPetSelected}
+						<div class="floating-results list-group">
+							{#each pets as item}
+								<a
+									href={null}
+									class="list-group-item"
+									style="cursor:pointer"
+									title="Seleccionar"
+									on:click={selectPet(item)}
+									><i class="ti-user" /> - {item.name}
+									- {item.customer}</a
+								>
+							{/each}
+						</div>{/if}
+				</div>
 			</div>
-			{#if pets.length > 0 && !isPetSelected}
-				<div class="floating-results list-group">
-					{#each pets as item}
-						<a
-							href="#"
-							class="list-group-item"
-							on:click={selectPet(item)}
-							><i class="ti-user" /> - {item.name}
-							- {item.customer}</a
-						>
-					{/each}
-				</div>{/if}
 		</div>
+		{#if petSelected.id > 0}
+			<form on:submit|preventDefault={onSubmitHandler}>
+				<div class="row">
+					<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+						<label for="">Fecha</label>
+						<input
+							type="date"
+							name=""
+							id=""
+							class="form-control"
+							bind:value={medicalHistory.date}
+						/>
+					</div>
+				</div>
+				<br />
+				<div class="card border border-info rounded">
+					<div class="card-body">
+						<h5 class="card-title">Datos del Responsable</h5>
+						<div class="row">
+							<div
+								class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12"
+							>
+								<div class="form-group">
+									<label for="">Cliente</label>
+									<input
+										type="text"
+										class="form-control"
+										disabled
+										value={petSelected.customer}
+									/>
+								</div>
+							</div>
+							<div
+								class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6"
+							>
+								<div class="form-group">
+									<label for="">Ruc</label>
+									<input
+										type="text"
+										class="form-control"
+										disabled
+										value={petSelected.customerIdCard}
+									/>
+								</div>
+							</div>
+							<div
+								class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6"
+							>
+								<div class="form-group">
+									<label for="">Email</label>
+									<input
+										type="text"
+										class="form-control"
+										disabled
+										value={petSelected.email}
+									/>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="card border border-info rounded">
+					<div class="card-body">
+						<h5 class="card-title">Datos de la mascota</h5>
+						<div class="row">
+							<div
+								class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12"
+							>
+								<div class="form-group">
+									<label for="pet-name">Nombre</label>
+									<h5>{petSelected.name}</h5>
+								</div>
+							</div>
+							<div
+								class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6"
+							>
+								<div class="form-group">
+									<label for="pet-type">Tipo</label>
+									<h5>{petSelected.petType}</h5>
+								</div>
+							</div>
+							<div
+								class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6"
+							>
+								<div class="form-group">
+									<label for="pet-age">Raza</label>
+									<h5>{petSelected.breed}</h5>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+								<div class="form-group">
+									<label for="pet-age">Sexo</label>
+									<h5>{petSelected.gender}</h5>
+								</div>
+							</div>
+							<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+								<div class="form-group">
+									<label for="pet-age">Color</label>
+									<h5>{petSelected.color}</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>Test de Salud</th>
+							{#each diseasesStatuses as item}
+								<th>{item.name}</th>
+							{/each}
+						</tr>
+					</thead>
+					<tbody>
+						{#each diseases as d}
+							<tr>
+								<td>{d.name}</td>
+								{#each diseasesStatuses as ds}
+									<td
+										><input
+											type="radio"
+											id="{d.id}-chkdds"
+											name="{d.id}-chkdds"
+											on:change={() =>
+												addDiseaseStatus(d.id, ds.id)}
+										/></td
+									>
+								{/each}
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>Test de Comportamiento:</th>
+							{#each behaviorsStatuses as item}
+								<th>{item.name}</th>
+							{/each}
+						</tr>
+					</thead>
+					<tbody>
+						{#each behaviors as d}
+							<tr>
+								<td>{d.name}</td>
+								{#each behaviorsStatuses as ds}
+									<td
+										><input
+											type="radio"
+											id="{d.id}-chkbbs"
+											name="{d.id}-chkbbs"
+											on:change={() =>
+												addBehaviorStatus(d.id, ds.id)}
+										/></td
+									>
+								{/each}
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+
+				<div class="row">
+					<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+						<label for="">Corte y Estilo</label>
+						<textarea
+							name=""
+							id=""
+							class="form-control"
+							bind:value={medicalHistory.observations}
+						/>
+					</div>
+				</div>
+
+				<button type="submit" class="btn btn-success">
+					<i class="ti-save" />
+					Guardar
+				</button>
+			</form>
+		{/if}
 	</div>
 </div>
-
-<hr />
-{#if petSelected.id > 0}
-	<form on:submit|preventDefault={onSubmitHandler}>
-		<div class="row">
-			<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-				<label for="">Fecha</label>
-				<input
-					type="date"
-					name=""
-					id=""
-					class="form-control"
-					bind:value={medicalHistory.date}
-				/>
-			</div>
-		</div> 
-		<br>
-		<h5 class="text-info">Datos del Responsable</h5>
-		<div class="row">
-			<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-				<div class="form-group">
-					<label for="">Cliente</label>
-					<input
-						type="text"
-						class="form-control"
-						disabled
-						value={petSelected.customer}
-					/>
-				</div>
-			</div>
-			<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-				<div class="form-group">
-					<label for="">Ruc</label>
-					<input
-						type="text"
-						class="form-control"
-						disabled
-						value={petSelected.customerIdCard}
-					/>
-				</div>
-			</div>
-			<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-				<div class="form-group">
-					<label for="">Email</label>
-					<input
-						type="text"
-						class="form-control"
-						disabled
-						value={petSelected.email}
-					/>
-				</div>
-			</div>
-		</div>
-		<br>
-		<h5 class="">Datos de la mascota</h5>
-		<div class="row">
-			<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-				<div class="form-group">
-					<label for="pet-name">Nombre</label>
-					<input
-						bind:value={petSelected.name}
-						type="text"
-						class="form-control"
-						id="pet-name"
-						placeholder="Nombre"
-						disabled
-						required
-					/>
-				</div>
-			</div>
-			<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-				<div class="form-group">
-					<label for="pet-age">Edad</label>
-					<input
-						type="number"
-						id="pet-age"
-						class="form-control"
-						step="any"
-						required
-						disabled
-						bind:value={petSelected.age}
-					/>
-				</div>
-			</div>
-		</div>
-
-		<table class="table table-bordered">
-			<caption><h5>Test de Salud:</h5></caption>
-			<thead>
-				<tr>
-					<th />
-					{#each diseasesStatuses as item}
-						<th>{item.name}</th>
-					{/each}
-				</tr>
-			</thead>
-			<tbody>
-				{#each diseases as d}
-					<tr>
-						<th>{d.name}</th>
-						{#each diseasesStatuses as ds}
-							<td
-								><input
-									type="radio"
-									id="{d.id}-chkdds"
-									name="{d.id}-chkdds"
-									on:change={() =>
-										addDiseaseStatus(d.id, ds.id)}
-								/></td
-							>
-						{/each}
-					</tr>
-				{/each}
-			</tbody>
-		</table>
-
-		<table class="table table-bordered">
-			<caption><h5>Test de Comportamiento:</h5></caption>
-			<thead>
-				<tr>
-					<th />
-					{#each behaviorsStatuses as item}
-						<th>{item.name}</th>
-					{/each}
-				</tr>
-			</thead>
-			<tbody>
-				{#each behaviors as d}
-					<tr>
-						<th>{d.name}</th>
-						{#each behaviorsStatuses as ds}
-							<td
-								><input
-									type="radio"
-									id="{d.id}-chkbbs"
-									name="{d.id}-chkbbs"
-									on:change={() =>
-										addBehaviorStatus(d.id, ds.id)}
-								/></td
-							>
-						{/each}
-					</tr>
-				{/each}
-			</tbody>
-		</table>
-
-		<div class="row">
-			<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-				<label for="">Corte y Estilo</label>
-				<textarea
-					name=""
-					id=""
-					class="form-control"
-					bind:value={medicalHistory.observations}
-				/>
-			</div>
-		</div>
-
-		<button type="submit" class="btn btn-success">
-			<i class="ti-save" />
-			Guardar
-		</button>
-	</form>
-{/if}

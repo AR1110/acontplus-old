@@ -159,19 +159,18 @@
     </div>
 </div>
 
+{#if newRecord}
+    <Add newRecord />
+{:else}
+    <Search
+        bind:searchTerm
+        on:input={searchRecords}
+        placeholder="Buscar Mascota"
+    />
+{/if}
+
 <div class="card">
     <div class="card-body">
-        {#if newRecord}
-            <Add newRecord />
-        {:else}
-            <Search
-                bind:searchTerm
-                on:input={searchRecords}
-                placeholder="Buscar Mascota"
-            />
-        {/if}
-        <hr />
-
         <div class="table-responsive">
             <table class="table">
                 <caption>Registros</caption>
