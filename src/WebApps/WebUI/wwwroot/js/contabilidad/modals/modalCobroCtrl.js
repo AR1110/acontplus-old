@@ -1127,7 +1127,8 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
                 params: {
                     dataFormaCobro,
                    comprobante: $scope.comprobante,
-                   saldo: $scope.data.totalSaldo
+                   saldo: $scope.data.totalSaldo,
+                   datosCobro: $scope.datosCobro
                 },
                 isRenderRazorPartial: true
             })
@@ -1437,7 +1438,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
 ModalFormaCobroCtrl.$inject = ['$scope', '$uibModalInstance', 'formulario', 'toastService', 'params']
 
 function ModalFormaCobroCtrl ($scope, $uibModalInstance, fS, tS, params){
-    let {dataFormaCobro, comprobante, saldo} = params;
+    let {dataFormaCobro, comprobante, saldo, datosCobro} = params;
     let {documentos, entidadesFinancieras, subEntidadesFinancieras, bancos, ciudades} = dataFormaCobro;
   
     let cobroSvc = new CobroService(tS)
@@ -1479,7 +1480,12 @@ function ModalFormaCobroCtrl ($scope, $uibModalInstance, fS, tS, params){
             $scope.ciudades = ciudades
 
             //Documentos Retencion Compra y Nota de Credito
-            $scope.documentosElectronicos = documentos; 
+            $scope.documentosElectronicos = documentos.map(item=>{
+                return {
+                    ...item,
+                    tipoDoc: item.codDoc
+                }
+            })
     
         } catch (error) {
             
@@ -1511,6 +1517,7 @@ function ModalFormaCobroCtrl ($scope, $uibModalInstance, fS, tS, params){
             $scope.data.aprobacion = null;    
             $scope.data.posFechado = false;
             $scope.selectedDocElectronico = [];
+            $scope.data.fechaEmision = new Date();
 
             if(codigo==='CHE'){
                 $scope.data.referencia = $scope.comprobante.nombreFiscal;
@@ -1541,39 +1548,44 @@ function ModalFormaCobroCtrl ($scope, $uibModalInstance, fS, tS, params){
     }
 
     $scope.getDataPago = function(item = {}) {
-        let entidadFinanciera = $scope.entidadesFinancieras.find(item=>item.idEntidadFinanciera===$scope.data.idEntidadFinanciera);
-        let subEntidadFinanciera = $scope.subEntidadesFinancieras.find(item=>item.idSubEntidadFinanciera===$scope.data.idSubEntidadFinanciera);
-        
-        let ciudad = $scope.ciudades.find(item=>item.idCiudad===$scope.data.idCiudad);
-        let banco = $scope.bancos.find(item=>item.idBanco===$scope.data.idBanco);
-
-        return {
-           //Info
-            entidadFinanciera: entidadFinanciera.descripcion,
-            subEntidadFinanciera: subEntidadFinanciera.descripcion,
+        try {
+            let entidadFinanciera = $scope.entidadesFinancieras.find(item=>item.idEntidadFinanciera===$scope.data.idEntidadFinanciera);
+            let subEntidadFinanciera = $scope.subEntidadesFinancieras.find(item=>item.idSubEntidadFinanciera===$scope.data.idSubEntidadFinanciera);
             
-            ciudad: ciudad && ciudad.descripcion,
-            banco: banco && banco.descripcion,
+            let ciudad = $scope.ciudades.find(item=>item.idCiudad===$scope.data.idCiudad);
+            let banco = $scope.bancos.find(item=>item.idBanco===$scope.data.idBanco);
 
-            //Data
-            idEntidadFinanciera: entidadFinanciera.idEntidadFinanciera,
-            idSubEntidadFinanciera: subEntidadFinanciera.idSubEntidadFinanciera,
-            codEntidadFinanciera: entidadFinanciera.codigo,
-            idBanco: $scope.data.idBanco,
-            idCiudad: $scope.data.idCiudad,
-            fechaEmision: new Date(),
-            posFechado: $scope.data.posFechado,
-            referencia: $scope.data.referencia,
-            aprobacion: $scope.data.aprobacion,
-            lote: $scope.data.lote,
+            var formattedDateTime = moment($scope.data.fechaEmision).tz("America/Guayaquil").format("YYYY-MM-DD HH:mm:ss");
+            return {
+            //Info
+                entidadFinanciera: entidadFinanciera.descripcion,
+                subEntidadFinanciera: subEntidadFinanciera.descripcion,
+                
+                ciudad: ciudad && ciudad.descripcion,
+                banco: banco && banco.descripcion,
 
-            //Data Documento 
-            nro: item.serieComprobante || $scope.data.nro,
-            idTipoDocumento: item.idTipoDocumento,
-            idComprobante: item.idDocumento,
-            tipoDocumento: item.tipoDocumento || item.codDoc,
-            valorAbono: item.saldo || $scope.data.valorAbono,
-            controlCaja: subEntidadFinanciera.controlCaja
+                //Data
+                idEntidadFinanciera: entidadFinanciera.idEntidadFinanciera,
+                idSubEntidadFinanciera: subEntidadFinanciera.idSubEntidadFinanciera,
+                codEntidadFinanciera: entidadFinanciera.codigo,
+                idBanco: $scope.data.idBanco,
+                idCiudad: $scope.data.idCiudad,
+                fechaEmision: new Date(formattedDateTime),
+                posFechado: $scope.data.posFechado,
+                referencia: $scope.data.referencia,
+                aprobacion: $scope.data.aprobacion,
+                lote: $scope.data.lote,
+
+                //Data Documento 
+                nro: item.serieComprobante || $scope.data.nro,
+                idTipoDocumento: item.idTipoDocumento,
+                idComprobante: item.idDocumento,
+                tipoDocumento: item.tipoDocumento || item.codDoc,
+                valorAbono: item.saldo || $scope.data.valorAbono,
+                controlCaja: subEntidadFinanciera.controlCaja
+            }
+        } catch (error) {
+            console.log(error);
         }
     }
     // {
@@ -1592,8 +1604,14 @@ function ModalFormaCobroCtrl ($scope, $uibModalInstance, fS, tS, params){
             return
         }
 
+        if(datosCobro.some(dataCobro => dataCobro.idTipoDocumento ===item.idTipoDocumento && dataCobro.idComprobante === item.idDocumento)) {
+            $scope.selectedDocElectronico = [];
+            fS.sweetAlert('warning', 'Este documento ya fue aplicado al cobro');
+            $(".swal2-container").css("z-index", "999999");
+            return
+        }
         Swal.fire({                
-            html: `<small>Abonar el valor <h3>$${item.saldo}</h3> del Documento ${item.tipoDocumento}?</small>`,
+            html: `<small>Abonar el valor <h3>$${item.saldo}</h3> del Documento ${item.codDoc=='A' ? item.serieComprobante : item.tipoDoc}?</small>`,
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -1602,9 +1620,15 @@ function ModalFormaCobroCtrl ($scope, $uibModalInstance, fS, tS, params){
             cancelButtonText: 'No, cancelar'
         }).then(result => {
             if (result.isConfirmed) {
+
+
               $uibModalInstance.close($scope.getDataPago(item))
+            }else{
+                $scope.selectedDocElectronico = [];
+                $scope.$apply();
             }
         })
+        $(".swal2-container").css("z-index", "999999");
     }
 
 

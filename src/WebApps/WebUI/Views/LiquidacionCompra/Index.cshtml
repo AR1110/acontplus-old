@@ -17,117 +17,203 @@
 
 
     <!--Filtro -->
-    <partial name="_ModalFiltro"/>
-    <!--List-->
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="card">
-                <div class="card-body">
-                    <md-toolbar class="md-table-toolbar md-default">
-                        <div class="md-toolbar-tools">
+    
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <div class="form-gorup">
+                        <span for="establecimiento">Establecimiento</span>
+                        <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
+                            class="form-control  border-select" ng-change="getLiquidacionesCompra()">
+                            <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
+                                {{item.nombreComercial}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span for="">Rango de Fechas</span> 
+                        <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
+                            end-date="dataSearch.fechaFin"
+                            result-range-date="resultRangeFilter(result)"></date-range-filter>                       
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span for="proveedorFiltro">Proveedor:</span>
+                        <input type="text" id="providerInputSearch" class="form-control border-select"
+                            ng-model="proveedor.nombreProveedor" provider-search-drtv on-select="onSelectProveedor(result)"
+                            on-keyup="onKeyupProveedor()" placeholder="Ingrese C.I o Nombre Comercial"
+                            onclick="select();">
 
-                            <div class="col-lg-3 col-md-3 col-sm-6 col-12">
-                                <button type="button"  class="btn btn-info" ng-click="openModalFiltro()"><i class=" fas fa-filter"></i> Filtrar</button>            
+                        <script type="text/ng-template" id="autocompleteProviderTemplate.html">
+                            <div class="autocomplete-suggestion-uib-typeahead">
+                                <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
                             </div>
-                            <div class="col-lg-6 col"></div>
-                            <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-                                <form class="form-material">
-                                    <input type="text" class="form-control" ng-keyup="filterLocalLCompras()" ng-model="txtFilter" placeholder="Buscar">
-                                </form>
-                            </div>
+                        </script>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <button type="button" class="btn btn-info btn-sm" data-toggle="button" data-more="#sh"
+                        aria-pressed="false" ng-click="onClickBtnMore()">
+                        <span class="text">
+                            <i class="mdi mdi-eye" aria-hidden="true"
+                                uib-tooltip="Más opciones"></i>
+                                </span>
+                                <span class="text-active">
+                                    <i class="mdi mdi-eye-off" aria-hidden="true"
+                                uib-tooltip="Ocultar opciones"></i>
+                                </span>
+                                </button>
+                                <button type="button" class="btn btn-success btn-sm" ng-click="getLiquidacionesCompra()"
+                                    uib-tooltip="Recargar">
+                                    <i class="mdi mdi-refresh"></i>
+                                </button>
                         </div>
-                    </md-toolbar>
+                    </div> 
+                </div>
+            </div>
+            <div class="row" ng-if="moreSearchOptions">
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span for="usuarioFiltro">Usuario</span>
+                        <input type="text" id="customerInputSearchUser" class="form-control border-select"
+                    ng-model="searchUser.nombreCompleto" user-search-drtv on-select="onSelectUser(result)"
+                    on-keyup="onKeyupUser()" placeholder="..."
+                    onclick="select();" >
 
-                    <md-table-container style="max-height: 400px;">
-                        <table resize md-table class="table-condensed table-sm">
-                            <thead fix-head md-head md-order="query.order" md-on-reorder="liqCompras">
-                                <tr md-row>
-                                    <th md-column>Op</th>
-                                    @* <th md-column>N°</th> *@
-                                    <th md-column>N°. Doc</th>
-                                    <th md-column>F. Emisión</th>
-                                    <th md-column>F. Vcto</th>
-                                    <th md-column>Proveedor</th>
-                                    <th md-column>Total</th>
-                                    <th md-column>Abono</th>
-                                    <th md-column>Saldo</th>
-                                    <th md-column>Estado</th>
-                                    <th md-column>Estado Sri</th>
-                                    <th md-column>Usuario</th>
-                                </tr>
-                            </thead>
-                            <tbody md-body>
-                                <tr md-row ng-repeat="item in liquidacionesCompra" ng-class="item.style">
-                                    <td md-cell>
-                                        <md-menu>
-                                            <md-button aria-label="Open demo menu" class="md-icon-button"
-                                                       ng-click="$mdMenu.open($event)">
-                                                <icon class="mdi mdi-menu"></icon>
-                                            </md-button>
-                                            <md-menu-content class="md-dense">
-                                                <md-menu-item>
-                                                    <md-button ng-click="openModalDetalle(item)">
-                                                        <span md-menu-align-target><i class="ti-menu"></i> Detalle</span>
-                                                    </md-button>
-                                                </md-menu-item>
-
-
-                                                <md-menu-item ng-if="accion.editar">
-                                                    <md-button ng-click="openModalEditar(item)">
-                                                        <span md-menu-align-target><i class="ti-pencil"></i> Editar</span>
-                                                    </md-button>
-                                                </md-menu-item>
-
-                                                <md-menu-item ng-if="accion.anular">
-                                                    <md-button ng-click="askToDelete(item)">
-                                                        <span md-menu-align-target><icon class="ti-na"></icon> Anular</span>
-                                                    </md-button>
-                                                </md-menu-item>                                                                                         
-
-                                                <md-menu-item ng-if="accion.reporte">
-                                                    <md-button ng-click="getReport(item)">
-                                                        <span md-menu-align-target><i class=" ti-file"></i> PDF</span>
-                                                    </md-button>
-                                                </md-menu-item>
-
-
-                                            </md-menu-content>
-                                        </md-menu>
-                                    </td>
-                                    @* <td md-cell>{{$index+1}}</td> *@
-                                    <td md-cell>{{item.nroDocumento}}</td>
-                                    <td md-cell>{{item.fechaEmision|date: 'dd/MM/yyyy'}}</td>
-                                    <td md-cell>{{item.fechaVencimiento|date:'dd/MM/yyyy'}}</td>
-                                    <td md-cell>{{item.nombreFiscal}}</td>
-                                    <td md-cell>${{item.total}}</td>
-                                    <td md-cell>${{item.abono}}</td>
-                                    <td md-cell>${{item.saldo}}</td>
-                                    <td md-cell>{{item.estadoFinanciero}}</td>
-                                    <td md-cell>{{item.estadoSri}}</td>
-                                    <td md-cell>{{item.usuario}}</td>
-                                </tr>
-                                <tr ng-if="liquidacionesCompra.length===0" class="text-center">
-                                    <td colspan="10">No hay registros</td>
-                                </tr>
-                            </tbody>
-                            <tfoot md-foot>
-                                <tr md-row>
-                                    <td md-cell colspan="2">{{liquidacionesCompra.length}} Registros</td>
-                                    <td md-cell colspan="3"><span class="font-weight-bold">Total: </span></td>
-                                    <td md-cell><span class="font-weight-bold">${{total}}</span></td>
-                                    <td md-cell colspan="3"></td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </md-table-container>                               
+                        <script type="text/ng-template" id="autocompleteUserTemplate.html">
+                            <div class="autocomplete-suggestion-uib-typeahead">
+                                <span class="item-title"><b> {{match.model.nroIdentificacion}}</b> - {{match.model.nombreCompleto}}</span>
+                            </div>
+                        </script>                                                                      
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>Estado:</span>
+                        <select class="form-control" ng-model="dataSearch.codEstadoDoc" ng-change="getLiquidacionesCompra()">
+                            <option value="">Todos</option>
+                            <option ng-value="item.codigo" ng-repeat="item in estadoPagos">
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>Nro. Documento</span>
+                        <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial" placeholder="Ej: 23">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>      
+    </div>
+    <div class="card"> 
+        <div class="card-body">
+            <div class="row justify-content-end">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                     <form class="form-material">
+                            <input type="text" class="form-control" ng-keyup="filterLocalLCompras()" ng-model="txtFilter" placeholder="Buscar">
+                        </form>
+                </div>
+            </div> 
+            <md-table-container style="max-height: 400px;">
+                <table resize md-table class="table-condensed table-sm">
+                    <thead fix-head md-head md-order="query.order" md-on-reorder="liqCompras">
+                        <tr md-row>
+                            <th md-column>Op</th>
+                            @* <th md-column>N°</th> *@
+                            <th md-column>N°. Doc</th>
+                            <th md-column>F. Emisión</th>
+                            <th md-column>F. Vcto</th>
+                            <th md-column>Proveedor</th>
+                            <th md-column>Total</th>
+                            <th md-column>Abono</th>
+                            <th md-column>Saldo</th>
+                            <th md-column>Estado</th>
+                            <th md-column>Estado Sri</th>
+                            <th md-column>Usuario</th>
+                        </tr>
+                    </thead>
+                    <tbody md-body>
+                        <tr md-row ng-repeat="item in liquidacionesCompra" ng-class="item.style">
+                            <td md-cell>
+                                <md-menu>
+                                    <md-button aria-label="Open demo menu" class="md-icon-button"
+                                                ng-click="$mdMenu.open($event)">
+                                        <icon class="mdi mdi-menu"></icon>
+                                    </md-button>
+                                    <md-menu-content class="md-dense">
+                                        <md-menu-item>
+                                            <md-button ng-click="openModalDetalle(item)">
+                                                <span md-menu-align-target><i class="ti-menu"></i> Detalle</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+
+                                        <md-menu-item ng-if="accion.editar">
+                                            <md-button ng-click="openModalEditar(item)">
+                                                <span md-menu-align-target><i class="ti-pencil"></i> Editar</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item ng-if="accion.anular">
+                                            <md-button ng-click="askToDelete(item)">
+                                                <span md-menu-align-target><icon class="ti-na"></icon> Anular</span>
+                                            </md-button>
+                                        </md-menu-item>                                                                                         
+
+                                        <md-menu-item ng-if="accion.reporte">
+                                            <md-button ng-click="getReport(item)">
+                                                <span md-menu-align-target><i class=" ti-file"></i> PDF</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+
+                                    </md-menu-content>
+                                </md-menu>
+                            </td>
+                            @* <td md-cell>{{$index+1}}</td> *@
+                            <td md-cell>{{item.nroDocumento}}</td>
+                            <td md-cell>{{item.fechaEmision|date: 'dd/MM/yyyy'}}</td>
+                            <td md-cell>{{item.fechaVencimiento|date:'dd/MM/yyyy'}}</td>
+                            <td md-cell>{{item.nombreFiscal}}</td>
+                            <td md-cell>${{item.total}}</td>
+                            <td md-cell>${{item.abono}}</td>
+                            <td md-cell>${{item.saldo}}</td>
+                            <td md-cell>{{item.estadoFinanciero}}</td>
+                            <td md-cell>{{item.estadoSri}}</td>
+                            <td md-cell>{{item.usuario}}</td>
+                        </tr>
+                        <tr ng-if="liquidacionesCompra.length===0" class="text-center">
+                            <td colspan="10">No hay registros</td>
+                        </tr>
+                    </tbody>
+                    <tfoot md-foot>
+                        <tr md-row>
+                            <td md-cell colspan="2">{{liquidacionesCompra.length}} Registros</td>
+                            <td md-cell colspan="3"><span class="font-weight-bold">Total: </span></td>
+                            <td md-cell><span class="font-weight-bold">${{total}}</span></td>
+                            <td md-cell><span class="font-weight-bold">${{totalAbono}}</span></td>
+                            <td md-cell><span class="font-weight-bold">${{totalSaldo}}</span></td>
+                            <td md-cell colspan="3"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </md-table-container>                               
+        </div>
+    </div>
+        
 </div>
 
 @section Scripts{
     <script src="~/js/common/components/mdAutocompleteProveedor.min.js" asp-append-version="true"></script>
+    <script src="~/js/compras/services/liquidacionCompraService.min.js" asp-append-version="true"></script>  
     <script src="~/js/compras/controllers/liquidacionCompraCtrl.min.js" asp-append-version="true"></script>            
     
 }

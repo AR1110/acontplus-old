@@ -17,15 +17,21 @@ function compraNoHabitualCtrl($scope, commonSvc, compraNoHabSvc, mS, tS, modalSv
     } = nombreModal.compra_no_habitual;
 
     //Filtro 
+
+    $scope.proveedor = {
+        nombreProveedor: ''
+    }
+
+    $scope.searchUser = {
+        nombreCompleto: ''
+    }
+    $scope.moreSearchOptions = false;
+
     $scope.dataSearch = {
         checkBoxFecha: true,
         // fechaInicio: new Date(),
         // fechaFin: new Date()
-    };
-
-    // $scope.meses = _fS.meses();
-    // $scope.mes = new Date().getMonth() + 1;
-    $scope.proveedorFilter = {};
+    }; 
 
     $scope.estadoDocs = [{
         estado: 'AC',
@@ -33,53 +39,7 @@ function compraNoHabitualCtrl($scope, commonSvc, compraNoHabSvc, mS, tS, modalSv
     }, {
         estado: 'A',
         descripcion: 'Anulado',
-    }]
-    $scope.openModalFiltro = function() {
-        $("#modalFiltro").modal('show');
-    }    
-
-    //-------------------------------------------Proveedor filter------------------------------
-    $scope.searchProveedorFilter = (textSearch) => {
-        return commonSvc.proveedorSearch(textSearch);
-    }
-
-    $scope.proveedorFilte = {};
-    $scope.searchProveedorFilterChange = function (item) {
-        $scope.dataSearch.byProveedor = item.proveedor.idProveedor
-    }
-
-    //Busqueda Avanzada 
-    $scope.busquedaAvanzada = () => {
-        if ($scope.dataSearch.checkBoxProveedor) {
-            if (_fS.campo($scope.dataSearch.byProveedor)) {
-                tS.toastr('warning', 'Por favor seleccione el Proveedor');
-                return;
-            };
-        }
-
-        if ($scope.dataSearch.checkBoxFecha) {
-            if (_fS.campo($scope.dataSearch.fechaInicio)) {
-                tS.toastr('warning', 'Por favor seleccione la Fecha Inicio');
-                return;
-            };
-            if (_fS.campo($scope.dataSearch.fechaFin)) {
-                tS.toastr('warning', 'Por favor seleccione la Fecha Fin');
-                return;
-            };
-        }
-
-
-        if ($scope.dataSearch.checkBoxEstado) {
-            if ($scope.dataSearch.byEstado === null || $scope.dataSearch.byEstado === undefined) {
-                tS.toastr('warning', 'Por favor seleccione el Estado');
-                return
-            }
-        }
-
-        $scope.getComprasNoHabitual();
-        $("#modalFiltro").modal('hide');
-    }
-
+    }]   
 
 
 
@@ -125,6 +85,87 @@ function compraNoHabitualCtrl($scope, commonSvc, compraNoHabSvc, mS, tS, modalSv
         $scope.openModal(modalParms)
     }
 
+    
+
+    $scope.resultRangeFilter = function (item) {
+        $scope.dataSearch.fechaInicio = item.startDate,
+        $scope.dataSearch.fechaFin = item.endDate
+        $scope.getComprasNoHabitual();
+    }
+
+    //====================Cliente===========
+    $scope.onKeyupProveedor= function(){
+     
+        $scope.dataSearch.idProveedor = 0;
+        
+    }
+    $scope.onSelectProveedor = function(item){
+        $scope.dataSearch.idProveedor = item.idProveedor;
+        $scope.getComprasNoHabitual();
+    }
+
+    $scope.onKeyupUser = function(){
+        if(!$scope.searchUser.nombreCompleto){
+            $scope.dataSearch.idUsuario = 0;
+        }
+    }
+    $scope.onSelectUser = function(item) {
+        $scope.dataSearch.idUsuario = item.idUsuario;
+        $scope.getComprasNoHabitual();
+    }
+
+    $scope.onClickBtnMore = function () {
+        $scope.moreSearchOptions = !$scope.moreSearchOptions;
+    }
+
+
+    $scope.sumImporteTotal = function () {
+        let importeTotal = 0;
+        for (let item of $scope.documentoIngreso) {
+            importeTotal += item.importeTotal;
+        }
+        $scope.importeTotal = _fS.roundNumber(importeTotal, 2);
+    }
+
+
+
+    //Obtenemos Datos 
+    $scope.getComprasNoHabitual = () => {
+        try {
+            showLoader();
+
+            let query = {
+                typeList: 1,
+                codEstab: $scope.dataSearch.codEstab,
+                dateStart: _fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
+                dateEnd: _fS.formatDateTimeZone($scope.dataSearch.fechaFin),
+                checkBoxProveedor: $scope.dataSearch.idProveedor > 0,
+                idProveedor: $scope.dataSearch.idProveedor,   
+                checkBoxEstado: $scope.dataSearch.estado ? true : false,
+                estado: $scope.dataSearch.estado,
+                isSearchNroDoc: $scope.dataSearch.nroSecuencial ? true: false,
+                nroSecuencial: $scope.dataSearch.nroSecuencial
+            };  
+				   
+          
+
+            $scope.documentoIngreso = [];
+            $scope.sumImporteTotal();
+            compraNoHabSvc.getAll(query).then(response => {
+                $scope.documentoIngreso = response;
+                $scope.sumImporteTotal();
+                hideLoader();
+
+            }).catch(error => {
+                hideLoader();
+                console.log(error);
+            })            
+        } catch (error) {
+            hideLoader();
+            console.log(error)
+        }
+    }
+
     //Formulario Nuevo
     $scope.openModalEditar = async (item) => {
         try {
@@ -146,54 +187,7 @@ function compraNoHabitualCtrl($scope, commonSvc, compraNoHabSvc, mS, tS, modalSv
         } catch (error) {
             hideLoader();
             console.log(error)
-        }
-
-
-
-    }
-
-    $scope.sumImporteTotal = function () {
-        let importeTotal = 0;
-        for (let item of $scope.documentoIngreso) {
-            importeTotal += item.importeTotal;
-        }
-        $scope.importeTotal = _fS.roundNumber(importeTotal, 2);
-    }
-
-    //Obtenemos Datos 
-    $scope.getComprasNoHabitual = () => {
-        try {
-            showLoader();
-
-            let query = {
-                typeList: 1,
-                checkBoxFecha: true,
-                checkBoxEstab: $scope.dataSearch.checkBoxEstab,
-                checkBoxProveedor: $scope.dataSearch.checkBoxProveedor,
-                checkBoxEstado: $scope.dataSearch.checkBoxEstado,
-                dateStart: _fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
-                dateEnd: _fS.formatDateTimeZone($scope.dataSearch.fechaFin),
-                codEstab: $scope.dataSearch.codEstab,
-                idProveedor: $scope.dataSearch.byProveedor,
-                estado: $scope.dataSearch.byEstado,
-            };
-          
-
-            $scope.documentoIngreso = [];
-            $scope.sumImporteTotal();
-            compraNoHabSvc.getAll(query).then(response => {
-                $scope.documentoIngreso = response;
-                $scope.sumImporteTotal();
-                hideLoader();
-
-            }).catch(error => {
-                hideLoader();
-                console.log(error);
-            })            
-        } catch (error) {
-            hideLoader();
-            console.log(error)
-        }
+        } 
     }
 
 
