@@ -57,71 +57,73 @@ BEGIN
 											 INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision    = di.idPuntoEmision
 											 INNER JOIN dbo.Proveedor       pr WITH (NOLOCK) ON pr.idProveedor       = di.idProveedor
 											 INNER JOIN dbo.Usuario         us WITH (NOLOCK) ON us.idUsuario         = di.idUsuario
-											 WHERE di.idEntidad = @idEntidad '
+											 WHERE di.idEntidad = @idEntidad AND es.codEstab = @codEstab'
 
 			DECLARE @params AS NVARCHAR(MAX) = '@idEntidad AS INT
-											   ,@codEstab AS VARCHAR(20)
+											   ,@codEstab AS VARCHAR(100)
 											   ,@dateStart AS DATETIME
 											   ,@dateEnd AS DATETIME
 											   ,@idProveedor AS INT
-											   ,@estado AS BIT'
+											   ,@estado AS BIT
+											   ,@nroSecuencial VARCHAR(13)'
 
 			DECLARE @codEstab AS VARCHAR(20)
 			DECLARE @checkBoxProveedor AS BIT 
-			DECLARE @checkBoxEstab AS BIT 
-			DECLARE @checkBoxFecha AS BIT
+			DECLARE @checkBoxEstab AS BIT  
 			DECLARE @checkBoxEstado AS BIT
 			DECLARE @idProveedor AS INT
 			DECLARE @estado AS BIT
 			DECLARE @dateStart AS DATE
 			DECLARE @dateEnd AS DATE
 			DECLARE @typeStatus AS VARCHAR(5)
+			DECLARE @isSearchNroDoc BIT
+			DECLARE @nroSecuencial  VARCHAR(13)
 
 			SELECT @checkBoxEstab     = checkBoxEstab
-				  ,@checkBoxProveedor = checkBoxProveedor
-				  ,@checkBoxFecha     = checkBoxFecha
+				  ,@checkBoxProveedor = checkBoxProveedor 
 				  ,@checkBoxEstado    = checkBoxEstado
 				  ,@codEstab          = codEstab
 				  ,@idProveedor       = idProveedor
-				  ,@dateStart         = dateStart
-				  ,@dateEnd           = dateEnd
+				  ,@dateStart         = CONVERT(DATETIME, dateStart, 121)
+				  ,@dateEnd           = CONVERT(DATETIME, dateEnd, 121)
 				  ,@typeStatus        = estado
+				  ,@isSearchNroDoc     = isSearchNroDoc
+				  ,@nroSecuencial      = LTRIM(TRIM(nroSecuencial))
 			FROM OPENJSON(@json)
 			WITH (codEstab  VARCHAR(20) '$.codEstab'
 			     ,checkBoxEstab     BIT '$.checkBoxEstab'
-			     ,checkBoxProveedor BIT '$.checkBoxProveedor'
-			     ,checkBoxFecha     BIT '$.checkBoxFecha'
+			     ,checkBoxProveedor BIT '$.checkBoxProveedor' 
 			     ,checkBoxEstado    BIT '$.checkBoxEstado'
 				 ,idProveedor       INT '$.idProveedor'
-				 ,dateStart    DATETIME '$.dateStart'
-				 ,dateEnd      DATETIME '$.dateEnd'
+				 ,dateStart    VARCHAR(50) '$.dateStart'
+				 ,dateEnd      VARCHAR(50) '$.dateEnd'
 				 ,estado	 VARCHAR(5) '$.estado'
+				 ,isSearchNroDoc BIT
+				 ,nroSecuencial VARCHAR(13)
 				 ) as dt
+ 
+			 
+			IF @isSearchNroDoc = 1
+				BEGIN 
+					SET @sql = @sql + ' AND di.secuencial = @nroSecuencial'
+				END 
+			ELSE
+				BEGIN 
+					SET @sql = @sql + ' AND CAST(di.fechaEmision AS DATE) BETWEEN CAST(@dateStart AS DATE) AND CAST(@dateEnd AS DATE) '
+					IF @checkBoxProveedor = 1 
+						BEGIN
+							SET @sql = @sql + ' AND di.idProveedor = @idProveedor  '
+						END 
 
-			IF @checkBoxFecha = 1
-				BEGIN
-					SET @sql = @sql+'AND CAST(di.fechaEmision AS DATE) BETWEEN CAST(@dateStart AS DATE) AND CAST(@dateEnd AS DATE) '
+					IF @checkBoxEstado = 1
+						BEGIN
+							SET @estado = IIF(@typeStatus= 'AC',1,0)
+
+							SET @sql = @sql + ' AND di.estado = @estado '
+						END 
 				END 
 
-			IF @checkBoxEstab = 1
-				BEGIN
-					SET @sql = @sql+'AND es.codEstab = @codEstab '
-				END 
-
-
-			IF @checkBoxProveedor = 1 
-				BEGIN
-					SET @sql = @sql+'AND di.idProveedor = @idProveedor  '
-				END 
-
-			IF @checkBoxEstado = 1
-				BEGIN
-					SET @estado = IIF(@typeStatus= 'AC',1,0)
-
-					SET @sql = @sql+'AND di.estado = @estado '
-				END 
-
-			SET @sql = @sql + 'ORDER BY di.idDocumentoIngreso DESC '
+			SET @sql = @sql + ' ORDER BY di.idDocumentoIngreso DESC '
 
 			EXEC sp_executesql 
 			      @sql
@@ -132,6 +134,7 @@ BEGIN
 				 ,@dateEnd     = @dateEnd
 				 ,@idProveedor = @idProveedor
 				 ,@estado      = @estado
+				 ,@nroSecuencial = @nroSecuencial
 		END 
 
 	IF @typeList = 2

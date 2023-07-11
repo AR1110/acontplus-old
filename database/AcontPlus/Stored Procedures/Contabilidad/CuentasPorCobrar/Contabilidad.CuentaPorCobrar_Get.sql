@@ -95,6 +95,7 @@ BEGIN
 		,saldo DECIMAL(15,5)
 		,codDoc VARCHAR(100)
 		,nroDoc VARCHAR(20)
+		,fechaEmision DATETIME 
 	)
 
 
@@ -289,7 +290,7 @@ BEGIN
 				AND ci.estado = 1
 				AND ci.idEntidad = @idEntidad
 
-			INSERT INTO @documents (idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc)
+			INSERT INTO @documents (idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc, fechaEmision)
 			SELECT 
 			     d.idDocRelacionado
 				,idTipoDocumento = (SELECT TOP 1 td.idTipoDocumento FROM dbo.TipoDocumento td WITH (NOLOCK) WHERE td.codigoSri = '07')
@@ -297,6 +298,7 @@ BEGIN
 				,saldo           = d.valorRetenido
 				,codDoc          = 'Retención Version:'+dr.versionComp
 				,nroDoc          = ''
+				,dr.fechaEmision
 			FROM factelect.DocRelacionado           d WITH (NOLOCK)
 			INNER JOIN Recepcion.DocumentoRecibido dr WITH (NOLOCK) ON dr.idDocumento = d.idDocumentoRecibido
 			WHERE dr.codDoc = '07' 
@@ -305,7 +307,7 @@ BEGIN
 				AND d.estado = 'PE'
 				AND d.idDocRelacionado NOT IN (SELECT c.idComprobante FROM @cobroDocuments c WHERE c.codDoc = '07')
 
-			INSERT INTO @documents (idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc)
+			INSERT INTO @documents (idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc, fechaEmision)
 			SELECT 
 			     de.idDocumentoElectronico
 				,idTipoDocumento  = (SELECT TOP 1 td.idTipoDocumento FROM dbo.TipoDocumento td WITH (NOLOCK) WHERE td.codigoSri = '04')
@@ -313,6 +315,7 @@ BEGIN
 				,saldo            = (SELECT TOP 1 nc.total FROM dbo.NotaCredito nc WITH (NOLOCK) WHERE nc.idNotaCredito = de.idDocumento)
 				,codDoc           = 'Nota de Crédito Version: '+de.versionComp
 				,nroDoc           = ''
+				,de.fechaEmision
 			FROM dbo.DocumentoElectronico de WITH (NOLOCK)
 			WHERE de.codDoc = '04'
 				AND de.codEstado = 4
@@ -320,7 +323,7 @@ BEGIN
 				AND de.idContribuyente = @idCliente
 				AND de.idDocumentoElectronico NOT IN (SELECT c.idComprobante FROM @cobroDocuments c WHERE c.codDoc = '04')
 
-			INSERT INTO @documents (idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc)
+			INSERT INTO @documents (idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc, fechaEmision)
 			SELECT 
 				 a.idAnticipo as idComprobante
 				,a.idTipoDocumento as idTipoDocumento
@@ -328,6 +331,7 @@ BEGIN
 				,a.valor
 				,td.codigo as tipoDocumento
 				,''
+				,a.fechaEmision
 			FROM dbo.Anticipo               a WITH (NOLOCK)
 			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab        = a.codEstab
 			INNER JOIN TipoDocumento       td WITH (NOLOCK) ON td.idTipoDocumento = a.idTipoDocumento
@@ -349,7 +353,7 @@ BEGIN
 
 			SELECT cd.idCiudad,provincia = pr.descripcion ,cd.descripcion,pr.codigo FROM dbo.Provincia pr WITH (NOLOCK) INNER JOIN dbo.Ciudad cd WITH (NOLOCK) ON cd.idProvincia = pr.idProvincia WHERE cd.estado = 1
 
-			SELECT idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc FROM @documents 
+			SELECT idDocumento,idTipoDocumento,serieComprobante,saldo,codDoc,nroDoc, fechaEmision = FORMAT(fechaEmision,'MM/dd/yyyy HH:mm') FROM @documents 
 
 			SELECT idCuentaPorCobrar
 			      ,serieComprobante

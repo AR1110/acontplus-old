@@ -6,5 +6,6 @@ export * from "./production-area";
 export * from "./recipe";
 export * from "./routes";
 export * from "./sub-category";
+export * from "./table";
 export * from "./type-with-key";
 export * from "./user.type";

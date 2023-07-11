@@ -7,11 +7,12 @@ const AuthGuard = () => {
   //const userState = useSelector((store: AppStore) => store.user);
   const userState = localStorage.getItem("ACCESS_TOKEN") ? true : false;
 
-  return userState ? (
-    <RootLayout />
-  ) : (
-    <Navigate replace to={PublicRoutes.LOGIN}></Navigate>
-  );
+  // return userState ? (
+  //   <RootLayout />
+  // ) : (
+  //   <Navigate replace to={PublicRoutes.LOGIN}></Navigate>
+  // );
+  return <RootLayout />;
 };
 
 export default AuthGuard;

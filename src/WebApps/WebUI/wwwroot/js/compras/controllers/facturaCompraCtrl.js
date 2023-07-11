@@ -11,7 +11,7 @@ facturaCompraCtrl.$inject = [
     'formulario'
 ]
 
-function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, factCompraSvc, _modalSvc, _nombreModalConst, _form) {
+function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, factCompraSvc, _modalSvc, _nombreModalConst, fS) {
 
     // let accion = JSON.parse(localStorage.getItem("accion"));  
     // if(accion===null){
@@ -25,15 +25,20 @@ function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, factCompraSvc, _mod
     const { MODAL_FILE_CTRL,
         MODAL_NUEVO} = _nombreModalConst.factura_compra;
 
+    $scope.proveedor = {
+        nombreProveedor: ''
+    }
+
+    $scope.searchUser = {
+        nombreCompleto: ''
+    }
+    $scope.moreSearchOptions = false;
+
+    $scope.estadoPagos = [];
     $scope.dataSearch = {
         pageIndex: 1,
         pageSize: 1000
-    }
-
-    //Filters        
-    $scope.meses = _form.meses();
-    $scope.mes = $scope.meses[new Date().getMonth() + 1].numero;
-    $scope.proveedorFilter = {};
+    } 
 
     $scope.filterLocalFC = async () => {
         let facturas = JSON.parse(JSON.stringify($scope.cloneFacturas));
@@ -50,7 +55,7 @@ function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, factCompraSvc, _mod
             abono += val.abono;
             saldo += val.saldo;
         }
-        $scope.total = _form.roundNumber(total, 5);
+        $scope.total = fS.roundNumber(total, 5);
         $scope.abono = abono || 0;
         $scope.saldo = saldo || 0;
     }
@@ -59,14 +64,33 @@ function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, factCompraSvc, _mod
     $scope.getFacturas = function () {
         try {
             showLoader();
+            $scope.cloneFacturas = [];
             $scope.facturas = [];
+            $scope.getTotalColumna();
 
-            factCompraSvc.getAll($scope.dataSearch).then(response => {
+            let estado = $scope.estadoPagos.length && $scope.estadoPagos.find(item=>item.codigo === $scope.dataSearch.codEstadoDoc);
+            const dataSearch = {
+                codEstab: $scope.dataSearch.codEstab,
+                tipoFecha: 'FE',
+                checkBoxFecha: true,
+                fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
+                fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
+                checkBoxProveedor: $scope.dataSearch.idProveedor > 0,
+                byProveedor: $scope.dataSearch.idProveedor,
+                checkBoxEstado: $scope.dataSearch.codEstadoDoc?true: false,
+                byEstado: estado && estado.idEstadoPago,
+                isSearchNroDoc: $scope.dataSearch.nroSecuencial ? true: false,
+                nroSecuencial: $scope.dataSearch.nroSecuencial
+                
+            }
+
+            factCompraSvc.getAll(dataSearch).then(response => {
                 hideLoader();
                 $scope.facturas = response || [];
                 $scope.cloneFacturas = JSON.parse(JSON.stringify($scope.facturas));
                 $scope.getTotalColumna();
             }).catch(error => {
+                console.log(error);
                 hideLoader();
             })            
         } catch (error) {
@@ -92,74 +116,38 @@ function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, factCompraSvc, _mod
 
 
     //----------------------------------------------FILTROS ----------------------------------------
-    $scope.openModalFiltro = function () {
-
-        $("#modalBusquedaAvanzadaFC").modal('show');
-    }
-
-    $scope.onChangeFechaFiltro = () => {
-        $scope.dataSearch.tipoFecha = 'FE';
-        $scope.mes = new Date().getMonth() + 1;
-        $scope.getFechaInicioFinFilter($scope.mes)
-    }
-
-    //Fecha Inicial y Final dependiendo el Mes que seleccione el usuario en el Buscador AVanzado
-    $scope.getFechaInicioFinFilter = function (mes) {
-        let {
-            fechaInicio,
-            fechaFin
-        } = _form.getFechaInicioFinFilter(mes);
-        $scope.dataSearch.fechaInicio = fechaInicio;
-        $scope.dataSearch.fechaFin = fechaFin;
-    }
-
-    //-------------------------------------------Proveedor filter------------------------------
-    $scope.searchProveedorFilter = (textSearch) => _commonSvc.proveedorSearch(textSearch);
-
-    $scope.proveedorFilte = {};
-    $scope.selectProveedorFiltro = function (item) {
-        $scope.dataSearch.byProveedor = item.proveedor.idProveedor
-
-    }
-
-    //Busqueda Avanzada 
-    $scope.busquedaAvanzada = () => {
-        // if (_form.campo($scope.dataSearch.bySucursal)) {
-        //     toast.toastr('warning', 'Por favor seleccione una Sucursal');
-        //     return;
-        // };
-        if ($scope.dataSearch.checkBoxProveedor) {
-            if (_form.campo($scope.dataSearch.byProveedor)) {
-                toast.toastr('warning', 'Por favor seleccione el Proveedor');
-                return;
-            };
-        }
-
-        if ($scope.dataSearch.checkBoxFecha) {
-            if (_form.campo($scope.dataSearch.fechaInicio)) {
-                toast.toastr('warning', 'Por favor seleccione la Fecha Inicio');
-                return;
-            };
-            if (_form.campo($scope.dataSearch.fechaFin)) {
-                toast.toastr('warning', 'Por favor seleccione la Fecha Fin');
-                return;
-            };
-        }
-
-        if ($scope.dataSearch.checkBoxEstado) {
-            if (_form.campo($scope.dataSearch.byEstado)) {
-                toast.toastr('warning', 'Por favor seleccione el Estado');
-                return
-            }
-        }
-
+    $scope.resultRangeFilter = function (item) {
+        $scope.dataSearch.fechaInicio = item.startDate,
+        $scope.dataSearch.fechaFin = item.endDate
         $scope.getFacturas();
-        $("#modalBusquedaAvanzadaFC").modal('hide');
     }
 
+    //====================Cliente===========
+    $scope.onKeyupProveedor= function(){
+        if(!$scope.proveedor.nombreProveedor){
+            $scope.dataSearch.idProveedor = 0;
+        }
+    }
+    $scope.onSelectProveedor = function(item){
+        $scope.dataSearch.idProveedor = item.idProveedor;
+        $scope.getFacturas();
+    }
 
+    $scope.onKeyupUser = function(){
+        if(!$scope.searchUser.nombreCompleto){
+            $scope.dataSearch.idUsuario = 0;
+        }
+    }
+    $scope.onSelectUser = function(item) {
+        $scope.dataSearch.idUsuario = item.idUsuario;
+        $scope.getFacturas();
+    }
 
+    $scope.onClickBtnMore = function () {
+        $scope.moreSearchOptions = !$scope.moreSearchOptions;
+    }  
 
+     
     $scope.openModalNew = async () => {
         let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_NUEVO['controller']];
         let template = MODAL_NUEVO['template'];
@@ -286,11 +274,11 @@ function facturaCompraCtrl($scope, $filter, _mS, _commonSvc, factCompraSvc, _mod
                 factCompraSvc.delete(item.idFacturaCompra).then(response => {
                     if (response.code === "0") {
                         hideLoader();
-                        _form.sweetAlert('warning', response.message, response.titleSms);
+                        fS.sweetAlert('warning', response.message, response.titleSms);
                     }
                     if (response.code === "1") {
                         hideLoader();
-                        _form.sweetAlert('success', response.message, response.titleSms, 1000);
+                        fS.sweetAlert('success', response.message, response.titleSms, 1000);
                         $scope.getFacturas();
                     }
                 }).catch(error => {

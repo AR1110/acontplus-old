@@ -1210,6 +1210,88 @@
         };
     });
 
+
+
+    app.directive('providerSearchDrtv', function ($compile, commonService) {
+        return {
+            restrict: 'A',
+            scope: {
+                onSelect: '&',
+                onKeyup:'&',
+                ngModel: '='
+            },
+            link: function (scope, element, attrs) {
+                scope.proveedor = {
+                    nombreProveedor: scope.ngModel
+                }
+                scope.search = function (textSearch) {
+                    if (textSearch.length > 1) {
+                        return commonService.proveedorSearch(textSearch).then(response=>{
+                            let proveedores = response || [];
+                            console.log(proveedores)
+                            return proveedores.map(item=>{
+                                let proveedor = item.proveedor;
+                                return { 
+                                    idProveedor: proveedor.idProveedor,
+                                    idTipoClienteProveedor: proveedor.idTipoClienteProveedor,
+                                    idTipoEntidad: proveedor.idTipoEntidad,
+                                    idSubContribuyente: proveedor.idSubContribuyente,
+                                    idTiempoCredito: proveedor.idTiempoCredito,
+                                    idTipoIdentificacion: proveedor.idTipoIdentificacion,
+                                    idCiudad: proveedor.idCiudad,
+                                    numeroIdentificacion: proveedor.numeroIdentificacion,
+                                    nombreFiscal: proveedor.nombreFiscal,
+                                    nombreComercial: proveedor.nombreComercial,
+                                    direccion: proveedor.direccion,
+                                    telefono: proveedor.telefono,
+                                    correo: proveedor.correo,
+                                    estado: proveedor.estado,
+                                    validationSri: proveedor.validationSri,
+                                    diasCredito: item.diasCredito,
+                                    codigoIndetificacion: item.codigoIndetificacion
+                                }
+                            })
+                        })
+                        .catch(error=>{
+                            console.log(error);
+                        })
+                    }
+                }
+    
+                element.attr('uib-typeahead', 'item as item.nombreFiscal for item in search($viewValue)');
+                element.attr('typeahead-on-select', 'onSelect({result: $item})');
+                element.attr('typeahead-template-url', 'autocompleteProviderTemplate.html');
+                element.attr('ng-keyup', 'onKeyup()');
+                element.attr('typeahead-editable', 'false');
+
+                 
+                // element.attr('ng-model', 'ngModel')
+                element.removeAttr('provider-search-drtv');
+
+                // Add CSS styles dynamically
+                element.attr('style', 'position:relative;');
+                element.attr('popover-append-to-body', 'true');
+                element.attr('popover-placement', 'bottom-left');
+                element.attr('popover-popup-delay', '200');
+                element.attr('popover-trigger', 'mouseenter');
+
+                // Create a style element to apply custom CSS styles
+                var customStyle = document.createElement('style');
+                customStyle.innerHTML = `
+                    [uib-typeahead-popup].dropdown-menu {
+                        z-index: 999999 !important;
+                        max-height: 250px;
+                        overflow-y: auto;
+                        width: auto;
+                    }
+                `;
+                
+                document.head.appendChild(customStyle);
+                $compile(element)(scope);
+            }
+        };
+    });
+
     //filters 
 
      

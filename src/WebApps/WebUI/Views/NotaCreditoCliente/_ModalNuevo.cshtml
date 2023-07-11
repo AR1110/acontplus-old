@@ -80,7 +80,7 @@
                         uib-typeahead="item as item.nroFactura for item in $ctrl.facturas | filter:{nroFactura:$viewValue}"
                         typeahead-show-hint="true" typeahead-min-length="0"
                         typeahead-on-select="$ctrl.selectedInvoiceChange($item)" typeahead-editable="false">
-                    <button type="button" class="btn btn-info btn-xs mt-1">
+                    <button type="button" class="btn btn-info btn-xs mt-1" ng-click="$ctrl.getDetalleDoc()">
                         <i class="ti-file"></i> Ver documento
                     </button>
 

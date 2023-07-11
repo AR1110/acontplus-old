@@ -837,7 +837,12 @@ export class ModalBaseCtrl {
             this.uiGridInvoice.actividadTipoIva = this.actividadTipoIva;
             this.data = Object.assign(this.data, this.uiGridInvoice.getTotales());
 
-            this.setDataInfoEstab(this.establecimientos, this.puntosEmisiones)
+            this.setDataInfoEstab(this.establecimientos, this.puntosEmisiones);
+
+            //Si se encuantra en modulo nota credito 
+            if(typeof this.getInvoiceByCustomer === 'function'){
+                this.getInvoiceByCustomer();
+            }
 
             this.$scope.$apply();
         } catch (error) {
