@@ -580,6 +580,164 @@
     });
 
 
+    /**
+     * Buscador de cliente para venta en donde incluye a mas del buscador consultar datos del cliente al SRI en caso de no encontrar datos en la base de datos AcontPlus
+     */
+    app.directive('customerSearchSaleDrtv', function ($compile, clienteService, commonService) {
+        return {
+            restrict: 'A',
+            scope: {
+                onSelect: '&',
+                onKeyup:'&',
+                ngModel: '=',
+                functionTrigger: '&'
+            },
+            link: function (scope, element, attrs) {
+
+                function verificarNumero(numero) {
+                    numero = numero ? numero.trim(): ""
+                   
+                    if (![10, 13].includes(numero.length)) return;
+             
+                    if(isNaN(numero)) return
+             
+                    if(numero.length===13 && numero.slice(-3) !=="001") return; 
+            
+                    return true;
+                }
+
+                scope.cliente = {
+                    nombreCliente: scope.ngModel
+                }
+
+                scope.search = function (textSearch) {
+                    if ( textSearch.length < 2) return;
+
+                    return clienteService.search({textSearch})
+                    .then(async response => {
+                    
+                        if(response.code==="0") {
+
+                            if(!verificarNumero(textSearch))  return [];
+
+                            
+                            scope.functionTrigger({result: {
+                                nombreFiscal: textSearch,
+                            }})
+
+                            //Numero de Ruc 
+                            if(textSearch.length===13){
+                                try {
+                                    
+                                    showLoader();
+                                    let {numeroRuc, razonSocial,establecimientos, direccion, telefono, email} = await commonService.checkClientSRIByRUC(textSearch);
+                                    hideLoader();
+                                    if (!numeroRuc) return; 
+                
+                                    //retornamos datos al controlador principal donde llamamos la directiva
+                                    scope.functionTrigger({
+                                        result: { 
+                                            nombreFiscal: textSearch,
+                                            numeroIdentificacion: numeroRuc,
+                                            identificacionComprador: numeroRuc,
+                                            razonSocialComprador: razonSocial ,
+                                            nombreComercial: razonSocial,
+                                            direccionComprador: direccion || null,
+                                            telefono: telefono || null,
+                                            email: email || null,
+                                            idCliente: 0
+                                        }
+                                    }) 
+
+
+                                } catch (error) {
+                                    hideLoader();
+                                    console.log(error);
+                                    scope.functionTrigger({
+                                        result: {
+                                            nombreFiscal: textSearch
+                                        }
+                                    })
+                                }                             
+                            }
+
+                            //Numero de Cedula 
+                            if(textSearch.length===10){
+                                try {
+                                    showLoader(); 
+                                    let {identificacion, nombreCompleto} = await commonService.checkClientSRIByCedula(textSearch) 
+                                    hideLoader();
+                                    if (!identificacion || !nombreCompleto) return; 
+
+                                    
+                                    scope.functionTrigger({                                    
+                                        result: { 
+                                            nombreFiscal: textSearch,
+                                            numeroIdentificacion: identificacion,
+                                            identificacionComprador: identificacion,
+                                            razonSocialComprador: nombreCompleto ,
+                                            nombreComercial: nombreCompleto,
+                                            idCliente: 0
+                                        }
+                                    }) 
+                                } catch (error) {
+                                    console.log(error);
+                                    hideLoader();
+                                    scope.functionTrigger({
+                                        result: {
+                                            nombreFiscal: textSearch,
+                                        }
+                                    })
+                                }
+                            }
+                        }
+                        return response;
+
+
+                    })
+                    .catch(error=>{
+                        console.log(error);
+                    })
+                    
+                }
+    
+                element.attr('uib-typeahead', 'item as item.nombreFiscal for item in search($viewValue)');
+                element.attr('typeahead-on-select', 'onSelect({result: $item})');
+                element.attr('typeahead-template-url', 'customerSearchSaleTemplate.html');
+                element.attr('ng-keyup', 'onKeyup()');
+                element.attr('typeahead-editable', 'true');
+
+                 
+                // element.attr('ng-model', 'ngModel')
+                element.removeAttr('customer-search-sale-drtv');
+
+                // Add CSS styles dynamically
+                element.attr('style', 'position:relative;');
+                element.attr('popover-append-to-body', 'true');
+                element.attr('popover-placement', 'bottom-left');
+                element.attr('popover-popup-delay', '200');
+                element.attr('popover-trigger', 'mouseenter');
+
+                // Create a style element to apply custom CSS styles
+                var customStyle = document.createElement('style');
+                customStyle.innerHTML = `
+                    [uib-typeahead-popup].dropdown-menu {
+                        z-index: 999999 !important;
+                        max-height: 250px;
+                        overflow-y: auto;
+                        width: auto;
+                    }
+                `;
+                
+                document.head.appendChild(customStyle);
+                $compile(element)(scope);
+            }
+        };
+    });
+
+
+    
+
 
     
 
@@ -1227,8 +1385,7 @@
                 scope.search = function (textSearch) {
                     if (textSearch.length > 1) {
                         return commonService.proveedorSearch(textSearch).then(response=>{
-                            let proveedores = response || [];
-                            console.log(proveedores)
+                            let proveedores = response || []; 
                             return proveedores.map(item=>{
                                 let proveedor = item.proveedor;
                                 return { 

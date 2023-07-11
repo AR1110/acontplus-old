@@ -67,7 +67,18 @@
             let notaEntrega = Object.assign({}, data);
             notaEntrega.fechaEmision = fS.formatDateTimeZone(data.fechaEmision)
             notaEntrega.fechaVencimiento = fS.formatDateTimeZone(data.fechaVencimiento)
-            notaEntrega.idCliente = cliente.idCliente;
+           
+
+            if(cliente.idCliente===0 && !cliente.razonSocialComprador && !cliente.identificacionComprador){
+                throw new Error("Datos de cliente no proporcionados")
+            }
+
+            notaEntrega.idCliente = cliente.idCliente; 
+            notaEntrega.identificacionComprador = cliente.identificacionComprador;
+            notaEntrega.razonSocialComprador = cliente.razonSocialComprador;
+            notaEntrega.direccionComprador = cliente.direccionComprador;
+            notaEntrega.email = cliente.email;
+            notaEntrega.telefono = cliente.telefono;
 
 
             return {
