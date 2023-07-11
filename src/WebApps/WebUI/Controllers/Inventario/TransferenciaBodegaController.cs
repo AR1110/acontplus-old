@@ -1,4 +1,4 @@
-﻿using Common.Logs;
+﻿using Services.Common.Logs;
 using DataAccess;
 using Domain.Models;
 using Domain.Models.Inventario;

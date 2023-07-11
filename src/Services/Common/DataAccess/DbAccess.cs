@@ -1,5 +1,4 @@
-﻿using Common.Logs;
-using Helpers;
+﻿using Helpers;
 using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlClient;
@@ -40,8 +39,8 @@ namespace DataAccess
             catch (Exception ex)
             {
                 Close();
-                LogWriter _log = new LogWriter(_config);
-                _log.LogError("Error in SPExecute: " + ex.ToString());
+                //LogWriter _log = new LogWriter(_config);
+                //_log.LogError("Error in SPExecute: " + ex.ToString());
             }
         }
         public void AddParameter(string paramName, SqlDbType paramType, object paramValue, bool isNull = false)
@@ -61,8 +60,8 @@ namespace DataAccess
             catch (Exception ex)
             {
                 Close();
-                LogWriter _log = new LogWriter(_config);
-                _log.LogError("Error in AddParameter: " + ex.ToString());
+                //LogWriter _log = new LogWriter(_config);
+                //_log.LogError("Error in AddParameter: " + ex.ToString());
             }
         }
         public void AddDynamicParam(string paramName, object paramValue)
@@ -81,8 +80,8 @@ namespace DataAccess
             catch (Exception ex)
             {
                 Close();
-                LogWriter _log = new LogWriter(_config);
-                _log.LogError("Error in AddDynamicParam: " + ex.ToString());
+                //LogWriter _log = new LogWriter(_config);
+                //_log.LogError("Error in AddDynamicParam: " + ex.ToString());
             }
         }
         public void AddOutputParam(string paramName, object paramValue)
@@ -108,8 +107,8 @@ namespace DataAccess
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_config);
-                _log.LogError("Error in OnlyExecute: " + ex.ToString());
+                //LogWriter _log = new LogWriter(_config);
+                //_log.LogError("Error in OnlyExecute: " + ex.ToString());
             }
             finally
             {
@@ -128,8 +127,8 @@ namespace DataAccess
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_config);
-                _log.LogError("Error in ExecuteReader: " + ex.ToString());
+                //LogWriter _log = new LogWriter(_config);
+                //_log.LogError("Error in ExecuteReader: " + ex.ToString());
             }
             finally
             {
@@ -161,9 +160,9 @@ namespace DataAccess
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_config);
+                //LogWriter _log = new LogWriter(_config);
 
-                _log.LogError("Error in GetDataSet: " + ex.ToString());
+                //_log.LogError("Error in GetDataSet: " + ex.ToString());
                 if (ds.Tables.Count > 0)
                 {
                     ds = new DataSet();
@@ -197,9 +196,9 @@ namespace DataAccess
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_config);
+                //LogWriter _log = new LogWriter(_config);
 
-                _log.LogError("Error in GetDataTable: " + ex.ToString());
+                //_log.LogError("Error in GetDataTable: " + ex.ToString());
                 DtError(ref dt, ex.ToString());
             }
             finally
@@ -297,8 +296,8 @@ namespace DataAccess
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_config);
-                _log.LogError("Error in Close: " + ex.ToString());
+                //LogWriter _log = new LogWriter(_config);
+                //_log.LogError("Error in Close: " + ex.ToString());
             }
         }
         public void DtColumns(ref DataTable dt)
