@@ -88,9 +88,23 @@
         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
             <div class="form-group">
                 <label>Cliente: <span class="text-danger">*</span></label>
-                <div class="input-group">
+                <div class="input-group"> 
+                     <input type="text" 
+                            id="clienteSearchInvoice"
+                            name="clienteSearchInvoice" 
+                            class="form-control border-select"
+                            ng-model="$ctrl.cliente.nombreFiscal" 
+                            customer-search-sale-drtv on-select="$ctrl.onSelectedClienteChange(result)"
+                            on-keyup="$ctrl.onKeyupCustomer()"  
+                            function-trigger = "$ctrl.receiveDataCustomerSRI(result)"
+                            placeholder="Ingrese C.I o Nombre Comercial" 
+                            onclick="select();">
 
-                    @await Html.PartialAsync("~/Views/Cliente/_UibModalSearchInvoice.cshtml")
+                        <script type="text/ng-template" id="customerSearchSaleTemplate.html">
+                            <div class="autocomplete-suggestion-uib-typeahead">
+                                <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
+                            </div>
+                        </script>
 
 
 

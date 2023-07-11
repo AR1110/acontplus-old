@@ -257,7 +257,7 @@
 
             return mS.getData('get', url + 'Search?json=' + JSON.stringify(query), null, true).then(response => {
                 if(response.code==='0'){
-                    throw response;
+                    return response;
                 }
                 if(response.code==='1'){
                     let clientes = JSON.parse(response.payload) || [];
@@ -278,6 +278,8 @@
                         }
                     })
                 }                
+            }).catch(error=>{
+                throw error;
             })
         }
 

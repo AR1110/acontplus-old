@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.35";
+} from "./modalBaseCtrl.js?v=0.36";
 
 
 class ModalNotaEntregaCtrl extends ModalBaseCtrl {
@@ -338,6 +338,9 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
             _fS,
             _tS
         })
+
+        
+        this.newCustomer = false; //Validacion de datos de cliente cuando cuando la consulta es del SRI 
     
         this.facturaSvc = facturaSvc, 
         this.notaEntregaSvc = notaEntregaSvc,
@@ -529,6 +532,17 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
             this.$scope.$apply();
         }
     }
+
+
+    receiveDataCustomerSRI(result) {
+        if(result.idCliente===0) {
+            this.newCustomer = true;
+        }else{
+            this.newCustomer = false;
+        }
+        this.cliente = result;
+    }
+
 
     async onSave() {
         try {
