@@ -677,6 +677,9 @@
                                             identificacionComprador: identificacion,
                                             razonSocialComprador: nombreCompleto ,
                                             nombreComercial: nombreCompleto,
+                                            direccionComprador: direccion || null,
+                                            telefono: telefono || null,
+                                            email: email || null,
                                             idCliente: 0
                                         }
                                     }) 
