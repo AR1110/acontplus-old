@@ -295,7 +295,7 @@ BEGIN
 								           WHEN 'A'  THEN (SELECT TOP 1 FORMAT(an.fechaEmision, 'dd/MM/yyyy HH:mm') FROM dbo.Anticipo             an WITH (NOLOCK) WHERE an.idAnticipo = co.idComprobante)
 							END
 		  ,cliente = ci.nombreFiscal
-		  ,total = co.abono
+		  ,total   = CAST(co.abono as numeric(18,2))
 	 FROM dbo.ComprobanteIngreso       ci WITH (NOLOCK)
 	 INNER JOIN dbo.Cobro              co WITH (NOLOCK) ON ci.idComprobanteIngreso = co.idComprobanteIngreso
 	 INNER JOIN dbo.EntidadFinanciera  ef WITH (NOLOCK) ON ef.idEntidadFinanciera  = co.idEntidadFinanciera
@@ -319,7 +319,7 @@ BEGIN
 	 WHERE cobro = 1
 	 ORDER BY pay,nroDoc,nroComprobante ASC 
 
-	 SELECT chequePosfechado = ISNULL(@chequesPosf,0)
-	       ,anticipos        = ISNULL((SELECT SUM(dc.total) FROM @tbDetalleCaja dc WHERE dc.tipDoc = 'A' ),0)
+	 SELECT chequePosfechado = CAST(ISNULL(@chequesPosf,0)as numeric(18,2))
+	       ,anticipos        = CAST(ISNULL((SELECT SUM(dc.total) FROM @tbDetalleCaja dc WHERE dc.tipDoc = 'A' ),0)as numeric(18,2))
 	 
 END 

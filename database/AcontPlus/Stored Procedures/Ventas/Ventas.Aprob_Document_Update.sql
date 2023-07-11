@@ -74,6 +74,7 @@ BEGIN
 		 orderIndex INT NOT NULL
 		,idTarifa INT NOT NULL
 		,idArticulo INT NOT NULL
+		,idBodega INT NOT NULL
 		,idMedida INT NOT NULL
 		,idTipoIva INT NOT NULL
 		,cantidad NUMERIC(18,5) NOT NULL
@@ -119,12 +120,13 @@ BEGIN
 		     )
 
 		INSERT INTO @tbDetalle 
-			  (orderIndex, idTarifa,idArticulo,idMedida, idTipoIva, cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigo,codigoPorcentaje,tarifa,baseImponible)
-		SELECT orderIndex, idTarifa,idArticulo,idMedida, idTipoIva, cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigo,codigoPorcentaje,tarifa,baseImponible
+			  (orderIndex, idTarifa,idBodega,idArticulo,idMedida, idTipoIva, cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigo,codigoPorcentaje,tarifa,baseImponible)
+		SELECT orderIndex, idTarifa,idBodega,idArticulo,idMedida, idTipoIva, cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigo,codigoPorcentaje,tarifa,baseImponible
 		FROM OPENJSON(@detalle)
 		WITH (
-				orderIndex                       INT '$.orderIndex',
-				idTarifa                         INT '$.idTarifa'
+				orderIndex                       INT '$.orderIndex'
+			   ,idTarifa                         INT '$.idTarifa'
+			   ,idBodega                         INT '$.idBodega'
 			   ,idArticulo                       INT '$.idArticulo'
 		       ,idMedida                         INT '$.idMedida' 
 			   ,idTipoIva                        INT '$.idTipoIva' 
@@ -229,6 +231,7 @@ BEGIN
 				uniqueId
 			   ,codArticulo
 			   ,idTarifa
+			   ,idBodega
 			   ,codMedida
 			   ,codigoPrincipal
 			   ,codigoAuxiliar
@@ -246,6 +249,7 @@ BEGIN
 			    @uniqueId
 			   ,ar.code_unique
 			   ,dt.idTarifa
+			   ,dt.idBodega
 			   ,me.codigo
 			   ,ar.codigo
 			   ,ar.codigoAuxiliar
