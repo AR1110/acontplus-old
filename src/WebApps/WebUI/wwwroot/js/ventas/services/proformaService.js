@@ -59,10 +59,19 @@
                 formattedDateForInsert = data.fechaEmision
             } 
 
+            if(cliente.idCliente===0 && !cliente.razonSocialComprador && !cliente.identificacionComprador){
+                throw new Error("Datos de cliente no proporcionados")
+            }
+
             let proforma = Object.assign({}, data);
              
             //Tarifa Aplicada al Documento
-            proforma.idCliente = cliente.idCliente;
+            proforma.idCliente = cliente.idCliente; 
+            proforma.identificacionComprador = cliente.identificacionComprador;
+            proforma.razonSocialComprador = cliente.razonSocialComprador;
+            proforma.direccionComprador = cliente.direccionComprador;
+            proforma.email = cliente.email;
+            proforma.telefono = cliente.telefono;
             proforma.fechaEmision = fS.formatDateTimeZone(formattedDateForInsert)
             // this.data.tarifa = this.actividadTipoIva.tarifa;            
     
