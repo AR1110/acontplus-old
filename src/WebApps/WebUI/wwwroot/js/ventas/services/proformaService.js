@@ -17,8 +17,11 @@
                     throw response;
                 }
                 if(response.code==="1"){
-                    let proformas = JSON.parse(response.payload) || []; 
-                    return proformas.map(item =>{
+                    let mainData = JSON.parse(response.payload) || [] ;
+                    let proformasRepos = mainData[0]; 
+                    let dataTotals = mainData[1][0]; 
+                    
+                    let proformas = proformasRepos.map(item =>{
                         return {
                             comprobante: 'Proforma',
                             entidad: item.entidad,
@@ -44,6 +47,10 @@
                             codEstado: item.codEstado,
                         }
                     })
+                    return {
+                        proformas,
+                        dataTotals
+                    }
                 }
             }).catch(error =>{
                 console.log('obtener datos->proforma service', error)

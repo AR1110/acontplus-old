@@ -162,15 +162,15 @@
                     infinite-scroll-parent="true" ng-init="isShow=true" ng-show="isShow"
                     style=" max-height: 400px; overflow-x: hidden;">
                     <table resize master md-table name="innerWireTable">
-                        <thead fix-head md-head md-trim-column-names>
+                        <thead fix-head md-head md-trim-column-names md-order="dataSearch.order">
                             <tr md-row>
                                 <th md-column></th>
                                 @* <th md-column>N°</th> *@
-                                <th md-column>N°. Doc</th>
-                                <th md-column>F. Emision</th>
+                                <th md-column md-order-by="nroDocumento">N°. Doc</th>
+                                <th md-column md-order-by="fechaEmision">F. Emision</th>
                                 <th md-column>F. Vcto</th>
-                                <th md-column>Cliente</th>
-                                <th md-column totales-venta-view="ventaPermiso">Total</th>
+                                <th md-column md-order-by="nombreFiscal">Cliente</th>
+                                <th md-column md-numeric md-order-by="total" totales-venta-view="ventaPermiso">Total</th>
                                 <th md-column totales-venta-view="ventaPermiso">Abono</th>
                                 <th md-column totales-venta-view="ventaPermiso">Saldo</th>
                                 <th md-column>Estado </th>
@@ -178,7 +178,7 @@
                             </tr>
                         </thead>
                         <tbody md-body>
-                            <tr md-row ng-repeat="ne in notaEntregas" ng-class="ne.style">
+                            <tr md-row ng-repeat="ne in notaEntregas | orderBy: dataSearch.order" ng-class="ne.style">
                                 <td md-cell>
                                     <md-menu>
                                         <md-button aria-label="Open demo menu" class="md-icon-button"
