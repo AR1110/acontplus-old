@@ -1012,6 +1012,11 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
         try {
             if (!this.isValidaForm()) return
 
+            if(!(this.data.idTiempoCredito) > 0){
+                this._fS.sweetAlert('warning', 'Seleccione el tiempo crédito');
+                return
+            }
+
             if (this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total > 50) {
                 this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')
                 return
@@ -1432,6 +1437,11 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
     async onSave() {
         try {
             if (!this.isValidaForm()) return
+
+            if(!(this.data.idTiempoCredito) > 0){
+                this._fS.sweetAlert('warning', 'Seleccione el tiempo crédito');
+                return
+            }
 
             if (this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total > 50) {
                 this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')

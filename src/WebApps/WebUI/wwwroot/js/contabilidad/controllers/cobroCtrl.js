@@ -206,8 +206,8 @@
                 const dataSearch = {
                     tipo: 1,
                     codEstab: $scope.dataSearch.codEstab, 
-                    fechaInicio: _form.formatDateTimeZone($scope.dataSearch.fechaInicio),
-                    fechaFin: _form.formatDateTimeZone($scope.dataSearch.fechaFin),
+                    fechaInicio: _form.formatDateMoment($scope.dataSearch.fechaInicio),
+                    fechaFin: _form.formatDateMoment($scope.dataSearch.fechaFin),
                     checkBoxPersona: $scope.tiposPersona.some(item=>item.codigo===$scope.dataSearch.byTipoPersona),
                     nroIdentificacion: $scope.dataSearch.nroIdentificacion,
                     checkBoxUsuario: $scope.dataSearch.byUsuario > 0,
