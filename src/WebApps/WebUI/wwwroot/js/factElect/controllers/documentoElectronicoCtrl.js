@@ -31,6 +31,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
     //Filtro
     $scope.recordsQuantity  = [10, 25, 50, 100]
     $scope.dataSearch = {
+        order: '',
         fechaInicio: new Date(),
         fechaFin: new Date(),
         pageSize: 50,

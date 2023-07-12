@@ -37,11 +37,17 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
     $scope.jsonPermission = {}
 
     $scope.moreSearchOptions = false;
+    $scope.recordsQuantity = [10, 25, 50, 100];
     $scope.dataSearch = {
+        order: '',
+        tipo: 1,
+        pageSize: 50,
         pageIndex: 1,
-        pageSize: 10000,
-        checkBoxFecha: false,
-    }
+        maxSize: 5,
+        totalRecords: 0,
+        busqueda: "",
+        byStock: 0,
+    };
     $scope.proformas = [];
 
     
@@ -135,6 +141,8 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
 
             let dataSearch = {
                 codEstab: $scope.dataSearch.codEstab,
+                pageIndex: $scope.dataSearch.pageIndex,
+                pageSize: $scope.dataSearch.pageSize,
                 checkBoxFecha: $scope.dataSearch.checkBoxFecha,
                 checkBoxCliente: $scope.dataSearch.byCliente > 0,
                 byCliente: $scope.dataSearch.byCliente,
@@ -150,9 +158,11 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
            
             proformaSvc.getAll(dataSearch).then(response => {
                 hideLoader();
-                $scope.proformas = response;
+                let {proformas, dataTotals} = response;
+                $scope.proformas = proformas;
                 $scope.cloneProformas = JSON.parse(JSON.stringify($scope.proformas));
-                $scope.total = $scope.sumarColumnaTotal();
+                $scope.dataSearch.totalRecords = dataTotals.totalRecords;
+                $scope.total = fS.roundNumber(dataTotals.total, 5);
                 
             }).catch(error=>{
                 hideLoader();
@@ -183,6 +193,14 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
     }
     $scope.initiload();
 
+    $scope.pagechanged = function () {
+        $scope.getProformas();
+    };
+
+    $scope.changePageSize = function () {
+        $scope.dataSearch.pageIndex = 1;
+        $scope.getProformas();
+    };
 
 
     $scope.openModalNew = async () => {

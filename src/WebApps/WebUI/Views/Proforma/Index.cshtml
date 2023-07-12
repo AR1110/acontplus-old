@@ -125,23 +125,32 @@
                     </div>
                 </div>
             </div>
+            <div class="row justify-contend-start">
+                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                    <span class="form-group pull-left page-size form-inline">
+                        <select class="form-control control-color" ng-model="dataSearch.pageSize"
+                            ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                        </select>
+                    </span>
+                </div>
+            </div>
             <md-table-container style="max-height: 400px;">
                 <table resize md-table>
-                    <thead fix-head md-head md-trim-column-names>
+                    <thead fix-head md-head md-trim-column-names md-order="dataSearch.order">
                         <tr md-row>
                             <th md-column></th>
                             <th md-column>N°</th>
-                            <th md-column>Nro. Doc</th>
-                            <th md-column>Fecha Emisión</th>
-                            <th md-column>Cliente</th>
-                            <th md-column>Total</th>
+                            <th md-column md-order-by="nroDocumento">Nro. Doc</th>
+                            <th md-column md-order-by="fechaEmision">Fecha Emisión</th>
+                            <th md-column md-order-by="nombreFiscal">Cliente</th>
+                            <th md-column md-numeric md-order-by="total">Total</th>
                             <th md-column>Estado Doc.</th>
                             <th md-column>Usuario</th>
                         </tr>
                     </thead>
 
                     <tbody md-body>
-                        <tr md-row ng-repeat="p in proformas" ng-class="p.rowColor">
+                        <tr md-row ng-repeat="p in proformas | orderBy: dataSearch.order" ng-class="p.rowColor">
                             <td md-cell>
                                 <md-menu>
                                     <md-button aria-label="Open demo menu" class="md-icon-button"
@@ -227,6 +236,7 @@
                     </tbody>
                     <tfoot md-foot>
                         <tr md-row>
+                            <td md-cell colspan="2"><span class="font-weight-bold">{{dataSearch.totalRecords}} Proformas</span></td>
                             <td md-cell colspan="5"><span class="font-weight-bold">Total:</span></td>
                             <td md-cell><span class="font-weight-bold">{{total}}</span></td>
                             <td md-cell></td>
@@ -235,6 +245,11 @@
                     </tfoot>
                 </table>
             </md-table-container>
+        </div>
+        <div class="card-body">
+             <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+                ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                class="pagination" boundary-links="true" rotate="false"></ul>
         </div>
     </div>
 
