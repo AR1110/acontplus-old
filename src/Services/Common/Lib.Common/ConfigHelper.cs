@@ -18,8 +18,8 @@ namespace Lib.Common
         {
             if (!env.HasValue)
                 env = EnvHelper.GetEnvironment();
-            configurationBuilder.AddJsonFile($"appsettings.{env}.json", optional: false, reloadOnChange: true);
-            configurationBuilder.AddJsonFile($"SharedSettings/sharedsettings.{env}.json", optional: false, reloadOnChange: true);
+            configurationBuilder.AddJsonFile($"appsettings.{env}.json", optional: true, reloadOnChange: true);
+            configurationBuilder.AddJsonFile($"SharedSettings/sharedsettings.{env}.json", optional: true, reloadOnChange: true);
         }
     }
 }

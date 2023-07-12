@@ -388,5 +388,11 @@
     "inputFiles": [
       "wwwroot/js/modal/ventas/modalFacturaCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/ventas/modalNotaEntregaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/ventas/modalNotaEntregaCtrl.js"
+    ]
   }
 ]

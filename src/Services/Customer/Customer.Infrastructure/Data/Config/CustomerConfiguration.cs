@@ -1,10 +1,10 @@
-﻿using Customer.API.Entities;
+﻿using Customer.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Reflection.Emit;
 using System.Reflection.Metadata;
 
-namespace Customer.API.Data.Config
+namespace Customer.Infrastructure.Data.Config
 {
     public class CustomerConfiguration : IEntityTypeConfiguration<AppCustomer>
     {
