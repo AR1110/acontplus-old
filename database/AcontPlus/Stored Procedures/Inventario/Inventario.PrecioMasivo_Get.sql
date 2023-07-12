@@ -1,3 +1,4 @@
+use AcontPlus
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -53,6 +54,7 @@ BEGIN
 	SET @sql = 'SELECT a.idArticulo
 				,codigo
 				,codigoAuxiliar
+				,codigoBarra
 				,descripcion
 				,stock
 				,precioCosto
@@ -75,6 +77,9 @@ BEGIN
 				,estadoTarifa = ISNULL((SELECT TOP 1 ap.estado FROM v_ArticuloPvp ap
 														WHERE ap.idArticulo = a.idArticulo 
 														AND ap.idTarifa = @idTarifa), 0)
+				,tarifa = ISNULL((SELECT TOP 1 ap.tarifa FROM v_ArticuloPvp ap
+														WHERE ap.idArticulo = a.idArticulo 
+														AND ap.idTarifa = @idTarifa), '''')
 				--,pvp1 = ISNULL((SELECT TOP 1 ap.precioVenta FROM v_ArticuloPvp ap
 				--										WHERE ap.idArticulo = a.idArticulo 
 				--										AND ap.codTarifa = ''1''), 0)
@@ -126,7 +131,7 @@ BEGIN
 		rucProveedor VARCHAR(25) '$.rucProveedor',
 		idFamilia INT '$.idFamilia',
 		idSubFamilia INT '$.idSubFamilia',
-		nroDocumento INT '$.nroDocumento'
+		nroDocumento VARCHAR(25) '$.nroDocumento'
 	)
 
 	IF (@tipo = 1)
@@ -159,6 +164,7 @@ BEGIN
 				BEGIN
 					SET @sql = @sql + 'AND idArticulo IN (SELECT idArticulo FROM v_InventarioTransaccion WHERE nroDocumento = @nroDocumento) '
 				END
+		SET @sql = @sql + 'ORDER BY a.fechaModificacion DESC '
 		EXEC sp_executesql @sql, @params
 							   ,@idEntidad = @idEntidad
 							   ,@idTarifa = @idTarifa

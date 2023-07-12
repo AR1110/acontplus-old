@@ -43,17 +43,15 @@ BEGIN
 	,@direccion VARCHAR(300)
 	,@rucReceptor VARCHAR(15)
 	,@claveAcceso AS VARCHAR(50)
+	,@comprobante VARCHAR(100)
+	,@serieComprobante VARCHAR(50)
+	,@importeTotal NUMERIC(18,5)
+
+	SELECT TOP 1 @claveAcceso = claveAcceso FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento
 
 	BEGIN TRY
 		BEGIN TRAN
-			UPDATE dr SET dr.codDoc = @codDoc
-			,dr.xmlDoc = @xmlDoc
-			,dr.downloaded = @downloaded
-			,versionComp = @versionComp
-			,fechaEmision = @fechaEmision
-			,fechaAutorizacion = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion')))).value('(/autorizacion/fechaAutorizacion)[1]','VARCHAR(49)')
-			FROM Recepcion.DocumentoRecibido dr WITH (ROWLOCK)
-			WHERE idDocumento = @idDocumento
+			
 
 			IF (@codDoc = '01')
 				BEGIN
@@ -62,6 +60,11 @@ BEGIN
 					,@identificacionCliProv = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//factura/infoTributaria/ruc)[1]','VARCHAR(13)')
 					,@direccion = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//factura/infoTributaria/dirMatriz)[1]','VARCHAR(300)')
 					,@rucReceptor = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//factura/infoFactura/identificacionComprador)[1]','VARCHAR(25)')
+					,@comprobante = 'Factura'
+					,@serieComprobante = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//factura/infoTributaria/estab)[1]','VARCHAR(25)')
+					+ '-' +  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//factura/infoTributaria/ptoEmi)[1]','VARCHAR(25)')
+					+ '-' +  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//factura/infoTributaria/secuencial)[1]','VARCHAR(25)')
+					,@importeTotal = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//factura/infoFactura/importeTotal)[1]','NUMERIC(18,5)')
 				END
 
 			IF (@codDoc = '03')
@@ -71,6 +74,10 @@ BEGIN
 					,@identificacionCliProv = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//liquidacionCompra/infoTributaria/ruc)[1]','VARCHAR(13)')
 					,@direccion = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//liquidacionCompra/infoTributaria/dirMatriz)[1]','VARCHAR(300)')
 					,@rucReceptor = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//liquidacionCompra/infoLiquidacionCompra/identificacionProveedor)[1]','VARCHAR(25)')
+					,@comprobante = 'Liquidación de Compra'
+						,@serieComprobante = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//liquidacionCompra/infoTributaria/estab)[1]','VARCHAR(25)')
+					+ '-' +  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//liquidacionCompra/infoTributaria/ptoEmi)[1]','VARCHAR(25)')
+					+ '-' +  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//liquidacionCompra/infoTributaria/secuencial)[1]','VARCHAR(25)')
 				END
 			IF (@codDoc = '04')
 				BEGIN
@@ -79,6 +86,11 @@ BEGIN
 					,@identificacionCliProv = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//notaCredito/infoTributaria/ruc)[1]','VARCHAR(13)')
 					,@direccion = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//notaCredito/infoTributaria/dirMatriz)[1]','VARCHAR(300)')
 					,@rucReceptor = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//notaCredito/infoNotaCredito/identificacionComprador)[1]','VARCHAR(25)')
+					,@comprobante = 'Nota de Crédito'
+						,@serieComprobante = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//notaCredito/infoTributaria/estab)[1]','VARCHAR(25)')
+					+ '-' +  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//notaCredito/infoTributaria/ptoEmi)[1]','VARCHAR(25)')
+					+ '-' +  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//notaCredito/infoTributaria/secuencial)[1]','VARCHAR(25)')
+					,@importeTotal = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//notaCredito/infoNotaCredito/importeTotal)[1]','NUMERIC(18,5)')
 				END
 			IF (@codDoc = '05')
 				BEGIN
@@ -87,6 +99,10 @@ BEGIN
 					,@identificacionCliProv = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//notaDebito/infoTributaria/ruc)[1]','VARCHAR(13)')
 					,@direccion = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//notaDebito/infoTributaria/dirMatriz)[1]','VARCHAR(300)')
 					,@rucReceptor = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//notaDebito/infoNotaDebito/identificacionComprador)[1]','VARCHAR(25)')
+					,@comprobante = 'Nota de Débito'
+						,@serieComprobante = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//notaDebito/infoTributaria/estab)[1]','VARCHAR(25)')
+					+ '-' +  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//notaDebito/infoTributaria/ptoEmi)[1]','VARCHAR(25)')
+					+ '-' +  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//notaDebito/infoTributaria/secuencial)[1]','VARCHAR(25)')
 				END
 			IF (@codDoc = '06')
 				BEGIN
@@ -95,6 +111,11 @@ BEGIN
 					,@identificacionCliProv = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//guiaRemision/infoTributaria/ruc)[1]','VARCHAR(13)')
 					,@direccion = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//guiaRemision/infoTributaria/dirMatriz)[1]','VARCHAR(300)')
 					,@rucReceptor = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//guiaRemision/infoGuiaRemision/identificacionComprador)[1]','VARCHAR(25)')
+					,@comprobante = 'Guía de Remisión'
+					,@serieComprobante = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//guiaRemision/infoTributaria/estab)[1]','VARCHAR(25)')
+					+ '-' +  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//guiaRemision/infoTributaria/ptoEmi)[1]','VARCHAR(25)')
+					+ '-' +  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//guiaRemision/infoTributaria/secuencial)[1]','VARCHAR(25)')
+					,@importeTotal = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//guiaRemision/infoGuiaRemision/importeTotal)[1]','NUMERIC(18,5)')
 				END
 			IF (@codDoc = '07')
 				BEGIN
@@ -103,11 +124,35 @@ BEGIN
 					,@identificacionCliProv = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//comprobanteRetencion/infoTributaria/ruc)[1]','VARCHAR(13)')
 					,@direccion = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//comprobanteRetencion/infoTributaria/dirMatriz)[1]','VARCHAR(300)')
 					,@rucReceptor = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//comprobanteRetencion/infoCompRetencion/identificacionSujetoRetenido)[1]','VARCHAR(25)')
+					,@comprobante = 'Comprobante de Retención'
+					,@serieComprobante = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//comprobanteRetencion/infoTributaria/estab)[1]','VARCHAR(25)')
+					+ '-' +  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//comprobanteRetencion/infoTributaria/ptoEmi)[1]','VARCHAR(25)')
+					+ '-' +  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//comprobanteRetencion/infoTributaria/secuencial)[1]','VARCHAR(25)')
 				END
+
+			UPDATE dr SET dr.comprobante = @comprobante
+			,dr.codDoc = @codDoc
+			,dr.serieComprobante = @serieComprobante
+			,dr.rucEmisor = @identificacionCliProv
+			,dr.razonSocialEmisior = @razonSocial
+			,fechaEmision = @fechaEmision
+			,fechaAutorizacion = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion')))).value('(/autorizacion/fechaAutorizacion)[1]','VARCHAR(49)')
+			,dr.tipoEmision = 'NORMAL'
+			,dr.identificacionReceptor = @rucReceptor
+			,dr.numeroAutorizacion = @claveAcceso
+			,dr.importeTotal = @importeTotal
+			,dr.xmlDoc = @xmlDoc
+			,dr.downloaded = @downloaded
+			,versionComp = @versionComp
+			FROM Recepcion.DocumentoRecibido dr WITH (ROWLOCK)
+			WHERE idDocumento = @idDocumento
 
 
 			IF (@codDoc != '07')
 				BEGIN
+					DECLARE @IDType VARCHAR(2)
+					,@customerId INT
+
 					SET @identificacionCliProv = (SELECT LTRIM(RTRIM(@identificacionCliProv)))
 
 					SET @idTipoIdentificacion = (SELECT CASE 
@@ -118,7 +163,20 @@ BEGIN
 													WHEN LEN(@identificacionCliProv) < 10 OR LEN(@identificacionCliProv) > 13 THEN (SELECT TOP 1 idTipoIdentificacion FROM TipoIdentificacion
 																																WHERE codigoSri = '06')
 												END)
-
+						
+					IF NOT EXISTS(SELECT 1 FROM Customer.Customer WHERE IDCard = LTRIM(RTRIM(@identificacionCliProv)))
+						BEGIN
+							 SET @IDType = (SELECT codigoSri FROM TipoIdentificacion t WHERE t.idTipoIdentificacion = @idTipoIdentificacion)
+							 
+							 INSERT INTO Customer.Customer(IDType, IDCard, BusinessName, TradeName, [Address], SriValidation)
+							 SELECT @IDType, LTRIM(RTRIM(@identificacionCliProv)), LTRIM(RTRIM(@razonSocial)), LTRIM(RTRIM(@nombreComercial)), LTRIM(RTRIM(@direccion)), 1
+							 
+							 SET @customerId = @@IDENTITY
+						END
+					ELSE
+						BEGIN 
+							SET @customerId = (SELECT ID FROM Customer.Customer WHERE IDCard = LTRIM(RTRIM(@identificacionCliProv)))
+						END
 
 					IF LEN(LTRIM(RTRIM(@rucReceptor))) = 13
 						BEGIN
@@ -130,6 +188,13 @@ BEGIN
 										BEGIN
 											INSERT INTO Proveedor(idTipoIdentificacion, nombreFiscal, nombreComercial, numeroIdentificacion, direccion, idEntidad)
 											VALUES (@idTipoIdentificacion,@razonSocial, @nombreComercial, @identificacionCliProv, @direccion, @idEntidad)
+											SET @idProveedor = @@IDENTITY
+
+
+											UPDATE Proveedor SET CustomerId = @customerId WHERE idProveedor = @idProveedor
+
+
+										
 										END
 								END
 						END
@@ -144,6 +209,10 @@ BEGIN
 										BEGIN
 											INSERT INTO Proveedor(idTipoIdentificacion, nombreFiscal, nombreComercial, numeroIdentificacion, direccion, idEntidad)
 											VALUES (@idTipoIdentificacion,@razonSocial, @nombreComercial, @identificacionCliProv, @direccion, @idEntidad)
+											SET @idProveedor = @@IDENTITY
+
+
+											UPDATE Proveedor SET CustomerId = @customerId WHERE idProveedor = @idProveedor
 										END
 								END
 							IF EXISTS (SELECT 1 FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor+'001')))
@@ -155,6 +224,10 @@ BEGIN
 										BEGIN
 											INSERT INTO Proveedor(idTipoIdentificacion, nombreFiscal, nombreComercial, numeroIdentificacion, direccion, idEntidad)
 											VALUES (@idTipoIdentificacion,@razonSocial, @nombreComercial, @identificacionCliProv, @direccion, @idEntidad)
+											SET @idProveedor = @@IDENTITY
+
+
+											UPDATE Proveedor SET CustomerId = @customerId WHERE idProveedor = @idProveedor
 										END
 								END
 						END
@@ -166,7 +239,6 @@ BEGIN
 
 				SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago ep WHERE ep.codigo = 'PE'
 
-				SELECT TOP 1 @claveAcceso = claveAcceso FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento
 
 				IF NOT EXISTS (SELECT 1 FROM Contabilidad.CuentaPorPagar WHERE uniqueId = @claveAcceso)
 					BEGIN 

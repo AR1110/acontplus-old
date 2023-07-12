@@ -48,18 +48,18 @@ BEGIN
 		 @pago =  ci.total
 		,@cambio = ci.cambio
 		,@formaPago = ef.descripcion
-	FROM 
-	dbo.CobroDocumento cd WITH (NOLOCK) 
-	INNER JOIN dbo.ComprobanteIngreso ci WITH (NOLOCK) ON ci.idComprobanteIngreso = cd.idComprobanteIngreso
-	INNER JOIN dbo.Cobro               c WITH (NOLOCK) ON c.idComprobanteIngreso  = ci.idComprobanteIngreso
-	INNER JOIN dbo.EntidadFinanciera  ef WITH (NOLOCK) ON ef.idEntidadFinanciera  = c.idEntidadFinanciera
-	WHERE cd.idTipoDocumento = @idTipoDocumento AND cd.idComprobante = @idDocument AND ci.estado = 1
+	FROM Contabilidad.Historial_Cobro hc WITH (NOLOCK) 
+	INNER JOIN Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) ON cc.idCuentaPorCobrar    = hc.idCuentaPorCobrar
+	INNER JOIN dbo.ComprobanteIngreso       ci WITH (NOLOCK) ON ci.idComprobanteIngreso = hc.idComprobanteIngreso
+	INNER JOIN dbo.Cobro                     c WITH (NOLOCK) ON c.idComprobanteIngreso  = ci.idComprobanteIngreso
+	INNER JOIN dbo.EntidadFinanciera        ef WITH (NOLOCK) ON ef.idEntidadFinanciera  = c.idEntidadFinanciera
+	WHERE cc.codDoc = IIF(@codDoc = 'FV','01','NE') AND cc.idDocumento = @idDocument AND ci.estado = 1
 
 	IF @codDoc = 'FV'
 		BEGIN
 			SET @header = (
 					SELECT 
-					    codDoc = 'FV'
+					     codDoc = 'FV'
 						,nroDoc = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,f.nroFactura) 
 						,nroFactura = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,f.nroFactura) 
 						,labelNroDoc = 'FACTURA Nro. '
@@ -277,6 +277,61 @@ BEGIN
 							WHERE prd.idProforma = @idDocument --AND prd.estado = 1 
 							FOR JSON PATH)
 		END 
+
+
+	IF @codDoc = 'IC' OR @codDoc = 'EC'
+		BEGIN 
+			SET @header = (	
+							SELECT 
+								 mc.razonSocial
+								 ,mc.ruc
+								,mc.establecimiento
+								,dirMatriz = mc.dirEstablecimiento
+								,fechaEmision =  CONVERT(NVARCHAR, FORMAT(mc.fechaEmision, 'dd/MM/yyyy hh:mm')) 						
+								,nroDoc= UPPER(mc.tipoDoc) + ' : ' + mc.codDoc + '-'+ mc.estab+ '-'+ dbo.AFTAutoComplete(mc.nroDoc)
+								--,mc.entregadoPor
+								-- mc.recibidoPor
+								,labelEmpleado = IIF(mc.codDoc='IC', 'Recib. por: ', 'Entrg. por: ') 
+								,empleado =  mc.empleado
+								,entidadFinanciera = UPPER(mc.entidadFinanciera)
+								,valorTotal = convert(numeric(18,2), mc.valor)
+								,observacion = UPPER(mc.observacion)
+								,usuario	
+							FROM v_movimiento_caja mc
+							WHERE idMovimientoCaja = @idDocument
+							FOR JSON PATH
+				
+			)
+		END 
+
+	IF @codDoc = 'A'
+		BEGIN
+			SET @header = (	
+							SELECT 
+								a.entidad
+								,a.establecimiento
+								,a.ruc
+								,dirMatriz = a.dirEstablecimiento
+								,a.idAnticipo
+								,nroDocumento = a.estab+ '-'+ dbo.AFTAutoComplete(a.nroDoc)
+								,fechaEmision = CONVERT(NVARCHAR, FORMAT(a.fechaEmision, 'dd/MM/yyyy hh:mm')) 
+								,valorTotal = CAST(a.valor AS numeric(18,2))
+								,observacion = a.observaciones
+								,identificacionComprador = a.numeroIdentificacion
+								,a.cliente
+								,a.direccionCliente
+								,a.telefonoCliente
+								,a.entidadFinanciera 
+								,a.estadoDoc  
+								,a.codDoc 
+								,usuario = a.nombreUsuario
+							FROM v_Anticipo a
+							WHERE a.idAnticipo = @idDocument
+							FOR JSON PATH
+				
+			)
+		END 
+ 
 
 	SET @dataSources = (SELECT encabezadoDs = @header, detalleDs = @detail FOR JSON PATH )
 

@@ -55,7 +55,7 @@ BEGIN
 		  ,b.descripcion
 	FROM Config.Bodeg_Asig ab
 	INNER JOIN dbo.Bodega b ON b.idBodega = ab.idBodega
-	WHERE codEstab_Asig = @codEstab_Asig
+	WHERE b.estado = 1 AND codEstab_Asig = @codEstab_Asig
 
 	IF @actividad = '01'
 		BEGIN

@@ -1,0 +1,230 @@
+﻿@page
+@model WebUI.CompraNoHabitual.Pages.IndexModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<div ng-controller="compraNoHabitualCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Compra No Habitual</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+                <button type="button" ng-click="openModalNew()" class="btn btn-info d-none d-lg-block m-l-15">
+                    <i class="icons-Add-File"></i> Nuevo
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+      <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <div class="form-gorup">
+                        <span for="establecimiento">Establecimiento</span>
+                        <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
+                            class="form-control  border-select" ng-change="getComprasNoHabitual()">
+                            <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
+                                {{item.nombreComercial}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span for="">Rango de Fechas</span> 
+                        <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
+                            end-date="dataSearch.fechaFin"
+                            result-range-date="resultRangeFilter(result)"></date-range-filter>                       
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span for="proveedorFiltro">Proveedor:</span>
+                        <input type="text" id="providerInputSearch" class="form-control border-select"
+                            ng-model="proveedor.nombreProveedor" provider-search-drtv on-select="onSelectProveedor(result)"
+                            on-keyup="onKeyupProveedor()" placeholder="Ingrese C.I o Nombre Comercial"
+                            onclick="select();">
+
+                        <script type="text/ng-template" id="autocompleteProviderTemplate.html">
+                            <div class="autocomplete-suggestion-uib-typeahead">
+                                <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
+                            </div>
+                        </script>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <button type="button" class="btn btn-info btn-sm" data-toggle="button" data-more="#sh"
+                        aria-pressed="false" ng-click="onClickBtnMore()">
+                        <span class="text">
+                            <i class="mdi mdi-eye" aria-hidden="true"
+                                uib-tooltip="Más opciones"></i>
+                                </span>
+                                <span class="text-active">
+                                    <i class="mdi mdi-eye-off" aria-hidden="true"
+                                uib-tooltip="Ocultar opciones"></i>
+                                </span>
+                                </button>
+                                <button type="button" class="btn btn-success btn-sm" ng-click="getComprasNoHabitual()"
+                                    uib-tooltip="Recargar">
+                                    <i class="mdi mdi-refresh"></i>
+                                </button>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+            <div class="row" ng-if="moreSearchOptions">
+                @* <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span for="usuarioFiltro">Usuario</span>
+                        <input type="text" id="customerInputSearchUser" class="form-control border-select"
+                    ng-model="searchUser.nombreCompleto" user-search-drtv on-select="onSelectUser(result)"
+                    on-keyup="onKeyupUser()" placeholder="..."
+                    onclick="select();" >
+
+                        <script type="text/ng-template" id="autocompleteUserTemplate.html">
+                            <div class="autocomplete-suggestion-uib-typeahead">
+                                <span class="item-title"><b> {{match.model.nroIdentificacion}}</b> - {{match.model.nombreCompleto}}</span>
+                            </div>
+                        </script>                                                                      
+                    </div>
+                </div> *@
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>Estado:</span>
+                        <select class="form-control" ng-model="dataSearch.estado" ng-change="getComprasNoHabitual()">
+                            <option value="">Todos</option>
+                            <option ng-value="item.estado" ng-repeat="item in estadoDocs">
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>Nro. Documento</span>
+                        <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial" placeholder="Ej: 23">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            @* <md-toolbar class="md-table-toolbar md-default">
+                <div class="md-toolbar-tools">
+
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+                        <button type="button" class="btn btn-info" ng-click="openModalFiltro()"><i
+                                class=" fas fa-filter"></i> Filtrar</button>
+                    </div>
+                    <div class="col-lg-6 col"></div>
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                        <form class="form-material">
+                            <div class="input-group">
+                                <input type="text" class="form-control" ng-keyup="filterLocalLCompras()"
+                                    ng-model="txtFilter" placeholder="Buscar">
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-outline-secondary btn-xs"
+                                        ng-click="getComprasNoHabitual()">
+                                        <i class="fas fa-redo fa-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </md-toolbar> *@
+
+            <md-table-container style="max-height: 400px;">
+                <table resize md-table>
+                    <thead fix-head md-head>
+                        <tr md-row>
+                            <th md-column>Op</th>
+                            <th md-column>N°. Doc</th>
+                            <th md-column>F. Emisión</th>
+                            <th md-column>Proveedor</th>
+                            <th md-column>Total</th>
+                            <th md-column>Estado</th>
+                            <th md-column>Usuario</th>
+                        </tr>
+                    </thead>
+                    <tbody md-body>
+                        <tr md-row ng-repeat="item in documentoIngreso" ng-class="item.colorRow">
+                            <td md-cell>
+                                <md-menu>
+                                    <md-button aria-label="Open demo menu" class="md-icon-button"
+                                        ng-click="$mdMenu.open($event)">
+                                        <icon class="mdi mdi-menu"></icon>
+                                    </md-button>
+                                    <md-menu-content class="md-dense">
+                                        <md-menu-item>
+                                            <md-button ng-click="openModalDetalle(item)">
+                                                <span md-menu-align-target><i class="ti-menu"></i>
+                                                    Detalle</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item>
+                                            <md-button ng-click="openModalEditar(item)">
+                                                <span md-menu-align-target><i class="ti-pencil"></i>
+                                                    Editar</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item>
+                                            <md-button ng-click="askToDelete(item)">
+                                                <span md-menu-align-target>
+                                                    <icon class="ti-na"></icon> Anular
+                                                </span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                    </md-menu-content>
+                                </md-menu>
+                            </td>
+                            <td md-cell>{{item.serieComprobante}}</td>
+                            <td md-cell>{{item.fechaEmision}}</td>
+                            <td md-cell>{{item.nombreFiscal}}</td>
+                            <td md-cell>${{item.importeTotal}}</td>
+                            <td md-cell>{{item.estado}}</td>
+                            <td md-cell>{{item.usuario}}</td>
+                        </tr>
+                        <tr ng-if="documentoIngreso.length===0" class="text-center">
+                            <td colspan="10">No hay registros</td>
+                        </tr>
+                    </tbody>
+                    <tfoot md-foot>
+                        <tr md-row>
+                            <td md-cell colspan="2">{{documentoIngreso.length}} Registros</td>
+                            <td md-cell colspan="2"><span class="font-weight-bold">Total:</span></td>
+                            <td md-cell><span class="font-weight-bold">{{importeTotal}}</span></td>
+                            <td md-cell colspan="3"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </md-table-container>
+        </div>
+    </div>
+         
+
+
+
+</div>
+
+@section Scripts{
+
+    <script src="~/js/common/components/mdAutocompleteProveedor.min.js" asp-append-version="true"></script>
+    <script src="~/js/compras/directives/compraDirective.min.js" asp-append-version="true"></script>
+    <script src="~/js/compras/services/compraNoHabitualService.js" asp-append-version="true"></script>
+    <script src="~/js/compras/controllers/compraNoHabitualCtrl.js" asp-append-version="true"></script>
+
+}

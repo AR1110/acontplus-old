@@ -8,7 +8,7 @@ GO
 --Author: Emilio Senguana
 --Date: 22 de abril del 2022
 --Description: procedure for report Retencion Compra
---exec ReporteCompras.RetencionCompra 38,[{ "idRetencionCompra": 18}]
+--exec ReporteCompras.RetencionCompra 38,'{\"versionComp\":\"2.0.0\",\"id\":475,\"codEstab\":\"ESTAB-000000069\",\"codigo\":\"RRC\",\"format\":\"pdf\"}'
 
 IF OBJECT_ID(N'ReporteCompras.RetencionCompra', N'P') IS NOT NULL
 DROP PROCEDURE ReporteCompras.RetencionCompra
@@ -244,7 +244,7 @@ BEGIN
 									,ISNULL(prov.telefono, 'S/N') as telefonoProveedor
 									,ISNULL(prov.direccion, 'S/N') as direccionProveedor								
 									,CONVERT(varchar(50), FORMAT(rc.fechaEmision, 'dd/MM/yyyy'), 106) as fechaEmision 		
-									,CAST((SELECT SUM(valorRetenido) FROM dbo.RetencionCompraDetalle WHERE idRetencionCompra = @id) as numeric(15, 2)) as totalValorRetenido
+									,CAST((SELECT SUM(ret.valorRetenido) FROM FactElect.RetencionAtsRet ret WHERE ret.idRetencionAts = @id) as numeric(15, 2)) as totalValorRetenido
 								FROM FactElect.RetencionAts        rc WITH (NOLOCK)
 								INNER JOIN Sri.Establecimiento      s WITH (NOLOCK) ON s.codEstab              = rc.codEstab
 								inner JOIN dbo.TipoDocumento       td WITH (NOLOCK) ON td.codigoSri            = '07'

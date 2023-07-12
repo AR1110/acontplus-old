@@ -43,6 +43,7 @@ BEGIN
 	DECLARE @idPuntoEmision INT
 	DECLARE @uniqueId VARCHAR(150) = NEWID()
 	DECLARE @docOrigen VARCHAR(5)
+	DECLARE @docDestino VARCHAR(5)
 	DECLARE @idEstadoDocumento INT
 	DECLARE @codigoPorcentaje INT = 2
 
@@ -69,6 +70,7 @@ BEGIN
 		,importeTotal NUMERIC(18,5) NOT NULL
 		,codigoPorcentaje INT NOT NULL
 		,docOrigen VARCHAR(15) NOT NULL
+		,docDestino VARCHAR(15) NOT NULL
 		,observacion VARCHAR(300) NULL
 	)
 
@@ -78,12 +80,12 @@ BEGIN
 		,idArticulo INT NOT NULL
 		,idMedida INT NOT NULL
 		,idTipoIva INT NOT NULL
+		,idBodega INT NOT NULL
 		,cantidad NUMERIC(18,5) NOT NULL
 		,descripcion VARCHAR(300) NOT NULL
 		,precioUnitario NUMERIC(18,5) NOT NULL
 		,descuento NUMERIC(18,5) NOT NULL
 		,precioTotalSinImpuesto NUMERIC(18,5) NOT NULL
-	--	,codigo INT NOT NULL
 		,codigoPorcentaje INT NOT NULL
 		,tarifa NUMERIC(18,5) NOT NULL
 		,baseImponible NUMERIC(18,5) NOT NULL
@@ -110,48 +112,41 @@ BEGIN
 	BEGIN TRY 
 		
 		INSERT INTO @tbComprobante
-		      (idCliente,idPuntoEmision,fechaEmision,codDoc,totalSinImpuestos,totalDescuento,totalConImpuestos,propina,importeTotal,codigoPorcentaje,docOrigen,observacion)
-		SELECT idCliente,idPuntoEmision,fechaEmision,codDoc,totalSinImpuestos,totalDescuento,totalConImpuestos,propina,importeTotal,codigoPorcentaje,docOrigen,observacion
+		      (idCliente,idPuntoEmision,fechaEmision,codDoc,totalSinImpuestos,totalDescuento,totalConImpuestos,propina,importeTotal,codigoPorcentaje,docOrigen, docDestino, observacion)
+		SELECT idCliente,idPuntoEmision,fechaEmision,codDoc,totalSinImpuestos,totalDescuento,totalConImpuestos,propina,importeTotal,codigoPorcentaje,docOrigen, docDestino, observacion
 		FROM OPENJSON(@comprobante)
 		WITH (
 				idCliente                   INT '$.idCliente' 
 			   ,idPuntoEmision              INT '$.idPuntoEmision' 
 			   ,fechaEmision       VARCHAR(300) '$.fechaEmision'
 			   ,codDoc               VARCHAR(5) '$.codDoc'
-			 --  ,totalSinImpuestos NUMERIC(18,5) '$.totalSinImpuestos' 
 			   ,totalSinImpuestos NUMERIC(18,5) '$.subTotalSinImpuestos' 
-			 
 			   ,totalDescuento    NUMERIC(18,5) '$.totalDescuento'
-			 --  ,totalConImpuestos NUMERIC(18,5) '$.totalConImpuestos' 
 			   ,totalConImpuestos NUMERIC(18,5) '$.total' 
 			   ,propina           NUMERIC(18,5) '$.propina'
-			--   ,importeTotal      NUMERIC(18,5) '$.importeTotal'
 			   ,importeTotal      NUMERIC(18,5) '$.total'
 			   ,codigoPorcentaje            INT '$.codigoPorcentaje' 
 			   ,docOrigen           VARCHAR(15) '$.docOrigen'
+			   ,docDestino          VARCHAR(15) '$.docDestino'
 			   ,observacion        VARCHAR(300) '$.observacion'
 		     )
 
 		INSERT INTO @tbDetalle 
-			  (orderIndex, idTarifa,idArticulo,idMedida, idTipoIva, cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,
-			  --codigo,
-			  codigoPorcentaje,tarifa,baseImponible)
-		SELECT orderIndex, idTarifa,idArticulo,idMedida, idTipoIva, cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,
-		--codigo,
-		codigoPorcentaje,tarifa,baseImponible
+			  (orderIndex,idTarifa,idBodega,idArticulo,idMedida,idTipoIva,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,baseImponible)
+		SELECT orderIndex,idTarifa,idBodega,idArticulo,idMedida,idTipoIva,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,baseImponible
 		FROM OPENJSON(@detalle)
 		WITH (
 				orderIndex                       INT '$.orderIndex',
 				idTarifa                         INT '$.idTarifa'
 			   ,idArticulo                       INT '$.idArticulo'
-		       ,idMedida                         INT '$.idMedida' 
+		       ,idBodega                         INT '$.idBodega'
+			   ,idMedida                         INT '$.idMedida' 
 			   ,idTipoIva                        INT '$.idTipoIva' 
 		       ,cantidad               NUMERIC(18,5) '$.cantidad' 
 		       ,descripcion             VARCHAR(300) '$.descripcion' 
 		       ,precioUnitario         NUMERIC(18,5) '$.precioUnitario' 
 		       ,descuento              NUMERIC(18,5) '$.descuento'
 		       ,precioTotalSinImpuesto NUMERIC(18,5) '$.precioTotalSinImpuesto' 
-		    --   ,codigo                           INT '$.codigo' 
 		       ,codigoPorcentaje                 INT '$.codigoPorcentaje'
 		       ,tarifa                 NUMERIC(18,5) '$.tarifa'
 		       ,baseImponible          NUMERIC(18,5) '$.baseImponible'
@@ -171,7 +166,7 @@ BEGIN
 
 		SELECT TOP 1 @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
-		SELECT @docOrigen = docOrigen FROM @tbComprobante
+		SELECT @docOrigen = docOrigen , @docDestino = docDestino FROM @tbComprobante
 
 		SELECT	
 			@idPuntoEmision          = dt.idPuntoEmision 
@@ -187,7 +182,9 @@ BEGIN
 		
 		SELECT @secuencial =  COUNT(*)+1 FROM Ventas.Aprob_Document WHERE idPuntoEmision = @idPuntoEmision
 
-		SELECT @claveAcceso = dbo.ufnGeneraClaveAcceso(dbo.AFTDeleteCero(@estab)
+		IF @docDestino = '01'
+			BEGIN
+				SET @claveAcceso = dbo.ufnGeneraClaveAcceso(dbo.AFTDeleteCero(@estab)
 													   ,@codDoc
 													   ,@ambiente
 													   ,@tipoEmision
@@ -195,6 +192,14 @@ BEGIN
 													   ,@ruc
 													   ,@estab+@ptoEmi
 													   ,dbo.AFTAutoComplete(@secuencial))
+			END 
+		ELSE
+			BEGIN
+				SET @claveAcceso= NEWID()
+
+				SET @codDoc = 'NE'
+			END 
+		
 		-- ========================= VALIDADACIONES =====================================================	
 
 		IF (SELECT COUNT(*) FROM @tbComprobante) = 0 
@@ -211,7 +216,7 @@ BEGIN
 
 		IF (SELECT COUNT(*) FROM @tbDetalle) = 0 
 			BEGIN
-				SELECT '0'code,'Erro en la informacion del detalle' as 'message'
+				SELECT '0'code,'Error en la informacion del detalle' as 'message'
 				RETURN
 			END 
 
@@ -291,6 +296,7 @@ BEGIN
 				uniqueId
 			   ,codArticulo
 			   ,idTarifa
+			   ,idBodega
 			   ,codMedida
 			   ,codigoPrincipal
 			   ,codigoAuxiliar
@@ -308,6 +314,7 @@ BEGIN
 			    @uniqueId
 			   ,ar.code_unique
 			   ,dt.idTarifa
+			   ,dt.idBodega
 			   ,me.codigo
 			   ,ar.codigo
 			   ,ar.codigoAuxiliar
@@ -347,9 +354,8 @@ BEGIN
 
 					SELECT TOP 1 @idEstadoDocumento = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'TRA'
 
-
-					UPDATE ne SET ne.idEstadoPago = @idEstadoDocumento FROM dbo.NotaEntrega ne WITH(NOLOCK)
-				    JOIN (SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt WHERE dt.uniqueId = @uniqueId) dt ON dt.idDocumento = ne.idNotaEntrega
+					UPDATE cc SET cc.idEstadoPago = @idEstadoDocumento FROM Contabilidad.CuentaPorCobrar cc WITH(NOLOCK)
+				    JOIN (SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt WHERE dt.uniqueId = @uniqueId) dt ON dt.idDocumento = cc.idDocumento AND cc.codDoc = 'NE'
 
 					OPEN cursor_inventory
 

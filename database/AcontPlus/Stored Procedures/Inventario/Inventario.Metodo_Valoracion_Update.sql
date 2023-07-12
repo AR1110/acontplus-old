@@ -23,7 +23,11 @@ GO
 IF OBJECT_ID(N'Inventario.Metodo_Valoracion_Update', N'P') IS NOT NULL
 DROP PROCEDURE Inventario.Metodo_Valoracion_Update
 GO
-CREATE PROCEDURE Inventario.Metodo_Valoracion_Update @idTransaccion AS INT,@idArticulo AS INT ,@codMetodoValoracion AS VARCHAR(5)
+CREATE PROCEDURE Inventario.Metodo_Valoracion_Update 
+	@idTransaccion AS INT
+   ,@idArticulo AS INT 
+   ,@idMedida AS INT
+   ,@codMetodoValoracion AS VARCHAR(5)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -58,15 +62,23 @@ BEGIN
 
 			SELECT TOP 1 @precioTransaccion = precioUnitario FROM Inventario.Transaccion WITH (NOLOCK) WHERE idTransaccion = @idTransaccion
 			
-			SELECT  @porcetanje =  (@precioCosto - @precioCostoActual)/@precioCosto * 100
+			SELECT  @porcetanje =  @precioCosto / 2 
 
-			IF @porcetanje <=  50 
+			IF @precioCostoActual >= @porcetanje 
 				BEGIN
+					
+					IF EXISTS (SELECT 1 FROM dbo.Articulo WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida AND estado = 1)
+						BEGIN 
+							UPDATE dbo.Articulo SET precioCosto = @precioCostoActual, fechaModificacion = dbo.ufngetDateEcuador() WHERE idArticulo = @idArticulo
+						
+							UPDATE dbo.ArticuloPvP SET porcentajeUtilidad = ((precioVenta / @precioCostoActual) * 100) - 100 WHERE idArticulo = @idArticulo
+						END 
+					ELSE 
+						BEGIN
+							UPDATE dbo.ArticuloFraccionado SET precioCostoFraccionado = @precioCostoActual WHERE idArticulo = @idArticulo AND idMedida = @idMedida
+							
+						END
 					 UPDATE Inventario.Transaccion SET precioCosto = @precioTransaccion WHERE idTransaccion = @idTransaccion
-
-					 UPDATE dbo.Articulo SET precioCosto = @precioCostoActual WHERE idArticulo = @idArticulo
-
-					 UPDATE dbo.ArticuloPvP SET porcentajeUtilidad = ((precioVenta / @precioCostoActual) * 100) - 100 WHERE idArticulo = @idArticulo
 				END 
 			
 

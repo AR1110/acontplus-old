@@ -1,0 +1,398 @@
+[
+  {
+    "outputFileName": "wwwroot/dist/js/spinners.min.js",
+    "inputFiles": [
+      "wwwroot/dist/js/spinners.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/dist/css/spinners.min.css",
+    "inputFiles": [
+      "wwwroot/dist/css/spinners.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/dist/css/responsive.min.css",
+    "inputFiles": [
+      "wwwroot/dist/css/responsive.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/spinners.min.css",
+    "inputFiles": [
+      "wwwroot/css/spinners.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/custom.min.css",
+    "inputFiles": [
+      "wwwroot/css/custom.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/inventario/kardexCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/inventario/kardexCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/shared/cobro/cobroDocumentoCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/shared/cobro/cobroDocumentoCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/shared/cobro/cobroRapidoCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/shared/cobro/cobroRapidoCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/app/acontPlusApp.min.js",
+    "inputFiles": [
+      "wwwroot/js/app/acontPlusApp.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/app/loginApp.min.js",
+    "inputFiles": [
+      "wwwroot/js/app/loginApp.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/directives/venta-directive.min.js",
+    "inputFiles": [
+      "wwwroot/js/directives/venta-directive.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/ventas/facturaVentaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/ventas/facturaVentaCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/layoutCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/layoutCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/sri/atsCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/sri/atsCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/admin/firmaElectronicaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/admin/firmaElectronicaCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/compImportacionCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/compImportacionCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/services/helpers/tipoDocService.min.js",
+    "inputFiles": [
+      "wwwroot/js/services/helpers/tipoDocService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/sri/impuestoCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/sri/impuestoCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/services/almacen/articuloService.min.js",
+    "inputFiles": [
+      "wwwroot/js/services/almacen/articuloService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/dist/css/style.min.css",
+    "inputFiles": [
+      "wwwroot/dist/css/style.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/restaurant/configTpvCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/restaurant/configTpvCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/restaurant/clienteTpvCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/restaurant/clienteTpvCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/logistica/guiaRemisionCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/logistica/guiaRemisionCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/restaurant/reporteTpvCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/restaurant/reporteTpvCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/restaurant/consumoTpvCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/restaurant/consumoTpvCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/ventas/retencionAtsCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/ventas/retencionAtsCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/modalAnticipoCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/modalAnticipoCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/importacion/importacionCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/importacion/importacionCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/documentoElectronicoCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/documentoElectronicoCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/documentoElectronicoNACtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/documentoElectronicoNACtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/documentoElectronicoNSCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/documentoElectronicoNSCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/angular-uuid2/angular-uuid2.min.js",
+    "inputFiles": [
+      "wwwroot/lib/angular-uuid2/angular-uuid2.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/modalArticuloCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/modalArticuloCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/services/commonService.min.js",
+    "inputFiles": [
+      "wwwroot/js/services/commonService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/ventas/clienteCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/ventas/clienteCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/angular-utils-pagination/dirPagination.min.js",
+    "inputFiles": [
+      "wwwroot/lib/angular-utils-pagination/dirPagination.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/almacen/medidaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/almacen/medidaCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/modalMedidaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/modalMedidaCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/almacen/subFamiliaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/almacen/subFamiliaCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/modalSubFamiliaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/modalSubFamiliaCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/modalMarcaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/modalMarcaCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/almacen/marcaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/almacen/marcaCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/almacen/modeloCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/almacen/modeloCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/modalModeloCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/modalModeloCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/factElect/uiGridOptions.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/factElect/uiGridOptions.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/inventario/modalConsolidacionInventarioCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/inventario/modalConsolidacionInventarioCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/ventas/proformaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/ventas/proformaCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/admin/bodegaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/admin/bodegaCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/ventas/notaEntregaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/ventas/notaEntregaCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/inventario/consolidacionInvCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/inventario/consolidacionInvCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/common/services/commonService.min.js",
+    "inputFiles": [
+      "wwwroot/js/common/services/commonService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/common/components/mdAutocompleteArticulo.min.js",
+    "inputFiles": [
+      "wwwroot/js/common/components/mdAutocompleteArticulo.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/inventario/services/articuloService.min.js",
+    "inputFiles": [
+      "wwwroot/js/inventario/services/articuloService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/inventario/controllers/consolidacionInvCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/inventario/controllers/consolidacionInvCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/contabilidad/controllers/cuentaPorCobrar.min.js",
+    "inputFiles": [
+      "wwwroot/js/contabilidad/controllers/cuentaPorCobrar.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/inventario/controllers/precioMasivoCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/inventario/controllers/precioMasivoCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/recepcion/documentoRecibidoCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/recepcion/documentoRecibidoCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/factElect/controllers/retencionAtsCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/factElect/controllers/retencionAtsCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/common/directives/commonDirective.min.js",
+    "inputFiles": [
+      "wwwroot/js/common/directives/commonDirective.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/loginCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/loginCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/ventas/modals/modalClienteCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/ventas/modals/modalClienteCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/common/constants/namePathsModal.min.js",
+    "inputFiles": [
+      "wwwroot/js/common/constants/namePathsModal.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/common/modalClienteProveedorCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/common/modalClienteProveedorCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/ventas/modalBaseCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/ventas/modalBaseCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/ventas/modalFacturaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/ventas/modalFacturaCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/ventas/modalNotaEntregaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/ventas/modalNotaEntregaCtrl.js"
+    ]
+  }
+]

@@ -1,0 +1,204 @@
+<style>
+    /* Angular Material Overrides */
+    .md-select-menu-container, md-backdrop {
+        z-index: 9999 !important;
+    }
+</style>
+
+
+<form class="form-material">
+    <div class="modal-header">
+        <h5 class="modal-title">Factura TPV </h5>        
+        <button class="close" ng-click="$ctrl.closeModal()">&times;</button>        
+    </div>
+
+    <div class="modal-body">
+        <div layout-gt-sm="row">
+            <md-input-container class="md-block"  flex>
+                <md-select-sucursal  
+                    set-asignaciones="$ctrl.setAsignaciones(item)"
+                    edit-data="$ctrl.sucursal"
+                    scope-parent="$ctrl.scopeParent">
+                </md-select-sucursal>
+            </md-input-container>
+
+            <md-input-container class="md-block" flex>             
+                <md-select-punto-emision
+                    asignaciones-data="$ctrl.asignacionesData"
+                    set-item-punto-emision="$ctrl.setItemPuntoEmision(item)"
+                    edit-data="$ctrl.dataDocumento" 
+                    scope-parent="$ctrl.scopeParent">
+                </md-select-punto-emision>           
+            </md-input-container>
+
+            <md-autocomplete class="md-block mr-10" flex
+                md-input-name="autocompleteField"
+                md-input-minlength="2"
+                md-input-maxlength="2000"
+                md-no-cache="false"
+                md-search-text-change="$ctrl.searchTextChange(searchText)"
+                md-search-text="$ctrl.searchText"
+                md-selected-item-change="$ctrl.selectedItemChangeCliente(item)"
+                md-items="item in $ctrl.searchCustomer($ctrl.searchText)"
+                md-item-text="item.nombreFiscal"
+                md-escape-options="clear"                            
+                md-floating-label="Cliente"
+                input-aria-describedby="Buscar Cliente">
+                <md-item-template>
+                    <span md-highlight-text="searchText">{{item.nombreFiscal}}</span>
+                </md-item-template>                
+                <button type="button" ng-click="$ctrl.openModalClienteLista()" class="btn btn-warning btn-sm mt-1">
+                    <i class="ti-search"></i> Lista
+                </button>
+                <button type="button" ng-click="$ctrl.openModalCliente()" class="btn btn-success btn-sm mt-1">
+                    <i class="ti-plus"></i> Nuevo
+                </button>
+                <button type="button" ng-if="$ctrl.cliente.idCliente>0" ng-click="$ctrl.openModalCliente($ctrl.cliente)" class="btn btn-info btn-sm mt-1">
+                    <i class="ti-pencil"></i> Editar
+                </button>
+            </md-autocomplete> 
+
+            <md-input-container class="md-block" flex>
+                <label for="">Nro. Identificación</label>
+                <input  type="text" ng-value="$ctrl.cliente.numeroIdentificacion" disabled/>
+            </md-input-container>  
+
+            @* <md-input-container class="md-block" flex-gt-sm>
+                <label for="">Tiempo Crédito: </label>
+                <input  type="text" ng-value="cliente.numeroIdentificacion" disabled/>
+            </md-input-container> 
+
+            <md-input-container class="md-block" flex-gt-sm>
+                <label for="">Fecha Emisión</label>
+                <input  type="text" ng-value="cliente.numeroIdentificacion" disabled/>
+            </md-input-container>                                                *@
+        </div>      
+        
+           
+
+        @* <div layout-gt-sm="row" style="background-color: white">        
+            <md-autocomplete class="md-block" flex-gt-sm
+                md-input-name="autocompleteField"
+                md-input-minlength="2"
+                md-input-maxlength="2000"
+                md-no-cache="false"
+                md-search-text-change="searchTextChange(searchText)"
+                md-search-text="searchText"
+                md-selected-item-change="selectedItemChangeCliente(item)"
+                md-items="item in searchCustomer(searchText)"
+                md-item-text="item.nombreFiscal"
+                md-escape-options="clear"                            
+                md-floating-label="Cliente"
+                input-aria-describedby="Buscar Cliente">
+                <md-item-template>
+                    <span md-highlight-text="searchText">{{item.nombreFiscal}}</span>
+                </md-item-template>                
+                <button type="button" ng-click="openModalClienteLista()" class="btn btn-warning btn-sm mt-1">
+                    <i class="ti-search"></i> Lista
+                </button>
+                <button type="button" ng-click="openModalCliente()" class="btn btn-success btn-sm mt-1">
+                    <i class="ti-plus"></i> Nuevo
+                </button>
+                <button type="button" ng-if="cliente.idCliente>0" ng-click="openModalCliente(cliente)" class="btn btn-info btn-sm mt-1">
+                    <i class="ti-pencil"></i> Editar
+                </button>
+            </md-autocomplete> 
+
+            <md-input-container class="md-block" flex-gt-sm>
+                <label for="">Nro. Identificación</label>
+                <input  type="text" ng-value="cliente.numeroIdentificacion" disabled/>
+            </md-input-container>   
+        </div>           *@
+
+        <div layout-gt-sm="row">  
+            <div flex>
+                <md-autocomplete-articulo-simple
+                    tipo-doc="$ctrl.tipoDoc"
+                    abrir-modal-articulo="$ctrl.abrirModalArticulo(item)"
+                    get-data-articulo="$ctrl.getDataIdArticulo(item)"
+                    set-item-articulo-en-detalle="$ctrl.setItemArticuloEnDetalle(item)"
+                    scope-parent="$ctrl.scopeParent"
+                ></md-autocomplete-articulo-simple>
+            </div>
+            <md-input-container class="md-block" flex-gt-sm>
+                <label for="">Precio Costo:</label>
+                <input  type="text" inputmode="decimal" ng-keyup="$ctrl.setPrecioVenta()" decimal ng-model="$ctrl.data.precioVenta" placeholder="0.00" />
+            </md-input-container>
+
+            @* <md-input-container class="md-block" flex-gt-sm>
+                <label for="">Código: </label>
+                <input  type="text" ng-value="cliente.numeroIdentificacion" disabled/>
+            </md-input-container> 
+
+            <md-input-container class="md-block" flex-gt-sm>
+                <label for="">Descripción</label>
+                <input  type="text" ng-value="cliente.numeroIdentificacion" disabled/>
+            </md-input-container>                                                             *@
+        </div>  
+
+        <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+                <label for="">Descripción: </label>
+                <input  type="text" ng-model="$ctrl.data.descripcion" ng-keyup="$ctrl.setDescripcion()"/>
+            </md-input-container>
+        </div>
+
+        <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+                <label for="">Cantidad: </label>
+                <input  type="text" ng-value="$ctrl.data.cantidad" disabled/>
+            </md-input-container>
+
+            <md-input-container class="md-block" flex-gt-sm>
+                <label for="">IVA</label>
+                <input  type="text" ng-value="$ctrl.data.nombreTipoIva" disabled/>
+            </md-input-container>             
+        </div>
+
+        <div class="d-flex justify-content-center">
+            <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12 shadow ">
+                <h3 class="m-b-0 text-info">${{$ctrl.data.subTotalSinImpuestos}}</h3>
+                <h5 class="font-light">SubTotal</h5>
+            </div>
+            
+            <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12 shadow">
+                <h3 class="m-b-0">${{$ctrl.data.iva}}</h3>
+                <h5 class="font-light">{{$ctrl.config.tipoIva}}</h5>
+            </div>
+            <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12 shadow">
+                <h3 class="m-b-0">${{$ctrl.data.total}}</h3>
+                <h5 class="font-light">Total</h5>
+            </div>               
+        </div>
+
+        <input-select-bodega ng-hide="true"
+            asignaciones-data="$ctrl.asignacionesData"
+            set-item-bodega="$ctrl.setItemBodega(item)"                        
+            edit-data="$ctrl.dataDocumento"
+            grid-options-ref="$ctrl.gridOptionsDetailInvoice"
+            >
+        </input-select-bodega>
+
+
+        <div ui-grid="$ctrl.gridOptionsDetailInvoice" ng-hide="true"
+            ui-grid-edit
+            ui-grid-resize-columns
+            ui-grid-cellNav
+            ui-grid-auto-resize
+            ui-grid-validate
+            ui-grid-save-state
+            class="grid">
+        </div>  
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" ng-click="$ctrl.saveInvoiceTpv()" class="btn btn-success">
+            <i class="ti-save"></i> Guardar
+        </button>
+
+        <button  type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">
+            &times; Cerrar
+        </button>
+    </div>
+</form>

@@ -1,0 +1,264 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+<style>
+
+    .checkboxdemoSelectAll legend {
+        color: #3F51B5;
+    }
+
+    .checkboxdemoSelectAll fieldset {
+        border-style: solid;
+        border-width: 1px;
+    }
+
+    .checkboxdemoSelectAll .demo-select-all-checkboxes {
+        padding-left: 30px;
+    }   
+</style>
+<div ng-controller="contraPartidaCtrl" ng-cloak>
+    <div class="" ng-show="accion.leer">
+        <div class="row page-titles">
+            <div class="col-md-5 align-self-center">
+                <h4 class="text-themecolor">Gestión de Contrapartidas</h4>
+            </div>
+            <div class="col-md-7 align-self-center text-right">
+                <div class="d-flex justify-content-end align-items-center">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">Administraciòn</a></li>
+                        <li class="breadcrumb-item active">ContraPartida</li>
+                    </ol>
+                    <button type="button" ng-if="accion.crear" ng-click="abrirModal(0,1)" class="btn btn-info  m-l-15">
+                        <i class="fa fa-plus-circle"></i> Nuevo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <md-toolbar class="md-table-toolbar md-default">
+                            <div class="md-toolbar-tools">
+
+                                <div class="col-lg-9 col-md-6 col-sm-1 col-xs-1">
+
+                                </div>
+                                <div class="col-lg-3 col-md-6 col-sm-11 col-xs-11">
+                                    <input type="text" class="form-control" ng-model="buscar" placeholder="Buscar Contra Partida" />
+                                </div>
+
+                            </div>
+                        </md-toolbar>
+
+
+                        <!-- Tabla Contrapartida -->
+                        <md-table-container>
+
+                            <table md-table md-progress="promise">
+                                <thead md-head md-order="query.order" md-on-reorder="contraPartidas">
+                                    <tr md-row>
+                                        <th md-column><span>N°</span></th>
+                                        <th md-column md-order-by="contraPartida.codigo" md-asc>Código</th>
+                                        <th md-column md-order-by="contraPartida.descripcion"><span>Descripción</span></th>
+                                        <th md-column hide-gt-xs show-gt-md>Observación</th>
+                                        <th md-column>Estado</th>
+                                        <th md-column>Op.</th>
+                                    </tr>
+                                </thead>
+                                <tbody md-body>
+                                    <tr md-row ng-repeat="cp in contraPartidas | filter: buscar  | orderBy: query.order | limitTo: query.limit : (query.page -1) * query.limit">
+                                        <td md-cell>{{$index+1}}</td>
+                                        <td md-cell>{{cp.contraPartida.codigo}}</td>
+                                        <td md-cell><b class="text-primary">{{cp.contraPartida.descripcion}}</b></td>
+                                        <td md-cell hide-gt-xs show-gt-md>{{cp.contraPartida.observacion}}</td>
+                                        <td md-cell ng-bind-html="cp.contraPartida.estado| estadoPrimario"></td>
+                                        <td md-cell>                                
+                                            <button class="btn btn-info btn-xs" ng-if="accion.editar" ng-click="abrirModal(cp,2)"><i class="ti-pencil"></i></button>
+                                            <button class="btn btn-danger btn-xs" ng-if="accion.eliminar" ng-click="eliminarContraPartida(cp)"><i class="ti-trash"></i></button>
+                                            <button class="btn btn-secondary btn-xs" href="javascript:void(0)"  ng-click="viewDetalle(cp)"><i class="ti-menu"></i></button>
+                                                                                
+                                        </td>
+                                    </tr>
+                                    <tr ng-show="contraPartidas.length==0" class="text-center">
+                                        <td colspan="7">
+                                            No hay registros en esta tabla :)
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </md-table-container>
+
+
+                        <md-table-pagination md-limit="query.limit" md-limit-options="limitOptions" md-page="query.page" md-total="{{totalRecords}}" md-boundary-links="options.boundaryLinks" md-on-paginate="logPagination"></md-table-pagination>
+                    </div>
+                </div>
+            </div>        
+        </div>
+    
+
+        <!--Modal Agregar Partida-->
+        <div class="modal fade" id="agregar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" data-backdrop="static" data-keyboard="false" style="width:100%">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <form ng-submit="saveUpdate(tipo)" autocomplete="off" novalidate>
+                        <div class="modal-content">
+                            <div class="modal-header {{colorHeader}}">
+                                <h5 class="modal-title text-white">{{tipo==1?'Nuevo': 'Editar'}} Contrapartida</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="form-group col-lg-4 col-md-6 col-sm-6 col-12">
+                                        <label for="telefono">Descripción:  <span class="text-danger">*</span> </label>
+                                        <input type="text" id="descripcion" ng-model="data.descripcion" class="form-control" placeholder="CAJA CHICA">
+                                    </div>
+                                    <div class="form-group col-lg-4 col-md-6 col-sm-6 col-12">
+                                        <label for="">Código: <span class="text-danger">*</span> </label>
+                                        <input type="text" ng-model="data.codigo" touppercase class="form-control" placeholder="CÓDIGO">
+                                    </div>
+                                    <div class="form-group col-lg-4 col-md-12 col-sm-12 col-12">
+                                        <label for="telefono">Observación:  </label>
+                                        <textarea rows="1" ng-model="data.observacion" class="form-control" placeholder="..."></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="p-3 border shadow-sm rounded">
+
+                                    <div class="row">
+                                        <div class="col-md-6 border-right">
+                                            <h5>Caja</h5>
+                                            <hr />
+                                            <div class=" checkboxdemoSelectAll">
+                                                <div class="icheck-primary">
+                                                    <input type="checkbox" ng-model="allCheckCaja" ng-click="toggleAll('C')" id="allCaja" />
+                                                    <label for="allCaja">Seleccionar todo</label>
+                                                </div>
+                                                <div layout="row" layout-wrap flex>
+                                                    <div flex="50" class="demo-select-all-checkboxes" ng-repeat="c in cajas">
+                                                        <div class="icheck-primary">
+                                                            <input type="checkbox" ng-model="c.contraPartidaCaja.estado" ng-click="isCheckedCaja(allCheckCaja)" name="checkBoxCaja" id="someCheckboxId{{$index+1}}" />
+                                                            <label for="someCheckboxId{{$index+1}}">{{c.caja}}</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!--Entidad Financiera-->
+                                        <div class="col-md-6">
+                                            <h5>Entidad Financiera</h5>
+                                            <hr />
+                                            <div class=" checkboxdemoSelectAll">
+                                                <div class="icheck-success">
+                                                    <input type="checkbox" ng-model="allCheck" ng-click="toggleAll('E')" id="allEf" />
+                                                    <label for="allEf">Seleccionar todo</label>
+                                                </div>
+                                                <div layout="row" layout-wrap flex>
+                                                    <div flex="50" class="demo-select-all-checkboxes" ng-repeat="e in entidades">
+                                                        <div class="icheck-success">
+                                                            <input type="checkbox" ng-model="e.contraPartidaEntidadFinanciera.estado" ng-click="isCheckedEntidad(allCheck)" name="checkBoxEntidad" id="ef{{$index+1}}" />
+                                                            <label for="ef{{$index+1}}">{{ e.entidadFinanciera}}</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div class="form-group text-center col-lg-12 col-md-12 col-sm-12 col-12" ng-show="tipo==2">
+                                        <label class="control-label">Estado:</label><br />
+                                        <div class="icheck-info icheck-inline">
+                                            <input type="radio" id="estadoTrue" ng-value="true" ng-model="data.estado" name="estadoTrue" />
+                                            <label for="estadoTrue">Activo</label>
+                                        </div>
+                                        <div class="icheck-info icheck-inline m-l-20">
+                                            <input type="radio" id="estadoFlase" ng-value="false" ng-model="data.estado" name="estadoFlase" />
+                                            <label for="estadoFlase">Inactivo</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-success"><i class="{{icono}}"></i> {{btnModal}}</button>
+                                <button type="button" class="btn btn-dark" data-dismiss="modal"><i class="fa fa-close"></i>&times; Cerrar</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!--Ver Detalle-->
+        <div class="modal fade" id="detalle" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" data-backdrop="static" data-keyboard="false" style="width:100%">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel"><i class="fa fa-eye"></i>Asignaciones</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" style="pointer-events: none;opacity:0.8;">
+                            <div class="p-3 border shadow-sm rounded">
+                                <div class="row">
+                                    <div class="col-md-6 border-right">
+                                        <h5>Caja</h5>
+                                        <hr />
+                                        <div class=" checkboxdemoSelectAll">
+                                            <div layout="row" layout-wrap flex>
+                                                <div flex="100" class="demo-select-all-checkboxes" ng-repeat="c in cajas">
+                                                    <div class="icheck-primary">
+                                                        <input type="checkbox"  ng-model="c.contraPartidaCaja.estado" ng-click="isCheckedCaja(allCheckCaja)" name="checkBoxCaja" id="someCheckboxId{{$index+1}}" />
+                                                        <label for="someCheckboxId{{$index+1}}"><small>{{c.caja}}</small></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!--Entidad Financiera-->
+                                    <div class="col-md-6">
+                                        <h5>Entidad Financiera</h5>
+                                        <hr />
+                                        <div class=" checkboxdemoSelectAll">
+                                            <div layout="row" layout-wrap flex>
+                                                <div flex="100" class="demo-select-all-checkboxes" ng-repeat="e in entidades">
+                                                    <div class="icheck-success">
+                                                        <input type="checkbox"  ng-model="e.contraPartidaEntidadFinanciera.estado" ng-click="isCheckedEntidad(allCheck)" name="checkBoxEntidad" id="ef{{$index+1}}" />
+                                                        <label for="ef{{$index+1}}"><small>{{ e.entidadFinanciera | uppercase}}</small></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-dark" data-dismiss="modal"><i class="fa fa-close"></i>&times; Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/controllers/admin/contraPartidaCtrl.js" asp-append-version="true"></script>
+}
+
+

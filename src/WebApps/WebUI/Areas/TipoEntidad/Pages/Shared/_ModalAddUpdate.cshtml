@@ -1,0 +1,46 @@
+<style>
+  .custom-dialog-sm {
+    min-width: 400px;
+  }
+</style>
+<md-dialog aria-label="Tipo Entidad" class="custom-dialog-sm">
+  <form ng-submit="save()">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h5>{{tipoRegistro==1?'Nuevo':'Editar'}} Tipo Entidad</h5>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="closeDialog()">
+          <md-icon aria-label="Close dialog">close</md-icon>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+
+      <div class="md-dialog-content">
+        <md-input-container class="md-block">
+          <label>Descripción: </label>
+          <input type="text" ng-model="data.descripcion" touppercase ng-keyup="onKeyupDescripcion()" required>
+        </md-input-container>
+
+        <md-input-container class="md-block">
+          <label>Código:</label>
+          <input type="text" ng-model="data.codigo" required>
+        </md-input-container>
+
+        <div ng-if="tipoRegistro===2">
+          <label>Estado:</label>
+          <md-radio-group ng-model="data.estado">
+            <md-radio-button ng-value="true">Activo</md-radio-button>
+            <md-radio-button ng-value="false">Inactivo</md-radio-button>
+          </md-radio-group>
+        </div>
+      </div>
+    </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+      <md-button type="submit" class="md-primary">Guardar</md-button>
+      <md-button type="button" class="md-warn" ng-click="closeDialog()">Cerrar</md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

@@ -215,9 +215,13 @@ BEGIN
 								,rdlcName = CASE @codDoc WHEN 'FV' THEN @invoice+ti.descripcion+'.rdl' 
 		                                                 WHEN 'NE' THEN @note+ti.descripcion+'.rdl'
 														 WHEN 'PR' THEN 'Proforma' + ti.descripcion +'.rdl'
+														 WHEN 'IC' THEN 'IngresoEgreso' + ti.descripcion +'.rdl'
+														 WHEN 'EC' THEN 'IngresoEgreso' + ti.descripcion +'.rdl'
+														 WHEN 'A' THEN 'Anticipo' + ti.descripcion +'.rdl'
 														 END
 								--,hasParams = CAST(CASE WHEN ti.codigo = 'AT' THEN 1 ELSE 0 END AS BIT)
 								,hasParams = @hasParams
+								,codDoc = CASE WHEN @codDoc IN ('IC', 'EC') THEN 'MC' ELSE 'A'END
  								FROM ApiPrinter.Config_Document cd WITH (NOLOCK)
 								INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
 								INNER JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora

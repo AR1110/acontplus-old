@@ -1,0 +1,22 @@
+[
+    {
+        "Code": "P",
+        "Name": "Perros"
+    },
+    {
+        "Code": "G",
+        "Name": "Gatos"
+    },
+    {
+        "Code": "H",
+        "Name": "Hámsters"
+    },
+    {
+        "Code": "B",
+        "Name": "Pájaros"
+    },
+    {
+        "Code": "F",
+        "Name": "Peces"
+    }
+]

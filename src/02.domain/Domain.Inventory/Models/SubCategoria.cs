@@ -1,9 +1,0 @@
-﻿namespace Domain.Inventory.Models
-{
-    public class SubCategoria
-    {
-        public int idCategoria { get; set; }
-        public string? siglas { get; set; }
-        public decimal? montoObjetivo { get; set; }
-    }
-}

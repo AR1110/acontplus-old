@@ -1,0 +1,154 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div ng-controller="tipoIceCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Gestión de Tipo ICE</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+                @*<ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
+                        <li class="breadcrumb-item active">Tipo ICE</li>
+                    </ol>*@
+                <button type="button" ng-click="abrirModal(0,1)" class="btn btn-info  m-l-15">
+                    <i class="ti-plus"></i> Nuevo
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- row -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body p-b-0">
+                    <div class="row">
+                        <div class="col-lg-9">
+                            <span class="form-group pull-left page-size form-inline">
+                                <select class="form-control control-color"
+                                        ng-model="pageSize"
+                                        ng-change="changePageSize()"
+                                        ng-options="ra for ra in recordsQuantity">
+                                </select>
+                            </span>
+                        </div>
+                        <div class="col-lg-3">
+                            <input type="text" class="form-control" ng-model="buscar" placeholder="Buscar Tipo ICE" />
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-no-bordered">
+                            <thead>
+                                <tr class="text-center">
+                                    <th></th>
+                                    <th>N°</th>
+                                    <th>Act. Empresa</th>
+                                    <th>Codigo</th>
+                                    <th>Descripción</th>
+                                    <th>%</th>
+                                    <th>Valor</th>
+                                    <th>Estado</th>                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="ti in tipoIces | filter:buscar" class="text-center">
+                                    <td>
+                                        <div class="justify-content-center">
+                                            <a href="javascript:void(0)" ng-click="delete(ti)" tooltip class="text-rojo" data-toggle="tooltip" title="Eliminar"><i class="fa fa-trash"></i></a>
+                                            <a href="javascript:void(0)" ng-click="abrirModal(ti,2)" tooltip class="text-azul m-l-10" title="Actualizar" data-toggle="tooltip"><i class=" fas fa-edit"></i></a>                                            
+                                        </div>
+                                    </td>
+                                    <td>{{$index+1}}</td>
+                                    <td><span class="text-info">{{ti.actividadEmpresa.descripcion}}</span></td>
+                                    <td>{{ti.codigo}}</td>
+                                    <td>{{ti.descripcion}}</td>
+                                    <td>{{ti.porcentaje | currency: '': 0}} %</td>
+                                    <td>{{ti.valor}}</td>
+                                    <td ng-bind-html="ti.estado|estadoPrimario"></td>                                   
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td align="center" colspan="8">
+                                        <div class="pull-left">
+                                            <ul uib-pagination total-items="totalRecords" items-Per-Page="pageSize" ng-change="pagechanged()" ng-model="pageIndex" max-size="maxSize" class="pagination" boundary-links="true" rotate="false"></ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="agregarTipoIce" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" aria-hidden="true" data-backdrop="static" data-keyboard="true">
+        <div class="modal-dialog active" role="document">
+            <div class="modal-content">
+                <form ng-submit="saveUpdate(type)" class="form-material" autocomplete="off" novalidate>
+                    <div class="modal-content">
+                        <div class="modal-header {{colorHeader}}">
+                            <h5 class="modal-title text-white"><i class="{{iconoModal}}"></i>{{tituloModal}}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <label for="">Codigo: <span class="text-danger">*</span></label>
+                                    <input type="text" ng-model="data.codigo" class="form-control" valid-number placeholder="Ej: 3011">
+                                </div>
+                                <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <label for="">Descripción: <span class="text-danger">*</span></label>
+                                    <input type="text" ng-model="data.descripcion" class="form-control"  placeholder="Ej: ICE CIGARRILLOS RUBIOS">
+                                </div>
+                           
+                            
+                                <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <label>Porcentaje <span class="text-danger">*</span></label>
+                                    <input type="text" ng-model="data.porcentaje" class="form-control" valid-number placeholder="Ej: 15">
+                                </div>
+                                <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <label>Valor: <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input type="text" ng-model="data.valor" class="form-control" valid-number placeholder="Ej: 0">
+                                    </div>
+                                </div>
+                            
+                            
+                                <div class="form-group col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                                    <label>Actividad Empresa: <span class="text-danger">*</span></label>
+                                    <select class="form-control" ng-model="actividadEmpresa"
+                                            ng-options="ae as ae.descripcion for ae in actividadesEmpresa track by ae.idActividadEmpresa">
+                                    </select>
+                                </div>
+                                <div class="form-group col-lg-6 col-md-6 col-sm-6 col-xs-6" ng-if="type==2">
+                                    <label for="">Estado: </label>
+                                    <md-radio-group ng-model="data.estado">
+                                        <md-radio-button ng-value="true">Activo</md-radio-button>
+                                        <md-radio-button ng-value="false">Inactivo</md-radio-button>
+                                    </md-radio-group>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn {{btnColor}}"><i class="{{icono}}"></i> {{btnTitulo}}</button>
+                            <button type="button" class="btn btn-dark" data-dismiss="modal">&times; Cerrar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script src="~/js/controllers/sri/tipoIceCtrl.min.js" asp-append-version="true"></script>
+    
+}
+
+

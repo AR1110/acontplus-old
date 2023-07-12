@@ -23,7 +23,7 @@ GO
 IF OBJECT_ID(N'Ventas.Aprob_Document_Delete', N'P') IS NOT NULL
 DROP PROCEDURE Ventas.Aprob_Document_Delete 
 GO
-CREATE PROCEDURE Ventas.Aprob_Document_Delete @idRol INT, @id INT
+CREATE PROCEDURE Ventas.Aprob_Document_Delete @idUsuarioRol INT, @id INT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -36,7 +36,7 @@ BEGIN
 	DECLARE @uniqueId VARCHAR(150)
 
 	BEGIN TRY 
-		SELECT @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
+		SELECT @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
 
 		SELECT @docOrigen = docOrigen,@uniqueId = uniqueId FROM Ventas.Aprob_Document WHERE idAprob_Document = @id
 
@@ -48,6 +48,7 @@ BEGIN
 			SELECT @uniqueId,@idUsuario,dbo.ufnGetDateEcuador()
 
 			UPDATE Ventas.Aprob_Document SET codEstado = @codEstado WHERE idAprob_Document = @id
+			
 			UPDATE infoAdd  SET estado = 1
 			FROM Compra.InfoAdicional infoAdd
 			INNER JOIN Ventas.HistoryInfoAdicional h WITH(NOLOCK) ON h.idInfoAdicional = infoAdd.idInfoAdicional
@@ -63,7 +64,8 @@ BEGIN
 				    WHERE dt.uniqueId = @uniqueId
 
 					
-					UPDATE ne SET ne.idEstadoPago = @idEstadoDocumento FROM dbo.NotaEntrega ne WITH(NOLOCK) JOIN (SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt WHERE dt.uniqueId = @uniqueId) dt ON dt.idDocumento = ne.idNotaEntrega
+					UPDATE cc SET cc.idEstadoPago = @idEstadoDocumento FROM Contabilidad.CuentaPorCobrar cc WITH(NOLOCK)
+				    JOIN (SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt WHERE dt.uniqueId = @uniqueId) dt ON dt.idDocumento = cc.idDocumento AND cc.codDoc = 'NE'
 
 
 					OPEN cursor_inventory

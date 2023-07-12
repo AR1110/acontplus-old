@@ -41,10 +41,7 @@ BEGIN
 			,@nota NVARCHAR(300)
 			,@validationSri BIT
 	
-	SELECT 
-	     @idEntidad = idEntidad
-		,@idUsuario = idUsuario
-	FROM AFTDataRol(@idUsuarioRol)
+	SELECT  @idEntidad = idEntidad ,@idUsuario = idUsuario  FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
 
 
 
@@ -91,12 +88,29 @@ BEGIN
 
 	IF EXISTS (SELECT 1 FROM Cliente WHERE numeroIdentificacion = @numeroIdentificacion AND idEntidad = @idEntidad)
 		BEGIN
-			SELECT '0'code,'Este cliente ya se encuentra registrado'
+			SELECT '0'code,'Este cliente ya se encuentra registrado' as 'message'
 			RETURN 
 		END 
 
 	BEGIN TRY 
-		BEGIN TRAN 
+		BEGIN TRAN
+
+		DECLARE @IDType VARCHAR(2)
+			,@customerId INT
+
+			IF NOT EXISTS(SELECT 1 FROM Customer.Customer WHERE IDCard = LTRIM(RTRIM(@numeroIdentificacion)))
+				BEGIN
+					SET @IDType = (SELECT codigoSri FROM TipoIdentificacion t WHERE t.idTipoIdentificacion = @idTipoIdentificacion)
+
+					INSERT INTO Customer.Customer(IDType, IDCard, BusinessName, TradeName, email, telephone, [Address], SriValidation)
+					SELECT @IDType, LTRIM(RTRIM(@numeroIdentificacion)), LTRIM(RTRIM(@nombreFiscal)), LTRIM(RTRIM(@nombreComercial)),  LTRIM(RTRIM(@correo)), LTRIM(RTRIM(@telefono)), LTRIM(RTRIM(@direccion)), @validationSri
+					SET @customerId = @@IDENTITY
+				END
+			ELSE
+				BEGIN 
+					SET @customerId = (SELECT ID FROM Customer.Customer WHERE IDCard = LTRIM(RTRIM(@numeroIdentificacion)))
+				END
+			
 			INSERT INTO Cliente 
 			        (idTipoIdentificacion
 					,idEmpleado
@@ -143,6 +157,9 @@ BEGIN
 					,@validationSri)
 
 		SET @idCliente = @@IDENTITY;
+
+
+		UPDATE Cliente  SET customerId = @customerId WHERE idCliente = @idCliente
 
 		COMMIT TRAN 
 			SELECT '1'code, 'Registrado Correctamente' as 'message',payload =  @idCliente

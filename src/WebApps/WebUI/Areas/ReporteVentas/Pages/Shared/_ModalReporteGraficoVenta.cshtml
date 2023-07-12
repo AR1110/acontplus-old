@@ -1,0 +1,77 @@
+<div id="modalReporteGraficoVenta" class="modal fade in" role="dialog" tabindex="-1" data-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Reporte Grafico de Venta</h5>
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row justify-content-between">
+                    <div class="col-lg-3">
+                        <div class="icheck-info">
+                            <input type="checkbox" ng-model="dataSearch.checkboxSucursalFG" name="checkboxSucursalFG" id="checkboxSucursalFG">
+                            <label for="checkboxSucursalFG">Sucursal</label>
+                        </div>
+                    </div>
+                    <div class="col-lg-3" ng-if="dataSearch.checkboxSucursalFG">
+                        <div class="icheck-info">
+                            <input type="checkbox"  ng-model="dataSearch.checkboxPtoEmisionFG" name="checkboxPtoEmisionFG" id="checkboxPtoEmisionFG">
+                            <label for="checkboxPtoEmisionFG">Punto Emisión</label>
+                        </div>
+                    </div>                    
+                    <div class="col-lg-3">
+                        <div class="icheck-info">
+                            <input type="checkbox" ng-model="dataSearch.checkboxTipoDocRG" name="checkboxTipoDocRG" id="checkboxTipoDocRG">
+                            <label for="checkboxTipoDocRG">Tipo Documento</label>
+                        </div>
+                    </div>                   
+                </div>
+                <hr/>
+
+                <div class="row">
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                        <div class="form-group">
+                            <label for="periodo">Periodo</label>
+                            <select ng-model="dataSearch.byAnio" class="form-control">
+                                <option ng-value="item.descripcion" ng-repeat="item in anios">{{item.descripcion}}</option>
+                            </select>
+                        </div>
+                    </div>                                    
+                </div>   
+                <div class="row">
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12" ng-if="dataSearch.checkboxSucursalFG">
+                        <div class="form-group">
+                            <label for="sucursal">Sucursal</label>
+                            <select ng-model="dataSearch.codEstab" class="form-control" ng-change="getAsignaciones()">
+                                <option ng-value="item.codEstab" ng-repeat="item in sucursales">{{item.nombreComercial}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12" ng-if="dataSearch.checkboxSucursalFG && dataSearch.checkboxPtoEmisionFG">
+                        <div class="form-group">
+                            <label for="sucursal">Punto Emisión</label>
+                            <select ng-model="dataSearch.byPtoEmisionRG" class="form-control">
+                                <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmisiones">{{item.ptoEmi}}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12" ng-if="dataSearch.checkboxTipoDocRG">
+                        <div class="form-group">
+                            <label for="tipoDocumento">Tipo Documento</label>
+                            <select ng-model="dataSearch.byTipoDocRG" class="form-control">
+                                <option ng-value="item.codigo" ng-repeat="item in tipoDocs">{{item.descripcion}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>  
+                           
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary-1" ng-click="getEstadistica()"><i class="fa fa-search"></i> Buscar</button>
+                <button class="btn btn-dark" data-dismiss="modal">&times; Cerrar</button>
+            </div>
+        </div>
+
+    </div>
+</div>

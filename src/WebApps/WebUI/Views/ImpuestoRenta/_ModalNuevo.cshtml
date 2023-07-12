@@ -1,0 +1,45 @@
+
+
+<form autocomplete="off" ng-submit="$ctrl.save()">
+    <div class="modal-header">
+        <h5 class="h5"><icon class="ti-plus"></icon> Nuevo Impuesto Renta</h5>
+        <button type="button" class="close" ng-click="$ctrl.closeModal()">&times;</button>
+    </div>
+
+    <div class="modal-body">
+
+        <div class="row">
+            <div class="col-xl-12 col-md-12 col-sm-12 col-12">
+                <div class="form-group">
+                    <label for="codigo">Código: <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control border-select" ng-model="$ctrl.data.codigo" autofocus placeholder="3440">
+                </div>
+            </div>
+
+            <div class="col-xl-12 col-md-12 col-sm-12 col-12">
+                <div class="form-group">
+                    <label for="descripcion">Descripción: <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control border-select" touppercase ng-model="$ctrl.data.concepto" placeholder="...">
+                </div>
+            </div>
+
+            <div class="col-xl-12 col-md-12 col-sm-12 col-12">
+                <div class="form-group">
+                    <label for="porcentaje">Porcentaje: <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control border-select" decimal ng-model="$ctrl.data.porcentajeMin" placeholder="0%">
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success" >
+            <icon class="ti-save"></icon> Guardar
+        </button>
+
+        <button type="button" class="btn btn-dark"  ng-click="$ctrl.closeModal()">
+            &times; Cerrar
+        </button>
+    </div>
+</form>

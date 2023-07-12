@@ -1,0 +1,353 @@
+<div class="modal-header">
+    <h5 class="modal-title"><i class="mdi mdi-account-settings-variant"></i> Configuración Usuario</h5>
+    <button type="button" class="close" ng-click="closeModal()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="modal-body">
+    <div class="row">
+        <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12">
+            <div class="card">
+                <div class="card-body shadow border-1">
+                    <div class="d-flex flex-row">
+                        <div class="">
+                            <img src="~/assets/images/user/user.png" alt="user" class="img-circle" width="100">
+                        </div>
+                        <div class="p-l-20">
+                            <h4 class="font-medium">{{params.nombreCompleto}}</h4>
+                            <h6>{{params.nroIdentificacion}}</h6>
+                            <h6>{{params.nombreUsuario}}</h6>
+                            <h6>{{params.correo}}</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-7 col-lg-7 col-md-6 col-sm-12 col-12">
+            <div class="card">
+                <div class="card-header bg-info">
+                    <h6 class="m-b-0 text-white"><i class="mdi mdi-domain"></i> Entidad</h6>
+                </div>
+
+                <div class="table-responsive shadow">
+                    <table md-table md-row-select="options.rowSelection" multiple="{{options.multiSelect}}"
+                        ng-model="selectedUsuarioRol">
+                        <thead md-head>
+                            <tr md-row>
+                                <th md-column>N°</th>
+                                <th md-column>Ruc</th>
+                                <th md-column>Razon Social</th>
+                                <th md-column>Rol</th>
+                            </tr>
+                        </thead>
+                        <tbody md-body>
+                            <tr md-row md-select="item" md-on-select="onClickEntidadRol"
+                                md-auto-select="options.autoSelect" ng-repeat="item in usuarioRoles">
+                                <td md-cell>{{$index+1}}</td>
+                                <td md-cell>{{item.ruc}}</td>
+                                <td md-cell>{{item.razonSocial}}</td>
+                                <td md-cell>{{item.codRol}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <uib-tabset active="0">
+        <!--Tab Establecimietos-->
+        <uib-tab>
+            <uib-tab-heading>
+                <i class="mdi mdi-chart-areaspline"></i> Establecimientos
+            </uib-tab-heading>
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table md-table>
+                            <thead md-head>
+                                <tr md-row>
+                                    <th md-column>N°</th>
+                                    <th md-column>Nombre Comercial</th>
+                                    <th md-column>Nro. Estab.</th>
+                                    <th md-column>Estado</th>
+                                    <th md-column>Predeterminado</th>
+                                    <th md-column>Op</th>
+                                </tr>
+                            </thead>
+                            <tbody md-body>
+                                <tr md-row ng-repeat="item in establecimientos">
+                                    <td md-cell>{{$index+1}}</td>
+                                    <td md-cell>{{item.nombreComercial}}</td>
+                                    <td md-cell>{{item.estab}}</td>
+                                    <td md-cell>
+                                        {{item.estado?'Asignada':'No Asignada'}}
+                                    </td>
+                                    <td md-cell>
+                                        <div class="custom-control custom-switch" ng-if="item.estado">
+                                            <input type="checkbox" class="custom-control-input"
+                                                ng-model="item.predeterminado" id="customSwitch{{$index}}"
+                                                ng-change="onChangePredeterminada(item)">
+                                            <label class="custom-control-label" for="customSwitch{{$index}}"></label>
+                                        </div>
+                                    </td>
+                                    <td md-cell>
+                                        <div class="icheck-info icheck-inline">
+                                            <input type="checkbox" ng-model="item.estado" ng-change="asignarEstab(item)"
+                                                id="checkboxEstab{{$index}}" name="checkboxEstab{{$index}}">
+                                            <label for="checkboxEstab{{$index}}"></label>
+                                        </div>
+                                        <button type="button" ng-if="item.estado"
+                                            class="btn btn-dark btn-rounded btn-sm"
+                                            ng-click="openModalAsignPtoEmisionAndBodega(item)" tooltip-placement="top"
+                                            uib-tooltip="Asignar Pto de Emisión y Bodegas">
+                                            <i class="mdi mdi-account-network"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr md-row ng-if="establecimientos.length===0">
+                                    <td colspan="6" class="text-center">
+                                        No hay Establecimientos Asignadas.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </uib-tab>
+
+
+        <!--Tab Permissions-->
+        <uib-tab disable="disbledTabPermission">
+            <uib-tab-heading>
+                <i class="mdi mdi-key"></i> Permisos
+            </uib-tab-heading>
+
+            <div class="card">
+                <div class="card-header bg-transparent">
+                    <div class="float-right">
+                        <button class="btn btn-success" ng-click="savePermission()">
+                            <i class="mdi mdi-account-key"></i> Guardar permiso
+                        </button>
+                    </div>
+                </div>
+                <md-divider></md-divider>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                            <div class="card">
+                                <div class="card-header bg-success">
+                                    <h6 class="m-b-0 text-white"><i class="mdi mdi-store"></i> Artículo</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="icheck-info" ng-repeat="item in articlePermissions">
+                                        <input type="checkbox" name="articlePermission{{$index+1}}"
+                                            id="articlePermission{{$index+1}}" ng-model="item.update">
+                                        <label for="articlePermission{{$index+1}}">{{item.label}}</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                            <div class="card">
+                                <div class="card-header bg-primary">
+                                    <h6 class="m-b-0 text-white"><i class="mdi mdi-shopping"></i> Ventas</h6>
+                                </div>
+                                <div class="card-body">
+                                    <span class="text-muted">Comprobante</span>
+                                    <div class="icheck-info" id="comprobantePermission"
+                                        ng-repeat="item in salePermissions.comprobante">
+                                        <input type="checkbox" name="compPermission{{$index+1}}"
+                                            id="compPermission{{$index+1}}" ng-model="item.update">
+                                        <label for="compPermission{{$index+1}}">{{item.label}}</label>
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+                                    <span class="text-muted">Detalle</span>
+                                    <div class="icheck-info" id="detailPermission"
+                                        ng-repeat="item in salePermissions.detail">
+                                        <input type="checkbox" name="detailPermission{{$index+1}}"
+                                            id="detailPermission{{$index+1}}" ng-model="item.update">
+                                        <label for="detailPermission{{$index+1}}">{{item.label}}</label>
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+                                    <span class="text-muted">Adicionales</span>
+
+                                    <div ng-repeat="(item, key) in salePermissions">
+
+                                        <div ng-show="key.requestAuthorizationKey">
+                                            <div class="icheck-info">
+                                                <input type="checkbox" name="permissionAddtional{{$index}}"
+                                                    id="permissionAddtional{{$index}}"
+                                                    ng-model="key.requestAuthorizationKey.requestKey">
+                                                <label
+                                                    for="permissionAddtional{{$index}}">{{key.requestAuthorizationKey.label}}</label>
+                                            </div>
+
+                                            <div ng-switch="key.requestAuthorizationKey.requestKey">
+                                                <div ng-switch-when="true">
+                                                    <div class="form-group">
+                                                        <label for="salePermissionAdditional">Usuario</label>
+                                                        <input type="text"
+                                                            ng-model="key.requestAuthorizationKey.usuarioAprobante"
+                                                            class="form-control border-select"
+                                                            uib-typeahead="item as item.nombreCompleto for item in searchUserAdmin($viewValue)"
+                                                            typeahead-editable="false" placeholder="Ej: 1450152325001"
+                                                            uib-tooltip="Receptor de la solicitud de aprobación"
+                                                            tooltip-placement="top"
+                                                            typeahead-on-select="onSelectUser($item, key.requestAuthorizationKey)"
+                                                            onClick="select();" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div ng-if="key.viewOthersDocs">
+                                            <div class="icheck-info">
+                                                <input type="checkbox" name="permissionAddtional{{$index+1}}"
+                                                    id="permissionAddtional{{$index+1}}"
+                                                    ng-model="key.viewOthersDocs.view">
+                                                <label
+                                                    for="permissionAddtional{{$index+1}}">{{key.viewOthersDocs.label}}</label>
+                                            </div>
+                                        </div>
+
+                                        <div ng-if="key.kardex">
+                                            <div class="icheck-info">
+                                                <input type="checkbox" name="permissionAddtional{{$index+2}}"
+                                                    id="permissionAddtional{{$index+2}}" ng-model="key.kardex.view">
+                                                <label
+                                                    for="permissionAddtional{{$index+2}}">{{key.kardex.label}}</label>
+                                            </div>
+                                        </div>
+
+                                        <div ng-if="key.totalesVenta">
+                                            <div class="icheck-info">
+                                                <input type="checkbox" name="permissionAddtional{{$index+3}}"
+                                                    id="permissionAddtional{{$index+3}}"
+                                                    ng-model="key.totalesVenta.view">
+                                                <label
+                                                    for="permissionAddtional{{$index+3}}">{{key.totalesVenta.label}}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                            <div class="card">
+                                <div class="card-header bg-warning">
+                                    <h6 class="m-b-0 text-white"><i class="mdi mdi-bulletin-board"></i> Caja</h6>
+                                </div>
+                                <div class="card-body">
+
+                                    <div class="icheck-info">
+                                        <input type="checkbox" name="cajaPermissionView1" id="cajaPermissionView1"
+                                            ng-model="cajaPermissions.verOtrasCajas.view">
+                                        <label for="cajaPermissionView1">{{cajaPermissions.verOtrasCajas.label}}</label>
+                                    </div>
+
+                                    <div class="icheck-info">
+                                        <input type="checkbox" name="cajaPermissionView2" id="cajaPermissionView2"
+                                            ng-model="cajaPermissions.reporteMovimientoCaja.view">
+                                        <label
+                                            for="cajaPermissionView2">{{cajaPermissions.reporteMovimientoCaja.label}}</label>
+                                    </div>
+
+                                    <div class="icheck-info">
+                                        <input type="checkbox" name="cajaPermissionCerrar" id="cajaPermissionCerrar"
+                                            ng-model="cajaPermissions.cerrarCaja.cerrar">
+                                        <label for="cajaPermissionCerrar">{{cajaPermissions.cerrarCaja.label}}</label>
+                                    </div>
+
+                                    <div class="icheck-info">
+                                        <input type="checkbox" name="cajaPermissionEnterKey" id="cajaPermissionEnterKey"
+                                            ng-model="cajaPermissions.enterKey.isRequerid">
+                                        <label for="cajaPermissionEnterKey">{{cajaPermissions.enterKey.label}}</label>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </uib-tab>
+
+        <uib-tab ng-if="isRoleMain();">
+            <uib-tab-heading>
+                <i class="mdi mdi-clipboard-check"></i> Aprobar solicitud de Autorización
+            </uib-tab-heading>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table md-table>
+                            <thead md-head>
+                                <tr md-row>
+                                    <th md-column>N°</th>
+                                    <th md-column>Usuario Solicitante</th>
+                                    <th md-column>Acción</th>
+                                    <th md-column>Motivo</th>
+                                    <th md-column>Estado</th>
+                                    <th md-column>Fecha Registro</th>
+                                    <th md-column>Fecha Aprobación</th>
+                                    <th md-column>Op</th>
+                                </tr>
+                            </thead>
+                            <tbody md-body>
+                                <tr md-row ng-repeat="item in authorizationKeyRequests">
+                                    <td md-cell>{{$index+1}}</td>
+                                    <td md-cell>{{item.usuarioSolicitante}}</td>
+                                    <td md-cell>{{item.accionDescripcion}}</td>
+                                    <td md-cell>{{item.observacion}}</td>
+                                    <td md-cell>{{item.estadoDescripcion}}</td>
+                                    <td md-cell>{{item.fechaRegistro}}</td>
+                                    <td md-cell>{{item.fechaAprobacion}}</td>
+                                    <td md-cell>
+                                        <div ng-switch="item.codEstado">
+                                            <div ng-switch-when="A">
+                                                <h4 class="text-success"><i class="mdi mdi-check-all"></i></h4>
+                                            </div>
+                                            <div ng-switch-when="F">
+
+                                            </div>
+                                            <div ng-switch-default>
+                                                <button class="btn waves-effect waves-light btn-outline-success btn-sm"
+                                                    uib-tooltip="Aprobar Solicitud de Clave de Autorización para editar o anular el documento de venta"
+                                                    tooltip-placement="top"
+                                                    ng-click="approveAuthorizationKeyRequest(item)">
+                                                    <i class="ti ti-check-box "></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr md-row ng-if="authorizationKeyRequests.length===0">
+                                    <td colspan="8" class="text-center">
+                                        No hay Establecimientos Asignadas.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </uib-tab>
+    </uib-tabset>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-dark btn-sm" ng-click="closeModal()">
+        &times; Cerrar
+    </button>
+</div>

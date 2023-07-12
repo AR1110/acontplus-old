@@ -1,0 +1,156 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+<div ng-controller="subEntidadFinancieraCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Sub Entidad Financiera</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">                
+                <button type="button" ng-if="accion.crear" ng-click="openModal(0,1)" class="btn btn-info m-l-15">
+                    <i class="fa fa-plus-circle"></i> Nuevo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <md-card>
+        <md-card-content>
+            <md-toolbar class="md-table-toolbar md-default">
+                <div class="md-toolbar-tools">
+
+                    <div class="col-lg-9 col-md-6 col-sm-1 col-xs-1 m-t-20">
+                        @*<span class="form-group pull-left page-size form-inline">
+                                <select class="form-control control-color"
+                                        ng-model="pageSize"
+                                        ng-change="changePageSize()"
+                                        ng-options="ra for ra in recordsQuantity">
+                                </select>
+                            </span>*@
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-11 col-xs-11">
+                        <input type="text" class="form-control" ng-model="buscar" placeholder="Buscar" />
+                    </div>
+
+                </div>
+            </md-toolbar>
+            <!-- tabla Sub Entidad Financiiera -->
+            <md-table-container>
+
+                <table md-table>
+                    <thead md-head md-order="query.order" md-on-reorder="subFinancieras">
+                        <tr md-row>
+                            <th md-column><span>N°</span></th>
+                            <th md-column> E. Financiera</th>
+                            <th md-column>Código</th>
+                            <th md-column md-order-by="etiqueta.descripcion"><span>Descripción</span></th>                            
+                            <th md-column>Estado</th>
+                            <th md-column align="center" ng-if="accion.editar || accion.eliminar">Op.</th>
+                        </tr>
+                    </thead>
+                    <tbody md-body >
+                        <tr md-row ng-repeat="ef in subFinancieras|filter:buscar  | orderBy: query.order">
+                            <td md-cell>{{$index+1}}</td>
+                            <td md-cell><span class="text-primary">{{ef.entidadFinanciera}}</span></td>
+                            <td md-cell>{{ef.subEntidadFinanciera.codigo}}</td>
+                            <td md-cell>{{ef.subEntidadFinanciera.descripcion}}</td>                            
+                            <td md-cell ng-bind-html="ef.subEntidadFinanciera.estado | estadoPrimario"></td>
+                            <td md-cell ng-if="accion.editar || accion.eliminar">
+                                <md-button class="md-icon-button md-primary" ng-if="accion.editar" ng-click="openModal(ef,2)" aria-label="Editar">
+                                    <i class="fa fa-edit"></i>
+                                </md-button>
+                                <md-button class="md-icon-button md-accent" ng-if="accion.eliminar" ng-click="askToDelete(ef)" aria-label="Eliminar">
+                                    <i class="fa fa-trash"></i>
+                                </md-button>
+                            </td>
+                        </tr>
+                        <tr md-row ng-show="subFinancieras.length==0">
+                            <td md-cell colspan="6" class="text-center">No hay registros disponibles en esta tabla.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </md-table-container>            
+        </md-card-content>
+    </md-card>
+
+
+    <div class="modal fade" id="agregar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form ng-submit="save(type)" autocomplete="off" novalidate>
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" >{{type===1?'Nuevo':'Editar'}} Sub Entidad Financiera</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="form-group col-lg-12">
+                                    <label class="entidadFinanciera"> Entidad Financiera: <span class="text-danger">*</span></label>
+                                    <select class="form-control border-select"
+                                            ng-model="entidadFinanciera"
+                                            ng-options="e as e.descripcion for e in entidadesFinancieras track by e.idEntidadFinanciera">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <label for="telefono">Descripcion <span class="text-danger">*</span> </label>
+                                    <input type="text" touppercase ng-model="data.descripcion" class="form-control" placeholder="...">
+                                </div>
+                            </div>                            
+                            <div class="row">
+                                <div class="form-group col-lg-6 col-md-6 col-sm-6 col-12">
+                                    <label for="telefono">Código <span class="text-danger">*</span> </label>
+                                    <input type="text" ng-model="data.codigo" touppercase ng-disabled="data.descripcion==undefined || data.descripcion=='' || tipooperacion==2" class="form-control" placeholder="...">
+                                </div> 
+                                <div class="col-lg-6">                                    
+                                    <div class="form-group mt-2">
+                                        <label></label>
+                                        <div class="icheck-info">                                    
+                                            <input type="checkbox" ng-model="data.controlCaja" name="controlCaja" id="controlCaja">
+                                            <label for="controlCaja">Registro cuadre de caja</label>
+                                        </div>
+                                    </div>                                    
+                                </div>                               
+                            </div>
+
+                            <div class="row justify-content-between" ng-show="type==2">
+                                <div class="col-lg-3">
+                                    <div class="icheck-primary">
+                                        <input type="radio" ng-model="data.estado" ng-value="true" id="someRadioId1" name="someGroupName" />
+                                        <label for="someRadioId1">Activo</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="icheck-primary">
+                                        <input type="radio" ng-model="data.estado" ng-value="false" id="someRadioId2" name="someGroupName" />
+                                        <label for="someRadioId2">Inactivo</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-success"><i class="{{icon}}"></i> {{btnModal}}</button>
+                            <button type="button" class="btn btn-dark" data-dismiss="modal"><i class="fa fa-close"></i>&times; Cerrar</button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts{
+    <script src="~/js/controllers/financiera/subEntidadFinancieraCtrl.min.js" asp-append-version="true"></script>
+}
+
+

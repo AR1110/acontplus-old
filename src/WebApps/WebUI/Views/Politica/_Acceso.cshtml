@@ -1,0 +1,150 @@
+<div id="modalAcceso" class="modal fade in" role="dialog" tabindex="-1" data-backdrop="static">
+    <div class="modal-dialog  modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-key"></i> Acceso</h5>            
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row justify-content-between">
+                    <div class="col-lg-4 col-md-6 col-xs-6 col-12">
+                        <span class="font-weight-bold">Politica: </span>
+                        <p class="text-muted">{{nombrePolitica}}</p>
+                    </div>
+                    <div class="col-lg-4 col-md-6 col-xs-6 col-12">
+                        <input type="text" ng-model="searchAcceso" class="form-control" placeholder="Buscar Acceso">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <md-table-container style="max-height: 400px;">
+                            <table resize  md-table >
+                                <thead fix-head md-head>
+                                    <tr md-row>
+                                        <th md-column>N°</th>
+                                        <th md-column>Menú</th>
+                                        <th md-column>Leer</th>
+                                        <th md-column>Crear</th>
+                                        <th md-column>Editar</th>
+                                        <th md-column>Eliminar</th>
+                                        <th md-column>Reporte</th>
+                                        <th md-column>Enviar Correo</th>
+                                        <th md-column>Cobro/Pago</th>
+                                        <th md-column>Enviar Sri</th>
+                                        <th md-column>Historial F</th>
+                                        <th md-column>Cuota</th>
+                                        <th md-column>Anular</th>
+                                        <th md-column>Impuesto</th>
+                                        <th md-column>Kardex</th>
+                                        <th md-column>Imagen</th>                                
+                                        <th md-column>Acceso</th>                                
+                                    </tr>
+                                </thead>
+                                <tbody md-body>
+                                    <tr md-row ng-repeat="acc in accesos |filter:searchAcceso ">
+                                        <td md-cell>{{$index+1}}</td>
+                                        <td md-cell>{{acc.subMenu}}</td>
+                                        <td md-cell>
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" ng-model="acc.leer"  class="custom-control-input" id="leer{{$index+1}}">
+                                            <label class="custom-control-label" for="leer{{$index+1}}"></label>
+                                            </div>
+                                        </td>
+                                        <td md-cell>
+                                            <div class="custom-control custom-switch">
+                                            <input type="checkbox" ng-model="acc.crear" class="custom-control-input" id="crear{{$index+1}}">
+                                            <label class="custom-control-label" for="crear{{$index+1}}"></label>
+                                            </div>
+                                        </td>
+                                        <td md-cell>
+                                            <div class="custom-control custom-switch">
+                                            <input type="checkbox" ng-model="acc.editar" class="custom-control-input" id="editar{{$index+1}}">
+                                            <label class="custom-control-label" for="editar{{$index+1}}"></label>
+                                            </div>                                    
+                                        </td>
+                                        <td md-cell>
+                                            <div class="custom-control custom-switch">
+                                            <input type="checkbox" ng-model="acc.eliminar" class="custom-control-input" id="eliminar{{$index+1}}">
+                                            <label class="custom-control-label" for="eliminar{{$index+1}}"></label>
+                                            </div>
+                                        </td>
+                                        <td md-cell>
+                                            <div class="custom-control custom-switch">
+                                            <input type="checkbox" ng-model="acc.reporte" class="custom-control-input" id="reporte{{$index+1}}">
+                                            <label class="custom-control-label" for="reporte{{$index+1}}"></label>
+                                            </div>
+                                        </td>
+                                        <td md-cell>
+                                            <div class="custom-control custom-switch">
+                                            <input type="checkbox" ng-model="acc.enviarCorreo" class="custom-control-input" id="enviarCorreo{{$index+1}}">
+                                            <label class="custom-control-label" for="enviarCorreo{{$index+1}}"></label>
+                                            </div>
+                                        </td>
+                                        <td md-cell>
+                                            <div class="custom-control custom-switch">
+                                            <input type="checkbox" ng-model="acc.cobroPago" class="custom-control-input" id="cobroPago{{$index+1}}">
+                                            <label class="custom-control-label" for="cobroPago{{$index+1}}"></label>
+                                            </div>
+                                        </td>
+                                        <td md-cell>
+                                            <div class="custom-control custom-switch">
+                                            <input type="checkbox" ng-model="acc.enviarSri" class="custom-control-input" id="enviarSri{{$index+1}}">
+                                            <label class="custom-control-label" for="enviarSri{{$index+1}}"></label>
+                                            </div>
+                                        </td>
+                                        <td md-cell>
+                                            <div class="custom-control custom-switch">
+                                            <input type="checkbox" ng-model="acc.historialFinanciero" class="custom-control-input" id="historialFinanciero{{$index+1}}">
+                                            <label class="custom-control-label" for="historialFinanciero{{$index+1}}"></label>
+                                            </div>
+                                        </td>
+                                        <td md-cell>
+                                            <div class="custom-control custom-switch">
+                                            <input type="checkbox" ng-model="acc.cuota" class="custom-control-input" id="cuota{{$index+1}}">
+                                            <label class="custom-control-label" for="cuota{{$index+1}}"></label>
+                                            </div>
+                                        </td>
+                                        <td md-cell>
+                                            <div class="custom-control custom-switch">
+                                            <input type="checkbox" ng-model="acc.anular" class="custom-control-input" id="anular{{$index+1}}">
+                                            <label class="custom-control-label" for="anular{{$index+1}}"></label>
+                                            </div>
+                                        </td>
+                                        <td md-cell>
+                                            <div class="custom-control custom-switch">
+                                            <input type="checkbox" ng-model="acc.impuesto" class="custom-control-input" id="impuesto{{$index+1}}">
+                                            <label class="custom-control-label" for="impuesto{{$index+1}}"></label>
+                                            </div>
+                                        </td>
+                                        <td md-cell>
+                                            <div class="custom-control custom-switch">
+                                            <input type="checkbox" ng-model="acc.kardex" class="custom-control-input" id="kardex{{$index+1}}">
+                                            <label class="custom-control-label" for="kardex{{$index+1}}"></label>
+                                            </div>
+                                        </td>
+                                        <td md-cell>
+                                            <div class="custom-control custom-switch">
+                                            <input type="checkbox" ng-model="acc.imagen" class="custom-control-input" id="imagen{{$index+1}}">
+                                            <label class="custom-control-label" for="imagen{{$index+1}}"></label>
+                                            </div>
+                                        </td> 
+                                        <td md-cell>
+                                            <div class="custom-control custom-switch">
+                                            <input type="checkbox" ng-model="acc.acceso" class="custom-control-input" id="acceso{{$index+1}}">
+                                            <label class="custom-control-label" for="acceso{{$index+1}}"></label>
+                                            </div>
+                                        </td>                                                                
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </md-table-container>            
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" ng-click="guardarAcceso()"><i class="ti-save"></i> Guardar</button>
+                <button class="btn btn-dark" data-dismiss="modal">&times; Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

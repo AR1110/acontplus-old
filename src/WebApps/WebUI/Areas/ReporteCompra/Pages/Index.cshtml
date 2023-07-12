@@ -1,0 +1,47 @@
+﻿@page
+@model WebUI.Areas.ReporteCompra.Pages.IndexModel
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<div ng-controller="reporteCompraCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Reporte Compras</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+            </div>
+        </div>
+    </div>
+
+    <!--Modal para reportar-->
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <button class="btn btn-info" ng-click="openModalReporte()">
+                        <i class="mdi mdi-file-find fa-lg"></i> Nuevo Reporte
+                    </button>
+                </div>
+                <md-divider></md-divider>
+                <div class="card-body">
+                    <div class="jumbotron text-center">
+                        <br><br><br><br>
+                        @* <h2>Aquí se mostrará el reporte creado!</h2> *@
+                        <br><br><br><br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts{
+        <script src="~/js/reports/controllers/reporteCompraCtrl.min.js" asp-append-version="true"></script>
+    }
+
+
+</div>

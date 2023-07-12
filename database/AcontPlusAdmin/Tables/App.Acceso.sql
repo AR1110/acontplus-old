@@ -1,9 +1,0 @@
---CREATE TABLE App.Acceso(
---	idAcceso INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
---	idUsuarioRol INT FOREIGN KEY REFERENCES App.UsuarioRol(idUsuarioRol) NOT NULL,
---	menu NVARCHAR(MAX) NOT NULL,
---	subMenu NVARCHAR(MAX) NOT NULL,
---	accion NVARCHAR(MAX) NOT NULL,
---	estado BIT DEFAULT 1 NOT NULL,
---	fechaRegistro DATETIME NOT NULL
---)

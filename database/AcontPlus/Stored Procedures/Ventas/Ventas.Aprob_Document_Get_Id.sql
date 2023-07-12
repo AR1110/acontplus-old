@@ -31,23 +31,37 @@ BEGIN
 	SELECT 
 		d.idAprob_Document
 	   ,d.uniqueId
-	   ,d.idCliente
 	   ,idTiempoCredito = ISNULL(cl.idTiempoCredito, 0)
 	   ,d.idPuntoEmision
 	   ,d.estab
 	   ,d.ptoEmi
-	   ,cliente = cl.nombreFiscal
+	   ,serieComprobante = d.estab+'-'+d.ptoEmi+'-'+Helper.F_Auto_Sequential(d.secuencial)
 	   ,d.identificacionComprador
-	   ,direccion = ISNULL(cl.direccion, NULL)
 	   ,d.codDoc
 	   ,d.docOrigen
-	   ,d.fechaEmision
-	   ,total = d.importeTotal
+	   ,d.fechaEmision	 
 	   ,d.observacion
 	   ,codigoPorcentaje = CONVERT(VARCHAR(3), d.codigoPorcentaje)
+	   ,totalSinImpuestos
+	   ,totalDescuento
+	   ,totalConImpuestos
+	   ,propina
+	   ,importeTotal	   
 	FROM Ventas.Aprob_Document d
 	INNER JOIN Cliente cl ON cl.idCliente = d.idCliente
 	WHERE d.idAprob_Document = @id
+
+	SELECT 
+		cl.idCliente,
+		cl.nombreComercial,
+		cl.nombreFiscal,
+		cl.numeroIdentificacion,
+		direccion = ISNULL(cl.direccion,'')
+		,tipoIdentificacion = ti.codigo 
+	FROM Ventas.Aprob_Document aprob_doc
+	INNER JOIN Cliente cl WITH(NOLOCK) ON cl.idCliente = aprob_doc.idCliente
+	LEFT JOIN TipoIdentificacion ti WITH(NOLOCK) ON ti.idTipoIdentificacion = cl.idTipoIdentificacion
+	WHERE aprob_doc.idAprob_Document = @id;
 
 	SELECT 
 		idAprob_Document_Detailt
@@ -55,15 +69,17 @@ BEGIN
 	   ,m.idMedida
 	   ,t.idTipoIva
 	   ,dt.idTarifa
+	   ,dt.idBodega
 	   ,a.codigo
 	   ,dt.descripcion
 	   ,medida = m.descripcion
 	   ,dt.cantidad
 	   ,dt.precioUnitario	
-	   ,precioConIva = dt.precioUnitario + dt.valor
+	   ,precioConIva = CAST(((dt.precioUnitario * (dt.tarifa / 100)) + dt.precioUnitario) AS decimal(18, 2)) -- dt.precioUnitario + dt.valor
 	   ,porcentajeDescuento = CASE WHEN dt.precioUnitario=0 THEN 0 ELSE  (dt.descuento / dt.precioUnitario) * 100   END   
 	   ,precioTotalSinImpuesto = (dt.precioUnitario - dt.descuento) * dt.cantidad
 	   ,dt.descuento
+	   ,totalDescuento = dt.cantidad * dt.descuento
 	   ,nombreTipoIva = t.descripcion
 	   ,valor = t.porcentaje
 	   ,codigoTipoIva = t.codigo
@@ -76,6 +92,12 @@ BEGIN
 	INNER JOIN dbo.TipoIva  t ON t.codigoPorcentaje = dt.codigoPorcentaje
 	WHERE dt.uniqueId = @uniqueId AND dt.estado = 1 ORDER BY dt.idAprob_Document_Detailt ASC 
 
+	SELECT 
+		 tipoDoc  = CASE WHEN codDocumento = 'PR' THEN 'Proforma' 
+			             WHEN codDocumento = 'NE' THEN 'NotaEntrega' 
+			             ELSE '' END 
+		,serieComprobante = serie
+	FROM Ventas.Aprob_Document_Hist WHERE uniqueId = @uniqueId
 	
 	SELECT 
 		ia.idInfoAdicionalDoc,

@@ -1,0 +1,634 @@
+class MovimientoCajaBase {
+    constructor($http, _modalSvc, $uibModalInstance, _toastr, _form) {
+        this.$http = $http;
+        this._modalSvc = _modalSvc;
+        this.$uibModalInstance = $uibModalInstance;
+        this._toastr = _toastr;
+        this._form = _form;
+
+        this.data = {}
+        this.initiload();
+    }
+
+    initiload() {
+        this.$http.get('/EntidadFinanciera/OptionEntidadFinanciera').then(({
+            data: response
+        }) => {
+            this.entidadesFinancieras = response.data;
+        })
+    }
+
+    //Get Sub Entidad Financiera 
+    getSubEntidadByEntidadFinanciera() {
+        this.$http.get('/SubEntidadFinanciera/GetByIdEntidadFinanciera?idEntidadFinanciera=' + this.data.idEntidadFinanciera)
+            .then(({
+                data: response
+            }) => {
+                this.subEntidades = response.data;
+                this.data.idSubEntidadFinanciera = this.subEntidades[0].idSubEntidadFinanciera;
+            }, error => console.log(error));
+    }
+
+}
+
+//Modal Movimiento Caja 
+
+class ModalMovimientoCajaCtrl extends MovimientoCajaBase {
+    static $inject = ['$http', '$q', 'mainService', 'commonService', 'modalService', '$uibModalInstance', 'formulario', 'toastService']
+    constructor($http, $q, _mS, _commonSvc, _modalSvc, $uibModalInstance, _form, _toastr) {
+        super($http, _modalSvc, $uibModalInstance, _toastr, _form)
+        this.$q = $q;
+        this._mS = _mS;
+        this._commonSvc = _commonSvc;
+        this.tipoDocumentos = [];
+        this.cajas = [];
+
+        this.data = {};
+
+        this.searchEmpleado = ModalMovimientoCajaCtrl.searchEmpleado
+
+    }
+
+    async $onInit() {
+
+        try {
+            let results = await Promise.all([
+                this._mS.getData('get', '/TipoDocumento/GetAll').then(response => response.data),
+                this._commonSvc.getEstabAsign(),
+            ])
+
+            this.tipoDocumentos = results[0].filter(val => val.codigo === "IC" || val.codigo == "EC");
+
+            this.establecimientos = results[1];
+
+            if (this.establecimientos.length > 0) {
+                let dataEstab = this.establecimientos[0];
+                this.data.codEstab = dataEstab.codEstab;
+
+                this._commonSvc.getDataFormEstabAsig(dataEstab).then(response => {
+                    this.cajas = response[3];
+
+                    if (this.cajas.length > 0) {
+                        this.data.idCaja = this.cajas[0].idCaja
+                    }
+
+                })
+            } else {
+                this._toastr.toastr('warning', 'No tienes asignado ningún Establecimiento!')
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    $onDestroy() {
+
+    }
+
+    //Buscar Empleado 
+    static searchEmpleado(busqueda) {
+        return this.$http.get('/Empleado/Search?busqueda=' + busqueda).then(response => {
+            return response.data.data
+        })
+    }
+
+    onKeyupSearchEmpleado(text) {
+        if (text === null || text === undefined || text === "") {
+            this.data.idEmpleado = '';
+        }
+    }
+
+    selectedEmpleadoChange(item) {
+        this.data.idEmpleado = item.idEmpleado;
+    }
+
+    guardarMovCaja() {
+        const tituloToast = 'Guardar';
+
+        if (!this.data.codEstab) {
+            this._toastr.toastr('warning', 'Seleccione la Caja', tituloToast);
+        }
+
+        if (this._form.campo(this.data.idCaja)) {
+            this._toastr.toastr('warning', 'Seleccione la Caja', tituloToast);
+            return
+        }
+
+        if (this._form.campo(this.data.idTipoDocumento)) {
+            this._toastr.toastr('warning', 'Seleccione el Tipo Documento', tituloToast);
+            return
+        }
+
+        if (this._form.campo(this.data.idEntidadFinanciera)) {
+            this._toastr.toastr('warning', 'Seleccione la Entidad Financiera', tituloToast);
+            return
+        }
+
+        if (this._form.campo(this.data.idSubEntidadFinanciera)) {
+            this._toastr.toastr('warning', 'Seleccione la Entidad Financiera', tituloToast);
+            return
+        }
+
+        if (this._form.campo(this.data.idEmpleado)) {
+            this._toastr.toastr('warning', 'Seleccione el Empleado', tituloToast);
+            return
+        }
+
+        if (this._form.campo(this.data.valor) || isNaN(this.data.valor)) {
+            this._toastr.toastr('warning', 'Ingrese el Valor', tituloToast);
+            return
+        }
+
+        if (Number(this.data.valor) === 0) {
+            this._toastr.toastr('warning', 'El valor tiene que ser mayor a 0', tituloToast);
+            return
+        }
+
+        if (this._form.campo(this.data.observaciones)) {
+            this._toastr.toastr('warning', 'Ingrese la Observación', tituloToast);
+            return
+        }
+
+        this._mS.getData('post', '/MovimientoCaja/Insert', this.data).then(response => {
+            if (response.id === "0") {
+                this._toastr.toastr('warning', response.message)
+                return
+            }
+
+            if (response.id === "1") {
+                this._toastr.toastr('success', response.message)
+                this.$uibModalInstance.close(response);
+            }
+        })
+    }
+
+    closeModal() {
+        this.$uibModalInstance.close();
+    }
+}
+
+
+
+//Modal Anticipo 
+
+class ModalAnticipoCtrl extends MovimientoCajaBase {
+    static $inject = ['$http', 'mainService', 'commonService', '$uibModalInstance', 'modalService', 'toastService', 'formulario'];
+    constructor($http, _mS, _commonSvc, $uibModalInstance, _modalSvc, _toastr, _form) {
+        super($http, _modalSvc, $uibModalInstance, _toastr, _form)
+
+        this._mS = _mS;
+        this._commonSvc = _commonSvc;
+        this.tipoRegistro = 1;
+        this.clienteSearch = ModalAnticipoCtrl.clienteSearch
+
+    }
+
+    $onInit() {
+        this._commonSvc.getEstabAsign().then(response => {
+            this.establecimientos = response;
+            if (this.establecimientos.length > 0) {
+                this.data.codEstab = this.establecimientos[0].codEstab
+            } else {
+                this._toastr.toastr('warning', 'NO TIENES ASIGNADO NINGÚN ESTABLECIMIENTO')
+            }
+        })
+    }
+
+    static clienteSearch(text) {
+        return this._commonSvc.clienteSearch(text)
+    }
+
+    onKeyupSearchCliente(text) {
+        if (text === '') {
+            this.selectedClientePersonalizado = '';
+            this.data.idCliente;
+        }
+    }
+
+    selectedClienteChange(item) {
+        this.data.idCliente = item.idCliente;
+    }
+
+    guardarAnticipo() {
+        const tituloToast = this.tipoRegistro === 1 ? 'Guardar' : 'Actualizar';
+
+        if (!this.data.codEstab) {
+            this._toastr.toastr('warning', 'Seleccion el Establecimiento', tituloToast);
+            return
+        };
+
+        if (this._form.campo(this.data.idCliente)) {
+            this._toastr.toastr('warning', 'Seleccion el Cliente', tituloToast);
+            return
+        };
+
+        if (this._form.campo(this.data.idEntidadFinanciera)) {
+            this._toastr.toastr('warning', 'Seleccione la Entidad Financiera', tituloToast);
+            return
+        }
+
+        if (this._form.campo(this.data.idSubEntidadFinanciera)) {
+            this._toastr.toastr('warning', 'Seleccione la Entidad Financiera', tituloToast)
+            return
+        }
+
+        if (this._form.campo(this.data.valor) || isNaN(this.data.valor)) {
+            this._toastr.toastr('warning', 'Ingrese el Valor', tituloToast)
+            return
+        }
+
+        if (Number(this.data.valor) === 0) {
+            this._toastr.toastr('warning', 'El valor tiene que ser mayor a 0', tituloToast);
+            return
+        }
+
+        this._mS.getData('post', '/Anticipo/Insert', this.data).then(response => {
+            if (response.id === "0") {
+                this._toastr.toastr('warning', response.message, response.titleSms)
+                return
+            }
+
+            if (response.id === "1") {
+                this.$uibModalInstance.close(response);
+                this._toastr.toastr('success', response.message, response.titleSms);
+            }
+        })
+    }
+
+
+    closeModal() {
+        this.$uibModalInstance.close();
+    }
+}
+
+
+class MovimientoCajaCtrl {
+    static $inject = ['$http', 'mainService', '$q', 'commonService', 'modalService', 'formulario', 'toastService'];
+    constructor($http, _mS, $q, _commonSvc, _modalSvc, _form, _tS) {
+        this.$http = $http;
+        this._mS = _mS;
+        this._commonSvc = _commonSvc;
+        this._modalSvc = _modalSvc;
+        this._form = _form;
+        this._tS = _tS;
+
+        this.accion = {};
+
+        //Filters                        
+        this.dataSearch = {
+            fechaInicio: new Date(),
+            fechaFin: new Date(),
+        };
+
+        this.dataSearchAnticipo = {
+            fechaInicio: new Date(),
+            fechaFin: new Date(),
+        }
+
+
+        this.estados = [];
+        this.movCajas = [];
+        this.anticipos = [];
+
+        this.searchEmpleado = ModalMovimientoCajaCtrl.searchEmpleado
+        this.clienteSearch = ModalAnticipoCtrl.clienteSearch;
+        this.clienteSearchAnticipo = ModalAnticipoCtrl.clienteSearch;
+
+        //Filter 
+        // this.moreSearchOptions = false;
+
+
+        let thisMoment = moment(new Date())
+        
+         
+        //https://www.daterangepicker.com/
+        const dateRangePicker = {
+            date: { startDate: thisMoment, endDate: thisMoment },
+            picker: null,
+            options: {
+                pickerClasses: 'custom-display', //angular-daterangepicker extra
+                buttonClasses: 'btn',
+                applyButtonClasses: 'btn-success',
+                cancelButtonClasses: 'btn-danger',
+                locale: {
+                    applyLabel: "Aplicar",
+                    cancelLabel: 'Cancelar',
+                    customRangeLabel: 'Rango Personalizado',
+                    separator: ' - ',
+                    format: "YYYY-MM-DD", //will give you 2017-01-06
+                    //format: "D-MMM-YY", //will give you 6-Jan-17
+                    //format: "D-MMMM-YY", //will give you 6-January-17
+                },
+                ranges: {
+                    'Hoy': [moment(), moment()],
+                    'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+                    'Ultimos 15 Días': [moment().subtract(14, 'days'), moment()],
+                    'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
+                    'Este Mes': [moment().startOf('month'), moment().endOf('month')],
+                }
+            }
+        }; 
+
+        this.dateRangePicker = JSON.parse(JSON.stringify(dateRangePicker))
+        
+        this.dateRangePicker.options.eventHandlers = {
+                "apply.daterangepicker": (event, picker)=> {
+                    this.getMovCajas()
+                    console.log('applied')
+                }
+            }
+        this.dateRangePickerAnticipo = JSON.parse(JSON.stringify(dateRangePicker))
+        this.dateRangePickerAnticipo.options.eventHandlers = {
+            "apply.daterangepicker": (event, picker)=> {
+
+                this.getAnticipos()
+                console.log('applied')
+            }
+        }
+
+    }
+
+    async $onInit() {
+        // let accion = JSON.parse(localStorage.getItem("accion"));
+        // if(accion===null){
+        //     location.href = "/Home/Index";
+        // }else{
+        //     this.accion = accion[0];
+        // }
+
+        await this._commonSvc.getEstabAsign().then(response => {
+            this.establecimientos = response;
+
+            if (this.establecimientos.length > 0) {
+                this.dataSearch.codEstab = this.establecimientos[0].codEstab;
+                this.dataSearchAnticipo.codEstab = this.establecimientos[0].codEstab;
+            } else {
+                this._tS.toastr('warning', 'No tienes Asignado Ningún Establecimiento')
+            }            
+        })
+
+        this.getMovCajas();
+        this.getAnticipos();
+        this.getAllEstado();
+    }
+
+
+    resultRangeFilter (item) {
+        this.dataSearch.fechaInicio = item.startDate,
+        this.dataSearch.fechaFin = item.endDate
+        this.getMovCajas();
+    }
+    onClickBtnMore() {
+        this.moreSearchOptions = !this.moreSearchOptions;
+    }
+
+    resultRangeFilter (item) {
+        this.dataSearch.fechaInicio = item.startDate,
+        this.dataSearch.fechaFin = item.endDate
+        this.getMovCajas();
+    }
+    onClickBtnMoreAnticipo() {
+        this.moreSearchOptionsAnticipo = !this.moreSearchOptionsAnticipo;
+    }
+
+
+    //Get Movimientos Caja
+    getMovCajas() {
+        try {
+
+            let dataSearch = {
+                codEstab:this.dataSearch.codEstab, 
+                checkBoxEmpleado: this.dataSearch.byEmpleado > 0,
+                byEmpleado: this.dataSearch.byEmpleado,                 
+                checkBoxEstado: this.dataSearch.codEstado ? true : false,
+                codEstado: this.dataSearch.codEstado,
+                fechaInicio: this._form.formatDateMoment(this.dateRangePicker.date.startDate),
+                fechaFin: this._form.formatDateMoment(this.dateRangePicker.date.endDate), 
+                checkBoxFecha: true
+            }
+
+            showLoader();
+            this.movCajas = [];
+            this._mS.getData('get', '/MovimientoCaja/Get?json=' + JSON.stringify(dataSearch)).then(response => {
+                if (response.id === "0") {
+                    hideLoader();
+                    console.log(response)
+                    return
+                }
+
+                this.movCajas = JSON.parse(response.data) || [];
+                hideLoader();
+            }).catch(error => {
+                hideLoader();
+                console.log(error)
+            })
+        } catch (error) {
+            hideLoader();
+        }
+    }
+
+
+    //Get Anticipos 
+    getAnticipos() {
+        try {
+            let dataSearch = {
+                codEstab:this.dataSearchAnticipo.codEstab,                   
+                checkBoxEstado: this.dataSearchAnticipo.codEstado ? true : false,
+                checkBoxCliente: this.dataSearchAnticipo.byCliente > 0,
+                byCliente: this.dataSearchAnticipo.byCliente,
+                fechaInicio: this._form.formatDateMoment(this.dateRangePickerAnticipo.date.startDate),
+                fechaFin: this._form.formatDateMoment(this.dateRangePickerAnticipo.date.endDate), 
+                checkBoxFecha: true
+            }
+            showLoader();
+            this.anticipos = [];
+            this._mS.getData('get', '/Anticipo/Get?json=' + JSON.stringify(dataSearch)).then(response => {
+                hideLoader();
+                if (response.id === "0") {
+                    console.log(response)                    
+                }
+                if(response.id === "1") {
+                    this.anticipos = JSON.parse(response.data) || []
+                }
+            }).catch(error => {
+                hideLoader();
+                console.log(error)
+            })
+        } catch (error) {
+            hideLoader();
+            console.log(error)
+        }
+    };
+
+    getAllEstado() {
+        this._commonSvc.getEstadoDocByCodDoc('EC').then(response => {
+            this.estados = response;
+        })
+    }
+
+    openModalAddUpdate() {
+        const modalRef = this._modalSvc.openModalCustom({
+            controller: ModalMovimientoCajaCtrl,
+            template: 'MovimientoCaja/_ModalMovimientoCaja.cshtml',
+            size: 'lg',
+
+        })
+        modalRef.result.then(result => {
+            if (typeof result === 'object') {
+                this.getMovCajas();
+            }
+        })
+    }
+ 
+
+    // //Buscar Empleado 
+    // searchEmpleado(busqueda){
+    //     return this.$http.get('/Empleado/Search?busqueda='+busqueda).then(response=>{                         
+    //         return response.data.data
+    //     })
+    // }
+
+    onKeyupSearchEmpleado(text) {
+        if (!text) {
+            this.dataSearch.byEmpleado = '';
+        }
+    }
+
+    selectedEmpleadoChange(item) {
+        this.dataSearch.byEmpleado = item.idEmpleado;
+    }
+
+     
+    getPrint(item) {
+        let parameters = { 
+            idDocument: item.idMovimientoCaja,
+            idTipoDocumento: item.idTipoDocumento,
+            codEstab: item.codEstab,
+            codDoc: item.codDoc,
+            nroIdentificacion: item.nroIdentificacion
+        }
+
+        this._commonSvc.askToPrint({
+            parameters: JSON.stringify(parameters)
+        })
+
+    }
+ 
+
+    getReport(item) {
+        try {
+            let format = 'pdf';
+
+            let dataParms = {
+                id: item.idMovimientoCaja,
+            }
+
+
+
+            const parameters = {
+                hasService: true,                
+                reportParams: JSON.stringify({
+                    hasParams: false,
+                    codigo: 'RMIE',
+                    format,
+                    codEstab: item.codEstab,
+                    aditionalParams: []
+                }),
+                dataParams: JSON.stringify(dataParms)
+            }
+
+            this._commonSvc.getReport({
+                parameters,
+                formatType: format
+            })
+        } catch (error) {
+            console.log(error)
+        }      
+    }
+
+
+
+
+
+
+    //-------------------------------------Tab Anticipo -----------------------
+    openModalAnticipoNew() {
+        const modalRef = this._modalSvc.openModalCustom({
+            controller: ModalAnticipoCtrl,
+            template: 'MovimientoCaja/_ModalAnticipo.cshtml',
+            size: 'md'
+        })
+
+        modalRef.result.then(result => {
+            if (typeof result === 'object') {
+                this.getAnticipos();
+            }
+        })
+    }
+ 
+
+    onKeyupSearchCliente() {
+        if (!this.dataSearchAnticipo.selelectedCliente) {
+            this.selectedCliente = '';
+            this.dataSearchAnticipo.byCliente;
+        }
+    }
+
+    selectedClienteChange(item) {
+        this.dataSearchAnticipo.byCliente = item.idCliente;
+        this.getAnticipos();
+    }
+
+
+    printAnticipo(item) {
+        let parameters = {            
+            idDocument: item.idAnticipo,
+            idTipoDocumento: item.idTipoDocumento,
+            codEstab: item.codEstab,
+            codDoc: item.codDoc,
+            nroIdentificacion: item.identificacionUsuario,            
+        }
+        this._commonSvc.askToPrint({
+            parameters: JSON.stringify(parameters)
+        })
+
+    }
+
+    getReportAnticipo(item) {
+        try {
+            let format = 'pdf';
+
+            let dataParms = {
+                id: item.idAnticipo,
+            }
+
+
+
+            const parameters = {
+                hasService: true,                
+                reportParams: JSON.stringify({
+                    hasParams: false,
+                    codigo: 'RA',
+                    format,
+                    codEstab: item.codEstab,
+                    aditionalParams: []
+                }),
+                dataParams: JSON.stringify(dataParms)
+            }
+
+            this._commonSvc.getReport({
+                parameters,
+                formatType: format
+            })
+        } catch (error) {
+            console.log(error)
+        }      
+    }
+     
+}
+
+app.controller('movimientoCajaCtrl', MovimientoCajaCtrl).name
+
+// export { movimientoCajaCtrl}

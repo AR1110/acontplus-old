@@ -1,7 +1,11 @@
 ﻿################################################################################
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
-
+node_modules
+bin-debug/
+bin-release/
+[Oo]bj/
+[Bb]in/
 /.vs
 /src/packages
 /src/.vs
@@ -367,3 +371,14 @@
 /src/03.business_logic/BL.PdfReports/obj
 /src/03.business_logic/BL.ExcelReports/bin/Release/net6.0
 /src/03.business_logic/BL.PdfReports/bin/Release/net6.0
+/src/08.razor_ui/Config_UI/bin/Debug/net6.0
+/src/08.razor_ui/Config_UI/obj
+/src/08.razor_ui/Config_UI/bin/Release/net6.0
+/src/08.razor_ui/Ventas_UI/bin
+/src/08.razor_ui/Ventas_UI/obj
+/src/04.services/ApiAdmin/obj
+/src/04.services/ApiAdmin/bin
+/src/05.web_apps/AdminUI/bin/Release/net6.0
+/.gitignore
+/src/05.web_apps/WebUI/wwwroot/js/svelte/build/bundle.js
+/src/WebApps/WebUI/wwwroot/js/svelte/build/bundle.js

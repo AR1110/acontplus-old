@@ -1,0 +1,54 @@
+﻿@page
+@model WebUI.Areas.ReporteVentas.Pages.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewBag.title = "Reporte Ventas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div ng-controller="reporteVentaCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Reporte Ventas</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+
+            </div>
+        </div>
+    </div>
+
+    <!--Modal para reportar-->
+    @await Html.PartialAsync("_ModalFiltroReporteVenta")
+    @await Html.PartialAsync("_ModalReporteGraficoVenta")
+
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <button class="btn btn-info" ng-click="openModalFiltroReporteVenta()">
+                        <i class="mdi mdi-file-find fa-lg"></i> Nuevo Reporte
+                    </button>
+                    <button class="btn btn-warning-1" ng-click="openModalReporteGraficoVenta()">
+                        <i class="text-white mdi mdi-chart-bar fa-lg"></i> Reporte Gráfico
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <canvas id="chartBarAnualVentas" width="400" style="display: inline; width: 1239px; height: 150px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts{
+        <script src="~/js/reports/controllers/reporteVentaCtrl.min.js" asp-append-version="true"></script>
+    }
+
+
+</div>

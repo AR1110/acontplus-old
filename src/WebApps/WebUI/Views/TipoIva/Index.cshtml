@@ -1,0 +1,123 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div ng-controller="tipoIvaCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Gestión de Tipo IVA</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+                <button type="button" ng-click="abrirModal(0,1)" class="btn btn-info  m-l-15">
+                    <i class="fa fa-plus-circle"></i> Agregar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <md-card>
+                <md-card-content>
+                    <md-table-container>
+                        <table md-table>
+                            <thead md-head>
+                                <tr md-row>
+                                    <th md-column>N°</th>
+                                    <th md-column>Descripción</th>
+                                    <th md-column>%</th>
+                                    <th md-column>Codigo %</th>
+                                    <th md-column>Estado</th>
+                                    <th md-column>Op.</th>
+                                </tr>
+                            </thead>
+                            <tbody md-body>
+                                <tr md-row ng-repeat="ti in tipoIvas |filter:buscar" class="text-center">
+                                    <td md-cell>{{$index+1}}</td>
+                                    <td md-cell>{{ti.descripcion}}</td>
+                                    <td md-cell>{{ti.porcentaje|currency:'%':0}}</td>
+                                    <td md-cell>{{ti.codigoPorcentaje}}</td>
+                                    <td md-cell ng-bind-html="ti.estado|estadoPrimario"></td>
+                                    <td md-cell>
+                                        <md-button class="md-icon-button md-primary" ng-click="abrirModal(ti,2)" aria-label="Editar">
+                                            <i class="fa fa-edit"></i>
+                                        </md-button>
+                                        @*<md-button class="md-icon-button md-accent" ng-click="delete(ti)" aria-label="Eliminar">
+                                            <i class="fa fa-trash"></i>
+                                        </md-button>*@
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </md-table-container>
+                    @*<md-table-pagination md-limit="query.limit" md-limit-options="recordsQuantity" md-page="query.page" md-total="{{totalRecords}}" md-page-select="options.pageSelect" md-boundary-links="options.boundaryLinks" md-on-paginate="logPagination"></md-table-pagination>*@
+                </md-card-content>
+            </md-card>
+        </div>
+    </div>
+    
+
+    <!--Agregar-->
+    <div class="modal fade" id="agregarTipoIva" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form ng-submit="saveUpdate(type)" autocomplete="off" novalidate class="form-material">
+                    <div class="modal-content">
+                        <div class="modal-header {{colorHeader}}">
+                            <h5 class="modal-title text-white" id="exampleModalLabel"><i class="{{iconoModal}}"></i>{{tituloModal}}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <label for="">Descripción: <span class="text-danger">*</span></label>
+                                    <input type="text" ng-model="data.descripcion" class="form-control form-control-line">
+                                </div>
+                            </div>
+                            <div class="row" ng-if="type==1">
+                                <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <label for="">Código: <span class="text-danger">*</span></label>
+                                    <input type="text" ng-model="data.codigo" class="form-control form-control-line">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <label for="">Porcentaje: <span class="text-danger">*</span></label>
+                                    <input type="text" ng-model="data.porcentaje" valid-number class="form-control form-control-line">
+                                </div>
+                            </div>
+                            <div class="row" ng-show="type==2">
+                                <div class="col-6">
+                                    <div class="icheck-primary">
+                                        <input type="radio" ng-model="data.estado" ng-value="true" id="someRadioId1" name="someGroupName" />
+                                        <label for="someRadioId1">Activo</label>
+                                    </div>
+                                </div>
+                                <div class="col-6 text-right">
+                                    <div class="icheck-primary">
+                                        <input type="radio" ng-model="data.estado" ng-value="false" id="someRadioId2" name="someGroupName" />
+                                        <label for="someRadioId2">Inactivo</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn {{btnColor}}"><i class="{{icono}}"></i> {{btnTitulo}}</button>
+                            <button type="button" class="btn btn-dark" data-dismiss="modal">&times; Cerrar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script src="~/js/controllers/sri/tipoIvaCtrl.min.js"  asp-append-version="true"></script>    
+    
+}
+
+

@@ -1,0 +1,76 @@
+﻿
+<div class="modal-header">
+    <h5 class="modal-title">Historial Movimientos</h5>
+    <button class="close" ng-click="closeModal()">&times;</button>
+</div>
+
+<div class="modal-body">
+
+    <div class="row justify-content-between">
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+            <div class="row">
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <small class="text-muted">Serie Comprobante</small><br>
+                    <span>{{data.serieComprobante}}</span>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <small class="text-muted">Proveedor</small><br>
+                    <span>{{data.nombreFiscal}}</span>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <small class="text-muted">Nro. Identificación</small><br>
+                    <span>{{data.identificacion}}</span>
+                </div>
+            </div>
+        </div>    
+        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+            <div class="row">
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <small class="text-muted">Importe Total</small><br>
+                    <span>${{data.importeTotal}}</span>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <small class="text-muted">Abono</small><br>
+                    <span>${{data.abono}}</span>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <small class="text-muted">Saldo</small><br>
+                    <span>${{data.saldo}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <md-table-container>
+        <table md-table>
+            <thead md-head>
+                <tr md-row>
+                    <th md-column>N°</th>
+                    <th md-column>T. Doc</th>
+                    <th md-column>Total</th>
+                    <th md-column>Fecha Registro</th>
+                    <th md-column>Usuario</th>
+                    <th md-column>Estado</th>
+                </tr>
+            </thead>
+            <tbody md-body>
+                <tr md-row ng-repeat="item in historialMovimientos">
+                    <td md-cell>{{$index+1}}</td>
+                    <td md-cell>{{item.tipoDocumento}}</td>
+                    <td md-cell>${{item.total}}</td>
+                    <td md-cell>{{item.fechaRegistro}}</td>
+                    <td md-cell>{{item.usuario}}</td>
+                    <td md-cell>{{item.estado}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </md-table-container>
+
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-dark" ng-click="closeModal()">
+        &times; Cerrar
+    </button>
+</div>

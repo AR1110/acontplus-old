@@ -129,8 +129,7 @@ BEGIN
 
 			INSERT INTO dbo.ArticuloFraccionado
 				(   
-				    codigo
-				   ,unique_code
+				    uniqueId
 				   ,idArticulo
 				   ,idMedida
 				   ,conversion
@@ -140,8 +139,7 @@ BEGIN
 				   ,idUsuario
 				 )
 			SELECT 
-				   'F'+Helper.F_Auto_Sequential(id+@sequential)
-				   ,unique_code
+				    unique_code
 				   ,idArticulo
 				   ,idMedida
 				   ,conversion
@@ -152,7 +150,7 @@ BEGIN
 		    FROM @tableArticulo 
 
 			INSERT INTO @tablaArticuloImport(idArticuloFraccionado,codFraccionado)
-			SELECT idArticuloFraccionado,unique_code FROM dbo.ArticuloFraccionado WHERE idEntidad = @idEntidad 
+			SELECT idArticuloFraccionado,uniqueId FROM dbo.ArticuloFraccionado WHERE idEntidad = @idEntidad 
 
 			INSERT INTO dbo.ArticuloFraccionadoPvP
 				(

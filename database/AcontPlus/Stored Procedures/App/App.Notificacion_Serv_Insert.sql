@@ -14,9 +14,12 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 
+	DECLARE @idUsuarioRol INT
 	DECLARE @idUsuario INT
 	DECLARE @idEntidad INT 
-	
+	DECLARE @codDoc VARCHAR(5)
+	DECLARE @serieComprobante VARCHAR(50)
+
 	DECLARE @params NVARCHAR(MAX)
 	DECLARE @emailData VARCHAR(MAX)
 
@@ -48,24 +51,29 @@ BEGIN
 	BEGIN TRY
 		
 		SELECT 
+			@codDoc    = js.codDoc,
+			@serieComprobante = js.serieComprobante,
 			@idEntidad = ur.idEntidad,
 			@idUsuario = ur.idUsuario,
 			@id        = js.id,
 			@codigo    = js.codigo,
 			@receptor  = js.receptor,
 			@params    = js.params,
-			@subject   = subject
+			@subject   = js.subjectJson
 		FROM App.UsuarioRol ur JOIN OPENJSON(@json)		
 		WITH(
 			idUsuarioRol        INT '$.idUsuarioRol',
+			codDoc        VARCHAR(6) '$.codDoc',
+			serieComprobante VARCHAR(50) '$.serieComprobante',
 			codigo       VARCHAR(5) '$.params.reportParams.codigo',
 			id                 INT  '$.params.spParams.id',
 			receptor   VARCHAR(100) '$.receptor',
 			params    NVARCHAR(MAX) '$.params' AS JSON,
-			subject   VARCHAR(100)
+			subjectJson   VARCHAR(500)  '$.subject' 
 		) as js ON js.idUsuarioRol = ur.idUsuarioRol
 
-		
+
+ 
 
 		
 		SELECT TOP 1 @jsonConfig = jsonConfig FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig='CD'
@@ -161,6 +169,25 @@ BEGIN
 								)
 				END 
 			
+
+			--Envio por correo de comprobante Ingreso
+			IF @codDoc='CI'
+				BEGIN
+					SET @template = 'EmailCompIngreso.html'
+					SET @body = (SELECT cliente     = ci.nombreFiscal, 
+						   documento    = @serieComprobante,
+					       fechaEmision = dbo.AFTConvertDate(ci.fechaRegistro)+''''+ dbo.AFTConvertHora(ci.fechaRegistro),
+						   importeTotal = ci.total,																   
+						   telefono     = ISNULL(estab.telefono, ''),
+						   razonSocial  = estab.nombreComercial
+					 FROM dbo.ComprobanteIngreso ci WITH(NOLOCK)
+					 INNER JOIN Sri.Establecimiento estab WITH (NOLOCK) ON estab.codEstab = ci.codEstab
+					 WHERE ci.idComprobanteIngreso = @id
+					 FOR JSON PATH
+					 )
+
+				END
+
 			SET @emailData = (SELECT body = @body, 
 			                         cc = '',									    
 							         EnableSsl = '1', 

@@ -113,7 +113,7 @@ BEGIN
 
 		SELECT *
 		FROM Bodega WITH (NOLOCK)
-		WHERE codEstab IN (SELECT codEstab FROM Config.Estab_Asig WHERE idUsuarioRol = @idRol)
+		WHERE estado = 1 AND codEstab IN (SELECT codEstab FROM Config.Estab_Asig WHERE idUsuarioRol = @idRol) 
 
 		SELECT *
 		FROM Medida WITH (NOLOCK)
@@ -137,35 +137,19 @@ BEGIN
 			FROM FactElect.RetAtsDocSustento retDoc
 			INNER JOIN FactElect.RetencionAts rAts ON rAts.idRetencionAts = retDoc.idRetencionAts
 			WHERE retDoc.numAutDocSustento = @claveAcceso
+			AND rAts.anuladaSri = 0
 			RETURN
 		END
 
-		IF @codDoc = '04'
+		IF @codDoc = '07' OR @codDoc = '04'
 		BEGIN
-			SELECT comprobante
-				,serieComprobante
-				,rucEmisor
-				,razonSocialEmisior
-				,fechaEmision
-				,claveAcceso
-				,importeTotal
-			FROM (
-				SELECT comprobante
-					,serieComprobante
-					,rucEmisor
-					,razonSocialEmisior
-					,fechaEmision
-					,claveAcceso
-					,importeTotal
-					,Replace(serieComprobante, '-', '') AS numDocSustento
-				FROM Recepcion.DocumentoRecibido
-				) t
-			WHERE t.numDocSustento = (
-					SELECT numDocSustento
-					FROM FactElect.DocRelacionado WITH (NOLOCK)
-					WHERE codDocSustento = '01'
-						AND idDocumentoRecibido = @idDocumento
-					)
+			SELECT comprobante = CASE dr.codDocSustento WHEN '01' THEN 'Factura' ELSE '' END  
+				  ,serieComprobante = dr.numDocSustento
+				  ,fechaEmision = dr.fechaEmisionDocSustento
+				  ,dr.claveAcceso
+				  ,importeTotal = dr.baseImponible 
+			FROM FactElect.DocRelacionado dr WITH (NOLOCK)
+			WHERE dr.idDocumentoRecibido = @idDocumento
 			RETURN
 		END
 	END

@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>disable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Ocelot" Version="18.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Services\Common\Lib.Common\Lib.Common.csproj" />
+	  <ProjectReference Include="..\..\Services\Common\Services.Common\Services.Common.csproj" />
+	</ItemGroup>
+
+</Project>
