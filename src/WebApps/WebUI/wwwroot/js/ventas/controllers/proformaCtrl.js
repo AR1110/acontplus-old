@@ -162,7 +162,7 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
                 $scope.proformas = proformas;
                 $scope.cloneProformas = JSON.parse(JSON.stringify($scope.proformas));
                 $scope.dataSearch.totalRecords = dataTotals.totalRecords;
-                $scope.total = fS.roundNumber(dataTotals.total, 5);
+                $scope.total = fS.roundNumber(dataTotals.totalDocument, 5);
                 
             }).catch(error=>{
                 hideLoader();
