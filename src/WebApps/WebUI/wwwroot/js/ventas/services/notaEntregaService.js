@@ -17,7 +17,7 @@
                 if(response.code==="1"){
                     let mainData = JSON.parse(response.payload) ;
                     let notaEntregaRepos = mainData[0];
-                    let dataTotals = mainData[1][0]; 
+                    let {totalRecords, totalDocument, totalAbono, totalSaldo} = notaEntregaRepos[0]; 
                     
                     let notaEntregas = notaEntregaRepos.map(item=>{
                         return {
@@ -54,9 +54,11 @@
                             nroIdentificacion: item.nroIdentificacion
                         }
                     })
+
+
                     return {
                         notaEntregas,
-                        dataTotals
+                        dataTotals: {totalRecords, totalDocument, totalAbono, totalSaldo}
                     }
                 }
             })

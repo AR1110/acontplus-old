@@ -19,7 +19,7 @@
                 if(response.code==="1"){
                     let mainData = JSON.parse(response.payload) || [] ;
                     let proformasRepos = mainData[0]; 
-                    let dataTotals = mainData[1][0]; 
+                    let {totalRecords, totalDocument} = proformasRepos[0]; 
                     
                     let proformas = proformasRepos.map(item =>{
                         return {
@@ -49,7 +49,7 @@
                     })
                     return {
                         proformas,
-                        dataTotals
+                        dataTotals: {totalRecords, totalDocument}
                     }
                 }
             }).catch(error =>{
