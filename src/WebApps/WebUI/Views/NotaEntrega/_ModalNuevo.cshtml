@@ -94,7 +94,7 @@
                                id="clienteSearchInvoice"
                                name="clienteSearchInvoice"
                                class="form-control border-select"
-                               ng-model="$ctrl.cliente.nombreFiscal"
+                               ng-model="$parent.$ctrl.cliente.nombreFiscal"
                                customer-search-sale-drtv on-select="$ctrl.onSelectedClienteChange(result)"
                                on-keyup="$ctrl.onKeyupCustomer()"
                                function-trigger="$ctrl.receiveDataCustomerSRI(result)"

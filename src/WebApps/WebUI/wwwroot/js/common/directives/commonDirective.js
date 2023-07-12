@@ -606,9 +606,12 @@
                     return true;
                 }
 
-                scope.cliente = {
-                    nombreCliente: scope.ngModel
-                }
+                console.log(scope.ngModel)
+
+                // scope.cliente = {
+                //     nombreCliente: scope.ngModel,
+                //     nombreFiscal: scope.ngModel
+                // }
 
                 scope.search = function (textSearch) {
                     if ( textSearch.length < 2) return;
@@ -708,6 +711,7 @@
                 element.attr('typeahead-on-select', 'onSelect({result: $item})');
                 element.attr('typeahead-template-url', 'customerSearchSaleTemplate.html');
                 element.attr('ng-keyup', 'onKeyup()');
+                element.attr('ng-model', 'ngModel');
                 element.attr('typeahead-editable', 'true');
 
                  
