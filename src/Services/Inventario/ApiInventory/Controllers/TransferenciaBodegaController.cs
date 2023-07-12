@@ -79,7 +79,7 @@ namespace ApiInventory.Controllers
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Inventario.TransferenciaBodega_Update");
+                await _db.SPExecute("Inventario.TransferenciaBodega_Update", true);
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("jsonHeader", SqlValidation.ValidateSqlString(data.header));
                 _db.AddDynamicParam("jsonDetalle", SqlValidation.ValidateSqlString(data.detail));

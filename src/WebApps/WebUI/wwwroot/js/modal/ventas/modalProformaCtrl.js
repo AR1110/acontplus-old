@@ -29,7 +29,7 @@ class ModalProformaCtrl extends ModalBaseCtrl {
         this._fS = _fS;
 
         this.TIPO_DOC_PR = _commonSvc.tipoDoc['PR']
-        this.CAMPOS = ["idSucursal", "idCliente", "idPuntoEmision", "fechaEmision", "gridOptions", "gridOptionsBodega"];
+        this.CAMPOS = ["idSucursal", "idPuntoEmision", "fechaEmision", "gridOptions", "gridOptionsBodega"];
 
         this.datosAdicionalesArticulo = [];
         this.cliente = {};
@@ -434,7 +434,14 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl {
         }
     }
 
-
+    receiveDataCustomerSRI(result) {
+        if (result.idCliente === 0) {
+            this.newCustomer = true;
+        } else {
+            this.newCustomer = false;
+        }
+        this.cliente = result;
+    }
 
     async onSelectedClienteChange(item) {
         try {

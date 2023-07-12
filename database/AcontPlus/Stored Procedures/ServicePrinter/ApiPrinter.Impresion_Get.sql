@@ -221,7 +221,11 @@ BEGIN
 														 END
 								--,hasParams = CAST(CASE WHEN ti.codigo = 'AT' THEN 1 ELSE 0 END AS BIT)
 								,hasParams = @hasParams
-								,codDoc = CASE WHEN @codDoc IN ('IC', 'EC') THEN 'MC' ELSE 'A'END
+								,codDoc = CASE @codDoc WHEN 'IC' THEN 'MC'
+													   WHEN 'EC' THEN 'MC'
+													   WHEN 'A' THEN 'A'
+													   ELSE ''
+											END 
  								FROM ApiPrinter.Config_Document cd WITH (NOLOCK)
 								INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
 								INNER JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora

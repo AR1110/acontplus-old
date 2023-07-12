@@ -24,6 +24,8 @@ GO
 IF OBJECT_ID(N'Compra.Documento_Ingreso_Get', N'P') IS NOT NULL
 DROP PROCEDURE Compra.Documento_Ingreso_Get
 GO
+
+-- Compra.Documento_Ingreso_Get 264, '{"checkBoxEstado": false,"checkBoxProveedor": false,"codEstab": "ESTAB-000000216","dateEnd": "11-07-2023 11:33 PM","dateStart": "11-07-2023 11:33 PM","estado": undefined,"idProveedor": undefined,"isSearchNroDoc": false,"nroSecuencial": undefined,"typeList": 1}'
 CREATE PROCEDURE Compra.Documento_Ingreso_Get @idUsuarioRol INT, @json VARCHAR(MAX)
 AS
 BEGIN
