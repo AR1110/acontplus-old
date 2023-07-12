@@ -43,7 +43,7 @@ BEGIN
 	IF @typeList = 1
 		BEGIN
 
-			DECLARE @sql AS NVARCHAR(MAX) = 'SELECT TOP (100)
+			DECLARE @sql AS NVARCHAR(MAX) = 'SELECT TOP 100
 												 di.idDocumentoIngreso
 												,serieComprobante = es.estab+''-''+pt.ptoEmi+''-''+Helper.F_Auto_Sequential(di.secuencial)
 												,fechaEmision     = FORMAT(di.fechaEmision, ''dd/MM/yyyy HH:mm'')
@@ -57,7 +57,7 @@ BEGIN
 											 INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision    = di.idPuntoEmision
 											 INNER JOIN dbo.Proveedor       pr WITH (NOLOCK) ON pr.idProveedor       = di.idProveedor
 											 INNER JOIN dbo.Usuario         us WITH (NOLOCK) ON us.idUsuario         = di.idUsuario
-											 WHERE di.idEntidad = @idEntidad AND es.codEstab = @codEstab'
+											 WHERE es.codEstab = @codEstab'
 
 			DECLARE @params AS NVARCHAR(MAX) = '@idEntidad AS INT
 											   ,@codEstab AS VARCHAR(100)
@@ -87,17 +87,17 @@ BEGIN
 				  ,@dateStart         = CONVERT(DATETIME, dateStart, 121)
 				  ,@dateEnd           = CONVERT(DATETIME, dateEnd, 121)
 				  ,@typeStatus        = estado
-				  ,@isSearchNroDoc     = isSearchNroDoc
-				  ,@nroSecuencial      = LTRIM(TRIM(nroSecuencial))
+				  ,@isSearchNroDoc    = isSearchNroDoc
+				  ,@nroSecuencial     = LTRIM(TRIM(nroSecuencial))
 			FROM OPENJSON(@json)
-			WITH (codEstab  VARCHAR(20) '$.codEstab'
-			     ,checkBoxEstab     BIT '$.checkBoxEstab'
-			     ,checkBoxProveedor BIT '$.checkBoxProveedor' 
-			     ,checkBoxEstado    BIT '$.checkBoxEstado'
-				 ,idProveedor       INT '$.idProveedor'
+			WITH (codEstab     VARCHAR(20) '$.codEstab'
+			     ,checkBoxEstab        BIT '$.checkBoxEstab'
+			     ,checkBoxProveedor    BIT '$.checkBoxProveedor' 
+			     ,checkBoxEstado       BIT '$.checkBoxEstado'
+				 ,idProveedor          INT '$.idProveedor'
 				 ,dateStart    VARCHAR(50) '$.dateStart'
 				 ,dateEnd      VARCHAR(50) '$.dateEnd'
-				 ,estado	 VARCHAR(5) '$.estado'
+				 ,estado	    VARCHAR(5) '$.estado'
 				 ,isSearchNroDoc BIT
 				 ,nroSecuencial VARCHAR(13)
 				 ) as dt
@@ -110,6 +110,7 @@ BEGIN
 			ELSE
 				BEGIN 
 					SET @sql = @sql + ' AND CAST(di.fechaEmision AS DATE) BETWEEN CAST(@dateStart AS DATE) AND CAST(@dateEnd AS DATE) '
+					
 					IF @checkBoxProveedor = 1 
 						BEGIN
 							SET @sql = @sql + ' AND di.idProveedor = @idProveedor  '
