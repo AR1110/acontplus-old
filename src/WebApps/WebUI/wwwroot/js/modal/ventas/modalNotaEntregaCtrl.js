@@ -550,6 +550,11 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
 
             if (!this.isValidaForm()) return
 
+            if(!(this.data.idTiempoCredito) > 0){
+                this._fS.sweetAlert('warning', 'Seleccione el tiempo crédito');
+                return
+            }
+
             if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
                 for(let item of this.gridOptions.data){
                     if(item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)){
@@ -649,6 +654,11 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
 
 
             if (!this.isValidaForm()) return
+
+            if(!(this.data.idTiempoCredito) > 0){
+                this._fS.sweetAlert('warning', 'Seleccione el tiempo crédito');
+                return
+            }
 
             if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
                 for(let item of this.gridOptions.data){
@@ -1155,6 +1165,11 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
         try {
             if (!this.isValidaForm()) return
 
+            if(!(this.data.idTiempoCredito) > 0){
+                this._fS.sweetAlert('warning', 'Seleccione el tiempo crédito');
+                return
+            }
+
             if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
                 for(let item of this.gridOptions.data){
                     if(item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)){
@@ -1468,6 +1483,11 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
 
             if (!this.isValidaForm()) return
 
+            if(!(this.data.idTiempoCredito) > 0){
+                this._fS.sweetAlert('warning', 'Seleccione el tiempo crédito');
+                return
+            }
+
             if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
                 for(let item of this.gridOptions.data){
                     if(item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)){
@@ -1567,6 +1587,11 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
         try {
 
             if (!this.isValidaForm()) return
+
+            if(!(this.data.idTiempoCredito) > 0){
+                this._fS.sweetAlert('warning', 'Seleccione el tiempo crédito');
+                return
+            }
 
             if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
                 for(let item of this.gridOptions.data){
