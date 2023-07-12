@@ -24,7 +24,7 @@ GO
 IF OBJECT_ID(N'Contabilidad.ComprobanteIngreso_Get', N'P') IS NOT NULL
 DROP PROCEDURE Contabilidad.ComprobanteIngreso_Get
 GO
-
+--{"tipo":1,"codEstab":"ESTAB-000000020","fechaInicio":"2023-06-13 00:00:00 AM","fechaFin":"2023-07-12 23:59:59 PM","checkBoxPersona":false,"checkBoxUsuario":false,"checkBoxEstado":false,"isSearchNroDoc":true,"nroSecuencialDoc":"861"}
 -- Contabilidad.ComprobanteIngreso_Get 25, '{"tipo":1,"codEstab":"ESTAB-000000002","checkBoxFecha":true,"fechaInicio":"05-05-2022 12:00 AM","fechaFin":"04-07-2023 11:59 PM","checkBoxEstado":false,"byEstado":""}'
 CREATE PROCEDURE Contabilidad.ComprobanteIngreso_Get @idUsuarioRol INT, @json VARCHAR(MAX)
 AS
@@ -111,12 +111,12 @@ BEGIN
 				,@codEstab          = codEstab
 			--	,@byTipoDocumento   = byTipoDocumento
 				,@byEstado          = byEstado
-				,@fechaInicio       = CONVERT(DATETIME, fechaInicio, 105)
-				,@fechaFin          = CONVERT(DATETIME, fechaFin, 105)
+				,@fechaInicio       = CONVERT(DATETIME, fechaInicio, 121)
+				,@fechaFin          = CONVERT(DATETIME, fechaFin, 121)
 				,@codTipoDoc        = codTipoDoc
 				,@nroSecuencialTipoDoc = LTRIM(TRIM(nroSecuencialTipoDoc))
 				,@isSearchNroDoc    = isSearchNroDoc
-				,@nroSecuencialDoc  = LTRIM(RTRIM(TRIM(nroSecuencialDoc)))
+				,@nroSecuencialDoc  = LTRIM(TRIM(nroSecuencialDoc))
 			FROM OPENJSON(@json)
 			WITH ( 
 				  checkBoxPersona   BIT           '$.checkBoxPersona'
@@ -140,17 +140,18 @@ BEGIN
 
 			SELECT @isViewOtherDocs = JSON_VALUE(jsonPermission, '$.additional.viewOthersDocs.view') FROM Config.UserPermission WITH (NOLOCK) WHERE codModule ='V' AND idUsuarioRol = @idUsuarioRol
 		
-			SET @sql = @sql+'AND CAST(ci.fechaRegistro as date) BETWEEN CAST(@fechaI as date) AND CAST(@fechaF as date) '
+			
 
 
-			IF @codTipoDoc = 'FV' OR @codTipoDoc = 'NE' OR @isSearchNroDoc = 1
+			IF @isSearchNroDoc = 1
 				BEGIN
-				  
 					--SET @sql = @sql + ' AND ci.idComprobanteIngreso IN (SELECT cd.idComprobanteIngreso FROM CobroDocumento cd WHERE cd.idTipoDocumento = @idTipoDocumento AND cd.idComprobante = @idComprobante) '
 					SET @sql = @sql + ' AND ci.nroDocumento = @nroSecuencialDoc '
 				END  
 			ELSE 
 				BEGIN
+					SET @sql = @sql+'AND CAST(ci.fechaRegistro as date) BETWEEN CAST(@fechaI as date) AND CAST(@fechaF as date) '
+
 					IF @checkBoxEstado = 1
 						BEGIN
 							SET @sql = @sql+'AND ci.estado = @estado '
@@ -162,6 +163,7 @@ BEGIN
 						END 
 				END
 
+			--Por defecto le va a listar los comrprobantes que hizo el usuario y esta logueado 
 			IF @isViewOtherDocs = 0
 				BEGIN
 					SET @sql = @sql + ' AND ci.idUsuario = @idUsuario '
