@@ -992,7 +992,7 @@
                 $scope.documentos = [];
                 let dataSearch = {
                     codEstab: $scope.dataSearch.codEstab,
-                    checkBoxFecha: $scope.dataSearch.checkBoxFecha,
+                    checkBoxFecha: true,
                     checkBoxCliente: $scope.dataSearch.byCliente > 0,
                     byCliente: $scope.dataSearch.byCliente,
                     fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
