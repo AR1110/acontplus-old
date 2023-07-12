@@ -48,7 +48,7 @@ function homeCtrl($scope, mS, $interval) {
     var now = new Date();
 
     // Set the desired hour for execution (e.g. 3pm)
-    var desiredHour = 17; // 3pm in 24-hour format
+    var desiredHour = 12; // 3pm in 24-hour format
 
     // Check if the current hour is less than the desired hour
     if (now.getHours() < desiredHour) {
