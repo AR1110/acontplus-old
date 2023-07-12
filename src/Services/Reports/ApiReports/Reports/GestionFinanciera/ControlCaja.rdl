@@ -1288,7 +1288,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>ControlCajaDs</DataSetName>
-            <Top>3.43123in</Top>
+            <Top>3.05623in</Top>
             <Left>0.13994in</Left>
             <Height>0.5in</Height>
             <Width>10.1093in</Width>
@@ -2946,77 +2946,6 @@
                   </Border>
                 </Style>
               </Tablix>
-              <Textbox Name="Textbox42">
-                <CanGrow>true</CanGrow>
-                <KeepTogether>true</KeepTogether>
-                <Paragraphs>
-                  <Paragraph>
-                    <TextRuns>
-                      <TextRun>
-                        <Value>CHEQUES POSFECHADOS:</Value>
-                        <Style>
-                          <FontSize>7pt</FontSize>
-                          <FontWeight>Bold</FontWeight>
-                        </Style>
-                      </TextRun>
-                    </TextRuns>
-                    <Style>
-                      <TextAlign>Center</TextAlign>
-                    </Style>
-                  </Paragraph>
-                </Paragraphs>
-                <rd:DefaultName>Textbox42</rd:DefaultName>
-                <Top>2.32063cm</Top>
-                <Left>1.01185cm</Left>
-                <Height>0.6cm</Height>
-                <Width>3.71708cm</Width>
-                <ZIndex>1</ZIndex>
-                <Style>
-                  <Border>
-                    <Style>None</Style>
-                  </Border>
-                  <VerticalAlign>Middle</VerticalAlign>
-                  <PaddingLeft>2pt</PaddingLeft>
-                  <PaddingRight>2pt</PaddingRight>
-                  <PaddingTop>2pt</PaddingTop>
-                  <PaddingBottom>2pt</PaddingBottom>
-                </Style>
-              </Textbox>
-              <Textbox Name="Textbox43">
-                <CanGrow>true</CanGrow>
-                <KeepTogether>true</KeepTogether>
-                <Paragraphs>
-                  <Paragraph>
-                    <TextRuns>
-                      <TextRun>
-                        <Value>=First(Fields!chequePosfechado.Value, "TotalesDs")</Value>
-                        <Style>
-                          <FontSize>7pt</FontSize>
-                        </Style>
-                      </TextRun>
-                    </TextRuns>
-                    <Style>
-                      <TextAlign>Center</TextAlign>
-                    </Style>
-                  </Paragraph>
-                </Paragraphs>
-                <rd:DefaultName>Textbox43</rd:DefaultName>
-                <Top>2.32063cm</Top>
-                <Left>4.72893cm</Left>
-                <Height>0.6cm</Height>
-                <Width>2.5cm</Width>
-                <ZIndex>2</ZIndex>
-                <Style>
-                  <Border>
-                    <Style>None</Style>
-                  </Border>
-                  <VerticalAlign>Middle</VerticalAlign>
-                  <PaddingLeft>2pt</PaddingLeft>
-                  <PaddingRight>2pt</PaddingRight>
-                  <PaddingTop>2pt</PaddingTop>
-                  <PaddingBottom>2pt</PaddingBottom>
-                </Style>
-              </Textbox>
               <Textbox Name="Textbox1">
                 <CanGrow>true</CanGrow>
                 <KeepTogether>true</KeepTogether>
@@ -3040,7 +2969,7 @@
                 <Left>1.92375cm</Left>
                 <Height>0.6cm</Height>
                 <Width>9.26625cm</Width>
-                <ZIndex>3</ZIndex>
+                <ZIndex>1</ZIndex>
                 <Style>
                   <Border>
                     <Style>None</Style>
@@ -3055,7 +2984,7 @@
             <KeepTogether>true</KeepTogether>
             <Top>4.21419cm</Top>
             <Left>12.74181cm</Left>
-            <Height>3.00771cm</Height>
+            <Height>2.33743cm</Height>
             <Width>13.31673cm</Width>
             <ZIndex>2</ZIndex>
             <Style>
@@ -3820,7 +3749,7 @@
               </Textbox>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
-            <Top>10.40572cm</Top>
+            <Top>9.45322cm</Top>
             <Left>0.28437cm</Left>
             <Height>2.55875cm</Height>
             <Width>25.82797cm</Width>
@@ -4926,7 +4855,7 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox53</rd:DefaultName>
-            <Top>3.12557in</Top>
+            <Top>2.75057in</Top>
             <Left>9.73845cm</Left>
             <Height>0.6cm</Height>
             <Width>5.27451cm</Width>
@@ -5208,7 +5137,7 @@
               </Tablix>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
-            <Top>13.25426cm</Top>
+            <Top>12.30176cm</Top>
             <Left>0.28437cm</Left>
             <Height>1.49458cm</Height>
             <Width>9.73364cm</Width>
@@ -5220,7 +5149,7 @@
             </Style>
           </Rectangle>
         </ReportItems>
-        <Height>14.88113cm</Height>
+        <Height>13.95509cm</Height>
         <Style />
       </Body>
       <Width>26.25641cm</Width>
