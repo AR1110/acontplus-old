@@ -85,6 +85,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
                 hideLoader()
                 if (response.code === "0") {
                     $scope.comprobantes = [];
+                    $scope.dataSearch.totalRecords = 0;
                     console.log(response)
                     return
                 }
@@ -97,6 +98,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
                 }    
 
             }).catch(error => {
+                $scope.dataSearch.totalRecords = 0;
                 console.log(error)
                 hideLoader();
             })
