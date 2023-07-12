@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Customer.API.Data.Migrations
+namespace Customer.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class InitialPrd : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -24,14 +24,14 @@ namespace Customer.API.Data.Migrations
                     IDType = table.Column<string>(type: "varchar(2)", unicode: false, maxLength: 2, nullable: false),
                     IDCard = table.Column<string>(type: "varchar(15)", unicode: false, maxLength: 15, nullable: false),
                     BusinessName = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: false),
-                    TradeName = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: true),
-                    Email = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
-                    Telephone = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: true),
-                    Address = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
+                    TradeName = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: false),
+                    Email = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
+                    Telephone = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: false),
+                    Address = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
                     SriValidation = table.Column<bool>(type: "bit", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Enabled = table.Column<bool>(type: "bit", nullable: false, defaultValueSql: "1"),
+                    Enabled = table.Column<bool>(type: "bit", nullable: true, defaultValueSql: "1"),
                     Deleted = table.Column<bool>(type: "bit", nullable: true)
                 },
                 constraints: table =>

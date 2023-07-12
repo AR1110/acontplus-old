@@ -1,9 +1,9 @@
-﻿using Customer.API.Entities;
-using Customer.API.Data.Config;
+﻿using Customer.Core.Entities;
+using Customer.Infrastructure.Data.Config;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
-namespace Customer.API.Data
+namespace Customer.Infrastructure.Data
 {
     public class CustomerContext : DbContext
     {

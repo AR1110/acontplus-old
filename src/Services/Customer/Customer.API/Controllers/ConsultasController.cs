@@ -1,11 +1,10 @@
-﻿using Customer.API.Data;
-using Customer.API.Dtos;
+﻿using Customer.API.Dtos;
 using Customer.API.Services;
+using Customer.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Services.Common.Logs;
 using Services.Common.Utils;
 using System.Data;
