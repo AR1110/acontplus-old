@@ -2,6 +2,8 @@
   "profiles": {
     "WebUI": {
       "commandName": "Project",
+      "hotReloadEnabled": true,
+      "hotReloadProfile": "aspnetcore",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

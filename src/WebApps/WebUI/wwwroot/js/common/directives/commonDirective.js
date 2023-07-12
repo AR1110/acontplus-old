@@ -665,7 +665,7 @@
                             if(textSearch.length===10){
                                 try {
                                     showLoader(); 
-                                    let {identificacion, nombreCompleto} = await commonService.checkClientSRIByCedula(textSearch) 
+                                    let {identificacion, nombreCompleto, direccion, telefono, email} = await commonService.checkClientSRIByCedula(textSearch) 
                                     hideLoader();
                                     if (!identificacion || !nombreCompleto) return; 
 
@@ -677,6 +677,9 @@
                                             identificacionComprador: identificacion,
                                             razonSocialComprador: nombreCompleto ,
                                             nombreComercial: nombreCompleto,
+                                            direccionComprador: direccion || null,
+                                            telefono: telefono || null,
+                                            email: email || null,
                                             idCliente: 0
                                         }
                                     }) 

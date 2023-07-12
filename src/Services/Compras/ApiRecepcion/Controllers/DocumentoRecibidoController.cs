@@ -1,5 +1,5 @@
 ﻿using ApiRecepcion.Utils; 
-using Common.Logs;
+using Services.Common.Logs;
 using Compras.Application;
 using DataAccess;
 using Domain.Dtos; 

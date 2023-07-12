@@ -50,6 +50,7 @@
 		<None Remove="Reports\GestionReporte\RetencionVentaRG.rdlc" />
 		<None Remove="Reports\GuiaRemision.rdlc" />
 		<None Remove="Reports\Inventario\ConsolidacionInventario.rdlc" />
+		<None Remove="Reports\Inventario\ConsumoDiario.rdl" />
 		<None Remove="Reports\Inventario\Kardex.rdlc" />
 		<None Remove="Reports\Inventario\TransferenciaBodega.rdl" />
 		<None Remove="Reports\NotaCredito.rdlc" />
@@ -154,6 +155,9 @@
 		</Content>
 		<Content Include="Reports\Inventario\ConsolidacionInventario.rdlc">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Reports\Inventario\ConsumoDiario.rdl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Reports\Inventario\Kardex.rdlc">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
