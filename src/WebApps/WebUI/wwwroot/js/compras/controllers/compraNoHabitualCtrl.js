@@ -137,8 +137,8 @@ function compraNoHabitualCtrl($scope, commonSvc, compraNoHabSvc, mS, tS, modalSv
             let query = {
                 typeList: 1,
                 codEstab: $scope.dataSearch.codEstab,
-                dateStart: _fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
-                dateEnd: _fS.formatDateTimeZone($scope.dataSearch.fechaFin),
+                dateStart: _fS.formatDateMoment($scope.dataSearch.fechaInicio),
+                dateEnd: _fS.formatDateMoment($scope.dataSearch.fechaFin),
                 checkBoxProveedor: $scope.dataSearch.idProveedor > 0,
                 idProveedor: $scope.dataSearch.idProveedor,   
                 checkBoxEstado: $scope.dataSearch.estado ? true : false,
