@@ -311,9 +311,10 @@ namespace Customer.API.Services
                 Stream stream = streamTask.Result;
                 var sr = new StreamReader(stream);
                 Html = HttpUtility.HtmlDecode(sr.ReadToEnd());
-                Html = Html.Replace("[", "");
-                Html = Html.Replace("]", "");
-                PersonaDatosError = JsonConvert.DeserializeObject<DatosPersonaSriUpdate>(Html);
+                //Html = Html.Replace("[", "");
+                //Html = Html.Replace("]", "");
+                var respSri = JsonConvert.DeserializeObject<List<DatosPersonaSriUpdate>>(Html);
+                PersonaDatosError = respSri[0];
                 if (PersonaDatosError == null)
                 {
                     PersonaDatosError = new DatosPersonaSriUpdate();

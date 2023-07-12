@@ -43,7 +43,7 @@
         public string agenteRetencion { get; set; }
         public string contribuyenteEspecial { get; set; }
         public InformacionFechasContribuyente informacionFechasContribuyente { get; set; }
-        public RepresentantesLegales representantesLegales { get; set; }
+        public List<RepresentantesLegales> representantesLegales { get; set; }
         public object motivoCancelacionSuspension { get; set; }
         public string contribuyenteFantasma { get; set; }
         public string transaccionesInexistente { get; set; }
@@ -51,6 +51,7 @@
         public List<Establecimiento> Establecimientos { get; set; }
         //custom
         public string Error { get; set; }
+        public bool NetworkError { get; set; }
         public string nombreComercial { get; set; }
         public string direccion { get; set; }
         public string email { get; set; }
