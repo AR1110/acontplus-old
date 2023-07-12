@@ -997,9 +997,11 @@
                     byCliente: $scope.dataSearch.byCliente,
                     fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
-                    typeList : 2
+                    typeList : 2,
+                    pageIndex: 1,
+                    pageSize: 100
                 }
-                proformaSvc.getAll(dataSearch).then(async response => {
+                proformaSvc.getAll(dataSearch).then(async ({proformas}) => {
                     $scope.gridOptionsSelectedDocs.columnDefs = [{
                         name: 'Nro. Doc',
                         field: 'nroDocumento'
@@ -1045,7 +1047,7 @@
                     },
                     ];
 
-                    this.documentos = response;
+                    this.documentos = proformas;
                     await this.setDataGridOptionsChildren();
                 }).catch(error => {
                     hideLoader();
