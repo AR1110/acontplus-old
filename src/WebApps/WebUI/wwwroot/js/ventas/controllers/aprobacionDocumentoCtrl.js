@@ -925,7 +925,7 @@
                     typeList: 2,
                     tipoFecha: 'FE',
                     pageIndex: 1,
-                    pageSize: 100,
+                    pageSize: 50,
                 }
                
                 notaEntregaSvc.getAll(dataSearch).then(async ({notaEntregas}) => { 
@@ -999,7 +999,7 @@
                     fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
                     typeList : 2,
                     pageIndex: 1,
-                    pageSize: 100
+                    pageSize: 50
                 }
                 proformaSvc.getAll(dataSearch).then(async ({proformas}) => {
                     $scope.gridOptionsSelectedDocs.columnDefs = [{
