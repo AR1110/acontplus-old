@@ -394,5 +394,17 @@
     "inputFiles": [
       "wwwroot/js/modal/ventas/modalNotaEntregaCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/ventas/modalProformaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/ventas/modalProformaCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/homeCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/homeCtrl.js"
+    ]
   }
 ]
