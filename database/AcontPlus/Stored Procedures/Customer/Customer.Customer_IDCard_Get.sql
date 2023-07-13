@@ -31,6 +31,7 @@ BEGIN
                                 FROM Customer.Customer 
 								WHERE LTRIM(RTRIM(IDCard)) = LTRIM(RTRIM(@id))
 								AND SriValidation = 1
+								AND Deleted is null
 			RETURN
 		END
 
@@ -39,5 +40,6 @@ BEGIN
                                 FROM Customer.Customer 
 								WHERE LTRIM(RTRIM(IDCard)) = LTRIM(RTRIM(@id))
 								AND SriValidation = 1
+								AND Deleted is null
 END
 GO
