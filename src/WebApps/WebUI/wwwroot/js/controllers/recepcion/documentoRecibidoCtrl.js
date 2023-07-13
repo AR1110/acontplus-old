@@ -95,11 +95,11 @@
                     eventHandlers: {
                         'apply.daterangepicker': function (event, picker) {
                             $scope.getComprobantes()
-                            console.log('applied')
+                            //console.log('applied')
                         }
                     }
                 }
-            }; 
+            };
 
             //console.log(_urlService)
 
@@ -239,7 +239,7 @@
                     allowEscapeKey: false,
                     allowEnterKey: false
                 }).then(function () {
-                    console.log('Confirm')
+                    //console.log('Confirm')
                 })
 
 
@@ -339,7 +339,6 @@
                 $scope.uploadXml($scope.files);
             });
             $scope.$watch('file', function () {
-                console.log("file single")
                 if ($scope.file != null) {
                     $scope.files = [$scope.file];
                 }
@@ -396,12 +395,12 @@
                     .then(function () {
                         // Todas las peticiones se han completado con éxito
                         //tS.toastr("info", "Todas las peticiones se han completado")
-                        console.log('Todas las peticiones se han completado');
+                        //console.log('Todas las peticiones se han completado');
                     })
                     .catch(function (error) {
                         // Al menos una de las peticiones ha fallado
                         tS.toastr("danger", "Al menos una de las peticiones ha fallado")
-                        console.log('Al menos una de las peticiones ha fallado:', error);
+                        //console.log('Al menos una de las peticiones ha fallado:', error);
                     });
             };
             // $scope.uploadXml = async (files) => {
@@ -590,14 +589,12 @@
 
                     mS.getData('get', 'DocumentoRecibido/Get/' + JSON.stringify(data), null, true).then(
                         response => {
-                            console.log(response)
                             if (response.code == '0') {
                                 tS.toastr('warning', response.message)
                             }
                             if (response.code == '1') {
                                 let arrTemp = JSON.parse(response.payload)[0]
                                 $scope.mergedDocs = arrTemp;
-                                console.log($scope.mergedDocs)
                             }
                         }
                     ).catch(error => {
@@ -611,7 +608,7 @@
             }
 
             $("#docRelModal").on('hide.bs.modal', () => {
-                console.log('close doc_relacionado')
+
             })
 
 
@@ -670,7 +667,6 @@
                         alert('No ha seleccionado ningun archivo')
                         return;
                     }
-                    console.log(file)
                     mS.getDataFile('DocumentoRecibido/' + $scope.selected[0].idDocumento + '/' + $scope.selected[0].claveAcceso, file, null, true).then(
                         response => {
                             hideLoader()
@@ -916,7 +912,6 @@
                             $scope.selectedEstab.codEstab = $scope.query.codEstab
                             $scope.getFormData()
                             $scope.fullComprobante = response.payload;
-                            console.log($scope.fullComprobante)
                             //poner condicionales de acuerdo al tipo de documento
                             let codDoc = $scope.fullComprobante.infoTributaria.codDoc
                             $scope.infoTributaria = $scope.fullComprobante.infoTributaria
@@ -1037,7 +1032,6 @@
                                     break;
                                 case "07":
                                     $scope.infoCompRetencion = $scope.fullComprobante.infoCompRetencion
-                                    console.log($scope.infoRetencion)
                                     $('#retencionModal').modal('show')
                                     break;
                                 default:
@@ -1045,7 +1039,6 @@
                             }
                             /** Info Adicional */
                             if ($scope.fullComprobante.infoAdicional) {
-                                console.log($scope.fullComprobante.infoAdicional)
                             }
 
                         }
@@ -1135,17 +1128,14 @@
                             for (const element of $scope.tiposIdentificacion) {
                                 if ($scope.provCliente.ruc.length == 10 && element.codigoSri == "05") {
                                     $scope.provCliente.idTipoIdentificacion = element.idTipoIdentificacion;
-                                    console.log('yes')
                                 }
                                 if ($scope.provCliente.ruc.length == 13 && element.codigoSri == "04") {
                                     $scope.provCliente.idTipoIdentificacion = element.idTipoIdentificacion;
-                                    console.log('yes')
                                 }
                             }
                             if ($scope.provCliente.ruc.length < 10 || $scope.provCliente > 13) {
                                 document.getElementById('idTipoIdentificacionProv').removeAttribute('disabled')
                             }
-                            console.log($scope.arraysProvClient)
                             $scope.modalRefProv = modalService.openModalCustom({
                                 template: '~/Areas/DocumentoRecibido/Pages/Shared/_CompImpProveedor.cshtml',
                                 size: 'xl',
@@ -1374,7 +1364,6 @@
                                         etiquetas: etiquetasMapper
                                     }
                                 })
-                                console.log($scope.tempDetail)
 
                             }
                         }).catch(error => {
@@ -1395,7 +1384,7 @@
                         idDocumento: $scope.selected[0].idDocumento
                     }), null, true).then(response => {
                         if (response.code == '0') {
-                            console.log(response)
+                            //console.log(response)
                         }
                         if (response.code == '1') {
                             let dtAdicional = JSON.parse(response.payload);
@@ -1446,7 +1435,7 @@
                         })
                     }
                 })
-                console.log(item)
+                //console.log(item)
             }
 
             $scope.saveArticleTemp = function (tipo, data) {
@@ -1789,68 +1778,18 @@
                     let { MODAL_FILE_CTRL, MODAL_HISTORIAL_COMPRA } = nameModalConst.doc_recibido;
                     let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_HISTORIAL_COMPRA['controller']];
 
-                    modalService.openModalCustom({
+                    $scope.modalCH = modalService.openModalCustom({
                         controller: controller,
                         template: '~/Areas/DocumentoRecibido/Pages/Shared/_HistoryCompras.cshtml',
                         size: 'xl',
                         params: item,
                         isRenderRazorPartial: true
                     })
+                    
 
-                    //$scope.articleName = item.descripcion
-                    // mS.getData('get', '/CompraHabitual/Get?json=' + JSON.stringify({ tipo: 3, idArticulo: item.idArticulo })).then(
-                    //     response => {
-                    //         if (!response.payload) {
-                    //             tS.toastr('warning', 'Este articulo aun no tiene registros de compra habitual')
-                    //         } else {
-                    //             $scope.historyComprasArticle = JSON.parse(response.payload)
-                    //             //console.log($scope.historyComprasArticle)
-                    //             $scope.articleName = $scope.historyComprasArticle[0].articulo
-                    //             $scope.modalRefAHC = modalService.openModalSecond(null, 'DocumentoRecibido/_HistoryCompras.cshtml', 'xl', null, true, 'uibModalFullScreen', $scope)
-                    //             $scope.modalRefAHC.result.then(res => { })
-                    //         }
-                    //     }
-                    // )
-                } catch (error) {
-                    console.log(error)
-                }
-            }
-
-            $scope.askToDeleteCH = function (item) {
-                Swal.fire({
-                    title: '¿Está seguro/a de desvincular este articulo de compras habituales?',
-                    text: "¡No podrás revertir esto!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Si!',
-                    cancelButtonText: 'No',
-                    allowOutsideClick: false
-                }).then((result) => {
-                    if (result.value) {
-                        $scope.deleteCH(item)
-                    }
-                })
-            }
-            $scope.deleteCH = (item) => {
-                try {
-                    mS.getData('delete', 'CompraHabitual/Delete?id=' + item.idCompraHabitual, null, true).then(
-                        response => {
-                            if (response.code == '0') {
-                                tS.toastr('warning', response.message)
-                                return
-                            }
-                            if (response.code == '1') {
-                                let index = $scope.historyComprasArticle.indexOf(item)
-                                $scope.historyComprasArticle.splice(index, 1)
-                                $scope.getTempDetails()
-                                tS.toastr('success', response.message)
-                            }
-                        }, error => {
-                            console.log(error)
-                        }
-                    )
+                    $scope.modalCH.result.then(res => {
+                        $scope.getTempDetails()
+                    })
                 } catch (error) {
                     console.log(error)
                 }
