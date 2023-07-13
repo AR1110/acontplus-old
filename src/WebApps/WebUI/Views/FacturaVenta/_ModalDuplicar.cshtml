@@ -89,7 +89,7 @@
 
                         <input type="text" id="clienteSearchInvoice" name="clienteSearchInvoice" class="form-control border-select"
                             ng-model="$ctrl.cliente.nombreFiscal" cliente-search-drtv on-select="$ctrl.onSelectedClienteChange(result)"
-                            on-keyup-cliente="$ctrl.onKeyupSearchCliente()" placeholder="Ingrese C.I o Nombre Comercial"
+                            on-keyup="$ctrl.onKeyupSearchCliente()" placeholder="Ingrese C.I o Nombre Comercial"
                             onclick="select();">
 
                         <script type="text/ng-template" id="autocompleteClienteTemplate.html">
