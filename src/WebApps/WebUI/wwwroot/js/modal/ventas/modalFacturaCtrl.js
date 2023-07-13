@@ -706,7 +706,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
         }else{
             this.newCustomer = false;
         }
-        this.cliente = result;
+        this.cliente = result; 
     }
 
     

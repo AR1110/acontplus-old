@@ -549,6 +549,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
             this.newCustomer = false;
         }
         this.cliente = result;
+        this.$scope.$apply();
     }
 
 
