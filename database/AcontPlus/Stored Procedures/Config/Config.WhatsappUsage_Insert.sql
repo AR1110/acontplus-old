@@ -25,7 +25,7 @@ BEGIN
 	BEGIN TRY
 		BEGIN TRAN
 			INSERT INTO Config.WhatsappUsage(ruc, fechaInicio, limite, ilimitado, estado, idUsuario)
-			SELECT ruc, dbo.ufnGetDateEcuador(), limite, ilimitado, estado, @idUsuario FROM OPENJSON (@json) 
+			SELECT ruc, dbo.ufnGetDateEcuador(), limite, ilimitado, ISNULL(estado, 1), @idUsuario FROM OPENJSON (@json) 
 														WITH (
 																ruc VARCHAR(25) '$.ruc',
 																limite INT '$.limite',

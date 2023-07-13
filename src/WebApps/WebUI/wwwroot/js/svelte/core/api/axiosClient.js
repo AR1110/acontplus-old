@@ -23,9 +23,9 @@ function setRefreshedTokens(tokens) {
 async function logout() {
     console.log("logout...");
 }
-console.log(getCurrentAccessToken());
+//console.log(getCurrentAccessToken());
 var decodedJwt = jwt_decode(getCurrentAccessToken());
-console.log(decodedJwt);
+//console.log(decodedJwt);
 
 export const client = createAxiosClient({
     options: {
