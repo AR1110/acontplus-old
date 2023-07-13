@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.min.js?v=0.80";
+} from "./modalBaseCtrl.min.js?v=0.81";
 
 
 class ModalProformaCtrl extends ModalBaseCtrl {
@@ -88,6 +88,16 @@ class ModalProformaCtrl extends ModalBaseCtrl {
 
             })
         }
+    }
+
+
+    
+    onKeyupCustomer(){
+        if(!this.cliente.nombreFiscal){
+            console.log(this.cliente)
+            this.cliente = {};
+        }
+
     }
 
     /**

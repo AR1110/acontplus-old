@@ -228,15 +228,26 @@ export class ModalBaseCtrl {
      * @param {date} fechaEmision 
      */
     getFechaVencimiento() {
-        if (this.data.fechaEmision && this.tiempoCreditos.length > 0) {
-            let tiempoCredito = this.tiempoCreditos.find(item => item.idTiempoCredito === this.data.idTiempoCredito);
-            let diasCredito = typeof tiempoCredito === 'object' ? tiempoCredito.diasCredito : 0;
 
-            this.data.fechaVencimiento = this._fS.getFechaVencimiento(this.data.fechaEmision, diasCredito);
-            this.fechaEmisionEscrita = this._fS.getFechaEscrita(this.data.fechaEmision);
-            this.fechaVencimientoEscrita = this._fS.getFechaEscrita(this.data.fechaVencimiento);
-
+        if(!this.data.fechaEmision){
+            this.data.fechaEmision = new Date();
         }
+        
+        let tiempoCredito = this.tiempoCreditos.find(item => item.idTiempoCredito === this.data.idTiempoCredito);
+        let diasCredito = 0;
+        if(tiempoCredito){
+            diasCredito = tiempoCredito.diasCredito;
+        }else if(this.tiempoCreditos.length > 0){
+            tiempoCredito = this.tiempoCreditos[0];
+            diasCredito = tiempoCredito.diasCredito;
+            this.data.idTiempoCredito = tiempoCredito.idTiempoCredito;
+        } 
+
+        this.data.fechaVencimiento = this._fS.getFechaVencimiento(this.data.fechaEmision, diasCredito);
+        this.fechaEmisionEscrita = this._fS.getFechaEscrita(this.data.fechaEmision);
+        this.fechaVencimientoEscrita = this._fS.getFechaEscrita(this.data.fechaVencimiento);
+
+        
     }
 
 

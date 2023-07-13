@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.36";
+} from "./modalBaseCtrl.js?v=0.37";
 
 
 class ModalNotaEntregaCtrl extends ModalBaseCtrl {
@@ -99,6 +99,14 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl {
                 }
             })
         }, 500)
+
+    }
+
+    onKeyupCustomer(){
+        if(!this.cliente.nombreFiscal){
+            console.log(this.cliente)
+            this.cliente = {};
+        }
 
     }
 

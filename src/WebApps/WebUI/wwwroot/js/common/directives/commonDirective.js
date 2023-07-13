@@ -589,10 +589,12 @@
             scope: {
                 onSelect: '&',
                 onKeyup:'&',
-                ngModel: '=',
+                ngModel: '<',
                 functionTrigger: '&'
             },
+            require: 'ngModel',
             link: function (scope, element, attrs) {
+                console.log(attrs);
 
                 function verificarNumero(numero) {
                     numero = numero ? numero.trim(): ""
@@ -606,9 +608,12 @@
                     return true;
                 }
 
-                scope.cliente = {
-                    nombreCliente: scope.ngModel
-                }
+                
+                // attrs.ngModel = scope.ngModel;
+                // scope.cliente = {
+                //     nombreCliente: scope.ngModel,
+                    
+                // }
 
                 scope.search = function (textSearch) {
                     if ( textSearch.length < 2) return;
@@ -707,12 +712,11 @@
                 element.attr('uib-typeahead', 'item as item.nombreFiscal for item in search($viewValue)');
                 element.attr('typeahead-on-select', 'onSelect({result: $item})');
                 element.attr('typeahead-template-url', 'customerSearchSaleTemplate.html');
-                element.attr('ng-keyup', 'onKeyup()');
-                element.attr('typeahead-editable', 'true');
-
-                 
-                // element.attr('ng-model', 'ngModel')
+                element.attr('ng-keyup', 'onKeyup()'); 
+                element.attr('typeahead-editable', 'true'); 
+                element.attr('ng-model', 'ngModel'); 
                 element.removeAttr('customer-search-sale-drtv');
+                
 
                 // Add CSS styles dynamically
                 element.attr('style', 'position:relative;');
