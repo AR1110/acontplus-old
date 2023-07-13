@@ -26,6 +26,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
+	  <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <ProjectReference Include="..\..\Common\DataAccess\DataAccess.csproj" />
 	  <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
 	  <ProjectReference Include="..\FactElect.Application\FactElect.Application.csproj" />
