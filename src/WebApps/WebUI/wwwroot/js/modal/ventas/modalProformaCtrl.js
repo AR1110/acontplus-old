@@ -90,6 +90,16 @@ class ModalProformaCtrl extends ModalBaseCtrl {
         }
     }
 
+
+    
+    onKeyupCustomer(){
+        if(!this.cliente.nombreFiscal){
+            console.log(this.cliente)
+            this.cliente = {};
+        }
+
+    }
+
     /**
      * 
      * @param {*} entity Datos del Articulo 

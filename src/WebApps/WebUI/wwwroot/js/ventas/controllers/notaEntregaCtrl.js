@@ -322,19 +322,19 @@
         $scope.openModalEdit = async (item) => {
             try {
 
-                if (item.anulada) {
-                    _fS.sweetAlert('warning', 'El documento ya se encuentra anulada');
-                    return
-                }
+                // if (item.anulada) {
+                //     _fS.sweetAlert('warning', 'El documento ya se encuentra anulada');
+                //     return
+                // }
 
 
-                let result = await _commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.E);
-                if (result.code === "2") {
-                    _commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.E);
-                    return
-                }
+                // let result = await _commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.E);
+                // if (result.code === "2") {
+                //     _commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.E);
+                //     return
+                // }
 
-                showLoader();
+                // showLoader();
 
 
                 let { MODAL_FILE_CTRL, MODAL_EDITAR } = _nombreModalConst.nota_entrega;
