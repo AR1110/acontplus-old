@@ -110,8 +110,9 @@
                     checkBoxInventario: $scope.dataSearch.checkBoxInventario,
                     bySubFamilia: $scope.dataSearch.bySubFamilia,
                     byTipoIva: $scope.dataSearch.byTipoIva,
-                    byStock: $scope.dataSearch.byStock,
-                    
+                    byStock: $scope.dataSearch.byStock,                    
+                    checkBoxStatus: ['0', '1'].includes($scope.dataSearch.status),
+                    status: $scope.dataSearch.status
                   };
     
 
