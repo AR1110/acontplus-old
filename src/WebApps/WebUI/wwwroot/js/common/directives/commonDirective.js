@@ -550,6 +550,7 @@
                 element.attr('typeahead-template-url', 'autocompleteClienteTemplate.html');
                 element.attr('ng-keyup', 'onKeyupCliente()');
                 element.attr('typeahead-editable', 'false');
+                element.attr('ng-value', 'ngModel');
 
                  
                 // element.attr('ng-model', 'ngModel')
@@ -610,10 +611,10 @@
 
                 
                 // attrs.ngModel = scope.ngModel;
-                // scope.cliente = {
-                //     nombreCliente: scope.ngModel,
+                scope.cliente = {
+                    nombreCliente: scope.ngModel,
                     
-                // }
+                }
 
                 scope.search = function (textSearch) {
                     if ( textSearch.length < 2) return;
@@ -714,7 +715,7 @@
                 element.attr('typeahead-template-url', 'customerSearchSaleTemplate.html');
                 element.attr('ng-keyup', 'onKeyup()'); 
                 element.attr('typeahead-editable', 'true'); 
-                element.attr('ng-model', 'ngModel'); 
+                element.attr('ng-value', 'ngModel'); 
                 element.removeAttr('customer-search-sale-drtv');
                 
 
