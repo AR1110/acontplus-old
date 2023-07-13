@@ -27,7 +27,7 @@ namespace ApiVentas.Controllers
                 await _db.SPExecute("Ventas.Proforma_Get", true);
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
-                _response = _db.GetDataTableAsync();
+                _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
             {

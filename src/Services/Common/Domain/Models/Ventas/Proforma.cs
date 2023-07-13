@@ -29,5 +29,10 @@
         public decimal total { get; set; }
         public decimal tarifa { get; set; }
         public string observacion { get; set; }
+        public string identificacionComprador { get; set; }
+        public string razonSocialComprador { get; set; }
+        public string direccionComprador { get; set; }
+        public string email { get; set; }
+        public string telefono { get; set; }
     }
 }

@@ -207,15 +207,15 @@
                     style=" max-height: 350px; overflow-x: hidden">
                     <table resize master md-table name="innerWireTable" md-row-select="true" multiple="true"
                         ng-model="selectedComprobantes">
-                        <thead md-head fix-head>
+                        <thead md-head fix-head md-order="dataSearch.order">
                             <tr md-row>
                                 @* <th md-column>Nro</th> *@
                                 <th md-column>Op.</th>
                                 <th md-column>Comprobante</th>
-                                <th md-column>F. Emisión</th>
-                                <th md-column>serie</th>
+                                <th md-column md-order-by="fechaEmision">F. Emisión</th>
+                                <th md-column md-order-by="serieComprobante">serie</th>
                                 <th md-column>Ruc Receptor</th>
-                                <th md-column>Razón Social Receptor</th>
+                                <th md-column md-order-by="razonSocial">Razón Social Receptor</th>
                                 <th md-column>Clave de acceso/Nro. autorización</th>
                                 <th md-column>Estado</th>
                                 <th md-column>Usuario</th>
@@ -224,7 +224,7 @@
                         <tbody md-body>
                             <tr md-row md-auto-select="false" md-select="item" ng-disabled="!(item.codEstado===2)"
                                 md-on-select="onSelectComprobante"
-                                ng-repeat="item in comprobantes | filter: textSearch " ng-class="item.style">
+                                ng-repeat="item in comprobantes | orderBy: dataSearch.order | filter: textSearch " ng-class="item.style">
 
                                 <td md-cell>
                                     <md-menu>

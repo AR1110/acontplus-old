@@ -17,8 +17,11 @@
                     throw response;
                 }
                 if(response.code==="1"){
-                    let proformas = JSON.parse(response.payload) || []; 
-                    return proformas.map(item =>{
+                    let mainData = JSON.parse(response.payload) || [] ;
+                    let proformasRepos = mainData[0]; 
+                    let {totalRecords, totalDocument} = proformasRepos[0]; 
+                    
+                    let proformas = proformasRepos.map(item =>{
                         return {
                             comprobante: 'Proforma',
                             entidad: item.entidad,
@@ -44,6 +47,10 @@
                             codEstado: item.codEstado,
                         }
                     })
+                    return {
+                        proformas,
+                        dataTotals: {totalRecords, totalDocument}
+                    }
                 }
             }).catch(error =>{
                 console.log('obtener datos->proforma service', error)
@@ -59,10 +66,19 @@
                 formattedDateForInsert = data.fechaEmision
             } 
 
+            if(cliente.idCliente===0 && !cliente.razonSocialComprador && !cliente.identificacionComprador){
+                throw new Error("Datos de cliente no proporcionados")
+            }
+
             let proforma = Object.assign({}, data);
              
             //Tarifa Aplicada al Documento
-            proforma.idCliente = cliente.idCliente;
+            proforma.idCliente = cliente.idCliente; 
+            proforma.identificacionComprador = cliente.identificacionComprador;
+            proforma.razonSocialComprador = cliente.razonSocialComprador;
+            proforma.direccionComprador = cliente.direccionComprador;
+            proforma.email = cliente.email;
+            proforma.telefono = cliente.telefono;
             proforma.fechaEmision = fS.formatDateTimeZone(formattedDateForInsert)
             // this.data.tarifa = this.actividadTipoIva.tarifa;            
     

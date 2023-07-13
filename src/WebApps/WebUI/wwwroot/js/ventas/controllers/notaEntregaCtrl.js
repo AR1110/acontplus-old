@@ -29,6 +29,7 @@
 
         $scope.recordsQuantity = [10, 25, 50, 100];
         $scope.dataSearch = {
+            order: '',
             tipo: 1,
             pageSize: 50,
             pageIndex: 1,
@@ -167,7 +168,7 @@
 
                     //Totals 
                     $scope.dataSearch.totalRecords = dataTotals.totalRecords;
-                    $scope.total = _fS.roundNumber(dataTotals.total, 5);
+                    $scope.total = _fS.roundNumber(dataTotals.totalDocument, 5);
                     $scope.totalAbono = _fS.roundNumber(dataTotals.totalAbono, 5);
                     $scope.totalSaldo = _fS.roundNumber(dataTotals.totalSaldo, 5);
                     

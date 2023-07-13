@@ -194,7 +194,7 @@ function facturaVentaCtrl(
 
                 //Totales
                 $scope.dataSearch.totalRecords = dataTotals.totalRecords;
-                $scope.total = _fS.roundNumber(dataTotals.total, 5);
+                $scope.total = _fS.roundNumber(dataTotals.totalDocument, 5);
                 $scope.totalAbono = _fS.roundNumber(dataTotals.totalAbono, 5);
                 $scope.totalSaldo = _fS.roundNumber(dataTotals.totalSaldo, 5);
                 // $scope.getTotales();

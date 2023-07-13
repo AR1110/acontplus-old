@@ -24,7 +24,8 @@
 
                     let mainData = JSON.parse(response.payload);
                     let facturasRepository = mainData[0];
-                    let dataTotals = mainData[1][0];
+                    let {totalRecords, totalDocument, totalAbono, totalSaldo} = facturasRepository[0]; 
+
                     let facturas = facturasRepository.map(item=>{
                         return {
                             codigoTipoDoc:'FV',
@@ -72,7 +73,7 @@
 
                     return {
                         facturas,
-                        dataTotals
+                        dataTotals: {totalRecords, totalDocument, totalAbono, totalSaldo}
                     }
 
                 }

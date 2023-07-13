@@ -3657,7 +3657,6 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox72</rd:DefaultName>
                 <Top>7.18761cm</Top>
-                <Left>0cm</Left>
                 <Height>0.6cm</Height>
                 <Width>8.87812cm</Width>
                 <ZIndex>7</ZIndex>
@@ -3909,7 +3908,6 @@
                 <MIMEType>=Parameters!mimeTypeBarcode.Value</MIMEType>
                 <Sizing>Fit</Sizing>
                 <Top>6.01682cm</Top>
-                <Left>0cm</Left>
                 <Height>1.13552cm</Height>
                 <Width>8.87812cm</Width>
                 <ZIndex>15</ZIndex>
@@ -3958,25 +3956,25 @@
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
-      <Prompt>ReportParameter1</Prompt>
+      <Prompt>logo</Prompt>
     </ReportParameter>
     <ReportParameter Name="mimeType">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
-      <Prompt>ReportParameter1</Prompt>
+      <Prompt>mimeType</Prompt>
     </ReportParameter>
     <ReportParameter Name="barcode">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
-      <Prompt>ReportParameter1</Prompt>
+      <Prompt>barcode</Prompt>
     </ReportParameter>
     <ReportParameter Name="mimeTypeBarcode">
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
-      <Prompt>ReportParameter1</Prompt>
+      <Prompt>mimeTypeBarcode</Prompt>
     </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>
