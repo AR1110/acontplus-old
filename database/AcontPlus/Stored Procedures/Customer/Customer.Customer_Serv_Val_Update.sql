@@ -30,25 +30,45 @@ BEGIN
 
 	BEGIN TRY
 		BEGIN TRAN
-				IF NOT EXISTS(SELECT 1 FROM Customer.Customer WHERE IDCard = @IDCard)
+			--IF NOT EXISTS(SELECT 1 FROM Customer.Customer WHERE IDCard = @IDCard)
+			--	BEGIN
+			--		SET @IDType = (SELECT CASE WHEN LEN(@IDCARD) = 13 THEN '04' WHEN LEN(@IDCARD) = 10 THEN '05'END) 
+			--		INSERT INTO Customer.Customer(IDType, IDCard, BusinessName, TradeName, SriValidation)
+			--		SELECT @IDType, LTRIM(RTRIM(@IDCard)), LTRIM(RTRIM(@businessName)), LTRIM(RTRIM(@tradeName)), 1
+			--		SET @customerId = @@IDENTITY
+			--	END
+			--ELSE
+			--	BEGIN
+			--		UPDATE Customer.Customer SET SriValidation = 1, businessName = @businessName, tradeName = @tradeName 
+			--		WHERE IDCard = @IDCard
+			--		SET @customerId = (SELECT ID FROM Customer.Customer WHERE IDCard = LTRIM(RTRIM(@IDCARD)))
+			--	END
+
+			--UPDATE Cliente SET nombreComercial = @tradeName, nombreFiscal = @businessName, validationSri = 1, customerId = @customerId
+			--WHERE numeroIdentificacion = @IDCard AND validationSri = 0
+
+			--UPDATE Proveedor SET nombreComercial = @tradeName, nombreFiscal = @businessName, validationSri = 1, customerId = @customerId
+			--WHERE numeroIdentificacion = @IDCard AND validationSri = 0
+
+
+			SET @customerId = (SELECT id FROM Customer.Customer where IDCard = @IDCard)
+			
+			IF EXISTS(SELECT 1 FROM Cliente WHERE CustomerId = @customerId AND LTRIM(RTRIM(nombreFiscal)) != LTRIM(RTRIM(@businessName)))
 				BEGIN
-					SET @IDType = (SELECT CASE WHEN LEN(@IDCARD) = 13 THEN '04' WHEN LEN(@IDCARD) = 10 THEN '05'END) 
-					INSERT INTO Customer.Customer(IDType, IDCard, BusinessName, TradeName, SriValidation)
-					SELECT @IDType, LTRIM(RTRIM(@IDCard)), LTRIM(RTRIM(@businessName)), LTRIM(RTRIM(@tradeName)), 1
-					SET @customerId = @@IDENTITY
-				END
-			ELSE
-				BEGIN
-					UPDATE Customer.Customer SET SriValidation = 1, businessName = @businessName, tradeName = @tradeName 
-					WHERE IDCard = @IDCard
-					SET @customerId = (SELECT ID FROM Customer.Customer WHERE IDCard = LTRIM(RTRIM(@IDCARD)))
+					UPDATE Cliente SET nombreComercial = @tradeName, nombreFiscal = @businessName, validationSri = 1
+					WHERE customerId = @customerId
 				END
 
-			UPDATE Cliente SET nombreComercial = @tradeName, nombreFiscal = @businessName, validationSri = 1, customerId = @customerId
-			WHERE numeroIdentificacion = @IDCard AND validationSri = 0
-
-			UPDATE Proveedor SET nombreComercial = @tradeName, nombreFiscal = @businessName, validationSri = 1, customerId = @customerId
-			WHERE numeroIdentificacion = @IDCard AND validationSri = 0
+			IF EXISTS(SELECT 1 FROM Proveedor p WHERE CustomerId = @customerId AND LTRIM(RTRIM(nombreFiscal)) != LTRIM(RTRIM(@businessName)))
+				BEGIN
+					UPDATE Proveedor SET nombreComercial = @tradeName, nombreFiscal = @businessName, validationSri = 1
+					WHERE customerId = @customerId
+				END
+			--IF EXISTS(SELECT 1 FROM Customer.Customer WHERE Id = @customerId)
+			--	BEGIN
+					UPDATE Customer.Customer SET tradeName = @tradeName, businessName = @businessName, updatedAt = GETDATE(), BusinessNameUpdated = 1
+					WHERE Id = @customerId
+				--END
 		COMMIT TRAN
 	END TRY
 	BEGIN CATCH

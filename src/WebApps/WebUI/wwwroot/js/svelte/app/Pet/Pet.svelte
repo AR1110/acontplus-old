@@ -200,7 +200,7 @@
 		editStatus = false;
 	};
 
-	const onSubmitHandler = () => {
+	const save = () => {
 		if (!editStatus) {
 			addPet();
 		} else {
@@ -294,7 +294,7 @@
 		<test-counter></test-counter> -->
 
 {#if showForm | editStatus}
-	<form on:submit|preventDefault={onSubmitHandler}>
+	<form on:submit|preventDefault={save}>
 		<div class="row">
 			<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
 				<div class="form-group">
@@ -615,7 +615,6 @@
 
 <style>
 	@import "../dist/css/style.css";
-	@import "bootstrap-toggle";
 
 	.floating-results {
 		position: absolute;

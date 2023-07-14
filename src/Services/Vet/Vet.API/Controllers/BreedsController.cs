@@ -18,7 +18,7 @@ namespace Vet.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Breed>>> GetBreeds()
         {
-            return await _context.Breeds.ToListAsync();
+            return await _context.Breeds.Include(t => t.PetType).ToListAsync();
         }
 
         // GET: api/Breeds/5

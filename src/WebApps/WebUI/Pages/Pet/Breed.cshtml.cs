@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebUI.Areas.Pet.Pages
+namespace WebUI.Pages.Pet
 {
-    public class IndexModel : PageModel
+    public class BreedModel : PageModel
     {
         public void OnGet()
         {
