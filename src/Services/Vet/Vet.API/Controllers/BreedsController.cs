@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing;
 using Vet.Core.Entities;
 using Vet.Infrastructure.Data;
 
@@ -18,7 +19,7 @@ namespace Vet.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Breed>>> GetBreeds()
         {
-            return await _context.Breeds.Include(t => t.PetType).ToListAsync();
+            return await _context.Breeds.Include(t => t.PetType).Where(x =>x.Deleted == null).ToListAsync();
         }
 
         // GET: api/Breeds/5
@@ -87,8 +88,28 @@ namespace Vet.API.Controllers
                 return NotFound();
             }
 
-            _context.Breeds.Remove(petBreed);
-            await _context.SaveChangesAsync();
+            //_context.Breeds.Remove(petBreed);
+            //await _context.SaveChangesAsync();
+
+            petBreed.Deleted = true;
+            petBreed.Enabled = false;
+            _context.Entry(petBreed).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!BreedExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
             return NoContent();
         }

@@ -11,15 +11,25 @@ namespace Vet.Application.Services
     {
         private readonly VetContext _context;
         private readonly IADORepository _repository;
+        private readonly APIResponse _response;
         public PetService(VetContext context, IADORepository repository)
         {
             _context = context;
             _repository = repository;
+            _response = new APIResponse();
         }
-        public async Task<List<Pet>> GetAsync()
+        public async Task<APIResponse> GetAsync(Dictionary<string, object> parameters)
         {
-            var response = await _context.Pets.ToListAsync();
-            return response;
+            var dt = await _repository.GetDataTableAsync("Pet.Pet_Get", parameters);
+            if (DataValidation.DataTableIsNull(dt))
+            {
+                _response.Create(code: "0", "La transacción no devolvio respuesta");
+            }
+            else
+            {
+                _response.Create(code: "1", payload: Converters.DataTableToJSON(dt));
+            }
+            return _response;
         }
         public async Task<Pet> GetByIdAsync(int id)
         {
@@ -46,7 +56,6 @@ namespace Vet.Application.Services
 
         public async Task<APIResponse> SearchAsync(Dictionary<string, object> parameters)
         {
-            var _response = new APIResponse();
             var dt = await _repository.GetDataTableAsync("Pet.Pet_Get", parameters);
             if (DataValidation.DataTableIsNull(dt))
             {

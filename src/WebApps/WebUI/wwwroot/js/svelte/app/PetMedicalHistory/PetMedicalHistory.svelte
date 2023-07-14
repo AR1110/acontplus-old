@@ -10,6 +10,7 @@
 	import Add from "./components/Add.svelte";
 	import { showLoader, hideLoader } from "../../core/utils/loading-spinner";
 	let newRecord = false;
+
 	function openNew(open) {
 		newRecord = open;
 	}
@@ -118,11 +119,6 @@
 		}
 	};
 
-	const editHistory = (historyEdited) => {
-		// editStatus = true;
-		// pet = petEdited;
-	};
-
 	const formatDate = (inputDate) => {
 		let date = new Date(inputDate);
 		const day = String(date.getDate()).padStart(2, "0");
@@ -140,6 +136,15 @@
 			let petName = item.pet.name.toLowerCase();
 			return petName.includes(searchTerm.toLowerCase());
 		}));
+	};
+
+	let editStatus = false;
+	let historyEdited = {};
+
+	const editHistory = (item) => {
+		toast({ type: "info", message: "Funcionalidad en construccion" });
+		// editStatus = true;
+		// historyEdited = item;
 	};
 </script>
 
@@ -160,8 +165,8 @@
 	</div>
 </div>
 
-{#if newRecord}
-	<Add newRecord />
+{#if newRecord | editStatus}
+	<Add {newRecord} {editStatus} {historyEdited} />
 {:else}
 	<Search
 		bind:searchTerm
@@ -197,12 +202,12 @@
 								>
 									<i class="ti-trash" />
 								</button>
-								<!-- <button
+								<button
 									class="btn btn-outline-warning btn-sm"
 									on:click={editHistory(item)}
 								>
 									<i class="ti-pencil" />
-								</button> -->
+								</button>
 								<button
 									class="btn btn-outline-danger btn-sm"
 									on:click={getReport(item.id)}

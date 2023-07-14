@@ -1,6 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using System.Data; 
+using System.Data;
 using Vet.Core.Interfaces;
 using Vet.Infrastructure.Data;
 
@@ -19,18 +19,22 @@ namespace Vet.Infrastructure.Repositories
             using (var command = _context.Database.GetDbConnection().CreateCommand())
             {
                 command.CommandText = spName;
-                foreach (var parameter in parameters)
+                if (parameters.Count > 0)
                 {
-                    //AddSqlParameter(parameter.Key, parameter.Value);
-                    if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                    foreach (var parameter in parameters)
                     {
-                        SqlParameter sqlParam = new SqlParameter();
-                        sqlParam.ParameterName = parameter.Key;
-                        sqlParam.SqlDbType = GetDbType(parameter.Value);
-                        sqlParam.Value = parameter.Value ?? (object)DBNull.Value;
-                        command.Parameters.Add(sqlParam);
+                        //AddSqlParameter(parameter.Key, parameter.Value);
+                        if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                        {
+                            SqlParameter sqlParam = new SqlParameter();
+                            sqlParam.ParameterName = parameter.Key;
+                            sqlParam.SqlDbType = GetDbType(parameter.Value);
+                            sqlParam.Value = parameter.Value ?? (object)DBNull.Value;
+                            command.Parameters.Add(sqlParam);
+                        }
                     }
                 }
+
                 command.CommandType = CommandType.StoredProcedure;
                 await _context.Database.OpenConnectionAsync();
                 using (SqlDataAdapter adapter = new SqlDataAdapter())
@@ -48,9 +52,19 @@ namespace Vet.Infrastructure.Repositories
             using (var command = _context.Database.GetDbConnection().CreateCommand())
             {
                 command.CommandText = spName;
-                foreach (var parameter in parameters)
+                if (parameters.Count > 0)
                 {
-                    //AddSqlParameter((SqlCommand)command, parameter.Key, parameter.Value);
+                    foreach (var parameter in parameters)
+                    {
+                        if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                        {
+                            SqlParameter sqlParam = new SqlParameter();
+                            sqlParam.ParameterName = parameter.Key;
+                            sqlParam.SqlDbType = GetDbType(parameter.Value);
+                            sqlParam.Value = parameter.Value ?? (object)DBNull.Value;
+                            command.Parameters.Add(sqlParam);
+                        }
+                    }
                 }
                 command.CommandType = CommandType.StoredProcedure;
                 await _context.Database.OpenConnectionAsync();

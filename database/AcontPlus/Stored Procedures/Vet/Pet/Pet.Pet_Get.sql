@@ -26,37 +26,53 @@ BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE @tipo INT,
-			@textSearch VARCHAR(100)
+			@textSearch VARCHAR(100),
+			@sqlQuery NVARCHAR(MAX),
+			@params NVARCHAR(MAX)
+
+	
+	SET @params = N'@companyId INT,
+				   @textSearch VARCHAR(100) '
 
 	SELECT @tipo = tipo, @textSearch = textSearch FROM OPENJSON(@json) WITH(
 		tipo INT '$.tipo',
 		textSearch VARCHAR(100) '$.textSearch'
 	)
 
-	IF (@tipo = 2)
-		BEGIN
-
-			SELECT p.Id
+	SET @sqlQuery = N'SELECT p.Id
 				,p.[Name]
 				,p.Age
 				,p.Color
+				,p.[Enabled]
+				,p.CompanyId
+				,p.PetTypeId
+				,p.BreedId
+				,p.GenderId
 				,g.[Name] gender
 				,pt.[Name] petType
 				,b.[Name] breed
+				,c.id customerId
 				,c.businessName customer
 				,c.IDCard customerIdCard
-				,c.email
+				,cc.correo email
 			FROM Pet.Pet p
 				INNER JOIN Customer.Customer c ON p.CustomerId = c.Id
+				LEFT JOIN Cliente cc WITH(NOLOCK) ON c.Id = cc.customerId AND cc.idEntidad = @companyId
 				LEFT JOIN Pet.Gender g ON p.genderId = g.Id
 				LEFT JOIN Pet.PetType pt ON p.petTypeId = pt.Id
 				LEFT JOIN Pet.Breed b ON p.breedId = b.Id
 			WHERE p.CompanyId = @companyId
-				AND (
-					c.BusinessName LIKE '%' + @textSearch + '%' OR
+			AND p.Deleted IS NULL '
+
+
+	IF (@tipo = 2)
+		BEGIN
+			SET @sqlQuery = @sqlQuery + 'AND (
+					c.BusinessName LIKE ''%'' + @textSearch + ''%'' OR
 					c.IDCard = @textSearch OR
-					P.[Name] LIKE '%' + @textSearch + '%'
-				)
+					P.[Name] LIKE ''%'' + @textSearch + ''%''
+				)'
 		END
+	EXEC sp_executesql @sqlQuery, @params, @companyId, @textSearch;
 END
 GO

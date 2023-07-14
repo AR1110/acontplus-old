@@ -22,21 +22,35 @@ namespace Vet.API.Controllers
 
         // GET: api/Pet
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Pet>>> GetPets()
+        public async Task<ActionResult<APIResponse>> GetPets(string json)
         {
             int companyId = Convert.ToInt32(User.GetCompanyId());
             if (!_context.Pets.Any(x => x.CompanyId == companyId))
             {
                 return NoContent();
             }
-            return await _context.Pets
-                .Include(t => t.PetType)
-                .Include(b => b.Breed)
-                .Include(s => s.Gender)
-                .Where(x => x.CompanyId == companyId
-                && x.Enabled
-                )
-                .ToListAsync();
+            try
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    { "companyId", companyId },
+                    { "json", json}
+                };
+
+                return await _petService.GetAsync(parameters);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Error al buscar las mascotas:" + ex.Message);
+            }
+            //return await _context.Pets
+            //    .Include(t => t.PetType)
+            //    .Include(b => b.Breed)
+            //    .Include(s => s.Gender)
+            //    .Where(x => x.CompanyId == companyId
+            //    && x.Deleted == null
+            //    )
+            //    .ToListAsync();
         }
         // GET: api/Pet
         [HttpGet("search")]
