@@ -9,7 +9,7 @@ namespace Vet.Core.Entities
         public PetType PetType { get; set; }
         public int? PetTypeId { get; set; }
         [Required]
-        [MaxLength(2)]
+        [MaxLength(5)]
         public string Code { get; set; }
         [Required]
         [MaxLength(100)]

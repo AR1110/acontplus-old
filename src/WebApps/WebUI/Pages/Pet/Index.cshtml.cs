@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebUI.Areas.PetMedicalHistory.Pages
+namespace WebUI.Pages.Pet
 {
     public class IndexModel : PageModel
     {
