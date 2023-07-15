@@ -155,10 +155,7 @@
                                 <th md-column md-numeric md-order-by="total" totales-venta-view="ventaPermiso"><span>Total</span></th>
                                 <th md-column totales-venta-view="ventaPermiso"><span>Abono</span></th>
                                 <th md-column totales-venta-view="ventaPermiso"><span>Saldo</span></th>
-                                <th md-column><span>Nro. Ret</span></th>
-                                <th md-column><span>Nro. NC.</span></th>
                                 <th md-column><span>Estado</span></th>
-                                <th md-column><span>Estado SRI</span></th>
                                 <th md-column><span>F. Pago</span></th>
                                 <th md-column><span>Usuario</span></th>
                             </tr>
@@ -267,10 +264,7 @@
                                 <td md-cell totales-venta-view="ventaPermiso">${{item.total}}</td>
                                 <td md-cell totales-venta-view="ventaPermiso">${{item.abono}}</td>
                                 <td md-cell totales-venta-view="ventaPermiso">${{item.saldo}}</td>
-                                <td md-cell>{{item.nroRetencion}}</td>
-                                <td md-cell>{{item.nroNotaCredito}}</td>
                                 <td md-cell>{{item.estadoFinanciero}}</td>
-                                <td md-cell ng-bind-html="item.estadoSri"></td>
                                 <td md-cell>{{item.tiempoCredito?"CONTADO":"CREDITO"}}</td>
                                 <td md-cell>{{item.usuario}}</td>
                             </tr>
