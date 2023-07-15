@@ -513,11 +513,21 @@ export class ModalKardexCtrl extends KardexCtrl {
 
 
 export class ModalFiltroKardex {
-    static $inject = ["$uibModalInstance", "mainService", "commonService", "formulario", "toastService", "params"]
-    constructor($uibModalInstance, _mS, _commonSvc, _form, _tS, _params) {
+    static $inject = [
+        "$uibModalInstance", 
+        "mainService", 
+        "commonService",
+        "articuloService", 
+        "formulario", 
+        "toastService", 
+        "params"
+    ]
+    constructor($uibModalInstance, _mS, _commonSvc, articuloSvc, _form, _tS, _params) {
         this.$uibModalInstance = $uibModalInstance;
         this._mS = _mS;
         this._commonSvc = _commonSvc;
+
+        this.articuloSvc = articuloSvc;
         this.form = _form;
         this._tS = _tS;
         this._params = _params;
@@ -581,9 +591,16 @@ export class ModalFiltroKardex {
 
 
     articuloSearch(textSearch) {
-        return this._commonSvc.articuloSearchGeneral({
-            textSearch
-        });
+        if(textSearch.length < 2) return;
+
+        
+        return this.articuloSvc.search({busqueda: textSearch})
+        .catch(error=>{
+            console.log(error)
+        })
+        // return this._commonSvc.articuloSearchGeneral({
+        //     textSearch
+        // });
     }
 
     onKeyupArticuloSearchFiltro() {
