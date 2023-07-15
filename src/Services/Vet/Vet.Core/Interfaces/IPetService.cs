@@ -5,7 +5,7 @@ namespace Vet.Core.Interfaces
 {
     public interface IPetService
     {
-        Task<List<Pet>> GetAsync();
+        Task<APIResponse> GetAsync(Dictionary<string, object> parameters);
         Task<Pet> GetByIdAsync(int id);
         Task<Pet> AddAsync(Pet pet);
         Pet UpdateAsync(Pet pet);

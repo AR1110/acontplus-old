@@ -6,9 +6,11 @@
 	import {
 		showLoader,
 		hideLoader,
-	} from "../../../core/utils/loading-spinner";
+	} from "../../../core/utils/loading-spinner"; 
 
 	export let newRecord;
+	export let editStatus;
+	export let historyEdited;
 
 	let diseases = [],
 		diseasesStatuses = [],
@@ -36,19 +38,15 @@
 		console.log("starting");
 		await client.get("/gateway/Diseases/").then((response) => {
 			diseases = response;
-			//console.log("diseases =>", diseases);
 		});
 		await client.get("/gateway/DiseaseStatus/").then((response) => {
 			diseasesStatuses = response;
-			//console.log("diseasesStatuses =>", diseasesStatuses);
 		});
 		await client.get("/gateway/Behaviors/").then((response) => {
 			behaviors = response;
-			//console.log("behaviors =>", behaviors);
 		});
 		await client.get("/gateway/BehaviorStatus/").then((response) => {
 			behaviorsStatuses = response;
-			//console.log("behaviorsStatuses => ", behaviorsStatuses);
 		});
 
 		(month = "" + (now.getMonth() + 1)),
@@ -77,7 +75,6 @@
 		} else {
 			addDisease(d, ds);
 		}
-		//console.log(healthChecks);
 	}
 
 	let behaviorTests = [];
@@ -96,7 +93,6 @@
 		} else {
 			addBehavior(d, ds);
 		}
-		//console.log(behaviorTests);
 	}
 
 	let value = "";
@@ -125,17 +121,25 @@
 					hideLoader();
 					console.log(error);
 				});
+		} else if (pets.length > 0) {
+			pets = [];
 		}
 	};
 	const onFocus = () => (isFocused = true);
-	const onBlur = () => (isFocused = false);
+	const onBlur = () => {
+		if (!value) {
+			pets = [];
+			value = "";
+		}
+	};
 	let placeholder = "Buscar cliente/mascota";
 	let isPetSelected = false;
 	let petSelected = {};
 	const selectPet = (e) => {
 		isPetSelected = true;
 		petSelected = e;
-		console.log(e);
+		value = "";
+		pets = [];
 	};
 
 	const addHistory = async () => {
@@ -164,7 +168,6 @@
 			behaviorTests: behaviorTests,
 			observations: medicalHistory.observations,
 		};
-		console.log(newHistory);
 		await client
 			.post("/gateway/MedicalHistories/", newHistory)
 			.then((response) => {
@@ -186,6 +189,23 @@
 	const onSubmitHandler = () => {
 		addHistory();
 	};
+	const getHistoryById = async () => {
+		await client
+			.get("/gateway/MedicalHistories/" + historyEdited.id)
+			.then((response) => {
+				console.log(response)
+				//let tempArray = JSON.parse(response.payload);
+				console.log(JSON.parse(response.payload))
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+		//medicalHistory = historyEdited;
+		//console.log(medicalHistory);
+	};
+	if (editStatus) {
+		getHistoryById(historyEdited.id);
+	}
 </script>
 
 <div class="card">
@@ -211,15 +231,16 @@
 									style="cursor:pointer"
 									title="Seleccionar"
 									on:click={selectPet(item)}
-									><i class="ti-user" /> - {item.name}
-									- {item.customer}</a
+									><i class="fa fa-paw" /> ({item.name}) -
+									<i class="ti-user" />
+									{item.customer}</a
 								>
 							{/each}
 						</div>{/if}
 				</div>
 			</div>
 		</div>
-		{#if petSelected.id > 0}
+		{#if (petSelected.id > 0) | editStatus}
 			<form on:submit|preventDefault={onSubmitHandler}>
 				<div class="row">
 					<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
@@ -285,7 +306,7 @@
 						<h5 class="card-title">Datos de la mascota</h5>
 						<div class="row">
 							<div
-								class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12"
+								class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12"
 							>
 								<div class="form-group">
 									<label for="pet-name">Nombre</label>
@@ -310,13 +331,17 @@
 							</div>
 						</div>
 						<div class="row">
-							<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+							<div
+								class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6"
+							>
 								<div class="form-group">
 									<label for="pet-age">Sexo</label>
 									<h5>{petSelected.gender}</h5>
 								</div>
 							</div>
-							<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+							<div
+								class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6"
+							>
 								<div class="form-group">
 									<label for="pet-age">Color</label>
 									<h5>{petSelected.color}</h5>

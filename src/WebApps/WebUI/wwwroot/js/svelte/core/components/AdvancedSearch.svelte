@@ -3,6 +3,13 @@
 	import { current_component } from "svelte/internal";
 	const events = getEventsAction(current_component);
 	export let value;
-    export let placeholder;
+	export let placeholder;
 </script>
-<input class="form-control" onclick="this.select()" placeholder="{placeholder}" use:events {value}/>
+
+<input
+	class="form-control"
+	onclick="this.select()"
+	{placeholder}
+	use:events
+	{value}
+/>

@@ -4,17 +4,12 @@
 <script>
 	import { v4 } from "uuid";
 	import { onMount } from "svelte";
-	//import jwt_decode from "jwt-decode"
 	import { client } from "../../core/api/axiosClient";
 	import toast from "../../core/utils/toast";
 	import Swal from "sweetalert2";
 	import Search from "../../core/components/Search.svelte";
 	import AdvancedSearch from "../../core/components/AdvancedSearch.svelte";
-
 	import { showLoader, hideLoader } from "../../core/utils/loading-spinner";
-
-	let quotes = [];
-	let error = null;
 
 	let genderes = [],
 		breeds = [],
@@ -22,37 +17,34 @@
 		petTypes = [],
 		pets = [];
 
-	onMount(async () => {
+	const getPets = async () => {
 		showLoader();
-		try {
-			await client.get("/gateway/Pets/").then((response) => {
-				pets = response;
-				console.log("pets =>", pets);
+		await client
+			.get(`/gateway/Pets/?json=` + JSON.stringify({ tipo: 1 }))
+			.then((response) => {
+				if (response.code == 1) {
+					pets = JSON.parse(response.payload);
+				}
+				hideLoader();
+			})
+			.catch((error) => {
+				hideLoader();
+				console.log(error);
 			});
-			await client.get("/gateway/Genderes/").then((response) => {
-				genderes = response;
-				console.log("genderes =>", genderes);
-			});
-			await client.get("/gateway/PetTypes/").then((response) => {
-				petTypes = response;
-				console.log("petTypes =>", petTypes);
-			});
-			await client.get("/gateway/Breeds/").then((response) => {
-				breeds = response;
-				console.log("breeds => ", breeds);
-			});
-		} catch (error) {
-			console.log(error);
-		} finally {
-			hideLoader();
-		}
-	});
+	};
 
-	// const cat = localStorage.getItem("ngStorage-currentUser")
-	// const objToken = JSON.parse(cat)
-	// console.log(objToken.token)
-	// var decodedJwt = jwt_decode(objToken.token)
-	// console.log(decodedJwt)
+	onMount(async () => {
+		await client.get("/gateway/Genderes/").then((response) => {
+			genderes = response;
+		});
+		await client.get("/gateway/PetTypes/").then((response) => {
+			petTypes = response;
+		});
+		await client.get("/gateway/Breeds/").then((response) => {
+			breeds = response;
+		});
+		await getPets();
+	});
 
 	const filterBreed = (id) => {
 		breedsFiltered = breeds.filter((x) => x.petTypeId == id);
@@ -83,7 +75,8 @@
 			cleanPet();
 		}
 		if (!open) {
-			isCustomerSelected = false
+			customerSelected = {};
+			isCustomerSelected = false;
 		}
 	};
 
@@ -119,12 +112,13 @@
 					message: "Registrada exitosamente",
 				});
 				openNew(false);
-				initialLoad();
 			})
 			.catch((error) => {
 				console.log(error);
 			});
 		cleanPet();
+		await getPets();
+		//window.location.reload(true);
 	};
 
 	const deletePet = async (id) => {
@@ -157,6 +151,9 @@
 	const editPet = (petEdited) => {
 		editStatus = true;
 		pet = petEdited;
+		customerSelected.businessName = petEdited.customer;
+		customerSelected.idCard = petEdited.customerIdCard;
+		customerSelected.email = petEdited.email;
 		breedsFiltered = breeds.filter(
 			(b) => b.petTypeId == petEdited.petTypeId
 		);
@@ -168,11 +165,8 @@
 			customerId: pet.customerId,
 			companyId: pet.companyId,
 			name: pet.name,
-			petType: pet.petType,
 			petTypeId: pet.petTypeId,
-			breed: pet.breed,
 			breedId: pet.breedId,
-			gender: pet.gender,
 			genderId: pet.genderId,
 			age: pet.age,
 			color: pet.color,
@@ -182,15 +176,11 @@
 		await client
 			.put("/gateway/Pets/" + updatedpet.id, updatedpet)
 			.then((response) => {
-				const petIndex = pets.findIndex((p) => p.id === pet.id);
-				pets[petIndex] = updatedpet;
-				console.log(response);
 				toast({
 					type: "success",
 					message: "Actualizada exitosamente",
 				});
 				openNew(false);
-				initialLoad();
 			})
 			.catch((error) => {
 				console.log(error);
@@ -198,6 +188,7 @@
 
 		cleanPet();
 		editStatus = false;
+		await getPets();
 	};
 
 	const save = () => {
@@ -210,14 +201,13 @@
 
 	function disablePet(item) {
 		pet = item;
-		//console.log(pet)
 		updatePet();
 	}
 
 	let value = "";
 	let isFocused = false;
 	//const onInput = (e) => (value = e.target.value)
-	let clients = [];
+	let customers = [];
 	const onInput = async (e) => {
 		value = e.target.value;
 		if (value.length >= 3) {
@@ -232,20 +222,42 @@
 				})
 				.then((response) => {
 					if (response.code == "1") {
-						clients = JSON.parse(response.payload);
+						customers = JSON.parse(response.payload);
 					}
 				});
+		} else if (customers.length > 0) {
+			customers = [];
 		}
 	};
-	const onFocus = () => (isFocused = true);
-	const onBlur = () => (isFocused = false);
+	const onFocus = () => {};
+	const onBlur = (e) => {
+		if (!value) {
+			customers = [];
+			value = "";
+		}
+	};
 	let placeholder = "Buscar cliente";
 	let isCustomerSelected = false;
-	let customerSelected = {};
+	let customerSelected = {
+		customerId: "",
+		companyId: "",
+		businessName: "",
+		idCard: "",
+		email: "",
+		telephone: "",
+		address: "",
+	};
 	const selectClient = (e) => {
 		isCustomerSelected = true;
-		customerSelected = e;
-		console.log(e);
+		customerSelected.customerId = e.customerId;
+		customerSelected.companyId = e.companyId;
+		customerSelected.businessName = e.nombreFiscal;
+		customerSelected.idCard = e.numeroIdentificacion;
+		customerSelected.email = e.correo;
+		customerSelected.telephone = e.telephone;
+		customerSelected.address = e.direccion;
+		value = "";
+		customers = [];
 	};
 
 	let filteredPets = [];
@@ -307,14 +319,14 @@
 							{placeholder}
 						/>
 					</div>
-					{#if clients.length > 0 && !isCustomerSelected}
+					{#if customers.length > 0 && !isCustomerSelected}
 						<div class="floating-results list-group">
-							{#each clients as item}
+							{#each customers as item}
 								<a
 									href={null}
 									class="list-group-item"
 									on:click={selectClient(item)}
-									><i class="ti-user" /> - {item.customerId}
+									><i class="ti-user" /> - {item.numeroIdentificacion}
 									- {item.nombreFiscal}</a
 								>
 							{/each}
@@ -322,7 +334,7 @@
 				</div>
 			</div>
 		</div>
-		{#if isCustomerSelected}
+		{#if isCustomerSelected | editStatus}
 			<div class="card">
 				<div class="card-body">
 					<h5 class="card-title">Datos del Cliente</h5>
@@ -334,7 +346,7 @@
 									type="text"
 									class="form-control"
 									disabled
-									value={customerSelected.nombreFiscal}
+									value={customerSelected.businessName}
 								/>
 							</div>
 						</div>
@@ -345,7 +357,7 @@
 									type="text"
 									class="form-control"
 									disabled
-									value={customerSelected.numeroIdentificacion}
+									value={customerSelected.idCard}
 								/>
 							</div>
 						</div>
@@ -356,7 +368,7 @@
 									type="text"
 									class="form-control"
 									disabled
-									value={customerSelected.correo}
+									value={customerSelected.email}
 								/>
 							</div>
 						</div>
@@ -526,9 +538,9 @@
 						{#each filteredPets as item}
 							<tr>
 								<td>{item.name}</td>
-								<td>{item.petType.name}</td>
-								<td>{item.breed.name}</td>
-								<td>{item.gender.name}</td>
+								<td>{item.petType}</td>
+								<td>{item.breed}</td>
+								<td>{item.gender}</td>
 								<td>{item.age}</td>
 								<td>{item.color}</td>
 								<td>
@@ -568,9 +580,9 @@
 						{#each pets as item}
 							<tr>
 								<td>{item.name}</td>
-								<td>{item.petType.name}</td>
-								<td>{item.breed.name}</td>
-								<td>{item.gender.name}</td>
+								<td>{item.petType}</td>
+								<td>{item.breed}</td>
+								<td>{item.gender}</td>
 								<td>{item.age}</td>
 								<td>{item.color}</td>
 								<td>

@@ -6,6 +6,7 @@
     import { client } from "../../core/api/axiosClient";
     import toast from "../../core/utils/toast";
     import Swal from "sweetalert2";
+    import Search from "../../core/components/Search.svelte";
 
     let petTypes = [],
         breeds = [];
@@ -15,7 +16,6 @@
             .get("/gateway/PetTypes/")
             .then((response) => {
                 petTypes = response;
-                console.log("petTypes =>", petTypes);
             })
             .catch((error) => {
                 hideLoader();
@@ -30,7 +30,6 @@
                         element.description = "N/A";
                     }
                 });
-                console.log("breeds => ", breeds);
             })
             .catch((error) => {
                 console.log(error);
@@ -104,13 +103,78 @@
             });
         cleanBreed();
     };
+    const editBreed = (item) => {
+        breed = item;
+        editStatus = true;
+    };
+    const updateBreed = async () => {
+        let updatedBreed = {
+            id: breed.id,
+            petTypeId: breed.petTypeId,
+            code: breed.code,
+            name: breed.name,
+            description: breed.description,
+        };
+        await client
+            .put("/gateway/Breeds/" + updatedBreed.id, updatedBreed)
+            .then((response) => {
+                const breedIndex = breeds.findIndex((b) => b.id === breed.id);
+                breeds[breedIndex] = updatedBreed;
+                toast({
+                    type: "success",
+                    message: "Actualizada exitosamente",
+                });
+                openNew(false);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
 
-    const updateBreed = () => {};
+        cleanBreed();
+        editStatus = false;
+    };
+    const deleteBreed = async (id) => {
+        let { isConfirmed } = await Swal.fire({
+            text: "Esta seguro de eliminar esta raza?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Si, proceder!",
+            cancelButtonText: "No, cancelar",
+        });
+        if (isConfirmed) {
+            await client
+                .delete("/gateway/Breeds/" + id)
+                .then((response) => {
+                    console.log(response);
+                    toast({
+                        type: "success",
+                        message: "Eliminada exitosamente",
+                    });
+                    breeds = breeds.filter((b) => b.id !== id);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    };
+
+    let filteredBreeds = [];
+
+    let searchTerm = "";
+
+    const searchBreeds = () => {
+        return (filteredBreeds = breeds.filter((b) => {
+            let breedName = b.name.toLowerCase();
+            return breedName.includes(searchTerm.toLowerCase());
+        }));
+    };
 </script>
 
 <div class="row page-titles">
     <div class="col-md-5 align-self-center">
-        <h5 class="text-themecolor">Registro de Razas</h5>
+        <h5 class="text-themecolor">Razas de Mascotas</h5>
     </div>
     <div class="col-md-7 align-self-center text-right">
         <div class="d-flex justify-content-end align-items-center">
@@ -127,6 +191,9 @@
 {#if showForm | editStatus}
     <div class="card">
         <div class="card-body">
+            {#if !editStatus}
+                <h5 class="card-title">Añadir Raza</h5>{:else}
+                <h5 class="card-title">Editar Raza</h5>{/if}
             <form on:submit|preventDefault={save}>
                 <div class="row">
                     <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-4">
@@ -212,6 +279,12 @@
 {/if}
 
 {#if breeds.length > 0}
+    <Search
+        bind:searchTerm
+        on:input={searchBreeds}
+        placeholder="Buscar Razas"
+    />
+
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
@@ -226,26 +299,55 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {#each breeds as item}
-                            <tr>
-                                <td>{item.petType.name}</td>
-                                <td>{item.code}</td>
-                                <td>{item.name}</td>
-                                <td>{item.description}</td>
-                                <td>
-                                    <button
-                                        type="button"
-                                        class="btn btn-outline-warning btn-sm"
-                                        ><i class="ti-pencil" /></button
-                                    >
-                                    <button
-                                        type="button"
-                                        class="btn btn-outline-danger btn-sm"
-                                        ><i class="ti-trash" /></button
-                                    >
-                                </td>
-                            </tr>
-                        {/each}
+                        {#if searchTerm && filteredBreeds.length === 0}
+                            <h5>No se encontraron resultados</h5>
+                        {:else if filteredBreeds.length > 0}
+                            {#each filteredBreeds as item}
+                                <tr>
+                                    <td>{item.petType.name}</td>
+                                    <td>{item.code}</td>
+                                    <td>{item.name}</td>
+                                    <td>{item.description}</td>
+                                    <td>
+                                        <button
+                                            type="button"
+                                            class="btn btn-outline-warning btn-sm"
+                                            on:click={editBreed(item)}
+                                            ><i class="ti-pencil" /></button
+                                        >
+                                        <button
+                                            type="button"
+                                            class="btn btn-outline-danger btn-sm"
+                                            on:click={deleteBreed(item.id)}
+                                            ><i class="ti-trash" /></button
+                                        >
+                                    </td>
+                                </tr>
+                            {/each}
+                        {:else}
+                            {#each breeds as item}
+                                <tr>
+                                    <td>{item.petType.name}</td>
+                                    <td>{item.code}</td>
+                                    <td>{item.name}</td>
+                                    <td>{item.description}</td>
+                                    <td>
+                                        <button
+                                            type="button"
+                                            class="btn btn-outline-warning btn-sm"
+                                            on:click={editBreed(item)}
+                                            ><i class="ti-pencil" /></button
+                                        >
+                                        <button
+                                            type="button"
+                                            class="btn btn-outline-danger btn-sm"
+                                            on:click={deleteBreed(item.id)}
+                                            ><i class="ti-trash" /></button
+                                        >
+                                    </td>
+                                </tr>
+                            {/each}
+                        {/if}
                     </tbody>
                 </table>
             </div>

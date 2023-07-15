@@ -39,6 +39,7 @@ BEGIN
 
     SELECT [d].[Name] disease
 		,[ds].[Name] diseaseStatus
+		,ds.[Order]
 		,CASE WHEN hc.DiseaseStatusId = ds.Id AND hc.DiseaseId = d.Id THEN 'x' ELSE '' END diseaseSelected
 	FROM Pet.HealthCheck hc
 		INNER JOIN Pet.Disease d WITH(NOLOCK) ON hc.DiseaseId = d.Id
@@ -48,6 +49,7 @@ BEGIN
 
     SELECT [bs].[Name] behaviorStatus
 		,[b].[Name] behavior
+		,bs.[Order]
 		,CASE WHEN bt.BehaviorStatusId= bs.Id AND bt.BehaviorId = b.Id THEN 'x' ELSE '' END behaviorSelected
 	FROM Pet.BehaviorTest bt  
 		INNER JOIN Pet.Behavior b WITH(NOLOCK) ON bt.BehaviorId = b.Id

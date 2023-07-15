@@ -2,6 +2,7 @@
 using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
 using Services.Common;
 using Vet.Core.Entities;
 using Vet.Core.Interfaces;
@@ -59,16 +60,24 @@ namespace Vet.API.Controllers
 
         // GET: api/MedicalHistories/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<MedicalHistory>> GetMedicalHistory(int id)
+        public async Task<ActionResult<APIResponse>> GetMedicalHistory(int id)
         {
-            var medicalHistory = await _context.MedicalHistories.FindAsync(id);
+            //var medicalHistory = await _context.MedicalHistories.FindAsync(id);
 
-            if (medicalHistory == null)
+            //if (medicalHistory == null)
+            //{
+            //    return NotFound();
+            //}
+
+            //return medicalHistory;
+            try
             {
-                return NotFound();
+                return await _medicalHistory.GetByIdAsync(id);
             }
-
-            return medicalHistory;
+            catch (Exception ex)
+            {
+                return BadRequest("Error on get by Id");
+            }
         }
 
         [HttpPost("Report/{id}")]

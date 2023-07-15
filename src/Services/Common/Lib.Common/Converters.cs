@@ -2,6 +2,7 @@ using System.Collections;
 using System.Data;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Text.Unicode;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -37,14 +38,23 @@ namespace Lib.Common
                     data = new Dictionary<string, object>();
                     foreach (DataColumn col in dt.Columns)
                     {
-                        data.Add(col.ColumnName, dr[col]);
+                        data.Add(ToCamelCase(col.ColumnName), dr[col]);
                     }
                     table.Add(data);
                 }
                 root.Add(table);
             }
 
-            return JsonConvert.SerializeObject(root);
+            DefaultContractResolver contractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new CamelCaseNamingStrategy()
+            };
+
+            return JsonConvert.SerializeObject(root, new JsonSerializerSettings
+            {
+                ContractResolver = contractResolver,
+                Formatting = Formatting.Indented
+            });
         }
         public static DataTable JsonToDataTable(string json)
         {
@@ -60,6 +70,25 @@ namespace Lib.Common
             };
             var result = System.Text.Json.JsonSerializer.Serialize(data, options);
             return result;
+        }
+
+        public static string ToCamelCase(this string str)
+        {
+            //var words = str.Split(new[] { "_", " " }, StringSplitOptions.RemoveEmptyEntries);
+            //words = words
+            //    .Select(word => char.ToUpper(word[0]) + word.Substring(1))
+            //    .ToArray();
+            //return string.Join(string.Empty, words);
+            var words = str.Split(new[] { "_", " " }, StringSplitOptions.RemoveEmptyEntries);
+            var leadWord = Regex.Replace(words[0], @"([A-Z])([A-Z]+|[a-z0-9]+)($|[A-Z]\w*)",
+                m =>
+                {
+                    return m.Groups[1].Value.ToLower() + m.Groups[2].Value.ToLower() + m.Groups[3].Value;
+                });
+            var tailWords = words.Skip(1)
+                .Select(word => char.ToUpper(word[0]) + word.Substring(1))
+                .ToArray();
+            return $"{leadWord}{string.Join(string.Empty, tailWords)}";
         }
     }
 }
