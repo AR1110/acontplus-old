@@ -624,9 +624,9 @@
 </div>
 
 <style>
-	@import "../dist/css/style.css";
+	/* @import "../dist/css/style.css"; */
 
-	.floating-results {
+	/* .floating-results {
 		position: absolute;
 		z-index: 1000;
 		width: 100%;
@@ -645,5 +645,5 @@
 
 	.floating-results .list-group-item:hover {
 		background-color: #f8f9fa;
-	}
+	} */
 </style>

@@ -7,12 +7,13 @@
 	import Search from "../../core/components/Search.svelte";
 	import Add from "./components/Add.svelte";
 	import { showLoader, hideLoader } from "../../core/utils/loading-spinner";
+	//import toast, { Toaster } from 'svelte-french-toast'; 
 	let newRecord = false;
 
 	function openNew(open) {
 		newRecord = open;
 	}
-	let medicalHistories = [];
+	let medicalHistories = []; 
 	onMount(async () => {
 		showLoader();
 		await client.get("/gateway/MedicalHistories/").then((response) => {
@@ -20,7 +21,7 @@
 				medicalHistories = JSON.parse(response.payload);
 			}
 		});
-		hideLoader();
+		hideLoader();   
 	});
 	const getReport = async (id) => {
 		//Add authentication headers as params
@@ -145,7 +146,6 @@
 		historyEdited = item;
 	};
 </script>
-
 <div class="row page-titles">
 	<div class="col-md-5 align-self-center">
 		<h5 class="text-themecolor">Registro Informado de Estetica Canina</h5>
@@ -162,6 +162,7 @@
 		</div>
 	</div>
 </div>
+<!-- <Toaster /> -->
 
 {#if newRecord | editStatus}
 	<Add {newRecord} {editStatus} {historyEdited} />
@@ -222,8 +223,8 @@
 	</div>
 </div>
 
-<style>
-	@import "../dist/css/style.css";
+<style lang="css">
+	/* @import "../dist/css/style.css"; */
 	.floating-results {
 		position: absolute;
 		z-index: 1000;

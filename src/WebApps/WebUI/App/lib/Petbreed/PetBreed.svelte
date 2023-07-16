@@ -1,5 +1,3 @@
-<svelte:options tag="pet-breed" />
-
 <script>
     import { onMount } from "svelte";
     import { showLoader, hideLoader } from "../../core/utils/loading-spinner";
@@ -358,5 +356,5 @@
 {/if}
 
 <style>
-    @import "../dist/css/style.css";
+    /* @import "../dist/css/style.css"; */
 </style>

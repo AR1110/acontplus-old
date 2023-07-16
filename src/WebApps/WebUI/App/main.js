@@ -1,6 +1,7 @@
-﻿import Pet from "./app/Pet/Pet.svelte";
-import PetMedicalHistory from "./app/PetMedicalHistory/PetMedicalHistory.svelte";
-import PetBreed from "./app/PetBreed/PetBreed.svelte"; 
+﻿import Pet from "./lib/Pet/Pet.svelte";
+import PetMedicalHistory from "./lib/PetMedicalHistory/PetMedicalHistory.svelte";
+import PetBreed from "./lib/PetBreed/PetBreed.svelte"; 
+import Counter from "./core/components/Counter.svelte";
 // import App from "./App.svelte"
 // const app = new App({
 //     target: document.getElementById('app'),

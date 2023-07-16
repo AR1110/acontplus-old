@@ -1,5 +1,3 @@
-<svelte:options tag="svg-clock" />
-
 <script>
     import { onMount } from "svelte";
 
