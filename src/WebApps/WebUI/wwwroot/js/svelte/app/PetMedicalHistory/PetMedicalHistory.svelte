@@ -142,9 +142,9 @@
 	let historyEdited = {};
 
 	const editHistory = (item) => {
-		toast({ type: "info", message: "Funcionalidad en construccion" });
-		// editStatus = true;
-		// historyEdited = item;
+		//toast({ type: "info", message: "Funcionalidad en construccion" });
+		editStatus = true;
+		historyEdited = item;
 	};
 </script>
 
