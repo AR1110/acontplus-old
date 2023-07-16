@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Vet.Core.Entities;
 using Vet.Infrastructure.Data;
 
@@ -52,10 +53,14 @@ namespace Vet.API.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(behaviorTest).State = EntityState.Modified;
-
+            //_context.Entry(behaviorTest).State = EntityState.Modified;
+            var test = await _context.BehaviorTests.FindAsync(id);
+            test.BehaviorId = behaviorTest.BehaviorId;
+            test.BehaviorStatusId = behaviorTest.BehaviorStatusId;
+            test.UpdatedAt = DateTime.Now;
             try
             {
+                _context.Update(test);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)

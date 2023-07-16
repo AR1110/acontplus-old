@@ -7,11 +7,11 @@
     ],
 
     "compilerOptions": {
-        "target": "es2017",
-        "module": "commonjs",
-        "strict": false,
+        "target": "es2015",
+        // "module": "CommonJS",
+        "strict": true,
         "forceConsistentCasingInFileNames": true,
-        "lib": [ "es2015", "dom" ],
+        // "lib": [ "es2015", "dom" ],
         "baseUrl": ".",
         "paths": {
             "$lib/*": ["App/lib/*"],

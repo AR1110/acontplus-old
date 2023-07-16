@@ -2,6 +2,7 @@
 using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
 using Services.Common;
 using Vet.Core.Entities;
@@ -105,10 +106,14 @@ namespace Vet.API.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(medicalHistory).State = EntityState.Modified;
-
+            //_context.Entry(medicalHistory).State = EntityState.Modified;
+            var mh = await _context.MedicalHistories.FindAsync(id);
+            mh.Date = medicalHistory.Date;
+            mh.Observations = medicalHistory.Observations;
+            mh.UpdatedAt = DateTime.Now;
             try
             {
+                _context.Update(mh);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
