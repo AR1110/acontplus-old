@@ -51,11 +51,15 @@ namespace Vet.API.Controllers
             {
                 return BadRequest();
             }
-
-            _context.Entry(healthCheck).State = EntityState.Modified;
+            var healthCheckFounded = await _context.HealthChecks.FindAsync(id);
+            healthCheckFounded.DiseaseId = healthCheck.DiseaseId;
+            healthCheckFounded.DiseaseStatusId = healthCheck.DiseaseStatusId;
+            healthCheckFounded.UpdatedAt = DateTime.Now;
+            //_context.Entry(healthCheck).State = EntityState.Modified;
 
             try
             {
+                _context.Update(healthCheckFounded);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)

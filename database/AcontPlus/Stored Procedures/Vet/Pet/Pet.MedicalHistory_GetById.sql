@@ -13,10 +13,14 @@ BEGIN
 
 
 	SELECT mh.*
-		,p.[Name] petName
+		,p.Id petId
+		,p.[Name]
+		,p.Color
+		,pt.[Name] pettype
 		,b.[Name] breed
 		,g.[Name] gender
 		,cc.BusinessName
+		,cc.IDCard
 		,cc.Email
 		,cc.[Address]
 	FROM Pet.MedicalHistory mh WITH(NOLOCK)
@@ -24,6 +28,7 @@ BEGIN
 		INNER JOIN Pet.Breed b ON p.BreedId = b.Id
 		INNER JOIN Pet.Gender g ON p.GenderId = g.Id
 		INNER JOIN Customer.Customer cc ON p.CustomerId = cc.Id
+		INNER JOIN Pet.PetType pt ON p.PetTypeId = pt.Id
 		LEFT JOIN Cliente c WITH(NOLOCK) ON cc.Id = c.CustomerId AND p.CompanyId = c.idEntidad
 	WHERE mh.id = @id
 	AND mh.Deleted IS NULL
