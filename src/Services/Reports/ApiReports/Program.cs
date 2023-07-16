@@ -38,7 +38,7 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.UseMiddleware<JWTMiddleware>();
+
 
 app.UseEndpoints(endpoints =>
 {

@@ -48,8 +48,6 @@ namespace ApiConfig
 
             app.UseAuthorization();
 
-            app.UseMiddleware<JWTMiddleware>();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGet("/", async context =>

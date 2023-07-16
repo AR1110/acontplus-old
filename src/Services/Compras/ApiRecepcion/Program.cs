@@ -48,7 +48,7 @@ namespace ApiRecepcion
 
             app.UseAuthorization();
 
-            app.UseMiddleware<JWTMiddleware>();
+            
 
             app.UseEndpoints(endpoints =>
             {

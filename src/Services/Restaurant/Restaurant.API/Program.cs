@@ -52,7 +52,7 @@ app.UseAuthorization();
 
 app.UseStaticFiles();
 
-//app.UseMiddleware<JWTMiddleware>();
+//
 
 app.MapControllers().RequireAuthorization();
 
