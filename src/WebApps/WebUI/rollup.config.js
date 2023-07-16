@@ -60,7 +60,9 @@ import alias from "@rollup/plugin-alias";
 import nodeResolve from '@rollup/plugin-node-resolve';
 
 const production = !process.env.ROLLUP_WATCH;
+// const appObject = "petBreed"
 const appObject = "petMH"
+
 export default {
     // This `main.js` file we wrote
     input: 'App/main.js',

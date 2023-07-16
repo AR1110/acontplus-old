@@ -46,10 +46,16 @@ namespace Vet.API.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(petBreed).State = EntityState.Modified;
-
+            //_context.Entry(petBreed).State = EntityState.Modified;
+            var breedFounded = await _context.Breeds.FindAsync(id);
+            breedFounded.PetTypeId = petBreed.PetTypeId;
+            breedFounded.Code = petBreed.Code;
+            breedFounded.Name = petBreed.Name;
+            breedFounded.Description = petBreed.Description;
+            breedFounded.UpdatedAt = DateTime.Now;
             try
             {
+                _context.Update(breedFounded);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)

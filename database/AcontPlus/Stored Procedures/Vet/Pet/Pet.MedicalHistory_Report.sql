@@ -21,6 +21,7 @@ BEGIN
 				END petAge
 		,[p].[Name] petName
 		,p.Color petColor
+		,p.[Weight] petWeight
 		,mh.Observations
 		,[b].[Name] petBreed
 		,[g].[Name] petGender
