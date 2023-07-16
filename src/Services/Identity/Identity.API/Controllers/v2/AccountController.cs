@@ -69,5 +69,52 @@ namespace Identity.API.Controllers.v2
                 return BadRequest("Error on login");
             }
         }
+
+
+        [HttpPost("loginApp")]
+        public async Task<IActionResult> LoginApp([FromBody] LoginDto authRequest)
+        {
+            LogWriter _logs = new LogWriter(_config);
+            LoginDao _l = new LoginDao(_config);
+            GenericResponse _gr = await _l.LoginAppAsync(authRequest);
+            var codSms = _gr.id as string;
+            try
+            {
+                if (codSms == "2" || codSms == "1")
+                {
+                    var response = _gr.data as LoginViewModelV2;
+
+                    var loginData = response.userData[0];
+                    var loginDataDto = new LoginDataDto();
+
+                    loginDataDto.idUsuarioRol = loginData.idRol;
+                    loginDataDto.userName = loginData.userName;
+                    loginDataDto.fullName = loginData.fullName;
+                    loginDataDto.nroIdentificacion = loginData.nroIdentificacion;
+                    loginDataDto.role = loginData.role;
+                    loginDataDto.razonSocial = loginData.entidad;
+                    loginDataDto.rucEmpresa = loginData.ruc ?? "";
+                    loginData.companyId = loginData.companyId;
+                    loginDataDto.urlGateway = _config["ApiGateways:Acontplus"];
+
+                    var jwtToken = _tokenService.GenerateJwtToken(loginDataDto);
+                    if (jwtToken == null) { return Unauthorized(); }
+                    _logs.LogInfo("Login successful: idRol -> " + Convert.ToString(loginDataDto.idUsuarioRol) + " \n jwt: " + jwtToken);
+
+                    if (jwtToken == null)
+                    {
+                        _gr.Create(code: "0", message: "Error al iniciar session");
+                        return Ok(_gr);
+                    }
+                    loginData.jwtToken = jwtToken;
+                }
+                return Ok(_gr);
+            }
+            catch (Exception ex)
+            {
+                _logs.LogError("Error while login into AcontplusWeb: " + ex.ToString());
+                return BadRequest("Error on login");
+            }
+        }
     }
 }

@@ -22,7 +22,7 @@ builder.Services.AddControllers()
                 .AddJsonOptions(options =>
                 options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
 
-builder.Configuration.SetBasePath(BinDirectory.GetBinRunDir());
+builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
 ConfigHelper.AddJsonFiles(builder.Configuration);
 
 builder.Services.AddApplicationServices(builder.Configuration);

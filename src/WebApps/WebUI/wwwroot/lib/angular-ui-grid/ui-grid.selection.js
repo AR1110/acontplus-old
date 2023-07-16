@@ -1,6 +1,7 @@
 /*!
- * ui-grid - v4.11.1 - 2022-02-23
- * Copyright (c) 2022 ; License: MIT 
+ * ui-grid - v4.12.2 - 2023-01-23
+* http://ui-grid.info/
+ * Copyright (c) 2023 ; License: MIT 
  */
 
 (function () {
@@ -245,11 +246,13 @@
                  * @ngdoc function
                  * @name selectRowByKey
                  * @methodOf  ui.grid.selection.api:PublicApi
-                 * @description Select the data row
+                 * @description selects all GridRows who have an key that is equal to comparator
+                 * so for Example if isInEntity == false then it does this check: row[key] === comparator
+                 * if isInEntity == true then it does this check: row.entity[key] === comparator
                  * @param {boolean} isInEntity if true then key is in entity else it's directly in row
-                 * @param {Symbol} key the key to look for
+                 * @param {string | number} key the key to look for
                  * @param {any} comparator the value that key should have
-                 * @param {Event} evt object if raised from an event
+                 * @param {Event} evt [optional] object if raised from an event
                  * @param {array} lookInRows [optional] the rows to look in - if not provided then looks in grid.rows
                 */
                 selectRowByKey: function (isInEntity, key, comparator, evt, lookInRows) {
@@ -293,11 +296,13 @@
                  * @ngdoc function
                  * @name unSelectRowByKey
                  * @methodOf  ui.grid.selection.api:PublicApi
-                 * @description Select the data row
+                 * @description unselects the GridRows who have an key that is equal to comparator
+                 * so for Example if isInEntity == false then it does this check: row[key] === comparator
+                 * if isInEntity == true then it does this check: row.entity[key] === comparator
                  * @param {boolean} isInEntity if true then key is in entity else it's directly in row
-                 * @param {(string|number)} key the key to look for
+                 * @param {string | number} key the key to look for
                  * @param {any} comparator the value that key should have
-                 * @param {Event} evt object if raised from an event
+                 * @param {Event} evt [optional] object if raised from an event
                  * @param {array} lookInRows [optional] the rows to look in - if not provided then looks in grid.rows
                 */
                 unSelectRowByKey: function (isInEntity, key, comparator, evt, lookInRows) {

@@ -1,6 +1,7 @@
 /*!
- * ui-grid - v4.11.1 - 2022-02-23
- * Copyright (c) 2022 ; License: MIT 
+ * ui-grid - v4.12.2 - 2023-01-23
+* http://ui-grid.info/
+ * Copyright (c) 2023 ; License: MIT 
  */
 
 (function() {
@@ -3493,16 +3494,20 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants, i18
     // *** Auto hide when click elsewhere ******
       var applyHideMenu = function(event) {
         if ($scope.shown) {
-          if ($scope.col && $scope.col.filterContainer === 'columnMenu') {
-            var elm = document.querySelector('.ui-grid-column-menu').querySelector('[ui-grid-filter]');
-            if (elm && elm.contains(event.target)) {
-              return false;
-            }
-          }
+          var disableGridMenuHideOnScroll = uiGridCtrl && uiGridCtrl.grid && uiGridCtrl.grid.options ? uiGridCtrl.grid.options.disableGridMenuHideOnScroll : null;
 
-          $scope.$apply(function () {
-            $scope.hideMenu();
-          });
+          if (event.type !== 'scroll' || !disableGridMenuHideOnScroll) {
+            if ($scope.col && $scope.col.filterContainer === 'columnMenu') {
+              var elm = document.querySelector('.ui-grid-column-menu').querySelector('[ui-grid-filter]');
+              if (elm && elm.contains(event.target)) {
+                return false;
+              }
+            }
+
+            $scope.$apply(function () {
+              $scope.hideMenu();
+            });
+          }
         }
       };
 
@@ -6201,7 +6206,9 @@ angular.module('ui.grid')
    * @ngdoc function
    * @name getRowsByKey
    * @methodOf ui.grid.class:Grid
-   * @description returns the GridRows who have an key that is equal to comparator
+   * @description returns all GridRows who have an key that is equal to comparator
+   * so for Example if isInEntity == false then it does this check: row[key] === comparator
+   * if isInEntity == true then it does this check: row.entity[key] === comparator
    * @param {boolean} isInEntity if true then key is in entity else it's directly in row
    * @param {(string|number)} key the key to look for
    * @param {any} comparator the value that key should have
@@ -6227,7 +6234,9 @@ angular.module('ui.grid')
    * @ngdoc function
    * @name findRowByKey
    * @methodOf ui.grid.class:Grid
-   * @description returns the first GridRow which has an key that is equal to comparator
+   * @description returns the first GridRow who has an key that is equal to comparator
+   * so for Example if isInEntity == false then it does this check: row[key] === comparator
+   * if isInEntity == true then it does this check: row.entity[key] === comparator
    * @param {boolean} isInEntity if true then key is in entity else it's directly in row
    * @param {(string|number)} key the key to look for
    * @param {any} comparator the value that key should have
@@ -9701,6 +9710,14 @@ angular.module('ui.grid')
       */
       baseOptions.gridMenuTemplate = baseOptions.gridMenuTemplate || 'ui-grid/uiGridMenu';
 
+      /**
+       * @ngdoc string
+       * @name disableGridMenuHideOnScroll
+       * @propertyOf ui.grid.class:GridOptions
+       * @description 'false' by default. When provided, this setting disables Grid Menu Hide On Scroll
+       */
+      baseOptions.disableGridMenuHideOnScroll = baseOptions.disableGridMenuHideOnScroll || false;
+
             /**
        * @ngdoc string
        * @name menuButtonTemplate
@@ -10341,12 +10358,12 @@ angular.module('ui.grid')
       // Skip hidden columns
       if (!column.visible) { return; }
 
-      if (pinRightColumn) {
-        availableWidth += self.grid.scrollbarWidth;
-      }
-
       if (!pinRightColumn && column.colDef.pinnedRight) {
         pinRightColumn = true;
+      }
+
+      if (pinRightColumn) {
+        availableWidth += self.grid.scrollbarWidth;
       }
 
       if (angular.isNumber(column.width)) {
@@ -10908,6 +10925,7 @@ angular.module('ui.grid')
         self.verticalScrollLength = -9999999;
         self.horizontalScrollLength = -999999;
 
+        self.type = 'scroll';
 
         /**
          *  @ngdoc function
@@ -11131,12 +11149,13 @@ angular.module('ui.grid')
                   }
 
                   if ( filterType ) {
-                    col[templateType] = template.replace(uiGridConstants.CUSTOM_FILTERS, function() {
+                    template = template.replace(uiGridConstants.CUSTOM_FILTERS, function() {
                       return col[filterType] ? "|" + col[filterType] : "";
                     });
-                  } else {
-                    col[templateType] = template;
                   }
+                  return gridUtil.postProcessTemplate(template).then(function(template) {
+                    col[templateType] = template;
+                  });
                 },
                 function () {
                   throw new Error("Couldn't fetch/use colDef." + templateType + " '" + colDef[templateType] + "'");
@@ -16002,6 +16021,7 @@ module.filter('px', function() {
       var service = {
 
         delay: 100,
+        type: null,
 
         initializeGrid: function (grid) {
 
@@ -16774,6 +16794,7 @@ module.filter('px', function() {
          */
         csvExport: function (grid, rowTypes, colTypes) {
           var self = this;
+          self.type = 'csv';
           this.loadAllDataIfNeeded(grid, rowTypes, colTypes).then(function() {
             var exportColumnHeaders = grid.options.showHeader ? self.getColumnHeaders(grid, colTypes) : [];
             var exportData = self.getData(grid, rowTypes, colTypes);
@@ -17003,8 +17024,8 @@ module.filter('px', function() {
                      gridCol.colDef.exporterSuppressExport !== true && gridCol.field !== '$$hashKey' &&
                      grid.options.exporterSuppressColumns.indexOf( gridCol.name ) === -1 ) {
                   var cellValue = applyCellFilters ? grid.getCellDisplayValue( row, gridCol ) : grid.getCellValue( row, gridCol ),
-                    extractedField = { value: grid.options.exporterFieldCallback( grid, row, gridCol, cellValue ) },
-                    extension = grid.options.exporterFieldFormatCallback( grid, row, gridCol, cellValue );
+                    extractedField = { value: grid.options.exporterFieldCallback( grid, row, gridCol, cellValue, service.type ) },
+                    extension = grid.options.exporterFieldFormatCallback( grid, row, gridCol, cellValue, service.type );
 
                   if (extension) {
                     Object.assign(extractedField, extension);
@@ -17210,7 +17231,7 @@ module.filter('px', function() {
          */
         pdfExport: function (grid, rowTypes, colTypes) {
           var self = this;
-
+          self.type = 'pdf';
           this.loadAllDataIfNeeded(grid, rowTypes, colTypes).then(function () {
             var exportColumnHeaders = self.getColumnHeaders(grid, colTypes),
               exportData = self.getData(grid, rowTypes, colTypes),
@@ -17555,6 +17576,7 @@ module.filter('px', function() {
 
         excelExport: function (grid, rowTypes, colTypes) {
           var self = this;
+          self.type = 'excel';
           this.loadAllDataIfNeeded(grid, rowTypes, colTypes).then(function() {
             var exportColumnHeaders = grid.options.showHeader ? self.getColumnHeaders(grid, colTypes) : [];
 
@@ -27179,11 +27201,13 @@ module.filter('px', function() {
                  * @ngdoc function
                  * @name selectRowByKey
                  * @methodOf  ui.grid.selection.api:PublicApi
-                 * @description Select the data row
+                 * @description selects all GridRows who have an key that is equal to comparator
+                 * so for Example if isInEntity == false then it does this check: row[key] === comparator
+                 * if isInEntity == true then it does this check: row.entity[key] === comparator
                  * @param {boolean} isInEntity if true then key is in entity else it's directly in row
-                 * @param {Symbol} key the key to look for
+                 * @param {string | number} key the key to look for
                  * @param {any} comparator the value that key should have
-                 * @param {Event} evt object if raised from an event
+                 * @param {Event} evt [optional] object if raised from an event
                  * @param {array} lookInRows [optional] the rows to look in - if not provided then looks in grid.rows
                 */
                 selectRowByKey: function (isInEntity, key, comparator, evt, lookInRows) {
@@ -27227,11 +27251,13 @@ module.filter('px', function() {
                  * @ngdoc function
                  * @name unSelectRowByKey
                  * @methodOf  ui.grid.selection.api:PublicApi
-                 * @description Select the data row
+                 * @description unselects the GridRows who have an key that is equal to comparator
+                 * so for Example if isInEntity == false then it does this check: row[key] === comparator
+                 * if isInEntity == true then it does this check: row.entity[key] === comparator
                  * @param {boolean} isInEntity if true then key is in entity else it's directly in row
-                 * @param {(string|number)} key the key to look for
+                 * @param {string | number} key the key to look for
                  * @param {any} comparator the value that key should have
-                 * @param {Event} evt object if raised from an event
+                 * @param {Event} evt [optional] object if raised from an event
                  * @param {array} lookInRows [optional] the rows to look in - if not provided then looks in grid.rows
                 */
                 unSelectRowByKey: function (isInEntity, key, comparator, evt, lookInRows) {
