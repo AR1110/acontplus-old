@@ -2,6 +2,7 @@ using Services.Common;
 using Helpers;
 using System.Reflection;
 using Reports.Application;
+using Lib.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 

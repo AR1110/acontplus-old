@@ -1,6 +1,6 @@
 ﻿using System.IO.Compression;
 
-namespace Helpers
+namespace Lib.Common
 {
     public static class CompressionHelper
     {

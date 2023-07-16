@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
-namespace Helpers
+
+namespace Lib.Common
 {
     public static class DirHelper
     {

@@ -2,7 +2,7 @@
 using Newtonsoft.Json.Serialization;
 using System.Text;
 
-namespace Helpers
+namespace WebUI.ApiClient
 {
     public static class ApiHelper
     {
