@@ -2,8 +2,8 @@
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import replace from "@rollup/plugin-replace";
-import json from "@rollup/plugin-json";
-import builtins from 'rollup-plugin-node-builtins';
+//import json from "@rollup/plugin-json";
+//import builtins from 'rollup-plugin-node-builtins';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -11,14 +11,13 @@ export default {
     // This `main.js` file we wrote
     input: 'wwwroot/js/svelte/main.js',
     output: {
-        sourcemap: 'inline',
         // The destination for our bundled JavaScript
-        file: 'wwwroot/js/svelte/build/bundle.js',
+        file: 'wwwroot/js/svelte/build/petMH.js',
         // Our bundle will be an Immediately-Invoked Function Expression
         format: 'iife',
         //format: 'cjs',
         // The IIFE return value will be assigned into a variable called `app`
-        name: 'app',
+        name: 'petMH',
     },
     plugins: [
         svelte({
@@ -29,15 +28,15 @@ export default {
                 customElement: true,
             }
         }),
-        builtins(),
-        json(),
+        //builtins(),
+        //json(),
         commonjs({
             include: /node_modules/,
             requireReturnsDefault: 'auto',
         }),
-        replace({
-            preventAssignment: true,
-        }),
+        // replace({
+        //     preventAssignment: true,
+        // }),
 
         // Tell any third-party plugins that we're building for the browser
         resolve({

@@ -1,5 +1,3 @@
-<svelte:options tag="pet-medical-history-app" />
-
 <script>
 	import { onMount } from "svelte";
 	import { client, clientFile } from "../../core/api/axiosClient";

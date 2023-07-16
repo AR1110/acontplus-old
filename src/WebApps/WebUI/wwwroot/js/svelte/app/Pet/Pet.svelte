@@ -1,6 +1,4 @@
 <!-- svelte-ignore tag-option-deprecated -->
-<svelte:options tag="pet-app" />
-
 <script>
 	import { v4 } from "uuid";
 	import { onMount } from "svelte";

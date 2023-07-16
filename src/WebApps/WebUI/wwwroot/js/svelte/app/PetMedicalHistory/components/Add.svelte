@@ -6,7 +6,7 @@
 	import {
 		showLoader,
 		hideLoader,
-	} from "../../../core/utils/loading-spinner"; 
+	} from "../../../core/utils/loading-spinner";
 
 	export let newRecord;
 	export let editStatus;
@@ -58,6 +58,32 @@
 
 		dateString = [year, month, day].join("-");
 		medicalHistory.date = dateString;
+		if (editStatus) {
+			await client
+				.get("/gateway/MedicalHistories/" + historyEdited.id)
+				.then((response) => {
+					let tempArray = JSON.parse(response.payload);
+					console.log(tempArray);
+					console.log(behaviorsStatuses);
+					behaviorTests = tempArray[2];
+					tempArray[2].forEach((value, key) => {
+						addBehaviorStatus(
+							value.behaviorId,
+							value.behaviorStatusId
+						);
+						var id = `${value.behaviorId}-${value.behaviorStatusId}-chkbbs`;
+						let val = document.getElementById(id);
+						val.checked = true
+						console.log(val);
+					});
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+			//medicalHistory = historyEdited;
+			//console.log(medicalHistory);
+		}
+	
 	});
 
 	function addDisease(d, ds) {
@@ -189,25 +215,7 @@
 	const onSubmitHandler = () => {
 		addHistory();
 	};
-	const getHistoryById = async () => {
-		await client
-			.get("/gateway/MedicalHistories/" + historyEdited.id)
-			.then((response) => {
-				console.log(response)
-				//let tempArray = JSON.parse(response.payload);
-				console.log(JSON.parse(response.payload))
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-		//medicalHistory = historyEdited;
-		//console.log(medicalHistory);
-	};
-	if (editStatus) {
-		getHistoryById(historyEdited.id);
-	}
 </script>
-
 <div class="card">
 	<div class="card-body">
 		<div class="row">
@@ -397,8 +405,8 @@
 									<td
 										><input
 											type="radio"
-											id="{d.id}-chkbbs"
-											name="{d.id}-chkbbs"
+											id="{d.id}-{ds.id}-chkbbs"
+											name="{d.id}-{ds.id}-chkbbs"
 											on:change={() =>
 												addBehaviorStatus(d.id, ds.id)}
 										/></td
