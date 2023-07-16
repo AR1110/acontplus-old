@@ -4,7 +4,7 @@
  *         This causes it to be incompatible with plugins that depend on @uirouter/core.
  *         We recommend switching to the ui-router-core.js and ui-router-angularjs.js bundles instead.
  *         For more information, see https://ui-router.github.io/blog/uirouter-for-angularjs-umd-bundles
- * @version v1.0.30
+ * @version v1.1.0
  * @link https://ui-router.github.io
  * @license MIT License, http://www.opensource.org/licenses/MIT
  */
@@ -1943,19 +1943,19 @@
          * @param {Object} $to Internal definition of object representing state to transition to.
          */
         StateParams.prototype.$inherit = function (newParams, $current, $to) {
-            var parentParams;
             var parents = ancestors($current, $to), inherited = {}, inheritList = [];
             for (var i in parents) {
                 if (!parents[i] || !parents[i].params)
                     continue;
-                parentParams = Object.keys(parents[i].params);
-                if (!parentParams.length)
+                var parentParams = parents[i].params;
+                var parentParamsKeys = Object.keys(parentParams);
+                if (!parentParamsKeys.length)
                     continue;
-                for (var j in parentParams) {
-                    if (inheritList.indexOf(parentParams[j]) >= 0)
+                for (var j in parentParamsKeys) {
+                    if (parentParams[parentParamsKeys[j]].inherit == false || inheritList.indexOf(parentParamsKeys[j]) >= 0)
                         continue;
-                    inheritList.push(parentParams[j]);
-                    inherited[parentParams[j]] = this[parentParams[j]];
+                    inheritList.push(parentParamsKeys[j]);
+                    inherited[parentParamsKeys[j]] = this[parentParamsKeys[j]];
                 }
             }
             return extend({}, inherited, newParams);

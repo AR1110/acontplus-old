@@ -35,9 +35,9 @@
 
 .spinner {
     background-color: transparent;
-    border-top: 10px solid #F2811D;
-    border-right: 10px solid #F2811D;
-    border-bottom: 10px solid #F2811D;
+    border-top: 10px solid #D61672;
+    border-right: 10px solid #D61672;
+    border-bottom: 10px solid #D61672;
     border-left: 10px solid rgba(255,255,255,1);
     transform: translateZ(0);
     animation-iteration-count: infinite;
