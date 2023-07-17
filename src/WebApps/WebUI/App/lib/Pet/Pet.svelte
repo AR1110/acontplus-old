@@ -22,6 +22,14 @@
 			.then((response) => {
 				if (response.code == 1) {
 					pets = JSON.parse(response.payload);
+					pets.forEach((element, index) => {
+                    if (element.weight === null) {
+                        element.weight = "N/A";
+                    }
+					if (element.color === null) {
+                        element.color = "N/A";
+                    }
+                });
 				}
 				hideLoader();
 			})
@@ -58,6 +66,7 @@
 		genderId: "",
 		age: "",
 		color: "",
+		weight: "",
 	};
 
 	let editStatus = false;
@@ -100,6 +109,7 @@
 			genderId: pet.genderId,
 			age: pet.age,
 			color: pet.color,
+			weight: pet.weight,
 		};
 		await client
 			.post("/gateway/Pets/", newPet)
@@ -169,6 +179,7 @@
 			age: pet.age,
 			color: pet.color,
 			enabled: pet.enabled,
+			weight: pet.weight,
 		};
 
 		await client
@@ -491,6 +502,20 @@
 								/>
 							</div>
 						</div>
+						<div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+							<div class="form-group">
+								<label for="pet-weight">Peso (kg)</label>
+								<input
+									type="number"
+									id="pet-weight"
+									class="form-control"
+									placeholder="5.5"
+									step="any"
+									required
+									bind:value={pet.weight}
+								/>
+							</div>
+						</div>
 					</div>
 
 					<button type="submit" class="btn btn-success">
@@ -525,6 +550,7 @@
 						<th>Sexo</th>
 						<th>Edad</th>
 						<th>Color</th>
+						<th>Peso</th>
 						<th>Estado</th>
 						<th />
 					</tr>
@@ -541,6 +567,7 @@
 								<td>{item.gender}</td>
 								<td>{item.age}</td>
 								<td>{item.color}</td>
+								<td>{item.weight}</td>
 								<td>
 									<div
 										class="custom-control custom-switch text-warning"
@@ -583,6 +610,7 @@
 								<td>{item.gender}</td>
 								<td>{item.age}</td>
 								<td>{item.color}</td>
+								<td>{item.weight}</td>
 								<td>
 									<div
 										class="custom-control custom-switch text-warning"
@@ -622,28 +650,3 @@
 		</div>
 	</div>
 </div>
-
-<style>
-	/* @import "../dist/css/style.css"; */
-
-	/* .floating-results {
-		position: absolute;
-		z-index: 1000;
-		width: 100%;
-		max-height: 300px;
-		overflow-y: auto;
-		background-color: #fff;
-		border: 1px solid #ced4da;
-		border-top: none;
-		border-radius: 0 0 0.25rem 0.25rem;
-		box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15);
-	}
-
-	.floating-results .list-group-item {
-		cursor: pointer;
-	}
-
-	.floating-results .list-group-item:hover {
-		background-color: #f8f9fa;
-	} */
-</style>

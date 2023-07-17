@@ -11,6 +11,7 @@
 	export let newRecord;
 	export let editStatus;
 	export let historyEdited;
+	export let initialLoad;
 
 	let diseases = [],
 		diseasesStatuses = [],
@@ -27,12 +28,35 @@
 		observations: "",
 	};
 
-	let now = new Date(),
-		month,
-		day,
-		year;
+	let petSelected = {
+		customer: "",
+		customerIdCard: "",
+		id: "",
+		name: "",
+		email: "",
+		petType: "",
+		age: "",
+		color: "",
+		breed: "",
+		gender: "",
+	};
 
-	let dateString;
+	const formatDate = (date = null) => {
+		let now = new Date();
+		if (date) {
+			now = new Date(date);
+		}
+		let month, day, year;
+
+		//let dateString;
+		(month = "" + (now.getMonth() + 1)),
+			(day = "" + now.getDate()),
+			(year = now.getFullYear());
+
+		if (month.length < 2) month = "0" + month;
+		if (day.length < 2) day = "0" + day;
+		return [year, month, day].join("-");
+	};
 
 	onMount(async () => {
 		console.log("starting");
@@ -49,15 +73,9 @@
 			behaviorsStatuses = response;
 		});
 
-		(month = "" + (now.getMonth() + 1)),
-			(day = "" + now.getDate()),
-			(year = now.getFullYear());
-
-		if (month.length < 2) month = "0" + month;
-		if (day.length < 2) day = "0" + day;
-
-		dateString = [year, month, day].join("-");
-		medicalHistory.date = dateString;
+		if (!editStatus) {
+			medicalHistory.date = formatDate();
+		}
 		if (editStatus) {
 			await client
 				.get("/gateway/MedicalHistories/" + historyEdited.id)
@@ -65,39 +83,99 @@
 					let tempArray = JSON.parse(response.payload);
 					console.log(tempArray);
 					console.log(behaviorsStatuses);
+					let objData = tempArray[0][0];
+					petSelected.customer = objData.businessName;
+					petSelected.customerIdCard = objData.idCard;
+					petSelected.id = objData.petId;
+					petSelected.name = objData.name;
+					petSelected.email = objData.email;
+					petSelected.petType = objData.pettype;
+					petSelected.age = objData.age;
+					petSelected.color = objData.color;
+					petSelected.breed = objData.breed;
+					petSelected.gender = objData.gender;
+					medicalHistory.id = objData.id;
+
+					// let editedDate = new Date(objData.date);
+					// console.log(editedDate);
+					// (month = "" + (editedDate.getMonth() + 1)),
+					// 	(day = "" + editedDate.getDate()),
+					// 	(year = editedDate.getFullYear());
+
+					// if (month.length < 2) month = "0" + month;
+					// if (day.length < 2) day = "0" + day;
+
+					// dateString = [year, month, day].join("-");
+
+					medicalHistory.date = formatDate(objData.date);
+					medicalHistory.observations = objData.observations;
+
+					healthChecks = tempArray[1];
+					tempArray[1].forEach((value, key) => {
+						addDiseaseStatus(
+							value.diseaseId,
+							value.diseaseStatusId,
+							false
+						);
+						document.getElementById(
+							`${value.diseaseId}-${value.diseaseStatusId}-chkdds`
+						).checked = true;
+					});
+
 					behaviorTests = tempArray[2];
 					tempArray[2].forEach((value, key) => {
 						addBehaviorStatus(
 							value.behaviorId,
 							value.behaviorStatusId
 						);
-						var id = `${value.behaviorId}-${value.behaviorStatusId}-chkbbs`;
-						let val = document.getElementById(id);
-						val.checked = true
-						console.log(val);
+						document.getElementById(
+							`${value.behaviorId}-${value.behaviorStatusId}-chkbbs`
+						).checked = true;
 					});
 				})
 				.catch((error) => {
 					console.log(error);
 				});
-			//medicalHistory = historyEdited;
-			//console.log(medicalHistory);
 		}
-	
 	});
 
 	function addDisease(d, ds) {
 		healthChecks.push({
+			medicalHistoryId: editStatus ? medicalHistory.id : 0,
 			diseaseId: d,
 			diseaseStatusId: ds,
 		});
 	}
-
-	function addDiseaseStatus(d, ds) {
+	const updateHealthCheck = async (d, ds) => {
+		let id = healthChecks.find(
+			(check) => check.diseaseId === d && check.diseaseStatusId === ds
+		).id;
+		let checkUpdated = {
+			id: id,
+			medicalHistoryId: medicalHistory.id,
+			diseaseId: d,
+			diseaseStatusId: ds,
+		};
+		await client
+			.put("/gateway/HealthChecks/" + id, checkUpdated)
+			.then((response) => {
+				toast({
+					type: "success",
+					message: "Actualizada exitosamente",
+				});
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	};
+	function addDiseaseStatus(d, ds, dbUp) {
 		if (healthChecks.some((check) => check.diseaseId === d)) {
 			healthChecks.find(
 				(check) => check.diseaseId === d
 			).diseaseStatusId = ds;
+			if (editStatus && dbUp) {
+				updateHealthCheck(d, ds);
+			}
 		} else {
 			addDisease(d, ds);
 		}
@@ -106,18 +184,47 @@
 	let behaviorTests = [];
 	function addBehavior(d, ds) {
 		behaviorTests.push({
+			medicalHistoryId: editStatus ? medicalHistory.id : 0,
 			behaviorId: d,
 			behaviorStatusId: ds,
 		});
 	}
 
-	function addBehaviorStatus(d, ds) {
-		if (behaviorTests.some((test) => test.behaviorId === d)) {
+	const updateBehaviorTest = async (b, bs) => {
+		let id = behaviorTests.find(
+			(behavior) =>
+				behavior.behaviorId === b && behavior.behaviorStatusId === bs
+		).id;
+		let testUpdated = {
+			id: id,
+			medicalHistoryId: medicalHistory.id,
+			behaviorId: b,
+			behaviorStatusId: bs,
+		};
+		await client
+			.put("/gateway/BehaviorTests/" + id, testUpdated)
+			.then((response) => {
+				toast({
+					type: "success",
+					message: "Actualizado exitosamente",
+				});
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	};
+
+	function addBehaviorStatus(b, bs, dbUp) {
+		if (behaviorTests.some((test) => test.behaviorId === b)) {
 			behaviorTests.find(
-				(test) => test.behaviorId === d
-			).behaviorStatusId = ds;
+				(test) => test.behaviorId === b
+			).behaviorStatusId = bs;
+
+			if (editStatus && dbUp) {
+				updateBehaviorTest(b, bs);
+			}
 		} else {
-			addBehavior(d, ds);
+			addBehavior(b, bs);
 		}
 	}
 
@@ -160,7 +267,6 @@
 	};
 	let placeholder = "Buscar cliente/mascota";
 	let isPetSelected = false;
-	let petSelected = {};
 	const selectPet = (e) => {
 		isPetSelected = true;
 		petSelected = e;
@@ -180,6 +286,7 @@
 			});
 			return;
 		}
+		debugger;
 		if (behaviorTests.length == 0) {
 			toast({
 				type: "warning",
@@ -212,10 +319,68 @@
 		medicalHistory = {};
 	};
 
+	const updateHistory = async () => {
+		if (!medicalHistory.id) {
+			toast({
+				type: "warning",
+				message: "No se encontro el recurso para editar",
+			});
+			return;
+		}
+		if (healthChecks.length == 0) {
+			toast({
+				type: "warning",
+				message: "Debe registrar el test de salud",
+			});
+			return;
+		}
+		if (behaviorTests.length == 0) {
+			toast({
+				type: "warning",
+				message: "Debe de registrar los test de comportamiento",
+			});
+			return;
+		}
+		const updatedHistory = {
+			id: medicalHistory.id,
+			petId: petSelected.id,
+			date: medicalHistory.date,
+			healthChecks: healthChecks,
+			behaviorTests: behaviorTests,
+			observations: medicalHistory.observations,
+		};
+		await client
+			.put(
+				"/gateway/MedicalHistories/" + medicalHistory.id,
+				updatedHistory
+			)
+			.then((response) => {
+				toast({
+					type: "success",
+					message: "Actualizada exitosamente",
+				});
+				newRecord = false;
+				setTimeout(() => {
+					window.location.reload();
+				}, 500);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+		medicalHistory = {};
+		editStatus = false;
+		initialLoad();
+	};
+
 	const onSubmitHandler = () => {
-		addHistory();
+		if (editStatus) {
+			updateHistory();
+		} else {
+			addHistory();
+		}
 	};
 </script>
+
 <div class="card">
 	<div class="card-body">
 		<div class="row">
@@ -376,10 +541,14 @@
 									<td
 										><input
 											type="radio"
-											id="{d.id}-chkdds"
+											id="{d.id}-{ds.id}-chkdds"
 											name="{d.id}-chkdds"
 											on:change={() =>
-												addDiseaseStatus(d.id, ds.id)}
+												addDiseaseStatus(
+													d.id,
+													ds.id,
+													true
+												)}
 										/></td
 									>
 								{/each}
@@ -398,17 +567,21 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each behaviors as d}
+						{#each behaviors as b}
 							<tr>
-								<td>{d.name}</td>
-								{#each behaviorsStatuses as ds}
+								<td>{b.name}</td>
+								{#each behaviorsStatuses as bs}
 									<td
 										><input
 											type="radio"
-											id="{d.id}-{ds.id}-chkbbs"
-											name="{d.id}-{ds.id}-chkbbs"
+											id="{b.id}-{bs.id}-chkbbs"
+											name="{b.id}-chkbbs"
 											on:change={() =>
-												addBehaviorStatus(d.id, ds.id)}
+												addBehaviorStatus(
+													b.id,
+													bs.id,
+													true
+												)}
 										/></td
 									>
 								{/each}
@@ -428,7 +601,7 @@
 						/>
 					</div>
 				</div>
-
+				<br />
 				<button type="submit" class="btn btn-success">
 					<i class="ti-save" />
 					Guardar

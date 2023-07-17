@@ -7,22 +7,33 @@
 	import Search from "../../core/components/Search.svelte";
 	import Add from "./components/Add.svelte";
 	import { showLoader, hideLoader } from "../../core/utils/loading-spinner";
-	//import toast, { Toaster } from 'svelte-french-toast'; 
+	//import toast, { Toaster } from 'svelte-french-toast';
 	let newRecord = false;
 
 	function openNew(open) {
 		newRecord = open;
 	}
-	let medicalHistories = []; 
+	let medicalHistories = [];
 	onMount(async () => {
-		showLoader();
-		await client.get("/gateway/MedicalHistories/").then((response) => {
-			if (response.code == "1") {
-				medicalHistories = JSON.parse(response.payload);
-			}
-		});
-		hideLoader();   
+		initialLoad();
 	});
+
+	const initialLoad = async () => {
+		showLoader();
+		await client
+			.get("/gateway/MedicalHistories/")
+			.then((response) => {
+				if (response.code == "1") {
+					medicalHistories = JSON.parse(response.payload);
+				}
+			})
+			.catch((error) => {
+				hideLoader();
+				console.log(error);
+			});
+		hideLoader();
+	};
+
 	const getReport = async (id) => {
 		//Add authentication headers as params
 		// var params = {
@@ -110,7 +121,7 @@
 						type: "success",
 						message: "Eliminada exitosamente",
 					});
-					pets = pets.filter((pet) => pet.id !== id);
+					medicalHistories = medicalHistories.filter((mh) => mh.id !== id);
 				})
 				.catch((error) => {
 					console.log(error);
@@ -146,6 +157,7 @@
 		historyEdited = item;
 	};
 </script>
+
 <div class="row page-titles">
 	<div class="col-md-5 align-self-center">
 		<h5 class="text-themecolor">Registro Informado de Estetica Canina</h5>
@@ -165,15 +177,16 @@
 <!-- <Toaster /> -->
 
 {#if newRecord | editStatus}
-	<Add {newRecord} {editStatus} {historyEdited} />
+	<Add {newRecord} {editStatus} {historyEdited} {initialLoad} />
 {:else}
-	<Search
+	<!-- <Search
 		bind:searchTerm
 		on:input={searchRecords}
 		placeholder="Buscar Mascota"
-	/>
+	/> -->
 {/if}
 
+{#if medicalHistories.length > 0}
 <div class="card">
 	<div class="card-body">
 		<div class="table-responsive">
@@ -222,7 +235,11 @@
 		</div>
 	</div>
 </div>
+{:else}
+<h5 class="card-title">No se encontraron registros</h5>
+{/if}
 
+<!-- 
 <style lang="css">
 	/* @import "../dist/css/style.css"; */
 	.floating-results {
@@ -245,4 +262,4 @@
 	.floating-results .list-group-item:hover {
 		background-color: #f8f9fa;
 	}
-</style>
+</style> -->

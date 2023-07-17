@@ -112,8 +112,21 @@ namespace Vet.API.Controllers
 
             _context.Entry(pet).State = EntityState.Modified;
 
+            var petFounded = await _context.Pets.FindAsync(id);
+            petFounded.Name = pet.Name;
+            petFounded.PetTypeId = pet.PetTypeId;
+            petFounded.BreedId = pet.BreedId;
+            petFounded.GenderId = pet.GenderId;
+            petFounded.Age = pet.Age;
+            petFounded.Color = pet.Color;
+            petFounded.Weight = pet.Weight;
+            petFounded.Enabled = pet.Enabled;
+            petFounded.Weight = pet.Weight;
+            petFounded.UpdatedAt = DateTime.Now;
+
             try
             {
+                _context.Update(petFounded);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)

@@ -37,6 +37,7 @@ BEGIN
 		INNER JOIN Pet.Pet p ON mh.PetId = p.Id
 		INNER JOIN Customer.Customer c ON p.CustomerId = c.Id
 	WHERE p.CompanyId = @companyId
+	AND mh.Deleted is null
 	--Select * from pet.Behavior
 END
 GO

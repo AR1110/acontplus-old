@@ -1,4 +1,53 @@
-﻿import svelte from "rollup-plugin-svelte";
+﻿// import svelte from 'rollup-plugin-svelte';
+// import resolve from '@rollup/plugin-node-resolve';
+// import commonjs from '@rollup/plugin-commonjs';
+// import replace from "@rollup/plugin-replace";
+// //import json from "@rollup/plugin-json";
+// //import builtins from 'rollup-plugin-node-builtins';
+
+// const production = !process.env.ROLLUP_WATCH;
+// const appObject = "petMH"
+// export default {
+//     // This `main.js` file we wrote
+//     input: 'App/main.js',
+//     output: {
+//         // The destination for our bundled JavaScript
+//         file:  `wwwroot/build/${appObject}.js`,
+//         // Our bundle will be an Immediately-Invoked Function Expression
+//         format: 'iife',
+//         //format: 'cjs',
+//         // The IIFE return value will be assigned into a variable called `app`
+//         name: 'petMH',
+//     },
+//     plugins: [
+//         svelte({
+//             // Tell the svelte plugin where our svelte files are located
+//             include: 'App/**/*.svelte',
+//             emitCss: false,
+//             compilerOptions: {
+//                 customElement: true,
+//             }
+//         }),
+//         //builtins(),
+//         //json(),
+//         commonjs({
+//             include: /node_modules/,
+//             requireReturnsDefault: 'auto',
+//         }),
+//         replace({
+//             preventAssignment: true,
+//         }),
+
+//         // Tell any third-party plugins that we're building for the browser
+//         resolve({
+//             browser: true,
+//             dedupe: ['svelte']
+//         }),
+//         //production && terser(),
+//     ]
+// };
+
+import svelte from "rollup-plugin-svelte";
 import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
 import terser from "@rollup/plugin-terser";
@@ -11,7 +60,9 @@ import alias from "@rollup/plugin-alias";
 import nodeResolve from '@rollup/plugin-node-resolve';
 
 const production = !process.env.ROLLUP_WATCH;
+// const appObject = "petBreed"
 const appObject = "petMH"
+
 export default {
     // This `main.js` file we wrote
     input: 'App/main.js',
@@ -72,7 +123,7 @@ export default {
             types: ["svelte"],
             resolveJsonModule: true
         }),
-        production && terser(),
+        //production && terser(),
     ],
     watch: {
         clearScreen: false
