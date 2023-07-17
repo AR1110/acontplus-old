@@ -1,4 +1,5 @@
 using Helpers;
+using Lib.Common;
 using Services.Common;
 using System.Reflection;
 
@@ -34,7 +35,7 @@ namespace ApiLogistica
 
             app.UseAuthorization();
 
-            app.UseMiddleware<JWTMiddleware>();
+            
 
             app.UseEndpoints(endpoints =>
             {

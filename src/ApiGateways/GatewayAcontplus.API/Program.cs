@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Configuration.SetBasePath(BinDirectory.GetBinRunDir());
+builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
 ConfigHelper.AddJsonFiles(builder.Configuration);
 
 string[] origins = builder.Configuration.GetSection("SafeOrigins").Value.Split('|');
@@ -48,7 +48,7 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-//app.UseMiddleware<JWTMiddleware>();
+//
 
 app.UseEndpoints(endpoints =>
 {

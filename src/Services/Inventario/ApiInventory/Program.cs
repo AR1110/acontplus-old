@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using System.Reflection;
+using Lib.Common;
 
 namespace ApiInventory
 {
@@ -82,7 +83,7 @@ namespace ApiInventory
 
             app.UseAuthorization();
 
-            app.UseMiddleware<JWTMiddleware>();
+            
 
             app.UseEndpoints(endpoints =>
             {
