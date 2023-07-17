@@ -93,7 +93,7 @@ namespace ApiConfig.Controllers
             return Ok(_response);
         }
 
-        [HttpPost("Put")]
+        [HttpPut("Put")]
         public async Task<IActionResult> Put(string json, IFormFile file)
         {
             GenericResponse _response = new GenericResponse();
