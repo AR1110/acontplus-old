@@ -539,6 +539,29 @@
       "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],
       "UpstreamPathTemplate": "/gateway/ReporteDataSource/{everything}"
     },
+
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 44354
+        }
+      ],
+      "DownstreamPathTemplate": "/api/FirmaElectronica{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/gateway/FirmaElectronica{everything}"
+    },
+
     {
       "AuthenticationOptions": {
         "AllowedScopes": [],

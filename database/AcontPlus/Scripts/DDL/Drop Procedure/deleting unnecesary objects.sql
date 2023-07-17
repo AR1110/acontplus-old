@@ -375,3 +375,24 @@ GO
 
 DROP PROCEDURE IF EXISTS [GestFinanc].[ComprobanteIngreso_Insert_Fast]
 GO
+
+ -------
+DROP PROCEDURE IF EXISTS [DocumentoTributario].[FirmaElectronica_Insert]
+GO
+
+
+DROP PROCEDURE IF EXISTS [DocumentoTributario].[FirmaElectronica_Update]
+GO
+
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPFirmaElectronicaDelete]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPFirmaElectronicaGet]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPFirmaElectronicaInsert]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPFirmaElectronicaUpdate]
+GO

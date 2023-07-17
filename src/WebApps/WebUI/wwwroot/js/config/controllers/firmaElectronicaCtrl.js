@@ -12,7 +12,7 @@ function firmaElectronicaCtrl($scope, mS, tS) {
     //     $scope.accion = accion[0];
     // }
 
-    let url = '/FirmaElectronica/';
+    let url = 'FirmaElectronica/';
 
     $scope.firma = {};
     $scope.fileSign = {};
@@ -34,21 +34,27 @@ function firmaElectronicaCtrl($scope, mS, tS) {
     };
 
     $scope.initialLoad = function () {
-        mS.getData('get', '/Entidad/OptionEntidad').then(function (response) {
-            $scope.entidades = response.data;
-        }, error => console.log(error));
-
-        mS.getData('get', url + 'Get').then(function (response) {
-            if (response.id == 0) {
-                tS.toastr('warning', response.message, response.titleSms);
+        showLoader();
+        $scope.firmas = [];
+        mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 1 }), null, true).then(function (response) {
+            hideLoader();
+            if (response.code == 0) {
+                console.log(response)
                 return;
             }
-            $scope.firmas = response.data.map(val => {
+            if(response.code=='1'){
+                let firmas = JSON.parse(response.payload)[0] || [];
+                $scope.firmas = firmas.map(val => {
                 val.contraseniaEncryp = val.contrasenia.replace(val.contrasenia, '*'.repeat(val.contrasenia.length));
                 return val;
             });
+            }
+           
 
-        }, error => console.log(error));
+        }).catch(error=>{
+            hideLoader()
+            console.log(error)
+        })
     };
     $scope.initialLoad();
 
@@ -64,7 +70,8 @@ function firmaElectronicaCtrl($scope, mS, tS) {
     $scope.post = function () {
         showLoader();
         let file = $scope.fileSign;
-        if (file == null || file == undefined) {
+        console.log(file)
+        if (!file || Object.keys(file.length)===0) {
             hideLoader();
             tS.toastr('warning', 'Por favor suba el archivo de la firma');
             return
@@ -79,63 +86,41 @@ function firmaElectronicaCtrl($scope, mS, tS) {
             tS.toastr('warning', 'Por seleccione la fecha caducidad');
             return;
         }
-        mS.getDataFile(url + 'Post', file, $scope.firma).then(response => {
-            if (response.id == 0) {
+        mS.getDataFile(url + 'Post', file, $scope.firma, true).then(response => {
+            if (response.code == 0) {
                 hideLoader();
                 tS.toastr('warning', response.message, response.titleSms);
                 return;
             };
-            if (response.id == 1) {
+            if (response.code == 1) {
                 hideLoader();
                 tS.toastr('success', response.message, response.titleSms);
                 $scope.initialLoad();
                 $('#modalFirma').modal('hide');
             }
             hideLoader();
-        }, error => console.log(error));
+        }).catch(error=>{
+            hideLoader();
+            console.log(error)
+        })
     };
 
     $scope.put = function () {
-        mS.getData('put', url + 'Put', $scope.firma).then(function (response) {
-            if (response.id == 0) {
+       
+        mS.getData('put', url + 'Put', $scope.firma, true).then(function (response) {
+            if (response.code == 0) {
                 tS.toastr('warning', response.message, response.titleSms);
                 return;
             }
-            if (response.id == 1) {
+            if (response.code == 1) {
                 tS.toastr('success', response.message, response.titleSms);
                 $scope.initialLoad();
                 $('#modalUpdate').modal('hide');
             }
-        }, error => console.log(error));
-    };
-
-    $scope.askToDelete = function (item) {
-        Swal.fire({
-            icon: 'warning',
-            //title: 'Insumos',
-            text: 'Esta seguro/a de eliminar esta firma electronica ahora?',
-            showDenyButton: true,
-            confirmButtonText: `Si`,
-            denyButtonText: `No`,
-            allowOutsideClick: false
-        }).then((response) => {
-            if (response.value) {
-                $scope.delete(item);
-            }
-        });
-    };
-
-    $scope.delete = function (item) {
-        mS.getData('delete', url + 'Delete?idFirmaElectronica=' + item.idFirmaElectronica).then(response => {
-            if (response.id == 0) {
-                tS.toastr('warning', response.message, response.titleSms);
-                return;
-            };
-            if (response.id == 1) {
-                tS.toastr('success', response.message, response.titleSms);
-                $('#modalFirma').modal('hide');
-            }
-        }, error => console.log(error));
+        }).catch(error=>{
+            hideLoader();
+            console.log(error)
+        })
     };
 
     $("#modalFirma, #modalUpdate").on('hide.bs.modal', e => {
