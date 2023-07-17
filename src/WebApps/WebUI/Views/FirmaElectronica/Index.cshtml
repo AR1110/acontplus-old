@@ -126,23 +126,34 @@
                             <div class="row">
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                     <div class="form-group">
-                                        <label for="contrasenia">Entidad:</label>
-                                        <h5>{{firma.nombre}}</h5>
+                                        <label>Contraseña:</label>
+                                        <input type="text" class="form-control" ng-model="firma.contrasenia" name="name"
+                                               value="" required />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="fechaCaducidad">Fecha Caducidad: </label>
+                                        <input type="date" class="form-control" ng-model="firma.fechaCaducidad"
+                                               required />
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                                    <md-switch ng-model="data.estado" aria-label="Switch 1">
+                                       ¿Actualizar Archivo Firma?
+                                    </md-switch>
+                                </div>
+                                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" ng-if="data.estado">
                                     <div class="form-group">
-                                        <label for="contrasenia">Contraseña:</label>
-                                        <input type="text" class="form-control" ng-model="firma.contrasenia" required />
+                                        <label>Formato de archivos: <span class="text-info">.p12</span> </label>
+                                        <input type="file" class="form-control" ngf-select ng-model="fileSign" />
+                                        <i ng-show="formFirma.fileSign.$error.pattern" class="text-danger">
+                                            Formato de archivo no aceptado
+                                        </i>
                                     </div>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label for="fechaCaducidad">Fecha Caducidad: </label>
-                                <input type="date" class="form-control" ng-model="firma.fechaCaducidad" required/>
-                            </div>
+                            
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-outline-success waves-effect waves-light">
