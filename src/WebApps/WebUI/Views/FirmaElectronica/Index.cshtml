@@ -36,7 +36,7 @@
                                 <tbody md-body>
                                     <tr md-row ng-repeat="item in firmas">
                                         <td md-cell>{{$index+1}}</td>
-                                        <td md-cell>{{item.nombre}}</td>
+                                        <td md-cell>{{item.razonSocial}}</td>
                                         <td md-cell ng-mouseover="verContrasenia(item)"
                                             ng-mouseleave="contraseniaEncryp(item)">
                                             {{item.contraseniaEncryp}}
@@ -74,14 +74,6 @@
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                    <div class="form-group">
-                                        <label>Entidad:</label>
-                                        <select class="form-control" ng-model="firma.idEntidad" required>
-                                            <option value="{{item.idEntidad}}" ng-repeat="item in entidades">
-                                                {{item.razonSocial}}
-                                            </option>
-                                        </select>
-                                    </div>
                                     <div class="form-group">
                                         <label>Contraseña:</label>
                                         <input type="text" class="form-control" ng-model="firma.contrasenia" name="name"
