@@ -14,6 +14,9 @@
         public string role { get; set; }
         public string actividad { get; set; }
         public string jwtToken { get; set; }
+
+        // Add
+        public string sucursal { get; set; }
     }
     public class LoginMenu
     {
