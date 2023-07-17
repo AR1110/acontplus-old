@@ -1,4 +1,4 @@
-var petMH = (function () {
+var petBreed = (function () {
 	'use strict';
 
 	/** @returns {void} */
@@ -38,10 +38,6 @@ var petMH = (function () {
 		return Object.keys(obj).length === 0;
 	}
 
-	function action_destroyer(action_result) {
-		return action_result && is_function(action_result.destroy) ? action_result.destroy : noop$1;
-	}
-
 	/**
 	 * @param {Node} target
 	 * @param {Node} node
@@ -49,45 +45,6 @@ var petMH = (function () {
 	 */
 	function append(target, node) {
 		target.appendChild(node);
-	}
-
-	/**
-	 * @param {Node} target
-	 * @param {string} style_sheet_id
-	 * @param {string} styles
-	 * @returns {void}
-	 */
-	function append_styles(target, style_sheet_id, styles) {
-		const append_styles_to = get_root_for_style(target);
-		if (!append_styles_to.getElementById(style_sheet_id)) {
-			const style = element('style');
-			style.id = style_sheet_id;
-			style.textContent = styles;
-			append_stylesheet(append_styles_to, style);
-		}
-	}
-
-	/**
-	 * @param {Node} node
-	 * @returns {ShadowRoot | Document}
-	 */
-	function get_root_for_style(node) {
-		if (!node) return document;
-		const root = node.getRootNode ? node.getRootNode() : node.ownerDocument;
-		if (root && /** @type {ShadowRoot} */ (root).host) {
-			return /** @type {ShadowRoot} */ (root);
-		}
-		return node.ownerDocument;
-	}
-
-	/**
-	 * @param {ShadowRoot | Document} node
-	 * @param {HTMLStyleElement} style
-	 * @returns {CSSStyleSheet}
-	 */
-	function append_stylesheet(node, style) {
-		append(/** @type {Document} */ (node).head || node, style);
-		return style.sheet;
 	}
 
 	/**
@@ -181,12 +138,6 @@ var petMH = (function () {
 	}
 
 	/**
-	 * @returns {number} */
-	function to_number(value) {
-		return value === '' ? null : +value;
-	}
-
-	/**
 	 * @param {Element} element
 	 * @returns {ChildNode[]}
 	 */
@@ -213,16 +164,6 @@ var petMH = (function () {
 
 	/**
 	 * @returns {void} */
-	function set_style(node, key, value, important) {
-		if (value == null) {
-			node.style.removeProperty(key);
-		} else {
-			node.style.setProperty(key, value, important ? 'important' : '');
-		}
-	}
-
-	/**
-	 * @returns {void} */
 	function select_option(select, value, mounting) {
 		for (let i = 0; i < select.options.length; i += 1) {
 			const option = select.options[i];
@@ -239,20 +180,6 @@ var petMH = (function () {
 	function select_value(select) {
 		const selected_option = select.querySelector(':checked');
 		return selected_option && selected_option.__value;
-	}
-
-	/**
-	 * @param {HTMLElement} element
-	 * @returns {{}}
-	 */
-	function get_custom_elements_slots(element) {
-		const result = {};
-		element.childNodes.forEach(
-			/** @param {Element} node */ (node) => {
-				result[node.slot || 'default'] = true;
-			}
-		);
-		return result;
 	}
 
 	/**
@@ -678,276 +605,6 @@ var petMH = (function () {
 		set_current_component(parent_component);
 	}
 
-	let SvelteElement;
-
-	if (typeof HTMLElement === 'function') {
-		SvelteElement = class extends HTMLElement {
-			/** The Svelte component constructor */
-			$$ctor;
-			/** Slots */
-			$$s;
-			/** The Svelte component instance */
-			$$c;
-			/** Whether or not the custom element is connected */
-			$$cn = false;
-			/** Component props data */
-			$$d = {};
-			/** `true` if currently in the process of reflecting component props back to attributes */
-			$$r = false;
-			/** @type {Record<string, CustomElementPropDefinition>} Props definition (name, reflected, type etc) */
-			$$p_d = {};
-			/** @type {Record<string, Function[]>} Event listeners */
-			$$l = {};
-			/** @type {Map<Function, Function>} Event listener unsubscribe functions */
-			$$l_u = new Map();
-
-			constructor($$componentCtor, $$slots, use_shadow_dom) {
-				super();
-				this.$$ctor = $$componentCtor;
-				this.$$s = $$slots;
-				if (use_shadow_dom) {
-					this.attachShadow({ mode: 'open' });
-				}
-			}
-
-			addEventListener(type, listener, options) {
-				// We can't determine upfront if the event is a custom event or not, so we have to
-				// listen to both. If someone uses a custom event with the same name as a regular
-				// browser event, this fires twice - we can't avoid that.
-				this.$$l[type] = this.$$l[type] || [];
-				this.$$l[type].push(listener);
-				if (this.$$c) {
-					const unsub = this.$$c.$on(type, listener);
-					this.$$l_u.set(listener, unsub);
-				}
-				super.addEventListener(type, listener, options);
-			}
-
-			removeEventListener(type, listener, options) {
-				super.removeEventListener(type, listener, options);
-				if (this.$$c) {
-					const unsub = this.$$l_u.get(listener);
-					if (unsub) {
-						unsub();
-						this.$$l_u.delete(listener);
-					}
-				}
-			}
-
-			async connectedCallback() {
-				this.$$cn = true;
-				if (!this.$$c) {
-					// We wait one tick to let possible child slot elements be created/mounted
-					await Promise.resolve();
-					if (!this.$$cn) {
-						return;
-					}
-					function create_slot(name) {
-						return () => {
-							let node;
-							const obj = {
-								c: function create() {
-									node = element('slot');
-									if (name !== 'default') {
-										attr(node, 'name', name);
-									}
-								},
-								/**
-								 * @param {HTMLElement} target
-								 * @param {HTMLElement} [anchor]
-								 */
-								m: function mount(target, anchor) {
-									insert(target, node, anchor);
-								},
-								d: function destroy(detaching) {
-									if (detaching) {
-										detach(node);
-									}
-								}
-							};
-							return obj;
-						};
-					}
-					const $$slots = {};
-					const existing_slots = get_custom_elements_slots(this);
-					for (const name of this.$$s) {
-						if (name in existing_slots) {
-							$$slots[name] = [create_slot(name)];
-						}
-					}
-					for (const attribute of this.attributes) {
-						// this.$$data takes precedence over this.attributes
-						const name = this.$$g_p(attribute.name);
-						if (!(name in this.$$d)) {
-							this.$$d[name] = get_custom_element_value(name, attribute.value, this.$$p_d, 'toProp');
-						}
-					}
-					this.$$c = new this.$$ctor({
-						target: this.shadowRoot || this,
-						props: {
-							...this.$$d,
-							$$slots,
-							$$scope: {
-								ctx: []
-							}
-						}
-					});
-
-					// Reflect component props as attributes
-					const reflect_attributes = () => {
-						this.$$r = true;
-						for (const key in this.$$p_d) {
-							this.$$d[key] = this.$$c.$$.ctx[this.$$c.$$.props[key]];
-							if (this.$$p_d[key].reflect) {
-								const attribute_value = get_custom_element_value(
-									key,
-									this.$$d[key],
-									this.$$p_d,
-									'toAttribute'
-								);
-								if (attribute_value == null) {
-									this.removeAttribute(key);
-								} else {
-									this.setAttribute(this.$$p_d[key].attribute || key, attribute_value);
-								}
-							}
-						}
-						this.$$r = false;
-					};
-					this.$$c.$$.after_update.push(reflect_attributes);
-					reflect_attributes(); // once initially because after_update is added too late for first render
-
-					for (const type in this.$$l) {
-						for (const listener of this.$$l[type]) {
-							const unsub = this.$$c.$on(type, listener);
-							this.$$l_u.set(listener, unsub);
-						}
-					}
-					this.$$l = {};
-				}
-			}
-
-			// We don't need this when working within Svelte code, but for compatibility of people using this outside of Svelte
-			// and setting attributes through setAttribute etc, this is helpful
-			attributeChangedCallback(attr, _oldValue, newValue) {
-				if (this.$$r) return;
-				attr = this.$$g_p(attr);
-				this.$$d[attr] = get_custom_element_value(attr, newValue, this.$$p_d, 'toProp');
-				this.$$c?.$set({ [attr]: this.$$d[attr] });
-			}
-
-			disconnectedCallback() {
-				this.$$cn = false;
-				// In a microtask, because this could be a move within the DOM
-				Promise.resolve().then(() => {
-					if (!this.$$cn) {
-						this.$$c.$destroy();
-						this.$$c = undefined;
-					}
-				});
-			}
-
-			$$g_p(attribute_name) {
-				return (
-					Object.keys(this.$$p_d).find(
-						(key) =>
-							this.$$p_d[key].attribute === attribute_name ||
-							(!this.$$p_d[key].attribute && key.toLowerCase() === attribute_name)
-					) || attribute_name
-				);
-			}
-		};
-	}
-
-	/**
-	 * @param {string} prop
-	 * @param {any} value
-	 * @param {Record<string, CustomElementPropDefinition>} props_definition
-	 * @param {'toAttribute' | 'toProp'} [transform]
-	 */
-	function get_custom_element_value(prop, value, props_definition, transform) {
-		const type = props_definition[prop]?.type;
-		value = type === 'Boolean' && typeof value !== 'boolean' ? value != null : value;
-		if (!transform || !props_definition[prop]) {
-			return value;
-		} else if (transform === 'toAttribute') {
-			switch (type) {
-				case 'Object':
-				case 'Array':
-					return value == null ? null : JSON.stringify(value);
-				case 'Boolean':
-					return value ? '' : null;
-				case 'Number':
-					return value == null ? null : value;
-				default:
-					return value;
-			}
-		} else {
-			switch (type) {
-				case 'Object':
-				case 'Array':
-					return value && JSON.parse(value);
-				case 'Boolean':
-					return value; // conversion already handled above
-				case 'Number':
-					return value != null ? +value : value;
-				default:
-					return value;
-			}
-		}
-	}
-
-	/**
-	 * @internal
-	 *
-	 * Turn a Svelte component into a custom element.
-	 * @param {import('./public.js').ComponentType} Component  A Svelte component constructor
-	 * @param {Record<string, CustomElementPropDefinition>} props_definition  The props to observe
-	 * @param {string[]} slots  The slots to create
-	 * @param {string[]} accessors  Other accessors besides the ones for props the component has
-	 * @param {boolean} use_shadow_dom  Whether to use shadow DOM
-	 */
-	function create_custom_element(
-		Component,
-		props_definition,
-		slots,
-		accessors,
-		use_shadow_dom
-	) {
-		const Class = class extends SvelteElement {
-			constructor() {
-				super(Component, slots, use_shadow_dom);
-				this.$$p_d = props_definition;
-			}
-			static get observedAttributes() {
-				return Object.keys(props_definition).map((key) =>
-					(props_definition[key].attribute || key).toLowerCase()
-				);
-			}
-		};
-		Object.keys(props_definition).forEach((prop) => {
-			Object.defineProperty(Class.prototype, prop, {
-				get() {
-					return this.$$c && prop in this.$$c ? this.$$c[prop] : this.$$d[prop];
-				},
-				set(value) {
-					value = get_custom_element_value(prop, value, props_definition);
-					this.$$d[prop] = value;
-					this.$$c?.$set({ [prop]: value });
-				}
-			});
-		});
-		accessors.forEach((accessor) => {
-			Object.defineProperty(Class.prototype, accessor, {
-				get() {
-					return this.$$c?.[accessor];
-				}
-			});
-		});
-		Component.element = /** @type {any} */ (Class);
-		return Class;
-	}
-
 	/**
 	 * Base class for Svelte components. Used when dev=false.
 	 *
@@ -1022,447 +679,6 @@ var petMH = (function () {
 	if (typeof window !== 'undefined')
 		// @ts-ignore
 		(window.__svelte || (window.__svelte = { v: new Set() })).v.add(PUBLIC_VERSION);
-
-	var REGEX = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|00000000-0000-0000-0000-000000000000)$/i;
-
-	function validate(uuid) {
-	  return typeof uuid === 'string' && REGEX.test(uuid);
-	}
-
-	/**
-	 * Convert array of 16 byte values to UUID string format of the form:
-	 * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
-	 */
-
-	var byteToHex = [];
-
-	for (var i = 0; i < 256; ++i) {
-	  byteToHex.push((i + 0x100).toString(16).substr(1));
-	}
-
-	function stringify(arr) {
-	  var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-	  // Note: Be careful editing this code!  It's been tuned for performance
-	  // and works in ways you may not expect. See https://github.com/uuidjs/uuid/pull/434
-	  var uuid = (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + '-' + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + '-' + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + '-' + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + '-' + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase(); // Consistency check for valid UUID.  If this throws, it's likely due to one
-	  // of the following:
-	  // - One or more input array values don't map to a hex octet (leading to
-	  // "undefined" in the uuid)
-	  // - Invalid input values for the RFC `version` or `variant` fields
-
-	  if (!validate(uuid)) {
-	    throw TypeError('Stringified UUID is invalid');
-	  }
-
-	  return uuid;
-	}
-
-	function parse(uuid) {
-	  if (!validate(uuid)) {
-	    throw TypeError('Invalid UUID');
-	  }
-
-	  var v;
-	  var arr = new Uint8Array(16); // Parse ########-....-....-....-............
-
-	  arr[0] = (v = parseInt(uuid.slice(0, 8), 16)) >>> 24;
-	  arr[1] = v >>> 16 & 0xff;
-	  arr[2] = v >>> 8 & 0xff;
-	  arr[3] = v & 0xff; // Parse ........-####-....-....-............
-
-	  arr[4] = (v = parseInt(uuid.slice(9, 13), 16)) >>> 8;
-	  arr[5] = v & 0xff; // Parse ........-....-####-....-............
-
-	  arr[6] = (v = parseInt(uuid.slice(14, 18), 16)) >>> 8;
-	  arr[7] = v & 0xff; // Parse ........-....-....-####-............
-
-	  arr[8] = (v = parseInt(uuid.slice(19, 23), 16)) >>> 8;
-	  arr[9] = v & 0xff; // Parse ........-....-....-....-############
-	  // (Use "/" to avoid 32-bit truncation when bit-shifting high-order bytes)
-
-	  arr[10] = (v = parseInt(uuid.slice(24, 36), 16)) / 0x10000000000 & 0xff;
-	  arr[11] = v / 0x100000000 & 0xff;
-	  arr[12] = v >>> 24 & 0xff;
-	  arr[13] = v >>> 16 & 0xff;
-	  arr[14] = v >>> 8 & 0xff;
-	  arr[15] = v & 0xff;
-	  return arr;
-	}
-
-	function stringToBytes(str) {
-	  str = unescape(encodeURIComponent(str)); // UTF8 escape
-
-	  var bytes = [];
-
-	  for (var i = 0; i < str.length; ++i) {
-	    bytes.push(str.charCodeAt(i));
-	  }
-
-	  return bytes;
-	}
-
-	var DNS = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
-	var URL$1 = '6ba7b811-9dad-11d1-80b4-00c04fd430c8';
-	function v35 (name, version, hashfunc) {
-	  function generateUUID(value, namespace, buf, offset) {
-	    if (typeof value === 'string') {
-	      value = stringToBytes(value);
-	    }
-
-	    if (typeof namespace === 'string') {
-	      namespace = parse(namespace);
-	    }
-
-	    if (namespace.length !== 16) {
-	      throw TypeError('Namespace must be array-like (16 iterable integer values, 0-255)');
-	    } // Compute hash of namespace and value, Per 4.3
-	    // Future: Use spread syntax when supported on all platforms, e.g. `bytes =
-	    // hashfunc([...namespace, ... value])`
-
-
-	    var bytes = new Uint8Array(16 + value.length);
-	    bytes.set(namespace);
-	    bytes.set(value, namespace.length);
-	    bytes = hashfunc(bytes);
-	    bytes[6] = bytes[6] & 0x0f | version;
-	    bytes[8] = bytes[8] & 0x3f | 0x80;
-
-	    if (buf) {
-	      offset = offset || 0;
-
-	      for (var i = 0; i < 16; ++i) {
-	        buf[offset + i] = bytes[i];
-	      }
-
-	      return buf;
-	    }
-
-	    return stringify(bytes);
-	  } // Function#name is not settable on some platforms (#270)
-
-
-	  try {
-	    generateUUID.name = name; // eslint-disable-next-line no-empty
-	  } catch (err) {} // For CommonJS default export support
-
-
-	  generateUUID.DNS = DNS;
-	  generateUUID.URL = URL$1;
-	  return generateUUID;
-	}
-
-	/*
-	 * Browser-compatible JavaScript MD5
-	 *
-	 * Modification of JavaScript MD5
-	 * https://github.com/blueimp/JavaScript-MD5
-	 *
-	 * Copyright 2011, Sebastian Tschan
-	 * https://blueimp.net
-	 *
-	 * Licensed under the MIT license:
-	 * https://opensource.org/licenses/MIT
-	 *
-	 * Based on
-	 * A JavaScript implementation of the RSA Data Security, Inc. MD5 Message
-	 * Digest Algorithm, as defined in RFC 1321.
-	 * Version 2.2 Copyright (C) Paul Johnston 1999 - 2009
-	 * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
-	 * Distributed under the BSD License
-	 * See http://pajhome.org.uk/crypt/md5 for more info.
-	 */
-	function md5(bytes) {
-	  if (typeof bytes === 'string') {
-	    var msg = unescape(encodeURIComponent(bytes)); // UTF8 escape
-
-	    bytes = new Uint8Array(msg.length);
-
-	    for (var i = 0; i < msg.length; ++i) {
-	      bytes[i] = msg.charCodeAt(i);
-	    }
-	  }
-
-	  return md5ToHexEncodedArray(wordsToMd5(bytesToWords(bytes), bytes.length * 8));
-	}
-	/*
-	 * Convert an array of little-endian words to an array of bytes
-	 */
-
-
-	function md5ToHexEncodedArray(input) {
-	  var output = [];
-	  var length32 = input.length * 32;
-	  var hexTab = '0123456789abcdef';
-
-	  for (var i = 0; i < length32; i += 8) {
-	    var x = input[i >> 5] >>> i % 32 & 0xff;
-	    var hex = parseInt(hexTab.charAt(x >>> 4 & 0x0f) + hexTab.charAt(x & 0x0f), 16);
-	    output.push(hex);
-	  }
-
-	  return output;
-	}
-	/**
-	 * Calculate output length with padding and bit length
-	 */
-
-
-	function getOutputLength(inputLength8) {
-	  return (inputLength8 + 64 >>> 9 << 4) + 14 + 1;
-	}
-	/*
-	 * Calculate the MD5 of an array of little-endian words, and a bit length.
-	 */
-
-
-	function wordsToMd5(x, len) {
-	  /* append padding */
-	  x[len >> 5] |= 0x80 << len % 32;
-	  x[getOutputLength(len) - 1] = len;
-	  var a = 1732584193;
-	  var b = -271733879;
-	  var c = -1732584194;
-	  var d = 271733878;
-
-	  for (var i = 0; i < x.length; i += 16) {
-	    var olda = a;
-	    var oldb = b;
-	    var oldc = c;
-	    var oldd = d;
-	    a = md5ff(a, b, c, d, x[i], 7, -680876936);
-	    d = md5ff(d, a, b, c, x[i + 1], 12, -389564586);
-	    c = md5ff(c, d, a, b, x[i + 2], 17, 606105819);
-	    b = md5ff(b, c, d, a, x[i + 3], 22, -1044525330);
-	    a = md5ff(a, b, c, d, x[i + 4], 7, -176418897);
-	    d = md5ff(d, a, b, c, x[i + 5], 12, 1200080426);
-	    c = md5ff(c, d, a, b, x[i + 6], 17, -1473231341);
-	    b = md5ff(b, c, d, a, x[i + 7], 22, -45705983);
-	    a = md5ff(a, b, c, d, x[i + 8], 7, 1770035416);
-	    d = md5ff(d, a, b, c, x[i + 9], 12, -1958414417);
-	    c = md5ff(c, d, a, b, x[i + 10], 17, -42063);
-	    b = md5ff(b, c, d, a, x[i + 11], 22, -1990404162);
-	    a = md5ff(a, b, c, d, x[i + 12], 7, 1804603682);
-	    d = md5ff(d, a, b, c, x[i + 13], 12, -40341101);
-	    c = md5ff(c, d, a, b, x[i + 14], 17, -1502002290);
-	    b = md5ff(b, c, d, a, x[i + 15], 22, 1236535329);
-	    a = md5gg(a, b, c, d, x[i + 1], 5, -165796510);
-	    d = md5gg(d, a, b, c, x[i + 6], 9, -1069501632);
-	    c = md5gg(c, d, a, b, x[i + 11], 14, 643717713);
-	    b = md5gg(b, c, d, a, x[i], 20, -373897302);
-	    a = md5gg(a, b, c, d, x[i + 5], 5, -701558691);
-	    d = md5gg(d, a, b, c, x[i + 10], 9, 38016083);
-	    c = md5gg(c, d, a, b, x[i + 15], 14, -660478335);
-	    b = md5gg(b, c, d, a, x[i + 4], 20, -405537848);
-	    a = md5gg(a, b, c, d, x[i + 9], 5, 568446438);
-	    d = md5gg(d, a, b, c, x[i + 14], 9, -1019803690);
-	    c = md5gg(c, d, a, b, x[i + 3], 14, -187363961);
-	    b = md5gg(b, c, d, a, x[i + 8], 20, 1163531501);
-	    a = md5gg(a, b, c, d, x[i + 13], 5, -1444681467);
-	    d = md5gg(d, a, b, c, x[i + 2], 9, -51403784);
-	    c = md5gg(c, d, a, b, x[i + 7], 14, 1735328473);
-	    b = md5gg(b, c, d, a, x[i + 12], 20, -1926607734);
-	    a = md5hh(a, b, c, d, x[i + 5], 4, -378558);
-	    d = md5hh(d, a, b, c, x[i + 8], 11, -2022574463);
-	    c = md5hh(c, d, a, b, x[i + 11], 16, 1839030562);
-	    b = md5hh(b, c, d, a, x[i + 14], 23, -35309556);
-	    a = md5hh(a, b, c, d, x[i + 1], 4, -1530992060);
-	    d = md5hh(d, a, b, c, x[i + 4], 11, 1272893353);
-	    c = md5hh(c, d, a, b, x[i + 7], 16, -155497632);
-	    b = md5hh(b, c, d, a, x[i + 10], 23, -1094730640);
-	    a = md5hh(a, b, c, d, x[i + 13], 4, 681279174);
-	    d = md5hh(d, a, b, c, x[i], 11, -358537222);
-	    c = md5hh(c, d, a, b, x[i + 3], 16, -722521979);
-	    b = md5hh(b, c, d, a, x[i + 6], 23, 76029189);
-	    a = md5hh(a, b, c, d, x[i + 9], 4, -640364487);
-	    d = md5hh(d, a, b, c, x[i + 12], 11, -421815835);
-	    c = md5hh(c, d, a, b, x[i + 15], 16, 530742520);
-	    b = md5hh(b, c, d, a, x[i + 2], 23, -995338651);
-	    a = md5ii(a, b, c, d, x[i], 6, -198630844);
-	    d = md5ii(d, a, b, c, x[i + 7], 10, 1126891415);
-	    c = md5ii(c, d, a, b, x[i + 14], 15, -1416354905);
-	    b = md5ii(b, c, d, a, x[i + 5], 21, -57434055);
-	    a = md5ii(a, b, c, d, x[i + 12], 6, 1700485571);
-	    d = md5ii(d, a, b, c, x[i + 3], 10, -1894986606);
-	    c = md5ii(c, d, a, b, x[i + 10], 15, -1051523);
-	    b = md5ii(b, c, d, a, x[i + 1], 21, -2054922799);
-	    a = md5ii(a, b, c, d, x[i + 8], 6, 1873313359);
-	    d = md5ii(d, a, b, c, x[i + 15], 10, -30611744);
-	    c = md5ii(c, d, a, b, x[i + 6], 15, -1560198380);
-	    b = md5ii(b, c, d, a, x[i + 13], 21, 1309151649);
-	    a = md5ii(a, b, c, d, x[i + 4], 6, -145523070);
-	    d = md5ii(d, a, b, c, x[i + 11], 10, -1120210379);
-	    c = md5ii(c, d, a, b, x[i + 2], 15, 718787259);
-	    b = md5ii(b, c, d, a, x[i + 9], 21, -343485551);
-	    a = safeAdd(a, olda);
-	    b = safeAdd(b, oldb);
-	    c = safeAdd(c, oldc);
-	    d = safeAdd(d, oldd);
-	  }
-
-	  return [a, b, c, d];
-	}
-	/*
-	 * Convert an array bytes to an array of little-endian words
-	 * Characters >255 have their high-byte silently ignored.
-	 */
-
-
-	function bytesToWords(input) {
-	  if (input.length === 0) {
-	    return [];
-	  }
-
-	  var length8 = input.length * 8;
-	  var output = new Uint32Array(getOutputLength(length8));
-
-	  for (var i = 0; i < length8; i += 8) {
-	    output[i >> 5] |= (input[i / 8] & 0xff) << i % 32;
-	  }
-
-	  return output;
-	}
-	/*
-	 * Add integers, wrapping at 2^32. This uses 16-bit operations internally
-	 * to work around bugs in some JS interpreters.
-	 */
-
-
-	function safeAdd(x, y) {
-	  var lsw = (x & 0xffff) + (y & 0xffff);
-	  var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
-	  return msw << 16 | lsw & 0xffff;
-	}
-	/*
-	 * Bitwise rotate a 32-bit number to the left.
-	 */
-
-
-	function bitRotateLeft(num, cnt) {
-	  return num << cnt | num >>> 32 - cnt;
-	}
-	/*
-	 * These functions implement the four basic operations the algorithm uses.
-	 */
-
-
-	function md5cmn(q, a, b, x, s, t) {
-	  return safeAdd(bitRotateLeft(safeAdd(safeAdd(a, q), safeAdd(x, t)), s), b);
-	}
-
-	function md5ff(a, b, c, d, x, s, t) {
-	  return md5cmn(b & c | ~b & d, a, b, x, s, t);
-	}
-
-	function md5gg(a, b, c, d, x, s, t) {
-	  return md5cmn(b & d | c & ~d, a, b, x, s, t);
-	}
-
-	function md5hh(a, b, c, d, x, s, t) {
-	  return md5cmn(b ^ c ^ d, a, b, x, s, t);
-	}
-
-	function md5ii(a, b, c, d, x, s, t) {
-	  return md5cmn(c ^ (b | ~d), a, b, x, s, t);
-	}
-
-	v35('v3', 0x30, md5);
-
-	// Adapted from Chris Veness' SHA1 code at
-	// http://www.movable-type.co.uk/scripts/sha1.html
-	function f(s, x, y, z) {
-	  switch (s) {
-	    case 0:
-	      return x & y ^ ~x & z;
-
-	    case 1:
-	      return x ^ y ^ z;
-
-	    case 2:
-	      return x & y ^ x & z ^ y & z;
-
-	    case 3:
-	      return x ^ y ^ z;
-	  }
-	}
-
-	function ROTL(x, n) {
-	  return x << n | x >>> 32 - n;
-	}
-
-	function sha1(bytes) {
-	  var K = [0x5a827999, 0x6ed9eba1, 0x8f1bbcdc, 0xca62c1d6];
-	  var H = [0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476, 0xc3d2e1f0];
-
-	  if (typeof bytes === 'string') {
-	    var msg = unescape(encodeURIComponent(bytes)); // UTF8 escape
-
-	    bytes = [];
-
-	    for (var i = 0; i < msg.length; ++i) {
-	      bytes.push(msg.charCodeAt(i));
-	    }
-	  } else if (!Array.isArray(bytes)) {
-	    // Convert Array-like to Array
-	    bytes = Array.prototype.slice.call(bytes);
-	  }
-
-	  bytes.push(0x80);
-	  var l = bytes.length / 4 + 2;
-	  var N = Math.ceil(l / 16);
-	  var M = new Array(N);
-
-	  for (var _i = 0; _i < N; ++_i) {
-	    var arr = new Uint32Array(16);
-
-	    for (var j = 0; j < 16; ++j) {
-	      arr[j] = bytes[_i * 64 + j * 4] << 24 | bytes[_i * 64 + j * 4 + 1] << 16 | bytes[_i * 64 + j * 4 + 2] << 8 | bytes[_i * 64 + j * 4 + 3];
-	    }
-
-	    M[_i] = arr;
-	  }
-
-	  M[N - 1][14] = (bytes.length - 1) * 8 / Math.pow(2, 32);
-	  M[N - 1][14] = Math.floor(M[N - 1][14]);
-	  M[N - 1][15] = (bytes.length - 1) * 8 & 0xffffffff;
-
-	  for (var _i2 = 0; _i2 < N; ++_i2) {
-	    var W = new Uint32Array(80);
-
-	    for (var t = 0; t < 16; ++t) {
-	      W[t] = M[_i2][t];
-	    }
-
-	    for (var _t = 16; _t < 80; ++_t) {
-	      W[_t] = ROTL(W[_t - 3] ^ W[_t - 8] ^ W[_t - 14] ^ W[_t - 16], 1);
-	    }
-
-	    var a = H[0];
-	    var b = H[1];
-	    var c = H[2];
-	    var d = H[3];
-	    var e = H[4];
-
-	    for (var _t2 = 0; _t2 < 80; ++_t2) {
-	      var s = Math.floor(_t2 / 20);
-	      var T = ROTL(a, 5) + f(s, b, c, d) + e + K[s] + W[_t2] >>> 0;
-	      e = d;
-	      d = c;
-	      c = ROTL(b, 30) >>> 0;
-	      b = a;
-	      a = T;
-	    }
-
-	    H[0] = H[0] + a >>> 0;
-	    H[1] = H[1] + b >>> 0;
-	    H[2] = H[2] + c >>> 0;
-	    H[3] = H[3] + d >>> 0;
-	    H[4] = H[4] + e >>> 0;
-	  }
-
-	  return [H[0] >> 24 & 0xff, H[0] >> 16 & 0xff, H[0] >> 8 & 0xff, H[0] & 0xff, H[1] >> 24 & 0xff, H[1] >> 16 & 0xff, H[1] >> 8 & 0xff, H[1] & 0xff, H[2] >> 24 & 0xff, H[2] >> 16 & 0xff, H[2] >> 8 & 0xff, H[2] & 0xff, H[3] >> 24 & 0xff, H[3] >> 16 & 0xff, H[3] >> 8 & 0xff, H[3] & 0xff, H[4] >> 24 & 0xff, H[4] >> 16 & 0xff, H[4] >> 8 & 0xff, H[4] & 0xff];
-	}
-
-	v35('v5', 0x50, sha1);
 
 	function bind(fn, thisArg) {
 	  return function wrap() {
@@ -2676,6 +1892,8 @@ var petMH = (function () {
 	  }
 	}
 
+	var InterceptorManager$1 = InterceptorManager;
+
 	var transitionalDefaults = {
 	  silentJSONParsing: true,
 	  forcedJSONParsing: true,
@@ -3003,6 +2221,8 @@ var petMH = (function () {
 	utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 	  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
 	});
+
+	var defaults$1 = defaults;
 
 	// RawAxiosHeaders whose duplicates are ignored by node
 	// c.f. https://nodejs.org/api/http.html#http_message_headers
@@ -3338,6 +2558,8 @@ var petMH = (function () {
 	utils.freezeMethods(AxiosHeaders.prototype);
 	utils.freezeMethods(AxiosHeaders);
 
+	var AxiosHeaders$1 = AxiosHeaders;
+
 	/**
 	 * Transform the data for a request or a response
 	 *
@@ -3347,9 +2569,9 @@ var petMH = (function () {
 	 * @returns {*} The resulting transformed data
 	 */
 	function transformData(fns, response) {
-	  const config = this || defaults;
+	  const config = this || defaults$1;
 	  const context = response || config;
-	  const headers = AxiosHeaders.from(context.headers);
+	  const headers = AxiosHeaders$1.from(context.headers);
 	  let data = context.data;
 
 	  utils.forEach(fns, function transform(fn) {
@@ -3655,7 +2877,7 @@ var petMH = (function () {
 	var xhrAdapter = isXHRAdapterSupported && function (config) {
 	  return new Promise(function dispatchXhrRequest(resolve, reject) {
 	    let requestData = config.data;
-	    const requestHeaders = AxiosHeaders.from(config.headers).normalize();
+	    const requestHeaders = AxiosHeaders$1.from(config.headers).normalize();
 	    const responseType = config.responseType;
 	    let onCanceled;
 	    function done() {
@@ -3697,7 +2919,7 @@ var petMH = (function () {
 	        return;
 	      }
 	      // Prepare the response
-	      const responseHeaders = AxiosHeaders.from(
+	      const responseHeaders = AxiosHeaders$1.from(
 	        'getAllResponseHeaders' in request && request.getAllResponseHeaders()
 	      );
 	      const responseData = !responseType || responseType === 'text' || responseType === 'json' ?
@@ -3941,7 +3163,7 @@ var petMH = (function () {
 	function dispatchRequest(config) {
 	  throwIfCancellationRequested(config);
 
-	  config.headers = AxiosHeaders.from(config.headers);
+	  config.headers = AxiosHeaders$1.from(config.headers);
 
 	  // Transform request data
 	  config.data = transformData.call(
@@ -3953,7 +3175,7 @@ var petMH = (function () {
 	    config.headers.setContentType('application/x-www-form-urlencoded', false);
 	  }
 
-	  const adapter = adapters.getAdapter(config.adapter || defaults.adapter);
+	  const adapter = adapters.getAdapter(config.adapter || defaults$1.adapter);
 
 	  return adapter(config).then(function onAdapterResolution(response) {
 	    throwIfCancellationRequested(config);
@@ -3965,7 +3187,7 @@ var petMH = (function () {
 	      response
 	    );
 
-	    response.headers = AxiosHeaders.from(response.headers);
+	    response.headers = AxiosHeaders$1.from(response.headers);
 
 	    return response;
 	  }, function onAdapterRejection(reason) {
@@ -3979,7 +3201,7 @@ var petMH = (function () {
 	          config.transformResponse,
 	          reason.response
 	        );
-	        reason.response.headers = AxiosHeaders.from(reason.response.headers);
+	        reason.response.headers = AxiosHeaders$1.from(reason.response.headers);
 	      }
 	    }
 
@@ -3987,7 +3209,7 @@ var petMH = (function () {
 	  });
 	}
 
-	const headersToObject = (thing) => thing instanceof AxiosHeaders ? thing.toJSON() : thing;
+	const headersToObject = (thing) => thing instanceof AxiosHeaders$1 ? thing.toJSON() : thing;
 
 	/**
 	 * Config-specific merge-function which creates a new config-object
@@ -4190,8 +3412,8 @@ var petMH = (function () {
 	  constructor(instanceConfig) {
 	    this.defaults = instanceConfig;
 	    this.interceptors = {
-	      request: new InterceptorManager(),
-	      response: new InterceptorManager()
+	      request: new InterceptorManager$1(),
+	      response: new InterceptorManager$1()
 	    };
 	  }
 
@@ -4256,7 +3478,7 @@ var petMH = (function () {
 	      }
 	    );
 
-	    config.headers = AxiosHeaders.concat(contextHeaders, headers);
+	    config.headers = AxiosHeaders$1.concat(contextHeaders, headers);
 
 	    // filter out skipped interceptors
 	    const requestInterceptorChain = [];
@@ -4367,6 +3589,8 @@ var petMH = (function () {
 
 	  Axios.prototype[method + 'Form'] = generateHTTPMethod(true);
 	});
+
+	var Axios$1 = Axios;
 
 	/**
 	 * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -4484,6 +3708,8 @@ var petMH = (function () {
 	  }
 	}
 
+	var CancelToken$1 = CancelToken;
+
 	/**
 	 * Syntactic sugar for invoking a function and expanding an array for arguments.
 	 *
@@ -4592,6 +3818,8 @@ var petMH = (function () {
 	  HttpStatusCode[value] = key;
 	});
 
+	var HttpStatusCode$1 = HttpStatusCode;
+
 	/**
 	 * Create an instance of Axios
 	 *
@@ -4600,11 +3828,11 @@ var petMH = (function () {
 	 * @returns {Axios} A new instance of Axios
 	 */
 	function createInstance(defaultConfig) {
-	  const context = new Axios(defaultConfig);
-	  const instance = bind(Axios.prototype.request, context);
+	  const context = new Axios$1(defaultConfig);
+	  const instance = bind(Axios$1.prototype.request, context);
 
 	  // Copy axios.prototype to instance
-	  utils.extend(instance, Axios.prototype, context, {allOwnKeys: true});
+	  utils.extend(instance, Axios$1.prototype, context, {allOwnKeys: true});
 
 	  // Copy context to instance
 	  utils.extend(instance, context, null, {allOwnKeys: true});
@@ -4618,44 +3846,47 @@ var petMH = (function () {
 	}
 
 	// Create the default instance to be exported
-	const axios$1 = createInstance(defaults);
+	const axios = createInstance(defaults$1);
 
 	// Expose Axios class to allow class inheritance
-	axios$1.Axios = Axios;
+	axios.Axios = Axios$1;
 
 	// Expose Cancel & CancelToken
-	axios$1.CanceledError = CanceledError;
-	axios$1.CancelToken = CancelToken;
-	axios$1.isCancel = isCancel;
-	axios$1.VERSION = VERSION;
-	axios$1.toFormData = toFormData;
+	axios.CanceledError = CanceledError;
+	axios.CancelToken = CancelToken$1;
+	axios.isCancel = isCancel;
+	axios.VERSION = VERSION;
+	axios.toFormData = toFormData;
 
 	// Expose AxiosError class
-	axios$1.AxiosError = AxiosError;
+	axios.AxiosError = AxiosError;
 
 	// alias for CanceledError for backward compatibility
-	axios$1.Cancel = axios$1.CanceledError;
+	axios.Cancel = axios.CanceledError;
 
 	// Expose all/spread
-	axios$1.all = function all(promises) {
+	axios.all = function all(promises) {
 	  return Promise.all(promises);
 	};
 
-	axios$1.spread = spread;
+	axios.spread = spread;
 
 	// Expose isAxiosError
-	axios$1.isAxiosError = isAxiosError;
+	axios.isAxiosError = isAxiosError;
 
 	// Expose mergeConfig
-	axios$1.mergeConfig = mergeConfig;
+	axios.mergeConfig = mergeConfig;
 
-	axios$1.AxiosHeaders = AxiosHeaders;
+	axios.AxiosHeaders = AxiosHeaders$1;
 
-	axios$1.formToJSON = thing => formDataToJSON(utils.isHTMLForm(thing) ? new FormData(thing) : thing);
+	axios.formToJSON = thing => formDataToJSON(utils.isHTMLForm(thing) ? new FormData(thing) : thing);
 
-	axios$1.HttpStatusCode = HttpStatusCode;
+	axios.HttpStatusCode = HttpStatusCode$1;
 
-	axios$1.default = axios$1;
+	axios.default = axios;
+
+	// this module should only have a default export
+	var axios$1 = axios;
 
 	const processQueue = (error) => {
 	    failedQueue.forEach((prom) => {
@@ -4813,15 +4044,6 @@ var petMH = (function () {
 	    setRefreshedTokens,
 	});
 
-	const clientFile = (url) => {
-	   return axios({
-	        url: `${decodedJwt.urlGateway}` + url,
-	        method: 'POST',
-	        responseType: 'blob',
-	        headers: { 'Authorization': 'Bearer ' + getCurrentAccessToken() }
-	    })
-	};
-
 	function toast({
 	    type,
 	    message,
@@ -4851,7 +4073,7 @@ var petMH = (function () {
 	var sweetalert2_all = {exports: {}};
 
 	/*!
-	* sweetalert2 v11.7.15
+	* sweetalert2 v11.7.18
 	* Released under the MIT License.
 	*/
 	sweetalert2_all.exports;
@@ -6196,11 +5418,15 @@ var petMH = (function () {
 		      if ('MutationObserver' in window) {
 		        const initialPopupWidth = parseInt(window.getComputedStyle(getPopup()).width);
 		        const textareaResizeHandler = () => {
+		          // check if texarea is still in document (i.e. popup wasn't closed in the meantime)
+		          if (!document.body.contains(textarea)) {
+		            return;
+		          }
 		          const textareaWidth = textarea.offsetWidth + getMargin(textarea);
 		          if (textareaWidth > initialPopupWidth) {
 		            getPopup().style.width = `${textareaWidth}px`;
 		          } else {
-		            getPopup().style.width = null;
+		            applyNumericalStyle(getPopup(), 'width', params.width);
 		          }
 		        };
 		        new MutationObserver(textareaResizeHandler).observe(textarea, {
@@ -6860,13 +6086,13 @@ var petMH = (function () {
 
 		  /* istanbul ignore file */
 
+		  // @ts-ignore
+		  const isSafariOrIOS = typeof window !== 'undefined' && !!window.GestureEvent; // true for Safari desktop + all iOS browsers https://stackoverflow.com/a/70585394
+
 		  // Fix iOS scrolling http://stackoverflow.com/q/39626302
 
 		  const iOSfix = () => {
-		    const iOS =
-		    // @ts-ignore
-		    /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream || navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
-		    if (iOS && !hasClass(document.body, swalClasses.iosfix)) {
+		    if (isSafariOrIOS && !hasClass(document.body, swalClasses.iosfix)) {
 		      const offset = document.body.scrollTop;
 		      document.body.style.top = `${offset * -1}px`;
 		      addClass(document.body, swalClasses.iosfix);
@@ -7002,10 +6228,10 @@ var petMH = (function () {
 		      restoreActiveElement(returnFocus).then(() => triggerDidCloseAndDispose(instance, didClose));
 		      removeKeydownHandler(globalState);
 		    }
-		    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-		    // workaround for #2088
+
+		    // workaround for https://github.com/sweetalert2/sweetalert2/issues/2088
 		    // for some reason removing the container in Safari will scroll the document to bottom
-		    if (isSafari) {
+		    if (isSafariOrIOS) {
 		      container.setAttribute('style', 'display:none !important');
 		      container.removeAttribute('class');
 		      container.innerHTML = '';
@@ -9034,7 +8260,7 @@ var petMH = (function () {
 		    };
 		  });
 		  SweetAlert.DismissReason = DismissReason;
-		  SweetAlert.version = '11.7.15';
+		  SweetAlert.version = '11.7.18';
 
 		  const Swal = SweetAlert;
 		  // @ts-ignore
@@ -9050,9 +8276,9 @@ var petMH = (function () {
 	var sweetalert2_allExports = sweetalert2_all.exports;
 	var Swal = /*@__PURE__*/getDefaultExportFromCjs(sweetalert2_allExports);
 
-	/* wwwroot\js\svelte\core\components\Search.svelte generated by Svelte v4.0.5 */
+	/* App\core\components\Search.svelte generated by Svelte v4.0.5 */
 
-	function create_fragment$5(ctx) {
+	function create_fragment$1(ctx) {
 		let div2;
 		let div1;
 		let div0;
@@ -9115,7 +8341,7 @@ var petMH = (function () {
 		};
 	}
 
-	function instance$5($$self, $$props, $$invalidate) {
+	function instance$1($$self, $$props, $$invalidate) {
 		let { searchTerm } = $$props;
 		let { placeholder } = $$props;
 
@@ -9139,129 +8365,9 @@ var petMH = (function () {
 	class Search extends SvelteComponent {
 		constructor(options) {
 			super();
-			init(this, options, instance$5, create_fragment$5, safe_not_equal, { searchTerm: 0, placeholder: 1 });
-		}
-
-		get searchTerm() {
-			return this.$$.ctx[0];
-		}
-
-		set searchTerm(searchTerm) {
-			this.$$set({ searchTerm });
-			flush();
-		}
-
-		get placeholder() {
-			return this.$$.ctx[1];
-		}
-
-		set placeholder(placeholder) {
-			this.$$set({ placeholder });
-			flush();
+			init(this, options, instance$1, create_fragment$1, safe_not_equal, { searchTerm: 0, placeholder: 1 });
 		}
 	}
-
-	create_custom_element(Search, {"searchTerm":{},"placeholder":{}}, [], [], true);
-
-	function getEventsAction(component) {
-	  return node => {
-	    const events = Object.keys(component.$$.callbacks);
-	    const listeners = [];
-	    events.forEach(event =>
-	      listeners.push(listen(node, event, e => bubble(component, e)))
-	    );
-	    return {
-	      destroy: () => {
-	        listeners.forEach(listener => listener());
-	      }
-	    };
-	  };
-	}
-
-	/* wwwroot\js\svelte\core\components\AdvancedSearch.svelte generated by Svelte v4.0.5 */
-
-	function create_fragment$4(ctx) {
-		let input;
-		let mounted;
-		let dispose;
-
-		return {
-			c() {
-				input = element("input");
-				attr(input, "class", "form-control");
-				attr(input, "onclick", "this.select()");
-				attr(input, "placeholder", /*placeholder*/ ctx[1]);
-				input.value = /*value*/ ctx[0];
-			},
-			m(target, anchor) {
-				insert(target, input, anchor);
-
-				if (!mounted) {
-					dispose = action_destroyer(/*events*/ ctx[2].call(null, input));
-					mounted = true;
-				}
-			},
-			p(ctx, [dirty]) {
-				if (dirty & /*placeholder*/ 2) {
-					attr(input, "placeholder", /*placeholder*/ ctx[1]);
-				}
-
-				if (dirty & /*value*/ 1 && input.value !== /*value*/ ctx[0]) {
-					input.value = /*value*/ ctx[0];
-				}
-			},
-			i: noop$1,
-			o: noop$1,
-			d(detaching) {
-				if (detaching) {
-					detach(input);
-				}
-
-				mounted = false;
-				dispose();
-			}
-		};
-	}
-
-	function instance$4($$self, $$props, $$invalidate) {
-		const events = getEventsAction(current_component);
-		let { value } = $$props;
-		let { placeholder } = $$props;
-
-		$$self.$$set = $$props => {
-			if ('value' in $$props) $$invalidate(0, value = $$props.value);
-			if ('placeholder' in $$props) $$invalidate(1, placeholder = $$props.placeholder);
-		};
-
-		return [value, placeholder, events];
-	}
-
-	class AdvancedSearch extends SvelteComponent {
-		constructor(options) {
-			super();
-			init(this, options, instance$4, create_fragment$4, safe_not_equal, { value: 0, placeholder: 1 });
-		}
-
-		get value() {
-			return this.$$.ctx[0];
-		}
-
-		set value(value) {
-			this.$$set({ value });
-			flush();
-		}
-
-		get placeholder() {
-			return this.$$.ctx[1];
-		}
-
-		set placeholder(placeholder) {
-			this.$$set({ placeholder });
-			flush();
-		}
-	}
-
-	create_custom_element(AdvancedSearch, {"value":{},"placeholder":{}}, [], [], true);
 
 	const showLoader = () => {
 	    var div = "<div class='loading'><span class='spinner'></span></div>";
@@ -9273,2192 +8379,6 @@ var petMH = (function () {
 	    $('.loading').remove();
 	    $('#loaderCss').removeClass('positionLoading');
 	};
-
-	/* wwwroot\js\svelte\app\Pet\Pet.svelte generated by Svelte v4.0.5 */
-
-	function add_css$2(target) {
-		append_styles(target, "svelte-ujbddh", "@import \"../dist/css/style.css\";.floating-results.svelte-ujbddh.svelte-ujbddh{position:absolute;z-index:1000;width:100%;max-height:300px;overflow-y:auto;background-color:#fff;border:1px solid #ced4da;border-top:none;border-radius:0 0 0.25rem 0.25rem;box-shadow:0px 2px 5px rgba(0, 0, 0, 0.15)}.floating-results.svelte-ujbddh .list-group-item.svelte-ujbddh{cursor:pointer}.floating-results.svelte-ujbddh .list-group-item.svelte-ujbddh:hover{background-color:#f8f9fa}");
-	}
-
-	function get_each_context_1$2(ctx, list, i) {
-		const child_ctx = ctx.slice();
-		child_ctx[43] = list[i];
-		child_ctx[46] = list;
-		child_ctx[47] = i;
-		return child_ctx;
-	}
-
-	function get_each_context$3(ctx, list, i) {
-		const child_ctx = ctx.slice();
-		child_ctx[43] = list[i];
-		child_ctx[44] = list;
-		child_ctx[45] = i;
-		return child_ctx;
-	}
-
-	function get_each_context_2$2(ctx, list, i) {
-		const child_ctx = ctx.slice();
-		child_ctx[43] = list[i];
-		return child_ctx;
-	}
-
-	function get_each_context_3$1(ctx, list, i) {
-		const child_ctx = ctx.slice();
-		child_ctx[43] = list[i];
-		return child_ctx;
-	}
-
-	function get_each_context_4$1(ctx, list, i) {
-		const child_ctx = ctx.slice();
-		child_ctx[43] = list[i];
-		return child_ctx;
-	}
-
-	function get_each_context_5$1(ctx, list, i) {
-		const child_ctx = ctx.slice();
-		child_ctx[43] = list[i];
-		return child_ctx;
-	}
-
-	// (306:0) {#if showForm | editStatus}
-	function create_if_block_2$1(ctx) {
-		let form;
-		let div3;
-		let div2;
-		let div1;
-		let div0;
-		let advancedsearch;
-		let t0;
-		let t1;
-		let current;
-		let mounted;
-		let dispose;
-
-		advancedsearch = new AdvancedSearch({
-				props: { value: /*value*/ ctx[7], placeholder: placeholder$1 }
-			});
-
-		advancedsearch.$on("input", /*onInput*/ ctx[19]);
-		advancedsearch.$on("focus", /*onFocus*/ ctx[20]);
-		advancedsearch.$on("blur", /*onBlur*/ ctx[21]);
-		let if_block0 = /*customers*/ ctx[8].length > 0 && !/*isCustomerSelected*/ ctx[9] && create_if_block_8(ctx);
-		let if_block1 = /*isCustomerSelected*/ ctx[9] | /*editStatus*/ ctx[5] && create_if_block_3$1(ctx);
-
-		return {
-			c() {
-				form = element("form");
-				div3 = element("div");
-				div2 = element("div");
-				div1 = element("div");
-				div0 = element("div");
-				create_component(advancedsearch.$$.fragment);
-				t0 = space();
-				if (if_block0) if_block0.c();
-				t1 = space();
-				if (if_block1) if_block1.c();
-				attr(div0, "class", "input-group");
-				attr(div1, "class", "form-group");
-				attr(div2, "class", "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12");
-				attr(div3, "class", "row");
-			},
-			m(target, anchor) {
-				insert(target, form, anchor);
-				append(form, div3);
-				append(div3, div2);
-				append(div2, div1);
-				append(div1, div0);
-				mount_component(advancedsearch, div0, null);
-				append(div1, t0);
-				if (if_block0) if_block0.m(div1, null);
-				append(form, t1);
-				if (if_block1) if_block1.m(form, null);
-				current = true;
-
-				if (!mounted) {
-					dispose = listen(form, "submit", prevent_default(/*save*/ ctx[17]));
-					mounted = true;
-				}
-			},
-			p(ctx, dirty) {
-				const advancedsearch_changes = {};
-				if (dirty[0] & /*value*/ 128) advancedsearch_changes.value = /*value*/ ctx[7];
-				advancedsearch.$set(advancedsearch_changes);
-
-				if (/*customers*/ ctx[8].length > 0 && !/*isCustomerSelected*/ ctx[9]) {
-					if (if_block0) {
-						if_block0.p(ctx, dirty);
-					} else {
-						if_block0 = create_if_block_8(ctx);
-						if_block0.c();
-						if_block0.m(div1, null);
-					}
-				} else if (if_block0) {
-					if_block0.d(1);
-					if_block0 = null;
-				}
-
-				if (/*isCustomerSelected*/ ctx[9] | /*editStatus*/ ctx[5]) {
-					if (if_block1) {
-						if_block1.p(ctx, dirty);
-					} else {
-						if_block1 = create_if_block_3$1(ctx);
-						if_block1.c();
-						if_block1.m(form, null);
-					}
-				} else if (if_block1) {
-					if_block1.d(1);
-					if_block1 = null;
-				}
-			},
-			i(local) {
-				if (current) return;
-				transition_in(advancedsearch.$$.fragment, local);
-				current = true;
-			},
-			o(local) {
-				transition_out(advancedsearch.$$.fragment, local);
-				current = false;
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(form);
-				}
-
-				destroy_component(advancedsearch);
-				if (if_block0) if_block0.d();
-				if (if_block1) if_block1.d();
-				mounted = false;
-				dispose();
-			}
-		};
-	}
-
-	// (320:5) {#if customers.length > 0 && !isCustomerSelected}
-	function create_if_block_8(ctx) {
-		let div;
-		let each_value_5 = ensure_array_like(/*customers*/ ctx[8]);
-		let each_blocks = [];
-
-		for (let i = 0; i < each_value_5.length; i += 1) {
-			each_blocks[i] = create_each_block_5$1(get_each_context_5$1(ctx, each_value_5, i));
-		}
-
-		return {
-			c() {
-				div = element("div");
-
-				for (let i = 0; i < each_blocks.length; i += 1) {
-					each_blocks[i].c();
-				}
-
-				attr(div, "class", "floating-results list-group svelte-ujbddh");
-			},
-			m(target, anchor) {
-				insert(target, div, anchor);
-
-				for (let i = 0; i < each_blocks.length; i += 1) {
-					if (each_blocks[i]) {
-						each_blocks[i].m(div, null);
-					}
-				}
-			},
-			p(ctx, dirty) {
-				if (dirty[0] & /*selectClient, customers*/ 4194560) {
-					each_value_5 = ensure_array_like(/*customers*/ ctx[8]);
-					let i;
-
-					for (i = 0; i < each_value_5.length; i += 1) {
-						const child_ctx = get_each_context_5$1(ctx, each_value_5, i);
-
-						if (each_blocks[i]) {
-							each_blocks[i].p(child_ctx, dirty);
-						} else {
-							each_blocks[i] = create_each_block_5$1(child_ctx);
-							each_blocks[i].c();
-							each_blocks[i].m(div, null);
-						}
-					}
-
-					for (; i < each_blocks.length; i += 1) {
-						each_blocks[i].d(1);
-					}
-
-					each_blocks.length = each_value_5.length;
-				}
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(div);
-				}
-
-				destroy_each(each_blocks, detaching);
-			}
-		};
-	}
-
-	// (322:7) {#each customers as item}
-	function create_each_block_5$1(ctx) {
-		let a;
-		let i;
-		let t0;
-		let t1_value = /*item*/ ctx[43].numeroIdentificacion + "";
-		let t1;
-		let t2;
-		let t3_value = /*item*/ ctx[43].nombreFiscal + "";
-		let t3;
-		let mounted;
-		let dispose;
-
-		return {
-			c() {
-				a = element("a");
-				i = element("i");
-				t0 = text(" - ");
-				t1 = text(t1_value);
-				t2 = text("\n\t\t\t\t\t\t\t\t\t- ");
-				t3 = text(t3_value);
-				attr(i, "class", "ti-user");
-				attr(a, "href", null);
-				attr(a, "class", "list-group-item svelte-ujbddh");
-			},
-			m(target, anchor) {
-				insert(target, a, anchor);
-				append(a, i);
-				append(a, t0);
-				append(a, t1);
-				append(a, t2);
-				append(a, t3);
-
-				if (!mounted) {
-					dispose = listen(a, "click", function () {
-						if (is_function(/*selectClient*/ ctx[22](/*item*/ ctx[43]))) /*selectClient*/ ctx[22](/*item*/ ctx[43]).apply(this, arguments);
-					});
-
-					mounted = true;
-				}
-			},
-			p(new_ctx, dirty) {
-				ctx = new_ctx;
-				if (dirty[0] & /*customers*/ 256 && t1_value !== (t1_value = /*item*/ ctx[43].numeroIdentificacion + "")) set_data(t1, t1_value);
-				if (dirty[0] & /*customers*/ 256 && t3_value !== (t3_value = /*item*/ ctx[43].nombreFiscal + "")) set_data(t3, t3_value);
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(a);
-				}
-
-				mounted = false;
-				dispose();
-			}
-		};
-	}
-
-	// (335:2) {#if isCustomerSelected | editStatus}
-	function create_if_block_3$1(ctx) {
-		let div8;
-		let div7;
-		let h50;
-		let t1;
-		let div6;
-		let div1;
-		let div0;
-		let label0;
-		let t3;
-		let input0;
-		let input0_value_value;
-		let t4;
-		let div3;
-		let div2;
-		let label1;
-		let t6;
-		let input1;
-		let input1_value_value;
-		let t7;
-		let div5;
-		let div4;
-		let label2;
-		let t9;
-		let input2;
-		let input2_value_value;
-		let t10;
-		let div22;
-		let div21;
-		let h51;
-		let t11;
-		let div13;
-		let div10;
-		let div9;
-		let label3;
-		let t13;
-		let input3;
-		let t14;
-		let div12;
-		let div11;
-		let label4;
-		let t16;
-		let select0;
-		let option0;
-		let t18;
-		let t19;
-		let div20;
-		let div15;
-		let div14;
-		let label5;
-		let t21;
-		let select1;
-		let option1;
-		let t23;
-		let div17;
-		let div16;
-		let label6;
-		let t25;
-		let input4;
-		let t26;
-		let div19;
-		let div18;
-		let label7;
-		let t28;
-		let input5;
-		let t29;
-		let button;
-		let i;
-		let t30;
-		let t31;
-		let mounted;
-		let dispose;
-
-		function select_block_type(ctx, dirty) {
-			if (!/*editStatus*/ ctx[5]) return create_if_block_7;
-			return create_else_block_2$1;
-		}
-
-		let current_block_type = select_block_type(ctx);
-		let if_block0 = current_block_type(ctx);
-		let each_value_4 = ensure_array_like(/*petTypes*/ ctx[2]);
-		let each_blocks_1 = [];
-
-		for (let i = 0; i < each_value_4.length; i += 1) {
-			each_blocks_1[i] = create_each_block_4$1(get_each_context_4$1(ctx, each_value_4, i));
-		}
-
-		let if_block1 = /*breedsFiltered*/ ctx[1].length > 0 && create_if_block_6$1(ctx);
-		let each_value_2 = ensure_array_like(/*genderes*/ ctx[0]);
-		let each_blocks = [];
-
-		for (let i = 0; i < each_value_2.length; i += 1) {
-			each_blocks[i] = create_each_block_2$2(get_each_context_2$2(ctx, each_value_2, i));
-		}
-
-		function select_block_type_1(ctx, dirty) {
-			if (!/*editStatus*/ ctx[5]) return create_if_block_5$1;
-			return create_else_block_1$1;
-		}
-
-		let current_block_type_1 = select_block_type_1(ctx);
-		let if_block2 = current_block_type_1(ctx);
-		let if_block3 = /*showForm*/ ctx[6] | /*editStatus*/ ctx[5] && create_if_block_4$1(ctx);
-
-		return {
-			c() {
-				div8 = element("div");
-				div7 = element("div");
-				h50 = element("h5");
-				h50.textContent = "Datos del Cliente";
-				t1 = space();
-				div6 = element("div");
-				div1 = element("div");
-				div0 = element("div");
-				label0 = element("label");
-				label0.textContent = "Razón Social";
-				t3 = space();
-				input0 = element("input");
-				t4 = space();
-				div3 = element("div");
-				div2 = element("div");
-				label1 = element("label");
-				label1.textContent = "Ruc";
-				t6 = space();
-				input1 = element("input");
-				t7 = space();
-				div5 = element("div");
-				div4 = element("div");
-				label2 = element("label");
-				label2.textContent = "Email";
-				t9 = space();
-				input2 = element("input");
-				t10 = space();
-				div22 = element("div");
-				div21 = element("div");
-				h51 = element("h5");
-				if_block0.c();
-				t11 = space();
-				div13 = element("div");
-				div10 = element("div");
-				div9 = element("div");
-				label3 = element("label");
-				label3.textContent = "Nombre";
-				t13 = space();
-				input3 = element("input");
-				t14 = space();
-				div12 = element("div");
-				div11 = element("div");
-				label4 = element("label");
-				label4.textContent = "Tipo:";
-				t16 = space();
-				select0 = element("select");
-				option0 = element("option");
-				option0.textContent = "Seleccione el tipo";
-
-				for (let i = 0; i < each_blocks_1.length; i += 1) {
-					each_blocks_1[i].c();
-				}
-
-				t18 = space();
-				if (if_block1) if_block1.c();
-				t19 = space();
-				div20 = element("div");
-				div15 = element("div");
-				div14 = element("div");
-				label5 = element("label");
-				label5.textContent = "Sexo:";
-				t21 = space();
-				select1 = element("select");
-				option1 = element("option");
-				option1.textContent = "Seleccione el sexo";
-
-				for (let i = 0; i < each_blocks.length; i += 1) {
-					each_blocks[i].c();
-				}
-
-				t23 = space();
-				div17 = element("div");
-				div16 = element("div");
-				label6 = element("label");
-				label6.textContent = "Edad";
-				t25 = space();
-				input4 = element("input");
-				t26 = space();
-				div19 = element("div");
-				div18 = element("div");
-				label7 = element("label");
-				label7.textContent = "Color";
-				t28 = space();
-				input5 = element("input");
-				t29 = space();
-				button = element("button");
-				i = element("i");
-				t30 = space();
-				if_block2.c();
-				t31 = space();
-				if (if_block3) if_block3.c();
-				attr(h50, "class", "card-title");
-				attr(label0, "for", "");
-				attr(input0, "type", "text");
-				attr(input0, "class", "form-control");
-				input0.disabled = true;
-				input0.value = input0_value_value = /*customerSelected*/ ctx[10].businessName;
-				attr(div0, "class", "form-group");
-				attr(div1, "class", "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12");
-				attr(label1, "for", "");
-				attr(input1, "type", "text");
-				attr(input1, "class", "form-control");
-				input1.disabled = true;
-				input1.value = input1_value_value = /*customerSelected*/ ctx[10].idCard;
-				attr(div2, "class", "form-group");
-				attr(div3, "class", "col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6");
-				attr(label2, "for", "");
-				attr(input2, "type", "text");
-				attr(input2, "class", "form-control");
-				input2.disabled = true;
-				input2.value = input2_value_value = /*customerSelected*/ ctx[10].email;
-				attr(div4, "class", "form-group");
-				attr(div5, "class", "col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6");
-				attr(div6, "class", "row");
-				attr(div7, "class", "card-body");
-				attr(div8, "class", "card");
-				attr(h51, "class", "card-title");
-				attr(label3, "for", "pet-name");
-				attr(input3, "type", "text");
-				attr(input3, "class", "form-control");
-				attr(input3, "id", "pet-name");
-				attr(input3, "placeholder", "Nombre");
-				input3.required = true;
-				attr(div9, "class", "form-group");
-				attr(div10, "class", "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12");
-				attr(label4, "for", "petType");
-				option0.selected = true;
-				option0.disabled = true;
-				option0.__value = "Seleccione el tipo";
-				set_input_value(option0, option0.__value);
-				attr(select0, "name", "petType");
-				attr(select0, "id", "petType");
-				attr(select0, "class", "form-control");
-				select0.required = true;
-				if (/*pet*/ ctx[4].petTypeId === void 0) add_render_callback(() => /*select0_change_handler*/ ctx[26].call(select0));
-				attr(div11, "class", "form-group");
-				attr(div12, "class", "col-xl-3 col-lg-3 col-md-3 col-sm-3 col-3");
-				attr(div13, "class", "row");
-				attr(label5, "for", "gender");
-				option1.selected = true;
-				option1.disabled = true;
-				option1.__value = "Seleccione el sexo";
-				set_input_value(option1, option1.__value);
-				attr(select1, "name", "gender");
-				attr(select1, "id", "gender");
-				attr(select1, "class", "form-control");
-				if (/*pet*/ ctx[4].genderId === void 0) add_render_callback(() => /*select1_change_handler*/ ctx[29].call(select1));
-				attr(div14, "class", "form-group");
-				attr(div15, "class", "col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6");
-				attr(label6, "for", "pet-age");
-				attr(input4, "type", "number");
-				attr(input4, "id", "pet-age");
-				attr(input4, "class", "form-control");
-				attr(input4, "step", "any");
-				input4.required = true;
-				attr(div16, "class", "form-group");
-				attr(div17, "class", "col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6");
-				attr(label7, "for", "pet-color");
-				attr(input5, "type", "text");
-				attr(input5, "id", "pet-color");
-				attr(input5, "class", "form-control");
-				attr(input5, "placeholder", "blanco");
-				input5.required = true;
-				attr(div18, "class", "form-group");
-				attr(div19, "class", "col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6");
-				attr(div20, "class", "row");
-				attr(i, "class", "ti-save");
-				attr(button, "type", "submit");
-				attr(button, "class", "btn btn-success");
-				attr(div21, "class", "card-body");
-				attr(div22, "class", "card");
-			},
-			m(target, anchor) {
-				insert(target, div8, anchor);
-				append(div8, div7);
-				append(div7, h50);
-				append(div7, t1);
-				append(div7, div6);
-				append(div6, div1);
-				append(div1, div0);
-				append(div0, label0);
-				append(div0, t3);
-				append(div0, input0);
-				append(div6, t4);
-				append(div6, div3);
-				append(div3, div2);
-				append(div2, label1);
-				append(div2, t6);
-				append(div2, input1);
-				append(div6, t7);
-				append(div6, div5);
-				append(div5, div4);
-				append(div4, label2);
-				append(div4, t9);
-				append(div4, input2);
-				insert(target, t10, anchor);
-				insert(target, div22, anchor);
-				append(div22, div21);
-				append(div21, h51);
-				if_block0.m(h51, null);
-				append(div21, t11);
-				append(div21, div13);
-				append(div13, div10);
-				append(div10, div9);
-				append(div9, label3);
-				append(div9, t13);
-				append(div9, input3);
-				set_input_value(input3, /*pet*/ ctx[4].name);
-				append(div13, t14);
-				append(div13, div12);
-				append(div12, div11);
-				append(div11, label4);
-				append(div11, t16);
-				append(div11, select0);
-				append(select0, option0);
-
-				for (let i = 0; i < each_blocks_1.length; i += 1) {
-					if (each_blocks_1[i]) {
-						each_blocks_1[i].m(select0, null);
-					}
-				}
-
-				select_option(select0, /*pet*/ ctx[4].petTypeId, true);
-				append(div13, t18);
-				if (if_block1) if_block1.m(div13, null);
-				append(div21, t19);
-				append(div21, div20);
-				append(div20, div15);
-				append(div15, div14);
-				append(div14, label5);
-				append(div14, t21);
-				append(div14, select1);
-				append(select1, option1);
-
-				for (let i = 0; i < each_blocks.length; i += 1) {
-					if (each_blocks[i]) {
-						each_blocks[i].m(select1, null);
-					}
-				}
-
-				select_option(select1, /*pet*/ ctx[4].genderId, true);
-				append(div20, t23);
-				append(div20, div17);
-				append(div17, div16);
-				append(div16, label6);
-				append(div16, t25);
-				append(div16, input4);
-				set_input_value(input4, /*pet*/ ctx[4].age);
-				append(div20, t26);
-				append(div20, div19);
-				append(div19, div18);
-				append(div18, label7);
-				append(div18, t28);
-				append(div18, input5);
-				set_input_value(input5, /*pet*/ ctx[4].color);
-				append(div21, t29);
-				append(div21, button);
-				append(button, i);
-				append(button, t30);
-				if_block2.m(button, null);
-				append(div21, t31);
-				if (if_block3) if_block3.m(div21, null);
-
-				if (!mounted) {
-					dispose = [
-						listen(input3, "input", /*input3_input_handler*/ ctx[25]),
-						listen(select0, "change", /*select0_change_handler*/ ctx[26]),
-						listen(select0, "change", /*change_handler*/ ctx[27]),
-						listen(select1, "change", /*select1_change_handler*/ ctx[29]),
-						listen(input4, "input", /*input4_input_handler*/ ctx[30]),
-						listen(input5, "input", /*input5_input_handler*/ ctx[31])
-					];
-
-					mounted = true;
-				}
-			},
-			p(ctx, dirty) {
-				if (dirty[0] & /*customerSelected*/ 1024 && input0_value_value !== (input0_value_value = /*customerSelected*/ ctx[10].businessName) && input0.value !== input0_value_value) {
-					input0.value = input0_value_value;
-				}
-
-				if (dirty[0] & /*customerSelected*/ 1024 && input1_value_value !== (input1_value_value = /*customerSelected*/ ctx[10].idCard) && input1.value !== input1_value_value) {
-					input1.value = input1_value_value;
-				}
-
-				if (dirty[0] & /*customerSelected*/ 1024 && input2_value_value !== (input2_value_value = /*customerSelected*/ ctx[10].email) && input2.value !== input2_value_value) {
-					input2.value = input2_value_value;
-				}
-
-				if (current_block_type !== (current_block_type = select_block_type(ctx))) {
-					if_block0.d(1);
-					if_block0 = current_block_type(ctx);
-
-					if (if_block0) {
-						if_block0.c();
-						if_block0.m(h51, null);
-					}
-				}
-
-				if (dirty[0] & /*pet, petTypes*/ 20 && input3.value !== /*pet*/ ctx[4].name) {
-					set_input_value(input3, /*pet*/ ctx[4].name);
-				}
-
-				if (dirty[0] & /*petTypes*/ 4) {
-					each_value_4 = ensure_array_like(/*petTypes*/ ctx[2]);
-					let i;
-
-					for (i = 0; i < each_value_4.length; i += 1) {
-						const child_ctx = get_each_context_4$1(ctx, each_value_4, i);
-
-						if (each_blocks_1[i]) {
-							each_blocks_1[i].p(child_ctx, dirty);
-						} else {
-							each_blocks_1[i] = create_each_block_4$1(child_ctx);
-							each_blocks_1[i].c();
-							each_blocks_1[i].m(select0, null);
-						}
-					}
-
-					for (; i < each_blocks_1.length; i += 1) {
-						each_blocks_1[i].d(1);
-					}
-
-					each_blocks_1.length = each_value_4.length;
-				}
-
-				if (dirty[0] & /*pet, petTypes*/ 20) {
-					select_option(select0, /*pet*/ ctx[4].petTypeId);
-				}
-
-				if (/*breedsFiltered*/ ctx[1].length > 0) {
-					if (if_block1) {
-						if_block1.p(ctx, dirty);
-					} else {
-						if_block1 = create_if_block_6$1(ctx);
-						if_block1.c();
-						if_block1.m(div13, null);
-					}
-				} else if (if_block1) {
-					if_block1.d(1);
-					if_block1 = null;
-				}
-
-				if (dirty[0] & /*genderes*/ 1) {
-					each_value_2 = ensure_array_like(/*genderes*/ ctx[0]);
-					let i;
-
-					for (i = 0; i < each_value_2.length; i += 1) {
-						const child_ctx = get_each_context_2$2(ctx, each_value_2, i);
-
-						if (each_blocks[i]) {
-							each_blocks[i].p(child_ctx, dirty);
-						} else {
-							each_blocks[i] = create_each_block_2$2(child_ctx);
-							each_blocks[i].c();
-							each_blocks[i].m(select1, null);
-						}
-					}
-
-					for (; i < each_blocks.length; i += 1) {
-						each_blocks[i].d(1);
-					}
-
-					each_blocks.length = each_value_2.length;
-				}
-
-				if (dirty[0] & /*pet, petTypes*/ 20) {
-					select_option(select1, /*pet*/ ctx[4].genderId);
-				}
-
-				if (dirty[0] & /*pet, petTypes*/ 20 && to_number(input4.value) !== /*pet*/ ctx[4].age) {
-					set_input_value(input4, /*pet*/ ctx[4].age);
-				}
-
-				if (dirty[0] & /*pet, petTypes*/ 20 && input5.value !== /*pet*/ ctx[4].color) {
-					set_input_value(input5, /*pet*/ ctx[4].color);
-				}
-
-				if (current_block_type_1 !== (current_block_type_1 = select_block_type_1(ctx))) {
-					if_block2.d(1);
-					if_block2 = current_block_type_1(ctx);
-
-					if (if_block2) {
-						if_block2.c();
-						if_block2.m(button, null);
-					}
-				}
-
-				if (/*showForm*/ ctx[6] | /*editStatus*/ ctx[5]) {
-					if (if_block3) {
-						if_block3.p(ctx, dirty);
-					} else {
-						if_block3 = create_if_block_4$1(ctx);
-						if_block3.c();
-						if_block3.m(div21, null);
-					}
-				} else if (if_block3) {
-					if_block3.d(1);
-					if_block3 = null;
-				}
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(div8);
-					detach(t10);
-					detach(div22);
-				}
-
-				if_block0.d();
-				destroy_each(each_blocks_1, detaching);
-				if (if_block1) if_block1.d();
-				destroy_each(each_blocks, detaching);
-				if_block2.d();
-				if (if_block3) if_block3.d();
-				mounted = false;
-				run_all(dispose);
-			}
-		};
-	}
-
-	// (379:42) {:else}
-	function create_else_block_2$1(ctx) {
-		let t;
-
-		return {
-			c() {
-				t = text("Editar\n\t\t\t\t\t\t\tMascota");
-			},
-			m(target, anchor) {
-				insert(target, t, anchor);
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(t);
-				}
-			}
-		};
-	}
-
-	// (379:6) {#if !editStatus}
-	function create_if_block_7(ctx) {
-		let t;
-
-		return {
-			c() {
-				t = text("Datos de la Mascota");
-			},
-			m(target, anchor) {
-				insert(target, t, anchor);
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(t);
-				}
-			}
-		};
-	}
-
-	// (411:9) {#each petTypes as item}
-	function create_each_block_4$1(ctx) {
-		let option;
-		let t_value = /*item*/ ctx[43].name + "";
-		let t;
-		let option_value_value;
-
-		return {
-			c() {
-				option = element("option");
-				t = text(t_value);
-				option.__value = option_value_value = /*item*/ ctx[43].id;
-				set_input_value(option, option.__value);
-			},
-			m(target, anchor) {
-				insert(target, option, anchor);
-				append(option, t);
-			},
-			p(ctx, dirty) {
-				if (dirty[0] & /*petTypes*/ 4 && t_value !== (t_value = /*item*/ ctx[43].name + "")) set_data(t, t_value);
-
-				if (dirty[0] & /*petTypes*/ 4 && option_value_value !== (option_value_value = /*item*/ ctx[43].id)) {
-					option.__value = option_value_value;
-					set_input_value(option, option.__value);
-				}
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(option);
-				}
-			}
-		};
-	}
-
-	// (419:6) {#if breedsFiltered.length > 0}
-	function create_if_block_6$1(ctx) {
-		let div1;
-		let div0;
-		let label;
-		let t1;
-		let select;
-		let option;
-		let mounted;
-		let dispose;
-		let each_value_3 = ensure_array_like(/*breedsFiltered*/ ctx[1]);
-		let each_blocks = [];
-
-		for (let i = 0; i < each_value_3.length; i += 1) {
-			each_blocks[i] = create_each_block_3$1(get_each_context_3$1(ctx, each_value_3, i));
-		}
-
-		return {
-			c() {
-				div1 = element("div");
-				div0 = element("div");
-				label = element("label");
-				label.textContent = "Raza:";
-				t1 = space();
-				select = element("select");
-				option = element("option");
-				option.textContent = "Seleccione la raza";
-
-				for (let i = 0; i < each_blocks.length; i += 1) {
-					each_blocks[i].c();
-				}
-
-				attr(label, "for", "breed");
-				option.selected = true;
-				option.disabled = true;
-				option.__value = "Seleccione la raza";
-				set_input_value(option, option.__value);
-				attr(select, "name", "breed");
-				attr(select, "id", "breed");
-				attr(select, "class", "form-control");
-				select.required = true;
-				if (/*pet*/ ctx[4].breedId === void 0) add_render_callback(() => /*select_change_handler*/ ctx[28].call(select));
-				attr(div0, "class", "form-group");
-				attr(div1, "class", "col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6");
-			},
-			m(target, anchor) {
-				insert(target, div1, anchor);
-				append(div1, div0);
-				append(div0, label);
-				append(div0, t1);
-				append(div0, select);
-				append(select, option);
-
-				for (let i = 0; i < each_blocks.length; i += 1) {
-					if (each_blocks[i]) {
-						each_blocks[i].m(select, null);
-					}
-				}
-
-				select_option(select, /*pet*/ ctx[4].breedId, true);
-
-				if (!mounted) {
-					dispose = listen(select, "change", /*select_change_handler*/ ctx[28]);
-					mounted = true;
-				}
-			},
-			p(ctx, dirty) {
-				if (dirty[0] & /*breedsFiltered*/ 2) {
-					each_value_3 = ensure_array_like(/*breedsFiltered*/ ctx[1]);
-					let i;
-
-					for (i = 0; i < each_value_3.length; i += 1) {
-						const child_ctx = get_each_context_3$1(ctx, each_value_3, i);
-
-						if (each_blocks[i]) {
-							each_blocks[i].p(child_ctx, dirty);
-						} else {
-							each_blocks[i] = create_each_block_3$1(child_ctx);
-							each_blocks[i].c();
-							each_blocks[i].m(select, null);
-						}
-					}
-
-					for (; i < each_blocks.length; i += 1) {
-						each_blocks[i].d(1);
-					}
-
-					each_blocks.length = each_value_3.length;
-				}
-
-				if (dirty[0] & /*pet, petTypes*/ 20) {
-					select_option(select, /*pet*/ ctx[4].breedId);
-				}
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(div1);
-				}
-
-				destroy_each(each_blocks, detaching);
-				mounted = false;
-				dispose();
-			}
-		};
-	}
-
-	// (435:10) {#each breedsFiltered as item}
-	function create_each_block_3$1(ctx) {
-		let option;
-		let t_value = /*item*/ ctx[43].name + "";
-		let t;
-		let option_value_value;
-
-		return {
-			c() {
-				option = element("option");
-				t = text(t_value);
-				option.__value = option_value_value = /*item*/ ctx[43].id;
-				set_input_value(option, option.__value);
-			},
-			m(target, anchor) {
-				insert(target, option, anchor);
-				append(option, t);
-			},
-			p(ctx, dirty) {
-				if (dirty[0] & /*breedsFiltered*/ 2 && t_value !== (t_value = /*item*/ ctx[43].name + "")) set_data(t, t_value);
-
-				if (dirty[0] & /*breedsFiltered*/ 2 && option_value_value !== (option_value_value = /*item*/ ctx[43].id)) {
-					option.__value = option_value_value;
-					set_input_value(option, option.__value);
-				}
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(option);
-				}
-			}
-		};
-	}
-
-	// (459:9) {#each genderes as item}
-	function create_each_block_2$2(ctx) {
-		let option;
-		let t_value = /*item*/ ctx[43].name + "";
-		let t;
-		let option_value_value;
-
-		return {
-			c() {
-				option = element("option");
-				t = text(t_value);
-				option.__value = option_value_value = /*item*/ ctx[43].id;
-				set_input_value(option, option.__value);
-			},
-			m(target, anchor) {
-				insert(target, option, anchor);
-				append(option, t);
-			},
-			p(ctx, dirty) {
-				if (dirty[0] & /*genderes*/ 1 && t_value !== (t_value = /*item*/ ctx[43].name + "")) set_data(t, t_value);
-
-				if (dirty[0] & /*genderes*/ 1 && option_value_value !== (option_value_value = /*item*/ ctx[43].id)) {
-					option.__value = option_value_value;
-					set_input_value(option, option.__value);
-				}
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(option);
-				}
-			}
-		};
-	}
-
-	// (498:32) {:else}
-	function create_else_block_1$1(ctx) {
-		let t;
-
-		return {
-			c() {
-				t = text("Actualizar");
-			},
-			m(target, anchor) {
-				insert(target, t, anchor);
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(t);
-				}
-			}
-		};
-	}
-
-	// (498:6) {#if !editStatus}
-	function create_if_block_5$1(ctx) {
-		let t;
-
-		return {
-			c() {
-				t = text("Guardar");
-			},
-			m(target, anchor) {
-				insert(target, t, anchor);
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(t);
-				}
-			}
-		};
-	}
-
-	// (500:5) {#if showForm | editStatus}
-	function create_if_block_4$1(ctx) {
-		let button;
-		let mounted;
-		let dispose;
-
-		return {
-			c() {
-				button = element("button");
-				button.innerHTML = `<i class="ti-close"></i>Cancelar`;
-				attr(button, "type", "button");
-				attr(button, "class", "btn btn-warning");
-			},
-			m(target, anchor) {
-				insert(target, button, anchor);
-
-				if (!mounted) {
-					dispose = listen(button, "click", /*click_handler_1*/ ctx[32]);
-					mounted = true;
-				}
-			},
-			p: noop$1,
-			d(detaching) {
-				if (detaching) {
-					detach(button);
-				}
-
-				mounted = false;
-				dispose();
-			}
-		};
-	}
-
-	// (577:5) {:else}
-	function create_else_block$2(ctx) {
-		let each_1_anchor;
-		let each_value_1 = ensure_array_like(/*pets*/ ctx[3]);
-		let each_blocks = [];
-
-		for (let i = 0; i < each_value_1.length; i += 1) {
-			each_blocks[i] = create_each_block_1$2(get_each_context_1$2(ctx, each_value_1, i));
-		}
-
-		return {
-			c() {
-				for (let i = 0; i < each_blocks.length; i += 1) {
-					each_blocks[i].c();
-				}
-
-				each_1_anchor = empty();
-			},
-			m(target, anchor) {
-				for (let i = 0; i < each_blocks.length; i += 1) {
-					if (each_blocks[i]) {
-						each_blocks[i].m(target, anchor);
-					}
-				}
-
-				insert(target, each_1_anchor, anchor);
-			},
-			p(ctx, dirty) {
-				if (dirty[0] & /*editPet, pets, deletePet, disablePet*/ 360456) {
-					each_value_1 = ensure_array_like(/*pets*/ ctx[3]);
-					let i;
-
-					for (i = 0; i < each_value_1.length; i += 1) {
-						const child_ctx = get_each_context_1$2(ctx, each_value_1, i);
-
-						if (each_blocks[i]) {
-							each_blocks[i].p(child_ctx, dirty);
-						} else {
-							each_blocks[i] = create_each_block_1$2(child_ctx);
-							each_blocks[i].c();
-							each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
-						}
-					}
-
-					for (; i < each_blocks.length; i += 1) {
-						each_blocks[i].d(1);
-					}
-
-					each_blocks.length = each_value_1.length;
-				}
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(each_1_anchor);
-				}
-
-				destroy_each(each_blocks, detaching);
-			}
-		};
-	}
-
-	// (535:39) 
-	function create_if_block_1$2(ctx) {
-		let each_1_anchor;
-		let each_value = ensure_array_like(/*filteredPets*/ ctx[11]);
-		let each_blocks = [];
-
-		for (let i = 0; i < each_value.length; i += 1) {
-			each_blocks[i] = create_each_block$3(get_each_context$3(ctx, each_value, i));
-		}
-
-		return {
-			c() {
-				for (let i = 0; i < each_blocks.length; i += 1) {
-					each_blocks[i].c();
-				}
-
-				each_1_anchor = empty();
-			},
-			m(target, anchor) {
-				for (let i = 0; i < each_blocks.length; i += 1) {
-					if (each_blocks[i]) {
-						each_blocks[i].m(target, anchor);
-					}
-				}
-
-				insert(target, each_1_anchor, anchor);
-			},
-			p(ctx, dirty) {
-				if (dirty[0] & /*editPet, filteredPets, deletePet, disablePet*/ 362496) {
-					each_value = ensure_array_like(/*filteredPets*/ ctx[11]);
-					let i;
-
-					for (i = 0; i < each_value.length; i += 1) {
-						const child_ctx = get_each_context$3(ctx, each_value, i);
-
-						if (each_blocks[i]) {
-							each_blocks[i].p(child_ctx, dirty);
-						} else {
-							each_blocks[i] = create_each_block$3(child_ctx);
-							each_blocks[i].c();
-							each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
-						}
-					}
-
-					for (; i < each_blocks.length; i += 1) {
-						each_blocks[i].d(1);
-					}
-
-					each_blocks.length = each_value.length;
-				}
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(each_1_anchor);
-				}
-
-				destroy_each(each_blocks, detaching);
-			}
-		};
-	}
-
-	// (533:5) {#if searchTerm && filteredPets.length === 0}
-	function create_if_block$3(ctx) {
-		let h5;
-
-		return {
-			c() {
-				h5 = element("h5");
-				h5.textContent = "No se encontraron resultados";
-			},
-			m(target, anchor) {
-				insert(target, h5, anchor);
-			},
-			p: noop$1,
-			d(detaching) {
-				if (detaching) {
-					detach(h5);
-				}
-			}
-		};
-	}
-
-	// (578:6) {#each pets as item}
-	function create_each_block_1$2(ctx) {
-		let tr;
-		let td0;
-		let t0_value = /*item*/ ctx[43].name + "";
-		let t0;
-		let t1;
-		let td1;
-		let t2_value = /*item*/ ctx[43].petType + "";
-		let t2;
-		let t3;
-		let td2;
-		let t4_value = /*item*/ ctx[43].breed + "";
-		let t4;
-		let t5;
-		let td3;
-		let t6_value = /*item*/ ctx[43].gender + "";
-		let t6;
-		let t7;
-		let td4;
-		let t8_value = /*item*/ ctx[43].age + "";
-		let t8;
-		let t9;
-		let td5;
-		let t10_value = /*item*/ ctx[43].color + "";
-		let t10;
-		let t11;
-		let td6;
-		let div;
-		let input;
-		let input_id_value;
-		let t12;
-		let label;
-		let label_for_value;
-		let t13;
-		let td7;
-		let button0;
-		let t14;
-		let button1;
-		let t15;
-		let mounted;
-		let dispose;
-
-		function input_change_handler_1() {
-			/*input_change_handler_1*/ ctx[36].call(input, /*each_value_1*/ ctx[46], /*item_index_1*/ ctx[47]);
-		}
-
-		function change_handler_2() {
-			return /*change_handler_2*/ ctx[37](/*item*/ ctx[43]);
-		}
-
-		return {
-			c() {
-				tr = element("tr");
-				td0 = element("td");
-				t0 = text(t0_value);
-				t1 = space();
-				td1 = element("td");
-				t2 = text(t2_value);
-				t3 = space();
-				td2 = element("td");
-				t4 = text(t4_value);
-				t5 = space();
-				td3 = element("td");
-				t6 = text(t6_value);
-				t7 = space();
-				td4 = element("td");
-				t8 = text(t8_value);
-				t9 = space();
-				td5 = element("td");
-				t10 = text(t10_value);
-				t11 = space();
-				td6 = element("td");
-				div = element("div");
-				input = element("input");
-				t12 = space();
-				label = element("label");
-				t13 = space();
-				td7 = element("td");
-				button0 = element("button");
-				button0.innerHTML = `<i class="ti-trash"></i>`;
-				t14 = space();
-				button1 = element("button");
-				button1.innerHTML = `<i class="ti-pencil"></i>`;
-				t15 = space();
-				attr(input, "type", "checkbox");
-				attr(input, "class", "custom-control-input");
-				attr(input, "id", input_id_value = "switch" + /*item*/ ctx[43].id);
-				attr(label, "class", "custom-control-label");
-				attr(label, "for", label_for_value = "switch" + /*item*/ ctx[43].id);
-				attr(div, "class", "custom-control custom-switch text-warning");
-				attr(button0, "class", "btn btn-outline-danger btn-sm");
-				attr(button1, "class", "btn btn-outline-warning btn-sm");
-			},
-			m(target, anchor) {
-				insert(target, tr, anchor);
-				append(tr, td0);
-				append(td0, t0);
-				append(tr, t1);
-				append(tr, td1);
-				append(td1, t2);
-				append(tr, t3);
-				append(tr, td2);
-				append(td2, t4);
-				append(tr, t5);
-				append(tr, td3);
-				append(td3, t6);
-				append(tr, t7);
-				append(tr, td4);
-				append(td4, t8);
-				append(tr, t9);
-				append(tr, td5);
-				append(td5, t10);
-				append(tr, t11);
-				append(tr, td6);
-				append(td6, div);
-				append(div, input);
-				input.checked = /*item*/ ctx[43].enabled;
-				append(div, t12);
-				append(div, label);
-				append(tr, t13);
-				append(tr, td7);
-				append(td7, button0);
-				append(td7, t14);
-				append(td7, button1);
-				append(tr, t15);
-
-				if (!mounted) {
-					dispose = [
-						listen(input, "change", input_change_handler_1),
-						listen(input, "change", change_handler_2),
-						listen(button0, "click", function () {
-							if (is_function(/*deletePet*/ ctx[15](/*item*/ ctx[43].id))) /*deletePet*/ ctx[15](/*item*/ ctx[43].id).apply(this, arguments);
-						}),
-						listen(button1, "click", function () {
-							if (is_function(/*editPet*/ ctx[16](/*item*/ ctx[43]))) /*editPet*/ ctx[16](/*item*/ ctx[43]).apply(this, arguments);
-						})
-					];
-
-					mounted = true;
-				}
-			},
-			p(new_ctx, dirty) {
-				ctx = new_ctx;
-				if (dirty[0] & /*pets*/ 8 && t0_value !== (t0_value = /*item*/ ctx[43].name + "")) set_data(t0, t0_value);
-				if (dirty[0] & /*pets*/ 8 && t2_value !== (t2_value = /*item*/ ctx[43].petType + "")) set_data(t2, t2_value);
-				if (dirty[0] & /*pets*/ 8 && t4_value !== (t4_value = /*item*/ ctx[43].breed + "")) set_data(t4, t4_value);
-				if (dirty[0] & /*pets*/ 8 && t6_value !== (t6_value = /*item*/ ctx[43].gender + "")) set_data(t6, t6_value);
-				if (dirty[0] & /*pets*/ 8 && t8_value !== (t8_value = /*item*/ ctx[43].age + "")) set_data(t8, t8_value);
-				if (dirty[0] & /*pets*/ 8 && t10_value !== (t10_value = /*item*/ ctx[43].color + "")) set_data(t10, t10_value);
-
-				if (dirty[0] & /*pets*/ 8 && input_id_value !== (input_id_value = "switch" + /*item*/ ctx[43].id)) {
-					attr(input, "id", input_id_value);
-				}
-
-				if (dirty[0] & /*pets*/ 8) {
-					input.checked = /*item*/ ctx[43].enabled;
-				}
-
-				if (dirty[0] & /*pets*/ 8 && label_for_value !== (label_for_value = "switch" + /*item*/ ctx[43].id)) {
-					attr(label, "for", label_for_value);
-				}
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(tr);
-				}
-
-				mounted = false;
-				run_all(dispose);
-			}
-		};
-	}
-
-	// (536:6) {#each filteredPets as item}
-	function create_each_block$3(ctx) {
-		let tr;
-		let td0;
-		let t0_value = /*item*/ ctx[43].name + "";
-		let t0;
-		let t1;
-		let td1;
-		let t2_value = /*item*/ ctx[43].petType + "";
-		let t2;
-		let t3;
-		let td2;
-		let t4_value = /*item*/ ctx[43].breed + "";
-		let t4;
-		let t5;
-		let td3;
-		let t6_value = /*item*/ ctx[43].gender + "";
-		let t6;
-		let t7;
-		let td4;
-		let t8_value = /*item*/ ctx[43].age + "";
-		let t8;
-		let t9;
-		let td5;
-		let t10_value = /*item*/ ctx[43].color + "";
-		let t10;
-		let t11;
-		let td6;
-		let div;
-		let input;
-		let input_id_value;
-		let t12;
-		let label;
-		let label_for_value;
-		let t13;
-		let td7;
-		let button0;
-		let t14;
-		let button1;
-		let t15;
-		let mounted;
-		let dispose;
-
-		function input_change_handler() {
-			/*input_change_handler*/ ctx[34].call(input, /*each_value*/ ctx[44], /*item_index*/ ctx[45]);
-		}
-
-		function change_handler_1() {
-			return /*change_handler_1*/ ctx[35](/*item*/ ctx[43]);
-		}
-
-		return {
-			c() {
-				tr = element("tr");
-				td0 = element("td");
-				t0 = text(t0_value);
-				t1 = space();
-				td1 = element("td");
-				t2 = text(t2_value);
-				t3 = space();
-				td2 = element("td");
-				t4 = text(t4_value);
-				t5 = space();
-				td3 = element("td");
-				t6 = text(t6_value);
-				t7 = space();
-				td4 = element("td");
-				t8 = text(t8_value);
-				t9 = space();
-				td5 = element("td");
-				t10 = text(t10_value);
-				t11 = space();
-				td6 = element("td");
-				div = element("div");
-				input = element("input");
-				t12 = space();
-				label = element("label");
-				t13 = space();
-				td7 = element("td");
-				button0 = element("button");
-				button0.innerHTML = `<i class="ti-trash"></i>`;
-				t14 = space();
-				button1 = element("button");
-				button1.innerHTML = `<i class="ti-pencil"></i>`;
-				t15 = space();
-				attr(input, "type", "checkbox");
-				attr(input, "class", "custom-control-input");
-				attr(input, "id", input_id_value = "switch" + /*item*/ ctx[43].id);
-				attr(label, "class", "custom-control-label");
-				attr(label, "for", label_for_value = "switch" + /*item*/ ctx[43].id);
-				attr(div, "class", "custom-control custom-switch text-warning");
-				attr(button0, "class", "btn btn-outline-danger btn-sm");
-				attr(button1, "class", "btn btn-outline-warning btn-sm");
-			},
-			m(target, anchor) {
-				insert(target, tr, anchor);
-				append(tr, td0);
-				append(td0, t0);
-				append(tr, t1);
-				append(tr, td1);
-				append(td1, t2);
-				append(tr, t3);
-				append(tr, td2);
-				append(td2, t4);
-				append(tr, t5);
-				append(tr, td3);
-				append(td3, t6);
-				append(tr, t7);
-				append(tr, td4);
-				append(td4, t8);
-				append(tr, t9);
-				append(tr, td5);
-				append(td5, t10);
-				append(tr, t11);
-				append(tr, td6);
-				append(td6, div);
-				append(div, input);
-				input.checked = /*item*/ ctx[43].enabled;
-				append(div, t12);
-				append(div, label);
-				append(tr, t13);
-				append(tr, td7);
-				append(td7, button0);
-				append(td7, t14);
-				append(td7, button1);
-				append(tr, t15);
-
-				if (!mounted) {
-					dispose = [
-						listen(input, "change", input_change_handler),
-						listen(input, "change", change_handler_1),
-						listen(button0, "click", function () {
-							if (is_function(/*deletePet*/ ctx[15](/*item*/ ctx[43].id))) /*deletePet*/ ctx[15](/*item*/ ctx[43].id).apply(this, arguments);
-						}),
-						listen(button1, "click", function () {
-							if (is_function(/*editPet*/ ctx[16](/*item*/ ctx[43]))) /*editPet*/ ctx[16](/*item*/ ctx[43]).apply(this, arguments);
-						})
-					];
-
-					mounted = true;
-				}
-			},
-			p(new_ctx, dirty) {
-				ctx = new_ctx;
-				if (dirty[0] & /*filteredPets*/ 2048 && t0_value !== (t0_value = /*item*/ ctx[43].name + "")) set_data(t0, t0_value);
-				if (dirty[0] & /*filteredPets*/ 2048 && t2_value !== (t2_value = /*item*/ ctx[43].petType + "")) set_data(t2, t2_value);
-				if (dirty[0] & /*filteredPets*/ 2048 && t4_value !== (t4_value = /*item*/ ctx[43].breed + "")) set_data(t4, t4_value);
-				if (dirty[0] & /*filteredPets*/ 2048 && t6_value !== (t6_value = /*item*/ ctx[43].gender + "")) set_data(t6, t6_value);
-				if (dirty[0] & /*filteredPets*/ 2048 && t8_value !== (t8_value = /*item*/ ctx[43].age + "")) set_data(t8, t8_value);
-				if (dirty[0] & /*filteredPets*/ 2048 && t10_value !== (t10_value = /*item*/ ctx[43].color + "")) set_data(t10, t10_value);
-
-				if (dirty[0] & /*filteredPets*/ 2048 && input_id_value !== (input_id_value = "switch" + /*item*/ ctx[43].id)) {
-					attr(input, "id", input_id_value);
-				}
-
-				if (dirty[0] & /*filteredPets*/ 2048) {
-					input.checked = /*item*/ ctx[43].enabled;
-				}
-
-				if (dirty[0] & /*filteredPets*/ 2048 && label_for_value !== (label_for_value = "switch" + /*item*/ ctx[43].id)) {
-					attr(label, "for", label_for_value);
-				}
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(tr);
-				}
-
-				mounted = false;
-				run_all(dispose);
-			}
-		};
-	}
-
-	function create_fragment$3(ctx) {
-		let div3;
-		let div0;
-		let t1;
-		let div2;
-		let div1;
-		let button;
-		let t3;
-		let t4;
-		let search;
-		let updating_searchTerm;
-		let t5;
-		let div6;
-		let div5;
-		let div4;
-		let table;
-		let thead;
-		let t20;
-		let tbody;
-		let current;
-		let mounted;
-		let dispose;
-		let if_block0 = /*showForm*/ ctx[6] | /*editStatus*/ ctx[5] && create_if_block_2$1(ctx);
-
-		function search_searchTerm_binding(value) {
-			/*search_searchTerm_binding*/ ctx[33](value);
-		}
-
-		let search_props = { placeholder: "Buscar Mascota" };
-
-		if (/*searchTerm*/ ctx[12] !== void 0) {
-			search_props.searchTerm = /*searchTerm*/ ctx[12];
-		}
-
-		search = new Search({ props: search_props });
-		binding_callbacks.push(() => bind$1(search, 'searchTerm', search_searchTerm_binding));
-		search.$on("input", /*searchPets*/ ctx[23]);
-
-		function select_block_type_2(ctx, dirty) {
-			if (/*searchTerm*/ ctx[12] && /*filteredPets*/ ctx[11].length === 0) return create_if_block$3;
-			if (/*filteredPets*/ ctx[11].length > 0) return create_if_block_1$2;
-			return create_else_block$2;
-		}
-
-		let current_block_type = select_block_type_2(ctx);
-		let if_block1 = current_block_type(ctx);
-
-		return {
-			c() {
-				div3 = element("div");
-				div0 = element("div");
-				div0.innerHTML = `<h5 class="text-themecolor">Registro de Mascotas</h5>`;
-				t1 = space();
-				div2 = element("div");
-				div1 = element("div");
-				button = element("button");
-				button.innerHTML = `<i class="fa fa-plus-circle"></i> Nuevo`;
-				t3 = space();
-				if (if_block0) if_block0.c();
-				t4 = space();
-				create_component(search.$$.fragment);
-				t5 = space();
-				div6 = element("div");
-				div5 = element("div");
-				div4 = element("div");
-				table = element("table");
-				thead = element("thead");
-				thead.innerHTML = `<tr><th>Nombre</th> <th>Especie</th> <th>Raza</th> <th>Sexo</th> <th>Edad</th> <th>Color</th> <th>Estado</th> <th></th></tr>`;
-				t20 = space();
-				tbody = element("tbody");
-				if_block1.c();
-				attr(div0, "class", "col-md-5 align-self-center");
-				attr(button, "type", "button");
-				attr(button, "class", "btn btn-info d-block d-lg-inline-block m-l-15");
-				attr(div1, "class", "d-flex justify-content-end align-items-center");
-				attr(div2, "class", "col-md-7 align-self-center text-right");
-				attr(div3, "class", "row page-titles");
-				attr(table, "class", "table table-bordered");
-				attr(div4, "class", "table-responsive");
-				attr(div5, "class", "card-body");
-				attr(div6, "class", "card");
-			},
-			m(target, anchor) {
-				insert(target, div3, anchor);
-				append(div3, div0);
-				append(div3, t1);
-				append(div3, div2);
-				append(div2, div1);
-				append(div1, button);
-				insert(target, t3, anchor);
-				if (if_block0) if_block0.m(target, anchor);
-				insert(target, t4, anchor);
-				mount_component(search, target, anchor);
-				insert(target, t5, anchor);
-				insert(target, div6, anchor);
-				append(div6, div5);
-				append(div5, div4);
-				append(div4, table);
-				append(table, thead);
-				append(table, t20);
-				append(table, tbody);
-				if_block1.m(tbody, null);
-				current = true;
-
-				if (!mounted) {
-					dispose = listen(button, "click", /*click_handler*/ ctx[24]);
-					mounted = true;
-				}
-			},
-			p(ctx, dirty) {
-				if (/*showForm*/ ctx[6] | /*editStatus*/ ctx[5]) {
-					if (if_block0) {
-						if_block0.p(ctx, dirty);
-
-						if (dirty[0] & /*showForm, editStatus*/ 96) {
-							transition_in(if_block0, 1);
-						}
-					} else {
-						if_block0 = create_if_block_2$1(ctx);
-						if_block0.c();
-						transition_in(if_block0, 1);
-						if_block0.m(t4.parentNode, t4);
-					}
-				} else if (if_block0) {
-					group_outros();
-
-					transition_out(if_block0, 1, 1, () => {
-						if_block0 = null;
-					});
-
-					check_outros();
-				}
-
-				const search_changes = {};
-
-				if (!updating_searchTerm && dirty[0] & /*searchTerm*/ 4096) {
-					updating_searchTerm = true;
-					search_changes.searchTerm = /*searchTerm*/ ctx[12];
-					add_flush_callback(() => updating_searchTerm = false);
-				}
-
-				search.$set(search_changes);
-
-				if (current_block_type === (current_block_type = select_block_type_2(ctx)) && if_block1) {
-					if_block1.p(ctx, dirty);
-				} else {
-					if_block1.d(1);
-					if_block1 = current_block_type(ctx);
-
-					if (if_block1) {
-						if_block1.c();
-						if_block1.m(tbody, null);
-					}
-				}
-			},
-			i(local) {
-				if (current) return;
-				transition_in(if_block0);
-				transition_in(search.$$.fragment, local);
-				current = true;
-			},
-			o(local) {
-				transition_out(if_block0);
-				transition_out(search.$$.fragment, local);
-				current = false;
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(div3);
-					detach(t3);
-					detach(t4);
-					detach(t5);
-					detach(div6);
-				}
-
-				if (if_block0) if_block0.d(detaching);
-				destroy_component(search, detaching);
-				if_block1.d();
-				mounted = false;
-				dispose();
-			}
-		};
-	}
-	let placeholder$1 = "Buscar cliente";
-
-	function instance$3($$self, $$props, $$invalidate) {
-		let genderes = [], breeds = [], breedsFiltered = [], petTypes = [], pets = [];
-
-		const getPets = async () => {
-			showLoader();
-
-			await client.get(`/gateway/Pets/?json=` + JSON.stringify({ tipo: 1 })).then(response => {
-				if (response.code == 1) {
-					$$invalidate(3, pets = JSON.parse(response.payload));
-				}
-
-				hideLoader();
-			}).catch(error => {
-				hideLoader();
-				console.log(error);
-			});
-		};
-
-		onMount(async () => {
-			await client.get("/gateway/Genderes/").then(response => {
-				$$invalidate(0, genderes = response);
-			});
-
-			await client.get("/gateway/PetTypes/").then(response => {
-				$$invalidate(2, petTypes = response);
-			});
-
-			await client.get("/gateway/Breeds/").then(response => {
-				breeds = response;
-			});
-
-			await getPets();
-		});
-
-		const filterBreed = id => {
-			$$invalidate(1, breedsFiltered = breeds.filter(x => x.petTypeId == id));
-		};
-
-		let pet = {
-			id: "",
-			customerId: "",
-			companyId: "",
-			name: "",
-			petTypeId: "",
-			breedId: "",
-			genderId: "",
-			age: "",
-			color: ""
-		};
-
-		let editStatus = false;
-
-		const cleanPet = () => {
-			$$invalidate(4, pet = {});
-		};
-
-		let showForm = false;
-
-		const openNew = open => {
-			$$invalidate(6, showForm = open);
-
-			if (!open && editStatus) {
-				$$invalidate(5, editStatus = false);
-				cleanPet();
-			}
-
-			if (!open) {
-				$$invalidate(10, customerSelected = {});
-				$$invalidate(9, isCustomerSelected = false);
-			}
-		};
-
-		const addPet = async () => {
-			if (!customerSelected.customerId) {
-				toast({
-					type: "warning",
-					message: "Debe asignar un cliente"
-				});
-
-				return;
-			}
-
-			if (!pet.petTypeId) {
-				toast({
-					type: "warning",
-					message: "Debe seleccionar una especie"
-				});
-
-				return;
-			}
-
-			if (!pet.genderId) {
-				toast({
-					type: "warning",
-					message: "Debe seleccionar el sexo"
-				});
-
-				return;
-			}
-
-			const newPet = {
-				customerId: customerSelected.customerId,
-				companyId: customerSelected.companyId,
-				name: pet.name,
-				petTypeId: pet.petTypeId,
-				breedId: pet.breedId,
-				genderId: pet.genderId,
-				age: pet.age,
-				color: pet.color
-			};
-
-			await client.post("/gateway/Pets/", newPet).then(response => {
-				console.log(response);
-
-				toast({
-					type: "success",
-					message: "Registrada exitosamente"
-				});
-
-				openNew(false);
-			}).catch(error => {
-				console.log(error);
-			});
-
-			cleanPet();
-			await getPets();
-		}; //window.location.reload(true);
-
-		const deletePet = async id => {
-			let { isConfirmed } = await Swal.fire({
-				text: "Esta seguro de eliminar esta mascota?",
-				icon: "warning",
-				showCancelButton: true,
-				confirmButtonColor: "#3085d6",
-				cancelButtonColor: "#d33",
-				confirmButtonText: "Si, proceder!",
-				cancelButtonText: "No, cancelar"
-			});
-
-			if (isConfirmed) {
-				await client.delete("/gateway/Pets/" + id).then(response => {
-					console.log(response);
-
-					toast({
-						type: "success",
-						message: "Eliminada exitosamente"
-					});
-
-					$$invalidate(3, pets = pets.filter(pet => pet.id !== id));
-				}).catch(error => {
-					console.log(error);
-				});
-			}
-		};
-
-		const editPet = petEdited => {
-			$$invalidate(5, editStatus = true);
-			$$invalidate(4, pet = petEdited);
-			$$invalidate(10, customerSelected.businessName = petEdited.customer, customerSelected);
-			$$invalidate(10, customerSelected.idCard = petEdited.customerIdCard, customerSelected);
-			$$invalidate(10, customerSelected.email = petEdited.email, customerSelected);
-			$$invalidate(1, breedsFiltered = breeds.filter(b => b.petTypeId == petEdited.petTypeId));
-		};
-
-		const updatePet = async () => {
-			let updatedpet = {
-				id: pet.id,
-				customerId: pet.customerId,
-				companyId: pet.companyId,
-				name: pet.name,
-				petTypeId: pet.petTypeId,
-				breedId: pet.breedId,
-				genderId: pet.genderId,
-				age: pet.age,
-				color: pet.color,
-				enabled: pet.enabled
-			};
-
-			await client.put("/gateway/Pets/" + updatedpet.id, updatedpet).then(response => {
-				toast({
-					type: "success",
-					message: "Actualizada exitosamente"
-				});
-
-				openNew(false);
-			}).catch(error => {
-				console.log(error);
-			});
-
-			cleanPet();
-			$$invalidate(5, editStatus = false);
-			await getPets();
-		};
-
-		const save = () => {
-			if (!editStatus) {
-				addPet();
-			} else {
-				updatePet();
-			}
-		};
-
-		function disablePet(item) {
-			$$invalidate(4, pet = item);
-			updatePet();
-		}
-
-		let value = "";
-
-		//const onInput = (e) => (value = e.target.value)
-		let customers = [];
-
-		const onInput = async e => {
-			$$invalidate(7, value = e.target.value);
-
-			if (value.length >= 3) {
-				let data = { textSearch: value };
-
-				await client.get(`/gateway/Cliente/Search/`, { params: { json: JSON.stringify(data) } }).then(response => {
-					if (response.code == "1") {
-						$$invalidate(8, customers = JSON.parse(response.payload));
-					}
-				});
-			} else if (customers.length > 0) {
-				$$invalidate(8, customers = []);
-			}
-		};
-
-		const onFocus = () => {
-			
-		};
-
-		const onBlur = e => {
-			if (!value) {
-				$$invalidate(8, customers = []);
-				$$invalidate(7, value = "");
-			}
-		};
-
-		let isCustomerSelected = false;
-
-		let customerSelected = {
-			customerId: "",
-			companyId: "",
-			businessName: "",
-			idCard: "",
-			email: "",
-			telephone: "",
-			address: ""
-		};
-
-		const selectClient = e => {
-			$$invalidate(9, isCustomerSelected = true);
-			$$invalidate(10, customerSelected.customerId = e.customerId, customerSelected);
-			$$invalidate(10, customerSelected.companyId = e.companyId, customerSelected);
-			$$invalidate(10, customerSelected.businessName = e.nombreFiscal, customerSelected);
-			$$invalidate(10, customerSelected.idCard = e.numeroIdentificacion, customerSelected);
-			$$invalidate(10, customerSelected.email = e.correo, customerSelected);
-			$$invalidate(10, customerSelected.telephone = e.telephone, customerSelected);
-			$$invalidate(10, customerSelected.address = e.direccion, customerSelected);
-			$$invalidate(7, value = "");
-			$$invalidate(8, customers = []);
-		};
-
-		let filteredPets = [];
-		let searchTerm = "";
-
-		// resets language menu if search input is used
-		const searchPets = () => {
-			return $$invalidate(11, filteredPets = pets.filter(pet => {
-				let petName = pet.name.toLowerCase();
-				return petName.includes(searchTerm.toLowerCase());
-			}));
-		};
-
-		const click_handler = () => openNew(true);
-
-		function input3_input_handler() {
-			pet.name = this.value;
-			$$invalidate(4, pet);
-			$$invalidate(2, petTypes);
-		}
-
-		function select0_change_handler() {
-			pet.petTypeId = select_value(this);
-			$$invalidate(4, pet);
-			$$invalidate(2, petTypes);
-		}
-
-		const change_handler = e => filterBreed(e.target.value);
-
-		function select_change_handler() {
-			pet.breedId = select_value(this);
-			$$invalidate(4, pet);
-			$$invalidate(2, petTypes);
-		}
-
-		function select1_change_handler() {
-			pet.genderId = select_value(this);
-			$$invalidate(4, pet);
-			$$invalidate(2, petTypes);
-		}
-
-		function input4_input_handler() {
-			pet.age = to_number(this.value);
-			$$invalidate(4, pet);
-			$$invalidate(2, petTypes);
-		}
-
-		function input5_input_handler() {
-			pet.color = this.value;
-			$$invalidate(4, pet);
-			$$invalidate(2, petTypes);
-		}
-
-		const click_handler_1 = () => openNew(false);
-
-		function search_searchTerm_binding(value) {
-			searchTerm = value;
-			$$invalidate(12, searchTerm);
-		}
-
-		function input_change_handler(each_value, item_index) {
-			each_value[item_index].enabled = this.checked;
-			$$invalidate(11, filteredPets);
-		}
-
-		const change_handler_1 = item => disablePet(item);
-
-		function input_change_handler_1(each_value_1, item_index_1) {
-			each_value_1[item_index_1].enabled = this.checked;
-			$$invalidate(3, pets);
-		}
-
-		const change_handler_2 = item => disablePet(item);
-
-		return [
-			genderes,
-			breedsFiltered,
-			petTypes,
-			pets,
-			pet,
-			editStatus,
-			showForm,
-			value,
-			customers,
-			isCustomerSelected,
-			customerSelected,
-			filteredPets,
-			searchTerm,
-			filterBreed,
-			openNew,
-			deletePet,
-			editPet,
-			save,
-			disablePet,
-			onInput,
-			onFocus,
-			onBlur,
-			selectClient,
-			searchPets,
-			click_handler,
-			input3_input_handler,
-			select0_change_handler,
-			change_handler,
-			select_change_handler,
-			select1_change_handler,
-			input4_input_handler,
-			input5_input_handler,
-			click_handler_1,
-			search_searchTerm_binding,
-			input_change_handler,
-			change_handler_1,
-			input_change_handler_1,
-			change_handler_2
-		];
-	}
-
-	class Pet extends SvelteComponent {
-		constructor(options) {
-			super();
-			init(this, options, instance$3, create_fragment$3, safe_not_equal, {}, add_css$2, [-1, -1]);
-		}
-	}
-
-	create_custom_element(Pet, {}, [], [], true);
 
 	var FileSaver_min = {exports: {}};
 
@@ -11472,2105 +8392,27 @@ var petMH = (function () {
 
 	FileSaver_min.exports;
 
-	/* wwwroot\js\svelte\app\PetMedicalHistory\components\Add.svelte generated by Svelte v4.0.5 */
-
-	function get_each_context$2(ctx, list, i) {
-		const child_ctx = ctx.slice();
-		child_ctx[34] = list[i];
-		return child_ctx;
-	}
-
-	function get_each_context_1$1(ctx, list, i) {
-		const child_ctx = ctx.slice();
-		child_ctx[37] = list[i];
-		return child_ctx;
-	}
-
-	function get_each_context_2$1(ctx, list, i) {
-		const child_ctx = ctx.slice();
-		child_ctx[40] = list[i];
-		return child_ctx;
-	}
-
-	function get_each_context_3(ctx, list, i) {
-		const child_ctx = ctx.slice();
-		child_ctx[34] = list[i];
-		return child_ctx;
-	}
-
-	function get_each_context_4(ctx, list, i) {
-		const child_ctx = ctx.slice();
-		child_ctx[37] = list[i];
-		return child_ctx;
-	}
-
-	function get_each_context_5(ctx, list, i) {
-		const child_ctx = ctx.slice();
-		child_ctx[40] = list[i];
-		return child_ctx;
-	}
-
-	function get_each_context_6(ctx, list, i) {
-		const child_ctx = ctx.slice();
-		child_ctx[40] = list[i];
-		return child_ctx;
-	}
-
-	// (232:5) {#if pets.length > 0 && !isPetSelected}
-	function create_if_block_1$1(ctx) {
-		let div;
-		let each_value_6 = ensure_array_like(/*pets*/ ctx[7]);
-		let each_blocks = [];
-
-		for (let i = 0; i < each_value_6.length; i += 1) {
-			each_blocks[i] = create_each_block_6(get_each_context_6(ctx, each_value_6, i));
-		}
-
-		return {
-			c() {
-				div = element("div");
-
-				for (let i = 0; i < each_blocks.length; i += 1) {
-					each_blocks[i].c();
-				}
-
-				attr(div, "class", "floating-results list-group");
-			},
-			m(target, anchor) {
-				insert(target, div, anchor);
-
-				for (let i = 0; i < each_blocks.length; i += 1) {
-					if (each_blocks[i]) {
-						each_blocks[i].m(div, null);
-					}
-				}
-			},
-			p(ctx, dirty) {
-				if (dirty[0] & /*selectPet, pets*/ 32896) {
-					each_value_6 = ensure_array_like(/*pets*/ ctx[7]);
-					let i;
-
-					for (i = 0; i < each_value_6.length; i += 1) {
-						const child_ctx = get_each_context_6(ctx, each_value_6, i);
-
-						if (each_blocks[i]) {
-							each_blocks[i].p(child_ctx, dirty);
-						} else {
-							each_blocks[i] = create_each_block_6(child_ctx);
-							each_blocks[i].c();
-							each_blocks[i].m(div, null);
-						}
-					}
-
-					for (; i < each_blocks.length; i += 1) {
-						each_blocks[i].d(1);
-					}
-
-					each_blocks.length = each_value_6.length;
-				}
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(div);
-				}
-
-				destroy_each(each_blocks, detaching);
-			}
-		};
-	}
-
-	// (234:7) {#each pets as item}
-	function create_each_block_6(ctx) {
-		let a;
-		let i0;
-		let t0;
-		let t1_value = /*item*/ ctx[40].name + "";
-		let t1;
-		let t2;
-		let i1;
-		let t3;
-		let t4_value = /*item*/ ctx[40].customer + "";
-		let t4;
-		let mounted;
-		let dispose;
-
-		return {
-			c() {
-				a = element("a");
-				i0 = element("i");
-				t0 = text(" (");
-				t1 = text(t1_value);
-				t2 = text(") -\r\n\t\t\t\t\t\t\t\t\t");
-				i1 = element("i");
-				t3 = space();
-				t4 = text(t4_value);
-				attr(i0, "class", "fa fa-paw");
-				attr(i1, "class", "ti-user");
-				attr(a, "href", null);
-				attr(a, "class", "list-group-item");
-				set_style(a, "cursor", "pointer");
-				attr(a, "title", "Seleccionar");
-			},
-			m(target, anchor) {
-				insert(target, a, anchor);
-				append(a, i0);
-				append(a, t0);
-				append(a, t1);
-				append(a, t2);
-				append(a, i1);
-				append(a, t3);
-				append(a, t4);
-
-				if (!mounted) {
-					dispose = listen(a, "click", function () {
-						if (is_function(/*selectPet*/ ctx[15](/*item*/ ctx[40]))) /*selectPet*/ ctx[15](/*item*/ ctx[40]).apply(this, arguments);
-					});
-
-					mounted = true;
-				}
-			},
-			p(new_ctx, dirty) {
-				ctx = new_ctx;
-				if (dirty[0] & /*pets*/ 128 && t1_value !== (t1_value = /*item*/ ctx[40].name + "")) set_data(t1, t1_value);
-				if (dirty[0] & /*pets*/ 128 && t4_value !== (t4_value = /*item*/ ctx[40].customer + "")) set_data(t4, t4_value);
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(a);
-				}
-
-				mounted = false;
-				dispose();
-			}
-		};
-	}
-
-	// (250:2) {#if (petSelected.id > 0) | editStatus}
-	function create_if_block$2(ctx) {
-		let form;
-		let div1;
-		let div0;
-		let label0;
-		let t1;
-		let input0;
-		let t2;
-		let br;
-		let t3;
-		let div10;
-		let div9;
-		let h50;
-		let t5;
-		let div8;
-		let div3;
-		let div2;
-		let label1;
-		let t7;
-		let input1;
-		let input1_value_value;
-		let t8;
-		let div5;
-		let div4;
-		let label2;
-		let t10;
-		let input2;
-		let input2_value_value;
-		let t11;
-		let div7;
-		let div6;
-		let label3;
-		let t13;
-		let input3;
-		let input3_value_value;
-		let t14;
-		let div24;
-		let div23;
-		let h51;
-		let t16;
-		let div17;
-		let div12;
-		let div11;
-		let label4;
-		let t18;
-		let h52;
-		let t19_value = /*petSelected*/ ctx[9].name + "";
-		let t19;
-		let t20;
-		let div14;
-		let div13;
-		let label5;
-		let t22;
-		let h53;
-		let t23_value = /*petSelected*/ ctx[9].petType + "";
-		let t23;
-		let t24;
-		let div16;
-		let div15;
-		let label6;
-		let t26;
-		let h54;
-		let t27_value = /*petSelected*/ ctx[9].breed + "";
-		let t27;
-		let t28;
-		let div22;
-		let div19;
-		let div18;
-		let label7;
-		let t30;
-		let h55;
-		let t31_value = /*petSelected*/ ctx[9].gender + "";
-		let t31;
-		let t32;
-		let div21;
-		let div20;
-		let label8;
-		let t34;
-		let h56;
-		let t35_value = /*petSelected*/ ctx[9].color + "";
-		let t35;
-		let t36;
-		let table0;
-		let thead0;
-		let tr0;
-		let th0;
-		let t38;
-		let t39;
-		let tbody0;
-		let t40;
-		let table1;
-		let thead1;
-		let tr1;
-		let th1;
-		let t42;
-		let t43;
-		let tbody1;
-		let t44;
-		let div26;
-		let div25;
-		let label9;
-		let t46;
-		let textarea;
-		let t47;
-		let button;
-		let mounted;
-		let dispose;
-		let each_value_5 = ensure_array_like(/*diseasesStatuses*/ ctx[2]);
-		let each_blocks_3 = [];
-
-		for (let i = 0; i < each_value_5.length; i += 1) {
-			each_blocks_3[i] = create_each_block_5(get_each_context_5(ctx, each_value_5, i));
-		}
-
-		let each_value_3 = ensure_array_like(/*diseases*/ ctx[1]);
-		let each_blocks_2 = [];
-
-		for (let i = 0; i < each_value_3.length; i += 1) {
-			each_blocks_2[i] = create_each_block_3(get_each_context_3(ctx, each_value_3, i));
-		}
-
-		let each_value_2 = ensure_array_like(/*behaviorsStatuses*/ ctx[4]);
-		let each_blocks_1 = [];
-
-		for (let i = 0; i < each_value_2.length; i += 1) {
-			each_blocks_1[i] = create_each_block_2$1(get_each_context_2$1(ctx, each_value_2, i));
-		}
-
-		let each_value = ensure_array_like(/*behaviors*/ ctx[3]);
-		let each_blocks = [];
-
-		for (let i = 0; i < each_value.length; i += 1) {
-			each_blocks[i] = create_each_block$2(get_each_context$2(ctx, each_value, i));
-		}
-
-		return {
-			c() {
-				form = element("form");
-				div1 = element("div");
-				div0 = element("div");
-				label0 = element("label");
-				label0.textContent = "Fecha";
-				t1 = space();
-				input0 = element("input");
-				t2 = space();
-				br = element("br");
-				t3 = space();
-				div10 = element("div");
-				div9 = element("div");
-				h50 = element("h5");
-				h50.textContent = "Datos del Responsable";
-				t5 = space();
-				div8 = element("div");
-				div3 = element("div");
-				div2 = element("div");
-				label1 = element("label");
-				label1.textContent = "Cliente";
-				t7 = space();
-				input1 = element("input");
-				t8 = space();
-				div5 = element("div");
-				div4 = element("div");
-				label2 = element("label");
-				label2.textContent = "Ruc";
-				t10 = space();
-				input2 = element("input");
-				t11 = space();
-				div7 = element("div");
-				div6 = element("div");
-				label3 = element("label");
-				label3.textContent = "Email";
-				t13 = space();
-				input3 = element("input");
-				t14 = space();
-				div24 = element("div");
-				div23 = element("div");
-				h51 = element("h5");
-				h51.textContent = "Datos de la mascota";
-				t16 = space();
-				div17 = element("div");
-				div12 = element("div");
-				div11 = element("div");
-				label4 = element("label");
-				label4.textContent = "Nombre";
-				t18 = space();
-				h52 = element("h5");
-				t19 = text(t19_value);
-				t20 = space();
-				div14 = element("div");
-				div13 = element("div");
-				label5 = element("label");
-				label5.textContent = "Tipo";
-				t22 = space();
-				h53 = element("h5");
-				t23 = text(t23_value);
-				t24 = space();
-				div16 = element("div");
-				div15 = element("div");
-				label6 = element("label");
-				label6.textContent = "Raza";
-				t26 = space();
-				h54 = element("h5");
-				t27 = text(t27_value);
-				t28 = space();
-				div22 = element("div");
-				div19 = element("div");
-				div18 = element("div");
-				label7 = element("label");
-				label7.textContent = "Sexo";
-				t30 = space();
-				h55 = element("h5");
-				t31 = text(t31_value);
-				t32 = space();
-				div21 = element("div");
-				div20 = element("div");
-				label8 = element("label");
-				label8.textContent = "Color";
-				t34 = space();
-				h56 = element("h5");
-				t35 = text(t35_value);
-				t36 = space();
-				table0 = element("table");
-				thead0 = element("thead");
-				tr0 = element("tr");
-				th0 = element("th");
-				th0.textContent = "Test de Salud";
-				t38 = space();
-
-				for (let i = 0; i < each_blocks_3.length; i += 1) {
-					each_blocks_3[i].c();
-				}
-
-				t39 = space();
-				tbody0 = element("tbody");
-
-				for (let i = 0; i < each_blocks_2.length; i += 1) {
-					each_blocks_2[i].c();
-				}
-
-				t40 = space();
-				table1 = element("table");
-				thead1 = element("thead");
-				tr1 = element("tr");
-				th1 = element("th");
-				th1.textContent = "Test de Comportamiento:";
-				t42 = space();
-
-				for (let i = 0; i < each_blocks_1.length; i += 1) {
-					each_blocks_1[i].c();
-				}
-
-				t43 = space();
-				tbody1 = element("tbody");
-
-				for (let i = 0; i < each_blocks.length; i += 1) {
-					each_blocks[i].c();
-				}
-
-				t44 = space();
-				div26 = element("div");
-				div25 = element("div");
-				label9 = element("label");
-				label9.textContent = "Corte y Estilo";
-				t46 = space();
-				textarea = element("textarea");
-				t47 = space();
-				button = element("button");
-
-				button.innerHTML = `<i class="ti-save"></i>
-					Guardar`;
-
-				attr(label0, "for", "");
-				attr(input0, "type", "date");
-				attr(input0, "name", "");
-				attr(input0, "id", "");
-				attr(input0, "class", "form-control");
-				attr(div0, "class", "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12");
-				attr(div1, "class", "row");
-				attr(h50, "class", "card-title");
-				attr(label1, "for", "");
-				attr(input1, "type", "text");
-				attr(input1, "class", "form-control");
-				input1.disabled = true;
-				input1.value = input1_value_value = /*petSelected*/ ctx[9].customer;
-				attr(div2, "class", "form-group");
-				attr(div3, "class", "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12");
-				attr(label2, "for", "");
-				attr(input2, "type", "text");
-				attr(input2, "class", "form-control");
-				input2.disabled = true;
-				input2.value = input2_value_value = /*petSelected*/ ctx[9].customerIdCard;
-				attr(div4, "class", "form-group");
-				attr(div5, "class", "col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6");
-				attr(label3, "for", "");
-				attr(input3, "type", "text");
-				attr(input3, "class", "form-control");
-				input3.disabled = true;
-				input3.value = input3_value_value = /*petSelected*/ ctx[9].email;
-				attr(div6, "class", "form-group");
-				attr(div7, "class", "col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6");
-				attr(div8, "class", "row");
-				attr(div9, "class", "card-body");
-				attr(div10, "class", "card border border-info rounded");
-				attr(h51, "class", "card-title");
-				attr(label4, "for", "pet-name");
-				attr(div11, "class", "form-group");
-				attr(div12, "class", "col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12");
-				attr(label5, "for", "pet-type");
-				attr(div13, "class", "form-group");
-				attr(div14, "class", "col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6");
-				attr(label6, "for", "pet-age");
-				attr(div15, "class", "form-group");
-				attr(div16, "class", "col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6");
-				attr(div17, "class", "row");
-				attr(label7, "for", "pet-age");
-				attr(div18, "class", "form-group");
-				attr(div19, "class", "col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6");
-				attr(label8, "for", "pet-age");
-				attr(div20, "class", "form-group");
-				attr(div21, "class", "col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6");
-				attr(div22, "class", "row");
-				attr(div23, "class", "card-body");
-				attr(div24, "class", "card border border-info rounded");
-				attr(table0, "class", "table table-bordered");
-				attr(table1, "class", "table table-bordered");
-				attr(label9, "for", "");
-				attr(textarea, "name", "");
-				attr(textarea, "id", "");
-				attr(textarea, "class", "form-control");
-				attr(div25, "class", "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12");
-				attr(div26, "class", "row");
-				attr(button, "type", "submit");
-				attr(button, "class", "btn btn-success");
-			},
-			m(target, anchor) {
-				insert(target, form, anchor);
-				append(form, div1);
-				append(div1, div0);
-				append(div0, label0);
-				append(div0, t1);
-				append(div0, input0);
-				set_input_value(input0, /*medicalHistory*/ ctx[5].date);
-				append(form, t2);
-				append(form, br);
-				append(form, t3);
-				append(form, div10);
-				append(div10, div9);
-				append(div9, h50);
-				append(div9, t5);
-				append(div9, div8);
-				append(div8, div3);
-				append(div3, div2);
-				append(div2, label1);
-				append(div2, t7);
-				append(div2, input1);
-				append(div8, t8);
-				append(div8, div5);
-				append(div5, div4);
-				append(div4, label2);
-				append(div4, t10);
-				append(div4, input2);
-				append(div8, t11);
-				append(div8, div7);
-				append(div7, div6);
-				append(div6, label3);
-				append(div6, t13);
-				append(div6, input3);
-				append(form, t14);
-				append(form, div24);
-				append(div24, div23);
-				append(div23, h51);
-				append(div23, t16);
-				append(div23, div17);
-				append(div17, div12);
-				append(div12, div11);
-				append(div11, label4);
-				append(div11, t18);
-				append(div11, h52);
-				append(h52, t19);
-				append(div17, t20);
-				append(div17, div14);
-				append(div14, div13);
-				append(div13, label5);
-				append(div13, t22);
-				append(div13, h53);
-				append(h53, t23);
-				append(div17, t24);
-				append(div17, div16);
-				append(div16, div15);
-				append(div15, label6);
-				append(div15, t26);
-				append(div15, h54);
-				append(h54, t27);
-				append(div23, t28);
-				append(div23, div22);
-				append(div22, div19);
-				append(div19, div18);
-				append(div18, label7);
-				append(div18, t30);
-				append(div18, h55);
-				append(h55, t31);
-				append(div22, t32);
-				append(div22, div21);
-				append(div21, div20);
-				append(div20, label8);
-				append(div20, t34);
-				append(div20, h56);
-				append(h56, t35);
-				append(form, t36);
-				append(form, table0);
-				append(table0, thead0);
-				append(thead0, tr0);
-				append(tr0, th0);
-				append(tr0, t38);
-
-				for (let i = 0; i < each_blocks_3.length; i += 1) {
-					if (each_blocks_3[i]) {
-						each_blocks_3[i].m(tr0, null);
-					}
-				}
-
-				append(table0, t39);
-				append(table0, tbody0);
-
-				for (let i = 0; i < each_blocks_2.length; i += 1) {
-					if (each_blocks_2[i]) {
-						each_blocks_2[i].m(tbody0, null);
-					}
-				}
-
-				append(form, t40);
-				append(form, table1);
-				append(table1, thead1);
-				append(thead1, tr1);
-				append(tr1, th1);
-				append(tr1, t42);
-
-				for (let i = 0; i < each_blocks_1.length; i += 1) {
-					if (each_blocks_1[i]) {
-						each_blocks_1[i].m(tr1, null);
-					}
-				}
-
-				append(table1, t43);
-				append(table1, tbody1);
-
-				for (let i = 0; i < each_blocks.length; i += 1) {
-					if (each_blocks[i]) {
-						each_blocks[i].m(tbody1, null);
-					}
-				}
-
-				append(form, t44);
-				append(form, div26);
-				append(div26, div25);
-				append(div25, label9);
-				append(div25, t46);
-				append(div25, textarea);
-				set_input_value(textarea, /*medicalHistory*/ ctx[5].observations);
-				append(form, t47);
-				append(form, button);
-
-				if (!mounted) {
-					dispose = [
-						listen(input0, "input", /*input0_input_handler*/ ctx[19]),
-						listen(textarea, "input", /*textarea_input_handler*/ ctx[22]),
-						listen(form, "submit", prevent_default(/*onSubmitHandler*/ ctx[16]))
-					];
-
-					mounted = true;
-				}
-			},
-			p(ctx, dirty) {
-				if (dirty[0] & /*medicalHistory*/ 32) {
-					set_input_value(input0, /*medicalHistory*/ ctx[5].date);
-				}
-
-				if (dirty[0] & /*petSelected*/ 512 && input1_value_value !== (input1_value_value = /*petSelected*/ ctx[9].customer) && input1.value !== input1_value_value) {
-					input1.value = input1_value_value;
-				}
-
-				if (dirty[0] & /*petSelected*/ 512 && input2_value_value !== (input2_value_value = /*petSelected*/ ctx[9].customerIdCard) && input2.value !== input2_value_value) {
-					input2.value = input2_value_value;
-				}
-
-				if (dirty[0] & /*petSelected*/ 512 && input3_value_value !== (input3_value_value = /*petSelected*/ ctx[9].email) && input3.value !== input3_value_value) {
-					input3.value = input3_value_value;
-				}
-
-				if (dirty[0] & /*petSelected*/ 512 && t19_value !== (t19_value = /*petSelected*/ ctx[9].name + "")) set_data(t19, t19_value);
-				if (dirty[0] & /*petSelected*/ 512 && t23_value !== (t23_value = /*petSelected*/ ctx[9].petType + "")) set_data(t23, t23_value);
-				if (dirty[0] & /*petSelected*/ 512 && t27_value !== (t27_value = /*petSelected*/ ctx[9].breed + "")) set_data(t27, t27_value);
-				if (dirty[0] & /*petSelected*/ 512 && t31_value !== (t31_value = /*petSelected*/ ctx[9].gender + "")) set_data(t31, t31_value);
-				if (dirty[0] & /*petSelected*/ 512 && t35_value !== (t35_value = /*petSelected*/ ctx[9].color + "")) set_data(t35, t35_value);
-
-				if (dirty[0] & /*diseasesStatuses*/ 4) {
-					each_value_5 = ensure_array_like(/*diseasesStatuses*/ ctx[2]);
-					let i;
-
-					for (i = 0; i < each_value_5.length; i += 1) {
-						const child_ctx = get_each_context_5(ctx, each_value_5, i);
-
-						if (each_blocks_3[i]) {
-							each_blocks_3[i].p(child_ctx, dirty);
-						} else {
-							each_blocks_3[i] = create_each_block_5(child_ctx);
-							each_blocks_3[i].c();
-							each_blocks_3[i].m(tr0, null);
-						}
-					}
-
-					for (; i < each_blocks_3.length; i += 1) {
-						each_blocks_3[i].d(1);
-					}
-
-					each_blocks_3.length = each_value_5.length;
-				}
-
-				if (dirty[0] & /*diseasesStatuses, diseases, addDiseaseStatus*/ 1030) {
-					each_value_3 = ensure_array_like(/*diseases*/ ctx[1]);
-					let i;
-
-					for (i = 0; i < each_value_3.length; i += 1) {
-						const child_ctx = get_each_context_3(ctx, each_value_3, i);
-
-						if (each_blocks_2[i]) {
-							each_blocks_2[i].p(child_ctx, dirty);
-						} else {
-							each_blocks_2[i] = create_each_block_3(child_ctx);
-							each_blocks_2[i].c();
-							each_blocks_2[i].m(tbody0, null);
-						}
-					}
-
-					for (; i < each_blocks_2.length; i += 1) {
-						each_blocks_2[i].d(1);
-					}
-
-					each_blocks_2.length = each_value_3.length;
-				}
-
-				if (dirty[0] & /*behaviorsStatuses*/ 16) {
-					each_value_2 = ensure_array_like(/*behaviorsStatuses*/ ctx[4]);
-					let i;
-
-					for (i = 0; i < each_value_2.length; i += 1) {
-						const child_ctx = get_each_context_2$1(ctx, each_value_2, i);
-
-						if (each_blocks_1[i]) {
-							each_blocks_1[i].p(child_ctx, dirty);
-						} else {
-							each_blocks_1[i] = create_each_block_2$1(child_ctx);
-							each_blocks_1[i].c();
-							each_blocks_1[i].m(tr1, null);
-						}
-					}
-
-					for (; i < each_blocks_1.length; i += 1) {
-						each_blocks_1[i].d(1);
-					}
-
-					each_blocks_1.length = each_value_2.length;
-				}
-
-				if (dirty[0] & /*behaviorsStatuses, behaviors, addBehaviorStatus*/ 2072) {
-					each_value = ensure_array_like(/*behaviors*/ ctx[3]);
-					let i;
-
-					for (i = 0; i < each_value.length; i += 1) {
-						const child_ctx = get_each_context$2(ctx, each_value, i);
-
-						if (each_blocks[i]) {
-							each_blocks[i].p(child_ctx, dirty);
-						} else {
-							each_blocks[i] = create_each_block$2(child_ctx);
-							each_blocks[i].c();
-							each_blocks[i].m(tbody1, null);
-						}
-					}
-
-					for (; i < each_blocks.length; i += 1) {
-						each_blocks[i].d(1);
-					}
-
-					each_blocks.length = each_value.length;
-				}
-
-				if (dirty[0] & /*medicalHistory*/ 32) {
-					set_input_value(textarea, /*medicalHistory*/ ctx[5].observations);
-				}
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(form);
-				}
-
-				destroy_each(each_blocks_3, detaching);
-				destroy_each(each_blocks_2, detaching);
-				destroy_each(each_blocks_1, detaching);
-				destroy_each(each_blocks, detaching);
-				mounted = false;
-				run_all(dispose);
-			}
-		};
-	}
-
-	// (365:7) {#each diseasesStatuses as item}
-	function create_each_block_5(ctx) {
-		let th;
-		let t_value = /*item*/ ctx[40].name + "";
-		let t;
-
-		return {
-			c() {
-				th = element("th");
-				t = text(t_value);
-			},
-			m(target, anchor) {
-				insert(target, th, anchor);
-				append(th, t);
-			},
-			p(ctx, dirty) {
-				if (dirty[0] & /*diseasesStatuses*/ 4 && t_value !== (t_value = /*item*/ ctx[40].name + "")) set_data(t, t_value);
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(th);
-				}
-			}
-		};
-	}
-
-	// (374:8) {#each diseasesStatuses as ds}
-	function create_each_block_4(ctx) {
-		let td;
-		let input;
-		let input_id_value;
-		let input_name_value;
-		let mounted;
-		let dispose;
-
-		function change_handler() {
-			return /*change_handler*/ ctx[20](/*d*/ ctx[34], /*ds*/ ctx[37]);
-		}
-
-		return {
-			c() {
-				td = element("td");
-				input = element("input");
-				attr(input, "type", "radio");
-				attr(input, "id", input_id_value = "" + (/*d*/ ctx[34].id + "-chkdds"));
-				attr(input, "name", input_name_value = "" + (/*d*/ ctx[34].id + "-chkdds"));
-			},
-			m(target, anchor) {
-				insert(target, td, anchor);
-				append(td, input);
-
-				if (!mounted) {
-					dispose = listen(input, "change", change_handler);
-					mounted = true;
-				}
-			},
-			p(new_ctx, dirty) {
-				ctx = new_ctx;
-
-				if (dirty[0] & /*diseases*/ 2 && input_id_value !== (input_id_value = "" + (/*d*/ ctx[34].id + "-chkdds"))) {
-					attr(input, "id", input_id_value);
-				}
-
-				if (dirty[0] & /*diseases*/ 2 && input_name_value !== (input_name_value = "" + (/*d*/ ctx[34].id + "-chkdds"))) {
-					attr(input, "name", input_name_value);
-				}
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(td);
-				}
-
-				mounted = false;
-				dispose();
-			}
-		};
-	}
-
-	// (371:6) {#each diseases as d}
-	function create_each_block_3(ctx) {
-		let tr;
-		let td;
-		let t0_value = /*d*/ ctx[34].name + "";
-		let t0;
-		let t1;
-		let t2;
-		let each_value_4 = ensure_array_like(/*diseasesStatuses*/ ctx[2]);
-		let each_blocks = [];
-
-		for (let i = 0; i < each_value_4.length; i += 1) {
-			each_blocks[i] = create_each_block_4(get_each_context_4(ctx, each_value_4, i));
-		}
-
-		return {
-			c() {
-				tr = element("tr");
-				td = element("td");
-				t0 = text(t0_value);
-				t1 = space();
-
-				for (let i = 0; i < each_blocks.length; i += 1) {
-					each_blocks[i].c();
-				}
-
-				t2 = space();
-			},
-			m(target, anchor) {
-				insert(target, tr, anchor);
-				append(tr, td);
-				append(td, t0);
-				append(tr, t1);
-
-				for (let i = 0; i < each_blocks.length; i += 1) {
-					if (each_blocks[i]) {
-						each_blocks[i].m(tr, null);
-					}
-				}
-
-				append(tr, t2);
-			},
-			p(ctx, dirty) {
-				if (dirty[0] & /*diseases*/ 2 && t0_value !== (t0_value = /*d*/ ctx[34].name + "")) set_data(t0, t0_value);
-
-				if (dirty[0] & /*diseases, addDiseaseStatus, diseasesStatuses*/ 1030) {
-					each_value_4 = ensure_array_like(/*diseasesStatuses*/ ctx[2]);
-					let i;
-
-					for (i = 0; i < each_value_4.length; i += 1) {
-						const child_ctx = get_each_context_4(ctx, each_value_4, i);
-
-						if (each_blocks[i]) {
-							each_blocks[i].p(child_ctx, dirty);
-						} else {
-							each_blocks[i] = create_each_block_4(child_ctx);
-							each_blocks[i].c();
-							each_blocks[i].m(tr, t2);
-						}
-					}
-
-					for (; i < each_blocks.length; i += 1) {
-						each_blocks[i].d(1);
-					}
-
-					each_blocks.length = each_value_4.length;
-				}
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(tr);
-				}
-
-				destroy_each(each_blocks, detaching);
-			}
-		};
-	}
-
-	// (394:7) {#each behaviorsStatuses as item}
-	function create_each_block_2$1(ctx) {
-		let th;
-		let t_value = /*item*/ ctx[40].name + "";
-		let t;
-
-		return {
-			c() {
-				th = element("th");
-				t = text(t_value);
-			},
-			m(target, anchor) {
-				insert(target, th, anchor);
-				append(th, t);
-			},
-			p(ctx, dirty) {
-				if (dirty[0] & /*behaviorsStatuses*/ 16 && t_value !== (t_value = /*item*/ ctx[40].name + "")) set_data(t, t_value);
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(th);
-				}
-			}
-		};
-	}
-
-	// (403:8) {#each behaviorsStatuses as ds}
-	function create_each_block_1$1(ctx) {
-		let td;
-		let input;
-		let input_id_value;
-		let input_name_value;
-		let mounted;
-		let dispose;
-
-		function change_handler_1() {
-			return /*change_handler_1*/ ctx[21](/*d*/ ctx[34], /*ds*/ ctx[37]);
-		}
-
-		return {
-			c() {
-				td = element("td");
-				input = element("input");
-				attr(input, "type", "radio");
-				attr(input, "id", input_id_value = "" + (/*d*/ ctx[34].id + "-" + /*ds*/ ctx[37].id + "-chkbbs"));
-				attr(input, "name", input_name_value = "" + (/*d*/ ctx[34].id + "-" + /*ds*/ ctx[37].id + "-chkbbs"));
-			},
-			m(target, anchor) {
-				insert(target, td, anchor);
-				append(td, input);
-
-				if (!mounted) {
-					dispose = listen(input, "change", change_handler_1);
-					mounted = true;
-				}
-			},
-			p(new_ctx, dirty) {
-				ctx = new_ctx;
-
-				if (dirty[0] & /*behaviors, behaviorsStatuses*/ 24 && input_id_value !== (input_id_value = "" + (/*d*/ ctx[34].id + "-" + /*ds*/ ctx[37].id + "-chkbbs"))) {
-					attr(input, "id", input_id_value);
-				}
-
-				if (dirty[0] & /*behaviors, behaviorsStatuses*/ 24 && input_name_value !== (input_name_value = "" + (/*d*/ ctx[34].id + "-" + /*ds*/ ctx[37].id + "-chkbbs"))) {
-					attr(input, "name", input_name_value);
-				}
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(td);
-				}
-
-				mounted = false;
-				dispose();
-			}
-		};
-	}
-
-	// (400:6) {#each behaviors as d}
-	function create_each_block$2(ctx) {
-		let tr;
-		let td;
-		let t0_value = /*d*/ ctx[34].name + "";
-		let t0;
-		let t1;
-		let t2;
-		let each_value_1 = ensure_array_like(/*behaviorsStatuses*/ ctx[4]);
-		let each_blocks = [];
-
-		for (let i = 0; i < each_value_1.length; i += 1) {
-			each_blocks[i] = create_each_block_1$1(get_each_context_1$1(ctx, each_value_1, i));
-		}
-
-		return {
-			c() {
-				tr = element("tr");
-				td = element("td");
-				t0 = text(t0_value);
-				t1 = space();
-
-				for (let i = 0; i < each_blocks.length; i += 1) {
-					each_blocks[i].c();
-				}
-
-				t2 = space();
-			},
-			m(target, anchor) {
-				insert(target, tr, anchor);
-				append(tr, td);
-				append(td, t0);
-				append(tr, t1);
-
-				for (let i = 0; i < each_blocks.length; i += 1) {
-					if (each_blocks[i]) {
-						each_blocks[i].m(tr, null);
-					}
-				}
-
-				append(tr, t2);
-			},
-			p(ctx, dirty) {
-				if (dirty[0] & /*behaviors*/ 8 && t0_value !== (t0_value = /*d*/ ctx[34].name + "")) set_data(t0, t0_value);
-
-				if (dirty[0] & /*behaviors, behaviorsStatuses, addBehaviorStatus*/ 2072) {
-					each_value_1 = ensure_array_like(/*behaviorsStatuses*/ ctx[4]);
-					let i;
-
-					for (i = 0; i < each_value_1.length; i += 1) {
-						const child_ctx = get_each_context_1$1(ctx, each_value_1, i);
-
-						if (each_blocks[i]) {
-							each_blocks[i].p(child_ctx, dirty);
-						} else {
-							each_blocks[i] = create_each_block_1$1(child_ctx);
-							each_blocks[i].c();
-							each_blocks[i].m(tr, t2);
-						}
-					}
-
-					for (; i < each_blocks.length; i += 1) {
-						each_blocks[i].d(1);
-					}
-
-					each_blocks.length = each_value_1.length;
-				}
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(tr);
-				}
-
-				destroy_each(each_blocks, detaching);
-			}
-		};
-	}
-
-	function create_fragment$2(ctx) {
-		let div5;
-		let div4;
-		let div3;
-		let div2;
-		let div1;
-		let div0;
-		let advancedsearch;
-		let t0;
-		let t1;
-		let current;
-
-		advancedsearch = new AdvancedSearch({
-				props: { value: /*value*/ ctx[6], placeholder }
-			});
-
-		advancedsearch.$on("input", /*onInput*/ ctx[12]);
-		advancedsearch.$on("focus", /*onFocus*/ ctx[13]);
-		advancedsearch.$on("blur", /*onBlur*/ ctx[14]);
-		let if_block0 = /*pets*/ ctx[7].length > 0 && !/*isPetSelected*/ ctx[8] && create_if_block_1$1(ctx);
-		let if_block1 = /*petSelected*/ ctx[9].id > 0 | /*editStatus*/ ctx[0] && create_if_block$2(ctx);
-
-		return {
-			c() {
-				div5 = element("div");
-				div4 = element("div");
-				div3 = element("div");
-				div2 = element("div");
-				div1 = element("div");
-				div0 = element("div");
-				create_component(advancedsearch.$$.fragment);
-				t0 = space();
-				if (if_block0) if_block0.c();
-				t1 = space();
-				if (if_block1) if_block1.c();
-				attr(div0, "class", "input-group");
-				attr(div1, "class", "form-group");
-				attr(div2, "class", "col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12");
-				attr(div3, "class", "row");
-				attr(div4, "class", "card-body");
-				attr(div5, "class", "card");
-			},
-			m(target, anchor) {
-				insert(target, div5, anchor);
-				append(div5, div4);
-				append(div4, div3);
-				append(div3, div2);
-				append(div2, div1);
-				append(div1, div0);
-				mount_component(advancedsearch, div0, null);
-				append(div1, t0);
-				if (if_block0) if_block0.m(div1, null);
-				append(div4, t1);
-				if (if_block1) if_block1.m(div4, null);
-				current = true;
-			},
-			p(ctx, dirty) {
-				const advancedsearch_changes = {};
-				if (dirty[0] & /*value*/ 64) advancedsearch_changes.value = /*value*/ ctx[6];
-				advancedsearch.$set(advancedsearch_changes);
-
-				if (/*pets*/ ctx[7].length > 0 && !/*isPetSelected*/ ctx[8]) {
-					if (if_block0) {
-						if_block0.p(ctx, dirty);
-					} else {
-						if_block0 = create_if_block_1$1(ctx);
-						if_block0.c();
-						if_block0.m(div1, null);
-					}
-				} else if (if_block0) {
-					if_block0.d(1);
-					if_block0 = null;
-				}
-
-				if (/*petSelected*/ ctx[9].id > 0 | /*editStatus*/ ctx[0]) {
-					if (if_block1) {
-						if_block1.p(ctx, dirty);
-					} else {
-						if_block1 = create_if_block$2(ctx);
-						if_block1.c();
-						if_block1.m(div4, null);
-					}
-				} else if (if_block1) {
-					if_block1.d(1);
-					if_block1 = null;
-				}
-			},
-			i(local) {
-				if (current) return;
-				transition_in(advancedsearch.$$.fragment, local);
-				current = true;
-			},
-			o(local) {
-				transition_out(advancedsearch.$$.fragment, local);
-				current = false;
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(div5);
-				}
-
-				destroy_component(advancedsearch);
-				if (if_block0) if_block0.d();
-				if (if_block1) if_block1.d();
-			}
-		};
-	}
-
-	let placeholder = "Buscar cliente/mascota";
-
-	function instance$2($$self, $$props, $$invalidate) {
-		let { newRecord } = $$props;
-		let { editStatus } = $$props;
-		let { historyEdited } = $$props;
-		let diseases = [], diseasesStatuses = [], behaviors = [], behaviorsStatuses = [];
-		let healthChecks = [];
-
-		let medicalHistory = {
-			petId: "",
-			date: "",
-			healthChecks: [],
-			behaviorTests: [],
-			observations: ""
-		};
-
-		let now = new Date(), month, day, year;
-		let dateString;
-
-		onMount(async () => {
-			console.log("starting");
-
-			await client.get("/gateway/Diseases/").then(response => {
-				$$invalidate(1, diseases = response);
-			});
-
-			await client.get("/gateway/DiseaseStatus/").then(response => {
-				$$invalidate(2, diseasesStatuses = response);
-			});
-
-			await client.get("/gateway/Behaviors/").then(response => {
-				$$invalidate(3, behaviors = response);
-			});
-
-			await client.get("/gateway/BehaviorStatus/").then(response => {
-				$$invalidate(4, behaviorsStatuses = response);
-			});
-
-			(month = "" + (now.getMonth() + 1), day = "" + now.getDate(), year = now.getFullYear());
-			if (month.length < 2) month = "0" + month;
-			if (day.length < 2) day = "0" + day;
-			dateString = [year, month, day].join("-");
-			$$invalidate(5, medicalHistory.date = dateString, medicalHistory);
-
-			if (editStatus) {
-				await client.get("/gateway/MedicalHistories/" + historyEdited.id).then(response => {
-					let tempArray = JSON.parse(response.payload);
-					console.log(tempArray);
-					console.log(behaviorsStatuses);
-					behaviorTests = tempArray[2];
-
-					tempArray[2].forEach((value, key) => {
-						addBehaviorStatus(value.behaviorId, value.behaviorStatusId);
-						var id = `${value.behaviorId}-${value.behaviorStatusId}-chkbbs`;
-						let val = document.getElementById(id);
-						console.log(val);
-					});
-				}).catch(error => {
-					console.log(error);
-				});
-			} //medicalHistory = historyEdited;
-			//console.log(medicalHistory);
-		});
-
-		function addDisease(d, ds) {
-			healthChecks.push({ diseaseId: d, diseaseStatusId: ds });
-		}
-
-		function addDiseaseStatus(d, ds) {
-			if (healthChecks.some(check => check.diseaseId === d)) {
-				healthChecks.find(check => check.diseaseId === d).diseaseStatusId = ds;
-			} else {
-				addDisease(d, ds);
-			}
-		}
-
-		let behaviorTests = [];
-
-		function addBehavior(d, ds) {
-			behaviorTests.push({ behaviorId: d, behaviorStatusId: ds });
-		}
-
-		function addBehaviorStatus(d, ds) {
-			if (behaviorTests.some(test => test.behaviorId === d)) {
-				behaviorTests.find(test => test.behaviorId === d).behaviorStatusId = ds;
-			} else {
-				addBehavior(d, ds);
-			}
-		}
-
-		let value = "";
-
-		//const onInput = (e) => (value = e.target.value)
-		let pets = [];
-
-		const onInput = async e => {
-			$$invalidate(6, value = e.target.value);
-			console.log(value);
-
-			if (value.length >= 3) {
-				showLoader();
-				let data = { tipo: 2, textSearch: value };
-
-				await client.get(`/gateway/pets/search?json=` + JSON.stringify(data)).then(response => {
-					hideLoader();
-
-					if (response.code == 1) {
-						$$invalidate(7, pets = JSON.parse(response.payload));
-						console.log(pets);
-					}
-				}).catch(error => {
-					hideLoader();
-					console.log(error);
-				});
-			} else if (pets.length > 0) {
-				$$invalidate(7, pets = []);
-			}
-		};
-
-		const onFocus = () => true;
-
-		const onBlur = () => {
-			if (!value) {
-				$$invalidate(7, pets = []);
-				$$invalidate(6, value = "");
-			}
-		};
-
-		let isPetSelected = false;
-		let petSelected = {};
-
-		const selectPet = e => {
-			$$invalidate(8, isPetSelected = true);
-			$$invalidate(9, petSelected = e);
-			$$invalidate(6, value = "");
-			$$invalidate(7, pets = []);
-		};
-
-		const addHistory = async () => {
-			if (!petSelected.id) {
-				toast({
-					type: "warning",
-					message: "Debe asignar un cliente"
-				});
-
-				return;
-			}
-
-			if (healthChecks.length == 0) {
-				toast({
-					type: "warning",
-					message: "Debe registrar el test de salud"
-				});
-
-				return;
-			}
-
-			if (behaviorTests.length == 0) {
-				toast({
-					type: "warning",
-					message: "Debe de registrar los test de comportamiento"
-				});
-
-				return;
-			}
-
-			const newHistory = {
-				petId: petSelected.id,
-				date: medicalHistory.date,
-				healthChecks,
-				behaviorTests,
-				observations: medicalHistory.observations
-			};
-
-			await client.post("/gateway/MedicalHistories/", newHistory).then(response => {
-				toast({
-					type: "success",
-					message: "Registrado exitosamente"
-				});
-
-				$$invalidate(17, newRecord = false);
-
-				setTimeout(
-					() => {
-						window.location.reload();
-					},
-					500
-				);
-			}).catch(error => {
-				console.log(error);
-			});
-
-			$$invalidate(5, medicalHistory = {});
-		};
-
-		const onSubmitHandler = () => {
-			addHistory();
-		};
-
-		function input0_input_handler() {
-			medicalHistory.date = this.value;
-			$$invalidate(5, medicalHistory);
-		}
-
-		const change_handler = (d, ds) => addDiseaseStatus(d.id, ds.id);
-		const change_handler_1 = (d, ds) => addBehaviorStatus(d.id, ds.id);
-
-		function textarea_input_handler() {
-			medicalHistory.observations = this.value;
-			$$invalidate(5, medicalHistory);
-		}
-
-		$$self.$$set = $$props => {
-			if ('newRecord' in $$props) $$invalidate(17, newRecord = $$props.newRecord);
-			if ('editStatus' in $$props) $$invalidate(0, editStatus = $$props.editStatus);
-			if ('historyEdited' in $$props) $$invalidate(18, historyEdited = $$props.historyEdited);
-		};
-
-		return [
-			editStatus,
-			diseases,
-			diseasesStatuses,
-			behaviors,
-			behaviorsStatuses,
-			medicalHistory,
-			value,
-			pets,
-			isPetSelected,
-			petSelected,
-			addDiseaseStatus,
-			addBehaviorStatus,
-			onInput,
-			onFocus,
-			onBlur,
-			selectPet,
-			onSubmitHandler,
-			newRecord,
-			historyEdited,
-			input0_input_handler,
-			change_handler,
-			change_handler_1,
-			textarea_input_handler
-		];
-	}
-
-	class Add extends SvelteComponent {
-		constructor(options) {
-			super();
-
-			init(
-				this,
-				options,
-				instance$2,
-				create_fragment$2,
-				safe_not_equal,
-				{
-					newRecord: 17,
-					editStatus: 0,
-					historyEdited: 18
-				},
-				null,
-				[-1, -1]
-			);
-		}
-
-		get newRecord() {
-			return this.$$.ctx[17];
-		}
-
-		set newRecord(newRecord) {
-			this.$$set({ newRecord });
-			flush();
-		}
-
-		get editStatus() {
-			return this.$$.ctx[0];
-		}
-
-		set editStatus(editStatus) {
-			this.$$set({ editStatus });
-			flush();
-		}
-
-		get historyEdited() {
-			return this.$$.ctx[18];
-		}
-
-		set historyEdited(historyEdited) {
-			this.$$set({ historyEdited });
-			flush();
-		}
-	}
-
-	create_custom_element(Add, {"newRecord":{},"editStatus":{},"historyEdited":{}}, [], [], true);
-
-	/* wwwroot\js\svelte\app\PetMedicalHistory\PetMedicalHistory.svelte generated by Svelte v4.0.5 */
-
-	function add_css$1(target) {
-		append_styles(target, "svelte-1xfrtbf", "@import \"../dist/css/style.css\";");
-	}
-
-	function get_each_context$1(ctx, list, i) {
-		const child_ctx = ctx.slice();
-		child_ctx[16] = list[i];
-		return child_ctx;
-	}
-
-	// (177:0) {:else}
-	function create_else_block$1(ctx) {
-		let search;
-		let updating_searchTerm;
-		let current;
-
-		function search_searchTerm_binding(value) {
-			/*search_searchTerm_binding*/ ctx[12](value);
-		}
-
-		let search_props = { placeholder: "Buscar Mascota" };
-
-		if (/*searchTerm*/ ctx[2] !== void 0) {
-			search_props.searchTerm = /*searchTerm*/ ctx[2];
-		}
-
-		search = new Search({ props: search_props });
-		binding_callbacks.push(() => bind$1(search, 'searchTerm', search_searchTerm_binding));
-		search.$on("input", /*searchRecords*/ ctx[9]);
-
-		return {
-			c() {
-				create_component(search.$$.fragment);
-			},
-			m(target, anchor) {
-				mount_component(search, target, anchor);
-				current = true;
-			},
-			p(ctx, dirty) {
-				const search_changes = {};
-
-				if (!updating_searchTerm && dirty & /*searchTerm*/ 4) {
-					updating_searchTerm = true;
-					search_changes.searchTerm = /*searchTerm*/ ctx[2];
-					add_flush_callback(() => updating_searchTerm = false);
-				}
-
-				search.$set(search_changes);
-			},
-			i(local) {
-				if (current) return;
-				transition_in(search.$$.fragment, local);
-				current = true;
-			},
-			o(local) {
-				transition_out(search.$$.fragment, local);
-				current = false;
-			},
-			d(detaching) {
-				destroy_component(search, detaching);
-			}
-		};
-	}
-
-	// (175:0) {#if newRecord | editStatus}
-	function create_if_block$1(ctx) {
-		let add;
-		let current;
-
-		add = new Add({
-				props: {
-					newRecord: /*newRecord*/ ctx[0],
-					editStatus: /*editStatus*/ ctx[3],
-					historyEdited: /*historyEdited*/ ctx[4]
-				}
-			});
-
-		return {
-			c() {
-				create_component(add.$$.fragment);
-			},
-			m(target, anchor) {
-				mount_component(add, target, anchor);
-				current = true;
-			},
-			p(ctx, dirty) {
-				const add_changes = {};
-				if (dirty & /*newRecord*/ 1) add_changes.newRecord = /*newRecord*/ ctx[0];
-				if (dirty & /*editStatus*/ 8) add_changes.editStatus = /*editStatus*/ ctx[3];
-				if (dirty & /*historyEdited*/ 16) add_changes.historyEdited = /*historyEdited*/ ctx[4];
-				add.$set(add_changes);
-			},
-			i(local) {
-				if (current) return;
-				transition_in(add.$$.fragment, local);
-				current = true;
-			},
-			o(local) {
-				transition_out(add.$$.fragment, local);
-				current = false;
-			},
-			d(detaching) {
-				destroy_component(add, detaching);
-			}
-		};
-	}
-
-	// (199:5) {#each medicalHistories as item}
-	function create_each_block$1(ctx) {
-		let tr;
-		let td0;
-		let t0_value = /*item*/ ctx[16].customer + "";
-		let t0;
-		let t1;
-		let td1;
-		let t2_value = /*item*/ ctx[16].petName + "";
-		let t2;
-		let t3;
-		let td2;
-		let t4_value = /*formatDate*/ ctx[8](/*item*/ ctx[16].date) + "";
-		let t4;
-		let t5;
-		let td3;
-		let t6_value = /*item*/ ctx[16].observations + "";
-		let t6;
-		let t7;
-		let td4;
-		let button0;
-		let t8;
-		let button1;
-		let t9;
-		let button2;
-		let t10;
-		let mounted;
-		let dispose;
-
-		return {
-			c() {
-				tr = element("tr");
-				td0 = element("td");
-				t0 = text(t0_value);
-				t1 = space();
-				td1 = element("td");
-				t2 = text(t2_value);
-				t3 = space();
-				td2 = element("td");
-				t4 = text(t4_value);
-				t5 = space();
-				td3 = element("td");
-				t6 = text(t6_value);
-				t7 = space();
-				td4 = element("td");
-				button0 = element("button");
-				button0.innerHTML = `<i class="ti-trash"></i>`;
-				t8 = space();
-				button1 = element("button");
-				button1.innerHTML = `<i class="ti-pencil"></i>`;
-				t9 = space();
-				button2 = element("button");
-				button2.innerHTML = `<i class="fa fa-file-pdf"></i>`;
-				t10 = space();
-				attr(button0, "class", "btn btn-outline-danger btn-sm");
-				attr(button1, "class", "btn btn-outline-warning btn-sm");
-				attr(button2, "class", "btn btn-outline-danger btn-sm");
-				attr(button2, "title", "Obtener Reporte");
-			},
-			m(target, anchor) {
-				insert(target, tr, anchor);
-				append(tr, td0);
-				append(td0, t0);
-				append(tr, t1);
-				append(tr, td1);
-				append(td1, t2);
-				append(tr, t3);
-				append(tr, td2);
-				append(td2, t4);
-				append(tr, t5);
-				append(tr, td3);
-				append(td3, t6);
-				append(tr, t7);
-				append(tr, td4);
-				append(td4, button0);
-				append(td4, t8);
-				append(td4, button1);
-				append(td4, t9);
-				append(td4, button2);
-				append(tr, t10);
-
-				if (!mounted) {
-					dispose = [
-						listen(button0, "click", function () {
-							if (is_function(/*deleteHistory*/ ctx[7](/*item*/ ctx[16].id))) /*deleteHistory*/ ctx[7](/*item*/ ctx[16].id).apply(this, arguments);
-						}),
-						listen(button1, "click", function () {
-							if (is_function(/*editHistory*/ ctx[10](/*item*/ ctx[16]))) /*editHistory*/ ctx[10](/*item*/ ctx[16]).apply(this, arguments);
-						}),
-						listen(button2, "click", function () {
-							if (is_function(/*getReport*/ ctx[6](/*item*/ ctx[16].id))) /*getReport*/ ctx[6](/*item*/ ctx[16].id).apply(this, arguments);
-						})
-					];
-
-					mounted = true;
-				}
-			},
-			p(new_ctx, dirty) {
-				ctx = new_ctx;
-				if (dirty & /*medicalHistories*/ 2 && t0_value !== (t0_value = /*item*/ ctx[16].customer + "")) set_data(t0, t0_value);
-				if (dirty & /*medicalHistories*/ 2 && t2_value !== (t2_value = /*item*/ ctx[16].petName + "")) set_data(t2, t2_value);
-				if (dirty & /*medicalHistories*/ 2 && t4_value !== (t4_value = /*formatDate*/ ctx[8](/*item*/ ctx[16].date) + "")) set_data(t4, t4_value);
-				if (dirty & /*medicalHistories*/ 2 && t6_value !== (t6_value = /*item*/ ctx[16].observations + "")) set_data(t6, t6_value);
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(tr);
-				}
-
-				mounted = false;
-				run_all(dispose);
-			}
-		};
-	}
-
-	function create_fragment$1(ctx) {
-		let div3;
-		let div0;
-		let t1;
-		let div2;
-		let div1;
-		let button;
-		let t3;
-		let input_1;
-		let t4;
-		let current_block_type_index;
-		let if_block;
-		let t5;
-		let div6;
-		let div5;
-		let div4;
-		let table;
-		let caption;
-		let t7;
-		let thead;
-		let t15;
-		let tbody;
-		let current;
-		let mounted;
-		let dispose;
-		const if_block_creators = [create_if_block$1, create_else_block$1];
-		const if_blocks = [];
-
-		function select_block_type(ctx, dirty) {
-			if (/*newRecord*/ ctx[0] | /*editStatus*/ ctx[3]) return 0;
-			return 1;
-		}
-
-		current_block_type_index = select_block_type(ctx);
-		if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
-		let each_value = ensure_array_like(/*medicalHistories*/ ctx[1]);
-		let each_blocks = [];
-
-		for (let i = 0; i < each_value.length; i += 1) {
-			each_blocks[i] = create_each_block$1(get_each_context$1(ctx, each_value, i));
-		}
-
-		return {
-			c() {
-				div3 = element("div");
-				div0 = element("div");
-				div0.innerHTML = `<h5 class="text-themecolor">Registro Informado de Estetica Canina</h5>`;
-				t1 = space();
-				div2 = element("div");
-				div1 = element("div");
-				button = element("button");
-				button.innerHTML = `<i class="fa fa-plus-circle"></i> Nuevo`;
-				t3 = space();
-				input_1 = element("input");
-				t4 = space();
-				if_block.c();
-				t5 = space();
-				div6 = element("div");
-				div5 = element("div");
-				div4 = element("div");
-				table = element("table");
-				caption = element("caption");
-				caption.textContent = "Registros";
-				t7 = space();
-				thead = element("thead");
-				thead.innerHTML = `<tr><th>Cliente</th> <th>Mascota</th> <th>Fecha</th> <th>Obs</th></tr>`;
-				t15 = space();
-				tbody = element("tbody");
-
-				for (let i = 0; i < each_blocks.length; i += 1) {
-					each_blocks[i].c();
-				}
-
-				attr(div0, "class", "col-md-5 align-self-center");
-				attr(button, "type", "button");
-				attr(button, "class", "btn btn-info d-block d-lg-inline-block m-l-15");
-				attr(div1, "class", "d-flex justify-content-end align-items-center");
-				attr(div2, "class", "col-md-7 align-self-center text-right");
-				attr(div3, "class", "row page-titles");
-				attr(input_1, "type", "text");
-				attr(input_1, "id", "my-input");
-				input_1.value = "yeys";
-				attr(table, "class", "table");
-				attr(div4, "class", "table-responsive");
-				attr(div5, "class", "card-body");
-				attr(div6, "class", "card");
-			},
-			m(target, anchor) {
-				insert(target, div3, anchor);
-				append(div3, div0);
-				append(div3, t1);
-				append(div3, div2);
-				append(div2, div1);
-				append(div1, button);
-				insert(target, t3, anchor);
-				insert(target, input_1, anchor);
-				insert(target, t4, anchor);
-				if_blocks[current_block_type_index].m(target, anchor);
-				insert(target, t5, anchor);
-				insert(target, div6, anchor);
-				append(div6, div5);
-				append(div5, div4);
-				append(div4, table);
-				append(table, caption);
-				append(table, t7);
-				append(table, thead);
-				append(table, t15);
-				append(table, tbody);
-
-				for (let i = 0; i < each_blocks.length; i += 1) {
-					if (each_blocks[i]) {
-						each_blocks[i].m(tbody, null);
-					}
-				}
-
-				current = true;
-
-				if (!mounted) {
-					dispose = listen(button, "click", /*click_handler*/ ctx[11]);
-					mounted = true;
-				}
-			},
-			p(ctx, [dirty]) {
-				let previous_block_index = current_block_type_index;
-				current_block_type_index = select_block_type(ctx);
-
-				if (current_block_type_index === previous_block_index) {
-					if_blocks[current_block_type_index].p(ctx, dirty);
-				} else {
-					group_outros();
-
-					transition_out(if_blocks[previous_block_index], 1, 1, () => {
-						if_blocks[previous_block_index] = null;
-					});
-
-					check_outros();
-					if_block = if_blocks[current_block_type_index];
-
-					if (!if_block) {
-						if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
-						if_block.c();
-					} else {
-						if_block.p(ctx, dirty);
-					}
-
-					transition_in(if_block, 1);
-					if_block.m(t5.parentNode, t5);
-				}
-
-				if (dirty & /*getReport, medicalHistories, editHistory, deleteHistory, formatDate*/ 1474) {
-					each_value = ensure_array_like(/*medicalHistories*/ ctx[1]);
-					let i;
-
-					for (i = 0; i < each_value.length; i += 1) {
-						const child_ctx = get_each_context$1(ctx, each_value, i);
-
-						if (each_blocks[i]) {
-							each_blocks[i].p(child_ctx, dirty);
-						} else {
-							each_blocks[i] = create_each_block$1(child_ctx);
-							each_blocks[i].c();
-							each_blocks[i].m(tbody, null);
-						}
-					}
-
-					for (; i < each_blocks.length; i += 1) {
-						each_blocks[i].d(1);
-					}
-
-					each_blocks.length = each_value.length;
-				}
-			},
-			i(local) {
-				if (current) return;
-				transition_in(if_block);
-				current = true;
-			},
-			o(local) {
-				transition_out(if_block);
-				current = false;
-			},
-			d(detaching) {
-				if (detaching) {
-					detach(div3);
-					detach(t3);
-					detach(input_1);
-					detach(t4);
-					detach(t5);
-					detach(div6);
-				}
-
-				if_blocks[current_block_type_index].d(detaching);
-				destroy_each(each_blocks, detaching);
-				mounted = false;
-				dispose();
-			}
-		};
-	}
-
-	function instance$1($$self, $$props, $$invalidate) {
-		let newRecord = false;
-
-		function openNew(open) {
-			$$invalidate(0, newRecord = open);
-		}
-
-		let medicalHistories = [];
-		let input;
-		let value;
-
-		onMount(async () => {
-			// Get the input element by ID.
-			input = document.getElementById("my-input");
-
-			// Get the value of the input element.
-			value = input.value;
-
-			console.log(value);
-			showLoader();
-
-			await client.get("/gateway/MedicalHistories/").then(response => {
-				if (response.code == "1") {
-					$$invalidate(1, medicalHistories = JSON.parse(response.payload));
-				}
-			});
-
-			hideLoader();
-		});
-
-		const getReport = async id => {
-			//Add authentication headers as params
-			// var params = {
-			//     access_token: "An access_token",
-			//     other_header: "other_header",
-			// };
-			//Add authentication headers in URL
-			//var url = [url_generating_pdf, $.param(params)].join("?");
-			//Open window
-			//window.open(url);
-			showLoader();
-
-			await clientFile(`/gateway/MedicalHistories/Report/` + id).then(response => {
-				var ieEDGE = navigator.userAgent.match(/Edge/g);
-				var ie = navigator.userAgent.match(/.NET/g); // IE 11+
-				var oldIE = navigator.userAgent.match(/MSIE/g);
-				var blob = new window.Blob([response.data], { type: "application/pdf" });
-
-				if (ie || oldIE || ieEDGE) {
-					window.navigator.msSaveBlob(blob, fileName);
-				} else {
-					var fileURL = URL.createObjectURL(blob);
-					window.open(fileURL);
-				}
-
-				hideLoader();
-				return;
-
-				// let fileName = response
-				//     .headers()["content-disposition"].split(";")[1]
-				//     .split("=")[1];
-				let fileName = response.headers["content-disposition"].split(";")[1].split("=")[1].replace('"', "");
-			}).catch(error => {
-				hideLoader();
-				console.log(error);
-			});
-		};
-
-		const deleteHistory = async id => {
-			let { isConfirmed } = await Swal.fire({
-				text: "Esta seguro de eliminar este registro?",
-				icon: "warning",
-				showCancelButton: true,
-				confirmButtonColor: "#3085d6",
-				cancelButtonColor: "#d33",
-				confirmButtonText: "Si, proceder!",
-				cancelButtonText: "No, cancelar"
-			});
-
-			if (isConfirmed) {
-				await client.delete("/gateway/MedicalHistories/" + id).then(response => {
-					console.log(response);
-
-					toast({
-						type: "success",
-						message: "Eliminada exitosamente"
-					});
-
-					pets = pets.filter(pet => pet.id !== id);
-				}).catch(error => {
-					console.log(error);
-				});
-			}
-		};
-
-		const formatDate = inputDate => {
-			let date = new Date(inputDate);
-			const day = String(date.getDate()).padStart(2, "0");
-			const month = String(date.getMonth() + 1).padStart(2, "0");
-			const year = String(date.getFullYear());
-			return `${day}/${month}/${year}`;
-		};
-
-		let searchTerm = "";
-
-		const searchRecords = () => {
-			return medicalHistories.filter(item => {
-				let petName = item.pet.name.toLowerCase();
-				return petName.includes(searchTerm.toLowerCase());
-			});
-		};
-
-		let editStatus = false;
-		let historyEdited = {};
-
-		const editHistory = item => {
-			//toast({ type: "info", message: "Funcionalidad en construccion" });
-			$$invalidate(3, editStatus = true);
-
-			$$invalidate(4, historyEdited = item);
-		};
-
-		const click_handler = () => openNew(true);
-
-		function search_searchTerm_binding(value) {
-			searchTerm = value;
-			$$invalidate(2, searchTerm);
-		}
-
-		return [
-			newRecord,
-			medicalHistories,
-			searchTerm,
-			editStatus,
-			historyEdited,
-			openNew,
-			getReport,
-			deleteHistory,
-			formatDate,
-			searchRecords,
-			editHistory,
-			click_handler,
-			search_searchTerm_binding
-		];
-	}
-
-	class PetMedicalHistory extends SvelteComponent {
-		constructor(options) {
-			super();
-			init(this, options, instance$1, create_fragment$1, safe_not_equal, {}, add_css$1);
-		}
-	}
-
-	create_custom_element(PetMedicalHistory, {}, [], [], true);
-
-	/* wwwroot\js\svelte\app\PetBreed\PetBreed.svelte generated by Svelte v4.0.5 */
-
-	function add_css(target) {
-		append_styles(target, "svelte-1vclyct", "@import \"../dist/css/style.css\";");
-	}
+	/* App\lib\PetBreed\PetBreed.svelte generated by Svelte v4.0.5 */
 
 	function get_each_context_1(ctx, list, i) {
 		const child_ctx = ctx.slice();
-		child_ctx[22] = list[i];
+		child_ctx[23] = list[i];
 		return child_ctx;
 	}
 
 	function get_each_context(ctx, list, i) {
 		const child_ctx = ctx.slice();
-		child_ctx[22] = list[i];
+		child_ctx[23] = list[i];
 		return child_ctx;
 	}
 
 	function get_each_context_2(ctx, list, i) {
 		const child_ctx = ctx.slice();
-		child_ctx[22] = list[i];
+		child_ctx[23] = list[i];
 		return child_ctx;
 	}
 
-	// (191:0) {#if showForm | editStatus}
+	// (195:0) {#if showForm | editStatus}
 	function create_if_block_3(ctx) {
 		let div11;
 		let div10;
@@ -13881,7 +8723,7 @@ var petMH = (function () {
 		};
 	}
 
-	// (195:55) {:else}
+	// (199:55) {:else}
 	function create_else_block_3(ctx) {
 		let h5;
 
@@ -13902,7 +8744,7 @@ var petMH = (function () {
 		};
 	}
 
-	// (194:12) {#if !editStatus}
+	// (198:12) {#if !editStatus}
 	function create_if_block_6(ctx) {
 		let h5;
 
@@ -13923,10 +8765,10 @@ var petMH = (function () {
 		};
 	}
 
-	// (211:32) {#each petTypes as item}
+	// (215:32) {#each petTypes as item}
 	function create_each_block_2(ctx) {
 		let option;
-		let t_value = /*item*/ ctx[22].name + "";
+		let t_value = /*item*/ ctx[23].name + "";
 		let t;
 		let option_value_value;
 
@@ -13934,7 +8776,7 @@ var petMH = (function () {
 			c() {
 				option = element("option");
 				t = text(t_value);
-				option.__value = option_value_value = /*item*/ ctx[22].id;
+				option.__value = option_value_value = /*item*/ ctx[23].id;
 				set_input_value(option, option.__value);
 			},
 			m(target, anchor) {
@@ -13942,9 +8784,9 @@ var petMH = (function () {
 				append(option, t);
 			},
 			p(ctx, dirty) {
-				if (dirty & /*petTypes*/ 1 && t_value !== (t_value = /*item*/ ctx[22].name + "")) set_data(t, t_value);
+				if (dirty & /*petTypes*/ 1 && t_value !== (t_value = /*item*/ ctx[23].name + "")) set_data(t, t_value);
 
-				if (dirty & /*petTypes*/ 1 && option_value_value !== (option_value_value = /*item*/ ctx[22].id)) {
+				if (dirty & /*petTypes*/ 1 && option_value_value !== (option_value_value = /*item*/ ctx[23].id)) {
 					option.__value = option_value_value;
 					set_input_value(option, option.__value);
 				}
@@ -13957,7 +8799,7 @@ var petMH = (function () {
 		};
 	}
 
-	// (265:46) {:else}
+	// (269:46) {:else}
 	function create_else_block_2(ctx) {
 		let t;
 
@@ -13976,7 +8818,7 @@ var petMH = (function () {
 		};
 	}
 
-	// (265:20) {#if !editStatus}
+	// (269:20) {#if !editStatus}
 	function create_if_block_5(ctx) {
 		let t;
 
@@ -13995,7 +8837,7 @@ var petMH = (function () {
 		};
 	}
 
-	// (267:16) {#if showForm | editStatus}
+	// (271:16) {#if showForm | editStatus}
 	function create_if_block_4(ctx) {
 		let button;
 		let mounted;
@@ -14028,7 +8870,7 @@ var petMH = (function () {
 		};
 	}
 
-	// (356:0) {:else}
+	// (360:0) {:else}
 	function create_else_block_1(ctx) {
 		let h5;
 
@@ -14052,7 +8894,7 @@ var petMH = (function () {
 		};
 	}
 
-	// (281:0) {#if breeds.length > 0}
+	// (285:0) {#if breeds.length > 0}
 	function create_if_block(ctx) {
 		let search;
 		let updating_searchTerm;
@@ -14164,7 +9006,7 @@ var petMH = (function () {
 		};
 	}
 
-	// (327:24) {:else}
+	// (331:24) {:else}
 	function create_else_block(ctx) {
 		let each_1_anchor;
 		let each_value_1 = ensure_array_like(/*breeds*/ ctx[1]);
@@ -14225,7 +9067,7 @@ var petMH = (function () {
 		};
 	}
 
-	// (304:60) 
+	// (308:60) 
 	function create_if_block_2(ctx) {
 		let each_1_anchor;
 		let each_value = ensure_array_like(/*filteredBreeds*/ ctx[5]);
@@ -14286,7 +9128,7 @@ var petMH = (function () {
 		};
 	}
 
-	// (302:24) {#if searchTerm && filteredBreeds.length === 0}
+	// (306:24) {#if searchTerm && filteredBreeds.length === 0}
 	function create_if_block_1(ctx) {
 		let h5;
 
@@ -14307,23 +9149,23 @@ var petMH = (function () {
 		};
 	}
 
-	// (328:28) {#each breeds as item}
+	// (332:28) {#each breeds as item}
 	function create_each_block_1(ctx) {
 		let tr;
 		let td0;
-		let t0_value = /*item*/ ctx[22].petType.name + "";
+		let t0_value = /*item*/ ctx[23].petType.name + "";
 		let t0;
 		let t1;
 		let td1;
-		let t2_value = /*item*/ ctx[22].code + "";
+		let t2_value = /*item*/ ctx[23].code + "";
 		let t2;
 		let t3;
 		let td2;
-		let t4_value = /*item*/ ctx[22].name + "";
+		let t4_value = /*item*/ ctx[23].name + "";
 		let t4;
 		let t5;
 		let td3;
-		let t6_value = /*item*/ ctx[22].description + "";
+		let t6_value = /*item*/ ctx[23].description + "";
 		let t6;
 		let t7;
 		let td4;
@@ -14384,10 +9226,10 @@ var petMH = (function () {
 				if (!mounted) {
 					dispose = [
 						listen(button0, "click", function () {
-							if (is_function(/*editBreed*/ ctx[9](/*item*/ ctx[22]))) /*editBreed*/ ctx[9](/*item*/ ctx[22]).apply(this, arguments);
+							if (is_function(/*editBreed*/ ctx[9](/*item*/ ctx[23]))) /*editBreed*/ ctx[9](/*item*/ ctx[23]).apply(this, arguments);
 						}),
 						listen(button1, "click", function () {
-							if (is_function(/*deleteBreed*/ ctx[10](/*item*/ ctx[22].id))) /*deleteBreed*/ ctx[10](/*item*/ ctx[22].id).apply(this, arguments);
+							if (is_function(/*deleteBreed*/ ctx[10](/*item*/ ctx[23].id))) /*deleteBreed*/ ctx[10](/*item*/ ctx[23].id).apply(this, arguments);
 						})
 					];
 
@@ -14396,10 +9238,10 @@ var petMH = (function () {
 			},
 			p(new_ctx, dirty) {
 				ctx = new_ctx;
-				if (dirty & /*breeds*/ 2 && t0_value !== (t0_value = /*item*/ ctx[22].petType.name + "")) set_data(t0, t0_value);
-				if (dirty & /*breeds*/ 2 && t2_value !== (t2_value = /*item*/ ctx[22].code + "")) set_data(t2, t2_value);
-				if (dirty & /*breeds*/ 2 && t4_value !== (t4_value = /*item*/ ctx[22].name + "")) set_data(t4, t4_value);
-				if (dirty & /*breeds*/ 2 && t6_value !== (t6_value = /*item*/ ctx[22].description + "")) set_data(t6, t6_value);
+				if (dirty & /*breeds*/ 2 && t0_value !== (t0_value = /*item*/ ctx[23].petType.name + "")) set_data(t0, t0_value);
+				if (dirty & /*breeds*/ 2 && t2_value !== (t2_value = /*item*/ ctx[23].code + "")) set_data(t2, t2_value);
+				if (dirty & /*breeds*/ 2 && t4_value !== (t4_value = /*item*/ ctx[23].name + "")) set_data(t4, t4_value);
+				if (dirty & /*breeds*/ 2 && t6_value !== (t6_value = /*item*/ ctx[23].description + "")) set_data(t6, t6_value);
 			},
 			d(detaching) {
 				if (detaching) {
@@ -14412,23 +9254,23 @@ var petMH = (function () {
 		};
 	}
 
-	// (305:28) {#each filteredBreeds as item}
+	// (309:28) {#each filteredBreeds as item}
 	function create_each_block(ctx) {
 		let tr;
 		let td0;
-		let t0_value = /*item*/ ctx[22].petType.name + "";
+		let t0_value = /*item*/ ctx[23].petType.name + "";
 		let t0;
 		let t1;
 		let td1;
-		let t2_value = /*item*/ ctx[22].code + "";
+		let t2_value = /*item*/ ctx[23].code + "";
 		let t2;
 		let t3;
 		let td2;
-		let t4_value = /*item*/ ctx[22].name + "";
+		let t4_value = /*item*/ ctx[23].name + "";
 		let t4;
 		let t5;
 		let td3;
-		let t6_value = /*item*/ ctx[22].description + "";
+		let t6_value = /*item*/ ctx[23].description + "";
 		let t6;
 		let t7;
 		let td4;
@@ -14489,10 +9331,10 @@ var petMH = (function () {
 				if (!mounted) {
 					dispose = [
 						listen(button0, "click", function () {
-							if (is_function(/*editBreed*/ ctx[9](/*item*/ ctx[22]))) /*editBreed*/ ctx[9](/*item*/ ctx[22]).apply(this, arguments);
+							if (is_function(/*editBreed*/ ctx[9](/*item*/ ctx[23]))) /*editBreed*/ ctx[9](/*item*/ ctx[23]).apply(this, arguments);
 						}),
 						listen(button1, "click", function () {
-							if (is_function(/*deleteBreed*/ ctx[10](/*item*/ ctx[22].id))) /*deleteBreed*/ ctx[10](/*item*/ ctx[22].id).apply(this, arguments);
+							if (is_function(/*deleteBreed*/ ctx[10](/*item*/ ctx[23].id))) /*deleteBreed*/ ctx[10](/*item*/ ctx[23].id).apply(this, arguments);
 						})
 					];
 
@@ -14501,10 +9343,10 @@ var petMH = (function () {
 			},
 			p(new_ctx, dirty) {
 				ctx = new_ctx;
-				if (dirty & /*filteredBreeds*/ 32 && t0_value !== (t0_value = /*item*/ ctx[22].petType.name + "")) set_data(t0, t0_value);
-				if (dirty & /*filteredBreeds*/ 32 && t2_value !== (t2_value = /*item*/ ctx[22].code + "")) set_data(t2, t2_value);
-				if (dirty & /*filteredBreeds*/ 32 && t4_value !== (t4_value = /*item*/ ctx[22].name + "")) set_data(t4, t4_value);
-				if (dirty & /*filteredBreeds*/ 32 && t6_value !== (t6_value = /*item*/ ctx[22].description + "")) set_data(t6, t6_value);
+				if (dirty & /*filteredBreeds*/ 32 && t0_value !== (t0_value = /*item*/ ctx[23].petType.name + "")) set_data(t0, t0_value);
+				if (dirty & /*filteredBreeds*/ 32 && t2_value !== (t2_value = /*item*/ ctx[23].code + "")) set_data(t2, t2_value);
+				if (dirty & /*filteredBreeds*/ 32 && t4_value !== (t4_value = /*item*/ ctx[23].name + "")) set_data(t4, t4_value);
+				if (dirty & /*filteredBreeds*/ 32 && t6_value !== (t6_value = /*item*/ ctx[23].description + "")) set_data(t6, t6_value);
 			},
 			d(detaching) {
 				if (detaching) {
@@ -14663,6 +9505,11 @@ var petMH = (function () {
 				console.log(error);
 			});
 
+			getBreeds();
+			hideLoader();
+		});
+
+		const getBreeds = async () => {
 			await client.get("/gateway/Breeds/").then(response => {
 				$$invalidate(1, breeds = response);
 
@@ -14675,9 +9522,7 @@ var petMH = (function () {
 				console.log(error);
 				hideLoader();
 			});
-
-			hideLoader();
-		});
+		};
 
 		let breed = {
 			petTypeId: "",
@@ -14777,8 +9622,11 @@ var petMH = (function () {
 			};
 
 			await client.put("/gateway/Breeds/" + updatedBreed.id, updatedBreed).then(response => {
-				const breedIndex = breeds.findIndex(b => b.id === breed.id);
-				$$invalidate(1, breeds[breedIndex] = updatedBreed, breeds);
+				debugger;
+
+				// const breedIndex = breeds.findIndex((b) => b.id === breed.id);
+				// breeds[breedIndex] = updatedBreed;
+				getBreeds();
 
 				toast({
 					type: "success",
@@ -14890,11 +9738,9 @@ var petMH = (function () {
 	class PetBreed extends SvelteComponent {
 		constructor(options) {
 			super();
-			init(this, options, instance, create_fragment, safe_not_equal, {}, add_css);
+			init(this, options, instance, create_fragment, safe_not_equal, {});
 		}
 	}
-
-	customElements.define("pet-breed", create_custom_element(PetBreed, {}, [], [], true));
 
 	// import App from "./App.svelte"
 	// const app = new App({
@@ -14909,13 +9755,11 @@ var petMH = (function () {
 	// const pet = new Pet({
 	//     target: document.getElementById('pet'),
 	// })
-
-	//export default pet
+	// export default pet
 
 	// const petMH = new PetMedicalHistory({
 	//     target: document.getElementById('petMH'),
 	// })
-
 	// export default petMH
 
 	return breed;

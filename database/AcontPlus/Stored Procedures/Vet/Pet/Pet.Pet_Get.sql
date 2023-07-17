@@ -48,6 +48,7 @@ BEGIN
 				,p.PetTypeId
 				,p.BreedId
 				,p.GenderId
+				,p.Weight
 				,g.[Name] gender
 				,pt.[Name] petType
 				,b.[Name] breed

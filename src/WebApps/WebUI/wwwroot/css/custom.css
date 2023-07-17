@@ -556,7 +556,7 @@ input.card {
 .list-group a:not(.active) {
     background-color: #dfe2e6;
     color: #262d33 !important;
-    opacity: .4;
+    /*opacity: .10;*/
 }
 
 .btn.btn-app {

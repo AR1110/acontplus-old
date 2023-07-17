@@ -11,17 +11,14 @@ import Counter from "./core/components/Counter.svelte";
 // const breed = new PetBreed({
 //     target: document.getElementById('pet-breed'),
 // })
-
 // export default breed
 
 // const pet = new Pet({
 //     target: document.getElementById('pet'),
 // })
-
-//export default pet
+// export default pet
 
 const petMH = new PetMedicalHistory({
     target: document.getElementById('petMH'),
 })
-
 export default petMH

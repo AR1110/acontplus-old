@@ -19,6 +19,11 @@
                 hideLoader();
                 console.log(error);
             });
+        getBreeds();
+        hideLoader();
+    });
+
+    const getBreeds = async () => {
         await client
             .get("/gateway/Breeds/")
             .then((response) => {
@@ -33,8 +38,7 @@
                 console.log(error);
                 hideLoader();
             });
-        hideLoader();
-    });
+    };
 
     let breed = {
         petTypeId: "",
@@ -116,8 +120,10 @@
         await client
             .put("/gateway/Breeds/" + updatedBreed.id, updatedBreed)
             .then((response) => {
-                const breedIndex = breeds.findIndex((b) => b.id === breed.id);
-                breeds[breedIndex] = updatedBreed;
+                debugger;
+                // const breedIndex = breeds.findIndex((b) => b.id === breed.id);
+                // breeds[breedIndex] = updatedBreed;
+                getBreeds();
                 toast({
                     type: "success",
                     message: "Actualizada exitosamente",

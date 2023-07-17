@@ -67,6 +67,10 @@
           <DataField>petColor</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
+        <Field Name="petWeight">
+          <DataField>petWeight</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="behaviorTests">
@@ -463,11 +467,77 @@
                   <PaddingBottom>2pt</PaddingBottom>
                 </Style>
               </Textbox>
+              <Textbox Name="Textbox4">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>PESO:</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox4</rd:DefaultName>
+                <Top>0.84694cm</Top>
+                <Left>13.25584cm</Left>
+                <Height>0.6cm</Height>
+                <Width>1.27233cm</Width>
+                <ZIndex>10</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox5">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!petWeight.Value, "mainDataSet")</Value>
+                        <Style />
+                      </TextRun>
+                      <TextRun>
+                        <Value> Kg.</Value>
+                        <Style />
+                      </TextRun>
+                    </TextRuns>
+                    <Style>
+                      <TextAlign>Left</TextAlign>
+                    </Style>
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox5</rd:DefaultName>
+                <Top>0.84694cm</Top>
+                <Left>14.70457cm</Left>
+                <Height>0.6cm</Height>
+                <Width>3.97818cm</Width>
+                <ZIndex>11</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
             </ReportItems>
             <KeepTogether>true</KeepTogether>
             <Top>4.42241cm</Top>
             <Left>0.03528cm</Left>
-            <Height>1.6445cm</Height>
+            <Height>1.59909cm</Height>
             <Width>18.68275cm</Width>
             <Style>
               <Border>
@@ -751,9 +821,9 @@
             </Paragraphs>
             <rd:DefaultName>observations</rd:DefaultName>
             <Top>8.09837cm</Top>
-            <Left>4.30151cm</Left>
+            <Left>3.41072cm</Left>
             <Height>0.6cm</Height>
-            <Width>13.94027cm</Width>
+            <Width>14.83106cm</Width>
             <ZIndex>7</ZIndex>
             <Style>
               <Border>
@@ -1294,7 +1364,7 @@
             <Top>8.09837cm</Top>
             <Left>0.03528cm</Left>
             <Height>0.6cm</Height>
-            <Width>4.08984cm</Width>
+            <Width>3.37544cm</Width>
             <ZIndex>13</ZIndex>
             <Style>
               <Border>
@@ -1306,87 +1376,6 @@
               <PaddingBottom>2pt</PaddingBottom>
             </Style>
           </Textbox>
-          <Textbox Name="ExecutionTime">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>=Globals!ExecutionTime</Value>
-                    <Style>
-                      <FontFamily />
-                      <FontSize>9pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Right</TextAlign>
-                </Style>
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>ExecutionTime</rd:DefaultName>
-            <Top>4.01361in</Top>
-            <Left>3.40223in</Left>
-            <Height>0.25in</Height>
-            <Width>2.86805in</Width>
-            <ZIndex>14</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox7">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>Acontplus Vet</Value>
-                    <Style>
-                      <FontFamily />
-                      <FontSize>9pt</FontSize>
-                      <FontWeight>Bold</FontWeight>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox7</rd:DefaultName>
-            <Top>10.22984cm</Top>
-            <Left>0.3055cm</Left>
-            <Height>0.6cm</Height>
-            <Width>3.80197cm</Width>
-            <ZIndex>15</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Line Name="Line3">
-            <Top>10.12401cm</Top>
-            <Left>0.05292cm</Left>
-            <Height>0cm</Height>
-            <Width>18.18886cm</Width>
-            <ZIndex>16</ZIndex>
-            <Style>
-              <Border>
-                <Style>Solid</Style>
-              </Border>
-            </Style>
-          </Line>
           <Textbox Name="Textbox12">
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
@@ -1407,11 +1396,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox12</rd:DefaultName>
-            <Top>9.27384cm</Top>
-            <Left>1.19803cm</Left>
+            <Top>9.73568cm</Top>
+            <Left>2.01317cm</Left>
             <Height>0.6cm</Height>
             <Width>4.72709cm</Width>
-            <ZIndex>17</ZIndex>
+            <ZIndex>14</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1445,11 +1434,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox16</rd:DefaultName>
-            <Top>9.27384cm</Top>
-            <Left>9.48585cm</Left>
+            <Top>9.73568cm</Top>
+            <Left>8.00884cm</Left>
             <Height>0.6cm</Height>
             <Width>4.44261cm</Width>
-            <ZIndex>18</ZIndex>
+            <ZIndex>15</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1464,7 +1453,7 @@
             </Style>
           </Textbox>
         </ReportItems>
-        <Height>10.82986cm</Height>
+        <Height>10.33568cm</Height>
         <Style>
           <Border>
             <Style>None</Style>

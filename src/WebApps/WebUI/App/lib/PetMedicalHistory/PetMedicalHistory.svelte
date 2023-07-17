@@ -121,7 +121,7 @@
 						type: "success",
 						message: "Eliminada exitosamente",
 					});
-					pets = pets.filter((pet) => pet.id !== id);
+					medicalHistories = medicalHistories.filter((mh) => mh.id !== id);
 				})
 				.catch((error) => {
 					console.log(error);
@@ -179,13 +179,14 @@
 {#if newRecord | editStatus}
 	<Add {newRecord} {editStatus} {historyEdited} {initialLoad} />
 {:else}
-	<Search
+	<!-- <Search
 		bind:searchTerm
 		on:input={searchRecords}
 		placeholder="Buscar Mascota"
-	/>
+	/> -->
 {/if}
 
+{#if medicalHistories.length > 0}
 <div class="card">
 	<div class="card-body">
 		<div class="table-responsive">
@@ -234,6 +235,10 @@
 		</div>
 	</div>
 </div>
+{:else}
+<h5 class="card-title">No se encontraron registros</h5>
+{/if}
+
 <!-- 
 <style lang="css">
 	/* @import "../dist/css/style.css"; */

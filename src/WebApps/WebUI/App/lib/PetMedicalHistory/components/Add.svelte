@@ -28,6 +28,19 @@
 		observations: "",
 	};
 
+	let petSelected = {
+		customer: "",
+		customerIdCard: "",
+		id: "",
+		name: "",
+		email: "",
+		petType: "",
+		age: "",
+		color: "",
+		breed: "",
+		gender: "",
+	};
+
 	const formatDate = (date = null) => {
 		let now = new Date();
 		if (date) {
@@ -82,7 +95,7 @@
 					petSelected.breed = objData.breed;
 					petSelected.gender = objData.gender;
 					medicalHistory.id = objData.id;
-					
+
 					// let editedDate = new Date(objData.date);
 					// console.log(editedDate);
 					// (month = "" + (editedDate.getMonth() + 1)),
@@ -211,7 +224,7 @@
 				updateBehaviorTest(b, bs);
 			}
 		} else {
-			addBehavior(d, ds);
+			addBehavior(b, bs);
 		}
 	}
 
@@ -254,7 +267,6 @@
 	};
 	let placeholder = "Buscar cliente/mascota";
 	let isPetSelected = false;
-	let petSelected = {};
 	const selectPet = (e) => {
 		isPetSelected = true;
 		petSelected = e;
@@ -274,6 +286,7 @@
 			});
 			return;
 		}
+		debugger;
 		if (behaviorTests.length == 0) {
 			toast({
 				type: "warning",
@@ -588,7 +601,7 @@
 						/>
 					</div>
 				</div>
-				<br>
+				<br />
 				<button type="submit" class="btn btn-success">
 					<i class="ti-save" />
 					Guardar
