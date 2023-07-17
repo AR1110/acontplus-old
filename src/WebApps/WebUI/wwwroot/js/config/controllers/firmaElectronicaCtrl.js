@@ -26,7 +26,7 @@ function firmaElectronicaCtrl($scope, mS, tS) {
         if (type == 1) {
             $('#modalFirma').modal('show');
             return;
-        }
+        } 
         if (type == 2) {
             $scope.firma = data;
             $scope.firma.fechaCaducidad = new Date(data.fechaCaducidad);     
@@ -71,8 +71,7 @@ function firmaElectronicaCtrl($scope, mS, tS) {
     $scope.post = function () {
         showLoader();
         let file = $scope.fileSign; 
-        console.log(file)
-        return
+      
         if(!file){
             tS.toastr('warning', 'Selecionele el archivo de la firma!');
             return
@@ -114,7 +113,15 @@ function firmaElectronicaCtrl($scope, mS, tS) {
             tS.toastr('warning', 'Seleccione el archivo');
             return
         }
-        mS.getDataFile(url + 'Put/?json=' + JSON.stringify($scope.firma), file ,null, true).then(function (response) {
+        let query = {
+            idFirmaElectronica: $scope.firma.idFirmaElectronica,
+            contrasenia: $scope.firma.contrasenia,
+            fechaCaducidad: $scope.firma.fechaCaducidad,
+            estado: $scope.firma.estado
+        }
+        showLoader();
+        mS.getData('put', url + 'Put/?json=' + JSON.stringify(query), null, true).then(function (response) {
+            hideLoader();
             if (response.code == 0) {
                 tS.toastr('warning', response.message, response.titleSms);
                 return;
@@ -129,6 +136,48 @@ function firmaElectronicaCtrl($scope, mS, tS) {
             console.log(error)
         })
     };
+
+
+    $scope.updateSignature = async function(item){
+        try {
+            const { value: file } = await Swal.fire({
+                title: 'Seleccione el arhivo',
+                input: 'file',
+                inputAttributes: {
+                  'accept': '.p12',
+                  'aria-label': 'Update Signature'
+                },
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Actualizar', 
+                cancelButtonText: 'Cancelar'
+              })
+              
+              if(!file) return;
+        
+              if(!(item.idFirmaElectronica  > 0)){
+                  tS.toastr('warning', 'El id es:'  + item.idFirmaElectronica);
+                  return
+              }
+              showLoader();
+              mS.getDataFile(url + 'UpdateSignature/' + item.idFirmaElectronica,  file, null, true).then(function (response) {
+                hideLoader();
+                  if (response.code == 0) {
+                      tS.toastr('warning', response.message, response.titleSms);
+                      return;
+                  }
+                  if (response.code == 1) {
+                      tS.toastr('success', response.message, response.titleSms);
+                      $scope.initialLoad();                      
+                  }
+              }).catch(error=>{
+                  hideLoader();
+                  console.log(error)
+              })
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     $("#modalFirma, #modalUpdate").on('hide.bs.modal', e => {
         $scope.firma = {};

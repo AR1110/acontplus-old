@@ -93,8 +93,9 @@ namespace ApiConfig.Controllers
             return Ok(_response);
         }
 
-        [HttpPut("Put")]
-        public async Task<IActionResult> Put(string json, IFormFile file)
+
+        [HttpPost("UpdateSignature/{id}")]
+        public async Task<IActionResult> UpdateSignature(int id, IFormFile file)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
@@ -114,16 +115,12 @@ namespace ApiConfig.Controllers
                 };
                 if (await new FileUpload().Upload(_configuration.GetSection("FactElectCerts").Value, signFile.FileName, signFile.Content))
                 {
-                    var data = JsonConvert.DeserializeObject<FirmaElectronica>(json);
-                    await _db.SPExecute("Config.FirmaElectronica_Update");
+                    await _db.SPExecute("Config.FirmaElectronica_UpdateSignature");
                     _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                    _db.AddDynamicParam("idFirmaElectronica", data.idFirmaElectronica);
-                    _db.AddDynamicParam("contrasenia", data.contrasenia);
+                    _db.AddDynamicParam("id", id);
                     _db.AddDynamicParam("fileName", signFile.FileName);
                     _db.AddDynamicParam("firma", signFile.Content);
                     _db.AddDynamicParam("contentType", signFile.ContentType);
-                    _db.AddDynamicParam("fechaCaducidad", data.fechaCaducidad);
-                    _db.AddDynamicParam("estado", data.estado);
                     _response = _db.GetDefault();
                 }
                 else
@@ -143,5 +140,41 @@ namespace ApiConfig.Controllers
             }
             return Ok(_response);
         }
+
+
+        [HttpPut("Put")]
+        public async Task<IActionResult> Put(string json)
+        {
+            GenericResponse _response = new GenericResponse();
+            DbAccess _db = new DbAccess(_configuration);
+            try
+            {
+                int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                
+                var data = JsonConvert.DeserializeObject<FirmaElectronica>(json);
+                await _db.SPExecute("Config.FirmaElectronica_Update");
+                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("idFirmaElectronica", data.idFirmaElectronica);
+                _db.AddDynamicParam("contrasenia", data.contrasenia);               
+                _db.AddDynamicParam("fechaCaducidad", data.fechaCaducidad);
+                _db.AddDynamicParam("estado", data.estado);
+                _response = _db.GetDefault();
+                 
+            }
+            catch (Exception ex)
+            {
+                LogWriter _log = new LogWriter(_configuration);
+                _log.LogError("Error on Update Firma Electronica: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al Actualizar la firma electronica");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+
+
+
     }
 }
