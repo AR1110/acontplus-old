@@ -3,6 +3,7 @@ using Domain.Models;
 using Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Services.Common.Logs;
 using WebUI.Utils;
 
@@ -43,8 +44,8 @@ namespace ApiConfig.Controllers
             return Ok(_response);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Post(FirmaElectronica data, IFormFile file)
+        [HttpPost("Post")]
+        public async Task<IActionResult> Post(string json, IFormFile file)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
@@ -64,6 +65,7 @@ namespace ApiConfig.Controllers
                 };
                 if (await new FileUpload().Upload(_configuration.GetSection("FactElectCerts").Value, signFile.FileName, signFile.Content))
                 {
+                    var data = JsonConvert.DeserializeObject<FirmaElectronica>(json);
                     await _db.SPExecute("Config.FirmaElectronica_Insert");
                     _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                     _db.AddDynamicParam("contrasenia", data.contrasenia);
@@ -91,8 +93,8 @@ namespace ApiConfig.Controllers
             return Ok(_response);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Put(FirmaElectronica data, IFormFile file)
+        [HttpPut("Put")]
+        public async Task<IActionResult> Put(string json, IFormFile file)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
@@ -112,6 +114,7 @@ namespace ApiConfig.Controllers
                 };
                 if (await new FileUpload().Upload(_configuration.GetSection("FactElectCerts").Value, signFile.FileName, signFile.Content))
                 {
+                    var data = JsonConvert.DeserializeObject<FirmaElectronica>(json);
                     await _db.SPExecute("Config.FirmaElectronica_Update");
                     _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                     _db.AddDynamicParam("idFirmaElectronica", data.idFirmaElectronica);
@@ -120,6 +123,7 @@ namespace ApiConfig.Controllers
                     _db.AddDynamicParam("firma", signFile.Content);
                     _db.AddDynamicParam("contentType", signFile.ContentType);
                     _db.AddDynamicParam("fechaCaducidad", data.fechaCaducidad);
+                    _db.AddDynamicParam("estado", data.estado);
                     _response = _db.GetDefault();
                 }
                 else

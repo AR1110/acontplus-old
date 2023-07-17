@@ -148,14 +148,14 @@
             }
 
             if (!$scope.dataSearch.chkProveedor && $scope.dataSearch.checkboxSubFamiliaFiltro) {
-                if (form.campo($scope.dataSearch.bySubFamilia)) {
+                if (!$scope.dataSearch.bySubFamilia) {
                     tS.toastr('warning',  'Seleccione la SubFamilia', 'Reporte');
                     return
                 }
             }
         
             if ($scope.dataSearch.checkboxStockFiltro) {
-                if (form.campo($scope.dataSearch.byStock)) {
+                if (!$scope.dataSearch.byStock) {
                     tS.toastr('warning',  'Seleccione el Stock', 'Reporte');
                     return
                 }

@@ -15,7 +15,7 @@ function firmaElectronicaCtrl($scope, mS, tS) {
     let url = 'FirmaElectronica/';
 
     $scope.firma = {};
-    $scope.fileSign = {};
+    $scope.fileSign = null;
     $scope.entidades = [];
     $scope.firmas = [];
 
@@ -29,6 +29,7 @@ function firmaElectronicaCtrl($scope, mS, tS) {
         }
         if (type == 2) {
             $scope.firma = data;
+            $scope.firma.fechaCaducidad = new Date(data.fechaCaducidad);     
             $('#modalUpdate').modal('show');
         }
     };
@@ -69,13 +70,14 @@ function firmaElectronicaCtrl($scope, mS, tS) {
 
     $scope.post = function () {
         showLoader();
-        let file = $scope.fileSign;
+        let file = $scope.fileSign; 
         console.log(file)
-        if (!file || Object.keys(file.length)===0) {
-            hideLoader();
-            tS.toastr('warning', 'Por favor suba el archivo de la firma');
+        return
+        if(!file){
+            tS.toastr('warning', 'Selecionele el archivo de la firma!');
             return
         }
+        
         if (!$scope.firma.contrasenia) {
             hideLoader();
             tS.toastr('warning', 'Por favor ingrese la contraseña');
@@ -86,7 +88,7 @@ function firmaElectronicaCtrl($scope, mS, tS) {
             tS.toastr('warning', 'Por seleccione la fecha caducidad');
             return;
         }
-        mS.getDataFile(url + 'Post', file, $scope.firma, true).then(response => {
+        mS.getDataFile(url + 'Post/?json='+JSON.stringify($scope.firma), file, null, true).then(response => {
             if (response.code == 0) {
                 hideLoader();
                 tS.toastr('warning', response.message, response.titleSms);
@@ -106,8 +108,13 @@ function firmaElectronicaCtrl($scope, mS, tS) {
     };
 
     $scope.put = function () {
-       
-        mS.getData('put', url + 'Put', $scope.firma, true).then(function (response) {
+        let file = $scope.fileSign; 
+        
+        if($scope.firma.estado){
+            tS.toastr('warning', 'Seleccione el archivo');
+            return
+        }
+        mS.getDataFile(url + 'Put/?json=' + JSON.stringify($scope.firma), file ,null, true).then(function (response) {
             if (response.code == 0) {
                 tS.toastr('warning', response.message, response.titleSms);
                 return;
