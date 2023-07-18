@@ -50,7 +50,7 @@ namespace Identity.API.Controllers.v2
                     loginDataDto.rucEmpresa = loginData.ruc ?? "";
                     loginData.companyId = loginData.companyId;
                     loginDataDto.urlGateway = _config["ApiGateways:Acontplus"];
-
+                    loginDataDto.idUsuario = loginData.idUsuario;
                     var jwtToken = _tokenService.GenerateJwtToken(loginDataDto);
                     if (jwtToken == null) { return Unauthorized(); }
                     _logs.LogInfo("Login successful: idRol -> " + Convert.ToString(loginDataDto.idUsuarioRol) + " \n jwt: " + jwtToken);

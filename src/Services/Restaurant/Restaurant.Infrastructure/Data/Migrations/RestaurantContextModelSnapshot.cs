@@ -59,6 +59,9 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("RoomId");
@@ -93,6 +96,9 @@ namespace Restaurant.Infrastructure.Data.Migrations
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -144,6 +150,9 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Floor", "Restaurant");
@@ -183,6 +192,9 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("ProductionArea", "Restaurant");
@@ -218,6 +230,9 @@ namespace Restaurant.Infrastructure.Data.Migrations
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
 
                     b.Property<float?>("Weight")
                         .HasColumnType("real");
@@ -269,6 +284,9 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("FloorId");
@@ -311,13 +329,13 @@ namespace Restaurant.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Restaurant.Core.Entities.Room", b =>
                 {
-                    b.HasOne("Restaurant.Core.Entities.Floor", "floor")
+                    b.HasOne("Restaurant.Core.Entities.Floor", "Floor")
                         .WithMany()
                         .HasForeignKey("FloorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("floor");
+                    b.Navigation("Floor");
                 });
 #pragma warning restore 612, 618
         }

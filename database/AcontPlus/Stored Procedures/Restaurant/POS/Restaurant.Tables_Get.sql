@@ -20,5 +20,5 @@ BEGIN
 		INNER JOIN Restaurant.Room r WITH(NOLOCK) ON t.RoomId = r.Id
 		INNER JOIN Restaurant.[Floor] f WITH(NOLOCK) ON r.FloorId = f.Id 
 	WHERE f.codEstab = @codEstab
-
+	AND Deleted IS NULL
 END

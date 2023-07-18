@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Lib.Common.Api;
-using Microsoft.AspNetCore.Http;
+﻿using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Core.Entities;
@@ -62,10 +57,20 @@ namespace Restaurant.API.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(table).State = EntityState.Modified;
+            //_context.Entry(table).State = EntityState.Modified;
+
+            var tableFounded = await _context.Tables.FindAsync(id);
+            tableFounded.RoomId = table.RoomId;
+            tableFounded.Capacity = table.Capacity;
+            tableFounded.NumberTable = table.NumberTable;
+            tableFounded.Description = table.Description;
+            tableFounded.Enabled = table.Enabled;
+            tableFounded.UpdatedAt = table.UpdatedAt;
+            tableFounded.UserId = User.GetUserId();
 
             try
             {
+                _context.Update(tableFounded);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -80,7 +85,7 @@ namespace Restaurant.API.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(tableFounded);
         }
 
         // POST: api/Tables
@@ -88,6 +93,7 @@ namespace Restaurant.API.Controllers
         [HttpPost]
         public async Task<ActionResult<AppTable>> PostTable(AppTable table)
         {
+            table.UserId = User.GetUserId();
             _context.Tables.Add(table);
             await _context.SaveChangesAsync();
 
@@ -104,10 +110,27 @@ namespace Restaurant.API.Controllers
                 return NotFound();
             }
 
-            _context.Tables.Remove(table);
-            await _context.SaveChangesAsync();
+            //_context.Tables.Remove(table);
 
-            return NoContent();
+            table.Deleted = true;
+            table.Enabled = false;
+            _context.Entry(table).State = EntityState.Modified;
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!TableExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return Ok();
         }
 
         private bool TableExists(int id)
