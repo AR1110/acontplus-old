@@ -10,10 +10,10 @@ namespace ApiConfig.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EmailConfig : ControllerBase
+    public class EmailConfigController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public EmailConfig(IConfiguration configuration)
+        public EmailConfigController(IConfiguration configuration)
         {
             _configuration = configuration;
         }
