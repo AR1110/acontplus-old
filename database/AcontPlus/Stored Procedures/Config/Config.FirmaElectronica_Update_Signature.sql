@@ -10,10 +10,10 @@ GO
 -- Create date: 2021-11-05
 -- Description:	<Description,,>
 -- =============================================
-IF OBJECT_ID('Config.FirmaElectronica_UpdateSignature')IS NOT NULL
-	DROP PROCEDURE Config.FirmaElectronica_UpdateSignature
+IF OBJECT_ID('Config.FirmaElectronica_Update_Signature')IS NOT NULL
+	DROP PROCEDURE Config.FirmaElectronica_Update_Signature
 GO
-CREATE PROCEDURE Config.FirmaElectronica_UpdateSignature
+CREATE PROCEDURE Config.FirmaElectronica_Update_Signature
      @idUsuarioRol INT
 	,@id INT 
 	,@fileName VARCHAR(300)
@@ -28,10 +28,11 @@ BEGIN
 	BEGIN TRY 
 		BEGIN TRAN  
 			UPDATE dbo.FirmaElectronica SET  
-				nombreArchivo  = @fileName
+				 nombreArchivo  = @fileName
 				,mimeType       = @contentType
 				,firma          = @firma 
 			WHERE idFirmaElectronica = @id
+
 			SELECT '1'code,'Actualizada exitosamente' as 'message'
 		COMMIT TRAN 
 	END TRY 
@@ -44,6 +45,5 @@ BEGIN
 		SELECT '0'code,ERROR_MESSAGE() as 'message'
 		RETURN 
 	END CATCH 
-	--UPDATE dbo.FirmaElectronica SET contrasenia = @contrasenia, estado = @estado  where idFirmaElectronica = @idFirmaElectronica
 	
 END

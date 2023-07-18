@@ -116,7 +116,7 @@ namespace ApiConfig.Controllers
                 };
                 if (await new FileUpload().Upload(_configuration.GetSection("FactElectCerts").Value, signFile.FileName, signFile.Content))
                 {
-                    await _db.SPExecute("Config.FirmaElectronica_UpdateSignature");
+                    await _db.SPExecute("Config.FirmaElectronica_Update_Signature");
                     _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                     _db.AddDynamicParam("id", id);
                     _db.AddDynamicParam("fileName", signFile.FileName);
