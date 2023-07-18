@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lib.Common.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Core.Entities;
+using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
+using Services.Common;
 
 namespace Restaurant.API.Controllers
 {
@@ -15,17 +18,24 @@ namespace Restaurant.API.Controllers
     public class TablesController : ControllerBase
     {
         private readonly RestaurantContext _context;
+        private readonly IAppTableService _tableService;
 
-        public TablesController(RestaurantContext context)
+        public TablesController(RestaurantContext context, IAppTableService tableService)
         {
             _context = context;
+            _tableService = tableService;
         }
 
         // GET: api/Tables
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AppTable>>> GetTables()
+        public async Task<ActionResult<APIResponse>> GetTables(string json)
         {
-            return await _context.Tables.ToListAsync();
+            var data = new Dictionary<string, object> {
+                {"userRoleId", User.GetUserRoleId()}, {"json", json}
+            };
+
+            return await _tableService.GetAsync(data);
+            //return await _context.Tables.ToListAsync();
         }
 
         // GET: api/Tables/5

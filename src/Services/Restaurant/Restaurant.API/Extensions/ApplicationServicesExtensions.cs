@@ -5,6 +5,8 @@ using Restaurant.Infrastructure.Data;
 using Restaurant.API.Helpers;
 using System.Configuration;
 using Lib.Common;
+using Restaurant.Application.Services;
+using Restaurant.Infrastructure.Repositories;
 
 namespace Restaurant.API.Extensions
 {
@@ -20,9 +22,10 @@ namespace Restaurant.API.Extensions
             //    optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultConnection"), builder => builder.MigrationsAssembly("Restaurant.Infrastructure"));
             //    return new RestaurantContext(optionsBuilder.Options);
             //});
-            //services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IADORepository, ADORepository>();
             //services.AddScoped<RestaurantContext, RestaurantContext>();
             services.AddScoped<IRecipe, RecipeService>();
+            services.AddScoped<IAppTableService, AppTableService>();
             //services.AddScoped<DbAccess, DbAccess>();
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             return services;
