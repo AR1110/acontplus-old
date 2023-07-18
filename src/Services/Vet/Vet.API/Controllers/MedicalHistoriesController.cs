@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
+using Newtonsoft.Json;
 using Services.Common;
+using System.Text.Json.Serialization;
 using Vet.Core.Entities;
 using Vet.Core.Interfaces;
 using Vet.Infrastructure.Data;
@@ -27,16 +29,17 @@ namespace Vet.API.Controllers
 
         // GET: api/MedicalHistories
         [HttpGet]
-        public async Task<ActionResult<APIResponse>> GetMedicalHistories()
+        public async Task<ActionResult<APIResponse>> GetMedicalHistories(string json)
         {
             try
             {
                 int companyId = Convert.ToInt32(User.GetCompanyId());
                 var apiRequest = new ApiRequest();
-
+                //var data = JsonConvert.DeserializeObject<ApiRequest>(json); 
                 var parameters = new Dictionary<string, object>
                 {
-                    { "companyId", companyId }
+                    { "userRoleId", User.GetUserRoleId() },
+                    { "json", json }
                 };
                 //apiRequest.Data = new Dictionary<string, object> { { "json", Converters.SerializeDictionary(dictionary)} };
 
@@ -111,6 +114,8 @@ namespace Vet.API.Controllers
             mh.Date = medicalHistory.Date;
             mh.Observations = medicalHistory.Observations;
             mh.UpdatedAt = DateTime.Now;
+            mh.CodEstab = medicalHistory.CodEstab;
+            mh.UserId = User.GetUserId();
             try
             {
                 _context.Update(mh);
@@ -136,6 +141,7 @@ namespace Vet.API.Controllers
         [HttpPost]
         public async Task<ActionResult<MedicalHistory>> PostMedicalHistory(MedicalHistory medicalHistory)
         {
+            medicalHistory.UserId = User.GetUserId();
             _context.MedicalHistories.Add(medicalHistory);
             await _context.SaveChangesAsync();
 

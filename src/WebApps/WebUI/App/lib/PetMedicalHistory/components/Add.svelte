@@ -12,6 +12,7 @@
 	export let editStatus;
 	export let historyEdited;
 	export let initialLoad;
+	export let codEstab;
 
 	let diseases = [],
 		diseasesStatuses = [],
@@ -21,6 +22,7 @@
 	let healthChecks = [];
 
 	let medicalHistory = {
+		codEstab: "",
 		petId: "",
 		date: "",
 		healthChecks: [],
@@ -275,6 +277,13 @@
 	};
 
 	const addHistory = async () => {
+		if (!codEstab) {
+			toast({
+				type: "warning",
+				message: "Debe seleccionar un establecimiento",
+			});
+			return;
+		}
 		if (!petSelected.id) {
 			toast({ type: "warning", message: "Debe asignar un cliente" });
 			return;
@@ -295,6 +304,7 @@
 			return;
 		}
 		const newHistory = {
+			codEstab: codEstab,
 			petId: petSelected.id,
 			date: medicalHistory.date,
 			healthChecks: healthChecks,
@@ -344,6 +354,7 @@
 		const updatedHistory = {
 			id: medicalHistory.id,
 			petId: petSelected.id,
+			codEstab: codEstab,
 			date: medicalHistory.date,
 			healthChecks: healthChecks,
 			behaviorTests: behaviorTests,

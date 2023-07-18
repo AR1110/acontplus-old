@@ -177,6 +177,26 @@ var petMH = (function () {
 	}
 
 	/**
+	 * @returns {void} */
+	function select_option(select, value, mounting) {
+		for (let i = 0; i < select.options.length; i += 1) {
+			const option = select.options[i];
+			if (option.__value === value) {
+				option.selected = true;
+				return;
+			}
+		}
+		if (!mounting || value !== undefined) {
+			select.selectedIndex = -1; // no option should be selected
+		}
+	}
+
+	function select_value(select) {
+		const selected_option = select.querySelector(':checked');
+		return selected_option && selected_option.__value;
+	}
+
+	/**
 	 * @typedef {Node & {
 	 * 	claim_order?: number;
 	 * 	hydrate_init?: true;
@@ -8372,47 +8392,47 @@ var petMH = (function () {
 
 	function get_each_context$1(ctx, list, i) {
 		const child_ctx = ctx.slice();
-		child_ctx[34] = list[i];
+		child_ctx[35] = list[i];
 		return child_ctx;
 	}
 
-	function get_each_context_1(ctx, list, i) {
+	function get_each_context_1$1(ctx, list, i) {
 		const child_ctx = ctx.slice();
-		child_ctx[37] = list[i];
+		child_ctx[38] = list[i];
 		return child_ctx;
 	}
 
 	function get_each_context_2(ctx, list, i) {
 		const child_ctx = ctx.slice();
-		child_ctx[40] = list[i];
+		child_ctx[41] = list[i];
 		return child_ctx;
 	}
 
 	function get_each_context_3(ctx, list, i) {
 		const child_ctx = ctx.slice();
-		child_ctx[43] = list[i];
+		child_ctx[44] = list[i];
 		return child_ctx;
 	}
 
 	function get_each_context_4(ctx, list, i) {
 		const child_ctx = ctx.slice();
-		child_ctx[46] = list[i];
+		child_ctx[47] = list[i];
 		return child_ctx;
 	}
 
 	function get_each_context_5(ctx, list, i) {
 		const child_ctx = ctx.slice();
-		child_ctx[40] = list[i];
+		child_ctx[41] = list[i];
 		return child_ctx;
 	}
 
 	function get_each_context_6(ctx, list, i) {
 		const child_ctx = ctx.slice();
-		child_ctx[40] = list[i];
+		child_ctx[41] = list[i];
 		return child_ctx;
 	}
 
-	// (398:5) {#if pets.length > 0 && !isPetSelected}
+	// (409:5) {#if pets.length > 0 && !isPetSelected}
 	function create_if_block_1$1(ctx) {
 		let div;
 		let each_value_6 = ensure_array_like(/*pets*/ ctx[8]);
@@ -8475,17 +8495,17 @@ var petMH = (function () {
 		};
 	}
 
-	// (400:7) {#each pets as item}
+	// (411:7) {#each pets as item}
 	function create_each_block_6(ctx) {
 		let a;
 		let i0;
 		let t0;
-		let t1_value = /*item*/ ctx[40].name + "";
+		let t1_value = /*item*/ ctx[41].name + "";
 		let t1;
 		let t2;
 		let i1;
 		let t3;
-		let t4_value = /*item*/ ctx[40].customer + "";
+		let t4_value = /*item*/ ctx[41].customer + "";
 		let t4;
 		let mounted;
 		let dispose;
@@ -8519,7 +8539,7 @@ var petMH = (function () {
 
 				if (!mounted) {
 					dispose = listen(a, "click", function () {
-						if (is_function(/*selectPet*/ ctx[15](/*item*/ ctx[40]))) /*selectPet*/ ctx[15](/*item*/ ctx[40]).apply(this, arguments);
+						if (is_function(/*selectPet*/ ctx[15](/*item*/ ctx[41]))) /*selectPet*/ ctx[15](/*item*/ ctx[41]).apply(this, arguments);
 					});
 
 					mounted = true;
@@ -8527,8 +8547,8 @@ var petMH = (function () {
 			},
 			p(new_ctx, dirty) {
 				ctx = new_ctx;
-				if (dirty[0] & /*pets*/ 256 && t1_value !== (t1_value = /*item*/ ctx[40].name + "")) set_data(t1, t1_value);
-				if (dirty[0] & /*pets*/ 256 && t4_value !== (t4_value = /*item*/ ctx[40].customer + "")) set_data(t4, t4_value);
+				if (dirty[0] & /*pets*/ 256 && t1_value !== (t1_value = /*item*/ ctx[41].name + "")) set_data(t1, t1_value);
+				if (dirty[0] & /*pets*/ 256 && t4_value !== (t4_value = /*item*/ ctx[41].customer + "")) set_data(t4, t4_value);
 			},
 			d(detaching) {
 				if (detaching) {
@@ -8541,7 +8561,7 @@ var petMH = (function () {
 		};
 	}
 
-	// (416:2) {#if (petSelected.id > 0) | editStatus}
+	// (427:2) {#if (petSelected.id > 0) | editStatus}
 	function create_if_block$1(ctx) {
 		let form;
 		let div1;
@@ -9012,8 +9032,8 @@ var petMH = (function () {
 
 				if (!mounted) {
 					dispose = [
-						listen(input0, "input", /*input0_input_handler*/ ctx[20]),
-						listen(textarea, "input", /*textarea_input_handler*/ ctx[23]),
+						listen(input0, "input", /*input0_input_handler*/ ctx[21]),
+						listen(textarea, "input", /*textarea_input_handler*/ ctx[24]),
 						listen(form, "submit", prevent_default(/*onSubmitHandler*/ ctx[16]))
 					];
 
@@ -9154,10 +9174,10 @@ var petMH = (function () {
 		};
 	}
 
-	// (531:7) {#each diseasesStatuses as item}
+	// (542:7) {#each diseasesStatuses as item}
 	function create_each_block_5(ctx) {
 		let th;
-		let t_value = /*item*/ ctx[40].name + "";
+		let t_value = /*item*/ ctx[41].name + "";
 		let t;
 
 		return {
@@ -9170,7 +9190,7 @@ var petMH = (function () {
 				append(th, t);
 			},
 			p(ctx, dirty) {
-				if (dirty[0] & /*diseasesStatuses*/ 4 && t_value !== (t_value = /*item*/ ctx[40].name + "")) set_data(t, t_value);
+				if (dirty[0] & /*diseasesStatuses*/ 4 && t_value !== (t_value = /*item*/ ctx[41].name + "")) set_data(t, t_value);
 			},
 			d(detaching) {
 				if (detaching) {
@@ -9180,7 +9200,7 @@ var petMH = (function () {
 		};
 	}
 
-	// (540:8) {#each diseasesStatuses as ds}
+	// (551:8) {#each diseasesStatuses as ds}
 	function create_each_block_4(ctx) {
 		let td;
 		let input;
@@ -9190,7 +9210,7 @@ var petMH = (function () {
 		let dispose;
 
 		function change_handler() {
-			return /*change_handler*/ ctx[21](/*d*/ ctx[43], /*ds*/ ctx[46]);
+			return /*change_handler*/ ctx[22](/*d*/ ctx[44], /*ds*/ ctx[47]);
 		}
 
 		return {
@@ -9198,8 +9218,8 @@ var petMH = (function () {
 				td = element("td");
 				input = element("input");
 				attr(input, "type", "radio");
-				attr(input, "id", input_id_value = "" + (/*d*/ ctx[43].id + "-" + /*ds*/ ctx[46].id + "-chkdds"));
-				attr(input, "name", input_name_value = "" + (/*d*/ ctx[43].id + "-chkdds"));
+				attr(input, "id", input_id_value = "" + (/*d*/ ctx[44].id + "-" + /*ds*/ ctx[47].id + "-chkdds"));
+				attr(input, "name", input_name_value = "" + (/*d*/ ctx[44].id + "-chkdds"));
 			},
 			m(target, anchor) {
 				insert(target, td, anchor);
@@ -9213,11 +9233,11 @@ var petMH = (function () {
 			p(new_ctx, dirty) {
 				ctx = new_ctx;
 
-				if (dirty[0] & /*diseases, diseasesStatuses*/ 6 && input_id_value !== (input_id_value = "" + (/*d*/ ctx[43].id + "-" + /*ds*/ ctx[46].id + "-chkdds"))) {
+				if (dirty[0] & /*diseases, diseasesStatuses*/ 6 && input_id_value !== (input_id_value = "" + (/*d*/ ctx[44].id + "-" + /*ds*/ ctx[47].id + "-chkdds"))) {
 					attr(input, "id", input_id_value);
 				}
 
-				if (dirty[0] & /*diseases*/ 2 && input_name_value !== (input_name_value = "" + (/*d*/ ctx[43].id + "-chkdds"))) {
+				if (dirty[0] & /*diseases*/ 2 && input_name_value !== (input_name_value = "" + (/*d*/ ctx[44].id + "-chkdds"))) {
 					attr(input, "name", input_name_value);
 				}
 			},
@@ -9232,11 +9252,11 @@ var petMH = (function () {
 		};
 	}
 
-	// (537:6) {#each diseases as d}
+	// (548:6) {#each diseases as d}
 	function create_each_block_3(ctx) {
 		let tr;
 		let td;
-		let t0_value = /*d*/ ctx[43].name + "";
+		let t0_value = /*d*/ ctx[44].name + "";
 		let t0;
 		let t1;
 		let t2;
@@ -9275,7 +9295,7 @@ var petMH = (function () {
 				append(tr, t2);
 			},
 			p(ctx, dirty) {
-				if (dirty[0] & /*diseases*/ 2 && t0_value !== (t0_value = /*d*/ ctx[43].name + "")) set_data(t0, t0_value);
+				if (dirty[0] & /*diseases*/ 2 && t0_value !== (t0_value = /*d*/ ctx[44].name + "")) set_data(t0, t0_value);
 
 				if (dirty[0] & /*diseases, diseasesStatuses, addDiseaseStatus*/ 1030) {
 					each_value_4 = ensure_array_like(/*diseasesStatuses*/ ctx[2]);
@@ -9310,10 +9330,10 @@ var petMH = (function () {
 		};
 	}
 
-	// (564:7) {#each behaviorsStatuses as item}
+	// (575:7) {#each behaviorsStatuses as item}
 	function create_each_block_2(ctx) {
 		let th;
-		let t_value = /*item*/ ctx[40].name + "";
+		let t_value = /*item*/ ctx[41].name + "";
 		let t;
 
 		return {
@@ -9326,7 +9346,7 @@ var petMH = (function () {
 				append(th, t);
 			},
 			p(ctx, dirty) {
-				if (dirty[0] & /*behaviorsStatuses*/ 16 && t_value !== (t_value = /*item*/ ctx[40].name + "")) set_data(t, t_value);
+				if (dirty[0] & /*behaviorsStatuses*/ 16 && t_value !== (t_value = /*item*/ ctx[41].name + "")) set_data(t, t_value);
 			},
 			d(detaching) {
 				if (detaching) {
@@ -9336,8 +9356,8 @@ var petMH = (function () {
 		};
 	}
 
-	// (573:8) {#each behaviorsStatuses as bs}
-	function create_each_block_1(ctx) {
+	// (584:8) {#each behaviorsStatuses as bs}
+	function create_each_block_1$1(ctx) {
 		let td;
 		let input;
 		let input_id_value;
@@ -9346,7 +9366,7 @@ var petMH = (function () {
 		let dispose;
 
 		function change_handler_1() {
-			return /*change_handler_1*/ ctx[22](/*b*/ ctx[34], /*bs*/ ctx[37]);
+			return /*change_handler_1*/ ctx[23](/*b*/ ctx[35], /*bs*/ ctx[38]);
 		}
 
 		return {
@@ -9354,8 +9374,8 @@ var petMH = (function () {
 				td = element("td");
 				input = element("input");
 				attr(input, "type", "radio");
-				attr(input, "id", input_id_value = "" + (/*b*/ ctx[34].id + "-" + /*bs*/ ctx[37].id + "-chkbbs"));
-				attr(input, "name", input_name_value = "" + (/*b*/ ctx[34].id + "-chkbbs"));
+				attr(input, "id", input_id_value = "" + (/*b*/ ctx[35].id + "-" + /*bs*/ ctx[38].id + "-chkbbs"));
+				attr(input, "name", input_name_value = "" + (/*b*/ ctx[35].id + "-chkbbs"));
 			},
 			m(target, anchor) {
 				insert(target, td, anchor);
@@ -9369,11 +9389,11 @@ var petMH = (function () {
 			p(new_ctx, dirty) {
 				ctx = new_ctx;
 
-				if (dirty[0] & /*behaviors, behaviorsStatuses*/ 24 && input_id_value !== (input_id_value = "" + (/*b*/ ctx[34].id + "-" + /*bs*/ ctx[37].id + "-chkbbs"))) {
+				if (dirty[0] & /*behaviors, behaviorsStatuses*/ 24 && input_id_value !== (input_id_value = "" + (/*b*/ ctx[35].id + "-" + /*bs*/ ctx[38].id + "-chkbbs"))) {
 					attr(input, "id", input_id_value);
 				}
 
-				if (dirty[0] & /*behaviors*/ 8 && input_name_value !== (input_name_value = "" + (/*b*/ ctx[34].id + "-chkbbs"))) {
+				if (dirty[0] & /*behaviors*/ 8 && input_name_value !== (input_name_value = "" + (/*b*/ ctx[35].id + "-chkbbs"))) {
 					attr(input, "name", input_name_value);
 				}
 			},
@@ -9388,11 +9408,11 @@ var petMH = (function () {
 		};
 	}
 
-	// (570:6) {#each behaviors as b}
+	// (581:6) {#each behaviors as b}
 	function create_each_block$1(ctx) {
 		let tr;
 		let td;
-		let t0_value = /*b*/ ctx[34].name + "";
+		let t0_value = /*b*/ ctx[35].name + "";
 		let t0;
 		let t1;
 		let t2;
@@ -9400,7 +9420,7 @@ var petMH = (function () {
 		let each_blocks = [];
 
 		for (let i = 0; i < each_value_1.length; i += 1) {
-			each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
+			each_blocks[i] = create_each_block_1$1(get_each_context_1$1(ctx, each_value_1, i));
 		}
 
 		return {
@@ -9431,19 +9451,19 @@ var petMH = (function () {
 				append(tr, t2);
 			},
 			p(ctx, dirty) {
-				if (dirty[0] & /*behaviors*/ 8 && t0_value !== (t0_value = /*b*/ ctx[34].name + "")) set_data(t0, t0_value);
+				if (dirty[0] & /*behaviors*/ 8 && t0_value !== (t0_value = /*b*/ ctx[35].name + "")) set_data(t0, t0_value);
 
 				if (dirty[0] & /*behaviors, behaviorsStatuses, addBehaviorStatus*/ 2072) {
 					each_value_1 = ensure_array_like(/*behaviorsStatuses*/ ctx[4]);
 					let i;
 
 					for (i = 0; i < each_value_1.length; i += 1) {
-						const child_ctx = get_each_context_1(ctx, each_value_1, i);
+						const child_ctx = get_each_context_1$1(ctx, each_value_1, i);
 
 						if (each_blocks[i]) {
 							each_blocks[i].p(child_ctx, dirty);
 						} else {
-							each_blocks[i] = create_each_block_1(child_ctx);
+							each_blocks[i] = create_each_block_1$1(child_ctx);
 							each_blocks[i].c();
 							each_blocks[i].m(tr, t2);
 						}
@@ -9581,10 +9601,12 @@ var petMH = (function () {
 		let { editStatus } = $$props;
 		let { historyEdited } = $$props;
 		let { initialLoad } = $$props;
+		let { codEstab } = $$props;
 		let diseases = [], diseasesStatuses = [], behaviors = [], behaviorsStatuses = [];
 		let healthChecks = [];
 
 		let medicalHistory = {
+			codEstab: "",
 			petId: "",
 			date: "",
 			healthChecks: [],
@@ -9823,6 +9845,15 @@ var petMH = (function () {
 		};
 
 		const addHistory = async () => {
+			if (!codEstab) {
+				toast({
+					type: "warning",
+					message: "Debe seleccionar un establecimiento"
+				});
+
+				return;
+			}
+
 			if (!petSelected.id) {
 				toast({
 					type: "warning",
@@ -9853,6 +9884,7 @@ var petMH = (function () {
 			}
 
 			const newHistory = {
+				codEstab,
 				petId: petSelected.id,
 				date: medicalHistory.date,
 				healthChecks,
@@ -9912,6 +9944,7 @@ var petMH = (function () {
 			const updatedHistory = {
 				id: medicalHistory.id,
 				petId: petSelected.id,
+				codEstab,
 				date: medicalHistory.date,
 				healthChecks,
 				behaviorTests,
@@ -9967,6 +10000,7 @@ var petMH = (function () {
 			if ('editStatus' in $$props) $$invalidate(0, editStatus = $$props.editStatus);
 			if ('historyEdited' in $$props) $$invalidate(18, historyEdited = $$props.historyEdited);
 			if ('initialLoad' in $$props) $$invalidate(19, initialLoad = $$props.initialLoad);
+			if ('codEstab' in $$props) $$invalidate(20, codEstab = $$props.codEstab);
 		};
 
 		return [
@@ -9990,6 +10024,7 @@ var petMH = (function () {
 			newRecord,
 			historyEdited,
 			initialLoad,
+			codEstab,
 			input0_input_handler,
 			change_handler,
 			change_handler_1,
@@ -10011,7 +10046,8 @@ var petMH = (function () {
 					newRecord: 17,
 					editStatus: 0,
 					historyEdited: 18,
-					initialLoad: 19
+					initialLoad: 19,
+					codEstab: 20
 				},
 				null,
 				[-1, -1]
@@ -10023,11 +10059,51 @@ var petMH = (function () {
 
 	function get_each_context(ctx, list, i) {
 		const child_ctx = ctx.slice();
-		child_ctx[13] = list[i];
+		child_ctx[17] = list[i];
 		return child_ctx;
 	}
 
-	// (181:0) {:else}
+	function get_each_context_1(ctx, list, i) {
+		const child_ctx = ctx.slice();
+		child_ctx[17] = list[i];
+		return child_ctx;
+	}
+
+	// (226:5) {#each establecimientos as item}
+	function create_each_block_1(ctx) {
+		let option;
+		let t_value = /*item*/ ctx[17].nombreComercial + "";
+		let t;
+		let option_value_value;
+
+		return {
+			c() {
+				option = element("option");
+				t = text(t_value);
+				option.__value = option_value_value = /*item*/ ctx[17].codEstab;
+				set_input_value(option, option.__value);
+			},
+			m(target, anchor) {
+				insert(target, option, anchor);
+				append(option, t);
+			},
+			p(ctx, dirty) {
+				if (dirty & /*establecimientos*/ 8 && t_value !== (t_value = /*item*/ ctx[17].nombreComercial + "")) set_data(t, t_value);
+
+				if (dirty & /*establecimientos*/ 8 && option_value_value !== (option_value_value = /*item*/ ctx[17].codEstab)) {
+					option.__value = option_value_value;
+					set_input_value(option, option.__value);
+				}
+			},
+			d(detaching) {
+				if (detaching) {
+					detach(option);
+				}
+			}
+		};
+	}
+
+	// (239:0) {:else}
 	function create_else_block_1(ctx) {
 		return {
 			c: noop$1,
@@ -10039,7 +10115,7 @@ var petMH = (function () {
 		};
 	}
 
-	// (179:0) {#if newRecord | editStatus}
+	// (237:0) {#if newRecord | editStatus}
 	function create_if_block_1(ctx) {
 		let add;
 		let current;
@@ -10047,9 +10123,10 @@ var petMH = (function () {
 		add = new Add({
 				props: {
 					newRecord: /*newRecord*/ ctx[0],
-					editStatus: /*editStatus*/ ctx[2],
-					historyEdited: /*historyEdited*/ ctx[3],
-					initialLoad: /*initialLoad*/ ctx[5]
+					editStatus: /*editStatus*/ ctx[4],
+					historyEdited: /*historyEdited*/ ctx[5],
+					initialLoad: /*initialLoad*/ ctx[7],
+					codEstab: /*codEstab*/ ctx[1]
 				}
 			});
 
@@ -10064,8 +10141,9 @@ var petMH = (function () {
 			p(ctx, dirty) {
 				const add_changes = {};
 				if (dirty & /*newRecord*/ 1) add_changes.newRecord = /*newRecord*/ ctx[0];
-				if (dirty & /*editStatus*/ 4) add_changes.editStatus = /*editStatus*/ ctx[2];
-				if (dirty & /*historyEdited*/ 8) add_changes.historyEdited = /*historyEdited*/ ctx[3];
+				if (dirty & /*editStatus*/ 16) add_changes.editStatus = /*editStatus*/ ctx[4];
+				if (dirty & /*historyEdited*/ 32) add_changes.historyEdited = /*historyEdited*/ ctx[5];
+				if (dirty & /*codEstab*/ 2) add_changes.codEstab = /*codEstab*/ ctx[1];
 				add.$set(add_changes);
 			},
 			i(local) {
@@ -10083,7 +10161,7 @@ var petMH = (function () {
 		};
 	}
 
-	// (238:0) {:else}
+	// (296:0) {:else}
 	function create_else_block(ctx) {
 		let h5;
 
@@ -10105,7 +10183,7 @@ var petMH = (function () {
 		};
 	}
 
-	// (189:0) {#if medicalHistories.length > 0}
+	// (247:0) {#if medicalHistories.length > 0}
 	function create_if_block(ctx) {
 		let div2;
 		let div1;
@@ -10116,7 +10194,7 @@ var petMH = (function () {
 		let thead;
 		let t9;
 		let tbody;
-		let each_value = ensure_array_like(/*medicalHistories*/ ctx[1]);
+		let each_value = ensure_array_like(/*medicalHistories*/ ctx[2]);
 		let each_blocks = [];
 
 		for (let i = 0; i < each_value.length; i += 1) {
@@ -10164,8 +10242,8 @@ var petMH = (function () {
 				}
 			},
 			p(ctx, dirty) {
-				if (dirty & /*getReport, medicalHistories, editHistory, deleteHistory, formatDate*/ 962) {
-					each_value = ensure_array_like(/*medicalHistories*/ ctx[1]);
+				if (dirty & /*getReport, medicalHistories, editHistory, deleteHistory, formatDate*/ 3844) {
+					each_value = ensure_array_like(/*medicalHistories*/ ctx[2]);
 					let i;
 
 					for (i = 0; i < each_value.length; i += 1) {
@@ -10197,23 +10275,23 @@ var petMH = (function () {
 		};
 	}
 
-	// (204:5) {#each medicalHistories as item}
+	// (262:6) {#each medicalHistories as item}
 	function create_each_block(ctx) {
 		let tr;
 		let td0;
-		let t0_value = /*item*/ ctx[13].customer + "";
+		let t0_value = /*item*/ ctx[17].customer + "";
 		let t0;
 		let t1;
 		let td1;
-		let t2_value = /*item*/ ctx[13].petName + "";
+		let t2_value = /*item*/ ctx[17].petName + "";
 		let t2;
 		let t3;
 		let td2;
-		let t4_value = /*formatDate*/ ctx[8](/*item*/ ctx[13].date) + "";
+		let t4_value = /*formatDate*/ ctx[10](/*item*/ ctx[17].date) + "";
 		let t4;
 		let t5;
 		let td3;
-		let t6_value = /*item*/ ctx[13].observations + "";
+		let t6_value = /*item*/ ctx[17].observations + "";
 		let t6;
 		let t7;
 		let td4;
@@ -10281,13 +10359,13 @@ var petMH = (function () {
 				if (!mounted) {
 					dispose = [
 						listen(button0, "click", function () {
-							if (is_function(/*deleteHistory*/ ctx[7](/*item*/ ctx[13].id))) /*deleteHistory*/ ctx[7](/*item*/ ctx[13].id).apply(this, arguments);
+							if (is_function(/*deleteHistory*/ ctx[9](/*item*/ ctx[17].id))) /*deleteHistory*/ ctx[9](/*item*/ ctx[17].id).apply(this, arguments);
 						}),
 						listen(button1, "click", function () {
-							if (is_function(/*editHistory*/ ctx[9](/*item*/ ctx[13]))) /*editHistory*/ ctx[9](/*item*/ ctx[13]).apply(this, arguments);
+							if (is_function(/*editHistory*/ ctx[11](/*item*/ ctx[17]))) /*editHistory*/ ctx[11](/*item*/ ctx[17]).apply(this, arguments);
 						}),
 						listen(button2, "click", function () {
-							if (is_function(/*getReport*/ ctx[6](/*item*/ ctx[13].id))) /*getReport*/ ctx[6](/*item*/ ctx[13].id).apply(this, arguments);
+							if (is_function(/*getReport*/ ctx[8](/*item*/ ctx[17].id))) /*getReport*/ ctx[8](/*item*/ ctx[17].id).apply(this, arguments);
 						})
 					];
 
@@ -10296,10 +10374,10 @@ var petMH = (function () {
 			},
 			p(new_ctx, dirty) {
 				ctx = new_ctx;
-				if (dirty & /*medicalHistories*/ 2 && t0_value !== (t0_value = /*item*/ ctx[13].customer + "")) set_data(t0, t0_value);
-				if (dirty & /*medicalHistories*/ 2 && t2_value !== (t2_value = /*item*/ ctx[13].petName + "")) set_data(t2, t2_value);
-				if (dirty & /*medicalHistories*/ 2 && t4_value !== (t4_value = /*formatDate*/ ctx[8](/*item*/ ctx[13].date) + "")) set_data(t4, t4_value);
-				if (dirty & /*medicalHistories*/ 2 && t6_value !== (t6_value = /*item*/ ctx[13].observations + "")) set_data(t6, t6_value);
+				if (dirty & /*medicalHistories*/ 4 && t0_value !== (t0_value = /*item*/ ctx[17].customer + "")) set_data(t0, t0_value);
+				if (dirty & /*medicalHistories*/ 4 && t2_value !== (t2_value = /*item*/ ctx[17].petName + "")) set_data(t2, t2_value);
+				if (dirty & /*medicalHistories*/ 4 && t4_value !== (t4_value = /*formatDate*/ ctx[10](/*item*/ ctx[17].date) + "")) set_data(t4, t4_value);
+				if (dirty & /*medicalHistories*/ 4 && t6_value !== (t6_value = /*item*/ ctx[17].observations + "")) set_data(t6, t6_value);
 			},
 			d(detaching) {
 				if (detaching) {
@@ -10320,18 +10398,34 @@ var petMH = (function () {
 		let div1;
 		let button;
 		let t3;
+		let div7;
+		let div6;
+		let div5;
+		let div4;
+		let label;
+		let t5;
+		let select;
+		let option;
+		let t7;
 		let current_block_type_index;
 		let if_block0;
-		let t4;
+		let t8;
 		let if_block1_anchor;
 		let current;
 		let mounted;
 		let dispose;
+		let each_value_1 = ensure_array_like(/*establecimientos*/ ctx[3]);
+		let each_blocks = [];
+
+		for (let i = 0; i < each_value_1.length; i += 1) {
+			each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
+		}
+
 		const if_block_creators = [create_if_block_1, create_else_block_1];
 		const if_blocks = [];
 
 		function select_block_type(ctx, dirty) {
-			if (/*newRecord*/ ctx[0] | /*editStatus*/ ctx[2]) return 0;
+			if (/*newRecord*/ ctx[0] | /*editStatus*/ ctx[4]) return 0;
 			return 1;
 		}
 
@@ -10339,7 +10433,7 @@ var petMH = (function () {
 		if_block0 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
 
 		function select_block_type_1(ctx, dirty) {
-			if (/*medicalHistories*/ ctx[1].length > 0) return create_if_block;
+			if (/*medicalHistories*/ ctx[2].length > 0) return create_if_block;
 			return create_else_block;
 		}
 
@@ -10357,8 +10451,24 @@ var petMH = (function () {
 				button = element("button");
 				button.innerHTML = `<i class="fa fa-plus-circle"></i> Nuevo`;
 				t3 = space();
+				div7 = element("div");
+				div6 = element("div");
+				div5 = element("div");
+				div4 = element("div");
+				label = element("label");
+				label.textContent = "Establecimiento:";
+				t5 = space();
+				select = element("select");
+				option = element("option");
+				option.textContent = "Seleccione el establecimiento";
+
+				for (let i = 0; i < each_blocks.length; i += 1) {
+					each_blocks[i].c();
+				}
+
+				t7 = space();
 				if_block0.c();
-				t4 = space();
+				t8 = space();
 				if_block1.c();
 				if_block1_anchor = empty();
 				attr(div0, "class", "col-md-5 align-self-center");
@@ -10367,6 +10477,20 @@ var petMH = (function () {
 				attr(div1, "class", "d-flex justify-content-end align-items-center");
 				attr(div2, "class", "col-md-7 align-self-center text-right");
 				attr(div3, "class", "row page-titles");
+				attr(label, "for", "");
+				option.selected = true;
+				option.disabled = true;
+				option.__value = "Seleccione el establecimiento";
+				set_input_value(option, option.__value);
+				attr(select, "name", "codEstab");
+				attr(select, "id", "codEstab");
+				attr(select, "class", "form-control");
+				select.required = true;
+				if (/*codEstab*/ ctx[1] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[13].call(select));
+				attr(div4, "class", "col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12");
+				attr(div5, "class", "row");
+				attr(div6, "class", "card-body");
+				attr(div7, "class", "card");
 			},
 			m(target, anchor) {
 				insert(target, div3, anchor);
@@ -10376,18 +10500,67 @@ var petMH = (function () {
 				append(div2, div1);
 				append(div1, button);
 				insert(target, t3, anchor);
+				insert(target, div7, anchor);
+				append(div7, div6);
+				append(div6, div5);
+				append(div5, div4);
+				append(div4, label);
+				append(div4, t5);
+				append(div4, select);
+				append(select, option);
+
+				for (let i = 0; i < each_blocks.length; i += 1) {
+					if (each_blocks[i]) {
+						each_blocks[i].m(select, null);
+					}
+				}
+
+				select_option(select, /*codEstab*/ ctx[1], true);
+				insert(target, t7, anchor);
 				if_blocks[current_block_type_index].m(target, anchor);
-				insert(target, t4, anchor);
+				insert(target, t8, anchor);
 				if_block1.m(target, anchor);
 				insert(target, if_block1_anchor, anchor);
 				current = true;
 
 				if (!mounted) {
-					dispose = listen(button, "click", /*click_handler*/ ctx[10]);
+					dispose = [
+						listen(button, "click", /*click_handler*/ ctx[12]),
+						listen(select, "change", /*select_change_handler*/ ctx[13]),
+						listen(select, "change", /*initialLoad*/ ctx[7])
+					];
+
 					mounted = true;
 				}
 			},
 			p(ctx, [dirty]) {
+				if (dirty & /*establecimientos*/ 8) {
+					each_value_1 = ensure_array_like(/*establecimientos*/ ctx[3]);
+					let i;
+
+					for (i = 0; i < each_value_1.length; i += 1) {
+						const child_ctx = get_each_context_1(ctx, each_value_1, i);
+
+						if (each_blocks[i]) {
+							each_blocks[i].p(child_ctx, dirty);
+						} else {
+							each_blocks[i] = create_each_block_1(child_ctx);
+							each_blocks[i].c();
+							each_blocks[i].m(select, null);
+						}
+					}
+
+					for (; i < each_blocks.length; i += 1) {
+						each_blocks[i].d(1);
+					}
+
+					each_blocks.length = each_value_1.length;
+				}
+
+				if (dirty & /*codEstab, establecimientos*/ 10) {
+					select_option(select, /*codEstab*/ ctx[1]);
+				}
+
 				let previous_block_index = current_block_type_index;
 				current_block_type_index = select_block_type(ctx);
 
@@ -10411,7 +10584,7 @@ var petMH = (function () {
 					}
 
 					transition_in(if_block0, 1);
-					if_block0.m(t4.parentNode, t4);
+					if_block0.m(t8.parentNode, t8);
 				}
 
 				if (current_block_type === (current_block_type = select_block_type_1(ctx)) && if_block1) {
@@ -10439,37 +10612,66 @@ var petMH = (function () {
 				if (detaching) {
 					detach(div3);
 					detach(t3);
-					detach(t4);
+					detach(div7);
+					detach(t7);
+					detach(t8);
 					detach(if_block1_anchor);
 				}
 
+				destroy_each(each_blocks, detaching);
 				if_blocks[current_block_type_index].d(detaching);
 				if_block1.d(detaching);
 				mounted = false;
-				dispose();
+				run_all(dispose);
 			}
 		};
 	}
 
 	function instance($$self, $$props, $$invalidate) {
 		let newRecord = false;
+		let codEstab = "0";
 
 		function openNew(open) {
 			$$invalidate(0, newRecord = open);
 		}
 
-		let medicalHistories = [];
+		let medicalHistories = [], establecimientos = [];
 
 		onMount(async () => {
-			initialLoad();
+			getEstab();
 		});
 
-		const initialLoad = async () => {
+		const getEstab = async () => {
+			debugger;
 			showLoader();
 
-			await client.get("/gateway/MedicalHistories/").then(response => {
+			await client.get(`/gateway/EstabAsig/?json=` + JSON.stringify({ tipo: 1 })).then(response => {
+				if (response.code == 1) {
+					$$invalidate(3, establecimientos = JSON.parse(response.payload));
+
+					if (establecimientos.length > 0) {
+						$$invalidate(1, codEstab = establecimientos.find(x => x.predeterminado == true).codEstab);
+
+						if (codEstab) {
+							initialLoad();
+						}
+					}
+				}
+
+				hideLoader();
+			}).catch(error => {
+				hideLoader();
+				console.log(error);
+			});
+		};
+
+		const initialLoad = async () => {
+			$$invalidate(2, medicalHistories = []);
+			showLoader();
+
+			await client.get("/gateway/MedicalHistories/?json=" + JSON.stringify({ codEstab })).then(response => {
 				if (response.code == "1") {
-					$$invalidate(1, medicalHistories = JSON.parse(response.payload));
+					$$invalidate(2, medicalHistories = JSON.parse(response.payload));
 				}
 			}).catch(error => {
 				hideLoader();
@@ -10537,7 +10739,7 @@ var petMH = (function () {
 						message: "Eliminada exitosamente"
 					});
 
-					$$invalidate(1, medicalHistories = medicalHistories.filter(mh => mh.id !== id));
+					$$invalidate(2, medicalHistories = medicalHistories.filter(mh => mh.id !== id));
 				}).catch(error => {
 					console.log(error);
 				});
@@ -10557,16 +10759,24 @@ var petMH = (function () {
 
 		const editHistory = item => {
 			//toast({ type: "info", message: "Funcionalidad en construccion" });
-			$$invalidate(2, editStatus = true);
+			$$invalidate(4, editStatus = true);
 
-			$$invalidate(3, historyEdited = item);
+			$$invalidate(5, historyEdited = item);
 		};
 
 		const click_handler = () => openNew(true);
 
+		function select_change_handler() {
+			codEstab = select_value(this);
+			$$invalidate(1, codEstab);
+			$$invalidate(3, establecimientos);
+		}
+
 		return [
 			newRecord,
+			codEstab,
 			medicalHistories,
+			establecimientos,
 			editStatus,
 			historyEdited,
 			openNew,
@@ -10575,7 +10785,8 @@ var petMH = (function () {
 			deleteHistory,
 			formatDate,
 			editHistory,
-			click_handler
+			click_handler,
+			select_change_handler
 		];
 	}
 

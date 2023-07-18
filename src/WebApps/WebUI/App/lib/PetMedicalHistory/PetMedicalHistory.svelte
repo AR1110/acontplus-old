@@ -9,19 +9,49 @@
 	import { showLoader, hideLoader } from "../../core/utils/loading-spinner";
 	//import toast, { Toaster } from 'svelte-french-toast';
 	let newRecord = false;
+	let codEstab = "0";
 
 	function openNew(open) {
 		newRecord = open;
 	}
-	let medicalHistories = [];
+	let medicalHistories = [],
+		establecimientos = [];
 	onMount(async () => {
-		initialLoad();
+		getEstab();
 	});
-
-	const initialLoad = async () => {
+	const getEstab = async () => {
+		debugger;
 		showLoader();
 		await client
-			.get("/gateway/MedicalHistories/")
+			.get(`/gateway/EstabAsig/?json=` + JSON.stringify({ tipo: 1 }))
+			.then((response) => {
+				if (response.code == 1) {
+					establecimientos = JSON.parse(response.payload);
+					if (establecimientos.length > 0) {
+						codEstab = establecimientos.find(
+							(x) => x.predeterminado == true
+						).codEstab;
+
+						if (codEstab) {
+							initialLoad();
+						}
+					}
+				}
+				hideLoader();
+			})
+			.catch((error) => {
+				hideLoader();
+				console.log(error);
+			});
+	};
+	const initialLoad = async () => {
+		medicalHistories = [];
+		showLoader();
+		await client
+			.get(
+				"/gateway/MedicalHistories/?json=" +
+					JSON.stringify({ codEstab: codEstab })
+			)
 			.then((response) => {
 				if (response.code == "1") {
 					medicalHistories = JSON.parse(response.payload);
@@ -121,7 +151,9 @@
 						type: "success",
 						message: "Eliminada exitosamente",
 					});
-					medicalHistories = medicalHistories.filter((mh) => mh.id !== id);
+					medicalHistories = medicalHistories.filter(
+						(mh) => mh.id !== id
+					);
 				})
 				.catch((error) => {
 					console.log(error);
@@ -175,9 +207,35 @@
 	</div>
 </div>
 <!-- <Toaster /> -->
+<div class="card">
+	<div class="card-body">
+		<div class="row">
+			<div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+				<label for="">Establecimiento:</label>
+				<select
+					name="codEstab"
+					id="codEstab"
+					class="form-control"
+					required
+					bind:value={codEstab}
+					on:change={initialLoad}
+				>
+					<option selected disabled
+						>Seleccione el establecimiento</option
+					>
+					{#each establecimientos as item}
+						<option value={item.codEstab}
+							>{item.nombreComercial}</option
+						>
+					{/each}
+				</select>
+			</div>
+		</div>
+	</div>
+</div>
 
 {#if newRecord | editStatus}
-	<Add {newRecord} {editStatus} {historyEdited} {initialLoad} />
+	<Add {newRecord} {editStatus} {historyEdited} {initialLoad} {codEstab} />
 {:else}
 	<!-- <Search
 		bind:searchTerm
@@ -187,56 +245,56 @@
 {/if}
 
 {#if medicalHistories.length > 0}
-<div class="card">
-	<div class="card-body">
-		<div class="table-responsive">
-			<table class="table">
-				<caption>Registros</caption>
-				<thead>
-					<tr>
-						<th>Cliente</th>
-						<th>Mascota</th>
-						<th>Fecha</th>
-						<th>Obs</th>
-					</tr>
-				</thead>
-				<tbody>
-					{#each medicalHistories as item}
+	<div class="card">
+		<div class="card-body">
+			<div class="table-responsive">
+				<table class="table">
+					<caption>Registros</caption>
+					<thead>
 						<tr>
-							<td>{item.customer}</td>
-							<td>{item.petName}</td>
-							<td> {formatDate(item.date)} </td>
-							<td> {item.observations} </td>
-							<td>
-								<button
-									class="btn btn-outline-danger btn-sm"
-									on:click={deleteHistory(item.id)}
-								>
-									<i class="ti-trash" />
-								</button>
-								<button
-									class="btn btn-outline-warning btn-sm"
-									on:click={editHistory(item)}
-								>
-									<i class="ti-pencil" />
-								</button>
-								<button
-									class="btn btn-outline-danger btn-sm"
-									on:click={getReport(item.id)}
-									title="Obtener Reporte"
-								>
-									<i class="fa fa-file-pdf" />
-								</button>
-							</td>
+							<th>Cliente</th>
+							<th>Mascota</th>
+							<th>Fecha</th>
+							<th>Obs</th>
 						</tr>
-					{/each}
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						{#each medicalHistories as item}
+							<tr>
+								<td>{item.customer}</td>
+								<td>{item.petName}</td>
+								<td> {formatDate(item.date)} </td>
+								<td> {item.observations} </td>
+								<td>
+									<button
+										class="btn btn-outline-danger btn-sm"
+										on:click={deleteHistory(item.id)}
+									>
+										<i class="ti-trash" />
+									</button>
+									<button
+										class="btn btn-outline-warning btn-sm"
+										on:click={editHistory(item)}
+									>
+										<i class="ti-pencil" />
+									</button>
+									<button
+										class="btn btn-outline-danger btn-sm"
+										on:click={getReport(item.id)}
+										title="Obtener Reporte"
+									>
+										<i class="fa fa-file-pdf" />
+									</button>
+								</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
-</div>
 {:else}
-<h5 class="card-title">No se encontraron registros</h5>
+	<h5 class="card-title">No se encontraron registros</h5>
 {/if}
 
 <!-- 

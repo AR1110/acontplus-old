@@ -25,5 +25,6 @@ namespace Vet.Core.Entities
         [Column(TypeName = "numeric(4,2), null")]
         public decimal? Weight { get; set; }
         public DateTime? Birthdate { get; set; }
+        public int? UserId { get; set; }
     }
 }

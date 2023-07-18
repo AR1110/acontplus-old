@@ -2,6 +2,7 @@
 {
     public class LoginData
     {
+        public int idUsuario { get; set; }
         public int idRol { get; set; }
         public string userName { get; set; }
         public string fullName { get; set; }

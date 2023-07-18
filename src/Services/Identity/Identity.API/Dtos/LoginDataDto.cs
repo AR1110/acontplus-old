@@ -2,6 +2,7 @@
 {
     public class LoginDataDto
     {
+        public int idUsuario { get; set; }
         public int idUsuarioRol { get; set; }
         public string userName { get; set; }
         public string fullName { get; set; }

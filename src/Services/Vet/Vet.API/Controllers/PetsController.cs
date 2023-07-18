@@ -123,7 +123,7 @@ namespace Vet.API.Controllers
             petFounded.Enabled = pet.Enabled;
             petFounded.Weight = pet.Weight;
             petFounded.UpdatedAt = DateTime.Now;
-
+            petFounded.UserId = User.GetUserId();
             try
             {
                 _context.Update(petFounded);
@@ -149,6 +149,7 @@ namespace Vet.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Pet>> PostPet(Pet pet)
         {
+            pet.UserId = User.GetUserId();
             _context.Pets.Add(pet);
             await _context.SaveChangesAsync();
 

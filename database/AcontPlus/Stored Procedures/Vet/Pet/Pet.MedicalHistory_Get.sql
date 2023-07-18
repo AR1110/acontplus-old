@@ -19,16 +19,19 @@ GO
 -- Create date: 2022-07-06
 -- Description:	sp for get medical histories
 -- =============================================
-CREATE OR ALTER PROCEDURE Pet.MedicalHistory_Get @companyId INT
+CREATE OR ALTER PROCEDURE Pet.MedicalHistory_Get @userRoleId INT
+,@json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	--DECLARE @companyId INT
+	DECLARE @companyId INT,
+			@codEstab VARCHAR(15)
 
-	--SELECT @companyId = companyId FROM OPENJSON(@json) WITH(
-	--	companyId INT '$.companyId'
-	--)
+	SET @companyId = (SELECT idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId)
+	SELECT @codEstab = codEstab FROM OPENJSON(@json) WITH(
+		codEstab VARCHAR(15) '$.codEstab'
+	)
 
 	SELECT mh.Id, mh.Observations, p.Name petName, p.Age, p.Color
 		,c.businessName customer
@@ -37,6 +40,7 @@ BEGIN
 		INNER JOIN Pet.Pet p ON mh.PetId = p.Id
 		INNER JOIN Customer.Customer c ON p.CustomerId = c.Id
 	WHERE p.CompanyId = @companyId
+	AND mh.codEstab = @codEstab
 	AND mh.Deleted is null
 	--Select * from pet.Behavior
 END

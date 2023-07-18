@@ -71,6 +71,10 @@
           <DataField>petWeight</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
+        <Field Name="petType">
+          <DataField>petType</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="behaviorTests">
@@ -138,6 +142,7 @@
                         <Value>RAZA:</Value>
                         <Style>
                           <FontFamily />
+                          <FontSize>9pt</FontSize>
                         </Style>
                       </TextRun>
                     </TextRuns>
@@ -167,9 +172,31 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
+                        <Value>(</Value>
+                        <Style>
+                          <FontFamily />
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                      <TextRun>
+                        <Value>=First(Fields!petType.Value, "mainDataSet")</Value>
+                        <Style>
+                          <FontFamily />
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                      <TextRun>
+                        <Value>) - </Value>
+                        <Style>
+                          <FontFamily />
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                      <TextRun>
                         <Value>=First(Fields!petBreed.Value, "mainDataSet")</Value>
                         <Style>
                           <FontFamily />
+                          <FontSize>9pt</FontSize>
                         </Style>
                       </TextRun>
                     </TextRuns>
@@ -205,6 +232,7 @@
                         <Value>EDAD:</Value>
                         <Style>
                           <FontFamily />
+                          <FontSize>9pt</FontSize>
                         </Style>
                       </TextRun>
                     </TextRuns>
@@ -238,6 +266,7 @@
                         <Value>=First(Fields!petAge.Value, "mainDataSet")</Value>
                         <Style>
                           <FontFamily />
+                          <FontSize>9pt</FontSize>
                         </Style>
                       </TextRun>
                     </TextRuns>
@@ -250,7 +279,7 @@
                 <Top>0.10583cm</Top>
                 <Left>14.70457cm</Left>
                 <Height>0.6cm</Height>
-                <Width>3.97818cm</Width>
+                <Width>3.91468cm</Width>
                 <ZIndex>3</ZIndex>
                 <Style>
                   <Border>
@@ -273,6 +302,7 @@
                         <Value>NOMBRE:</Value>
                         <Style>
                           <FontFamily />
+                          <FontSize>9pt</FontSize>
                         </Style>
                       </TextRun>
                     </TextRuns>
@@ -306,6 +336,7 @@
                         <Value>=First(Fields!petName.Value, "mainDataSet")</Value>
                         <Style>
                           <FontFamily />
+                          <FontSize>9pt</FontSize>
                         </Style>
                       </TextRun>
                     </TextRuns>
@@ -341,6 +372,7 @@
                         <Value>SEXO:</Value>
                         <Style>
                           <FontFamily />
+                          <FontSize>9pt</FontSize>
                         </Style>
                       </TextRun>
                     </TextRuns>
@@ -374,6 +406,7 @@
                         <Value>=First(Fields!petGender.Value, "mainDataSet")</Value>
                         <Style>
                           <FontFamily />
+                          <FontSize>9pt</FontSize>
                         </Style>
                       </TextRun>
                     </TextRuns>
@@ -409,6 +442,7 @@
                         <Value>COLOR:</Value>
                         <Style>
                           <FontFamily />
+                          <FontSize>9pt</FontSize>
                         </Style>
                       </TextRun>
                     </TextRuns>
@@ -442,6 +476,7 @@
                         <Value>=First(Fields!petColor.Value, "mainDataSet")</Value>
                         <Style>
                           <FontFamily />
+                          <FontSize>9pt</FontSize>
                         </Style>
                       </TextRun>
                     </TextRuns>
@@ -475,7 +510,9 @@
                     <TextRuns>
                       <TextRun>
                         <Value>PESO:</Value>
-                        <Style />
+                        <Style>
+                          <FontSize>9pt</FontSize>
+                        </Style>
                       </TextRun>
                     </TextRuns>
                     <Style />
@@ -505,11 +542,15 @@
                     <TextRuns>
                       <TextRun>
                         <Value>=First(Fields!petWeight.Value, "mainDataSet")</Value>
-                        <Style />
+                        <Style>
+                          <FontSize>9pt</FontSize>
+                        </Style>
                       </TextRun>
                       <TextRun>
                         <Value> Kg.</Value>
-                        <Style />
+                        <Style>
+                          <FontSize>9pt</FontSize>
+                        </Style>
                       </TextRun>
                     </TextRuns>
                     <Style>
@@ -557,6 +598,7 @@
                         <Value>TELÉFONO:</Value>
                         <Style>
                           <FontFamily />
+                          <FontSize>9pt</FontSize>
                         </Style>
                       </TextRun>
                     </TextRuns>
@@ -565,9 +607,9 @@
                 </Paragraphs>
                 <rd:DefaultName>Textbox15</rd:DefaultName>
                 <Top>0.91016cm</Top>
-                <Left>8.37459cm</Left>
+                <Left>0cm</Left>
                 <Height>0.635cm</Height>
-                <Width>2.16465cm</Width>
+                <Width>4.09929cm</Width>
                 <Style>
                   <Border>
                     <Style>None</Style>
@@ -589,7 +631,7 @@
                         <Value>=First(Fields!telefono.Value, "mainDataSet")</Value>
                         <Style>
                           <FontFamily />
-                          <FontSize>11pt</FontSize>
+                          <FontSize>9pt</FontSize>
                         </Style>
                       </TextRun>
                     </TextRuns>
@@ -598,10 +640,78 @@
                 </Paragraphs>
                 <rd:DefaultName>telefono</rd:DefaultName>
                 <Top>0.35833in</Top>
-                <Left>4.27723in</Left>
+                <Left>1.61389in</Left>
                 <Height>0.25in</Height>
-                <Width>1.96708in</Width>
+                <Width>2.23389in</Width>
                 <ZIndex>1</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox14">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>C.I.:</Value>
+                        <Style>
+                          <FontFamily />
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox14</rd:DefaultName>
+                <Top>0.16932cm</Top>
+                <Left>14.41837cm</Left>
+                <Height>0.60001cm</Height>
+                <Width>0.73802cm</Width>
+                <ZIndex>2</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="numeroIdentificacion">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!numeroIdentificacion.Value, "mainDataSet")</Value>
+                        <Style>
+                          <FontFamily />
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>numeroIdentificacion</rd:DefaultName>
+                <Top>0.06666in</Top>
+                <Left>5.96708in</Left>
+                <Height>0.23622in</Height>
+                <Width>1.37722in</Width>
+                <ZIndex>3</ZIndex>
                 <Style>
                   <Border>
                     <Style>None</Style>
@@ -617,8 +727,8 @@
             <KeepTogether>true</KeepTogether>
             <Top>0.90171cm</Top>
             <Left>0cm</Left>
-            <Height>2.57527cm</Height>
-            <Width>18.71803cm</Width>
+            <Height>2.53998cm</Height>
+            <Width>18.71805cm</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
@@ -636,7 +746,7 @@
                     <Value>=First(Fields!responsable.Value, "mainDataSet")</Value>
                     <Style>
                       <FontFamily />
-                      <FontSize>11pt</FontSize>
+                      <FontSize>9pt</FontSize>
                     </Style>
                   </TextRun>
                 </TextRuns>
@@ -645,9 +755,9 @@
             </Paragraphs>
             <rd:DefaultName>responsable</rd:DefaultName>
             <Top>0.42167in</Top>
-            <Left>1.86056in</Left>
+            <Left>1.61389in</Left>
             <Height>0.23622in</Height>
-            <Width>4.38374in</Width>
+            <Width>4.06263in</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>
@@ -669,10 +779,7 @@
                   <TextRun>
                     <Value>DATOS DEL RESPONSABLE DE LA MASCOTA</Value>
                     <Style>
-                      <FontFamily />
-                      <FontSize>11pt</FontSize>
-                      <FontWeight>Bold</FontWeight>
-                      <Color>White</Color>
+                      <FontFamily>Montserrat</FontFamily>
                     </Style>
                   </TextRun>
                 </TextRuns>
@@ -686,43 +793,9 @@
             <ZIndex>3</ZIndex>
             <Style>
               <Border>
-                <Style>None</Style>
+                <Style>Solid</Style>
               </Border>
-              <BackgroundColor>SlateBlue</BackgroundColor>
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="numeroIdentificacion">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>=First(Fields!numeroIdentificacion.Value, "mainDataSet")</Value>
-                    <Style>
-                      <FontFamily />
-                      <FontSize>11pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>numeroIdentificacion</rd:DefaultName>
-            <Top>0.71355in</Top>
-            <Left>1.86056in</Left>
-            <Height>0.25in</Height>
-            <Width>1.36708in</Width>
-            <ZIndex>4</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
+              <BackgroundColor>#fe9a84</BackgroundColor>
               <VerticalAlign>Middle</VerticalAlign>
               <PaddingLeft>2pt</PaddingLeft>
               <PaddingRight>2pt</PaddingRight>
@@ -740,7 +813,7 @@
                     <Value>=First(Fields!direccion.Value, "mainDataSet")</Value>
                     <Style>
                       <FontFamily />
-                      <FontSize>11pt</FontSize>
+                      <FontSize>9pt</FontSize>
                     </Style>
                   </TextRun>
                 </TextRuns>
@@ -751,10 +824,10 @@
             </Paragraphs>
             <rd:DefaultName>direccion</rd:DefaultName>
             <Top>1.01889in</Top>
-            <Left>1.86056in</Left>
+            <Left>1.61389in</Left>
             <Height>0.23622in</Height>
-            <Width>4.38374in</Width>
-            <ZIndex>5</ZIndex>
+            <Width>5.73041in</Width>
+            <ZIndex>4</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -775,9 +848,7 @@
                   <TextRun>
                     <Value>DATOS DE LA MASCOTA</Value>
                     <Style>
-                      <FontFamily />
-                      <FontWeight>Bold</FontWeight>
-                      <Color>White</Color>
+                      <FontFamily>Montserrat</FontFamily>
                     </Style>
                   </TextRun>
                 </TextRuns>
@@ -786,15 +857,15 @@
             </Paragraphs>
             <rd:DefaultName>Textbox8</rd:DefaultName>
             <Top>1.42444in</Top>
-            <Left>0.00695in</Left>
-            <Height>0.30277in</Height>
-            <Width>7.36235in</Width>
-            <ZIndex>6</ZIndex>
+            <Left>0.01389in</Left>
+            <Height>0.31666in</Height>
+            <Width>7.35541in</Width>
+            <ZIndex>5</ZIndex>
             <Style>
               <Border>
-                <Style>None</Style>
+                <Style>Solid</Style>
               </Border>
-              <BackgroundColor>SlateBlue</BackgroundColor>
+              <BackgroundColor>#fe9a84</BackgroundColor>
               <VerticalAlign>Middle</VerticalAlign>
               <PaddingLeft>2pt</PaddingLeft>
               <PaddingRight>2pt</PaddingRight>
@@ -812,7 +883,7 @@
                     <Value>=First(Fields!observations.Value, "mainDataSet")</Value>
                     <Style>
                       <FontFamily />
-                      <FontSize>11pt</FontSize>
+                      <FontSize>8pt</FontSize>
                     </Style>
                   </TextRun>
                 </TextRuns>
@@ -821,10 +892,10 @@
             </Paragraphs>
             <rd:DefaultName>observations</rd:DefaultName>
             <Top>8.09837cm</Top>
-            <Left>3.41072cm</Left>
+            <Left>2.8175cm</Left>
             <Height>0.6cm</Height>
-            <Width>14.83106cm</Width>
-            <ZIndex>7</ZIndex>
+            <Width>15.42428cm</Width>
+            <ZIndex>6</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -867,7 +938,7 @@
                             <Color>LightGrey</Color>
                             <Style>None</Style>
                           </Border>
-                          <BackgroundColor>LightGrey</BackgroundColor>
+                          <BackgroundColor>#c8e8ea</BackgroundColor>
                           <VerticalAlign>Middle</VerticalAlign>
                           <PaddingLeft>2pt</PaddingLeft>
                           <PaddingRight>2pt</PaddingRight>
@@ -968,7 +1039,7 @@
                             <Color>LightGrey</Color>
                             <Style>None</Style>
                           </Border>
-                          <BackgroundColor>LightGrey</BackgroundColor>
+                          <BackgroundColor>#c8e8ea</BackgroundColor>
                           <VerticalAlign>Middle</VerticalAlign>
                           <PaddingLeft>2pt</PaddingLeft>
                           <PaddingRight>2pt</PaddingRight>
@@ -995,7 +1066,7 @@
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
-                    <Size>4.03962cm</Size>
+                    <Size>4.3cm</Size>
                     <CellContents>
                       <Textbox Name="behavior">
                         <CanGrow>true</CanGrow>
@@ -1034,8 +1105,8 @@
             <Top>6.40503cm</Top>
             <Left>5.11194cm</Left>
             <Height>1.2cm</Height>
-            <Width>5.53962cm</Width>
-            <ZIndex>8</ZIndex>
+            <Width>5.8cm</Width>
+            <ZIndex>7</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1059,6 +1130,7 @@
                                 <Style>
                                   <FontSize>8pt</FontSize>
                                   <FontWeight>Bold</FontWeight>
+                                  <Color>White</Color>
                                 </Style>
                               </TextRun>
                             </TextRuns>
@@ -1070,7 +1142,7 @@
                           <Border>
                             <Style>None</Style>
                           </Border>
-                          <BackgroundColor>LightGrey</BackgroundColor>
+                          <BackgroundColor>#08808e</BackgroundColor>
                           <VerticalAlign>Middle</VerticalAlign>
                           <PaddingLeft>2pt</PaddingLeft>
                           <PaddingRight>2pt</PaddingRight>
@@ -1086,7 +1158,7 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>1.52483cm</Width>
+                  <Width>1.6cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -1157,6 +1229,7 @@
                                 <Value>=Fields!diseaseStatus.Value</Value>
                                 <Style>
                                   <FontSize>8pt</FontSize>
+                                  <Color>White</Color>
                                 </Style>
                               </TextRun>
                             </TextRuns>
@@ -1170,7 +1243,7 @@
                           <Border>
                             <Style>None</Style>
                           </Border>
-                          <BackgroundColor>LightGrey</BackgroundColor>
+                          <BackgroundColor>#08808e</BackgroundColor>
                           <VerticalAlign>Middle</VerticalAlign>
                           <PaddingLeft>2pt</PaddingLeft>
                           <PaddingRight>2pt</PaddingRight>
@@ -1236,8 +1309,8 @@
             <Top>6.40503cm</Top>
             <Left>0cm</Left>
             <Height>1.2cm</Height>
-            <Width>4.93555cm</Width>
-            <ZIndex>9</ZIndex>
+            <Width>5.01072cm</Width>
+            <ZIndex>8</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1254,6 +1327,7 @@
                     <Value>NOMBRES Y APELLIDOS:</Value>
                     <Style>
                       <FontFamily />
+                      <FontSize>9pt</FontSize>
                     </Style>
                   </TextRun>
                 </TextRuns>
@@ -1264,41 +1338,8 @@
             <Top>1.07103cm</Top>
             <Left>0.03528cm</Left>
             <Height>0.6cm</Height>
-            <Width>4.51415cm</Width>
-            <ZIndex>10</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox14">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>C.I.:</Value>
-                    <Style>
-                      <FontFamily />
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox14</rd:DefaultName>
-            <Top>1.81242cm</Top>
-            <Left>0.03528cm</Left>
-            <Height>0.635cm</Height>
-            <Width>4.51415cm</Width>
-            <ZIndex>11</ZIndex>
+            <Width>4.06401cm</Width>
+            <ZIndex>9</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1320,6 +1361,7 @@
                     <Value>DIRECCIÓN:</Value>
                     <Style>
                       <FontFamily />
+                      <FontSize>9pt</FontSize>
                     </Style>
                   </TextRun>
                 </TextRuns>
@@ -1330,8 +1372,8 @@
             <Top>2.58797cm</Top>
             <Left>0.03528cm</Left>
             <Height>0.6cm</Height>
-            <Width>4.51415cm</Width>
-            <ZIndex>12</ZIndex>
+            <Width>4.06401cm</Width>
+            <ZIndex>10</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1353,6 +1395,7 @@
                     <Value>OBSERVACIONES:</Value>
                     <Style>
                       <FontFamily />
+                      <FontSize>8pt</FontSize>
                       <FontWeight>Bold</FontWeight>
                     </Style>
                   </TextRun>
@@ -1364,12 +1407,13 @@
             <Top>8.09837cm</Top>
             <Left>0.03528cm</Left>
             <Height>0.6cm</Height>
-            <Width>3.37544cm</Width>
-            <ZIndex>13</ZIndex>
+            <Width>2.78222cm</Width>
+            <ZIndex>11</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
+              <VerticalAlign>Middle</VerticalAlign>
               <PaddingLeft>2pt</PaddingLeft>
               <PaddingRight>2pt</PaddingRight>
               <PaddingTop>2pt</PaddingTop>
@@ -1400,7 +1444,7 @@
             <Left>2.01317cm</Left>
             <Height>0.6cm</Height>
             <Width>4.72709cm</Width>
-            <ZIndex>14</ZIndex>
+            <ZIndex>12</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1438,7 +1482,7 @@
             <Left>8.00884cm</Left>
             <Height>0.6cm</Height>
             <Width>4.44261cm</Width>
-            <ZIndex>15</ZIndex>
+            <ZIndex>13</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1460,7 +1504,7 @@
           </Border>
         </Style>
       </Body>
-      <Width>18.71803cm</Width>
+      <Width>18.71805cm</Width>
       <Page>
         <PageHeader>
           <Height>1.74553cm</Height>
