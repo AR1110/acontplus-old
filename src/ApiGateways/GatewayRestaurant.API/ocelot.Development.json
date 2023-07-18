@@ -19,11 +19,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5415
+          "Port": 7221
         }
       ],
       "DownstreamPathTemplate": "/api/v2/Account{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Post" ],
       "UpstreamPathTemplate": "/gateway/Account{everything}"
     },

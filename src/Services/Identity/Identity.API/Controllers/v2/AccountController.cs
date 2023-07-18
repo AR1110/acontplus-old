@@ -4,6 +4,7 @@ using Domain.ViewModels;
 using Helpers;
 using Identity.API.Dtos;
 using Identity.API.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
@@ -23,8 +24,8 @@ namespace Identity.API.Controllers.v2
             _tokenService = tokenService;
         }
 
-
-        [HttpPost]
+        [AllowAnonymous]
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto authRequest)
         {
             LogWriter _logs = new LogWriter(_config);

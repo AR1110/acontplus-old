@@ -3,7 +3,7 @@ import { Http } from "@/core/utils";
 const login = (username: string, password: string) => {
   return Http({
     method: "post",
-    url: "Account/",
+    url: "account/login",
     data: {
       username,
       password,
