@@ -48,7 +48,16 @@
                 <div class="form-group">
                     <label for="">Cliente: <span class="text-danger">*</span></label>
                     <div class="input-group">
-                        @await Html.PartialAsync("~/Views/Cliente/_UibModalSearchInvoice.cshtml")
+                          <input type="text" id="clienteSearchInvoice" name="clienteSearchInvoice" class="form-control border-select"
+                            ng-model="$ctrl.cliente.nombreFiscal" cliente-search-drtv on-select="$ctrl.onSelectedClienteChange(result)"
+                            on-keyup-cliente="$ctrl.onKeyupCustomer()" placeholder="Ingrese C.I o Nombre Comercial"
+                            onclick="select();">
+
+                        <script type="text/ng-template" id="autocompleteClienteTemplate.html">
+                            <div class="autocomplete-suggestion-uib-typeahead">
+                                <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
+                            </div>
+                        </script>
                         <div class="input-group-append">
                             <button type="button" class="btn btn-outline-secondary btn-xs border-select"
                                 id="btnNewCustomerDocument" btn-cliente

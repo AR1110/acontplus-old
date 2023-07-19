@@ -1,6 +1,7 @@
 using Services.Common;
 using Helpers;
 using System.Reflection;
+using Lib.Common;
 
 namespace ApiConfig
 {
@@ -47,8 +48,6 @@ namespace ApiConfig
             app.UseAuthentication();
 
             app.UseAuthorization();
-
-            app.UseMiddleware<JWTMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

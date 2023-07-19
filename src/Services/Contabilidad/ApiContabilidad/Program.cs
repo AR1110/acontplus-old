@@ -1,6 +1,7 @@
 using Services.Common;
 using Helpers;
 using System.Reflection;
+using Lib.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,7 +49,7 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.UseMiddleware<JWTMiddleware>();
+
 
 app.UseEndpoints(endpoints =>
 {

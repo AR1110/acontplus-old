@@ -6,7 +6,7 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.SetBasePath(BinDirectory.GetBinRunDir());
+builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
 ConfigHelper.AddJsonFiles(builder.Configuration);
 
 // Add services to the container.

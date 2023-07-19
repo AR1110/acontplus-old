@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.min.js?v=0.80";
+} from "./modalBaseCtrl.min.js?v=0.81";
 
 
 class ModalProformaCtrl extends ModalBaseCtrl {
@@ -29,7 +29,7 @@ class ModalProformaCtrl extends ModalBaseCtrl {
         this._fS = _fS;
 
         this.TIPO_DOC_PR = _commonSvc.tipoDoc['PR']
-        this.CAMPOS = ["idSucursal", "idCliente", "idPuntoEmision", "fechaEmision", "gridOptions", "gridOptionsBodega"];
+        this.CAMPOS = ["idSucursal", "idPuntoEmision", "fechaEmision", "gridOptions", "gridOptionsBodega"];
 
         this.datosAdicionalesArticulo = [];
         this.cliente = {};
@@ -88,6 +88,16 @@ class ModalProformaCtrl extends ModalBaseCtrl {
 
             })
         }
+    }
+
+
+    
+    onKeyupCustomer(){
+        if(!this.cliente.nombreFiscal){
+            console.log(this.cliente)
+            this.cliente = {};
+        }
+
     }
 
     /**
@@ -434,7 +444,14 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl {
         }
     }
 
-
+    receiveDataCustomerSRI(result) {
+        if (result.idCliente === 0) {
+            this.newCustomer = true;
+        } else {
+            this.newCustomer = false;
+        }
+        this.cliente = result; 
+    }
 
     async onSelectedClienteChange(item) {
         try {

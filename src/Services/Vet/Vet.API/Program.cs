@@ -1,6 +1,5 @@
 using Lib.Common;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
 using Services.Common.Middleware;
@@ -23,7 +22,7 @@ builder.Services.AddControllers()
                 .AddJsonOptions(options =>
                 options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
 
-builder.Configuration.SetBasePath(BinDirectory.GetBinRunDir());
+builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
 ConfigHelper.AddJsonFiles(builder.Configuration);
 
 builder.Services.AddApplicationServices(builder.Configuration);

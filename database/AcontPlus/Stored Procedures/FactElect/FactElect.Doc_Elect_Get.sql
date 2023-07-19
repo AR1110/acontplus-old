@@ -188,7 +188,7 @@ BEGIN
 
 	IF (@tipo = '3')
 		BEGIN
-			SET @sql = @sql +  ' AND codEstado IN (0,5) '
+			SET @sql = @sql +  ' AND codEstado NOT IN (4,6) '
 		END
 	ELSE 
 		BEGIN

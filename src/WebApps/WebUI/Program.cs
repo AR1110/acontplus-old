@@ -1,6 +1,6 @@
 using Services.Common;
 using Helpers;
-using WebUI.Hubs;
+using Lib.Common;
 
 namespace testWebApi
 {
@@ -39,55 +39,11 @@ namespace testWebApi
             // Add services to the container.
             builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
             //SignalR
-            builder.Services.AddSignalR();
-
+            //builder.Services.AddSignalR();
 
             builder.Services.AddDistributedMemoryCache();
 
             builder.Services.AddMvc();
-
-            //autenticacion global //https://learn.microsoft.com/en-us/aspnet/core/security/authorization/secure-data?view=aspnetcore-6.0
-            //builder.Services.AddAuthorization(options =>
-            //{
-            //    options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
-            //});
-
-            //for more information review https://docs.microsoft.com/en-us/aspnet/core/security/authentication/cookie?view=aspnetcore-6.0
-            //builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            //    .AddCookie(options =>
-            //    {
-            //        options.ExpireTimeSpan = TimeSpan.FromDays(1);
-            //        options.SlidingExpiration = true;
-            //        options.LoginPath = "/Login/Index";
-            //        options.AccessDeniedPath = "/denied";
-            //        options.Events = new CookieAuthenticationEvents()
-            //        {
-            //            OnSigningIn = async context =>
-            //            {
-            //                //var principal = context.Principal;
-            //                //if (principal.HasClaim(c=>c.Type == ClaimTypes.NameIdentifier))
-            //                //{
-            //                //    if (principal.Claims.FirstOrDefault(c=>c.Type == ClaimTypes.NameIdentifier).Value=="root")
-            //                //    {
-            //                //        var claimsIdentity = principal.Identity as ClaimsIdentity;
-            //                //        claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, "Admin"));
-            //                //    }
-            //                //}
-            //                //context.Properties.ExpiresUtc = DateTimeOffset.Now.AddHours(1);
-            //                //context.CookieOptions.Expires = context.Properties.ExpiresUtc?.ToUniversalTime();
-            //                await Task.CompletedTask;
-            //            },
-            //            OnSignedIn = async context =>
-            //            {
-            //                await Task.CompletedTask;
-            //            },
-            //            OnValidatePrincipal = async context =>
-            //            {
-            //                await Task.CompletedTask;
-            //            }
-            //        };
-            //        options.EventsType = typeof(CustomCookieAuthenticationEvents);
-            //    });
 
             //prevenir ataques
             //builder.Services.AddAntiforgery(options =>
@@ -99,16 +55,7 @@ namespace testWebApi
 
             //builder.Services.AddScoped<CustomCookieAuthenticationEvents>();
 
-            //builder.Services.AddTransient<IConfiguration>(sp =>
-            //{
-            //    IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-            //    configurationBuilder.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
-            //    return configurationBuilder.Build();
-            //});
-
             //builder.Services.AddHttpContextAccessor();
-
-
 
             var app = builder.Build();
 
@@ -126,7 +73,8 @@ namespace testWebApi
                 app.UseHsts();
             }
 
-            //app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
+
             app.UseStaticFiles();
 
             app.UseRouting();
@@ -137,18 +85,14 @@ namespace testWebApi
 
             app.UseAuthorization();
 
-            //app.MapControllers().RequireAuthorization(); ONLY FOR API
-
-            app.UseMiddleware<JWTMiddleware>();
-
             //app.UseCookiePolicy(cookiePolicyOptions);
-
-
 
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
-            app.MapHub<NotificationHub>("/notificationHub");
+
+            //app.MapHub<NotificationHub>("/notificationHub");
+
             app.MapRazorPages(); //added manually
 
             app.Run();

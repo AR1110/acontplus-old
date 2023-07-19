@@ -925,7 +925,7 @@
                     typeList: 2,
                     tipoFecha: 'FE',
                     pageIndex: 1,
-                    pageSize: 100,
+                    pageSize: 50,
                 }
                
                 notaEntregaSvc.getAll(dataSearch).then(async ({notaEntregas}) => { 
@@ -992,14 +992,16 @@
                 $scope.documentos = [];
                 let dataSearch = {
                     codEstab: $scope.dataSearch.codEstab,
-                    checkBoxFecha: $scope.dataSearch.checkBoxFecha,
+                    checkBoxFecha: true,
                     checkBoxCliente: $scope.dataSearch.byCliente > 0,
                     byCliente: $scope.dataSearch.byCliente,
                     fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
-                    typeList : 2
+                    typeList : 2,
+                    pageIndex: 1,
+                    pageSize: 50
                 }
-                proformaSvc.getAll(dataSearch).then(async response => {
+                proformaSvc.getAll(dataSearch).then(async ({proformas}) => {
                     $scope.gridOptionsSelectedDocs.columnDefs = [{
                         name: 'Nro. Doc',
                         field: 'nroDocumento'
@@ -1045,7 +1047,7 @@
                     },
                     ];
 
-                    this.documentos = response;
+                    this.documentos = proformas;
                     await this.setDataGridOptionsChildren();
                 }).catch(error => {
                     hideLoader();

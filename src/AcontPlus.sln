@@ -104,7 +104,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FactElect.Core", "Services\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compras.Application", "Services\Compras\Compras.Application\Compras.Application.csproj", "{00D2F259-78BC-434B-A655-208B5DA63537}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Customer.Core", "Services\Customer\Customer.Core\Customer.Core.csproj", "{9E3D2A69-527D-48D2-BC61-E9F69213196B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Customer.Core", "Services\Customer\Customer.Core\Customer.Core.csproj", "{9E3D2A69-527D-48D2-BC61-E9F69213196B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Customer.Infrastructure", "Services\Customer\Customer.Infrastructure\Customer.Infrastructure.csproj", "{BFA0F608-6413-4911-8E2D-72EFC9C0E0CA}"
 EndProject

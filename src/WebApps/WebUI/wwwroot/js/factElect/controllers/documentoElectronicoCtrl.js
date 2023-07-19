@@ -31,6 +31,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
     //Filtro
     $scope.recordsQuantity  = [10, 25, 50, 100]
     $scope.dataSearch = {
+        order: '',
         fechaInicio: new Date(),
         fechaFin: new Date(),
         pageSize: 50,
@@ -84,6 +85,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
                 hideLoader()
                 if (response.code === "0") {
                     $scope.comprobantes = [];
+                    $scope.dataSearch.totalRecords = 0;
                     console.log(response)
                     return
                 }
@@ -96,6 +98,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
                 }    
 
             }).catch(error => {
+                $scope.dataSearch.totalRecords = 0;
                 console.log(error)
                 hideLoader();
             })

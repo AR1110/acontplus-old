@@ -25,6 +25,8 @@ namespace DataAccess
                     return SqlDbType.Xml;
                 case "Byte[]":
                     return SqlDbType.VarBinary;
+                case "DateTime":
+                    return SqlDbType.DateTime;
                 default:
                     return SqlDbType.Variant;
             }

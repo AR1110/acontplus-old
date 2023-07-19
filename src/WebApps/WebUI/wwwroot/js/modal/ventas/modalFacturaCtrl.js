@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.108";
+} from "./modalBaseCtrl.js?v=0.110";
 
 class ModalFacturaCtrl extends ModalBaseCtrl {
 
@@ -108,6 +108,14 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
                 }
             })
         }, 500)
+
+    }
+
+    onKeyupCustomer(){
+        if(!this.cliente.nombreFiscal){
+            console.log(this.cliente)
+            this.cliente = {};
+        }
 
     }
 
@@ -698,7 +706,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
         }else{
             this.newCustomer = false;
         }
-        this.cliente = result;
+        this.cliente = result; 
     }
 
     
@@ -1011,6 +1019,11 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
     async onSave() {
         try {
             if (!this.isValidaForm()) return
+
+            if(!(this.data.idTiempoCredito) > 0){
+                this._fS.sweetAlert('warning', 'Seleccione el tiempo crédito');
+                return
+            }
 
             if (this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total > 50) {
                 this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')
@@ -1432,6 +1445,11 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
     async onSave() {
         try {
             if (!this.isValidaForm()) return
+
+            if(!(this.data.idTiempoCredito) > 0){
+                this._fS.sweetAlert('warning', 'Seleccione el tiempo crédito');
+                return
+            }
 
             if (this.cliente.numeroIdentificacion === this.NUM_CONSUMIDOR_FINAL && this.data.total > 50) {
                 this._fS.sweetAlert('warning', 'La factura supera los 50 USD de importe total por cuanto no puede ser emitida a nombre del <b>CONSUMIDOR FINAL</b>')

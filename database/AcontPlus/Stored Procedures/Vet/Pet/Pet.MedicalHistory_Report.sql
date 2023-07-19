@@ -21,6 +21,8 @@ BEGIN
 				END petAge
 		,[p].[Name] petName
 		,p.Color petColor
+		,p.[Weight] petWeight
+		,pt.[Name] petType
 		,mh.Observations
 		,[b].[Name] petBreed
 		,[g].[Name] petGender
@@ -34,11 +36,13 @@ BEGIN
 		INNER JOIN Pet.Pet p WITH(NOLOCK) ON mh.PetId = p.Id
 		INNER JOIN Pet.Breed b WITH(NOLOCK) ON p.BreedId = b.Id
 		INNER JOIN Pet.Gender g WITH(NOLOCK) ON p.GenderId = g.Id
+		INNER JOIN Pet.PetType pt WITH(NOLOCK) ON p.PetTypeId = pt.Id
 		LEFT JOIN Customer.Customer c WITH(NOLOCK) ON p.CustomerId = c.Id 
 	WHERE mh.Id = @id
 
     SELECT [d].[Name] disease
 		,[ds].[Name] diseaseStatus
+		,ds.[Order]
 		,CASE WHEN hc.DiseaseStatusId = ds.Id AND hc.DiseaseId = d.Id THEN 'x' ELSE '' END diseaseSelected
 	FROM Pet.HealthCheck hc
 		INNER JOIN Pet.Disease d WITH(NOLOCK) ON hc.DiseaseId = d.Id
@@ -48,6 +52,7 @@ BEGIN
 
     SELECT [bs].[Name] behaviorStatus
 		,[b].[Name] behavior
+		,bs.[Order]
 		,CASE WHEN bt.BehaviorStatusId= bs.Id AND bt.BehaviorId = b.Id THEN 'x' ELSE '' END behaviorSelected
 	FROM Pet.BehaviorTest bt  
 		INNER JOIN Pet.Behavior b WITH(NOLOCK) ON bt.BehaviorId = b.Id

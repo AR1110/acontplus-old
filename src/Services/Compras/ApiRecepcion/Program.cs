@@ -2,6 +2,7 @@ using Services.Common;
 using Helpers;
 using System.Reflection;
 using Compras.Application;
+using Lib.Common;
 
 namespace ApiRecepcion
 {
@@ -48,7 +49,7 @@ namespace ApiRecepcion
 
             app.UseAuthorization();
 
-            app.UseMiddleware<JWTMiddleware>();
+            
 
             app.UseEndpoints(endpoints =>
             {

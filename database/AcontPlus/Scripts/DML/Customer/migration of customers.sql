@@ -123,17 +123,17 @@
 
 --GO
 
---UPDATE C SET c.CustomerId = cc.Id
+--UPDATE C SET c.CustomerId = cc.Id, c.validationSri = cc.SriValidation
 
 --FROM dbo.Cliente c 
---JOIN (SELECT Id, IDCard FROM Customer.Customer) cc ON c.numeroIdentificacion = cc.IDCard 
+--JOIN (SELECT Id, IDCard, SriValidation FROM Customer.Customer) cc ON LTRIM(RTRIM(c.numeroIdentificacion)) = cc.IDCard 
 
 --GO
 
---UPDATE p SET p.CustomerId = cc.Id
+--UPDATE p SET p.CustomerId = cc.Id, p.validationSri = cc.SriValidation
 
 --FROM dbo.Proveedor p 
---JOIN (SELECT Id, IDCard FROM Customer.Customer) cc ON p.numeroIdentificacion = cc.IDCard 
+--JOIN (SELECT Id, IDCard, SriValidation FROM Customer.Customer) cc ON LTRIM(RTRIM(p.numeroIdentificacion)) = cc.IDCard 
 
 
 --GO

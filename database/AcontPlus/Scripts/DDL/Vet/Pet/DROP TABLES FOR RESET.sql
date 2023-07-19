@@ -1,0 +1,26 @@
+--use acontplus
+--go
+--drop table if exists Pet.Behavior
+--go
+--drop table if exists Pet.BehaviorStatus
+--go
+--drop table if exists Pet.Breed
+--go
+--drop table if exists Pet.PetType
+--go
+--drop table if exists Pet.Gender
+--go
+--drop table if exists Pet.Pet
+--go
+--drop table if exists Pet.MedicalHistory
+--go
+--drop table if exists Pet.BehaviorTest
+--go
+--drop table if exists Pet.HealthCheck
+--go
+--drop table if exists Pet.Disease
+--go
+--drop table if exists Pet.DiseaseStatus
+--go
+--drop table if exists Pet.DiseaseType
+--go

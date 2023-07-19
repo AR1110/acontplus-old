@@ -1,6 +1,7 @@
 using Services.Common;
 using Helpers;
 using System.Reflection;
+using Lib.Common;
 
 namespace ApiVentas
 {
@@ -34,7 +35,7 @@ namespace ApiVentas
 
             app.UseAuthorization();
 
-            app.UseMiddleware<JWTMiddleware>();
+            
 
             app.UseEndpoints(endpoints =>
             {

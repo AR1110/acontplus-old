@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.36";
+} from "./modalBaseCtrl.js?v=0.37";
 
 
 class ModalNotaEntregaCtrl extends ModalBaseCtrl {
@@ -99,6 +99,14 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl {
                 }
             })
         }, 500)
+
+    }
+
+    onKeyupCustomer(){
+        if(!this.cliente.nombreFiscal){
+            console.log(this.cliente)
+            this.cliente = {};
+        }
 
     }
 
@@ -540,7 +548,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
         }else{
             this.newCustomer = false;
         }
-        this.cliente = result;
+        this.cliente = result; 
     }
 
 
@@ -549,6 +557,11 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
 
 
             if (!this.isValidaForm()) return
+
+            if(!(this.data.idTiempoCredito) > 0){
+                this._fS.sweetAlert('warning', 'Seleccione el tiempo crédito');
+                return
+            }
 
             if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
                 for(let item of this.gridOptions.data){
@@ -649,6 +662,11 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
 
 
             if (!this.isValidaForm()) return
+
+            if(!(this.data.idTiempoCredito) > 0){
+                this._fS.sweetAlert('warning', 'Seleccione el tiempo crédito');
+                return
+            }
 
             if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
                 for(let item of this.gridOptions.data){
@@ -1155,6 +1173,11 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
         try {
             if (!this.isValidaForm()) return
 
+            if(!(this.data.idTiempoCredito) > 0){
+                this._fS.sweetAlert('warning', 'Seleccione el tiempo crédito');
+                return
+            }
+
             if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
                 for(let item of this.gridOptions.data){
                     if(item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)){
@@ -1468,6 +1491,11 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
 
             if (!this.isValidaForm()) return
 
+            if(!(this.data.idTiempoCredito) > 0){
+                this._fS.sweetAlert('warning', 'Seleccione el tiempo crédito');
+                return
+            }
+
             if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
                 for(let item of this.gridOptions.data){
                     if(item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)){
@@ -1567,6 +1595,11 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
         try {
 
             if (!this.isValidaForm()) return
+
+            if(!(this.data.idTiempoCredito) > 0){
+                this._fS.sweetAlert('warning', 'Seleccione el tiempo crédito');
+                return
+            }
 
             if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
                 for(let item of this.gridOptions.data){

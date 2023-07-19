@@ -550,6 +550,7 @@
                 element.attr('typeahead-template-url', 'autocompleteClienteTemplate.html');
                 element.attr('ng-keyup', 'onKeyupCliente()');
                 element.attr('typeahead-editable', 'false');
+                element.attr('ng-value', 'ngModel');
 
                  
                 // element.attr('ng-model', 'ngModel')
@@ -583,16 +584,22 @@
     /**
      * Buscador de cliente para venta en donde incluye a mas del buscador consultar datos del cliente al SRI en caso de no encontrar datos en la base de datos AcontPlus
      */
-    app.directive('customerSearchSaleDrtv', function ($compile, clienteService, commonService) {
+    app.directive('customerSearchSaleDrtv', function ($compile, clienteService, commonService, toastService) {
         return {
             restrict: 'A',
             scope: {
                 onSelect: '&',
                 onKeyup:'&',
-                ngModel: '=',
+                ngModel: '<',
                 functionTrigger: '&'
             },
+            require: 'ngModel',
             link: function (scope, element, attrs) {
+                scope.cliente = {
+                    nombreCliente: scope.ngModel,                    
+                }
+
+                let validationSearchCustomerExternal = false;
 
                 function verificarNumero(numero) {
                     numero = numero ? numero.trim(): ""
@@ -606,97 +613,115 @@
                     return true;
                 }
 
-                scope.cliente = {
-                    nombreCliente: scope.ngModel
-                }
 
-                scope.search = function (textSearch) {
-                    if ( textSearch.length < 2) return;
-
-                    return clienteService.search({textSearch})
-                    .then(async response => {
+                scope.checkTypeIdentification = async function(){
                     
-                        if(response.code==="0") {
+                    let textSearch = scope.ngModel; //Recuperamos valor ingresado
+                    
+                  
+                    if(!validationSearchCustomerExternal) return;
+                    scope.functionTrigger({
+                        result: {
+                            nombreFiscal: textSearch,
+                        }
+                    })
 
-                            if(!verificarNumero(textSearch))  return [];
+                    //Verificamos si el campo ingresado es cedula o ruc (longitud caracteres)
+                    if(!verificarNumero(textSearch))  return [];
+
+                    //Numero de RUC 
+                    if(textSearch.length===13){
+                       try {
+                            showLoader();
+                            
+                            let {numeroRuc, razonSocial,establecimientos, direccion, telefono, email, error} = await commonService.checkClientSRIByRUC(textSearch); 
+                            hideLoader();
+                            if (!numeroRuc) {
+                                toastService.toastr('warning', error)
+                                return
+                            }
+    
+                            console.log('response finish')
+                            //retornamos datos al controlador principal donde llamamos la directiva
+                            scope.functionTrigger({
+                                result: { 
+                                    nombreFiscal: textSearch,
+                                    numeroIdentificacion: numeroRuc,
+                                    identificacionComprador: numeroRuc,
+                                    razonSocialComprador: razonSocial ,
+                                    nombreComercial: razonSocial,
+                                    direccionComprador: direccion || null,
+                                    telefono: telefono || null,
+                                    email: email || null,
+                                    idCliente: 0
+                                }
+                            })  
+                            scope.$apply();                       
+                        } catch (error) {
+                            console.log(error);
+                            hideLoader();
+                            scope.functionTrigger({
+                                result: {
+                                    nombreFiscal: textSearch,
+                                }
+                            })                        
+                        }    
+                    }
+
+                    //Numero de Cedula 
+                    if(textSearch.length===10){
+                        try {
+                            showLoader(); 
+                            let {identificacion, nombreCompleto, direccion, telefono, email, error} = await commonService.checkClientSRIByCedula(textSearch) 
+                            hideLoader();
+                            if (!identificacion || !nombreCompleto) {
+                                toastService.toastr('warning', error)
+                                return
+                            }
 
                             
-                            scope.functionTrigger({result: {
-                                nombreFiscal: textSearch,
-                            }})
-
-                            //Numero de Ruc 
-                            if(textSearch.length===13){
-                                try {
-                                    
-                                    showLoader();
-                                    let {numeroRuc, razonSocial,establecimientos, direccion, telefono, email} = await commonService.checkClientSRIByRUC(textSearch);
-                                    hideLoader();
-                                    if (!numeroRuc) return; 
-                
-                                    //retornamos datos al controlador principal donde llamamos la directiva
-                                    scope.functionTrigger({
-                                        result: { 
-                                            nombreFiscal: textSearch,
-                                            numeroIdentificacion: numeroRuc,
-                                            identificacionComprador: numeroRuc,
-                                            razonSocialComprador: razonSocial ,
-                                            nombreComercial: razonSocial,
-                                            direccionComprador: direccion || null,
-                                            telefono: telefono || null,
-                                            email: email || null,
-                                            idCliente: 0
-                                        }
-                                    }) 
-
-
-                                } catch (error) {
-                                    hideLoader();
-                                    console.log(error);
-                                    scope.functionTrigger({
-                                        result: {
-                                            nombreFiscal: textSearch
-                                        }
-                                    })
-                                }                             
-                            }
-
-                            //Numero de Cedula 
-                            if(textSearch.length===10){
-                                try {
-                                    showLoader(); 
-                                    let {identificacion, nombreCompleto, direccion, telefono, email} = await commonService.checkClientSRIByCedula(textSearch) 
-                                    hideLoader();
-                                    if (!identificacion || !nombreCompleto) return; 
-
-                                    
-                                    scope.functionTrigger({                                    
-                                        result: { 
-                                            nombreFiscal: textSearch,
-                                            numeroIdentificacion: identificacion,
-                                            identificacionComprador: identificacion,
-                                            razonSocialComprador: nombreCompleto ,
-                                            nombreComercial: nombreCompleto,
-                                            direccionComprador: direccion || null,
-                                            telefono: telefono || null,
-                                            email: email || null,
-                                            idCliente: 0
-                                        }
-                                    }) 
-                                } catch (error) {
-                                    console.log(error);
-                                    hideLoader();
-                                    scope.functionTrigger({
-                                        result: {
-                                            nombreFiscal: textSearch,
-                                        }
-                                    })
+                            scope.functionTrigger({                                    
+                                result: { 
+                                    nombreFiscal: textSearch,
+                                    numeroIdentificacion: identificacion,
+                                    identificacionComprador: identificacion,
+                                    razonSocialComprador: nombreCompleto ,
+                                    nombreComercial: nombreCompleto,
+                                    direccionComprador: direccion || null,
+                                    telefono: telefono || null,
+                                    email: email || null,
+                                    idCliente: 0
                                 }
-                            }
+                            }) 
+                            scope.$apply(); 
+                        } catch (error) {
+                            console.log(error);
+                            hideLoader();
+                            scope.functionTrigger({
+                                result: {
+                                    nombreFiscal: textSearch,
+                                }
+                            })
+                        }
+                    }
+
+                } 
+
+
+                scope.search = function (textSearch) {
+                    validationSearchCustomerExternal = false;
+                    if ( textSearch.length < 2) return;
+
+                    return clienteService.search({textSearch}).then(response => {
+                        if(response.code==="0") {
+                            validationSearchCustomerExternal = true; 
+                            // scope.functionTrigger({
+                            //     result: {
+                            //         nombreFiscal: textSearch,
+                            //     }
+                            // })
                         }
                         return response;
-
-
                     })
                     .catch(error=>{
                         console.log(error);
@@ -707,12 +732,12 @@
                 element.attr('uib-typeahead', 'item as item.nombreFiscal for item in search($viewValue)');
                 element.attr('typeahead-on-select', 'onSelect({result: $item})');
                 element.attr('typeahead-template-url', 'customerSearchSaleTemplate.html');
-                element.attr('ng-keyup', 'onKeyup()');
-                element.attr('typeahead-editable', 'true');
-
-                 
-                // element.attr('ng-model', 'ngModel')
+                element.attr('ng-keyup', 'onKeyup()'); 
+                element.attr('typeahead-editable', 'true'); 
+                element.attr('ng-value', 'ngModel'); 
+                element.attr('ng-enter', 'checkTypeIdentification()');
                 element.removeAttr('customer-search-sale-drtv');
+                
 
                 // Add CSS styles dynamically
                 element.attr('style', 'position:relative;');

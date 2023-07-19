@@ -2,6 +2,7 @@
 {
     public class LoginData
     {
+        public int idUsuario { get; set; }
         public int idRol { get; set; }
         public string userName { get; set; }
         public string fullName { get; set; }
@@ -14,6 +15,9 @@
         public string role { get; set; }
         public string actividad { get; set; }
         public string jwtToken { get; set; }
+
+        // Add
+        public string sucursal { get; set; }
     }
     public class LoginMenu
     {

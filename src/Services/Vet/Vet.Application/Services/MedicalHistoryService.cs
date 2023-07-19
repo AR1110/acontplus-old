@@ -1,6 +1,7 @@
 ﻿using Lib.Common;
 using Lib.Common.Api;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
 using System.Data.SqlClient;
 using Vet.Core.Entities;
 using Vet.Core.Interfaces;
@@ -37,6 +38,20 @@ namespace Vet.Application.Services
         }
         public async Task<APIResponse> GetByIdAsync(int id)
         {
+            var parameters = new Dictionary<string, object>()
+            {
+                {"id", id}
+            };
+            var ds = await _generic.GetDataSetAsync("Pet.MedicalHistory_GetById", parameters);
+
+            if (DataValidation.DataTableIsNull(ds.Tables[0]))
+            {
+                _response.Create(code: "0", "La transacción no devolvio respuesta");
+            }
+            else
+            {
+                _response.Create(code: "1", payload: Converters.DataSetToJSON(ds));
+            }
             return _response;
         }
         public async Task<APIResponse> AddAsync(MedicalHistory medicalHistory)

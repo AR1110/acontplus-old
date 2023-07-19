@@ -2,21 +2,21 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"><i class="fa fa-warning text-danger"></i> Comprobantes Erroneos</h5>
+                <h5 class="modal-title"><i class="fa fa-warning text-danger"></i> Comprobantes Electrónicos Pendientes</h5>
                 <button class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="table-responsive">
                     <table class="table table-bordered">
-                        <caption><h5 class="text-danger">Se encontraron los siguientes comprobantes con error, favor verifique y corriga!</h5></caption>
+                        <caption><h5 class="text-danger">Se encontraron los siguientes comprobantes sin autorizar o posiblemente con errores, por favor verifique!</h5></caption>
                         <thead>
                             <tr class="small">
                                 <th>Comprobante</th>
                                 <th>Serie</th>
                                 <th>Fecha Emisión</th>
                                 <th>Clave Acceso</th>
-                                <th>Ambiente</th>
                                 <th>Estado</th>
+                                <th>Ambiente</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -25,8 +25,8 @@
                                 <td>{{item.serieComprobante}}</td>
                                 <td>{{item.fechaEmision}}</td>
                                 <td>{{item.claveAcceso}}</td>
-                                <td>{{item.ambiente}}</td>
                                 <td>{{item.estado}}</td>
+                                <td>{{item.ambiente}}</td>
                             </tr>
                         </tbody>
                     </table>

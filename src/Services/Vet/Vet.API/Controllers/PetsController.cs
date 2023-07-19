@@ -22,21 +22,35 @@ namespace Vet.API.Controllers
 
         // GET: api/Pet
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Pet>>> GetPets()
+        public async Task<ActionResult<APIResponse>> GetPets(string json)
         {
             int companyId = Convert.ToInt32(User.GetCompanyId());
             if (!_context.Pets.Any(x => x.CompanyId == companyId))
             {
                 return NoContent();
             }
-            return await _context.Pets
-                .Include(t => t.PetType)
-                .Include(b => b.Breed)
-                .Include(s => s.Gender)
-                .Where(x => x.CompanyId == companyId
-                && x.Enabled
-                )
-                .ToListAsync();
+            try
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    { "companyId", companyId },
+                    { "json", json}
+                };
+
+                return await _petService.GetAsync(parameters);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Error al buscar las mascotas:" + ex.Message);
+            }
+            //return await _context.Pets
+            //    .Include(t => t.PetType)
+            //    .Include(b => b.Breed)
+            //    .Include(s => s.Gender)
+            //    .Where(x => x.CompanyId == companyId
+            //    && x.Deleted == null
+            //    )
+            //    .ToListAsync();
         }
         // GET: api/Pet
         [HttpGet("search")]
@@ -98,8 +112,21 @@ namespace Vet.API.Controllers
 
             _context.Entry(pet).State = EntityState.Modified;
 
+            var petFounded = await _context.Pets.FindAsync(id);
+            petFounded.Name = pet.Name;
+            petFounded.PetTypeId = pet.PetTypeId;
+            petFounded.BreedId = pet.BreedId;
+            petFounded.GenderId = pet.GenderId;
+            petFounded.Age = pet.Age;
+            petFounded.Color = pet.Color;
+            petFounded.Weight = pet.Weight;
+            petFounded.Enabled = pet.Enabled;
+            petFounded.Weight = pet.Weight;
+            petFounded.UpdatedAt = DateTime.Now;
+            petFounded.UserId = User.GetUserId();
             try
             {
+                _context.Update(petFounded);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -122,6 +149,7 @@ namespace Vet.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Pet>> PostPet(Pet pet)
         {
+            pet.UserId = User.GetUserId();
             _context.Pets.Add(pet);
             await _context.SaveChangesAsync();
 

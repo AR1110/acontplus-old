@@ -2,7 +2,11 @@
 using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
+using Newtonsoft.Json;
 using Services.Common;
+using System.Text.Json.Serialization;
 using Vet.Core.Entities;
 using Vet.Core.Interfaces;
 using Vet.Infrastructure.Data;
@@ -25,16 +29,17 @@ namespace Vet.API.Controllers
 
         // GET: api/MedicalHistories
         [HttpGet]
-        public async Task<ActionResult<APIResponse>> GetMedicalHistories()
+        public async Task<ActionResult<APIResponse>> GetMedicalHistories(string json)
         {
             try
             {
                 int companyId = Convert.ToInt32(User.GetCompanyId());
                 var apiRequest = new ApiRequest();
-
+                //var data = JsonConvert.DeserializeObject<ApiRequest>(json); 
                 var parameters = new Dictionary<string, object>
                 {
-                    { "companyId", companyId }
+                    { "userRoleId", User.GetUserRoleId() },
+                    { "json", json }
                 };
                 //apiRequest.Data = new Dictionary<string, object> { { "json", Converters.SerializeDictionary(dictionary)} };
 
@@ -59,16 +64,24 @@ namespace Vet.API.Controllers
 
         // GET: api/MedicalHistories/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<MedicalHistory>> GetMedicalHistory(int id)
+        public async Task<ActionResult<APIResponse>> GetMedicalHistory(int id)
         {
-            var medicalHistory = await _context.MedicalHistories.FindAsync(id);
+            //var medicalHistory = await _context.MedicalHistories.FindAsync(id);
 
-            if (medicalHistory == null)
+            //if (medicalHistory == null)
+            //{
+            //    return NotFound();
+            //}
+
+            //return medicalHistory;
+            try
             {
-                return NotFound();
+                return await _medicalHistory.GetByIdAsync(id);
             }
-
-            return medicalHistory;
+            catch (Exception ex)
+            {
+                return BadRequest("Error on get by Id");
+            }
         }
 
         [HttpPost("Report/{id}")]
@@ -96,10 +109,16 @@ namespace Vet.API.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(medicalHistory).State = EntityState.Modified;
-
+            //_context.Entry(medicalHistory).State = EntityState.Modified;
+            var mh = await _context.MedicalHistories.FindAsync(id);
+            mh.Date = medicalHistory.Date;
+            mh.Observations = medicalHistory.Observations;
+            mh.UpdatedAt = DateTime.Now;
+            mh.CodEstab = medicalHistory.CodEstab;
+            mh.UserId = User.GetUserId();
             try
             {
+                _context.Update(mh);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -122,6 +141,7 @@ namespace Vet.API.Controllers
         [HttpPost]
         public async Task<ActionResult<MedicalHistory>> PostMedicalHistory(MedicalHistory medicalHistory)
         {
+            medicalHistory.UserId = User.GetUserId();
             _context.MedicalHistories.Add(medicalHistory);
             await _context.SaveChangesAsync();
 

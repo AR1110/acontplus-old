@@ -67,6 +67,14 @@
           <DataField>petColor</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
+        <Field Name="petWeight">
+          <DataField>petWeight</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="petType">
+          <DataField>petType</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="behaviorTests">
@@ -85,6 +93,10 @@
         </Field>
         <Field Name="behaviorSelected">
           <DataField>behaviorSelected</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="order">
+          <DataField>order</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
       </Fields>
@@ -107,6 +119,10 @@
           <DataField>diseaseSelected</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
+        <Field Name="order">
+          <DataField>order</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
       </Fields>
     </DataSet>
   </DataSets>
@@ -114,6 +130,612 @@
     <ReportSection>
       <Body>
         <ReportItems>
+          <Rectangle Name="Rectangle2">
+            <ReportItems>
+              <Textbox Name="Textbox2">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>RAZA:</Value>
+                        <Style>
+                          <FontFamily />
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox2</rd:DefaultName>
+                <Top>0.10583cm</Top>
+                <Left>6.06623cm</Left>
+                <Height>0.6cm</Height>
+                <Width>1.8015cm</Width>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="petBreed">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>(</Value>
+                        <Style>
+                          <FontFamily />
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                      <TextRun>
+                        <Value>=First(Fields!petType.Value, "mainDataSet")</Value>
+                        <Style>
+                          <FontFamily />
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                      <TextRun>
+                        <Value>) - </Value>
+                        <Style>
+                          <FontFamily />
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                      <TextRun>
+                        <Value>=First(Fields!petBreed.Value, "mainDataSet")</Value>
+                        <Style>
+                          <FontFamily />
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style>
+                      <TextAlign>Left</TextAlign>
+                    </Style>
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>petBreed</rd:DefaultName>
+                <Top>0.10583cm</Top>
+                <Left>7.97356cm</Left>
+                <Height>0.6cm</Height>
+                <Width>4.89423cm</Width>
+                <ZIndex>1</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox9">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>EDAD:</Value>
+                        <Style>
+                          <FontFamily />
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox9</rd:DefaultName>
+                <Top>0.10583cm</Top>
+                <Left>13.25584cm</Left>
+                <Height>0.6cm</Height>
+                <Width>1.27233cm</Width>
+                <ZIndex>2</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="petAge">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!petAge.Value, "mainDataSet")</Value>
+                        <Style>
+                          <FontFamily />
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style>
+                      <TextAlign>Left</TextAlign>
+                    </Style>
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>petAge</rd:DefaultName>
+                <Top>0.10583cm</Top>
+                <Left>14.70457cm</Left>
+                <Height>0.6cm</Height>
+                <Width>3.91468cm</Width>
+                <ZIndex>3</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox1">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>NOMBRE:</Value>
+                        <Style>
+                          <FontFamily />
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox1</rd:DefaultName>
+                <Top>0.10583cm</Top>
+                <Left>0.03528cm</Left>
+                <Height>0.6cm</Height>
+                <Width>1.8015cm</Width>
+                <ZIndex>4</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="petName">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!petName.Value, "mainDataSet")</Value>
+                        <Style>
+                          <FontFamily />
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style>
+                      <TextAlign>Left</TextAlign>
+                    </Style>
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>petName</rd:DefaultName>
+                <Top>0.10583cm</Top>
+                <Left>1.94261cm</Left>
+                <Height>0.6cm</Height>
+                <Width>3.91195cm</Width>
+                <ZIndex>5</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox6">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>SEXO:</Value>
+                        <Style>
+                          <FontFamily />
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox6</rd:DefaultName>
+                <Top>0.84694cm</Top>
+                <Left>0cm</Left>
+                <Height>0.6cm</Height>
+                <Width>1.8015cm</Width>
+                <ZIndex>6</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="petGender">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!petGender.Value, "mainDataSet")</Value>
+                        <Style>
+                          <FontFamily />
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style>
+                      <TextAlign>Left</TextAlign>
+                    </Style>
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>petGender</rd:DefaultName>
+                <Top>0.84694cm</Top>
+                <Left>1.97789cm</Left>
+                <Height>0.6cm</Height>
+                <Width>3.91195cm</Width>
+                <ZIndex>7</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox11">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>COLOR:</Value>
+                        <Style>
+                          <FontFamily />
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox11</rd:DefaultName>
+                <Top>0.84694cm</Top>
+                <Left>6.03095cm</Left>
+                <Height>0.6cm</Height>
+                <Width>1.8015cm</Width>
+                <ZIndex>8</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="petColor">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!petColor.Value, "mainDataSet")</Value>
+                        <Style>
+                          <FontFamily />
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style>
+                      <TextAlign>Left</TextAlign>
+                    </Style>
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>petColor</rd:DefaultName>
+                <Top>0.84694cm</Top>
+                <Left>7.97356cm</Left>
+                <Height>0.6cm</Height>
+                <Width>4.89423cm</Width>
+                <ZIndex>9</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox4">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>PESO:</Value>
+                        <Style>
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox4</rd:DefaultName>
+                <Top>0.84694cm</Top>
+                <Left>13.25584cm</Left>
+                <Height>0.6cm</Height>
+                <Width>1.27233cm</Width>
+                <ZIndex>10</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox5">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!petWeight.Value, "mainDataSet")</Value>
+                        <Style>
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                      <TextRun>
+                        <Value> Kg.</Value>
+                        <Style>
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style>
+                      <TextAlign>Left</TextAlign>
+                    </Style>
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox5</rd:DefaultName>
+                <Top>0.84694cm</Top>
+                <Left>14.70457cm</Left>
+                <Height>0.6cm</Height>
+                <Width>3.97818cm</Width>
+                <ZIndex>11</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+            </ReportItems>
+            <KeepTogether>true</KeepTogether>
+            <Top>4.42241cm</Top>
+            <Left>0.03528cm</Left>
+            <Height>1.59909cm</Height>
+            <Width>18.68275cm</Width>
+            <Style>
+              <Border>
+                <Style>Solid</Style>
+              </Border>
+            </Style>
+          </Rectangle>
+          <Rectangle Name="Rectangle1">
+            <ReportItems>
+              <Textbox Name="Textbox15">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>TELÉFONO:</Value>
+                        <Style>
+                          <FontFamily />
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox15</rd:DefaultName>
+                <Top>0.91016cm</Top>
+                <Left>0cm</Left>
+                <Height>0.635cm</Height>
+                <Width>4.09929cm</Width>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="telefono">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!telefono.Value, "mainDataSet")</Value>
+                        <Style>
+                          <FontFamily />
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>telefono</rd:DefaultName>
+                <Top>0.35833in</Top>
+                <Left>1.61389in</Left>
+                <Height>0.25in</Height>
+                <Width>2.23389in</Width>
+                <ZIndex>1</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="Textbox14">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>C.I.:</Value>
+                        <Style>
+                          <FontFamily />
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>Textbox14</rd:DefaultName>
+                <Top>0.16932cm</Top>
+                <Left>14.41837cm</Left>
+                <Height>0.60001cm</Height>
+                <Width>0.73802cm</Width>
+                <ZIndex>2</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+              <Textbox Name="numeroIdentificacion">
+                <CanGrow>true</CanGrow>
+                <KeepTogether>true</KeepTogether>
+                <Paragraphs>
+                  <Paragraph>
+                    <TextRuns>
+                      <TextRun>
+                        <Value>=First(Fields!numeroIdentificacion.Value, "mainDataSet")</Value>
+                        <Style>
+                          <FontFamily />
+                          <FontSize>9pt</FontSize>
+                        </Style>
+                      </TextRun>
+                    </TextRuns>
+                    <Style />
+                  </Paragraph>
+                </Paragraphs>
+                <rd:DefaultName>numeroIdentificacion</rd:DefaultName>
+                <Top>0.06666in</Top>
+                <Left>5.96708in</Left>
+                <Height>0.23622in</Height>
+                <Width>1.37722in</Width>
+                <ZIndex>3</ZIndex>
+                <Style>
+                  <Border>
+                    <Style>None</Style>
+                  </Border>
+                  <VerticalAlign>Middle</VerticalAlign>
+                  <PaddingLeft>2pt</PaddingLeft>
+                  <PaddingRight>2pt</PaddingRight>
+                  <PaddingTop>2pt</PaddingTop>
+                  <PaddingBottom>2pt</PaddingBottom>
+                </Style>
+              </Textbox>
+            </ReportItems>
+            <KeepTogether>true</KeepTogether>
+            <Top>0.90171cm</Top>
+            <Left>0cm</Left>
+            <Height>2.53998cm</Height>
+            <Width>18.71805cm</Width>
+            <ZIndex>1</ZIndex>
+            <Style>
+              <Border>
+                <Style>Solid</Style>
+              </Border>
+            </Style>
+          </Rectangle>
           <Textbox Name="responsable">
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
@@ -124,7 +746,7 @@
                     <Value>=First(Fields!responsable.Value, "mainDataSet")</Value>
                     <Style>
                       <FontFamily />
-                      <FontSize>11pt</FontSize>
+                      <FontSize>9pt</FontSize>
                     </Style>
                   </TextRun>
                 </TextRuns>
@@ -133,9 +755,10 @@
             </Paragraphs>
             <rd:DefaultName>responsable</rd:DefaultName>
             <Top>0.42167in</Top>
-            <Left>1.86056in</Left>
+            <Left>1.61389in</Left>
             <Height>0.23622in</Height>
-            <Width>3.02541in</Width>
+            <Width>4.06263in</Width>
+            <ZIndex>2</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -156,9 +779,7 @@
                   <TextRun>
                     <Value>DATOS DEL RESPONSABLE DE LA MASCOTA</Value>
                     <Style>
-                      <FontFamily />
-                      <FontSize>11pt</FontSize>
-                      <FontWeight>Bold</FontWeight>
+                      <FontFamily>Montserrat</FontFamily>
                     </Style>
                   </TextRun>
                 </TextRuns>
@@ -166,119 +787,15 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox3</rd:DefaultName>
-            <Top>0.03556in</Top>
-            <Left>0.01389in</Left>
-            <Height>0.25in</Height>
-            <Width>4.4865in</Width>
-            <ZIndex>1</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="correo">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>=First(Fields!correo.Value, "mainDataSet")</Value>
-                    <Style>
-                      <FontFamily />
-                      <FontSize>11pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                </Style>
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>correo</rd:DefaultName>
-            <Top>1.32444in</Top>
-            <Left>1.86056in</Left>
-            <Height>0.25in</Height>
-            <Width>3.02541in</Width>
-            <ZIndex>2</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="numeroIdentificacion">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>=First(Fields!numeroIdentificacion.Value, "mainDataSet")</Value>
-                    <Style>
-                      <FontFamily />
-                      <FontSize>11pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>numeroIdentificacion</rd:DefaultName>
-            <Top>0.71355in</Top>
-            <Left>1.86056in</Left>
-            <Height>0.25in</Height>
-            <Width>3.02541in</Width>
+            <Top>0.02778in</Top>
+            <Height>0.32723in</Height>
+            <Width>7.3693in</Width>
             <ZIndex>3</ZIndex>
             <Style>
               <Border>
-                <Style>None</Style>
+                <Style>Solid</Style>
               </Border>
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="telefono">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>=First(Fields!telefono.Value, "mainDataSet")</Value>
-                    <Style>
-                      <FontFamily />
-                      <FontSize>11pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>telefono</rd:DefaultName>
-            <Top>1.005in</Top>
-            <Left>1.86056in</Left>
-            <Height>0.25in</Height>
-            <Width>3.02541in</Width>
-            <ZIndex>4</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
+              <BackgroundColor>#fe9a84</BackgroundColor>
               <VerticalAlign>Middle</VerticalAlign>
               <PaddingLeft>2pt</PaddingLeft>
               <PaddingRight>2pt</PaddingRight>
@@ -296,7 +813,7 @@
                     <Value>=First(Fields!direccion.Value, "mainDataSet")</Value>
                     <Style>
                       <FontFamily />
-                      <FontSize>11pt</FontSize>
+                      <FontSize>9pt</FontSize>
                     </Style>
                   </TextRun>
                 </TextRuns>
@@ -306,11 +823,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>direccion</rd:DefaultName>
-            <Top>1.64389in</Top>
-            <Left>1.86056in</Left>
+            <Top>1.01889in</Top>
+            <Left>1.61389in</Left>
             <Height>0.23622in</Height>
-            <Width>3.02541in</Width>
-            <ZIndex>5</ZIndex>
+            <Width>5.73041in</Width>
+            <ZIndex>4</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -331,8 +848,7 @@
                   <TextRun>
                     <Value>DATOS DE LA MASCOTA</Value>
                     <Style>
-                      <FontFamily />
-                      <FontWeight>Bold</FontWeight>
+                      <FontFamily>Montserrat</FontFamily>
                     </Style>
                   </TextRun>
                 </TextRuns>
@@ -340,15 +856,16 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox8</rd:DefaultName>
-            <Top>2.08in</Top>
+            <Top>1.42444in</Top>
             <Left>0.01389in</Left>
-            <Height>0.25in</Height>
-            <Width>4.29167in</Width>
-            <ZIndex>6</ZIndex>
+            <Height>0.31666in</Height>
+            <Width>7.35541in</Width>
+            <ZIndex>5</ZIndex>
             <Style>
               <Border>
-                <Style>None</Style>
+                <Style>Solid</Style>
               </Border>
+              <BackgroundColor>#fe9a84</BackgroundColor>
               <VerticalAlign>Middle</VerticalAlign>
               <PaddingLeft>2pt</PaddingLeft>
               <PaddingRight>2pt</PaddingRight>
@@ -366,7 +883,7 @@
                     <Value>=First(Fields!observations.Value, "mainDataSet")</Value>
                     <Style>
                       <FontFamily />
-                      <FontSize>11pt</FontSize>
+                      <FontSize>8pt</FontSize>
                     </Style>
                   </TextRun>
                 </TextRuns>
@@ -374,15 +891,18 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>observations</rd:DefaultName>
-            <Top>13.17837cm</Top>
-            <Left>4.30151cm</Left>
+            <Top>8.09837cm</Top>
+            <Left>2.8175cm</Left>
             <Height>0.6cm</Height>
-            <Width>8.10886cm</Width>
-            <ZIndex>7</ZIndex>
+            <Width>15.42428cm</Width>
+            <ZIndex>6</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
+              <BottomBorder>
+                <Style>Solid</Style>
+              </BottomBorder>
               <PaddingLeft>2pt</PaddingLeft>
               <PaddingRight>2pt</PaddingRight>
               <PaddingTop>2pt</PaddingTop>
@@ -404,6 +924,7 @@
                               <TextRun>
                                 <Value>TEST DE COMPORTAMIENTO</Value>
                                 <Style>
+                                  <FontSize>8pt</FontSize>
                                   <FontWeight>Bold</FontWeight>
                                 </Style>
                               </TextRun>
@@ -417,6 +938,7 @@
                             <Color>LightGrey</Color>
                             <Style>None</Style>
                           </Border>
+                          <BackgroundColor>#c8e8ea</BackgroundColor>
                           <VerticalAlign>Middle</VerticalAlign>
                           <PaddingLeft>2pt</PaddingLeft>
                           <PaddingRight>2pt</PaddingRight>
@@ -449,7 +971,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!behaviorSelected.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style>
@@ -480,12 +1004,12 @@
                 <TablixMember>
                   <Group Name="behaviorStatus">
                     <GroupExpressions>
-                      <GroupExpression>=Fields!behaviorStatus.Value</GroupExpression>
+                      <GroupExpression>=Fields!order.Value</GroupExpression>
                     </GroupExpressions>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!behaviorStatus.Value</Value>
+                      <Value>=Fields!order.Value</Value>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
@@ -499,7 +1023,9 @@
                             <TextRuns>
                               <TextRun>
                                 <Value>=Fields!behaviorStatus.Value</Value>
-                                <Style />
+                                <Style>
+                                  <FontSize>8pt</FontSize>
+                                </Style>
                               </TextRun>
                             </TextRuns>
                             <Style>
@@ -513,6 +1039,7 @@
                             <Color>LightGrey</Color>
                             <Style>None</Style>
                           </Border>
+                          <BackgroundColor>#c8e8ea</BackgroundColor>
                           <VerticalAlign>Middle</VerticalAlign>
                           <PaddingLeft>2pt</PaddingLeft>
                           <PaddingRight>2pt</PaddingRight>
@@ -539,7 +1066,7 @@
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
-                    <Size>5.17544cm</Size>
+                    <Size>4.3cm</Size>
                     <CellContents>
                       <Textbox Name="behavior">
                         <CanGrow>true</CanGrow>
@@ -549,7 +1076,9 @@
                             <TextRuns>
                               <TextRun>
                                 <Value>=Fields!behavior.Value</Value>
-                                <Style />
+                                <Style>
+                                  <FontSize>8pt</FontSize>
+                                </Style>
                               </TextRun>
                             </TextRuns>
                             <Style />
@@ -573,11 +1102,11 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>behaviorTests</DataSetName>
-            <Top>11.5697cm</Top>
-            <Left>0.03528cm</Left>
+            <Top>6.40503cm</Top>
+            <Left>5.11194cm</Left>
             <Height>1.2cm</Height>
-            <Width>6.67544cm</Width>
-            <ZIndex>8</ZIndex>
+            <Width>5.8cm</Width>
+            <ZIndex>7</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -599,7 +1128,9 @@
                               <TextRun>
                                 <Value>TEST DE SALUD</Value>
                                 <Style>
+                                  <FontSize>8pt</FontSize>
                                   <FontWeight>Bold</FontWeight>
+                                  <Color>White</Color>
                                 </Style>
                               </TextRun>
                             </TextRuns>
@@ -611,6 +1142,7 @@
                           <Border>
                             <Style>None</Style>
                           </Border>
+                          <BackgroundColor>#08808e</BackgroundColor>
                           <VerticalAlign>Middle</VerticalAlign>
                           <PaddingLeft>2pt</PaddingLeft>
                           <PaddingRight>2pt</PaddingRight>
@@ -626,7 +1158,7 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>1.8cm</Width>
+                  <Width>1.6cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -643,7 +1175,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!diseaseSelected.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style>
@@ -679,7 +1213,7 @@
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!diseaseStatus.Value</Value>
+                      <Value>=Fields!order.Value</Value>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
@@ -693,7 +1227,10 @@
                             <TextRuns>
                               <TextRun>
                                 <Value>=Fields!diseaseStatus.Value</Value>
-                                <Style />
+                                <Style>
+                                  <FontSize>8pt</FontSize>
+                                  <Color>White</Color>
+                                </Style>
                               </TextRun>
                             </TextRuns>
                             <Style>
@@ -706,6 +1243,7 @@
                           <Border>
                             <Style>None</Style>
                           </Border>
+                          <BackgroundColor>#08808e</BackgroundColor>
                           <VerticalAlign>Middle</VerticalAlign>
                           <PaddingLeft>2pt</PaddingLeft>
                           <PaddingRight>2pt</PaddingRight>
@@ -732,7 +1270,7 @@
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
-                    <Size>4.08984cm</Size>
+                    <Size>3.41072cm</Size>
                     <CellContents>
                       <Textbox Name="disease">
                         <CanGrow>true</CanGrow>
@@ -742,7 +1280,9 @@
                             <TextRuns>
                               <TextRun>
                                 <Value>=Fields!disease.Value</Value>
-                                <Style />
+                                <Style>
+                                  <FontSize>8pt</FontSize>
+                                </Style>
                               </TextRun>
                             </TextRuns>
                             <Style />
@@ -766,357 +1306,17 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>healthChecks</DataSetName>
-            <Top>9.77053cm</Top>
-            <Left>0.03528cm</Left>
+            <Top>6.40503cm</Top>
+            <Left>0cm</Left>
             <Height>1.2cm</Height>
-            <Width>5.88984cm</Width>
-            <ZIndex>9</ZIndex>
+            <Width>5.01072cm</Width>
+            <ZIndex>8</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
             </Style>
           </Tablix>
-          <Textbox Name="Textbox1">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>NOMBRE:</Value>
-                    <Style>
-                      <FontFamily />
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox1</rd:DefaultName>
-            <Top>6.0452cm</Top>
-            <Left>0.03528cm</Left>
-            <Height>0.6cm</Height>
-            <Width>1.8015cm</Width>
-            <ZIndex>10</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="petName">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>=First(Fields!petName.Value, "mainDataSet")</Value>
-                    <Style>
-                      <FontFamily />
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                </Style>
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>petName</rd:DefaultName>
-            <Top>6.0452cm</Top>
-            <Left>2.01317cm</Left>
-            <Height>0.6cm</Height>
-            <Width>8.92295cm</Width>
-            <ZIndex>11</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox2">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>RAZA:</Value>
-                    <Style>
-                      <FontFamily />
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox2</rd:DefaultName>
-            <Top>6.75103cm</Top>
-            <Left>0.03528cm</Left>
-            <Height>0.6cm</Height>
-            <Width>1.8015cm</Width>
-            <ZIndex>12</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="petBreed">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>=First(Fields!petBreed.Value, "mainDataSet")</Value>
-                    <Style>
-                      <FontFamily />
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                </Style>
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>petBreed</rd:DefaultName>
-            <Top>6.75103cm</Top>
-            <Left>2.01317cm</Left>
-            <Height>0.6cm</Height>
-            <Width>8.92295cm</Width>
-            <ZIndex>13</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox6">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>SEXO:</Value>
-                    <Style>
-                      <FontFamily />
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox6</rd:DefaultName>
-            <Top>8.18304cm</Top>
-            <Left>0.03528cm</Left>
-            <Height>0.6cm</Height>
-            <Width>1.8015cm</Width>
-            <ZIndex>14</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="petGender">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>=First(Fields!petGender.Value, "mainDataSet")</Value>
-                    <Style>
-                      <FontFamily />
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                </Style>
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>petGender</rd:DefaultName>
-            <Top>8.18304cm</Top>
-            <Left>2.01317cm</Left>
-            <Height>0.6cm</Height>
-            <Width>8.92295cm</Width>
-            <ZIndex>15</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox9">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>EDAD:</Value>
-                    <Style>
-                      <FontFamily />
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox9</rd:DefaultName>
-            <Top>7.4772cm</Top>
-            <Left>0.03528cm</Left>
-            <Height>0.6cm</Height>
-            <Width>1.8015cm</Width>
-            <ZIndex>16</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="petAge">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>=First(Fields!petAge.Value, "mainDataSet")</Value>
-                    <Style>
-                      <FontFamily />
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                </Style>
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>petAge</rd:DefaultName>
-            <Top>7.4772cm</Top>
-            <Left>2.01317cm</Left>
-            <Height>0.6cm</Height>
-            <Width>8.92295cm</Width>
-            <ZIndex>17</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox11">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>COLOR:</Value>
-                    <Style>
-                      <FontFamily />
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox11</rd:DefaultName>
-            <Top>8.85359cm</Top>
-            <Left>0cm</Left>
-            <Height>0.6cm</Height>
-            <Width>1.83678cm</Width>
-            <ZIndex>18</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="petColor">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>=First(Fields!petColor.Value, "mainDataSet")</Value>
-                    <Style>
-                      <FontFamily />
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                </Style>
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>petColor</rd:DefaultName>
-            <Top>8.85359cm</Top>
-            <Left>2.01317cm</Left>
-            <Height>0.6cm</Height>
-            <Width>8.92295cm</Width>
-            <ZIndex>19</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
           <Textbox Name="Textbox13">
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
@@ -1127,6 +1327,7 @@
                     <Value>NOMBRES Y APELLIDOS:</Value>
                     <Style>
                       <FontFamily />
+                      <FontSize>9pt</FontSize>
                     </Style>
                   </TextRun>
                 </TextRuns>
@@ -1137,107 +1338,8 @@
             <Top>1.07103cm</Top>
             <Left>0.03528cm</Left>
             <Height>0.6cm</Height>
-            <Width>4.51415cm</Width>
-            <ZIndex>20</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox14">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>C.I.:</Value>
-                    <Style>
-                      <FontFamily />
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox14</rd:DefaultName>
-            <Top>1.81242cm</Top>
-            <Left>0.03528cm</Left>
-            <Height>0.635cm</Height>
-            <Width>4.51415cm</Width>
-            <ZIndex>21</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox15">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>TELÉFONO:</Value>
-                    <Style>
-                      <FontFamily />
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox15</rd:DefaultName>
-            <Top>2.55269cm</Top>
-            <Left>0.07056cm</Left>
-            <Height>0.635cm</Height>
-            <Width>4.51415cm</Width>
-            <ZIndex>22</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <VerticalAlign>Middle</VerticalAlign>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox16">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>CORREO ELECTRÓNICO:</Value>
-                    <Style>
-                      <FontFamily />
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox16</rd:DefaultName>
-            <Top>3.36408cm</Top>
-            <Left>0.03528cm</Left>
-            <Height>0.635cm</Height>
-            <Width>4.51415cm</Width>
-            <ZIndex>23</ZIndex>
+            <Width>4.06401cm</Width>
+            <ZIndex>9</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1259,6 +1361,7 @@
                     <Value>DIRECCIÓN:</Value>
                     <Style>
                       <FontFamily />
+                      <FontSize>9pt</FontSize>
                     </Style>
                   </TextRun>
                 </TextRuns>
@@ -1266,11 +1369,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox17</rd:DefaultName>
-            <Top>4.17547cm</Top>
+            <Top>2.58797cm</Top>
             <Left>0.03528cm</Left>
             <Height>0.6cm</Height>
-            <Width>4.51415cm</Width>
-            <ZIndex>24</ZIndex>
+            <Width>4.06401cm</Width>
+            <ZIndex>10</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1289,9 +1392,10 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>OBSERVACIONES</Value>
+                    <Value>OBSERVACIONES:</Value>
                     <Style>
                       <FontFamily />
+                      <FontSize>8pt</FontSize>
                       <FontWeight>Bold</FontWeight>
                     </Style>
                   </TextRun>
@@ -1300,54 +1404,107 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox21</rd:DefaultName>
-            <Top>13.17837cm</Top>
+            <Top>8.09837cm</Top>
             <Left>0.03528cm</Left>
             <Height>0.6cm</Height>
-            <Width>4.08984cm</Width>
-            <ZIndex>25</ZIndex>
+            <Width>2.78222cm</Width>
+            <ZIndex>11</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
+              <VerticalAlign>Middle</VerticalAlign>
               <PaddingLeft>2pt</PaddingLeft>
               <PaddingRight>2pt</PaddingRight>
               <PaddingTop>2pt</PaddingTop>
               <PaddingBottom>2pt</PaddingBottom>
             </Style>
           </Textbox>
-          <Line Name="Line1">
-            <Top>9.6932cm</Top>
-            <Left>0.03528cm</Left>
-            <Height>0cm</Height>
-            <Width>11.42258cm</Width>
-            <ZIndex>26</ZIndex>
+          <Textbox Name="Textbox12">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Encargado</Value>
+                    <Style>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox12</rd:DefaultName>
+            <Top>9.73568cm</Top>
+            <Left>2.01317cm</Left>
+            <Height>0.6cm</Height>
+            <Width>4.72709cm</Width>
+            <ZIndex>12</ZIndex>
             <Style>
               <Border>
-                <Style>Solid</Style>
+                <Style>None</Style>
               </Border>
+              <TopBorder>
+                <Style>Solid</Style>
+              </TopBorder>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
             </Style>
-          </Line>
-          <Line Name="Line2">
-            <Top>11.42944cm</Top>
-            <Left>0cm</Left>
-            <Height>0cm</Height>
-            <Width>11.42258cm</Width>
-            <ZIndex>27</ZIndex>
+          </Textbox>
+          <Textbox Name="Textbox16">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Cliente</Value>
+                    <Style>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox16</rd:DefaultName>
+            <Top>9.73568cm</Top>
+            <Left>8.00884cm</Left>
+            <Height>0.6cm</Height>
+            <Width>4.44261cm</Width>
+            <ZIndex>13</ZIndex>
             <Style>
               <Border>
-                <Style>Solid</Style>
+                <Style>None</Style>
               </Border>
+              <TopBorder>
+                <Style>Solid</Style>
+              </TopBorder>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
             </Style>
-          </Line>
+          </Textbox>
         </ReportItems>
-        <Height>13.96887cm</Height>
+        <Height>10.33568cm</Height>
         <Style>
           <Border>
             <Style>None</Style>
           </Border>
         </Style>
       </Body>
-      <Width>15.86053cm</Width>
+      <Width>18.71805cm</Width>
       <Page>
         <PageHeader>
           <Height>1.74553cm</Height>
@@ -1458,7 +1615,7 @@
               <MIMEType>=Parameters!mimeType.Value</MIMEType>
               <Sizing>FitProportional</Sizing>
               <Top>0cm</Top>
-              <Left>13.48793cm</Left>
+              <Left>16.34543cm</Left>
               <Height>1.55221cm</Height>
               <Width>2.3726cm</Width>
               <ZIndex>3</ZIndex>
@@ -1475,90 +1632,12 @@
             </Border>
           </Style>
         </PageHeader>
-        <PageFooter>
-          <Height>1.016cm</Height>
-          <PrintOnFirstPage>true</PrintOnFirstPage>
-          <PrintOnLastPage>true</PrintOnLastPage>
-          <ReportItems>
-            <Textbox Name="ExecutionTime">
-              <CanGrow>true</CanGrow>
-              <KeepTogether>true</KeepTogether>
-              <Paragraphs>
-                <Paragraph>
-                  <TextRuns>
-                    <TextRun>
-                      <Value>=Globals!ExecutionTime</Value>
-                      <Style>
-                        <FontFamily />
-                      </Style>
-                    </TextRun>
-                  </TextRuns>
-                  <Style>
-                    <TextAlign>Right</TextAlign>
-                  </Style>
-                </Paragraph>
-              </Paragraphs>
-              <rd:DefaultName>ExecutionTime</rd:DefaultName>
-              <Top>0.01389in</Top>
-              <Left>4.02722in</Left>
-              <Height>0.25in</Height>
-              <Width>2in</Width>
-              <Style>
-                <Border>
-                  <Style>None</Style>
-                </Border>
-                <PaddingLeft>2pt</PaddingLeft>
-                <PaddingRight>2pt</PaddingRight>
-                <PaddingTop>2pt</PaddingTop>
-                <PaddingBottom>2pt</PaddingBottom>
-              </Style>
-            </Textbox>
-            <Textbox Name="Textbox7">
-              <CanGrow>true</CanGrow>
-              <KeepTogether>true</KeepTogether>
-              <Paragraphs>
-                <Paragraph>
-                  <TextRuns>
-                    <TextRun>
-                      <Value>Acontplus Vet</Value>
-                      <Style>
-                        <FontFamily />
-                        <FontWeight>Bold</FontWeight>
-                      </Style>
-                    </TextRun>
-                  </TextRuns>
-                  <Style />
-                </Paragraph>
-              </Paragraphs>
-              <rd:DefaultName>Textbox7</rd:DefaultName>
-              <Top>0.14111cm</Top>
-              <Left>0.32314cm</Left>
-              <Height>0.6cm</Height>
-              <Width>3.80197cm</Width>
-              <ZIndex>1</ZIndex>
-              <Style>
-                <Border>
-                  <Style>None</Style>
-                </Border>
-                <PaddingLeft>2pt</PaddingLeft>
-                <PaddingRight>2pt</PaddingRight>
-                <PaddingTop>2pt</PaddingTop>
-                <PaddingBottom>2pt</PaddingBottom>
-              </Style>
-            </Textbox>
-          </ReportItems>
-          <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
-          </Style>
-        </PageFooter>
         <PageHeight>29.7cm</PageHeight>
         <PageWidth>21cm</PageWidth>
-        <LeftMargin>2.5cm</LeftMargin>
-        <RightMargin>2.5cm</RightMargin>
-        <TopMargin>1.5cm</TopMargin>
-        <BottomMargin>1.5cm</BottomMargin>
+        <LeftMargin>1cm</LeftMargin>
+        <RightMargin>1cm</RightMargin>
+        <TopMargin>1cm</TopMargin>
+        <BottomMargin>1cm</BottomMargin>
         <ColumnSpacing>1.27cm</ColumnSpacing>
         <Style />
       </Page>
@@ -1596,6 +1675,7 @@
       </CellDefinitions>
     </GridLayoutDefinition>
   </ReportParametersLayout>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
   <rd:ReportUnitType>Cm</rd:ReportUnitType>
   <rd:ReportID>1477afdf-5693-408b-a32b-c100b824ae13</rd:ReportID>
 </Report>

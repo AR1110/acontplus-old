@@ -1,0 +1,14 @@
+﻿@page
+@model WebUI.Pages.Pet.MedicalHistoryModel
+@{
+    ViewData["Title"] = "Pet Medical History";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@* <pet-medical-history-app /> *@
+<div id="petMH"></div>
+@section Scripts{
+    @* <link href="~/build/petMH.css" asp-append-version="true" rel="stylesheet" /> *@
+    <script src="~/build/petMH.js" asp-append-version="true"></script>
+}

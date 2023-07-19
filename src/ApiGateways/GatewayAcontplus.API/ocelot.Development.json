@@ -539,6 +539,51 @@
       "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],
       "UpstreamPathTemplate": "/gateway/ReporteDataSource/{everything}"
     },
+
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 44354
+        }
+      ],
+      "DownstreamPathTemplate": "/api/FirmaElectronica{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/gateway/FirmaElectronica{everything}"
+    },
+
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 44354
+        }
+      ],
+      "DownstreamPathTemplate": "/api/EmailConfig{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/gateway/EmailConfig{everything}"
+    },
+
     {
       "AuthenticationOptions": {
         "AllowedScopes": [],
@@ -1297,7 +1342,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7166
+          "Port": 7167
         }
       ],
       "DownstreamPathTemplate": "/api/Genderes{everything}",
@@ -1318,7 +1363,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7166
+          "Port": 7167
         }
       ],
       "DownstreamPathTemplate": "/api/PetTypes{everything}",
@@ -1339,7 +1384,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7166
+          "Port": 7167
         }
       ],
       "DownstreamPathTemplate": "/api/Breeds{everything}",
@@ -1360,7 +1405,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7166
+          "Port": 7167
         }
       ],
       "DownstreamPathTemplate": "/api/Pets{everything}",
@@ -1381,7 +1426,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7166
+          "Port": 7167
         }
       ],
       "DownstreamPathTemplate": "/api/Diseases{everything}",
@@ -1402,7 +1447,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7166
+          "Port": 7167
         }
       ],
       "DownstreamPathTemplate": "/api/DiseaseStatus{everything}",
@@ -1423,7 +1468,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7166
+          "Port": 7167
         }
       ],
       "DownstreamPathTemplate": "/api/Behaviors{everything}",
@@ -1444,7 +1489,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7166
+          "Port": 7167
         }
       ],
       "DownstreamPathTemplate": "/api/BehaviorStatus{everything}",
@@ -1465,7 +1510,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7166
+          "Port": 7167
         }
       ],
       "DownstreamPathTemplate": "/api/HealthChecks{everything}",
@@ -1486,7 +1531,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7166
+          "Port": 7167
         }
       ],
       "DownstreamPathTemplate": "/api/BehaviorTests{everything}",
@@ -1507,7 +1552,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7166
+          "Port": 7167
         }
       ],
       "DownstreamPathTemplate": "/api/MedicalHistories{everything}",
@@ -1550,7 +1595,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7166
+          "Port": 7167
         }
       ],
       "DownstreamPathTemplate": "/api/TransferenciaBodega{everything}",
@@ -1562,6 +1607,27 @@
         "Delete"
       ],
       "UpstreamPathTemplate": "/gateway/TransferenciaBodega{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 44354
+        }
+      ],
+      "DownstreamPathTemplate": "/api/EstabAsig{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/gateway/EstabAsig{everything}"
     }
   ]
 }

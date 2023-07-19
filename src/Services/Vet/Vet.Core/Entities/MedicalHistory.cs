@@ -14,5 +14,8 @@ namespace Vet.Core.Entities
         public string Observations { get; set; }
         public List<HealthCheck> HealthChecks { get; set; }
         public List<BehaviorTest> BehaviorTests { get; set; }
+        [MaxLength(15)]
+        public string CodEstab { get; set; }
+        public int? UserId { get; set; }
     }
 }

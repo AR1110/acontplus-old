@@ -85,18 +85,21 @@
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label>Cliente: <span class="text-danger">*</span></label>
-                    <div class="input-group">
-
-                        <input type="text" id="clienteSearchInvoice" name="clienteSearchInvoice" class="form-control border-select"
-                            ng-model="$ctrl.cliente.nombreFiscal" cliente-search-drtv on-select="$ctrl.onSelectedClienteChange(result)"
-                            on-keyup-cliente="$ctrl.onKeyupSearchCliente()" placeholder="Ingrese C.I o Nombre Comercial"
+                    <div class="input-group"> 
+                        <input type="text" 
+                        id="clienteSearchInvoice" 
+                        name="clienteSearchInvoice" 
+                        class="form-control border-select"
+                        ng-model="$ctrl.cliente.nombreFiscal" 
+                        cliente-search-drtv on-select="$ctrl.onSelectedClienteChange(result)"
+                        on-keyup-cliente="$ctrl.onKeyupSearchCliente()" placeholder="Ingrese C.I o Nombre Comercial"
                             onclick="select();">
 
                         <script type="text/ng-template" id="autocompleteClienteTemplate.html">
                             <div class="autocomplete-suggestion-uib-typeahead">
                                 <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
                             </div>
-                        </script>
+                        </script> 
 
                         <div class="input-group-append">
 

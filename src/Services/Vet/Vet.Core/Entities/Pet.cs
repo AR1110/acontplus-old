@@ -6,7 +6,7 @@ namespace Vet.Core.Entities
     [Table("Pet", Schema = "Pet")]
     public class Pet : BaseEntity
     {
-        public int CustomerId { get; set; } 
+        public int CustomerId { get; set; }
         public int CompanyId { get; set; }
         [Required]
         [MaxLength(150)]
@@ -17,10 +17,14 @@ namespace Vet.Core.Entities
         public int? BreedId { get; set; }
         public virtual Gender Gender { get; set; }
         public int? GenderId { get; set; }
-        public double Age { get; set; }
+        [Column(TypeName = "numeric(4,2), not null")]
+        public decimal Age { get; set; }
         [Required]
         [MaxLength(50)]
         public string Color { get; set; }
+        [Column(TypeName = "numeric(4,2), null")]
+        public decimal? Weight { get; set; }
         public DateTime? Birthdate { get; set; }
+        public int? UserId { get; set; }
     }
 }

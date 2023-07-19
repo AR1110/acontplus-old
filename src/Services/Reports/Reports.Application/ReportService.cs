@@ -1,5 +1,6 @@
 ﻿using Domain.Dtos;
 using Helpers;
+using Lib.Common;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Reporting.NETCore;
 using Newtonsoft.Json;
