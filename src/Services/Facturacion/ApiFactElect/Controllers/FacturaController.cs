@@ -51,7 +51,7 @@ namespace ApiFactElect.Controllers
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Ventas.Factura_Insert");
+                await _db.SPExecute("Ventas.Factura_Insert", true);
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("jsonFactura", SqlValidation.ValidateSqlString(data.factura));
                 _db.AddDynamicParam("jsonDetalle", SqlValidation.ValidateSqlString(data.detalle));
@@ -79,7 +79,7 @@ namespace ApiFactElect.Controllers
             GenericResponse _response = new GenericResponse();
             try
             {
-                await _db.SPExecute("Ventas.Factura_Update");
+                await _db.SPExecute("Ventas.Factura_Update", true);
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("jsonFactura", SqlValidation.ValidateSqlString(data.factura));
