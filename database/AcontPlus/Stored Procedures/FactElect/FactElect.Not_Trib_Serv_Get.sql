@@ -40,11 +40,9 @@ BEGIN
 										   WHEN '06' THEN 'FactElect.GuiaRemision_Send_Email'
 							               WHEN '07' THEN 'FactElect.Retencion_Send_Email'
 							 END
+	--jsonParmeter = '[{"format":"pdf" ,"id":'+CAST(de.idDocumento AS varchar)+',"codDoc":' + '"' + de.codDoc + '"' + '}]' 
 	FROM FactElect.NotificacionTributaria n WITH (NOLOCK)
-	INNER JOIN v_DocElectronico de WITH (NOLOCK) ON n.idDocumentoElectronico = de.idDocumentoElectronico	
-	--INNER JOIN dbo.TipoDocumento td WITH (NOLOCK) ON td.codigoSri = de.codDoc
+	INNER JOIN v_DocElectronico de WITH (NOLOCK) ON n.idDocumentoElectronico = de.idDocumentoElectronico
 	WHERE n.estado = 'NE'
-
-	
 END
 GO
