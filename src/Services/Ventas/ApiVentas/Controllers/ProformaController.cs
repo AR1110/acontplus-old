@@ -50,7 +50,7 @@ namespace ApiVentas.Controllers
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Ventas.Proforma_Insert");
+                await _db.SPExecute("Ventas.Proforma_Insert", true);
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("jsonProforma", JsonConvert.SerializeObject(data.proforma));
                 _db.AddDynamicParam("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
@@ -104,7 +104,7 @@ namespace ApiVentas.Controllers
             GenericResponse _response = new GenericResponse();
             try
             {
-                await _db.SPExecute("Ventas.Proforma_Delete");
+                await _db.SPExecute("Ventas.Proforma_Delete", true);
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
                 _response = _db.GetDefault();

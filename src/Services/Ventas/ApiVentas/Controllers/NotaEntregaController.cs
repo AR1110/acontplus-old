@@ -50,7 +50,7 @@ namespace ApiVentas.Controllers
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Ventas.NotaEntrega_Insert");
+                await _db.SPExecute("Ventas.NotaEntrega_Insert", true);
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("jsonNotaEntrega", JsonConvert.SerializeObject(data.notaEntrega));
                 _db.AddDynamicParam("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
@@ -78,7 +78,7 @@ namespace ApiVentas.Controllers
             GenericResponse _response = new GenericResponse();
             try
             {
-                await _db.SPExecute("Ventas.NotaEntrega_Update");
+                await _db.SPExecute("Ventas.NotaEntrega_Update", true);
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("jsonNotaEntrega", JsonConvert.SerializeObject(data.notaEntrega));
