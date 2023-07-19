@@ -41,6 +41,8 @@ CREATE PROCEDURE Inventario.Transaccion_Insert
 AS
 BEGIN
 	SET NOCOUNT ON; 
+	SET DEADLOCK_PRIORITY LOW;
+
 	DECLARE @idTipoTransaccion INT 
 	DECLARE @idTipoDocumento INT
 	DECLARE @fraccion AS NUMERIC(18,5)

@@ -12,6 +12,8 @@ CREATE PROCEDURE Inventario.Transaccion_Update @codTran VARCHAR(5),@codDoc VARCH
 AS
 BEGIN
 	SET NOCOUNT ON; 
+	SET DEADLOCK_PRIORITY LOW;
+
 	DECLARE @idTipoDocumento INT
 	DECLARE @idTipoTransaccion INT
 
