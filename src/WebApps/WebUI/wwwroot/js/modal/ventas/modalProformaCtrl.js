@@ -450,8 +450,7 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl {
         } else {
             this.newCustomer = false;
         }
-        this.cliente = result;
-        this.$scope.$apply();
+        this.cliente = result; 
     }
 
     async onSelectedClienteChange(item) {
