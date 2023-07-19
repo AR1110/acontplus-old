@@ -5,15 +5,13 @@
     'use strict';
 
     app.factory('transferenciaBodegaService', function($injector) {
-        let mS = $injector.get('mainService');
-        let fS = $injector.get('formulario');
+        let mS = $injector.get('mainService'); 
         let url = 'TransferenciaBodega/'
         return {
             getAll,
             insert,
             update,
-            anular,
-            getId
+            anular
         }
 
         function getAll(query) {
