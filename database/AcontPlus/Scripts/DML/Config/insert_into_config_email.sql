@@ -8,7 +8,7 @@ INSERT INTO [Config].[Email_Config]
            ,[password]
            ,[port])
      VALUES
-           ('1'
+           (1
            ,'envio.comprobantes@acontplus.com.ec'
            ,'smtp.gmail.com'
            ,'xmhlwbiibinctuvn'
