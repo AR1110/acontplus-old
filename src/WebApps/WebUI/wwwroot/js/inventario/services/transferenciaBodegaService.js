@@ -6,12 +6,14 @@
 
     app.factory('transferenciaBodegaService', function($injector) {
         let mS = $injector.get('mainService');
+        let fS = $injector.get('formulario');
         let url = 'TransferenciaBodega/'
         return {
             getAll,
             insert,
             update,
-            anular
+            anular,
+            getId
         }
 
         function getAll(query) {
@@ -75,7 +77,46 @@
             })
         }
 
-       
+
+        // function getId(id){
+
+        //     return mS.getData('get', `${url}/GetId?id=` + id, null, true).then(response=>{
+        //         if (response.code === "0") { 
+        //             throw response.message
+        //         }
+    
+        //         if (response.code === "1") {
+        //             let dataMain = JSON.parse(response.payload);
+    
+        //             let dataDocumento = dataMain[0][0];
+        //             dataDocumento.fechaEmision = fS.formatDate(dataDocumento.fechaEmision);
+    
+        //             let establecimientoOrigen = dataMain[1][0];
+        //             let establecimientoDestino = dataMain[2][0];
+
+        //             let detalleDocumento = []; //
+        //             for (let item of dataMain[3]) {
+        //                 this.getDataArticuloParaCompra({
+        //                     json: item
+        //                 }).then(response => {
+        //                     item.medidas = JSON.parse(response.payload)[1]
+        //                 })
+    
+        //                 detalleDocumento.push(item)
+        //             } 
+
+        //             return {
+        //                 dataDocumento,
+        //                 establecimientoOrigen,
+        //                 establecimientoDestino,
+        //                 detalleDocumento,
+        //                 isComplete
+        //             }
+        //         }
+
+        //     })
+
+        // } 
 
     })
 
