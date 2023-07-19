@@ -20,7 +20,7 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
-	SET DEADLOCK_PRIORITY LOW;
+	SET DEADLOCK_PRIORITY HIGH;
 
 	DECLARE @cantidadActual AS NUMERIC(18,5)
 	DECLARE @stock AS NUMERIC(15,5)
@@ -35,7 +35,6 @@ BEGIN
 	    ,fechaEmision DATETIME NOT NULL
 		,cantidad NUMERIC(15,5) NOT NULL
 	)
-
 
 	INSERT INTO @ajustes (idAjuste,cantidad,fechaEmision)
 	SELECT TOP 1 tt.idTransaccion, tt.cantidad,MAX(tt.fechaRegistro) 
@@ -98,11 +97,11 @@ BEGIN
 		END
 
 	
-	UPDATE Inventario.Stock SET cantidad = ISNULL(@cantidadActual,0) WHERE idArticulo = @idArticulo AND idBodega = @idBodega
+	UPDATE Inventario.Stock WITH(ROWLOCK) SET cantidad = ISNULL(@cantidadActual,0) WHERE idArticulo = @idArticulo AND idBodega = @idBodega
 
 	SELECT @stock = SUM(cantidad) FROM Inventario.Stock WITH (NOLOCK) WHERE idArticulo = @idArticulo 
 
-	UPDATE dbo.Articulo SET stock = ISNULL(@stock,0) WHERE idArticulo = @idArticulo
+	UPDATE dbo.Articulo WITH(ROWLOCK) SET stock = ISNULL(@stock,0) WHERE idArticulo = @idArticulo
 	
 		
 END
