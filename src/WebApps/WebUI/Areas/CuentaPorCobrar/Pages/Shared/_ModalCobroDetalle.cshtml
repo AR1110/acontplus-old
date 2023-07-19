@@ -1,0 +1,207 @@
+<md-dialog aria-label="Comprobante Ingreso (Detalle)" style="min-width: 1000px;">
+    <form ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h5>Detalle de Comprobante Ingreso</h5>
+                <span flex></span>
+                <md-button class="md-icon-button" ng-click="closeDialog()">
+                    <md-icon aria-label="Close" md-font-set="md">close</md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+
+        <md-dialog-content>
+            <!--Detalle por comprobante ingreso-->
+            <div class="md-dialog-content" ng-if="showDetalleCompIngreso">
+                <div layout="row" layout-align="space-between center">
+                    <div flex="60">
+                        <strong>C.I./RUC:</strong> {{ comprobante.numeroIdentificacion }} <br>
+                        <strong>Cliente:</strong> {{ comprobante.nombreFiscal }} <br>
+                        <strong>Nro. Comprobante:</strong> {{ comprobante.serieComprobante }}<br>
+                        <strong>Fecha Emisión:</strong> {{ comprobante.fechaEmision }}
+                    </div>
+                    <div flex="20">
+                        <strong>Total: </strong>  ${{ comprobante.total }} <br>
+                        <strong>Abono: </strong>  ${{ comprobante.abono }} <br>
+                        <strong>Cambio: </strong> ${{ comprobante.cambio }} <br>
+                    </div>
+                </div>
+
+                
+                <md-table-container>
+                    <table md-table>
+                        <thead md-head>
+                            <tr md-row>
+                                <th md-column></th>
+                                <th md-column>N°</th>
+                                <th md-column>Fecha Emisión</th>
+                                <th md-column>Sub Entidad</th>
+                                <th md-column>Valor</th>
+                                <th md-column>Posfechado</th>
+                                <th md-column>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody md-body>
+                            <tr md-row ng-repeat-start="item in cobros">
+                                <td md-cell>
+
+                                    <icon ng-if="!item.showDetalle" ng-click="expandDetalle(item)" class=" fas fa-arrow-right "></icon>
+                                    <icon ng-if="item.showDetalle" ng-click="expandDetalle(item)" class=" fas fa-arrow-down"></icon>
+
+                                    <icon ng-if="item.showInfoCobro" ng-click="showInfo(item)" class="ml-2 fas fa-info-circle text-info"></icon>
+                                </td>
+                                <td md-cell>{{$index+1}}</td>
+                                <td md-cell>{{item.fechaEmision}}</td>
+                                <td md-cell>{{item.subEntidadFinanciera}}</td>
+                                <td md-cell>${{item.valor}}</td>
+                                <td md-cell>{{item.posfechado}}</td>
+                                <td md-cell>
+                                    <span class="badge badge-success badge-pill">{{item.estado}}</span>
+                                </td>
+                            </tr>
+                            <tr ng-show="item.showDetalle" ng-repeat-end="">
+                                <td md-cell colspan="9">
+                                    <div class="ml-5 mt-1 mr-5">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover table-bordered table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Cuota</th>
+                                                        <th>Tipo. Documento</th>
+                                                        <th>Nro. Documento</th>
+                                                        <th>Fecha Vcto</th>
+                                                        <th>Total cuota</th>
+                                                        <th>Interes</th>
+                                                        <th>Dias Mora</th>
+                                                        <th>Mora</th>
+                                                        <th>Abono</th>
+                                                        <th>Saldo</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="itemDetalle in item.cobroDetalles">
+                                                        <td>{{itemDetalle.nroCuota}}</td>
+                                                        <th>{{itemDetalle.codDoc}}</th>
+                                                        <td>{{itemDetalle.serieComprobante}}</td>
+                                                        <td>{{itemDetalle.fechaVencimiento}}</td>
+                                                        <td>${{itemDetalle.cuota}}</td>
+                                                        <td>${{itemDetalle.interes}}</td>
+                                                        <td>{{itemDetalle.diasMora}}</td>
+                                                        <td>${{itemDetalle.mora}}</td>
+                                                        <td>${{itemDetalle.abono}}</td>
+                                                        <td>${{itemDetalle.saldo}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </md-table-container>
+
+            </div>
+            
+            <!--Detalle de comprobante ingreso por Documento-->
+            <div class="md-dialog-content" ng-if="showDetalleCompIngresoByDoc">
+                <div layout="row" layout-align="space-between center">
+                    <div flex="60">
+                        <strong>C.I./RUC:</strong> {{ comprobante.numeroIdentificacion }} <br>
+                        <strong>Cliente:</strong> {{ comprobante.nombreFiscal }} <br>                      
+                        <strong>Serie Comprobante:</strong> {{ comprobante.serieComprobante }} <br>                      
+                    </div>
+                    <div flex="20">
+                        <strong>Total: </strong>  ${{ comprobante.importeTotal }} <br>
+                        <strong>Abono: </strong>  ${{ comprobante.abono }} <br>
+                        <strong>Saldo: </strong> ${{ comprobante.saldo }} <br>
+                    </div>
+                </div>
+
+                <md-table-container>
+                    <table md-table>
+                        <thead md-head>
+                            <tr md-row>
+                                <th md-column></th>
+                                <th md-column>N°</th>
+                                <th md-column>N°. Doc </th>
+                                <th md-column>Fecha </th>
+                                <th md-column>Total </th>
+                                <th md-column>Abono </th>
+                                <th md-column>Cambio </th>
+                                <th md-column>Estado  </th>
+                            </tr>
+                        </thead>
+                        <tbody md-body>
+                            <tr md-row ng-repeat-start="item in comprobanteIngresos">  
+                                <td md-cell>
+
+                                    <icon ng-if="!item.showDetalle" ng-click="expandDetalle(item)" class=" fas fa-arrow-right "></icon>
+                                    <icon ng-if="item.showDetalle" ng-click="expandDetalle(item)" class=" fas fa-arrow-down"></icon>
+
+                                    <icon ng-if="item.showInfoCobro" uib-tooltip="Información" ng-click="showInfo(item)" class="ml-2 fas fa-info-circle text-info"></icon>
+                                </td>                          
+                                <td md-cell>{{$index+1}}</td>
+                                <td md-cell>{{item.serieComprobante}}</td>
+                                <td md-cell>{{item.fechaEmision}}</td>
+                                <td md-cell>{{item.total}}</td>
+                                <td md-cell>${{item.abono}}</td>
+                                <td md-cell>${{item.cambio}}</td>
+                                <td md-cell>{{item.estado}}</td>                              
+                            </tr>
+                            <tr ng-show="item.showDetalle" ng-repeat-end="">
+                                <td md-cell colspan="9">
+                                    <div class="ml-5 mt-1 mr-5">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover table-bordered table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>N°</th>
+                                                        <th>Fecha Emisión</th>
+                                                        <th>Forma Cobro</th>                                                        
+                                                        <th>Posfechado</th>
+                                                        <th>Valor</th>
+                                                        <th>Abono</th>
+                                                        <th>Cambio</th>
+                                                        <th>Estado</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="itemCobro in item.cobros">
+                                                        <td>                                                         
+                                                            <icon uib-tooltip="Información" ng-if="itemCobro.showInfoCobro" ng-click="showInfo(itemCobro)" class="fas fa-info-circle text-info"></icon>                                                           
+                                                            <icon uib-tooltip="Cuotas" ng-click="showCuotas(itemCobro)" class="ml-2 fas fa-eye"></icon>
+                                                        </td>
+                                                        <td>{{$index+1}}</td>
+                                                        <td>{{itemCobro.fechaEmision}}</td>
+                                                        <td>{{itemCobro.formaCobro}}</td>
+                                                        <td>{{itemCobro.posfechado}}</td>
+                                                        <td>${{itemCobro.valor}}</td>
+                                                        <td>${{itemCobro.abono}}</td>
+                                                        <td>${{itemCobro.vuelto}}</td>
+                                                        <td>
+                                                            <span class="badge badge-success badge-pill">{{itemCobro.estado}}</span>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </md-table-container>
+
+            </div>
+        </md-dialog-content>
+
+        <md-dialog-actions layout="row" layout-align="end center">
+            <!-- Close button in the footer -->
+            <md-button ng-click="closeDialog()" class="md-primary">
+                Cerrar
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

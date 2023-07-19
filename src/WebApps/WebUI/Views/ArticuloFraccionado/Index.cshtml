@@ -1,0 +1,108 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+<div ng-controller="articuloFraccionableCtrl as $ctrl">
+  <div class="row page-titles">
+    <div class="col-md-5 align-self-center">
+      <h4 class="text-themecolor">Articulos Fraccionables</h4>
+    </div>
+    <div class="col-md-7 align-self-center text-right">
+      <div class="d-flex justify-content-end align-items-center">
+        <!--<ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/Home/Index">Inicio</a></li>
+                    <li class="breadcrumb-item"><a href="javascript:void(0)">Almacen</a></li>
+                    <li class="breadcrumb-item active">Articulo Fraccionable</li>
+                </ol>-->
+        <button
+          type="button"
+          class="btn btn-info m-l-15"
+          ng-if="accion.crear"
+          ng-click="openModal()"
+        >
+          <i class="fa fa-plus-circle"></i> Nuevo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="row justify-content-end">
+        <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+          <form class="form-material">
+            <input
+              type="text"
+              class="form-control"
+              ng-model="buscarText"
+              placeholder="Buscar Articulo"
+            />
+          </form>
+        </div>
+      </div>
+
+      <md-table-container>
+        <table md-table>
+          <thead md-head>
+            <tr md-row>
+              <th md-column ng-if="accion.editar || accion.eliminar">Op.</th>
+              <th md-column>N°</th>
+              <th md-column>Articulo</th>
+              <th md-column>Conversión</th>
+              <th md-column>P. Costo Fraccionado</th>
+              <th md-column>Medida</th>
+              <th md-column>Gestión</th>
+              <th md-column>Estado</th>
+            </tr>
+          </thead>
+          <tbody md-body>
+            <tr
+              md-row
+              ng-repeat="af in articuloFraccionados | filter: buscarText"
+            >
+              <td md-cell ng-if="accion.editar || accion.eliminar">
+                <button
+                  class="btn btn-info btn-sm"
+                  ng-if="accion.editar"
+                  ng-click="openModal(af)"
+                >
+                  <i class="mdi mdi-pencil"></i>
+                </button>
+
+                <button
+                  class="btn btn-danger btn-sm"
+                  ng-if="accion.eliminar"
+                  ng-click="askToDelete(af)"
+                >
+                  <i class="mdi mdi-delete"></i>
+                </button>
+              </td>
+              <td md-cell>{{$index+1}}</td>
+              <td md-cell><b class="text-primary">{{af.articulo}}</b></td>
+              <td md-cell>{{af.conversion}}</td>
+              <td md-cell>${{af.precioCostoFraccionado}}</td>
+              <td md-cell>{{af.medida}}</td>
+              <td md-cell>
+                <span> {{af.fraccionado.gestionVenta?'Venta':'Compra'}} </span>
+              </td>
+              <td md-cell ng-bind-html="af.estado | estadoPrimario"></td>
+            </tr>
+            <tr
+              md-row
+              class="text-center"
+              ng-show="articuloFraccionados.length===0"
+            >
+              <td md-cell colspan="7">No hay registros :)</td>
+            </tr>
+          </tbody>
+        </table>
+      </md-table-container>
+    </div>
+  </div>
+</div>
+
+@section Scripts{
+    <script
+      src="~/js/inventario/controllers/articuloFraccionableCtrl.min.js"
+      asp-append-version="true"
+    ></script>
+} 

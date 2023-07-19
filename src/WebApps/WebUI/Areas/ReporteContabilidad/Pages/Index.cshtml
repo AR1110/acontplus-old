@@ -1,0 +1,137 @@
+@page
+@model WebUI.Areas.Reporte.Pages.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div ng-controller="reporteContabilidadCtrl">
+
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Reporte Contabilidad</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            @* <div class="d-flex justify-content-end align-items-center">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="javascript:void(0)"> </a></li>
+                    <li class="breadcrumb-item active">Reporte</li>
+                </ol>
+                <button type="button" ng-if="accion.crear" ng-click="openModal(null,1)" class="btn btn-info  m-l-15">
+                    <i class="ti-plus"></i> Agregar
+                </button>
+            </div> *@
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-sm">Estab.:</span>
+                        </div>
+                        <select name="" id="" class="form-control border-select" ng-model="dataSearch.codEstab">
+                            <option ng-value="item.codEstab" ng-repeat="item in establecimientos">{{item.nombreComercial}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-sm">Tipo Doc. </span>
+                        </div>
+                        <select name="" id="" class="form-control border-select" ng-model='dataSearch.codDoc' ng-change="onChangeTipoDoc()">
+                            <option ng-value="item.codDoc" ng-repeat="item in tiposDoc">{{item.descripcion}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-sm">Rango de Fecha.</span>
+                        </div>
+                        <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
+                                           end-date="dataSearch.fechaFin"
+                                           result-range-date="resultRangeFilter(result)"></date-range-filter>
+                    </div>
+                </div>
+            </div>
+      
+            <div class="row">
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12" ng-if="showCliente">
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-sm">Cliente.:</span>
+                        </div>
+                        <input type="text" id="customerInputSearch" class="form-control border-select"
+                               ng-model="searchCliente.nombreCliente" cliente-search-drtv on-select="onSelectCliente(result)"
+                               on-keyup-cliente="onKeyupCliente()" placeholder="Ingrese C.I o Nombre Comercial"
+                               onclick="select();">
+
+                        <script type="text/ng-template" id="autocompleteClienteTemplate.html">
+                            <div class="autocomplete-suggestion-uib-typeahead">
+                                <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
+                            </div>
+                        </script>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12" ng-if="showEmpleado">
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-sm">Empleado.:</span>
+                        </div>
+                        <input type="text" id="customerInputSearch" class="form-control border-select"
+                               ng-model="cliente.nombreCliente" empleado-search-drtv on-select="onSelectCliente(result)"
+                               on-keyup="onKeyupCliente()" placeholder="Ingrese C.I o Nombre Comercial"
+                               onclick="select();">
+
+                        <script type="text/ng-template" id="autocompleteEmpleadoTemplate.html">
+                            <div class="autocomplete-suggestion-uib-typeahead">
+                                <span class="item-title"><b> {{match.model.nroIdentificacion}}</b> - {{match.model.nombreCompleto}}</span>
+                            </div>
+                        </script>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-sm">Usuario.:</span>
+                        </div>
+                        <input type="text" id="customerInputSearch" class="form-control border-select"
+                               ng-model="searchUser.nombreCompleto" user-search-drtv on-select="onSelectUser(result)"
+                               on-keyup="onKeyupUser()" placeholder="..."
+                               onclick="select();">
+
+                        <script type="text/ng-template" id="autocompleteUserTemplate.html">
+                            <div class="autocomplete-suggestion-uib-typeahead">
+                                <span class="item-title"><b> {{match.model.nroIdentificacion}}</b> - {{match.model.nombreCompleto}}</span>
+                            </div>
+                        </script>
+                    </div>
+                </div>
+            </div>
+            <span>
+                <label id="formatos">Formato:</label>
+            </span>
+            <md-radio-group ng-model="dataSearch.format" aria-labelledby="formatos">
+                <md-radio-button value="pdf" class="md-primary">PDF</md-radio-button>
+                <md-radio-button value="excel" class="md-primary">EXCEL</md-radio-button>              
+            </md-radio-group>
+        </div>
+        <md-divider></md-divider>
+        <div class="card-body">
+            <button type="button" class="btn btn-success" ng-click='getReport()'>
+                <i class="ti-download"></i> Descargar                
+            </button>
+        </div>
+    </div>
+
+</div>
+
+
+
+@section scripts{
+    <script src="~/js/reports/controllers/reporteContabilidadCtrl.js" asp-append-version="true"></script>
+}

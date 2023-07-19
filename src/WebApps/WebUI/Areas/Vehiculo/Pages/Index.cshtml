@@ -1,0 +1,82 @@
+@page
+@model WebUI.Areas.Vehiculo.Pages.Index
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div ng-controller="vehiculoCtrl">
+    <div class="row page-titles ">
+        <div class="col-md-5 alig-self-center">
+            <h5 class="text-themecolor">Gestión de Vehiculos</h5>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+                <button type="button" class="btn btn-info m-l-15" btn-vehiculo result-modal="resultModal(result)"> <i
+                        class="ti-plus"></i> Nuevo</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <md-toolbar class="md-table-toolbar md-default">
+                        <div class="md-toolbar-tools">
+                            <div class="col-lg-9 col-md-9 col-sm-1">
+                                @* <button type="button" class="btn btn-info" ng-click="openModalFiltro()"><i class="fa
+                                fa-filter"></i> Filtrar</button> *@
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                                <form class="form-material">
+                                    <input type="text" class="form-control" ng-model="buscar" placeholder="Buscar">
+                                </form>
+                            </div>
+                        </div>
+                    </md-toolbar>
+                    <md-divider></md-divider>
+                    <md-table-container>
+                        <table md-table>
+                            <thead md-head>
+                                <tr md-row>
+                                    <th md-column></th>
+                                    <th md-column>N°</th>
+                                    <th md-column>Placa</th>
+                                    <th md-column>Marca</th>
+                                    <th md-column>Modelo</th>
+                                    <th md-column>Observación</th>
+                                </tr>
+                            </thead>
+                            <tbody md-body>
+                                <tr md-row ng-repeat="v in vehiculos">
+                                    <td md-cell>
+                                        <button class="btn btn-info btn-xs" btn-vehiculo
+                                            result-modal="resultModal(result)" params="v"><i
+                                                class="ti-pencil"></i></button>
+                                        <button class="btn btn-danger btn-xs" ng-click="sweetAlertEliminar(v)"><i
+                                                class="ti-trash"></i></button>
+                                    </td>
+                                    <td md-cell>{{$index+1}}</td>
+                                    <td md-cell>{{v.placa}}</td>
+                                    <td md-cell>{{v.marca}}</td>
+                                    <td md-cell>{{v.modelo}}</td>
+                                    <td md-cell>{{v.observacion}}</td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </md-table-container>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+@section Scripts{
+    <script src="~/js/logistica/services/logisticaService.min.js" asp-append-version="true"></script>
+    <script src="~/js/logistica/controllers/vehiculoCtrl.min.js" asp-append-version="true"></script>
+}

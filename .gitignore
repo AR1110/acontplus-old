@@ -1,7 +1,11 @@
 ﻿################################################################################
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
-
+node_modules
+bin-debug/
+bin-release/
+[Oo]bj/
+[Bb]in/
 /.vs
 /src/packages
 /src/.vs
@@ -67,4 +71,3 @@
 /src/06.windows_services/ValidatorWS/obj
 /src/07.worker_services/WS_DocumentoRecibido/bin/Debug/net6.0
 /src/07.worker_services/WS_DocumentoRecibido/obj
-/src

@@ -1,0 +1,117 @@
+﻿@{
+    ViewData["title"] = "Transferencia";
+}
+
+<div ng-controller="transferenciaBodegaCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Gestión de Transferencia de Productos </h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+                <button type="button" ng-click="openModalNew()" class="btn btn-info  m-l-15">
+                    <i class="fa fa-plus-circle"></i> Nuevo
+                </button>
+            </div>
+        </div>
+    </div>
+
+ 
+    <div class="card">
+        <div class="card-body">
+             <div class="row">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <div class="form-gorup">
+                        <span for="establecimiento">Establecimiento</span>
+                        <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
+                            class="form-control  border-select" ng-change="getTransferenciasBodega()">
+                            <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
+                                {{item.nombreComercial}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span for="">Rango de Fechas</span>
+                        @* <div class="input-group"> *@
+                        <date-range-filter current-date="dataSearch.startDate" start-date="dataSearch.startDate"
+                            end-date="dataSearch.endDate"
+                            result-range-date="resultDateRange(result)"></date-range-filter>
+                        
+                    </div>
+                </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span for="buscar">Buscar</span>
+                        <input type="text" class="form-control border-select" ng-model="dataSearch.bySearch" ng-keyup="getFilterTransferencia()" placeholder="Buscar">
+                    </div>
+                </div>
+                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">                   
+                    <button type="button" class="btn btn-success btm-sm mt-4" uib-tooltip="Recargar"
+                        ng-click="getTransferenciasBodega()">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                </div>
+            </div>
+           
+            <hr>
+            <md-table-container style="max-height: 400px;">
+                <table md-table>
+                    <thead md-head fix-head>
+                        <tr md-row>
+                            <th md-column></th>
+                            <th md-column>N°</th>
+                            <th md-column>Nro. Doc</th>
+                            <th md-column>F. Emisión</th>
+                            <th md-column>Origen</th>
+                            <th md-column>Destino</th>
+                            <th md-column>Total</th>
+                            <th md-column>Estado</th>
+                        </tr>                                
+                    </thead>
+                    <tbody md-body>
+                        <tr md-row ng-repeat="item in transferenciasBodegas" ng-class="item.rowColor">
+                            <td md-cell>
+                                <div class="dropdown h-2">
+                                    <button class="btn btn-default " type="button" id="dropdownMenu" data-toggle="dropdown" data-boundary="viewport" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fa fa-bars"></i>
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenu">                            
+                                        <button class="dropdown-item" type="button" ng-click="openModalDetalle(item)"><i class="ti-menu"></i> Detalle</button>                                                 
+                                        <button class="dropdown-item" type="button" ng-click="openModalEditar(item)"><i class="ti-pencil"></i> Editar</button>                                                
+                                        <button class="dropdown-item" type="button" ng-click="askToDelete(item)"><i class="ti-na"></i> Anular</button>  
+                                        <button class="dropdown-item" type="button" ng-click="getReport(item)"><i class="fas fa-file-pdf"></i> Reporte</button>                                                
+                                    </div>
+                                </div>                                                                                                                            
+
+                            </td>
+                            <td md-cell>{{$index+1}}</td>
+                            <td md-cell>{{item.nroDoc}}</td>
+                            <td md-cell>{{item.fechaEmision}}</td>
+                            <td md-cell>{{item.bodegaOrigen}}</td>
+                            <td md-cell>{{item.bodegaDestino}}</td>
+                            <td md-cell>${{item.total}}</td>
+                            <td md-cell>{{item.estadoDesc}}</td>
+                        </tr>
+                        <tr ng-if="transferenciasBodegas.length===0" class="text-center">
+                            <td colspan="8">No hay registros en esta tabla</td>
+                        </tr>
+                    </tbody>
+                    <tfoot md-foot>
+                        <tr>
+                            <td></td>
+                        </tr>                        
+                    </tfoot>
+                </table>
+            </md-table-container>
+        </div>
+    </div>
+         
+</div>
+
+@section Scripts{        
+    <script src="~/js/inventario/services/transferenciaBodegaService.min.js" asp-append-version="true"></script>
+    <script src="~/js/inventario/controllers/transferenciaBodegaCtrl.min.js" asp-append-version="true"></script>    
+
+}

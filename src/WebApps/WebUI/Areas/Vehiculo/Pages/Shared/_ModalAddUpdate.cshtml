@@ -1,0 +1,41 @@
+<div class="modal-header ">
+    <h5 class="modal-title">{{tipoRegistro===1?'Nuevo':'Editar'}} Vehículo</h5>
+    <button class="close" ng-click="closeModal()">&times;</button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-12">
+            <div class="form-group">
+                <label for=""> Placa: <span class="text-danger">*</span></label>
+                <input type="text" class="form-control border-select" ng-model="data.placa">
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <label for="">Marca: <span class="text-danger">*</span></label>
+                <input type="text" class="form-control border-select" touppercase ng-model="data.marca">
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <label for="">Modelo: <span class="text-danger">*</span></label>
+                <input type="text" class="form-control border-select" ng-model="data.modelo">
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <label for="">Observación: </label>
+                <textarea ng-model="data.observacion" class="form-control border-select" cols="30" rows="2"></textarea>                            
+            </div>
+        </div>
+    </div>                           
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-success" ng-click="saveUpdate()">
+        <i ng-class="tipoRegistro===1?'ti-save':'fa fa-edit'"></i>
+        {{tipoRegistro===1?'Guardar':'Actualizar'}}
+    </button>
+    <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
+</div> 
+
+

@@ -1,3 +1,5 @@
+USE [Acontplus]
+GO 
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -29,6 +31,9 @@ CREATE PROCEDURE Config.GestionSistema_Update
    ,@idArticulo INT
    ,@idMetodoValoracion INT 
    ,@llevaInventario VARCHAR(5)
+   ,@searchCode INT 
+   ,@printerAutomatic INT 
+   ,@payAutomatic INT 
 
 AS
 BEGIN
@@ -42,14 +47,13 @@ BEGIN
 	DECLARE @codArticulo VARCHAR(20)
 	DECLARE @idUsuario INT
 
-	SELECT @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
+	SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
+	SELECT TOP 1 @codigoPorcentaje = codigoPorcentaje FROM dbo.TipoIva WITH (NOLOCK) WHERE idTipoIva = @idTipoIva
 
-	SELECT @codigoPorcentaje = codigoPorcentaje FROM dbo.TipoIva WHERE idTipoIva = @idTipoIva
+	SELECT TOP 1 @codMetodoValoracion = codigo FROM Inventario.MetodoValoracion WITH (NOLOCK) WHERE idMetodoValoracion = @idMetodoValoracion
 
-	SELECT @codMetodoValoracion = codigo FROM Inventario.MetodoValoracion WHERE idMetodoValoracion = @idMetodoValoracion
-
-	SELECT @codArticulo = codigo FROM dbo.Articulo WHERE idArticulo = @idArticulo
+	SELECT TOP 1 @codArticulo = codigo FROM dbo.Articulo WITH (NOLOCK) WHERE idArticulo = @idArticulo
 
 	BEGIN TRY
 		BEGIN TRAN 
@@ -63,6 +67,9 @@ BEGIN
 			   ,nroIdentificacion = @nroIdentificacion
 			   ,codArticulo = @codArticulo
 			   ,codMetodoValoracion = @codMetodoValoracion
+			   ,searchCode = @searchCode
+			   ,printerAutomatic  = @printerAutomatic 
+			   ,payAutomatic = @payAutomatic 
 			WHERE idGestionSistema = @id
 		COMMIT TRAN 
 		SELECT '1' code,'Actualizado Correctamente' as 'message'

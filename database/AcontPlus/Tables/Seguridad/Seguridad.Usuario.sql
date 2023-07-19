@@ -1,0 +1,15 @@
+USE AcontPlus
+GO
+CREATE TABLE Seguridad.Usuario(
+idUsuario INT NOT NULL CONSTRAINT pk_usuario PRIMARY KEY CLUSTERED (idUsuario ASC) IDENTITY(1,1),
+nombreUsuario VARCHAR(100) NOT NULL CONSTRAINT uk_nombreUsuario UNIQUE,
+email VARCHAR(150) NULL,
+contrasenia VARBINARY(128) NOT NULL,
+salt UNIQUEIDENTIFIER NOT NULL,
+nombreCompleto VARCHAR(500) NOT NULL,
+nroIdentificacion VARCHAR(25) NULL,
+estado BIT NOT NULL DEFAULT 1,
+registro DATETIME NOT NULL DEFAULT GETDATE(),
+actualizacion DATETIME NULL
+)
+GO

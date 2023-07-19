@@ -1,0 +1,129 @@
+<div class="modal-header">
+    <h5 class="modal-title"><i class="mdi mdi-timetable"></i> Cuotas</h5>
+    <button class="close" ng-click="closeModal()">&times;</button>
+</div>
+
+<div class="modal-body">
+    <div class="row">
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12 b-r">
+            <strong>Proveedor:</strong>
+            <br>                        
+            <p class="text-muted">{{data.nombreFiscal}}</p>
+        </div>
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12 b-r">
+            <strong>Nro. Documento:</strong>
+            <br>
+            <p class="text-muted">{{data.serieComprobante}}</p>
+        </div>
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12 b-r">
+            <strong>Fecha Emisión:</strong>
+            <br>
+            <p class="text-muted">{{data.fechaEmision}}</p>
+        </div>
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12 b-r">
+            <strong>Total:</strong>
+            <h4>${{data.importeTotal}}</h4>
+        </div>
+    </div>
+    <md-divider></md-divider>
+    <div class="row justify-content-between mt-2">
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+            <div class="form-group">
+                <label>Tiempo Crédito</label>
+                <div class="input-group">                                
+                    <select ng-disabled = "data.codPago!='PE'" class="form-control border-select" ng-model="data.idTiempoCredito" ng-change="generarNuevaCuota()">
+                            <option ng-value="item.idTiempoCredito" ng-repeat="item in tiempoCreditos">{{item.descripcion}}</option>
+                    </select>
+                    <div class="input-group-append">                        
+                        <button ng-disabled = "data.codPago!='PE'" type="button" ng-click="generarNuevaCuota()" class="btn btn-outline-secondary btn-sm">
+                            <i class=" fas fa-redo fa-xs"></i>
+                        </button>
+                        @* <button type="button" ng-click="openModalTiempoCredito()" class="btn btn-outline-secondary btn-sm">
+                            <i class="fa fa-plus fa-xs"></i>
+                        </button> *@
+                    </div>
+                </div>                            
+            </div>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-612col-12">
+            <label>Configurar Fecha: <code>dd/MM/yyyy</code></label>
+            <div class="input-group">
+                <input ng-disabled = "data.codPago!='PE'" type="date" ng-model="configFecha" class="form-control border-select" aria-label="Config. Fecha Vencimiento">
+                <div class="input-group-append">
+                    <button type="button" ng-disabled="data.codPago !=='PE'" ng-click="getConfigFechaCuota(true)" class="btn btn-info" uib-tooltip="">
+                        <i class="mdi mdi-update"></i> Fin Mes
+                    </button>
+                    <button type="button" ng-disabled="data.codPago !=='PE'" ng-click="getConfigFechaCuota(false)" class="btn btn-success" uib-tooltip='El día tiene que ser menor a 28 días'>
+                        <i class="mdi mdi-av-timer"></i> Mismo Dia
+                    </button>                  
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="table-responsive">
+        <table class="table table-condensed table-sm">
+            <thead>
+                <tr>
+                    <th><span>N°</span></th>
+                    <th><span>Cuota</span></th>
+                    <th colspan="2" class="text-center"><span>F. Vencimiento</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="cuota in cuotas">
+                    <td width="100">{{cuota.nroCuota}}</td>
+                    <td width="100">
+                        <!--Input Entrada-->
+                        <input type="text" ng-if="cuota.nroCuota==='E'" decimal
+                                autocomplete="off" id="valorEntrada"
+                                ng-model="cuota.cuota" 
+                                ng-keyup="setValorEntrada(cuota.cuota)"
+                                class="form-control border-select" />
+                                
+                        <!--Input Cuota -->
+                        <input type="text" ng-if="cuota.nroCuota!=='E'" autocomplete="off"
+                                id="setValcuota{{cuota.idCuotaPorPagar}}" decimal onClick="select()"
+                                ng-keyup="setValorCuota(cuota)"
+                                ng-model="cuota.cuota" class="form-control border-select" />
+                    </td>
+                    <td width="100">
+                        <span ng-if="cuota.nroCuota=='E'" class="ml-1">{{c.fechaVencimiento | date:'dd/MM/yyyy'}}</span>
+                        
+                        <input type="date" min="2020-01-01" max="2030-12-31"
+                                id="fechaVencimiento{{cuota.idCuotaPorPagar}}"
+                                ng-if="cuota.nroCuota!=='E'"
+                                ng-model="cuota.fechaVencimiento"
+                                ng-change="setFechaVencimientoCuota(cuota)"
+                                class="form-control" required />
+                        <small class="invalid-feedback">Fecha Vcto. no válida </small>
+                    </td>
+                    <td width="100">
+                        {{getFechaVencimientoEscrita(cuota.fechaVencimiento)}}
+                    </td>
+                </tr>                               
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td align="right">
+                        <span class="h6 font-weight-bold">Total Cuota</span><br>
+                        <span class="h6 font-weight-bold">Diferencia</span><br>
+                    </td>
+                    <td>
+                        <span class="h6 font-weight-bold">${{totalCuota}}</span><br>
+                        <span class="h6 font-weight-bold">${{totalDiferencia}}</span>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+
+<div class="modal-footer">
+    <button ng-if="data.codPago =='PE'" type="button" class="btn btn-success" ng-click="guardarCuota()">
+        <i class="ti-save"></i> Guardar
+    </button>
+    <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
+</div>

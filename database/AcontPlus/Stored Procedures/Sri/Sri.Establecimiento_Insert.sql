@@ -1,3 +1,5 @@
+USE [Acontplus]
+go
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -29,6 +31,7 @@ BEGIN
 	SET NOCOUNT ON;
 	DECLARE @idEntidad INT 
 	DECLARE @idUsuario INT
+	DECLARE @sequencial INT
 	DECLARE @nombreUsuario VARCHAR(100)
 	DECLARE @ruc VARCHAR(15)
 	DECLARE @canton VARCHAR(10) 
@@ -41,87 +44,95 @@ BEGIN
     DECLARE @nombreComercial VARCHAR(150) 
     DECLARE @dirEstablecimiento VARCHAR(300) 
     DECLARE @contribuyenteRimpe VARCHAR(150) 
-	DECLARE @sequencial INT
 	DECLARE @codEstab VARCHAR(50)
+	DECLARE @telefono VARCHAR(100)
+	DECLARE @correo VARCHAR(300)
 	
+	BEGIN TRY
+		SELECT TOP 1 @idEntidad = idEntidad ,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
-	SELECT @idEntidad = idEntidad ,@idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
+		SELECT TOP 1 @nombreUsuario = nombreUsuario FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @idUsuario
 
-	SELECT @nombreUsuario = nombreUsuario FROM dbo.Usuario WHERE idUsuario = @idUsuario
+		SELECT TOP 1 @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
-	SELECT @ruc = ruc FROM dbo.Entidad WHERE idEntidad = @idEntidad
+		SELECT @sequencial = COUNT(*)+1 FROM Sri.Establecimiento WITH (NOLOCK)
 
-	SELECT @sequencial = COUNT(*)+1 FROM Sri.Establecimiento
+		SELECT @codEstab =  'ESTAB-'+Helper.F_Auto_Sequential(@sequencial)
 
-	SELECT @codEstab =  'ESTAB-'+Helper.F_Auto_Sequential(@sequencial)
-
-
-	BEGIN TRY 
-		BEGIN TRAN 
-			SELECT 
-					 @canton                = canton
-					,@actividad             = actividad
-					,@agenteRetencion       = agenteRetencion
-					,@contribuyente         = contribuyente
-					,@estab                 = estab
-					,@contribuyenteEspecial = contribuyenteEspecial
-					,@obligadoContabilidad  = obligadoContabilidad
-					,@nombreComercial       = nombreComercial
-					,@dirEstablecimiento    = dirEstablecimiento
-					,@contribuyenteRimpe    = contribuyenteRimpe
-			FROM OPENJSON (@json)
-			WITH (
-					 canton                VARCHAR(10) '$.canton'
-					,actividad             VARCHAR(5)  '$.actividad'
-					,agenteRetencion       VARCHAR(150)'$.agenteRetencion'
-					,contribuyente         VARCHAR(5)  '$.contribuyente'
-					,estab                 VARCHAR(5)  '$.estab'
-					,contribuyenteEspecial VARCHAR(10) '$.contribuyenteEspecial'
-					,obligadoContabilidad  VARCHAR(5)  '$.obligadoContabilidad'
-					,nombreComercial       VARCHAR(150)'$.nombreComercial'
-					,dirEstablecimiento    VARCHAR(300)'$.dirEstablecimiento'
-					,contribuyenteRimpe    VARCHAR(150)'$.contribuyenteRimpe'
-				 )
-
-			IF EXISTS (SELECT 1 FROM Sri.Establecimiento WHERE ruc = @ruc AND estab = @estab)
-				BEGIN
-					SELECT '0'code,'El numero de establecimiento ya se encuentra registrado' as 'message'
-					RETURN 
-				END 
-
-
-				INSERT INTO Sri.Establecimiento
-				(  
-				    codEstab
-				   ,canton
-				   ,actividad
-				   ,agenteRetencion
-				   ,contribuyente
-				   ,ruc
-				   ,estab
-				   ,contribuyenteEspecial
-				   ,obligadoContabilidad
-				   ,nombreComercial
-				   ,dirEstablecimiento
-				   ,contribuyenteRimpe
-				   ,fechaRegistro
-				   ,usuario
+		SELECT 
+				 @canton                = canton
+				,@actividad             = actividad
+				,@agenteRetencion       = agenteRetencion
+				,@contribuyente         = contribuyente
+				,@estab                 = estab
+				,@contribuyenteEspecial = contribuyenteEspecial
+				,@obligadoContabilidad  = obligadoContabilidad
+				,@nombreComercial       = nombreComercial
+				,@dirEstablecimiento    = dirEstablecimiento
+				,@telefono              = telefono
+				,@contribuyenteRimpe    = contribuyenteRimpe
+				,@correo                = correo
+		FROM OPENJSON (@json)
+		WITH (
+				 canton                VARCHAR(10) '$.canton'
+				,actividad             VARCHAR(5)  '$.actividad'
+				,agenteRetencion       VARCHAR(150)'$.agenteRetencion'
+				,contribuyente         VARCHAR(5)  '$.contribuyente'
+				,estab                 VARCHAR(5)  '$.estab'
+				,contribuyenteEspecial VARCHAR(10) '$.contribuyenteEspecial'
+				,obligadoContabilidad  VARCHAR(5)  '$.obligadoContabilidad'
+				,nombreComercial       VARCHAR(150)'$.nombreComercial'
+				,dirEstablecimiento    VARCHAR(300)'$.dirEstablecimiento'
+				,telefono              VARCHAR(150)'$.telefono'
+				,contribuyenteRimpe    VARCHAR(150)'$.contribuyenteRimpe'
+				,correo                VARCHAR(300) '$.correo'
 				)
+
+		IF EXISTS (SELECT 1 FROM Sri.Establecimiento WHERE ruc = @ruc AND estab = @estab)
+			BEGIN
+				SELECT '0'code,'El numero de establecimiento ya se encuentra registrado' as 'message'
+				RETURN 
+			END 
+
+		BEGIN TRAN 
+				INSERT INTO Sri.Establecimiento
+					(codEstab
+					,canton
+					,actividad
+					,agenteRetencion
+					,contribuyente
+					,ruc
+					,estab
+					,contribuyenteEspecial
+					,obligadoContabilidad
+					,nombreComercial
+					,dirEstablecimiento
+					,telefono
+					,correo
+					,contribuyenteRimpe
+					,fechaRegistro
+					,usuario)
 				SELECT 
-				    @codEstab
-				   ,@canton
-				   ,@actividad
-				   ,@agenteRetencion
-				   ,@contribuyente
-				   ,@ruc
-				   ,@estab
-				   ,@contribuyenteEspecial
-				   ,@obligadoContabilidad
-				   ,@nombreComercial
-				   ,@dirEstablecimiento
-				   ,@contribuyenteRimpe
-				   ,dbo.ufnGetDateEcuador()
-				   ,@nombreUsuario
+				     @codEstab
+				    ,@canton
+				    ,@actividad
+				    ,@agenteRetencion
+				    ,@contribuyente
+				    ,@ruc
+				    ,@estab
+				    ,@contribuyenteEspecial
+				    ,@obligadoContabilidad
+				    ,@nombreComercial
+				    ,@dirEstablecimiento
+					,@telefono
+					,@correo
+				    ,@contribuyenteRimpe
+				    ,dbo.ufnGetDateEcuador()
+				    ,@nombreUsuario
+
+
+				INSERT INTO FactElect.Config_Comprob_Elect (codEstab,estab,isAutomatic)
+				SELECT @codEstab,@estab,0
 					
 		COMMIT TRAN 
 		SELECT '1'code,'Registrado Correctamente' AS 'message'

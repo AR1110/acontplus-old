@@ -1,3 +1,5 @@
+USE [AcontPlus]
+GO
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -28,8 +30,35 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	DECLARE @idEntidad INT
+	DECLARE @jsonConfigDecimal AS VARCHAR(MAX)
+	DECLARE @configDecimal AS TABLE (
+		nroPrecio INT NOT NULL
+	   ,nroCantidad INT NOT NULL
+	   ,nroIva INT NOT NULL
+	   ,nroDescuentoDetalle INT NOT NULL
+	   ,nroTotalDetalle INT NOT NULL
+	   ,nroTotalSubTotal INT NOT NULL
+	   ,nroDescuento INT NOT NULL
+	   ,nroIce INT NOT NULL
+	)
 
 	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+
+	SELECT TOP 1 @jsonConfigDecimal = jsonConfig FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CD'
+
+	INSERT INTO @configDecimal(nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle ,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce)
+						SELECT nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle ,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce
+						FROM OPENJSON(@jsonConfigDecimal)
+						WITH (codTransaccion      VARCHAR(5) '$.codTransaccion'
+							 ,nroPrecio                  INT '$.nroPrecio'
+							 ,nroCantidad                INT '$.nroCantidad'
+							 ,nroIva                     INT '$.nroIva'
+							 ,nroDescuentoDetalle        INT '$.nroDescuentoDetalle'
+							 ,nroTotalDetalle            INT '$.nroTotalDetalle'
+							 ,nroTotalSubTotal           INT '$.nroTotalSubTotal'
+							 ,nroDescuento               INT '$.nroDescuento'
+							 ,nroIce                     INT '$.nroIce') as dt
+					   WHERE dt.codTransaccion = 'C'
 
 	SELECT 
 		es.codEstab_Asig
@@ -41,6 +70,7 @@ BEGIN
 	FROM Config.Estab_Asig es WITH (NOLOCK) 
 	INNER JOIN Sri.Establecimiento sr WITH (NOLOCK) ON sr.codEstab = es.codEstab
 	WHERE es.idUsuarioRol = @idRol 
+	ORDER BY es.predeterminado DESC
 
 	SELECT 
 		nroPrecio
@@ -51,7 +81,7 @@ BEGIN
 	   ,nroTotalSubTotal
 	   ,nroDescuento
 	   ,nroIce
-	FROM Config.CantidadDecimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTransaccion = 'C'
+	FROM @configDecimal
 
 	SELECT 
 		idTipoIva
@@ -76,6 +106,9 @@ BEGIN
 	WHERE idEntidad = @idEntidad AND estado = 1
 	ORDER BY idCategoriaCompra DESC
 
-	SELECT idSustentoTributario, descripcion FROM SustentoTributario WHERE estado = 1
+	SELECT idSustentoTributario, descripcion = codigo + ' - ' + descripcion FROM SustentoTributario WHERE estado = 1
+
+	SELECT * FROM SustentoTributario
+
 END
 GO

@@ -1,0 +1,209 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+<div ng-controller="tipoContribuyenteCtrl" id="tipoContribuyente">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Gestión de Contribuyentes</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+                @*<ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
+                        <li class="breadcrumb-item active">Contribuyente </li>
+                    </ol>*@
+                <button type="button" ng-if="accion.crear" ng-click="abrirModalTc(0,1)" class="btn btn-info  d-lg-block m-l-15">
+                    <i class="ti-plus"></i> Nuevo
+                </button>
+            </div>
+        </div>
+    </div>
+    @* <div class="text-center">
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+            <strong>Nota - </strong> Haz click sobre Tipo Contribuyente para ver respectivos Sub Contribuyentes :)
+        </div>
+    </div> *@
+   
+    <md-card>
+        <md-card-content>
+            <md-table-container>
+                <table md-table>
+                    <thead md-head>
+                        <tr md-row>
+                            <th md-column></th>
+                            <th md-column>N°</th>
+                            <th md-column>Código</th>
+                            <th md-column>Descripción</th>
+                            <th md-column ng-if="accion.editar || accion.eliminar">Op.</th>
+                        </tr>
+                    </thead>
+                    <tbody md-body>
+                        <tr md-row ng-repeat-start="tc in tipoContribuyentes">
+                            <td md-cell ng-click="expandDetalle(tc)">
+                                <span ng-if="tc.expanded"><i class="fas fa-caret-square-down"></i></span>
+                                <span ng-if="!tc.expanded"><i class="fas fa-caret-square-right"></i></span>
+                            </td>
+                            <td md-cell ng-click="expandDetalle(tc)">{{$index+1}}</td>
+                            <td md-cell ng-click="expandDetalle(tc)">{{tc.codigo}}</td>
+                            <td md-cell ng-click="expandDetalle(tc)">{{tc.descripcion}}</td>
+                            <td md-cell ng-if="accion.editar || accion.eliminar">
+                                <md-button class="md-icon-button md-primary" ng-if="accion.editar" ng-click="abrirModalTc(tc,2)" aria-label="Editar">
+                                    <i class="fa fa-edit"></i>
+                                </md-button>
+                                <md-button class="md-icon-button md-accent" ng-if="accion.eliminar" ng-click="deleteTc(tc)" aria-label="Eliminar">
+                                    <i class="fa fa-trash"></i>
+                                </md-button>
+                            </td>
+                        </tr>
+                        <tr md-row ng-if="tc.expanded" ng-repeat-end="">
+                            <td md-cell colspan="5">
+                                <div class="table-responsive m-t-5">
+                                    <table class="table table-no-bordered table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>N°</th>
+                                                <th>Código</th>
+                                                <th>Descripción</th>
+                                                <th>Estado</th>
+                                                <th>
+                                                    <button class="btn btn-info btn-sm" ng-if="accion.crear" ng-click="abrirModalSubC(tc,1)"><i class="ti-plus"></i></button>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="sc in tc.subContribuyentes">
+                                                <td>{{$index+1}}</td>
+                                                <td>{{sc.subContribuyente.codigo}}</td>
+                                                <td>{{sc.subContribuyente.descripcion}}</td>
+                                                <td ng-bind-html="sc.subContribuyente.estado|estadoPrimario"></td>
+                                                <td>
+                                                    <a href="javascript:void(0)" ng-if="accion.editar" ng-click="abrirModalSubC(sc,2)" class="text-inverse p-r-10" data-toggle="tooltip" title="" data-original-title="Edit"><i class="ti-marker-alt"></i></a>
+                                                    <a href="javascript:void(0)" ng-if="accion.eliminar" ng-click="deleteSubC(sc.subContribuyente)" class="text-inverse" title="" data-toggle="tooltip" data-original-title="Delete"><i class="ti-trash"></i></a>
+                                                </td>
+                                            </tr>
+                                            @*<tr class="text-center" mg-show="tc.subContribuyentes.length==0">
+                                                    <td colspan="5"> No hay registros en esta tabla</td>
+                                                </tr>*@
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </md-table-container>
+        </md-card-content>
+    </md-card>
+
+    <!--Agregar Tipo Contribuyente-->
+    <div id="agregarContribuyente" class="modal fade in" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header {{colorHeader}} text-white">
+                    <h4 class="modal-title"><i class="{{icono}}"></i> {{tituloModal}}</h4>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">
+                        &times;
+                    </button>
+                </div>
+                <form class="form-material" ng-submit="saveUpdateTc(type)">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label>Descripción: <span class="text-danger">*</span></label>
+                                    <input type="text" ng-model="data.descripcion" ng-change="obtenerTresLetras(data)" class="form-control"
+                                           placeholder="Ej: Sociedades">
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                                <div class="form-group">
+                                    <label>Código <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" ng-disabled="data.descripcion==''" ng-model="data.codigo" placeholder="Ej: SO" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-info waves-effect">
+                            <i class="{{btnIcono}}"></i>
+                            {{btnModal}}
+                        </button>
+                        <button type="button" class="btn btn-dark " data-dismiss="modal">
+                            &times; Cerrar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add SubContribuyente -->
+    <div id="agregarSubContribuyente" class="modal fade in" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header {{colorHeader}} text-white">
+                    <h5 class="modal-title"><i class="{{icono}}"></i> {{tituloModal}}</h5>
+                    <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">
+                        &times;
+                    </button>
+                </div>
+                <form ng-submit="saveUpdateSubC(type)" class="form-material" autocomplete="off">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="form-group col-lg-12 col-md-12 col-sm-12">
+                                <label>Tipo Contribuyente: <span class="text-danger">*</span></label>
+                                <select class="form-control" ng-model="tipoContribuyente" disabled
+                                        ng-options="tc as tc.descripcion for tc in selectTipoContribuyentes track by tc.idTipoContribuyente">
+                                </select>
+                            </div>
+                            <div class="form-group col-lg-12 col-md-12 col-sm-12">
+                                <label>Descripción: <span class="text-danger">*</span></label>
+                                <input type="text" ng-model="data.descripcion" class="form-control"
+                                       placeholder="Ej: Micro-Empresa">
+                            </div>
+                            <div class="form-group col-lg-12 col-md-12 col-sm-12">
+                                <label class="col-md-12">Código <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" ng-disabled="data.descripcion==''||data.descripcion==undefined" ng-model="data.codigo" placeholder="Ej: M-E" />
+                            </div>
+
+                            <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12" ng-show="type==2">
+                                <label for="">Estado: </label>
+                                <md-radio-group ng-model="data.estado">
+                                    <md-radio-button ng-value="true">Activo</md-radio-button>
+                                    <md-radio-button ng-value="false">Inactivo</md-radio-button>
+                                </md-radio-group>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-info">
+                            <i class="{{btnIcono}}"></i>
+                            {{btnModal}}
+                        </button>
+                        <button type="button" class="btn btn-dark " data-dismiss="modal">
+                            &times; Cerrar
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+</div>
+
+
+
+
+
+@section Scripts{
+    <script src="~/js/controllers/sri/tipoContribuyenteCtrl.min.js" asp-append-version="true"></script>    
+}
+

@@ -1,0 +1,446 @@
+﻿@*{
+        @inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment hostingEnv
+    }*@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="Herramienta Administrativa & Contable">
+    <meta name="keywords" content="AcontPlus, Contabilidad, Sistema Contable" />
+    <meta name="author" content="AcontPlus">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="AcontPlus" />
+    <meta name="apple-mobile-web-app-title" content="AcontPlus" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#D61672" />
+
+    <title>@ViewData["Title"] - AcontPlus</title>
+
+    @* <link rel="apple-touch-icon" sizes="180x180" href="~/assets/images/icon/apple-touch-icon-180x180.png"> *@
+    @* <link rel="icon" type="image/png" sizes="32x32" href="~/assets/images/icon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/assets/images/icon/favicon-16x16.png"> *@
+    <link href="~/favicon.ico" rel="shortcut icon icon" type="image/x-icon" asp-append-version="true" />
+    <link href="~/favicon.ico" rel="icon" type="image/x-icon" asp-append-version="true" />
+    <link rel="manifest" href="/manifest.json" asp-append-version="true">
+
+    <link href="~/lib/icheck-bootstrap/icheck-bootstrap.min.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/lib/limonte-sweetalert2/sweetalert2.min.css" rel="stylesheet" asp-append-version="true" />
+    <!--css-->
+    <link href="~/lib/bootstrap-daterangepicker/daterangepicker.min.css" rel="stylesheet" />
+    <link href="~/dist/css/style.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/dist/css/pages/tab-page.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/dist/css/pages/floating-label.css" rel="stylesheet" />
+    <link href="~/dist/css/pages/other-pages.css" rel="stylesheet" />
+    <link href="~/lib/magnific-popup.js/magnific-popup.min.css" rel="stylesheet" asp-append-version="true">
+
+    <!--Tooltip-->
+    <link href="~/dist/css/pages/stylish-tooltip.css" rel="stylesheet" />
+    <link href="~/dist/css/pages/user-card.css" rel="stylesheet">
+    <!--Toast-->
+    <link href="~/lib/toastr/toastr.min.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/lib/cute-alert-master/style.css" asp-append-version="true" />
+
+    <!--ui-grid-->
+    <link href="~/lib/angular-ui-grid/ui-grid.css" rel="stylesheet" asp-append-version="true" />
+
+    <!--Tabulator-->
+    <link href="~/lib/tabulator/css/tabulator_simple.min.css" rel="stylesheet" asp-append-version="true" />
+
+    <!--bg tags por eliminar mas adelante-->
+    <link href="~/lib/ng-tags/ng-tags-input.min.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/lib/ng-tags/ng-tags-input.bootstrap.min.css" rel="stylesheet" asp-append-version="true" />
+
+    <!--angular material-->
+    <link href="~/lib/angular-material/angular-material.min.css" rel="stylesheet" asp-append-version="true" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="~/lib/angular-material-data-table/md-data-table.min.css" rel="stylesheet" asp-append-version="true" />
+
+    <!--custom css-->
+    <link href="~/css/acontplus-style.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/css/custom.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/css/spinners.min.css" rel="stylesheet" asp-append-version="true" />
+
+</head>
+
+<body class="skin-custom fixed-layout" ng-class="miniSidebar" ng-cloak ng-app="acontPlusApp">
+    <div id="loaderCss"></div>
+    <div class="preloader">
+        <div class="loader">
+            <div class="loader__figure"></div>
+            <p class="loader__label">AcontPlus</p>
+        </div>
+    </div>
+
+    <img id="jsBarcodeImg" src="" alt="" style="display: none;">
+
+    <div id="main-wrapper" ng-controller="layoutCtrl">
+        <header class="topbar">
+            <nav class="navbar top-navbar navbar-expand-md navbar-dark">
+                <!-- ============================================================== -->
+                <!-- Logo -->
+                <!-- ============================================================== -->
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/Home/Index"  >
+                        <b>
+                            <!-- Dark Logo icon -->
+                            <img src="~/assets/images/icon/logo-icon.png" width="190" alt="homepage" class="dark-logo img-fluid">
+                            <!-- Light Logo icon -->
+                            <img src="~/assets/images/icon/logo-icon.png" width="190" alt="homepage" class="light-logo img-fluid">
+                        </b>
+
+                        <!-- dark Logo text -->
+                        <span style="">
+                            @* <!-- dark Logo text -->
+                         <img src="../assets/images/logo-text.png" alt="homepage" class="dark-logo">
+                         <!-- Light Logo text -->    
+                         <img src="../assets/images/logo-light-text.png" class="light-logo" alt="homepage"> *@
+                         </span>
+                    </a>
+                </div>
+
+                <!-- ============================================================== -->
+                <!-- End Logo -->
+                <!-- ============================================================== -->
+
+                <div class="navbar-collapse">
+
+                    <!-- ============================================================== -->
+                    <!-- toggle and nav items -->
+                    <!-- ============================================================== -->
+                    <ul class="navbar-nav mr-auto">
+                        <!-- This is  -->
+                        <li class="nav-item">
+                            <a class="nav-link nav-toggler d-block d-md-none waves-effect waves-dark"
+                               href="javascript:void(0)">
+                                <icon class="ti-menu"></icon>
+                            </a>
+                        </li>
+                        <li class="nav-item" id="toggleButton">
+                            <a id="menu_toggle" class="nav-link sidebartoggler d-none d-lg-block d-md-block waves-effect waves-dark"
+                               href="javascript:void(0)">
+                                <icon class="icon-menu"></icon>
+                            </a>
+                        </li>
+                        <!-- ============================================================== -->
+                        <li class="nav-item">
+                            <a class="nav-link d-lg-block m-md-block d-none text-white" href="javascript:void(0)">
+                                <span id="horaActual"></span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="navbar-nav d-lg-block m-md-block d-none mx-auto text-white">
+                        <div class="d-flex flex-column">
+                            <div class="p-0 text-white">{{entidad}}</div>
+                            <div class="p-0 text-white"><small>{{nombreComercial}}</small></div>
+                        </div>
+                    </div>
+
+                    <!-- ============================================================== -->
+                    <!-- User profile and search -->
+                    <!-- ============================================================== -->
+                    <ul class="navbar-nav my-lg-0">
+
+                        <li class="nav-item dropdown u-pro">
+                            <a class="nav-link dropdown-toggle waves-effect waves-dark profile-pic" href=""
+                               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <img src="~/assets/images/3.jpg" alt="user" class=""> <span class="hidden-md-down">
+                                    Hola,
+                                    {{usuario}} &nbsp;<icon class="fa fa-angle-down"></icon>
+                                </span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right animated flipInY">
+                                <a href="/Usuario/Perfil" class="dropdown-item">
+                                    <icon class="ti-user"></icon> Mi perfil
+                                </a>
+
+                                <div class="dropdown-divider"></div>
+                                <a href="javascript:void(0)" class="dropdown-item">
+                                    <iconi class="ti-settings"></iconi>
+                                    Seguridad
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a href="javascript:void(0)" ng-click="logout()" class="dropdown-item">
+                                    <icon class="fa fa-power-off"></icon> Cerrar Sesión
+                                </a>
+                            </div>
+                        </li>
+                        <li class="nav-item right-side-toggle">
+                            <a class="nav-link  waves-effect waves-light"
+                               href="javascript:void(0)">
+                                <icon class="ti-settings"></icon>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <!-- ============================================================== -->
+        <!-- End Topbar header -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Left Sidebar   -->
+        <!-- ============================================================== -->
+        <aside class="left-sidebar">
+            <!-- Sidebar scroll-->
+            <div class="scroll-sidebar" style="overflow: auto;">
+                <!-- Sidebar navigation-->
+                <nav class="sidebar-nav">
+                    <ul id="sidebarnav">
+
+
+                        <li>
+                            <span class="has-arrow waves-effect waves-dark">
+                            </span>
+                        </li>
+
+                        <li ng-repeat="m in menus">
+
+                            <a class="has-arrow waves-effect waves-dark {{active?'active':''}}" ng-show="!active"
+                               ng-click="active=true" href="javascript:void(0)" aria-expanded="false">
+                                <i class="{{m.icon}}"></i><span class="hide-menu">{{m.description}}</span>
+                            </a>
+                            <a class="has-arrow waves-effect waves-dark {{active?'active':''}}" ng-show="active"
+                               ng-click="active=false" href="javascript:void(0)" aria-expanded="false">
+                                <i class="{{m.icon}}"></i><span class="hide-menu">{{m.description}}</span>
+                            </a>
+                            <ul ng-repeat="sm in subMenus |orderBy:sm.idSubmenu" aria-expanded="false"
+                                class="collapse {{active?'in':''}}" ng-if="m.idMenu==sm.idMenu">
+                                <li>
+                                    <a href="javascript:void(0)" ng-click="onChangeSubMenu(sm)">
+                                        <i class="{{sm.icon}}"></i> <small class="font-15">{{sm.description}}</small>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+                <!-- End Sidebar navigation -->
+            </div>
+
+            <!-- End Sidebar scroll-->
+        </aside>
+
+        <div class="page-wrapper">
+            <div class="container-fluid">
+                @RenderBody()
+
+                <!-- .right-sidebar -->
+                <div class="right-sidebar">
+                    <div class="slimscrollright">
+                        <div class="rpanel-title">
+                            Configurar Temas <span>
+                                <i class="ti-close right-side-toggle"></i>
+                            </span>
+                        </div>
+                        <div class="r-panel-body">
+                            <ul id="themecolors" class="m-t-20">
+                                <li><b>Claros</b></li>
+                                <li>
+                                    <a href="javascript:void(0)" data-skin="skin-default"
+                                       class="default-theme working">1</a>
+                                </li>
+                                <li><a href="javascript:void(0)" data-skin="skin-green" class="green-theme">2</a></li>
+                                <li><a href="javascript:void(0)" data-skin="skin-red" class="red-theme">3</a></li>
+                                <li><a href="javascript:void(0)" data-skin="skin-blue" class="blue-theme">4</a></li>
+                                <li><a href="javascript:void(0)" data-skin="skin-purple" class="purple-theme">5</a></li>
+                                <li><a href="javascript:void(0)" data-skin="skin-megna" class="megna-theme">6</a></li>
+                                <li class="d-block m-t-30"><b>Oscuros</b></li>
+                                <li>
+                                    <a href="javascript:void(0)" data-skin="skin-default-dark"
+                                       class="default-dark-theme ">7</a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0)" data-skin="skin-green-dark"
+                                       class="green-dark-theme">8</a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0)" data-skin="skin-red-dark" class="red-dark-theme">9</a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0)" data-skin="skin-blue-dark"
+                                       class="blue-dark-theme">10</a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0)" data-skin="skin-purple-dark"
+                                       class="purple-dark-theme">11</a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0)" data-skin="skin-megna-dark"
+                                       class="megna-dark-theme ">12</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- ============================================================== -->
+                <!-- End Right sidebar -->
+                <!-- ============================================================== -->
+            </div>
+        </div>
+        <footer class="footer">
+            @*<input type="text" id="environmentApp" name="name" value="@hostingEnv.EnvironmentName" hidden />*@
+            &copy; 2021 - AcontPlus @*<a asp-area="" asp-controller="Home" asp-action="Privacy"></a>*@
+        </footer>
+
+    </div>
+    @await Html.PartialAsync("_ModalSession")
+
+    <script src="~/lib/jquery/jquery.min.js" asp-append-version="true"></script>
+    <script src="~/lib/popper/popper.min.js" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap/js/bootstrap.min.js" asp-append-version="true"></script>
+    <script src="~/dist/js/perfect-scrollbar.jquery.min.js" asp-append-version="true"></script>
+
+    <script src="~/dist/js/waves.js"></script>
+    <script src="~/dist/js/sidebarmenu.js"></script>
+    <script src="~/dist/js/custom.min.js"></script>
+
+    <script src="~/lib/magnific-popup.js/jquery.magnific-popup.min.js" asp-append-version="true"></script>
+
+    <!--stickey kit -->
+    <script src="~/lib/sticky-kit/sticky-kit.min.js" asp-append-version="true"></script>
+    <script src="~/lib/jquery-sparklines/jquery.sparkline.min.js" asp-append-version="true"></script>
+
+    <!--Sweet Alert-->
+    <script src="~/lib/limonte-sweetalert2/sweetalert2.min.js" asp-append-version="true"></script>
+
+    <!--Toast-->
+    <script src="~/lib/toastr/toastr.min.js" asp-append-version="true"></script>
+
+    <!--angularjs-->
+    <script src="~/lib/angularjs/angular.min.js" asp-append-version="true"></script>
+    <script src="~/lib/angular-messages/angular-messages.min.js" asp-append-version="true"></script>
+    <script src="~/lib/angular-aria/angular-aria.min.js" asp-append-version="true"></script>
+    <script src="~/lib/angular-animate/angular-animate.min.js" asp-append-version="true"></script>
+    <script src="~/lib/angular-sanitize/angular-sanitize.js" asp-append-version="true"></script>
+    <script src="~/lib/angular-filter/angular-filter.js" asp-append-version="true"></script>
+    <script src="~/lib/angular-file-saver/angular-file-saver.min.js" asp-append-version="true"></script>
+    <script src="~/lib/angular-file-saver/angular-file-saver.bundle.min.js" asp-append-version="true"></script>
+    @*<script src="~/lib/ng-idle/angular-idle.min.js" asp-append-version="true"></script>*@
+    <script src="~/lib/angular-ui-router/angular-ui-router.min.js" asp-append-version="true"></script>
+    <script src="~/lib/ngStorage/ngStorage.min.js" asp-append-version="true"></script>
+    <script src="~/lib/angular-cookies/angular-cookies.min.js" asp-append-version="true"></script>
+    <script src="~/lib/angular-uuid2/angular-uuid2.min.js" asp-append-version="true"></script>
+    <!--angularjs-material-->
+    <script src="~/lib/angular-material/angular-material.min.js" asp-append-version="true"></script>
+    <script src="~/lib/angular-material-data-table/md-data-table.min.js" asp-append-version="true"></script>
+    <script src="~/lib/angular-material-data-table/fixed-table-header.js" asp-append-version="true"></script>
+
+    <!--ui-bootstrap-->
+    <script src="~/lib/ui-bootstrap/ui-bootstrap-tpls-3.0.6.min.js" asp-append-version="true"></script>
+    <script src="~/dist/js/pages/jasny-bootstrap.min.js" asp-append-version="true"></script>
+
+    <!--ngMask-->
+    <script src='~/lib/ngMask/ngMask.min.js' asp-append-version="true"></script>
+
+    <!--ui grid-->
+    <script src="~/lib/angular-ui-grid/ui-grid.min.js" asp-append-version="true"></script>
+    <script src="~/lib/angular-ui-grid/ui-grid.auto-resize.min.js" asp-append-version="true"></script>
+    <script src="~/lib/angular-ui-grid/ui-grid.move-columns.js" asp-append-version="true"></script>
+
+    <!--angular match-media for screen size-->
+    <script src="~/lib/angular-media-queries/match-media.js"></script>
+
+    <!--Tabulator-->
+    <script src="~/lib/tabulator/js/tabulator.js" asp-append-version="true"></script>
+
+    <!--momment js-->
+    <script src="~/lib/moment.js/moment.min.js" asp-append-version="true"></script>
+    <script src="~/lib/moment-timezone/moment-timezone-with-data-10-year-range.js" asp-append-version="true"></script>
+
+    <!--angular-file-upload by daniel farid-->
+    <script src="~/lib/danialfarid-angular-file-upload/ng-file-upload-shim.min.js" asp-append-version="true"></script>
+    <script src="~/lib/danialfarid-angular-file-upload/ng-file-upload.min.js" asp-append-version="true"></script>
+
+    <!--Directiva Pagination-->
+    <script src="~/lib/angular-utils-pagination/dirPagination.min.js"></script>
+    <script src="~/lib/bootstrap-daterangepicker/daterangepicker.min.js"></script>
+    <script src="~/lib/angular-daterangepicker/angular-daterangepicker.min.js"></script>
+    <!--angular-jwt-->
+    <script src="~/lib/angular-jwt/angular-jwt.min.js"></script>
+    <!--Chartjs-->
+    <script src="~/lib/Chart.js/Chart.min.js" asp-append-version="true"></script>
+
+    <!--JS Barcode-->
+    <script src="~/lib/jsbarcode/JsBarcode.all.min.js"></script>
+    <script src="~/lib/html2canvas/html2canvas.min.js"></script>
+
+    <!--SingalR-->
+    <script src="~/lib/microsoft-signalr/signalr.min.js"></script>
+
+    <script src="~/js/app/acontPlusApp.js" asp-append-version="true"></script>
+    <script src="~/js/controllers/layoutCtrl.min.js" asp-append-version="true"></script>
+    <!--Common Directives---->
+    <script src="~/js/common/directives/commonDirective.min.js" asp-append-version="true"></script>
+    @* <script src="~/js/common/filters/commonFilter.min.js" asp-append-version="true"></script> *@
+    <!--Common Constants-->
+    <script src="~/js/common/constants/namePathsModal.min.js" asp-append-version="true"></script>
+
+    <!--Common Services-->
+    <script src="~/js/common/services/formularioService.min.js" asp-append-version="true"></script>
+    <script type="module" src="~/js/common/services/commonService.min.js" asp-append-version="true"></script>
+    <script src="~/js/services/documentoVentaService.js" asp-append-version="true"></script>
+    <script src="~/js/services/socketService.js" asp-append-version="true"></script>
+
+
+
+    <!----------------------------Inventory--------------------------------->
+    <script src="~/js/inventario/directives/inventarioDirective.min.js" asp-append-version="true"></script>
+    <script src="~/js/inventario/services/articuloService.min.js" asp-append-version="true"></script>
+    <script src="~/js/inventario/services/inventarioService.min.js" asp-append-version="true"></script>
+    <!----------------------------Inventory---------------------------------->
+    <!--------------------------Module Ventas-------------------------------->
+    <script src="~/js/ventas/services/ventaService.min.js" asp-append-version="true"></script>
+
+
+    <!--Components-->
+    <script src="~/js/common/components/mdAutocompleteCliente.min.js" asp-append-version="true"></script>
+    <script src="~/js/common/components/mdAutocompleteArticulo.min.js" asp-append-version="true"></script>
+
+    <script src="~/js/spinners.min.js" asp-append-version="true"></script>
+    <script src="~/js/doubleScroll.min.js" asp-append-version="true"></script>
+
+    <!--Device Info-->
+    <script src="~/lib/UAParser.js/ua-parser.min.js"></script>
+
+    <script src="~/lib/axios/axios.min.js" asp-append-version="true"></script>
+    @*<script src="~/js/svelte/build/bundle.js" asp-append-version="true"></script>*@
+    <script>
+
+
+        $(document).on({
+            'show.bs.modal': function () {
+                var zIndex = 1040 + (10 * $('.modal:visible').length);
+                $(this).css('z-index', zIndex);
+                setTimeout(function () {
+                    $('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
+                }, 0);
+            }, 'hidden.bs.modal': function () {
+                if ($('.modal:visible').length > 0) {
+                    setTimeout(function () {
+                        $(document.body).addClass('modal-open');
+                    }, 0);
+                }
+            }
+        }, '.modal');
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js', { scope: './' }).then(function (registration) {
+                console.log('Service worker registration succeeded:', registration);
+            }).catch(function (error) {
+                console.log('Service worker registration failed:', error);
+            });
+        } else {
+            console.log('Service workers are not supported.');
+        }
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+
+
+</body>
+
+</html>

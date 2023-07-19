@@ -1,0 +1,78 @@
+USE ACONTPLUS
+--permitir ingreso manual de claves de acceso
+--GO
+--ALTER TABLE Recepcion.DocumentoRecibido ALTER COLUMN serieComprobante VARCHAR(50) NULL
+--GO
+--ALTER TABLE Recepcion.DocumentoRecibido ALTER COLUMN rucEmisor VARCHAR(15) NULL
+--GO
+--ALTER TABLE Recepcion.DocumentoRecibido ALTER COLUMN fechaEmision VARCHAR(50) NULL
+--GO
+--ALTER TABLE Recepcion.DocumentoRecibido ALTER COLUMN fechaAutorizacion VARCHAR(50) NULL
+--GO
+--ALTER TABLE Recepcion.DocumentoRecibido ALTER COLUMN tipoEmision VARCHAR(20) NULL
+--GO
+--ALTER TABLE Recepcion.DocumentoRecibido ALTER COLUMN identificacionReceptor VARCHAR(50) NULL
+--GO
+--ALTER TABLE Recepcion.DocumentoRecibido ALTER COLUMN numeroAutorizacion VARCHAR(49) NULL
+--GO
+--ALTER TABLE Recepcion.DocumentoRecibido ALTER COLUMN importeTotal VARCHAR(50) NULL
+--GO
+--select top 2 *  from Recepcion.DocumentoRecibido where claveAcceso = '2405202301099128640300121080050004331145376177715'
+go
+--select * from ErroresSistema
+--go
+--Recepcion.Documento_Insert 63, 
+--'{
+--  "codEstab": "ESTAB-000000006",
+--  "comprobantes": [
+--    {
+--      "claveAcceso": "2005202307179028338000120010190087506320875063213"
+--    },
+--    {
+--      "claveAcceso": "2005202307210011580300120020020000059681566649714"
+--    }
+--  ]
+--}'
+
+--update Recepcion.DocumentoRecibido set downloaded = 'ND' where claveAcceso = '2005202307210011580300120020020000059681566649714'
+ --declare @json VARCHAR(MAX) = '{
+--  "codEstab": "ESTAB-000000006",
+--  "comprobantes": [
+--    {
+--      "claveAcceso": "2005202307179028338000120010190087506320875063213"
+--    },
+--    {
+--      "claveAcceso": "2005202307210011580300120020020000059681566649714"
+--    }
+--  ]
+--}'
+--,@jsonData NVARCHAR(MAX)
+
+--SELECT  @jsonData = jsonData FROM OPENJSON(@json) WITH(codEstab VARCHAR(MAX) '$.codEstab', jsonData NVARCHAR(MAX) '$.comprobantes' AS JSON)
+
+--SELECT comprobante, serieComprobante, rucEmisor, razonSocialEmisior, fechaEmision, fechaAutorizacion, tipoEmision, identificacionReceptor, claveAcceso, numeroAutorizacion, CASE WHEN LEN(Ltrim(rtrim(importeTotal))) > 0 THEN Ltrim(rtrim(importeTotal)) ELSE NULL END
+
+--			FROM OPENJSON(@jsonData) WITH( 
+--				comprobante VARCHAR(50) '$.comprobante'
+--				,serieComprobante VARCHAR(50) '$.serieComprobante'
+--				,rucEmisor VARCHAR(15) '$.rucEmisor'
+--				,razonSocialEmisior VARCHAR(250) '$.razonSocialEmisior'
+--				,fechaEmision VARCHAR(50) '$.fechaEmision'
+--				,fechaAutorizacion VARCHAR(50) '$.fechaAutorizacion'
+--				,tipoEmision VARCHAR(20) '$.tipoEmision'
+--				,identificacionReceptor VARCHAR(15) '$.identificacionReceptor'
+--				,claveAcceso VARCHAR(50) '$.claveAcceso'
+--				,numeroAutorizacion VARCHAR(50) '$.numeroAutorizacion'
+--				,importeTotal VARCHAR(50) '$.importeTotal'
+--			)
+--TRUNCATE TABLE ErroresSistema
+--declare @xmlDoc xml
+--SELECT @xmlDoc = xmlDoc from Recepcion.DocumentoRecibido where idDocumento = 1
+--select CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc)))
+--SELECT  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//factura/infoFactura/identificacionComprador)[1]','VARCHAR(25)')
+
+--SELECT  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//factura/infoTributaria/estab)[1]','VARCHAR(25)')
+--+ '-' +  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//factura/infoTributaria/ptoEmi)[1]','VARCHAR(25)')
+--+ '-' +  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//factura/infoTributaria/secuencial)[1]','VARCHAR(25)')
+--SELECT  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//factura/infoTributaria/ruc)[1]','VARCHAR(25)')
+--SELECT  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//factura/infoTributaria/razonSocial)[1]','VARCHAR(1000)')

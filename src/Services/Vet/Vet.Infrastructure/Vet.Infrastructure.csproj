@@ -1,0 +1,64 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>disable</Nullable>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="Data\SeedData\Behaviors.json" />
+	  <None Remove="Data\SeedData\BehaviorStatuses.json" />
+	  <None Remove="Data\SeedData\Breeds.json" />
+	  <None Remove="Data\SeedData\Diseases.json" />
+	  <None Remove="Data\SeedData\DiseaseStatuses.json" />
+	  <None Remove="Data\SeedData\Genderes.json" />
+	  <None Remove="Data\SeedData\PetTypes.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.19" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.8" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.8">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.8" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.8">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0" />
+		<PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Vet.Core\Vet.Core.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Content Include="Data\SeedData\Behaviors.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Data\SeedData\BehaviorStatuses.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Data\SeedData\Breeds.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Data\SeedData\Diseases.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Data\SeedData\DiseaseStatuses.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Data\SeedData\Genderes.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Data\SeedData\PetTypes.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+</Project>

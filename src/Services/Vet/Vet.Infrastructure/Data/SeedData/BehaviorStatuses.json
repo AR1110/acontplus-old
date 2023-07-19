@@ -1,0 +1,17 @@
+[
+  {
+    "Code": "S",
+    "Name": "Si",
+    "Order": 1
+  },
+  {
+    "Code": "N",
+    "Name": "No",
+    "Order": 2
+  },
+  {
+    "Code": "M",
+    "Name": "Medio",
+    "Order": 3
+  }
+]

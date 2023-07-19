@@ -18,20 +18,21 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 
-	SELECT 
+	SELECT TOP (@cantDocs)
 	de.codDoc, 
-	td.descripcion as comprobante,
+	comprobante,
+	de.serieComprobante,
 	n.estado,
 	n.idNotificacionTributaria, 
 	n.idDocumentoElectronico, 
 	ISNULL(n.receptor,'') receptor, 
 	de.claveAcceso, 
 	ISNULL(de.xmlSri, '') xmlSri,
-	jsonParmeter = CASE codDoc WHEN '01' THEN '[{"codigo":"RF", "format":"pdf", "id":'+CAST(de.idDocumento AS varchar)+'}]' 
-	                           WHEN '03' THEN '[{"codigo":"RLC", "format":"pdf", "id":'+CAST(de.idDocumento AS varchar)+'}]'
-							   WHEN '04' THEN '[{"codigo":"RNCC", "format":"pdf", "id":'+CAST(de.idDocumento AS varchar)+'}]'
-							   WHEN '06' THEN '[{"codigo":"RGR", "format":"pdf", "id":'+CAST(de.idDocumento AS varchar)+'}]'
-							   WHEN '07' THEN '[{"codigo":"RRC", "format":"pdf", "id":'+CAST(de.idDocumento AS varchar)+',"versionComp":"'+de.versionComp+'"}]'
+	jsonParmeter = CASE codDoc WHEN '01' THEN '[{"codigo":"RF"  ,"format":"pdf" ,"id":'+CAST(de.idDocumento AS varchar)+'}]' 
+	                           WHEN '03' THEN '[{"codigo":"RLC" ,"format":"pdf" ,"id":'+CAST(de.idDocumento AS varchar)+'}]'
+							   WHEN '04' THEN '[{"codigo":"RNCC","format":"pdf" ,"id":'+CAST(de.idDocumento AS varchar)+'}]'
+							   WHEN '06' THEN '[{"codigo":"RGR" ,"format":"pdf" ,"id":'+CAST(de.idDocumento AS varchar)+'}]'
+							   WHEN '07' THEN '[{"codigo":"RRC" ,"format":"pdf" ,"id":'+CAST(de.idDocumento AS varchar)+',"versionComp":"'+de.versionComp+'"}]'
 							 END
 	,storedProcedureSendMail = CASE codDoc WHEN '01' THEN 'FactElect.Factura_SendEmail' 
 	                                       WHEN '03' THEN 'FactElect.Liquidacion_Send_Email'
@@ -39,11 +40,9 @@ BEGIN
 										   WHEN '06' THEN 'FactElect.GuiaRemision_Send_Email'
 							               WHEN '07' THEN 'FactElect.Retencion_Send_Email'
 							 END
-	FROM FactElect.NotificacionTributaria n
-	INNER JOIN DocumentoElectronico de ON n.idDocumentoElectronico = de.idDocumentoElectronico	
-	INNER JOIN dbo.TipoDocumento td ON td.codigoSri = de.codDoc
+	--jsonParmeter = '[{"format":"pdf" ,"id":'+CAST(de.idDocumento AS varchar)+',"codDoc":' + '"' + de.codDoc + '"' + '}]' 
+	FROM FactElect.NotificacionTributaria n WITH (NOLOCK)
+	INNER JOIN v_DocElectronico de WITH (NOLOCK) ON n.idDocumentoElectronico = de.idDocumentoElectronico
 	WHERE n.estado = 'NE'
-
-	
 END
 GO

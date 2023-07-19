@@ -27,13 +27,11 @@ BEGIN
     DECLARE @rdlcParams VARCHAR(MAX)
 	DECLARE @imagen VARBINARY(MAX)
 	DECLARE @mimeType VARCHAR(150)
-	DECLARE @parameter VARCHAR(MAX)
 	DECLARE @dataSources VARCHAR(MAX)
 	DECLARE @headerDs NVARCHAR(MAX)
 	DECLARE @detailDs VARCHAR(MAX)
 	DECLARE @payment  VARCHAR(MAX)
 	DECLARE @infoAdditionalDs VARCHAR(MAX)
-	DECLARE @normativeDs VARCHAR(MAX)
 	DECLARE @claveAcceso VARCHAR(50)
 	DECLARE @nroDoc VARCHAR(20)
 	DECLARE @fecha VARCHAR(100)
@@ -42,8 +40,6 @@ BEGIN
 	DECLARE @razonSocial VARCHAR(200)
 	DECLARE @telefono VARCHAR(50) 
 	DECLARE @subject VARCHAR(100)
-	DECLARE @email VARCHAR(50) = 'envio.comprobantes@acontplus.com.ec'
-	DECLARE @password VARCHAR(50) = 'rmdodmyvosnwxzwt'
 	DECLARE @nameDoc VARCHAR(150)
 	DECLARE @dataMail VARCHAR(MAX)
 	DECLARE @cc VARCHAR(100)
@@ -95,8 +91,8 @@ BEGIN
 							,s.contribuyenteEspecial
 							,s.obligadoContabilidad 
 							,s.nombreComercial
-							,agenteRetencion
-							,contribuyenteRimpe 
+							,contribuyenteRimpe = ISNULL(s.contribuyenteRimpe,'')
+							,agenteRetencion = ISNULL('AGENTE DE RETENCION RESOLUCION NRO: '+s.agenteRetencion,'')
 							,nroIdentificacionTransportista = t.nroIdentificacion
 							,nombreTransportista       = t.nombre 
 							,placa                     = v.placa
@@ -161,15 +157,9 @@ BEGIN
 	       ,claveAcceso = @claveAcceso
 		   ,rdlcParams = @rdlcParams
 		   ,dataSources = @dataSources
-		   ,ISNULL(@email,'') as 'from'
-		   ,ISNULL(@password,'') as 'password'
 		   ,ISNULL(@subject,'') as 'subject'
 		   ,ISNULL(@cc,'') as 'cc'  
 		   ,ISNULL(@nameDoc,'') as 'invoiceName'
-		   ,'logoAcontPlus.jpg' logo
-		   ,'smtp.gmail.com' host
-		   ,587 as 'port'
-		   ,1 EnableSsl
 		   ,dataMail = @dataMail
 
 

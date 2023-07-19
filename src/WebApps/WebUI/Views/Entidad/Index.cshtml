@@ -1,0 +1,108 @@
+﻿@{
+    ViewData["title"] = "Entidad";
+}
+
+
+<div ng-controller="entidadCtrl">
+    <div ng-show="accion.leer">
+        <div class="row page-titles">
+            <div class="col-md-5 align-self-center">
+                <h4 class="text-themecolor">Gestión de Entidades</h4>
+            </div>
+            <div class="col-md-7 align-self-center text-right">
+                <div class="d-flex justify-content-end align-items-center">
+
+                    <button type="button" ng-if="accion.leer && accion.crear" ng-click="openModal()"
+                        class="btn btn-info  m-l-15">
+                        <i class="fa fa-plus-circle"></i> Nuevo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <md-toolbar class="md-table-toolbar md-default">
+                        <div class="md-toolbar-tools">
+
+                            <div class="col-lg-9 col-md-6 col-sm-1 col-xs-1 m-t-20">
+                                @*<span class="form-group pull-left page-size form-inline">
+                                <select class="form-control control-color"
+                                ng-model="pageSize"
+                                ng-change="changePageSize()"
+                                ng-options="ra for ra in recordsQuantity">
+                                </select>
+                                </span>*@
+                            </div>
+                            <div class="col-lg-3 col-md-6 col-sm-11 col-xs-11">
+                                <form class="form-material">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" ng-model="buscar"
+                                            placeholder="Buscar" />
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-secondary btn-xs"
+                                                ng-click="getEntidades()">
+                                                <i class="fas fa-redo"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+                    </md-toolbar>
+
+                    <md-table-container>
+                        <table md-table>
+                            <thead md-head>
+                                <tr md-row>
+                                    <th md-column ng-if="accion.editar|| accion.eliminar">Op.</th>
+                                    <th md-column>N°</th>
+                                    <th md-column>Ruc</th>
+                                    <th md-column>Razón Social</th>
+                                    <th md-column>Nombre Comercial</th>
+                                    <th md-column>Telefono</th>
+                                    <th md-column>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody md-body>
+                                <tr md-row ng-repeat="e in entidades|filter:buscar">
+                                    <td md-cell ng-show="accion.editar || accion.eliminar">
+                                        <div class="row justify-content-center">
+                                            <div class="col-4">
+                                                <a href="javascript:void(0)" ng-if="accion.editar"
+                                                    ng-click="openModal(e)" class="btn btn-info btn-xs"><i
+                                                        class="ti-pencil"></i></a>
+                                            </div>
+                                            @* <div class="col-4">
+                                            <a href="javascript:void(0)" tooltip-placement='top'
+                                            uib-tooltip="ConfiguraciÓn de SRI" ng-click="openModalConfigSri(e)"
+                                            class="btn btn-dark btn-xs"><i class="fas fa-cog"></i></a>
+                                            </div> *@
+                                        </div>
+                                    </td>
+                                    <td md-cell>{{$index+1}}</td>
+                                    <td md-cell><span ng-click="abrirModal(e,4)">{{e.ruc}}</span></td>
+                                    <td md-cell><a href="javascript:void(0)" ng-click="verDetalle(e)">
+                                            {{e.razonSocial}}</a></td>
+                                    <td md-cell>{{e.nombreComercial}}</td>
+                                    <td md-cell>{{e.telefono}}</td>
+                                    <td md-cell ng-bind-html="e.estado | estadoPrimario"></td>
+                                </tr>
+                                <tr md-row ng-show="entidades.length==0">
+                                    <td md-cell colspan="8" class="text-center">No hay registros disponibles en esta
+                                        tabla.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </md-table-container>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/config/controllers/entidadCtrl.min.js" asp-append-version="true"></script>
+}

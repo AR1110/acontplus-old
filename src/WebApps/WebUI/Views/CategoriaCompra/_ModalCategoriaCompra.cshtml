@@ -1,0 +1,33 @@
+<div class="modal-header">
+    <h5 class="modal-title">{{$ctrl.tipoRegistro==1?'Nuevo':'Editar'}} Categoria de Compra</h5>
+    <button class="close" ng-click="$ctrl.closeModal()">&times;</button>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
+            <label for="Descripcion">Descripción <span class="text-danger">*</span></label>
+            <input type="text" ng-model="$ctrl.data.descripcion" touppercase class="form-control border-select" 
+                    ng-keyup="$ctrl.obtenerTresLetras()" placeholder="Ej: Inventarios">
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
+            <label for="codigo">Código <span class="text-danger">*</span></label>
+            <input type="text" ng-model="$ctrl.data.codigo"  touppercase 
+                    ng-disabled="$ctrl.tipoRegistro==2" class="form-control border-select" placeholder="Ej: INV">
+        </div>
+    </div>
+    <div ng-if="$ctrl.tipoRegistro==2">
+        <label for="">Estado: </label>
+        <md-radio-group ng-model="$ctrl.data.estado">
+            <md-radio-button ng-value="true">Activo</md-radio-button>
+            <md-radio-button ng-value="false">Inactivo</md-radio-button>
+        </md-radio-group>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="submit" class="btn btn-success" ng-click="$ctrl.saveUpdate()">
+        {{$ctrl.tipoRegistro===1?'Guardar':'Actualizar'}}
+    </button>
+    <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
+</div>

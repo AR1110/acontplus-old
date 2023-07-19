@@ -1,0 +1,23 @@
+{
+    "extends": "@tsconfig/svelte/tsconfig.json",
+
+    "include": ["**/*"],
+    "exclude": [
+        "node_modules/*"
+    ],
+
+    "compilerOptions": {
+        "target": "es2015",
+        // "module": "CommonJS",
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        // "lib": [ "es2015", "dom" ],
+        "baseUrl": ".",
+        "paths": {
+            "$lib/*": ["App/lib/*"],
+            "$pet/*": ["App/lib/Pet/*"], 
+            "$petbreed/*": ["App/lib/PetBreed/*"],
+            "$petmedicalhistory/*": ["App/lib/PetMedicalHistory/*"],
+        }
+    }
+}

@@ -1,0 +1,40 @@
+
+<form ng-submit="onUpdate()" autocomplete="off">    
+    <div class="modal-header bg-info text-white">
+        <h5 class="modal-title">Editar Usuario</h5>
+        <button type="button" class="close" ng-click="closeModal()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">  
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label for="">Nro. Identificación</label>
+                    <input type="text" ng-model="data.nroIdentificacion" valid-number class="form-control border-select">
+                </div>
+            </div>
+        </div>                  
+        <div class="row">
+            <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
+                <label class="text-muted">Nombre Completo: <span class="text-danger">*</span></label>
+                <input type="text" ng-model="data.nombreCompleto" touppercase valid-letra class="form-control border-select" placeholder="Ej: Znchéz">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
+                <label class="text-muted">Email: <span class="text-danger">*</span> </label>
+                <div class="controls">
+                    <input type="text" ng-model="data.correo" class="form-control correo border-select" validate-email placeholder="Ej: admin@gmail.com">
+                    <small class="invalid-feedback">Email no válido </small>
+                </div>
+            </div>                      
+        </div>                                       
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-info"><i class="fa fa-edit"></i> Actualizar</button>
+        <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
+    </div>
+
+</form>

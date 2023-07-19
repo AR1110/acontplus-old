@@ -24,23 +24,28 @@ IF OBJECT_ID(N'Ventas.Aprob_Document_Insert', N'P') IS NOT NULL
 DROP PROCEDURE Ventas.Aprob_Document_Insert 
 GO
 CREATE PROCEDURE Ventas.Aprob_Document_Insert 
-	@idRol INT 
-   ,@jsonHeader	 VARCHAR(MAX)
-   ,@jsonDetail	 VARCHAR(MAX)
-   ,@jsonHistory VARCHAR(MAX)
+	@idUsuarioRol INT 
+   ,@comprobante VARCHAR(MAX)
+   ,@detalle	 VARCHAR(MAX)
+   ,@historial VARCHAR(MAX)
+   ,@infoAdicional VARCHAR(MAX)
+   ,@historialVenta VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
+	DECLARE @idAprobacion INT 
+	DECLARE @idTipoDocumento INT
 	DECLARE @idEntidad INT 
 	DECLARE @idUsuario INT
 	DECLARE @idPuntoEmision INT
 	DECLARE @uniqueId VARCHAR(150) = NEWID()
 	DECLARE @docOrigen VARCHAR(5)
+	DECLARE @docDestino VARCHAR(5)
 	DECLARE @idEstadoDocumento INT
-	DECLARE @codigoPorcentaje INT 
+	DECLARE @codigoPorcentaje INT = 2
 
     DECLARE @fechaEmision DATETIME
 	DECLARE @identificacionComprador VARCHAR(20)
@@ -53,32 +58,133 @@ BEGIN
     DECLARE @secuencial INT
     DECLARE @claveAcceso VARCHAR(50)
 
+	DECLARE @tbComprobante  AS TABLE (
+		 idCliente INT NOT NULL
+		,idPuntoEmision INT NOT NULL
+		,fechaEmision VARCHAR(300)
+		,codDoc VARCHAR(5) NOT NULL
+		,totalSinImpuestos NUMERIC(18,5) NOT NULL
+		,totalDescuento NUMERIC(18,5) NOT NULL
+		,totalConImpuestos NUMERIC(18,5) NOT NULL
+		,propina NUMERIC(18,5) NOT NULL
+		,importeTotal NUMERIC(18,5) NOT NULL
+		,codigoPorcentaje INT NOT NULL
+		,docOrigen VARCHAR(15) NOT NULL
+		,docDestino VARCHAR(15) NOT NULL
+		,observacion VARCHAR(300) NULL
+	)
+
+	DECLARE @tbDetalle AS TABLE (
+		 orderIndex INT NOT NULL
+		,idTarifa INT NOT NULL
+		,idArticulo INT NOT NULL
+		,idMedida INT NOT NULL
+		,idTipoIva INT NOT NULL
+		,idBodega INT NOT NULL
+		,cantidad NUMERIC(18,5) NOT NULL
+		,descripcion VARCHAR(300) NOT NULL
+		,precioUnitario NUMERIC(18,5) NOT NULL
+		,descuento NUMERIC(18,5) NOT NULL
+		,precioTotalSinImpuesto NUMERIC(18,5) NOT NULL
+		,codigoPorcentaje INT NOT NULL
+		,tarifa NUMERIC(18,5) NOT NULL
+		,baseImponible NUMERIC(18,5) NOT NULL
+	)
+
+	DECLARE @tbHistorial AS TABLE (
+		idDocumento INT NOT NULL
+	   ,serie VARCHAR(20) NOT NULL
+	)
+
+	DECLARE @tbInfoAdicional AS TABLE (
+		 nombre VARCHAR(300) NOT NULL
+		,valor VARCHAR(300) NOT NULL
+	)
+
+	DECLARE @tbHistorialVenta AS TABLE (
+		idInfoAdicional INT UNIQUE NOT NULL
+	)
+
+	--SELECT '0'code, @comprobante AS 'message'
+	--RETURN
+	--======================Fecha Emision===============================
+
 	BEGIN TRY 
-		SELECT @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
+		
+		INSERT INTO @tbComprobante
+		      (idCliente,idPuntoEmision,fechaEmision,codDoc,totalSinImpuestos,totalDescuento,totalConImpuestos,propina,importeTotal,codigoPorcentaje,docOrigen, docDestino, observacion)
+		SELECT idCliente,idPuntoEmision,fechaEmision,codDoc,totalSinImpuestos,totalDescuento,totalConImpuestos,propina,importeTotal,codigoPorcentaje,docOrigen, docDestino, observacion
+		FROM OPENJSON(@comprobante)
+		WITH (
+				idCliente                   INT '$.idCliente' 
+			   ,idPuntoEmision              INT '$.idPuntoEmision' 
+			   ,fechaEmision       VARCHAR(300) '$.fechaEmision'
+			   ,codDoc               VARCHAR(5) '$.codDoc'
+			   ,totalSinImpuestos NUMERIC(18,5) '$.subTotalSinImpuestos' 
+			   ,totalDescuento    NUMERIC(18,5) '$.totalDescuento'
+			   ,totalConImpuestos NUMERIC(18,5) '$.total' 
+			   ,propina           NUMERIC(18,5) '$.propina'
+			   ,importeTotal      NUMERIC(18,5) '$.total'
+			   ,codigoPorcentaje            INT '$.codigoPorcentaje' 
+			   ,docOrigen           VARCHAR(15) '$.docOrigen'
+			   ,docDestino          VARCHAR(15) '$.docDestino'
+			   ,observacion        VARCHAR(300) '$.observacion'
+		     )
 
-		SELECT @ruc = ruc FROM dbo.Entidad WHERE idEntidad = @idEntidad
+		INSERT INTO @tbDetalle 
+			  (orderIndex,idTarifa,idBodega,idArticulo,idMedida,idTipoIva,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,baseImponible)
+		SELECT orderIndex,idTarifa,idBodega,idArticulo,idMedida,idTipoIva,cantidad,descripcion,precioUnitario,descuento,precioTotalSinImpuesto,codigoPorcentaje,tarifa,baseImponible
+		FROM OPENJSON(@detalle)
+		WITH (
+				orderIndex                       INT '$.orderIndex',
+				idTarifa                         INT '$.idTarifa'
+			   ,idArticulo                       INT '$.idArticulo'
+		       ,idBodega                         INT '$.idBodega'
+			   ,idMedida                         INT '$.idMedida' 
+			   ,idTipoIva                        INT '$.idTipoIva' 
+		       ,cantidad               NUMERIC(18,5) '$.cantidad' 
+		       ,descripcion             VARCHAR(300) '$.descripcion' 
+		       ,precioUnitario         NUMERIC(18,5) '$.precioUnitario' 
+		       ,descuento              NUMERIC(18,5) '$.descuento'
+		       ,precioTotalSinImpuesto NUMERIC(18,5) '$.precioTotalSinImpuesto' 
+		       ,codigoPorcentaje                 INT '$.codigoPorcentaje'
+		       ,tarifa                 NUMERIC(18,5) '$.tarifa'
+		       ,baseImponible          NUMERIC(18,5) '$.baseImponible'
+		     )
 
-		SELECT @codigoPorcentaje = codigoPorcentaje FROM Config.GestionSistema WHERE idEntidad = @idEntidad
+		INSERT INTO @tbHistorial  (idDocumento,serie) SELECT idDocumento,serie FROM OPENJSON(@historial) WITH (idDocumento INT '$.idDocumento' ,serie VARCHAR(30) '$.serie')
 
-		SELECT @idEstadoDocumento = idEstadoPago FROM dbo.EstadoPago WHERE codigo = 'APL'
+		INSERT INTO @tbInfoAdicional (nombre,valor) SELECT nombre,valor FROM OPENJSON(@infoAdicional) WITH (nombre VARCHAR(300) '$.nombre' ,valor VARCHAR(300) '$.valor')
+		
+		INSERT INTO @tbHistorialVenta (idInfoAdicional) SELECT idInfoAdicional FROM OPENJSON(@historialVenta) WITH (idInfoAdicional INT '$.idInfoAdicional')
+		
 
-		SELECT @docOrigen = docOrigen FROM OPENJSON(@jsonHeader) WITH (docOrigen VARCHAR(5) '$.docOrigen')
+		-- ========================== CAPTURAR LAS VARIABLES =============================================================
+		SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = 'APR'
+
+		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
+
+		SELECT TOP 1 @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
+
+		SELECT @docOrigen = docOrigen , @docDestino = docDestino FROM @tbComprobante
 
 		SELECT	
 			@idPuntoEmision          = dt.idPuntoEmision 
 		   ,@identificacionComprador = numeroIdentificacion
-		   ,@estab                   = s.estab
-		   ,@ptoEmi                  = pto.ptoEmi
-		   ,@ambiente                = pto.ambiente
+		   ,@estab                   = es.estab
+		   ,@ptoEmi                  = pt.ptoEmi
+		   ,@ambiente                = pt.ambiente
 		   ,@fechaEmision            = dt.fechaEmision
-		FROM Helper.F_DeserializeDocument_header(@jsonHeader) dt 
-		INNER JOIN dbo.PuntoEmision  pto ON pto.idPuntoEmision = dt.idPuntoEmision
-		INNER JOIN Sri.Establecimiento s ON s.codEstab         = pto.codEstab
-		INNER JOIN dbo.Cliente        cl ON cl.idCliente       = dt.idCliente 
-
+		FROM @tbComprobante dt 
+		INNER JOIN dbo.PuntoEmision    pt WITH (NOLOCK) ON pt.idPuntoEmision = dt.idPuntoEmision
+		INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pt.codEstab
+		INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente      = dt.idCliente 
+		
 		SELECT @secuencial =  COUNT(*)+1 FROM Ventas.Aprob_Document WHERE idPuntoEmision = @idPuntoEmision
 
-		SELECT @claveAcceso = dbo.ufnGeneraClaveAcceso(dbo.AFTDeleteCero(@estab)
+		IF @docDestino = '01'
+			BEGIN
+				SET @claveAcceso = dbo.ufnGeneraClaveAcceso(dbo.AFTDeleteCero(@estab)
 													   ,@codDoc
 													   ,@ambiente
 													   ,@tipoEmision
@@ -86,6 +192,40 @@ BEGIN
 													   ,@ruc
 													   ,@estab+@ptoEmi
 													   ,dbo.AFTAutoComplete(@secuencial))
+			END 
+		ELSE
+			BEGIN
+				SET @claveAcceso= NEWID()
+
+				SET @codDoc = 'NE'
+			END 
+		
+		-- ========================= VALIDADACIONES =====================================================	
+
+		IF (SELECT COUNT(*) FROM @tbComprobante) = 0 
+			BEGIN
+				SELECT '0'code,'Erro en la informacion del comprobante' as 'message'
+				RETURN
+			END 
+
+		IF  CAST(@fechaEmision AS DATE)  >  CAST(dbo.ufnGetDateEcuador() AS DATE)
+			BEGIN 
+				SELECT '0'code, 'La fecha de emisión del documento no puede ser posterior a la fecha actual.' as 'message'
+				RETURN 
+			END
+
+		IF (SELECT COUNT(*) FROM @tbDetalle) = 0 
+			BEGIN
+				SELECT '0'code,'Error en la informacion del detalle' as 'message'
+				RETURN
+			END 
+
+		IF (SELECT COUNT(*) FROM @tbHistorial) = 0 
+			BEGIN
+				SELECT '0'code,'Erro en la informacion del historial' as 'message'
+				RETURN
+			END 
+		
 		IF @claveAcceso IS NULL
 			BEGIN
 				SELECT '0'code,'Error critico la clave de Acceso no se genero correctamente' as 'message'
@@ -138,22 +278,25 @@ BEGIN
 			   ,@tipoEmision
 			   ,@secuencial
 			   ,@claveAcceso
-			   ,subTotalSinImpuestos
+			   ,totalSinImpuestos
 			   ,totalDescuento
-			   ,total
+			   ,totalConImpuestos
 			   ,propina
-			   ,total
+			   ,importeTotal
 			   ,@codigoPorcentaje
 			   ,@docOrigen
 			   ,observacion
 			   ,@idEntidad
 			   ,@idUsuario
-			FROM Helper.F_DeserializeDocument_header(@jsonHeader)
+			FROM @tbComprobante
+
+			SET @idAprobacion = @@IDENTITY
 
 			INSERT INTO Ventas.Aprob_Document_Detailt(
 				uniqueId
 			   ,codArticulo
 			   ,idTarifa
+			   ,idBodega
 			   ,codMedida
 			   ,codigoPrincipal
 			   ,codigoAuxiliar
@@ -169,51 +312,71 @@ BEGIN
 			)
 			SELECT 
 			    @uniqueId
-			   ,a.code_unique
+			   ,ar.code_unique
 			   ,dt.idTarifa
-			   ,m.codigo
-			   ,a.codigo
-			   ,a.codigoAuxiliar
+			   ,dt.idBodega
+			   ,me.codigo
+			   ,ar.codigo
+			   ,ar.codigoAuxiliar
 			   ,dt.cantidad
 			   ,dt.descripcion
 			   ,dt.precioUnitario
-			   ,dt.valorDescuento
+			   ,dt.descuento
 			   ,dt.precioTotalSinImpuesto
-			   ,i.codigo
+			   ,im.codigo
 			   ,ti.codigoPorcentaje
 			   ,ti.porcentaje
 			   ,dt.precioTotalSinImpuesto
-			FROM Helper.F_DeserializeDocument_Detail(@jsonDetail) dt
-			LEFT JOIN dbo.Articulo a ON a.idArticulo = dt.idArticulo
-			LEFT JOIN dbo.TipoIva ti ON ti.idTipoIva = dt.idTipoIva
-			LEFT JOIN dbo.Impuesto i ON i.idImpuesto = ti.idImpuesto
-			LEFT JOIN dbo.Medida   m ON m.idMedida   = dt.idMedida
+			FROM @tbDetalle dt
+			LEFT JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = dt.idArticulo
+			LEFT JOIN dbo.TipoIva  ti WITH (NOLOCK) ON ti.idTipoIva  = dt.idTipoIva
+			LEFT JOIN dbo.Impuesto im WITH (NOLOCK) ON im.idImpuesto = ti.idImpuesto
+			LEFT JOIN dbo.Medida   me WITH (NOLOCK) ON me.idMedida   = dt.idMedida
+			ORDER BY dt.orderIndex ASC
 
-			INSERT INTO Ventas.Aprob_Document_Hist(
-				uniqueId
-			   ,idDocumento
-			   ,codDocumento
-			   ,serie
-			)
-			SELECT 
-				@uniqueId
-			   ,idDocumento
-			   ,@docOrigen
-			   ,serie
-			FROM OPENJSON(@jsonHistory) 
-			WITH (idDocumento INT '$.idDocumento' ,serie VARCHAR(30) '$.serie')
+			INSERT INTO Ventas.Aprob_Document_Hist(uniqueId,idDocumento,codDocumento,serie)
+			SELECT @uniqueId,idDocumento,@codDoc,serie FROM @tbHistorial 
+
+			INSERT INTO InfoAdicionalDoc (idComprobante,idTipoDocumento,nombre,valor)
+						          SELECT @idAprobacion,@idTipoDocumento,nombre,valor FROM @tbInfoAdicional
+
+			INSERT INTO Ventas.HistoryInfoAdicional(idInfoAdicional,idDocumento,codDoc,secuencial,estab,ptoEmi)
+			                                 SELECT idInfoAdicional,@idAprobacion,'APR',@secuencial,@estab,@ptoEmi FROM @tbHistorialVenta
 
 			IF @docOrigen = 'NE'
 				BEGIN
-					UPDATE ne SET	
-						ne.idEstadoPago = @idEstadoDocumento
-					FROM dbo.NotaEntrega ne WITH(NOLOCK)
-				    JOIN (SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt
-					       WHERE dt.uniqueId = @uniqueId) dt ON dt.idDocumento = ne.idNotaEntrega
+
+					DECLARE @idDocumento AS INT
+
+					DECLARE cursor_inventory CURSOR LOCAL FOR
+					SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt
+				    WHERE dt.uniqueId = @uniqueId
+
+					SELECT TOP 1 @idEstadoDocumento = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'TRA'
+
+					UPDATE cc SET cc.idEstadoPago = @idEstadoDocumento FROM Contabilidad.CuentaPorCobrar cc WITH(NOLOCK)
+				    JOIN (SELECT dt.idDocumento FROM Ventas.Aprob_Document_Hist dt WHERE dt.uniqueId = @uniqueId) dt ON dt.idDocumento = cc.idDocumento AND cc.codDoc = 'NE'
+
+					OPEN cursor_inventory
+
+						FETCH NEXT FROM cursor_inventory INTO @idDocumento
+
+						WHILE @@FETCH_STATUS = 0
+							BEGIN
+								--tipo transaccion  salidas
+								--tipo documento  NotaEntrega
+								EXEC Inventario.Transaccion_Update 'S','NE',@idDocumento,2
+								FETCH NEXT FROM cursor_inventory INTO @idDocumento
+							END
+					CLOSE cursor_inventory
+					DEALLOCATE cursor_inventory 
+
 				END 
 
 			IF @docOrigen = 'PR'
 				BEGIN
+					SELECT TOP 1 @idEstadoDocumento = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'APL'
+
 					UPDATE pr SET	
 						pr.idEstadoDocumento = @idEstadoDocumento
 					FROM dbo.Proforma pr WITH(NOLOCK)

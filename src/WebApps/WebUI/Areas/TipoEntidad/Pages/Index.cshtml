@@ -1,0 +1,90 @@
+@page
+@model WebUI.Areas.TipoEntidad.Pages.Index
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="tipoEntidadCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Gestión de Tipo Entidad</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+                @*<ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
+                <li class="breadcrumb-item active">Tipo Entidad</li>
+                </ol>*@
+                <button type="button" ng-click="openModal()" class="btn btn-info d-none d-lg-block m-l-15">
+                    <i class="ti-plus"></i> Nuevo
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            @* <div class="row">
+            <div class="col-lg-9">
+            <span class="form-group pull-left page-size form-inline">
+            <select class="form-control control-color" ng-model="pageSize" ng-change="changePageSize()"
+            ng-options="ra for ra in recordsQuantity">
+            </select>
+            </span>
+            </div>
+            <div class="col-lg-3">
+            <form class="form-material">
+            <input type="text" class="form-control" ng-model="buscar" placeholder="Buscar Tipo Entidad" />
+            </form>
+            </div>
+            </div> *@
+            <div class="table-responsive ">
+                <table class="table table-no-bordered  text-center">
+                    <thead>
+                        <tr>
+                            <th>Op.</th>
+                            <th>N°</th>
+                            <th>Código</th>
+                            <th>Descripción</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="te in tipoEntidades | filter:buscar">
+                            <td>
+                                <div class="justify-content-center">
+                                    <a href="javascript:void(0)" ng-click="openModal(te)" class="btn btn-info btn-xs"
+                                        title="Actualizar" data-toggle="tooltip"><i class="ti-pencil"></i></a>
+                                    <a href="javascript:void(0)" ng-click="askToDelete(te)"
+                                        class="btn btn-danger btn-xs" data-toggle="tooltip" title="Eliminar"><i
+                                            class="ti-trash"></i></a>
+                                </div>
+                            </td>
+                            <td>{{$index+1}}</td>
+                            <td>{{te.codigo}}</td>
+                            <td>{{te.descripcion}}</td>
+                            <td ng-bind-html="te.estado | estadoPrimario"></td>
+                        </tr>
+                    </tbody>
+                    @* <tfoot>
+                    <tr>
+                    <td align="center" colspan="5">
+                    <div class="pull-left">
+                    <ul uib-pagination total-items="totalRecords" items-Per-Page="pageSize"
+                    ng-change="pagechanged()" ng-model="pageIndex" max-size="maxSize"
+                    class="pagination" boundary-links="true" rotate="false"></ul>
+                    </div>
+                    </td>
+                    </tr>
+                    </tfoot> *@
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    <script src="~/js/config/controllers/tipoEntidadCtrl.min.js" asp-append-version="true"></script>
+}
+

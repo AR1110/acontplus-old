@@ -16,10 +16,11 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:		<Author,,Name>
--- Create date: <Create Date,,>
--- Description:	<Description,,>
+-- Author:		Alexis Ramirez	
+-- Create date: 2023/04/01
+-- Description:	SP para traer los datos de los establecimientos.
 -- =============================================
+
 IF OBJECT_ID(N'Sri.Establecimiento_Get_Id', N'P') IS NOT NULL
 DROP PROCEDURE Sri.Establecimiento_Get_Id 
 GO
@@ -50,9 +51,11 @@ BEGIN
 		,obligadoContabilidad
 		,nombreComercial
 		,dirEstablecimiento
+		,telefono
 		,contribuyenteRimpe
+		,correo
 		,estado
-	FROM  Sri.Establecimiento 
+	FROM Sri.Establecimiento 
 	WHERE idEstablecimiento = @id
 
 	IF @typeList = 1
@@ -66,7 +69,7 @@ BEGIN
 			WHERE codEstab = @codEstab 
 
 			SELECT
-					idConfig_Comprob_Elect
+				 idConfig_Comprob_Elect
 				,isAutomatic
 			FROM FactElect.Config_Comprob_Elect 
 			WHERE codEstab = @codEstab 

@@ -1,0 +1,216 @@
+﻿@{
+    ViewData["title"] = "Articulo";
+}
+
+<div ng-controller="articuloCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h5 class="text-themecolor">Gestión de Articulos</h5>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-item-center">
+                <button class="btn btn-info m-l-15" ng-if="accion.leer && accion.crear" ng-click="openModalNew()">
+                    <i class="fa fa-plus-circle"></i> Nuevo
+                </button>
+                @* <button class="btn btn-warning m-l-15" ng-click="openModalNew()"><i class="fa fa-plus-circle"></i>
+                New Test</button> *@
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="card">
+        <div class="card-body">
+            @* <md-toolbar class="md-table-toolbar md-default">
+                <div class="md-toolbar-tools">
+                    <div class="col-lg-9 col-md-9 col-sm-1">
+                        <button class="btn btn-info" ng-click="openModalFiltro()">
+                            <i class="fa fa-filter"></i> Filtro
+                        </button>
+
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                        <form class="form-material">
+                            <div class="input-group">
+                                <input type="text" class="form-control" ng-model="dataSearch.bySearch"
+                                    ng-change="searchArticulo()" placeholder="Buscar Articulo" />
+                                <div class="input-group-append">
+                                    <button class="btn btn-secondary btn-sm" ng-click="searchArticulo()">
+                                        <i class="fas fa-redo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </md-toolbar> *@
+            
+            <div class="row">
+                
+                <div class="col-lg-9 col-md-9 col-sm-1">
+                    <span class="form-group pull-left page-size form-inline">
+                        <select class="form-control control-color" ng-model="dataSearch.pageSize"
+                            ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                        </select>
+                    </span>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+                    <form class="form-material">
+                        <div class="input-group">
+                            <input type="text" class="form-control" ng-model="dataSearch.bySearch"
+                                ng-change="searchArticulo()" placeholder="Buscar Articulo" />
+                            <div class="input-group-append">
+                                <button class="btn btn-secondary btn-sm" ng-click="searchArticulo()">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                                <button class="btn btn-info btn-sm" ng-click="openModalFiltro()">
+                                    <i class="fas fa-filter"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+      
+             
+             
+            <md-table-container style=" max-height: 400px;">
+                <table resize master md-table>
+                    <thead md-trim-column-names fix-head md-head>
+                        <tr md-row>
+                            <th md-column></th>
+                            <th md-column>Op.</th>
+                            <th md-column>N°</th>
+                            <th md-column>Código</th>
+                            <th md-column>Descripción</th>
+                            <th md-column>T. Articulo</th>
+                            <th md-column>Sub Familia</th>
+                            <th md-column>Stock</th>
+                            <th md-column>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody md-body>
+                        <tr md-row ng-repeat-start="a in articulos">
+                            <td md-cell ng-click="expandDetalle(a)">
+                                <span ng-if="a.expanded">
+                                    <icon class="fas fa-caret-square-down"></icon>
+                                </span>
+                                <span ng-if="!a.expanded">
+                                    <icon class="fas fa-caret-square-right"></icon>
+                                </span>
+                            </td>
+                            <td md-cell>
+                                <md-menu>
+                                    <md-button aria-label="Open demo menu" class="md-icon-button"
+                                        ng-click="$mdMenu.open($event)">
+                                        <icon class="mdi mdi-menu"></icon>
+                                    </md-button>
+                                    <md-menu-content class="md-dense">
+                                        <md-menu-item ng-if="accion.editar">
+                                            <md-button ng-click="openModalEditar(a)">
+                                                <span md-menu-align-target><i class="ti-pencil"></i>
+                                                    Editar</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item ng-if="accion.eliminar || !a.articulo.estado">
+                                            <md-button ng-click="askToDelete(a)">
+                                                <span md-menu-align-target><i class="ti-trash"></i>
+                                                    Eliminar</span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item ng-if="accion.impuesto">
+                                            <md-button ng-click="abrirModalImpuestoArticulo(a)">
+                                                <span md-menu-align-target>
+                                                    <icon class="ti-money"></icon> Impuesto
+                                                </span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item>
+                                            <md-button ng-click="updateStockArticle(a)">
+                                                <span md-menu-align-target>
+                                                    <icon class="fas  fas fa-boxes"></icon> Actualizar Stock
+                                                </span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item ng-if="accion.kardex">
+                                            <md-button view-kardex-btn params="a">
+                                                <span md-menu-align-target>
+                                                    <icon class="fas fa-clipboard-list"></icon> Kardex
+                                                </span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                        <md-menu-item ng-if="accion.imagen">
+                                            <md-button ng-click="openModalArticuloImagen(a)">
+                                                <span md-menu-align-target>
+                                                    <icon class="ti-image"></icon> Imagenes
+                                                </span>
+                                            </md-button>
+                                        </md-menu-item>
+
+
+                                        <!--Historial Compras-->
+                                        <md-menu-item>
+                                            <md-button ng-click="openModalHistorialCompra(a)"
+                                                title="Historial Compras">
+                                                <span md-menu-align-target>
+                                                    <icon class="mdi mdi-history"></icon> Hist. Compras
+                                                </span>
+                                            </md-button>
+                                        </md-menu-item>
+
+                                    </md-menu-content>
+                                </md-menu>
+                                <button type="button" class="btn btn-outline-success btn-xs" ng-show="a.imagen"
+                                    ng-click="openModalImagen(a)">
+                                    <i class="fas fa-file-image"></i>
+                                </button>
+                            </td>
+                            <td md-cell>{{$index+1}}</td>
+                            <td md-cell>{{a.codigo}}</td>
+                            <td md-cell>
+                                <span tooltip uib-tooltip="{{a.observaciones}}" tooltip-trigger="'mouseenter'"
+                                    tooltip-placement="{{a.observaciones?'top':''}}">{{a.descripcion}}</span>
+                            </td>
+                            <td md-cell>{{a.tipoArticulo}}</td>
+                            <td md-cell>{{a.subFamilia}}</td>
+                            <td md-cell>
+                                <h6>
+                                    <span ng-class="a.style" estab-stock article="a">{{a.stock}}
+                                    </span>
+                                </h6>
+                            </td>
+                            <td md-cell ng-bind-html="a.estado | estadoPrimario"></td>
+                        </tr>
+                        <tr md-row ng-if="a.expanded" ng-repeat-end="">
+                            <td md-cell colspan="10">
+                                @await Html.PartialAsync("~/Views/Articulo/_GestionArticuloDetalle.cshtml")
+                            </td>
+                        </tr>
+                        <tr ng-show="articulos.length===0" class="text-center">
+                            <td colspan="9">No hay registros en esta tabla.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </md-table-container>
+        </div>
+
+        <div class="card-body">
+            <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+                ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                class="pagination" boundary-links="true" rotate="false"></ul>
+        </div>        
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <script src="~/js/inventario/controllers/articuloCtrl.min.js" asp-append-version="true"></script>
+}

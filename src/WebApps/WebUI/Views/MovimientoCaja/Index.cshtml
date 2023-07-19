@@ -1,0 +1,329 @@
+﻿@{
+    ViewData["title"] = "Movimiento Caja";
+}
+
+<div ng-controller="movimientoCajaCtrl as $ctrl">
+    <div class="row page-titles">
+        <div class="col-md-5">
+            <h5 class="text-themecolor"> Gestión de Movimientos Caja</h5>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+                
+            </div>            
+        </div>
+    </div>
+    
+  
+
+    <md-content>
+        <md-tabs class="md-primary" md-center-tabs md-dynamic-height="">
+
+            <md-tab label="Egresos/Ingresos Caja">
+                <md-content class="md-padding">
+                    <div class="row">
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                            <div class="form-gorup">
+                                <span for="establecimiento">Establecimiento</span>
+                                <select name="establecimiento" id="establecimiento" ng-model="$ctrl.dataSearch.codEstab"
+                                    class="form-control  border-select" ng-change="$ctrl.getMovCajas()">
+                                    <option ng-value="item.codEstab" ng-repeat="item in $ctrl.establecimientos">
+                                        {{item.nombreComercial}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <span for="">Rango de Fechas</span>                               
+                                    <input date-range-picker class="form-control date-picker" type="text"
+                                   ng-model="$ctrl.dateRangePicker.date" picker="$ctrl.dateRangePicker.picker"
+                                   picker-classes="extra-class-names" min="'2014-02-23'" max="$ctrl.dateRangePicker.maxDate"
+                                   options="$ctrl.dateRangePicker.options" options="{locale: {separator: " :"}}" />
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <span for="filterEmpleado">Empleado</span>
+                                <input type="text"
+                                    autocomplete="off"
+                                    class="form-control border-select"
+                                    placeholder="Ingrese Descripción"
+                                    ng-model="$ctrl.selectedEmpleado"
+                                    ng-keyup="$ctrl.onKeyupSearchEmpleado()"
+                                    uib-typeahead="e as e.nombreCompleto for e in $ctrl.searchEmpleado($viewValue)"
+                                    typeahead-loading="loadingLocations"
+                                    typeahead-no-results="data.noResults"
+                                    typeahead-items="1"
+                                    typeahead-wait-ms="10"                            
+                                    typeahead-template-url="autocompleteEmpleado.html"
+                                    typeahead-editable="false"                                                
+                                    typeahead-on-select="$ctrl.selectedEmpleadoChange($item)" />
+                                    <script type="text/ng-template" id="autocompleteEmpleado.html">
+                                        <div class="autocomplete-suggestion-uib-typeahead">
+                                            <span class="item-title">
+                                                <strong>{{match.model.nroIdentificacion}}</strong> - {{match.model.nombreCompleto}}
+                                            </span>
+                                        </div>
+                                    </script>
+                                <small ng-show="$ctrl.data.noResults" class="text-danger">No se encontraron los resultados</small>
+                            </div>
+                        </div>
+                        <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                            <button type="button" class="btn btn-info btm-sm mt-4" data-toggle="button" data-more="#sh"
+                                aria-pressed="false" ng-click="$ctrl.onClickBtnMore()">
+                                <span class="text"><i class="fas fa-eye fa-xs" aria-hidden="true"
+                                        uib-tooltip="Más opciones"></i></span>
+                                <span class="text-active"><i class="fas fa-eye fa-xs" aria-hidden="true"
+                                        uib-tooltip="Ocultar opciones"></i></span>
+                            </button>
+                            <button type="button" class="btn btn-success btm-sm mt-4" uib-tooltip="Recargar"
+                                ng-click="$ctrl.getMovCajas()">
+                                <i class="fas fa-redo fa-xs"></i>
+                            </button>
+                            <button type="button" class="btn btn-info btm-sm mt-4" uib-tooltip="Nuevo"
+                                ng-click="$ctrl.openModalAddUpdate()">
+                                <i class="ti-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row justify-content-between" ng-if="$ctrl.moreSearchOptions">
+                        <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                            <div class="form-group">
+                                <span>Estado:</span>
+                                <select id="estadoDocumentos" class="form-control" ng-model="$ctrl.dataSearch.codEstado"
+                                    ng-change="$ctrl.getMovCajas()">
+                                    <option value="">Todos</option>
+                                    <option ng-value="item.codigo" ng-repeat="item in $ctrl.estadoDocumentos">
+                                        {{item.descripcion}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                            <div class="form-group">
+                                <span>Buscar</span>
+                                <input type="text" class="form-control border-select" ng-change="$ctrl.searchFilterLocal()"
+                                    ng-model="$ctrl.dataSearch.bySearch" placeholder="Ej: 001-002">
+                            </div>
+                        </div>
+                    </div>
+
+                    <md-table-container style="max-height: 400px;">
+                        <table resize md-table>
+                            <thead fix-head md-head>
+                                <tr md-row>
+                                    <th md-column></th>
+                                    @* <th md-column>N°</th> *@
+                                    <th md-column>Caja</th>
+                                    <th md-column>Fecha</th>
+                                    <th md-column>Nro. Doc</th>
+                                    <th md-column>E. Financiera</th>                
+                                    <th md-column>Valor</th>
+                                    <th md-column>Observación</th>
+                                    <th md-column>Empleado</th>
+                                    <th md-column>Estado</th>
+                                </tr>
+                            </thead> 
+                            <tbody md-body>
+                                <tr md-row ng-repeat="mc in $ctrl.movCajas | filter: $ctrl.dataSearch.bySearch">
+                                    <td md-cell>                                               
+                                        <md-menu>
+                                            <md-button aria-label="Open demo menu" class="md-icon-button"
+                                                    ng-click="$mdMenu.open($event)">
+                                                <icon class="mdi mdi-menu"></icon>
+                                            </md-button>
+                                            <md-menu-content class="md-dense">                                               
+                                                <md-menu-item>
+                                                    <md-button ng-click="$ctrl.getPrint(mc)">
+                                                        <span md-menu-align-target><i class="mdi mdi-printer"></i> Impresión</span>
+                                                    </md-button>
+                                                </md-menu-item>
+
+                                                <md-menu-item>
+                                                    <md-button ng-click="$ctrl.getReport(mc)">
+                                                        <span md-menu-align-target><i class="mdi mdi-file-pdf"></i> Reporte</span>
+                                                    </md-button>
+                                                </md-menu-item>
+                                            </md-menu-content>
+                                        </md-menu> 
+                                    </td>
+                                    @* <td md-cell>{{$index+1}}</td> *@
+                                    <td md-cell>{{mc.caja}}</td>
+                                    <td md-cell>{{mc.fechaEmision}}</td>
+                                    <td md-cell>{{mc.nroDoc}}</td>
+                                    <td md-cell>{{mc.subEntidadFinanciera}}</td>
+                                    <td md-cell>${{mc.valor}}</td>
+                                    <td md-cell>{{mc.observaciones}}</td>
+                                    <td md-cell>{{mc.empleado}}</td>
+                                    <td md-cell>{{mc.estado}}</td>
+                                </tr>
+                                <tr ng-if="$ctrl.movCajas.length===0" class="text-center">
+                                    <td colspan="9">No hay registros.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </md-table-container>   
+
+                </md-content>
+            </md-tab>
+
+
+            <md-tab label="Anticipos">
+                <md-content class="md-padding">
+                    @* <md-toolbar class="md-table-toolbar md-default">
+                        <div class="md-toolbar-tools">
+                            <div class="col-lg-9 col-md-9 col-sm-1">
+                                <button type="button" ng-if="accion.crear" class="btn btn-info" ng-click="$ctrl.openModalAnticipoNew()"> <i class="fa fa-plus-circle"></i> Nuevo</button>                                    
+                                <button type="button" class="btn btn-secondary" ng-click="$ctrl.openModalFiltroAnticipo()"> <i class="fa fa-filter"></i> Buscar</button>                                    
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-12 col-12">                              
+                                <input type="text" class="form-control" ng-model="buscar" placeholder="Buscar Anticipos " />
+                                
+                            </div>
+                        </div>
+                    </md-toolbar>                            *@
+                    <div class="row">
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                            <div class="form-gorup">
+                                <span for="establecimiento">Establecimiento</span>
+                                <select name="establecimiento" id="establecimiento" ng-model="$ctrl.dataSearchAnticipo.codEstab"
+                                    class="form-control  border-select" ng-change="$ctrl.getAnticipos()">
+                                    <option ng-value="item.codEstab" ng-repeat="item in $ctrl.establecimientos">
+                                        {{item.nombreComercial}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <span for="">Rango de Fechas</span>                               
+                                    <input date-range-picker class="form-control date-picker" type="text"
+                                   ng-model="$ctrl.dateRangePickerAnticipo.date" picker="$ctrl.dateRangePickerAnticipo.picker"
+                                   picker-classes="extra-class-names" min="'2014-02-23'" max="$ctrl.dateRangePickerAnticipo.maxDate"
+                                   options="$ctrl.dateRangePickerAnticipo.options" options="{locale: {separator: " :"}}" />
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <span for="clienteFiltro">Cliente</span>
+                                <input type="text" id="customerInputSearch" class="form-control border-select"
+                                    ng-model="$ctrl.dataSearchAnticipo.selelectedCliente" cliente-search-drtv on-select="$ctrl.selectedClienteChange(result)"
+                                    on-keyup-cliente="$ctrl.onKeyupSearchCliente()" placeholder="Ingrese C.I o Nombre Comercial"
+                                    onclick="select();">
+
+                                <script type="text/ng-template" id="autocompleteClienteTemplate.html">
+                                    <div class="autocomplete-suggestion-uib-typeahead">
+                                        <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
+                                    </div>
+                                </script>                                
+                            </div>
+                        </div>
+                        <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                            <button type="button" class="btn btn-info btm-sm mt-4" data-toggle="button" data-more="#sh"
+                                aria-pressed="false" ng-click="$ctrl.onClickBtnMoreAnticipo()">
+                                <span class="text"><i class="fas fa-eye fa-xs" aria-hidden="true"
+                                        uib-tooltip="Más opciones"></i></span>
+                                <span class="text-active"><i class="fas fa-eye fa-xs" aria-hidden="true"
+                                        uib-tooltip="Ocultar opciones"></i></span>
+                            </button>
+                            <button type="button" class="btn btn-success btm-sm mt-4" uib-tooltip="Recargar"
+                                ng-click="$ctrl.getAnticipos()">
+                                <i class="fas fa-redo fa-xs"></i>
+                            </button>
+                            <button type="button" class="btn btn-info btm-sm mt-4" uib-tooltip="Nuevo"
+                                ng-click="$ctrl.openModalAnticipoNew()">
+                                <i class="ti-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row justify-content-between" ng-if="$ctrl.moreSearchOptionsAnticipo">
+                        <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                            <div class="form-group">
+                                <span>Estado:</span>
+                                <select id="estadoDocumentos" class="form-control" ng-model="$ctrl.dataSearch.codEstado"
+                                    ng-change="$ctrl.getAnticipos()">
+                                    <option value="">Todos</option>
+                                    <option ng-value="item.codigo" ng-repeat="item in $ctrl.estadoDocumentos">
+                                        {{item.descripcion}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                            <div class="form-group">
+                                <span>Buscar</span>
+                                <input type="text" class="form-control border-select" ng-change="$ctrl.searchFilterLocal()"
+                                    ng-model="$ctrl.dataSearchAnticipo.bySearch" placeholder="Ej: 001-002">
+                            </div>
+                        </div>
+                    </div>
+
+                    <md-table-container>
+                        <table  md-table>
+                            <thead  md-head>
+                                <tr md-row>
+                                    <th md-column></th> 
+                                    <th md-column>N°</th> 
+                                    @* <th md-column>Caja</th> *@
+                                    <th md-column>Fecha</th>
+                                    <th md-column>Nro. Doc</th>
+                                    <th md-column>E. Financiera</th>                
+                                    <th md-column>Valor</th>
+                                    <th md-column>Observación</th>
+                                    <th md-column>Cliente</th>
+                                    <th md-column>Estado</th> 
+                                </tr>
+                            </thead> 
+                            <tbody md-body>
+                                <tr md-row ng-repeat="a in $ctrl.anticipos | filter:$ctrl.dataSearchAnticipo.bySearch">
+                                    <td md-cell>
+                                        <md-menu>
+                                            <md-button aria-label="Open demo menu" class="md-icon-button"
+                                                    ng-click="$mdMenu.open($event)">
+                                                <icon class="mdi mdi-menu"></icon>
+                                            </md-button>
+                                            <md-menu-content class="md-dense">                                               
+                                                <md-menu-item>
+                                                    <md-button ng-click="$ctrl.printAnticipo(a)">
+                                                        <span md-menu-align-target><i class="mdi mdi-printer"></i> Impresión</span>
+                                                    </md-button>
+                                                </md-menu-item>
+
+                                                <md-menu-item>
+                                                    <md-button ng-click="$ctrl.getReportAnticipo(a)">
+                                                        <span md-menu-align-target><i class="mdi mdi-file-pdf"></i> Reporte</span>
+                                                    </md-button>
+                                                </md-menu-item>
+                                            </md-menu-content>
+                                        </md-menu> 
+                                    </td> 
+                                    <td md-cell>{{$index+1}}</td> 
+                                    @* <td md-cell>{{mc.caja}}</td> *@
+                                    <td md-cell>{{a.fechaEmision}}</td>
+                                    <td md-cell>{{a.nroDoc}}</td>
+                                    <td md-cell>{{a.subEntidadFinanciera}}</td>
+                                    <td md-cell>${{a.valor}}</td>
+                                    <td md-cell>{{a.observacion}}</td>
+                                    <td md-cell>{{a.cliente}}</td>
+                                    <td md-cell>{{a.estadoDoc}}</td> 
+                                </tr>
+                                <tr ng-if="$ctrl.anticipos.length===0" class="text-center">
+                                    <td colspan="7">No hay registros.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </md-table-container>
+                </md-content>
+            </md-tab>
+
+        </md-tabs>
+    </md-content>        
+</div>
+
+@section Scripts{
+    @* <script src="~/js/controllers/financiera/movimientoCajaCtrl.js" asp-append-version="true"></script> *@
+    <script type="module" src="~/js/controllers/financiera/movimientoCajaCtrl.js" asp-append-version="true"></script>
+}

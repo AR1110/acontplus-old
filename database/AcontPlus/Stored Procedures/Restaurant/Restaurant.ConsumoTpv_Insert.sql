@@ -26,13 +26,14 @@ BEGIN
 	DECLARE @isThermal BIT
 	DECLARE @format VARCHAR(200)
 	DECLARE @deviceInfo VARCHAR(max)
-	DECLARE @rdlcParams VARCHAR(MAX)
+	DECLARE @dataSources VARCHAR(MAX)
 	DECLARE @rdlcProps VARCHAR(MAX)
 	DECLARE @razonSocial VARCHAR(500)
 	DECLARE @nombreComercial VARCHAR(500)
 	DECLARE @estab VARCHAR(5)
 	DECLARE @ruc VARCHAR(20)
 	DECLARE @estado BIT 
+	DECLARE @urlPrinter VARCHAR(300)
 
 	DECLARE @tmp AS TABLE (
 		idConfigTpv VARCHAR(2)
@@ -108,15 +109,24 @@ BEGIN
 	SELECT @razonSocial = razonSocial FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
 	SELECT @nombreComercial = nombreComercial FROM Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab
+	
+	SELECT TOP 1 @urlPrinter = ipMaquina
+		FROM ApiPrinter.Config_Document cd WITH (NOLOCK)
+		INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
+		INNER JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora
+		WHERE i.codEstab = @codEstab 
 
-	SELECT @printerName = i.nombreImpresora
-		  ,@isThermal = ti.isThermal
-		  ,@format = ti.formato
-		  ,@deviceInfo = ti.deviceInfo
+	SET @rdlcProps = (
+	SELECT  i.nombreImpresora printerName
+		    ,CAST(0 AS bit) isThermal
+		   ,ti.formato
+		  ,ti.deviceInfo
+		  ,i.nombreEquipo computerName
+		  ,rdlcName = 'TicketTpv.rdl'
 	FROM ApiPrinter.Impresora i
 	INNER JOIN ApiPrinter.TipoImpresora ti ON ti.idTipoImpresora = i.idTipoImpresora
-	WHERE i.codEstab = @codEstab 
-	AND predeterminada = 1
+	WHERE i.codEstab = @codEstab
+	  FOR JSON PATH)
 
 	SELECT @estado =  estado FROM Restaurant.ConfigPrinter WHERE codEstab = @codEstab
 
@@ -134,8 +144,9 @@ BEGIN
 			
 
 			IF (@print = 1)
-
-						SET @rdlcParams = 
+				BEGIN
+									
+						SET @dataSources = 
 							(
 								SELECT razonSocial = @razonSocial
 								,nombreComercial = @nombreComercial
@@ -155,36 +166,41 @@ BEGIN
 								FOR JSON PATH
 							)
 
-					SET  @rdlcProps = (SELECT rdlcProps = (SELECT rdlcName = 'TicketTpv.rdl',printerName = @printerName,isThermal = @isThermal, 'format' = @format, deviceInfo = @deviceInfo FOR JSON PATH))
-
-				BEGIN
-
-					IF @printerName IS  NULL
-					BEGIN
-						SET @idConsumoTpv = NULL
-						SELECT '0' code, 'No tienes configurada ninguna impresora' as 'message'
-						RETURN
-					END 
-					INSERT INTO ApiPrinter.Service_Printer_Document
-					(
-						idService_Printer_Document
-					   ,ruc
-					   ,numEstab
-					   ,rdlcProps
-					   ,rdlcParams
-					   ,fechaRegistro
-					)
-					SELECT 
-						NEWID()
-					   ,@ruc
-					   ,@estab
-					   ,@rdlcProps
-					   ,@rdlcParams
-					   ,dbo.ufnGetDateEcuador()
-					WHERE @estado = 1
+					--SET  @rdlcProps = (SELECT rdlcProps = (SELECT rdlcName = 'TicketTpv.rdl',printerName = @printerName,isThermal = @isThermal, 'format' = @format, deviceInfo = @deviceInfo FOR JSON PATH))
+					
+					IF NOT EXISTS(SELECT 1 FROM ApiPrinter.Impresora i
+											INNER JOIN ApiPrinter.TipoImpresora ti ON ti.idTipoImpresora = i.idTipoImpresora
+											WHERE i.codEstab = @codEstab)
+						BEGIN
+							SET @idConsumoTpv = NULL
+							SELECT '0' code, 'No tienes configurada ninguna impresora' as 'message'
+						END 
+					ELSE
+						BEGIN 
+							SELECT '1' code, 'Registrado correctamente' as 'message', payload = (SELECT 'http://' + @urlPrinter urlPrinter, @rdlcProps rdlcProps, @dataSources dataSources FOR JSON PATH)
+						END
+					--INSERT INTO ApiPrinter.Service_Printer_Document
+					--(
+					--	idService_Printer_Document
+					--   ,ruc
+					--   ,numEstab
+					--   ,rdlcProps
+					--   ,rdlcParams
+					--   ,fechaRegistro
+					--)
+					--SELECT 
+					--	NEWID()
+					--   ,@ruc
+					--   ,@estab
+					--   ,@rdlcProps
+					--   ,@rdlcParams
+					--   ,dbo.ufnGetDateEcuador()
+					--WHERE @estado = 1
 				END
-
-			SELECT '1' code, 'Registrado correctamente' as 'message'
+			ELSE
+				BEGIN
+					SELECT '1' code, 'Registrado correctamente' as 'message'--, payload = (SELECT @rdlcProps rdlcProps, @rdlcParams rdlcParams FOR JSON PATH)
+				END
 		COMMIT TRAN
 	END TRY
 

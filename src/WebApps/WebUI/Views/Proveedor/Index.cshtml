@@ -1,0 +1,98 @@
+﻿@{
+    ViewData["title"] ="Proveedor";
+}
+
+<div ng-controller="proveedorCtrl">
+    <div class="row page-titles">
+        <div class="col-lg-5 align-self-center">
+            <h5 class="text themecolor">Gestión de Proveedores</h5>
+        </div>
+        <div class="col-lg-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+                <button class="btn btn-info m-l-15" ng-if="accion.crear" ng-click="openModalNew()"><i class="fa fa-plus-circle"></i> Nuevo</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <md-toolbar class="md-table-toolbar md-default">
+                    <div class="md-toolbar-tools">
+                        <div class="col-lg-9 col-md-9 col-sm-9 m-t-20">
+                                @*<span class="form-group pull-left page-size form-inline">
+                                    <select class="form-control control-color"
+                                            ng-model="pageSize"
+                                            ng-change="changePageSize()"
+                                            ng-options="ra for ra in recordsQuantity">
+                                    </select>
+                                </span>*@
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3">
+                            <form class="form-material">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" ng-model="dataSearch.bySearch" ng-keyup="onKeyupSearchProveedor()" placeholder="Buscar Proveedor" />
+                                    <div class="input-group-append" ng-click="reloadProveedores()">
+                                        <button class="btn btn-info">
+                                            <i class="fas fa-redo"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>            
+                        </div>
+                    </div>
+                </md-toolbar>
+
+                <md-table-container md-scroll-y layout-fill style=" max-height: 400px;">
+                    <table md-table >
+                        <thead md-head fix-head>
+                            <tr md-row>                
+                                <th md-column ng-show="accion.editar || accion.eliminar">Op.</th>                
+                                <th md-column>N°</th>
+                                <th md-column>Ruc</th>
+                                <th md-column>Nombre Fiscal</th>
+                                <th md-column>Dirección</th>
+                                <th md-column>Teléfono</th>
+                                <th md-column>Estado</th>                
+                            </tr>
+                        </thead>
+                        <tbody md-body>
+                            <tr md-row ng-repeat="item in proveedores" >               
+                                <td md-cell ng-show="accion.editar || accion.eliminar">
+                                    <div layout="row" layout-align="start center">
+                                        <button class="btn btn-info btn-xs" ng-if="accion.editar" ng-click="openModalEdit(item)"> <i class="ti-pencil"></i></button>
+                                        <button class="btn btn-danger btn-xs ml-2" ng-if="accion.eliminar"  ng-click="eliminarProveedor(item)"> <i class="ti-trash"></i></button>
+                                    </div>
+                                </td> 
+                                <td md-cell>{{$index+1}}</td>
+                                <td md-cell>{{item.numeroIdentificacion}}</td>
+                                <td md-cell>{{item.nombreFiscal}}</td>
+                                <td md-cell>{{item.direccion}}</td>
+                                <td md-cell>{{item.telefono}}</td>
+                                <td md-cell ng-bind-html="item.estado|estadoPrimario"></td>                                 
+                            </tr>
+                            <tr ng-show="proveedores.length==0" class="text-center">
+                                <td colspan="7">
+                                    No hay registros en esta tabla :)
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td align="center" colspan="7">
+                                    <div class="pull-left m-t-10">
+                                        
+                                    </div>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>                
+                </md-table-container>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{    
+    <script src="~/js/compras/controllers/proveedorCtrl.min.js" asp-append-version="true"></script>    
+}
