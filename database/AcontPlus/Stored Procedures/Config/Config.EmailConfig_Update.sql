@@ -29,7 +29,7 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	DECLARE @enableSsl VARCHAR(5)
+	DECLARE @enableSsl BIT
     DECLARE @from VARCHAR(150)
     DECLARE @host VARCHAR(150)
     DECLARE @password VARCHAR(150)
@@ -43,7 +43,7 @@ BEGIN
 			  ,@password  = [password] 
 			  ,@port      = [port] 
 		FROM OPENJSON(@json) 
-		WITH (enableSsl    VARCHAR(5) '$.enableSsl'
+		WITH (enableSsl           BIT '$.enableSsl'
 		     ,[from]     VARCHAR(150) '$.from'
 			 ,host       VARCHAR(150) '$.host'
 			 ,[password] VARCHAR(150) '$.password'
@@ -58,7 +58,7 @@ BEGIN
 				  ,[port]      = @port
 			 WHERE idEmailConfig = @idEmailConfig
 			
-			SELECT '0'code,'Actualizado Correctamente' as 'message'
+			SELECT '1'code,'Actualizado Correctamente' as 'message'
 		COMMIT TRAN 
 	END TRY 
 

@@ -14,14 +14,13 @@ IF OBJECT_ID(N'ReporteCompras.RetencionCompra', N'P') IS NOT NULL
 DROP PROCEDURE ReporteCompras.RetencionCompra
 GO
 
--- exec ReporteCompras.RetencionCompra '{"id":20, "versionComp": "2.0.0"}'
+-- exec ReporteCompras.RetencionCompra '{"id":2, "versionComp": "1.0.0"}'
 CREATE PROCEDURE ReporteCompras.RetencionCompra	@json NVARCHAR(MAX)
 AS
 BEGIN
  SET NOCOUNT  ON;
  SET LANGUAGE SPANISH;
 
- DECLARE @idTipoAmbiente INT 
  DECLARE @id BIGINT
  DECLARE @idEntidad INT
  DECLARE @idTipoDocumento BIGINT 
@@ -32,7 +31,6 @@ BEGIN
  DECLARE @headerDs VARCHAR(MAX)
  DECLARE @detailDs VARCHAR(MAX)
  DECLARE @infoAdditionalDs VARCHAR(MAX)
- DECLARE @normativeDs VARCHAR(MAX)
  DECLARE @dataSources VARCHAR(MAX)
  DECLARE @claveAcceso VARCHAR(50)
  DECLARE @nroDoc VARCHAR(20)
@@ -42,33 +40,25 @@ BEGIN
  DECLARE @razonSocial VARCHAR(200)
  DECLARE @telefono VARCHAR(50) 
  DECLARE @subject VARCHAR(100)
- DECLARE @email VARCHAR(50) = 'envio.comprobantes@acontplus.com.ec'
- DECLARE @password VARCHAR(50) = 'xmhlwbiibinctuvn'
  DECLARE @nameDoc VARCHAR(150)
  DECLARE @dataMail VARCHAR(MAX)
  DECLARE @cc VARCHAR(100)
  DECLARE @versionComp VARCHAR(10)
  DECLARE @fechaAutorizacion DATETIME
 
-
-
-
 	SELECT 
-		@idTipoDocumento = idTipoDocumento
-		,@id = id
+		 @id = id
 		,@rdlcParams = rdlcParams 
 		,@versionComp = versionComp
 	FROM OPENJSON(@json)
 	WITH (
-		idTipoDocumento INT '$.idTipoDocumento'
-		,id INT '$.id'
+		 id INT '$.id'
 		,rdlcParams VARCHAR(MAX) '$.rdlcParams'
 		,versionComp VARCHAR(MAX) '$.versionComp'
 	) AS dt 
 	
 	SELECT @fechaAutorizacion = fechaAutorizacion FROM DocumentoElectronico WITH (NOLOCK) WHERE idDocumento = @id AND codDoc = '07' AND versionComp = @versionComp
 	
-
 	IF @versionComp = '1.0.0'
 		BEGIN
 			SELECT 
@@ -90,9 +80,9 @@ BEGIN
 			INNER JOIN Sri.Establecimiento s WITH (NOLOCK) ON s.codEstab         = pe.codEstab
 			INNER JOIN dbo.Proveedor      pr WITH (NOLOCK) ON pr.idProveedor     = rc.idProveedor
 			INNER JOIN dbo.Entidad         e WITH (NOLOCK) ON e.idEntidad        = rc.idEntidad
-			WHERE idRetencionCompra = @id;
+			WHERE idRetencionCompra = @id
 
-			SELECT @imagen = imagen, @mimeType = mimeType FROM Config.Estab_Logo WHERE codEstab = @codEstab
+			SELECT @imagen = imagen, @mimeType = mimeType FROM Config.Estab_Logo WITH (NOLOCK) WHERE codEstab = @codEstab
 
 			SET @headerDs = (
 								SELECT
@@ -166,33 +156,17 @@ BEGIN
 
 			SET @dataSources = (SELECT RetencionCompraDs = @headerDs, RetencionCompraDetalleDs = @detailDs, InfoAdicionalDs = ISNULL(@infoAdditionalDs,'[]') FOR JSON PATH)
 
-			SELECT  imagen = @imagen
-			       ,mimeType = @mimeType
-				   ,claveAcceso = @claveAcceso
-				   ,rdlcParams = @rdlcParams
-				   ,dataSources = @dataSources
-				   ,ISNULL(@email,'') as 'from'
-				   ,ISNULL(@password,'') as 'password'
-				   ,ISNULL(@subject,'') as 'subject'
-				   ,ISNULL(@cc,'') as 'cc'  
-				   ,ISNULL(@nameDoc,'') as 'invoiceName'
-				   ,'logoAcontPlus.jpg' logo
-				   ,'smtp.gmail.com' host
-				   ,587 as 'port'
-				   ,1 EnableSsl
-				   ,dataMail = @dataMail
 		END
-	ELSE
+	
+	IF @versionComp = '2.0.0'
 		BEGIN
 			SELECT 
 				@idTipoDocumento = td.idTipoDocumento,
-				@imagen          = el.imagen,
-				@mimeType		= el.mimeType,
+				@codEstab        = s.codEstab,
 				@claveAcceso     = d.claveAcceso,
 				@idEntidad       = e.idEntidad,
 				@subject         = 'Comprobante Electrónico - Acontplus N°: '+ s.estab+'-'+rc.ptoEmi+'-'+dbo.AFTAutoComplete(rc.secuencial),
 				@cliente         = pr.nombreFiscal,
-				--@importeTotal    = CAST(rc.total AS DECIMAL(15,2)),
 				@telefono        = e.telefono,
 				@razonSocial     = e.razonSocial,
 				@nroDoc          = dbo.AFTGenerarNroDocumento(s.estab + rc.ptoEmi,rc.secuencial),
@@ -201,21 +175,17 @@ BEGIN
 				@cc              = e.email
 			FROM FactElect.RetencionAts         rc WITH (NOLOCK) 
 			INNER JOIN Sri.Establecimiento       s WITH (NOLOCK) ON s.codestab        = rc.codestab
-			LEFT JOIN dbo.Proveedor            pr WITH (NOLOCK) ON pr.idProveedor    = rc.idProveedor
-			LEFT JOIN dbo.DocumentoElectronico d  WITH (NOLOCK) ON s.codEstab        = d.codEstab    AND 
+			LEFT JOIN dbo.Proveedor             pr WITH (NOLOCK) ON pr.idProveedor    = rc.idProveedor
+			LEFT JOIN dbo.DocumentoElectronico   d WITH (NOLOCK) ON s.codEstab        = d.codEstab    AND 
 			                                                        d.codDoc          = '07'          AND 
 																	rc.idRetencionAts = d.idDocumento AND 
 																	d.versionComp     = '2.0.0'
-			LEFT JOIN dbo.Entidad               e WITH(NOLOCK)  ON e.ruc        = d.ruc 
-			LEFT JOIN dbo.TipoDocumento        td WITH (NOLOCK) ON td.codigoSri = '07'
-			LEFT JOIN Config.Estab_Logo        el WITH (NOLOCK) ON s.codEstab   = el.codEstab
+			LEFT JOIN dbo.Entidad                e WITH(NOLOCK)  ON e.ruc        = d.ruc 
+			LEFT JOIN dbo.TipoDocumento         td WITH (NOLOCK) ON td.codigoSri = '07'
 			WHERE idRetencionAts = @id;
 		
-			--PRINT CAST(@idRetencionCompra AS VARCHAR(20))
-			--PRINT CAST(@idEntidad AS VARCHAR(20))
-
-			--SELECT FROM EntidadLogo WHERE idEntidad = @idEntidad
-
+			SELECT @imagen = imagen, @mimeType = mimeType FROM Config.Estab_Logo WHERE codEstab = @codEstab
+			
 			SET @headerDs = (
 								SELECT 
 									 rc.idRetencionAts idRetencionCompra
@@ -296,21 +266,16 @@ BEGIN
 
 			SET @dataSources = (SELECT RetencionCompraDs = @headerDs, RetencionCompraDetalleDs = @detailDs, InfoAdicionalDs = ISNULL(@infoAdditionalDs,'[]') FOR JSON PATH)
 
-			SELECT  imagen = @imagen
-		           ,mimeType = @mimeType
-				   ,claveAcceso = @claveAcceso
-				   ,rdlcParams = @rdlcParams
-				   ,dataSources = @dataSources
-				   ,ISNULL(@email,'') as 'from'
-				   ,ISNULL(@password,'') as 'password'
-				   ,ISNULL(@subject,'') as 'subject'
-				   ,ISNULL(@cc,'') as 'cc'  
-				   ,ISNULL(@nameDoc,'') as 'invoiceName'
-				   ,'logoAcontPlus.jpg' logo
-				   ,'smtp.gmail.com' host
-				   ,587 as 'port'
-				   ,1 EnableSsl
-				   ,dataMail = @dataMail
 		END
+
+	SELECT  imagen = @imagen
+	       ,mimeType = @mimeType
+	       ,claveAcceso = @claveAcceso
+		   ,rdlcParams = @rdlcParams
+		   ,dataSources = @dataSources
+		   ,ISNULL(@subject,'') as 'subject'
+		   ,ISNULL(@cc,'') as 'cc'  
+		   ,ISNULL(@nameDoc,'') as 'invoiceName'
+		   ,dataMail = @dataMail
 END 
 
