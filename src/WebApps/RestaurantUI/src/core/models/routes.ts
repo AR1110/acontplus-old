@@ -4,6 +4,8 @@ const PublicRoutes = {
 
 const PrivateRoutes = {
   PRIVATE: "private",
+  ADMIN: "admin",
+  DASHBOARD: "Dashboard",
   LAYOUT: "Layout",
   HOME: "Home",
   POS: "Pos",

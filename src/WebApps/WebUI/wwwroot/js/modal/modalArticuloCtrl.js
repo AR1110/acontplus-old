@@ -1231,6 +1231,7 @@ class ModalFiltroCtrl {
     this._commonSvc = _commonSvc;
     this._form = _form;
     this.dataSearch = _params;
+    this.dataSearch.status = this.dataSearch.status===null || this.dataSearch.status==undefined ? '1': this.dataSearch.status;
   }
 
   async $onInit() {

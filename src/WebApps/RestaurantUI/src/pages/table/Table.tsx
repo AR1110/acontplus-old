@@ -8,6 +8,10 @@ export default function TableComponent() {
     console.log("");
   };
 
+  const getTables = function(){
+    get
+  }
+
   useEffect(() => {
     setTables([
       {
