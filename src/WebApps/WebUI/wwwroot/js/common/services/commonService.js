@@ -1353,7 +1353,7 @@ export class CommonService {
             isComplete = false;
         if (!id) throw "ID DOCUMENTO INVÁLIDO";
 
-        await this.mS.getData('get', `/TransferenciaBodega/GetId?id=${id}`, null, true).then(response => {
+        await this.mS.getData('get', `TransferenciaBodega/GetId?id=${id}`, null, true).then(response => {
 
             if (response.code === "0") {
                 this.form.sweetAlert('warning', response.message)

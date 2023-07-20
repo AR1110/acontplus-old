@@ -23,7 +23,7 @@ namespace ApiInventory.Controllers
             GenericResponse _response = new GenericResponse();
             try
             {
-                await _db.SPExecute("Inventario.Consolidacion_Get");
+                await _db.SPExecute("Inventario.Consolidacion_Get", true);
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDataSetAsync();
@@ -47,7 +47,7 @@ namespace ApiInventory.Controllers
             GenericResponse _response = new GenericResponse();
             try
             {
-                await _db.SPExecute("Inventario.Consolidacion_Insert");
+                await _db.SPExecute("Inventario.Consolidacion_Insert", true);
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(DataHelper.SerializeDictionary(parameters.data)));
                 _response = _db.GetDefault();
@@ -71,7 +71,7 @@ namespace ApiInventory.Controllers
             GenericResponse _response = new GenericResponse();
             try
             {
-                await _db.SPExecute("Inventario.Consolidacion_Update");
+                await _db.SPExecute("Inventario.Consolidacion_Update", true);
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(DataHelper.SerializeDictionary(parameters.data)));
