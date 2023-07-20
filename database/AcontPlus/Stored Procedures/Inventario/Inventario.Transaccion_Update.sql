@@ -12,6 +12,8 @@ CREATE PROCEDURE Inventario.Transaccion_Update @codTran VARCHAR(5),@codDoc VARCH
 AS
 BEGIN
 	SET NOCOUNT ON; 
+	SET DEADLOCK_PRIORITY LOW;
+
 	DECLARE @idTipoDocumento INT
 	DECLARE @idTipoTransaccion INT
 
@@ -21,12 +23,12 @@ BEGIN
 		
 	IF @codTran = 'T'
 		BEGIN
-			UPDATE Inventario.Transaccion SET estado = @estado WHERE idDocumento = @idDocumento AND idTipoDocumento = @idTipoDocumento 
+			UPDATE Inventario.Transaccion WITH(ROWLOCK) SET estado = @estado WHERE idDocumento = @idDocumento AND idTipoDocumento = @idTipoDocumento 
 		END
 
 	ELSE 
 		BEGIN
-			UPDATE Inventario.Transaccion SET estado = @estado WHERE idDocumento = @idDocumento AND idTipoDocumento = @idTipoDocumento AND idTipoTransaccion = @idTipoTransaccion
+			UPDATE Inventario.Transaccion WITH(ROWLOCK) SET estado = @estado WHERE idDocumento = @idDocumento AND idTipoDocumento = @idTipoDocumento AND idTipoTransaccion = @idTipoTransaccion
 		END 
 
 	

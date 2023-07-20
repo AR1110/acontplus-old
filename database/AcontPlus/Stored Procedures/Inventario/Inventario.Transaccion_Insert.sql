@@ -41,6 +41,8 @@ CREATE PROCEDURE Inventario.Transaccion_Insert
 AS
 BEGIN
 	SET NOCOUNT ON; 
+	SET DEADLOCK_PRIORITY HIGH;
+
 	DECLARE @idTipoTransaccion INT 
 	DECLARE @idTipoDocumento INT
 	DECLARE @fraccion AS NUMERIC(18,5)
@@ -48,6 +50,21 @@ BEGIN
 	DECLARE @codMetodoValoradion AS VARCHAR(5)
 	DECLARE @idEntidad AS INT 
 	DECLARE @idTransaccion AS INT
+
+	
+	DECLARE @cantidadActual AS NUMERIC(18,5)
+	DECLARE @stock AS NUMERIC(15,5)
+	DECLARE @fechaEmision AS DATETIME
+
+	DECLARE @salidas AS NUMERIC(18,5)
+	DECLARE @entradas AS NUMERIC(18,5)
+	DECLARE @saldo AS NUMERIC(18,5)
+
+	DECLARE @ajustes AS TABLE (
+	     idAjuste INT NOT NULL
+	    ,fechaEmision DATETIME NOT NULL
+		,cantidad NUMERIC(15,5) NOT NULL
+	)
 
 	SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = @codTran
 	
@@ -64,7 +81,7 @@ BEGIN
 	--REGISTRAR LAS TRANSACCIONES DEL ARTICULO 
 	IF @estado = 1 
 		BEGIN 
-			INSERT INTO Inventario.Transaccion
+			INSERT INTO Inventario.Transaccion WITH(ROWLOCK)
 				   (idTipoTransaccion, idArticulo, idBodega, idTipoDocumento, idDocumento, idMedida, idTarifa, cantidad, precioCosto, precioUnitario, total,fechaRegistro, idUsuario)
 			SELECT @idTipoTransaccion,@idArticulo,@idBodega,@idTipoDocumento,@idDocumento,@idMedida,@idTarifa,@cantidadFinal,@precioCosto,@precioUnitario,@total,@fechaRegistro,@idUsuario
 			
@@ -72,8 +89,8 @@ BEGIN
 
 		END
 
-	--ACTUALIZAR LOS STOCK DE LOS ARTICULOS 
 	EXEC Inventario.Stock_Update @idArticulo,@idBodega
+
 
 	--ACTUALIZAR EL PRECIO CONEL METODO DE VALORACION
 	IF @codTran = 'E'
