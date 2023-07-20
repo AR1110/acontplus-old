@@ -51,13 +51,14 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
             $scope.comprobantes = [];
 
             let dataSearch = {}
-
+            let url = ''
             if (tipo > 0) {
+                url = 'DocumentoElectronico/GetByStatus/?json='
                 dataSearch = {
                     tipo
                 }
             } else {
-
+                url = 'DocumentoElectronico/?json='
                 dataSearch = {
                     checkBoxEstab: $scope.dataSearch.checkBoxEstab,
                     estab: $scope.dataSearch.estab,
@@ -81,7 +82,7 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
                 }   
 
             }
-            _mS.getData('get', 'DocumentoElectronico/?json=' + JSON.stringify(dataSearch), null, true).then(response => {
+            _mS.getData('get', url + JSON.stringify(dataSearch), null, true).then(response => {
                 hideLoader()
                 if (response.code === "0") {
                     $scope.comprobantes = [];

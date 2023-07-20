@@ -45,7 +45,29 @@ namespace ApiInventory.Controllers
             }
             return Ok(_response);
         }
-
+        [HttpGet("GetId")]
+        public async Task<IActionResult> GetId(int id)
+        {
+            DbAccess _db = new DbAccess(_configuration);
+            LogWriter _log = new LogWriter(_configuration);
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                await _db.SPExecute("Inventario.TransferenciaBodega_Get_Id");
+                _db.AddDynamicParam("id", id);
+                _response = _db.GetDataSetAsync();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError("Error in GetId: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al Obtener los datos");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] TransferenciaBodegaParams data)
         {
@@ -53,7 +75,7 @@ namespace ApiInventory.Controllers
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Inventario.TransferenciaBodega_Insert");
+                await _db.SPExecute("Inventario.TransferenciaBodega_Insert", true);
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("jsonHeader", SqlValidation.ValidateSqlString(data.header));
                 _db.AddDynamicParam("jsonDetalle", SqlValidation.ValidateSqlString(data.detail));
