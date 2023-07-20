@@ -820,7 +820,8 @@
                                 descripcion: item.descripcion,
                                 cantidad: item.cantidad,
                                 precioCosto: item.precioCosto,
-                                estado: item.estado                                
+                                estado: item.estado  ,
+                                tota: item.total                              
                             }
                         }))
                     }
