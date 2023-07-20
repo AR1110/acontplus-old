@@ -1,4 +1,3 @@
-using Helpers;
 using Lib.Common;
 using Services.Common;
 using System.Reflection;
@@ -21,7 +20,6 @@ namespace ApiLogistica
 
             builder.Services.AddSwaggerDocumentation();
 
-
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -34,8 +32,6 @@ namespace ApiLogistica
             app.UseAuthentication();
 
             app.UseAuthorization();
-
-            
 
             app.UseEndpoints(endpoints =>
             {
