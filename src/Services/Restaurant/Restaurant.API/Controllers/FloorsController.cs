@@ -78,6 +78,10 @@ namespace Restaurant.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Floor>> PostFloor(Floor floor)
         {
+            if (string.IsNullOrWhiteSpace(floor.CodEstab))
+            {
+                return NoContent();
+            }
             _context.Floors.Add(floor);
             await _context.SaveChangesAsync();
 

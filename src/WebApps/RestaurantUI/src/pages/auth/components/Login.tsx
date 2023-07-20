@@ -5,7 +5,7 @@ import { SnackbarUtils as tS } from "@/core/utils";
 import { AuthService as AuthSvc } from "@/core/services/auth.service";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "@/redux/slices/user.slice";
-import { DataLogin } from "@/core/models";
+import { DataLogin, PrivateRoutes } from "@/core/models";
 
 type Data = {
   username: string;
@@ -57,12 +57,13 @@ export default function Login() {
     }
     AuthSvc.login(data.username, data.password).then((response) => {
       console.log(response);
+      console.log(tS);
       if (response.code === "0") {
-        tS.warning(response.message);
+        // tS.warning(response.message);
         return;
       }
       if (response.code === "1") {
-        tS.success(response.message);
+        // tS.success(response.message);
 
         const userData = response.payload as DataLogin;
 
@@ -71,7 +72,7 @@ export default function Login() {
         AuthSvc.setPersistent("ACCESS_TOKEN", jwtToken);
         AuthSvc.setPersistent("USER", JSON.stringify(userData));
         dispatch(setCredentials(userData));
-        navigate(`/`, { replace: true });
+        navigate(`/${PrivateRoutes.ADMIN}`, { replace: true });
       }
     });
   };

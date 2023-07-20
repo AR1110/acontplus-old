@@ -41,6 +41,7 @@ BEGIN
 									,actividad = ISNULL(ec.actividad,'''')
 									,rucEmpresa = e.ruc
 									,e.idEntidad companyId
+									,r.idUsuario
 								 FROM App.UsuarioRol r 
 								 INNER JOIN dbo.Entidad e ON e.idEntidad = r.idEntidad
 								 INNER JOIN dbo.Usuario u ON u.idUsuario = r.idUsuario

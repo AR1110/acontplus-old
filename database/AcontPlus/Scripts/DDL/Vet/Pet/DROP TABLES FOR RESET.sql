@@ -24,5 +24,3 @@
 --go
 --drop table if exists Pet.DiseaseType
 --go
-
-

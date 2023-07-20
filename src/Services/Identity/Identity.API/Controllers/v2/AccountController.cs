@@ -4,6 +4,7 @@ using Domain.ViewModels;
 using Helpers;
 using Identity.API.Dtos;
 using Identity.API.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
@@ -23,8 +24,8 @@ namespace Identity.API.Controllers.v2
             _tokenService = tokenService;
         }
 
-
-        [HttpPost]
+        [AllowAnonymous]
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto authRequest)
         {
             LogWriter _logs = new LogWriter(_config);
@@ -49,7 +50,7 @@ namespace Identity.API.Controllers.v2
                     loginDataDto.rucEmpresa = loginData.ruc ?? "";
                     loginData.companyId = loginData.companyId;
                     loginDataDto.urlGateway = _config["ApiGateways:Acontplus"];
-
+                    loginDataDto.idUsuario = loginData.idUsuario;
                     var jwtToken = _tokenService.GenerateJwtToken(loginDataDto);
                     if (jwtToken == null) { return Unauthorized(); }
                     _logs.LogInfo("Login successful: idRol -> " + Convert.ToString(loginDataDto.idUsuarioRol) + " \n jwt: " + jwtToken);

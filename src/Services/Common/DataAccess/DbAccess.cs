@@ -5,7 +5,7 @@ using System.Data.SqlClient;
 
 namespace DataAccess
 {
-    public class DbAccess
+    public class DbAccess: IDisposable
     {
         private IConfiguration _config;
         private readonly SqlConnection _connection;
@@ -323,6 +323,30 @@ namespace DataAccess
         {
             DtColumns(ref dt);
             DtRows(ref dt, "Error al ejecutar la transacción", message);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_command != null)
+                {
+                    _command.Dispose();
+                }
+                _connection.Close();
+                _connection.Dispose();
+            }
+        }
+
+        ~DbAccess()
+        {
+            Dispose(false);
         }
     }
 }

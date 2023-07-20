@@ -1,10 +1,9 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import { ApiResponse } from "../models";
 import { AuthService } from "@/core/services";
-import { getRestaurantApiUrl } from "@/core/config/url.config";
 
-const POSInstance = axios.create({
-  baseURL: getRestaurantApiUrl(),
+const instance = axios.create({
+  baseURL: import.meta.env.DEV ? "https://localhost:7111/gateway/" : "",
 });
 
 //   console.log("init Axios interceptor");
@@ -67,14 +66,14 @@ const addResponseInterceptor = (instance: AxiosInstance) => {
 };
 
 //Add Interceptor and response to POS
-addRequestInterceptor(POSInstance);
-addResponseInterceptor(POSInstance);
+addRequestInterceptor(instance);
+addResponseInterceptor(instance);
 
 // const axios = <T>(cfg: AxiosRequestConfig): Promise<ApiResponse> =>
 //   instance.request<any, T>(cfg);
 
 const Http = async (config: AxiosRequestConfig): Promise<ApiResponse> => {
-  return POSInstance.request(config).then((response) => {
+  return instance.request(config).then((response) => {
     return response.data;
   });
 };

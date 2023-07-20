@@ -25,7 +25,7 @@ namespace Restaurant.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Room>>> GetRooms()
         {
-            return await _context.Rooms.ToListAsync();
+            return await _context.Rooms.Include(x=>x.Floor).ToListAsync();
         }
 
         // GET: api/Rooms/5

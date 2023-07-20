@@ -6,7 +6,7 @@ namespace Restaurant.Core.Entities
     [Table("Room", Schema = "Restaurant")]
     public class Room : BaseEntity
     {
-        public Floor floor { get; set; }
+        public Floor Floor { get; set; }
         public int FloorId { get; set; }
 
         [Required]
