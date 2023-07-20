@@ -570,6 +570,28 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
+          "Port": 44354
+        }
+      ],
+      "DownstreamPathTemplate": "/api/EmailConfig{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/gateway/EmailConfig{everything}"
+    },
+
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
           "Port": 7097
         }
       ],
