@@ -1267,6 +1267,7 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
             _tS
         })
 
+        this.newCustomer = false;
         this.historyDatosAdicionales = [];
 
         this.facturaSvc = facturaSvc;
@@ -1440,6 +1441,16 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
             console.log('ERROR AL OBTENER DATOS DEL CLIENTE', error)
             this.$scope.$apply();
         }
+    }
+
+
+    receiveDataCustomerSRI(result) {
+        if(result.idCliente===0) {
+            this.newCustomer = true;
+        }else{
+            this.newCustomer = false;
+        }
+        this.cliente = result; 
     }
 
     async onSave() {
