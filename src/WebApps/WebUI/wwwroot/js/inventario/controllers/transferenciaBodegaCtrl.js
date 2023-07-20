@@ -811,7 +811,17 @@
                 
                     let data = {
                         header: JSON.stringify(header),
-                        detail: JSON.stringify($scope.gridOptions.data)
+                        detail: JSON.stringify($scope.gridOptions.data.map(item=>{
+                            return {
+                                idTransferenciaBodegaDetalle: item.idTransferenciaBodegaDetalle,
+                                idTransferenciaBodega: item.idTransferenciaBodegaDetalle,
+                                idMedida: item.idMedida,
+                                descripcion: item.descripcion,
+                                cantidad: item.cantidad,
+                                precioCosto: item.precioCosto,
+                                estado: item.estado                                
+                            }
+                        }))
                     }
 
                     showLoader();
