@@ -821,7 +821,7 @@
                                 cantidad: item.cantidad,
                                 precioCosto: item.precioCosto,
                                 estado: item.estado  ,
-                                tota: item.total                              
+                                total: item.total                              
                             }
                         }))
                     }

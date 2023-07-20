@@ -418,5 +418,11 @@
     "inputFiles": [
       "wwwroot/js/factElect/controllers/documentoElectronicoCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/inventario/controllers/transferenciaBodegaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/inventario/controllers/transferenciaBodegaCtrl.js"
+    ]
   }
 ]
