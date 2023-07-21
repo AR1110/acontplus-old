@@ -98,7 +98,7 @@ BEGIN
 			SELECT t.idDetalle, idDocumento, @idProveedor, a.idArticulo, m.idMedida, t.codigoPrincipal, t.codigoAuxiliar, cantidad, t.descripcion, precioUnitario, precioUnitario, descuento, precioTotalSinImpuesto, @idUsuario,1
 			FROM @tmp t
 			LEFT JOIN Recepcion.CompraHabitual ch ON t.codigoPrincipal = ch.codArticulo AND ch.ruc = @rucProv
-			LEFT JOIN dbo.Articulo a ON a.codigo = t.codigoPrincipal AND a.idEntidad = @idEntidad
+			LEFT JOIN dbo.Articulo a ON a.codigo = t.codigoPrincipal AND a.idEntidad = @idEntidad AND a.estado = 1
 			LEFT JOIN dbo.Medida m ON a.idMedida = m.idMedida AND m.idEntidad = @idEntidad
 			order by idDetalle asc
 			--UPDATE Recepcion.Doc_Impuesto_Temp SET codArticulo = (SELECT TOP 1 codigoPrincipal FROM @tmp) WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp)
@@ -111,7 +111,7 @@ BEGIN
 			INSERT INTO Recepcion.Doc_Impuesto_Temp(idDetalle, idDocumento, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
 			SELECT idDetalle, (SELECT TOP 1 idDocumento FROM @tmp), t.codigoPrincipal, t.codigo, t.codigoPorcentaje, ti.porcentaje, t.precioUnitario, t.valor 
 			FROM @tmp t
-			LEFT JOIN dbo.Articulo a ON a.codigo = t.codigoPrincipal AND a.idEntidad = @idEntidad
+			LEFT JOIN dbo.Articulo a ON a.codigo = t.codigoPrincipal AND a.idEntidad = @idEntidad AND a.estado = 1
 			LEFT JOIN Sri.TarifaImpuesto ti ON t.codigo = ti.codImpuesto AND t.codigoPorcentaje = ti.codigo
 			LEFT JOIN dbo.Medida m ON a.idMedida = m.idMedida AND a.idEntidad = @idEntidad
 			--WHERE NOT EXISTS (SELECT * FROM Recepcion.Doc_Detalle_Temp tt 
