@@ -79,6 +79,7 @@ BEGIN
 					AND  a.idEntidad = @idEntidad
 					OR (a.codigoAuxiliar = (SELECT t.descripcion FROM @tmp t)  COLLATE SQL_Latin1_General_Cp1_CI_AI)
 					OR (a.codigoBarra = (SELECT t.descripcion FROM @tmp t)  COLLATE SQL_Latin1_General_Cp1_CI_AI)
+					AND a.estado = 1
 					--AND NOT EXISTS (
 					--	SELECT * FROM FacturaCompraDetalle fcd WHERE a.idArticulo = fcd.idArticulo
 					--)
@@ -154,6 +155,7 @@ BEGIN
 					FROM dbo.Articulo a
 					WHERE a.descripcion LIKE '%' + (SELECT t.descripcion FROM @tmp t) + '%' COLLATE SQL_Latin1_General_Cp1_CI_AI
 					AND  a.idEntidad = @idEntidad
+					AND a.estado = 1
 					--AND a.idArticulo NOT IN (
 					--	SELECT fcd.idArticulo FROM FacturaCompraDetalle fcd WHERE a.idArticulo = fcd.idArticulo
 					--)
@@ -203,9 +205,11 @@ BEGIN
 	,'Sin compras registradas' razonSocial
 	INTO #Temp
 	FROM dbo.Articulo a
-	WHERE a.codigo = (SELECT t.codigoPrincipal FROM @tmp t)
-	OR a.descripcion LIKE '%' + (SELECT t.descripcion FROM @tmp t) + '%' COLLATE SQL_Latin1_General_Cp1_CI_AI
-	AND  a.idEntidad = @idEntidad
+	WHERE   a.idEntidad = @idEntidad
+	AND a.estado = 1
+	AND (a.codigo = (SELECT t.codigoPrincipal FROM @tmp t) OR 
+			a.descripcion LIKE '%' + (SELECT t.descripcion FROM @tmp t) + '%' COLLATE SQL_Latin1_General_Cp1_CI_AI
+	)
 	--AND a.idArticulo NOT IN (
 	--	SELECT fcd.idArticulo FROM FacturaCompraDetalle fcd WHERE a.idArticulo = fcd.idArticulo
 	--)
