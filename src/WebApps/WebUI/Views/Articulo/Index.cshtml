@@ -18,167 +18,111 @@
         </div>
     </div>
 
-
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-3 col-xl-3 col-md-12 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>SubFamilia</span>
+                        <select name="subFamilia" id="subFamilia" class="form form-control border-select" ng-model="dataSearch.idSubFamilia" ng-change="searchArticulo()">
+                            <option value="">Todos</option>
+                            <option ng-value="item.idSubFamilia" ng-repeat="item in subFamilias">
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-xl-3 col-md-12 col-sm-12 col-12">
+                     <div class="form-group">
+                        <span>Medida</span>
+                        <select name="medida" id="medida" class="form form-control border-select" ng-model="dataSearch.idMedida" ng-change="searchArticulo()">
+                            <option value="">Todos</option>
+                            <option ng-value="item.idMedida" ng-repeat="item in medidas">
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-xl-3 col-md-12 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>Marca</span>
+                        <select name="marca" id="marca" class="form form-control border-select" ng-model="dataSearch.idMarca" ng-change="searchArticulo()">
+                            <option value="">Todos</option>
+                            <option ng-value="item.idMarca" ng-repeat="item in marcas">
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-xl-3 col-md-12 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>Modelos</span>
+                        <select name="modelo" id="modelo" class="form form-control border-select" ng-model="dataSearch.idModelo" ng-change="searchArticulo()">
+                            <option value="">Todos</option>
+                            <option ng-value="item.idModelo" ng-repeat="item in modelos">
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-xl-3 col-md-12 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>Tipo Iva</span>
+                        <select name="tipoIva" id="tipoIva" class="form form-control border-select" ng-model="dataSearch.idTipoIva" ng-change="searchArticulo()">
+                            <option value="">Todos</option>
+                            <option ng-value="item.idTipoIva" ng-repeat="item in tiposIva">
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-xl-3 col-md-12 col-sm-12 col-12">
+                    <div class="form-group">
+                        <spna>Stock</spna>
+                        <select class="form-control border-select" ng-model="dataSearch.byStock" ng-change="searchArticulo()">    
+                            <option value="">Todos</option>                            
+                            <option ng-value="1">Con Stock</option>
+                            <option ng-value="2">Sin Stock</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-xl-2 col-md-12 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>Estado</span>
+                        <select name="" id="" class="form-control border-select" ng-model="dataSearch.status" ng-change="searchArticulo()">
+                            <option value="">Todos</option>
+                            <option ng-value="1">Activo</option>
+                            <option ng-value="0">Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-xl-2 col-md-12 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>Fraccionado</span>
+                        <md-switch ng-model="dataSearch.checkBoxFraccionado" aria-label="Inventario" ng-change="searchArticulo()">
+                        {{ dataSearch.checkBoxFraccionado?'SI':'NO' }}
+                    </md-switch>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-xl-2 col-md-12 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>Inventario</span>
+                        <md-switch ng-model="dataSearch.checkBoxInventario" ng-change="searchArticulo()" aria-label="Switch 1">
+                        {{dataSearch.checkBoxInventario?'SI':'NO'}}
+                    </md-switch>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <div class="card">
-        <div class="card-body">
-            @* <md-toolbar class="md-table-toolbar md-default">
-                <div class="md-toolbar-tools">
-                    <div class="col-lg-9 col-md-9 col-sm-1">
-                        <button class="btn btn-info" ng-click="openModalFiltro()">
-                            <i class="fa fa-filter"></i> Filtro
-                        </button>
-
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-                        <form class="form-material">
-                            <div class="input-group">
-                                <input type="text" class="form-control" ng-model="dataSearch.bySearch"
-                                    ng-change="searchArticulo()" placeholder="Buscar Articulo" />
-                                <div class="input-group-append">
-                                    <button class="btn btn-secondary btn-sm" ng-click="searchArticulo()">
-                                        <i class="fas fa-redo"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </md-toolbar> *@
+        <div class="card-body"> 
             
-            <div class="row">
-                
-                <div class="row justify-content-between">
-        <div class="col-lg-2 col-md-2 col-sm-4 col-12">
-            <div class="icheck-info">
-                <input type="checkbox" ng-model="$ctrl.dataSearch.checkBoxSubFamilia" id="checkBoxSubFamilia">
-                <label for="checkBoxSubFamilia">SubFamilia</label>
-            </div>
-        </div>
-
-        <div class="col-lg-2 col-md-2 col-sm-4 col-12">
-            <div class="icheck-info">
-                <input type="checkbox" ng-model="$ctrl.dataSearch.checkBoxMedida" id="checkBoxMedida">
-                <label for="checkBoxMedida">Medida</label>
-            </div>
-        </div>
-
-        <div class="col-lg-2 col-md-2 col-sm-4 col-12">
-            <div class="icheck-info">
-                <input type="checkbox" ng-model="$ctrl.dataSearch.checkBoxMarca" id="checkBoxMarca">
-                <label for="checkBoxMarca">Marca</label>
-            </div>
-        </div>
-
-        <div class="col-lg-2 col-md-2 col-sm-4 col-12">
-            <div class="icheck-info">
-                <input type="checkbox" ng-model="$ctrl.dataSearch.checkBoxModelo" id="checkBoxModelo">
-                <label for="checkBoxModelo">Modelo</label>
-            </div>
-        </div>
-
-        </div>
-        <div class="row justify-content-between">
-            <div class="col-lg-2 col-md-2 col-sm-4 col-12">
-                <div class="icheck-info">
-                    <input type="checkbox" ng-model="$ctrl.dataSearch.checkBoxTipoIva" id="checkBoxTipoIva">
-                    <label for="checkBoxTipoIva">Tipo Iva</label>
-                </div>
-            </div>
-            <div class="col-lg-2 col-md-2 col-sm-4 col-12">
-                <div class="icheck-info">
-                    <input type="checkbox" ng-model="$ctrl.dataSearch.checkBoxStock" id="checkBoxStock">
-                    <label for="checkBoxStock">Stock</label>
-                </div>
-            </div>
-            <div class="col-lg-2 col-md-2 col-sm-4 col-12">
-                <div class="icheck-info">
-                    <input type="checkbox" ng-model="$ctrl.dataSearch.checkBoxFraccionado" id="checkBoxFraccionado">
-                    <label for="checkBoxFraccionado">Fraccionado</label>
-                </div>                        
-            </div>
-            <div class="col-lg-2 col-md-2 col-sm-4 col-12">
-                <div class="icheck-info">
-                    <input type="checkbox" ng-model="$ctrl.dataSearch.checkBoxInventario" id="checkBoxInventario">
-                    <label for="checkBoxInventario">Inventario</label>
-                </div>
-            </div>
-        </div>
-
-        <hr>
-
-        <div class="row">
-            <div class="col-lg-6 col-md-6 col-sm-6 col-12" ng-if="$ctrl.dataSearch.checkBoxSubFamilia">
-                <div class="form-group">
-                    <label for="">SubFamilia</label>
-                        <select class="form-control border-select" ng-model="$ctrl.dataSearch.bySubFamilia" 
-                                ng-options="sf.idSubFamilia as sf.subFamilia group by sf.familia  for sf in $ctrl.subFamilias">
-                        </select>                          
-                </div>
-            </div>
-            <div class="col-lg-6 col-md-6 col-sm-6 col-12" ng-if="$ctrl.dataSearch.checkBoxMedida">
-                <div class="form-group">
-                    <label for="">Medida</label>
-                    <select ng-model="$ctrl.dataSearch.byMedida" class="form-control">
-                        <option ng-value="item.idMedida" ng-repeat="item in $ctrl.medidas">{{item.descripcion}}</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-6 col-md-6 col-sm-6 col-12" ng-if="$ctrl.dataSearch.checkBoxMarca">
-                <div class="form-group">
-                    <label for="">Marca</label>
-                    <select ng-model="$ctrl.dataSearch.byMarca" class="form-control">
-                        <option ng-value="item.idMarca" ng-repeat="item in $ctrl.marcas">{{item.descripcion}}</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-lg-6 col-md-6 col-sm-6 col-12" ng-if="$ctrl.dataSearch.checkBoxModelo">
-                <div class="form-group">
-                    <label for="">Modelo</label>                
-                    <select class="form-control border-select" ng-model="$ctrl.dataSearch.byModelo"
-                            ng-options="m.idModelo as m.modelo group by m.marca for m in $ctrl.modelos">
-                    </select>               
-                </div>
-            </div>        
-        </div>
-
-        <div class="row">
-            <div class="col-lg-6 col-md-6 col-sm-6 col-12" ng-if="$ctrl.dataSearch.checkBoxTipoIva">
-                <div class="form-group">
-                    <label for="">Tipo Iva</label>
-                    <select ng-model="$ctrl.dataSearch.byTipoIva" class="form-control">
-                        <option ng-value="item.idTipoIva" ng-repeat="item in $ctrl.tipoIvas">{{item.descripcion}}</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-lg-6 col-md-6 col-sm-6 col-12" ng-if="$ctrl.dataSearch.checkBoxStock">
-                <div class="form-group">
-                    <label for="opcion">Opción</label>
-                    <select class="form-control" ng-model="$ctrl.dataSearch.byStock">                                
-                        <option ng-value="1">Con Stock</option>
-                        <option ng-value="2">Sin Stock</option>
-                    </select>
-                </div>
-            </div>
-        </div>   
-
-        <div class="row">
-            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
-                <div class="form-group">
-                    <label for="estado">Estado</label>
-                    <select name="" id="" class="form-control border-select" ng-model="$ctrl.dataSearch.status">
-                        <option value=""></option>
-                        <option value="1">Activo</option>
-                        <option value="0">Inactivo</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
+            <div class="row">   
                 <div class="col-lg-9 col-md-9 col-sm-1">
                     <span class="form-group pull-left page-size form-inline">
                         <select class="form-control control-color" ng-model="dataSearch.pageSize"
@@ -194,10 +138,7 @@
                             <div class="input-group-append">
                                 <button class="btn btn-secondary btn-sm" ng-click="searchArticulo()">
                                     <i class="fas fa-redo"></i>
-                                </button>
-                                <button class="btn btn-info btn-sm" ng-click="openModalFiltro()">
-                                    <i class="fas fa-filter"></i>
-                                </button>
+                                </button> 
                             </div>
                         </div>
                     </form>
@@ -252,13 +193,7 @@
                                             </md-button>
                                         </md-menu-item>
 
-                                        <md-menu-item ng-if="accion.impuesto">
-                                            <md-button ng-click="abrirModalImpuestoArticulo(a)">
-                                                <span md-menu-align-target>
-                                                    <icon class="ti-money"></icon> Impuesto
-                                                </span>
-                                            </md-button>
-                                        </md-menu-item>
+                                        
 
                                         <md-menu-item>
                                             <md-button ng-click="updateStockArticle(a)">
