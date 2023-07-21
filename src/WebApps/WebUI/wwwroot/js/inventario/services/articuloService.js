@@ -18,8 +18,14 @@
 
                 if(response.code==="1"){
                     let mainData = JSON.parse(response.payload);
+                    console.log(mainData)
                     let articulos = mainData[0];
                     let totalRecords = mainData[0][0].totalRecords; 
+                    let subFamilias = mainData[1]; 
+                    let medidas = mainData[2];
+                    let marcas = mainData[3];
+                    let modelos = mainData[4];
+                    let tiposIva = mainData[5];                    
 
                     //Listado de articulos 
                     return {
@@ -43,7 +49,12 @@
                                 totalRecords: item.totalRecords,
                                 style: item.style
                             }
-                        })
+                        }),
+                        subFamilias,
+                        medidas,
+                        marcas,
+                        modelos,
+                        tiposIva
                     }
                 }
             })

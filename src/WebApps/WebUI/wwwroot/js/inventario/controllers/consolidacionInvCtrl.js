@@ -1320,7 +1320,8 @@
         } = _params;
         let {
             dataDocumento,
-            detalleDocumento
+            detalleDocumento,
+            medidasTemp
         } = data;
         $scope.uiGridConstants = uiGridConstants
         $scope.TIPO_REGISTRO = TIPO_REGISTRO;
@@ -1331,21 +1332,20 @@
         $scope.detalleDocumento.medidas = []
         let index = 1
         for (const dc of $scope.detalleDocumento) {
-            dc.num = index
-            let tempMedidas = []
-            tempMedidas.push({
+            dc.num = index            
+            medidasTemp.push({
                 idMedida: dc.idMedida,
                 descripcion: dc.medida,
                 precioCosto: dc.precioCosto
             })
-            if (dc.fraccionado) {
-                console.log(dc.medidasTemp)
-                let tempArray =  dc.medidasTemp && JSON.parse(dc.medidasTemp) || []
-                for (const tm of tempArray) {
-                    tempMedidas.push(tm)
-                }
-            }
-            dc.medidas = tempMedidas
+            // if (dc.fraccionado) {
+                
+            //     let tempArray =  dc.medidasTemp && JSON.parse(dc.medidasTemp) || []
+            //     for (const tm of tempArray) {
+            //         tempMedidas.push(tm)
+            //     }
+            // }
+            dc.medidas = medidasTemp
             index++
         }
 

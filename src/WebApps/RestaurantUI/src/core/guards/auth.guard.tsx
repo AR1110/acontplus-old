@@ -1,13 +1,22 @@
 // import { AppStore } from "@/redux/store";
 // import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
-import { PublicRoutes } from "../models";
-const AuthGuard = () => {
+import { PrivateRoutes, PublicRoutes } from "../models";
+
+interface Props {
+  privateValidation: boolean;
+}
+
+const AuthGuard = ({ privateValidation }: Props) => {
   //const userState = useSelector((store: AppStore) => store.user);
   const userState = localStorage.getItem("ACCESS_TOKEN") ? true : false;
 
   return userState ? (
-    <Outlet />
+    privateValidation ? (
+      <Outlet />
+    ) : (
+      <Navigate replace to={PrivateRoutes.ADMIN}></Navigate>
+    )
   ) : (
     <Navigate replace to={PublicRoutes.LOGIN}></Navigate>
   );

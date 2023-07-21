@@ -1,11 +1,13 @@
 import { PrivateRoutes } from "@/core/models";
 import { RoutesWithNotFound } from "@/core/utils";
-import { Navigate, Route } from "react-router-dom";
+import { Route } from "react-router-dom";
 import { lazy } from "react";
-import RootLayout from "@/layouts/RootLayout";
+
+const AdminLayout = lazy(() => import("@/layouts/AdminLayout"));
 
 const Dashboard = lazy(() => import("./dashboard/Dashboard"));
-const Table = lazy(() => import("./table/Table"));
+const TableIndex = lazy(() => import("./pages/table/Table"));
+const DishComponent = lazy(() => import("./dish/Dish"));
 
 /**
  *
@@ -13,13 +15,12 @@ const Table = lazy(() => import("./table/Table"));
  */
 export default function Admin() {
   return (
-    <>
-      <RoutesWithNotFound>
-        <Route path="/" element={<RootLayout />}>
-          <Route path={PrivateRoutes.DASHBOARD} element={<Dashboard />}></Route>
-          <Route path={PrivateRoutes.TABLE} element={<Table />}></Route>
-        </Route>
-      </RoutesWithNotFound>
-    </>
+    <RoutesWithNotFound>
+      <Route path="/" element={<AdminLayout />}>
+        <Route path={PrivateRoutes.DASHBOARD} element={<Dashboard />}></Route>
+        <Route path={PrivateRoutes.TABLE} element={<TableIndex />}></Route>
+        <Route path={PrivateRoutes.DISH} element={<DishComponent />}></Route>
+      </Route>
+    </RoutesWithNotFound>
   );
 }
