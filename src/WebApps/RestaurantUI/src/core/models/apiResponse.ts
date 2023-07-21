@@ -1,7 +1,8 @@
+type ApiResponseCode = "0" | "1";
 export interface ApiResponse {
-  code: string;
+  code: ApiResponseCode;
   message: string;
-  payload: unknown;
+  payload: any;
   title?: string;
 }
 

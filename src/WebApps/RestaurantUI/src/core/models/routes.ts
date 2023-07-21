@@ -5,10 +5,10 @@ const PublicRoutes = {
 const PrivateRoutes = {
   PRIVATE: "private",
   ADMIN: "admin",
+  POS: "pos",
   DASHBOARD: "Dashboard",
   LAYOUT: "Layout",
   HOME: "Home",
-  POS: "Pos",
   CATEGORIA: "Categoria",
   RECIPE: "Recipe",
   DISH: "Dish",

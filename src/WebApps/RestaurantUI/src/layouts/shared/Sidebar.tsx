@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function Sidebar() {
   return (
     <>
@@ -6,24 +8,24 @@ export default function Sidebar() {
           <nav className="sidebar-nav">
             <ul id="sidebarnav">
               <li>
-                <a
+                <Link
+                  to="Dashboard"
                   className="waves-effect waves-dark"
-                  href="#"
                   aria-expanded="false"
                 >
                   <i className="ti-home"></i>
                   <span className="hide-menu">Inicio</span>
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
+                  to="Table"
                   className="waves-effect waves-dark"
-                  href="#"
                   aria-expanded="false"
                 >
-                  <i className="ti-home"></i>
-                  <span className="hide-menu">Inicio</span>
-                </a>
+                  <i className="mdi mdi-table"></i>
+                  <span className="hide-menu">Mesas</span>
+                </Link>
               </li>
             </ul>
           </nav>
