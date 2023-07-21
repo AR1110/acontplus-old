@@ -14,7 +14,7 @@
     },
     "RequestIdKey": "OcRequestId"
   },
-  "Routes": [    
+  "Routes": [
     {
       "DownstreamHostAndPorts": [
         {
@@ -90,6 +90,22 @@
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/Restaurant{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7210
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "UpstreamPathTemplate": "/gateway/Inventario{everything}"
     }
   ]
 }
