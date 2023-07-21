@@ -23,7 +23,7 @@ namespace Restaurant.API.Controllers
         public FloorsController(RestaurantContext context)
         {
             _context = context;
-        }
+        } 
 
         // GET: api/Floors
         [HttpGet]
