@@ -849,20 +849,11 @@ function ModalArticuloGeneralCtrl(
       if ($scope.dataSearch.bySearch.length < 2) {
         $scope.dataSearch.totalRecords = 0;
         return;
-      }
-
-      const dataSearch = {
-        tipo: 1,
-        module: "CP",
-        bySearch: $scope.dataSearch.bySearch,
-        pageIndex: $scope.dataSearch.pageIndex,
-        pageSize: $scope.dataSearch.pageSize,
-        byColumn: $scope.dataSearch.byColumn,
-      };
+      } 
       $scope.activated = true;
 
       artSvc
-        .getAll(dataSearch)
+        .getAllWithPrices($scope.dataSearch)
         .then((response) => {
           let { articulos, totalRecords } = response;
           $scope.activated = false;
