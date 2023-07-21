@@ -61,8 +61,10 @@ import nodeResolve from '@rollup/plugin-node-resolve';
 
 const production = !process.env.ROLLUP_WATCH;
 // const appObject = "petBreed"
+// const appObject = "pet"
 // const appObject = "petMH"
-const appObject = "configEmail"
+// const appObject = "configEmail"
+const appObject = "motivoDiscrepancia"
 
 export default {
     // This `main.js` file we wrote

@@ -108,13 +108,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Customer.Core", "Services\C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Customer.Infrastructure", "Services\Customer\Customer.Infrastructure\Customer.Infrastructure.csproj", "{BFA0F608-6413-4911-8E2D-72EFC9C0E0CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inventario.API", "Services\Inventario\Inventario.API\Inventario.API.csproj", "{E866BD98-6630-48AF-8C58-FC66C3115BB7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inventario.API", "Services\Inventario\Inventario.API\Inventario.API.csproj", "{E866BD98-6630-48AF-8C58-FC66C3115BB7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inventario.Application", "Services\Inventario\Inventario.Application\Inventario.Application.csproj", "{529AEC8A-832E-4FA6-A378-F91CC3A9D0D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inventario.Application", "Services\Inventario\Inventario.Application\Inventario.Application.csproj", "{529AEC8A-832E-4FA6-A378-F91CC3A9D0D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inventario.Core", "Services\Inventario\Inventario.Core\Inventario.Core.csproj", "{DF903256-4A35-4516-956B-02BFBD295A3C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inventario.Core", "Services\Inventario\Inventario.Core\Inventario.Core.csproj", "{DF903256-4A35-4516-956B-02BFBD295A3C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inventario.Infrastructure", "Services\Inventario\Inventario.Infrastructure\Inventario.Infrastructure.csproj", "{1B114191-4D5E-4622-9715-26E63175261C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inventario.Infrastructure", "Services\Inventario\Inventario.Infrastructure\Inventario.Infrastructure.csproj", "{1B114191-4D5E-4622-9715-26E63175261C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
