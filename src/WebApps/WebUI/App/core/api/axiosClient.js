@@ -29,7 +29,7 @@ var decodedJwt = jwt_decode(getCurrentAccessToken());
 
 export const client = createAxiosClient({
     options: {
-        baseURL: `${decodedJwt.urlGateway}`,
+        baseURL: `${decodedJwt.urlGateway}/gateway/`,
         timeout: 300000,
         headers: {
             "Content-Type": "application/json",
