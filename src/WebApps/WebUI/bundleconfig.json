@@ -406,5 +406,23 @@
     "inputFiles": [
       "wwwroot/js/controllers/homeCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/inventario/services/transferenciaBodegaService.min.js",
+    "inputFiles": [
+      "wwwroot/js/inventario/services/transferenciaBodegaService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/factElect/controllers/documentoElectronicoCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/factElect/controllers/documentoElectronicoCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/inventario/controllers/transferenciaBodegaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/inventario/controllers/transferenciaBodegaCtrl.js"
+    ]
   }
 ]
