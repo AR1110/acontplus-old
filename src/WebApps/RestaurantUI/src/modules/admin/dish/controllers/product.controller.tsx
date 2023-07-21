@@ -4,7 +4,13 @@ export const productController = {
   getAll: function () {
     return Http({
       method: 'get',
-      url: 'Articulo/Search?json={"busqueda": ""}',
+      url: 'Inventario/Articulo/Get/',
+      params: {
+        'json': {
+          'pageSize': '1',
+          'tipo': '1',
+        }
+      }
     });
   },
 

@@ -11,29 +11,7 @@ import {
 } from '@mui/material';
 import SearchComponent from './components/Search';
 import { productController } from './controllers/product.controller';
-
-
-
-
-// Create methods for get, post, put, delete
-const getDishes = () => {
-  try {
-    productController.getAll().then((response) => {
-      if(response.code === "0") {
-        console.log(response);
-
-        console.log("Holaaaaaaaaaaaaaa");
-      }
-    });
-  }catch(error) {
-    console.log(error);
-  }
-};
-
-
-
-
-
+import { useEffect } from 'react';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -62,14 +40,34 @@ const rows = [
 ];
 
 export default function DishComponent() {
+  // Create methods for get, post, put, delete
+  const getDishes = () => {
+    try {
+      productController.getAll().then((response) => {
+        if (response.code === '0') {
+          console.log(response);
+        }
+        if (response.code === '1') {
+          console.log(response.payload);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getDishes();
+  }, []);
+
   return (
     <>
       <Grid container spacing={2}>
         <Grid item xs={6} md={2}>
-            <h1>Platos</h1>
+          <h1>Platos</h1>
         </Grid>
         <Grid item xs={6} md={4}>
-           <SearchComponent></SearchComponent>
+          <SearchComponent></SearchComponent>
         </Grid>
         <Grid item xs={6} md={4}>
           <Item>xs=6 md=4</Item>
