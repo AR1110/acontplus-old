@@ -4,12 +4,12 @@ export const productController = {
   getAll: function () {
     return Http({
       method: "get",
-      url: "Inventario/api/Articulo/Get",
+      url: "Inventario/Articulo/Get/",
       params: {
-        json: JSON.stringify({
+        json: {
           pageSize: "1",
           tipo: "1",
-        }),
+        },
       },
     });
   },
