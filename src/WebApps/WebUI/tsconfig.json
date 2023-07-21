@@ -9,7 +9,7 @@
     "compilerOptions": {
         "target": "es2015",
         // "module": "CommonJS",
-        "strict": true,
+        "strict": false,
         "forceConsistentCasingInFileNames": true,
         // "lib": [ "es2015", "dom" ],
         "baseUrl": ".",

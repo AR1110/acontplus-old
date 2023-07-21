@@ -18,7 +18,7 @@
 	const getPets = async () => {
 		showLoader();
 		await client
-			.get(`/gateway/Pets/?json=` + JSON.stringify({ tipo: 1 }))
+			.get(`Vet/Pets/?json=` + JSON.stringify({ tipo: 1 }))
 			.then((response) => {
 				if (response.code == 1) {
 					pets = JSON.parse(response.payload);
@@ -40,13 +40,13 @@
 	};
 
 	onMount(async () => {
-		await client.get("/gateway/Genderes/").then((response) => {
+		await client.get("Vet/Genderes/").then((response) => {
 			genderes = response;
 		});
-		await client.get("/gateway/PetTypes/").then((response) => {
+		await client.get("Vet/PetTypes/").then((response) => {
 			petTypes = response;
 		});
-		await client.get("/gateway/Breeds/").then((response) => {
+		await client.get("Vet/Breeds/").then((response) => {
 			breeds = response;
 		});
 		await getPets();
@@ -112,7 +112,7 @@
 			weight: pet.weight,
 		};
 		await client
-			.post("/gateway/Pets/", newPet)
+			.post("Vet/Pets/", newPet)
 			.then((response) => {
 				console.log(response);
 				toast({
@@ -141,7 +141,7 @@
 		});
 		if (isConfirmed) {
 			await client
-				.delete("/gateway/Pets/" + id)
+				.delete("Vet/Pets/" + id)
 				.then((response) => {
 					console.log(response);
 					toast({
@@ -183,7 +183,7 @@
 		};
 
 		await client
-			.put("/gateway/Pets/" + updatedpet.id, updatedpet)
+			.put("Vet/Pets/" + updatedpet.id, updatedpet)
 			.then((response) => {
 				toast({
 					type: "success",
@@ -224,7 +224,7 @@
 				textSearch: value,
 			};
 			await client
-				.get(`/gateway/Cliente/Search/`, {
+				.get(`Cliente/Search/`, {
 					params: {
 						json: JSON.stringify(data),
 					},

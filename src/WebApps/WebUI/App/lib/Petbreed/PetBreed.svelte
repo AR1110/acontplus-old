@@ -11,7 +11,7 @@
     onMount(async () => {
         showLoader();
         await client
-            .get("/gateway/PetTypes/")
+            .get("Vet/PetTypes/")
             .then((response) => {
                 petTypes = response;
             })
@@ -25,7 +25,7 @@
 
     const getBreeds = async () => {
         await client
-            .get("/gateway/Breeds/")
+            .get("Vet/Breeds/")
             .then((response) => {
                 breeds = response;
                 breeds.forEach((element, index) => {
@@ -89,7 +89,7 @@
             description: breed.description,
         };
         await client
-            .post("/gateway/Breeds/", newBreed)
+            .post("Vet/Breeds/", newBreed)
             .then((response) => {
                 console.log(response);
                 breeds.push(response);
@@ -118,7 +118,7 @@
             description: breed.description,
         };
         await client
-            .put("/gateway/Breeds/" + updatedBreed.id, updatedBreed)
+            .put("Vet/Breeds/" + updatedBreed.id, updatedBreed)
             .then((response) => {
                 debugger;
                 // const breedIndex = breeds.findIndex((b) => b.id === breed.id);
@@ -149,7 +149,7 @@
         });
         if (isConfirmed) {
             await client
-                .delete("/gateway/Breeds/" + id)
+                .delete("Vet/Breeds/" + id)
                 .then((response) => {
                     console.log(response);
                     toast({
