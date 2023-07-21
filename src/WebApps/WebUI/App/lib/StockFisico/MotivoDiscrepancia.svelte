@@ -4,14 +4,20 @@
     import { client } from "../../core/api/axiosClient";
     import toast from "../../core/utils/toast";
     import Swal from "sweetalert2";
-    let url = "Inventario/MotivoDiscrepancias";
-    let data: MotivoDiscrepancia = {
-        id: 0,
-        codigo: "",
-        descripcion: "",
-    };
+    import { TabulatorFull as Tabulator } from "tabulator-tables";
+
+    let url = "Inventario/MotivoDiscrepancias/";
+    // let data: MotivoDiscrepancia = {
+    //     id: 0,
+    //     codigo: "",
+    //     descripcion: "",
+    // };
+
+    let data = {} as MotivoDiscrepancia;
 
     let motivos: MotivoDiscrepancia[] = [];
+
+    let tableComponent;
 
     onMount(() => {
         onload();
@@ -23,6 +29,11 @@
             .then((response: any) => {
                 motivos = response;
                 console.log(motivos);
+                new Tabulator(tableComponent, {
+                    data: motivos, //link data to table
+                    reactiveData: true, //enable data reactivity
+                    columns: new Array(data), //define table columns
+                });
             })
             .catch((error) => {
                 console.log(error);
@@ -39,7 +50,14 @@
             cleanMotivo();
         }
     };
-    const cleanMotivo = () => {};
+    const cleanMotivo = () => {
+        let newData: MotivoDiscrepancia = {
+            id: 0,
+            codigo: "",
+            descripcion: "",
+        };
+        data = newData;
+    };
 
     const add = async () => {
         if (!data.codigo) {
@@ -57,6 +75,7 @@
                     type: "success",
                     message: "Registrada exitosamente",
                 });
+                cleanMotivo();
                 openNew(false);
                 onload();
             })
@@ -73,10 +92,38 @@
         }
     };
     const edit = (e) => {
+        console.log(e);
         editStatus = true;
         data = e;
     };
-    const update = () => {};
+    const update = async () => {
+        if (!data.codigo) {
+            toast({ type: "warning", message: "Ingrese el código" });
+            return;
+        }
+        if (!data.descripcion) {
+            toast({ type: "warning", message: "Ingrese la descripción" });
+            return;
+        }
+        await client
+            .put(`${url}` + data.id, data)
+            .then((response: any) => {
+                toast({
+                    type: "success",
+                    message: "Actualizado exitosamente",
+                });
+                cleanMotivo();
+                openNew(false);
+                onload();
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+    const disable = async (item) => {
+        data = item;
+        update();
+    };
 </script>
 
 <div class="row page-titles">
@@ -131,6 +178,8 @@
     </div>
 {/if}
 {#if motivos.length > 0}
+    <div bind:this={tableComponent} />
+
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
@@ -139,6 +188,7 @@
                         <tr>
                             <th>Código</th>
                             <th>Descripción</th>
+                            <th>Estado</th>
                             <th>Op</th>
                         </tr>
                     </thead>
@@ -147,6 +197,23 @@
                             <tr>
                                 <td>{item.codigo}</td>
                                 <td>{item.descripcion}</td>
+                                <td>
+                                    <div
+                                        class="custom-control custom-switch text-warning"
+                                    >
+                                        <input
+                                            type="checkbox"
+                                            bind:checked={item.enabled}
+                                            on:change={() => disable(item)}
+                                            class="custom-control-input"
+                                            id="switch{item.id}"
+                                        />
+                                        <label
+                                            class="custom-control-label"
+                                            for="switch{item.id}"
+                                        />
+                                    </div>
+                                </td>
                                 <td>
                                     <button
                                         class="btn btn-outline-warning"
@@ -162,3 +229,9 @@
         </div>
     </div>
 {/if}
+<svelte:head>
+    <link
+        href="https://unpkg.com/tabulator-tables@4.9.1/dist/css/tabulator.min.css"
+        rel="stylesheet"
+    />
+</svelte:head>

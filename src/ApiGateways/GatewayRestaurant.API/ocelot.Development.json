@@ -35,22 +35,6 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44331
-        }
-      ],
-      "DownstreamPathTemplate": "/api/v3/Articulo{everything}",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/gateway/Articulo{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
           "Port": 44358
         }
       ],

@@ -40,6 +40,10 @@ const rows = [
 ];
 
 export default function DishComponent() {
+  useEffect(() => {
+    getDishes();
+  }, []);
+
   // Create methods for get, post, put, delete
   const getDishes = () => {
     try {
@@ -48,7 +52,8 @@ export default function DishComponent() {
           console.log(response);
         }
         if (response.code === '1') {
-          console.log(response.payload);
+          const decode = JSON.parse(response.payload);
+          console.log(decode);
         }
       });
     } catch (error) {
@@ -56,9 +61,7 @@ export default function DishComponent() {
     }
   };
 
-  useEffect(() => {
-    getDishes();
-  }, []);
+
 
   return (
     <>
