@@ -13,6 +13,7 @@ import { AuthGuard } from "./core/guards";
 
 const Login = lazy(() => import("@/pages/auth/components/Login"));
 const Admin = lazy(() => import("@/modules/admin/Admin"));
+const Pos = lazy(() => import("@/modules/pos/Pos"));
 // const Pos = lazy(() => import("@/pages/Pos/Pos"));
 // const Categoria = lazy(() => import("@/pages/Categoria/Categoria"));
 // const TableComponent = lazy(() => import("@/pages/table/Table"));
@@ -68,11 +69,12 @@ export default function App() {
               element={<Navigate to={PrivateRoutes.ADMIN}></Navigate>}
             ></Route>
             <Route path={PublicRoutes.LOGIN} element={<Login />}></Route>
-            <Route element={<AuthGuard />}>
+            <Route element={<AuthGuard privateValidation={true} />}>
               <Route
                 path={`${PrivateRoutes.ADMIN}/*`}
                 element={<Admin />}
               ></Route>
+              <Route path={`${PrivateRoutes.POS}/*`} element={<Pos />}></Route>
             </Route>
           </RoutesWithNotFound>
         </BrowserRouter>
