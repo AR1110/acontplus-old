@@ -8,7 +8,7 @@ export default defineConfig({
       "@": "/src",
       // { find: '@assets', replacement: '/src/assets' },
       // { find: '@common', replacement: '/src/common' },
-      // { find: '@layouts', replacement: '/src/layouts' },
+      "@admin": "/src/modules/admin",
     },
   },
   plugins: [react()],

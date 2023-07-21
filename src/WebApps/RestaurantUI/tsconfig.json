@@ -4,7 +4,8 @@
     "target": "esnext",
     "baseUrl": ".",
     "paths": { 
-      "@/*": ["src/*"],      
+      "@/*": ["src/*"], 
+      "@admin/*": ["src/modules/admin/*"],      
     },
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
