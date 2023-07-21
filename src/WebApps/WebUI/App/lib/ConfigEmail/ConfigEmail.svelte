@@ -5,7 +5,7 @@
   import Swal from "sweetalert2";
   import { options } from "toastr";
 
-  let url = "/gateway/EmailConfig/";
+  let url = "EmailConfig/";
 
   type Data = {
     idEmailConfig: number;
