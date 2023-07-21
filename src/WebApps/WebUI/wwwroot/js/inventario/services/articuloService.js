@@ -19,41 +19,7 @@
                 if(response.code==="1"){
                     let mainData = JSON.parse(response.payload);
                     let articulos = mainData[0];
-                    let totalRecords = mainData[1][0].totalRecords;
-                    //Si es consultar precio
-                    if(query.module ==='CP'){
-                      
-                        return {
-                            totalRecords,
-                            articulos: articulos.map(item=>{                            
-                                let tarifas = JSON.parse(item.tarifa)
-                                return {
-                                    idArticulo: item.idArticulo,
-                                    idMedida: item.idMedida,
-                                    code_unique: item.code_unique,
-                                    codigo: item.codigo,
-                                    descripcion: item.descripcion,
-                                    precioCosto: item.precioCosto,
-                                    estado: item.estado,
-                                    stock: item.stock,
-                                    observaciones: item.observaciones,
-                                    imagen: item.imagen,
-                                    subFamilia: item.subFamilia,
-                                    medida: item.medida,
-                                    marca: item.marca,
-                                    modelo: item.modelo,
-                                    tipoIva: item.tipoIva,
-                                    tipoArticulo: item.tipoArticulo,
-                                    style: item.style,
-                                    precioSinSubsidio: item.precioSinSubsidio,
-                                    stockMinimo: item.stockMinimo,
-                                    tarifas,
-                                    color: item.color,
-                                    }
-                                })
-
-                        }
-                    }
+                    let totalRecords = mainData[0][0].totalRecords; 
 
                     //Listado de articulos 
                     return {
@@ -79,6 +45,63 @@
                             }
                         })
                     }
+                }
+            })
+        }
+
+
+        //se usa en modulo consultar precio y modal consultar Listado de Articulos 
+        service.getAllWithPrices = function(dataSearch){
+            const query = { 
+                tipo: 3,
+                module: "CP",
+                bySearch: dataSearch.bySearch,
+                pageIndex: dataSearch.pageIndex,
+                pageSize: dataSearch.pageSize,
+                byColumn: dataSearch.byColumn,
+              };
+
+            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response=>{
+                if(response.code==="0"){
+                    throw response;
+                }
+
+                if(response.code==="1"){
+                    let mainData = JSON.parse(response.payload);
+                    let articulos = mainData[0];
+                    let totalRecords = mainData[0][0].totalRecords; 
+                      
+                    return {
+                        totalRecords,
+                        articulos: articulos.map(item=>{                            
+                            let tarifas = JSON.parse(item.tarifa)
+                            return {
+                                idArticulo: item.idArticulo,
+                                idMedida: item.idMedida,
+                                code_unique: item.code_unique,
+                                codigo: item.codigo,
+                                descripcion: item.descripcion,
+                                precioCosto: item.precioCosto,
+                                estado: item.estado,
+                                stock: item.stock,
+                                observaciones: item.observaciones,
+                                imagen: item.imagen,
+                                subFamilia: item.subFamilia,
+                                medida: item.medida,
+                                marca: item.marca,
+                                modelo: item.modelo,
+                                tipoIva: item.tipoIva,
+                                tipoArticulo: item.tipoArticulo,
+                                style: item.style,
+                                precioSinSubsidio: item.precioSinSubsidio,
+                                stockMinimo: item.stockMinimo,
+                                tarifas,
+                                color: item.color,
+                                }
+                            })
+
+                    }
+                
                 }
             })
         }
@@ -236,7 +259,7 @@
             const query = {
                 bySearch: objSearch.textSearch,
                 code: objSearch.isSearchByCode,
-                tipo: 1 
+                tipo: 2
             }
             return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
                 if(response.code==="0"){
