@@ -1,5 +1,66 @@
 <script type="ts">
-    type stock = {
-        
-    }
+    let editStatus = false,
+        showForm = false;
+
+    const openNew = (open) => {
+        showForm = open;
+        if (!open && editStatus) {
+            editStatus = false;
+            //clean();
+        }
+    };
 </script>
+
+<div class="row page-titles">
+    <div class="col-md-5 align-self-center">
+        <h5 class="text-themecolor">Stock Físico</h5>
+    </div>
+    <div class="col-md-7 align-self-center text-right">
+        <div class="d-flex justify-content-end align-items-center">
+            <button
+                type="button"
+                on:click={() => openNew(true)}
+                class="btn btn-info d-block d-lg-inline-block m-l-15"
+            >
+                <i class="fa fa-plus-circle" /> Nuevo
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th />
+                        <th>N°</th>
+                        <th>N°. Documento</th>
+                        <th>Fecha Emisión</th>
+                        <th>Observación</th>
+                        <th>Usuario</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- <tr>
+                        <td />
+                        <td />
+                        <td>{item.nroDoc}</td>
+                        <td>{item.fechaEmision}</td>
+                        <td>{item.observacion}</td>
+                        <td>{item.usuario}</td>
+                        <td>${item.total}</td>
+                    </tr> -->
+                </tbody>
+                <!-- <tfoot>
+                    <tr>
+                        <td colspan="6"><strong>Total:</strong></td>
+                        <td>{{ total }}</td>
+                    </tr>
+                </tfoot> -->
+            </table>
+        </div>
+    </div>
+</div>

@@ -4,7 +4,7 @@
     import { client } from "../../core/api/axiosClient";
     import toast from "../../core/utils/toast";
     import Swal from "sweetalert2";
-    import { TabulatorFull as Tabulator } from "tabulator-tables";
+    import Grid from "./Grid.svelte";
 
     let url = "Inventario/MotivoDiscrepancias/";
     // let data: MotivoDiscrepancia = {
@@ -16,8 +16,21 @@
     let data = {} as MotivoDiscrepancia;
 
     let motivos: MotivoDiscrepancia[] = [];
-
-    let tableComponent;
+    let dataArray = [];
+    let columns = [
+        {
+            title: "Código",
+            field: "codigo",
+            widthGrow: 2, 
+            editor: "input",
+        },
+        {
+            title: "Descripcion",
+            field: "descripcion",
+            widthGrow: 2, 
+            editor: "input",
+        },
+    ];
 
     onMount(() => {
         onload();
@@ -28,12 +41,7 @@
             .get(url)
             .then((response: any) => {
                 motivos = response;
-                console.log(motivos);
-                new Tabulator(tableComponent, {
-                    data: motivos, //link data to table
-                    reactiveData: true, //enable data reactivity
-                    columns: new Array(data), //define table columns
-                });
+                dataArray = motivos;
             })
             .catch((error) => {
                 console.log(error);
@@ -178,7 +186,7 @@
     </div>
 {/if}
 {#if motivos.length > 0}
-    <div bind:this={tableComponent} />
+    <Grid {dataArray} {columns} />
 
     <div class="card">
         <div class="card-body">
