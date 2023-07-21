@@ -1,9 +1,9 @@
-import { Http } from "@/core/utils";
+import { Http } from '@/core/utils';
 
 // Doc: get all product
-const getProduct  = () => {
+const getProduct = () => {
   return Http({
-    method: "get",
+    method: 'get',
     url: "Articulo/Search?json={'busqueda': ''}",
   });
 };
@@ -11,7 +11,7 @@ const getProduct  = () => {
 // Doc: get product by id
 const getProductById = (id: number) => {
   return Http({
-    method: "get",
+    method: 'get',
     url: `Articulo/${id}`,
   });
 };
@@ -19,10 +19,9 @@ const getProductById = (id: number) => {
 // Doc: search product
 const searchProduct = (search: string) => {
   return Http({
-    method: "get",
+    method: 'get',
     url: `Articulo/Search?json={'busqueda': '${search}'}`,
   });
 };
-
 
 export default { getProduct, getProductById, searchProduct };
