@@ -1332,20 +1332,24 @@
         $scope.detalleDocumento.medidas = []
         let index = 1
         for (const dc of $scope.detalleDocumento) {
-            dc.num = index            
-            medidasTemp.push({
+            dc.num = index
+            let tempMedidas = [];
+
+            //Medidas principales 
+            tempMedidas.push({
                 idMedida: dc.idMedida,
                 descripcion: dc.medida,
                 precioCosto: dc.precioCosto
             })
-            // if (dc.fraccionado) {
+            
+            if (dc.fraccionado) {
                 
-            //     let tempArray =  dc.medidasTemp && JSON.parse(dc.medidasTemp) || []
-            //     for (const tm of tempArray) {
-            //         tempMedidas.push(tm)
-            //     }
-            // }
-            dc.medidas = medidasTemp
+                // let tempArray =  dc.medidasTemp && JSON.parse(dc.medidasTemp) || []
+                // for (const tm of tempArray) {
+                //     tempMedidas.push(tm)
+                // }
+            }
+            dc.medidas = tempMedidas
             index++
         }
 
