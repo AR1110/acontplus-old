@@ -1001,7 +1001,7 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
             _fS,
             _tS
         })
-        
+       
         this.notaEntregaSvc = notaEntregaSvc;
         this.facturaSvc = facturaSvc;
 
@@ -1148,6 +1148,8 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
             hideLoader();
         }
     }
+
+   
 
     async onSelectedClienteChange(item) {
         try {
@@ -1301,6 +1303,8 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
             _fS,
             _tS
         })
+
+        this.newCustomer = false;
 
         this.notaEntregaSvc = notaEntregaSvc;
         this.facturaSvc = facturaSvc;
@@ -1457,6 +1461,15 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
 
             hideLoader();
         }
+    }
+
+    receiveDataCustomerSRI(result) {
+        if (result.idCliente === 0) {
+            this.newCustomer = true;
+        } else {
+            this.newCustomer = false;
+        }
+        this.cliente = result; 
     }
 
     async onSelectedClienteChange(item) {

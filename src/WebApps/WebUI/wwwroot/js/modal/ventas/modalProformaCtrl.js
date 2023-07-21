@@ -1028,6 +1028,8 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
         })
         const self = this;
 
+        this.newCustomer = false;
+
         this.proformaSvc = proformaSvc;
 
         let {
@@ -1161,6 +1163,15 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
 
             hideLoader();
         }
+    }
+
+    receiveDataCustomerSRI(result) {
+        if (result.idCliente === 0) {
+            this.newCustomer = true;
+        } else {
+            this.newCustomer = false;
+        }
+        this.cliente = result; 
     }
 
     async onSelectedClienteChange(item) {
