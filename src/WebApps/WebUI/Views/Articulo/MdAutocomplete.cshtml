@@ -88,6 +88,7 @@
                             <th>
                                 Ubicación
                             </th>
+                            <th>Op.</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -122,9 +123,9 @@
                             <td class="suggestion-column text-center" ng-repeat="ub in item.warehouses">
                                 {{ub.ubicacion}}
                             </td>
-                            @* <td ng-click="$ctrl.showDetailTarifa(item)" stop-event >
-                            <i class="ti-eye"></i>
-                            </td> *@
+                            <td ng-click="$ctrl.openModalArticuloFraccionadoInfo(item)" stop-event >
+                                <i class="fa fa-balance-scale"></i>
+                            </td>
                         </tr>
                     </tbody>
                 </table>

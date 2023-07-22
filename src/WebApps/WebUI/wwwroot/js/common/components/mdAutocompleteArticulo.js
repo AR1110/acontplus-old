@@ -183,6 +183,8 @@ class BaseSearchArticulo {
 
 }
 
+
+//Buscador de articulo general con pvp contado 
 class MdArticuloCtrl extends BaseSearchArticulo {
 
     static $inject = ['articuloService', 'mainService', '$rootScope', '$scope', '$timeout', '$q', 'commonService', 'modalService', 'nombreModal', 'nombreModalInventario', 'toastService']
@@ -356,6 +358,25 @@ class MdArticuloCtrl extends BaseSearchArticulo {
             console.log(error)
         }
         
+    }
+
+    async openModalArticuloFraccionadoInfo(item) {
+        try {
+            const {fileCtrl, controllers, templates} = this.nombreModalInventario.ARTICULO;
+            let ctrl = (await import(fileCtrl))[controllers['AFI']];
+            let template = templates['AFI'];
+            let modalRef = this._modalSvc.openModalCustom({
+                controller: ctrl,
+                template,
+                size: 'md',
+                params: item,
+                windowClass: 'uibModalFullScreen'
+            })
+    
+            
+        } catch (error) {
+            console.log(error)
+        }
     }
 }
 
