@@ -34,11 +34,14 @@ app.constant('nombreModalInventario', {
         fileCtrl: '/js/modal/modalArticuloCtrl.min.js' + CHANGE_VERSION(),
         controllers: {
             'LG': 'ModalArticuloGeneralCtrl',
-            'M': 'ModalArticuloCtrl'
+            'M': 'ModalArticuloCtrl',
+            'AFI': 'ModalArticuloFraccionadoInfoCtrl'
         },
         templates:{
             'LG': 'Articulo/_ModalArticuloGeneral.cshtml',
-            'M': 'Articulo/_ModalNuevoArticulo.cshtml'
+            'M': 'Articulo/_ModalNuevoArticulo.cshtml',
+            'AFI': 'Articulo/_ArticuloFraccionadoInfo.cshtml',
+
         }
     },
     FAMILIA: {
