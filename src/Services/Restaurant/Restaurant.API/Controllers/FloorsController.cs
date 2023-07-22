@@ -6,6 +6,7 @@ using Lib.Common.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Restaurant.Application.Services;
 using Restaurant.Core.Entities;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
@@ -18,7 +19,7 @@ namespace Restaurant.API.Controllers
     public class FloorsController : ControllerBase
     {
         private readonly RestaurantContext _context;
-        private readonly IAppFloorService _floorService;
+        private readonly AppFloorService _floorService;
 
         public FloorsController(RestaurantContext context)
         {
