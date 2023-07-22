@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { ITable } from "../../models/table.model";
+import { ITable } from "@admin/models";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -52,7 +52,7 @@ function BootstrapDialogTitle(props: DialogTitleProps) {
             color: (theme) => theme.palette.grey[500],
           }}
         >
-          <CloseIcon />
+          <CloseIcon /> 
         </IconButton>
       ) : null}
     </DialogTitle>
@@ -75,6 +75,7 @@ export default function TableDialog({
     formik.resetForm();
     handleClose();
   };
+
   const validationSchema = yup.object({
     numberTable: yup.number().required("Numero de mesa es requerido"),
     description: yup.string().required("Descripción es requerido"),
@@ -83,6 +84,7 @@ export default function TableDialog({
       .min(1, "Numero de capacidad de la mesa al menos tiene que ser 1")
       .required("Campo capacidad es requrida"),
   });
+
   console.log(values);
 
   const formik = useFormik({

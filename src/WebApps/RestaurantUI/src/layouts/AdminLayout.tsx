@@ -21,7 +21,7 @@ import MoreIcon from "@mui/icons-material/MoreVert";
 import HomeIcon from "@mui/icons-material/Home";
 import TableBarIcon from "@mui/icons-material/TableBar";
 import { Badge, Menu, MenuItem } from "@mui/material";
-import { AccountCircle } from "@mui/icons-material";
+import { AccountCircle, Restaurant, TableBar } from "@mui/icons-material";
 import { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 
@@ -220,6 +220,11 @@ export default function Admin() {
       description: "Mesa",
       icon: <TableBarIcon />,
       to: "Table",
+    },
+    {
+      description: "Platillos",
+      icon: <Restaurant />,
+      to: "Dish",
     },
   ];
 

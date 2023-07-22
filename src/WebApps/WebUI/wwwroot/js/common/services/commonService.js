@@ -1313,7 +1313,8 @@ export class CommonService {
         let isComplete = false,
             dataTipoDocumento = {},
             dataDocumento = {},
-            detalleDocumento = [];
+            detalleDocumento = [],
+            medidasTemp = [];
 
         await this.mS.getData('get', 'Consolidacion/?json=' + JSON.stringify({ tipo: 3, id: id }), null, true).then(response => {
 
@@ -1325,7 +1326,8 @@ export class CommonService {
                 let dataMain = JSON.parse(response.payload);
                 dataDocumento = dataMain[0][0];
                 dataDocumento.fechaEmision = this.form.formatDate(dataDocumento.fechaEmision)
-                detalleDocumento = dataMain[1]
+                detalleDocumento = dataMain[1];
+                medidasTemp = dataMain[2];
                 isComplete = true;
             }
         })
@@ -1335,6 +1337,7 @@ export class CommonService {
             dataTipoDocumento,
             dataDocumento,
             detalleDocumento,
+            medidasTemp
         }
     }
 

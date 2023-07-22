@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lib.Common.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Core.Entities;
+using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
+using Services.Common;
 
 namespace Restaurant.API.Controllers
 {
@@ -15,32 +18,35 @@ namespace Restaurant.API.Controllers
     public class FloorsController : ControllerBase
     {
         private readonly RestaurantContext _context;
+        private readonly IAppFloorService _floorService;
 
         public FloorsController(RestaurantContext context)
         {
             _context = context;
-        }
+        } 
 
         // GET: api/Floors
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Floor>>> GetFloors()
+        public async Task<ActionResult<APIResponse>> GetFloors(string json)
         {
-            return await _context.Floors.ToListAsync();
+            var data = new Dictionary<string, object> {
+                {"userRoleId", User.GetUserRoleId()}, {"json", json}
+            };
+
+            return await _floorService.GetAsync(data);
         }
 
         // GET: api/Floors/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Floor>> GetFloor(int id)
-        {
-            var floor = await _context.Floors.FindAsync(id);
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<Floor>> GetFloor(int id)
+        //{
 
-            if (floor == null)
-            {
-                return NotFound();
-            }
+        //    var data = new Dictionary<string, object> {
+        //        {"userRoleId", User.GetUserRoleId()}, {"json", json}
+        //    };
 
-            return floor;
-        }
+        //    return await _tableService.GetAsync(data);
+        //}
 
         // PUT: api/Floors/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

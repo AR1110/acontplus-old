@@ -3,6 +3,7 @@ import PetMedicalHistory from "./lib/PetMedicalHistory/PetMedicalHistory.svelte"
 import PetBreed from "./lib/PetBreed/PetBreed.svelte"; 
 import Counter from "./core/components/Counter.svelte";
 import ConfigEmail from "./lib/ConfigEmail/ConfigEmail.svelte"
+import MotivoDiscrepancia from "./lib/StockFisico/MotivoDiscrepancia.svelte";
 // import App from "./App.svelte"
 // const app = new App({
 //     target: document.getElementById('app'),
@@ -25,7 +26,12 @@ import ConfigEmail from "./lib/ConfigEmail/ConfigEmail.svelte"
 // export default petMH
 
 
-const configEmail = new ConfigEmail({
-    target: document.getElementById('configEmail'),
+// const configEmail = new ConfigEmail({
+//     target: document.getElementById('configEmail'),
+// })
+// export default configEmail
+
+const motivoDiscrepancia = new MotivoDiscrepancia({
+    target: document.getElementById('motivoDiscrepancia'),
 })
-export default configEmail
+export default motivoDiscrepancia

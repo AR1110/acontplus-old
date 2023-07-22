@@ -6,7 +6,8 @@ import { lazy } from "react";
 const AdminLayout = lazy(() => import("@/layouts/AdminLayout"));
 
 const Dashboard = lazy(() => import("./dashboard/Dashboard"));
-const TableComponent = lazy(() => import("./table/Table"));
+const TableIndex = lazy(() => import("./pages/table/Table"));
+const DishComponent = lazy(() => import("./dish/Dish"));
 
 /**
  *
@@ -17,7 +18,8 @@ export default function Admin() {
     <RoutesWithNotFound>
       <Route path="/" element={<AdminLayout />}>
         <Route path={PrivateRoutes.DASHBOARD} element={<Dashboard />}></Route>
-        <Route path={PrivateRoutes.TABLE} element={<TableComponent />}></Route>
+        <Route path={PrivateRoutes.TABLE} element={<TableIndex />}></Route>
+        <Route path={PrivateRoutes.DISH} element={<DishComponent />}></Route>
       </Route>
     </RoutesWithNotFound>
   );

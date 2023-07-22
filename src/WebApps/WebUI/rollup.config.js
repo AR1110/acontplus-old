@@ -61,8 +61,10 @@ import nodeResolve from '@rollup/plugin-node-resolve';
 
 const production = !process.env.ROLLUP_WATCH;
 // const appObject = "petBreed"
+// const appObject = "pet"
 // const appObject = "petMH"
-const appObject = "configEmail"
+// const appObject = "configEmail"
+const appObject = "motivoDiscrepancia"
 
 export default {
     // This `main.js` file we wrote
@@ -106,7 +108,7 @@ export default {
                 customElement: false,
             }
         }),
-        css({ output: `${appObject}.css` }),
+        //css({ output: `${appObject}.css` }),
         // Tell any third-party plugins that we're building for the browser
         resolve({
             browser: true,
@@ -124,7 +126,7 @@ export default {
             types: ["svelte"],
             resolveJsonModule: true
         }),
-        //production && terser(),
+        production && terser(),
     ],
     watch: {
         clearScreen: false

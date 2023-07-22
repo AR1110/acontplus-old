@@ -4032,6 +4032,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Folder Include="App\lib\StockFisico\" />
 		<Folder Include="Pages\Shared\" />
 		<Folder Include="wwwroot\lib\angular-daterangepicker\" />
 	</ItemGroup>

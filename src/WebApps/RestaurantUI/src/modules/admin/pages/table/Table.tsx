@@ -9,11 +9,11 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import ModeEditOutlineIcon from "@mui/icons-material/ModeEditOutline";
 import { useEffect, useState } from "react";
-import { tableSvc } from "../services/table.service";
+import { tableSvc } from "@admin/services";
 import TableDialog from "./components/TableDialog";
-import { ITable, TablesResponseFromApi } from "../models/table.model";
+import { ITable, TablesResponseFromApi } from "@admin/models/table.model";
 
-export default function TableComponent() {
+export default function TableIndex() {
   const [isOpenDialog, setIsOpenDialog] = useState(false);
   const [tables, setTables] = useState<Array<ITable>>([]);
   const [data, setData] = useState<Partial<ITable>>({
