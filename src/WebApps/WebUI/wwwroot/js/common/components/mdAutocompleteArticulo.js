@@ -71,9 +71,7 @@ class BaseSearchArticulo {
         if (!item || !item.hasOwnProperty('idArticulo')) return
 
         this.dataArticulo = {
-            idArticulo: item.idArticulo,
-            idPresentacion: item.idPresentacion,
-            presentacion: 'A'
+            idArticulo: item.idArticulo, 
         }
         this.selectedItem = null
 
@@ -97,42 +95,63 @@ class BaseSearchArticulo {
 
     getDataArticuloParaVenta() {
         try {
-            console.log(this.idBodega)
+            
             showLoader();
             this.dataArticulo.idBodega = this.idBodega;
+            this.dataArticulo.tipo = 6;
 
             /**
              * return object {articulo, medidas, datosAdicionales}
              */
-            this.articuloSvc.findForSale(this.dataArticulo).then(async result => {
-                hideLoader();               
-                let {code, message, titleSms} = result.response
-               
-                if (code === "1") {
-                    this.setItemArticuloEnDetalle({
-                        item: result
-                    })
-                    return
-                }
-                
-                let {isConfirmed} = await Swal.fire({
-                    title: `<small>${titleSms}</small>`,
-                    icon: 'warning',
-                    html: `<small>${message}</small>`,
-                    allowOutsideClick: false,
-                    allowEscapeKey: false,
-                })
+            this.articuloSvc.findForSale(this.dataArticulo).then(async dataArticuloApi => {
 
-                if (isConfirmed) {
-                    if (code === "0") {
-                        $("#custom-template-md-autocomplete-articulo").focus();
-                    }
-                    if (code === "2") {
+                this.articuloSvc.checkNotificationStock({
+                    idArticulo: this.dataArticulo.idArticulo,
+                    cantidad: 1,
+                    idBodega: this.dataArticulo.idBodega,
+                }).then(async responseApi=>{
+                    hideLoader();
+                    
+                    let {code, message, titleSms} = responseApi
+               
+                    if (code === "1") {
+                        this.tS.toastr('info', message, titleSms)
                         this.setItemArticuloEnDetalle({
-                            item: result
+                            item: dataArticuloApi
                         })
+                        return
                     }
-                }
+                    
+                    let {isConfirmed} = await Swal.fire({
+                        title: `<small>${titleSms}</small>`,
+                        icon: 'warning',
+                        html: `<small>${message}</small>`,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                    })
+
+                    if (isConfirmed) {
+                        if (code === "0") {
+                            $("#custom-template-md-autocomplete-articulo").focus();
+                        }
+                        if (code === "2") {
+                            this.setItemArticuloEnDetalle({
+                                item: dataArticuloApi
+                            })
+                        }
+                    }
+
+
+                }).catch(error => {
+                    hideLoader();
+                    console.log(error);
+                })
+                //hideLoader();
+                // this.setItemArticuloEnDetalle({
+                //     item: result
+                // })
+                // hideLoader();               
+                
             }).catch(error => {
                 hideLoader();
                 console.log(error);

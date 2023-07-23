@@ -3,7 +3,7 @@
 
     'use strict';
 
-    app.factory('articuloService', ['mainService', function(mainService){
+    app.factory('articuloService', ['mainService', 'formulario', function(mainService, fS){
 
         let url = 'Articulo/';
 
@@ -341,11 +341,20 @@
         
         /**
          * 
-         * @param {*} query 
+         * @param {*} query {tipo: 6, idArticulo: 17, idBodega: 2}
          * @returns object
          */
         service.findForSale = function(query){
-            return mainService.getData('get', url + 'FindForSale?json='+ JSON.stringify(query), null, true).then(response=>{
+            if(!query.hasOwnProperty('tipo')){
+                fS.sweetAlert('warning', 'Propiedad tipo no proporcionado')
+                throw ''
+            }
+            if(!query.hasOwnProperty('idArticulo')){
+                fS.sweetAlert('warning', 'Propiedad idArticulo no proporcionado')
+                throw ''
+            }
+            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response=>{
+                console.log(response)
                 if(response.code==='0'){
                     throw response;
                 }
@@ -415,12 +424,7 @@
                         estado: item.estado
                     }))
                     
-                    return {
-                        response: {
-                            code: dataArticulo.code,
-                            message: dataArticulo.message,
-                            titleSms: dataArticulo.titleSms,
-                        },
+                    return { 
                         articulo: articuloMapper,
                         medidas: medidaMapper,
                         datosAdicionalesArticulo: infoAdicionalMapper
@@ -429,6 +433,26 @@
             })
         }
 
+
+        service.checkNotificationStock = function(query){ 
+            if(!query.hasOwnProperty('idArticulo')){
+                fS.sweetAlert('warning', 'Propiedad idArticulo no proporcionado')
+                throw ''
+            }
+            query.tipo = 7;
+            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response=>{
+                if(response.code==='0'){
+                    throw response;
+                }
+                if(response.code==='1'){
+                    console.log(response)
+                    const responseApi = JSON.parse(response.payload)[0][0];
+                    return responseApi;
+
+                }
+                
+            })
+        }
          service.getId = (id) => {
            return mainService.getData("GET", url + "GetId/" + id, null, true).then(
                  response => {
