@@ -1337,19 +1337,44 @@
 
             //Medidas principales 
             tempMedidas.push({
+                idConsolidacionInventarioDetalle: dc.idConsolidacionInventarioDetalle,
                 idMedida: dc.idMedida,
                 descripcion: dc.medida,
                 precioCosto: dc.precioCosto
             })
+
+            let tempArrayMedidas = medidasTemp.filter(mTemp=>mTemp.idConsolidacionInventarioDetalle===dc.idConsolidacionInventarioDetalle).map(resM=>{
+                let tempArray =  resM.medidasTemp && JSON.parse(resM.medidasTemp) || []
+                tempMedidas.push({
+                    idConsolidacionInventarioDetalle: resM.idConsolidacionInventarioDetalle,
+                    idMedida: resM.idMedida,
+                    descripcion: resM.medida,
+                    precioCosto: resM.precioCosto
+                })
+               let resultArr =  tempMedidas.concat(tempArray);   
+               return resultArr;
+            }) 
             
-            if (dc.fraccionado) {
-                
-                // let tempArray =  dc.medidasTemp && JSON.parse(dc.medidasTemp) || []
-                // for (const tm of tempArray) {
-                //     tempMedidas.push(tm)
-                // }
-            }
-            dc.medidas = tempMedidas
+            tempArrayMedidas = tempArrayMedidas[0]
+            // if (dc.fraccionado) {
+            //     for(let mm of tempArrayMedidas){
+            //         tempMedidas.push({
+            //             idMedida: mm.idMedida,
+            //             descripcion: mm.medida,
+            //             precioCosto: mm.precioCosto
+            //         })
+            //         let tempArray =  mm.medidasTemp && JSON.parse(mm.medidasTemp) || []
+                    
+            //     }
+            //     // for (const tm of tempArray) {
+            //     //     tempMedidas.push(tm)
+            //     // }
+            // }
+            let uniquesMedidas = tempArrayMedidas.filter((obj, i) => {
+                return tempArrayMedidas.findIndex((obj2) => obj2.idMedida === obj.idMedida) === i;
+              });
+            console.log(uniquesMedidas)
+            dc.medidas =  uniquesMedidas;
             index++
         }
 

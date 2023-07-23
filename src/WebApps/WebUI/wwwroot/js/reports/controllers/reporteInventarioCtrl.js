@@ -20,7 +20,8 @@
         $scope.tipoReportes = [
             {codigo: 1, descripcion: 'Con Valoración', codigoReporte: 'INVRV'},
             {codigo: 2, descripcion: 'Con Lista de Precios', codigoReporte: 'INVAT'},
-            {codigo: 3, descripcion: 'Consumo Diario', codigoReporte: 'CDA'}
+            {codigo: 3, descripcion: 'Consumo Diario', codigoReporte: 'CDA'},
+            {codigo: 4, descripcion: 'Articulos Fraccionados', codigoReporte: 'RAF'}
         ] 
 
         $scope.hideCheckbox = true; //Oculta: chechboxk proveedor, subfamilia si es tipo-reporte 2
@@ -47,7 +48,7 @@
                         $scope.bodegas = response[1]
                     })
                 } else {
-                    tS.toastr('warning', 'NO TIENES ASIGNADO NINGUNA SUCURSAL')
+                    tS.toastr('warning', 'NO TIENES ASIGNADO NINGUN ESTABLECIMIENTO')
                 }
             })
 
@@ -119,26 +120,6 @@
         }
 
         $scope.filtrar = async function () {
-            // if($scope.dataSearch.checkboxSucursalFiltro){
-            //     if(form.campo($scope.dataSearch.codEstab)){
-            //         toast.toastr('warning', 'Seleccione la Sucursal', 'Reporte');
-            //         return
-            //     }
-            // }
-
-            // if($scope.dataSearch.checkboxBodegaFiltro){
-            //     if(form.campo($scope.dataSearch.byBodega)){
-            //         toast.toastr('warning', 'Seleccione la Bodega', 'Reporte');
-            //         return
-            //     }
-            // }
-
-            // if (!$scope.dataSearch.chkProveedor) {
-            //     if (form.campo($scope.dataSearch.bySubFamilia)) {
-            //         toast.toastr('warning', 'Seleccione la SubFamilia', 'Reporte');
-            //         return
-            //     }
-            // }
 
             if ($scope.dataSearch.chkProveedor) {
                 if (!$scope.dataSearch.numeroIdentificacion) {
@@ -193,6 +174,15 @@
                     codTransaccion : $scope.dataSearch.codTransaccion,
                     fechaInicio : fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
                     fechaFin : fS.formatDateTimeZone($scope.dataSearch.fechaFin)
+                }
+
+            }
+
+            if($scope.dataSearch.byTipoReporte===4){
+                dataSearch = {
+                    tipo : 5,
+                    checkBoxArticulo : $scope.dataSearch.checkboxArticuloFiltro,
+                    idArticulo : $scope.dataSearch.idArticulo
                 }
 
             }
