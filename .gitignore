@@ -71,4 +71,6 @@ bin-release/
 /src/06.windows_services/ValidatorWS/obj
 /src/07.worker_services/WS_DocumentoRecibido/bin/Debug/net6.0
 /src/07.worker_services/WS_DocumentoRecibido/obj
-/src
+/src/WebApps/RestaurantUI/.vs/RestaurantUI/FileContentIndex
+/src/WebApps/RestaurantUI/.vs/RestaurantUI/v17
+/src/WebApps/RestaurantUI/.vs
