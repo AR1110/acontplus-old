@@ -7,8 +7,7 @@ export default function CategoryPage() {
       direction="row"
       alignItems="center"
       justifyContent="space-between"
-      mb={5}
-    >
+      mb={5}>
       <Typography variant="h5" gutterBottom>
         Categoria
       </Typography>
