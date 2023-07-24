@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.37";
+} from "./modalBaseCtrl.js?v=0.50";
 
 
 class ModalNotaEntregaCtrl extends ModalBaseCtrl {
@@ -317,7 +317,8 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
         'nombreModal', 
         'formulario', 
         'toastService', 
-        'params'
+        'params',
+        'articuloService'
     ]
 
     constructor(
@@ -333,7 +334,8 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
         _nombreModalConst, 
         _fS, 
         _tS, 
-        _params
+        _params,
+        articuloSvc
     ) {
         super({
             $scope,
@@ -354,6 +356,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
         this.notaEntregaSvc = notaEntregaSvc,
 
         this._storageSvc = _storageSvc;
+        this.articuloSvc = articuloSvc;
 
         let {
             TIPO_REGISTRO
@@ -480,7 +483,9 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
                 actividadTipoIva: this.actividadTipoIva,
-                codigoDoc: 'NE'
+                codigoDoc: 'NE',
+                idBodega: this.idBodega,
+                parentScope: this
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
@@ -973,7 +978,8 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
         'nombreModal', 
         'formulario', 
         'toastService', 
-        'params'
+        'params',
+        'articuloService'
     ]
 
     constructor(
@@ -988,7 +994,8 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
         _nombreModalConst, 
         _fS,
         _tS, 
-        _params
+        _params,
+        articuloSvc
     ) {
         super({
             $scope,
@@ -1004,6 +1011,7 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
        
         this.notaEntregaSvc = notaEntregaSvc;
         this.facturaSvc = facturaSvc;
+        this.articuloSvc = articuloSvc;
 
         this.historyDatosAdicionales = [];
         this.datosAdicionalesArticulo = [];
@@ -1124,7 +1132,9 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
                 actividadTipoIva: this.actividadTipoIva,
-                codigoDoc: 'NE'
+                codigoDoc: 'NE',
+                idBodega: this.idBodega,
+                parentScope: this
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
@@ -1275,7 +1285,8 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
         'nombreModal', 
         'formulario', 
         'toastService', 
-        'params'
+        'params',
+        'articuloService'
     ]
 
     constructor(
@@ -1290,7 +1301,8 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
         _nombreModalConst, 
         _fS, 
         _tS, 
-        _params
+        _params,
+        articuloSvc
     ) {
         super({
             $scope,
@@ -1308,6 +1320,7 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
 
         this.notaEntregaSvc = notaEntregaSvc;
         this.facturaSvc = facturaSvc;
+        this.articuloSvc = articuloSvc;
 
         this.historyDatosAdicionales = [];
 
@@ -1427,7 +1440,9 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
                 actividadTipoIva: this.actividadTipoIva,
-                codigoDoc: 'NE'
+                codigoDoc: 'NE',
+                idBodega: this.idBodega,
+                parentScope: this
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;

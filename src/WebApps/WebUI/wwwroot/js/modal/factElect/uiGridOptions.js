@@ -23,53 +23,16 @@ export class UiGridOptions{
      * @param {object} props  {bodegas, configColumn, tipoIvas, decimal}
      */
     setInitiload(props){
-        const {bodegas, configColumn, tipoIvas, decimal, actividadTipoIva, codigoDoc} = props;
+        const {bodegas, configColumn, tipoIvas, decimal, actividadTipoIva, codigoDoc, articuloSvc, parentScope} = props;
         this.bodegas = bodegas;
         this.configColumn = configColumn;
         this.tipoIvas = tipoIvas || this.tipoIvas;
         this.decimal = decimal;
         this.actividadTipoIva = actividadTipoIva;
         this.codigoDoc = codigoDoc;
-    }
-
-    
-    
-    setIdBodegaEnColumnDefs(){
-        try {                                                                 
-            for(let item of this.gridOptions.data){
-                item.idBodega = this.idBodega;
-            }          
-        } catch (error) {
-            console.error(error)
-        }
-    }
-
-    async askToChangeBodega(){
-        let bodega = this.bodegas.find(item=>item.idBodega===this.idBodega);
-        let { isConfirmed } = await Swal.fire({
-            html: `<small>¿Esta seguro de cambiar la Bodega: <b>${bodega.descripcion}</b>  en el detalle del Documento?</small>`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: `Sí, cambiar!`,
-            cancelButtonText: 'No, cancelar!',
-            allowOutsideClick: false,           
-        })
-
-        if (isConfirmed) {
-           
-            this.cloneIdBodega = this.idBodega;           
-            
-            if (this.gridOptions.data.length === 0) return
-
-            this.setBodegasEnColumnDefs();
-            this.$scope.$apply();
-        } else {
-            this.idBodega = this.cloneIdBodega;
-            this.$scope.$apply();
-        }
-    }  
-    
+        this.parentScope = parentScope
+        this.articuloSvc = this.parentScope.articuloSvc;
+    } 
     
     /**
      * 
@@ -117,41 +80,41 @@ export class UiGridOptions{
      * 
      * @param {object} entity 
      */
-    async checkStock(obj){
-        let result = null;
-        await this._mS.getData('get', '/ControlStock/VerificarStock?idArticulo='+obj.idArticulo + '&cantidad='+obj.cantidad+'&presentacion='+obj.presentacion+'&idPresentacion='+obj.idPresentacion).then(response=>{ 
+    // async checkStock(obj){
+    //     let result = null;
+    //     await this._mS.getData('get', '/ControlStock/VerificarStock?idArticulo='+obj.idArticulo + '&cantidad='+obj.cantidad+'&presentacion='+obj.presentacion+'&idPresentacion='+obj.idPresentacion).then(response=>{ 
                    
-            if(response.id==="0" || response.id==="2"){
+    //         if(response.id==="0" || response.id==="2"){
                 
-                Swal.fire({
-                    title:`<small>${response.titleSms}</small>`,
-                    icon:'warning',
-                    html:`<small>${response.message}</small>`,
-                    allowEscapeKey:false,
-                    allowOutsideClick:false,
-                    // didClose:()=>{
-                    //     if(response.id==="0"){
-                    //         entity.cantidad = oldValue;
-                    //         this.setTotalRow(entity, index);
-                    //         this.indexRow = index;
-                    //         this.reloadTotales = true;
-                    //         return
-                    //     }
-                    //     if(response.id==="2"){
-                    //         this.indexRow = index;
-                    //         this.reloadTotales = true;
-                    //         return
-                    //     }
+    //             Swal.fire({
+    //                 title:`<small>${response.titleSms}</small>`,
+    //                 icon:'warning',
+    //                 html:`<small>${response.message}</small>`,
+    //                 allowEscapeKey:false,
+    //                 allowOutsideClick:false,
+    //                 // didClose:()=>{
+    //                 //     if(response.id==="0"){
+    //                 //         entity.cantidad = oldValue;
+    //                 //         this.setTotalRow(entity, index);
+    //                 //         this.indexRow = index;
+    //                 //         this.reloadTotales = true;
+    //                 //         return
+    //                 //     }
+    //                 //     if(response.id==="2"){
+    //                 //         this.indexRow = index;
+    //                 //         this.reloadTotales = true;
+    //                 //         return
+    //                 //     }
                         
-                    // }                            
-                })
-                result = response;                
-            }   
-            result = response;
-        })
+    //                 // }                            
+    //             })
+    //             result = response;                
+    //         }   
+    //         result = response;
+    //     })
 
-        return result;
-    }
+    //     return result;
+    // }
 
     validateCantMinimaVentaPorMayor(rowEntity, oldValue, tipo){
         if(['FV', 'NE', 'PR'].includes(this.codigoDoc) && rowEntity.articuloTarifas.some(item=>(item.ventaPorMayor) && rowEntity.cantidad < rowEntity.cantMinimaVentaPorMayor)){
@@ -160,11 +123,68 @@ export class UiGridOptions{
             if(tipo===1){
                 rowEntity.cantidad = oldValue;
             }else if(tipo===2){
-                rowEntity.idTarget = oldValue; 
+                rowEntity.idTarifa = oldValue; 
             }
         }
     }
 
+
+    checkNotificationStock(rowEntity, oldValue, nameColumn){
+        try {
+            if(['FV', 'NE'].includes(this.codigoDoc))  return;
+
+            if(!rowEntity.llevaInventario) return ;
+            showLoader();
+            this.articuloSvc.checkNotificationStock({
+                idArticulo: rowEntity.idArticulo,
+                cantidad: rowEntity.cantidad,
+                idBodega: rowEntity.idBodega,
+            }).then(async responseApi=>{
+                hideLoader();
+                let {code, message, titleSms} = responseApi; 
+                if (code === "1") { 
+                    // this.setItemArticuloEnDetalle({
+                    //     item: dataArticuloApi
+                    // })
+                    // return 
+                    console.log(responseApi);
+                    return
+                }
+                
+                let {isConfirmed} = await Swal.fire({
+                    title: `<small>${titleSms}</small>`,
+                    icon: 'warning',
+                    html: `<small>${message}</small>`,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                })
+
+                if (isConfirmed) {
+                    if (code === "0") {
+                        rowEntity[nameColumn] = oldValue;
+                        this.parentScope.recalculateTotals(rowEntity);
+                        $("#custom-template-md-autocomplete-articulo").focus();
+                    }
+                    if (code === "2") {
+                        console.log(rowEntity);
+                        //Funcion declarada del ModalBaseCtrl  
+                        this.recalculateTotals(rowEntity);
+                        // this.setItemArticuloEnDetalle({
+                        //     item: dataArticuloApi
+                        // })
+                    }
+                }
+
+            }).
+            catch(error=>{
+                console.log(error)
+            })
+            
+        } catch (error) {
+            hideLoader();
+            console.log(error);
+        }
+    }
     /**
      * 
      *  
@@ -179,7 +199,8 @@ export class UiGridOptions{
 
                 // this.validateCantMinimaVentaPorMayor(rowEntity, oldValue, 1)
                 rowEntity.cantidad = this._fS.roundNumber(rowEntity.cantidad, this.decimal.nroCantidad);
-                    //Verificacion de Stock                        
+                    //Verificacion de Stock             
+                    this.checkNotificationStock(rowEntity, oldValue, 'cantidad')           
             },
             'idMedida': ()=>{
                 if (rowEntity.idMedida === oldValue) return
@@ -329,6 +350,14 @@ export class UiGridOptions{
                     
                 } catch (error) {
                     toastr.error(`CÁLCULO DE VALOR DE DESCUENTO: ${error}`)
+                }
+            },
+            "idBodega": ()=>{
+                try {
+                    if(rowEntity.valorDescuento===oldValue) return
+                    this.checkNotificationStock(rowEntity, oldValue, 'idBodega')                    
+                } catch (error) {
+                    
                 }
             },
             "calculoTotalDetalle": ()=>{

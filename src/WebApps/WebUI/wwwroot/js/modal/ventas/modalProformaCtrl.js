@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.min.js?v=0.81";
+} from "./modalBaseCtrl.min.js?v=0.50";
 
 
 class ModalProformaCtrl extends ModalBaseCtrl {
@@ -277,7 +277,8 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl {
         'nombreModal', 
         'formulario', 
         'toastService', 
-        'params'
+        'params',
+        'articuloService'
     ]
 
     constructor(
@@ -292,7 +293,8 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl {
         _nombreModalConst, 
         _fS, 
         _tS, 
-        _params
+        _params,
+        articuloSvc
     ) {
         super({
             $scope,
@@ -308,6 +310,7 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl {
         const self = this;
         this._storageSvc = _storageSvc;
         this.proformaSvc = proformaSvc;
+        this.articuloSvc = articuloSvc;
 
         let {
             TIPO_REGISTRO
@@ -412,7 +415,9 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl {
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
                 actividadTipoIva: this.actividadTipoIva,
-                codigoDoc: 'PR'
+                codigoDoc: 'PR',
+                idBodega: this.idBodega,
+                parentScope: this
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
@@ -740,7 +745,8 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl {
         'nombreModal', 
         'formulario', 
         'toastService', 
-        'params'
+        'params',
+        'articuloService'
     ]
 
     constructor(
@@ -754,7 +760,8 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl {
         _nombreModalConst, 
         _fS, 
         _tS, 
-        _params
+        _params,
+        articuloSvc
     ) {
         super({
             $scope,
@@ -770,6 +777,7 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl {
         const self = this;
 
         this.proformaSvc = proformaSvc;
+        this.articuloSvc = articuloSvc;
 
         let {
             TIPO_REGISTRO,
@@ -870,7 +878,9 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl {
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
                 actividadTipoIva: this.actividadTipoIva,
-                codigoDoc: 'PR'
+                codigoDoc: 'PR',
+                idBodega: this.idBodega,
+                parentScope: this
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
@@ -999,7 +1009,8 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
         'nombreModal', 
         'formulario', 
         'toastService', 
-        'params'
+        'params',
+        'articuloService'
     ]
 
     constructor(
@@ -1013,7 +1024,8 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
         _nombreModalConst, 
         _fS, 
         _tS, 
-        _params
+        _params,
+        articuloSvc
     ) {
         super({
             $scope,
@@ -1031,6 +1043,7 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
         this.newCustomer = false;
 
         this.proformaSvc = proformaSvc;
+        this.articuloSvc = articuloSvc;
 
         let {
             TIPO_REGISTRO,
@@ -1132,7 +1145,9 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
                 actividadTipoIva: this.actividadTipoIva,
-                codigoDoc: 'PR'
+                codigoDoc: 'PR',
+                idBodega: this.idBodega,
+                parentScope: this
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
