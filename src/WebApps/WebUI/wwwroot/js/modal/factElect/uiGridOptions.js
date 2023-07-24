@@ -30,8 +30,8 @@ export class UiGridOptions{
         this.decimal = decimal;
         this.actividadTipoIva = actividadTipoIva;
         this.codigoDoc = codigoDoc;
-        this.articuloSvc = articuloSvc;
         this.parentScope = parentScope
+        this.articuloSvc = this.parentScope.articuloSvc;
     } 
     
     /**
