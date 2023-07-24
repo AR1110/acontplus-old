@@ -9,6 +9,7 @@ namespace Inventario.Core.Entities
         [Required]
         [MaxLength(15)]
         public string CodEstab { get; set; }
+        public int PuntoEmisionId { get; set; }
         [Required]
         [MaxLength(15)]
         public string Secuencial { get; set; }
