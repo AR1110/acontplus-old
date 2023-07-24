@@ -354,7 +354,6 @@
                 throw ''
             }
             return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response=>{
-                console.log(response)
                 if(response.code==='0'){
                     throw response;
                 }
@@ -445,7 +444,7 @@
                     throw response;
                 }
                 if(response.code==='1'){
-                    console.log(response)
+                    
                     const responseApi = JSON.parse(response.payload)[0][0];
                     return responseApi;
 

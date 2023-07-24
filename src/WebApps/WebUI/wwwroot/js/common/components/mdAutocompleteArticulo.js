@@ -51,10 +51,13 @@ class BaseSearchArticulo {
             /**
              * return object {idArticulo: 0}
              */
+            showLoader();
             this.articuloSvc.findByEnterCode({textSearch: this.searchText, isSearchByCode: true}).then(response=>{
+                hideLoader();
                 this.selectArticleSearch(response)
                 this.searchText = null                
-            }).catch(error => {             
+            }).catch(error => {  
+                hideLoader();           
                 console.log(error);
             })
         } catch (error) {
@@ -72,6 +75,7 @@ class BaseSearchArticulo {
 
         this.dataArticulo = {
             idArticulo: item.idArticulo, 
+            llevaInventario: item.llevaInventario
         }
         this.selectedItem = null
 
@@ -105,6 +109,14 @@ class BaseSearchArticulo {
              */
             this.articuloSvc.findForSale(this.dataArticulo).then(async dataArticuloApi => {
 
+                //Cuando el articulo no lleva inventario 
+                if(!dataArticuloApi.articulo.llevaInventario) {
+                    hideLoader();
+                    this.setItemArticuloEnDetalle({
+                        item: dataArticuloApi
+                    })
+                    return
+                }
                 this.articuloSvc.checkNotificationStock({
                     idArticulo: this.dataArticulo.idArticulo,
                     cantidad: 1,
@@ -112,14 +124,13 @@ class BaseSearchArticulo {
                 }).then(async responseApi=>{
                     hideLoader();
                     
-                    let {code, message, titleSms} = responseApi
-               
-                    if (code === "1") {
-                        this.tS.toastr('info', message, titleSms)
+                    let {code, message, titleSms} = responseApi; 
+                    console.log(responseApi);
+                    if (code === "1") { 
                         this.setItemArticuloEnDetalle({
                             item: dataArticuloApi
                         })
-                        return
+                        return 
                     }
                     
                     let {isConfirmed} = await Swal.fire({
