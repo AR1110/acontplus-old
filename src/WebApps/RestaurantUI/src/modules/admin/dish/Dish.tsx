@@ -11,7 +11,8 @@ import {
 } from '@mui/material';
 import SearchComponent from './components/Search';
 import { productController } from './controllers/product.controller';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { IProduct, ProductResponseFromApi } from '../models/product.models';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -21,28 +22,13 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-function createData(
-  name: string,
-  calories: number,
-  fat: number,
-  carbs: number,
-  protein: number
-) {
-  return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
-
 export default function DishComponent() {
   useEffect(() => {
     getDishes();
   }, []);
+
+  // Set data.
+  const [productData, setProductData] = useState<IProduct[] | []>([]);
 
   // Create methods for get, post, put, delete
   const getDishes = () => {
@@ -53,7 +39,8 @@ export default function DishComponent() {
         }
         if (response.code === '1') {
           const decode = JSON.parse(response.payload);
-          console.log(decode);
+          const setProduct = mapFomApiToProducts(decode[0]);
+          setProductData(setProduct);
         }
       });
     } catch (error) {
@@ -61,7 +48,32 @@ export default function DishComponent() {
     }
   };
 
-
+  const mapFomApiToProducts = (
+    apiResponse: ProductResponseFromApi
+  ): Array<IProduct> => {
+    return apiResponse.map((product) => ({
+      code_unique: product.code_unique,
+      codigo: product.codigo,
+      description: product.descripcion,
+      estado: product.estado,
+      idArticulo: product.idArticulo,
+      idMedida: product.idMedida,
+      imagen: product.imagen,
+      marca: product.marca,
+      medida: product.medida,
+      modelo: product.modelo,
+      observation: product.observaciones,
+      precioCosto: product.precioCosto,
+      precioSinSubsidio: product.precioSinSubsidio,
+      stock: product.stock,
+      stockMinimo: product.stockMinimo,
+      style: product.style,
+      subFamilia: product.subFamilia,
+      tipoArticulo: product.tipoArticulo,
+      tipoIva: product.tipoIva,
+      totalRecords: product.totalRecords,
+    }));
+  };
 
   return (
     <>
@@ -80,26 +92,25 @@ export default function DishComponent() {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Dessert (100g serving)</TableCell>
-              <TableCell align="right">Calories</TableCell>
-              <TableCell align="right">Fat&nbsp;(g)</TableCell>
-              <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-              <TableCell align="right">Protein&nbsp;(g)</TableCell>
+              <TableCell>Descripción (100g serving)</TableCell>
+              <TableCell align="right">Categoría</TableCell>
+              <TableCell align="right">Total peso&nbsp;(g)</TableCell>
+              <TableCell align="right">Costo&nbsp;(g)</TableCell>
+              <TableCell align="right">Precio&nbsp;(g)</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
+            {productData.map((row) => (
               <TableRow
-                key={row.name}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              >
+                key={row.description}
+                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                 <TableCell component="th" scope="row">
-                  {row.name}
+                  {row.description}
                 </TableCell>
-                <TableCell align="right">{row.calories}</TableCell>
-                <TableCell align="right">{row.fat}</TableCell>
-                <TableCell align="right">{row.carbs}</TableCell>
-                <TableCell align="right">{row.protein}</TableCell>
+                <TableCell align="right">{row.subFamilia}</TableCell>
+                <TableCell align="right">{row.stock}</TableCell>
+                <TableCell align="right">{row.precioCosto}</TableCell>
+                <TableCell align="right">{row.precioSinSubsidio}</TableCell>
               </TableRow>
             ))}
           </TableBody>
