@@ -13,6 +13,8 @@ const PrivateRoutes = {
   RECIPE: "Recipe",
   DISH: "Dish",
   TABLE: "Table",
+  CATEGORY: "Category",
+  PRODUCT: "Product",
 };
 
 export { PublicRoutes, PrivateRoutes };
