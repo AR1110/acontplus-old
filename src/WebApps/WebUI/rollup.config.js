@@ -64,7 +64,8 @@ const production = !process.env.ROLLUP_WATCH;
 // const appObject = "pet"
 // const appObject = "petMH"
 // const appObject = "configEmail"
-const appObject = "motivoDiscrepancia"
+// const appObject = "motivoDiscrepancia"
+const appObject = "stockFisico"
 
 export default {
     // This `main.js` file we wrote
@@ -82,11 +83,11 @@ export default {
     plugins: [
         alias({
             entries: [
-                { find: "$lib", replacement:  path.resolve(__dirname, "../App/lib") },
-                
-                { find: "$pet", replacement:  path.resolve(__dirname, "../App/lib") + "/Pet" },
-                { find: "$petbreed", replacement:  path.resolve(__dirname, "../App/lib") + "/PetBreed" },
-                { find: "$petmedicalhistory", replacement:  path.resolve(__dirname, "../App/lib") + "/PetMedicalHistory" },
+                { find: "$lib", replacement: path.resolve(__dirname, "../App/lib") },
+
+                { find: "$pet", replacement: path.resolve(__dirname, "../App/lib") + "/Pet" },
+                { find: "$petbreed", replacement: path.resolve(__dirname, "../App/lib") + "/PetBreed" },
+                { find: "$petmedicalhistory", replacement: path.resolve(__dirname, "../App/lib") + "/PetMedicalHistory" },
             ]
         }),
         //builtins(),
@@ -112,7 +113,7 @@ export default {
         // Tell any third-party plugins that we're building for the browser
         resolve({
             browser: true,
-            dedupe: ['svelte']
+            dedupe: ['svelte', 'svelte/transition', 'svelte/internal'], // important!
         }),
 
         commonjs({

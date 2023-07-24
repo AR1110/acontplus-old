@@ -1,14 +1,22 @@
 <script type="ts">
     let editStatus = false,
-        showForm = false;
+        showPopup = false;
+    import ModalNuevo from "./Components/ModalNuevo.svelte";
 
     const openNew = (open) => {
-        showForm = open;
+        showPopup = open;
         if (!open && editStatus) {
             editStatus = false;
             //clean();
+        } else {
         }
     };
+
+    const onPopupClose = (data) => {
+		showPopup = false;
+
+		console.log(data);
+	}
 </script>
 
 <div class="row page-titles">
@@ -27,6 +35,11 @@
         </div>
     </div>
 </div>
+<!-- {#if showForm}
+    <ModalNuevo />
+{/if} -->
+
+<ModalNuevo showModal={showPopup} onModalClose={(data) => onPopupClose(data)} />
 
 <div class="row">
     <div class="col-lg-12">
