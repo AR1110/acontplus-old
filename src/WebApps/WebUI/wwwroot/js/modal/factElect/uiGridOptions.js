@@ -131,7 +131,7 @@ export class UiGridOptions{
 
     checkNotificationStock(rowEntity, oldValue, nameColumn){
         try {
-            if(['FV'].includes(this.codigoDoc))  return;
+            if(['FV', 'NE'].includes(this.codigoDoc))  return;
 
             if(!rowEntity.llevaInventario) return ;
             showLoader();
