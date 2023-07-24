@@ -52,7 +52,7 @@ namespace ApiFactElect.Controllers.Factura.v2
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Ventas.Factura_Insert");
+                await _db.SPExecute("Ventas.Factura_Insert_v2");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("jsonFactura", SqlValidation.ValidateSqlString(data.factura));
                 _db.AddDynamicParam("jsonDetalle", SqlValidation.ValidateSqlString(data.detalle));
