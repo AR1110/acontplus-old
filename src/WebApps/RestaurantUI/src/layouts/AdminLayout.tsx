@@ -22,6 +22,9 @@ import HomeIcon from "@mui/icons-material/Home";
 import TableBarIcon from "@mui/icons-material/TableBar";
 import { Badge, Menu, MenuItem } from "@mui/material";
 import { AccountCircle, Restaurant, TableBar } from "@mui/icons-material";
+import Inventory2Icon from "@mui/icons-material/Inventory2";
+import CategoryIcon from "@mui/icons-material/Category";
+
 import { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 
@@ -225,6 +228,16 @@ export default function Admin() {
       description: "Platillos",
       icon: <Restaurant />,
       to: "Dish",
+    },
+    {
+      description: "Categoria",
+      icon: <CategoryIcon />,
+      to: "Category",
+    },
+    {
+      description: "Productos",
+      icon: <Inventory2Icon />,
+      to: "Product",
     },
   ];
 
