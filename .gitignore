@@ -74,3 +74,4 @@ bin-release/
 /src/WebApps/RestaurantUI/.vs/RestaurantUI/FileContentIndex
 /src/WebApps/RestaurantUI/.vs/RestaurantUI/v17
 /src/WebApps/RestaurantUI/.vs
+*.user
