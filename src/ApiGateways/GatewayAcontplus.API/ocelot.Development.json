@@ -700,7 +700,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44331
+          "Port": 7149
         }
       ],
       "DownstreamPathTemplate": "/api/Kardex?json={json}",
@@ -716,7 +716,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44331
+          "Port": 7149
         }
       ],
       "DownstreamPathTemplate": "/api/Kardex/Filters",
@@ -876,7 +876,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44331
+          "Port": 7149
         }
       ],
       "DownstreamPathTemplate": "/api/Etiqueta/{everything}",
@@ -892,7 +892,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44331
+          "Port": 7149
         }
       ],
       "DownstreamPathTemplate": "/api/Familia{everything}",
@@ -908,7 +908,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44331
+          "Port": 7149
         }
       ],
       "DownstreamPathTemplate": "/api/SubFamilia{everything}",
@@ -924,7 +924,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44331
+          "Port": 7149
         }
       ],
       "DownstreamPathTemplate": "/api/Medida{everything}",
@@ -940,7 +940,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44331
+          "Port": 7149
         }
       ],
       "DownstreamPathTemplate": "/api/Modelo{everything}",
@@ -956,7 +956,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44331
+          "Port": 7149
         }
       ],
       "DownstreamPathTemplate": "/api/Marca{everything}",
@@ -972,7 +972,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44331
+          "Port": 7149
         }
       ],
       "DownstreamPathTemplate": "/api/Tarifa{everything}",
@@ -1020,7 +1020,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44331
+          "Port": 7149
         }
       ],
       "DownstreamPathTemplate": "/api/Articulo{everything}",
@@ -1068,7 +1068,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44331
+          "Port": 7149
         }
       ],
       "DownstreamPathTemplate": "/api/PrecioMasivo{everything}",
@@ -1230,7 +1230,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44331
+          "Port": 7149
         }
       ],
       "DownstreamPathTemplate": "/api/Consolidacion{everything}",
@@ -1385,7 +1385,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44331
+          "Port": 7149
         }
       ],
       "DownstreamPathTemplate": "/api/TransferenciaBodega{everything}",

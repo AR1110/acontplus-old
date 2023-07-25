@@ -1,7 +1,7 @@
 <script type="ts">
     let editStatus = false,
         showPopup = false;
-    import ModalNuevo from "./Components/ModalNuevo.svelte";
+    import Add from "./Components/Add.svelte";
 
     const openNew = (open) => {
         showPopup = open;
@@ -39,7 +39,7 @@
     <ModalNuevo />
 {/if} -->
 
-<ModalNuevo showModal={showPopup} onModalClose={(data) => onPopupClose(data)} />
+<Add showModal={showPopup} onModalClose={(data) => onPopupClose(data)} />
 
 <div class="row">
     <div class="col-lg-12">
