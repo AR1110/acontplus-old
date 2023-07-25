@@ -2,6 +2,7 @@ using Services.Common;
 using Helpers;
 using System.Reflection;
 using Lib.Common;
+using ApiConfig.Extensions;
 
 namespace ApiConfig
 {
@@ -16,6 +17,8 @@ namespace ApiConfig
             ConfigHelper.AddJsonFiles(builder.Configuration);
 
             builder.Services.AddControllers();
+
+            builder.Services.AddApplicationServices(builder.Configuration);
 
             builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 

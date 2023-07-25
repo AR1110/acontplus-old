@@ -1,16 +1,16 @@
 import { client } from "../api/axiosClient.js";
-import type { StructureResponse } from "../interfaces/structure-response.js";
 let url = "Config/EstabAsig/";
-
 async function get(params: any) {
-    return await client.get(`${url}?json=${params}`).then((response: StructureResponse) => {
-        return response
-    }).catch((error) => {
-        console.log(error)
-        return {
-            status: error.status,
-            data: error.response
+    return await client.get(`${url}?json=${params}`).then((response: any) => {
+        if (response.status === 200) {
+            return response.data;
+        } else {
+            console.log(response.status);
+            return null;
         }
+    }).catch((error) => {
+        console.log(error.response)
+        return null;
     })
 }
 export const Estabs = {

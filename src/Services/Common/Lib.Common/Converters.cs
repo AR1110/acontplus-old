@@ -38,7 +38,7 @@ namespace Lib.Common
                     data = new Dictionary<string, object>();
                     foreach (DataColumn col in dt.Columns)
                     {
-                        data.Add(ToCamelCase(col.ColumnName), dr[col]);
+                        data.Add(col.ColumnName, dr[col]);
                     }
                     table.Add(data);
                 }
