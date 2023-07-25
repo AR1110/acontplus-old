@@ -390,6 +390,8 @@ class MdArticuloCtrl extends BaseSearchArticulo {
         
     }
 
+
+    
     async openModalArticuloFraccionadoInfo(item) {
         try {
             const {fileCtrl, controllers, templates} = this.nombreModalInventario.ARTICULO;
@@ -400,7 +402,7 @@ class MdArticuloCtrl extends BaseSearchArticulo {
                 template,
                 size: 'md',
                 params: item,
-                windowClass: 'uibModalFullScreen'
+                windowClass: 'zindex'
             })
     
             
