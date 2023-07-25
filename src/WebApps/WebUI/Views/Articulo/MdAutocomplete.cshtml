@@ -52,7 +52,11 @@
     }
 
     .zindex {
+        z-index: 999999 !important;        
+    }
+    .contentArticlePopover {
         z-index: 999999 !important;
+        max-width: 400px !important;
     }
 </style>
 
@@ -120,11 +124,19 @@
                             <td class="suggestion-column text-center" ng-repeat="pvp in item.priceSale">
                                 <span class="font-weight-bold">${{pvp.precio}}</span>
                             </td>
-                            <td class="suggestion-column text-center" ng-repeat="ub in item.warehouses">
+                            <td class="suggestion-column text-center" ng-if="item.warehouses.length >0" ng-repeat="ub in item.warehouses">
                                 {{ub.ubicacion}}
                             </td>
-                            <td ng-click="$ctrl.openModalArticuloFraccionadoInfo(item)" stop-event >
+                             <td class="suggestion-column text-center" ng-if="item.warehouses.length ===0">
+
+                             </td>
+                            @* <td ng-click="$ctrl.openModalArticuloFraccionadoInfo(item)" stop-event >
                                 <i class="fa fa-balance-scale"></i>
+                            </td> *@
+                            <td class="suggestion-column text-center">
+                                 <span article-fraccionado-info-drtv article="item" ng-if="item.fraccionado">
+                                     <i class="fa fa-balance-scale"></i>
+                                 </span> 
                             </td>
                         </tr>
                     </tbody>

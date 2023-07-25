@@ -18,7 +18,7 @@
 
                 if(response.code==="1"){
                     let mainData = JSON.parse(response.payload);
-                    console.log(mainData)
+                   
                     let articulos = mainData[0];
                     let totalRecords = mainData[0][0].totalRecords; 
                     let subFamilias = mainData[1]; 
@@ -60,6 +60,31 @@
             })
         }
 
+
+        //Lista de articulos fraccionados para buscador rapido 
+        service.getArticlesFractionalInfo = function(query) {
+            if(!query.hasOwnProperty('idArticulo')){
+                fS.sweetAlert('warning', 'Propiedad idArticulo no proporcionado')
+                return
+            }
+            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response=>{
+                if(response.code==="0"){
+                    throw response;
+                }
+
+                if(response.code==="1"){
+                    let dataRepository = JSON.parse(response.payload)[0];  
+                    return dataRepository.map(item=>{
+                        let tarifas = item.tarifas && JSON.parse(item.tarifas)
+                        return {
+                            ...item,
+                            tarifas
+                        }
+                    })                  
+                   
+                }
+            })
+        }
 
         //se usa en modulo consultar precio y modal consultar Listado de Articulos 
         service.getAllWithPrices = function(dataSearch){
@@ -118,6 +143,7 @@
         }
 
 
+        //Articulos para listar en el modulo de articulo fraccionado 
         service.searchForFraccionado = function(query) {
             query.tipo = 1; 
             query.pageIndex = 1;
@@ -151,6 +177,18 @@
                             style: item.style
                         }
                     })                    
+                }
+            })
+        }
+
+        //Se usa en modulo de consolidacion 
+        service.getForImportation = function(query){
+            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response=>{
+                if(response.code==="0"){
+                    throw response;
+                }
+                if(response.code==="1"){
+                    return JSON.parse(response.payload)[0]
                 }
             })
         }
@@ -253,6 +291,7 @@
                             stockMinimo: item.stockMinimo,
                             style: item.style,
                             subFamilia: item.subFamilia,
+                            fraccionado: item.fraccionado,
                             priceSales: priceSales.map(item=>{
                                 return {
                                     tarifa: item.tarifa,
@@ -452,7 +491,10 @@
                 
             })
         }
-         service.getId = (id) => {
+
+
+        //Se usa Recepcion documentos 
+        service.getId = (id) => {
            return mainService.getData("GET", url + "GetId/" + id, null, true).then(
                  response => {
                      if (response.code == "0") {
