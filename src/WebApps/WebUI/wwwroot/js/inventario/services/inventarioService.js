@@ -4,7 +4,7 @@
 
     app.factory('familiaService', function ($injector) {
 
-        let url = 'Familia/';
+        let url = 'Inventario/Familia/';
         let mS = $injector.get('mainService');
         let service = {};
 
@@ -63,7 +63,7 @@
      */
     app.factory('subFamiliaService', function ($injector) {
 
-        let url = 'SubFamilia/';
+        let url = 'Inventario/SubFamilia/';
         let mS = $injector.get('mainService');
         let service = {};
 
@@ -126,7 +126,7 @@
      */
     app.factory('marcaService', function ($injector) {
 
-        let url = 'Marca/';
+        let url = 'Inventario/Marca/';
         let mS = $injector.get('mainService');
         let service = {};
 
@@ -186,7 +186,7 @@
      */
     app.factory('modeloService', function ($injector) {
 
-        let url = 'Modelo/';
+        let url = 'Inventario/Modelo/';
         let mS = $injector.get('mainService');
         let service = {};
 
@@ -235,7 +235,7 @@
      */
     app.factory('medidaService', function ($injector) {
 
-        let url = 'Medida/';
+        let url = 'Inventario/Medida/';
         let mS = $injector.get('mainService');
         let service = {};
 
@@ -280,7 +280,7 @@
     */
     app.factory('tarifaService', function ($injector) {
 
-        let url = 'Tarifa/';
+        let url = 'Inventario/Tarifa/';
         let mS = $injector.get('mainService');
         let service = {};
 

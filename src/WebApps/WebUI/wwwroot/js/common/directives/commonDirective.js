@@ -322,7 +322,7 @@
         }
     })
 
-    app.directive('estabStock', function (mainService, $compile, $timeout) {
+    app.directive('estabStock', function (mainService, $compile, $timeout, articuloService) {
         return {
             restrict: 'A',
             scope: {
@@ -356,7 +356,7 @@
                                             </div>   
                                              `;
 
-                        mainService.getData('get', '/Articulo/GetId?id=' + scope.article.idArticulo).then(response => {
+                        articuloService.getId(scope.article.idArticulo).then(response => {
                             const results = JSON.parse(response.payload) || [];
 
                             scope.branchs = results[4].map(val => {

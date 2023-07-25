@@ -165,10 +165,9 @@ export class UiGridOptions{
                         this.parentScope.recalculateTotals(rowEntity);
                         $("#custom-template-md-autocomplete-articulo").focus();
                     }
-                    if (code === "2") {
-                        console.log(rowEntity);
+                    if (code === "2") { 
                         //Funcion declarada del ModalBaseCtrl  
-                        this.recalculateTotals(rowEntity);
+                        this.parentScope.recalculateTotals(rowEntity);
                         // this.setItemArticuloEnDetalle({
                         //     item: dataArticuloApi
                         // })

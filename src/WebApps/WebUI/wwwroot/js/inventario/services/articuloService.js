@@ -5,7 +5,7 @@
 
     app.factory('articuloService', ['mainService', 'formulario', function(mainService, fS){
 
-        let url = 'Articulo/';
+        let url = 'Inventario/Articulo/';
 
         let service = {};
 
@@ -151,6 +151,17 @@
                             style: item.style
                         }
                     })                    
+                }
+            })
+        }
+
+        service.getForImportation = function(query){
+            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response=>{
+                if(response.code==="0"){
+                    throw response;
+                }
+                if(response.code==="1"){
+                    return JSON.parse(response.payload)[0]
                 }
             })
         }
@@ -452,7 +463,10 @@
                 
             })
         }
-         service.getId = (id) => {
+
+
+        //Se usa Recepcion documentos 
+        service.getId = (id) => {
            return mainService.getData("GET", url + "GetId/" + id, null, true).then(
                  response => {
                      if (response.code == "0") {
