@@ -660,7 +660,7 @@
                     articulo = item
                     medidas.push({ idMedida: articulo.idMedida, descripcion: articulo.medida, precioCosto: articulo.precioCosto })
                     if (articulo.fraccionado) {
-                        let medidasTemp = JSON.parse(articulo.medidas)
+                        let medidasTemp = articulo.medidas && JSON.parse(articulo.medidas) || [];
                         for (const m of medidasTemp) {
                             medidas.push(m)
                         }
@@ -1710,7 +1710,7 @@
                     articulo = item
                     medidas.push({ idMedida: articulo.idMedida, descripcion: articulo.medida, precioCosto: articulo.precioCosto })
                     if (articulo.fraccionado) {
-                        let medidasTemp = JSON.parse(articulo.medidas)
+                        let medidasTemp = articulo.medidas && JSON.parse(articulo.medidas) || [];
                         for (const m of medidasTemp) {
                             medidas.push(m)
                         }
