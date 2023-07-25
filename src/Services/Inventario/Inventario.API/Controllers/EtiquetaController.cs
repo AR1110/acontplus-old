@@ -4,7 +4,7 @@ using Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ApiInventory.Controllers
+namespace Inventario.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

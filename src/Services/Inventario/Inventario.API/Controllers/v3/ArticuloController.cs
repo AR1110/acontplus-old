@@ -4,7 +4,7 @@ using Domain.Dtos;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ApiInventory.Controllers.v3
+namespace Inventario.API.Controllers.v3
 {
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]

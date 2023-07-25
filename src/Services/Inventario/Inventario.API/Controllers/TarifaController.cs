@@ -4,18 +4,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using Services.Common.Logs;
 using DataAccess;
-using Domain.Models.Almacen;
+using Domain.Models;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
-namespace ApiInventory.Controllers
+namespace Inventario.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class SubFamiliaController : ControllerBase
+    public class TarifaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public SubFamiliaController(IConfiguration configuration)
+        public TarifaController(IConfiguration configuration)
         {
             _configuration = configuration;
         }
@@ -27,7 +28,7 @@ namespace ApiInventory.Controllers
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.SubFamilia_Get");
+                await _db.SPExecute("Almacen.Tarifa_Get");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDataTableAsync();
@@ -35,8 +36,8 @@ namespace ApiInventory.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar SubFamilias: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al listar SubFamilias");
+                _log.LogError("Error al listar tarifas: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al listar tarifas");
             }
             finally
             {
@@ -46,25 +47,23 @@ namespace ApiInventory.Controllers
         }
 
         [HttpPost("Insert")]
-        public async Task<IActionResult> Insert([FromBody] SubFamilia data)
+        public async Task<IActionResult> Insert([FromBody] Tarifa data)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.SubFamilia_Insert");
+                await _db.SPExecute("Almacen.Tarifa_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("idFamilia", data.idFamilia);
                 _db.AddDynamicParam("descripcion", data.descripcion);
-                _db.AddDynamicParam("siglas", data.siglas);
-                _db.AddDynamicParam("montoObjetivo", data.montoObjetivo);
+                _db.AddDynamicParam("codigo", data.codigo);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al insertar subfamilia: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al insertar subfamilia");
+                _log.LogError("Error al insertar tarifa: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al insertar tarifa");
             }
             finally
             {
@@ -74,26 +73,23 @@ namespace ApiInventory.Controllers
         }
 
         [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] SubFamilia data)
+        public async Task<IActionResult> Update(int id, string json)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.SubFamilia_Update");
+                await _db.SPExecute("Almacen.Tarifa_Update");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("idFamilia", data.idFamilia);
-                _db.AddDynamicParam("descripcion", data.descripcion);                
-                _db.AddDynamicParam("montoObjetivo", data.montoObjetivo);
-                _db.AddDynamicParam("estado", data.estado);
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));             
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al actualizar subfamilia: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al actualizar subfamilia");
+                _log.LogError("Error al actualizar tarifa: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al actualizar tarifa");
             }
             finally
             {
@@ -109,16 +105,16 @@ namespace ApiInventory.Controllers
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.SubFamilia_Update_Cancel");
+                await _db.SPExecute("Almacen.Tarifa_Delete");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", id);              
+                _db.AddDynamicParam("id", id);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al eliminar subfamilia: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al eliminar subfamilia");
+                _log.LogError("Error al eliminar medida: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al eliminar medida");
             }
             finally
             {
@@ -134,16 +130,15 @@ namespace ApiInventory.Controllers
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.SubFamilia_For_Select");
+                await _db.SPExecute("Almacen.Tarifa_For_Select");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar SubFamilias para Select: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al listar SubFamilias para Select");
+                _log.LogError("Error al listar tarifas para Select: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al listar tarifas para Select");
             }
             finally
             {
@@ -151,6 +146,5 @@ namespace ApiInventory.Controllers
             }
             return Ok(_response);
         }
-
     }
 }

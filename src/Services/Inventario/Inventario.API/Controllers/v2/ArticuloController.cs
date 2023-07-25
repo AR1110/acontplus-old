@@ -5,7 +5,7 @@ using Domain.ViewModels.Almacen;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ApiInventory.Controllers.v2
+namespace Inventario.API.Controllers.v2
 {
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]

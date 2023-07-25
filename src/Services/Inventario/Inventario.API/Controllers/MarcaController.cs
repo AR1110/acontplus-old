@@ -8,7 +8,7 @@ using Domain.Models;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ApiInventory.Controllers
+namespace Inventario.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

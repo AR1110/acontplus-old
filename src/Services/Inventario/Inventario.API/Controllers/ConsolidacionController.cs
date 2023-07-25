@@ -5,7 +5,7 @@ using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace ApiInventory.Controllers
+namespace Inventario.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

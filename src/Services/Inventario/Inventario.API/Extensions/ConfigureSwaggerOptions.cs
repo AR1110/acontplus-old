@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace ApiInventory.Extensions
+namespace Inventario.API.Extensions
 {
     public class ConfigureSwaggerOptions
     : IConfigureNamedOptions<SwaggerGenOptions>
@@ -51,7 +51,7 @@ namespace ApiInventory.Extensions
         {
             var info = new OpenApiInfo()
             {
-                Title = "Inventory API",
+                Title = "Inventario API",
                 Version = desc.ApiVersion.ToString()
             };
 

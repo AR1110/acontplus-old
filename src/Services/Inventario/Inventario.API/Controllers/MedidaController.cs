@@ -4,19 +4,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using Services.Common.Logs;
 using DataAccess;
-using Domain.Models;
+using Domain.Models.Almacen;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
-namespace ApiInventory.Controllers
+namespace Inventario.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TarifaController : ControllerBase
+    public class MedidaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public TarifaController(IConfiguration configuration)
+        public MedidaController(IConfiguration configuration)
         {
             _configuration = configuration;
         }
@@ -28,7 +27,7 @@ namespace ApiInventory.Controllers
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.Tarifa_Get");
+                await _db.SPExecute("Almacen.Medida_Get");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDataTableAsync();
@@ -36,8 +35,8 @@ namespace ApiInventory.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar tarifas: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al listar tarifas");
+                _log.LogError("Error al listar medidas: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al listar medidas");
             }
             finally
             {
@@ -47,23 +46,22 @@ namespace ApiInventory.Controllers
         }
 
         [HttpPost("Insert")]
-        public async Task<IActionResult> Insert([FromBody] Tarifa data)
+        public async Task<IActionResult> Insert([FromBody] Medida data)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.Tarifa_Insert");
+                await _db.SPExecute("Almacen.Medida_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("descripcion", data.descripcion);
-                _db.AddDynamicParam("codigo", data.codigo);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al insertar tarifa: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al insertar tarifa");
+                _log.LogError("Error al insertar medida: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al insertar medida");
             }
             finally
             {
@@ -73,23 +71,24 @@ namespace ApiInventory.Controllers
         }
 
         [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Update(int id, string json)
+        public async Task<IActionResult> Update(int id, [FromBody] Medida data)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.Tarifa_Update");
+                await _db.SPExecute("Almacen.Medida_Update");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));             
+                _db.AddDynamicParam("descripcion", data.descripcion);
+                _db.AddDynamicParam("estado", data.estado);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al actualizar tarifa: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al actualizar tarifa");
+                _log.LogError("Error al actualizar medida: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al actualizar medida");
             }
             finally
             {
@@ -105,7 +104,7 @@ namespace ApiInventory.Controllers
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.Tarifa_Delete");
+                await _db.SPExecute("Almacen.Medida_Delete");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
                 _response = _db.GetDefault();
@@ -130,15 +129,15 @@ namespace ApiInventory.Controllers
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.Tarifa_For_Select");
+                await _db.SPExecute("Almacen.Medida_For_Select");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar tarifas para Select: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al listar tarifas para Select");
+                _log.LogError("Error al listar medidas para Select: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al listar medidas para Select");
             }
             finally
             {
@@ -146,5 +145,6 @@ namespace ApiInventory.Controllers
             }
             return Ok(_response);
         }
+
     }
 }

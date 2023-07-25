@@ -8,14 +8,14 @@ using Domain.Models.Almacen;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ApiInventory.Controllers
+namespace Inventario.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class MedidaController : ControllerBase
+    public class SubFamiliaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public MedidaController(IConfiguration configuration)
+        public SubFamiliaController(IConfiguration configuration)
         {
             _configuration = configuration;
         }
@@ -27,7 +27,7 @@ namespace ApiInventory.Controllers
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.Medida_Get");
+                await _db.SPExecute("Almacen.SubFamilia_Get");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDataTableAsync();
@@ -35,8 +35,8 @@ namespace ApiInventory.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar medidas: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al listar medidas");
+                _log.LogError("Error al listar SubFamilias: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al listar SubFamilias");
             }
             finally
             {
@@ -46,22 +46,25 @@ namespace ApiInventory.Controllers
         }
 
         [HttpPost("Insert")]
-        public async Task<IActionResult> Insert([FromBody] Medida data)
+        public async Task<IActionResult> Insert([FromBody] SubFamilia data)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.Medida_Insert");
+                await _db.SPExecute("Almacen.SubFamilia_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("idFamilia", data.idFamilia);
                 _db.AddDynamicParam("descripcion", data.descripcion);
+                _db.AddDynamicParam("siglas", data.siglas);
+                _db.AddDynamicParam("montoObjetivo", data.montoObjetivo);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al insertar medida: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al insertar medida");
+                _log.LogError("Error al insertar subfamilia: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al insertar subfamilia");
             }
             finally
             {
@@ -71,24 +74,26 @@ namespace ApiInventory.Controllers
         }
 
         [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] Medida data)
+        public async Task<IActionResult> Update(int id, [FromBody] SubFamilia data)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.Medida_Update");
+                await _db.SPExecute("Almacen.SubFamilia_Update");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("descripcion", data.descripcion);
+                _db.AddDynamicParam("idFamilia", data.idFamilia);
+                _db.AddDynamicParam("descripcion", data.descripcion);                
+                _db.AddDynamicParam("montoObjetivo", data.montoObjetivo);
                 _db.AddDynamicParam("estado", data.estado);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al actualizar medida: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al actualizar medida");
+                _log.LogError("Error al actualizar subfamilia: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al actualizar subfamilia");
             }
             finally
             {
@@ -104,16 +109,16 @@ namespace ApiInventory.Controllers
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.Medida_Delete");
+                await _db.SPExecute("Almacen.SubFamilia_Update_Cancel");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", id);
+                _db.AddDynamicParam("id", id);              
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al eliminar medida: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al eliminar medida");
+                _log.LogError("Error al eliminar subfamilia: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al eliminar subfamilia");
             }
             finally
             {
@@ -129,15 +134,16 @@ namespace ApiInventory.Controllers
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.Medida_For_Select");
+                await _db.SPExecute("Almacen.SubFamilia_For_Select");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar medidas para Select: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al listar medidas para Select");
+                _log.LogError("Error al listar SubFamilias para Select: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al listar SubFamilias para Select");
             }
             finally
             {
