@@ -5,7 +5,7 @@
 
     app.factory('articuloService', ['mainService', 'formulario', function(mainService, fS){
 
-        let url = 'Articulo/';
+        let url = 'Inventario/Articulo/';
 
         let service = {};
 
