@@ -8,7 +8,7 @@
 
 
     function articuloCtrl($scope, mS, articuloSvc, modalSvc, nombreModalConst, form) { 
-
+ 
         const {
             MODAL_CTRL,
             MODAL_NUEVO,  
