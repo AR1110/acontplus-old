@@ -146,6 +146,33 @@ namespace ApiVentas.Controllers.v2
             return Ok(_response);
         }
 
+        [HttpPut("UpdateApp/{id}")]
+        public async Task<IActionResult> UpdateApp(int id, [FromBody] Cliente data)
+        {
+            GenericResponse _response = new GenericResponse();
+            DbAccess _db = new DbAccess(_configuration);
+            try
+            {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                await _db.SPExecute("Ventas.Cliente_Update_App");
+                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _db.AddDynamicParam("id", id);
+                _db.AddDynamicParam("json", JsonConvert.SerializeObject(data));
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                LogWriter _logs = new LogWriter(_configuration);
+                _logs.LogError("Error while updating customer: \n " + ex.ToString());
+                _response.Create(code: "0", message: "Error al actualizar el cliente");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
