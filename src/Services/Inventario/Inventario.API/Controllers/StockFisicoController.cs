@@ -26,7 +26,7 @@ namespace Inventario.API.Controllers
 
         // GET: api/StockFisico
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<StockFisico>>> GetStockFisicos(string json)
+        public async Task<IActionResult> GetStockFisicos(string json)
         {
             //if (_context.StockFisicos == null)
             //{
@@ -41,7 +41,7 @@ namespace Inventario.API.Controllers
                     {"json", json}
                 };
                 var response = await _stockFisico.GetAsync(parameters);
-                if (response == null) { return NotFound(); }
+                if (response == null) { return NoContent(); }
                 return Ok(response);
             }
             catch (Exception)

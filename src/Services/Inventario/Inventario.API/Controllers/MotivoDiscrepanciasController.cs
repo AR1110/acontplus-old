@@ -20,21 +20,28 @@ namespace Inventario.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MotivoDiscrepancia>>> GetMotivoDiscrepancias()
         {
-          if (_context.MotivoDiscrepancias == null)
-          {
-              return NotFound();
-          }
-            return await _context.MotivoDiscrepancias.ToListAsync();
+            if (_context.MotivoDiscrepancias == null)
+            {
+                return NotFound();
+            }
+            try
+            {
+                return await _context.MotivoDiscrepancias.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // GET: api/MotivoDiscrepancias/5
         [HttpGet("{id}")]
         public async Task<ActionResult<MotivoDiscrepancia>> GetMotivoDiscrepancia(int id)
         {
-          if (_context.MotivoDiscrepancias == null)
-          {
-              return NotFound();
-          }
+            if (_context.MotivoDiscrepancias == null)
+            {
+                return NotFound();
+            }
             var motivoDiscrepancia = await _context.MotivoDiscrepancias.FindAsync(id);
 
             if (motivoDiscrepancia == null)
@@ -81,11 +88,11 @@ namespace Inventario.API.Controllers
         [HttpPost]
         public async Task<ActionResult<MotivoDiscrepancia>> PostMotivoDiscrepancia(MotivoDiscrepancia motivoDiscrepancia)
         {
-          if (_context.MotivoDiscrepancias == null)
-          {
-              return Problem("Entity set 'InventarioContext.MotivoDiscrepancias'  is null.");
-          }
-          
+            if (_context.MotivoDiscrepancias == null)
+            {
+                return Problem("Entity set 'InventarioContext.MotivoDiscrepancias'  is null.");
+            }
+
             _context.MotivoDiscrepancias.Add(motivoDiscrepancia);
             await _context.SaveChangesAsync();
 

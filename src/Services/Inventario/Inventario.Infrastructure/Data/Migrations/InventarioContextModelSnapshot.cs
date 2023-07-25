@@ -97,6 +97,9 @@ namespace Inventario.Infrastructure.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(500)");
 
+                    b.Property<int>("PuntoEmisionId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Responsable")
                         .IsRequired()
                         .HasMaxLength(300)
