@@ -22,6 +22,9 @@
 	  <ProjectReference Include="..\..\Common\DataAccess\DataAccess.csproj" />
 	  <ProjectReference Include="..\..\Common\Lib.Common\Lib.Common.csproj" />
 	  <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
+	  <ProjectReference Include="..\Config.Application\Config.Application.csproj" />
+	  <ProjectReference Include="..\Config.Core\Config.Core.csproj" />
+	  <ProjectReference Include="..\Config.Infrastructure\Config.Infrastructure.csproj" />
 	</ItemGroup>
 
 </Project>

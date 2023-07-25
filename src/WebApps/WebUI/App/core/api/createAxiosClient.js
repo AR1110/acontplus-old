@@ -44,7 +44,7 @@ export function createAxiosClient({
         (response) => {
             // Any status code that lie within the range of 2xx cause this function to trigger
             // Do something with response data
-            return response.data;
+            return response;
         },
         (error) => {
             const originalRequest = error.config;

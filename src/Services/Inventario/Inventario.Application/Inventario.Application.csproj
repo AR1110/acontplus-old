@@ -6,4 +6,9 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Configuracion\Config.Core\Config.Core.csproj" />
+    <ProjectReference Include="..\Inventario.Core\Inventario.Core.csproj" />
+  </ItemGroup>
+
 </Project>

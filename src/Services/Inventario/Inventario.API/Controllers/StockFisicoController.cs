@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Inventario.Core.Entities;
 using Inventario.Infrastructure.Data;
+using Inventario.Core.Interfaces;
+using Services.Common;
 
 namespace Inventario.API.Controllers
 {
@@ -15,31 +17,47 @@ namespace Inventario.API.Controllers
     public class StockFisicoController : ControllerBase
     {
         private readonly InventarioContext _context;
-
-        public StockFisicoController(InventarioContext context)
+        private readonly IStockFisicoService _stockFisico;
+        public StockFisicoController(InventarioContext context, IStockFisicoService stockFisico)
         {
             _context = context;
+            _stockFisico = stockFisico;
         }
 
         // GET: api/StockFisico
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<StockFisico>>> GetStockFisicos()
+        public async Task<ActionResult<IEnumerable<StockFisico>>> GetStockFisicos(string json)
         {
-          if (_context.StockFisicos == null)
-          {
-              return NotFound();
-          }
-            return await _context.StockFisicos.ToListAsync();
+            //if (_context.StockFisicos == null)
+            //{
+            //    return NotFound();
+            //}
+            //return await _context.StockFisicos.ToListAsync();
+            try
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId() },
+                    {"json", json}
+                };
+                var response = await _stockFisico.GetAsync(parameters);
+                if (response == null) { return NotFound(); }
+                return Ok(response);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
 
         // GET: api/StockFisico/5
         [HttpGet("{id}")]
         public async Task<ActionResult<StockFisico>> GetStockFisico(int id)
         {
-          if (_context.StockFisicos == null)
-          {
-              return NotFound();
-          }
+            if (_context.StockFisicos == null)
+            {
+                return NotFound();
+            }
             var stockFisico = await _context.StockFisicos.FindAsync(id);
 
             if (stockFisico == null)
@@ -86,10 +104,10 @@ namespace Inventario.API.Controllers
         [HttpPost]
         public async Task<ActionResult<StockFisico>> PostStockFisico(StockFisico stockFisico)
         {
-          if (_context.StockFisicos == null)
-          {
-              return Problem("Entity set 'InventarioContext.StockFisicos'  is null.");
-          }
+            if (_context.StockFisicos == null)
+            {
+                return Problem("Entity set 'InventarioContext.StockFisicos'  is null.");
+            }
             _context.StockFisicos.Add(stockFisico);
             await _context.SaveChangesAsync();
 
