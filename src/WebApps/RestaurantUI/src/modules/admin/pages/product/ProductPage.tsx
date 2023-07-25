@@ -5,59 +5,88 @@ import {
   CardContent,
   CardHeader,
   Container,
+  Grid,
   IconButton,
   Paper,
   Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   Typography,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { red } from "@mui/material/colors";
+import { IProductView } from "@admin/models";
+import { useEffect, useState } from "react";
+import { ProductSvc } from "@admin/services";
+
+interface ProductState {
+  products: IProductView[];
+}
+
 export default function ProductPage() {
+  let enumeracion = 1;
+  const [products, setProducts] = useState<ProductState["products"]>([]);
+
+  const getProducts = () => {
+    try {
+      console.log(ProductSvc);
+      ProductSvc.getAll().then((response) => {
+        setProducts(response);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getProducts();
+  }, []);
+
   return (
     <>
-      {/* <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-        mb={5}
-      >
-        <Typography variant="h5" gutterBottom>
-          Productos
-        </Typography>
-        <Button variant="contained" startIcon={<AddIcon />}>
-          Nuevo
-        </Button>
-      </Stack> */}
-      <Container maxWidth="sm">
-        <Typography></Typography>
-        <Paper elevation={0}>
-          <Card sx={{ maxWidth: 345 }}>
-            <CardHeader
-              avatar={
-                <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-                  R
-                </Avatar>
-              }
-              action={
-                <IconButton aria-label="settings">
-                  <MoreVertIcon />
-                </IconButton>
-              }
-              title="Shrimp and Chorizo Paella"
-              subheader="September 14, 2016"
-            />
-
-            <CardContent>
-              <Typography variant="body2" color="text.secondary">
-                This impressive paella is a perfect party dish and a fun meal to
-                cook together with your guests. Add 1 cup of frozen peas along
-                with the mussels, if you like.
-              </Typography>
-            </CardContent>
-          </Card>
+      <Grid item xs={12}>
+        <Paper
+          sx={{ p: 2, display: "flex", flexDirection: "column" }}
+          elevation={0}
+        >
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>N°</TableCell>
+                  <TableCell>Código</TableCell>
+                  <TableCell align="right">Descripción</TableCell>
+                  <TableCell align="right">Tipo Artículo</TableCell>
+                  <TableCell align="right">Categoria</TableCell>
+                  <TableCell align="right">Stock</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {products.map((row, index) => (
+                  <TableRow
+                    key={index}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell>{enumeracion++}</TableCell>
+                    <TableCell component="th" scope="row">
+                      {row.code}
+                    </TableCell>
+                    <TableCell align="right">{row.description}</TableCell>
+                    <TableCell align="right">{row.typeArticle}</TableCell>
+                    <TableCell align="right">{row.category}</TableCell>
+                    <TableCell align="right">{row.stock}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Paper>
-      </Container>
+      </Grid>
     </>
   );
 }
