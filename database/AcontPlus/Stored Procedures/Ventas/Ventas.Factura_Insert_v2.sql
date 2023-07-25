@@ -339,7 +339,6 @@ BEGIN
 			END
 		ELSE
 			BEGIN
-				SELECT TOP 1 @razonSocialComprador = nombreFiscal, @identificacionComprador = numeroIdentificacion, @idTipoIdentificacion = idTipoIdentificacion FROM dbo.Cliente WITH (NOLOCK) WHERE idCliente = @idCliente
 				IF (@identificacionComprador IS NULL)
 					BEGIN
 						SELECT '0' as code, 'El nro de identificación del cliente es incorrecto' as 'message'
@@ -410,28 +409,31 @@ BEGIN
 
 		BEGIN TRAN
 			
-			IF (@idCliente = 0)
+			IF @idCliente = 0
 				BEGIN
-					
 					IF NOT EXISTS(SELECT 1 FROM Customer.Customer WHERE IDCard = LTRIM(RTRIM(@identificacionComprador)))
 						BEGIN
-							SET @IDType = (SELECT codigoSri FROM TipoIdentificacion t WITH (NOLOCK)  WHERE t.idTipoIdentificacion = @idTipoIdentificacion)
+							SELECT TOP 1 @IDType = codigoSri FROM TipoIdentificacion t WITH (NOLOCK)  WHERE t.idTipoIdentificacion = @idTipoIdentificacion
 
 							INSERT INTO Customer.Customer(IDType, IDCard, BusinessName, TradeName, email, telephone, [Address], SriValidation)
 							SELECT @IDType, LTRIM(RTRIM(@identificacioncomprador)), LTRIM(RTRIM(@razonSocialComprador)), LTRIM(RTRIM(@razonSocialComprador)),  LTRIM(RTRIM(@email)), LTRIM(RTRIM(@telefono)), LTRIM(RTRIM(@direccionComprador)), 1
+							
 							SET @customerId = @@IDENTITY
 						END
 					ELSE
 						BEGIN 
-							SET @customerId = (SELECT ID FROM Customer.Customer WHERE IDCard = LTRIM(RTRIM(@identificacionComprador)))
+							SELECT TOP 1 @customerId = ID FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = LTRIM(RTRIM(@identificacionComprador))
 						END
-
-					INSERT INTO dbo.Cliente(idEntidad, idTipoIdentificacion, numeroIdentificacion, nombreFiscal, nombreComercial, direccion, correo, telefono, validationSri, customerId)
-					VALUES (@idEntidad, @idTipoIdentificacion, @identificacionComprador, @razonSocialComprador, @razonSocialComprador, @direccionComprador, @email, @telefono, 1, @customerId)
 					
-					SET @idCliente = @@IDENTITY
+					IF NOT EXISTS (SELECT 1 FROM Cliente WITH (NOLOCK) WHERE numeroIdentificacion = @identificacionComprador AND idEntidad = @idEntidad)
+						BEGIN
+							INSERT INTO dbo.Cliente(idEntidad, idTipoIdentificacion, numeroIdentificacion, nombreFiscal, nombreComercial, direccion, correo, telefono, validationSri, customerId)
+							VALUES (@idEntidad, @idTipoIdentificacion, @identificacionComprador, @razonSocialComprador, @razonSocialComprador, @direccionComprador, @email, @telefono, 1, @customerId)
+
+							SET @idCliente = @@IDENTITY
+						END 
 				END
-			ELSE  ----- Add by Danis 
+			ELSE 
 				BEGIN
 					UPDATE dbo.Cliente 
 					SET direccion	= @direccionComprador,
