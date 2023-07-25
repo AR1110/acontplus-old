@@ -433,14 +433,14 @@ BEGIN
 							SET @idCliente = @@IDENTITY
 						END 
 				END
-			ELSE 
-				BEGIN
-					UPDATE dbo.Cliente 
-					SET direccion	= @direccionComprador,
-						correo		= @email,
-						telefono	= @telefono
-					WHERE idCliente = @idCliente
-				END
+			--ELSE 
+			--	BEGIN
+			--		UPDATE dbo.Cliente 
+			--		SET direccion	= @direccionComprador,
+			--			correo		= @email,
+			--			telefono	= @telefono
+			--		WHERE idCliente = @idCliente
+			--	END
 	
 			--==== INFORMACION DE LA VENTA =============================================================
 			
