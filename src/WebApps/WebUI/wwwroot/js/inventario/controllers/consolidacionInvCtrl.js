@@ -1007,11 +1007,12 @@
         'commonService',
         'modalService',
         'nombreModal',
+        'articuloService',
         'toastService',
         'formulario',
         'params'
     ]
-    function ModalConsolidacionImportacionCtrl($scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params) {
+    function ModalConsolidacionImportacionCtrl($scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, articleSvc, _tS, _fS, _params) {
         $scope.TIPO_DOC = _commonSvc.tipoDoc['CIV']
         $scope.uiGridConstants = uiGridConstants
         $scope.data = {};
@@ -1128,14 +1129,17 @@
         }
 
         $scope.initialLoad = () => {
-            _mS.getData("get", 'Articulo/Get?json=' + JSON.stringify({ checkBoxConsolidar: true, idBodega: $scope.idBodega }), null, true).then(
-                response => {
-                    if (response.code == "0") {
-                        _tS.toastr("warning", response.message)
-                    }
-                    if (response.code == "1") {
-                        console.log(response)
-                        $scope.articulosImportados = JSON.parse(response.payload) || [];
+            try {
+                
+                showLoader();
+                const query = { 
+                    tipo: 1, 
+                    checkBoxConsolidar: true, 
+                    idBodega: $scope.idBodega ,
+                    pageIndex: 1, pageSize: 50
+                }
+                articleSvc.getForImportation(query).then(response=>{                    
+                    $scope.articulosImportados = response;
                         let num = 1;
                         $scope.gridOptions.data = $scope.articulosImportados.map(item => ({
                             ...item,
@@ -1146,11 +1150,15 @@
                             num: num++
                         }))
                         $scope.setTotalDetalle();
-                    }
-                }
-            ).catch(error => {
+
+                }).catch(error=>{
+                    hideLoader();
+                    console.log(error)
+                })
+            } catch (error) {
+                hideLoader();
                 console.log(error)
-            })
+            } 
         }
         $scope.initialLoad()
 
