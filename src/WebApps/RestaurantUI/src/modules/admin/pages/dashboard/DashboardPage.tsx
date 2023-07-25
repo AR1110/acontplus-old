@@ -1,7 +1,7 @@
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 
-export default function Dashboard() {
+export default function DashboardPage() {
   return (
     <div>
       <Grid container spacing={0} sx={{ mt: 2, mb: 2 }}>
