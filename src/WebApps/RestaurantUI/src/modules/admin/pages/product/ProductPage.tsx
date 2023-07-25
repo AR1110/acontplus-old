@@ -14,6 +14,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TablePagination,
   TableRow,
   Typography,
 } from "@mui/material";
@@ -26,12 +27,16 @@ import { ProductSvc } from "@admin/services";
 
 interface ProductState {
   products: IProductView[];
+  page: number;
+  rowsPerPage: number;
 }
 
 export default function ProductPage() {
   let enumeracion = 1;
   const [products, setProducts] = useState<ProductState["products"]>([]);
-
+  const [page, setPage] = useState<ProductState["page"]>(0);
+  const [rowsPerPage, setRowsPerPage] =
+    useState<ProductState["rowsPerPage"]>(10);
   const getProducts = () => {
     try {
       console.log(ProductSvc);
@@ -47,6 +52,17 @@ export default function ProductPage() {
     getProducts();
   }, []);
 
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
   return (
     <>
       <Grid item xs={12}>
@@ -54,16 +70,20 @@ export default function ProductPage() {
           sx={{ p: 2, display: "flex", flexDirection: "column" }}
           elevation={0}
         >
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableContainer component={Paper} sx={{ maxHeight: 440 }}>
+            <Table
+              stickyHeader
+              sx={{ minWidth: 650 }}
+              aria-label="simple table"
+            >
               <TableHead>
                 <TableRow>
                   <TableCell>N°</TableCell>
                   <TableCell>Código</TableCell>
-                  <TableCell align="right">Descripción</TableCell>
-                  <TableCell align="right">Tipo Artículo</TableCell>
-                  <TableCell align="right">Categoria</TableCell>
-                  <TableCell align="right">Stock</TableCell>
+                  <TableCell align="center">Descripción</TableCell>
+                  <TableCell align="center">Tipo Artículo</TableCell>
+                  <TableCell align="center">Categoria</TableCell>
+                  <TableCell align="center">Stock</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -76,15 +96,24 @@ export default function ProductPage() {
                     <TableCell component="th" scope="row">
                       {row.code}
                     </TableCell>
-                    <TableCell align="right">{row.description}</TableCell>
-                    <TableCell align="right">{row.typeArticle}</TableCell>
-                    <TableCell align="right">{row.category}</TableCell>
-                    <TableCell align="right">{row.stock}</TableCell>
+                    <TableCell align="center">{row.description}</TableCell>
+                    <TableCell align="center">{row.typeArticle}</TableCell>
+                    <TableCell align="center">{row.category}</TableCell>
+                    <TableCell align="center">{row.stock}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[10, 25, 50, 100]}
+            component="div"
+            count={products.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         </Paper>
       </Grid>
     </>
