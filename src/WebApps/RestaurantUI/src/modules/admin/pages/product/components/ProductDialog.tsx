@@ -138,7 +138,10 @@ export default function ProductDialog() {
     Http({
       method: "post",
       url: PATHS.INVENTARIO + "v3/Articulo/Upload",
-      formData,
+      data: formData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     }).then((response) => {
       console.log(response);
     });
