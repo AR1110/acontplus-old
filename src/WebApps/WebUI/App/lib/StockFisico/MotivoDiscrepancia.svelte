@@ -4,7 +4,7 @@
     import { client } from "../../core/api/axiosClient";
     import toast from "../../core/utils/toast";
     import Swal from "sweetalert2";
-    import Grid from "./Grid.svelte";
+    import Grid from "../../core/components/Grid.svelte";
 
     let url = "Inventario/MotivoDiscrepancias/";
     // let data: MotivoDiscrepancia = {

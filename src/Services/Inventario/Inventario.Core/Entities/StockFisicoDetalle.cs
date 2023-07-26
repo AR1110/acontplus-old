@@ -15,9 +15,9 @@ namespace Inventario.Core.Entities
         [Column(TypeName = "numeric(18,5), not null")]
         public decimal StockActual { get; set; }
         [Column(TypeName = "numeric(18,5), not null")]
-        public decimal Discrepancia { get; set; }
+        public decimal? Discrepancia { get; set; }
         public MotivoDiscrepancia MotivoDiscrepancia { get; set; }
-        public int MotivoDiscrepanciaId { get; set; }
+        public int? MotivoDiscrepanciaId { get; set; }
         [MaxLength(300)]
         public string OtroMotivo { get; set; }
     }

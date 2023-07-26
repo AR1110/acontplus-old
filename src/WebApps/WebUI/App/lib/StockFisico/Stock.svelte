@@ -13,10 +13,10 @@
     };
 
     const onPopupClose = (data) => {
-		showPopup = false;
+        showPopup = false;
 
-		console.log(data);
-	}
+        console.log(data);
+    };
 </script>
 
 <div class="row page-titles">
@@ -40,40 +40,44 @@
 {/if} -->
 
 <Add showModal={showPopup} onModalClose={(data) => onPopupClose(data)} />
-
-<div class="row">
-    <div class="col-lg-12">
-        <div class="card">
-            <table>
-                <thead>
-                    <tr>
-                        <th />
-                        <th>N°</th>
-                        <th>N°. Documento</th>
-                        <th>Fecha Emisión</th>
-                        <th>Observación</th>
-                        <th>Usuario</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- <tr>
-                        <td />
-                        <td />
-                        <td>{item.nroDoc}</td>
-                        <td>{item.fechaEmision}</td>
-                        <td>{item.observacion}</td>
-                        <td>{item.usuario}</td>
-                        <td>${item.total}</td>
-                    </tr> -->
-                </tbody>
-                <!-- <tfoot>
-                    <tr>
-                        <td colspan="6"><strong>Total:</strong></td>
-                        <td>{{ total }}</td>
-                    </tr>
-                </tfoot> -->
-            </table>
+    
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th />
+                                <th>N°</th>
+                                <th>N°. Documento</th>
+                                <th>Fecha Emisión</th>
+                                <th>Observación</th>
+                                <th>Usuario</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- <tr>
+                                <td />
+                                <td />
+                                <td>{item.nroDoc}</td>
+                                <td>{item.fechaEmision}</td>
+                                <td>{item.observacion}</td>
+                                <td>{item.usuario}</td>
+                                <td>${item.total}</td>
+                            </tr> -->
+                        </tbody>
+                        <!-- <tfoot>
+                            <tr>
+                                <td colspan="6"><strong>Total:</strong></td>
+                                <td>{{ total }}</td>
+                            </tr>
+                        </tfoot> -->
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>

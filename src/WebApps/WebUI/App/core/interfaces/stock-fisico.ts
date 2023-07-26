@@ -10,13 +10,15 @@ export interface StockFisico {
     detalles: any
 }
 
-export interface StockFisicoDetalle extends StockFisico {
+export interface StockFisicoDetalle {
     stockFisicoId: number;
     idBodega: number;
     idArticulo: number;
-    cantidadContada: number;
+    codigo: string;
+    descripcion: string;
+    cantidadContada?: number;
     stockActual: number;
-    discrepancia: number;
-    motivoDiscrepanciaId: number;
-    otroMotivo: number;
+    discrepancia?: number;
+    motivoDiscrepanciaId?: number;
+    otroMotivo?: string;
 }

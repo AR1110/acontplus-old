@@ -1,9 +1,18 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import MaskInput from "svelte-input-mask/MaskInput.svelte";
     import Modal from "../../../core/components/Modal.svelte";
-    import type { StockFisico } from "../../../core/interfaces/stock-fisico";
+    import type {
+        StockFisico,
+        StockFisicoDetalle,
+    } from "../../../core/interfaces/stock-fisico";
     import { Estabs } from "../../../core/services/establecimiento-service";
     import { Stock } from "../../../core/services/stok-fisico-service";
+    import { Articulos } from "../../../core/services/articulo-service";
+    import AdvancedSearch from "../../../core/components/AdvancedSearch.svelte";
+    import Grid from "../../../core/components/Grid.svelte";
+    import type { MotivoDiscrepancia } from "../../../core/interfaces/motivo-discrepancia";
+    import { Discrepancias } from "../../../core/services/motivos-discrepancia-service";
 
     export let showModal = false;
     export let onModalClose;
@@ -13,12 +22,16 @@
     let idBodega = 0;
     let data = {} as StockFisico;
     type mainForm = {
+        tipo: number;
         opcion: number;
+        idArticulo: number;
         idSubFamilia: number;
         nroDocumento: string;
     };
     let options: mainForm = {
-        opcion: 0,
+        tipo: 0,
+        opcion: 1,
+        idArticulo: 0,
         idSubFamilia: 0,
         nroDocumento: "",
     };
@@ -27,6 +40,8 @@
         puntosEmision = [],
         bodegas = [],
         subfamilias = [];
+
+    let motivosDiscrepancia = [] as MotivoDiscrepancia[];
 
     const initialLoad = () => {
         Stock.get(JSON.stringify({ tipo: 1 })).then((response: any) => {
@@ -39,7 +54,12 @@
                 setDefaultPtoEmi();
                 bodegas = allArrays[1].filter((x) => x.codEstab === codEstab);
                 setDefaultBodega();
+                subfamilias = allArrays[2];
             }
+        });
+        Discrepancias.get(null).then((response) => {
+            motivosDiscrepancia = response;
+            console.log(motivosDiscrepancia);
         });
     };
     let catalogs = [
@@ -103,237 +123,431 @@
         setDefaultBodega();
     };
     const askToChangeBodega = () => {};
-    const advancedSearch = () => {};
+    //const advancedSearch = () => {};
 
-    const getArticles = () => {};
+    let article = "";
+    let articleSelected = {};
+    let articles = [];
+    const onInput = async (e) => {
+        article = e.target.value;
+        if (article.length >= 3) {
+            let data = {
+                busqueda: article,
+            };
+            Articulos.search(JSON.stringify(data)).then((response) => {
+                if (response.code == "1") {
+                    articles = JSON.parse(response.payload);
+                }
+            });
+        } else if (articles.length > 0) {
+            articles = [];
+        }
+    };
+    const onFocus = () => {};
+    const onBlur = (e) => {
+        if (!article) {
+            articles = [];
+            article = "";
+        }
+    };
+    let isArticleSelected = false;
+    const selectArticle = (e) => {
+        isArticleSelected = true;
+        articleSelected = e;
+        options.idArticulo = e.idArticulo;
+        getArticles();
+    };
+    let articlesFounded = [] as StockFisicoDetalle[];
+    const getArticles = () => {
+        articlesFounded = [];
+        options.tipo = 4;
+        Stock.get(JSON.stringify(options)).then((response) => {
+            if (response) {
+                articlesFounded = response[0];
+                // for (const item of response[0]) {
+                //     articlesFounded.push({
+                //         idArticulo: item.idArticulo,
+                //         codigo: item.codigo,
+                //         descripcion: item.descripcion,
+                //         stockFisicoId: 0,
+                //         cantidadContada: 0,
+                //         stockActual: item.stock,
+                //         discrepancia: 0,
+                //         motivoDiscrepanciaId: 0,
+                //         otroMotivo: "",
+                //     });
+                // }
+                articlesFounded.forEach((value) => {
+                    value.stockFisicoId = 0;
+                    value.cantidadContada = 0;
+                    value.discrepancia = 0;
+                    value.motivoDiscrepanciaId = 0;
+                    value.otroMotivo = "";
+                });
+                console.log(articlesFounded.length);
+            }
+        });
+    };
+
+    let updateDiscrepancia = (cell) => {
+        let data = cell.getData();
+        let sum = Number(data.stock) - Number(data.cantidadContada);
+        let row = cell.getRow();
+        row.update({
+            discrepancia: sum,
+        });
+    };
+    //https://jsfiddle.net/biruktes/hn8gascw/24/
+    let customNativeSelect = function (cell, onRendered, success, cancel) {
+        var cellRealValue = cell.getElement().dataset.motivoDiscrepanciaId;
+        cellRealValue =
+            typeof cellRealValue === "undefined" ? "none" : cellRealValue;
+
+        //Create and append select list
+        var selectList = document.createElement("select");
+
+        selectList.style.width = "100%";
+        selectList.style.boxSizing = "border-box";
+
+        onRendered(function () {
+            selectList.focus();
+            selectList.style.height = "100%";
+        });
+
+        function onChange() {
+            if (selectList.selectedOptions[0].value != cellRealValue) {
+                success(selectList.selectedOptions[0].value);
+                // Store value to cell dataset
+                cell.getElement().dataset.motivoDiscrepanciaId =
+                    selectList.selectedOptions[0].value;
+                alert(
+                    "Here is what the actual looks like: " +
+                        JSON.stringify(cell.getTable().getData())
+                );
+            } else {
+                // No change
+                cancel();
+            }
+        }
+
+        //submit new value on blur or change
+        selectList.addEventListener("blur", onChange);
+
+        //submit new value on enter
+        selectList.addEventListener("keydown", function (e) {
+            if (e.keyCode == 13) {
+                onChange();
+            }
+
+            if (e.keyCode == 27) {
+                cancel();
+            }
+        });
+
+        //Create and append the options
+        for (var i = 0; i < motivosDiscrepancia.length; i++) {
+            var option = document.createElement("option");
+            option.value = motivosDiscrepancia[i].id.toString();
+            option.text = motivosDiscrepancia[i].descripcion;
+
+            if (motivosDiscrepancia[i].id === cellRealValue) {
+                option.selected = "selected";
+            }
+            selectList.appendChild(option);
+        }
+
+        return selectList;
+    };
+    let columns = [
+        {
+            title: "Código",
+            field: "codigo",
+            widthGrow: 2,
+        },
+        {
+            title: "Descripcion",
+            field: "descripcion",
+            widthGrow: 2,
+        },
+        {
+            title: "Cant. Contada",
+            field: "cantidadContada",
+            widthGrow: 2,
+            editor: "input",
+            cellEdited: updateDiscrepancia,
+            headerSort: false,
+            editorParams: {
+                selectContents: true,
+            },
+        },
+        {
+            title: "Stock Actual",
+            field: "stock",
+            widthGrow: 2,
+            headerSort: false,
+        },
+        {
+            title: "Discrepancia",
+            field: "discrepancia",
+            widthGrow: 2,
+            // mutator: (value, data, type, params, component) => {
+            //     return Number(data.stock) - Number(data.cantidadContada);
+            // },
+        },
+        {
+            title: "Motivo",
+            field: "motivoDiscrepanciaId",
+            //editor: "list",
+            editor: customNativeSelect,
+            //editorParams: { values: motivosDiscrepancia },
+        },
+    ];
+
+    const handleNroDocChange = (e) => {
+        options.nroDocumento = e.detail.inputState.maskedValue;
+    };
 </script>
 
 {#if showModal}
-    <!-- <Modal open={showModal} onClosed={() => onPopupClose()} {iconTitle} {title}>
-       
-    </Modal> -->
-
-    <div class="card">
-        <div class="card-body">
-            <form autocomplete="off" on:submit|preventDefault={onSave}>
-                <div class="modal-body">
-                    <div class="row">
-                        <div
-                            class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12"
-                        >
-                            <div class="form-group">
-                                <label for="establecimiento"
-                                    >Estab.: <span class="text-danger">*</span
-                                    ></label
-                                >
-                                <select
-                                    name="establecimiento"
-                                    id="establecimiento"
-                                    class="form-control border-select"
-                                    bind:value={data.codEstab}
-                                    on:change={onChangeEstablecimiento}
-                                >
-                                    {#each establecimientos as item}
-                                        <option value={item.codEstab}>
-                                            {item.nombreComercial}
-                                        </option>
-                                    {/each}
-                                </select>
-                            </div>
-                        </div>
-
-                        <div
-                            class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12"
-                        >
-                            <div class="form-group">
-                                <label for="puntoEmision"
-                                    >Punto Emisión: <span class="text-danger"
-                                        >*</span
-                                    ></label
-                                >
-                                <select
-                                    id="puntoEmision"
-                                    name="puntoEmision"
-                                    class="form-control border-select"
-                                    bind:value={data.puntoEmisionId}
-                                >
-                                    {#each puntosEmision as item}
-                                        <option value={item.idPuntoEmision}>
-                                            {item.ptoEmi}
-                                        </option>
-                                    {/each}
-                                </select>
-                            </div>
-                        </div>
-
-                        <div
-                            class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12"
-                        >
-                            <div class="form-group">
-                                <label for="fechaEmision"
-                                    >Fecha Emisión <span class="text-danger"
-                                        >*</span
-                                    ></label
-                                >
-                                <input
-                                    type="date"
-                                    name="fechaEmision"
-                                    bind:value={data.fecha}
-                                    class="form-control border-select"
-                                />
-                            </div>
-                        </div>
-
-                        <div
-                            class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12"
-                        >
-                            <div class="form-group">
-                                <label for="bodegas">Bodega</label>
-                                <select
-                                    name="bodegas"
-                                    id="bodegas"
-                                    class="form-control border-select"
-                                    bind:value={idBodega}
-                                    on:change={askToChangeBodega}
-                                >
-                                    {#each bodegas as item}
-                                        <option value={item.idBodega}
-                                            >{item.bodega}</option
-                                        >
-                                    {/each}
-                                </select>
-                            </div>
+    <Modal open={showModal} onClosed={() => onPopupClose()} {iconTitle} {title}>
+        <form autocomplete="off" on:submit|preventDefault={onSave}>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                        <div class="form-group">
+                            <label for="establecimiento"
+                                >Estab.: <span class="text-danger">*</span
+                                ></label
+                            >
+                            <select
+                                name="establecimiento"
+                                id="establecimiento"
+                                class="form-control border-select"
+                                bind:value={data.codEstab}
+                                on:change={onChangeEstablecimiento}
+                            >
+                                {#each establecimientos as item}
+                                    <option value={item.codEstab}>
+                                        {item.nombreComercial}
+                                    </option>
+                                {/each}
+                            </select>
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                        <div class="form-group">
+                            <label for="puntoEmision"
+                                >Punto Emisión: <span class="text-danger"
+                                    >*</span
+                                ></label
+                            >
+                            <select
+                                id="puntoEmision"
+                                name="puntoEmision"
+                                class="form-control border-select"
+                                bind:value={data.puntoEmisionId}
+                            >
+                                {#each puntosEmision as item}
+                                    <option value={item.idPuntoEmision}>
+                                        {item.ptoEmi}
+                                    </option>
+                                {/each}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                        <div class="form-group">
+                            <label for="fechaEmision"
+                                >Fecha Emisión <span class="text-danger">*</span
+                                ></label
+                            >
+                            <input
+                                type="date"
+                                name="fechaEmision"
+                                bind:value={data.fecha}
+                                class="form-control border-select"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                        <div class="form-group">
+                            <label for="bodegas">Bodega</label>
+                            <select
+                                name="bodegas"
+                                id="bodegas"
+                                class="form-control border-select"
+                                bind:value={idBodega}
+                                on:change={askToChangeBodega}
+                            >
+                                {#each bodegas as item}
+                                    <option value={item.idBodega}
+                                        >{item.bodega}</option
+                                    >
+                                {/each}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 col-12">
+                        <div class="form-group">
+                            <label for="opcion">Opciones:</label>
+                            <select
+                                name="opcion"
+                                id="opcion"
+                                class="form-control"
+                                bind:value={options.opcion}
+                            >
+                                {#each catalogs as item}
+                                    <option value={item.code}>
+                                        {item.description}
+                                    </option>
+                                {/each}
+                            </select>
+                        </div>
+                    </div>
+                    {#if options.opcion == 1}
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-                            <!-- <md-autocomplete-articulo-component tipo-doc="TIPO_DOC"
-                                                                        placeholder="'Buscar Articulo'"
-                                                                        abrir-modal-articulo="abrirModalArticulo(item)"
-                                                                        get-data-articulo="getDataIdArticulo(item)"
-                                                                        set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)"
-                                                                        scope-parent="$scope">
-                                    </md-autocomplete-articulo-component> -->
-                        </div>
-                        <!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-                            <button
-                                type="button"
-                                class="btn btn-outline-info btn-lg"
-                                on:click={advancedSearch}
-                                ><i class="ti-search" /> Busqueda Avanzada</button
-                            >
-                        </div> -->
-                        <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 col-12">
                             <div class="form-group">
-                                <label for="opcion">Opciones:</label>
+                                <label for="">Articulo</label>
+                                <AdvancedSearch
+                                    on:input={onInput}
+                                    on:focus={onFocus}
+                                    on:blur={onBlur}
+                                    value={article}
+                                    placeholder={"Buscar articulo"}
+                                />
+                                {#if articles.length > 0 && !isArticleSelected}
+                                    <div class="floating-results list-group">
+                                        {#each articles as item}
+                                            <a
+                                                href={null}
+                                                class="list-group-item"
+                                                on:click={() =>
+                                                    selectArticle(item)}
+                                                ><i class="fa-solid fa-check" />
+                                                {item.codigo}
+                                                - {item.descripcion}</a
+                                            >
+                                        {/each}
+                                    </div>{/if}
+                            </div>
+                        </div>
+                    {/if}
+
+                    <!-- <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+                        <button
+                            type="button"
+                            class="btn btn-outline-info btn-lg"
+                            on:click={advancedSearch}
+                            ><i class="ti-search" /> Busqueda Avanzada</button
+                        >
+                    </div> -->
+
+                    {#if options.opcion == 3}
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                            <div class="form-group">
+                                <label for="idSubFamilia">Subfamilias:</label>
                                 <select
-                                    name="opcion"
-                                    id="opcion"
+                                    name="idSubFamilia"
+                                    id="idSubFamilia"
                                     class="form-control"
-                                    bind:value={options.opcion}
+                                    bind:value={options.idSubFamilia}
+                                    on:change={getArticles}
                                 >
-                                    {#each catalogs as item}
-                                        <option value={item.code}>
-                                            {item.description}
+                                    {#each subfamilias as item}
+                                        <option value={item.idSubFamilia}>
+                                            {item.descripcion}
                                         </option>
                                     {/each}
                                 </select>
                             </div>
                         </div>
-                        {#if options.opcion == 3}
-                            <div
-                                class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12"
-                            >
-                                <div class="form-group">
-                                    <label for="idSubFamilia"
-                                        >Subfamilias:</label
-                                    >
-                                    <select
-                                        name="idSubFamilia"
-                                        id="idSubFamilia"
-                                        class="form-control"
-                                        bind:value={options.idSubFamilia}
-                                        on:change={getArticles}
-                                    >
-                                        {#each subfamilias as item}
-                                            <option value={item.idSubFamilia}>
-                                                {item.descripcion}
-                                            </option>
-                                        {/each}
-                                    </select>
-                                </div>
-                            </div>
-                        {/if}
-                        {#if options.opcion == 4}
-                            <div
-                                class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12"
-                            >
-                                <!-- @await Html.PartialAsync("~/Views/Proveedor/_ProveedorAutocompleteFiltro.cshtml") -->
-                            </div>
-                        {/if}
-                        {#if options.opcion == 5}
-                            <div
-                                class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12"
-                            >
-                                <div class="form-group">
-                                    <label for="nroDocumento"
-                                        >N° de Documento:</label
-                                    >
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        id="nroDocumento"
-                                        name="nroDocumento"
-                                        placeholder="000-000-000000000"
-                                        on:blur={getArticles}
-                                        bind:value={options.nroDocumento}
-                                        required
-                                    />
-                                </div>
-                            </div>
-                        {/if}
-                    </div>
-                    <!-- <div id="grid" ui-grid="gridOptions"
-                                 ui-grid-edit
-                                 ui-grid-resize-columns
-                                 ui-grid-cellNav
-                                 ui-grid-auto-resize
-                                 class="grid">
-                            </div> -->
-                    <br />
-                    <!--Sub Totales -->
-                    <div class="row">
-                        <div
-                            class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-8"
-                        >
+                    {/if}
+                    {#if options.opcion == 4}
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                            <!-- @await Html.PartialAsync("~/Views/Proveedor/_ProveedorAutocompleteFiltro.cshtml") -->
+                        </div>
+                    {/if}
+                    {#if options.opcion == 5}
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                             <div class="form-group">
-                                <textarea
+                                <label for="nroDocumento"
+                                    >N° de Documento:</label
+                                >
+                                <!-- <input
+                                    type="text"
                                     class="form-control"
-                                    placeholder="Observación"
-                                    bind:value={data.obs}
+                                    id="nroDocumento"
+                                    name="nroDocumento"
+                                    placeholder="000-000-000000000"
+                                    on:blur={getArticles}
+                                    bind:value={options.nroDocumento}
+                                    required
+                                /> -->
+                                <MaskInput
+                                    class="form-control"
+                                    alwaysShowMask
+                                    maskChar="_"
+                                    mask="000-000-000000000"
+                                    on:blur={getArticles}
+                                    on:change={handleNroDocChange}
                                     required
                                 />
                             </div>
                         </div>
-                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-8">
-                            <div class="text-right">
-                                <!-- <h4><strong>Total: ${data.total}</strong></h4> -->
-                            </div>
+                    {/if}
+                </div>
+                <!-- <div id="grid" ui-grid="gridOptions"
+                             ui-grid-edit
+                             ui-grid-resize-columns
+                             ui-grid-cellNav
+                             ui-grid-auto-resize
+                             class="grid">
+                        </div> -->
+                {#if articlesFounded.length > 0}
+                    <Grid dataArray={articlesFounded} {columns} />
+                {/if}
+                <br />
+                <!--Sub Totales -->
+                <div class="row">
+                    <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-8">
+                        <div class="form-group">
+                            <textarea
+                                class="form-control"
+                                placeholder="Observación"
+                                bind:value={data.obs}
+                                required
+                            />
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-8">
+                        <div class="text-right">
+                            <!-- <h4><strong>Total: ${data.total}</strong></h4> -->
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">
-                        <i class="ti-save" /> Guardar
-                    </button>
-                    <button
-                        type="button"
-                        class="btn btn-dark"
-                        on:click={() => modalClose()}>&times; Cerrar</button
-                    >
-                </div>
-            </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-success">
+                    <i class="ti-save" /> Guardar
+                </button>
+                <button
+                    type="button"
+                    class="btn btn-dark"
+                    on:click={() => modalClose()}>&times; Cerrar</button
+                >
+            </div>
+        </form>
+    </Modal>
+
+    <!-- <div class="card">
+        <div class="card-body">
+          
         </div>
-    </div>
+    </div> -->
 {/if}

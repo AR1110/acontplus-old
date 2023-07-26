@@ -16,4 +16,3 @@ async function get(params: any) {
 export const Estabs = {
     get: get,
 }
-

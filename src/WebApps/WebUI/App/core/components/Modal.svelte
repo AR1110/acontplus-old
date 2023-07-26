@@ -17,14 +17,14 @@
 
 <div
     id="modalNew"
-    class="modal"
+    class="modal uibModalFullScreen"
     tabindex="-1"
     role="dialog"
     aria-labelledby="sampleModalLabel"
     aria-hidden={false}
 >
     <div
-        class="modal-dialog modal-xl"
+        class="modal-dialog"
         role="document"
         in:fly={{ y: -50, duration: 300 }}
         out:fly={{ y: -50, duration: 300, easing: quintOut }}
