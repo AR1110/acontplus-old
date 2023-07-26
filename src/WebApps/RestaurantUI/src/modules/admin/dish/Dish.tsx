@@ -12,7 +12,7 @@ import {
 import SearchComponent from "./components/Search";
 import { productController } from "./controllers/product.controller";
 import { useEffect, useState } from "react";
-import { IProduct, ProductResponseFromApi } from "../models/product.models";
+import { IProduct, ProductResponseFromApi } from "../models/product.model";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
