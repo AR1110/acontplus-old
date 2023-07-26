@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Box,
   Button,
   Card,
   CardContent,
@@ -19,11 +20,13 @@ import {
   Typography,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { red } from "@mui/material/colors";
+import EditIcon from "@mui/icons-material/Edit";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { IProductView } from "@admin/models";
 import { useEffect, useState } from "react";
 import { ProductSvc } from "@admin/services";
+import DialogCustom from "@/core/components/DialogCustom";
+import ProductDialog from "./components/ProductDialog";
 
 interface ProductState {
   products: IProductView[];
@@ -37,6 +40,22 @@ export default function ProductPage() {
   const [page, setPage] = useState<ProductState["page"]>(0);
   const [rowsPerPage, setRowsPerPage] =
     useState<ProductState["rowsPerPage"]>(10);
+
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("Dione");
+
+  const handleClickListItem = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (newValue?: string) => {
+    setOpen(false);
+
+    if (newValue) {
+      setValue(newValue);
+    }
+  };
+
   const getProducts = () => {
     try {
       console.log(ProductSvc);
@@ -66,6 +85,23 @@ export default function ProductPage() {
   return (
     <>
       <Grid item xs={12}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          mb={1}
+        >
+          <Typography variant="h5" gutterBottom>
+            Productos
+          </Typography>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={handleClickListItem}
+          >
+            Agregar
+          </Button>
+        </Stack>
         <Paper
           sx={{ p: 2, display: "flex", flexDirection: "column" }}
           elevation={0}
@@ -78,6 +114,7 @@ export default function ProductPage() {
             >
               <TableHead>
                 <TableRow>
+                  <TableCell></TableCell>
                   <TableCell>N°</TableCell>
                   <TableCell>Código</TableCell>
                   <TableCell align="center">Descripción</TableCell>
@@ -92,6 +129,22 @@ export default function ProductPage() {
                     key={index}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
+                    <TableCell>
+                      <IconButton
+                        aria-label="delete"
+                        color="primary"
+                        size="small"
+                      >
+                        <EditIcon fontSize="inherit" />
+                      </IconButton>
+                      <IconButton
+                        aria-label="delete"
+                        color="error"
+                        size="small"
+                      >
+                        <RemoveCircleOutlineIcon fontSize="inherit" />
+                      </IconButton>
+                    </TableCell>
                     <TableCell>{enumeracion++}</TableCell>
                     <TableCell component="th" scope="row">
                       {row.code}
@@ -116,6 +169,16 @@ export default function ProductPage() {
           />
         </Paper>
       </Grid>
+
+      <DialogCustom
+        id="ringtone-menu"
+        keepMounted
+        open={open}
+        onClose={handleClose}
+        value={value}
+        children={<ProductDialog />}
+        maxWidth="md"
+      />
     </>
   );
 }
