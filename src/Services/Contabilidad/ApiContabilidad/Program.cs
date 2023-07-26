@@ -2,6 +2,7 @@ using Services.Common;
 using Helpers;
 using System.Reflection;
 using Lib.Common;
+using ApiContabilidad.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,9 @@ builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
 ConfigHelper.AddJsonFiles(builder.Configuration);
 
 builder.Services.AddControllers();
+
+builder.Services.AddApplicationServices(builder.Configuration);
+
 builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
