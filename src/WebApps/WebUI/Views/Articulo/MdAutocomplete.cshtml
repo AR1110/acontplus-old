@@ -92,7 +92,6 @@
                             <th>
                                 Ubicación
                             </th>
-                            <th>Op.</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -116,7 +115,10 @@
                                 {{ item.subFamilia}}
                             </td>
                             <td class="suggestion-column text-center">
-                                {{ item.medida}}
+                                <span article-fraccionado-info-drtv article="item" class="{{item.fraccionado}}">
+                                     {{ item.medida}}
+                                 </span> 
+                                
                             </td>
                             <td class="suggestion-column text-center">
                                 {{ item.marca}}
@@ -130,14 +132,6 @@
                              <td class="suggestion-column text-center" ng-if="item.warehouses.length ===0">
 
                              </td>
-                            @* <td ng-click="$ctrl.openModalArticuloFraccionadoInfo(item)" stop-event >
-                                <i class="fa fa-balance-scale"></i>
-                            </td> *@
-                            <td class="suggestion-column text-center">
-                                 <span article-fraccionado-info-drtv article="item" ng-if="item.fraccionado">
-                                     <i class="fa fa-balance-scale"></i>
-                                 </span> 
-                            </td>
                         </tr>
                     </tbody>
                 </table>

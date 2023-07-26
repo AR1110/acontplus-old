@@ -18,8 +18,8 @@ CREATE VIEW v_Articulo_Fraccionado AS (
 		  ,ar.stock
 		  ,medidaFraccionada  = mf.descripcion
 		  ,af.conversion
-		  ,catidadFraccionado = CAST(ar.stock / af.conversion AS NUMERIC(18,0))
-		  ,sobrante           = CAST(ar.stock - ((ar.stock / af.conversion) * af.conversion) AS NUMERIC(18,2))
+		  ,catidadFraccionado = CAST(ar.stock / IIF(af.conversion = 0,1,af.conversion) AS NUMERIC(18,0))
+		  ,sobrante           = CAST(ar.stock - (IIF(af.conversion = 0,1,af.conversion) * af.conversion) AS NUMERIC(18,2))
 	FROM ArticuloFraccionado af WITH (NOLOCK)
 	INNER JOIN Articulo      ar WITH (NOLOCK) ON ar.idArticulo = af.idArticulo
 	INNER JOIN Medida        me WITH (NOLOCK) ON me.idMedida   = ar.idMedida 
