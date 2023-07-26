@@ -76,23 +76,23 @@ BEGIN
 	IF (SELECT COUNT(*) FROM @ajustes) = 0  
 		BEGIN	
 			
-		SELECT @entradas = ISNULL(SUM(tr.cantidad),0) 
-		FROM Inventario.Transaccion           tr WITH (NOLOCK)
-		INNER JOIN Inventario.TipoTransaccion tt WITH (NOLOCK) ON tt.idTipoTransaccion = tr.idTipoTransaccion
-		WHERE   tt.codigo     = 'E' 
-			AND tr.estado     = 1
-			AND tr.idArticulo = @idArticulo 
-			AND tr.idBodega   = @idBodega
+			SELECT @entradas = ISNULL(SUM(tr.cantidad),0) 
+			FROM Inventario.Transaccion           tr WITH (NOLOCK)
+			INNER JOIN Inventario.TipoTransaccion tt WITH (NOLOCK) ON tt.idTipoTransaccion = tr.idTipoTransaccion
+			WHERE   tt.codigo     = 'E' 
+				AND tr.estado     = 1
+				AND tr.idArticulo = @idArticulo 
+				AND tr.idBodega   = @idBodega
 
-		SELECT @salidas = ISNULL(SUM(tr.cantidad),0) 
-		FROM Inventario.Transaccion           tr WITH (NOLOCK)
-		INNER JOIN Inventario.TipoTransaccion tt WITH (NOLOCK) ON tt.idTipoTransaccion = tr.idTipoTransaccion
-		WHERE   tt.codigo     = 'S' 
-			AND tr.estado     = 1 
-			AND tr.idArticulo = @idArticulo 
-			AND tr.idBodega   = @idBodega
+			SELECT @salidas = ISNULL(SUM(tr.cantidad),0) 
+			FROM Inventario.Transaccion           tr WITH (NOLOCK)
+			INNER JOIN Inventario.TipoTransaccion tt WITH (NOLOCK) ON tt.idTipoTransaccion = tr.idTipoTransaccion
+			WHERE   tt.codigo     = 'S' 
+				AND tr.estado     = 1 
+				AND tr.idArticulo = @idArticulo 
+				AND tr.idBodega   = @idBodega
 
-		SET @cantidadActual = @entradas - @salidas
+			SET @cantidadActual = @entradas - @salidas
 
 		END
 
