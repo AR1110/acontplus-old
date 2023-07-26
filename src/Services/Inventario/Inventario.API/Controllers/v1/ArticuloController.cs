@@ -80,7 +80,9 @@ namespace Inventario.API.Controllers.v1
                 _db.AddDynamicParam("json", data.jsonpvp);
                 _db.AddDynamicParam("idBodega", data.idBodega);
                 _db.AddDynamicParam("ubicacion", data.ubicacion);
+                //si viene archivo: capturar nombre y enviar a bd
                 _response = _db.GetDefault();
+                //si viene archivo y el insert es correcto, envia al iservicestorage de amazon, si es correcto no hace nada y sino deberia de null el urlResource del nombre del archivo
             }
             catch (Exception ex)
             {

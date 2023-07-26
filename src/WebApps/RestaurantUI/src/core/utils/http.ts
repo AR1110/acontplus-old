@@ -11,7 +11,7 @@ const updateHeader = (request: any) => {
   const token = "Bearer " + AuthService.getToken();
   const newHeaders = {
     Authorization: token,
-    "Content-Type": "application/json",
+    "Content-Type": "multipart/form-data",
   };
   request.headers = newHeaders;
 
