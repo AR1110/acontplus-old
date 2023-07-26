@@ -15,6 +15,7 @@ namespace Inventario.API.Extensions
             options.UseSqlServer(Encryption.DecryptString(configuration.GetSection("KeyEncryption").Value, configuration.GetConnectionString("DefaultConnection"))));
             services.AddScoped<IADORepository, ADORepository>();
             services.AddScoped<IStockFisicoService, StockFisicoService>();
+            services.AddScoped<IStorageService, StorageService>();
             return services;
         }
     }

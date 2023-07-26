@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AWSSDK.Core" Version="3.7.200.4" />
+    <PackageReference Include="AWSSDK.S3" Version="3.7.201.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Configuracion\Config.Core\Config.Core.csproj" />
     <ProjectReference Include="..\Inventario.Core\Inventario.Core.csproj" />
   </ItemGroup>
