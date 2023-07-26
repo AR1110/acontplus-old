@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Contabilidad.Core.Entities;
 using Contabilidad.Infrastructure.Data;
 using Services.Common;
+using Contabilidad.Core.Interfaces;
 
 namespace ApiContabilidad.Controllers
 {
@@ -16,19 +17,38 @@ namespace ApiContabilidad.Controllers
     public class CategoriasController : ControllerBase
     {
         private readonly ContabilidadContext _context;
-
-        public CategoriasController(ContabilidadContext context)
+        private readonly ICategoriaService _categoria;
+        public CategoriasController(ContabilidadContext context, ICategoriaService categoria)
         {
             _context = context;
+            _categoria = categoria;
         }
 
         // GET: api/Categorias
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<Categoria>>> GetCategorias()
+        //{
+        //    return await _context.Categorias.ToListAsync();
+        //}
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Categoria>>> GetCategorias()
+        public async Task<IActionResult> GetCategorias(string json)
         {
-            return await _context.Categorias.ToListAsync();
+            try
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId() },
+                    {"json",  json}
+                };
+                var result = await _categoria.GetAsync(parameters);
+                if(result == null) { return NoContent(); };
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Error al traer las categorias");
+            } 
         }
-
         // GET: api/Categorias/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Categoria>> GetCategoria(int id)

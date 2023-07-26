@@ -19,7 +19,7 @@ GO
 -- Create date: 09-03-2023
 -- Description:	SP PARA OBTENER LOS DATOS DEL ARCHIVO RDLC
 -- =============================================
---Reporte.Report_Get '{"hasParams":true,"codigo":"FVRG","format":"pdf","aditionalParams":[]}'
+--Reporte.Report_Get '{"codigo":"KRG","format":"pdf","codEstab":"ESTAB-000000048","aditionalParams":[]}'
 CREATE PROCEDURE Reporte.Report_Get @json NVARCHAR(MAX)
 AS
 BEGIN 
