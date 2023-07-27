@@ -3,13 +3,14 @@ import { Suspense, lazy } from "react";
 // import { SnackbarProvider } from "notistack";
 import { Provider } from "react-redux";
 import { store } from "./redux/store.ts";
-import { RoutesWithNotFound, SnackbarUtilsConfigurator } from "@/core/utils";
+import { RoutesWithNotFound, SnackbarUtilitiesConfigurator } from "@/core/utils";
 // import { PrivateRoutes, PublicRoutes } from "@/core/models/";
 // import AuthGuard from "@/core/guards/auth.guard.tsx";
 // import RecipeComponent from "./pages/recipe/RecipeComponent.tsx";
 // import Dish from "./pages/Dish/Dish.tsx";
 import { PrivateRoutes, PublicRoutes } from "./core/models";
 import { AuthGuard } from "./core/guards";
+import { SnackbarProvider } from "notistack";
 
 const Login = lazy(() => import("@/pages/auth/components/Login"));
 const Admin = lazy(() => import("@/modules/admin/Admin"));
@@ -62,6 +63,8 @@ export default function App() {
   return (
     <Suspense fallback={<>Cargando</>}>
       <Provider store={store}>
+        <SnackbarProvider>
+        <SnackbarUtilitiesConfigurator />
         <BrowserRouter>
           <RoutesWithNotFound>
             <Route
@@ -78,6 +81,7 @@ export default function App() {
             </Route>
           </RoutesWithNotFound>
         </BrowserRouter>
+        </SnackbarProvider>
       </Provider>
     </Suspense>
   );

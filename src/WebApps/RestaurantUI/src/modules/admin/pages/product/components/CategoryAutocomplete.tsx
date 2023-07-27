@@ -1,9 +1,13 @@
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
+import { useProductContext } from "../context";
 
 export default function CategoryAutocomplete() {
-  const options = top100Films.map((option) => {
-    const firstLetter = option.title.toUpperCase();
+  const {productState} = useProductContext();
+  const dataFormApi = productState.dataFormApi; 
+
+  const options = dataFormApi.categories.map((option) => {
+    const firstLetter = option.familia.toUpperCase();
     return {
       firstLetter: /[0-9]/.test(firstLetter) ? "0-9" : firstLetter,
       ...option,
@@ -18,7 +22,7 @@ export default function CategoryAutocomplete() {
         (a, b) => -b.firstLetter.localeCompare(a.firstLetter)
       )}
       groupBy={(option) => option.firstLetter}
-      getOptionLabel={(option) => option.title}
+      getOptionLabel={(option) => option.subFamilia}
       renderInput={(params) => <TextField {...params} label="Categoria" />}
     />
   );
