@@ -10,6 +10,7 @@ namespace Contabilidad.Infrastructure.Data
         }
         public DbSet<Categoria> Categorias { get; set; }
         public DbSet<Tipo> Tipos { get; set; }
+        public DbSet<SubCategoria> subCategorias { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -29,7 +30,13 @@ namespace Contabilidad.Infrastructure.Data
 
             modelBuilder.Entity<Tipo>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
             modelBuilder.Entity<Tipo>().HasIndex(x => x.Codigo)
-           .HasDatabaseName("UXC_CContabilidad_Codigo")
+           .HasDatabaseName("UXT_CContabilidad_Codigo")
+           .IsUnique();
+
+            // Datos para la tabla SubCategoria
+            modelBuilder.Entity<SubCategoria>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<SubCategoria>().HasIndex(x => x.Codigo)
+           .HasDatabaseName("UXSC_CContabilidad_Codigo")
            .IsUnique();
         }
 

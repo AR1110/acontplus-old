@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Contabilidad.Core.Entities
 {
-    [Table("Categoria", Schema = "Contabilidad")]
+    [Table("Tipo", Schema = "Contabilidad")]
     public class Tipo : BaseEntity
     {
         [Required]
