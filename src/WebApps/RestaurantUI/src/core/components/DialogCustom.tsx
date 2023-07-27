@@ -5,8 +5,7 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
-  LinearProgress,
-  Typography,
+  LinearProgress, 
   useMediaQuery,
   useTheme,
 } from "@mui/material";

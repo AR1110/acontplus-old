@@ -14,11 +14,10 @@ import {
 } from "@mui/material";
 import CategoryAutocomplete from "./CategoryAutocomplete";
 
-import { ChangeEvent, useEffect, useState } from "react";
-import { Http } from "@/core/utils";
-import { PATHS } from "@/core/constants/path";
+import {  useState } from "react";
+ 
 import { useProductContext } from "../context";
-import { SalePriceList } from "@/modules/admin/models";
+ 
 import SalePriceListTabulator from "./SalePriceListTabulator";
 export default function ProductDialog() { 
 
