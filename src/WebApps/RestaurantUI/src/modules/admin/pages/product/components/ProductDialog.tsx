@@ -96,8 +96,9 @@ export default function ProductDialog({handleClose}: DialogProps) {
         idMedida: yup.number().required("La medida es requerida"),
         precioCosto: yup
             .number()
-            .min(1, "El valor mínimo en el precio de costo es 0.01")
-            .required("Campo precio costo es requerido es requrida"),
+            // .min(1, "El valor mínimo en el precio de costo es 0.01")
+            .required("Campo precio costo es requerido es requrida")
+            .test("not-zero", "El valor mínimo en el precio de costo es 0.01", value => value !== 0),
     });
 
 
@@ -210,7 +211,7 @@ export default function ProductDialog({handleClose}: DialogProps) {
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
-                        <TextField 
+                        <TextField type="number"
                             label="Precio Costo" 
                             fullWidth 
                             size="small" 

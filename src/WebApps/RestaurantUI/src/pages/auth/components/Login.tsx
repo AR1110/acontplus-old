@@ -1,7 +1,7 @@
 import { ChangeEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
-import { SnackbarUtils as tS } from "@/core/utils";
+import { SnackbarUtilities as tS } from "@/core/utils";
 import { AuthService as AuthSvc } from "@/core/services/auth.service";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "@/redux/slices/user.slice";
@@ -67,9 +67,9 @@ export default function Login() {
 
         const userData = response.payload as DataLogin;
 
-        const jwtToken = userData["userData"][0].jwtToken;
+        const jwtToken = userData.userData[0]?.jwtToken;
 
-        AuthSvc.setPersistent("ACCESS_TOKEN", jwtToken);
+        AuthSvc.setPersistent("ACCESS_TOKEN", jwtToken!);
         AuthSvc.setPersistent("USER", JSON.stringify(userData));
         dispatch(setCredentials(userData));
         navigate(`/${PrivateRoutes.ADMIN}`, { replace: true });
