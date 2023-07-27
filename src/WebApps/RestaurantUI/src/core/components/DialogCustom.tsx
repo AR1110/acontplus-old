@@ -5,8 +5,7 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
-  LinearProgress,
-  Typography,
+  LinearProgress, 
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -18,7 +17,7 @@ type SizeDialog = "xs" | "sm" | "md" | "lg" | "xl";
 export interface DialogProps {
   id: string;
   keepMounted: boolean;
-  value: string;
+  value?: string;
   open: boolean;
   onClose: (value?: string) => void;
   children: JSX.Element | JSX.Element[];

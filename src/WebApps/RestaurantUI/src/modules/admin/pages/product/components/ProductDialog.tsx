@@ -13,139 +13,47 @@ import {
   TextField,
 } from "@mui/material";
 import CategoryAutocomplete from "./CategoryAutocomplete";
-import { ReactTabulator } from "react-tabulator/lib";
-import { useState } from "react";
-import { Http } from "@/core/utils";
-import { PATHS } from "@/core/constants/path";
-export default function ProductDialog() {
+
+import {  useState } from "react";
+ 
+import { useProductContext } from "../context";
+ 
+import SalePriceListTabulator from "./SalePriceListTabulator";
+export default function ProductDialog() { 
+
   const [selectedFile, setSelectedFile] = useState(null);
-  const currencies = [
-    {
-      value: "USD",
-      label: "$",
-    },
-    {
-      value: "EUR",
-      label: "€",
-    },
-    {
-      value: "BTC",
-      label: "฿",
-    },
-    {
-      value: "JPY",
-      label: "¥",
-    },
-    {
-      value: "JPY",
-      label: "¥",
-    },
-    {
-      value: "JPY",
-      label: "¥",
-    },
-    {
-      value: "JPY",
-      label: "¥",
-    },
-    {
-      value: "JPY",
-      label: "¥",
-    },
-    {
-      value: "JPY",
-      label: "¥",
-    },
-    {
-      value: "JPY",
-      label: "¥",
-    },
-    {
-      value: "JPY",
-      label: "¥",
-    },
-    {
-      value: "JPY",
-      label: "¥",
-    },
-    {
-      value: "JPY",
-      label: "¥",
-    },
-    {
-      value: "JPY",
-      label: "¥",
-    },
-  ];
+  const {productState} = useProductContext();
+  const dataFormApi = productState.dataFormApi;  
 
-  const columns = [
-    { title: "Tarifa", field: "tarifa", width: 150, editor: "input" },
-    { title: "Tipo Iva", field: "tipoIva", hozAlign: "left" },
-    { title: "Precio Venta", field: "precioVenta" },
-    { title: "Precio con IVA", field: "precioConIva", hozAlign: "center" },
-    { title: "% Utilidad", field: "porcentajeUtilidad", hozAlign: "center" },
-    { title: "Utilidad", field: "utilidad", hozAlign: "center" },
-    { title: "Estado", field: "estado", hozAlign: "center" },
-  ];
-  const data = [
-    {
-      id: 3,
-      tarifa: "Christine Lobowski",
-      tipoIva: "12",
-      precioVenta: "green",
-      precioConIva: "22/05/1982",
-      porcentajeUtilidad: "",
-      utlidad: "",
-      estado: "",
-    },
-    {
-      id: 3,
-      tarifa: "Christine Lobowski",
-      tipoIva: "12",
-      precioVenta: "green",
-      precioConIva: "22/05/1982",
-      porcentajeUtilidad: "",
-      utlidad: "",
-      estado: "",
-    },
-    {
-      id: 3,
-      tarifa: "Christine Lobowski",
-      tipoIva: "12",
-      precioVenta: "green",
-      precioConIva: "22/05/1982",
-      porcentajeUtilidad: "",
-      utlidad: "",
-      estado: "",
-    },
-  ];
+   
 
-  const uploadImage = function (event: React.ChangeEvent<HTMLInputElement>) {
-    if (event.target.files) {
-      setSelectedFile(event.target.files[0]!);
-    }
-  };
+//   const uploadImage = function (event: ChangeEvent<HTMLInputElement>) {
+//     if (event.target.files) {
+//       setSelectedFile(event.target.files[0]!);
+//     }
+//   };
 
-  const saveImage = function () {
-    // Create an object of formData
-    const formData = new FormData();
+//   const saveImage = function () {
+//     // Create an object of formData
+//     const formData = new FormData();
 
-    // Update the formData object
-    formData.append("myFile", selectedFile, selectedFile.name);
+//     // Update the formData object
+//     formData.append("myFile", selectedFile, selectedFile.name);
 
-    // Details of the uploaded file
-    console.log(selectedFile);
-    Http({
-      method: "post",
-      url: PATHS.INVENTARIO + "v3/Articulo/Upload",
-      data: formData,
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }).then((response) => {
-      console.log(response);
-    });
-  };
+//     // Details of the uploaded file
+//     console.log(selectedFile);
+//     Http({
+//       method: "post",
+//       url: PATHS.INVENTARIO + "v3/Articulo/Upload",
+//       data: formData,
+//       headers: {
+//         "Content-Type": "multipart/form-data",
+//       },
+//     }).then((response) => {
+//       console.log(response);
+//     });
+//   };
+  
 
   return (
     <>
@@ -157,14 +65,14 @@ export default function ProductDialog() {
           <CategoryAutocomplete />
         </Grid>
         <Grid item xs={12} sm={6}>
-          <FormControl fullWidth size="small">
-            <InputLabel>Medida</InputLabel>
-            <Select value="" label="Age">
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
-            </Select>
-          </FormControl>
+			<FormControl fullWidth size="small">
+				<InputLabel>Medida</InputLabel>
+				<Select value="" label="Medida">
+				{dataFormApi.measures.map((item, key) => (
+					<MenuItem key={key} value={item.idMedida}>{item.descripcion}</MenuItem>
+				))}
+				</Select>
+			</FormControl>
         </Grid>
         <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
           <TextField label="Código" fullWidth size="small" />
@@ -184,16 +92,15 @@ export default function ProductDialog() {
           />
         </Grid>
 
-        <Grid item xs={8} sm={6}>
-          <TextField
-            required
-            id="city"
-            name="city"
-            label="City"
-            fullWidth
-            autoComplete="shipping address-level2"
-            variant="standard"
-          />
+        <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
+			<FormControl fullWidth size="small">
+				<InputLabel>Tipo Iva</InputLabel>
+				<Select value="" label="Medida">
+				{dataFormApi.vatRates.map((item, key) => (
+					<MenuItem key={key} value={item.idTipoIva}>{item.descripcion}</MenuItem>
+				))}
+				</Select>
+			</FormControl>
         </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
@@ -204,16 +111,10 @@ export default function ProductDialog() {
             variant="standard"
           />
         </Grid>
-        <Grid item lg={8} md={8} sm={12} xs={12}>
-          <ReactTabulator
-            responsiveLayout={true}
-            autoResize={true}
-            data={data}
-            columns={columns}
-            layout={"fitData"}
-          />
+        <Grid item lg={9} md={9} sm={12} xs={12}>
+          <SalePriceListTabulator/>
         </Grid>
-        <Grid item lg={4} md={4} sm={12} xs={12}>
+        <Grid item lg={3} md={3} sm={12} xs={12}>
           <Card sx={{ maxWidth: 345 }}>
             <CardMedia
               sx={{ height: 140 }}
@@ -222,7 +123,7 @@ export default function ProductDialog() {
             />
 
             <CardActions>
-              <input type="file" onChange={uploadImage} />
+              {/* <input type="file" onChange={uploadImage} />
               <Button
                 size="small"
                 fullWidth
@@ -231,7 +132,7 @@ export default function ProductDialog() {
                 onClick={saveImage}
               >
                 Subir imagen
-              </Button>
+              </Button> */}
             </CardActions>
           </Card>
         </Grid>
