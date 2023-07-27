@@ -126,7 +126,7 @@ BEGIN
 		 nc.idDocumento
 		,cantidad               = x.y.value('(detalle/cantidad)[1]','NUMERIC(18,2)')
 		,precioUnitario         = x.y.value('(detalle/precioUnitario)[1]','NUMERIC(18,2)')
-		,descuento              = x.y.value('(detalle/descuento)[1]','NUMERIC(18,2)')
+		,descuento              = ISNULL(x.y.value('(detalle/descuento)[1]','NUMERIC(18,2)'),0)
 		,precioTotalSinImpuesto = x.y.value('(detalle/precioTotalSinImpuesto)[1]','NUMERIC(18,2)')
 	FROM @comprobantes nc
 	CROSS APPLY nc.xmlComp.nodes('//detalles') x(y)
