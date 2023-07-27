@@ -104,6 +104,7 @@ namespace Inventario.API.Controllers
         [HttpPost]
         public async Task<ActionResult<StockFisico>> PostStockFisico(StockFisico stockFisico)
         {
+            stockFisico.UserId = User.GetUserId();
             if (_context.StockFisicos == null)
             {
                 return Problem("Entity set 'InventarioContext.StockFisicos'  is null.");
