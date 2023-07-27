@@ -2,6 +2,7 @@
 using Contabilidad.Infrastructure.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Data;
 
 namespace Contabilidad.Infrastructure.Repositories
@@ -76,6 +77,32 @@ namespace Contabilidad.Infrastructure.Repositories
                 }
             }
             return ds;
+        }
+        public async Task<int> ExecuteScalarAsync(string spName, Dictionary<string, object> parameters)
+        {
+            int id = 0;
+            using (var command = _context.Database.GetDbConnection().CreateCommand())
+            {
+                command.CommandText = spName;
+                if (parameters.Count > 0)
+                {
+                    foreach (var parameter in parameters)
+                    {
+                        if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                        {
+                            SqlParameter sqlParam = new SqlParameter();
+                            sqlParam.ParameterName = parameter.Key;
+                            sqlParam.SqlDbType = GetDbType(parameter.Value);
+                            sqlParam.Value = parameter.Value ?? DBNull.Value;
+                            command.Parameters.Add(sqlParam);
+                        }
+                    }
+                }
+                command.CommandType = CommandType.StoredProcedure;
+                await _context.Database.OpenConnectionAsync();
+                id = (int)command.ExecuteScalar();
+            }
+            return id;
         }
         private List<SqlParameter> AddSqlParameter(string paramName, object paramValue)
         {

@@ -355,7 +355,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 52813
+          "Port": 7273
         }
       ],
       "DownstreamPathTemplate": "/api/CuentaPorPagar/{everything}",
@@ -371,7 +371,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 52813
+          "Port": 7273
         }
       ],
       "DownstreamPathTemplate": "/api/CuentaPorPagar?json={json}",
@@ -387,7 +387,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 52813
+          "Port": 7273
         }
       ],
       "DownstreamPathTemplate": "/api/CuentaPorPagar/{id}?json={json}",
@@ -883,7 +883,7 @@
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "UpstreamPathTemplate": "/gateway/Etiqueta/{everything}"
-    },      
+    },
     {
       "AuthenticationOptions": {
         "AllowedScopes": [],
@@ -1052,7 +1052,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 52813
+          "Port": 7273
         }
       ],
       "DownstreamPathTemplate": "/api/CuentaPorCobrar{everything}",
@@ -1069,7 +1069,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 52813
+          "Port": 7273
         }
       ],
       "DownstreamPathTemplate": "/api/ComprobanteIngreso{everything}",
@@ -1369,6 +1369,23 @@
         "Delete"
       ],
       "UpstreamPathTemplate": "/gateway/Logistica{everything}"
+    },
+
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7273
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "UpstreamPathTemplate": "/gateway/Contabilidad{everything}"
     }
   ]
 }
