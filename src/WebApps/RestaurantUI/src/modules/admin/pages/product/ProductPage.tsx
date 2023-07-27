@@ -55,7 +55,7 @@ export default function ProductPage() {
         keepMounted
         open={open}
         onClose={handleClose} 
-        children={<ProductDialog />}
+        children={<ProductDialog handleClose={handleClose} />}
         maxWidth="md"
       />
     </ProductProvider>
