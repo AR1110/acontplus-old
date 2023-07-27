@@ -54,9 +54,6 @@ function DialogCustom(props: DialogProps) {
         onClose();
     };
 
-    const handleOk = () => {
-        onClose(value);
-    };
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setValue((event.target as HTMLInputElement).value);
