@@ -1,4 +1,5 @@
 //API
+
 export interface ProductoApi {
   readonly idArticulo: number;
   idSubFamilia: number;
@@ -64,6 +65,48 @@ export type ProductResponseFromApi = Array<{
   totalRecords: number;
 }>;
 
+
+// =============================START INTERFACES FOR ARTICLE FORM DATA =================
+ 
+interface CategoryApi { 
+    idFamilia: number,
+    idSubFamilia: number,
+    familia: string,
+    subFamilia: string,
+    siglas: string,
+    ultimoSecuencial: number
+ 
+}
+interface MeasureApi {
+  idMedida: number, 
+  codigo: string, 
+  descripcion: string
+}
+
+interface SaleFeeApi  
+{
+  idTarifa: number, 
+  descripcion: string, 
+  codigo: string, 
+  predeterminada: boolean
+}
+interface VatRateApi {
+  idTipoIva: number, 
+  descripcion: string
+  codigo: string, 
+  porcentaje: number
+}
+export interface DataFormApi {
+  categories: CategoryApi[]
+  measures: MeasureApi[]
+  saleFees: SaleFeeApi[]
+  vatRates: VatRateApi[]
+}
+
+// =============================END INTERFACES FOR ARTICLE FORM DATA =================
+ 
+
+
 //Front End
 export interface IProduct {
   code_unique: string;
@@ -95,4 +138,12 @@ export interface IProductView {
   typeArticle: string;
   category: string;
   stock: number
+}
+
+
+//==================================Context=================================== 
+
+export interface ProductState {
+  products: IProductView[]
+  dataFormApi: DataFormApi
 }
