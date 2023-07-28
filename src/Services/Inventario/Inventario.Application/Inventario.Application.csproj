@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Configuracion\Config.Core\Config.Core.csproj" />
     <ProjectReference Include="..\Inventario.Core\Inventario.Core.csproj" />
+    <ProjectReference Include="..\Inventario.Infrastructure\Inventario.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

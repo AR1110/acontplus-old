@@ -20,6 +20,18 @@
         ],
         "baseUrl": ".",
         "paths": {
+            "$core/*": [
+                "App/core/*"
+            ],
+            "$interfaces/*": [
+                "App/core/interfaces/*"
+            ],
+            "$services/*": [
+                "App/core/services/*"
+            ],
+            "$utils/*": [
+                "App/core/utils/*"
+            ],
             "$lib/*": [
                 "App/lib/*"
             ],
