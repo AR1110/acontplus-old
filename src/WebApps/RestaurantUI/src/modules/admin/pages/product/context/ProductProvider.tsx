@@ -1,5 +1,5 @@
 import { useEffect, useReducer } from "react";
-import { DataFormApi, ProductState } from "@/modules/admin/models";
+import { ProductState } from "@/modules/admin/models";
 import { ProductReducer } from "./ProductReducer";
 import { ProductContext } from "./ProductContext";
 import { ProductSvc } from "@/modules/admin/services";
@@ -11,8 +11,23 @@ const INITIAL_STATE: ProductState = {
 		categories: [],
 		measures: [],
 		saleFees: [],
-		vatRates: [] 
-	}  
+		vatRates: []
+	},
+	data: {
+		idSubFamilia: 0,
+		idMedida: 0,
+		precioCosto: 0,
+		precioSinSubsidio: 0,
+		codigo: "",
+		codigoAuxiliar: "",
+		valorIce: 0,
+		descripcion: "",
+		llevaInventario: false,
+		codigoBarra: "",
+		idEtiqueta: 0,
+		cantMinimaVentaPorMayor: 0
+	},
+	productPvPs: []
 }
 
 interface Props {

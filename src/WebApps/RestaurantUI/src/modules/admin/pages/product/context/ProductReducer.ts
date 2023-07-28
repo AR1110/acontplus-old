@@ -1,8 +1,10 @@
-import { DataFormApi, IProductView, ProductState } from "@/modules/admin/models"
+import { DataFormApi, ProductCreateDto, ProductPvPCreateDto, ProductReadDto, ProductState } from "@/modules/admin/models"
 
 type Action =
-    | { type: 'list', payload: IProductView[] }
+    | { type: 'list', payload: ProductReadDto[] }
     | { type: 'dataFormApi', payload: DataFormApi }
+    | { type: 'data', payload: ProductCreateDto}
+    | { type: 'productPvPs', payload: ProductPvPCreateDto[]}
 
 export const ProductReducer = (state: ProductState, action: Action): ProductState => {
     switch (action.type) {
@@ -15,7 +17,19 @@ export const ProductReducer = (state: ProductState, action: Action): ProductStat
             return {
                 ...state,
                 dataFormApi: action.payload
-            }  
+            } 
+        case 'data': 
+            return {
+                ...state,
+                data: action.payload
+            }
+
+        case 'productPvPs': 
+            return {
+                ...state,
+                productPvPs: [...action.payload]
+            }
+        
         default:
             return state;
     }
