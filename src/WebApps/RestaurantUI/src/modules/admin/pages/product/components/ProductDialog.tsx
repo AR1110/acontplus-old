@@ -31,7 +31,7 @@ import { useProductContext } from "../context";
 
 import SalePriceListTabulator from "./SalePriceListTabulator";
 import * as yup from "yup";
-import { useFormik } from "formik";
+import { Form, Formik, useFormik } from "formik";
 
 
 interface DialogProps {
@@ -45,22 +45,22 @@ export default function ProductDialog({handleClose}: DialogProps) {
     const dataFormApi = productState.dataFormApi;
 
     const [image, setImage] = useState(null);
-  const fileInputRef = useRef(null);
+    const fileInputRef = useRef(null);
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setImage(reader.result);
+        };
+        reader.readAsDataURL(file);
+        }
+    };
 
-  const handleUploadButtonClick = () => {
-    fileInputRef.current.click();
-  };
+    const handleUploadButtonClick = () => {
+        fileInputRef.current.click();
+    };
 
 
 
@@ -92,40 +92,55 @@ export default function ProductDialog({handleClose}: DialogProps) {
     //   };
 
     const validationSchema = yup.object({ 
-        descripcion: yup.string().trim().required("Descripción es requerido"),
-        idMedida: yup.number().required("La medida es requerida"),
-        precioCosto: yup
-            .number()
-            // .min(1, "El valor mínimo en el precio de costo es 0.01")
-            .required("Campo precio costo es requerido es requrida")
-            .test("not-zero", "El valor mínimo en el precio de costo es 0.01", value => value !== 0),
+        descripcion: yup.string().trim().lowercase("Hola").required("Descripción es requerido"),
+        idSubFamilia: yup.number().required("Descripción es requerido"),
+        idMedida: yup.number().default(0).required("La medida es requerida"),
+        codigo: yup.string().trim().required("El código es requerido"),
+        codigoBarra: yup.string().trim().required("El código de barra es requerido"),
+        codigoAuxiliar: yup.string().trim().required("El código Auxiliar es requerido"),
+        precioCosto: yup.number()
+                        .required("Campo precio costo es requerido es requrida")
+                        .test("not-zero", "El valor mínimo en el precio de costo es 0.01", value => value !== 0),
     });
 
 
-    const formik = useFormik({
-        initialValues: {
-            description: '',
-            idMedida: 0,
-            precioCosto: 0
-        },
-        validationSchema: validationSchema,
-        onSubmit: (values) => {
-            console.log(values);
+    // const formik = useFormik({
+    //     initialValues: productState.data,
+    //     validationSchema: validationSchema,
+    //     onSubmit: (values) => {
+    //         console.log(values);
 
-        },
-    });
+    //     },
+    // });
 
     const handleCancel = () => {
-        formik.resetForm();
+        // formik.resetForm();
         handleClose()
     };
 
-    const handleOk = () => {
-        console.log('ok')
-    };
+    // const handleOk = () => {
+    //     console.log('ok')
+    // };
+
+    const handleSubmit = (values:any, actions:any) => {
+        setTimeout(() => {
+            // Simulate form submission
+            alert(JSON.stringify(values, null, 2));
+           actions.setSubmitting(false);
+           actions.resetForm();
+          }, 1000);
+      };
+      
 
     return (
-        <form onSubmit={formik.handleSubmit}>
+
+        <Formik
+            initialValues={productState.data}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+            >
+      {(formik) => (
+        <Form> 
             <DialogTitle sx={{ m: 0, p: 2 }}>
                 Productos
                 <IconButton
@@ -148,16 +163,16 @@ export default function ProductDialog({handleClose}: DialogProps) {
                             label="Descripción" 
                             fullWidth 
                             size="small" 
-                            id="description"
-                            name="description" 
-                            value={formik.values.description}
+                            id="descripcion"
+                            name="descripcion" 
+                            value={formik.values.descripcion}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             error={
-                                formik.touched.description && Boolean(formik.errors.description)
+                                formik.touched.descripcion && Boolean(formik.errors.descripcion)
                             }
                             helperText={
-                                formik.touched.description && formik.errors.description
+                                formik.touched.descripcion && formik.errors.descripcion
                             } />
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -168,14 +183,14 @@ export default function ProductDialog({handleClose}: DialogProps) {
                             <InputLabel>Medida</InputLabel>
                             <Select  
                             name="idMedida"
-                            id="idMedida"
-                            label="Medida"  
+                            id="idMedida" 
+                            label="Medida"
                             value={formik.values.idMedida}
                             onChange={formik.handleChange}
                             error={
                                 formik.touched.idMedida && Boolean(formik.errors.idMedida)
                             } >
-                                <MenuItem value={0} disabled>Seleccione la Medida</MenuItem>
+                                
                                 {dataFormApi.measures.map((item, key) => (
                                     <MenuItem key={key} value={item.idMedida}>{item.descripcion}</MenuItem>
                                 ))}
@@ -183,20 +198,67 @@ export default function ProductDialog({handleClose}: DialogProps) {
                         </FormControl>
                     </Grid>
                     <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
-                        <TextField label="Código" fullWidth size="small" />
+                        <TextField  label="Código"  
+                                    fullWidth 
+                                    size="small"
+                                    id="codigo"
+                                    name="codigo" 
+                                    value={formik.values.codigo}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={
+                                        formik.touched.codigo && Boolean(formik.errors.codigo)
+                                    }
+                                    helperText={
+                                        formik.touched.codigo && formik.errors.codigo
+                                    }
+                                />
                     </Grid>
                     <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
-                        <TextField label="Código Aux:" fullWidth size="small" />
+                        <TextField 
+                            label="Código Aux:" 
+                            fullWidth 
+                            size="small"
+                            id="codigoAuxiliar"
+                            name="codigoAuxiliar" 
+                            value={formik.values.codigoAuxiliar}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            error={
+                                formik.touched.codigoAuxiliar && Boolean(formik.errors.codigoAuxiliar)
+                            }
+                            helperText={
+                                formik.touched.codigoAuxiliar && formik.errors.codigoAuxiliar
+                            }
+                        />
                     </Grid>
                     <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
-                        <TextField label="Código Barrá" fullWidth size="small" />
+                        <TextField 
+                            label="Código Barrá" 
+                            fullWidth 
+                            size="small"
+                            id="codigoBarra"
+                            name="codigoBarra" 
+                            value={formik.values.codigoBarra}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            error={
+                                formik.touched.codigoBarra && Boolean(formik.errors.codigoBarra)
+                            }
+                            helperText={
+                                formik.touched.codigoBarra && formik.errors.codigoBarra
+                            }
+                        />
                     </Grid>
                     <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
-                        <FormControlLabel
-                            value="top"
+                        <FormControlLabel 
                             control={<Switch color="primary" size="small" />}
-                            label="Lleva Inventario"
-                            labelPlacement="top"
+                            label="Lleva Inventario" 
+                            id="llevaInventario"
+                            name="llevaInventario" 
+                            value={formik.values.llevaInventario}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                         />
                     </Grid>
 
@@ -225,7 +287,8 @@ export default function ProductDialog({handleClose}: DialogProps) {
                             }
                             helperText={
                                 formik.touched.precioCosto && formik.errors.precioCosto
-                            } />
+                            } 
+                        />
                     </Grid>
                     <Grid item lg={9} md={9} sm={12} xs={12}>
                         <SalePriceListTabulator />
@@ -272,13 +335,18 @@ export default function ProductDialog({handleClose}: DialogProps) {
                 </Grid>
             </DialogContent>
             <DialogActions>
+                <Button type="submit" disabled={formik.isSubmitting}>Ok</Button>
                 <Button autoFocus onClick={handleCancel}>
                     Cancel
                 </Button>
-                <Button onClick={handleOk}>Ok</Button>
             </DialogActions>
+        </Form>
+      )}
+    </Formik>
+
+       
 
 
-        </form>
+        // </form>
     );
 }
