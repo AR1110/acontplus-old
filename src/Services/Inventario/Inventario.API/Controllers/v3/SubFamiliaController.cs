@@ -3,6 +3,7 @@ using Domain.Models.Almacen;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
+using System.Text.Json;
 
 namespace Inventario.API.Controllers.v3
 {
@@ -47,14 +48,12 @@ namespace Inventario.API.Controllers.v3
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
+            string json = JsonSerializer.Serialize(data);
             try
             {
                 await _db.SPExecute("Almacen.SubFamilia_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("idFamilia", data.idFamilia);
-                _db.AddDynamicParam("descripcion", data.descripcion);
-                _db.AddDynamicParam("siglas", data.siglas);
-                _db.AddDynamicParam("montoObjetivo", data.montoObjetivo);
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

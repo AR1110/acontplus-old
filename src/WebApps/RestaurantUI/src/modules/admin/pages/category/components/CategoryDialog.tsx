@@ -32,14 +32,12 @@ export default function CategoryDialog({ handleClose }: ModalProps) {
 
   const formik = useFormik({
     initialValues: {
-      idSubFamilia: 0,
       idFamilia: 0,
       descripcion: '',
       siglas: '',
-      codigo: '',
-      ultimoSecuencial: 0,
-      estado: true,
       montoObjetivo: 0.0,
+      applicationId: 1,
+      imagUrl: '',
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
