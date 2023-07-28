@@ -1,3 +1,3 @@
-export type TypeWidthKey<T> = {
+export type TypeWithKey<T> = {
   [key: string]: T;
 };
