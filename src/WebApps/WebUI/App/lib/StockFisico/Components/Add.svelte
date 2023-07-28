@@ -88,6 +88,9 @@
 
     const onSave = () => {
         //modalClose("saving");
+        Stock.post(data).then((response) => {
+            console.log(response);
+        });
     };
     const onPopupClose = () => {
         showModal = false;
@@ -393,7 +396,18 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 col-12">
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                        <div class="form-group">
+                            <label for="">Responsable</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                bind:value={data.responsable}
+                                required
+                            />
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3 col-12">
                         <div class="form-group">
                             <label for="opcion">Opciones:</label>
                             <select
@@ -411,7 +425,7 @@
                         </div>
                     </div>
                     {#if options.opcion == 1}
-                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3 col-12">
                             <div class="form-group">
                                 <label for="">Articulo</label>
                                 <AdvancedSearch
