@@ -3,6 +3,9 @@ using Helpers;
 using System.Reflection;
 using Lib.Common;
 using ApiContabilidad.Extensions;
+using Newtonsoft.Json.Serialization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +14,21 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
 ConfigHelper.AddJsonFiles(builder.Configuration);
 
-builder.Services.AddControllers();
+//builder.Services.AddControllers()
+//                .AddNewtonsoftJson(x =>
+//                {
+//                    x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+//                    x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
+//                }
+//                 )
+//                .AddJsonOptions(options =>
+//                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
+
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+}); ;
 
 builder.Services.AddApplicationServices(builder.Configuration);
 

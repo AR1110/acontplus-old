@@ -6,5 +6,6 @@ namespace Contabilidad.Core.Interfaces
     {
         public Task<DataTable> GetDataTableAsync(string spName, Dictionary<string, object> parameters);
         public Task<DataSet> GetDataSetAsync(string spName, Dictionary<string, object> parameters);
+        public Task<int> ExecuteScalarAsync(string spName, Dictionary<string, object> parameters);
     }
 }

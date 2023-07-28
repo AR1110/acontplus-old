@@ -17,8 +17,8 @@ namespace ApiContabilidad.Controllers
     public class CategoriasController : ControllerBase
     {
         private readonly ContabilidadContext _context;
-        private readonly ICategoriaService _categoria;
-        public CategoriasController(ContabilidadContext context, ICategoriaService categoria)
+        private readonly ISubCategoriaService _categoria;
+        public CategoriasController(ContabilidadContext context, ISubCategoriaService categoria)
         {
             _context = context;
             _categoria = categoria;

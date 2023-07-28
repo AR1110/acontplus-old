@@ -10,7 +10,7 @@ namespace Contabilidad.Infrastructure.Data
         }
         public DbSet<Categoria> Categorias { get; set; }
         public DbSet<Tipo> Tipos { get; set; }
-        public DbSet<SubCategoria> subCategorias { get; set; }
+        public DbSet<SubCategoria> Subcategorias { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
