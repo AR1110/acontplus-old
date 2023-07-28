@@ -6,4 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Lib.Common\Lib.Common.csproj" />
+    <ProjectReference Include="..\Contabilidad.Core\Contabilidad.Core.csproj" />
+    <ProjectReference Include="..\Contabilidad.Infrastructure\Contabilidad.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

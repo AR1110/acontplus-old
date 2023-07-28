@@ -65,7 +65,8 @@ const production = !process.env.ROLLUP_WATCH;
 // const appObject = "petMH"
 // const appObject = "configEmail"
 // const appObject = "motivoDiscrepancia"
-const appObject = "stockFisico"
+//const appObject = "stockFisico"
+const appObject = "subcategoria"
 
 export default {
     // This `main.js` file we wrote

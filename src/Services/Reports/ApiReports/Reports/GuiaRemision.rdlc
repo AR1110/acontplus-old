@@ -741,7 +741,7 @@
                   <Paragraph>
                     <TextRuns>
                       <TextRun>
-                        <Value>=First(Fields!ptoPartida.Value, "GuiaRemisionDs")</Value>
+                        <Value>=First(Fields!ptoLlegada.Value, "GuiaRemisionDs")</Value>
                         <Style>
                           <FontSize>8pt</FontSize>
                         </Style>
