@@ -1,7 +1,7 @@
 export type CategoryResponseFromApi = Array<{
   readonly idSubFamilia: number;
   idFamilia: number;
-  description: string;
+  descripcion: string;
   siglas: string;
   codigo: string;
   ultimoSecuencial: string;
@@ -15,9 +15,34 @@ export type CategoryResponseFromApi = Array<{
   imgUrl: string;
 }>;
 
-export interface ICategory {
+export interface ICategoryView {
+ readonly idSubFamilia: number;
   idFamilia: number;
-  siglas: number;
-  description: string;
-  imgUrl: string;
+  codigo: string;
+  descripcion: string;
+  nombreFamilia: string;
+  siglas: string;
+  montoObjetivo: number;
+  estado: boolean;
+}
+
+interface CategoryApi {
+  idSubFamilia: number;
+  idFamilia: number;
+  codigo: string;
+  descripcion: string;
+  nombreFamilia: string;
+  siglas: string;
+  montoObjetivo: number;
+  estado: boolean;
+}
+
+export interface DataFormApi {
+  subFamilias: CategoryApi[]
+}
+
+
+export interface CategoryState {
+  subFamilia: ICategoryView[]
+  dataFormApi: DataFormApi
 }
