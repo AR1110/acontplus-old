@@ -14,8 +14,10 @@ const INITIAL_STATE: ProductState = {
 		vatRates: []
 	},
 	data: {
+		idArticulo: 0,
 		idSubFamilia: 0,
 		idMedida: 0,
+		idTipoIva: 0,
 		precioCosto: 0,
 		precioSinSubsidio: 0,
 		codigo: "",
@@ -27,7 +29,10 @@ const INITIAL_STATE: ProductState = {
 		idEtiqueta: 0,
 		cantMinimaVentaPorMayor: 0
 	},
-	productPvPs: []
+	productPvPs: [],
+	dialogProps: {
+		dialogTitle: "",  
+	}
 }
 
 interface Props {
@@ -62,7 +67,7 @@ export const ProductProvider = ({ children }: Props) => {
 	}, []);
 
 	return (
-		<ProductContext.Provider value={{ productState }}>
+		<ProductContext.Provider value={{ productState, dispatch}}>
 			{children}
 		</ProductContext.Provider>
 	)

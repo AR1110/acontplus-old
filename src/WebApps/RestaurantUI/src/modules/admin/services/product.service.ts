@@ -1,11 +1,12 @@
 import { PATHS } from "@/core/constants/path";
 import { Http } from "@/core/utils";
-import { IProductView, ProductResponseFromApi } from "../models";
+import { ProductResponseFromApi } from "../models";
+ 
 
 const URL = 'v3/Articulo'
 
 const ProductSvc = {
-	getAll: async (): Promise<IProductView[]> => {
+	getAll: async () => {
 
 		const json = JSON.stringify({
 			tipo: 1, pageIndex: 1, pageSize: 50      	      		

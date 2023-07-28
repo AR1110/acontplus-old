@@ -18,6 +18,7 @@ export default function CategoryAutocomplete() {
 			clearOnEscape
 			value={dataFormApi.categories.find((option) => option.idSubFamilia === values.idSubFamilia ?? null) || null}
 			onChange={(event: React.SyntheticEvent<Element, Event>, value) => {
+				console.log(event)
 				formik.setFieldValue('idSubFamilia', value?.idSubFamilia);
 			}}
 			options={dataFormApi.categories}

@@ -1,16 +1,11 @@
 import Dialog from "@mui/material/Dialog";
-import {
-    Button,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    IconButton,
+import { 
     LinearProgress,
     useMediaQuery,
     useTheme,
 } from "@mui/material";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef} from "react";
 
 type SizeDialog = "xs" | "sm" | "md" | "lg" | "xl";
 
@@ -27,37 +22,23 @@ export interface DialogProps {
 function DialogCustom(props: DialogProps) {
     const {
         onClose,
-        value: valueProp,
+        value,
         open,
         children,
         maxWidth,
         ...other
-    } = props;
-    const [value, setValue] = useState(valueProp);
+    } = props; 
     const radioGroupRef = useRef<HTMLElement>(null);
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
-
-    useEffect(() => {
-        if (!open) {
-            setValue(valueProp);
-        }
-    }, [valueProp, open]);
+ 
 
     const handleEntering = () => {
         if (radioGroupRef.current != null) {
+            console.log(onClose, value)
             radioGroupRef.current.focus();
         }
-    };
-
-    const handleCancel = () => {
-        onClose();
-    };
-
-
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setValue((event.target as HTMLInputElement).value);
-    };
+    }; 
 
     return (
         <Dialog
