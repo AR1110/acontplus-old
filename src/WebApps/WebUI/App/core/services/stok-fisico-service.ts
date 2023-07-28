@@ -26,7 +26,7 @@ async function post(data: any) {
         return null;
     })
 }
-export const Stock = {
+export const StockFisicoService = {
     get,
     post,
 }

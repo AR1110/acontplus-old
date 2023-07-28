@@ -4,7 +4,7 @@ import PetBreed from "./lib/PetBreed/PetBreed.svelte";
 import Counter from "./core/components/Counter.svelte";
 import ConfigEmail from "./lib/ConfigEmail/ConfigEmail.svelte"
 import MotivoDiscrepancia from "./lib/StockFisico/MotivoDiscrepancia.svelte";
-import Stock from "./lib/StockFisico/Stock.svelte"
+import Stock from "./lib/StockFisico/index.svelte"
 import Subcategoria from "./lib/Contabilidad/Subcategoria/index.svelte"
 
 // import App from "./App.svelte"

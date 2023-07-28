@@ -3,12 +3,24 @@ using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Newtonsoft.Json.Serialization;
 using Services.Common;
+using System.Text.Json;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+                .AddNewtonsoftJson(x =>
+                {
+                    x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                    x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
+                }
+                 )
+                .AddJsonOptions(options =>
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase); 
+
 builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
 ConfigHelper.AddJsonFiles(builder.Configuration);
 
