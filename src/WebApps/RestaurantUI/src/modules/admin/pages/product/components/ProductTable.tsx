@@ -29,7 +29,7 @@ export default function ProductTable() {
     sx={{ p: 2, display: "flex", flexDirection: "column" }}
     elevation={0}
   >
-   
+
     <TableContainer component={Paper} sx={{ maxHeight: 440 }}>
       <Table
         stickyHeader
