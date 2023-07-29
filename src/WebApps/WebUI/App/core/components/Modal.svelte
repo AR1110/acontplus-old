@@ -2,7 +2,7 @@
     import { fade, fly } from "svelte/transition";
     import { quintOut } from "svelte/easing";
     export let open = false;
-    export let showBackdrop = true;
+    // export let showBackdrop = true;
     export let onClosed;
     export let title;
     export let iconTitle;

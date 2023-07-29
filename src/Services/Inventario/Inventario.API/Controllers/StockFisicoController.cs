@@ -109,8 +109,7 @@ namespace Inventario.API.Controllers
             {
                 return Problem("Entity set 'InventarioContext.StockFisicos'  is null.");
             }
-            _context.StockFisicos.Add(stockFisico);
-            await _context.SaveChangesAsync();
+          
 
             return CreatedAtAction("GetStockFisico", new { id = stockFisico.Id }, stockFisico);
         }

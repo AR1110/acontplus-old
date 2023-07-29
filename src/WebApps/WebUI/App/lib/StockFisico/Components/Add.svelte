@@ -1,18 +1,19 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import MaskInput from "svelte-input-mask/MaskInput.svelte";
-    import Modal from "../../../core/components/Modal.svelte";
+    import Modal from "$core/components/Modal.svelte";
     import type {
         StockFisico,
         StockFisicoDetalle,
-    } from "../../../core/interfaces/stock-fisico";
-    import { Estabs } from "../../../core/services/establecimiento-service";
-    import { Stock } from "../../../core/services/stok-fisico-service";
-    import { Articulos } from "../../../core/services/articulo-service";
-    import AdvancedSearch from "../../../core/components/AdvancedSearch.svelte";
-    import Grid from "../../../core/components/Grid.svelte";
-    import type { MotivoDiscrepancia } from "../../../core/interfaces/motivo-discrepancia";
-    import { Discrepancias } from "../../../core/services/motivos-discrepancia-service";
+    } from "$core/interfaces/stock-fisico";
+    import { Estabs } from "$core/services/establecimiento-service";
+    import { StockFisicoService } from "$core/services/stok-fisico-service";
+    import { Articulos } from "$core/services/articulo-service";
+    import AdvancedSearch from "$core/components/AdvancedSearch.svelte";
+    import Grid from "$core/components/Grid.svelte";
+    import type { MotivoDiscrepancia } from "$core/interfaces/motivo-discrepancia";
+    import { Discrepancias } from "$core/services/motivos-discrepancia-service";
+    import toast from "$core/utils/toast";
 
     export let showModal = false;
     export let onModalClose;
@@ -44,7 +45,7 @@
     let motivosDiscrepancia = [] as MotivoDiscrepancia[];
 
     const initialLoad = () => {
-        Stock.get(JSON.stringify({ tipo: 1 })).then((response: any) => {
+        StockFisicoService.get(JSON.stringify({ tipo: 1 })).then((response: any) => {
             if (response) {
                 allArrays = response;
                 console.log(allArrays);
@@ -55,6 +56,12 @@
                 bodegas = allArrays[1].filter((x) => x.codEstab === codEstab);
                 setDefaultBodega();
                 subfamilias = allArrays[2];
+                data.secuencial =
+                    allArrays[4][0].estab +
+                    "-" +
+                    allArrays[4][0].ptoEmi +
+                    "-" +
+                    String(allArrays[4][0].ultimaSecuencia).padStart(9, "0");
             }
         });
         Discrepancias.get(null).then((response) => {
@@ -87,8 +94,15 @@
     });
 
     const onSave = () => {
+        if (articlesFounded.length == 0) {
+            toast({ type: "warning", message: "Debe agregar un detalle" });
+            return;
+        }
         //modalClose("saving");
-        Stock.post(data).then((response) => {
+        data.secuencial = data.secuencial.split("-").join("");
+        data.stockFisicoDetalles = articlesFounded;
+        console.log(data.stockFisicoDetalles);
+        StockFisicoService.post(data).then((response) => {
             console.log(response);
         });
     };
@@ -164,7 +178,7 @@
     const getArticles = () => {
         articlesFounded = [];
         options.tipo = 4;
-        Stock.get(JSON.stringify(options)).then((response) => {
+        StockFisicoService.get(JSON.stringify(options)).then((response) => {
             if (response) {
                 articlesFounded = response[0];
                 // for (const item of response[0]) {
@@ -254,7 +268,8 @@
             option.text = motivosDiscrepancia[i].descripcion;
 
             if (motivosDiscrepancia[i].id === cellRealValue) {
-                option.selected = "selected";
+                //option.selected = "selected";
+                option.selected = true;
             }
             selectList.appendChild(option);
         }
@@ -316,12 +331,9 @@
         <form autocomplete="off" on:submit|preventDefault={onSave}>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
                         <div class="form-group">
-                            <label for="establecimiento"
-                                >Estab.: <span class="text-danger">*</span
-                                ></label
-                            >
+                            <label for="establecimiento">Estab.:</label>
                             <select
                                 name="establecimiento"
                                 id="establecimiento"
@@ -338,13 +350,9 @@
                         </div>
                     </div>
 
-                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12">
                         <div class="form-group">
-                            <label for="puntoEmision"
-                                >Punto Emisión: <span class="text-danger"
-                                    >*</span
-                                ></label
-                            >
+                            <label for="puntoEmision">Punto Emisión:</label>
                             <select
                                 id="puntoEmision"
                                 name="puntoEmision"
@@ -359,23 +367,7 @@
                             </select>
                         </div>
                     </div>
-
-                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
-                        <div class="form-group">
-                            <label for="fechaEmision"
-                                >Fecha Emisión <span class="text-danger">*</span
-                                ></label
-                            >
-                            <input
-                                type="date"
-                                name="fechaEmision"
-                                bind:value={data.fecha}
-                                class="form-control border-select"
-                            />
-                        </div>
-                    </div>
-
-                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
                         <div class="form-group">
                             <label for="bodegas">Bodega</label>
                             <select
@@ -393,10 +385,34 @@
                             </select>
                         </div>
                     </div>
+                    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-6">
+                        <div class="form-group">
+                            <label for="fechaEmision">Fecha Emisión</label>
+                            <input
+                                type="date"
+                                name="fechaEmision"
+                                bind:value={data.fecha}
+                                class="form-control border-select"
+                            />
+                        </div>
+                    </div>
+                    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-6">
+                        <div class="form-group">
+                            <label for="secuencial">Secuencial</label>
+                            <input
+                                type="text"
+                                name="secuencial"
+                                readonly
+                                disabled
+                                bind:value={data.secuencial}
+                                class="form-control border-select"
+                            />
+                        </div>
+                    </div>
                 </div>
 
                 <div class="row">
-                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+                    <div class="col-xl-5 col-lg-5 col-md-5 col-sm-5 col-12">
                         <div class="form-group">
                             <label for="">Responsable</label>
                             <input
@@ -407,7 +423,7 @@
                             />
                         </div>
                     </div>
-                    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3 col-12">
+                    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
                         <div class="form-group">
                             <label for="opcion">Opciones:</label>
                             <select
@@ -425,7 +441,7 @@
                         </div>
                     </div>
                     {#if options.opcion == 1}
-                        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3 col-12">
+                        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                             <div class="form-group">
                                 <label for="">Articulo</label>
                                 <AdvancedSearch

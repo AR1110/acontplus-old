@@ -7,7 +7,7 @@ export interface StockFisico {
     responsable: string;
     obs: string;
     fechaRevision: Date;
-    detalles: any
+    stockFisicoDetalles: any
 }
 
 export interface StockFisicoDetalle {

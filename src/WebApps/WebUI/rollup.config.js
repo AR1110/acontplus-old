@@ -53,7 +53,7 @@ import resolve from "@rollup/plugin-node-resolve";
 import terser from "@rollup/plugin-terser";
 import sveltePreprocess from "svelte-preprocess";
 import typescript from "@rollup/plugin-typescript";
-import css from "rollup-plugin-css-only";
+//import css from "rollup-plugin-css-only";
 import replace from '@rollup/plugin-replace';
 import path from "path";
 import alias from "@rollup/plugin-alias";
@@ -84,19 +84,18 @@ export default {
     plugins: [
         alias({
             entries: [
-                { find: "$lib", replacement: path.resolve(__dirname, "../App/lib") },
-
-                { find: "$pet", replacement: path.resolve(__dirname, "../App/lib") + "/Pet" },
-                { find: "$petbreed", replacement: path.resolve(__dirname, "../App/lib") + "/PetBreed" },
-                { find: "$petmedicalhistory", replacement: path.resolve(__dirname, "../App/lib") + "/PetMedicalHistory" },
+                { find: "$core", replacement: path.resolve(__dirname, "../WebUI/App/core") },
+                { find: "$interfaces", replacement: path.resolve(__dirname, "../WebUI/App/core/interfaces") },
+                { find: "$services", replacement: path.resolve(__dirname, "../WebUI/App/core/services") },
+                { find: "$utils", replacement: path.resolve(__dirname, "../WebUI/App/core/utils") },
+                { find: "$lib", replacement: path.resolve(__dirname, "../WebUI/App/lib") },
+                { find: "$pet", replacement: path.resolve(__dirname, "../WebUI/App/lib") + "/Pet" },
+                { find: "$petbreed", replacement: path.resolve(__dirname, "../WebUI/App/lib") + "/PetBreed" },
+                { find: "$petmedicalhistory", replacement: path.resolve(__dirname, "../WebUI/App/lib") + "/PetMedicalHistory" },
             ]
         }),
         //builtins(),
         //json(),
-        // commonjs({
-        //     include: /node_modules/,
-        //     requireReturnsDefault: 'auto',
-        // }),
         replace({
             preventAssignment: true,
             "process.env.NODE_ENV": JSON.stringify("development")

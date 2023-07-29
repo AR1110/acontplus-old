@@ -84,29 +84,18 @@ BEGIN
 			SELECT * FROM v_Bodega_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId
 			SELECT * FROM SubFamilia WITH(NOLOCK) WHERE idEntidad = @idEntidad
 			SELECT * FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CD' --AND JSON_VALUE(jsonConfig, '$[0].codTransaccion') = 'AL'
+			SELECT cd.*
+			FROM v_ConfigDocumento cd 
+				INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab
+			WHERE pa.idUsuarioRol = @userRoleId
+			AND cd.codDocumento = 'TF'
 		END
 
 	IF (@tipo = 2)
 		BEGIN
-			
-			SELECT
-				 idConsolidacionInventario = ci.idConsolidacionInventario
-				,fechaEmision = dbo.AFTConvertDate(ci.fechaEmision) 
-				,observacion = ISNULL(ci.observacion,'Ninguna')
-				,total = ci.total
-				,nroDoc = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,ci.nroDoc)
-				,estadoDoc = ep.descripcion
-				,codDoc = ep.codigo
-				,usuario = u.nombreUsuario
-				,style = IIF(ep.codigo = 'A','table-danger','')
-			FROM dbo.ConsolidacionInventario ci WITH (NOLOCK)
-			INNER JOIN dbo.PuntoEmision   pe  WITH (NOLOCK) ON pe.idPuntoEmision = ci.idPuntoEmision
-			INNER JOIN Sri.Establecimiento s  WITH (NOLOCK) ON s.codEstab        = pe.codEstab
-			INNER JOIN dbo.Usuario         u  WITH (NOLOCK) ON u.idUsuario       = ci.idUsuario
-			INNER JOIN dbo.EstadoPago     ep  WITH (NOLOCK) ON ep.idEstadoPago   = ci.idEstadoDocumento
-			WHERE ci.idEntidad = @idEntidad 
-			AND ci.estado = 1
-			ORDER by ci.idConsolidacionInventario DESC
+			SELECT *
+			FROM v_StockFisico WITH (NOLOCK)
+			WHERE idEntidad = @idEntidad
 		END
 
 	IF (@tipo = 3)
@@ -143,18 +132,6 @@ BEGIN
 			INNER JOIN v_Articulo a WITH(NOLOCK) ON a.idArticulo = cid.idArticulo
 			INNER JOIN Medida m WITH(NOLOCK) ON m.idMedida = cid.idMedida
 			INNER JOIN TipoIva ti WITH(NOLOCK) ON ti.idTipoIva = a.idTipoIva
-			WHERE cid.idConsolidacionInventario = @id AND cid.estado = 1
-
-			SELECT 
-				 cid.idConsolidacionInventarioDetalle
-				,a.idMedida 
-				,a.medida
-				,precioCosto = cid.precioCosto
-				,medidasTemp = (CASE WHEN a.fraccionado = 1 THEN (SELECT cid.idConsolidacionInventarioDetalle, af.idMedida, m.descripcion, af.precioCostoFraccionado precioCosto FROM ArticuloFraccionado af WITH (NOLOCK) 
-																												   INNER JOIN Medida m WITH (NOLOCK) ON af.idMedida = m.idMedida 
-																												   WHERE af.idArticulo = a.idArticulo FOR JSON PATH) ELSE '[]' END)
-			FROM ConsolidacionInventarioDetalle cid WITH(NOLOCK) 
-			INNER JOIN v_Articulo a WITH(NOLOCK) ON a.idArticulo = cid.idArticulo 
 			WHERE cid.idConsolidacionInventario = @id AND cid.estado = 1
 
 
