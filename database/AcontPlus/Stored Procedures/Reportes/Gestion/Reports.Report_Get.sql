@@ -80,7 +80,7 @@ BEGIN
 	,ISNULL(@format, '') as 'format'
 	,storedProcedure 
 	,LTRIM(RTRIM(@fileName)) as 'fileName'
-	,ISNULL(@hasParams, 0) hasParams
+	,ISNULL(@hasParams, 1) hasParams
 	FROM Config.Reporte r
 	WHERE codigo = @codigo
 

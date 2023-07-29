@@ -20,7 +20,7 @@ namespace Contabilidad.Application.Servicios
             _context = context;
             _response = new APIResponse();
         }
-        public async Task<object> GetAsync(Dictionary<string, object> parameters)
+        public async Task<object?> GetAsync(Dictionary<string, object> parameters)
         {
             DataSet ds = await _repository.GetDataSetAsync("Contabilidad.SubCategoria_Get", parameters);
 
@@ -28,7 +28,7 @@ namespace Contabilidad.Application.Servicios
             {
                 if (ds.Tables.Count > 0)
                 {
-                    ds = new DataSet();
+                    _ = new DataSet();
                 }
                 return null;
             }
@@ -45,12 +45,7 @@ namespace Contabilidad.Application.Servicios
                 _response.Create(code:"0", message: "Codigo ya existe");
                 return _response;
             }
-            //var parameters = new Dictionary<string, object>
-            //{
-            //    {"json", JsonConvert.SerializeObject(data)}
-            //};
-            //int id = await _repository.ExecuteScalarAsync("Contabilidad.SubCategoria_Insert ", parameters);
-
+           
             _context.Subcategorias.Add(data);
 
             await _context.SaveChangesAsync();
