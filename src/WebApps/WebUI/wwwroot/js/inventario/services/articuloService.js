@@ -95,6 +95,7 @@
                 pageIndex: dataSearch.pageIndex,
                 pageSize: dataSearch.pageSize,
                 byColumn: dataSearch.byColumn,
+                byStock: dataSearch.byStock
               };
 
             return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response=>{
