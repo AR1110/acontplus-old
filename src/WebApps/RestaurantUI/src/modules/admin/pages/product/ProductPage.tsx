@@ -14,14 +14,13 @@ import DialogCustom from "@/core/components/DialogCustom";
  
 
 export default function ProductPage() {    
-  const [open, setOpen] = useState(false); 
-  
+  const [open, setOpen] = useState(false);  
   // const enumeracion = 1;
-  const onOpenDialog = () => {  
+  const onOpenDialog = () => { 
     setOpen(true);
   };
 
-  const handleClose = (newValue?: string) => {
+  const handleClose = () => {
     setOpen(false); 
   };
  
@@ -36,6 +35,7 @@ export default function ProductPage() {
         >
           <Typography variant="h5" gutterBottom>
             Productos
+            
           </Typography>
           <Button
             variant="contained"
@@ -50,14 +50,17 @@ export default function ProductPage() {
        
       </Grid> 
 
-      <DialogCustom
-        id="ringtone-menu"
-        keepMounted
-        open={open}
-        onClose={handleClose} 
-        children={<ProductDialog handleClose={handleClose} />}
-        maxWidth="md"
-      />
+      <div>
+        { open ? <DialogCustom
+          id="ringtone-menu"
+          keepMounted
+          open={open}
+          onClose={handleClose} 
+          children={<ProductDialog handleClose={handleClose} dialogTitle="Nuevo Articulo" />}
+          maxWidth="md"
+        /> : '' 
+        }
+      </div>
     </ProductProvider>
     
   );

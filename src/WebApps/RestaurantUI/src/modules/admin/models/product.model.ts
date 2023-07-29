@@ -1,5 +1,28 @@
 import { ProductPvPCreateDto } from ".";
 
+export type ProductResponseFromApi = Array<{
+  code_unique: string;
+  codigo: string;
+  descripcion: string;
+  estado: boolean;
+  idArticulo: number;
+  idMedida: number;
+  imagen: boolean;
+  marca: string;
+  medida: string;
+  modelo: string;
+  observaciones: string;
+  precioCosto: number;
+  precioSinSubsidio: number;
+  stock: number;
+  stockMinimo: number;
+  style: string;
+  subFamilia: string;
+  tipoArticulo: string;
+  tipoIva: string;
+  totalRecords: number;
+}>;
+
 //Dtos (Request and response) 
 export interface ProductReadDto {
   readonly idProduct: number;
@@ -11,12 +34,13 @@ export interface ProductReadDto {
 }  
 
 export interface ProductCreateDto {
+  idArticulo?: number
   idSubFamilia: number;
   idMarca?: number;
   idModelo?:number
   idTipoIce?:number;
   idTipoArticulo?:number;
-  idTipoIva?:number;
+  idTipoIva:number;
   idMedida: number;
   precioCosto: number;
 	precioSinSubsidio: number;
@@ -144,16 +168,17 @@ export interface DataFormApi {
   vatRates: VatRateApi[]
 }
 
-// // =============================END INTERFACES FOR ARTICLE FORM DATA =================
  
- 
-
 
 // //==================================Context=================================== 
 
+export interface DialogProps {
+  dialogTitle: string;
+}
 export interface ProductState {
   products: ProductReadDto[]
   dataFormApi: DataFormApi,
   data: ProductCreateDto,
-  productPvPs: ProductPvPCreateDto[]
+  productPvPs: ProductPvPCreateDto[],
+  dialogProps: DialogProps
 }

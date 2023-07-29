@@ -1,4 +1,4 @@
-import { PrivateRoutes } from "@/core/models";
+ 
 import { RoutesWithNotFound } from "@/core/utils";
 import { Route } from "react-router-dom";
 import PosLayout from "@/layouts/PosLayout";

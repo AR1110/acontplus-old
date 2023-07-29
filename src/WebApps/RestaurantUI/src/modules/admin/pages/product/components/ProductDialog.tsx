@@ -1,66 +1,65 @@
-import {
-    Avatar,
-    Box,
+import { 
     Button,
     Card,
     CardActionArea,
-    CardActions, 
-    CardContent, 
+    CardActions,  
     CardMedia,
     DialogActions,
     DialogContent,
-    DialogTitle,
-    FormControl,
+    DialogTitle, 
     FormControlLabel,
+ 
     Grid,
     IconButton,
-    InputLabel,
+ 
     MenuItem,
-    Select,
+  
     Switch,
     TextField,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import BackupIcon from '@mui/icons-material/Backup';
+import CloseIcon from "@mui/icons-material/Close"; 
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import CategoryAutocomplete from "./CategoryAutocomplete";
 import ImgProductDefault from '/assets/images/imgProductDefault.png';
-import { useRef, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 
 import { useProductContext } from "../context";
 
 import SalePriceListTabulator from "./SalePriceListTabulator";
 import * as yup from "yup";
-import { Form, Formik, useFormik } from "formik";
+import {  Form, Formik} from "formik";
 
 
 interface DialogProps {
     handleClose: ()=>void;
+    dialogTitle: string;
 }
 
-export default function ProductDialog({handleClose}: DialogProps) {
+export default function ProductDialog({handleClose, dialogTitle}: DialogProps) {
 
-    const [selectedFile, setSelectedFile] = useState(null);
+    // const [selectedFile, setSelectedFile] = useState(null);
     const { productState } = useProductContext();
     const dataFormApi = productState.dataFormApi;
 
-    const [image, setImage] = useState(null);
-    const fileInputRef = useRef(null);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+ 
 
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setImage(reader.result);
-        };
-        reader.readAsDataURL(file);
+    const handleUploadButtonClick = () => { 
+        fileInputRef.current?.click();
+    };
+    
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = e.target.files?.[0];
+        if (selectedFile) {
+          // Read the selected file as a data URL and set it as the image preview
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setSelectedImage(reader.result as string);
+          };
+          reader.readAsDataURL(selectedFile);
         }
-    };
-
-    const handleUploadButtonClick = () => {
-        fileInputRef.current.click();
-    };
+      };
 
 
 
@@ -94,14 +93,17 @@ export default function ProductDialog({handleClose}: DialogProps) {
     const validationSchema = yup.object({ 
         descripcion: yup.string().trim().lowercase("Hola").required("Descripción es requerido"),
         idSubFamilia: yup.number().required("Descripción es requerido"),
-        idMedida: yup.number().default(0).required("La medida es requerida"),
+        idMedida: yup.number().required("La medida es requerida"),
         codigo: yup.string().trim().required("El código es requerido"),
         codigoBarra: yup.string().trim().required("El código de barra es requerido"),
         codigoAuxiliar: yup.string().trim().required("El código Auxiliar es requerido"),
+        idTipoIva: yup.number().required("Tipo Iva es requerido"),
         precioCosto: yup.number()
+                        .min(0, 'La cantidad no puede ser menor a cero')
                         .required("Campo precio costo es requerido es requrida")
                         .test("not-zero", "El valor mínimo en el precio de costo es 0.01", value => value !== 0),
     });
+    
 
 
     // const formik = useFormik({
@@ -123,230 +125,233 @@ export default function ProductDialog({handleClose}: DialogProps) {
     // };
 
     const handleSubmit = (values:any, actions:any) => {
-        setTimeout(() => {
+      
             // Simulate form submission
             alert(JSON.stringify(values, null, 2));
            actions.setSubmitting(false);
-           actions.resetForm();
-          }, 1000);
+       
+           
       };
       
 
     return (
 
-        <Formik
-            initialValues={productState.data}
-            validationSchema={validationSchema}
-            onSubmit={handleSubmit}
-            >
-      {(formik) => (
-        <Form> 
-            <DialogTitle sx={{ m: 0, p: 2 }}>
-                Productos
-                <IconButton
-                    aria-label="close"
-                    onClick={handleCancel}
-                    sx={{
-                        position: "absolute",
-                        right: 8,
-                        top: 8,
-                        color: (theme) => theme.palette.grey[500],
-                    }}
-                >
-                    <CloseIcon />
-                </IconButton>
-            </DialogTitle>
-            <DialogContent dividers>
-                <Grid container spacing={3}>
-                    <Grid item xs={12} sm={12} md={12}>
-                        <TextField 
-                            label="Descripción" 
-                            fullWidth 
-                            size="small" 
-                            id="descripcion"
-                            name="descripcion" 
-                            value={formik.values.descripcion}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            error={
-                                formik.touched.descripcion && Boolean(formik.errors.descripcion)
-                            }
-                            helperText={
-                                formik.touched.descripcion && formik.errors.descripcion
-                            } />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <CategoryAutocomplete />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <FormControl fullWidth size="small">
-                            <InputLabel>Medida</InputLabel>
-                            <Select  
-                            name="idMedida"
-                            id="idMedida" 
-                            label="Medida"
-                            value={formik.values.idMedida}
-                            onChange={formik.handleChange}
-                            error={
-                                formik.touched.idMedida && Boolean(formik.errors.idMedida)
-                            } >
-                                
-                                {dataFormApi.measures.map((item, key) => (
-                                    <MenuItem key={key} value={item.idMedida}>{item.descripcion}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
-                        <TextField  label="Código"  
+        <Formik initialValues={productState.data} validationSchema={validationSchema} onSubmit={handleSubmit}>
+            {(formik) => (
+                <Form> 
+                    <DialogTitle sx={{ m: 0, p: 2 }}>
+                    {dialogTitle}
+                        <IconButton
+                            aria-label="close"
+                            onClick={handleCancel}
+                            sx={{
+                                position: "absolute",
+                                right: 8,
+                                top: 8,
+                                color: (theme) => theme.palette.grey[500],
+                            }}
+                        >
+                            <CloseIcon />
+                        </IconButton>
+                    </DialogTitle>
+                    <DialogContent dividers>
+                        <Grid container spacing={3}>
+                            <Grid item xs={12} sm={12} md={12}>
+                                <TextField 
+                                    label="Descripción" 
                                     fullWidth 
-                                    size="small"
-                                    id="codigo"
-                                    name="codigo" 
-                                    value={formik.values.codigo}
+                                    size="small" 
+                                    id="descripcion"
+                                    name="descripcion" 
+                                    value={formik.values.descripcion}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                     error={
-                                        formik.touched.codigo && Boolean(formik.errors.codigo)
+                                        formik.touched.descripcion && Boolean(formik.errors.descripcion)
                                     }
                                     helperText={
-                                        formik.touched.codigo && formik.errors.codigo
+                                        formik.touched.descripcion && formik.errors.descripcion
+                                    } />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <CategoryAutocomplete />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    fullWidth
+                                    size="small"
+                                    id="idMedida"
+                                    name="idMedida"
+                                    select 
+                                    label="Medida" 
+                                    value={formik.values.idMedida > 0 ? formik.values.idMedida : ''}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}   
+                                    error={
+                                        formik.touched.idMedida && Boolean(formik.errors.idMedida)
+                                    }
+                                    helperText={
+                                        formik.touched.idMedida && formik.errors.idMedida
+                                    }                      
+                                    >
+                                    {dataFormApi.measures.map((option, index) => (
+                                        <MenuItem key={index} value={option.idMedida}>
+                                        {option.descripcion}
+                                        </MenuItem>
+                                    ))}
+                                    </TextField>
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
+                                <TextField  label="Código"  
+                                            fullWidth 
+                                            size="small"
+                                            id="codigo"
+                                            name="codigo" 
+                                            value={formik.values.codigo}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}
+                                            error={
+                                                formik.touched.codigo && Boolean(formik.errors.codigo)
+                                            }
+                                            helperText={
+                                                formik.touched.codigo && formik.errors.codigo
+                                            }
+                                        />
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
+                                <TextField 
+                                    label="Código Aux:" 
+                                    fullWidth 
+                                    size="small"
+                                    id="codigoAuxiliar"
+                                    name="codigoAuxiliar" 
+                                    value={formik.values.codigoAuxiliar}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={
+                                        formik.touched.codigoAuxiliar && Boolean(formik.errors.codigoAuxiliar)
+                                    }
+                                    helperText={
+                                        formik.touched.codigoAuxiliar && formik.errors.codigoAuxiliar
                                     }
                                 />
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
-                        <TextField 
-                            label="Código Aux:" 
-                            fullWidth 
-                            size="small"
-                            id="codigoAuxiliar"
-                            name="codigoAuxiliar" 
-                            value={formik.values.codigoAuxiliar}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            error={
-                                formik.touched.codigoAuxiliar && Boolean(formik.errors.codigoAuxiliar)
-                            }
-                            helperText={
-                                formik.touched.codigoAuxiliar && formik.errors.codigoAuxiliar
-                            }
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
-                        <TextField 
-                            label="Código Barrá" 
-                            fullWidth 
-                            size="small"
-                            id="codigoBarra"
-                            name="codigoBarra" 
-                            value={formik.values.codigoBarra}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            error={
-                                formik.touched.codigoBarra && Boolean(formik.errors.codigoBarra)
-                            }
-                            helperText={
-                                formik.touched.codigoBarra && formik.errors.codigoBarra
-                            }
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
-                        <FormControlLabel 
-                            control={<Switch color="primary" size="small" />}
-                            label="Lleva Inventario" 
-                            id="llevaInventario"
-                            name="llevaInventario" 
-                            value={formik.values.llevaInventario}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
-                        <FormControl fullWidth size="small">
-                            <InputLabel>Tipo Iva</InputLabel>
-                            <Select value="" label="Medida">
-                                {dataFormApi.vatRates.map((item, key) => (
-                                    <MenuItem key={key} value={item.idTipoIva}>{item.descripcion}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
-                        <TextField type="number"
-                            label="Precio Costo" 
-                            fullWidth 
-                            size="small" 
-                            id="precioCosto"
-                            name="precioCosto" 
-                            value={formik.values.precioCosto}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            error={
-                                formik.touched.precioCosto && Boolean(formik.errors.precioCosto)
-                            }
-                            helperText={
-                                formik.touched.precioCosto && formik.errors.precioCosto
-                            } 
-                        />
-                    </Grid>
-                    <Grid item lg={9} md={9} sm={12} xs={12}>
-                        <SalePriceListTabulator />
-                    </Grid>
-                    <Grid item lg={3} md={3} sm={12} xs={12}>
-                     
-                        <Card sx={{ maxWidth: 345 }}>
-                            <CardActionArea  onClick={handleUploadButtonClick}>
-                                <CardMedia
-                                component="img"
-                                height="140"
-                                image={ImgProductDefault}
-                                alt="green iguana"
-                                /> 
-                            </CardActionArea>
-                            <CardActions>
-                                <IconButton aria-label="fingerprint" color="error">
-                                    <RemoveCircleOutlineIcon/>
-                                </IconButton>
-                            </CardActions>
-                        </Card>
-                   
-                                    {/* <Card sx={{ maxWidth: 345 }}>
-                            <CardMedia
-                                sx={{ height: 140 }}
-                                image="/static/images/cards/contemplative-reptile.jpg"
-                                title="green iguana"
-                            />
-
-                            <CardActions>
-                                <input type="file"   />
-                                <Button
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
+                                <TextField 
+                                    label="Código Barrá" 
+                                    fullWidth 
                                     size="small"
+                                    id="codigoBarra"
+                                    name="codigoBarra" 
+                                    value={formik.values.codigoBarra}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={
+                                        formik.touched.codigoBarra && Boolean(formik.errors.codigoBarra)
+                                    }
+                                    helperText={
+                                        formik.touched.codigoBarra && formik.errors.codigoBarra
+                                    }
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
+                                <FormControlLabel 
+                                    control={<Switch color="primary" size="small" />}
+                                    label="Lleva Inventario" 
+                                    id="llevaInventario"
+                                    name="llevaInventario" 
+                                    value={formik.values.llevaInventario}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} sm={6} md={3} lg={3} xl={3}> 
+                                <TextField
                                     fullWidth
-                                    variant="contained"
-                                    color="success"
-                                    
-                                >
-                                    Subir imagen
-                                </Button>
-                            </CardActions>
-                        </Card> */}
-                    </Grid>
-                </Grid>
-            </DialogContent>
-            <DialogActions>
-                <Button type="submit" disabled={formik.isSubmitting}>Ok</Button>
-                <Button autoFocus onClick={handleCancel}>
-                    Cancel
-                </Button>
-            </DialogActions>
-        </Form>
-      )}
-    </Formik>
+                                    size="small"
+                                    id="idTipoIva"
+                                    name="idTipoIva"
+                                    select
+                                    label="Tipo Iva" 
+                                    value={formik.values.idTipoIva > 0 ? formik.values.idTipoIva : ''}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}                         
+                                    >
+                                    {dataFormApi.vatRates.map((option, index) => (
+                                        <MenuItem key={index} value={option.idTipoIva}>
+                                        {option.descripcion}
+                                        </MenuItem>
+                                    ))}
+                                    </TextField> 
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={3} lg={3} xl={3}>
+                                <TextField type="number"
+                                    label="Precio Costo" 
+                                    fullWidth 
+                                    size="small" 
+                                    id="precioCosto"
+                                    name="precioCosto" 
+                                    value={formik.values.precioCosto}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={
+                                        formik.touched.precioCosto && Boolean(formik.errors.precioCosto)
+                                    }
+                                    helperText={
+                                        formik.touched.precioCosto && formik.errors.precioCosto
+                                    } 
+                                />
+                            </Grid>
+                            <Grid item lg={9} md={9} sm={12} xs={12}>
+                                {/* Calculo tarifas  */}
+                                <SalePriceListTabulator />
+                            </Grid>
+                            <Grid item lg={3} md={3} sm={12} xs={12}>
+                            
+                                <Card sx={{ maxWidth: 345 }}>
+                                    <CardActionArea  onClick={handleUploadButtonClick}>
+                                        {selectedImage ? ( 
+                                            <CardMedia
+                                            component="img"
+                                            height="140"
+                                            image={selectedImage}
+                                            alt="green iguana"
+                                            />
 
-       
-
-
-        // </form>
+                                        ) :  <CardMedia
+                                            component="img"
+                                            height="140"
+                                            image={ImgProductDefault}
+                                            alt="green iguana"
+                                            /> 
+                                        }
+                                        
+                                        <input
+                                            type="file"
+                                            style={{ display: 'none' }} // Oculta el input file
+                                            ref={fileInputRef} // Asigna la referencia
+                                            onChange={handleFileChange}
+                                        />
+                                    </CardActionArea>
+                                    <CardActions>
+                                        <IconButton aria-label="fingerprint" color="error">
+                                            <RemoveCircleOutlineIcon/>
+                                        </IconButton>
+                                    </CardActions>
+                                </Card> 
+                            </Grid>
+                        </Grid>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button type="submit" disabled={formik.isSubmitting}>Ok</Button>
+                        <Button autoFocus onClick={handleCancel}>
+                            Cancel
+                        </Button>
+                    </DialogActions>
+                </Form>
+            )}
+        </Formik> 
+     
     );
 }

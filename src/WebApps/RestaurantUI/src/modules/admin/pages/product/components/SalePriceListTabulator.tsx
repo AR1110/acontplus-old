@@ -1,15 +1,14 @@
 import { SalePriceList } from "@/modules/admin/models"
-import { useEffect, useState } from "react"
+import { useEffect} from "react"
 import { useProductContext } from "../context";
 import { ColumnDefinition, ReactTabulator } from "react-tabulator/lib";
+ 
+type ColPvP = 'precioVenta' | 'precioConIva';
 
+export default function SalePriceListTabulator() { 
+    const { productState, dispatch } = useProductContext(); 
+    const dataFormApi = productState.dataFormApi; 
 
-export default function SalePriceListTabulator() {
-    const [salePriceList, setSalesPriceList] = useState<SalePriceList[]>([])
-
-
-    const { productState } = useProductContext();
-    const dataFormApi = productState.dataFormApi;
     const columns: ColumnDefinition[] = [
         { title: "Tarifa", field: "tarifa", width: 100, hozAlign: "center", editable: false },
         { title: "Tipo Iva", field: "tipoIva", width: 100, hozAlign: "center", editable: false },
@@ -30,10 +29,12 @@ export default function SalePriceListTabulator() {
         { title: "% Utilidad", field: "porcentajeUtilidad", width: 110, hozAlign: "center", editable: true, editor: 'number' },
         { title: "Utilidad", field: "utilidad", width: 100, hozAlign: "center", editable: false },
         { title: "Estado", field: "estado", width: 100, hozAlign: "center", editable: false },
-    ];
+    ]; 
 
+     
 
     useEffect(() => {
+        console.log('Hola')
         const salePriceList: SalePriceList[] = dataFormApi.saleFees.map(item => ({
             id: item.idTarifa,
             tarifa: item.descripcion,
@@ -44,28 +45,40 @@ export default function SalePriceListTabulator() {
             utilidad: 0,
             estado: item.predeterminada ? 'Predeterminado' : '',
         }))
-        setSalesPriceList(salePriceList)
-    }, [dataFormApi.saleFees]);
+        dispatch({
+            type: 'productPvPs',
+            payload: salePriceList
+        }) 
+    }, []);
 
 
     return (
 
         <>
-            {salePriceList.length > 0 ? <ReactTabulator
+            {productState.productPvPs.length > 0 ? <ReactTabulator
                 responsiveLayout={true}
                 autoResize={true}
-                data={salePriceList}
+                data={productState.productPvPs}
                 columns={columns}
                 layout={"fitData"}  
-                options={{ movableColumns: true, movableRows: true }}
+                // options={{ movableColumns: true, movableRows: true }}
                 events={
                     {
                         dataChanged: (row:any) => {
                             console.log(row)
                         },
                         cellEdited: (row: any) => {
-                            console.log(row.getColumn()._column.field)
-                            console.log(row.getData() )
+                            const fields: ColPvP  = row.getColumn()._column.field;
+                            // const rowData = row.getData(); 
+                            switch(fields) {
+                                case 'precioVenta':
+                                    //Validacion de Campos 
+                                        // if ([null, undefined, "", 0].includes(_self.getPrecioCosto) || isNaN(_self.precioCosto)) {
+                                        //     toastr.warning('Ingrese el Precio de Costo');
+                                        //     return
+                                        // }
+                                    break
+                            }
 
                             //Validacion de Campos 
                             

@@ -2,7 +2,8 @@ import { PATHS } from "@/core/constants/path";
 import { Http } from "@/core/utils/http";
 
 export const tableSvc = {
-  getAll: function (query: string) {
+  getAll: function (query?: string) {
+    console.log(query);
     return Http({
       method: "get",
       url: PATHS.PRIVATE + "Tables",
@@ -11,7 +12,8 @@ export const tableSvc = {
       },
     });
   },
-  findById: function (id: number) {
+  findById: function (id?: number) {
+    console.log(id)
     return Http({
       method: "get",
       url: PATHS.PRIVATE + "Table",

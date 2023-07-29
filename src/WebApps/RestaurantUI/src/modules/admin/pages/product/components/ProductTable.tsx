@@ -14,6 +14,7 @@ export default function ProductTable() {
   let enumeracion = 1;
 
   const handleChangePage = (event: unknown, newPage: number) => {
+    console.log(event);
     setPage(newPage);
   };
 
