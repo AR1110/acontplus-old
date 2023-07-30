@@ -34,11 +34,12 @@ namespace Inventario.Application.Services
                 return Converters.DataSetToJSON(ds);
             }
         }
-        public async Task<APIResponse> AddAsync(StockFisico stockFisico)
+        public async Task<APIResponse> AddAsync(ApiRequest request)
         {
-            _context.StockFisicos.Add(stockFisico);
-            await _context.SaveChangesAsync();
+            // _context.StockFisicos.Add(stockFisico);
+            // await _context.SaveChangesAsync();
             _response.Create(code: "0", message: "Ok");
+            var dt = await _repository.GetDataTableAsync("", request.Data);
             return _response;
         }
 

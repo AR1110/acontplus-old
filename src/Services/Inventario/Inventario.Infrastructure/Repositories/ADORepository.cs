@@ -3,6 +3,7 @@ using Inventario.Infrastructure.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Data.Common;
 
 namespace Inventario.Infrastructure.Repositories
 {
@@ -23,14 +24,9 @@ namespace Inventario.Infrastructure.Repositories
                 {
                     foreach (var parameter in parameters)
                     {
-                        //AddSqlParameter(parameter.Key, parameter.Value);
                         if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
                         {
-                            SqlParameter sqlParam = new SqlParameter();
-                            sqlParam.ParameterName = parameter.Key;
-                            sqlParam.SqlDbType = GetDbType(parameter.Value);
-                            sqlParam.Value = parameter.Value ?? DBNull.Value;
-                            command.Parameters.Add(sqlParam);
+                            AddSqlParameter(command, parameter.Key, parameter.Value);
                         }
                     }
                 }
@@ -58,14 +54,14 @@ namespace Inventario.Infrastructure.Repositories
                     {
                         if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
                         {
-                            SqlParameter sqlParam = new SqlParameter();
-                            sqlParam.ParameterName = parameter.Key;
-                            sqlParam.SqlDbType = GetDbType(parameter.Value);
-                            sqlParam.Value = parameter.Value ?? DBNull.Value;
-                            command.Parameters.Add(sqlParam);
+                            AddSqlParameter(command, parameter.Key, parameter.Value);
                         }
                     }
                 }
+
+                string outParam = "@tableNames";
+                AddSqlParameterOut(command, outParam, SqlDbType.VarChar, 500);
+
                 command.CommandType = CommandType.StoredProcedure;
                 await _context.Database.OpenConnectionAsync();
                 using (SqlDataAdapter adapter = new SqlDataAdapter())
@@ -74,23 +70,37 @@ namespace Inventario.Infrastructure.Repositories
                     ds = new DataSet();
                     adapter.Fill(ds);
                 }
+
+                string[] tableNames = GetParameter(command, outParam).ToString().Split(',');
+
+                for (int i = 0; i < tableNames.Length; i++)
+                {
+                    ds.Tables[i].TableName = tableNames[i];
+                }
             }
             return ds;
         }
-        private List<SqlParameter> AddSqlParameter(string paramName, object paramValue)
+        private void AddSqlParameter(DbCommand cmd, string name, object value)
         {
-            List<SqlParameter> parameters = new List<SqlParameter>();
-            if (!string.IsNullOrEmpty(paramName) && paramValue != null)
-            {
-                SqlParameter sqlParam = new SqlParameter();
-                sqlParam.ParameterName = paramName;
-                sqlParam.SqlDbType = GetDbType(paramValue);
-                sqlParam.Direction = ParameterDirection.Output;
-                parameters.Add(sqlParam);
-            }
-            return parameters;
+            SqlParameter sqlParam = new SqlParameter();
+            sqlParam.ParameterName = name;
+            sqlParam.SqlDbType = GetDbType(value);
+            sqlParam.Value = value ?? DBNull.Value;
+            cmd.Parameters.Add(sqlParam);
         }
-        //https://ajaxhispano.com/ask/alguien-tiene-una-funcion-c-que-mapee-el-tipo-de-datos-sql-de-una-columna-a-su-equivalente-clr-58667/
+        private void AddSqlParameterOut(DbCommand cmd, string parameterName, SqlDbType sqlDbType, int size)
+        {
+            SqlParameter sqlParam = new SqlParameter();
+            sqlParam.ParameterName = parameterName;
+            sqlParam.SqlDbType = sqlDbType;
+            sqlParam.Size = size;
+            sqlParam.Direction = ParameterDirection.Output;
+            cmd.Parameters.Add(sqlParam);
+        }
+        public object GetParameter(DbCommand command, string parameterName)
+        {
+            return command.Parameters[parameterName].Value;
+        }
         public static SqlDbType GetDbType(object obj)
         {
             Type type = obj.GetType();

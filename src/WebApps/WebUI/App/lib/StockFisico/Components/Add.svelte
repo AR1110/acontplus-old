@@ -6,13 +6,13 @@
         StockFisico,
         StockFisicoDetalle,
     } from "$core/interfaces/stock-fisico";
-    import { Estabs } from "$core/services/establecimiento-service";
-    import { StockFisicoService } from "$core/services/stok-fisico-service";
-    import { Articulos } from "$core/services/articulo-service";
+    import { Estabs } from "$services/establecimiento-service";
+    import { StockFisicoService } from "$services/stok-fisico-service";
+    import { Articulos } from "$services/articulo-service";
     import AdvancedSearch from "$core/components/AdvancedSearch.svelte";
     import Grid from "$core/components/Grid.svelte";
     import type { MotivoDiscrepancia } from "$core/interfaces/motivo-discrepancia";
-    import { Discrepancias } from "$core/services/motivos-discrepancia-service";
+    import { Discrepancias } from "$services/motivos-discrepancia-service";
     import toast from "$core/utils/toast";
 
     export let showModal = false;
@@ -45,25 +45,34 @@
     let motivosDiscrepancia = [] as MotivoDiscrepancia[];
 
     const initialLoad = () => {
-        StockFisicoService.get(JSON.stringify({ tipo: 1 })).then((response: any) => {
-            if (response) {
-                allArrays = response;
-                console.log(allArrays);
-                puntosEmision = allArrays[0].filter(
-                    (x) => x.codEstab === codEstab
-                );
-                setDefaultPtoEmi();
-                bodegas = allArrays[1].filter((x) => x.codEstab === codEstab);
-                setDefaultBodega();
-                subfamilias = allArrays[2];
-                data.secuencial =
-                    allArrays[4][0].estab +
-                    "-" +
-                    allArrays[4][0].ptoEmi +
-                    "-" +
-                    String(allArrays[4][0].ultimaSecuencia).padStart(9, "0");
+        StockFisicoService.get(JSON.stringify({ tipo: 1 })).then(
+            (response: any) => {
+                if (response) {
+                    allArrays = response;
+                    console.log(allArrays);
+                    puntosEmision = allArrays["puntosEmision"].filter(
+                        (x) => x.codEstab === codEstab
+                    );
+                    setDefaultPtoEmi();
+                    bodegas = allArrays["bodegas"].filter(
+                        (x) => x.codEstab === codEstab
+                    );
+                    setDefaultBodega();
+                    subfamilias = allArrays["subfamilias"];
+                    data.serieDocumento =
+                        allArrays["configDocumento"][0].estab +
+                        "-" +
+                        allArrays["configDocumento"][0].ptoEmi +
+                        "-" +
+                        String(
+                            allArrays["configDocumento"][0].ultimaSecuencia
+                        ).padStart(9, "0");
+                    data.secuencial = Number(
+                        allArrays["configDocumento"][0].ultimaSecuencia
+                    );
+                }
             }
-        });
+        );
         Discrepancias.get(null).then((response) => {
             motivosDiscrepancia = response;
             console.log(motivosDiscrepancia);
@@ -99,7 +108,6 @@
             return;
         }
         //modalClose("saving");
-        data.secuencial = data.secuencial.split("-").join("");
         data.stockFisicoDetalles = articlesFounded;
         console.log(data.stockFisicoDetalles);
         StockFisicoService.post(data).then((response) => {
@@ -132,11 +140,13 @@
     };
 
     const onChangeEstablecimiento = () => {
-        puntosEmision = allArrays[0].filter(
+        puntosEmision = allArrays["puntosEmision"].filter(
             (x) => x.codEstab === data.codEstab
         );
         setDefaultPtoEmi();
-        bodegas = allArrays[1].filter((x) => x.codEstab === data.codEstab);
+        bodegas = allArrays["bodegas"].filter(
+            (x) => x.codEstab === data.codEstab
+        );
         setDefaultBodega();
     };
     const askToChangeBodega = () => {};
@@ -180,25 +190,13 @@
         options.tipo = 4;
         StockFisicoService.get(JSON.stringify(options)).then((response) => {
             if (response) {
-                articlesFounded = response[0];
-                // for (const item of response[0]) {
-                //     articlesFounded.push({
-                //         idArticulo: item.idArticulo,
-                //         codigo: item.codigo,
-                //         descripcion: item.descripcion,
-                //         stockFisicoId: 0,
-                //         cantidadContada: 0,
-                //         stockActual: item.stock,
-                //         discrepancia: 0,
-                //         motivoDiscrepanciaId: 0,
-                //         otroMotivo: "",
-                //     });
-                // }
+                articlesFounded = response['articulos'];
                 articlesFounded.forEach((value) => {
                     value.stockFisicoId = 0;
                     value.cantidadContada = 0;
                     value.discrepancia = 0;
                     value.motivoDiscrepanciaId = 0;
+                    value.motivoDiscrepancia = "";
                     value.otroMotivo = "";
                 });
                 console.log(articlesFounded.length);
@@ -216,7 +214,7 @@
     };
     //https://jsfiddle.net/biruktes/hn8gascw/24/
     let customNativeSelect = function (cell, onRendered, success, cancel) {
-        var cellRealValue = cell.getElement().dataset.motivoDiscrepanciaId;
+        var cellRealValue = cell.getElement().dataset.motivoDiscrepancia;
         cellRealValue =
             typeof cellRealValue === "undefined" ? "none" : cellRealValue;
 
@@ -235,12 +233,14 @@
             if (selectList.selectedOptions[0].value != cellRealValue) {
                 success(selectList.selectedOptions[0].value);
                 // Store value to cell dataset
+                cell.getElement().dataset.motivoDiscrepancia =
+                    selectList.selectedOptions[0].text;
                 cell.getElement().dataset.motivoDiscrepanciaId =
                     selectList.selectedOptions[0].value;
-                alert(
-                    "Here is what the actual looks like: " +
-                        JSON.stringify(cell.getTable().getData())
-                );
+                // alert(
+                //     "Here is what the actual looks like: " +
+                //         JSON.stringify(cell.getTable().getData())
+                // );
             } else {
                 // No change
                 cancel();
@@ -314,7 +314,7 @@
         },
         {
             title: "Motivo",
-            field: "motivoDiscrepanciaId",
+            field: "motivoDiscrepancia",
             //editor: "list",
             editor: customNativeSelect,
             //editorParams: { values: motivosDiscrepancia },
@@ -404,7 +404,7 @@
                                 name="secuencial"
                                 readonly
                                 disabled
-                                bind:value={data.secuencial}
+                                bind:value={data.serieDocumento}
                                 class="form-control border-select"
                             />
                         </div>

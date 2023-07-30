@@ -44,7 +44,7 @@ namespace Inventario.API.Controllers
                 if (response == null) { return NoContent(); }
                 return Ok(response);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return BadRequest();
             }
@@ -102,16 +102,19 @@ namespace Inventario.API.Controllers
         // POST: api/StockFisico
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<StockFisico>> PostStockFisico(StockFisico stockFisico)
+        public async Task<IActionResult> PostStockFisico(StockFisico stockFisico)
         {
             stockFisico.UserId = User.GetUserId();
-            if (_context.StockFisicos == null)
+            try
             {
-                return Problem("Entity set 'InventarioContext.StockFisicos'  is null.");
+               var response = await _stockFisico.AddAsync(stockFisico);
+                return  Ok(response);
             }
-          
-
-            return CreatedAtAction("GetStockFisico", new { id = stockFisico.Id }, stockFisico);
+            catch (System.Exception ex)
+            {
+                
+                return BadRequest();
+            }
         }
 
         // DELETE: api/StockFisico/5

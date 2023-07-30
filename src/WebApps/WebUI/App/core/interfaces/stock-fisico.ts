@@ -2,7 +2,8 @@ export interface StockFisico {
     id: number;
     codEstab: string;
     puntoEmisionId: number;
-    secuencial: string;
+    secuencial: number;
+    serieDocumento: string;
     fecha: Date;
     responsable: string;
     obs: string;
@@ -20,5 +21,6 @@ export interface StockFisicoDetalle {
     stockActual: number;
     discrepancia?: number;
     motivoDiscrepanciaId?: number;
+    motivoDiscrepancia?: string;
     otroMotivo?: string;
 }
