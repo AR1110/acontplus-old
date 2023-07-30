@@ -116,7 +116,12 @@ export const PricingCalculateUtils = {
             console.log('pricingUtils -> getPorcentajeDescuento', error);
             return -1;
         }
+    },
+
+    getValueUtility: (priceSale: number, unitPrice:number): number => {
+        return (priceSale - unitPrice);
     }
+    
 
 }
 

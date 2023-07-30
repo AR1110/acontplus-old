@@ -43,13 +43,19 @@ const ProductSvc = {
 			url: `${PATHS.INVENTARIO}${URL}`,
 			params
 		})
-		const dataApi = JSON.parse(response.payload);
-		// const familias = dataApi[0];
-		const categories = dataApi[1]; //subfamilias
-		const measures = dataApi[2]; //medidas
-		const vatRates = dataApi[3]; //tipos iva
-		const saleFees = dataApi[4]; //tarifas
+		const dataApi = JSON.parse(response.payload); 
+		
+		const decimalInventory = dataApi[0][0];
+		console.log(decimalInventory)
+		//const familias = dataApi[1];
+		const categories = dataApi[2]; //subfamilias
+		const measures = dataApi[3]; //medidas
+		const vatRates = dataApi[4]; //tipos iva
+		const saleFees = dataApi[5]; //tarifas
 		return {
+			decimalInventory: {
+				nroPrecio: Number(decimalInventory.nroPrecio),
+			},
 			categories,
 			measures,
 			vatRates,

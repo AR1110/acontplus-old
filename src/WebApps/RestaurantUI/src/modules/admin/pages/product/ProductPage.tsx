@@ -11,6 +11,7 @@ import { useState } from "react";
 import { ProductProvider} from "./context";
 import { ProductDialog, ProductTable } from "./components";
 import DialogCustom from "@/core/components/DialogCustom";
+import { ErrorBoundary } from "@/core/utils"; 
  
 
 export default function ProductPage() {    
@@ -26,6 +27,7 @@ export default function ProductPage() {
  
   return ( 
     <ProductProvider >
+      <ErrorBoundary fallBackComponent={<>Error!</>}>
       <Grid item xs={12}>
         <Stack
           direction="row"
@@ -50,7 +52,7 @@ export default function ProductPage() {
        
       </Grid> 
 
-      <div>
+      <>
         { open ? <DialogCustom
           id="ringtone-menu"
           keepMounted
@@ -60,7 +62,8 @@ export default function ProductPage() {
           maxWidth="md"
         /> : '' 
         }
-      </div>
+      </>
+      </ErrorBoundary>
     </ProductProvider>
     
   );

@@ -2,9 +2,9 @@ import { Button, Grid, Stack, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
 import { CategoryProvider } from './context/CategoryProvider';
-import CategoryTable from './Components/CategoryTable';
+import CategoryTable from './components/CategoryTable';
 import DialogCustom from '@/core/components/DialogCustom';
-import CategoryDialog from './Components/CategoryDialog';
+import CategoryDialog from './components/CategoryDialog';
 
 export default function CategoryPage() {
   const [open, setOpen] = useState(false);
