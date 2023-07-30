@@ -6,13 +6,11 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import {
   Button,
-  ButtonGroup,
-  Divider,
-  Grid,
-  Stack,
+  ButtonGroup, 
+  Grid, 
   TableContainer,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
+ 
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import ModeEditOutlineIcon from "@mui/icons-material/ModeEditOutline";
 import { useEffect, useState } from "react";
@@ -29,10 +27,7 @@ export default function TableIndex() {
     description: "",
     capacity: 1,
   });
-
-  const handleOpenDialog = () => {
-    setIsOpenDialog(true);
-  };
+ 
 
   const handleCloseDialog = () => {
     setIsOpenDialog(false);

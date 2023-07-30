@@ -1,14 +1,15 @@
-import { DataFormApi, ProductCreateDto, ProductPvPCreateDto, ProductReadDto, ProductState } from "@/modules/admin/models"
+import { ProductDataFormApi, DialogProps, ProductCreateDto, ProductPvPCreateDto, ProductReadDto, ProductState } from "@/modules/admin/models"
 
 type Action =
-    | { type: 'list', payload: ProductReadDto[] }
-    | { type: 'dataFormApi', payload: DataFormApi }
+    | { type: 'products', payload: ProductReadDto[] }
+    | { type: 'dataFormApi', payload: ProductDataFormApi }
     | { type: 'data', payload: ProductCreateDto}
     | { type: 'productPvPs', payload: ProductPvPCreateDto[]}
+    | { type: 'dialogTitle', payload: DialogProps}
 
 export const ProductReducer = (state: ProductState, action: Action): ProductState => {
     switch (action.type) {
-        case 'list':
+        case 'products':
             return {
                 ...state,
                 products: [...action.payload],
@@ -19,9 +20,10 @@ export const ProductReducer = (state: ProductState, action: Action): ProductStat
                 dataFormApi: action.payload
             } 
         case 'data': 
+        console.log(action.payload)
             return {
                 ...state,
-                data: action.payload
+                data: {...action.payload}
             }
 
         case 'productPvPs': 
@@ -29,7 +31,11 @@ export const ProductReducer = (state: ProductState, action: Action): ProductStat
                 ...state,
                 productPvPs: [...action.payload]
             }
-        
+        case 'dialogTitle': 
+            return { 
+                ...state, 
+                dialogProps: {...action.payload}
+            }
         default:
             return state;
     }

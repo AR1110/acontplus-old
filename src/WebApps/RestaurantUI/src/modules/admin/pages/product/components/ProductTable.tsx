@@ -14,6 +14,7 @@ export default function ProductTable() {
   let enumeracion = 1;
 
   const handleChangePage = (event: unknown, newPage: number) => {
+    console.log(event);
     setPage(newPage);
   };
 
@@ -29,7 +30,7 @@ export default function ProductTable() {
     sx={{ p: 2, display: "flex", flexDirection: "column" }}
     elevation={0}
   >
-   
+
     <TableContainer component={Paper} sx={{ maxHeight: 440 }}>
       <Table
         stickyHeader

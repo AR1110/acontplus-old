@@ -11,22 +11,23 @@ import { useState } from "react";
 import { ProductProvider} from "./context";
 import { ProductDialog, ProductTable } from "./components";
 import DialogCustom from "@/core/components/DialogCustom";
+import { ErrorBoundary } from "@/core/utils"; 
  
 
 export default function ProductPage() {    
-  const [open, setOpen] = useState(false); 
-  
+  const [open, setOpen] = useState(false);  
   // const enumeracion = 1;
-  const onOpenDialog = () => {  
+  const onOpenDialog = () => { 
     setOpen(true);
   };
 
-  const handleClose = (newValue?: string) => {
+  const handleClose = () => {
     setOpen(false); 
   };
  
   return ( 
     <ProductProvider >
+      <ErrorBoundary fallBackComponent={<>Error!</>}>
       <Grid item xs={12}>
         <Stack
           direction="row"
@@ -36,6 +37,7 @@ export default function ProductPage() {
         >
           <Typography variant="h5" gutterBottom>
             Productos
+            
           </Typography>
           <Button
             variant="contained"
@@ -50,14 +52,18 @@ export default function ProductPage() {
        
       </Grid> 
 
-      <DialogCustom
-        id="ringtone-menu"
-        keepMounted
-        open={open}
-        onClose={handleClose} 
-        children={<ProductDialog handleClose={handleClose} />}
-        maxWidth="md"
-      />
+      <>
+        { open ? <DialogCustom
+          id="ringtone-menu"
+          keepMounted
+          open={open}
+          onClose={handleClose} 
+          children={<ProductDialog handleClose={handleClose} dialogTitle="Nuevo Articulo" />}
+          maxWidth="md"
+        /> : '' 
+        }
+      </>
+      </ErrorBoundary>
     </ProductProvider>
     
   );

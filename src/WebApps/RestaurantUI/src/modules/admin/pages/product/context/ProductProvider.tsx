@@ -8,15 +8,20 @@ import { ProductSvc } from "@/modules/admin/services";
 const INITIAL_STATE: ProductState = {
 	products: [],
 	dataFormApi: {
+		decimalInventory: {
+			nroPrecio: 0
+		}, 
 		categories: [],
 		measures: [],
 		saleFees: [],
 		vatRates: []
 	},
 	data: {
+		idArticulo: 0,
 		idSubFamilia: 0,
 		idMedida: 0,
-		precioCosto: 0,
+		idTipoIva: 0,
+		precioCosto: 0.01,
 		precioSinSubsidio: 0,
 		codigo: "",
 		codigoAuxiliar: "",
@@ -27,7 +32,10 @@ const INITIAL_STATE: ProductState = {
 		idEtiqueta: 0,
 		cantMinimaVentaPorMayor: 0
 	},
-	productPvPs: []
+	productPvPs: [],
+	dialogProps: {
+		dialogTitle: "",  
+	}
 }
 
 interface Props {
@@ -39,7 +47,7 @@ export const ProductProvider = ({ children }: Props) => {
 	const getProducts = () => {
 		try {
 			ProductSvc.getAll().then((response) => {
-				dispatch({ type: 'list', payload: response })
+				dispatch({ type: 'products', payload: response })
 			})
 		} catch (error) {
 			console.log(error);
@@ -62,7 +70,7 @@ export const ProductProvider = ({ children }: Props) => {
 	}, []);
 
 	return (
-		<ProductContext.Provider value={{ productState }}>
+		<ProductContext.Provider value={{ productState, dispatch}}>
 			{children}
 		</ProductContext.Provider>
 	)

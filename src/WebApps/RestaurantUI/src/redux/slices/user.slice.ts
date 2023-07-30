@@ -7,6 +7,7 @@ export const userslice = createSlice({
   initialState: AuthSvc.getUser() ? AuthSvc.getUser() : UserEmptyState,
   reducers: {
     setCredentials: (state, action) => {
+      console.log(state);
       return action.payload;
     },
     logOut: () => {

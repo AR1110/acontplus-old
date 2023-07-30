@@ -1,4 +1,4 @@
-import { styled, useTheme, Theme, CSSObject } from "@mui/material/styles";
+import { styled,  Theme, CSSObject } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
@@ -25,11 +25,10 @@ import {
   Container,
   Grid,
   Menu,
-  MenuItem,
-  Paper,
+  MenuItem, 
   createTheme,
 } from "@mui/material";
-import { AccountCircle, Restaurant, TableBar } from "@mui/icons-material";
+import { AccountCircle, Restaurant } from "@mui/icons-material";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
 import CategoryIcon from "@mui/icons-material/Category";
 
