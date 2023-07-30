@@ -87,6 +87,7 @@ BEGIN
 			
 			SET @idTransaccion = @@IDENTITY
 
+			
 		END
 
 	EXEC Inventario.Stock_Update @idArticulo,@idBodega
