@@ -1,6 +1,7 @@
 ﻿using DataAccess;
 using Domain.Models.Almacen;
 using Helpers;
+using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 using System.Text.Json;
@@ -44,16 +45,17 @@ namespace Inventario.API.Controllers.v3
         }
 
         [HttpPost("Post")]
-        public async Task<IActionResult> Post([FromBody] SubFamilia data)
+        public async Task<IActionResult> Post(ApiRequest request)
         {
             GenericResponse _response = new GenericResponse();
-            DbAccess _db = new DbAccess(_configuration);
-            string json = JsonSerializer.Serialize(data);
+
+            
+            DbAccess _db = new DbAccess(_configuration);            
             try
             {
                 await _db.SPExecute("Restaurant.Category_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", request.Data);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
