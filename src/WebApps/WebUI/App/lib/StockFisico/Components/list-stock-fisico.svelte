@@ -7,6 +7,7 @@
             //console.log(response);
             if (response) {
                 stocksFisicos = response["stockFisicos"];
+                console.log(stocksFisicos)
             }
         });
     });
