@@ -39,8 +39,6 @@ namespace Inventario.API.Controllers.v3
 
             //    return BadRequest("Cannot upload more than one file at a time"); 
 
-
-
             //if (Request.Form.Files[0].Length <= 0) 
 
             //    return BadRequest("Invalid file length, seems to be empty"); 
