@@ -5,4 +5,4 @@ export * from './pricingCalculate.utils';
 export * from './roundNumber.utils';
 export { default as RoutesWithNotFound } from './routes-with-not-found';
 export * from './snackbar-manager';
-export * from './upload-file.utils';
+export * from './uploadFile.utils';

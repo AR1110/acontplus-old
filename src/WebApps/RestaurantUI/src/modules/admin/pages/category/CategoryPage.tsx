@@ -23,6 +23,7 @@ export default function CategoryPage() {
   const getCategories = function(){
     try {
       CategorySvc.getAll().then((response) => {
+        
         setCategories(response);
 			});      
     } catch (error) {

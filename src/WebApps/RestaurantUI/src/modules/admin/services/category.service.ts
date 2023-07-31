@@ -1,5 +1,5 @@
 import { PATHS } from '@/core/constants/path';
-import { Http } from '@/core/utils';
+import { Http, HttpUploadFile } from '@/core/utils';
 import { CategoryReadDto } from '../models';
 
 const URL = 'v3/SubFamilia/'
@@ -16,6 +16,7 @@ export const CategorySvc = {
         json: query
       }  
     });
+    console.log(response);
 
     if(response.code=="1"){
       const categories = JSON.parse(response.payload);
@@ -32,15 +33,23 @@ export const CategorySvc = {
         totalRecords: item.totalRecords
       }) )
     } 
-
+    return []
   },
 
-  post: (data: any) => {
-    return Http({
+  post: async (data: any) => {
+
+    console.log(data)
+
+    const response = await Http({
       method: 'post',
-      url: `Inventario/v3/SubFamilia/Post`,
-      data: data,
+      url: `${PATHS.INVENTARIO}${URL}Post`,
+      data
     });
+
+    console.log(response);
+
+
+
   },
 
   // insert: () => {
@@ -55,4 +64,14 @@ export const CategorySvc = {
       url: PATHS.PRIVATE + 'Category',
     });
   },
+
+  imageUpload: async(data: any) => {
+    const response = await HttpUploadFile({
+      method: 'post',
+      url: `${PATHS.INVENTARIO}${URL}Post`,
+      data
+    });
+
+    console.log(response);
+  }
 };

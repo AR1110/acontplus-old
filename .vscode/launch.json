@@ -110,6 +110,27 @@
             "justMyCode": false,
         },
         {
+            "name": ".NET Core Launch (Restaurant)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Services/Restaurant/Restaurant.API/bin/Debug/net6.0/Restaurant.API.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/Services/Restaurant/Restaurant.API",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            },
+            "justMyCode": false,
+        },
+        {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach"
@@ -123,7 +144,8 @@
                 ".NET Core Launch (Gateway)",
                 ".NET Core Launch (Configuracion)",
                 ".NET Core Launch (Identity)",
-                ".NET Core Launch (Inventario)"
+                ".NET Core Launch (Inventario)",
+                ".NET Core Launch (Restaurant)"
             ],
             "stopAll": true
         }
