@@ -1,6 +1,9 @@
 ﻿using DataAccess;
 using Domain.Models.Almacen;
 using Helpers;
+using Inventario.Application.Services;
+using Inventario.Core.Interfaces;
+using Inventario.Core.Models;
 using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
@@ -14,9 +17,14 @@ namespace Inventario.API.Controllers.v3
     public class SubFamiliaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public SubFamiliaController(IConfiguration configuration)
+        private readonly IStorageService _storageService;
+
+        private string urlBase = "https://acontplus.s3.us-east-2.amazonaws.com/";
+
+        public SubFamiliaController(IConfiguration configuration, IStorageService storageService)
         {
             _configuration = configuration;
+            _storageService = storageService;
         }
 
         [HttpGet("Get")]
@@ -45,18 +53,49 @@ namespace Inventario.API.Controllers.v3
         }
 
         [HttpPost("Post")]
-        public async Task<IActionResult> Post(ApiRequest request)
+        [DisableRequestSizeLimit]
+        public async Task<IActionResult> Post([FromBody] CategoryFile data)
         {
             GenericResponse _response = new GenericResponse();
-                       
+
             
-            DbAccess _db = new DbAccess(_configuration);            
+            DbAccess _db = new DbAccess(_configuration);
             try
             {
+                var file = data.DataFile;
+
+                await using var memoryStream = new MemoryStream();
+                await file.CopyToAsync(memoryStream);
+
+                var fileExt = Path.GetExtension(file.FileName);
+                var directory = "category/";
+                var docName = $"{Guid.NewGuid()}{fileExt}";
+                var fileName = directory + docName;
+
+                var s3 = new S3Object()
+                {
+                    BucketName = "acontplus",
+                    InputStream = memoryStream,
+                    Name = fileName
+                };
+                var credentials = new AwsCredentials()
+                {
+                    Key = _configuration["AwsConfiguration:AWSAccessKey"],
+                    Secret = _configuration["AwsConfiguration:AWSSecretKey"]
+                };
+
                 await _db.SPExecute("Restaurant.Category_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", request.Data);
+                _db.AddDynamicParam("json", data.Params);
                 _response = _db.GetDefault();
+
+                if (_response.code == "1")
+                {
+
+                    var result = await _storageService.UploadFileAsync(s3, credentials);
+                }
+
+
             }
             catch (Exception ex)
             {
