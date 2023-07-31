@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import SearchComponent from './components/Search';
 import { ProductReadDto } from '../../models';
+import { DishSvc } from '../../services/dish.service';
 
 export default function DishComponent() {
   const [dishes, setDishes] = useState<Array<ProductReadDto>>([]);
@@ -26,7 +27,8 @@ export default function DishComponent() {
 
   const getDishes = () => {
     try {
-         
+      DishSvc.getAll().then((response) => {
+        setDishes(response);
       });
     } catch (error) {
       console.log(error);
@@ -65,20 +67,20 @@ export default function DishComponent() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {/* {productData.map((row) => (
-                  <TableRow
-                    key={row.description}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {row.description}
-                    </TableCell>
-                    <TableCell align="right">{row.subFamilia}</TableCell>
-                    <TableCell align="right">{row.stock}</TableCell>
-                    <TableCell align="right">{row.precioCosto}</TableCell>
-                    <TableCell align="right">{row.precioSinSubsidio}</TableCell>
-                  </TableRow>
-                ))} */}
+            {dishes.map((row) => (
+              <TableRow
+                key={row.description}
+                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              >
+                <TableCell component="th" scope="row">
+                  {row.description}
+                </TableCell>
+                <TableCell align="right">{row.idProduct}</TableCell>
+                <TableCell align="right">{row.stock}</TableCell>
+                <TableCell align="right">{row.category}</TableCell>
+                <TableCell align="right">{row.typeArticle}</TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>

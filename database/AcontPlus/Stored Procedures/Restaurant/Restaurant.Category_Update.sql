@@ -15,15 +15,28 @@ DROP PROCEDURE Restaurant.Category_Update
 GO
 CREATE PROCEDURE Restaurant.Category_Update
     @idUsuarioRol INT 
-   ,@id INT 
-   ,@idFamilia INT
-   ,@descripcion VARCHAR(50)
-   ,@montoObjetivo NUMERIC(10,5)  
-   ,@estado BIT
+   ,@id INT
+   ,@json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON
 	SET LANGUAGE SPANISH
+	DECLARE @idFamilia INT
+			,@descripcion VARCHAR(50)
+			,@montoObjetivo NUMERIC(10,5)
+			,@estado BIT
+
+	SELECT @idFamilia		= ISNULL(idFamilia, 0)
+			,@descripcion	= ISNULL(descripcion, '')
+			,@montoObjetivo	= ISNULL(montoObjetivo, 0)
+			,@estado		= ISNULL(estado, 0)
+	FROM OPENJSON(@json) 
+	WITH(
+	 idFamilia INT					'$.idFamilia'
+	 ,descripcion VARCHAR(50)		'$.descripcion'
+	 ,montoObjetivo NUMERIC(10,5)	'$.montoObjetivo'
+	 ,estado BIT					'$.estado'
+	)
 	
 	BEGIN TRY
 		BEGIN TRAN 
