@@ -25,7 +25,7 @@ namespace Inventario.API.Controllers.v3
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.SubFamilia_Get");
+                await _db.SPExecute("Restaurant.Category_Get");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDataTableAsync();
@@ -51,7 +51,7 @@ namespace Inventario.API.Controllers.v3
             string json = JsonSerializer.Serialize(data);
             try
             {
-                await _db.SPExecute("Almacen.SubFamilia_Insert");
+                await _db.SPExecute("Restaurant.Category_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDefault();
@@ -76,7 +76,7 @@ namespace Inventario.API.Controllers.v3
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.SubFamilia_Update");
+                await _db.SPExecute("Restaurant.Category_Update");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("idFamilia", data.idFamilia);
