@@ -54,47 +54,17 @@ namespace Inventario.API.Controllers.v3
 
         [HttpPost("Post")]
         [DisableRequestSizeLimit]
-        public async Task<IActionResult> Post([FromBody] CategoryFile data)
+        public async Task<IActionResult> Post([FromBody] ApiRequest data)
         {
             GenericResponse _response = new GenericResponse();
-
             
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                var file = data.DataFile;
-
-                await using var memoryStream = new MemoryStream();
-                await file.CopyToAsync(memoryStream);
-
-                var fileExt = Path.GetExtension(file.FileName);
-                var directory = "category/";
-                var docName = $"{Guid.NewGuid()}{fileExt}";
-                var fileName = directory + docName;
-
-                var s3 = new S3Object()
-                {
-                    BucketName = "acontplus",
-                    InputStream = memoryStream,
-                    Name = fileName
-                };
-                var credentials = new AwsCredentials()
-                {
-                    Key = _configuration["AwsConfiguration:AWSAccessKey"],
-                    Secret = _configuration["AwsConfiguration:AWSSecretKey"]
-                };
-
                 await _db.SPExecute("Restaurant.Category_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", data.Params);
+                _db.AddDynamicParam("json", data.Data);
                 _response = _db.GetDefault();
-
-                if (_response.code == "1")
-                {
-
-                    var result = await _storageService.UploadFileAsync(s3, credentials);
-                }
-
 
             }
             catch (Exception ex)
