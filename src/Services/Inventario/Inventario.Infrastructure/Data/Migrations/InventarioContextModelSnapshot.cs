@@ -106,11 +106,14 @@ namespace Inventario.Infrastructure.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(300)");
 
-                    b.Property<string>("Secuencial")
+                    b.Property<int>("Secuencial")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SerieDocumento")
                         .IsRequired()
-                        .HasMaxLength(15)
+                        .HasMaxLength(18)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(15)");
+                        .HasColumnType("varchar(18)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -142,7 +145,7 @@ namespace Inventario.Infrastructure.Data.Migrations
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<decimal>("Discrepancia")
+                    b.Property<decimal?>("Discrepancia")
                         .HasColumnType("numeric(18,5), not null");
 
                     b.Property<bool>("Enabled")
@@ -154,7 +157,7 @@ namespace Inventario.Infrastructure.Data.Migrations
                     b.Property<int>("IdBodega")
                         .HasColumnType("int");
 
-                    b.Property<int>("MotivoDiscrepanciaId")
+                    b.Property<int?>("MotivoDiscrepanciaId")
                         .HasColumnType("int");
 
                     b.Property<string>("OtroMotivo")
@@ -184,9 +187,7 @@ namespace Inventario.Infrastructure.Data.Migrations
                 {
                     b.HasOne("Inventario.Core.Entities.MotivoDiscrepancia", "MotivoDiscrepancia")
                         .WithMany()
-                        .HasForeignKey("MotivoDiscrepanciaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MotivoDiscrepanciaId");
 
                     b.HasOne("Inventario.Core.Entities.StockFisico", "StockFisico")
                         .WithMany("StockFisicoDetalles")

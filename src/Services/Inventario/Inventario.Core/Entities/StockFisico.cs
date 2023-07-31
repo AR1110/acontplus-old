@@ -12,7 +12,7 @@ namespace Inventario.Core.Entities
         public int PuntoEmisionId { get; set; }
         public int Secuencial { get; set; }
         [Required]
-        [MaxLength(15)]
+        [MaxLength(18)]
         public string SerieDocumento { get; set; }
         public DateTime Fecha { get; set; }
         [Required]
