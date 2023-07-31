@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Inventario.Core.Models;
+using Helpers;
 
 namespace Inventario.API.Controllers.v3
 {
@@ -19,12 +20,14 @@ namespace Inventario.API.Controllers.v3
         }
 
 
-        [HttpPost("upload")]
+        [HttpPost("upload/{folderName}")]
 
         [DisableRequestSizeLimit]
 
-        public async Task<IActionResult> Upload()
+        public async Task<IActionResult> Upload(string folderName)
         {
+            GenericResponse response = new GenericResponse();
+            String urlBase = "https://acontplus.s3.us-east-2.amazonaws.com/";
 
             //if (!Request.Form.Files.Any()) 
 
@@ -53,14 +56,14 @@ namespace Inventario.API.Controllers.v3
             await file.CopyToAsync(memoryStream);
 
             var fileExt = Path.GetExtension(file.FileName);
-            var directory = "category/";
+            var directory = folderName + "/"; // "category/"
             var docName = $"{Guid.NewGuid()}{fileExt}";
-
+            var fileName = directory + docName;
             var s3 = new S3Object()
             {
                 BucketName = "acontplus",
                 InputStream = memoryStream,
-                Name = directory + docName
+                Name = fileName
             };
             var credentials = new AwsCredentials()
             {
@@ -68,8 +71,12 @@ namespace Inventario.API.Controllers.v3
                 Secret = _configuration["AwsConfiguration:AWSSecretKey"]
             };
             var result = await _storageService.UploadFileAsync(s3, credentials);
-            return Ok(result);
 
+            if (result.StatusCode >= 200 && result.StatusCode < 300)
+            {
+                response.Create(code: "1", message: result.Message, payload: urlBase + fileName);
+            }
+            return Ok(result);
         }
     }
 }
