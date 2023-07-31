@@ -76,7 +76,7 @@ namespace Inventario.API.Controllers.v3
             {
                 response.Create(code: "1", message: result.Message, payload: urlBase + fileName);
             }
-            return Ok(result);
+            return Ok(response);
         }
     }
 }
