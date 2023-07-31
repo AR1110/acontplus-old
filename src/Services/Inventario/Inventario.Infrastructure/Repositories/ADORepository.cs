@@ -1,5 +1,6 @@
 ﻿using Inventario.Core.Interfaces;
 using Inventario.Infrastructure.Data;
+using Lib.Common.Api;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
@@ -80,7 +81,33 @@ namespace Inventario.Infrastructure.Repositories
             }
             return ds;
         }
-        private void AddSqlParameter(DbCommand cmd, string name, object value)
+        public async Task<string> SPExecute(string spName, Dictionary<string, object> parameters)
+        {
+            string response = string.Empty;
+            using (var command = _context.Database.GetDbConnection().CreateCommand())
+            {
+                command.CommandText = spName;
+                if (parameters.Count > 0)
+                {
+                    foreach (var parameter in parameters)
+                    {
+                        if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                        {
+                            AddSqlParameter(command, parameter.Key, parameter.Value);
+                        }
+                    }
+                }
+                command.CommandType = CommandType.StoredProcedure;
+                await _context.Database.OpenConnectionAsync();
+                var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    response = reader["response"].ToString();
+                }
+            }
+            return response;
+        }
+        private static void AddSqlParameter(DbCommand cmd, string name, object value)
         {
             SqlParameter sqlParam = new SqlParameter();
             sqlParam.ParameterName = name;
@@ -88,7 +115,7 @@ namespace Inventario.Infrastructure.Repositories
             sqlParam.Value = value ?? DBNull.Value;
             cmd.Parameters.Add(sqlParam);
         }
-        private void AddSqlParameterOut(DbCommand cmd, string parameterName, SqlDbType sqlDbType, int size)
+        private static void AddSqlParameterOut(DbCommand cmd, string parameterName, SqlDbType sqlDbType, int size)
         {
             SqlParameter sqlParam = new SqlParameter();
             sqlParam.ParameterName = parameterName;
@@ -97,7 +124,7 @@ namespace Inventario.Infrastructure.Repositories
             sqlParam.Direction = ParameterDirection.Output;
             cmd.Parameters.Add(sqlParam);
         }
-        public object GetParameter(DbCommand command, string parameterName)
+        public static object GetParameter(DbCommand command, string parameterName)
         {
             return command.Parameters[parameterName].Value;
         }

@@ -3,6 +3,7 @@ using Inventario.Core.Interfaces;
 using Inventario.Infrastructure.Data;
 using Lib.Common;
 using Lib.Common.Api;
+using Services.Lib.Common;
 using System.Data;
 
 namespace Inventario.Application.Services
@@ -34,14 +35,40 @@ namespace Inventario.Application.Services
                 return Converters.DataSetToJSON(ds);
             }
         }
-        public async Task<APIResponse> AddAsync(ApiRequest request)
+        public async Task<string> AddAsync(ApiRequest request)
         {
-            // _context.StockFisicos.Add(stockFisico);
-            // await _context.SaveChangesAsync();
-            _response.Create(code: "0", message: "Ok");
-            var dt = await _repository.GetDataTableAsync("", request.Data);
-            return _response;
+            var parameters = new Dictionary<string, object>{
+                {"userRoleId", request.UserRoleId},
+                {"json", Converters.SerializeDictionary(request.Data)}
+            };
+            return await _repository.SPExecute("Inventario.StockFisico_Insert", parameters);
         }
 
+        public async Task<string> UpdateAsync(int id, ApiRequest request)
+        {
+            // _context.StockFisicos.Add(stockFisico);
+            // await _context.SaveChangesAsync(); 
+            var parameters = new Dictionary<string, object>{
+                {"userRoleId", request.UserRoleId},
+                {"id", id},
+                {"json", Converters.SerializeDictionary(request.Data)}
+            };
+            return await _repository.SPExecute("Inventario.StockFisico_Update", request.Data);
+        }
+        public async Task<APIResponse> DeleteAsync(int id)
+        {
+            // _context.StockFisicos.Add(stockFisico);
+            // await _context.SaveChangesAsync(); 
+            var dt = await _repository.GetDataTableAsync("Inventario.StockFisico_Delete", null);
+            if (!DataValidation.DataTableIsNull(dt))
+            {
+                _response.Create(code: "1", payload: DataTableMapper.BindData<APIResponse>(dt));
+            }
+            else
+            {
+                _response.Create(code: "0", message: "La transacción no devolvio respuesta");
+            }
+            return _response;
+        }
     }
 }

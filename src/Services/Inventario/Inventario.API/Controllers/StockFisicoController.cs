@@ -9,6 +9,7 @@ using Inventario.Core.Entities;
 using Inventario.Infrastructure.Data;
 using Inventario.Core.Interfaces;
 using Services.Common;
+using Lib.Common.Api;
 
 namespace Inventario.API.Controllers
 {
@@ -102,17 +103,17 @@ namespace Inventario.API.Controllers
         // POST: api/StockFisico
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<IActionResult> PostStockFisico(StockFisico stockFisico)
+        public async Task<IActionResult> PostStockFisico(ApiRequest request)
         {
-            stockFisico.UserId = User.GetUserId();
+            request.UserRoleId = User.GetUserRoleId();
             try
             {
-               var response = await _stockFisico.AddAsync(stockFisico);
-                return  Ok(response);
+                var response = await _stockFisico.AddAsync(request);
+                return Ok(response);
             }
             catch (System.Exception ex)
             {
-                
+
                 return BadRequest();
             }
         }

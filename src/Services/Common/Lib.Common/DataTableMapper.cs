@@ -1,6 +1,6 @@
 using System.Data;
 
-namespace Services.Common.Utils
+namespace Services.Lib.Common
 {
     public class DataTableMapper
     {

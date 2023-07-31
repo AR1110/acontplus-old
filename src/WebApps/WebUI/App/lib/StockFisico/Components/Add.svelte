@@ -110,7 +110,7 @@
         //modalClose("saving");
         data.stockFisicoDetalles = articlesFounded;
         console.log(data.stockFisicoDetalles);
-        StockFisicoService.post(data).then((response) => {
+        StockFisicoService.post({ data: data }).then((response) => {
             console.log(response);
         });
     };
@@ -190,7 +190,7 @@
         options.tipo = 4;
         StockFisicoService.get(JSON.stringify(options)).then((response) => {
             if (response) {
-                articlesFounded = response['articulos'];
+                articlesFounded = response["articulos"];
                 articlesFounded.forEach((value) => {
                     value.stockFisicoId = 0;
                     value.cantidadContada = 0;
