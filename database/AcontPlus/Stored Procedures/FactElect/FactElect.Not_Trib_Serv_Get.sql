@@ -44,5 +44,6 @@ BEGIN
 	FROM FactElect.NotificacionTributaria n WITH (NOLOCK)
 	INNER JOIN v_DocElectronico de WITH (NOLOCK) ON n.idDocumentoElectronico = de.idDocumentoElectronico
 	WHERE n.estado = 'NE'
+	ORDER BY idNotificacionTributaria DESC
 END
 GO

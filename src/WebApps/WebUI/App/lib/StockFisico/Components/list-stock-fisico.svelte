@@ -1,12 +1,12 @@
 <script>
     import { onMount } from "svelte";
-    import { StockFisicoService } from "$core/services/stok-fisico-service";
+    import { StockFisicoService } from "$services/stok-fisico-service";
     let stocksFisicos = [];
     onMount(() => {
         StockFisicoService.get(JSON.stringify({ tipo: 2 })).then((response) => {
-            console.log(response);
+            //console.log(response);
             if (response) {
-                stocksFisicos = response['table'];
+                stocksFisicos = response["stockFisicos"];
             }
         });
     });
@@ -18,10 +18,11 @@
             <div class="col-lg-12">
                 <div class="card">
                     {#if stocksFisicos.length}
-                        <table>
+                        <table class="table table-bordered">
                             <thead>
                                 <tr>
                                     <th>N°. Documento</th>
+                                    <th>Responsable</th>
                                     <th>Fecha Emisión</th>
                                     <th>Observación</th>
                                 </tr>
@@ -29,9 +30,22 @@
                             <tbody>
                                 {#each stocksFisicos as item}
                                     <tr>
-                                        <td>{item.secuencial}</td>
+                                        <td>{item.serieDocumento}</td>
+                                        <td>{item.responsable}</td>
                                         <td>{item.fecha}</td>
                                         <td>{item.obs}</td>
+                                        <td>
+                                            <button
+                                                class="btn btn-danger btn-sm"
+                                                ><i
+                                                    class="fa fa-file-excel"
+                                                /></button
+                                            >
+                                            <button
+                                                class="btn btn-warning btn-sm"
+                                                ><i class="ti-pencil" /></button
+                                            >
+                                        </td>
                                     </tr>
                                 {/each}
                             </tbody>

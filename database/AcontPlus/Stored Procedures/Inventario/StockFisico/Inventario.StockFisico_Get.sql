@@ -15,6 +15,7 @@ DROP PROCEDURE Inventario.StockFisico_Get
 GO
 CREATE PROCEDURE Inventario.StockFisico_Get @userRoleId INT 
 ,@json VARCHAR(MAX) = NULL
+,@tableNames VARCHAR(500) OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -80,6 +81,7 @@ BEGIN
 								)
 	IF @tipo = 1
 		BEGIN
+			SET @tableNames = 'puntosEmision,bodegas,subfamilias,configuracion,configDocumento'
 			SELECT * FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
 			SELECT * FROM v_Bodega_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId
 			SELECT * FROM SubFamilia WITH(NOLOCK) WHERE idEntidad = @idEntidad
@@ -93,6 +95,7 @@ BEGIN
 
 	IF (@tipo = 2)
 		BEGIN
+			SET @tableNames = 'stockFisicos'
 			SELECT *
 			FROM v_StockFisico WITH (NOLOCK)
 			WHERE idEntidad = @idEntidad
@@ -140,6 +143,7 @@ BEGIN
 
 	IF (@tipo = 4)
 		BEGIN
+			SET @tableNames = 'articulos'
 			IF (@opcion = 1)
 				BEGIN 
 					SET @sql = @sql + 'AND a.idArticulo = @idArticulo '

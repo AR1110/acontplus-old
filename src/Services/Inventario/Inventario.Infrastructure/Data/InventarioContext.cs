@@ -29,7 +29,7 @@ namespace Inventario.Infrastructure.Data
            .HasMany(i => i.StockFisicoDetalles)
            .WithOne(d => d.StockFisico)
            .HasForeignKey(d => d.StockFisicoId);
-
+           
             modelBuilder.Entity<StockFisicoDetalle>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
         }
 

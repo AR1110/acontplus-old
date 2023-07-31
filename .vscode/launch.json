@@ -1,0 +1,131 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET Core Launch (Frontend)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/WebApps/WebUI/bin/Debug/net6.0/WebUI.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/WebApps/WebUI",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            },
+            "justMyCode": false,
+        },
+        {
+            "name": ".NET Core Launch (Identity)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Services/Identity/Identity.API/bin/Debug/net6.0/Identity.API.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/Services/Identity/Identity.API",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            },
+            "justMyCode": false,
+        },
+        {
+            "name": ".NET Core Launch (Gateway)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/ApiGateways/GatewayAcontplus.API/bin/Debug/net6.0/GatewayAcontplus.API.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/ApiGateways/GatewayAcontplus.API",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            },
+            "justMyCode": false,
+        },
+        {
+            "name": ".NET Core Launch (Configuracion)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Services/Configuracion/ApiConfig/bin/Debug/net6.0/ApiConfig.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/Services/Configuracion/ApiConfig",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            },
+            "justMyCode": false,
+        },
+        {
+            "name": ".NET Core Launch (Inventario)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Services/Inventario/Inventario.API/bin/Debug/net6.0/Inventario.API.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/Services/Inventario/Inventario.API",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            },
+            "justMyCode": false,
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach"
+        },
+    ],
+    "compounds": [
+        {
+            "name": "AcontPlus Dev",
+            "configurations": [
+                ".NET Core Launch (Frontend)",
+                ".NET Core Launch (Gateway)",
+                ".NET Core Launch (Configuracion)",
+                ".NET Core Launch (Identity)",
+                ".NET Core Launch (Inventario)"
+            ],
+            "stopAll": true
+        }
+    ]
+}
