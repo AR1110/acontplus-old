@@ -6,10 +6,13 @@ export interface ProductPvPReadDto {
 }
 
 export interface ProductPvPCreateDto {
-    readonly idArticuloPvP?: number;
-    idTarifa: number;
-    precioVenta: number;
-    precioConIva: number;
-    porcentajeUtilidad: number;
-    precioPredeterminado: boolean;
+    readonly idArticuloPvP?: number; 
+    tarifa: string
+    tipoIva?: string
+    porcentajeIva: number
+    precioVenta: number
+    precioConIva: number
+    porcentajeUtilidad: number,
+    utilidad: number,
+    estado: string,
 }

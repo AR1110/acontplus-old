@@ -8,6 +8,9 @@ import { ProductSvc } from "@/modules/admin/services";
 const INITIAL_STATE: ProductState = {
 	products: [],
 	dataFormApi: {
+		decimalInventory: {
+			nroPrecio: 0
+		}, 
 		categories: [],
 		measures: [],
 		saleFees: [],
@@ -18,7 +21,7 @@ const INITIAL_STATE: ProductState = {
 		idSubFamilia: 0,
 		idMedida: 0,
 		idTipoIva: 0,
-		precioCosto: 0,
+		precioCosto: 0.01,
 		precioSinSubsidio: 0,
 		codigo: "",
 		codigoAuxiliar: "",
@@ -44,7 +47,7 @@ export const ProductProvider = ({ children }: Props) => {
 	const getProducts = () => {
 		try {
 			ProductSvc.getAll().then((response) => {
-				dispatch({ type: 'list', payload: response })
+				dispatch({ type: 'products', payload: response })
 			})
 		} catch (error) {
 			console.log(error);

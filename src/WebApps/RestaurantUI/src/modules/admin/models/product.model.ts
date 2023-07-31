@@ -1,4 +1,6 @@
-import { ProductPvPCreateDto } from ".";
+import { ProductPvPCreateDto, VatRateReadDto } from "."; 
+import { MeasureReadDto } from "./measure.model";
+import { SaleFeeReadDto } from "./saleFee.model";
 
 export type ProductResponseFromApi = Array<{
   code_unique: string;
@@ -34,7 +36,7 @@ export interface ProductReadDto {
 }  
 
 export interface ProductCreateDto {
-  idArticulo?: number
+  idArticulo: number
   idSubFamilia: number;
   idMarca?: number;
   idModelo?:number
@@ -142,30 +144,16 @@ interface CategoryApi {
     ultimoSecuencial: number
  
 }
-interface MeasureApi {
-  idMedida: number, 
-  codigo: string, 
-  descripcion: string
+ 
+interface DecimalInventario {
+  nroPrecio: number
 }
-
-interface SaleFeeApi  
-{
-  idTarifa: number, 
-  descripcion: string, 
-  codigo: string, 
-  predeterminada: boolean
-}
-interface VatRateApi {
-  idTipoIva: number, 
-  descripcion: string
-  codigo: string, 
-  porcentaje: number
-}
-export interface DataFormApi {
+export interface ProductDataFormApi {
+  decimalInventory: DecimalInventario
   categories: CategoryApi[]
-  measures: MeasureApi[]
-  saleFees: SaleFeeApi[]
-  vatRates: VatRateApi[]
+  measures: MeasureReadDto[]
+  saleFees: SaleFeeReadDto[]
+  vatRates: VatRateReadDto[]
 }
 
  
@@ -175,9 +163,9 @@ export interface DataFormApi {
 export interface DialogProps {
   dialogTitle: string;
 }
-export interface ProductState {
+export interface ProductState {  
   products: ProductReadDto[]
-  dataFormApi: DataFormApi,
+  dataFormApi: ProductDataFormApi,
   data: ProductCreateDto,
   productPvPs: ProductPvPCreateDto[],
   dialogProps: DialogProps
