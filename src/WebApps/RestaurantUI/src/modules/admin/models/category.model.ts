@@ -1,4 +1,4 @@
-export type CategoryResponseFromApi = Array<{
+export interface CategoryReadDto {
   readonly idSubFamilia: number;
   idFamilia: number;
   descripcion: string;
@@ -12,8 +12,12 @@ export type CategoryResponseFromApi = Array<{
   idEntidad: number;
   montoObjetivo: number;
   importacion: boolean;
-  imgUrl: string;
-}>;
+  imgUrl: string;  
+  nombreFamilia: string
+  totalRecords: number;
+}
+
+export type CategoryReadDtoMapper = Array<CategoryReadDto>;
 
 export interface ICategoryView {
  readonly idSubFamilia: number;

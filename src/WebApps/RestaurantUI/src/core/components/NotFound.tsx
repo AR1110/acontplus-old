@@ -1,6 +1,6 @@
 import "./NotFound.css";
 
-export default function NotFound() {
+function NotFound() {
   return (
     <section id="wrapper" className="error-page">
       <div className="error-box">
@@ -20,4 +20,8 @@ export default function NotFound() {
       </div>
     </section>
   );
+}
+
+export {
+  NotFound
 }

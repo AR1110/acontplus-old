@@ -10,7 +10,7 @@ import { useState } from "react";
  
 import { ProductProvider} from "./context";
 import { ProductDialog, ProductTable } from "./components";
-import DialogCustom from "@/core/components/DialogCustom";
+import {DialogCustom} from "@/core/components/DialogCustom";
 import { ErrorBoundary } from "@/core/utils"; 
  
 
