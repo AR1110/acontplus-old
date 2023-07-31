@@ -42,8 +42,8 @@ BEGIN
 									   ,totalRecords = @totalRecords
 								   FROM SubFamilia  sf WITH (NOLOCK) 
 								   LEFT JOIN Familia f WITH (NOLOCK) ON f.idFamilia = sf.idFamilia
-								   WHERE sf.idEntidad = @idEntidad|
-								   AND sf.applicationId IS NOT NULL'
+								   WHERE sf.idEntidad = @idEntidad
+								   AND sf.applicationId IS NOT NULL '
 	
 	SELECT TOP 1 @ByEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol 
 	

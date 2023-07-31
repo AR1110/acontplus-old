@@ -11,7 +11,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import * as yup from 'yup';
 import { useFormik } from 'formik';
-import { useRef, useState } from 'react'; 
+import { useState } from 'react'; 
 import { CategorySvc } from '@/modules/admin/services';
 import { ImageUpload } from '@/core/components'; 
 interface ModalProps {
@@ -36,7 +36,7 @@ export default function CategoryDialog({ handleClose }: ModalProps) {
       siglas: '',
       montoObjetivo: 0.0,
       applicationId: 1,
-      imagUrl: '', 
+      imagUrl: '',
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {

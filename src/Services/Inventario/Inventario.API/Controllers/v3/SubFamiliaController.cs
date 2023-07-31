@@ -48,7 +48,7 @@ namespace Inventario.API.Controllers.v3
         public async Task<IActionResult> Post(ApiRequest request)
         {
             GenericResponse _response = new GenericResponse();
-
+                       
             
             DbAccess _db = new DbAccess(_configuration);            
             try
