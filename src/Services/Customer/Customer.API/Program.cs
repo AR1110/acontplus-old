@@ -1,7 +1,6 @@
 using Customer.API.Extensions;
 using Lib.Common;
 using Services.Common;
-using Services.Common.Utils;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
