@@ -43,7 +43,7 @@ export const CategorySvc = {
     const response = await Http({
       method: 'post',
       url: `${PATHS.INVENTARIO}${URL}Post`,
-      data: {Data: data}
+      data
     });
 
     console.log(response);
@@ -65,9 +65,7 @@ export const CategorySvc = {
     });
   },
 
-  imageUpload: async(data: FormData) => {
-    console.log(data)
-
+  imageUpload: async(data: any) => {
     const response = await HttpUploadFile({
       method: 'post',
       url: `${PATHS.INVENTARIO}${URL}Post`,

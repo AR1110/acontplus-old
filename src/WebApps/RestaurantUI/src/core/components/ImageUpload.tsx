@@ -32,9 +32,7 @@ function ImageUpload({ onChangeImage }: ImageUploadProps) {
         setSelectedImage(null);
     }
 
-    const handleToUpperCase = function () {
-        if(!formik.values.descripcion) return null;
-    }
+    
 
     return (
         <Card sx={{ maxWidth: 345 }}>

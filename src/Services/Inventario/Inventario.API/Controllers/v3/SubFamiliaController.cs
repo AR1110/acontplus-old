@@ -54,7 +54,7 @@ namespace Inventario.API.Controllers.v3
 
         [HttpPost("Post")]
         [DisableRequestSizeLimit]
-        public async Task<IActionResult> Post([FromBody] CategoryFile data)
+        public async Task<IActionResult> Post(CategoryFile data)
         {
             GenericResponse _response = new GenericResponse();
 

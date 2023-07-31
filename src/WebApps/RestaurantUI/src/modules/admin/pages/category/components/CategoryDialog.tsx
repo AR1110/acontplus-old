@@ -46,20 +46,24 @@ export default function CategoryDialog({ handleClose }: ModalProps) {
         const formData = new FormData();
         
         // Update the formData object
-        //formData.append("image", selectedImage as Blob, selectedImage?.name);
-        formData.append("image", selectedImage as Blob, selectedImage?.name);
+        formData.append("file", selectedImage as Blob, selectedImage?.name);
+        // formData.append("image", selectedImage as Blob, selectedImage?.name);
     
 
 
        // formik.setFieldValue("file", values.file);
 
         // Details of the uploaded file
-        await CategorySvc.imageUpload(formData).then(response => { 
+        const data = {
+          DataFile: formData,
+          Params: JSON.stringify(values)
+        }
+        await CategorySvc.imageUpload(data).then(response => { 
           console.log(response);
         })
         // console.log(selectedImage)
         // console.log(formik.values)
-        // await CategorySvc.post(values).then((response) => {
+        // await CategorySvc.post(data).then((response) => {
         //   console.log(response);  
         // }) 
       } catch (error) { 
