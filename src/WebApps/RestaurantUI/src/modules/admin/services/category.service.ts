@@ -1,15 +1,38 @@
 import { PATHS } from '@/core/constants/path';
 import { Http } from '@/core/utils';
+import { CategoryReadDto } from '../models';
 
+const URL = 'v3/SubFamilia/'
 export const CategorySvc = {
-  getAll: () => {
-    return Http({
+  getAll: async () => {
+    const query = JSON.stringify({
+      pageIndex: 1,
+      pageSize: 2,
+    })
+    const response = await Http({
       method: 'get',
-      url: `Inventario/v3/SubFamilia/Get?json=${JSON.stringify({
-        pageIndex: 1,
-        pageSize: 2,
-      })}`,
+      url: `${PATHS.INVENTARIO}${URL}Get`,
+      params: {
+        json: query
+      }  
     });
+
+    if(response.code=="1"){
+      const categories = JSON.parse(response.payload);
+ 
+      return  categories.map((item: CategoryReadDto) =>({ 
+        codigo: item.codigo,
+        descripcion: item.descripcion,
+        estado: item.estado,
+        idFamilia: item.idFamilia,
+        idSubFamilia: item.idSubFamilia,
+        montoObjetivo: item.montoObjetivo,
+        nombreFamilia: item.nombreFamilia,
+        siglas: item.siglas,
+        totalRecords: item.totalRecords
+      }) )
+    } 
+
   },
 
   post: (data: any) => {

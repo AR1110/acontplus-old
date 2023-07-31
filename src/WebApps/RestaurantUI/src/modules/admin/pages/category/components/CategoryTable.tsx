@@ -7,16 +7,17 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-} from '@mui/material';
-import { useCategoryContext } from '../context/CategoryContext';
+} from '@mui/material'; 
 
 import EditIcon from '@mui/icons-material/Edit';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import { CategoryReadDto } from '@/modules/admin/models';
 
-export default function CategoryTable() {
-  const { categoryState } = useCategoryContext();
-  const categories = categoryState.subFamilia;
+type CategoryTableProp = {
+  categories: CategoryReadDto[]
+}
 
+export default function CategoryTable({categories}:CategoryTableProp) { 
   return (
     <Paper
       sx={{ p: 2, display: 'flex', flexDirection: 'column' }}

@@ -54,4 +54,6 @@ function DialogCustom(props: DialogProps) {
     );
 }
 
-export default DialogCustom;
+export {
+    DialogCustom
+}
