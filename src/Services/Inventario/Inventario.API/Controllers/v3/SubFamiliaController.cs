@@ -53,16 +53,16 @@ namespace Inventario.API.Controllers.v3
         }
 
         [HttpPost("Post")]
-        public async Task<IActionResult> Post([FromBody] ApiRequest data)
+        public async Task<IActionResult> Post([FromBody] ApiRequest request)
         {
             GenericResponse _response = new GenericResponse();
-            
+
             DbAccess _db = new DbAccess(_configuration);
             try
             {
                 await _db.SPExecute("Restaurant.Category_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", data.Data);
+                _db.AddDynamicParam("json", request.Data);
                 _response = _db.GetDefault();
 
             }
@@ -80,7 +80,7 @@ namespace Inventario.API.Controllers.v3
         }
 
         [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] SubFamilia data)
+        public async Task<IActionResult> Update(int id, [FromBody] ApiRequest request)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
@@ -89,10 +89,7 @@ namespace Inventario.API.Controllers.v3
                 await _db.SPExecute("Restaurant.Category_Update");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("idFamilia", data.idFamilia);
-                _db.AddDynamicParam("descripcion", data.descripcion);
-                _db.AddDynamicParam("montoObjetivo", data.montoObjetivo);
-                _db.AddDynamicParam("estado", data.estado);
+                _db.AddDynamicParam("json", request.Data);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
