@@ -1,36 +1,34 @@
-// import {
-//   Grid,
-//   Paper,
-//   Table,
-//   TableBody,
-//   TableCell,
-//   TableContainer,
-//   TableHead,
-//   TableRow,
-//   styled,
-// } from "@mui/material";
-// import SearchComponent from "./components/Search";
-// import { productController } from "./controllers/product.controller";
-// import { useEffect, useState } from "react";
-// import { IProduct, ProductResponseFromApi } from "../models/product.model";
+import {
+  Grid,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  styled,
+} from "@mui/material";
+import SearchComponent from "./components/Search";
+import { useEffect } from "react";
 
-// const Item = styled(Paper)(({ theme }) => ({
-//   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-//   ...theme.typography.body2,
-//   padding: theme.spacing(1),
-//   textAlign: "center",
-//   color: theme.palette.text.secondary,
-// }));
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: "center",
+  color: theme.palette.text.secondary,
+}));
 
-// export default function DishComponent() {
-//   useEffect(() => {
-//     getDishes();
-//   }, []);
+export default function DishComponent() {
+  useEffect(() => {
+    //getDishes();
+  }, []);
 
-//   // Set data.
-//   const [productData, setProductData] = useState<IProduct[] | []>([]);
+  // Set data.
+  //const [productData, setProductData] = useState<IProduct[] | []>([]);
 
-//   // Create methods for get, post, put, delete
+  // Create methods for get, post, put, delete
 //   const getDishes = () => {
 //     try {
 //       productController.getAll().then((response) => {
@@ -75,52 +73,55 @@
 //     }));
 //   };
 
-//   return (
-//     <>
-//       <Grid item xs={12}>
-//         <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-//           <Grid container spacing={2}>
-//             <Grid item xs={6} md={2}>
-//               <h1>Platos</h1>
-//             </Grid>
-//             <Grid item xs={6} md={4}>
-//               <SearchComponent></SearchComponent>
-//             </Grid>
-//             <Grid item xs={6} md={4}>
-//               <Item>xs=6 md=4</Item>
-//             </Grid>
-//           </Grid>
-//           <TableContainer component={Paper}>
-//             <Table sx={{ minWidth: 650 }} aria-label="simple table">
-//               <TableHead>
-//                 <TableRow>
-//                   <TableCell>Descripción (100g serving)</TableCell>
-//                   <TableCell align="right">Categoría</TableCell>
-//                   <TableCell align="right">Total peso&nbsp;(g)</TableCell>
-//                   <TableCell align="right">Costo&nbsp;(g)</TableCell>
-//                   <TableCell align="right">Precio&nbsp;(g)</TableCell>
-//                 </TableRow>
-//               </TableHead>
-//               <TableBody>
-//                 {productData.map((row) => (
-//                   <TableRow
-//                     key={row.description}
-//                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-//                   >
-//                     <TableCell component="th" scope="row">
-//                       {row.description}
-//                     </TableCell>
-//                     <TableCell align="right">{row.subFamilia}</TableCell>
-//                     <TableCell align="right">{row.stock}</TableCell>
-//                     <TableCell align="right">{row.precioCosto}</TableCell>
-//                     <TableCell align="right">{row.precioSinSubsidio}</TableCell>
-//                   </TableRow>
-//                 ))}
-//               </TableBody>
-//             </Table>
-//           </TableContainer>
-//         </Paper>
-//       </Grid>
-//     </>
-//   );
-// }
+  return (
+    <>
+      <Grid item xs={12} md={12} sm={12}>
+        <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+          <Grid container spacing={2}>
+            <Grid item xs={6} md={2}>
+              <h1>Platos</h1>
+            </Grid>
+            <Grid item xs={6} md={4}>
+              <SearchComponent></SearchComponent>
+            </Grid>
+            <Grid item xs={6} md={2}>
+              <Item>xs=6 md=4</Item>
+            </Grid>
+            <Grid item xs={6} md={2}>
+              <Item>xs=6 md=4</Item>
+            </Grid>
+          </Grid>
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Descripción (100g serving)</TableCell>
+                  <TableCell align="right">Categoría</TableCell>
+                  <TableCell align="right">Total peso&nbsp;(g)</TableCell>
+                  <TableCell align="right">Costo&nbsp;(g)</TableCell>
+                  <TableCell align="right">Precio&nbsp;(g)</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {/* {productData.map((row) => (
+                  <TableRow
+                    key={row.description}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {row.description}
+                    </TableCell>
+                    <TableCell align="right">{row.subFamilia}</TableCell>
+                    <TableCell align="right">{row.stock}</TableCell>
+                    <TableCell align="right">{row.precioCosto}</TableCell>
+                    <TableCell align="right">{row.precioSinSubsidio}</TableCell>
+                  </TableRow>
+                ))} */}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
+      </Grid>
+    </>
+  );
+}
