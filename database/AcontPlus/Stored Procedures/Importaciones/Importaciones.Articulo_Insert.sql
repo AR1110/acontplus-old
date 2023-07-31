@@ -29,10 +29,16 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	SET NOCOUNT ON;
-	DECLARE @idUsuario INT
-	DECLARE @idEntidad INT
+	DECLARE @idPuntoEmision INT
+    DECLARE @idArticulo INT
+    DECLARE @idBodega INT 
+    DECLARE @idMedida INT
+    DECLARE @cantidad INT
+    DECLARE @descripcion VARCHAR(500)
+    DECLARE @precioCosto NUMERIC(18,5)
+    DECLARE @idUsuario INT
+    DECLARE @idEntidad INT
 	DECLARE @ruc AS VARCHAR(15)
-	DECLARE @count INT
 	DECLARE @sequential INT
 	DECLARE @tablaTarifa TABLE
 	(
@@ -50,11 +56,11 @@ BEGIN
 	DECLARE @tableArticulo TABLE 
 	(
 		id INT IDENTITY(1,1) UNIQUE NOT NULL
-	   ,idSubFamilia INT
-	   ,idMedida INT 
-	   ,idMarca INT
-	   ,idModelo INT
-	   ,idTipoIva INT 
+	   ,idSubFamilia INT NOT NULL
+	   ,idMedida INT  NOT NULL
+	   ,idMarca INT NULL
+	   ,idModelo INT NULL
+	   ,idTipoIva INT  NOT NULL
 	   ,codigo VARCHAR(200) UNIQUE NOT NULL
 	   ,codBarras VARCHAR(200) UNIQUE 
 	   ,codAuxiliar VARCHAR(200) UNIQUE 
@@ -63,6 +69,8 @@ BEGIN
 	   ,stock DECIMAL(15,5)
 	   ,llevaInventario BIT NOT NULL
 	   ,fraccionado BIT NOT NULL
+	   ,ubicacion VARCHAR(100) NOT null
+	   ,fechaCaducidad DATE NOT null
 	   ,importacion BIT DEFAULT 1 
 	)
 
@@ -75,16 +83,19 @@ BEGIN
 		,precioCosto DECIMAL(15,5)
 	)
 
-	SELECT TOP 1 @idEntidad = idEntidad,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
-
-	SELECT TOP 1 @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
-
-	SELECT @sequential = COUNT(*) FROM dbo.Articulo 
-
-	INSERT INTO @tablaTarifa (idTarifa,codTarifa,perdeterminada)SELECT idTarifa,codigo ,predeterminada       FROM dbo.Tarifa     WHERE estado = 1 AND idEntidad = @idEntidad
 
 	BEGIN TRY
-		BEGIN TRAN 
+			
+			SELECT TOP 1 @idEntidad = idEntidad,@idUsuario = idUsuario,@ruc = rucEmpresa FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+
+			SELECT TOP 1 @idBodega = idBodega FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @idRol  AND defaultBodega = 1 
+	
+			SELECT TOP 1 @idBodega = idPuntoEmision FROM v_PtoEmi_Asign WITH (NOLOCK) WHERE idUsuarioRol = @idRol  AND defaultPtoEmi = 1 
+
+			SELECT @sequential = COUNT(*) FROM dbo.Articulo 
+
+			INSERT INTO @tablaTarifa (idTarifa,codTarifa,perdeterminada)SELECT idTarifa,codigo ,predeterminada       FROM dbo.Tarifa     WHERE estado = 1 AND idEntidad = @idEntidad
+
 			INSERT INTO @tableArticulo
 				(
 					 idSubFamilia
@@ -133,7 +144,6 @@ BEGIN
 				,stock           DECIMAL(20,5) '$.stock'
 			) as dt
 
-
 			INSERT INTO @tablePvP (precio,codTarifa,codArticulo,precioCosto,idTipoIva)
 			SELECT precio,REPLACE(tarifa,'PVP',''),codigo,precioCosto,idTipoIva
 			FROM OPENJSON(@json)
@@ -154,9 +164,37 @@ BEGIN
 				FOR tarifa in ([pvp1],[pvp2],[pvp3],[pvp4],[pvp5])           
 			) as p
 
+			IF @idBodega IS NULL
+				BEGIN 
+					SELECT '0' code, 'No tienes una Bodega Asignada' as 'message'
+					RETURN 
+				END
 
-			SELECT @count = COUNT(*) FROM @tableArticulo 
+			IF @idPuntoEmision IS NULL
+				BEGIN
+					SELECT '0' code, 'no tienes asignado un Pto. de Emision' as 'message'
+					RETURN 
+				END 
 
+			IF (SELECT COUNT(*) FROM @tableArticulo) = 0 
+				BEGIN
+					SELECT '0' code, 'ERROR EN LA IMPORTACION DE ARTICULOS' as 'message'
+					RETURN 
+				END 
+
+			IF (SELECT COUNT(*) FROM @tablePvP) = 0 
+				BEGIN
+					SELECT '0' code, 'ERROR EN LA IMPORTACION DE PRECIOS' as 'message'
+					RETURN 
+				END 
+
+			IF ((SELECT COUNT(*) FROM @tableArticulo) * 5) = (SELECT COUNT(*) FROM @tablePvP)
+				BEGIN
+					SELECT '0' code, 'ERROR EN LAS DIFERENCIAS DE PRECIOS Y ARTICULOS' as 'message'
+					RETURN 
+				END 
+
+		BEGIN TRAN 
 
 			INSERT INTO dbo.Articulo
 				(
@@ -225,7 +263,6 @@ BEGIN
 			INNER JOIN @tablaTarifa ta ON ta.codTarifa = pvp.codTarifa
 			INNER JOIN dbo.TipoIva ti ON ti.idTipoIva = pvp.idTipoIva
 
-
 			INSERT INTO Inventario.Stock(idBodega,idArticulo,cantidad)
 							  SELECT bo.idBodega,ar.idArticulo,0
 							  FROM dbo.Articulo      ar WITH (NOLOCK)
@@ -236,13 +273,32 @@ BEGIN
 								AND ar.estado = 1
 								AND ar.idArticulo NOT IN (SELECT s.idArticulo FROM Inventario.Stock s WITH (NOLOCK) INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = s.idArticulo WHERE ar.idEntidad = @idEntidad )
 
+			DECLARE cursor_inventory CURSOR LOCAL FOR
+			SELECT td.idArticulo,a.idMedida,a.stock,a.descripcion,a.precioCosto
+			FROM  @tablaArticuloImport td 
+			INNER JOIN Articulo a WITH (NOLOCK) ON td.idArticulo = a.idArticulo 
+			WHERE a.llevaInventario = 1
+
+			OPEN cursor_inventory
+
+			FETCH NEXT FROM cursor_inventory INTO @idArticulo,@idMedida,@cantidad,@descripcion,@precioCosto
+							
+			WHILE @@FETCH_STATUS = 0
+				BEGIN
+					EXEC Inventario.Consolidacion_Insert_Import @idPuntoEmision,@idArticulo,@idMedida,@cantidad,@descripcion,@precioCosto,@idUsuario,@idEntidad
+					FETCH NEXT FROM cursor_inventory INTO @idArticulo,@idMedida,@cantidad
+				END
+			CLOSE cursor_inventory
+			DEALLOCATE cursor_inventory   
+
 			INSERT INTO Importaciones.Historial(idUsuario,idEntidad,modulo,cantidad,fechaRegistro)
-			SELECT @idUsuario,@idEntidad,'/Almacen/Articulo',@count,dbo.ufnGetDateEcuador()
+			SELECT @idUsuario,@idEntidad,'/Almacen/Articulo',COUNT(*),dbo.ufnGetDateEcuador() FROM @tableArticulo
 
 		COMMIT TRAN 
 		SELECT '1' code, 'Articulos Importados correctamente' as 'message'
 		RETURN 
 	END TRY 
+
 	BEGIN CATCH
 		IF @@TRANCOUNT > 0 
 		BEGIN

@@ -59,7 +59,9 @@
                 $scope.copiaLiquidacionCompras = [];
                 $scope.sumTotalColumna(); 
                 let dataSearch = {
+                    tipo : 1,
                     codEstab: $scope.dataSearch.codEstab,
+                    checkBoxFecha : $scope.dataSearch.nroSecuencial ? false: true,
                     fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
                     checkBoxProveedor: $scope.dataSearch.idProveedor > 0,

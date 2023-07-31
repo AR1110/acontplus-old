@@ -50,7 +50,7 @@ BEGIN
 	(
 		id INT UNIQUE NOT NULL
 	   ,codigo VARCHAR(10) UNIQUE
-	   ,siglas VARCHAR(10) NULL
+	   ,siglas VARCHAR(25) NOT NULL
 	   ,descripcion VARCHAR(200) NOT NULL
 	)
 
@@ -250,7 +250,9 @@ BEGIN
 											,PVP3            DECIMAL(20,5) '$.PVP3'
 											,PVP4            DECIMAL(20,5) '$.PVP4'
 											,PVP5            DECIMAL(20,5) '$.PVP5'
-										) as dt
+											,ubicacion       VARCHAR(300)  '$.ubicacion'
+											,fechaven        DATETIME      '$.fechaven'
+ 										) as dt
 										LEFT JOIN dbo.TipoIva      ti  ON ti.codigoPorcentaje = dt.codIva
 										LEFT JOIN @tablaMedida     tm  ON tm.codMedida	      = dt.codMedida
 										LEFT JOIN @tablaSubFamilia ts  ON ts.codSubFamilia    = dt.codSubFamilia
