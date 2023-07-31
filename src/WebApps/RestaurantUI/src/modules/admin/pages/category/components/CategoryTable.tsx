@@ -18,6 +18,7 @@ type CategoryTableProp = {
 }
 
 export default function CategoryTable({categories}:CategoryTableProp) { 
+  console.log(categories)
   return (
     <Paper
       sx={{ p: 2, display: 'flex', flexDirection: 'column' }}

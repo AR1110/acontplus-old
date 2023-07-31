@@ -42,16 +42,28 @@ export default function CategoryDialog({ handleClose }: ModalProps) {
     onSubmit: (values) => {
       try {
         console.log(values)
-        CategorySvc.post(values).then((response) => {
-          if (response){
-            console.log(response);
-          }
-        });
+          //     // Create an object of formData
+        const formData = new FormData();
+
+        // Update the formData object
+        formData.append("image", selectedImage as Blob, selectedImage?.name);
+
+        // Details of the uploaded file
+        CategorySvc.imageUpload(formData).then(response=>{
+          console.log(response);
+        })
+        // CategorySvc.post(values).then((response) => {
+        //   if (response){
+        //     console.log(response);
+        //   }
+        // });
       } catch (error) {
         console.log(error);
       }
     },
   });
+
+
 
   const handleCancel = () => {
     formik.resetForm();
@@ -152,7 +164,7 @@ export default function CategoryDialog({ handleClose }: ModalProps) {
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button variant="contained" type="submit" disabled={formik.isSubmitting}>
+        <Button variant="contained" type="submit">
           Guardar
         </Button>
         <Button variant="outlined">Cerrar</Button>
