@@ -6,9 +6,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:		<Author,,Name>
--- Create date: <Create Date,,>
--- Description:	<Description,,>
+-- Author:		Ivan Paz
+-- Create date: 2023-07-20
+-- Description: sp for get stock fisicos and search articulos
 -- =============================================
 IF OBJECT_ID(N'Inventario.StockFisico_Get', N'P') IS NOT NULL
 DROP PROCEDURE Inventario.StockFisico_Get
@@ -24,7 +24,7 @@ BEGIN
 	,@tipo INT
 	,@id INT
 	,@opcion INT
-	,@idArticulo INT 
+	,@articuloId INT 
 	,@rucProveedor VARCHAR(25)
 	,@idSubFamilia INT
 	,@nroDocumento VARCHAR(25)
@@ -34,17 +34,17 @@ BEGIN
 	SET @idEntidad = (SELECT idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
 	
 	SET @params = '@idEntidad INT,
-				   @idArticulo INT,
+				   @articuloId INT,
 				   @rucProveedor VARCHAR(25),
 				   @idSubFamilia INT,
 				   @nroDocumento VARCHAR(25) '
 
-	SET @sql = 'SELECT a.idArticulo
+	SET @sql = 'SELECT a.idArticulo articuloId
 				,codigo
 				,codigoAuxiliar
 				,codigoBarra
 				,descripcion
-				,stock
+				,stock stockActual
 				,precioCosto
 				,estado
 				,iva
@@ -66,7 +66,7 @@ BEGIN
 	SELECT @tipo = tipo
 	,@id = id
 	,@opcion = opcion 
-	,@idArticulo = idArticulo
+	,@articuloId = articuloId
 	,@rucProveedor = rucProveedor
 	,@idSubFamilia = idSubFamilia
 	,@nroDocumento = nroDocumento
@@ -74,7 +74,7 @@ BEGIN
 								tipo INT '$.tipo', 
 								id INT '$.id',
 								opcion INT '$.opcion', 
-								idArticulo INT '$.idArticulo',
+								articuloId INT '$.articuloId',
 								rucProveedor VARCHAR(25) '$.rucProveedor',
 								idSubFamilia INT '$.idSubFamilia',
 								nroDocumento VARCHAR(25) '$.nroDocumento'
@@ -90,7 +90,7 @@ BEGIN
 			FROM v_ConfigDocumento cd 
 				INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab
 			WHERE pa.idUsuarioRol = @userRoleId
-			AND cd.codDocumento = 'TF'
+			AND cd.codDoc = 'TF'
 		END
 
 	IF (@tipo = 2)
@@ -146,7 +146,7 @@ BEGIN
 			SET @tableNames = 'articulos'
 			IF (@opcion = 1)
 				BEGIN 
-					SET @sql = @sql + 'AND a.idArticulo = @idArticulo '
+					SET @sql = @sql + 'AND a.idArticulo = @articuloId '
 				END
 			IF (@opcion = 3)
 				BEGIN
@@ -163,7 +163,7 @@ BEGIN
 		SET @sql = @sql + 'ORDER BY a.fechaModificacion DESC '
 		EXEC sp_executesql @sql, @params
 							   ,@idEntidad = @idEntidad 
-							   ,@idArticulo = @idArticulo
+							   ,@articuloId = @articuloId
 							   ,@idSubFamilia = @idSubFamilia
 							   ,@rucProveedor = @rucProveedor
 							   ,@nroDocumento = @nroDocumento
