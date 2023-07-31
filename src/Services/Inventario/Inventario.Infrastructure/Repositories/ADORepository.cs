@@ -81,7 +81,7 @@ namespace Inventario.Infrastructure.Repositories
             }
             return ds;
         }
-        public async Task<string> SPExecute(string spName, Dictionary<string, object> parameters)
+        public async Task<string> SPExecuteAsync(string spName, Dictionary<string, object> parameters)
         {
             string response = string.Empty;
             using (var command = _context.Database.GetDbConnection().CreateCommand())

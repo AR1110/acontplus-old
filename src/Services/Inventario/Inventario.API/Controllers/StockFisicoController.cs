@@ -114,7 +114,7 @@ namespace Inventario.API.Controllers
             catch (System.Exception ex)
             {
 
-                return BadRequest();
+                return BadRequest(ex.Message);
             }
         }
 

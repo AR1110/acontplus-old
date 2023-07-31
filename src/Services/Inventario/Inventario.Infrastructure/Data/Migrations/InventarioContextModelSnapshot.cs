@@ -134,6 +134,12 @@ namespace Inventario.Infrastructure.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("ArticuloId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BodegaId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("CantidadContada")
                         .HasColumnType("numeric(18,5), not null");
 
@@ -150,12 +156,6 @@ namespace Inventario.Infrastructure.Data.Migrations
 
                     b.Property<bool>("Enabled")
                         .HasColumnType("bit");
-
-                    b.Property<int>("IdArticulo")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IdBodega")
-                        .HasColumnType("int");
 
                     b.Property<int?>("MotivoDiscrepanciaId")
                         .HasColumnType("int");
