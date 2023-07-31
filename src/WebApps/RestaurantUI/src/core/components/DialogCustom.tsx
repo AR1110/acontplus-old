@@ -48,7 +48,7 @@ function DialogCustom(props: DialogProps) {
             open={open}
             {...other}
         >
-            <LinearProgress />
+            {/* <LinearProgress /> */}
             {children}
         </Dialog>
     );

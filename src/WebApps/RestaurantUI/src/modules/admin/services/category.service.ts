@@ -36,12 +36,20 @@ export const CategorySvc = {
     return []
   },
 
-  post: (data: any) => {
-    return Http({
+  post: async (data: any) => {
+
+    console.log(data)
+
+    const response = await Http({
       method: 'post',
-      url: `Inventario/v3/SubFamilia/Post`,
-      data: data,
+      url: `${PATHS.INVENTARIO}${URL}Post`,
+      data: {Data: data}
     });
+
+    console.log(response);
+
+
+
   },
 
   // insert: () => {
@@ -57,11 +65,15 @@ export const CategorySvc = {
     });
   },
 
-  imageUpload: (image:  FormData) => {
-    return HttpUploadFile({
+  imageUpload: async(data: FormData) => {
+    console.log(data)
+
+    const response = await HttpUploadFile({
       method: 'post',
-      url: `${PATHS.INVENTARIO}v3/UploadFile/Upload`, 
-      data: image, 
-    })
+      url: `${PATHS.INVENTARIO}${URL}Post`,
+      data
+    });
+
+    console.log(response);
   }
 };
