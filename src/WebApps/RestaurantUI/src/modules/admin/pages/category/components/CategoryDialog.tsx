@@ -59,7 +59,7 @@ export default function CategoryDialog({ handleClose }: ModalProps) {
   };
 
   const [file, setFile] = useState();
-
+  console.log(file)
   const fileInputRef = useRef(null);
 
   const handleUploadButtonClick = (e: any) => {

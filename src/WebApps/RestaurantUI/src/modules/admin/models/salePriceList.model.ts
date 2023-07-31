@@ -4,6 +4,7 @@ export interface SalePriceList{
     id: number
     tarifa: string
     tipoIva?: string
+    porcentajeIva: number
     precioVenta: number
     precioConIva: number
     porcentajeUtilidad: number,
