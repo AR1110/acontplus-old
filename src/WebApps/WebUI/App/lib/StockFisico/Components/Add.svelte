@@ -20,19 +20,19 @@
     let iconTitle = "ti-check";
     let title = "Nueva Toma Fisica";
     let codEstab;
-    let idBodega = 0;
+    let bodegaId = 0;
     let data = {} as StockFisico;
     type mainForm = {
         tipo: number;
         opcion: number;
-        idArticulo: number;
+        articuloId: number;
         idSubFamilia: number;
         nroDocumento: string;
     };
     let options: mainForm = {
         tipo: 0,
         opcion: 1,
-        idArticulo: 0,
+        articuloId: 0,
         idSubFamilia: 0,
         nroDocumento: "",
     };
@@ -107,11 +107,37 @@
             toast({ type: "warning", message: "Debe agregar un detalle" });
             return;
         }
+        // articlesFounded.forEach(element => {
+        //     if (element.motivoDiscrepanciaId == 0) {
+        //         toast({type: 'warning', message: "Debe seleccionar un motivo de discrepancia en todos los registros"})
+        //         return
+        //     }
+        // });
+        if (articlesFounded.some((x) => x.motivoDiscrepanciaId == 0)) {
+            toast({
+                type: "warning",
+                message:
+                    "Debe seleccionar un motivo de discrepancia en todos los registros",
+            });
+            return;
+        }
         //modalClose("saving");
-        data.stockFisicoDetalles = articlesFounded;
-        console.log(data.stockFisicoDetalles);
-        StockFisicoService.post({ data: data }).then((response) => {
-            console.log(response);
+        let newData = {
+            header: data,
+            stockFisicoDetalles: articlesFounded,
+        };
+        console.log(newData);
+        StockFisicoService.post({ data: newData }).then((response) => {
+            if (response.code == "0") {
+                toast({ type: "warning", message: response.message });
+            }
+            if (response.code == "1") {
+                toast({ type: "success", message: response.message });
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500);
+            }
+            console.log(response.code);
         });
     };
     const onPopupClose = () => {
@@ -135,7 +161,10 @@
 
     const setDefaultBodega = () => {
         if (bodegas.length > 0) {
-            idBodega = bodegas.find((x) => x.defaultBodega === true).idBodega;
+            bodegaId = bodegas.find((x) => x.defaultBodega === true).idBodega;
+            articlesFounded.forEach((value) => {
+                value.bodegaId = bodegaId;
+            });
         }
     };
 
@@ -149,7 +178,11 @@
         );
         setDefaultBodega();
     };
-    const askToChangeBodega = () => {};
+    const askToChangeBodega = () => {
+        articlesFounded.forEach((value) => {
+            value.bodegaId = bodegaId;
+        });
+    };
     //const advancedSearch = () => {};
 
     let article = "";
@@ -181,7 +214,7 @@
     const selectArticle = (e) => {
         isArticleSelected = true;
         articleSelected = e;
-        options.idArticulo = e.idArticulo;
+        options.articuloId = e.idArticulo;
         getArticles();
     };
     let articlesFounded = [] as StockFisicoDetalle[];
@@ -193,20 +226,20 @@
                 articlesFounded = response["articulos"];
                 articlesFounded.forEach((value) => {
                     value.stockFisicoId = 0;
+                    value.bodegaId = bodegaId;
                     value.cantidadContada = 0;
                     value.discrepancia = 0;
                     value.motivoDiscrepanciaId = 0;
                     value.motivoDiscrepancia = "";
                     value.otroMotivo = "";
                 });
-                console.log(articlesFounded.length);
             }
         });
     };
 
     let updateDiscrepancia = (cell) => {
         let data = cell.getData();
-        let sum = Number(data.stock) - Number(data.cantidadContada);
+        let sum = Number(data.stockActual) - Number(data.cantidadContada);
         let row = cell.getRow();
         row.update({
             discrepancia: sum,
@@ -234,9 +267,9 @@
                 success(selectList.selectedOptions[0].value);
                 // Store value to cell dataset
                 cell.getElement().dataset.motivoDiscrepancia =
-                    selectList.selectedOptions[0].text;
-                cell.getElement().dataset.motivoDiscrepanciaId =
                     selectList.selectedOptions[0].value;
+                cell.getElement().dataset.motivoDiscrepanciaId =
+                    selectList.selectedOptions[0].text;
                 // alert(
                 //     "Here is what the actual looks like: " +
                 //         JSON.stringify(cell.getTable().getData())
@@ -300,7 +333,7 @@
         },
         {
             title: "Stock Actual",
-            field: "stock",
+            field: "stockActual",
             widthGrow: 2,
             headerSort: false,
         },
@@ -314,7 +347,7 @@
         },
         {
             title: "Motivo",
-            field: "motivoDiscrepancia",
+            field: "motivoDiscrepanciaId",
             //editor: "list",
             editor: customNativeSelect,
             //editorParams: { values: motivosDiscrepancia },
@@ -374,7 +407,7 @@
                                 name="bodegas"
                                 id="bodegas"
                                 class="form-control border-select"
-                                bind:value={idBodega}
+                                bind:value={bodegaId}
                                 on:change={askToChangeBodega}
                             >
                                 {#each bodegas as item}
@@ -393,6 +426,7 @@
                                 name="fechaEmision"
                                 bind:value={data.fecha}
                                 class="form-control border-select"
+                                required
                             />
                         </div>
                     </div>
@@ -406,6 +440,7 @@
                                 disabled
                                 bind:value={data.serieDocumento}
                                 class="form-control border-select"
+                                required
                             />
                         </div>
                     </div>

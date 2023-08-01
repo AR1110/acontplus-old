@@ -8,13 +8,13 @@ export interface StockFisico {
     responsable: string;
     obs: string;
     fechaRevision: Date;
-    stockFisicoDetalles: any
+    //stockFisicoDetalles: Array<StockFisicoDetalle>;
 }
 
 export interface StockFisicoDetalle {
     stockFisicoId: number;
-    idBodega: number;
-    idArticulo: number;
+    bodegaId: number;
+    articuloId: number;
     codigo: string;
     descripcion: string;
     cantidadContada?: number;

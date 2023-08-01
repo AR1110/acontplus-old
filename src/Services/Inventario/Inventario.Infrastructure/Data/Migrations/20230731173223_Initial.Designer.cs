@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Inventario.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(InventarioContext))]
-    [Migration("20230725223937_nullDetailColumns")]
-    partial class nullDetailColumns
+    [Migration("20230731173223_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -109,11 +109,14 @@ namespace Inventario.Infrastructure.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(300)");
 
-                    b.Property<string>("Secuencial")
+                    b.Property<int>("Secuencial")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SerieDocumento")
                         .IsRequired()
-                        .HasMaxLength(15)
+                        .HasMaxLength(18)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(15)");
+                        .HasColumnType("varchar(18)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -134,6 +137,12 @@ namespace Inventario.Infrastructure.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("ArticuloId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BodegaId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("CantidadContada")
                         .HasColumnType("numeric(18,5), not null");
 
@@ -145,19 +154,13 @@ namespace Inventario.Infrastructure.Data.Migrations
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<decimal>("Discrepancia")
+                    b.Property<decimal?>("Discrepancia")
                         .HasColumnType("numeric(18,5), not null");
 
                     b.Property<bool>("Enabled")
                         .HasColumnType("bit");
 
-                    b.Property<int>("IdArticulo")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IdBodega")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MotivoDiscrepanciaId")
+                    b.Property<int?>("MotivoDiscrepanciaId")
                         .HasColumnType("int");
 
                     b.Property<string>("OtroMotivo")
@@ -187,9 +190,7 @@ namespace Inventario.Infrastructure.Data.Migrations
                 {
                     b.HasOne("Inventario.Core.Entities.MotivoDiscrepancia", "MotivoDiscrepancia")
                         .WithMany()
-                        .HasForeignKey("MotivoDiscrepanciaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MotivoDiscrepanciaId");
 
                     b.HasOne("Inventario.Core.Entities.StockFisico", "StockFisico")
                         .WithMany("StockFisicoDetalles")

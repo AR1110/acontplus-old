@@ -41,7 +41,9 @@ namespace Inventario.Infrastructure.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CodEstab = table.Column<string>(type: "varchar(15)", unicode: false, maxLength: 15, nullable: false),
-                    Secuencial = table.Column<string>(type: "varchar(15)", unicode: false, maxLength: 15, nullable: false),
+                    PuntoEmisionId = table.Column<int>(type: "int", nullable: false),
+                    Secuencial = table.Column<int>(type: "int", nullable: false),
+                    SerieDocumento = table.Column<string>(type: "varchar(18)", unicode: false, maxLength: 18, nullable: false),
                     Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Responsable = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: false),
                     Obs = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
@@ -65,12 +67,12 @@ namespace Inventario.Infrastructure.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     StockFisicoId = table.Column<int>(type: "int", nullable: false),
-                    IdBodega = table.Column<int>(type: "int", nullable: false),
-                    IdArticulo = table.Column<int>(type: "int", nullable: false),
+                    BodegaId = table.Column<int>(type: "int", nullable: false),
+                    ArticuloId = table.Column<int>(type: "int", nullable: false),
                     CantidadContada = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
                     StockActual = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
-                    Discrepancia = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
-                    MotivoDiscrepanciaId = table.Column<int>(type: "int", nullable: false),
+                    Discrepancia = table.Column<decimal>(type: "numeric(18,5)", nullable: true),
+                    MotivoDiscrepanciaId = table.Column<int>(type: "int", nullable: true),
                     OtroMotivo = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -85,8 +87,7 @@ namespace Inventario.Infrastructure.Data.Migrations
                         column: x => x.MotivoDiscrepanciaId,
                         principalSchema: "Inventario",
                         principalTable: "MotivoDiscrepancia",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_StockFisicoDetalle_StockFisico_StockFisicoId",
                         column: x => x.StockFisicoId,
