@@ -437,6 +437,7 @@ export default function SearchComponent() {
    id="country-select-demo"
    sx={{ width: 400 }}
    options={countries}
+   size="small"
    autoHighlight
    getOptionLabel={(option) => option.label}
    renderOption={(props, option) => (

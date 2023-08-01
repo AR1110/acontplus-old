@@ -4,7 +4,7 @@ type Props = {
   text: string;
 };
 
-export default function Button({ className, onClick, text }: Props) {
+ function Button({ className, onClick, text }: Props) {
   return (
     <>
       <button type="button" className={className} onClick={() => onClick}>
@@ -12,4 +12,8 @@ export default function Button({ className, onClick, text }: Props) {
       </button>
     </>
   );
+}
+
+export {
+  Button
 }

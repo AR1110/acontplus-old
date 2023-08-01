@@ -1,26 +1,64 @@
-import { Button, Grid, Stack, Typography } from '@mui/material';
+import { Button, Grid, Skeleton, Stack, TableCell, TableRow, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { useState } from 'react';
-import { CategoryProvider } from './context/CategoryProvider';
+import { useEffect, useState } from 'react';
 import CategoryTable from './components/CategoryTable';
-import DialogCustom from '@/core/components/DialogCustom';
+import { DialogCustom, dialogOpenSubject$ } from '@/core/components';
 import CategoryDialog from './components/CategoryDialog';
+import { ErrorBoundary } from '@/core/utils';
+import { CategorySvc } from '@admin/services';
+import { CategoryReadDto, CategoryReadDtoMapper } from '../../models';
+import { useAsync, useFetchAndLoad } from '@/hooks';
+import BackdropLoader from '@/core/components/BackdropLoader';
 
 export default function CategoryPage() {
-  const [open, setOpen] = useState(false);
-
+  const [categories, setCategories] = useState<Array<CategoryReadDto>>([]);
   // const enumeracion = 1;
   const onOpenDialog = () => {
-    setOpen(true);
+    dialogOpenSubject$.setSubject = true;
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  // const getCategories = function () {
+  //   try {
+  //     CategorySvc.getAll().then((response) => { 
+  //       setCategories(response);
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   getCategories();
+  // }, [])
+  const { loading, callEndpoint } = useFetchAndLoad();
+  const getApiData = async () => await callEndpoint(CategorySvc.getAll());
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const categoriesMapper = function (data: any) {
+    const categoriesApi: CategoryReadDto[] = JSON.parse(data)
+    // const results =  categoriesApi.map(item =>({ 
+    //   codigo: item.codigo,
+    //   descripcion: item.descripcion,
+    //   estado: item.estado,
+    //   idFamilia: item.idFamilia,
+    //   idSubFamilia: item.idSubFamilia,
+    //   montoObjetivo: item.montoObjetivo,
+    //   nombreFamilia: item.nombreFamilia,
+    //   siglas: item.siglas,
+    //   totalRecords: item.totalRecords
+    // }) )
+
+    setCategories(categoriesApi)
   };
+
+  useAsync(getApiData, categoriesMapper, () => {
+    console.log('init')
+  }); 
 
   return (
-    <CategoryProvider>
-      <Grid item xs={12}>
+    <ErrorBoundary fallBackComponent={<>Error!</>}>
+
+      {loading ? <BackdropLoader open={loading}/> : <Grid item xs={12}>
         <Stack
           direction="row"
           alignItems="center"
@@ -39,17 +77,11 @@ export default function CategoryPage() {
           </Button>
         </Stack>
 
-        <CategoryTable></CategoryTable>
+        <CategoryTable categories={categories} />
       </Grid>
-
-      <DialogCustom
-        id="ringtone-menu"
-        keepMounted
-        open={open}
-        onClose={handleClose}
-        children={<CategoryDialog handleClose={handleClose} />}
-        maxWidth="md"
+      }
+      <DialogCustom maxWidth='sm' children={<CategoryDialog />}
       />
-    </CategoryProvider>
+    </ErrorBoundary>
   );
 }

@@ -5,7 +5,7 @@ import { ProductResponseFromApi } from "../models";
 
 const URL = 'v3/Articulo'
 
-const ProductSvc = {
+export const ProductSvc = {
 	getAll: async () => {
 
 		const json = JSON.stringify({
@@ -76,4 +76,3 @@ const ProductSvc = {
   },
 };
 
-export default ProductSvc;

@@ -1,6 +1,10 @@
 ﻿using DataAccess;
 using Domain.Models.Almacen;
 using Helpers;
+using Inventario.Application.Services;
+using Inventario.Core.Interfaces;
+using Inventario.Core.Models;
+using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 using System.Text.Json;
@@ -13,9 +17,14 @@ namespace Inventario.API.Controllers.v3
     public class SubFamiliaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public SubFamiliaController(IConfiguration configuration)
+        private readonly IStorageService _storageService;
+
+        private string urlBase = "https://acontplus.s3.us-east-2.amazonaws.com/";
+
+        public SubFamiliaController(IConfiguration configuration, IStorageService storageService)
         {
             _configuration = configuration;
+            _storageService = storageService;
         }
 
         [HttpGet("Get")]
@@ -25,7 +34,7 @@ namespace Inventario.API.Controllers.v3
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.SubFamilia_Get");
+                await _db.SPExecute("Restaurant.Category_Get");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDataTableAsync();
@@ -44,17 +53,18 @@ namespace Inventario.API.Controllers.v3
         }
 
         [HttpPost("Post")]
-        public async Task<IActionResult> Post([FromBody] SubFamilia data)
+        public async Task<IActionResult> Post([FromBody] ApiRequest request)
         {
             GenericResponse _response = new GenericResponse();
+
             DbAccess _db = new DbAccess(_configuration);
-            string json = JsonSerializer.Serialize(data);
             try
             {
-                await _db.SPExecute("Almacen.SubFamilia_Insert");
+                await _db.SPExecute("Restaurant.Category_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", request.Data);
                 _response = _db.GetDefault();
+
             }
             catch (Exception ex)
             {
@@ -70,19 +80,16 @@ namespace Inventario.API.Controllers.v3
         }
 
         [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] SubFamilia data)
+        public async Task<IActionResult> Update(int id, [FromBody] ApiRequest request)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.SubFamilia_Update");
+                await _db.SPExecute("Restaurant.Category_Update");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("idFamilia", data.idFamilia);
-                _db.AddDynamicParam("descripcion", data.descripcion);
-                _db.AddDynamicParam("montoObjetivo", data.montoObjetivo);
-                _db.AddDynamicParam("estado", data.estado);
+                _db.AddDynamicParam("json", request.Data);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

@@ -1,4 +1,4 @@
-export type CategoryResponseFromApi = Array<{
+export interface CategoryReadDto {
   readonly idSubFamilia: number;
   idFamilia: number;
   descripcion: string;
@@ -12,10 +12,14 @@ export type CategoryResponseFromApi = Array<{
   idEntidad: number;
   montoObjetivo: number;
   importacion: boolean;
-  imgUrl: string;
-}>;
+  imgUrl: string;  
+  nombreFamilia: string
+  totalRecords: number;
+}
 
-export interface ICategoryView {
+export type CategoryReadDtoMapper = Array<CategoryReadDto>;
+
+export interface CategoryCreateDto {
  readonly idSubFamilia: number;
   idFamilia: number;
   codigo: string;
@@ -25,24 +29,12 @@ export interface ICategoryView {
   montoObjetivo: number;
   estado: boolean;
 }
+  
 
-interface CategoryApi {
-  idSubFamilia: number;
-  idFamilia: number;
-  codigo: string;
-  descripcion: string;
-  nombreFamilia: string;
-  siglas: string;
-  montoObjetivo: number;
-  estado: boolean;
-}
-
-export interface DataFormApi {
-  subFamilias: CategoryApi[]
-}
-
-
-export interface CategoryState {
-  subFamilia: ICategoryView[]
-  dataFormApi: DataFormApi
+export interface CategoryUpdateDto{
+  idFamilia: number
+  idSubFamilia: 0
+  descripcion: string
+  
+  
 }

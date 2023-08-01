@@ -27,6 +27,7 @@ export const ProductReducer = (state: ProductState, action: Action): ProductStat
             }
 
         case 'productPvPs': 
+        console.log(action.payload)
             return {
                 ...state,
                 productPvPs: [...action.payload]

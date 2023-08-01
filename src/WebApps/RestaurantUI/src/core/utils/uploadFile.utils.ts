@@ -62,10 +62,10 @@ instance.interceptors.response.use(
 // const axios = <T>(cfg: AxiosRequestConfig): Promise<ApiResponse> =>
 //   instance.request<any, T>(cfg);
 
-const UploadFileUtils = async (config: AxiosRequestConfig): Promise<ApiResponse> => {
+const HttpUploadFile = async (config: AxiosRequestConfig): Promise<ApiResponse> => {
   return instance.request(config).then((response) => {
     return response.data;
   });
 };
 
-export { UploadFileUtils };
+export { HttpUploadFile };
