@@ -455,7 +455,7 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
 
     async onSelectedClienteChange(item) {
         try {
-            if (item.validationSri=='CF') {
+            if (item.tipoIdentificacion=='CF') {
                Swal.fire({
                     icon:'warning',
                     html: '<p>A nombre de consumir final no se puede generar el Documento Nota de Crédito</p>'
