@@ -3,6 +3,7 @@ using DataAccess;
 using Domain.Dtos;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Lib.Common;
 
 namespace Inventario.API.Controllers
 {
@@ -49,7 +50,7 @@ namespace Inventario.API.Controllers
             {
                 await _db.SPExecute("Inventario.PrecioMasivo_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", DataHelper.SerializeDictionary(parameters.data));
+                _db.AddDynamicParam("json", Converters.SerializeDictionary(parameters.data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -73,7 +74,7 @@ namespace Inventario.API.Controllers
             {
                 await _db.SPExecute("Inventario.PrecioMasivo_Update", true);
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", DataHelper.SerializeDictionary(parameters.data));
+                _db.AddDynamicParam("json", Converters.SerializeDictionary(parameters.data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

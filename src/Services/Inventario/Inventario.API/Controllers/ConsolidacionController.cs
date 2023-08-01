@@ -4,6 +4,7 @@ using Domain.Dtos;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Lib.Common;
 
 namespace Inventario.API.Controllers
 {
@@ -49,7 +50,7 @@ namespace Inventario.API.Controllers
             {
                 await _db.SPExecute("Inventario.Consolidacion_Insert", true);
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(DataHelper.SerializeDictionary(parameters.data)));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(Converters.SerializeDictionary(parameters.data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -74,7 +75,7 @@ namespace Inventario.API.Controllers
                 await _db.SPExecute("Inventario.Consolidacion_Update", true);
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(DataHelper.SerializeDictionary(parameters.data)));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(Converters.SerializeDictionary(parameters.data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

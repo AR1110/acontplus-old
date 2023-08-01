@@ -3,9 +3,9 @@
 
     app.controller('testCtrl', testCtrl);
 
-    testCtrl.$inject = ['$scope', '$http', 'socketService', 'mainService'];
+    testCtrl.$inject = ['$scope', '$http', 'mainService'];
 
-    function testCtrl($scope, $http, socket, mS) {
+    function testCtrl($scope, $http, mS) {
         $scope.title = 'testCtrl';
 
         $scope.client = {}
@@ -14,50 +14,50 @@
         $scope.whatsapp = { number: '0991229095' }
 
         $scope.login = () => {
-            socket.emit('create-session', {
-                id: $scope.client.id,
-                description: $scope.client.description
-            })
+            //socket.emit('create-session', {
+            //    id: $scope.client.id,
+            //    description: $scope.client.description
+            //})
         }
 
-        socket.on('init', (data) => {
-            for (const session of data) {
-                if ($scope.client.id == session.id) {
-                    $scope.sessions.push({ id: session.id, description: session.description })
-                }
-                if (session.ready) {
-                    //$(`.client.${clientClass} .logs`).prepend($('<li>').text('Whatsapp is ready!'))
-                    $('.logs').append($('<li>').text('Whatsapp is ready!'))
-                } else {
-                    //$(`.client.${clientClass} .logs`).prepend($('<li>').text('Connecting...'))
-                    $('.logs').append($('<li>').text('Connecting...'))
-                }
-            }
-        })
+        //socket.on('init', (data) => {
+        //    for (const session of data) {
+        //        if ($scope.client.id == session.id) {
+        //            $scope.sessions.push({ id: session.id, description: session.description })
+        //        }
+        //        if (session.ready) {
+        //            //$(`.client.${clientClass} .logs`).prepend($('<li>').text('Whatsapp is ready!'))
+        //            $('.logs').append($('<li>').text('Whatsapp is ready!'))
+        //        } else {
+        //            //$(`.client.${clientClass} .logs`).prepend($('<li>').text('Connecting...'))
+        //            $('.logs').append($('<li>').text('Connecting...'))
+        //        }
+        //    }
+        //})
 
-        socket.on('remove-session', (id) => {
-            //$(`.client.client-${id}`).remove()
-        })
+        //socket.on('remove-session', (id) => {
+        //    //$(`.client.client-${id}`).remove()
+        //})
 
-        socket.on('message', (msg) => {
-            $('.logs').append($('<li>').text(msg.text))
-        })
+        //socket.on('message', (msg) => {
+        //    $('.logs').append($('<li>').text(msg.text))
+        //})
 
-        socket.on('qr', (data) => {
-            console.log(data)
-            //$('#qrcode').attr('src', src)
-            if ($scope.client.id == data.id) {
-                $scope.sessions.push({
-                    id: data.id,
-                    description: data.description
-                })
-                $(`#${data.id}-qrcode`).attr('src', data.src);
-            }
-        })
+        //socket.on('qr', (data) => {
+        //    console.log(data)
+        //    //$('#qrcode').attr('src', src)
+        //    if ($scope.client.id == data.id) {
+        //        $scope.sessions.push({
+        //            id: data.id,
+        //            description: data.description
+        //        })
+        //        $(`#${data.id}-qrcode`).attr('src', data.src);
+        //    }
+        //})
 
-        socket.on('ready', (data) => {
-            //$(`.client.client-${data.id} #qrcode`).hide()
-        })
+        //socket.on('ready', (data) => {
+        //    //$(`.client.client-${data.id} #qrcode`).hide()
+        //})
         
         $scope.getRide = () => {
             let format = 'pdf';

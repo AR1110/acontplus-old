@@ -4,6 +4,7 @@ using Domain.Dtos;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Lib.Common;
 
 namespace ApiConfig.Controllers
 {
@@ -49,7 +50,7 @@ namespace ApiConfig.Controllers
             {
                 await _db.SPExecute("Config.WhatsappUsage_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(DataHelper.SerializeDictionary(parameters.data)));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(Converters.SerializeDictionary(parameters.data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -74,7 +75,7 @@ namespace ApiConfig.Controllers
                 await _db.SPExecute("Config.WhatsappUsage_Update");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(DataHelper.SerializeDictionary(parameters.data)));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(Converters.SerializeDictionary(parameters.data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

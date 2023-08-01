@@ -3,6 +3,7 @@ using DataAccess;
 using Domain.Dtos;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Lib.Common;
 
 namespace ApiContabilidad.Controllers
 {
@@ -54,7 +55,7 @@ namespace ApiContabilidad.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _dbAccess.SPExecute("Contabilidad.CuotaPorCobrar_Insert");
                 _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _dbAccess.AddDynamicParam("json", DataHelper.SerializeDictionary(paremeter.data));
+                _dbAccess.AddDynamicParam("json", Converters.SerializeDictionary(paremeter.data));
                 _response = _dbAccess.GetDefault();
             }
             catch (Exception ex)
@@ -80,7 +81,7 @@ namespace ApiContabilidad.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _dbAccess.SPExecute("Contabilidad.CuotaPorCobrar_Update");
                 _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _dbAccess.AddDynamicParam("json", DataHelper.SerializeDictionary(paremeter.data));
+                _dbAccess.AddDynamicParam("json", Converters.SerializeDictionary(paremeter.data));
                 _response = _dbAccess.GetDefault();
             }
             catch (Exception ex)
