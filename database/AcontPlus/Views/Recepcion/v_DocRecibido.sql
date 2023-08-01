@@ -5,5 +5,8 @@ DROP VIEW v_DocRecibido
 GO
 CREATE VIEW v_DocRecibido AS (
 	
-	SELECT * FROM Recepcion.DocumentoRecibido
+	SELECT rd.*, e.ruc, en.idEntidad
+	FROM Recepcion.DocumentoRecibido rd WITH (NOLOCK)
+	INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON rd.idEstablecimiento = e.idEstablecimiento
+	INNER JOIN Entidad en WITH (NOLOCK) ON e.ruc = en.ruc 
 )

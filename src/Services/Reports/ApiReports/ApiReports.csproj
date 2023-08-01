@@ -49,6 +49,7 @@
 		<None Remove="Reports\GestionReporte\RetencionCompraRG.rdlc" />
 		<None Remove="Reports\GestionReporte\RetencionVentaRG.rdlc" />
 		<None Remove="Reports\GuiaRemision.rdlc" />
+		<None Remove="Reports\Inventario\ArticuloFraccionado.rdl" />
 		<None Remove="Reports\Inventario\ConsolidacionInventario.rdlc" />
 		<None Remove="Reports\Inventario\ConsumoDiario.rdl" />
 		<None Remove="Reports\Inventario\Kardex.rdlc" />
@@ -153,6 +154,9 @@
 		<Content Include="Reports\GuiaRemision.rdlc">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
+		<Content Include="Reports\Inventario\ArticuloFraccionado.rdl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 		<Content Include="Reports\Inventario\ConsolidacionInventario.rdlc">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
@@ -250,12 +254,6 @@
 	  <ProjectReference Include="..\..\Common\DataAccess\DataAccess.csproj" />
 	  <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
 	  <ProjectReference Include="..\Reports.Application\Reports.Application.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Update="Reports\Inventario\ArticuloFraccionado.rdl">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
 	</ItemGroup>
 
 </Project>
