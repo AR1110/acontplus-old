@@ -57,7 +57,7 @@ namespace ApiContabilidad.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _dbAccess.SPExecute("Contabilidad.ComprobanteIngreso_Insert");
                 _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _dbAccess.AddDynamicParam("json", Converters.SerializeDictionary(paremeter.data));
+                _dbAccess.AddDynamicParam("json", SqlValidation.ValidateSqlString(Converters.SerializeDictionary(paremeter.data)));
                 _response = _dbAccess.GetDefault();
             }
             catch (Exception ex)
