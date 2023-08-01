@@ -4,7 +4,7 @@ IF OBJECT_ID(N'v_DocElectronico', N'V') IS NOT NULL
 DROP VIEW v_DocElectronico
 GO
 CREATE VIEW v_DocElectronico AS (SELECT
-de.idDocumentoElectronico
+ de.idDocumentoElectronico
 ,e.idEntidad
 ,ISNULL(e.nombreComercial, e.razonSocial) nombreComercial
 ,e.razonSocial entidad
@@ -34,30 +34,20 @@ de.idDocumentoElectronico
 ,de.fechaAutorizacion
 ,de.claveAcceso
 ,de.numeroIdentificacion identClienteProv
---,cliente = (CASE 
---					WHEN de.codDoc = '01' THEN (SELECT TOP 1 c.nombreFiscal FROM Cliente c WITH(NOLOCK) WHERE LTRIM(RTRIM(c.numeroIdentificacion)) = LTRIM(RTRIM(de.numeroIdentificacion)))
---					WHEN de.codDoc = '04' THEN (SELECT TOP 1 c.nombreFiscal FROM Cliente c WITH(NOLOCK) WHERE LTRIM(RTRIM(c.numeroIdentificacion)) = LTRIM(RTRIM(de.numeroIdentificacion)))
---					WHEN de.codDoc = '05' THEN (SELECT TOP 1 c.nombreFiscal FROM Cliente c WITH(NOLOCK) WHERE LTRIM(RTRIM(c.numeroIdentificacion)) = LTRIM(RTRIM(de.numeroIdentificacion)))
---					WHEN de.codDoc = '06' THEN (SELECT TOP 1 c.nombreFiscal FROM Cliente c WITH(NOLOCK) WHERE LTRIM(RTRIM(c.numeroIdentificacion)) = LTRIM(RTRIM(de.numeroIdentificacion)))
---				END)
---,proveedor = (CASE 
---					WHEN de.codDoc = '03' THEN (SELECT TOP 1 p.nombreFiscal FROM Proveedor p WITH(NOLOCK) WHERE LTRIM(RTRIM(p.numeroIdentificacion)) = LTRIM(RTRIM(de.numeroIdentificacion)))
---					WHEN de.codDoc = '07' THEN (SELECT TOP 1 p.nombreFiscal FROM Proveedor p WITH(NOLOCK) WHERE LTRIM(RTRIM(p.numeroIdentificacion)) = LTRIM(RTRIM(de.numeroIdentificacion)))
---				END)
 ,telefono = (CASE 
-					WHEN de.codDoc = '01' THEN (SELECT TOP 1 LTRIM(RTRIM(c.telefono)) FROM Cliente c WITH(NOLOCK) WHERE c.idCliente = de.idContribuyente)
+					WHEN de.codDoc = '01' THEN (SELECT TOP 1 LTRIM(RTRIM(c.telefono)) FROM Cliente   c WITH(NOLOCK) WHERE c.idCliente   = de.idContribuyente)
 					WHEN de.codDoc = '03' THEN (SELECT TOP 1 LTRIM(RTRIM(p.telefono)) FROM Proveedor p WITH(NOLOCK) WHERE p.idProveedor = de.idContribuyente)
-					WHEN de.codDoc = '04' THEN (SELECT TOP 1 LTRIM(RTRIM(c.telefono)) FROM Cliente c WITH(NOLOCK) WHERE c.idCliente = de.idContribuyente)
-					WHEN de.codDoc = '05' THEN (SELECT TOP 1 LTRIM(RTRIM(c.telefono)) FROM Cliente c WITH(NOLOCK) WHERE c.idCliente = de.idContribuyente)
-					WHEN de.codDoc = '06' THEN (SELECT TOP 1 LTRIM(RTRIM(c.telefono)) FROM Cliente c WITH(NOLOCK) WHERE c.idCliente = de.idContribuyente)
+					WHEN de.codDoc = '04' THEN (SELECT TOP 1 LTRIM(RTRIM(c.telefono)) FROM Cliente   c WITH(NOLOCK) WHERE c.idCliente   = de.idContribuyente)
+					WHEN de.codDoc = '05' THEN (SELECT TOP 1 LTRIM(RTRIM(c.telefono)) FROM Cliente   c WITH(NOLOCK) WHERE c.idCliente   = de.idContribuyente)
+					WHEN de.codDoc = '06' THEN (SELECT TOP 1 LTRIM(RTRIM(c.telefono)) FROM Cliente   c WITH(NOLOCK) WHERE c.idCliente   = de.idContribuyente)
 					WHEN de.codDoc = '07' THEN (SELECT TOP 1 LTRIM(RTRIM(p.telefono)) FROM Proveedor p WITH(NOLOCK) WHERE p.idProveedor = de.idContribuyente)
 				END)
 ,razonSocial = (CASE 
-					WHEN de.codDoc = '01' THEN (SELECT TOP 1 c.nombreFiscal FROM Cliente c WITH(NOLOCK) WHERE c.idCliente = de.idContribuyente)
+					WHEN de.codDoc = '01' THEN (SELECT TOP 1 c.nombreFiscal FROM Cliente   c WITH(NOLOCK) WHERE c.idCliente   = de.idContribuyente)
 					WHEN de.codDoc = '03' THEN (SELECT TOP 1 p.nombreFiscal FROM Proveedor p WITH(NOLOCK) WHERE p.idProveedor = de.idContribuyente)
-					WHEN de.codDoc = '04' THEN (SELECT TOP 1 c.nombreFiscal FROM Cliente c WITH(NOLOCK) WHERE c.idCliente = de.idContribuyente)
-					WHEN de.codDoc = '05' THEN (SELECT TOP 1 c.nombreFiscal FROM Cliente c WITH(NOLOCK) WHERE c.idCliente = de.idContribuyente)
-					WHEN de.codDoc = '06' THEN (SELECT TOP 1 c.nombreFiscal FROM Cliente c WITH(NOLOCK) WHERE c.idCliente = de.idContribuyente)
+					WHEN de.codDoc = '04' THEN (SELECT TOP 1 c.nombreFiscal FROM Cliente   c WITH(NOLOCK) WHERE c.idCliente   = de.idContribuyente)
+					WHEN de.codDoc = '05' THEN (SELECT TOP 1 c.nombreFiscal FROM Cliente   c WITH(NOLOCK) WHERE c.idCliente   = de.idContribuyente)
+					WHEN de.codDoc = '06' THEN (SELECT TOP 1 c.nombreFiscal FROM Cliente   c WITH(NOLOCK) WHERE c.idCliente   = de.idContribuyente)
 					WHEN de.codDoc = '07' THEN (SELECT TOP 1 p.nombreFiscal FROM Proveedor p WITH(NOLOCK) WHERE p.idProveedor = de.idContribuyente)
 				END)
 ,rucReceptor = (CASE 
@@ -81,7 +71,7 @@ de.idDocumentoElectronico
 ,de.fechaRegistro
 ,de.idUsuario
 ,ISNULL(se.telefono, '') telefonoEstablecimiento
-FROM DocumentoElectronico de WITH(NOLOCK)
-INNER JOIN Entidad e WITH(NOLOCK) ON de.idEntidad = e.idEntidad
-LEFT JOIN Sri.Establecimiento se ON de.codEstab = se.codEstab
+FROM DocumentoElectronico     de WITH(NOLOCK)
+INNER JOIN             Entidad e WITH(NOLOCK) ON de.idEntidad = e.idEntidad
+LEFT JOIN Sri.Establecimiento se WITH(NOLOCK) ON de.codEstab = se.codEstab
 )

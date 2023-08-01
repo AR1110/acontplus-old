@@ -6,41 +6,33 @@ IF OBJECT_ID(N'v_CuentaPorPagar', N'V')IS NOT NULL
 GO 
 
 CREATE VIEW v_CuentaPorPagar AS (
-	SELECT cc.idCuentaPorCobrar
-		  ,cc.idDocumento
-		  ,cc.idCliente
-		  ,cc.idTiempoCredito
-		  ,cc.idEntidad
-		  ,cc.idPuntoEmision
-		  ,cc.idUsuario
-		  ,cc.idEstadoPago
-		  ,es.idEstablecimiento
+	SELECT cp.idCuentaPorPagar
+	      ,cp.idProveedor
+		  ,cp.idTiempoCredito
+		  ,cp.idEstadoPago
+		  ,cp.idUsuario
+		  ,cp.idEntidad
+		  ,cp.idDocumento
 		  ,es.codEstab
-		  ,cc.codDoc
-		  ,telefonoEstablecimiento = es.telefono
-		  ,es.nombreComercial
-		  ,cc.serieComprobante
-		  ,cc.secuencial
-		  ,cc.fechaEmision
-		  ,cc.fechaVencimiento
-		  ,identificacionComprador = cl.numeroIdentificacion
-		  ,razonSocialComprador    = cl.nombreFiscal
-		  ,correo                  = cl.correo
-		  ,telefono                = cl.telefono
+		  ,cp.codDoc
+		  ,cp.uniqueId
+		  ,razonSocialProveedor = pr.nombreFiscal
+		  ,identificacionProveedor = pr.numeroIdentificacion
+		  ,cp.serieComprobante
+		  ,secuencial = REPLACE(LTRIM(REPLACE(SUBSTRING(cp.serieComprobante,9,9),'0',' ')),' ','0')
+		  ,cp.fechaEmision
+		  ,cp.fechaVencimiento
+		  ,cp.importeTotal
+		  ,cp.abono
+		  ,cp.saldo
 		  ,estado                  = ep.descripcion
 		  ,codEstado               = ep.codigo
-		  ,cc.importeTotal
-		  ,cc.abono
-		  ,cc.saldo
-		  ,usuario                 = us.nombreUsuario
-		  ,tiempoCredito           = tc.tipo
-		  ,estadoSri               = CASE WHEN cc.codDoc = '01' THEN (SELECT de.codEstado FROM dbo.DocumentoElectronico de WITH (NOLOCK) WHERE de.idDocumento = cc.idDocumento AND de.codDoc = '01') 
+		  ,estadoSri               = CASE WHEN cp.codDoc = '03' THEN (SELECT de.codEstado FROM dbo.DocumentoElectronico de WITH (NOLOCK) WHERE de.idDocumento = cp.idDocumento AND de.codDoc = '03') 
 		                                                         ELSE 0 END 
-	FROM Contabilidad.CuentaPorCobrar cc WITH (NOLOCK)
-	INNER JOIN dbo.PuntoEmision       pt WITH (NOLOCK) ON pt.idPuntoEmision  = cc.idPuntoEmision
-	INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.codEstab        = pt.codEstab
-	INNER JOIN dbo.Cliente            cl WITH (NOLOCK) ON cl.idCliente       = cc.idCliente
-	INNER JOIN dbo.EstadoPago         ep WITH (NOLOCK) ON ep.idEstadoPago    = cc.idEstadoPago
-	INNER JOIN dbo.Usuario            us WITH (NOLOCK) ON us.idUsuario       = cc.idUsuario
-	INNER JOIN dbo.TiempoCredito      tc WITH (NOLOCK) ON tc.idTiempoCredito = cc.idTiempoCredito
+		  ,usuario = us.nombreUsuario
+	FROM Contabilidad.CuentaPorPagar cp WITH (NOLOCK)
+	INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.idEstablecimiento = cp.idEstablecimiento 
+	INNER JOIN Proveedor             pr WITH (NOLOCK) ON pr.idProveedor       = cp.idProveedor
+	INNER JOIN EstadoPago            ep WITH (NOLOCK) ON ep.idEstadoPago      = cp.idEstadoPago
+	INNER JOIN Usuario               us WITH (NOLOCK) ON us.idUsuario         = cp.idUsuario
 )
