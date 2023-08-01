@@ -1003,6 +1003,7 @@ export class CommonService {
                 item.n = index++;
 
                 let query = {
+                    tipo: 6,
                     idArticulo: item.idArticulo,
                 }
                 this.articuloSvc.findForSale(query).then(response => {

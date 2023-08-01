@@ -385,9 +385,11 @@
          * @returns object
          */
         service.findForSale = function(query){
+
             if(!query.hasOwnProperty('tipo')){
-                fS.sweetAlert('warning', 'Propiedad tipo no proporcionado')
-                throw ''
+                query.tipo = 6;
+                // fS.sweetAlert('warning', 'Propiedad tipo no proporcionado - listar articulo')
+                // throw ''
             }
             if(!query.hasOwnProperty('idArticulo')){
                 fS.sweetAlert('warning', 'Propiedad idArticulo no proporcionado')

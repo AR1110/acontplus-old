@@ -359,7 +359,7 @@
         }
       ],
       "DownstreamPathTemplate": "/api/CuentaPorPagar/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Post", "Put", "Delete" ],
       "UpstreamPathTemplate": "/gateway/CuentaPorPagar/{everything}"
     },
@@ -375,7 +375,7 @@
         }
       ],
       "DownstreamPathTemplate": "/api/CuentaPorPagar?json={json}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get" ],
       "UpstreamPathTemplate": "/gateway/CuentaPorPagar?json={json}"
     },
@@ -391,7 +391,7 @@
         }
       ],
       "DownstreamPathTemplate": "/api/CuentaPorPagar/{id}?json={json}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Put" ],
       "UpstreamPathTemplate": "/gateway/CuentaPorPagar/{id}?json={json}"
     },
@@ -1056,7 +1056,7 @@
         }
       ],
       "DownstreamPathTemplate": "/api/CuentaPorCobrar{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "UpstreamPathTemplate": "/gateway/CuentaPorCobrar{everything}"
     },
@@ -1073,7 +1073,7 @@
         }
       ],
       "DownstreamPathTemplate": "/api/ComprobanteIngreso{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "UpstreamPathTemplate": "/gateway/ComprobanteIngreso{everything}"
     },
