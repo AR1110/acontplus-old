@@ -19,7 +19,7 @@ export interface CategoryReadDto {
 
 export type CategoryReadDtoMapper = Array<CategoryReadDto>;
 
-export interface ICategoryView {
+export interface CategoryCreateDto {
  readonly idSubFamilia: number;
   idFamilia: number;
   codigo: string;
@@ -29,24 +29,12 @@ export interface ICategoryView {
   montoObjetivo: number;
   estado: boolean;
 }
+  
 
-interface CategoryApi {
-  idSubFamilia: number;
-  idFamilia: number;
-  codigo: string;
-  descripcion: string;
-  nombreFamilia: string;
-  siglas: string;
-  montoObjetivo: number;
-  estado: boolean;
-}
-
-export interface DataFormApi {
-  subFamilias: CategoryApi[]
-}
-
-
-export interface CategoryState {
-  subFamilia: ICategoryView[]
-  dataFormApi: DataFormApi
+export interface CategoryUpdateDto{
+  idFamilia: number
+  idSubFamilia: 0
+  descripcion: string
+  
+  
 }

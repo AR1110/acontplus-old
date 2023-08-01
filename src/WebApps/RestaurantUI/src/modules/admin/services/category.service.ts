@@ -1,22 +1,23 @@
 import { PATHS } from '@/core/constants/path';
-import { Http, HttpUploadFile } from '@/core/utils';
+import { Http, HttpUploadFile, loadAbort } from '@/core/utils';
 import { CategoryReadDto } from '../models';
 
 const URL = 'v3/SubFamilia/'
 export const CategorySvc = {
-  getAll: async () => {
+  getAll: async (): Promise<CategoryReadDto[]> => {
+    const controller = loadAbort(); //Cancelar peticion 
     const query = JSON.stringify({
       pageIndex: 1,
-      pageSize: 2,
+      pageSize: 50,
     })
     const response = await Http({
       method: 'get',
       url: `${PATHS.INVENTARIO}${URL}Get`,
       params: {
         json: query
-      }  
-    });
-    console.log(response);
+      },
+      signal: controller.signal
+    }); 
 
     if(response.code=="1"){
       const categories = JSON.parse(response.payload);
@@ -46,10 +47,7 @@ export const CategorySvc = {
       data
     });
 
-    console.log(response);
-
-
-
+    console.log(response); 
   },
 
   // insert: () => {
@@ -58,11 +56,17 @@ export const CategorySvc = {
   //     url: PATHS.PRIVATE + 'Category',
   //   });
   // },
-  update: () => {
-    return Http({
-      method: 'put',
-      url: PATHS.PRIVATE + 'Category',
+  update: async (id: number, data: any) => {
+    const response = await Http({
+      method: 'post',
+      url: `${PATHS.INVENTARIO}${URL}Update`,
+      params: {
+        id
+      },
+      data: {data}
     });
+
+    console.log(response);
   },
 
   imageUpload: async(data: any) => {

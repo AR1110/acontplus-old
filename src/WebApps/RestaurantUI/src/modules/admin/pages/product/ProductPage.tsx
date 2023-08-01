@@ -44,7 +44,7 @@ export default function ProductPage() {
           <ProductTable />
         </Grid>
 
-        <>
+        {/* <>
           {open ? (
             <DialogCustom
               id="ringtone-menu"
@@ -62,7 +62,7 @@ export default function ProductPage() {
           ) : (
             ''
           )}
-        </>
+        </> */}
       </ErrorBoundary>
     </ProductProvider>
   );

@@ -1,4 +1,5 @@
 import {
+  Badge,
   IconButton,
   Paper,
   Table,
@@ -9,16 +10,41 @@ import {
   TableRow,
 } from '@mui/material'; 
 
-import EditIcon from '@mui/icons-material/Edit';
-import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+ 
 import { CategoryReadDto } from '@/modules/admin/models';
+import { EditIcon, RemoveCircleOutlineIcon, dialogOpenSubject$ } from '@/core/components';
+import { dialogDataSubject$ } from './CategoryDialog';
+import Swal from 'sweetalert2';
+import { SnackbarUtilities as Snackbar } from '@/core/utils';
 
 type CategoryTableProp = {
   categories: CategoryReadDto[]
 }
 
 export default function CategoryTable({categories}:CategoryTableProp) { 
-  console.log(categories)
+
+
+  const dataEdit = (data: CategoryReadDto)=>{ 
+    dialogOpenSubject$.setSubject = true;
+    dialogDataSubject$.setSubject = data;    
+  }
+
+  const askToUpdateState = async (id: number)=>{
+    const {isConfirmed} = await Swal.fire({      
+      html: 'Esta seguro de eliminar esta categoria?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si',
+      cancelButtonText: 'No'
+    })
+    if(isConfirmed){
+      Snackbar.success('Eliminado correctamente' + id)
+    }
+  }
+
+
   return (
     <Paper
       sx={{ p: 2, display: 'flex', flexDirection: 'column' }}
@@ -34,6 +60,7 @@ export default function CategoryTable({categories}:CategoryTableProp) {
               <TableCell align="center">CÓDIGO</TableCell>
               <TableCell align="center">SECUENCIAL</TableCell>
               <TableCell align="center">MONTO OBJETIVO</TableCell>
+              <TableCell align='center'>ESTADO</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -43,10 +70,10 @@ export default function CategoryTable({categories}:CategoryTableProp) {
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <TableCell>
-                  <IconButton aria-label="delete" color="primary" size="small">
+                  <IconButton aria-label="delete" color="primary" size="small" onClick={()=>dataEdit(category)} >
                     <EditIcon fontSize="inherit" />
                   </IconButton>
-                  <IconButton aria-label="delete" color="error" size="small">
+                  <IconButton aria-label="delete" color="error" size="small" onClick={()=>askToUpdateState(category.idSubFamilia)}>
                     <RemoveCircleOutlineIcon fontSize="inherit" />
                   </IconButton>
                 </TableCell>
@@ -58,6 +85,9 @@ export default function CategoryTable({categories}:CategoryTableProp) {
                 <TableCell align="center">{category.codigo}</TableCell>
                 <TableCell align="center">{category.siglas}</TableCell>
                 <TableCell align="center">{category.montoObjetivo}</TableCell>
+                <TableCell align="center">
+                 <Badge badgeContent={category.estado?'Activo': 'Inactivo'} color={category.estado?'success':'warning'}></Badge>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

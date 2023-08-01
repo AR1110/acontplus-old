@@ -11,12 +11,17 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import * as yup from 'yup';
 import { useFormik } from 'formik';
-import { useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CategorySvc } from '@/modules/admin/services';
-import { ImageUpload } from '@/core/components'; 
+import { ImageUpload, dialogCloseSubject$ } from '@/core/components'; 
+import { SubjectManager } from '@/core/models';
+import { Subscription } from 'rxjs';
 interface ModalProps {
-  handleClose: () => void;
+  handleClose?: () => void;
 }
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const dialogDataSubject$ = new SubjectManager<any>();
 
 export default function CategoryDialog({ handleClose }: ModalProps) {
 
@@ -75,20 +80,29 @@ export default function CategoryDialog({ handleClose }: ModalProps) {
   });
 
   const handleCancel = () => {
-    formik.resetForm();
-    handleClose();
+    dialogCloseSubject$.setSubject = false;
+    formik.resetForm(); 
   };
 
   const handleToUpperCase = function () {
-    if (!formik.values.descripcion) return null;
-
-  
+    if (!formik.values.descripcion) return ;
+    if(formik.values.idSubFamilia > 0) return; 
     formik.setFieldValue("siglas", formik.values.descripcion.slice(0,3).toUpperCase())
-  }
+  } 
 
-  const handleChangeImage = function (file: File | null){
-    formik.setFieldValue("file", file );
-  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let dataSubject$ = new Subscription();
+  useEffect(()=>{
+    console.log('load component category')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    dataSubject$ = dialogDataSubject$.getSubject.subscribe((data) => {
+      console.log(data)
+      formik.setValues(data)
+    });
+    return ()=>{ 
+      dataSubject$.unsubscribe();
+    }
+  }, [])
 
 
   return (
@@ -169,30 +183,8 @@ export default function CategoryDialog({ handleClose }: ModalProps) {
             />
           </Grid>
 
-          <Grid item lg={3} md={3} sm={12} xs={12}>
-            <ImageUpload onChangeImage={setSelectedImage} />
-            {/* <Card sx={{ maxWidth: 345 }}>
-              <CardActionArea onClick={handleUploadButtonClick}>
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image={ImgProductDefault}
-                  alt="green iguana"
-                />
-              </CardActionArea>
-              <input
-                type="file"
-                name="image"
-                id="image"
-                ref={fileInputRef}
-                onChange={handleUploadButtonClick}
-              />
-              <CardActions>
-                <IconButton aria-label="fingerprint" color="error">
-                  <RemoveCircleOutlineIcon />
-                </IconButton>
-              </CardActions>
-            </Card> */}
+          <Grid item lg={5} md={6} sm={12} xs={12}>
+            <ImageUpload onChangeImage={setSelectedImage} /> 
           </Grid>
         </Grid>
       </DialogContent>
