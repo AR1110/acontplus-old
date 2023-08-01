@@ -53,23 +53,7 @@ export default function CategoryPage() {
 
   useAsync(getApiData, categoriesMapper, () => {
     console.log('init')
-  });
-
-  const renderTableSkeleton = () => {
-    return Array.from({ length: 5 }).map((_, index) => (
-      <TableRow key={index}>
-        <TableCell>
-          <Skeleton variant="text" />
-        </TableCell>
-        <TableCell>
-          <Skeleton variant="text" />
-        </TableCell>
-        <TableCell>
-          <Skeleton variant="text" />
-        </TableCell>
-      </TableRow>
-    ));
-  };
+  }); 
 
   return (
     <ErrorBoundary fallBackComponent={<>Error!</>}>
