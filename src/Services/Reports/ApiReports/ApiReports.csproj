@@ -252,4 +252,10 @@
 	  <ProjectReference Include="..\Reports.Application\Reports.Application.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Update="Reports\Inventario\ArticuloFraccionado.rdl">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
 </Project>
