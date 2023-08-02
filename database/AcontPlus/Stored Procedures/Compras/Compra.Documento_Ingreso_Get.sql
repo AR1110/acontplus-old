@@ -33,15 +33,32 @@ BEGIN
 	SET LANGUAGE SPANISH;
 	DECLARE @typeList INT = 0
 	DECLARE @idEntidad INT
-	DECLARE @jsonConfig AS VARCHAR(MAX)
+	DECLARE @idPuntoEmision AS INT 
+	DECLARE @secuencial AS INT 
+	DECLARE @idDocumentoIngreso AS INT
+	DECLARE @subTotalIva AS NUMERIC(18,5)
+	DECLARE @subTotalIvaCero AS NUMERIC(18,5)
+	DECLARE @subTotalExentoIva AS NUMERIC(18,5)
+	DECLARE @subTotalNoObjetoIva AS NUMERIC(18,5)
+	DECLARE @subTotalNetoIva AS NUMERIC(18,5)
+	DECLARE @subTotalNetoIvaCero AS NUMERIC(18,5)
+	DECLARE @subTotalNetoExentoIva AS NUMERIC(18,5)
+	DECLARE @subTotalNetoNoObjetoIva AS NUMERIC(18,5)
+	DECLARE @iva AS NUMERIC(18,5)
+	DECLARE @decuento AS NUMERIC(18,5)
+	DECLARE @taxes AS TABLE (
+			descuento NUMERIC(18,5) NOT NULL
+		,codigoPorcentaje VARCHAR(5) NOT NULL
+		,tarifa NUMERIC(18,5) NOT NULL
+		,baseImponible NUMERIC(18,5) NOT NULL
+		,valor NUMERIC(18,5) NOT NULL
+	)
 
 	SELECT @typeList = typeList FROM OPENJSON(@json) WITH(typeList INT '$.typeList')
 
 	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
-	SELECT TOP 1 @jsonConfig = jsonConfig FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CD'
-
-
+	-- LISTA PRINCIPAL DEL LAS COMPRAS NO HABITUALES -- 
 	IF @typeList = 1
 		BEGIN
 
@@ -140,6 +157,7 @@ BEGIN
 				 ,@nroSecuencial = @nroSecuencial
 		END 
 
+    -- DATOS PARA EL USO EN EL REGISTRO --
 	IF @typeList = 2
 		BEGIN
 
@@ -168,18 +186,7 @@ BEGIN
 
 
 			--==============================Configuracion Decimal============================================================== 
-			SELECT nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle ,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce
-			FROM OPENJSON(@jsonConfig)
-			WITH (codTransaccion VARCHAR(5) '$.codTransaccion'
-				,nroPrecio              INT '$.nroPrecio'
-				,nroCantidad            INT '$.nroCantidad'
-				,nroIva                 INT '$.nroIva'
-				,nroDescuentoDetalle    INT '$.nroDescuentoDetalle'
-				,nroTotalDetalle        INT '$.nroTotalDetalle'
-				,nroTotalSubTotal       INT '$.nroTotalSubTotal'
-				,nroDescuento           INT '$.nroDescuento'
-				,nroIce                 INT '$.nroIce') as dt
-			 WHERE dt.codTransaccion = 'C'
+			 SELECT  nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle ,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce FROM v_ConfigDecimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'C'
 
 
 			--=============================Impuestos===========================================================================
@@ -197,12 +204,9 @@ BEGIN
 			SELECT TOP 1 inventory = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.llevaInventario') FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CI'
 	END 
 
+	-- CREACION TEMPORAL DE LA SERIE DEL DOCUMENTO --
 	IF @typeList = 3
 		BEGIN
-			DECLARE @idPuntoEmision AS INT 
-			
-			DECLARE @secuencial AS INT 
-
 			SELECT @idPuntoEmision = idPuntoEmision FROM OPENJSON(@json) WITH (idPuntoEmision INT '$.idPuntoEmision')
 
 			SELECT @secuencial = COUNT(*)+1 FROM Compra.Documento_Ingreso WITH (NOLOCK) WHERE idPuntoEmision = @idPuntoEmision
@@ -212,30 +216,12 @@ BEGIN
 			INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab = pe.codEstab
 			WHERE pe.idPuntoEmision = @idPuntoEmision
 		END 
-
+	
+	-- RECUPERAR DATOS PARA LA ACTUALIZACION -- 
 	IF @typeList = 4
 		BEGIN
-			DECLARE @idDocumentoIngreso AS INT
-			DECLARE @subTotalIva AS NUMERIC(18,5)
-			DECLARE @subTotalIvaCero AS NUMERIC(18,5)
-			DECLARE @subTotalExentoIva AS NUMERIC(18,5)
-			DECLARE @subTotalNoObjetoIva AS NUMERIC(18,5)
-			DECLARE @subTotalNetoIva AS NUMERIC(18,5)
-			DECLARE @subTotalNetoIvaCero AS NUMERIC(18,5)
-			DECLARE @subTotalNetoExentoIva AS NUMERIC(18,5)
-			DECLARE @subTotalNetoNoObjetoIva AS NUMERIC(18,5)
-			DECLARE @iva AS NUMERIC(18,5)
-			DECLARE @decuento AS NUMERIC(18,5)
-			DECLARE @taxes AS TABLE (
-				 descuento NUMERIC(18,5) NOT NULL
-				,codigoPorcentaje VARCHAR(5) NOT NULL
-				,tarifa NUMERIC(18,5) NOT NULL
-				,baseImponible NUMERIC(18,5) NOT NULL
-				,valor NUMERIC(18,5) NOT NULL
-			)
-				
-			SELECT @idDocumentoIngreso = idDocumentoIngreso FROM OPENJSON(@json) WITH (idDocumentoIngreso INT '$.idDocumentoIngreso')
 
+			SELECT @idDocumentoIngreso = idDocumentoIngreso FROM OPENJSON(@json) WITH (idDocumentoIngreso INT '$.idDocumentoIngreso')
 
 			INSERT INTO @taxes (descuento,codigoPorcentaje,tarifa,baseImponible,valor)
 			SELECT 
@@ -332,18 +318,7 @@ BEGIN
 
 
 			--==============================Configuracion Decimal============================================================== 
-			SELECT nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle ,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce
-			FROM OPENJSON(@jsonConfig)
-			WITH (codTransaccion VARCHAR(5) '$.codTransaccion'
-				,nroPrecio              INT '$.nroPrecio'
-				,nroCantidad            INT '$.nroCantidad'
-				,nroIva                 INT '$.nroIva'
-				,nroDescuentoDetalle    INT '$.nroDescuentoDetalle'
-				,nroTotalDetalle        INT '$.nroTotalDetalle'
-				,nroTotalSubTotal       INT '$.nroTotalSubTotal'
-				,nroDescuento           INT '$.nroDescuento'
-				,nroIce                 INT '$.nroIce') as dt
-			 WHERE dt.codTransaccion = 'C'
+			SELECT  nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle ,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce FROM v_ConfigDecimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'C'
 
 
 			--=============================Impuestos===========================================================================
@@ -354,8 +329,7 @@ BEGIN
 			SELECT TOP 1 inventory = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.llevaInventario') FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CI'
 
 			--=============================Datos Adicionales===================================================================
-			SELECT * FROM Compra.InfoAdicional 
-				    WHERE uniqueId = (SELECT uniqueId FROM Compra.Documento_Ingreso WHERE idDocumentoIngreso = @idDocumentoIngreso)
+			SELECT * FROM Compra.InfoAdicional  WHERE uniqueId = (SELECT uniqueId FROM Compra.Documento_Ingreso WHERE idDocumentoIngreso = @idDocumentoIngreso)
 		END 
 END
 GO
