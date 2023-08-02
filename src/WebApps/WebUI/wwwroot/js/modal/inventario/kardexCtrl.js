@@ -324,7 +324,7 @@ export class KardexCtrl {
                 }
                 if (response.code === "1") {
                     let tempArray = JSON.parse(response.payload) || []
-                    this.kardexs = tempArray[2];
+                    this.kardexs = tempArray[2] || [];
                     if (this.kardexs.length === 0) {
                         hideLoader();
                         this.toast.toastr('info', 'No se encontraron los resultados');

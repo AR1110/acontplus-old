@@ -1084,7 +1084,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "205.209.99.71",
-          "Port": 7079
+          "Port": 8004
         }
       ],
       "DownstreamPathTemplate": "/api/NotaEntrega{everything}",
@@ -1183,51 +1183,7 @@
         "Delete"
       ],
       "UpstreamPathTemplate": "/gateway/Proforma{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "205.209.99.71",
-          "Port": 8005
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Transportista{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get",
-        "Post",
-        "Put",
-        "Delete"
-      ],
-      "UpstreamPathTemplate": "/gateway/Transportista{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "205.209.99.71",
-          "Port": 8005
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Vehiculo{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get",
-        "Post",
-        "Put",
-        "Delete"
-      ],
-      "UpstreamPathTemplate": "/gateway/Vehiculo{everything}"
-    },
+    },      
     {
       "AuthenticationOptions": {
         "AllowedScopes": [
@@ -1397,29 +1353,7 @@
         "Delete"
       ],
       "UpstreamPathTemplate": "/gateway/TiempoCredito{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "205.209.99.71",
-          "Port": 44395
-        }
-      ],
-      "DownstreamPathTemplate": "/api/GuiaRemision{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get",
-        "Post",
-        "Put",
-        "Delete"
-      ],
-      "UpstreamPathTemplate": "/gateway/GuiaRemision{everything}"
-    },
+    },    
     {
       "AuthenticationOptions": {
         "AllowedScopes": [
@@ -1780,6 +1714,102 @@
         "Delete"
       ],
       "UpstreamPathTemplate": "/gateway/EstabAsig{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8003
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/gateway/Inventario{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8098
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/gateway/Config{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8005
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/gateway/Logistica{everything}"
+    },
+
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8099
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "UpstreamPathTemplate": "/gateway/Contabilidad{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8004
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "UpstreamPathTemplate": "/gateway/Venta{everything}"
     }
   ]
 }

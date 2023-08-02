@@ -52,7 +52,7 @@
         }
 
         $scope.typeSend = 'GenericFile';
-        $scope.typeSend = 'N';
+        $scope.typeSendMail = 'N';
 
         
         $scope.openModalCobroLote = async function() {
