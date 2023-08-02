@@ -29,13 +29,8 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	SET NOCOUNT ON;
-	DECLARE @idPuntoEmision INT
-    DECLARE @idArticulo INT
-    DECLARE @idBodega INT 
-    DECLARE @idMedida INT
-    DECLARE @cantidad INT
-    DECLARE @descripcion VARCHAR(500)
-    DECLARE @precioCosto NUMERIC(18,5)
+	DECLARE @idBodega INT
+	DECLARE @ubicacion VARCHAR(150)
     DECLARE @idUsuario INT
     DECLARE @idEntidad INT
 	DECLARE @ruc AS VARCHAR(15)
@@ -69,8 +64,9 @@ BEGIN
 	   ,stock DECIMAL(15,5)
 	   ,llevaInventario BIT NOT NULL
 	   ,fraccionado BIT NOT NULL
-	   ,ubicacion VARCHAR(100) NOT null
-	   ,fechaCaducidad DATE NOT null
+	   ,caducidad BIT NOT NULL
+	   ,ubicacion VARCHAR(100) NULL
+	   ,fechaCaducidad DATETIME NULL
 	   ,importacion BIT DEFAULT 1 
 	)
 
@@ -88,9 +84,7 @@ BEGIN
 			
 			SELECT TOP 1 @idEntidad = idEntidad,@idUsuario = idUsuario,@ruc = rucEmpresa FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
-			SELECT TOP 1 @idBodega = idBodega FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @idRol  AND defaultBodega = 1 
-	
-			SELECT TOP 1 @idBodega = idPuntoEmision FROM v_PtoEmi_Asign WITH (NOLOCK) WHERE idUsuarioRol = @idRol  AND defaultPtoEmi = 1 
+			SELECT TOP 1 @idBodega = idBodega FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @idRol AND defaultBodega = 1 
 
 			SELECT @sequential = COUNT(*) FROM dbo.Articulo 
 
@@ -109,6 +103,9 @@ BEGIN
 					,descripcion
 					,precioCosto
 					,stock
+					,ubicacion
+					,caducidad
+					,fechaCaducidad
 					,llevaInventario
 					,fraccionado
 				)
@@ -124,6 +121,9 @@ BEGIN
 				   ,dt.descripcion
 				   ,dt.precioCosto
 				   ,dt.stock
+				   ,ubicacion
+				   ,caducidad = CASE WHEN fechaCaducidad IS NOT NULL THEN 1 ELSE 0 END 
+				   ,fechaCaducidad
 				   ,llevaInventario = dt.llevaInventario 
 				   ,fraccionado     = dt.fraccionado 
 			FROM OPENJSON(@json) 
@@ -142,7 +142,10 @@ BEGIN
 				,llevaInventario BIT           '$.llevaInventario'
 				,fraccionado     BIT           '$.fraccionado'
 				,stock           DECIMAL(20,5) '$.stock'
+				,ubicacion       VARCHAR(150)  '$.ubicacion'
+				,fechaCaducidad  VARCHAR(150)  '$.fechaven'
 			) as dt
+
 
 			INSERT INTO @tablePvP (precio,codTarifa,codArticulo,precioCosto,idTipoIva)
 			SELECT precio,REPLACE(tarifa,'PVP',''),codigo,precioCosto,idTipoIva
@@ -164,18 +167,6 @@ BEGIN
 				FOR tarifa in ([pvp1],[pvp2],[pvp3],[pvp4],[pvp5])           
 			) as p
 
-			IF @idBodega IS NULL
-				BEGIN 
-					SELECT '0' code, 'No tienes una Bodega Asignada' as 'message'
-					RETURN 
-				END
-
-			IF @idPuntoEmision IS NULL
-				BEGIN
-					SELECT '0' code, 'no tienes asignado un Pto. de Emision' as 'message'
-					RETURN 
-				END 
-
 			IF (SELECT COUNT(*) FROM @tableArticulo) = 0 
 				BEGIN
 					SELECT '0' code, 'ERROR EN LA IMPORTACION DE ARTICULOS' as 'message'
@@ -188,7 +179,7 @@ BEGIN
 					RETURN 
 				END 
 
-			IF ((SELECT COUNT(*) FROM @tableArticulo) * 5) = (SELECT COUNT(*) FROM @tablePvP)
+			IF ((SELECT COUNT(*) FROM @tableArticulo) * 5) != (SELECT COUNT(*) FROM @tablePvP)
 				BEGIN
 					SELECT '0' code, 'ERROR EN LAS DIFERENCIAS DE PRECIOS Y ARTICULOS' as 'message'
 					RETURN 
@@ -213,6 +204,8 @@ BEGIN
 				,llevaInventario
 				,productoFraccionable
 				,fechaRegistro
+				,caducidad
+				,fechaCaducidad
 				,idUsuario
 				,idEntidad
 				,importacion)
@@ -232,6 +225,8 @@ BEGIN
 				,llevaInventario
 				,fraccionado
 				,dbo.ufnGetDateEcuador()
+				,caducidad
+				,fechaCaducidad
 				,@idUsuario
 				,@idEntidad
 				,importacion
@@ -263,6 +258,13 @@ BEGIN
 			INNER JOIN @tablaTarifa ta ON ta.codTarifa = pvp.codTarifa
 			INNER JOIN dbo.TipoIva ti ON ti.idTipoIva = pvp.idTipoIva
 
+			INSERT INTO ArticuloUbicacion (idArticulo,idBodega,ubicacion,fechaRegistro,idUsuario)
+			SELECT a.idArticulo,@idBodega,ta.ubicacion,GETDATE(),@idUsuario 
+			FROM @tablaArticuloImport t
+			INNER JOIN Articulo        a ON a.idArticulo = t.idArticulo
+			INNER JOIN @tableArticulo ta on ta.codigo = a.codigo
+			WHERE a.llevaInventario = 1 
+
 			INSERT INTO Inventario.Stock(idBodega,idArticulo,cantidad)
 							  SELECT bo.idBodega,ar.idArticulo,0
 							  FROM dbo.Articulo      ar WITH (NOLOCK)
@@ -272,24 +274,6 @@ BEGIN
 							    AND ar.llevaInventario = 1 
 								AND ar.estado = 1
 								AND ar.idArticulo NOT IN (SELECT s.idArticulo FROM Inventario.Stock s WITH (NOLOCK) INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = s.idArticulo WHERE ar.idEntidad = @idEntidad )
-
-			DECLARE cursor_inventory CURSOR LOCAL FOR
-			SELECT td.idArticulo,a.idMedida,a.stock,a.descripcion,a.precioCosto
-			FROM  @tablaArticuloImport td 
-			INNER JOIN Articulo a WITH (NOLOCK) ON td.idArticulo = a.idArticulo 
-			WHERE a.llevaInventario = 1
-
-			OPEN cursor_inventory
-
-			FETCH NEXT FROM cursor_inventory INTO @idArticulo,@idMedida,@cantidad,@descripcion,@precioCosto
-							
-			WHILE @@FETCH_STATUS = 0
-				BEGIN
-					EXEC Inventario.Consolidacion_Insert_Import @idPuntoEmision,@idArticulo,@idMedida,@cantidad,@descripcion,@precioCosto,@idUsuario,@idEntidad
-					FETCH NEXT FROM cursor_inventory INTO @idArticulo,@idMedida,@cantidad
-				END
-			CLOSE cursor_inventory
-			DEALLOCATE cursor_inventory   
 
 			INSERT INTO Importaciones.Historial(idUsuario,idEntidad,modulo,cantidad,fechaRegistro)
 			SELECT @idUsuario,@idEntidad,'/Almacen/Articulo',COUNT(*),dbo.ufnGetDateEcuador() FROM @tableArticulo
