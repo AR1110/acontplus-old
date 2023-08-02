@@ -62,10 +62,15 @@ export class ModalModuloImportacionCrtl{
            
             fileReader.onload = (event)=>{
                 let data = event.target.result;             
-                let workbook = XLSX.read(data,{type:"binary"});       
-                                                 
-                workbook.SheetNames.forEach(async sheetName => {
+                let workbook = XLSX.read(data,{type:"binary", cellDates: true});       
+                                   
+                workbook.SheetNames.forEach(async sheetName => { 
+                   
                     this.tempArrayFiles = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+
+                    console.log(this.tempArrayFiles)
+    
+
                     this.columns = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 })[0].map(item=>item.trim())
                                        
                     this.tempArrayFiles = await this.getMappedItems();                                        

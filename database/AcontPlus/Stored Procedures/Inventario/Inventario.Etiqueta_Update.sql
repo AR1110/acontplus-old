@@ -11,13 +11,14 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 
-	DECLARE @idUsuario INT = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
-	DECLARE @idEntidad INT = (SELECT idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol)
+	DECLARE @idUsuario INT 
+	DECLARE @idEntidad INT 
 
-	DECLARE @descripcion VARCHAR(100)
-	DECLARE @etiquetas VARCHAR(600) 
+	DECLARE @descripcion VARCHAR(800)
+	DECLARE @etiquetas VARCHAR(900) 
 	DECLARE @estado BIT 
 
+	SELECT top 1 @idUsuario = idUsuario, @idEntidad = idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
 	SELECT 
 		@descripcion = descripcion,
 		@etiquetas = etiquetas,
@@ -44,7 +45,7 @@ BEGIN
 
 			IF @estado = 0
 				BEGIN 
-					IF EXISTS(SELECT 1 FROM Articulo WHERE idEntidad = @idEntidad AND idActividad = @id)
+					IF EXISTS(SELECT 1 FROM Articulo WHERE idEntidad = @idEntidad AND idEtiqueta = @id)
 						BEGIN 
 							SELECT '0'code, 'No es posible desactivar esta etiqueta mientras esté siendo utilizada en un artículo.' as 'message'
 							RETURN

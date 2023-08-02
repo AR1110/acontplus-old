@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.50";
+} from "./modalBaseCtrl.js?v=0.52";
 
 
 class ModalNotaEntregaCtrl extends ModalBaseCtrl {
@@ -279,18 +279,8 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl {
         Swal.fire({
             icon: 'warning',
             title: 'Datos Incorrectos',
-            html: 'Número de identificación inválido, desea editar?',
-            showConfirmButton: true,
-            showCancelButton: true,
-            confirmButtonText: 'Editar',
-            cancelButtonText: 'Cancelar'
-        }).then(async result => {
-            if (result.isConfirmed) {
-                this.cliente = item;
-                await this.openModalClienteUpdate();
-                this.cliente = {}
-            }
-        })
+            html: 'Número de identificación inválido, desea editar?', 
+        }) 
 
     }
 
@@ -824,7 +814,7 @@ export class ModalNotaEntregaDetalleCtrl extends ModalNotaEntregaCtrl {
         '$uibModalInstance', 
         'mainService', 
         'commonService', 
-       
+        'articuloService',
         'modalService', 
         'nombreModal', 
         'formulario', 
@@ -838,7 +828,7 @@ export class ModalNotaEntregaDetalleCtrl extends ModalNotaEntregaCtrl {
         $uibModalInstance, 
         _mS, 
         _commonSvc, 
-       
+        articuloSvc,       
         _modalSvc, 
         _nombreModalConst, 
         _fS, 
@@ -857,7 +847,7 @@ export class ModalNotaEntregaDetalleCtrl extends ModalNotaEntregaCtrl {
             _tS
         })
         
-       
+       this.articuloSvc = articuloSvc;
 
       
 
@@ -937,7 +927,9 @@ export class ModalNotaEntregaDetalleCtrl extends ModalNotaEntregaCtrl {
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
                 actividadTipoIva: this.actividadTipoIva,
-                codigoDoc: 'NE'
+                codigoDoc: 'NE',
+                idBodega: this.idBodega,
+                parentScope: this
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;

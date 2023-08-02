@@ -455,7 +455,7 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
 
     async onSelectedClienteChange(item) {
         try {
-            if (item.validationSri=='CF') {
+            if (item.tipoIdentificacion=='CF') {
                Swal.fire({
                     icon:'warning',
                     html: '<p>A nombre de consumir final no se puede generar el Documento Nota de Crédito</p>'
@@ -795,9 +795,9 @@ export class ModalNotaCreditoEditarCtrl extends ModalNotaCreditoCtrl {
 
 export class ModalNotaCreditoDetalleCtrl extends ModalNotaCreditoCtrl {
 
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params', 'articuloService']
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params) {
+    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params, articuloSvc) {
         super({
             $scope,
             $timeout,
@@ -810,6 +810,7 @@ export class ModalNotaCreditoDetalleCtrl extends ModalNotaCreditoCtrl {
             _tS
         })
         const self = this;
+        this.articuloSvc = articuloSvc;
 
         this.CELL_TEMPLATE_OPTION = `
         <a  ng-click="grid.appScope.$ctrl.openModalDatoAdicionalArticle(row.entity)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
