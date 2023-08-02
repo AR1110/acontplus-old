@@ -13,6 +13,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using Lib.Common;
 
 namespace ApiRecepcion.Controllers
 {
@@ -391,7 +392,7 @@ namespace ApiRecepcion.Controllers
                 await _db.SPExecute("Recepcion.Documento_Insert");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 //_db.AddDynamicParam("jsonData", SqlValidation.ValidateSqlString(data.jsonData));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(DataHelper.SerializeDictionary(parameters.data)));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(Converters.SerializeDictionary(parameters.data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -439,7 +440,7 @@ namespace ApiRecepcion.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Recepcion.Documento_Migrate");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("json", DataHelper.SerializeDictionary(parameters.data));
+                _db.AddDynamicParam("json", Converters.SerializeDictionary(parameters.data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

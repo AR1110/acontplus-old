@@ -39,13 +39,13 @@ import Subcategoria from "./lib/Contabilidad/Subcategoria/index.svelte"
 // })
 // export default motivoDiscrepancia
 
-// const stock = new Stock({
-//     target: document.getElementById('stockFisico'),
-// })
-// export default stock
-
-
-const subcategoria = new Subcategoria({
-    target: document.getElementById('subcategoria'),
+const stock = new Stock({
+    target: document.getElementById('stockFisico'),
 })
-export default subcategoria
+export default stock
+
+
+// const subcategoria = new Subcategoria({
+//     target: document.getElementById('subcategoria'),
+// })
+// export default subcategoria

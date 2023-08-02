@@ -199,7 +199,10 @@
                     item.subTotal = fS.roundNumber(subTotal, 5);
                     item.total = fS.roundNumber(item.precioTotalSinImpuesto, decimal.nroTotalDetalle);
         
-                    findForSale({idArticulo: item.idArticulo}).then(response => {
+                    /**
+                     * tipo 6 listar articulos para el documento ventas 
+                     */
+                    findForSale({tipo:6, idArticulo: item.idArticulo}).then(response => {
                         
                         let  {articulo, medidas, datosAdicionalesArticulo} = response;
                         item.medidas = medidas;

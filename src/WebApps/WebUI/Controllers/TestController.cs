@@ -33,7 +33,7 @@ namespace WebUI.Controllers
         {
             string textToEncrypt = "";
             textToEncrypt = Request.Form["txtToEncrypt"].ToString();
-            var encrypted = Encryption.EncryptString(_config.GetSection("keyEncrypt").Value, textToEncrypt);
+            var encrypted = Encryption.EncryptString(_config.GetSection("KeyEncryption").Value, textToEncrypt);
 
             //var client = new HttpClient(new HttpClientHandler()
             //{

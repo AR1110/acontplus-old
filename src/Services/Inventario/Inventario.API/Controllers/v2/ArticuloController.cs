@@ -4,6 +4,7 @@ using Domain.Dtos;
 using Domain.ViewModels.Almacen;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Lib.Common;
 
 namespace Inventario.API.Controllers.v2
 {
@@ -104,7 +105,7 @@ namespace Inventario.API.Controllers.v2
             {
                 await _db.SPExecute("Almacen.Articulo_Insert_v2");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(DataHelper.SerializeDictionary(parameters.data)));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(Converters.SerializeDictionary(parameters.data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -129,7 +130,7 @@ namespace Inventario.API.Controllers.v2
                 await _db.SPExecute("Almacen.Articulo_Update_v2");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(DataHelper.SerializeDictionary(parameters.data)));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(Converters.SerializeDictionary(parameters.data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

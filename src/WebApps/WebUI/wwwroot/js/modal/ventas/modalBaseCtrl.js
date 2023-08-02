@@ -1311,13 +1311,7 @@ export class ModalBaseCtrl {
             showConfirmButton: true,
             showCancelButton: true, 
             cancelButtonText: 'Cancelar'
-        }).then(async result => {
-            if (result.isConfirmed) {
-                this.cliente = item;
-                await this.openModalClienteUpdate();
-                this.cliente = {}
-            }
-        })
+        }) 
 
     }
 

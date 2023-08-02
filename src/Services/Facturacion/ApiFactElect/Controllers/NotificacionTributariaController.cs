@@ -3,6 +3,7 @@ using DataAccess;
 using Domain.Dtos;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Lib.Common;
 
 namespace ApiFactElect.Controllers
 {
@@ -47,7 +48,7 @@ namespace ApiFactElect.Controllers
             {
                 await _db.SPExecute("FactElect.Notificacion_Tributaria_Insert");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value)); 
-                _db.AddDynamicParam("json", DataHelper.SerializeDictionary(parameters.data));
+                _db.AddDynamicParam("json", Converters.SerializeDictionary(parameters.data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
