@@ -13,8 +13,8 @@ function empleadoCtrl($scope, mS, toast, ) {
     $scope.pageSize = 10;
     $scope.recordsQuantity = [5, 10, 25, 50]
 
-    $scope.resultModal = function(params){
-        if(typeof response==='object'){
+    $scope.resultModal = function(result){
+        if(typeof result==='object'){
             $scope.getEmpleados();
         }        
     }
@@ -47,13 +47,7 @@ function empleadoCtrl($scope, mS, toast, ) {
     $scope.changePageSize = function () {
         $scope.pageIndex = 1;
         $scope.getEmpleados();
-    }
-
-
-    $scope.openModalEdit = (item)=>{
-        $scope.openModalAddUpdate(item.empleado)        
-    }
-
+    } 
     
     $scope.askToDelete = async (item)=> {
         let {isConfirmed} = await Swal.fire({

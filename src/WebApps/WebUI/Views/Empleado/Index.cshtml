@@ -57,7 +57,7 @@
                                                 result-modal="resultModal(result)" params="e.empleado"><i
                                                     class="ti-pencil"></i></button>
                                             <button class="btn btn-danger btn-xs" ng-if="accion.eliminar"
-                                                ng-click="delete(e)"><i class="ti-trash"></i></button>
+                                                ng-click="askToDelete(e)"><i class="ti-trash"></i></button>
                                         </td>
                                         <td md-cell>{{$index+1}}</td>
                                         <td md-cell>{{e.empleado.nroIdentificacion}}</td>

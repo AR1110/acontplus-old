@@ -1084,7 +1084,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "205.209.99.71",
-          "Port": 7079
+          "Port": 8004
         }
       ],
       "DownstreamPathTemplate": "/api/NotaEntrega{everything}",
@@ -1794,6 +1794,22 @@
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "UpstreamPathTemplate": "/gateway/Contabilidad{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "205.209.99.71",
+          "Port": 8004
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "UpstreamPathTemplate": "/gateway/Venta{everything}"
     }
   ]
 }
