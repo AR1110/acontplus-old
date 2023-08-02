@@ -809,7 +809,7 @@ function ModalArticuloGeneralCtrl(
       maxSize: 5,
       totalRecords: 0,
       busqueda: "",
-      byStock: 0,
+      
       byColumn: "DESC",
   };
 
@@ -869,7 +869,7 @@ function ModalArticuloGeneralCtrl(
               return;
           }
           $scope.activated = true;
-
+          $scope.dataSearch.checkBoxStock = [1, 2].includes($scope.dataSearch.byStock)
           artSvc
               .getAllWithPrices($scope.dataSearch)
               .then((response) => {

@@ -419,7 +419,7 @@ function ModalCobroRapidoCtrl($scope, $uibModalInstance, mS, commonSvc, modalSvc
             showLoader();
             let query = {
                 tipo: 3,
-                idCliente : data.idCliente,
+             //   idCliente : data.idCliente, QUITAR MAS ADELANTE
                 codEstab : data.codEstab,
                 idCuentaPorCobrar,
                 credito: data.tiempoCredito
@@ -733,7 +733,7 @@ function ModalCobroLoteCtrl($scope, $uibModalInstance, mS, commonSvc, clienteSvc
             let query = {
                 tipo: 3,
                 codEstab: data.codEstab,
-                idCliente: data.idCliente,
+                idCliente: data.idCliente, //REMOVER MAS ADELANTE
                 idCuentaPorCobrar,
                 credito: data.tiempoCredito,
             }

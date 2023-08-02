@@ -89,13 +89,13 @@
         //se usa en modulo consultar precio y modal consultar Listado de Articulos 
         service.getAllWithPrices = function(dataSearch){
             const query = { 
-                tipo: 3,
-                module: "CP",
+                tipo: 3, 
                 bySearch: dataSearch.bySearch,
                 pageIndex: dataSearch.pageIndex,
                 pageSize: dataSearch.pageSize,
                 byColumn: dataSearch.byColumn,
-                byStock: dataSearch.byStock
+                byStock: dataSearch.byStock,
+                checkBoxStock: dataSearch.checkBoxStock,
               };
 
             return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response=>{
