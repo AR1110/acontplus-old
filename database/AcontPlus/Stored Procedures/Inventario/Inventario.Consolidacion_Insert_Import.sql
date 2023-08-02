@@ -103,6 +103,10 @@ BEGIN
 			ROLLBACK TRAN
 			RETURN
 
+			SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = 'CIV'
+
+			SELECT TOP 1 @secuencial = secuencial FROM v_ConfigDocumento WITH (NOLOCK) WHERE codDoc = 'CIV' AND idPuntoEmision = @idPuntoEmision
+
 			INSERT INTO ConsolidacionInventario
 				(idPuntoEmision 
 				,nroDoc
@@ -146,7 +150,11 @@ BEGIN
 						   ,@precioCosto
 						   ,@precioCosto
 
+			UPDATE ConfigDocumento SET ultimaSecuencia = ultiamSecuencia + 1 WHERE idPuntoEmision = @idPuntoEmision AND idTipoDocumento = @idTipoDocumento
+
 			EXEC Inventario.Transaccion_Insert 'A', 'CI', @fecha, @idConsolidacionInventario,  @idArticulo, @idBodega ,@idMedida,NULL,@cantidad,@precioCosto,@precioCosto,@importeTotal, @idUsuario
+		
+			
 		END 
 END
 GO

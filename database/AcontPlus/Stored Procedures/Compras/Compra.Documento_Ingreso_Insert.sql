@@ -129,22 +129,6 @@ BEGIN
 				SET @fechaEmisionTemp = dbo.ufnGetDateEcuador();
 			END 
 
-		--IF @fechaEmisionModificada > dbo.ufnGetDateEcuador()
-		--	BEGIN 
-		--		SELECT '0'code, 'La fecha de emisión del documento no puede ser posterior a la fecha actual.' as 'message'
-		--		RETURN 
-		--	END
-
-		--IF @fechaEmisionModificada < dbo.ufnGetDateEcuador()
-		--	BEGIN 
-		--		SET @fechaEmisionTemp = DATEADD(dd, DATEDIFF(dd, 0, @fechaEmisionModificada), 0)
-		--	END
-		--ELSE
-		--	BEGIN 
-		--		SET @fechaEmisionTemp =CAST(CAST(@fechaEmisionModificada AS DATE) AS datetime)  + @hora
-		--	END
-		
-		
 
 		INSERT INTO @document 
 		      (idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory)
@@ -313,8 +297,8 @@ BEGIN
 			--===========================================================Contabilidad=================================================================================================
 			
 			INSERT INTO Contabilidad.CuentaPorPagar
-                  (idEstablecimiento,idProveedor,idEstadoPago,codDoc,uniqueId,serieComprobante,identificacion,fechaEmision,importeTotal,idEntidad,idUsuario)
-		    SELECT idEstablecimiento,d.idProveedor,@idEstadoPago,codDoc,uniqueId,@serieComprobante,numeroIdentificacion,fechaEmision,importeTotal,d.idEntidad,d.idUsuario
+                  (idEstablecimiento,idProveedor,idEstadoPago,codDoc,idDocumento,uniqueId,serieComprobante,identificacion,fechaEmision,importeTotal,idEntidad,idUsuario)
+		    SELECT idEstablecimiento,d.idProveedor,@idEstadoPago,codDoc,@idDocumentoIngreso,uniqueId,@serieComprobante,numeroIdentificacion,fechaEmision,importeTotal,d.idEntidad,d.idUsuario
 		    FROM Compra.Documento_Ingreso d WITH (NOLOCK)
 		    INNER JOIN dbo.Proveedor p WITH (NOLOCK) ON p.idProveedor = d.idProveedor 
 		    WHERE d.idDocumentoIngreso = @idDocumentoIngreso
