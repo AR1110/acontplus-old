@@ -2,7 +2,7 @@
     'use strict';
 
     app.factory('notaEntregaService', function($injector) {
-        let url = 'NotaEntrega/';
+        let url = 'Venta/NotaEntrega/';
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario')
 
@@ -63,6 +63,8 @@
                 }
             })
         }
+
+        
 
         service.queryMapper = function({data, cliente, detalles, historyDatosAdicionales}){
 
