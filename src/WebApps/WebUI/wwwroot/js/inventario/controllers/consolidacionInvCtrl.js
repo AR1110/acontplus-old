@@ -1133,12 +1133,10 @@
                 
                 showLoader();
                 const query = { 
-                    tipo: 1, 
-                    checkBoxConsolidar: true, 
-                    idBodega: $scope.idBodega ,
-                    pageIndex: 1, pageSize: 50
+                    tipo: 9, 
                 }
-                articleSvc.getForImportation(query).then(response=>{                    
+                articleSvc.getForImportation(query).then(response=>{
+                    hideLoader();                    
                     $scope.articulosImportados = response;
                         let num = 1;
                         $scope.gridOptions.data = $scope.articulosImportados.map(item => ({
