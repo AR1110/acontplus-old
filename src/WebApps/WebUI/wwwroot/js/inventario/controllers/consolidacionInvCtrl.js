@@ -1135,7 +1135,8 @@
                 const query = { 
                     tipo: 9, 
                 }
-                articleSvc.getForImportation(query).then(response=>{                    
+                articleSvc.getForImportation(query).then(response=>{
+                    hideLoader();                    
                     $scope.articulosImportados = response;
                         let num = 1;
                         $scope.gridOptions.data = $scope.articulosImportados.map(item => ({
