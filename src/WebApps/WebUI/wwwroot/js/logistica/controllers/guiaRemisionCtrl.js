@@ -182,7 +182,7 @@
                 commonSvc.getDataGuiaRemision(item.idGuiaRemision).then(response=>{
                     hideLoader();    
                     if(!response.isComplete) throw response
-                    console.log(response);
+                    
                     let modalRef = modalSvc.openModalCustom({
                         controller: 'ModalGuiaRemisionCtrl',
                         template: URL_TEMPLATE + '_ModalAddUpdate.cshtml',

@@ -99,46 +99,8 @@ function pagoCtrl($timeout, $http, $filter, $scope, mS, _commonSvc, toast, _moda
             } else {
                 toast.toastr('warning', 'NO TIENES ASIGNADO NINGÚN ESTABLECIMIENTO')
             }
-        })
+        }) 
 
-        $http.get('/EntidadFinanciera/OptionEntidadFinanciera').then(({
-            data: response
-        }) => {
-            $scope.entidadesFinancieras = response.data;
-            $scope.entidadFinanciera = response.data.find(val => val.codigo == 'EFE');
-            $scope.getSubEntidadByIdEntFinanciera($scope.entidadFinanciera.idEntidadFinanciera);
-        }, error => console.log(error));
-
-        //Estado pago 
-        $http.get('/EstadoPago/Get').then(({
-            data: response
-        }) => {
-            $scope.paymentStatus = response.data;
-            $scope.estadoPago = {};
-            angular.forEach(response.data, val => {
-                $scope.estadoPago[val.codigo] = val.descripcion;
-            })
-        }, error => console.log(error));
-
-        $http.get('/Banco/GetByAll').then(({
-            data: response
-        }) => {
-            if (response.id == "0") {
-                toast.toastr('warning', response.message, response.titleSms);
-                return
-            }
-            $scope.bancos = response.data;
-        }, error => console.log(error));
-
-        $http.get('/Ciudad/ReadCiudadProvincia').then(({
-            data: response
-        }) => {
-            if (response.id == 0) {
-                toast.toastr('warning', response.message, response.titleSms);
-                return;
-            };
-            $scope.ciudadPronvincias = response.data;
-        });
     };
     $scope.init();
 
@@ -157,31 +119,7 @@ function pagoCtrl($timeout, $http, $filter, $scope, mS, _commonSvc, toast, _moda
             }, error => console.log(error));
     }
 
-
-    $scope.newPayment = async () => {
-        //  const {pago} = _nombreModal             
-        //  const {ModalPagoDocumentoCtrl} = await import('./../../modal/' + pago.MODAL_PAGO_DOCUMENTO_CTRL);
-        //  const modalRef = _modalSvc.openModalSecond(ModalPagoDocumentoCtrl, 'Shared/Pago/' + pago.MODAL_PAGO_DOCUMENTO_CSHTML, 'xl');
-        //  modalRef.opened.then(response=>{                
-        //      console.log(response)
-        //  })
-        $scope.showFooterStepUno = true;
-        $scope.showFooterStepDos = false;
-        $scope.pago.total = 0;
-        $scope.pago.abono = 0;
-        $scope.pago.abonoPosfechado = 0;
-        $scope.pago.totalPago = 0;
-        $scope.pago.saldo = 0;
-        $scope.pago.valorCambio = 0;
-        $scope.pago.posFechado = false;
-        $("#modalPayment").modal('show');
-    };
-
-    //Focus en input del Buscador del Cliente 
-    $("#modalPayment").on('shown.bs.modal', e => {
-        $("input[name='autocompleteSupplier']").focus();
-    });
-
+ 
 
     //-------------------------------MODAL FILTRO----------------------------
     $scope.openModalPagoFiltro = () => {

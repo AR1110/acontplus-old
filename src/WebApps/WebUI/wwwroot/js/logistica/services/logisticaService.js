@@ -3,7 +3,7 @@
     'use strict';
 
     app.factory('guiaRemisionService', function($injector){
-        let url = 'GuiaRemision/';
+        let url = 'Logistica/GuiaRemision/';
         let mS = $injector.get('mainService');
         let service = {};
 
@@ -66,7 +66,7 @@
 
 
     app.factory('transportistaService', function($injector){
-        let url = 'Transportista/';
+        let url = 'Logistica/Transportista/';
         let mS = $injector.get('mainService');
         let service = {};
 
@@ -162,7 +162,7 @@
 
 
     app.factory('vehiculoService', function($injector){
-        let url = 'Vehiculo/';
+        let url = 'Logistica/Vehiculo/';
         let mS = $injector.get('mainService');
         let service = {};
 

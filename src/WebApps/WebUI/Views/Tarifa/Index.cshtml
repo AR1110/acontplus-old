@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Index";
 }
 <div ng-controller="tarifaCtrl" ng-cloak>
@@ -10,17 +9,17 @@
         <div class="col-md-7 align-self-center text-right">
             <div class="d-flex justify-content-end align-items-center">
                 @*<ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
-                        <li class="breadcrumb-item active">Tarifa</li>
-                    </ol>*@
-                
+                <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
+                <li class="breadcrumb-item active">Tarifa</li>
+                </ol>*@
+
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-body">                   
+                <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-condensed ">
                             <thead>
@@ -37,8 +36,10 @@
                             <tbody>
                                 <tr ng-repeat="t in tarifas | filter:buscar track by $index" class="text-center">
                                     <td ng-if="accion.editar">
-                                        <button type="button" ng-if="accion.editar" class="btn btn-info btn-xs" tooltip data-toggle="toggle" title="Editar" ng-click="abrirModal(t,2)"><i class="ti-pencil"></i></button>                                        
-                                    </td>                                    
+                                        <button type="button" ng-if="accion.editar" class="btn btn-info btn-xs" tooltip
+                                            data-toggle="toggle" title="Editar" ng-click="abrirModal(t,2)"><i
+                                                class="ti-pencil"></i></button>
+                                    </td>
                                     <td>{{$index+1}}</td>
                                     <td>{{t.codigo}}</td>
                                     <td>{{t.descripcion}}</td>
@@ -51,7 +52,7 @@
                                         No existen registros disponibles en esta tabla;
                                     </td>
                                 </tr>
-                            </tbody>                           
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -59,7 +60,8 @@
         </div>
     </div>
 
-    <div class="modal fade" id="agregar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" data-backdrop="static" data-keyboard="false">
+    <div class="modal fade" id="agregar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1"
+        data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-sm" role="document">
             <form ng-submit="saveUpdate(type)" class="form-material" autocomplete="off" novalidate>
                 <div class="modal-content">
@@ -73,13 +75,15 @@
                         <div class="row">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="form-group">
-                                    <label class="form-control-label" for="descripcion">Descripcion <span class="text-danger">*</span></label>
-                                    <input type="text" ng-model="data.descripcion" touppercase class="form-control form-control-line" placeholder="Ej: Contado">
-                                </div>                                
+                                    <label class="form-control-label" for="descripcion">Descripcion <span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" ng-model="data.descripcion" touppercase
+                                        class="form-control form-control-line" placeholder="Ej: Contado">
+                                </div>
                                 @*<div class="icheck-primary icheck-inline">
-                                        <input type="checkbox" id="chb1" />
-                                        <label for="chb1">Predeterminado</label>
-                                    </div>*@
+                                <input type="checkbox" id="chb1" />
+                                <label for="chb1">Predeterminado</label>
+                                </div>*@
                             </div>
 
                         </div>
@@ -87,30 +91,34 @@
                             <div class="col-lg-12 col-md-12 col-sm-12 col-12">
                                 <div class="form-group">
                                     <label class="form-control-label" for="descripcion">Codigo: </label>
-                                    <input type="text" ng-model="data.codigo" class="form-control" touppercase placeholder="Ej: CON">
+                                    <input type="text" ng-model="data.codigo" class="form-control" touppercase
+                                        placeholder="Ej: CON">
                                 </div>
                             </div>
                         </div>
-                         
-                        <md-switch class="md-primary" md-no-ink aria-label="Switch No Ink" ng-model="data.ventaPorMayor">
+
+                        <md-switch class="md-primary" md-no-ink aria-label="Switch No Ink"
+                            ng-model="data.ventaPorMayor">
                             Venta al por mayor
                         </md-switch>
-                           
+
                         <br />
-                        <div class="row" ng-show="type==2">
-                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                                <div class="icheck-primary">
-                                    <input type="radio" ng-model="data.estado" ng-value="true" id="someRadioId1" name="someGroupName" />
-                                    <label for="someRadioId1">Activo</label>
-                                </div>
-                            </div>
-                            <div class="col-6 col-md-6 col-sm-6 col-xs-6 text-right">
-                                <div class="icheck-primary">
-                                    <input type="radio" ng-model="data.estado" ng-value="false" id="someRadioId2" name="someGroupName" />
-                                    <label for="someRadioId2">Inactivo</label>
-                                </div>
-                            </div>
+                        @* <div class="row" ng-show="type==2">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                        <div class="icheck-primary">
+                        <input type="radio" ng-model="data.estado" ng-value="true" id="someRadioId1"
+                        name="someGroupName" />
+                        <label for="someRadioId1">Activo</label>
                         </div>
+                        </div>
+                        <div class="col-6 col-md-6 col-sm-6 col-xs-6 text-right">
+                        <div class="icheck-primary">
+                        <input type="radio" ng-model="data.estado" ng-value="false" id="someRadioId2"
+                        name="someGroupName" />
+                        <label for="someRadioId2">Inactivo</label>
+                        </div>
+                        </div>
+                        </div> *@
 
                     </div>
                     <div class="modal-footer">

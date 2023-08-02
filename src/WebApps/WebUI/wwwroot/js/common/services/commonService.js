@@ -1263,7 +1263,7 @@ export class CommonService {
 
         if (!id) throw "ID DOCUMENTO INVÁLIDO";
 
-        await this.mS.getData('get', 'GuiaRemision/GetId/' + id, null, true).then(response => {
+        await this.mS.getData('get', 'Logistica/GuiaRemision/GetId/' + id, null, true).then(response => {
             
             if (response.code == "0") {
                 this.form.sweetAlert('warning', response.message)
