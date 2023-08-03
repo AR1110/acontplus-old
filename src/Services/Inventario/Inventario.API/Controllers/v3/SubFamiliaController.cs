@@ -63,7 +63,7 @@ namespace Inventario.API.Controllers.v3
             {
                 await _db.SPExecute("Restaurant.Category_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", request.Data);
+                _db.AddDynamicParam("json", Converters.SerializeDictionary(request.Data));
                 _response = _db.GetDefault();
 
             }
@@ -113,7 +113,7 @@ namespace Inventario.API.Controllers.v3
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.SubFamilia_Update_Cancel");
+                await _db.SPExecute("Restaurant.Category_Update_Cancel");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
                 _response = _db.GetDefault();
@@ -121,7 +121,7 @@ namespace Inventario.API.Controllers.v3
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al eliminar subfamilia: \n" + ex.ToString());
+                _log.LogError("Error al eliminar catgegoria: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar subfamilia");
             }
             finally
