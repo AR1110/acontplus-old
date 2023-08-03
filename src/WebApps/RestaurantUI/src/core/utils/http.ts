@@ -53,7 +53,8 @@ instance.interceptors.response.use(
     // }
 
     console.log(error.code)    
-    SnackbarUtilities.error(getValidationError(error.code)!);
+    // SnackbarUtilities.error(getValidationError(error.code)!);
+    SnackbarUtilities.error(error.message);
     return Promise.reject(error);
   }
 );
@@ -62,9 +63,9 @@ instance.interceptors.response.use(
 // const axios = <T>(cfg: AxiosRequestConfig): Promise<ApiResponse> =>
 //   instance.request<any, T>(cfg);
 
-const Http = async (config: AxiosRequestConfig): Promise<ApiResponse> => {
-  return instance.request(config).then((response) => {
-    return response.data;
+const Http = async (config: AxiosRequestConfig): Promise<AxiosResponse> => {
+  return instance.request(config).then((response) => { 
+    return response;
   });
 };
 

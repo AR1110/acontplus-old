@@ -1,60 +1,44 @@
-import { Button, Grid, Skeleton, Stack, TableCell, TableRow, Typography } from '@mui/material';
+import { Button, Grid, Stack, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import CategoryTable from './components/CategoryTable';
 import { DialogCustom, dialogOpenSubject$ } from '@/core/components';
 import CategoryDialog from './components/CategoryDialog';
 import { ErrorBoundary } from '@/core/utils';
 import { CategorySvc } from '@admin/services';
-import { CategoryReadDto, CategoryReadDtoMapper } from '../../models';
+import { CategoryReadDto } from '../../models';
 import { useAsync, useFetchAndLoad } from '@/hooks';
 import BackdropLoader from '@/core/components/BackdropLoader';
 
 export default function CategoryPage() {
-  const [categories, setCategories] = useState<Array<CategoryReadDto>>([]);
-  // const enumeracion = 1;
-  const onOpenDialog = () => {
-    dialogOpenSubject$.setSubject = true;
-  };
-
-  // const getCategories = function () {
-  //   try {
-  //     CategorySvc.getAll().then((response) => { 
-  //       setCategories(response);
-  //     });
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   getCategories();
-  // }, [])
+  const [categories, setCategories] = useState<Array<CategoryReadDto>>([]); 
+  const [reloadFetchApi, setReloadFetchApi] = useState(false); 
+  
   const { loading, callEndpoint } = useFetchAndLoad();
+
+  const onOpenDialog = () => { 
+    
+    dialogOpenSubject$.setSubject = true;
+  }; 
+
   const getApiData = async () => await callEndpoint(CategorySvc.getAll());
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const categoriesMapper = function (data: any) {
-    const categoriesApi: CategoryReadDto[] = JSON.parse(data)
-    // const results =  categoriesApi.map(item =>({ 
-    //   codigo: item.codigo,
-    //   descripcion: item.descripcion,
-    //   estado: item.estado,
-    //   idFamilia: item.idFamilia,
-    //   idSubFamilia: item.idSubFamilia,
-    //   montoObjetivo: item.montoObjetivo,
-    //   nombreFamilia: item.nombreFamilia,
-    //   siglas: item.siglas,
-    //   totalRecords: item.totalRecords
-    // }) )
-
-    setCategories(categoriesApi)
+  
+  const categoriesMapper = function (response:any) {  
+    const categoriesApi: CategoryReadDto[] = JSON.parse(response.payload) 
+    setCategories(categoriesApi);
   };
 
   useAsync(getApiData, categoriesMapper, () => {
     console.log('init')
-  }); 
+  }, [reloadFetchApi]); 
 
+  const callBackCloseDialog = () => {
+    setReloadFetchApi(!reloadFetchApi)
+  }
+  
+
+  
+  
   return (
     <ErrorBoundary fallBackComponent={<>Error!</>}>
 
@@ -80,7 +64,7 @@ export default function CategoryPage() {
         <CategoryTable categories={categories} />
       </Grid>
       }
-      <DialogCustom maxWidth='sm' children={<CategoryDialog />}
+      <DialogCustom maxWidth='sm' children={<CategoryDialog callBackCloseDialog={callBackCloseDialog} />}
       />
     </ErrorBoundary>
   );

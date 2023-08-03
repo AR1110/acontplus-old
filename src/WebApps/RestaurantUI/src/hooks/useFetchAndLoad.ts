@@ -1,5 +1,5 @@
 
-import { AxiosCall } from '@/core/models';
+import { AxiosCall } from '@/core/models'; 
 import { AxiosResponse } from 'axios';
 import { useEffect, useState } from 'react';
 
@@ -8,15 +8,14 @@ const useFetchAndLoad = () => {
     let controller: AbortController;
 
     const callEndpoint = async (axiosCall: AxiosCall<any>) => {
-        console.log(axiosCall)
+        
         if (axiosCall.controller) controller = axiosCall.controller;
 
         setLoading(true);
         let result = {} as AxiosResponse<any>;
 
         try {
-            result = await axiosCall.call;
-            
+            result = await axiosCall.call; 
         } catch (err: any) {
             setLoading(false);
             throw err;

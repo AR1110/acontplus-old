@@ -171,8 +171,8 @@
                 byCliente: $scope.dataSearch.byCliente,
                 checkBoxEstado: $scope.dataSearch.byEstado > 0,
                 byEstado: $scope.dataSearch.byEstado,
-                fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
-                fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
+                fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
+                fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
                 verDetalleDoc: $scope.dataSearch.byCliente>0?false: $scope.dataSearch.verDetalleDoc
             }       
             console.log($scope.dataSearch.byCliente)
