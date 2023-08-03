@@ -12,7 +12,9 @@ export class CommonService {
         "nombreModalInventario",
         "nombreModalCompra",
         "nombreModalLogistica",
-        "articuloService"
+        "articuloService",
+        "empleadoService",
+        "ventaService"
     ];
 
     constructor(
@@ -28,7 +30,9 @@ export class CommonService {
         nombreModalInventario,
         nombreModalCompra,
         nombreModalLogistica,
-        articuloSvc
+        articuloSvc,
+        empleadoSvc,
+        ventaSvc
     ) {
         this.$rootScope = $rootScope;
         this.$http = $http;
@@ -44,6 +48,8 @@ export class CommonService {
         this.nombreModalCompra = nombreModalCompra;
         this.nombreModalLogistica = nombreModalLogistica;
         this.articuloSvc = articuloSvc;
+        this.empleadoSvc = empleadoSvc;
+        this.ventaSvc = ventaSvc;
 
         // this.$http.get('/TipoDocumento/GetAll').then(({data:response})=>{
         //     this.tipoDoc = response.data.reduce((groups, item)=>{
@@ -213,20 +219,7 @@ export class CommonService {
             }
             return JSON.parse(response.data)
         });
-    }
-
-
-    getConfigVentaDetalle() {
-        return this.$http.get("/ConfigVentaDetalle/Get").then(({
-            data: response
-        }) => {
-            if (response.id === "0") {
-                toastr.warning(response.message, response.titleSms);
-                return;
-            }
-            return response.data;
-        })
-    }
+    } 
 
     getAllTipoIva() {
         return this.$http.get("/TipoIva/OptionTipoIva")
@@ -289,10 +282,11 @@ export class CommonService {
 
 
     //Buscador Empleado 
-    querySearchEmpleado(search) {
-        if (search === null || search === undefined || search === '') return
-        return this.mS.getData('get', '/Empleado/Search?busqueda=' + search).then(response => {
-            return response.data;
+    querySearchEmpleado(textSearch) {
+        if(!textSearch && textSearch.length < 2)  return [] 
+
+        return this.empleadoSvc.search({
+            textSearch 
         })
     }
 
@@ -347,10 +341,10 @@ export class CommonService {
 
     //---------------------------------------START CLIENTE-----------------------------------------
     clienteSearch(textSearch) {
-        return this.mS.getData('get', '/Cliente/Search?json=' + JSON.stringify({
+        return this.mS.getData('get', 'Venta/Cliente/Search?json=' + JSON.stringify({
             textSearch
-        })).then(response => {
-            if (response.id === '0') {
+        }), null, true).then(response => {
+            if (response.code === '0') {
                 console.warn(response)
                 return
             }
@@ -737,6 +731,7 @@ export class CommonService {
 
 
 
+    //por mejorar mas adelante 
     async generarNroDocumento({
         puntoEmision,
         idPuntoEmision,
@@ -1098,7 +1093,7 @@ export class CommonService {
 
             case "NE":
                 // showLoader();
-                await this.mS.getData('get', "/NotaEntrega/GetId?id=" + id).then(response => {
+                await this.ventaSvc.getIdNotaEntrega(id).then(response => {
                     if (response.code == "0") {
                         this.form.sweetAlert('warning', response.message)
                         throw response.message

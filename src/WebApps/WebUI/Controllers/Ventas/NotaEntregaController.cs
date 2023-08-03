@@ -21,6 +21,7 @@ namespace WebUI.Controllers.Ventas
 
        
 
+        //Por eliminar mas adelante 
         [HttpGet]
         public async Task<IActionResult> GetId(int id)
         {

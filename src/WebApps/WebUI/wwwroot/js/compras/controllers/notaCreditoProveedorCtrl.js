@@ -47,14 +47,23 @@ function notaCreditoProvCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalCon
     }
 
     $scope.initiload = ()=>{
-        _mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
-            let results = JSON.parse(response.payload) || [];
-            $scope.establecimientos = results[0];
-            let codEstab = $scope.establecimientos.length>0? $scope.establecimientos[0].codEstab: 0;            
-            $scope.dataSearch.codEstab = codEstab;
-            $scope.getNotasCredito();
-        })
-
+        
+        _commonSvc.getEstabAsign().then(response => {
+           
+            $scope.establecimientos = response; 
+            
+            if($scope.establecimientos.length>0){ 
+                let codEstab = $scope.establecimientos.length>0?$scope.establecimientos[0].codEstab: 0;            
+                $scope.dataSearch.codEstab = codEstab;
+                $scope.getNotasCredito();
+            }else{
+                hideLoader();
+                _tS.toastr('warning', 'No tienes asignado ningún Establecimiento')
+            }
+        }).catch(err => {
+            hideLoader();
+            console.error(err);
+        })  
         _commonSvc.getEstadoDocByCodDoc('NCP').then(response=>{
             $scope.estadoPagos = response;
         })

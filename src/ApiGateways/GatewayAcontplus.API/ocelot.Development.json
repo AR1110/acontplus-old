@@ -916,22 +916,7 @@
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/DatoAdicionalArticulo{everything}"
     },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7079
-        }
-      ],
-      "DownstreamPathTemplate": "/api/NotaEntrega{everything}",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/gateway/NotaEntrega{everything}"
-    },
+     
     {
       "AuthenticationOptions": {
         "AllowedScopes": [],
@@ -963,39 +948,7 @@
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
       "UpstreamPathTemplate": "/gateway/PrecioMasivo{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7079
-        }
-      ],
-      "DownstreamPathTemplate": "/api/AprobacionDocumento{everything}",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/gateway/AprobacionDocumento{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7079
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Proforma{everything}",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/gateway/Proforma{everything}"
-    },    
+    },     
     {
       "AuthenticationOptions": {
         "AllowedScopes": [],

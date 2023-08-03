@@ -81,7 +81,7 @@ namespace ApiVentas.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Ventas.Empleado_Insert");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("json", JsonConvert.SerializeObject(json));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -98,7 +98,7 @@ namespace ApiVentas.Controllers
         }
 
         [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Update(int id, string data)
+        public async Task<IActionResult> Update(int id, string json)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
@@ -108,7 +108,7 @@ namespace ApiVentas.Controllers
                 await _db.SPExecute("Ventas.Empleado_Update");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", JsonConvert.SerializeObject(data));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
