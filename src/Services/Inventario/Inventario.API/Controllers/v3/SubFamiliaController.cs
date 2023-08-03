@@ -4,6 +4,7 @@ using Helpers;
 using Inventario.Application.Services;
 using Inventario.Core.Interfaces;
 using Inventario.Core.Models;
+using Lib.Common;
 using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
@@ -89,7 +90,7 @@ namespace Inventario.API.Controllers.v3
                 await _db.SPExecute("Restaurant.Category_Update");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", request.Data);
+                _db.AddDynamicParam("json", Converters.SerializeDictionary(request.Data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
