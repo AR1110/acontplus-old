@@ -1,39 +1,79 @@
 ﻿using Lib.Common;
 using Lib.Common.Api;
 using Restaurant.Core.Interfaces;
+using Restaurant.Infrastructure.Data;
+using Services.Lib.Common;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Restaurant.Application.Services
 {
-    public class AppFloorService
+    public class AppFloorService : IAppFloorService
     {
         private readonly IADORepository _repository;
+        private readonly RestaurantContext _context;
         private readonly APIResponse _response;
 
-        public async Task<APIResponse> GetAsync(Dictionary<string, object> parameters)
+        public AppFloorService(IADORepository repository)
         {
-            try
+            _repository = repository;
+            _response = new APIResponse();
+        }
+
+        public async Task<object> GetAsync(Dictionary<string, object> parameters)
+        {
+            DataSet ds = await _repository.GetDataSetAsync("Restaurant.Floors_Get", parameters);
+
+            if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
             {
-                var dt = await _repository.GetDataTableAsync("Restaurant.Floors_Get", parameters);
-                if (DataValidation.DataTableIsNull(dt))
+                if (ds.Tables.Count > 0)
                 {
-                    _response.Create(code: "0", "La transacción no devolvio respuesta");
+                    ds = new DataSet();
                 }
-                else
-                {
-                    _response.Create(code: "1", payload: Converters.DataTableToJSON(dt));
-                }
+                return null;
             }
-            catch (Exception ex)
+            else
             {
-                _response.Create(code: "0", "Error on get tables");
+                return Converters.DataSetToJSON(ds);
+            }
+        }
+
+        public async Task<string> AddAsync(ApiRequest request)
+        {
+            var parameters = new Dictionary<string, object>{
+                {"userRoleId", request.UserRoleId},
+                {"json", Converters.SerializeDictionary(request.Data)}
+            };
+            return await _repository.SPExecuteAsync("Restaunrant.Floors_Insert", parameters);
+        }
+
+        public async Task<string> UpdateAsync(int id, ApiRequest request)
+        {
+            var parameters = new Dictionary<string, object>{
+                {"userRoleId", request.UserRoleId},
+                {"id", id},
+                {"json", Converters.SerializeDictionary(request.Data)}
+            };
+            return await _repository.SPExecuteAsync("Inventario.Floors_Update", request.Data);
+        }
+
+
+        public async Task<APIResponse> DeleteAsync(int id)
+        {
+            var dt = await _repository.GetDataTableAsync("Inventario.StockFisico_Delete", null);
+            if (!DataValidation.DataTableIsNull(dt))
+            {
+                _response.Create(code: "1", payload: DataTableMapper.BindData<APIResponse>(dt));
+            }
+            else
+            {
+                _response.Create(code: "0", message: "La transacción no devolvio respuesta");
             }
             return _response;
         }
-
     }
 }

@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Core.Entities;
+using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
+using Services.Common;
 
 namespace Restaurant.API.Controllers
 {
@@ -15,17 +17,35 @@ namespace Restaurant.API.Controllers
     public class RoomsController : ControllerBase
     {
         private readonly RestaurantContext _context;
+        private readonly IAppRoomService _service;
 
-        public RoomsController(RestaurantContext context)
+        public RoomsController(RestaurantContext context, IAppRoomService service)
         {
             _context = context;
+            _service = service;
         }
 
         // GET: api/Rooms
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Room>>> GetRooms()
+        public async Task<ActionResult> GetRooms(string json)
         {
-            return await _context.Rooms.Include(x=>x.Floor).ToListAsync();
+            try
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId() },
+                    {"json", json }
+                };
+
+                var response = await _service.GetAsync(parameters);
+                if (response == null) { return NoContent(); }
+
+                return Ok(response);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
 
         // GET: api/Rooms/5
