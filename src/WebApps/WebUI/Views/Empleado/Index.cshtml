@@ -54,15 +54,15 @@
                                     <tr md-row ng-repeat="e in empleados | filter: buscarEmpleado">
                                         <td md-cell>
                                             <button class="btn btn-info btn-xs" ng-if="accion.editar" btn-empleado
-                                                result-modal="resultModal(result)" params="e.empleado"><i
+                                                result-modal="resultModal(result)" params="e"><i
                                                     class="ti-pencil"></i></button>
                                             <button class="btn btn-danger btn-xs" ng-if="accion.eliminar"
-                                                ng-click="delete(e)"><i class="ti-trash"></i></button>
+                                                ng-click="askToDelete(e)"><i class="ti-trash"></i></button>
                                         </td>
                                         <td md-cell>{{$index+1}}</td>
-                                        <td md-cell>{{e.empleado.nroIdentificacion}}</td>
-                                        <td md-cell><b class="text-primary">{{e.empleado.nombreCompleto}}</b></td>
-                                        <td md-cell ng-bind-html="e.empleado.estado | estadoPrimario"></td>
+                                        <td md-cell>{{e.nroIdentificacion}}</td>
+                                        <td md-cell><b class="text-primary">{{e.nombreCompleto}}</b></td>
+                                        <td md-cell ng-bind-html="e.estado | estadoPrimario"></td>
 
                                     </tr>
                                     <tr ng-show="empleados.length==0" class="text-center">

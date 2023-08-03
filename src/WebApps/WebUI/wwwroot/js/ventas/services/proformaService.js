@@ -3,7 +3,7 @@
     'use strict';
 
     app.factory('proformaService', function($injector) {
-        let url = 'Proforma/';
+        let url = 'Venta/Proforma/';
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario')
 

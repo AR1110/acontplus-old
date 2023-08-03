@@ -248,18 +248,29 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
         }       
     }
 
-    $scope.initiload = ()=>{
-        _mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
-            let results = JSON.parse(response.payload) || [];
-            $scope.establecimientos = results[0];
-            let codEstab = $scope.establecimientos.length>0?$scope.establecimientos[0].codEstab: 0;            
-            $scope.dataSearch.codEstab = codEstab;
-            $scope.getRetencionesVenta();
-
-            _commonSvc.getEstadoDocByCodDoc(TIPO_DOC.codigo).then(response=>{
-                $scope.estadoPagos = response;
-            })  
+    $scope.initiload = ()=>{ 
+        _commonSvc.getEstabAsign().then(response => {
+           
+            $scope.establecimientos = response; 
+            
+            if($scope.establecimientos.length>0){ 
+                let codEstab = $scope.establecimientos.length>0?$scope.establecimientos[0].codEstab: 0;            
+                $scope.dataSearch.codEstab = codEstab;
+                $scope.getRetencionesVenta();
+            }else{
+                hideLoader();
+                _tS.toastr('warning', 'No tienes asignado ningún Establecimiento')
+            }
+        }).catch(err => {
+            hideLoader();
+            console.error(err);
+        })  
+        
+        _commonSvc.getEstadoDocByCodDoc(TIPO_DOC.codigo).then(response=>{
+            $scope.estadoPagos = response;
         })
+
+
     }
     $scope.initiload();
 

@@ -4,7 +4,7 @@
     'use strict';
 
     app.factory('aprobacionDocService', function($injector){
-        let url = 'AprobacionDocumento/';
+        let url = 'Venta/AprobacionDocumento/';
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
         let service = {}

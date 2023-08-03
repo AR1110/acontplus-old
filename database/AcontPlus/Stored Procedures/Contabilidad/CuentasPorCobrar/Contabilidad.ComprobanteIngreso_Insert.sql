@@ -81,8 +81,6 @@ BEGIN
 	)
 
 	BEGIN TRY 
-		
-		
 
   	    --====================================obtener Datos de los Json============================================
 		SELECT @comprobante = comprobante,@cobros = cobros,@cobroDetalle= cobroDetalle,@historial = historial FROM OPENJSON(@json) 

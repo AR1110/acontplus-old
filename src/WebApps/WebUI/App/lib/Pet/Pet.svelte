@@ -224,7 +224,7 @@
 				textSearch: value,
 			};
 			await client
-				.get(`Cliente/Search/`, {
+				.get(`Venta/Cliente/Search/`, {
 					params: {
 						json: JSON.stringify(data),
 					},

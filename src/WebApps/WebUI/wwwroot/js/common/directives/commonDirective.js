@@ -1331,7 +1331,7 @@
 
 
 
-    app.directive('empleadoSearchDrtv', function ($compile,mainService) {
+    app.directive('empleadoSearchDrtv', function ($compile,empleadoService) {
         return {
             restrict: 'A',
             scope: {
@@ -1345,18 +1345,8 @@
                 }
                 scope.search = function (textSearch) {
                     if (textSearch.length > 1) {
-                        return mainService.getData('get', '/Empleado/Search?busqueda=' + textSearch).then(response => {
-                            let empleados = response.data || [];
-                            return empleados.map(item=>(
-                                {
-                                    idEmpleado: item.idEmpleado,
-                                    idTipoIdentificacion: item.idTipoIdentificacion,
-                                    nroIdentificacion: item.nroIdentificacion,
-                                    nombreCompleto: item.nombreCompleto,
-                                    estado: item.estado,
-                                }
-                            )) 
-                        }).catch(error=>{
+                        return empleadoService.search({textSearch})
+                        .catch(error=>{
                             console.log(error)
                         })
                     }

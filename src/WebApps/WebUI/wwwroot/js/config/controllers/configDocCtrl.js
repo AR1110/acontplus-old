@@ -1,8 +1,8 @@
 app.controller('configDocCtrl', configDocCtrl);
 
-configDocCtrl.$inject = ['$timeout', '$scope', 'commonService', 'mainService', 'toastService'];
+configDocCtrl.$inject = ['$scope', 'commonService', 'mainService', 'toastService'];
 
-function configDocCtrl($timeout, $scope, _commonSvc, mS, toast) {
+function configDocCtrl($scope, _commonSvc, mS, tS) {
     // let accion = JSON.parse(localStorage.getItem("accion"));
     // if(accion===null){
     //     location.href = "/Home/Index";
@@ -15,18 +15,24 @@ function configDocCtrl($timeout, $scope, _commonSvc, mS, toast) {
     $scope.puntosEmision = [];
 
     $scope.initiload = ()=>{
-        mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response=>{
-            let results = JSON.parse(response.payload) || [];
-            $scope.establecimientos = results[0];   
+        showLoader();
+        _commonSvc.getEstabAsign().then(response => {
+           
+            $scope.establecimientos = response; 
             
             if($scope.establecimientos.length>0){
-                $scope.dataEstab = $scope.establecimientos.length>0?$scope.establecimientos[0]: [];
+                $scope.dataEstab = $scope.establecimientos.length>0?$scope.establecimientos[0]: {};
                 $scope.codEstab = $scope.dataEstab.codEstab;            
                 $scope.getPuntoEmision();
+                hideLoader();
             }else{
-                toastr.info('No tienes asignado ningún Establecimiento')
+                hideLoader();
+                tS.toastr('warning', 'No tienes asignado ningún Establecimiento')
             }
-        })
+        }).catch(err => {
+            hideLoader();
+            console.error(err);
+        }) 
     }
 
     $scope.initiload();
@@ -37,14 +43,13 @@ function configDocCtrl($timeout, $scope, _commonSvc, mS, toast) {
     }
 
     $scope.getPuntoEmision = ()=>{
-        mS.getData('get', '/EstabAsig/GetDataForm?json=' + JSON.stringify($scope.dataEstab)).then(response=>{
-            let results = JSON.parse(response.payload)
+        _commonSvc.getDataFormEstabAsig($scope.dataEstab).then(results=>{ 
             $scope.puntosEmision = results[0];            
             if($scope.puntosEmision.length>0){          
                 $scope.idPuntoEmision = $scope.puntosEmision[0].idPuntoEmision;
                 $scope.getConfigDocs();
             }else{
-                toastr.info('No tienes asignado ningún punto de Emisión')
+                tS.toastr('warning','No tienes asignado ningún punto de Emisión')
             }           
         })
     }
@@ -52,12 +57,15 @@ function configDocCtrl($timeout, $scope, _commonSvc, mS, toast) {
     $scope.getConfigDocs = function () {   
         showLoader();
         mS.getData('get', '/TipoDocumento/GetConfiguration?idPuntoEmision=' + $scope.idPuntoEmision).then(function (response) {                
+            hideLoader();
             if (response.id == 0) {
                 toast.toastr('warning', response.message);
             };
             $scope.configurationDocs = response.data;
+        }).catch(error => {
             hideLoader();
-        }, error=>console.log(error));
+            console.log(error)
+        })
     }
 
     $scope.saveConfig = function (item) {
@@ -78,7 +86,9 @@ function configDocCtrl($timeout, $scope, _commonSvc, mS, toast) {
             ultimaSecuencia: item.configDoc.ultimaSecuencia
         };
 
+        showLoader();
         mS.getData('post', '/TipoDocumento/SaveConfig', data).then(response=>{
+            hideLoader();
             if (response.id == 0) {
                 toast.toastr('warning', response.message);
                 return;
@@ -87,7 +97,10 @@ function configDocCtrl($timeout, $scope, _commonSvc, mS, toast) {
                 toast.toastr('success', response.message);
                 $scope.getConfigDocs();
             };
-        }, error=>console.log(error));
+        }).catch(error => {
+            hideLoader();
+            console.log(error)
+        })
     };
 
     $scope.configDoc = function () {
