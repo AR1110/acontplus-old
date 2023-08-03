@@ -1,7 +1,6 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { ApiResponse } from "../models";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios"; 
 import { AuthService } from "@/core/services";
-import { getValidationError, SnackbarUtilities } from ".";
+import { SnackbarUtilities } from ".";
 
 const instance = axios.create({
   baseURL: import.meta.env.DEV ? "https://localhost:7111/gateway/" : "",

@@ -1,178 +1,200 @@
-import Button from "@mui/material/Button";
-import { styled } from "@mui/material/styles";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
-
-import { 
-  MenuItem, 
+import {
+  Button,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  IconButton,
   TextField,
-} from "@mui/material";
-import { useFormik } from "formik";
-import * as yup from "yup";
-import { ITable } from "@admin/models";
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-  "& .MuiDialogContent-root": {
-    padding: theme.spacing(2),
-  },
-  "& .MuiDialogActions-root": {
-    padding: theme.spacing(1),
-  },
-  "& .MuiDialog-paper": { width: "50%", maxHeight: 435 },
-  maxWidth: "xs",
-}));
-
-export interface DialogTitleProps {
-  id: string;
-  children?: React.ReactNode;
-  onClose: () => void;
+import * as yup from 'yup';
+import { useFormik } from 'formik';
+import { useEffect, useState } from 'react';
+import { CategorySvc } from '@/modules/admin/services';
+import { ImageUpload, dialogCloseSubject$ } from '@/core/components'; 
+import { SubjectManager } from '@/core/models';
+import { Subscription } from 'rxjs';
+import { SnackbarUtilities } from '@/core/utils';
+interface ModalProps {
+  callBackCloseDialog: () => void;
 }
 
-function BootstrapDialogTitle(props: DialogTitleProps) {
-  const { children, onClose, ...other } = props;
+// eslint-disable-next-line react-refresh/only-export-components
+export const dialogDataSubject$ = new SubjectManager<any>();
+
+export default function CategoryDialog({ callBackCloseDialog }: ModalProps) {
+
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const validationSchema = yup.object({
+    descripcion: yup.string().trim().required('Descripción es requerido'),
+    siglas: yup.string().required('Siglas es requerido'),
+    montoObjetivo: yup.number().min(0, 'No puede ser vacio').required('Este campo es requerido'),
+    //file: yup.mixed().required("Required file")
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      idFamilia: 0,
+      idSubFamilia: 0,
+      descripcion: '',
+      siglas: '',
+      montoObjetivo: 0.0,
+      applicationId: 1, 
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (values) => {
+      try {
+        
+        // const formData = new FormData(); 
+        // formData.append("file", selectedImage as Blob, selectedImage?.name); 
+        // const data = {
+        //   DataFile: formData,
+        //   Params: JSON.stringify(values)
+        // }
+        // await CategorySvc.imageUpload(data).then(response => { 
+        //   console.log(response);
+        // }) 
+        // }) 
+        console.log(values)
+        if(values.idSubFamilia>0){
+          await CategorySvc.update(values.idSubFamilia, values).then(response => {
+            if(response.code==="0"){
+              SnackbarUtilities.warning(response.message);
+            }
+            if(response.code==="1"){
+              SnackbarUtilities.success(response.message);              
+              handleCancel();
+              callBackCloseDialog();
+            } 
+          })
+        }
+
+      } catch (error) { 
+        console.log(error);
+      }finally{
+        formik.setSubmitting(false);
+      }
+    },
+  });
+
+  const handleCancel = () => {
+    dialogCloseSubject$.setSubject = false;
+    formik.resetForm(); 
+  };
+
+  const handleToUpperCase = function () {
+    if (!formik.values.descripcion) return ;
+    if(formik.values.idSubFamilia > 0) return; 
+    formik.setFieldValue("siglas", formik.values.descripcion.slice(0,3).toUpperCase())
+  } 
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let dataSubject$ = new Subscription();
+
+  useEffect(()=>{
+    console.log('load component category')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    dataSubject$ = dialogDataSubject$.getSubject.subscribe((data) => {
+      console.log(data)
+      formik.setValues(data)
+    });
+    return ()=>{ 
+      dataSubject$.unsubscribe();
+    }
+  }, [])
+
 
   return (
-    <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
-      {children}
-      {onClose ? (
+    <form onSubmit={formik.handleSubmit}>
+      <DialogTitle id="alert-dialog-title">
+        {`${formik.values.idSubFamilia > 0 ? 'Editar' : 'Nuevo'} Categoria`}
         <IconButton
           aria-label="close"
-          onClick={onClose}
+          onClick={handleCancel}
           sx={{
-            position: "absolute",
+            position: 'absolute',
             right: 8,
             top: 8,
             color: (theme) => theme.palette.grey[500],
           }}
         >
-          <CloseIcon /> 
+          <CloseIcon />
         </IconButton>
-      ) : null}
-    </DialogTitle>
-  );
-}
-interface TableDialogProps {
-  isOpenDialog: boolean;
-  handleClose: () => void;
-  handleConfirmSave: () => void;
-  values: Partial<ITable>;
-}
-
-export default function TableDialog({
-  isOpenDialog,
-  handleClose,
-  handleConfirmSave,
-  values,
-}: TableDialogProps) {
-  const closeDialog = () => {
-    formik.resetForm();
-    handleClose();
-  };
-
-  const validationSchema = yup.object({
-    numberTable: yup.number().required("Numero de mesa es requerido"),
-    description: yup.string().required("Descripción es requerido"),
-    capacity: yup
-      .number()
-      .min(1, "Numero de capacidad de la mesa al menos tiene que ser 1")
-      .required("Campo capacidad es requrida"),
-  });
-
-  console.log(values);
-
-  const formik = useFormik({
-    initialValues: values,
-    validationSchema: validationSchema,
-    onSubmit: (values) => {
-      console.log(values);
-      handleConfirmSave();
-    },
-  });
-  formik.initialValues = values;
-  formik.values = values;
-  return (
-    <div>
-      <BootstrapDialog
-        aria-labelledby="customized-dialog-title"
-        open={isOpenDialog}
-      >
-        <form onSubmit={formik.handleSubmit}>
-          <BootstrapDialogTitle
-            id="customized-dialog-title"
-            onClose={closeDialog}
-          >
-            Nueva Mesa
-          </BootstrapDialogTitle>
-          <DialogContent dividers>
+      </DialogTitle>
+      <DialogContent dividers>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={12} md={12}>
             <TextField
               fullWidth
-              name="numberTable"
-              id="numberTable"
-              select
-              label="Número de mesa"
-              value={formik.values.numberTable}
-              onChange={formik.handleChange}
               error={
-                formik.touched.numberTable && Boolean(formik.errors.numberTable)
+                formik.touched.descripcion && Boolean(formik.errors.descripcion)
               }
               helperText={
-                formik.touched.numberTable && formik.errors.numberTable
+                formik.touched.descripcion && formik.errors.descripcion
               }
-              size="small"
-              margin="normal"
-            >
-              <MenuItem value={1}>1</MenuItem>
-              <MenuItem value={2}>2</MenuItem>
-              <MenuItem value={3}>3</MenuItem>
-              <MenuItem value={4}>4</MenuItem>
-            </TextField>
-
-            <TextField
-              fullWidth
-              id="description"
-              name="description"
-              label="Descripción"
-              value={formik.values.description}
-              onChange={formik.handleChange}
+              id="descripcion"
+              label="SubFamilia"
+              name="descripcion"
               onBlur={formik.handleBlur}
-              error={
-                formik.touched.description && Boolean(formik.errors.description)
-              }
-              helperText={
-                formik.touched.description && formik.errors.description
-              }
-              margin="normal"
-              size="small"
+              onChange={(e)=>{
+                formik.handleChange(e)
+                handleToUpperCase();
+              }}
+              size="medium"
+              value={formik.values.descripcion}
             />
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
             <TextField
+              error={formik.touched.siglas && Boolean(formik.errors.siglas)}
+              fullWidth
+              helperText={formik.touched.siglas && formik.errors.siglas}
+              id="siglas"
+              label="Siglas"
+              name="siglas"
+              onBlur={formik.handleBlur}
+              onChange={e=>{
+                formik.handleChange(e); 
+                formik.setFieldValue("siglas", e.target.value.toUpperCase());
+              }}
+              size="medium"
+              value={formik.values.siglas}
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
+            <TextField
+              fullWidth
+              id="montoObjetivo"
+              label="Monto objetivo"
+              name="montoObjetivo"
+              size="medium"
               type="number"
-              fullWidth
-              id="capacity"
-              name="capacity"
-              label="Capacidad"
-              value={formik.values.capacity}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.capacity && Boolean(formik.errors.capacity)}
-              helperText={formik.touched.capacity && formik.errors.capacity}
-              margin="normal"
-              size="small"
+              value={formik.values.montoObjetivo}
+              error={
+                formik.touched.montoObjetivo && Boolean(formik.errors.montoObjetivo)
+              }
+              helperText={
+                formik.touched.montoObjetivo && formik.errors.montoObjetivo
+              }
+              variant="outlined"
             />
-          </DialogContent>
-          <DialogActions>
-            <Button variant="contained" color="primary" type="submit">
-              Guardar
-            </Button>
-            <Button variant="outlined" onClick={closeDialog}>
-              Cerrar
-            </Button>
-          </DialogActions>
-        </form>
-      </BootstrapDialog>
-    </div>
+          </Grid>
+
+          <Grid item lg={5} md={6} sm={12} xs={12}>
+            <ImageUpload onChangeImage={setSelectedImage} /> 
+          </Grid>
+        </Grid>
+      </DialogContent>
+      <DialogActions>
+        <Button variant="contained" type="submit" disabled={formik.isSubmitting}>
+          {formik.isSubmitting ? 'Guardando...' : 'Guardar'}
+        </Button>
+        <Button variant="outlined" onClick={handleCancel} disabled={formik.isSubmitting}>Cerrar</Button>
+      </DialogActions>
+    </form>
   );
 }

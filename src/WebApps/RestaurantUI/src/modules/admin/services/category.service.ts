@@ -56,6 +56,14 @@ export const CategorySvc = {
     return response.data; 
   },
 
+  delete: async (id: number): Promise<ApiResponse> => {
+    const response = await Http({
+      method: 'delete',
+      url: `${PATHS.INVENTARIO}${URL}Delete/` + id,
+    });
+    return response.data; 
+  },
+
   imageUpload: async(data: any) => {
     const response = await HttpUploadFile({
       method: 'post',

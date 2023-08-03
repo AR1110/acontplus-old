@@ -61,7 +61,7 @@ export default function CategoryPage() {
           </Button>
         </Stack>
 
-        <CategoryTable categories={categories} />
+        <CategoryTable categories={categories} callBackCloseDialog={callBackCloseDialog} />
       </Grid>
       }
       <DialogCustom maxWidth='sm' children={<CategoryDialog callBackCloseDialog={callBackCloseDialog} />}
