@@ -105,7 +105,6 @@ BEGIN
 
 	SELECT @idCuentaPorCobrar = idCuentaPorCobrar, @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo',idCuentaPorCobrar INT '$.idCuentaPorCobrar')
 	
-
 	-- ============================= Gestios de cuotas en los Documentos ===================================================================
 	IF @tipo = 2
 		BEGIN
