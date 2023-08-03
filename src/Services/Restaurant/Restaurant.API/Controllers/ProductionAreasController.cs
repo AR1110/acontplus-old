@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Core.Entities;
+using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
+using Services.Common;
 
 namespace Restaurant.API.Controllers
 {
@@ -15,94 +17,98 @@ namespace Restaurant.API.Controllers
     public class ProductionAreasController : ControllerBase
     {
         private readonly RestaurantContext _context;
+        private readonly IAppProductionAreaService _service;
 
-        public ProductionAreasController(RestaurantContext context)
+        public ProductionAreasController(RestaurantContext context, IAppProductionAreaService service)
         {
             _context = context;
+            _service = service;
         }
 
         // GET: api/ProductionAreas
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductionArea>>> GetProductionAreas()
+        public async Task<IActionResult> GetProductionAreas()
         {
-            return await _context.ProductionAreas.ToListAsync();
-        }
-
-        // GET: api/ProductionAreas/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ProductionArea>> GetProductionArea(int id)
-        {
-            var productionArea = await _context.ProductionAreas.FindAsync(id);
-
-            if (productionArea == null)
+            try
             {
-                return NotFound();
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId() },                    
+                };
+
+                var response = await _service.GetAsync(parameters);
+                if (response == null) { return NoContent(); }
+
+                return Ok(response);
             }
-
-            return productionArea;
-        }
-
-        // PUT: api/ProductionAreas/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProductionArea(int id, ProductionArea productionArea)
-        {
-            if (id != productionArea.Id)
+            catch (Exception)
             {
                 return BadRequest();
             }
-
-            _context.Entry(productionArea).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProductionAreaExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
         }
+              
 
-        // POST: api/ProductionAreas
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<ProductionArea>> PostProductionArea(ProductionArea productionArea)
-        {
-            _context.ProductionAreas.Add(productionArea);
-            await _context.SaveChangesAsync();
+        //// PUT: api/ProductionAreas/5
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutProductionArea(int id, ProductionArea productionArea)
+        //{
+        //    if (id != productionArea.Id)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            return CreatedAtAction("GetProductionArea", new { id = productionArea.Id }, productionArea);
-        }
+        //    _context.Entry(productionArea).State = EntityState.Modified;
 
-        // DELETE: api/ProductionAreas/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProductionArea(int id)
-        {
-            var productionArea = await _context.ProductionAreas.FindAsync(id);
-            if (productionArea == null)
-            {
-                return NotFound();
-            }
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!ProductionAreaExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-            _context.ProductionAreas.Remove(productionArea);
-            await _context.SaveChangesAsync();
+        //    return NoContent();
+        //}
 
-            return NoContent();
-        }
+        //// POST: api/ProductionAreas
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //[HttpPost]
+        //public async Task<ActionResult<ProductionArea>> PostProductionArea(ProductionArea productionArea)
+        //{
+        //    _context.ProductionAreas.Add(productionArea);
+        //    await _context.SaveChangesAsync();
 
-        private bool ProductionAreaExists(int id)
-        {
-            return _context.ProductionAreas.Any(e => e.Id == id);
-        }
+        //    return CreatedAtAction("GetProductionArea", new { id = productionArea.Id }, productionArea);
+        //}
+
+        //// DELETE: api/ProductionAreas/5
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteProductionArea(int id)
+        //{
+        //    var productionArea = await _context.ProductionAreas.FindAsync(id);
+        //    if (productionArea == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    _context.ProductionAreas.Remove(productionArea);
+        //    await _context.SaveChangesAsync();
+
+        //    return NoContent();
+        //}
+
+        //private bool ProductionAreaExists(int id)
+        //{
+        //    return _context.ProductionAreas.Any(e => e.Id == id);
+        //}
     }
 }

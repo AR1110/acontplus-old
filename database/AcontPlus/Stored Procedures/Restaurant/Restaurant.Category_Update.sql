@@ -10,13 +10,14 @@ GO
 -- Create date: 2021-06-21
 -- Description:	Sp para actualizar las subfamilias
 -- =============================================
+-- Restaurant.Category_Update 
 IF OBJECT_ID(N'Restaurant.Category_Update', N'P') IS NOT NULL
 DROP PROCEDURE Restaurant.Category_Update
 GO
 CREATE PROCEDURE Restaurant.Category_Update
-    @idUsuarioRol INT 
-   ,@id INT
-   ,@json VARCHAR(MAX)
+@idUsuarioRol INT 
+,@id INT
+,@json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON
@@ -56,6 +57,7 @@ BEGIN
 		BEGIN
 			ROLLBACK TRAN; 
 		END
+		
 		SELECT '0'code,'Info: Error en el procedimiento: ' + ERROR_MESSAGE() as 'message'
 		RETURN 
 	END CATCH 

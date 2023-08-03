@@ -8,3 +8,5 @@ export * from './saleFee.model';
 export * from './salePriceList.model';
 export * from './table.model';
 export * from './vatRate.model';
+export * from './production_area.model';
+export * from './dish.model';

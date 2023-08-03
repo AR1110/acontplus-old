@@ -1,6 +1,5 @@
 import {
   Button,
-  Divider,
   Grid,
   Paper,
   Stack,
@@ -10,11 +9,11 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
   Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
-import SearchComponent from './components/Search';
 import { ProductReadDto } from '../../models';
 import { DishSvc } from '../../services/dish.service';
 
@@ -35,6 +34,27 @@ export default function DishComponent() {
     }
   };
 
+  const searchArticle = (e: React.FocusEvent<HTMLInputElement>) => {
+    try {
+      DishSvc.search(e.target.value).then((response) => {
+        setDishes(response);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Insertar
+//   const insertDish = () => {
+//     try {
+//       DishSvc.post().then((response) => {
+//         setDishes(response);
+//       });
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   };
+
   return (
     <Grid item xs={12}>
       <Stack
@@ -52,7 +72,13 @@ export default function DishComponent() {
       </Stack>
       <Grid container spacing={2}>
         <Grid item xs={6} md={4}>
-          <SearchComponent></SearchComponent>
+          <TextField
+            onBlur={searchArticle}
+            type="search"
+            fullWidth
+            label="Buscar platos"
+            size="small"
+          />
         </Grid>
       </Grid>
       <TableContainer sx={{ mt: 2 }} component={Paper}>
