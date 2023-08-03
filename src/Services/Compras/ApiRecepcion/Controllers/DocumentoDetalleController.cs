@@ -40,7 +40,7 @@ namespace ApiRecepcion.Controllers
             GenericResponse _response = new GenericResponse();
             try
             {
-                await _db.SPExecute("Recepcion.DocumentoDetalle_Insert");
+                await _db.SPExecute("Recepcion.DocumentoDetalle_Insert", true);
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("idDocumento", idDocumento);
                 _db.AddDynamicParam("idArticulo", idArticulo);
