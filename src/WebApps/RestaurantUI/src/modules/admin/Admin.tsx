@@ -6,12 +6,12 @@ import { lazy } from "react";
 const AdminLayout = lazy(() => import("@/layouts/AdminLayout"));
 
 const DashboardPage = lazy(() => import("./pages/dashboard/DashboardPage"));
-const TableIndex = lazy(() => import("./pages/table/Table")); 
+const TableIndex = lazy(() => import("./pages/table/TablePage")); 
 const CategoryPage = lazy(() => import("./pages/category/CategoryPage"));
 const ProductPage = lazy(() => import("./pages/product/ProductPage"));
 const DishPage = lazy(() => import("./pages/dish/Dish"));
 
-/**
+/** 
  *
  * Panel Administrativo
  */
