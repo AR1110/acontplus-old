@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lib.Common.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +28,7 @@ namespace Restaurant.API.Controllers
 
         // GET: api/Rooms
         [HttpGet]
-        public async Task<ActionResult> GetRooms(string json)
+        public async Task<ActionResult> Get(string json)
         {
             try
             {
@@ -36,7 +37,6 @@ namespace Restaurant.API.Controllers
                     {"userRoleId", User.GetUserRoleId() },
                     {"json", json }
                 };
-
                 var response = await _service.GetAsync(parameters);
                 if (response == null) { return NoContent(); }
 
@@ -48,20 +48,7 @@ namespace Restaurant.API.Controllers
             }
         }
 
-        // GET: api/Rooms/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Room>> GetRoom(int id)
-        {
-            var room = await _context.Rooms.FindAsync(id);
-
-            if (room == null)
-            {
-                return NotFound();
-            }
-
-            return room;
-        }
-
+       
         // PUT: api/Rooms/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -96,12 +83,18 @@ namespace Restaurant.API.Controllers
         // POST: api/Rooms
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Room>> PostRoom(Room room)
+        public async Task<ActionResult<Room>> Post([FromBody] ApiRequest request)
         {
-            _context.Rooms.Add(room);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetRoom", new { id = room.Id }, room);
+            request.UserRoleId = User.GetUserRoleId();
+            try
+            {
+                var response = await _service.AddAsync(request);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // DELETE: api/Rooms/5

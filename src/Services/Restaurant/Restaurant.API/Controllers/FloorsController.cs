@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Azure.Core;
 using Lib.Common.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -50,11 +51,10 @@ namespace Restaurant.API.Controllers
             }
         }
               
-
         // POST: api/Floors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult> PostFloor(ApiRequest request)
+        public async Task<ActionResult> Post(ApiRequest request)
         {
             request.UserRoleId = User.GetUserRoleId();
             try
@@ -69,46 +69,36 @@ namespace Restaurant.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, Floor floor)
+        public async Task<IActionResult> Put(int id, ApiRequest request)
         {
-            if (id != floor.Id)
-            {
-                return BadRequest("No se ha logrado obtener el Id");
-            }
-            _context.Entry(floor).State = EntityState.Modified;
-
+            request.UserRoleId = User.GetUserRoleId();
             try
             {
-                await _context.SaveChangesAsync();
+                var response = await _floorService.AddAsync(request);
+                return Ok(response);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!FloorExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest(ex.Message);
             }
-            return NoContent();
         }
 
         // DELETE: api/Floors/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteFloor(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var floor = await _context.Floors.FindAsync(id);
-            if (floor == null)
+            var request = new ApiRequest();
+            request.UserRoleId = User.GetUserRoleId();
+
+            try
             {
-                return NotFound();
+                var response = await _floorService.DeleteAsync(id, request);
+                return Ok(response);
             }
-
-            _context.Floors.Remove(floor);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         private bool FloorExists(int id)
