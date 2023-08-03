@@ -105,7 +105,6 @@ BEGIN
 
 	SELECT @idCuentaPorCobrar = idCuentaPorCobrar, @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo',idCuentaPorCobrar INT '$.idCuentaPorCobrar')
 	
-
 	-- ============================= Gestios de cuotas en los Documentos ===================================================================
 	IF @tipo = 2
 		BEGIN
@@ -190,9 +189,16 @@ BEGIN
 
 			SELECT TOP 1 @identificacionReceptor = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
-			SELECT @idCliente = idCliente, @codEstab = codEstab, @tiempoCredito = credito FROM OPENJSON(@json) WITH (idCliente INT '$.idCliente', codEstab VARCHAR(50) '$.codEstab', credito BIT '$.credito')
+			SELECT @idCliente = idCliente,@codEstab = codEstab, @tiempoCredito = credito FROM OPENJSON(@json) WITH (idCliente INT '$.idCliente', codEstab VARCHAR(50) '$.codEstab', credito BIT '$.credito')
 
-			SELECT TOP 1 @numeroIdentificacion = numeroIdentificacion, @nombreFiscal = nombreFiscal FROM dbo.Cliente WITH (NOLOCK) WHERE idCliente = @idCliente
+			IF @tiempoCredito = 1 OR @tiempoCredito = 0  
+				BEGIN
+					SELECT TOP 1 @idCliente = idCliente , @numeroIdentificacion = identificacionComprador, @nombreFiscal = razonSocialComprador FROM v_CuentaPorCobrar WITH (NOLOCK) WHERE idCuentaPorCobrar = @idCuentaPorCobrar
+				END 
+			ELSE 
+				BEGIN
+					SELECT TOP 1 @numeroIdentificacion = numeroIdentificacion, @nombreFiscal = nombreFiscal FROM v_Cliente WITH (NOLOCK) WHERE idCliente = @idCliente
+				END 
 
 			-- ====================================== Datos por lote se trae por cliente y establecimiento   ==================================================================
 			IF @tiempoCredito IS NULL
@@ -224,8 +230,8 @@ BEGIN
 						             FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
 									 INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
 						             WHERE cx.idCuentaPorCobrar = cc.idCuentaPorCobrar 
-									   AND cx.estado          = 1 
-									   AND ep.codigo         IN ('PE','PP')
+									   AND cx.estado = 1 
+									   AND ep.codigo IN ('PE','PP')
 									 ORDER BY cx.nroCuota ASC
 									 FOR JSON PATH
 									 )

@@ -40,25 +40,25 @@ BEGIN
 			,e.direccion 
 			,e.email 																					
 			,CAST(cinv.total AS numeric(15,2)) as total
-		FROM dbo.ConsolidacionInventario cinv
-		INNER JOIN dbo.PuntoEmision   pe ON pe.idPuntoEmision  = cinv.idPuntoEmision
-		INNER JOIN Sri.Establecimiento s ON s.codEstab         = pe.codEstab
-		INNER JOIN dbo.TipoDocumento  td ON td.idTipoDocumento = cinv.idTipoDocumento					
-		INNER JOIN dbo.Entidad         e ON e.idEntidad        = cinv.idEntidad
+		FROM dbo.ConsolidacionInventario cinv WITH (NOLOCK)
+		INNER JOIN dbo.PuntoEmision        pe WITH (NOLOCK) ON pe.idPuntoEmision  = cinv.idPuntoEmision
+		INNER JOIN Sri.Establecimiento      s WITH (NOLOCK) ON s.codEstab         = pe.codEstab
+		INNER JOIN dbo.TipoDocumento       td WITH (NOLOCK) ON td.idTipoDocumento = cinv.idTipoDocumento					
+		INNER JOIN dbo.Entidad              e WITH (NOLOCK) ON e.idEntidad        = cinv.idEntidad
 		WHERE cinv.idConsolidacionInventario = @idConsolidacionInventario 
 
 		SELECT 
 			 a.codigo			
 			,cid.descripcion 
-			,cid.cantidad 
+			,CAST(cid.cantidad as numeric(18,2)) as cantidad
 			,m.descripcion as medida
-			,a.stock as stock 
-			,cid.precioCosto
-			,cid.precioActual 			
-			,CAST((cid.cantidad * cid.precioActual) AS numeric(15,5)) AS total
-		FROM ConsolidacionInventarioDetalle cid
-		INNER JOIN Medida m ON m.idMedida = cid.idMedida
-		INNER JOIN Articulo a ON a.idArticulo = cid.idArticulo 
+			,CAST(a.stock as numeric(18,2)) as stock 
+			,CAST(cid.precioCosto as numeric(18,2)) as precioCosto
+			,CAST(cid.precioActual as numeric(18,2)) as precioActual 			
+			,CAST((cid.cantidad * cid.precioActual) AS numeric(15,2)) as total
+		FROM ConsolidacionInventarioDetalle cid WITH (NOLOCK)
+		INNER JOIN Medida                     m WITH (NOLOCK) ON m.idMedida = cid.idMedida
+		INNER JOIN Articulo                   a WITH (NOLOCK) ON a.idArticulo = cid.idArticulo 
 		WHERE cid.idConsolidacionInventario = @idConsolidacionInventario AND cid.estado = 1
 	END TRY
 	BEGIN CATCH

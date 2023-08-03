@@ -1,4 +1,3 @@
-
 USE AcontPlus
 
 IF OBJECT_ID(N'v_CuentaPorCobrar', N'V')IS NOT NULL
