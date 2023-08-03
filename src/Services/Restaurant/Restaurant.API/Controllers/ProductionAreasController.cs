@@ -27,7 +27,7 @@ namespace Restaurant.API.Controllers
 
         // GET: api/ProductionAreas
         [HttpGet]
-        public async Task<IActionResult> GetProductionAreas()
+        public async Task<IActionResult> Get()
         {
             try
             {

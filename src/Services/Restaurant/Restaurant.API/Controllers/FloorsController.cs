@@ -29,7 +29,7 @@ namespace Restaurant.API.Controllers
 
         // GET: api/Floors
         [HttpGet]
-        public async Task<ActionResult> GetFloors(string json)
+        public async Task<ActionResult> Get(string json)
         {
             try
             {
@@ -49,9 +49,27 @@ namespace Restaurant.API.Controllers
                 return BadRequest();
             }
         }
+              
+
+        // POST: api/Floors
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult> PostFloor(ApiRequest request)
+        {
+            request.UserRoleId = User.GetUserRoleId();
+            try
+            {
+                var response = await _floorService.AddAsync(request);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutFloor(int id, Floor floor)
+        public async Task<IActionResult> Put(int id, Floor floor)
         {
             if (id != floor.Id)
             {
@@ -75,23 +93,6 @@ namespace Restaurant.API.Controllers
                 }
             }
             return NoContent();
-        }
-
-        // POST: api/Floors
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult> PostFloor(ApiRequest request)
-        {
-            request.UserRoleId = User.GetUserRoleId();
-            try
-            {
-                var response = await _floorService.AddAsync(request);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
         }
 
         // DELETE: api/Floors/5

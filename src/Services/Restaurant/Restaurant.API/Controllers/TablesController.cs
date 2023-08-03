@@ -23,7 +23,7 @@ namespace Restaurant.API.Controllers
 
         // GET: api/Tables
         [HttpGet]
-        public async Task<IActionResult> GetTable(string json)
+        public async Task<IActionResult> Get(string json)
         {
             try
             {
@@ -42,25 +42,10 @@ namespace Restaurant.API.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTable(int id, [FromBody] ApiRequest request)
-        {
-            request.UserRoleId = User.GetUserRoleId();
-            try
-            {
-                var response = await _tableService.UpdateAsync(id, request);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
         // POST: api/Tables
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<IActionResult> PostTable([FromBody] ApiRequest request)
+        public async Task<IActionResult> Post([FromBody] ApiRequest request)
         {
             request.UserRoleId = User.GetUserRoleId();
             try
@@ -74,11 +59,29 @@ namespace Restaurant.API.Controllers
             }
         }
 
-        // DELETE: api/Tables/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTable(int id, [FromBody] ApiRequest request)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest request)
         {
             request.UserRoleId = User.GetUserRoleId();
+            try
+            {
+                var response = await _tableService.UpdateAsync(id, request);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+                
+
+        // DELETE: api/Tables/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var request = new ApiRequest();
+            request.UserRoleId = User.GetUserRoleId();
+
             try
             {
                 var response = await _tableService.DeleteAsync(id, request);

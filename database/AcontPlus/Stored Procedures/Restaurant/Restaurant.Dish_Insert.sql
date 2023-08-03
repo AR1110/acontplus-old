@@ -1,14 +1,5 @@
--- ================================================
--- Template generated from Template Explorer using:
--- Create Procedure (New Menu).SQL
---
--- Use the Specify Values for Template Parameters 
--- command (Ctrl-Shift-M) to fill in the parameter 
--- values below.
---
--- This block of comments will not be included in
--- the definition of the procedure.
--- ================================================
+USE Acontplus
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -18,7 +9,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE Restaurant.Dish_Insert
+CREATE OR ALTER PROCEDURE Restaurant.Dish_Insert
 @userRoleId INT
 ,@json VARCHAR(MAX)
 AS
@@ -27,9 +18,10 @@ BEGIN
 	
 	DECLARE @ProductId INT
 			,@ProductionAreaId INT
-			,@CreateAt DATETIME
+			,@CreatedAt DATETIME
 			,@UserId INT
 
+	--- VALIDATE JSON ---
 	IF (ISJSON(@json) = 0)
 	BEGIN
 		SELECT response = (SELECT code = '0'
@@ -38,29 +30,40 @@ BEGIN
 		RETURN
 	END
 
-	SELECT @ProductId			= RoomId
-			,@NumberTable	= NumberTable
-			,@Description   = Description
-			,@Enabled		= Enabled
+	--- GET DATA FROM JSON ---
+	SELECT @ProductId			= ProductId
+			,@ProductionAreaId  = ProductionAreaId
 	FROM OPENJSON(@json) 
 	WITH (
-		RoomId INT					'$.RoomId'
-		,NumberTable INT			'$.NumberTable'
-		,Description NVARCHAR(100)	'$.Description'
-		,Capacity INT				'$.Capacity'
-		,Enabled BIT				'$.Enabled'
+		ProductId INT '$.ProductId'
+		,ProductionAreaId INT '$.ProductionAreaId'		
 	)
 
-	SET @CreateAt = (SELECT dbo.ufnGetDateEcuador())
+	--- GET DATA FROM DATABASE ----
+	SET @CreatedAt = (SELECT dbo.ufnGetDateEcuador())
 	SET @UserId = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
 
 	BEGIN TRY
 		BEGIN TRAN
+			INSERT INTO Restaurant.[Dish](ProductId, CreatedAt, UpdatedAt, Enabled, Deleted, ProductionAreaId, UserId)
+			VALUES(@ProductId, @CreatedAt, NULL, 1, NULL, @ProductionAreaId, @UserId)
+		COMMIT TRAN
+		SELECT response = (SELECT code = '0'
+								  , [message]= 'Ingresado correctamente' 
+						   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
 	END TRY
 	BEGIN CATCH
+		SELECT response = (SELECT code = '0'
+								  , [message] = 'Error al registrar en base de datos' + ERROR_Message() 
+						   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER )
+        IF (@@TRANCOUNT > 0)
+            BEGIN
+				ROLLBACK TRAN
+			END
+			
+        INSERT INTO ErroresSistema
+		(token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, idUsuario)
+		VALUES(NEWID(), 'Restaurant.Dish/Insert', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), @userId)
 	END CATCH
 END
 GO
-
-
-SELECT * FROM Restaurant.[Dish]

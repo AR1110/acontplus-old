@@ -60,8 +60,7 @@ namespace Restaurant.Application.Services
         {
             var parameters = new Dictionary<string, object>{
                 {"userRoleId", request.UserRoleId},
-                {"id", id},
-                {"json", Converters.SerializeDictionary(request.Data)}
+                {"id", id}
             };
             return await _repository.SPExecuteAsync("Restaurant.Table_Delete", request.Data);
         }
