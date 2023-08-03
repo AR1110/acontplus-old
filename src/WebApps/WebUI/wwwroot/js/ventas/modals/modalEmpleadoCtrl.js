@@ -119,7 +119,7 @@ function ModalEmpleadoCtrl($scope, mS, empleadoSvc, $uibModalInstance, tS, param
             toastr.error(error)
         }
 
-
+ 
     }
 
     $scope.successResponse = function(response) {
