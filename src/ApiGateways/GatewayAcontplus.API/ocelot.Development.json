@@ -115,11 +115,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 54948
+          "Port": 7025
         }
       ],
       "DownstreamPathTemplate": "/api/Factura{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/Factura{everything}"
     },
@@ -163,11 +163,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 54948
+          "Port": 7025
         }
       ],
       "DownstreamPathTemplate": "/api/DocumentoElectronico{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/DocumentoElectronico{everything}"
     },
@@ -179,11 +179,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 54948
+          "Port": 7025
         }
       ],
       "DownstreamPathTemplate": "/api/DocumentoElectronicoError/{id}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get" ],
       "UpstreamPathTemplate": "/gateway/DocumentoElectronicoError/{id}"
     },
@@ -195,11 +195,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 54948
+          "Port": 7025
         }
       ],
       "DownstreamPathTemplate": "/api/NotificacionTributaria{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post" ],
       "UpstreamPathTemplate": "/gateway/NotificacionTributaria{everything}"
     },
@@ -211,11 +211,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 54948
+          "Port": 7025
         }
       ],
       "DownstreamPathTemplate": "/api/RetencionAts/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/RetencionAts/{everything}"
     },
@@ -227,11 +227,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 54948
+          "Port": 7025
         }
       ],
       "DownstreamPathTemplate": "/api/RetencionAts/cancel/{id}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Put" ],
       "UpstreamPathTemplate": "/gateway/RetencionAts/cancel/{id}"
     },
@@ -243,11 +243,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 54948
+          "Port": 7025
         }
       ],
       "DownstreamPathTemplate": "/api/RetencionAts",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Post" ],
       "UpstreamPathTemplate": "/gateway/RetencionAts"
     },
@@ -259,11 +259,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 54948
+          "Port": 7025
         }
       ],
       "DownstreamPathTemplate": "/api/DocSustento{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Post", "Put", "Delete" ],
       "UpstreamPathTemplate": "/gateway/DocSustento{everything}"
     },
@@ -275,11 +275,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 54948
+          "Port": 7025
         }
       ],
       "DownstreamPathTemplate": "/api/DocSustImpuesto{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Post", "Put", "Delete" ],
       "UpstreamPathTemplate": "/gateway/DocSustImpuesto{everything}"
     },
@@ -291,11 +291,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 54948
+          "Port": 7025
         }
       ],
       "DownstreamPathTemplate": "/api/DocSustPago{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Post", "Put", "Delete" ],
       "UpstreamPathTemplate": "/gateway/DocSustPago{everything}"
     },
@@ -307,11 +307,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 54948
+          "Port": 7025
         }
       ],
       "DownstreamPathTemplate": "/api/DocSustRetencion{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Post", "Put", "Delete" ],
       "UpstreamPathTemplate": "/gateway/DocSustRetencion{everything}"
     },
@@ -323,11 +323,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 54948
+          "Port": 7025
         }
       ],
       "DownstreamPathTemplate": "/api/RetAtsInfoAdicional/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post" ],
       "UpstreamPathTemplate": "/gateway/RetAtsInfoAdicional/{everything}"
     },
@@ -339,11 +339,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 54948
+          "Port": 7025
         }
       ],
       "DownstreamPathTemplate": "/api/RetAtsInfoAdicional{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Post", "Put", "Delete" ],
       "UpstreamPathTemplate": "/gateway/RetAtsInfoAdicional{everything}"
     },
@@ -451,11 +451,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 54948
+          "Port": 7025
         }
       ],
       "DownstreamPathTemplate": "/api/CompraNoHabitual/Cancel/{id}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Put" ],
       "UpstreamPathTemplate": "/gateway/CompraNoHabitual/Cancel/{id}"
     },
@@ -796,11 +796,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 54948
+          "Port": 7025
         }
       ],
       "DownstreamPathTemplate": "/api/Cliente/GetDataForm/{json}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get" ],
       "UpstreamPathTemplate": "/gateway/Cliente/GetDataForm/{json}"
     },
@@ -812,11 +812,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 54948
+          "Port": 7025
         }
       ],
       "DownstreamPathTemplate": "/api/Ats{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get" ],
       "UpstreamPathTemplate": "/gateway/Ats{everything}"
     },
