@@ -111,12 +111,18 @@
 
 
         service.getIdNotaEntrega = function (id){
-            return mS.getData('get', 'Venta/NotaEntrega/' + 'GetId/' + id, null, true)
+            return mS.getData('get', "/NotaEntrega/GetId?id=" + id)
             
             .catch(error=>{
                 console.log('sale service', error)
                 throw new Error(error)
             })
+            // return mS.getData('get', 'Venta/NotaEntrega/' + 'GetId/' + id, null, true)
+            
+            // .catch(error=>{
+            //     console.log('sale service', error)
+            //     throw new Error(error)
+            // })
         }
 
 
@@ -458,8 +464,11 @@
         
     })
 
+    //====================================NO SUBIR HASTA QUE SE HAYA ACTUALIZADO 
+    //==========================================
     app.factory('empleadoService', function($injector){
-        let url = 'Venta/Empleado/';
+        // let url = 'Venta/Empleado/';
+        let url = 'Empleado/';
         let mS = $injector.get('mainService');
         return {
             getAll ,
@@ -470,32 +479,12 @@
         }
 
         function getAll(query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response=>{
-                if(response.code==="0"){
+            return mS.getData('get', '/Empleado/Get?pageIndex=' + 1 + '&pageSize=' + 100).then(response => {
+                if(response.id ==='0'){
                     throw response;
                 }
-                if(response.code==="1"){
-                    let employeesApi = JSON.parse(response.payload);
-                    return employeesApi.map(item=>({
-                        idEmpleado: item.idEmpleado,
-                        idTipoIdentificacion: item.idTipoIdentificacion,
-                        nroIdentificacion: item.nroIdentificacion,
-                        nombreCompleto: item.nombreCompleto,
-                        estado: item.estado,
-                        totalDatos: item.totalDatos,
-                    }))
-                }
-            })
-        }
-
-        function search(json) {
-            return mS.getData('get', url + 'Search?json=' + JSON.stringify(json), null, true)
-            .then(response => {
-                if(response.code==='0'){
-                    throw response;
-                }
-                if(response.code==='1'){
-                    let employeesApi = JSON.parse(response.payload); 
+                if(response.id=="1"){
+                    let employeesApi = response.data; 
                     return employeesApi.map(item=>({
                         idEmpleado: item.idEmpleado,
                         idTipoIdentificacion: item.idTipoIdentificacion,
@@ -505,30 +494,91 @@
                     })) 
                 }
             })
-            .catch(error => { 
-                console.log(error)                 
-                throw error;
+            // return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response=>{
+            //     if(response.code==="0"){
+            //         throw response;
+            //     }
+            //     if(response.code==="1"){
+            //         let employeesApi = JSON.parse(response.payload);
+            //         return employeesApi.map(item=>({
+            //             idEmpleado: item.idEmpleado,
+            //             idTipoIdentificacion: item.idTipoIdentificacion,
+            //             nroIdentificacion: item.nroIdentificacion,
+            //             nombreCompleto: item.nombreCompleto,
+            //             estado: item.estado,
+            //             totalDatos: item.totalDatos,
+            //         }))
+            //     }
+            // })
+        }
+
+        function search(json) {
+            return mS.getData('get', '/Empleado/Search?busqueda=' + json.textSearch).then(response=>{
+                if(response.id==='0'){
+                    throw response;
+                }
+                if(response.id==='1'){
+                    let employeesApi = response.data;
+                    return employeesApi.map(item=>({
+                        idEmpleado: item.idEmpleado,
+                        idTipoIdentificacion: item.idTipoIdentificacion,
+                        nroIdentificacion: item.nroIdentificacion,
+                        nombreCompleto: item.nombreCompleto,
+                        estado: item.estado,
+                    })) 
+                }
             })
+            // return mS.getData('get', url + 'Search?json=' + JSON.stringify(json), null, true)
+            // .then(response => {
+            //     if(response.code==='0'){
+            //         throw response;
+            //     }
+            //     if(response.code==='1'){
+            //         let employeesApi = JSON.parse(response.payload); 
+            //         return employeesApi.map(item=>({
+            //             idEmpleado: item.idEmpleado,
+            //             idTipoIdentificacion: item.idTipoIdentificacion,
+            //             nroIdentificacion: item.nroIdentificacion,
+            //             nombreCompleto: item.nombreCompleto,
+            //             estado: item.estado,
+            //         })) 
+            //     }
+            // })
+            // .catch(error => { 
+            //     console.log(error)                 
+            //     throw error;
+            // })
         }
 
         function deleteEmployee(id) {
-            return mS.getData('delete', url + 'Delete/' +id, null, true);
+            return mS.getData('post', '/Empleado/Delete?idEmpleado=' + id)
+            // return mS.getData('delete', url + 'Delete/' +id, null, true);
         }
 
         function save(data) {
-            return mS.getData('post', url + 'Insert?json=' + JSON.stringify(data), null, true)
+            return mS.getData('post', url + 'Post', data)
             .catch(error => { 
                 console.log('Error service save employee: '+ error)                 
                 throw error;
             })
+            // return mS.getData('post', url + 'Insert?json=' + JSON.stringify(data), null, true)
+            // .catch(error => { 
+            //     console.log('Error service save employee: '+ error)                 
+            //     throw error;
+            // })
         }
 
         function update(id, data) {
-            return mS.getData('put', url + 'Update/' + id + '?json=' + JSON.stringify(data),null, true)
+            return mS.getData('put', url + 'Put?idEmpleado' + id, data)
             .catch(error => { 
                 console.log('Error service update employee: '+ error)                 
                 throw error;
             })
+            // return mS.getData('put', url + 'Update/' + id + '?json=' + JSON.stringify(data),null, true)
+            // .catch(error => { 
+            //     console.log('Error service update employee: '+ error)                 
+            //     throw error;
+            // })
         }
 
     }) 

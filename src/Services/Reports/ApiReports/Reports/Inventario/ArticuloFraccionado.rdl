@@ -920,9 +920,8 @@
             </TablixRowHierarchy>
             <DataSetName>detailDs</DataSetName>
             <Top>3.17183cm</Top>
-            <Left>0cm</Left>
             <Height>1.2cm</Height>
-            <Width>24.50042cm</Width>
+            <Width>24.50041cm</Width>
             <Style>
               <Border>
                 <Style>Solid</Style>
@@ -1225,7 +1224,6 @@
             </Textbox>
             <Line Name="Line1">
               <Top>0.17639cm</Top>
-              <Left>0cm</Left>
               <Height>0cm</Height>
               <Width>24.50042cm</Width>
               <ZIndex>3</ZIndex>
@@ -1253,10 +1251,36 @@
       </Page>
     </ReportSection>
   </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="logo">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>logo</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="mimeType">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>mimeType</Prompt>
+    </ReportParameter>
+  </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
       <NumberOfColumns>4</NumberOfColumns>
       <NumberOfRows>2</NumberOfRows>
+      <CellDefinitions>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>logo</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>mimeType</ParameterName>
+        </CellDefinition>
+      </CellDefinitions>
     </GridLayoutDefinition>
   </ReportParametersLayout>
   <rd:ReportUnitType>Cm</rd:ReportUnitType>
