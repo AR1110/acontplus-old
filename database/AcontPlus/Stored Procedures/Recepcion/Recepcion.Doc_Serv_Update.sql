@@ -182,7 +182,7 @@ BEGIN
 						BEGIN
 							IF EXISTS (SELECT 1 FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor)))
 								BEGIN
-									SET @idEntidad = (SELECT TOP 1 idEntidad FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor)) AND estado = 1)
+									SET @idEntidad = (SELECT TOP 1 idEntidad FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor)))
 							
 									IF NOT EXISTS(SELECT 1 FROM Proveedor WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = LTRIM(RTRIM(@identificacionCliProv)))
 										BEGIN
@@ -203,7 +203,7 @@ BEGIN
 							IF EXISTS (SELECT 1 FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor)))
 								BEGIN
 						
-									SET @idEntidad = (SELECT TOP 1 idEntidad FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor)) AND estado = 1)
+									SET @idEntidad = (SELECT TOP 1 idEntidad FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor)))
 							
 									IF NOT EXISTS(SELECT 1 FROM Proveedor WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = LTRIM(RTRIM(@identificacionCliProv)))
 										BEGIN
@@ -218,7 +218,7 @@ BEGIN
 							IF EXISTS (SELECT 1 FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor+'001')))
 								BEGIN
 						
-									SET @idEntidad = (SELECT TOP 1 idEntidad FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor+'001')) AND estado = 1)
+									SET @idEntidad = (SELECT TOP 1 idEntidad FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor+'001')))
 							
 									IF NOT EXISTS(SELECT 1 FROM Proveedor WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = LTRIM(RTRIM(@identificacionCliProv)))
 										BEGIN
