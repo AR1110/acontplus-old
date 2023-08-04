@@ -4,7 +4,7 @@ import {
     useTheme,
 } from "@mui/material";
 
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { SubjectManager } from "../models";
 import { Subscription } from "rxjs";
 

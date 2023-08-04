@@ -12,12 +12,12 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import * as yup from 'yup';
 import { useFormik } from 'formik';
-import { useEffect, useState } from 'react';
-import { CategorySvc } from '@/modules/admin/services';
-import { ImageUpload, dialogCloseSubject$ } from '@/core/components'; 
+import { useEffect } from 'react';
+import { CategorySvc, TableSvc } from '@/modules/admin/services';
+import {dialogCloseSubject$ } from '@/core/components'; 
 import { SubjectManager } from '@/core/models';
 import { Subscription } from 'rxjs';
-import { SnackbarUtilities } from '@/core/utils';
+import { SnackbarUtilities as Snackbar } from '@/core/utils';
 interface ModalProps {
   callBackCloseDialog: () => void;
 }
@@ -25,9 +25,7 @@ interface ModalProps {
 // eslint-disable-next-line react-refresh/only-export-components
 export const dialogDataSubject$ = new SubjectManager<any>();
 
-export default function CategoryDialog({ callBackCloseDialog }: ModalProps) {
-
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+export default function CategoryDialog({ callBackCloseDialog }: ModalProps) { 
   const validationSchema = yup.object({
     roomId: yup.number().default(1).min(1, 'No puede ser cero').required('Campo piso es requerido'),
     numberTable: yup.number().default(1).min(1, 'Numero de Mesa es obligatorio').required('Numero de Mesa es requerido'),
@@ -48,26 +46,26 @@ export default function CategoryDialog({ callBackCloseDialog }: ModalProps) {
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      try {
-        
-        // const formData = new FormData(); 
-        // formData.append("file", selectedImage as Blob, selectedImage?.name); 
-        // const data = {
-        //   DataFile: formData,
-        //   Params: JSON.stringify(values)
-        // }
-        // await CategorySvc.imageUpload(data).then(response => { 
-        //   console.log(response);
-        // }) 
-        // }) 
-        console.log(values)
+      try { 
         if(values.id>0){
           await CategorySvc.update(values.id, values).then(response => {
             if(response.code==="0"){
-              SnackbarUtilities.warning(response.message);
+              Snackbar.warning(response.message);
             }
             if(response.code==="1"){
-              SnackbarUtilities.success(response.message);              
+              Snackbar.success(response.message);              
+              handleCancel();
+              callBackCloseDialog();
+            } 
+          })
+        }else{
+          TableSvc.post(values).then(response =>{
+            console.log(response)
+            if(response.code==="0"){
+              Snackbar.warning(response.message);
+            }
+            if(response.code==="1"){
+              Snackbar.success(response.message);              
               handleCancel();
               callBackCloseDialog();
             } 
@@ -87,11 +85,11 @@ export default function CategoryDialog({ callBackCloseDialog }: ModalProps) {
     formik.resetForm(); 
   };
 
-  const handleToUpperCase = function () {
-    if (!formik.values.description) return ;
-    if(formik.values.id > 0) return; 
-    formik.setFieldValue("siglas", formik.values.description.toUpperCase())
-  } 
+  // const handleToUpperCase = function () {
+  //   if (!formik.values.description) return ;
+  //   if(formik.values.id > 0) return; 
+  //   formik.setFieldValue("description", formik.values.description.toUpperCase())
+  // } 
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let dataSubject$ = new Subscription();
@@ -167,10 +165,7 @@ export default function CategoryDialog({ callBackCloseDialog }: ModalProps) {
               label="Descripción"
               name="description"
               onBlur={formik.handleBlur}
-              onChange={(e)=>{
-                formik.handleChange(e)
-                handleToUpperCase();
-              }}
+              onChange={formik.handleChange}
               size="small"
               value={formik.values.description}
             />
