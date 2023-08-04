@@ -5,10 +5,13 @@ namespace Restaurant.Core.Entities
     [Table("Recipe", Schema = "Restaurant")]
     public class Recipe : BaseEntity
     {
-        public Dish Dish { get; set; }
-        public int DishId { get; set; }
-        //Ingredient Id
-        public int ProductId { get; set; } 
+        public Item Item { get; set; }
+        public int ItemId { get; set; }
+        public Ingredient Ingredient { get; set; }
+        public int IngredientId { get; set; }
+        public double Quantity { get; set; }
+        public int Unit { get; set; }
+        public string Instructions { get; set; }
         public float? Weight { get; set; }
         public float NetWeight { get; set; }
     }
