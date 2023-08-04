@@ -304,7 +304,7 @@ BEGIN
 				,saldo           = d.valorRetenido
 				,codDoc          = 'Retención Version:'+dr.versionComp
 				,nroDoc          = ''
-				,dr.fechaEmision
+				,GETDATE()
 			FROM factelect.DocRelacionado           d WITH (NOLOCK)
 			INNER JOIN Recepcion.DocumentoRecibido dr WITH (NOLOCK) ON dr.idDocumento = d.idDocumentoRecibido
 			WHERE dr.codDoc = '07' 

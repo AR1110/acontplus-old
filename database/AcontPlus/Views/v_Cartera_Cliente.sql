@@ -25,5 +25,5 @@ CREATE VIEW v_Cartera_Cliente AS (
 				  )
 	FROM Contabilidad.CuentaPorCobrar cc WITH (NOLOCK) 
 	INNER JOIN dbo.PuntoEmision       pe WITH (NOLOCK) ON pe.idPuntoEmision  = cc.idPuntoEmision
-	WHERE cc.estado = 1
+	--WHERE cc.estado = 1
  )
