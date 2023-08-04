@@ -20,6 +20,8 @@ import { DishSvc } from '../../services/dish.service';
 export default function DishComponent() {
   const [dishes, setDishes] = useState<Array<ProductReadDto>>([]);
 
+  console.log(dishes);
+
   useEffect(() => {
     getDishes();
   }, []);
@@ -27,7 +29,8 @@ export default function DishComponent() {
   const getDishes = () => {
     try {
       DishSvc.getAll().then((response) => {
-        setDishes(response);
+        console.log(response);
+        // setDishes(response);
       });
     } catch (error) {
       console.log(error);
@@ -37,7 +40,8 @@ export default function DishComponent() {
   const searchArticle = (e: React.FocusEvent<HTMLInputElement>) => {
     try {
       DishSvc.search(e.target.value).then((response) => {
-        setDishes(response);
+        console.log(response);
+        // setDishes(response);
       });
     } catch (error) {
       console.log(error);
@@ -93,7 +97,7 @@ export default function DishComponent() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {dishes.map((row) => (
+            {/* {dishes.map((row) => (
               <TableRow
                 key={row.description}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -106,7 +110,7 @@ export default function DishComponent() {
                 <TableCell align="right">{row.category}</TableCell>
                 <TableCell align="right">{row.typeArticle}</TableCell>
               </TableRow>
-            ))}
+            ))} */}
           </TableBody>
         </Table>
       </TableContainer>
