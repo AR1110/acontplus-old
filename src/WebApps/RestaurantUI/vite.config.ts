@@ -13,7 +13,7 @@ export default defineConfig({
   },
   plugins: [react()],
   build: {
-    outDir: "../src/Restaurant.API/wwwroot", // this line place index.html in the public folder
+    outDir: "../../Services/Restaurant/Restaurant.API/wwwroot", // this line place index.html in the public folder
     assetsDir: "./dist", // this line place your assets in the public/dist folder
   },
 });

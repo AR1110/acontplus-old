@@ -249,6 +249,11 @@ export default function Admin() {
       to: "ProductionArea",
     },
     {
+      description: "Ingredientes",
+      icon: <Restaurant />,
+      to: "Ingredient",
+    },
+    {
       description: "Platillos",
       icon: <Restaurant />,
       to: "Dish",
