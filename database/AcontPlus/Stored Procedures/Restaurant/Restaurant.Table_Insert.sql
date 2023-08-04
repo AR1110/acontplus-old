@@ -16,19 +16,20 @@ GO
 -- =============================================
 -- Author:		<Author,,Name>
 -- Create date: <Create Date,,>
--- Description:	<Description,,>
+-- description:	<description,,>
 -- =============================================
+-- Restaurant.Table_Insert 139, '{"id": 0,"roomId": 1,"numberTable": 64,"description": "MESA 2","capacity": 1,"enabled": true}'
 CREATE OR ALTER PROC Restaurant.Table_Insert
 @userRoleId INT
 ,@json NVARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
-	DECLARE @RoomId INT
-			,@NumberTable INT
-			,@Description VARCHAR(100)
-			,@Capacity INT 
-			,@Enabled BIT
+	DECLARE @roomId INT
+			,@numberTable INT
+			,@description VARCHAR(100)
+			,@capacity INT 
+			,@enabled BIT
 			,@UserId INT
 			,@CreateAt DATETIME 
 
@@ -38,26 +39,35 @@ BEGIN
 		RETURN
 	END
 
-	SELECT @RoomId			= RoomId
-			,@NumberTable	= NumberTable
-			,@Description   = Description
-			,@Enabled		= Enabled
+	SELECT @roomId			= roomId
+			,@numberTable	= numberTable
+			,@description   = description
+			,@capacity		= ISNULL(capacity, 0)
+			,@enabled		= enabled
 	FROM OPENJSON(@json) 
 	WITH (
-		RoomId INT					'$.RoomId'
-		,NumberTable INT			'$.NumberTable'
-		,Description NVARCHAR(100)	'$.Description'
-		,Capacity INT				'$.Capacity'
-		,Enabled BIT				'$.Enabled'
+		roomId INT					'$.roomId'
+		,numberTable INT			'$.numberTable'
+		,description NVARCHAR(100)	'$.description'
+		,capacity INT				'$.capacity'
+		,enabled BIT				'$.enabled'
 	)
+
+	---SELECT @roomId
 
 	SET @CreateAt = (SELECT dbo.ufnGetDateEcuador())
 	SET @UserId = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
 	   
 	BEGIN TRY
+		IF EXISTS(SELECT TOP 1 1 FROM Restaurant.[Table] WHERE NumberTable = @numberTable)
+			BEGIN 
+				SELECT response = (SELECT code = '0', [message]= 'Número de tabla '+CAST(@numberTable AS VARCHAR) + ' está en uso'  FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
+				RETURN
+			END 
+				
 		BEGIN TRAN
-			INSERT INTO Restaurant.[Table](RoomId, NumberTable, Description, Capacity, CreatedAt, UpdatedAt, Enabled, Deleted, UserId)
-			VALUES(@RoomId, @NumberTable, @Description, @Capacity, @CreateAt, NULL, @Enabled, NULL, @UserId)
+			INSERT INTO Restaurant.[Table](roomId, numberTable, Description, capacity, CreatedAt, UpdatedAt, Enabled, Deleted, UserId)
+			VALUES(@roomId, @numberTable, @description, @capacity, @CreateAt, NULL, @enabled, NULL, @UserId)
  		COMMIT TRAN
 
 		SELECT response = (SELECT code = '1', [message] = 'Ingresado correctamente' FOR JSON PATH, WITHOUT_ARRAY_WRAPPER )
@@ -70,8 +80,8 @@ BEGIN
 			END
 			
         INSERT INTO ErroresSistema
-		(token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, idUsuario)
-		VALUES(NEWID(), 'Restaurant.Table/Insert', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), @userId)
+		(token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, idUsuario, errorDate)
+		VALUES(NEWID(), 'Restaurant.Table/Insert', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), @userId, @CreateAt)
 	END CATCH
 END
 GO

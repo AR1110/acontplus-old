@@ -8,5 +8,6 @@ namespace Restaurant.Core.Entities
         public int ProductId { get; set; }
         public ProductionArea ProductionArea { get; set; }
         public int ProductionAreaId { get; set; }
+        public int EstablecimientoId { get; set; }
     }
 }

@@ -45,11 +45,11 @@ BEGIN
 			,@Enabled		= Enabled
 	FROM OPENJSON(@json) 
 	WITH (
-		RoomId INT					'$.RoomId'
-		,NumberTable INT			'$.NumberTable'
-		,Description NVARCHAR(100)	'$.Description'
-		,Capacity INT				'$.Capacity'
-		,Enabled BIT				'$.Enabled'
+		RoomId INT					'$.roomId'
+		,NumberTable INT			'$.numberTable'
+		,Description NVARCHAR(100)	'$.description'
+		,Capacity INT				'$.capacity'
+		,Enabled BIT				'$.enabled'
 	)
 
 	SET @UpdateAT = (SELECT dbo.ufnGetDateEcuador())

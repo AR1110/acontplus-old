@@ -15,6 +15,7 @@ const PrivateRoutes = {
   TABLE: "Table",
   CATEGORY: "Category",
   PRODUCT: "Product",
+  PRODUCTION_AREA: "ProductionArea",
 };
 
 export { PublicRoutes, PrivateRoutes };
