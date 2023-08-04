@@ -1,7 +1,8 @@
 import { Http } from "@/core/utils";
+import { ApiResponse } from "../models";
 
-const login = (username: string, password: string) => {
-  return Http({
+const login = async (username: string, password: string): Promise<ApiResponse> => {
+  const response = await Http({
     method: "post",
     url: "account/login",
     data: {
@@ -10,6 +11,7 @@ const login = (username: string, password: string) => {
       external: true,
     },
   });
+  return response.data;
 };
 
 const setPersistent = (key: string, value: string) => {

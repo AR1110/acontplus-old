@@ -9,6 +9,7 @@ export default function Header() {
   const dispatch = useDispatch();
   const userState = useSelector((store: AppStore) => store.user);
   const logout = () => {
+    console.log('logout')
     dispatch(logOut());
     navigate(`/${PublicRoutes.LOGIN}`, { replace: true });
   };
