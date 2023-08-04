@@ -2,15 +2,16 @@ import { Badge, Button, Grid, IconButton, Paper, Stack, Table, TableBody, TableC
 import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
 import { DialogCustom, EditIcon, RemoveCircleOutlineIcon, dialogOpenSubject$ } from '@/core/components';
-import CategoryDialog from './components/TableDialog';
+import CategoryDialog, { dialogDataSubject$ } from './components/TableDialog';
 import { ErrorBoundary } from '@/core/utils';
 import { TableSvc } from '@admin/services';
-import { CategoryReadDto } from '../../models';
+import { TableReadDto } from '@admin/models';
 import { useAsync, useFetchAndLoad } from '@/hooks';
 import BackdropLoader from '@/core/components/BackdropLoader';
+import Swal from 'sweetalert2';
 
 export default function TablePage() {
-    const [tables, setTables] = useState<Array<CategoryReadDto>>([]);
+    const [tables, setTables] = useState<Array<TableReadDto>>([]);
     const [reloadFetchApi, setReloadFetchApi] = useState(false);
 
     const { loading, callEndpoint } = useFetchAndLoad();
@@ -23,8 +24,9 @@ export default function TablePage() {
     const getApiData = async () => await callEndpoint(TableSvc.getAll());
 
     const categoriesMapper = function (response: any) {
-        const categoriesApi: CategoryReadDto[] = JSON.parse(response.payload)
-        setTables(categoriesApi);
+        console.log(response)
+        const tablesApi: TableReadDto[] =response.tables;
+        setTables(tablesApi);
     };
 
     useAsync(getApiData, categoriesMapper, () => {
@@ -35,6 +37,35 @@ export default function TablePage() {
         setReloadFetchApi(!reloadFetchApi)
     }
 
+
+    const dataEdit = (data: TableReadDto)=>{ 
+        dialogOpenSubject$.setSubject = true;
+        dialogDataSubject$.setSubject = data;    
+      }
+    
+      const askToUpdateState = async (id: number)=>{
+        const {isConfirmed} = await Swal.fire({      
+          html: 'Esta seguro de eliminar esta categoria?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Si',
+          cancelButtonText: 'No'
+        })
+        if(isConfirmed){
+        //   CategorySvc.delete(id).then(response=>{
+        //     if(response.code==="0"){
+        //       Snackbar.warning(response.message);
+        //     }
+        //     if(response.code==="1"){
+        //       Snackbar.success(response.message);  
+        //       callBackCloseDialog();
+        //     }         
+        //   }) 
+        }
+      }
+    
 
 
 
@@ -71,36 +102,31 @@ export default function TablePage() {
                                 <TableRow>
                                     <TableCell></TableCell>
                                     <TableCell>N°</TableCell>
-                                    <TableCell >DESCRIPCIÓN</TableCell>
-                                    <TableCell align="center">SIGLAS</TableCell>
-                                    <TableCell align="center">CÓDIGO</TableCell>
-                                    <TableCell align="center">SECUENCIAL</TableCell>
-                                    <TableCell align="center">MONTO OBJETIVO</TableCell>
+                                    <TableCell >DESCRIPCIÓN</TableCell> 
                                     <TableCell align='center'>ESTADO</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {tables.map((category, index) => (
+                                {tables.map((table, index) => (
                                     <TableRow
                                         key={index}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
                                         <TableCell>
-                                            {/* <IconButton aria-label="delete" color="primary" size="small" onClick={()=>dataEdit(category)} >
-                    <EditIcon fontSize="inherit" />
-                  </IconButton> */}
-
+                                        <IconButton aria-label="delete" color="primary" size="small" onClick={()=>dataEdit(table)} >
+                                            <EditIcon fontSize="inherit" />
+                                            </IconButton>
+                                            {table.enabled && <IconButton aria-label="delete"  color="error" size="small" onClick={()=>askToUpdateState(table.id)}>
+                    <RemoveCircleOutlineIcon fontSize="inherit" />
+                  </IconButton>}                                           
                                         </TableCell>
                                         <TableCell component="th" scope="row">
                                             {index + 1}
                                         </TableCell>
-                                        <TableCell>{category.descripcion}</TableCell>
-                                        <TableCell align="center">{category.siglas}</TableCell>
-                                        <TableCell align="center">{category.codigo}</TableCell>
-                                        <TableCell align="center">{category.siglas}</TableCell>
-                                        <TableCell align="center">{category.montoObjetivo}</TableCell>
+                                        <TableCell>{table.description}</TableCell>
+                                        
                                         <TableCell align="center">
-                                            <Badge badgeContent={category.estado ? 'Activo' : 'Inactivo'} color={category.estado ? 'success' : 'warning'}></Badge>
+                                            <Badge badgeContent={table.enabled ? 'Activo' : 'Inactivo'} color={table.enabled ? 'success' : 'warning'}></Badge>
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -110,7 +136,7 @@ export default function TablePage() {
                 </Paper>
                 }
             </Grid>
-            <DialogCustom maxWidth='sm' children={<CategoryDialog callBackCloseDialog={callBackCloseDialog} />}
+            <DialogCustom maxWidth='xs' children={<CategoryDialog callBackCloseDialog={callBackCloseDialog} />}
             />
         </ErrorBoundary>
     );

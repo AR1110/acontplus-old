@@ -4,8 +4,8 @@ import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
 
 import { ProductProvider } from './context';
-import { ProductDialog, ProductTable } from './components';
-import { DialogCustom } from '@/core/components/DialogCustom';
+// import { ProductDialog, ProductTable } from './components';
+// import { DialogCustom } from '@/core/components/DialogCustom';
 import { ErrorBoundary } from '@/core/utils';
 
 export default function ProductPage() {
@@ -15,9 +15,9 @@ export default function ProductPage() {
     setOpen(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
+  // const handleClose = () => {
+  //   setOpen(false);
+  // };
 
   return (
     <ProductProvider>
@@ -41,7 +41,7 @@ export default function ProductPage() {
             </Button>
           </Stack>
 
-          <ProductTable />
+          {/* <ProductTable /> */}
         </Grid>
 
         {/* <>

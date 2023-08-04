@@ -1,6 +1,7 @@
 import { PATHS } from "@/core/constants/path";
 import { Http } from "@/core/utils";
 import { ProductResponseFromApi } from "../models";
+import { ApiResponse } from "@/core/models";
  
 
 const URL = 'v3/Articulo'
@@ -19,18 +20,17 @@ export const ProductSvc = {
 				json
 			}
 		}) 
-		if (response.code === "1") {
-			const articulosApi: ProductResponseFromApi = JSON.parse(response.payload)[0];
-			return articulosApi.map((product) => ({
-				idProduct: product.idArticulo,
-				code: product.codigo,
-				description: product.descripcion,
-				typeArticle: product.tipoArticulo,
-				category: product.subFamilia,
-				stock: product.stock,
-			}));
-		}
-    return [];
+		
+		const resultData: ApiResponse = response.data;
+		const articulosApi: ProductResponseFromApi = JSON.parse(resultData.payload)[0];
+		return articulosApi.map((product) => ({
+			idProduct: product.idArticulo,
+			code: product.codigo,
+			description: product.descripcion,
+			typeArticle: product.tipoArticulo,
+			category: product.subFamilia,
+			stock: product.stock,
+		})); 
 	},
 	getDataForm: async() => {
 		const params = {
@@ -38,11 +38,13 @@ export const ProductSvc = {
 				tipo: 8
 			})
 		}
-		const response = await Http({
+		const resultAxios = await Http({
 			method: 'get',
 			url: `${PATHS.INVENTARIO}${URL}`,
 			params
 		})
+
+		const response: ApiResponse = resultAxios.data;
 		const dataApi = JSON.parse(response.payload); 
 		
 		const decimalInventory = dataApi[0][0];
