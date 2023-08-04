@@ -28,8 +28,8 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
     $scope.codDoc = params.codDoc
     $scope.comprobante = params.comprobante + ': ' + params.serieComprobante
     let idInstance = "", apiTokenInstance = ""
-    idInstance = "7103844789"
-    apiTokenInstance = "e926830906394f85905e575405d47096d286eeb780584c0785"
+    idInstance = "7103845341"
+    apiTokenInstance = "a59cd09ed1f449d8981586c7cf24526dfa9c8e6eedf1489b8c"
     $scope.getInstanceStatus = () => {
         $http.get(`https://api.green-api.com/waInstance${idInstance}/getStateInstance/${apiTokenInstance}`).then(
             (response) => {
