@@ -33,7 +33,11 @@ import Inventory2Icon from "@mui/icons-material/Inventory2";
 import CategoryIcon from "@mui/icons-material/Category";
 
 import { useState } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { logOut } from "@/redux/slices/user.slice";
+import { PublicRoutes } from "@/core/models";
+import { AppStore } from "@/redux/store";
 
 const drawerWidth = 240;
 
@@ -128,6 +132,14 @@ export default function Admin() {
   const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const userState = useSelector((store: AppStore) => store.user);
+  const logout = () => {
+    console.log('logout')
+    dispatch(logOut());
+    navigate(`/${PublicRoutes.LOGIN}`, { replace: true });
+  };
 
   const menuId = "primary-search-account-menu";
   const renderMenu = (
@@ -148,7 +160,7 @@ export default function Admin() {
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-      <MenuItem>Cerrar Sesión</MenuItem>
+      <MenuItem onClick={logout}>Cerrar Sesión</MenuItem>
     </Menu>
   );
 
@@ -247,6 +259,8 @@ export default function Admin() {
       to: "Product",
     },
   ];
+
+  
 
   return (
     <Box sx={{ display: "flex" }}>
