@@ -17,7 +17,7 @@ import { CategorySvc, TableSvc } from '@/modules/admin/services';
 import {dialogCloseSubject$ } from '@/core/components'; 
 import { SubjectManager } from '@/core/models';
 import { Subscription } from 'rxjs';
-import { SnackbarUtilities } from '@/core/utils';
+import { SnackbarUtilities as Snackbar } from '@/core/utils';
 interface ModalProps {
   callBackCloseDialog: () => void;
 }
@@ -62,10 +62,10 @@ export default function CategoryDialog({ callBackCloseDialog }: ModalProps) {
         if(values.id>0){
           await CategorySvc.update(values.id, values).then(response => {
             if(response.code==="0"){
-              SnackbarUtilities.warning(response.message);
+              Snackbar.warning(response.message);
             }
             if(response.code==="1"){
-              SnackbarUtilities.success(response.message);              
+              Snackbar.success(response.message);              
               handleCancel();
               callBackCloseDialog();
             } 
@@ -73,6 +73,14 @@ export default function CategoryDialog({ callBackCloseDialog }: ModalProps) {
         }else{
           TableSvc.post(values).then(response =>{
             console.log(response)
+            if(response.code==="0"){
+              Snackbar.warning(response.message);
+            }
+            if(response.code==="1"){
+              Snackbar.success(response.message);              
+              handleCancel();
+              callBackCloseDialog();
+            } 
           })
         }
 
@@ -89,11 +97,11 @@ export default function CategoryDialog({ callBackCloseDialog }: ModalProps) {
     formik.resetForm(); 
   };
 
-  const handleToUpperCase = function () {
-    if (!formik.values.description) return ;
-    if(formik.values.id > 0) return; 
-    formik.setFieldValue("siglas", formik.values.description.toUpperCase())
-  } 
+  // const handleToUpperCase = function () {
+  //   if (!formik.values.description) return ;
+  //   if(formik.values.id > 0) return; 
+  //   formik.setFieldValue("description", formik.values.description.toUpperCase())
+  // } 
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let dataSubject$ = new Subscription();
@@ -169,10 +177,7 @@ export default function CategoryDialog({ callBackCloseDialog }: ModalProps) {
               label="Descripción"
               name="description"
               onBlur={formik.handleBlur}
-              onChange={(e)=>{
-                formik.handleChange(e)
-                handleToUpperCase();
-              }}
+              onChange={formik.handleChange}
               size="small"
               value={formik.values.description}
             />

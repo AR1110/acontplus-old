@@ -29,15 +29,16 @@ export const TableSvc = {
 
     console.log(data)
 
-    const response = await Http({
+    const resultAxios = await Http({
       method: 'post',
-      url: `${PATHS.INVENTARIO}${URL}Post`,
+      url: `${PATHS.PRIVATE}${URL}`,
       data: {
-        Data: JSON.stringify(data)
+        Data: data
       }
     });
-
-    console.log(response); 
+    const response: ApiResponse = resultAxios.data;
+    return response;
+    
   },
 
   // insert: () => {
