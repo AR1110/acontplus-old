@@ -1,6 +1,7 @@
 import BackdropLoader from "@/core/components/BackdropLoader";
 import { ErrorBoundary } from "@/core/utils/ErrorBoundary";
 import { useFetchAndLoad } from "@/hooks";
+import { Grid } from "@mui/material";
 
 export default function ProductArea() {
   const { loading, callEndpoint } = useFetchAndLoad();
