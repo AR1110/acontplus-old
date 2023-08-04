@@ -29,6 +29,15 @@ export type TablesResponseFromApi = Array<{
   userId: number;
 }>;
 
+export interface TableCreateDto {
+  readonly id: number
+  roomId: number,
+  numberTable: number,
+  description: string,
+  capacity: number,
+  enabled: boolean, 
+}
+
 export interface ITable {
   id: number;
   numberTable: number;

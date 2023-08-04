@@ -1,6 +1,5 @@
 import { PATHS } from '@/core/constants/path';
 import { Http, HttpUploadFile, loadAbort } from '@/core/utils';
-import { CategoryReadDto } from '../models';
 import { ApiResponse } from '@/core/models';
 
 const URL = 'v3/SubFamilia/'

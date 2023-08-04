@@ -21,6 +21,7 @@ export default function DishComponent() {
   const [dishes, setDishes] = useState<Array<ProductReadDto>>([]);
 
   console.log(dishes);
+  console.log(setDishes);
 
   useEffect(() => {
     getDishes();

@@ -47,8 +47,8 @@ export default function CategoryDialog({ callBackCloseDialog }: ModalProps) {
     onSubmit: async (values) => {
       try {
         
-        // const formData = new FormData(); 
-        // formData.append("file", selectedImage as Blob, selectedImage?.name); 
+         const formData = new FormData(); 
+        formData.append("file", selectedImage as Blob, selectedImage?.name); 
         // const data = {
         //   DataFile: formData,
         //   Params: JSON.stringify(values)

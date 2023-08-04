@@ -54,6 +54,7 @@ export default function TablePage() {
           cancelButtonText: 'No'
         })
         if(isConfirmed){
+            console.log(id)
         //   CategorySvc.delete(id).then(response=>{
         //     if(response.code==="0"){
         //       Snackbar.warning(response.message);

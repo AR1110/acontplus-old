@@ -34,10 +34,10 @@ import CategoryIcon from "@mui/icons-material/Category";
 
 import { useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch} from "react-redux";
 import { logOut } from "@/redux/slices/user.slice";
 import { PublicRoutes } from "@/core/models";
-import { AppStore } from "@/redux/store";
+// import { AppStore } from "@/redux/store";
 
 const drawerWidth = 240;
 
@@ -134,7 +134,7 @@ export default function Admin() {
   };
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const userState = useSelector((store: AppStore) => store.user);
+  // const userState = useSelector((store: AppStore) => store.user);
   const logout = () => {
     console.log('logout')
     dispatch(logOut());

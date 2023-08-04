@@ -12,6 +12,7 @@ export default function ProductPage() {
   const [open, setOpen] = useState(false);
   // const enumeracion = 1;
   const onOpenDialog = () => {
+    console.log(open)
     setOpen(true);
   };
 
