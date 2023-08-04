@@ -6,6 +6,9 @@ BEGIN
 	DROP PROC Restaurant.ProductionArea_Insert
 END
 GO
+--- Author: IGNACIO MANCHU
+--- Date: 
+--- Description: 
 CREATE PROC Restaurant.ProductionArea_Insert
 @userRoleId INT
 ,@json VARCHAR(MAX)
@@ -13,10 +16,10 @@ AS
 BEGIN 
 SET NOCOUNT ON;
 	DECLARE @code VARCHAR(5)
-	DECLARE @Description VARCHAR(100)
+	DECLARE @description VARCHAR(100)
 	DECLARE @CreatedAt DATETIME
-	DECLARE @UserId INT
-	DECLARE @Enabled BIT
+	DECLARE @userId INT
+	DECLARE @enabled BIT
 
 	IF (ISJSON(@json) = 0)
 	BEGIN
@@ -26,23 +29,23 @@ SET NOCOUNT ON;
 		RETURN
 	END
 
-	SELECT @code		  = Code
-			,@Description = Description
+	SELECT @code		  = code
+			,@description = description
 	FROM OPENJSON(@json)
 	WITH(
-		Code VARCHAR(5)				'$.Code'
-		,Description VARCHAR(500)   '$.Description'		
+		code VARCHAR(5)				'$.code'
+		,description VARCHAR(500)   '$.description'		
 	)
 
-	SET @Enabled = 1
+	SET @enabled = 1
 	SET @CreatedAt = (SELECT dbo.ufnGetDateEcuador())
-	SET @UserId = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
+	SET @userId = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
 	
 	BEGIN TRY
 		BEGIN TRAN
 
-			INSERT INTO Restauran.[ProductionArea](Code, Description, CreatedAt, UpdateAt, Enabled, Deleted, UserId)
-			VALUES(@Code, @Description, @CreatedAt, NULL, @Enabled,NULL, @UserId)
+			INSERT INTO Restaurant.ProductionArea(Code, Description, CreatedAt, UpdatedAt, Enabled, Deleted, UserId)
+			VALUES(@code, @description, @CreatedAt, NULL, @enabled,NULL, @userId)
 
 		COMMIT TRAN
 
