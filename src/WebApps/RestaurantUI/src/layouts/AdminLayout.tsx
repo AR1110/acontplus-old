@@ -28,7 +28,7 @@ import {
   MenuItem, 
   createTheme,
 } from "@mui/material";
-import { AccountCircle, Restaurant } from "@mui/icons-material";
+import { AccountCircle, RestartAlt, Restaurant, TableRestaurantOutlined } from "@mui/icons-material";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
 import CategoryIcon from "@mui/icons-material/Category";
 
@@ -240,8 +240,13 @@ export default function Admin() {
     },
     {
       description: "Mesa",
-      icon: <TableBarIcon />,
+      icon: <TableRestaurantOutlined />,
       to: "Table",
+    },
+    {
+      description: "Area de Producción",
+      icon: <RestartAlt />,
+      to: "ProductionArea",
     },
     {
       description: "Platillos",

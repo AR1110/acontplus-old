@@ -10,8 +10,9 @@ const TableIndex = lazy(() => import("./pages/table/TablePage"));
 const CategoryPage = lazy(() => import("./pages/category/CategoryPage"));
 const ProductPage = lazy(() => import("./pages/product/ProductPage"));
 const DishPage = lazy(() => import("./pages/dish/Dish"));
+const ProductionAreaPage = lazy(() => import("./pages/production-area/ProductioArea"));
 
-/** 
+/**
  *
  * Panel Administrativo
  */
@@ -27,6 +28,7 @@ export default function Admin() {
         <Route path={PrivateRoutes.CATEGORY} element={<CategoryPage />}></Route>
         <Route path={PrivateRoutes.PRODUCT} element={<ProductPage />}></Route>
         <Route path={PrivateRoutes.DISH} element={<DishPage />}></Route>
+        <Route path={PrivateRoutes.PRODUCTION_AREA} element={<ProductionAreaPage /> }></Route>
       </Route>
     </RoutesWithNotFound>
   );

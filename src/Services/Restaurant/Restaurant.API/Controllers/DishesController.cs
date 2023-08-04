@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Azure.Core;
 using Lib.Common.Api;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,7 @@ namespace Restaurant.API.Controllers
 
         // GET: api/Dishes
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Get(string json)
         {
             try

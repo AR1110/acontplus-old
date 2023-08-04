@@ -1,8 +1,8 @@
 import { PATHS } from '@/core/constants/path';
 import { Http } from '@/core/utils';
-import { InsertDishDto, ReadDishDto } from '../models';
+import { InsertDishDto } from '../models';
 
-const URL = 'Dishes/GetDishes';
+const URL = 'Dishes/';
 export const DishSvc = {
   getAll: async () => {
     const query = JSON.stringify({
@@ -17,20 +17,7 @@ export const DishSvc = {
         json: query,
       },
     });
-
-    if (response.code === '1') {
-      const dishes = JSON.parse(response.payload);
-
-      return dishes.map((item: ReadDishDto) => ({
-        Id: item.Id,
-        Product: item.Product,
-        CreateAt: item.CreateAt,
-        UpdateAt: item.UpdateAt,
-        Enabled: item.Enabled,
-        Deleted: item.Deleted,
-        ProductionArea: item.ProductionArea,
-      }));
-    }
+    console.log(response);
   },
 
   search: async (search: string) => {
@@ -46,20 +33,7 @@ export const DishSvc = {
         json: query,
       },
     });
-
-    if (response.code === '1') {
-      const dishes = JSON.parse(response.payload);
-
-      return dishes.map((item: ReadDishDto) => ({
-        Id: item.Id,
-        Product: item.Product,
-        CreateAt: item.CreateAt,
-        UpdateAt: item.UpdateAt,
-        Enabled: item.Enabled,
-        Deleted: item.Deleted,
-        ProductionArea: item.ProductionArea,
-      }));
-    }
+    console.log(response);
   },
 
   post: (data: InsertDishDto) => {
