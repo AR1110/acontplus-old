@@ -61,19 +61,13 @@ namespace Restaurant.Application.Services
             return await _repository.SPExecuteAsync("Inventario.Floors_Update", request.Data);
         }
 
-
-        public async Task<APIResponse> DeleteAsync(int id)
+        public async Task<string> DeleteAsync(int id, ApiRequest request)
         {
-            var dt = await _repository.GetDataTableAsync("Inventario.StockFisico_Delete", null);
-            if (!DataValidation.DataTableIsNull(dt))
-            {
-                _response.Create(code: "1", payload: DataTableMapper.BindData<APIResponse>(dt));
-            }
-            else
-            {
-                _response.Create(code: "0", message: "La transacción no devolvio respuesta");
-            }
-            return _response;
+            var parameters = new Dictionary<string, object>{
+                {"userRoleId", request.UserRoleId},
+                {"id", id}                
+            };
+            return await _repository.SPExecuteAsync("Inventario.Floors_Update_Cancel", request.Data);
         }
     }
 }
