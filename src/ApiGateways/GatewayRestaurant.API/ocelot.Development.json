@@ -67,11 +67,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5094
+          "Port": 7111
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/Restaurant{everything}"
     },
