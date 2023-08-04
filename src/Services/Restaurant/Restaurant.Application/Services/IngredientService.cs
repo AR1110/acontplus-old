@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lib.Common;
+using Lib.Common.Api;
 using Newtonsoft.Json;
 using Restaurant.Core.Entities;
 using Restaurant.Core.Interfaces;
@@ -31,7 +32,7 @@ namespace Restaurant.Application.Services
                 return Converters.DataSetToJSON(ds);
             }
         }
-        public async Task<object> GetById(int id)
+        public async Task<object> GetByIdAsync(int id)
         {
             var parameters = new Dictionary<string, object>{
                 {"id", id},
@@ -46,16 +47,20 @@ namespace Restaurant.Application.Services
                 return Converters.DataSetToJSON(ds);
             }
         }
-        public async Task<string> AddAsync(Dictionary<string, object> parameters)
+        public async Task<string> AddAsync(ApiRequest data)
         {
+            var parameters = new Dictionary<string, object>{
+                    {"userRoleId", data.UserRoleId},
+                    {"json", Converters.SerializeDictionary(data.Data)}
+                };
             var response = await _repository.SPExecuteAsync("Restaurant.Ingredient_Insert", parameters);
             return response;
         }
-        public async Task<string> UpdateAsync(int id, Ingredient data)
+        public async Task<string> UpdateAsync(int id, ApiRequest data)
         {
             var parameters = new Dictionary<string, object>{
                 {"id", id},
-                {"json", JsonConvert.SerializeObject(data)}
+                {"json", JsonConvert.SerializeObject(data.Data)}
             };
             var response = await _repository.SPExecuteAsync("Restaurant.Ingredient_Update", parameters);
             return response;

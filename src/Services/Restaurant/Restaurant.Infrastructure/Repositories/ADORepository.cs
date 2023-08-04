@@ -109,11 +109,11 @@ namespace Restaurant.Infrastructure.Repositories
                 var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    response = reader["response"].ToString();
+                    response = reader.GetString(0);
                 }
             }
             return response;
-        }             
+        }
 
         public static object GetParameter(DbCommand command, string parameterName)
         {

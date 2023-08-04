@@ -60,11 +60,10 @@ namespace ApiConfig
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
+                endpoints.MapGet("/", context =>
                 {
-                    string projectName = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-                    //await context.Response.WriteAsync($"{projectName} is running at {string.Join(", ", app.Urls)}");
                     context.Response.Redirect("swagger");
+                    return Task.CompletedTask;
                 });
             });
 

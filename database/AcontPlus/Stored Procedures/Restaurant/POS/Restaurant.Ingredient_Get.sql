@@ -7,12 +7,12 @@ GO
 CREATE OR ALTER PROCEDURE Restaurant.Ingredient_Get
     @userRoleId INT,
     @json VARCHAR(MAX),
-    @tablesName VARCHAR(500) OUTPUT
+    @tableNames VARCHAR(500) OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    SET @tablesName = 'ingredients'
+    SET @tableNames = 'ingredients'
     SELECT *
     FROM Restaurant.Ingredient
 END
