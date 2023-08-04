@@ -30,6 +30,8 @@ SELECT  a.idArticulo
 	,a.precioCosto
 	,a.fechaModificacion
 	,a.idMedida
+	,a.caducidad
+	,a.fechaCaducidad
 	,a.productoFraccionable fraccionado
 	,precioSinSubsidio = ISNULL(a.precioSinSubsidio, 0)
 	,observaciones = ISNULL(a.observaciones, '')
