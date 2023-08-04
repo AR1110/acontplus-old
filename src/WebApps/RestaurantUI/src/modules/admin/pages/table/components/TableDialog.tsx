@@ -12,9 +12,9 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import * as yup from 'yup';
 import { useFormik } from 'formik';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { CategorySvc, TableSvc } from '@/modules/admin/services';
-import { ImageUpload, dialogCloseSubject$ } from '@/core/components'; 
+import {dialogCloseSubject$ } from '@/core/components'; 
 import { SubjectManager } from '@/core/models';
 import { Subscription } from 'rxjs';
 import { SnackbarUtilities } from '@/core/utils';
@@ -25,9 +25,7 @@ interface ModalProps {
 // eslint-disable-next-line react-refresh/only-export-components
 export const dialogDataSubject$ = new SubjectManager<any>();
 
-export default function CategoryDialog({ callBackCloseDialog }: ModalProps) {
-
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+export default function CategoryDialog({ callBackCloseDialog }: ModalProps) { 
   const validationSchema = yup.object({
     roomId: yup.number().default(1).min(1, 'No puede ser cero').required('Campo piso es requerido'),
     numberTable: yup.number().default(1).min(1, 'Numero de Mesa es obligatorio').required('Numero de Mesa es requerido'),
