@@ -3,6 +3,7 @@ using Helpers;
 using System.Reflection;
 using Lib.Common;
 using ApiConfig.Extensions;
+using Newtonsoft.Json.Serialization;
 
 namespace ApiConfig
 {
@@ -16,7 +17,14 @@ namespace ApiConfig
             builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
             ConfigHelper.AddJsonFiles(builder.Configuration);
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                                       .AddNewtonsoftJson(x =>
+                                       {
+                                           x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                                           x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
+                                       }); 
+            
+            builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 
             builder.Services.AddApplicationServices(builder.Configuration);
 
