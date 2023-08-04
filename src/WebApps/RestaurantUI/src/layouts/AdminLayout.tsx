@@ -19,7 +19,7 @@ import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import HomeIcon from "@mui/icons-material/Home";
-import TableBarIcon from "@mui/icons-material/TableBar";
+
 import {
   Badge,
   Container,

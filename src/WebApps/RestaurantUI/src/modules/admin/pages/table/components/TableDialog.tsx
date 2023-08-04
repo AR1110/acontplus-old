@@ -46,19 +46,7 @@ export default function CategoryDialog({ callBackCloseDialog }: ModalProps) {
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      try {
-        
-        // const formData = new FormData(); 
-        // formData.append("file", selectedImage as Blob, selectedImage?.name); 
-        // const data = {
-        //   DataFile: formData,
-        //   Params: JSON.stringify(values)
-        // }
-        // await CategorySvc.imageUpload(data).then(response => { 
-        //   console.log(response);
-        // }) 
-        // }) 
-        console.log(values)
+      try { 
         if(values.id>0){
           await CategorySvc.update(values.id, values).then(response => {
             if(response.code==="0"){
