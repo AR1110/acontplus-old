@@ -1,3 +1,19 @@
+export interface TableReadDto {
+  id: number,
+  roomId: number,
+  numberTable: number,
+  description: string,
+  capacity: number,
+  createdAt: string,
+  updatedAt: string,
+  enabled: boolean,
+  deleted: boolean,
+  userId: number,
+  room: string,
+  floor: string,
+  idFloor: number
+}
+
 export type TablesResponseFromApi = Array<{
   capacity: number;
   createdAt: string;
