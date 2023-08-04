@@ -1,0 +1,1 @@
+import{r as c,d as e}from"./index-145dca60.js";function r(t=e){return function(){return c.useContext(t)}}const a=r();function s(t=e){const o=t===e?a:r(t);return function(){const{store:u}=o();return u}}const x=s();function i(t=e){const o=t===e?x:s(t);return function(){return o().dispatch}}const f=i();export{f as u};
