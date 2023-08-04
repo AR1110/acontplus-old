@@ -19,13 +19,13 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close"; 
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
-import CategoryAutocomplete from "./CategoryAutocomplete";
+// import CategoryAutocomplete from "./CategoryAutocomplete";
 import ImgProductDefault from '/assets/images/imgProductDefault.png';
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 
 import { useProductContext } from "../context"; 
 import * as yup from "yup";
-import {  Form, Formik, useFormik} from "formik";
+import {  useFormik} from "formik";
 import { ColumnDefinition, ReactTabulator } from "react-tabulator";
 import { SalePriceList } from "@/modules/admin/models";
 import { PricingCalculateUtils, RoundNumber, SnackbarUtilities } from "@/core/utils";
@@ -168,18 +168,18 @@ export default function ProductDialog({handleClose, dialogTitle}: DialogProps) {
     //     console.log('ok')
     // };
 
-    const handleFormChange = (values: any) => {
-        // Realizar el dispatch con los nuevos valores
-        console.log(values);
-        dispatch({ type: "data", payload: values });
-      };
+    // const handleFormChange = (values: any) => {
+    //     // Realizar el dispatch con los nuevos valores
+    //     console.log(values);
+    //     dispatch({ type: "data", payload: values });
+    //   };
 
-    const handleSubmit = (values:any, actions:any) => {
+    // const handleSubmit = (values:any, actions:any) => {
       
-            // Simulate form submission
-            alert(JSON.stringify(values, null, 2));
-           actions.setSubmitting(false);
-      }; 
+    //         // Simulate form submission
+    //         alert(JSON.stringify(values, null, 2));
+    //        actions.setSubmitting(false);
+    //   }; 
 
 
       
@@ -199,21 +199,21 @@ export default function ProductDialog({handleClose, dialogTitle}: DialogProps) {
             });
             console.log(vatRate)
             console.log(dataVatRate)
-            const salePriceList: SalePriceList[] = dataFormApi.saleFees.map(item => ({
-                id: item.idTarifa,
-                tarifa: item.descripcion,
-                tipoIva: vatRate?.descripcion??'',
-                porcentajeIva: vatRate?.porcentaje??'',
-                precioVenta: 0,
-                precioConIva: 0,
-                porcentajeUtilidad: 0,
-                utilidad: 0,
-                estado: item.predeterminada ? 'Predeterminado' : '',
-            }))
-            dispatch({
-                type: 'productPvPs',
-                payload: salePriceList
-            }) 
+            // const salePriceList: SalePriceList[] = dataFormApi.saleFees.map(item => ({
+            //     id: item.idTarifa,
+            //     tarifa: item.descripcion,
+            //     tipoIva: vatRate?.descripcion??'',
+            //     porcentajeIva: vatRate?.porcentaje??'',
+            //     precioVenta: 0,
+            //     precioConIva: 0,
+            //     porcentajeUtilidad: 0,
+            //     utilidad: 0,
+            //     estado: item.predeterminada ? 'Predeterminado' : '',
+            // }))
+            // dispatch({
+            //     type: 'productPvPs',
+            //     payload: salePriceList
+            // }) 
         }
         return ()=>{
             console.log(productState.data)
