@@ -23,119 +23,74 @@ namespace Restaurant.API.Controllers
 
         // GET: api/Tables
         [HttpGet]
-        public async Task<ActionResult<APIResponse>> GetTables(string json)
+        public async Task<IActionResult> Get(string json)
         {
-            var data = new Dictionary<string, object> {
-                {"userRoleId", User.GetUserRoleId()}, {"json", json}
-            };
-
-            return await _tableService.GetAsync(data);
-            //return await _context.Tables.ToListAsync();
-        }
-
-        // GET: api/Tables/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<AppTable>> GetTable(int id)
-        {
-            var table = await _context.Tables.FindAsync(id);
-
-            if (table == null)
+            try
             {
-                return NotFound();
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId() },
+                    {"json", json}
+                };
+                var response = await _tableService.GetAsync(parameters);
+                if (response == null) { return NoContent(); }
+                return Ok(response);
             }
-
-            return table;
-        }
-
-        // PUT: api/Tables/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTable(int id, AppTable table)
-        {
-            if (id != table.Id)
+            catch (Exception)
             {
                 return BadRequest();
             }
-
-            //_context.Entry(table).State = EntityState.Modified;
-
-            var tableFounded = await _context.Tables.FindAsync(id);
-            tableFounded.RoomId = table.RoomId;
-            tableFounded.Capacity = table.Capacity;
-            tableFounded.NumberTable = table.NumberTable;
-            tableFounded.Description = table.Description;
-            tableFounded.Enabled = table.Enabled;
-            tableFounded.UpdatedAt = table.UpdatedAt;
-            tableFounded.UserId = User.GetUserId();
-
-            try
-            {
-                _context.Update(tableFounded);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TableExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return Ok(tableFounded);
         }
 
         // POST: api/Tables
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<AppTable>> PostTable(AppTable table)
+        public async Task<IActionResult> Post([FromBody] ApiRequest request)
         {
-            table.UserId = User.GetUserId();
-            _context.Tables.Add(table);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetTable", new { id = table.Id }, table);
+            request.UserRoleId = User.GetUserRoleId();
+            try
+            {
+                var response = await _tableService.AddAsync(request);
+                return Ok(response);
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest request)
+        {
+            request.UserRoleId = User.GetUserRoleId();
+            try
+            {
+                var response = await _tableService.UpdateAsync(id, request);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+                
 
         // DELETE: api/Tables/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTable(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var table = await _context.Tables.FindAsync(id);
-            if (table == null)
-            {
-                return NotFound();
-            }
+            var request = new ApiRequest();
+            request.UserRoleId = User.GetUserRoleId();
 
-            //_context.Tables.Remove(table);
-
-            table.Deleted = true;
-            table.Enabled = false;
-            _context.Entry(table).State = EntityState.Modified;
             try
             {
-                await _context.SaveChangesAsync();
+                var response = await _tableService.DeleteAsync(id, request);
+                return Ok(response);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!TableExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest(ex.Message);
             }
-            return Ok();
-        }
-
-        private bool TableExists(int id)
-        {
-            return _context.Tables.Any(e => e.Id == id);
         }
     }
 }

@@ -16,12 +16,14 @@ import { EditIcon, RemoveCircleOutlineIcon, dialogOpenSubject$ } from '@/core/co
 import { dialogDataSubject$ } from './CategoryDialog';
 import Swal from 'sweetalert2';
 import { SnackbarUtilities as Snackbar } from '@/core/utils';
+import { CategorySvc } from '@/modules/admin/services';
 
 type CategoryTableProp = {
-  categories: CategoryReadDto[]
+  categories: CategoryReadDto[],
+  callBackCloseDialog:()=>void
 }
 
-export default function CategoryTable({categories}:CategoryTableProp) { 
+export default function CategoryTable({categories, callBackCloseDialog}:CategoryTableProp) { 
 
 
   const dataEdit = (data: CategoryReadDto)=>{ 
@@ -40,7 +42,15 @@ export default function CategoryTable({categories}:CategoryTableProp) {
       cancelButtonText: 'No'
     })
     if(isConfirmed){
-      Snackbar.success('Eliminado correctamente' + id)
+      CategorySvc.delete(id).then(response=>{
+        if(response.code==="0"){
+          Snackbar.warning(response.message);
+        }
+        if(response.code==="1"){
+          Snackbar.success(response.message);  
+          callBackCloseDialog();
+        }         
+      }) 
     }
   }
 
@@ -73,9 +83,9 @@ export default function CategoryTable({categories}:CategoryTableProp) {
                   <IconButton aria-label="delete" color="primary" size="small" onClick={()=>dataEdit(category)} >
                     <EditIcon fontSize="inherit" />
                   </IconButton>
-                  <IconButton aria-label="delete" color="error" size="small" onClick={()=>askToUpdateState(category.idSubFamilia)}>
+                  {category.estado && <IconButton aria-label="delete"  color="error" size="small" onClick={()=>askToUpdateState(category.idSubFamilia)}>
                     <RemoveCircleOutlineIcon fontSize="inherit" />
-                  </IconButton>
+                  </IconButton>}
                 </TableCell>
                 <TableCell component="th" scope="row">
                   {index + 1}

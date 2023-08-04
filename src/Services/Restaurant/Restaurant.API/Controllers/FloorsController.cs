@@ -19,46 +19,62 @@ namespace Restaurant.API.Controllers
     public class FloorsController : ControllerBase
     {
         private readonly RestaurantContext _context;
-        private readonly AppFloorService _floorService;
+        private readonly IAppFloorService _floorService;
 
-        public FloorsController(RestaurantContext context)
+        public FloorsController(RestaurantContext context, IAppFloorService floorService)
         {
             _context = context;
-        } 
+            _floorService = floorService;
+        }
 
         // GET: api/Floors
         [HttpGet]
-        public async Task<ActionResult<APIResponse>> GetFloors(string json)
+        public async Task<ActionResult> Get(string json)
         {
-            var data = new Dictionary<string, object> {
-                {"userRoleId", User.GetUserRoleId()}, {"json", json}
-            };
+            try
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    {"userRoleId", User.GetUserRoleId() },
+                    {"json", json }
+                };
 
-            return await _floorService.GetAsync(data);
-        }
+                var response = await _floorService.GetAsync(parameters);
+                if (response == null) { return NoContent(); }
 
-        // GET: api/Floors/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<Floor>> GetFloor(int id)
-        //{
-
-        //    var data = new Dictionary<string, object> {
-        //        {"userRoleId", User.GetUserRoleId()}, {"json", json}
-        //    };
-
-        //    return await _tableService.GetAsync(data);
-        //}
-
-        // PUT: api/Floors/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutFloor(int id, Floor floor)
-        {
-            if (id != floor.Id)
+                return Ok(response);
+            }
+            catch (Exception)
             {
                 return BadRequest();
             }
+        }
+              
 
+        // POST: api/Floors
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult> PostFloor(ApiRequest request)
+        {
+            request.UserRoleId = User.GetUserRoleId();
+            try
+            {
+                var response = await _floorService.AddAsync(request);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, Floor floor)
+        {
+            if (id != floor.Id)
+            {
+                return BadRequest("No se ha logrado obtener el Id");
+            }
             _context.Entry(floor).State = EntityState.Modified;
 
             try
@@ -76,23 +92,7 @@ namespace Restaurant.API.Controllers
                     throw;
                 }
             }
-
             return NoContent();
-        }
-
-        // POST: api/Floors
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Floor>> PostFloor(Floor floor)
-        {
-            if (string.IsNullOrWhiteSpace(floor.CodEstab))
-            {
-                return NoContent();
-            }
-            _context.Floors.Add(floor);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetFloor", new { id = floor.Id }, floor);
         }
 
         // DELETE: api/Floors/5

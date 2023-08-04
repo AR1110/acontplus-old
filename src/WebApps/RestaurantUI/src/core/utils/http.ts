@@ -1,7 +1,6 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { ApiResponse } from "../models";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios"; 
 import { AuthService } from "@/core/services";
-import { getValidationError, SnackbarUtilities } from ".";
+import { SnackbarUtilities } from ".";
 
 const instance = axios.create({
   baseURL: import.meta.env.DEV ? "https://localhost:7111/gateway/" : "",
@@ -53,7 +52,8 @@ instance.interceptors.response.use(
     // }
 
     console.log(error.code)    
-    SnackbarUtilities.error(getValidationError(error.code)!);
+    // SnackbarUtilities.error(getValidationError(error.code)!);
+    SnackbarUtilities.error(error.message);
     return Promise.reject(error);
   }
 );
@@ -62,9 +62,9 @@ instance.interceptors.response.use(
 // const axios = <T>(cfg: AxiosRequestConfig): Promise<ApiResponse> =>
 //   instance.request<any, T>(cfg);
 
-const Http = async (config: AxiosRequestConfig): Promise<ApiResponse> => {
-  return instance.request(config).then((response) => {
-    return response.data;
+const Http = async (config: AxiosRequestConfig): Promise<AxiosResponse> => {
+  return instance.request(config).then((response) => { 
+    return response;
   });
 };
 

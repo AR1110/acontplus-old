@@ -1,6 +1,7 @@
 import { PATHS } from '@/core/constants/path';
 import { Http, HttpUploadFile, loadAbort } from '@/core/utils';
 import { CategoryReadDto } from '../models';
+import { ApiResponse } from '@/core/models';
 
 const URL = 'v3/SubFamilia/'
 export const CategorySvc = { 
@@ -21,24 +22,7 @@ export const CategorySvc = {
         signal: controller.signal
       }),
       controller
-    }
-
-    // if(response.code=="1"){
-    //   const categories = JSON.parse(response.payload);
- 
-    //   return  categories.map((item: CategoryReadDto) =>({ 
-    //     codigo: item.codigo,
-    //     descripcion: item.descripcion,
-    //     estado: item.estado,
-    //     idFamilia: item.idFamilia,
-    //     idSubFamilia: item.idSubFamilia,
-    //     montoObjetivo: item.montoObjetivo,
-    //     nombreFamilia: item.nombreFamilia,
-    //     siglas: item.siglas,
-    //     totalRecords: item.totalRecords
-    //   }) )
-    // } 
-    // return []
+    } 
   },
 
   post: async (data: any) => {
@@ -60,17 +44,24 @@ export const CategorySvc = {
   //     url: PATHS.PRIVATE + 'Category',
   //   });
   // },
-  update: async (id: number, data: any) => {
+  update: async (id: number, data: any): Promise<ApiResponse> => {
     const response = await Http({
-      method: 'post',
-      url: `${PATHS.INVENTARIO}${URL}Update`,
-      params: {
-        id
-      },
-      data: {data}
+      method: 'put',
+      url: `${PATHS.INVENTARIO}${URL}Update/` + id, 
+      data: { 
+          Data: data
+        
+      }
     });
+    return response.data; 
+  },
 
-    console.log(response);
+  delete: async (id: number): Promise<ApiResponse> => {
+    const response = await Http({
+      method: 'delete',
+      url: `${PATHS.INVENTARIO}${URL}Delete/` + id,
+    });
+    return response.data; 
   },
 
   imageUpload: async(data: any) => {

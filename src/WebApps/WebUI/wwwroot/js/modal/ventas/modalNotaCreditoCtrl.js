@@ -319,9 +319,9 @@ class ModalNotaCreditoCtrl extends ModalBaseCtrl {
 
 
 export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params', 'facturaService']
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params', 'facturaService', 'articuloService']
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params, facturaSvc) {
+    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params, facturaSvc, articuloSvc) {
         super({
             $scope,
             $timeout,
@@ -336,6 +336,7 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
         const self = this;
 
         this.facturaSvc = facturaSvc;
+        this.articuloSvc = articuloSvc;
 
         let {
             TIPO_REGISTRO
@@ -418,7 +419,9 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
                 bodegas: this.bodegas,
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
-                actividadTipoIva: this.actividadTipoIva
+                actividadTipoIva: this.actividadTipoIva,
+                idBodega: this.idBodega,
+                parentScope: this
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
@@ -611,9 +614,9 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
 
 export class ModalNotaCreditoEditarCtrl extends ModalNotaCreditoCtrl {
 
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params', 'articuloService']
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params) {
+    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params, articuloSvc) {
         super({
             $scope,
             $timeout,
@@ -627,6 +630,7 @@ export class ModalNotaCreditoEditarCtrl extends ModalNotaCreditoCtrl {
         })
         const self = this;
 
+        this.articuloSvc = articuloSvc;
 
         let {
             TIPO_REGISTRO,
@@ -709,7 +713,9 @@ export class ModalNotaCreditoEditarCtrl extends ModalNotaCreditoCtrl {
                 bodegas: this.bodegas,
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
-                actividadTipoIva: this.actividadTipoIva
+                actividadTipoIva: this.actividadTipoIva,
+                idBodega: this.idBodega,
+                parentScope: this
             })
             this.uiGridInvoice.idTarifa = this.idTarifa;
 

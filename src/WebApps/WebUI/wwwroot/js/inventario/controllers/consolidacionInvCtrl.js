@@ -1732,7 +1732,7 @@
 
                     entity = $scope.gridOptions.data[$scope.indexRow];
                     entity.cantidad = entity.cantidad + 1;
-
+                    $scope.addItem(entity, articulo, medidas);
                 } else {
                     $scope.addRow();
                     $scope.indexRow = $scope.gridOptions.data.findIndex(value => value.idArticulo === 0);

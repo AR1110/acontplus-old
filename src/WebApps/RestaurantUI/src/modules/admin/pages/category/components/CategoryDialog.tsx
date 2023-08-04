@@ -16,14 +16,15 @@ import { CategorySvc } from '@/modules/admin/services';
 import { ImageUpload, dialogCloseSubject$ } from '@/core/components'; 
 import { SubjectManager } from '@/core/models';
 import { Subscription } from 'rxjs';
+import { SnackbarUtilities } from '@/core/utils';
 interface ModalProps {
-  handleClose?: () => void;
+  callBackCloseDialog: () => void;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const dialogDataSubject$ = new SubjectManager<any>();
 
-export default function CategoryDialog({ handleClose }: ModalProps) {
+export default function CategoryDialog({ callBackCloseDialog }: ModalProps) {
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const validationSchema = yup.object({
@@ -45,32 +46,31 @@ export default function CategoryDialog({ handleClose }: ModalProps) {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
-        console.log(selectedImage)
-        console.log(values)
-        //     // Create an object of formData
-        const formData = new FormData();
         
-        // Update the formData object
-        formData.append("file", selectedImage as Blob, selectedImage?.name);
-        // formData.append("image", selectedImage as Blob, selectedImage?.name);
-    
-
-
-       // formik.setFieldValue("file", values.file);
-
-        // Details of the uploaded file
-        const data = {
-          DataFile: formData,
-          Params: JSON.stringify(values)
-        }
-        await CategorySvc.imageUpload(data).then(response => { 
-          console.log(response);
-        })
-        // console.log(selectedImage)
-        // console.log(formik.values)
-        // await CategorySvc.post(data).then((response) => {
-        //   console.log(response);  
+        // const formData = new FormData(); 
+        // formData.append("file", selectedImage as Blob, selectedImage?.name); 
+        // const data = {
+        //   DataFile: formData,
+        //   Params: JSON.stringify(values)
+        // }
+        // await CategorySvc.imageUpload(data).then(response => { 
+        //   console.log(response);
         // }) 
+        // }) 
+        console.log(values)
+        if(values.idSubFamilia>0){
+          await CategorySvc.update(values.idSubFamilia, values).then(response => {
+            if(response.code==="0"){
+              SnackbarUtilities.warning(response.message);
+            }
+            if(response.code==="1"){
+              SnackbarUtilities.success(response.message);              
+              handleCancel();
+              callBackCloseDialog();
+            } 
+          })
+        }
+
       } catch (error) { 
         console.log(error);
       }finally{
@@ -92,6 +92,7 @@ export default function CategoryDialog({ handleClose }: ModalProps) {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let dataSubject$ = new Subscription();
+
   useEffect(()=>{
     console.log('load component category')
     // eslint-disable-next-line react-hooks/exhaustive-deps
