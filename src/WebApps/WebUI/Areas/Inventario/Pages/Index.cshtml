@@ -47,6 +47,24 @@
                                 <label for="checkboxSubFamiliaFiltro">SubFamilia</label>
                             </div>
                         </div> 
+
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12" ng-hide="hideCheckbox" ng-if="dataSearch.byTipoReporte < 3">
+                            <div class="icheck-info">
+                                <input type="checkbox" ng-model="dataSearch.ckFechaCaducidad" class="form-control"
+                                    name="chkFechaCaducidad" id="chkFechaCaducidad">
+                                <label for="chkFechaCaducidad">Fecha Caducidad</label>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12" ng-hide="hideCheckbox" ng-if="dataSearch.byTipoReporte < 3">
+                            <div class="icheck-info">
+                                <input type="checkbox" ng-model="dataSearch.chkUbicacion" class="form-control"
+                                    name="chkUbicacion" id="chkUbicacion">
+                                <label for="chkUbicacion">Ubicación</label>
+                            </div>
+                        </div>
+
+
                         <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12" ng-if="dataSearch.byTipoReporte >=3">
                             <div class="icheck-info">
                                 <input type="checkbox" ng-model="dataSearch.checkboxArticuloFiltro" class="form-control"

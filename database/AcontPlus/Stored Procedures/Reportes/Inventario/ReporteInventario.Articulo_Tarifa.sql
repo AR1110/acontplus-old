@@ -17,135 +17,111 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 
-	DECLARE @byEntidad INT = (SELECT idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idRol)
+	DECLARE @byEntidad INT 
 	DECLARE @tituloReporte VARCHAR(150)
 	DECLARE @filtroFecha VARCHAR(50)
 
-	DECLARE @checkboxSubFamiliaFiltro BIT
-	DECLARE @bySubFamilia INT
-	DECLARE @checkboxStockFiltro BIT
-	DECLARE @byStock INT
+	DECLARE @checkboxSubFamiliaFiltro BIT ,@bySubFamilia INT
+	DECLARE @checkboxStockFiltro      BIT ,@byStock INT
+	DECLARE @chkProveedor             BIT ,@rucProveedor VARCHAR(25)
+	DECLARE @chkUbicacion             BIT ,@idBodega INT ,@ubicacion VARCHAR(150)
+	DECLARE @chkFechaCaducidad        BIT ,@fechaInicio DATETIME ,@fechaFin DATETIME
 	DECLARE @checkboxDetalleBodegaFiltro BIT 
 	DECLARE @byOrder NVARCHAR(10)			
 	DECLARE @byOrderCampo NVARCHAR(50)	
-	DECLARE @chkProveedor BIT = 0
-	DECLARE @rucProveedor VARCHAR(25)
-
-	DECLARE @params NVARCHAR(MAX)='@byEntidad    INT,									
-									@bySubFamilia INT,
-									@byOrder      VARCHAR(10),									
-									@byOrderCampo VARCHAR(50),
-									@rucProveedor VARCHAR(25) '			
-
-		--DECLARE @sql NVARCHAR(MAX) =  'SELECT 
-		--									idArticulo       = ar.idArticulo,																			
-		--									tarifa           = t.descripcion, 
-		--									descripcion      = ar.descripcion, 
-		--									codigo  		 = ar.codigo,
-		--									subFamilia		 = sf.descripcion ,
-		--									precioCosto      = CAST(ar.precioCosto as numeric(15, 2)),
-		--									precioIva      = CAST(apvp.precioConIva as numeric(15,2)),
-		--									totalStock       = CAST(ar.stock  as numeric(15, 2))                											
-		--								FROM ArticuloPvP apvp WITH (NOLOCK) 		
-		--								INNER JOIN Tarifa t WITH (NOLOCK) ON t.idTarifa            = apvp.idTarifa										
-		--								INNER JOIN Articulo ar WITH (NOLOCK) ON ar.idArticulo      = apvp.idArticulo										
-		--								INNER JOIN SubFamilia  sf WITH (NOLOCK) ON sf.idSubFamilia = ar.idSubFamilia									
-		--								WHERE ar.estado = 1 AND ar.idEntidad = @byEntidad AND ar.llevaInventario = 1 '
 	
+	DECLARE @params NVARCHAR(MAX)='@byEntidad    INT									
+								  ,@bySubFamilia INT
+								  ,@byOrder      VARCHAR(10)									
+								  ,@byOrderCampo VARCHAR(50)
+								  ,@rucProveedor VARCHAR(25)'			
 		
-			DECLARE @sql NVARCHAR(MAX) = 'SELECT ar.idArticulo
-											,ar.descripcion
-											,ar.codigo
-											,ar.subfamilia
-											,t.descripcion as tarifa
-											,precioIva = CAST(apvp.precioConIva as numeric(15,2))
-										FROM v_Articulo ar  WITH (NOLOCK) 		
-										INNER JOIN  ArticuloPvP apvp WITH (NOLOCK) ON ar.idArticulo = apvp.idArticulo
-										INNER JOIN Tarifa t WITH (NOLOCK) ON t.idTarifa = apvp.idTarifa
-										WHERE ar.estado = 1 AND ar.idEntidad = @byEntidad '
-
+	DECLARE @sql NVARCHAR(MAX) = 'SELECT ar.idArticulo
+									    ,ar.descripcion
+									    ,ar.codigo
+									    ,ar.subfamilia
+									    ,ar.tarifa
+									    ,CAST(ar.precioConIva as numeric(15,2)) as precioConIva
+								  FROM v_Articulo_Tarifa ar WITH (NOLOCK)
+								  WHERE ar.estado = 1 AND ar.idEntidad = @byEntidad '
+	
+	SELECT TOP 1 @byEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 			
-			SELECT 	
-			    @filtroFecha              = filtroFecha
-			  
-			   ,@checkboxSubFamiliaFiltro = checkboxSubFamiliaFiltro
-			   ,@bySubFamilia			  = bySubFamilia
-
-			   ,@checkboxStockFiltro      = checkboxStockFiltro
-			   ,@byStock                  = byStock
-
-			   ,@byOrder                  = byOrder			 
-			   ,@byOrderCampo             = byOrderCampo			   
-				,@chkProveedor = chkProveedor
-				,@rucProveedor = numeroIdentificacion
-			FROM OPENJSON(@json)
-			WITH (
-			      filtroFecha  VARCHAR(50)     '$.filtroFecha',						
-
-				  checkboxSubFamiliaFiltro BIT '$.checkboxSubFamiliaFiltro',
-				  bySubFamilia INT             '$.bySubFamilia',	
-				  
-				  checkboxStockFiltro BIT      '$.checkboxStockFiltro',
-				  byStock INT                  '$.byStock',				 			  				  
-
-				  byOrder NVARCHAR(10)         '$.byOrder',
-				  byOrderCampo NVARCHAR(50)    '$.byOrderCampo'		
-				  ,chkProveedor BIT '$.chkProveedor'
-				  ,numeroIdentificacion VARCHAR(25) '$.numeroIdentificacion'
-			) AS jsonValues	
+	SELECT
+		 @filtroFecha              = filtroFecha
+		,@checkboxSubFamiliaFiltro = checkboxSubFamiliaFiltro ,@bySubFamilia = bySubFamilia
+		,@checkboxStockFiltro      = checkboxStockFiltro      ,@byStock      = byStock
+		,@chkProveedor             = chkProveedor             ,@rucProveedor = numeroIdentificacion
+		,@chkFechaCaducidad         = ckFechaCaducidad         ,@fechaInicio  = fechaInicio ,@fechaFin = fechaFin
+		,@byOrder                  = byOrder			 
+		,@byOrderCampo             = byOrderCampo		
+	FROM OPENJSON(@json)
+	WITH ( filtroFecha            VARCHAR(50) '$.filtroFecha'			
+			,checkboxSubFamiliaFiltro     BIT '$.checkboxSubFamiliaFiltro',bySubFamilia                 INT '$.bySubFamilia'	
+			,checkboxStockFiltro          BIT '$.checkboxStockFiltro'     ,byStock                      INT '$.byStock'	
+			,chkProveedor                 BIT '$.chkProveedor'            ,numeroIdentificacion VARCHAR(25) '$.numeroIdentificacion'
+			,chkUbicacion                 BIT '$.chkUbicacion'            ,idBodega                     INT '$.idBodega'            ,ubicacion VARCHAR(100) '$.ubicacion'
+			,ckFechaCaducidad             BIT '$.ckFechaCaducidad'        ,fechaInicio             DATETIME '$.fechaInicio'         ,fechaFin      DATETIME '$.fechaFin'
+			,byOrder              VARCHAR(10) '$.byOrder'
+			,byOrderCampo         VARCHAR(50) '$.byOrderCampo'	
+	) AS dt	
 			
-		
-		
-
-		IF @chkProveedor = 1
+	IF @chkProveedor = 1
 		BEGIN
-			SET @sql = @sql + ' AND ar.idArticulo IN (SELECT it.idArticulo FROM v_InventarioTransaccion it WHERE it.rucClienteProveedor = @rucProveedor) '
-		END
-		ELSE
-		BEGIN 
-			IF @checkboxSubFamiliaFiltro = 1
-				BEGIN
-					SET @sql = @sql + ' AND ar.idSubFamilia = @bySubFamilia '
-				END
+			SET @sql = @sql + 'AND ar.idArticulo IN (SELECT it.idArticulo FROM v_InventarioTransaccion it WHERE it.rucClienteProveedor = @rucProveedor) '
 		END
 
-		--Articulo con stock
-		IF @checkboxStockFiltro = 1 AND @byStock = 1 
-			BEGIN			
-				SET @sql = @sql + ' AND ar.stock > 0 '
-			END 
-
-		--Articulo sin Stock 
-		IF  @checkboxStockFiltro = 1 AND @byStock = 2 
-			BEGIN			
-				SET @sql = @sql + ' AND ar.stock <= 0 '
-			END
-
-		IF @byOrderCampo = 'ar.idSubFamilia'
+	IF @chkUbicacion = 1
 		BEGIN
-			SET @byOrderCampo = 'ar.subfamilia'
+			SET @sql = @sql + 'AND ar.idArticulo IN (SELECT sa.idArticulo FROM v_Articulo_Stock sa WITH (NOLOCK) WHERE sa.idBodega = @idBodega AND sa.ubicacion LIKE ''%'' + @ubicacion + ''%'' ) '
+		END 
+
+	IF @chkFechaCaducidad = 1
+		BEGIN
+			SET @sql = @sql + 'AND ar.caducidad = 1 AND CAST(ar.fechaCaducidad AS DATE) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
+		END 
+
+	IF @checkboxSubFamiliaFiltro = 1
+		BEGIN
+			SET @sql = @sql + 'AND ar.idSubFamilia = @bySubFamilia '
 		END
 
-	    SET @sql = @sql + ' ORDER BY '+ @byOrderCampo+ ' ' +  @byOrder
+	IF @checkboxStockFiltro = 1 AND @byStock = 1 
+		BEGIN			
+			SET @sql = @sql + 'AND ar.stock > 0 '
+		END 
+
+	--Articulo sin Stock 
+	IF  @checkboxStockFiltro = 1 AND @byStock = 2 
+		BEGIN			
+			SET @sql = @sql + 'AND ar.stock <= 0 '
+		END
+
+	IF @byOrderCampo = 'ar.idSubFamilia'
+		BEGIN
+			SET @byOrderCampo = 'ar.idSubFamilia'
+		END
+
+	SET @sql = @sql + ' ORDER BY '+ @byOrderCampo+ ' ' +  @byOrder
 		
-		SELECT		    
-			e.ruc
-			,e.razonSocial 
-			,e.nombreComercial	
-			,ISNULL(e.telefono, '')telefonoEntidad
-			,ISNULL(e.direccion, '')direccionEntidad
-			,@filtroFecha as filtroFecha			
-			FROM dbo.Entidad e	WITH(NOLOCK)	
-			WHERE e.idEntidad = @byEntidad
+	SELECT		    
+		e.ruc
+		,e.razonSocial 
+		,e.nombreComercial	
+		,ISNULL(e.telefono, '')telefonoEntidad
+		,ISNULL(e.direccion, '')direccionEntidad
+		,@filtroFecha as filtroFecha			
+		FROM dbo.Entidad e	WITH(NOLOCK)	
+		WHERE e.idEntidad = @byEntidad
 
 
-		EXEC sp_executesql @sql, 
-					@params,	
-					@byEntidad    = @byEntidad,
-					@bySubFamilia = @bySubFamilia,
-					@byOrder      = @byOrder,
-					@byOrderCampo = @byOrderCampo,
-					@rucProveedor =  @rucProveedor
+	EXEC sp_executesql @sql, 
+				@params,	
+				@byEntidad    = @byEntidad,
+				@bySubFamilia = @bySubFamilia,
+				@byOrder      = @byOrder,
+				@byOrderCampo = @byOrderCampo,
+				@rucProveedor =  @rucProveedor
 
 	
 		

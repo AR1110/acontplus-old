@@ -22,9 +22,7 @@ namespace ApiConfig
                                        {
                                            x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                                            x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
-                                       }); 
-            
-            builder.Services.AddCustomJwtAuthentication(builder.Configuration);
+                                       });
 
             builder.Services.AddApplicationServices(builder.Configuration);
 
