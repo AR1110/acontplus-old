@@ -2,10 +2,15 @@ import {
   Button,
   DialogActions,
   DialogContent,
-  DialogTitle,
+  DialogTitle, 
+  FormControl, 
+  FormControlLabel,
+  FormGroup,
+  FormLabel,
   Grid,
   IconButton,
   MenuItem,
+  Switch,
   TextField,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
@@ -13,11 +18,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 import { useEffect } from 'react';
-import { CategorySvc, TableSvc } from '@/modules/admin/services';
+import { TableSvc } from '@admin/services';
 import {dialogCloseSubject$ } from '@/core/components'; 
 import { SubjectManager } from '@/core/models';
 import { Subscription } from 'rxjs';
 import { SnackbarUtilities as Snackbar } from '@/core/utils';
+import { categoryAdapter } from '@admin/adapters'; 
 interface ModalProps {
   callBackCloseDialog: () => void;
 }
@@ -26,6 +32,11 @@ interface ModalProps {
 export const dialogDataSubject$ = new SubjectManager<any>();
 
 export default function CategoryDialog({ callBackCloseDialog }: ModalProps) { 
+
+  
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let dataSubject$ = new Subscription();
+
   const validationSchema = yup.object({
     roomId: yup.number().default(1).min(1, 'No puede ser cero').required('Campo piso es requerido'),
     numberTable: yup.number().default(1).min(1, 'Numero de Mesa es obligatorio').required('Numero de Mesa es requerido'),
@@ -48,7 +59,8 @@ export default function CategoryDialog({ callBackCloseDialog }: ModalProps) {
     onSubmit: async (values) => {
       try { 
         if(values.id>0){
-          await CategorySvc.update(values.id, values).then(response => {
+         
+          await TableSvc.update(values.id, categoryAdapter.tableUpdateAdaptToApi(values)).then(response => {
             if(response.code==="0"){
               Snackbar.warning(response.message);
             }
@@ -59,7 +71,7 @@ export default function CategoryDialog({ callBackCloseDialog }: ModalProps) {
             } 
           })
         }else{
-          TableSvc.post(values).then(response =>{
+          await TableSvc.insert(values).then(response =>{
             console.log(response)
             if(response.code==="0"){
               Snackbar.warning(response.message);
@@ -83,19 +95,10 @@ export default function CategoryDialog({ callBackCloseDialog }: ModalProps) {
   const handleCancel = () => {
     dialogCloseSubject$.setSubject = false;
     formik.resetForm(); 
-  };
+  }; 
 
-  // const handleToUpperCase = function () {
-  //   if (!formik.values.description) return ;
-  //   if(formik.values.id > 0) return; 
-  //   formik.setFieldValue("description", formik.values.description.toUpperCase())
-  // } 
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let dataSubject$ = new Subscription();
-
-  useEffect(()=>{
-    console.log('load component category')
+  useEffect(()=>{ 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     dataSubject$ = dialogDataSubject$.getSubject.subscribe((data) => {
       console.log(data)
@@ -204,6 +207,25 @@ export default function CategoryDialog({ callBackCloseDialog }: ModalProps) {
               variant="outlined"
             />
           </Grid> 
+
+          <Grid item xs={12} sm={12} md={12}> 
+          <FormControl component="fieldset" variant="standard">
+            <FormLabel component="fieldset">Estado</FormLabel>
+              <FormControlLabel
+                control={
+                  <Switch   name="enabled" size='small' />
+                } 
+                label=""                
+                id="enabled"
+                name="enabled" 
+                checked={formik.values.enabled}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                
+              /> 
+          </FormControl> 
+          </Grid>
+
         </Grid>
       </DialogContent>
       <DialogActions>

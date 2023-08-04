@@ -1,0 +1,1 @@
+import{j as t,R as e,a as o}from"./index-6be2ba8b.js";function s(){return t.jsx("p",{children:"Hola"})}function r(){return t.jsx(t.Fragment,{children:t.jsx(e,{children:t.jsx(o,{path:"/",element:t.jsx(s,{})})})})}export{r as default};
