@@ -13,7 +13,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 import { useEffect, useState } from 'react';
-import { CategorySvc } from '@/modules/admin/services';
+import { CategorySvc, TableSvc } from '@/modules/admin/services';
 import { ImageUpload, dialogCloseSubject$ } from '@/core/components'; 
 import { SubjectManager } from '@/core/models';
 import { Subscription } from 'rxjs';
@@ -71,6 +71,10 @@ export default function CategoryDialog({ callBackCloseDialog }: ModalProps) {
               handleCancel();
               callBackCloseDialog();
             } 
+          })
+        }else{
+          TableSvc.post(values).then(response =>{
+            console.log(response)
           })
         }
 

@@ -1,6 +1,6 @@
 import { PATHS } from '@/core/constants/path';
 import { Http, HttpUploadFile, loadAbort } from '@/core/utils';
-import { CategoryReadDto } from '../models';
+import { TableCreateDto } from '../models';
 import { ApiResponse } from '@/core/models';
 
 const URL = 'Tables/'
@@ -25,14 +25,16 @@ export const TableSvc = {
     } 
   },
 
-  post: async (data: any) => {
+  post: async (data: TableCreateDto) => {
 
     console.log(data)
 
     const response = await Http({
       method: 'post',
       url: `${PATHS.INVENTARIO}${URL}Post`,
-      data
+      data: {
+        Data: JSON.stringify(data)
+      }
     });
 
     console.log(response); 
