@@ -9,6 +9,7 @@ import { TableReadDto } from '@admin/models';
 import { useAsync, useFetchAndLoad } from '@/hooks';
 import BackdropLoader from '@/core/components/BackdropLoader';
 import Swal from 'sweetalert2';
+import {categoryAdapter}  from '@admin/adapters';
 
 export default function TablePage() {
     const [tables, setTables] = useState<Array<TableReadDto>>([]);
@@ -17,16 +18,13 @@ export default function TablePage() {
     const { loading, callEndpoint } = useFetchAndLoad();
 
     const onOpenDialog = () => {
-
         dialogOpenSubject$.setSubject = true;
     };
 
     const getApiData = async () => await callEndpoint(TableSvc.getAll());
 
-    const categoriesMapper = function (response: any) {
-        console.log(response)
-        const tablesApi: TableReadDto[] =response.tables;
-        setTables(tablesApi);
+    const categoriesMapper = function (response: any) {                
+        setTables(categoryAdapter.tableReadAdaptFromApi(response.tables));
     };
 
     useAsync(getApiData, categoriesMapper, () => {
@@ -37,7 +35,6 @@ export default function TablePage() {
         setReloadFetchApi(!reloadFetchApi)
     }
 
-
     const dataEdit = (data: TableReadDto)=>{ 
         dialogOpenSubject$.setSubject = true;
         dialogDataSubject$.setSubject = data;    
@@ -45,7 +42,7 @@ export default function TablePage() {
     
       const askToUpdateState = async (id: number)=>{
         const {isConfirmed} = await Swal.fire({      
-          html: 'Esta seguro de eliminar esta categoria?',
+          html: 'Esta seguro de eliminar esta Mesa?',
           icon: 'warning',
           showCancelButton: true,
           confirmButtonColor: '#3085d6',

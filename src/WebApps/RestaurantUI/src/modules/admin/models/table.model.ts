@@ -4,14 +4,14 @@ export interface TableReadDto {
   numberTable: number,
   description: string,
   capacity: number,
-  createdAt: string,
-  updatedAt: string,
+  createdAt?: string,
+  updatedAt?: string,
   enabled: boolean,
-  deleted: boolean,
-  userId: number,
-  room: string,
-  floor: string,
-  idFloor: number
+  deleted?: boolean,
+  userId?: number,
+  room?: string,
+  floor?: string,
+  idFloor?: number
 }
 
 export type TablesResponseFromApi = Array<{
@@ -37,6 +37,16 @@ export interface TableCreateDto {
   capacity: number,
   enabled: boolean, 
 }
+
+export interface TableUpdateDto  {
+  roomId: number,
+  numberTable: number,
+  description: string,
+  capacity: number,
+  enabled: boolean, 
+}
+
+ 
 
 export interface ITable {
   id: number;

@@ -1,1 +1,0 @@
-import{j as r}from"./index-145dca60.js";import{G as e}from"./Grid-40e12fbf.js";import{P as i}from"./Paper-16629de2.js";function a(){return r.jsx("div",{children:r.jsx(e,{container:!0,spacing:0,sx:{mt:2,mb:2},children:r.jsx(e,{item:!0,xs:12,md:8,lg:12,children:r.jsx(i,{sx:{p:2,display:"flex",flexDirection:"column",height:240}})})})})}export{a as default};

@@ -1,6 +1,6 @@
 import { PATHS } from '@/core/constants/path';
 import { Http, HttpUploadFile, loadAbort } from '@/core/utils';
-import { TableCreateDto } from '../models';
+import { TableCreateDto, TableUpdateDto } from '../models';
 import { ApiResponse } from '@/core/models';
 
 const URL = 'Tables/'
@@ -25,9 +25,7 @@ export const TableSvc = {
     } 
   },
 
-  post: async (data: TableCreateDto) => {
-
-    console.log(data)
+  insert: async (data: TableCreateDto) => { 
 
     const resultAxios = await Http({
       method: 'post',
@@ -39,24 +37,18 @@ export const TableSvc = {
     const response: ApiResponse = resultAxios.data;
     return response;
     
-  },
-
-  // insert: () => {
-  //   return Http({
-  //     method: 'post',
-  //     url: PATHS.PRIVATE + 'Category',
-  //   });
-  // },
-  update: async (id: number, data: any): Promise<ApiResponse> => {
-    const response = await Http({
+  }, 
+  update: async (id: number, data: TableUpdateDto)=> {
+     
+    const resultAxios = await Http({
       method: 'put',
-      url: `${PATHS.INVENTARIO}${URL}Update/` + id, 
+      url: `${PATHS.PRIVATE}${URL}` + id, 
       data: { 
           Data: data
         
       }
     });
-    return response.data; 
+    return resultAxios.data as ApiResponse;    
   },
 
   delete: async (id: number): Promise<ApiResponse> => {
