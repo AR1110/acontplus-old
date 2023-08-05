@@ -2142,6 +2142,14 @@ export class CommonService {
         })
     }
 
+
+    checkCantItem(items){
+        if(Array.isArray(items)){
+            return items.length === 75
+        }
+        return items.length === 50;
+    }
+
 }
 
 
