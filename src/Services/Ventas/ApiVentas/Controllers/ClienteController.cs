@@ -28,7 +28,7 @@ namespace ApiVentas.Controllers
                 await _db.SPExecute("Ventas.Cliente_Get");
                 _db.AddDynamicParam("idRol", idUsuarioRol);
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
-                _response = _db.GetDataTableAsync();
+                _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
             {
@@ -43,6 +43,7 @@ namespace ApiVentas.Controllers
             return Ok(_response);
         }
 
+        //Eliminar mas adelante
         [HttpGet("GetDataForm")]
         public async Task<IActionResult> GetDataForm(string json)
         {

@@ -22,9 +22,9 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
-                <md-toolbar class="md-table-toolbar md-default">
-                    <div class="md-toolbar-tools">
-                        <div class="col-lg-9 col-md-9 col-sm-9 m-t-20">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-9 col-md-9 col-sm-9">
                             <div class="row justify-contend-start">
                                 <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
                                     <span class="form-group pull-left page-size form-inline">
@@ -39,7 +39,7 @@
                             <form class="form-material" autocomplete="off">
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="searchCliente"
-                                        ng-model="dataSearch.bySearch" ng-keyup="onKeyupSearchCliente()"
+                                        ng-model="dataSearch.textSearch" ng-keyup="onKeyupSearchCliente()"
                                         placeholder="Buscar Cliente" />
                                     <div class="input-group-append">
                                         <button type="button" uib-tooltip="Recargar la tabla" tooltip-placement="top"
@@ -55,65 +55,67 @@
                             </form>
                         </div>
                     </div>
-                </md-toolbar>
+                    <hr>
+                    <md-table-container md-scroll-y layout-fill style=" max-height: 300px;">
+                        <table md-table>
+                            <thead md-head fix-head>
+                                <tr md-row>
+                                    <th md-column ng-if="accion.editar || accion.eliminar">Op.</th>
+                                    <th md-column>N°</th>
+                                    <th md-column>RUC</th>
+                                    <th md-column>Nombre Fiscal</th>
+                                    <th md-column>Dirección</th>
+                                    <th md-column>Teléfono</th>
+                                    <th md-column>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody md-body>
+                                <tr md-row ng-repeat="c in clientes">
+                                    <td md-cell ng-if="accion.editar || accion.eliminar">
+                                        <div layout="row" layout-align="start center">
+                                            <button class="btn btn-info btn-xs"
+                                                ng-if="accion.editar && !c.esConsumidorFinal" btn-cliente
+                                                result-modal="resultModal(result)" params="c">
+                                                <i class="ti-pencil"></i>
+                                            </button>
+                                            <button class="btn btn-danger btn-xs ml-2"
+                                                ng-if="accion.eliminar && c.estado && !c.esConsumidorFinal"
+                                                ng-click="askToDelete(c)">
+                                                <i class="fas fa-user-times"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td md-cell>{{$index+1}}</td>
+                                    <td md-cell>{{c.numeroIdentificacion}}</td>
+                                    <td md-cell><a href="javascript:void(0)" class="text-primary"
+                                            ng-click="abrirModal(c,3)">{{c.nombreFiscal}}</a></td>
+                                    <td md-cell>{{c.direccion}}</td>
+                                    <td md-cell>{{c.telefono}}</td>
+                                    <td md-cell ng-bind-html="c.estado|estadoPrimario"></td>
+                                </tr>
+                                <tr ng-show="clientes.length==0" class="text-center">
+                                    <td colspan="7">
+                                        No hay registros en esta tabla :)
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td align="center" colspan="7">
 
-                <md-table-container md-scroll-y layout-fill style=" max-height: 400px;">
-                    <table md-table>
-                        <thead md-head fix-head>
-                            <tr md-row>
-                                <th md-column ng-if="accion.editar || accion.eliminar">Op.</th>
-                                <th md-column>N°</th>
-                                <th md-column>RUC</th>
-                                <th md-column>Nombre Fiscal</th>
-                                <th md-column>Dirección</th>
-                                <th md-column>Teléfono</th>
-                                <th md-column>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody md-body>
-                            <tr md-row ng-repeat="c in clientes">
-                                <td md-cell ng-if="accion.editar || accion.eliminar">
-                                    <div layout="row" layout-align="start center">
-                                        <button class="btn btn-info btn-xs"
-                                            ng-if="accion.editar && !c.esConsumidorFinal" btn-cliente
-                                            result-modal="resultModal(result)" params="c">
-                                            <i class="ti-pencil"></i>
-                                        </button>
-                                        <button class="btn btn-danger btn-xs ml-2"
-                                            ng-if="accion.eliminar && c.estado && !c.esConsumidorFinal"
-                                            ng-click="askToDelete(c)">
-                                            <i class="fas fa-user-times"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                                <td md-cell>{{$index+1}}</td>
-                                <td md-cell>{{c.numeroIdentificacion}}</td>
-                                <td md-cell><a href="javascript:void(0)" class="text-primary"
-                                        ng-click="abrirModal(c,3)">{{c.nombreFiscal}}</a></td>
-                                <td md-cell>{{c.direccion}}</td>
-                                <td md-cell>{{c.telefono}}</td>
-                                <td md-cell ng-bind-html="c.estado|estadoPrimario"></td>
-                            </tr>
-                            <tr ng-show="clientes.length==0" class="text-center">
-                                <td colspan="7">
-                                    No hay registros en esta tabla :)
-                                </td>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td align="center" colspan="7">
-                                    <div class="pull-left m-t-10 m-l-10">
-                                        <ul uib-pagination total-items="dataSearch.totalRecords"
-                                            items-Per-Page="dataSearch.pageSize" ng-change="pagechanged()"
-                                            ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
-                                            class="pagination" boundary-links="true" rotate="false"></ul>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </md-table-container>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </md-table-container>
+                </div>
+                <div class="card-body">
+                    <div class="pull-left m-t-5 m-l-10">
+                        <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+                            ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                            class="pagination" boundary-links="true" rotate="false"></ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

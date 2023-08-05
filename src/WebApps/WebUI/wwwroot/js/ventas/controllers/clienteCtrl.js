@@ -8,11 +8,11 @@
 
     function clienteCtrl($scope, clienteSvc, tS, commonSvc){
         'use strict'; 
-        $scope.recordsQuantity = [10, 25, 50, 100, 500, 1000];
+        $scope.recordsQuantity = [10, 25, 50, 100];
         
         $scope.dataSearch = {
             pageIndex: 1,
-            pageSize: 100  ,
+            pageSize: 50  ,
             maxSize: 5          
         }
 
@@ -21,7 +21,7 @@
         }
 
         $scope.resetList = function(){
-            $scope.dataSearch.bySearch = null;
+            $scope.dataSearch.textSearch = null;
             $scope.getClientes();
         }
 
@@ -38,13 +38,20 @@
         $scope.getClientes = function() {       
             try {  
                 showLoader();
-                $scope.dataSearch.bySearch = $scope.dataSearch.bySearch && $scope.dataSearch.bySearch 
+              
                 $scope.clientes = [];
-                $scope.dataSearch.totalRecords = 0;
-                clienteSvc.getAll($scope.dataSearch).then(response=>{
+               
+                const dataSearch = {
+                    pageIndex: $scope.dataSearch.pageIndex,
+                    pageSize: $scope.dataSearch.pageSize,
+                    checkTextSearch: $scope.dataSearch.textSearch?true: false,
+                    textSearch: $scope.dataSearch.textSearch
+                }
+                clienteSvc.getAll(dataSearch).then(response=>{
                     hideLoader();                    
                     $scope.clientes = response;
-                    $scope.dataSearch.totalRecords = $scope.clientes.length > 0? $scope.clientes[0].totalRecords:0                                                            
+                    $scope.dataSearch.totalRecords = $scope.clientes.length > 0? $scope.clientes[0].totalRecords:0;
+                    console.log($scope.dataSearch)                                                            
                 }).catch(error => {
                     $scope.dataSearch.totalRecords = 0;
                     console.log(error);
