@@ -115,7 +115,7 @@
         $scope.getReport = function (item) {
             let format = 'excel';
             let dataParms = {      
-                tipo: 1                        
+                tipo: 4                        
             }
 
             const parameters = {
