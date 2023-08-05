@@ -61,6 +61,7 @@
 		<None Remove="Reports\Retencion.rdlc" />
 		<None Remove="Reports\Test.rdlc" />
 		<None Remove="Reports\Ventas\AprobDocument.rdl" />
+		<None Remove="Reports\Ventas\Clientes.rdl" />
 		<None Remove="Reports\Ventas\NotaCreditoCliente.rdlc" />
 		<None Remove="Reports\Ventas\NotaEntrega.rdlc" />
 		<None Remove="Reports\Ventas\Proforma.rdlc" />
@@ -192,6 +193,9 @@
 		</Content>
 		<Content Include="Reports\ConsumoEmpresaTpv.rdl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Reports\Ventas\Clientes.rdl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Reports\Ventas\NotaCreditoCliente.rdlc">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
