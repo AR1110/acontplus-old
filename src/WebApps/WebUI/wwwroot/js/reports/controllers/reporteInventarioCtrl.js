@@ -6,9 +6,16 @@
 
     app.controller('reporteInventarioCtrl', reporteInventarioCtrl);
 
-    reporteInventarioCtrl.$inject = ['$scope', 'commonService', 'mainService', 'formulario', 'toastService'];
+    reporteInventarioCtrl.$inject = [
+        '$scope', 
+        'commonService', 
+        'mainService', 
+        'formulario', 
+        'toastService',
+        'articuloService'
+    ];
 
-    function reporteInventarioCtrl($scope, _commonSvc, mS, fS, tS) {
+    function reporteInventarioCtrl($scope, _commonSvc, mS, fS, tS, articuloSvc) {
 
         $scope.dataSearch = {};
         $scope.dataSearch.byOrderCampo = 'ar.descripcion';
@@ -27,30 +34,21 @@
 
         $scope.initiload = function () {
 
-            _commonSvc.getEstabAsign().then(response => {
+            articuloSvc.getDataForForm().then(response=>{
+                console.log(response)
+                $scope.establecimientos = response.establecimientos;
+                let dataEstab = $scope.establecimientos.find(item=>(item.predeterminado))
+                $scope.dataSearch.codEstab = dataEstab.codEstab;
+                $scope.tempBodegas = response.bodegas
 
-                $scope.establecimientos = response;
+                $scope.bodegas = $scope.tempBodegas.filter(item=>item.idEstab_Asig===dataEstab.idEstab_Asig);
+                $scope.dataSearch.idBodega = $scope.bodegas.find(item=>(item.defaultBodega)).idBodega;
+                $scope.subFamilias = response.subFamilias;
 
-                if ($scope.establecimientos.length > 0) {
-                    let dataEstab = $scope.establecimientos[0]
-                    $scope.dataSearch.codEstab = dataEstab.codEstab; //Para Filtro avanzado 
-                    _commonSvc.getDataFormEstabAsig(dataEstab).then(response => {
-                        $scope.bodegas = response[1]
-                    })
-                } else {
-                    tS.toastr('warning', 'NO TIENES ASIGNADO NINGUN ESTABLECIMIENTO')
-                }
-            })
-
-            mS.getData('get', '/SubFamilia/GetBy').then(response => {
-                if (response.id == 0) {
-                    tS.toastr('warning', response.message, response.titleSms)                
-                    return;
-                };
-                $scope.subFamilias = response.data;
-            })
+            })  
         }
         $scope.initiload(); 
+
 
         $scope.onTab = function(e, type) {
             $scope.dataSearch.byTipoReporte = type;
@@ -62,6 +60,18 @@
             }
             getTabPane.classList.add("active");
         } 
+
+        $scope.onChangeEstab = function(){
+            let dataEstab = $scope.establecimientos.find(item=>item.codEstab===$scope.dataSearch.codEstab);
+            $scope.bodegas = $scope.tempBodegas.filter(item=>item.idEstab_Asig===dataEstab.idEstab_Asig);
+            $scope.dataSearch.idBodega = $scope.bodegas.find(item=>(item.defaultBodega)).idBodega;
+        }
+
+        $scope.onChangeCheckProveedor= function() {
+            if($scope.dataSearch.chkProveedor){
+                $scope.dataSearch.checkboxSubFamiliaFiltro = false;
+            }
+        }
 
         $scope.onKeyupProveedor= function(){
             if(!$scope.proveedor.nombreProveedor){
@@ -120,6 +130,15 @@
                 if(!($scope.dataSearch.idUsuario>0)){
                     tS.toastr('warning', 'Seleccione el Usuario');
                     return;
+                }
+            }
+
+            if($scope.datSearch.byTipoReporte==1){
+                if($scope.dataSearch.chkUbicacion){
+                    if($scope.dataSearch.textUbicacion){
+                        tS.toastr('warning', 'Ingrese la ubicación ');
+                        return; 
+                    }
                 }
             }
 
@@ -187,6 +206,7 @@
                 fechaInicio : fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
                 fechaFin : fS.formatDateTimeZone($scope.dataSearch.fechaFin),
                 chkUbicacion: $scope.dataSearch.chkUbicacion,
+                textUbicacion: $scope.dataSearch.textUbicacion,
                 bySubFamilia: $scope.dataSearch.bySubFamilia,
                 byOrderCampo: $scope.dataSearch.byOrderCampo,
                 byTipoFormato: $scope.dataSearch.byTipoFormato,
