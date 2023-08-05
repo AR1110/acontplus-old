@@ -23,12 +23,12 @@
           <DataField>tipoIdentificacion</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
-        <Field Name="identificacion">
-          <DataField>identificacion</DataField>
+        <Field Name="numeroIdentificacion">
+          <DataField>numeroIdentificacion</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
-        <Field Name="razonSocial">
-          <DataField>razonSocial</DataField>
+        <Field Name="nombreFiscal">
+          <DataField>nombreFiscal</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="nombreComercial">
@@ -76,7 +76,7 @@
                   <Width>35.00365mm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>41.93333mm</Width>
+                  <Width>58.86666mm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -204,7 +204,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Razon Social</Value>
+                                  <Value>Nombre Fiscal</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -540,14 +540,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="identificacion">
+                        <Textbox Name="numeroIdentificacion">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!identificacion.Value</Value>
+                                  <Value>=Fields!numeroIdentificacion.Value</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                   </Style>
@@ -558,7 +558,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>identificacion</rd:DefaultName>
+                          <rd:DefaultName>numeroIdentificacion</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -594,14 +594,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="razonSocial">
+                        <Textbox Name="nombreFiscal">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!razonSocial.Value</Value>
+                                  <Value>=Fields!nombreFiscal.Value</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                   </Style>
@@ -612,7 +612,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>razonSocial</rd:DefaultName>
+                          <rd:DefaultName>nombreFiscal</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -895,7 +895,7 @@
             <Top>3.40783mm</Top>
             <Left>3.14325mm</Left>
             <Height>12mm</Height>
-            <Width>271.04374mm</Width>
+            <Width>287.97707mm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -910,7 +910,7 @@
           </Border>
         </Style>
       </Body>
-      <Width>274.71615mm</Width>
+      <Width>291.12032mm</Width>
       <Page>
         <PageFooter>
           <Height>7.82034mm</Height>

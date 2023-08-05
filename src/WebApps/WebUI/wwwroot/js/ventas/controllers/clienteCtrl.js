@@ -20,7 +20,7 @@
             $scope.getClientes();
         }
 
-        $scope.resetList = function(){
+        $scope.refresh = function(){
             $scope.dataSearch.textSearch = null;
             $scope.getClientes();
         }
@@ -112,14 +112,13 @@
         }
 
 
-        $scope.getReport = function (item) {
-            let format = 'excel';
+        $scope.getReport = function (format) { 
             let dataParms = {      
                 tipo: 4                        
             }
 
             const parameters = {
-                hasService: true,
+                hasService: false,
                 reportParams: JSON.stringify({
                     hasParams: false,
                     codigo: 'RCL',
@@ -133,7 +132,7 @@
 
             commonSvc.getReport({
                 parameters,
-                formatType: 'excel'
+                formatType: format
             })
         }
 
