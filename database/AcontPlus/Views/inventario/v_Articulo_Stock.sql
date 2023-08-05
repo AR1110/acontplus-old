@@ -12,6 +12,8 @@ CREATE VIEW v_Articulo_Stock AS (
 		  ,ar.estado
 		  ,ar.precioCosto
 		  ,ar.stock
+		  ,ar.caducidad
+		  ,ar.fechaCaducidad
 		  ,sf.descripcion as subfamilia
 		  ,bo.descripcion as bodega
 		  ,ubicacion = (SELECT ubicacion FROM ArticuloUbicacion au WITH (NOLOCK) WHERE au.idArticulo = st.idArticulo AND au.idBodega = st.idBodega)
