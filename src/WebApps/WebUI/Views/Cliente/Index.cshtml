@@ -108,20 +108,15 @@
                                     </td>
                                 </tr>
                             </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td align="center" colspan="7">
-                                        <div class="pull-left m-t-10 m-l-10">
-                                            <ul uib-pagination total-items="dataSearch.totalRecords"
-                                                items-Per-Page="dataSearch.pageSize" ng-change="pagechanged()"
-                                                ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
-                                                class="pagination" boundary-links="true" rotate="false"></ul>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tfoot>
                         </table>
                     </md-table-container>
+                </div>
+                <div class="card-body">
+                    <div class="pull-left m-t-5 m-l-10">
+                        <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+                            ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                            class="pagination" boundary-links="true" rotate="false"></ul>
+                    </div>
                 </div>
             </div>
         </div>
