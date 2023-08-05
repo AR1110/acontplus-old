@@ -143,9 +143,10 @@
             return fecha + ' ' + hora;
         }
 
-
+        // REPORTE DE CONSUMO DIARIO DE ARTICULOS
         $scope.getReportConsumoDiario = function() {
             let dataSearch = {
+                tipo : 4,
                 checkBoxArticulo : $scope.dataSearch.checkboxArticuloFiltro,
                 checkBoxUsuario : $scope.dataSearch.checkboxUsuarioFiltro,
                 checkBoxFecha : true,
@@ -174,9 +175,10 @@
             _commonSvc.getReport(params)
         }
 
-
+        // REPORTE DE ARTICULOS CON TARIFAS DE PRECIO ||  REPORTE DE ARTICULOS CON STOCK POR BODEGA
         $scope.getReportArticle = function(){
             let dataSearch = {
+                tipo : $scope.dataSearch.tipoReporteArticulo ==='INVRV'? 3: 2,
                 codEstab: $scope.dataSearch.codEstab,
                 chkProveedor: $scope.dataSearch.chkProveedor,
                 numeroIdentificacion: $scope.dataSearch.numeroIdentificacion,
@@ -210,9 +212,10 @@
             _commonSvc.getReport(params)
         } 
 
+        // REPORTE DE ARTICULOS FRACCIONADOS 
         $scope.getReportArticuloFraccionado = function () {
             let dataSearch = {
-                tipo : 5,
+                tipo : 1,
                 checkBoxArticulo : $scope.dataSearch.checkboxArticuloFiltro,
                 idArticulo : $scope.dataSearch.idArticulo
             }
@@ -232,9 +235,6 @@
 
             _commonSvc.getReport(params)
         } 
-
-
-
     }
 
 

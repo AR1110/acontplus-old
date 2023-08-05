@@ -396,3 +396,17 @@ GO
 
 DROP PROCEDURE IF EXISTS [dbo].[ASPFirmaElectronicaUpdate]
 GO
+
+--REPORTES 
+
+DROP PROCEDURE IF EXISTS [ReporteInventario].[Articulo_Global]
+GO
+
+DROP PROCEDURE IF EXISTS [ReporteInventario].[Articulo_Tarifa]
+GO
+
+DROP PROCEDURE IF EXISTS [ReporteInventario].[Articulo_Valoracion]
+GO
+
+DROP PROCEDURE IF EXISTS [Inventario].[Articulo_Report_Movement]
+GO
