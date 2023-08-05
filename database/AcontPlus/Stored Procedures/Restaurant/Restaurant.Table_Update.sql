@@ -16,20 +16,21 @@ GO
 -- =============================================
 -- Author:		<Author,,Name>
 -- Create date: <Create Date,,>
--- Description:	<Description,,>
+-- description:	<description,,>
 -- =============================================
+-- Restaurant.Table_Update 5, 35, '{"roomId": 1, "numberTable": 4,"description": "Data","capacity": 3,"enabled": 1 }'
 CREATE OR ALTER PROC Restaurant.Table_Update
 @userRoleId INT
 ,@id INT
-,@json NVARCHAR(MAX)
+,@json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
-	DECLARE @RoomId INT
-			,@NumberTable INT
-			,@Description VARCHAR(100)
-			,@Capacity INT 
-			,@Enabled BIT
+	DECLARE @roomId INT
+			,@numberTable INT
+			,@description VARCHAR(100)
+			,@capacity INT 
+			,@enabled BIT
 			,@UserId INT
 			,@UpdateAT DATETIME 
 
@@ -39,17 +40,18 @@ BEGIN
 		RETURN
 	END
 
-	SELECT @RoomId			= RoomId
-			,@NumberTable	= NumberTable
-			,@Description   = Description
-			,@Enabled		= Enabled
+	SELECT @roomId			= roomId
+			,@numberTable	= numberTable
+			,@description   = description
+			,@capacity      = capacity
+			,@enabled		= enabled
 	FROM OPENJSON(@json) 
 	WITH (
-		RoomId INT					'$.roomId'
-		,NumberTable INT			'$.numberTable'
-		,Description NVARCHAR(100)	'$.description'
-		,Capacity INT				'$.capacity'
-		,Enabled BIT				'$.enabled'
+		roomId INT					'$.roomId'
+		,numberTable INT			'$.numberTable'
+		,description NVARCHAR(100)	'$.description'
+		,capacity INT				'$.capacity'
+		,enabled BIT				'$.enabled'
 	)
 
 	SET @UpdateAT = (SELECT dbo.ufnGetDateEcuador())
@@ -58,11 +60,11 @@ BEGIN
 	BEGIN TRY
 		BEGIN TRAN
 			UPDATE Restaurant.[Table]
-			SET RoomId			= @RoomId
-				,NumberTable	= @NumberTable
-				,Description    = @Description
-				,Capacity		= @Capacity
-				,Enabled		= @Enabled
+			SET roomId			= @roomId
+				,NumberTable	= @numberTable
+				,Description    = @description
+				,Capacity		= @capacity
+				,Enabled		= @enabled
 				,UpdatedAt      = @UpdateAt
 				,UserId			= @UserId
 			WHERE Id = @id
@@ -78,8 +80,8 @@ BEGIN
 			END
 			
         INSERT INTO ErroresSistema
-		(token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, idUsuario)
-		VALUES(NEWID(), 'Restaurant.Table/Update', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), @userId)
+		(token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, idUsuario, errorDate)
+		VALUES(NEWID(), 'Restaurant.Table/Update', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), @userId, @UpdateAT)
 	END CATCH
 END
 GO

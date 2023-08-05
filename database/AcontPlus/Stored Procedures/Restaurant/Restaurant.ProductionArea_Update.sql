@@ -14,10 +14,10 @@ AS
 BEGIN 
 SET NOCOUNT ON;
 	DECLARE @code VARCHAR(5)
-	DECLARE @Description VARCHAR(100)
+	DECLARE @description VARCHAR(100)
 	DECLARE @UpdateddAt DATETIME
-	DECLARE @UserId INT
-	DECLARE @Enabled BIT
+	DECLARE @userId INT
+	DECLARE @enabled BIT
 
 	IF (ISJSON(@json) = 0)
 	BEGIN
@@ -27,26 +27,27 @@ SET NOCOUNT ON;
 		RETURN
 	END
 
-	SELECT @code		  = Code
-			,@Description = Description
+	SELECT @code		  = code
+			,@description = description
+			,@enabled	  = enabled
 	FROM OPENJSON(@json)
 	WITH(
-		Code VARCHAR(5)				'$.Code'
-		,Description VARCHAR(500)   '$.Description'
-		,Enabled	BIT				'$.Enabled'
+		code VARCHAR(5)				'$.code'
+		,description VARCHAR(500)   '$.description'
+		,enabled	BIT				'$.enabled'
 	)
 	
 	SET @UpdateddAt = (SELECT dbo.ufnGetDateEcuador())
-	SET @UserId = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
+	SET @userId = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
 	
 	BEGIN TRY
 		BEGIN TRAN
 			UPDATE Restaurant.ProductionArea
-			SET Code = @code
-				,Description = @Description
+			SET code = @code
+				,description = @description
 				,UpdatedAt   = @UpdateddAt
-				,Enabled     = @Enabled
-				,UserId		 = @UserId
+				,enabled     = @enabled
+				,userId		 = @userId
 			WHERE Id = @id
 
 		COMMIT TRAN
@@ -69,5 +70,3 @@ SET NOCOUNT ON;
 		VALUES(NEWID(), 'Restaurant.ProductionArea/Insert', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), @userId)
 	END CATCH
 END
-
-select * from Restaurant.ProductionArea
