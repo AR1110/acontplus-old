@@ -17,6 +17,8 @@
         $scope.dataSearch.byTipoFormato = 'pdf';
         $scope.dataSearch.codTransaccion = 'S';
 
+        $scope.validacionListaPrecio = false;
+
         $scope.tipoReportes = [
             {codigo: 1, descripcion: 'Con Valoración', codigoReporte: 'INVRV'},
             {codigo: 2, descripcion: 'Con Lista de Precios', codigoReporte: 'INVAT'},

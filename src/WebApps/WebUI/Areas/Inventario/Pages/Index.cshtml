@@ -142,8 +142,8 @@
                                 </script>
                             </div>
                         </div>
-
-                        <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12" ng-if="dataSearch.byTipoReporte==3">
+                        
+                        <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12" ng-if="(dataSearch.byTipoReporte==1 || dataSearch.byTipoReporte==2 ) && dataSearch.ckFechaCaducidad">
                             <div class="form-group">
                                 <label>Rango Fechas</label>
                             <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
