@@ -59,6 +59,7 @@ namespace Restaurant.Application.Services
         public async Task<string> UpdateAsync(int id, ApiRequest data)
         {
             var parameters = new Dictionary<string, object>{
+                {"userRoleId", data.UserRoleId},
                 {"id", id},
                 {"json", JsonConvert.SerializeObject(data.Data)}
             };

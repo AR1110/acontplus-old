@@ -205,6 +205,17 @@
             "configurations": [
                 ".NET Core Launch (Frontend)",
                 ".NET Core Launch (Gateway)",
+                ".NET Core Launch (Configuracion)",
+                ".NET Core Launch (Identity)",
+                ".NET Core Launch (Inventario)",
+                ".NET Core Launch (FactElect)",
+                ".NET Core Launch (Reports)"
+            ],
+            "stopAll": true
+        },
+        {
+            "name": "AcontPlus Restaurant",
+            "configurations": [
                 ".NET Core Launch (Gateway Restaurant)",
                 ".NET Core Launch (Configuracion)",
                 ".NET Core Launch (Identity)",
