@@ -1,11 +1,11 @@
-﻿using Services.Common.Logs;
-using DataAccess;
+﻿using DataAccess;
 using DataAccess.Compras;
 using Domain.Models;
 using Domain.ViewModels.Compras;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Services.Common.Logs;
 
 namespace WebUI.Controllers.Compras
 {
@@ -35,7 +35,7 @@ namespace WebUI.Controllers.Compras
         {
             DbAccess _db = new DbAccess(_configuration);
             LogWriter _log = new LogWriter(_configuration);
-            GenericResponse _response = new GenericResponse();           
+            GenericResponse _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -43,7 +43,7 @@ namespace WebUI.Controllers.Compras
                 _db.AddDynamicParam("idRol", idUsuarioRol);
                 _db.AddDynamicParam("jsonLiquidacion", SqlValidation.ValidateSqlString(JsonConvert.SerializeObject(data.liquidacion)));
                 _db.AddDynamicParam("jsonDetalle", SqlValidation.ValidateSqlString(JsonConvert.SerializeObject(data.detalle)));
-                _db.AddDynamicParam("jsonInfoAdicional", SqlValidation.ValidateSqlString(JsonConvert.SerializeObject(data.adicional)));                
+                _db.AddDynamicParam("jsonInfoAdicional", SqlValidation.ValidateSqlString(JsonConvert.SerializeObject(data.adicional)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -51,7 +51,7 @@ namespace WebUI.Controllers.Compras
                 _log.LogError("Error al crear la liquidacion de compra: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al crear la liquidacion compra");
             }
-            return Ok(_response);          
+            return Ok(_response);
         }
 
 

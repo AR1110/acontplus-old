@@ -1,8 +1,8 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using System.Data;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
+using System.Data;
 using System.Data.Common;
 
 namespace Restaurant.Infrastructure.Repositories

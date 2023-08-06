@@ -1,7 +1,7 @@
-﻿using Services.Common.Logs;
-using DataAccess;
+﻿using DataAccess;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common.Logs;
 
 namespace WebUI.Controllers.Ventas
 {
@@ -23,7 +23,7 @@ namespace WebUI.Controllers.Ventas
         {
             return PartialView();
         }
-       
+
 
         [HttpGet]
         public async Task<IActionResult> GetId(int id)

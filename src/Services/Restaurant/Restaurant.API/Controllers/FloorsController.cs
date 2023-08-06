@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Azure.Core;
-using Lib.Common.Api;
-using Microsoft.AspNetCore.Http;
+﻿using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Restaurant.Application.Services;
-using Restaurant.Core.Entities;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
 using Services.Common;
@@ -50,7 +41,7 @@ namespace Restaurant.API.Controllers
                 return BadRequest();
             }
         }
-              
+
         // POST: api/Floors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]

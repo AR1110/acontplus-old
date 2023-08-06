@@ -1,8 +1,8 @@
+using Lib.Common;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
-using System.Reflection;
 using Services.Common;
-using Lib.Common;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 

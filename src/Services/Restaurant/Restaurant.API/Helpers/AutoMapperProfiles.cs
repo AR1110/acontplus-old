@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using Restaurant.API.Dtos;
-using Restaurant.Core.Entities;
 
 namespace Restaurant.API.Helpers
 {

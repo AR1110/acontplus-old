@@ -1,10 +1,10 @@
-﻿using Services.Common.Logs;
-using DataAccess;
+﻿using DataAccess;
 using Domain.Dtos;
 using Helpers;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using Lib.Common;
+using Microsoft.AspNetCore.Mvc;
+using Services.Common.Logs;
+using System.Security.Claims;
 
 namespace Inventario.API.Controllers
 {

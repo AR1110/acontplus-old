@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Inventario.Core.Entities;
+using Inventario.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Inventario.Core.Entities;
-using Inventario.Infrastructure.Data;
 
 namespace Inventario.API.Controllers
 {
@@ -25,10 +20,10 @@ namespace Inventario.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<StockFisicoDetalle>>> GetStockFisicoDetalles()
         {
-          if (_context.StockFisicoDetalles == null)
-          {
-              return NotFound();
-          }
+            if (_context.StockFisicoDetalles == null)
+            {
+                return NotFound();
+            }
             return await _context.StockFisicoDetalles.ToListAsync();
         }
 
@@ -36,10 +31,10 @@ namespace Inventario.API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<StockFisicoDetalle>> GetStockFisicoDetalle(int id)
         {
-          if (_context.StockFisicoDetalles == null)
-          {
-              return NotFound();
-          }
+            if (_context.StockFisicoDetalles == null)
+            {
+                return NotFound();
+            }
             var stockFisicoDetalle = await _context.StockFisicoDetalles.FindAsync(id);
 
             if (stockFisicoDetalle == null)
@@ -86,10 +81,10 @@ namespace Inventario.API.Controllers
         [HttpPost]
         public async Task<ActionResult<StockFisicoDetalle>> PostStockFisicoDetalle(StockFisicoDetalle stockFisicoDetalle)
         {
-          if (_context.StockFisicoDetalles == null)
-          {
-              return Problem("Entity set 'InventarioContext.StockFisicoDetalles'  is null.");
-          }
+            if (_context.StockFisicoDetalles == null)
+            {
+                return Problem("Entity set 'InventarioContext.StockFisicoDetalles'  is null.");
+            }
             _context.StockFisicoDetalles.Add(stockFisicoDetalle);
             await _context.SaveChangesAsync();
 

@@ -1,8 +1,7 @@
-﻿using Inventario.Core.Interfaces;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Helpers;
+using Inventario.Core.Interfaces;
 using Inventario.Core.Models;
-using Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Inventario.API.Controllers.v3
 {

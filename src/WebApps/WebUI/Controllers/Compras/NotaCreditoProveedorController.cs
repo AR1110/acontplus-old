@@ -1,9 +1,9 @@
-﻿using Services.Common.Logs;
-using DataAccess;
+﻿using DataAccess;
 using DataAccess.Compras;
 using Domain.ViewModels.Compras;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common.Logs;
 
 namespace WebUI.Controllers.Compras
 {
@@ -26,7 +26,7 @@ namespace WebUI.Controllers.Compras
 
         [HttpPost]
         public async Task<IActionResult> Insert([FromBody] NotaCreditoProveedorViewModel data)
-        {           
+        {
             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _ncprov.InsertAsync(idRol, data);
             return Ok(res);

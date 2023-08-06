@@ -1,12 +1,9 @@
-﻿using Services.Common.Logs;
-using DataAccess;
-using Domain.Dtos;
+﻿using DataAccess;
 using Domain.Models;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using Services.Common.Logs;
 using System.Data;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Web;
 

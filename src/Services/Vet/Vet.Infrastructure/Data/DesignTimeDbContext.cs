@@ -20,7 +20,7 @@ namespace Vet.Infrastructure.Data
                 .AddJsonFile($"sharedsettings.Development.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"sharedsettings.Staging.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"sharedsettings.Production.json", optional: true, reloadOnChange: true)
-                .Build(); 
+                .Build();
 
             var connectionString = Encryption.DecryptString(configuration.GetSection("KeyEncryption").Value, configuration.GetConnectionString(_databaseName));
 

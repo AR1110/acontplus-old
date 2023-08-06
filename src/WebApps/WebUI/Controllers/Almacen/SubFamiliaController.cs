@@ -1,7 +1,5 @@
 ﻿using DataAccess;
 using DataAccess.Almacen;
-using Domain.Models;
-using Domain.Models.Almacen;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,7 +27,7 @@ namespace WebUI.Controllers
 
 
         public IActionResult Index()
-        {           
+        {
             return View();
         }
 

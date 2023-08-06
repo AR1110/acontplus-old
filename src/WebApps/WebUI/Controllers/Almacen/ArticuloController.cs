@@ -1,10 +1,10 @@
-﻿using Services.Common.Logs;
-using DataAccess;
+﻿using DataAccess;
 using DataAccess.Almacen;
 using Domain.Models;
 using Domain.ViewModels.Almacen;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common.Logs;
 
 namespace WebUI.Controllers
 {
@@ -130,7 +130,7 @@ namespace WebUI.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Search(string json)
-        {            
+        {
             LogWriter _log = new LogWriter(_configuration);
             var _response = new GenericResponse();
             try

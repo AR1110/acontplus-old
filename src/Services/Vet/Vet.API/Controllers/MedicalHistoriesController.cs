@@ -1,12 +1,7 @@
-﻿using Lib.Common;
-using Lib.Common.Api;
+﻿using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
-using Newtonsoft.Json;
 using Services.Common;
-using System.Text.Json.Serialization;
 using Vet.Core.Entities;
 using Vet.Core.Interfaces;
 using Vet.Infrastructure.Data;

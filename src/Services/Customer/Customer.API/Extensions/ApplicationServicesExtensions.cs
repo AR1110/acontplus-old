@@ -1,8 +1,7 @@
-﻿using Customer.Infrastructure.Data;
-using Customer.API.Services;
+﻿using Customer.API.Services;
+using Customer.Infrastructure.Data;
 using Lib.Common;
 using Microsoft.EntityFrameworkCore;
-using System.Configuration;
 
 namespace Customer.API.Extensions
 {

@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Restaurant.Core.Entities;
 using Restaurant.Core.Interfaces;
 using Services.Common;
 
@@ -58,7 +52,7 @@ namespace Restaurant.API.Controllers
             {
                 data.UserRoleId = User.GetUserRoleId();
                 var response = await _ingredient.AddAsync(data);
-                if (response == null) { return BadRequest("Cant Save"); };
+                if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("Cant Save"); };
                 return Ok(response);
             }
             catch (System.Exception ex)
@@ -66,14 +60,14 @@ namespace Restaurant.API.Controllers
                 return BadRequest("Error on Post: " + ex.Message);
             }
         }
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
         {
             try
             {
                 data.UserRoleId = User.GetUserRoleId();
                 var response = await _ingredient.UpdateAsync(id, data);
-                if (response == null) { return BadRequest("Cant Update"); };
+                if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("Cant Update"); };
                 return Ok(response);
             }
             catch (System.Exception ex)
@@ -81,7 +75,7 @@ namespace Restaurant.API.Controllers
                 return BadRequest("Error on Post: " + ex.Message);
             }
         }
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             try

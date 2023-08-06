@@ -2,13 +2,7 @@
 using Lib.Common.Api;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
-using Services.Lib.Common;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Restaurant.Application.Services
 {
@@ -65,7 +59,7 @@ namespace Restaurant.Application.Services
         {
             var parameters = new Dictionary<string, object>{
                 {"userRoleId", request.UserRoleId},
-                {"id", id}                
+                {"id", id}
             };
             return await _repository.SPExecuteAsync("Inventario.Floors_Update_Cancel", request.Data);
         }

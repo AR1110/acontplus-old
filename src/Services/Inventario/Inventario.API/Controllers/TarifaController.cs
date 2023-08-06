@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Services.Common.Logs;
 using DataAccess;
 using Domain.Models;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
+using Services.Common.Logs;
 
 namespace Inventario.API.Controllers
 {
@@ -82,7 +77,7 @@ namespace Inventario.API.Controllers
                 await _db.SPExecute("Almacen.Tarifa_Update");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));             
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

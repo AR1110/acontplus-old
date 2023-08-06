@@ -1,11 +1,9 @@
-using Services.Common;
-using Helpers;
-using System.Reflection;
+using ApiVentas.Extensions;
 using Lib.Common;
-using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using ApiVentas.Extensions;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Services.Common;
 
 namespace ApiVentas
 {

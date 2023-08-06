@@ -77,7 +77,7 @@ namespace Identity.Services
             };
             var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
             var securityToken = jwtSecurityTokenHandler.CreateToken(securityTokenDescriptor);
-            return jwtSecurityTokenHandler.WriteToken(securityToken); 
+            return jwtSecurityTokenHandler.WriteToken(securityToken);
         }
     }
 }

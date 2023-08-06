@@ -120,11 +120,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Config.Core", "Services\Con
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Config.Infrastructure", "Services\Configuracion\Config.Infrastructure\Config.Infrastructure.csproj", "{D35D79CF-41B3-487E-8D0D-F9826E612EF7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contabilidad.Application", "Services\Contabilidad\Contabilidad.Application\Contabilidad.Application.csproj", "{08213EF1-1BA0-4F5B-89CA-60AA8E71D7E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contabilidad.Application", "Services\Contabilidad\Contabilidad.Application\Contabilidad.Application.csproj", "{08213EF1-1BA0-4F5B-89CA-60AA8E71D7E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contabilidad.Core", "Services\Contabilidad\Contabilidad.Core\Contabilidad.Core.csproj", "{7AD78938-AF6E-4CC5-A529-3DAAD6CEF9B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contabilidad.Core", "Services\Contabilidad\Contabilidad.Core\Contabilidad.Core.csproj", "{7AD78938-AF6E-4CC5-A529-3DAAD6CEF9B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contabilidad.Infrastructure", "Services\Contabilidad\Contabilidad.Infrastructure\Contabilidad.Infrastructure.csproj", "{E7936EC5-9DA5-4012-B297-40BC35C83425}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contabilidad.Infrastructure", "Services\Contabilidad\Contabilidad.Infrastructure\Contabilidad.Infrastructure.csproj", "{E7936EC5-9DA5-4012-B297-40BC35C83425}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

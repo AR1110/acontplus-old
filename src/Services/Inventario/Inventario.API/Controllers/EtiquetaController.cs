@@ -1,8 +1,7 @@
-﻿using Services.Common.Logs;
-using DataAccess;
+﻿using DataAccess;
 using Helpers;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common.Logs;
 
 namespace Inventario.API.Controllers
 {
@@ -32,7 +31,8 @@ namespace Inventario.API.Controllers
                 _response = _db.GetDataTableAsync();
 
 
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 _log.LogError("Error al listar etiquetas: \n" + ex.ToString());
                 _response.Create("0", "Error al listar etiquetas");
@@ -107,7 +107,7 @@ namespace Inventario.API.Controllers
             {
                 await _db.SPExecute("Inventario.Etiqueta_Delete");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", id);                
+                _db.AddDynamicParam("id", id);
 
                 _response = _db.GetDefault();
 

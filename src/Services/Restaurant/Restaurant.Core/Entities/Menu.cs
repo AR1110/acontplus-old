@@ -13,6 +13,6 @@ namespace Restaurant.Core.Entities
         public string Summary { get; set; }
         public int TypeId { get; set; }
         public string Content { get; set; }
-        public List<MenuItem> MenuItems{ get; set; }
+        public List<MenuItem> MenuItems { get; set; }
     }
 }

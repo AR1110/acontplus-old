@@ -1,11 +1,4 @@
-﻿
-using Domain.Models;
-using Helpers;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
-using System.Data;
-
-namespace DataAccess
+﻿namespace DataAccess
 {
     //public class EtiquetaDao
     //{

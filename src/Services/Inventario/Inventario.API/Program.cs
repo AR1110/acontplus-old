@@ -15,7 +15,7 @@ builder.Services.AddControllers()
                 {
                     x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                     x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
-                }); 
+                });
 
 builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
 ConfigHelper.AddJsonFiles(builder.Configuration);
@@ -72,7 +72,8 @@ app.MapControllers().RequireAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
-    endpoints.MapGet("/", context => {
+    endpoints.MapGet("/", context =>
+    {
         context.Response.Redirect("swagger");
         return Task.CompletedTask;
     });

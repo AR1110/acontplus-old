@@ -1,15 +1,10 @@
-using Identity.API.Data.Identity;
-using Identity.API.Identity;
-using Identity.API.Entities;
 using Identity.API.Extensions;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Services.Common;
-using Services.Common.Middleware;
-using Microsoft.AspNetCore.Mvc.Versioning;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Lib.Common;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Services.Common;
+using Services.Common.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 

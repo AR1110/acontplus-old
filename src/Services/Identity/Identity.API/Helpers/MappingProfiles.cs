@@ -1,5 +1,5 @@
-﻿using Identity.API.Dtos; 
-using AutoMapper;
+﻿using AutoMapper;
+using Identity.API.Dtos;
 using Identity.API.Entities;
 
 namespace Identity.API.Helpers

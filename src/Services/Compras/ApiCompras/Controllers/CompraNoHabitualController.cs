@@ -1,8 +1,8 @@
-﻿using Services.Common.Logs;
-using DataAccess;
+﻿using DataAccess;
 using Domain.Dtos.Compras;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common.Logs;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

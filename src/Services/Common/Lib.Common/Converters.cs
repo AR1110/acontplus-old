@@ -1,7 +1,6 @@
-using System.Data;
-using System.Runtime.Serialization.Formatters;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using System.Data;
 
 namespace Lib.Common
 {
@@ -27,7 +26,7 @@ namespace Lib.Common
             {
                 NamingStrategy = new CamelCaseNamingStrategy()
             };
-             var options = new JsonSerializerSettings
+            var options = new JsonSerializerSettings
             {
                 ContractResolver = contractResolver,
                 Formatting = Formatting.Indented
