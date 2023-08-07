@@ -46,13 +46,8 @@ export default function TableComponent({
     });
     if (isConfirmed) {
       ProductionAreaSvc.delete(id).then((response) => {
-        if (response.code === '0') {
-          Snackbar.warning(response.message);
-        }
-        if (response.code === '1') {
-          Snackbar.success(response.message);
-          callBackCloseDialog();
-        }
+        callBackCloseDialog();
+        Snackbar.success(response.message);
       });
     }
   };
