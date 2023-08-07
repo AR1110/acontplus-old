@@ -1,11 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Reporting.NETCore;
 using System.Data;
-using System.IO;
-using System.Reflection;
-using Vet.Core.Entities;
 using Vet.Core.Interfaces;
 using Vet.Core.Utils;
 using Vet.Infrastructure.Data;
@@ -34,7 +30,7 @@ namespace Vet.Application.Reports
                 paramId.Value = id;
                 command.Parameters.Add(paramId);
                 command.CommandType = CommandType.StoredProcedure;
-                await  _context.Database.OpenConnectionAsync();
+                await _context.Database.OpenConnectionAsync();
                 using (SqlDataAdapter adapter = new SqlDataAdapter())
                 {
                     adapter.SelectCommand = (SqlCommand)command;

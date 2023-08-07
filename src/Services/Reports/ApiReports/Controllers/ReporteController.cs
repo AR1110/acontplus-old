@@ -1,5 +1,4 @@
-﻿using Services.Common.Logs;
-using DataAccess;
+﻿using DataAccess;
 using Domain.Dtos;
 using Domain.Models;
 using Helpers;
@@ -7,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Primitives;
 using Reports.Application;
+using Services.Common.Logs;
 using System.Data;
 
 namespace ApiReports.Controllers

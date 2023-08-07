@@ -1,18 +1,18 @@
-﻿using Identity.API.Dtos;
+﻿using AutoMapper;
+using DataAccess;
+using Domain.Dtos;
+using Domain.ViewModels;
+using Helpers;
+using Identity.API.Dtos;
+using Identity.API.Entities;
 using Identity.API.Errors;
 using Identity.API.Extensions;
 using Identity.API.Interfaces;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Identity.API.Entities;
-using System.Security.Claims;
 using Services.Common.Logs;
-using DataAccess;
-using Helpers;
-using Domain.Dtos;
-using Domain.ViewModels;
+using System.Security.Claims;
 
 namespace Identity.API.Controllers.v1
 {

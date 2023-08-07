@@ -1,5 +1,4 @@
-﻿using Inventario.Core.Entities;
-using Inventario.Core.Interfaces;
+﻿using Inventario.Core.Interfaces;
 using Inventario.Infrastructure.Data;
 using Lib.Common;
 using Lib.Common.Api;

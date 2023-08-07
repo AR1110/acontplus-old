@@ -2,16 +2,11 @@
 using Lib.Common.Api;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Restaurant.Application.Services
 {
-    public class AppRoomService: IAppRoomService
+    public class AppRoomService : IAppRoomService
     {
         private readonly IADORepository _repository;
         private readonly RestaurantContext _context;

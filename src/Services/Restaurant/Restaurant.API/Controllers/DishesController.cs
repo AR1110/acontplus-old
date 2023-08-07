@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Azure.Core;
-using Lib.Common.Api;
+﻿using Lib.Common.Api;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Restaurant.Core.Entities;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
 using Services.Common;

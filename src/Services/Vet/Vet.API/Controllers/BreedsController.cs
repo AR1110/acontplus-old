@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Drawing;
 using Vet.Core.Entities;
 using Vet.Infrastructure.Data;
 
@@ -19,7 +18,7 @@ namespace Vet.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Breed>>> GetBreeds()
         {
-            return await _context.Breeds.Include(t => t.PetType).Where(x =>x.Deleted == null).ToListAsync();
+            return await _context.Breeds.Include(t => t.PetType).Where(x => x.Deleted == null).ToListAsync();
         }
 
         // GET: api/Breeds/5

@@ -1,6 +1,5 @@
 ﻿using DataAccess;
 using DataAccess.Almacen;
-using Domain.Models;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 

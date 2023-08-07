@@ -1,5 +1,4 @@
-﻿using FactElect.Core;
-using FactElect.Core.Models;
+﻿using FactElect.Core.Models;
 using Helpers;
 using Microsoft.Extensions.Configuration;
 using System.Text;

@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace Vet.Core.Entities
 {
     public class BaseEntity

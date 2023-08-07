@@ -5,7 +5,7 @@ using System.Data.SqlClient;
 
 namespace DataAccess
 {
-    public class DbAccess: IDisposable
+    public class DbAccess : IDisposable
     {
         private IConfiguration _config;
         private readonly SqlConnection _connection;

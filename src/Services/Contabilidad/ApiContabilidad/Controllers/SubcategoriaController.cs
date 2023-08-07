@@ -1,11 +1,8 @@
 ﻿using Contabilidad.Core.Entities;
 using Contabilidad.Core.Interfaces;
 using Contabilidad.Infrastructure.Data;
-using Lib.Common.Api;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
-using System.Data.SqlClient;
 
 namespace ApiContabilidad.Controllers
 {
@@ -59,7 +56,7 @@ namespace ApiContabilidad.Controllers
             catch (Exception ex)
             {
                 return BadRequest();
-            }  
+            }
         }
     }
 }

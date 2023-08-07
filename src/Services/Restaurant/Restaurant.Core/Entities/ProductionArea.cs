@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Restaurant.Core.Entities
 {
     [Table("ProductionArea", Schema = "Restaurant")]
-    public class ProductionArea: BaseEntity
+    public class ProductionArea : BaseEntity
     {
         [Required]
         [MaxLength(5)]

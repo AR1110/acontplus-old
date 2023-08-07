@@ -5,7 +5,6 @@ using Helpers;
 using Identity.API.Dtos;
 using Identity.API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 

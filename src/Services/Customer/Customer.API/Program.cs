@@ -1,7 +1,6 @@
 using Customer.API.Extensions;
 using Lib.Common;
 using Services.Common;
-using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,7 +37,7 @@ app.UseEndpoints(endpoints =>
                    return Task.CompletedTask;
                });
            });
-           
+
 app.MapControllers().RequireAuthorization();
 
 app.Run();

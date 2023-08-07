@@ -7,7 +7,7 @@ using Services.Common.Logs;
 
 namespace ApiVentas.Controllers.v2
 {
-    [Route("api/v{version:apiVersion}/[controller]")]    
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [ApiVersion("2.0")]
     public class ClienteController : ControllerBase

@@ -165,7 +165,7 @@ namespace DataAccess.Compras
                     cmd.Parameters.AddWithValue("idFacturaCompra", idFacturaCompra);
                     var factura = JsonConvert.SerializeObject(data.factura); cmd.Parameters.Add(new SqlParameter("jsonFactura", factura));
                     var detalle = JsonConvert.SerializeObject(data.detalle); cmd.Parameters.Add(new SqlParameter("jsonDetalle", detalle));
-               //     var manejoAdicionalDetalle = JsonConvert.SerializeObject(data.manejoArticuloDetalle); cmd.Parameters.Add(new SqlParameter("jsonManejoArticuloDetalle", manejoAdicionalDetalle));
+                    //     var manejoAdicionalDetalle = JsonConvert.SerializeObject(data.manejoArticuloDetalle); cmd.Parameters.Add(new SqlParameter("jsonManejoArticuloDetalle", manejoAdicionalDetalle));
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
                     SqlDataReader reader = cmd.ExecuteReader();

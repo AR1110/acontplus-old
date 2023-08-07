@@ -3,7 +3,7 @@ GO
 
 --Author: Ivan Paz
 --Date: 2023-08-04
---Description: SP FOR GET INGREDIENTS INSERT
+--Description: SP FOR INSERT INGREDIENTS
 CREATE OR ALTER PROCEDURE Restaurant.Ingredient_Insert
     @userRoleId INT,
     @json NVARCHAR(MAX)
@@ -23,6 +23,11 @@ BEGIN
     SELECT @productId = productId
     FROM OPENJSON(@productJson) WITH(productId INT '$.productId')
 
+    IF EXISTS(SELECT 1
+    FROM Restaurant.Ingredient
+    WHERE productId = @productId)
+        SELECT dbo.ufn_spresponse('0', 'Este ingrediente ya se encuentra registrado', NULL)
+    RETURN
 
     DECLARE @summary VARCHAR(500)
     ,@typeId INT
@@ -51,28 +56,29 @@ BEGIN
     DECLARE @id INT = 0
     BEGIN TRY
         BEGIN TRAN
-        INSERT INTO Restaurant.Ingredient
+
+            INSERT INTO Restaurant.Ingredient
         (ProductId, Summary, TypeId, Quantity, Unit, Content, [Enabled], UserId)
     VALUES(@productId, @summary, @typeId, @quantity, @unit, @content, 1, @userId)
-        SET @id = (SELECT SCOPE_IDENTITY())
+            SET @id = (SELECT SCOPE_IDENTITY())
+
         COMMIT TRAN
-        IF (@id > 0)
-            BEGIN
-        SELECT dbo.ufn_spresponse('1', 'exitos al guardar', NULL)
-    END
-    ELSE
-    BEGIN
-        SELECT dbo.ufn_spresponse('0', 'No se pudo guardar el ingrediente', NULL)
-    END
+
+        IF (@id > 0) 
+            SELECT dbo.ufn_spresponse('1', 'exitos al guardar', NULL)
+        ELSE 
+            SELECT dbo.ufn_spresponse('0', 'No se pudo guardar el ingrediente', NULL)
     END TRY
     BEGIN CATCH
         SELECT dbo.ufn_spresponse('0', 'Error al guardar el ingrediente', NULL)
         
-    --     IF (@@TRANCOUNT > 0)
-    --         BEGIN
-    --     ROLLBACK TRAN
-    -- END
-       EXEC dbo.Error_Sistema_Insert NEWID(), 'Ingredient/Post', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), @userId
+        IF (@@TRANCOUNT > 0)
+            ROLLBACK TRAN
+
+       INSERT INTO ErroresSistema
+        (token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, errorDate, idUsuario)
+    VALUES
+        (NEWID(), 'Ingredient/Post', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @userId)
     END CATCH
 
 END

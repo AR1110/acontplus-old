@@ -2,7 +2,6 @@
 using Domain.Dtos;
 using Helpers;
 using Lib.Common;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 using System.Security.Claims;

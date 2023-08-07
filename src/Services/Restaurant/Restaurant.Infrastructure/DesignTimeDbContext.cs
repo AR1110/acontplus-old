@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Design;
+﻿using Lib.Common;
 using Microsoft.EntityFrameworkCore;
-using Restaurant.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using Lib.Common;
+using Restaurant.Infrastructure.Data;
 
 namespace Restaurant.Infrastructure.Extensions
 {

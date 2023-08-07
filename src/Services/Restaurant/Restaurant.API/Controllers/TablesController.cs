@@ -1,7 +1,5 @@
 ﻿using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Restaurant.Core.Entities;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
 using Services.Common;
@@ -73,7 +71,7 @@ namespace Restaurant.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
-                
+
 
         // DELETE: api/Tables/5
         [HttpDelete("{id}")]

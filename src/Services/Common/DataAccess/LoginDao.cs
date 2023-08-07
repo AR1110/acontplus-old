@@ -168,8 +168,8 @@ namespace DataAccess
                             {
                                 reader.NextResult();
                                 while (reader.Read())
-                                {                                    
-                                    loginData.menus = reader.GetString(0);                                    
+                                {
+                                    loginData.menus = reader.GetString(0);
                                 }
                                 reader.NextResult();
                                 while (reader.Read())
@@ -217,7 +217,7 @@ namespace DataAccess
                 using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
                     using (var cmd = new SqlCommand("App.Account_Login", con))
-                    {                        
+                    {
                         cmd.Parameters.AddWithValue("nombreUsuario", data.username);
                         cmd.Parameters.AddWithValue("contrasenia", data.password);
                         cmd.CommandType = CommandType.StoredProcedure;
@@ -258,7 +258,7 @@ namespace DataAccess
                                 {
                                     loginData.subMenus = reader.GetString(0);
                                 }
-                                
+
                             }
                         }
                         loginData.userData = userData;

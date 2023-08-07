@@ -9,7 +9,7 @@ import { TableReadDto } from '@admin/models';
 import { useAsync, useFetchAndLoad } from '@/hooks';
 import BackdropLoader from '@/core/components/BackdropLoader';
 import Swal from 'sweetalert2';
-import {categoryAdapter}  from '@admin/adapters';
+import { categoryAdapter } from '@admin/adapters';
 
 export default function TablePage() {
     const [tables, setTables] = useState<Array<TableReadDto>>([]);
@@ -23,7 +23,7 @@ export default function TablePage() {
 
     const getApiData = async () => await callEndpoint(TableSvc.getAll());
 
-    const categoriesMapper = function (response: any) {                
+    const categoriesMapper = function (response: any) {
         setTables(categoryAdapter.tableReadAdaptFromApi(response.tables));
     };
 
@@ -35,35 +35,35 @@ export default function TablePage() {
         setReloadFetchApi(!reloadFetchApi)
     }
 
-    const dataEdit = (data: TableReadDto)=>{ 
+    const dataEdit = (data: TableReadDto) => {
         dialogOpenSubject$.setSubject = true;
-        dialogDataSubject$.setSubject = data;    
-      }
-    
-      const askToUpdateState = async (id: number)=>{
-        const {isConfirmed} = await Swal.fire({      
-          html: 'Esta seguro de eliminar esta Mesa?',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Si',
-          cancelButtonText: 'No'
+        dialogDataSubject$.setSubject = data;
+    }
+
+    const askToUpdateState = async (id: number) => {
+        const { isConfirmed } = await Swal.fire({
+            html: 'Esta seguro de eliminar esta Mesa?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si',
+            cancelButtonText: 'No'
         })
-        if(isConfirmed){
+        if (isConfirmed) {
             console.log(id)
-        //   CategorySvc.delete(id).then(response=>{
-        //     if(response.code==="0"){
-        //       Snackbar.warning(response.message);
-        //     }
-        //     if(response.code==="1"){
-        //       Snackbar.success(response.message);  
-        //       callBackCloseDialog();
-        //     }         
-        //   }) 
+            //   CategorySvc.delete(id).then(response=>{
+            //     if(response.code==="0"){
+            //       Snackbar.warning(response.message);
+            //     }
+            //     if(response.code==="1"){
+            //       Snackbar.success(response.message);  
+            //       callBackCloseDialog();
+            //     }         
+            //   }) 
         }
-      }
-    
+    }
+
 
 
 
@@ -100,7 +100,7 @@ export default function TablePage() {
                                 <TableRow>
                                     <TableCell></TableCell>
                                     <TableCell>N°</TableCell>
-                                    <TableCell >DESCRIPCIÓN</TableCell> 
+                                    <TableCell >DESCRIPCIÓN</TableCell>
                                     <TableCell align='center'>ESTADO</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -111,18 +111,16 @@ export default function TablePage() {
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
                                         <TableCell>
-                                        <IconButton aria-label="delete" color="primary" size="small" onClick={()=>dataEdit(table)} >
-                                            <EditIcon fontSize="inherit" />
+                                            <IconButton aria-label="delete" color="primary" size="small" onClick={() => dataEdit(table)} >
+                                                <EditIcon fontSize="inherit" />
                                             </IconButton>
-                                            {table.enabled && <IconButton aria-label="delete"  color="error" size="small" onClick={()=>askToUpdateState(table.id)}>
-                    <RemoveCircleOutlineIcon fontSize="inherit" />
-                  </IconButton>}                                           
+
                                         </TableCell>
                                         <TableCell component="th" scope="row">
                                             {index + 1}
                                         </TableCell>
                                         <TableCell>{table.description}</TableCell>
-                                        
+
                                         <TableCell align="center">
                                             <Badge badgeContent={table.enabled ? 'Activo' : 'Inactivo'} color={table.enabled ? 'success' : 'warning'}></Badge>
                                         </TableCell>

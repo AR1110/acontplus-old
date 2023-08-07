@@ -1,11 +1,9 @@
-﻿using Services.Common.Logs;
-using DataAccess;
-using Domain.Dtos;
+﻿using DataAccess;
 using Helpers;
-using Microsoft.AspNetCore.Mvc;
-using Amazon.Runtime;
-using Inventario.Core.Models;
 using Inventario.Core.Interfaces;
+using Inventario.Core.Models;
+using Microsoft.AspNetCore.Mvc;
+using Services.Common.Logs;
 
 namespace Inventario.API.Controllers.v3
 {

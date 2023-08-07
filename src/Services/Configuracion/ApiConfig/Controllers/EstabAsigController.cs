@@ -16,7 +16,7 @@ namespace ApiConfig.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Get(string json)
-        { 
+        {
             try
             {
                 var parameters = new Dictionary<string, object>

@@ -3,9 +3,7 @@ using Contabilidad.Core.Interfaces;
 using Contabilidad.Infrastructure.Data;
 using Lib.Common;
 using Lib.Common.Api;
-using Newtonsoft.Json;
 using System.Data;
-using System.Text.Json.Serialization;
 
 namespace Contabilidad.Application.Servicios
 {
@@ -42,14 +40,14 @@ namespace Contabilidad.Application.Servicios
         {
             if (_context.Subcategorias.Any(x => x.Codigo == data.Codigo))
             {
-                _response.Create(code:"0", message: "Codigo ya existe");
+                _response.Create(code: "0", message: "Codigo ya existe");
                 return _response;
             }
-           
+
             _context.Subcategorias.Add(data);
 
             await _context.SaveChangesAsync();
-            
+
             _response.Create(code: "1", message: "Ok");
 
             return _response;

@@ -1,9 +1,9 @@
 ﻿using Amazon.Runtime;
-using Amazon.S3.Transfer;
 using Amazon.S3;
+using Amazon.S3.Transfer;
 using Inventario.Core.Interfaces;
-using Lib.Common.Api;
 using Inventario.Core.Models;
+using Lib.Common.Api;
 
 namespace Inventario.Application.Services
 {

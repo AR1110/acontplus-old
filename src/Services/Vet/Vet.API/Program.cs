@@ -2,7 +2,6 @@ using Lib.Common;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
 using Services.Common.Middleware;
-using System.Reflection;
 using Vet.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);

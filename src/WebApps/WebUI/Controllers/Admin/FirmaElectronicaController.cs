@@ -3,7 +3,6 @@ using Domain.Models;
 using Helpers;
 using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using WebUI.Utils;
 
 namespace WebUI.Controllers.Admin
