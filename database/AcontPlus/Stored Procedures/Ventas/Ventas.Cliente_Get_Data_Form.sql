@@ -27,15 +27,12 @@ BEGIN
 	
 	SELECT idSubContribuyente, descripcion, codigo FROM SubContribuyente WHERE estado = 1 ORDER BY idSubContribuyente desc
 	
-	SELECT idTiempoCredito, descripcion, diasCredito, numeroCuota, entrada, tipo 
-	FROM TiempoCredito 
-	WHERE idEntidad = @idEntidad AND gestion = 1 AND estado = 1
+	SELECT idTiempoCredito, descripcion, diasCredito, numeroCuota, entrada, tipo FROM TiempoCredito WHERE idEntidad = @idEntidad AND gestion = 1 AND estado = 1
 
 	SELECT c.idCiudad, ciudad = c.descripcion, c.codigo, c.estado, c.idProvincia, provincia = pr.descripcion
 	FROM Ciudad c
 	INNER JOIN Provincia pr ON pr.idProvincia = c.idProvincia
 	 
-
 	SELECT t_cp.idTipoClienteProveedor, t_cp.descripcion, t_cp.codigo FROM TipoClienteProveedor t_cp WITH(NOLOCK) 
 	                                                               INNER JOIN TipoPersona tp WITH(NOLOCK) ON t_cp.idTipoPersona =tp.idTipoPersona 
 																   WHERE tp.codigo='CL';
