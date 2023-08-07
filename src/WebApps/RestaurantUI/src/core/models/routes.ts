@@ -5,6 +5,7 @@ const PublicRoutes = {
 const PrivateRoutes = {
   PRIVATE: "private", 
   DASHBOARD: "Dashboard",
+  POS: "Pos"
  
 };
 

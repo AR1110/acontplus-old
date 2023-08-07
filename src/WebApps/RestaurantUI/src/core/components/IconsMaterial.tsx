@@ -13,6 +13,8 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import HomeIcon from "@mui/icons-material/Home";
 import MenuIcon from "@mui/icons-material/Menu"; 
+
+import CategoryIcon from '@mui/icons-material/Category';
 export {
     RemoveCircleOutlineIcon,
     SaveIcon,
@@ -27,5 +29,6 @@ export {
     NotificationsIcon,
     MoreIcon,
     HomeIcon,
-    MenuIcon
+    MenuIcon,
+    CategoryIcon
 }

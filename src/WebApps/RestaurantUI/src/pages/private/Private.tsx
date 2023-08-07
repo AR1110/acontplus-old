@@ -4,7 +4,7 @@ import { Navigate, Route } from "react-router-dom";
 import { lazy } from "react";
 
 const MainLayout = lazy(() => import("@/layouts/MainLayout"));
-const Dashboard = lazy(() => import("./Dashboard/Dashboard"));
+const Pos = lazy(() => import("./Pos/Pos"));
 // const TablePage = lazy(() => import("./pages/table/TablePage")); 
 // const CategoryPage = lazy(() => import("./pages/category/CategoryPage"));
 // const ProductPage = lazy(() => import("./pages/product/ProductPage"));
@@ -20,8 +20,10 @@ export default function Private() {
     return (
         <RoutesWithNotFound>
             <Route path="/" element={<MainLayout />}>
-                <Route path="/" element={<Navigate to={PrivateRoutes.DASHBOARD} />} />
-                <Route path={PrivateRoutes.DASHBOARD} element={<Dashboard />} />
+                {/* <Route path="/" element={<Navigate to={PrivateRoutes.DASHBOARD} />} />
+                <Route path={PrivateRoutes.DASHBOARD} element={<Dashboard />} /> */}
+                <Route path="/" element={<Navigate to={PrivateRoutes.POS} />} />
+                <Route path={PrivateRoutes.POS} element={<Pos />} />
             </Route>
         </RoutesWithNotFound>
     );
