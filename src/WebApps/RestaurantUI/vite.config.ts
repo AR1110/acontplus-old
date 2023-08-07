@@ -5,10 +5,8 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   resolve: {
     alias: {
-      "@": "/src",
-      // { find: '@assets', replacement: '/src/assets' },
-      // { find: '@common', replacement: '/src/common' },
-      "@admin": "/src/modules/admin",
+      "@": "/src", 
+      //"@admin": "/src/modules/admin",
     },
   },
   plugins: [react()],
