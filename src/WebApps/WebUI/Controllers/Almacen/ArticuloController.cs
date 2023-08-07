@@ -198,7 +198,7 @@ namespace WebUI.Controllers
             parameters.Add("json", data.jsonpvp);
             parameters.Add("idBodega", data.idBodega);
             parameters.Add("ubicacion", data.ubicacion ?? "");
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Almacen.Articulo_Insert", parameters)));
+            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Inventario.Articulo_Insert", parameters)));
         }
 
         [HttpPut]

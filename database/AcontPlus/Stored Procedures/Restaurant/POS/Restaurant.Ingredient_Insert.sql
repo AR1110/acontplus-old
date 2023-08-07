@@ -13,7 +13,7 @@ BEGIN
     DECLARE @productJson NVARCHAR(MAX)
     ,@ingredientJson NVARCHAR(MAX)
     ,@userId INT
-
+    
     SELECT @productJson = productJson
     , @ingredientJson = ingredientJson
     FROM OPENJSON(@json) WITH(productJson NVARCHAR(MAX) '$.productJson' AS JSON, ingredientJson NVARCHAR(MAX) '$.ingredientJson' AS JSON)
@@ -23,11 +23,11 @@ BEGIN
     SELECT @productId = productId
     FROM OPENJSON(@productJson) WITH(productId INT '$.productId')
 
-    IF EXISTS(SELECT 1
-    FROM Restaurant.Ingredient
-    WHERE productId = @productId)
-        SELECT dbo.ufn_spresponse('0', 'Este ingrediente ya se encuentra registrado', NULL)
-    RETURN
+    IF EXISTS(SELECT 1 FROM Restaurant.Ingredient WHERE productId = @productId)
+        BEGIN
+            SELECT dbo.ufn_spresponse('0', 'Este ingrediente ya se encuentra registrado', NULL)
+            RETURN
+        END
 
     DECLARE @summary VARCHAR(500)
     ,@typeId INT
@@ -52,14 +52,12 @@ BEGIN
     SET @userId = (SELECT idUsuario
     FROM V_usuario
     WHERE idUsuarioRol = @userRoleId)
-
+    
     DECLARE @id INT = 0
     BEGIN TRY
         BEGIN TRAN
-
-            INSERT INTO Restaurant.Ingredient
-        (ProductId, Summary, TypeId, Quantity, Unit, Content, [Enabled], UserId)
-    VALUES(@productId, @summary, @typeId, @quantity, @unit, @content, 1, @userId)
+            INSERT INTO Restaurant.Ingredient(ProductId, Summary, TypeId, Quantity, Unit, Content, [Enabled], UserId)
+            VALUES(@productId, @summary, @typeId, @quantity, @unit, @content, 1, @userId)
             SET @id = (SELECT SCOPE_IDENTITY())
 
         COMMIT TRAN
@@ -68,6 +66,7 @@ BEGIN
             SELECT dbo.ufn_spresponse('1', 'exitos al guardar', NULL)
         ELSE 
             SELECT dbo.ufn_spresponse('0', 'No se pudo guardar el ingrediente', NULL)
+      
     END TRY
     BEGIN CATCH
         SELECT dbo.ufn_spresponse('0', 'Error al guardar el ingrediente', NULL)

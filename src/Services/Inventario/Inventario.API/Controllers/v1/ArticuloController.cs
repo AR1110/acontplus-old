@@ -1,7 +1,10 @@
 ﻿using DataAccess;
 using Domain.ViewModels.Almacen;
 using Helpers;
+using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common;
 using Services.Common.Logs;
 
 namespace Inventario.API.Controllers.v1
@@ -68,18 +71,22 @@ namespace Inventario.API.Controllers.v1
         }
 
         [HttpPost]
-        public async Task<IActionResult> Insert([FromBody] ArticuloParams data)
+        public async Task<IActionResult> Post([FromBody] ApiRequest data)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.Articulo_Insert");
-                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("jsonArticulo", data.jsonArticulo);
-                _db.AddDynamicParam("json", data.jsonpvp);
-                _db.AddDynamicParam("idBodega", data.idBodega);
-                _db.AddDynamicParam("ubicacion", data.ubicacion);
+                await _db.SPExecute("Inventario.Articulo_Insert", true);
+                //_db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                //_db.AddDynamicParam("jsonArticulo", data.jsonArticulo);
+                //_db.AddDynamicParam("json", data.jsonpvp);
+                //_db.AddDynamicParam("idBodega", data.idBodega);
+                //_db.AddDynamicParam("ubicacion", data.ubicacion);
+
+                _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(Converters.SerializeDictionary(data.Data)));
+
                 //si viene archivo: capturar nombre y enviar a bd
                 _response = _db.GetDefault();
                 //si viene archivo y el insert es correcto, envia al iservicestorage de amazon, si es correcto no hace nada y sino deberia de null el urlResource del nombre del archivo

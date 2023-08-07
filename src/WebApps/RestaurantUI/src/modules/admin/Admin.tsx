@@ -2,7 +2,7 @@ import { PrivateRoutes } from "@/core/models";
 import { RoutesWithNotFound } from "@/core/utils";
 import { Route } from "react-router-dom";
 import { lazy } from "react";
-import IngredientPage from "./pages/ingredient/IngredientePage";
+import IngredientPage from "./pages/ingredient/IngredientPage";
 
 const AdminLayout = lazy(() => import("@/layouts/AdminLayout"));
 
