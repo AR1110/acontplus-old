@@ -65,8 +65,10 @@ const production = !process.env.ROLLUP_WATCH;
 // const appObject = "petMH"
 // const appObject = "configEmail"
 // const appObject = "motivoDiscrepancia"
-const appObject = "stockFisico"
+//const appObject = "stockFisico"
 // const appObject = "subcategoria"
+
+const appObject = "restaurantProductionAreas"
 
 export default {
     // This `main.js` file we wrote
@@ -89,6 +91,7 @@ export default {
                 { find: "$services", replacement: path.resolve(__dirname, "../WebUI/App/core/services") },
                 { find: "$utils", replacement: path.resolve(__dirname, "../WebUI/App/core/utils") },
                 { find: "$lib", replacement: path.resolve(__dirname, "../WebUI/App/lib") },
+                { find: "$routes", replacement: path.resolve(__dirname, "../WebUI/App/routes") },
                 { find: "$pet", replacement: path.resolve(__dirname, "../WebUI/App/lib") + "/Pet" },
                 { find: "$petbreed", replacement: path.resolve(__dirname, "../WebUI/App/lib") + "/PetBreed" },
                 { find: "$petmedicalhistory", replacement: path.resolve(__dirname, "../WebUI/App/lib") + "/PetMedicalHistory" },
