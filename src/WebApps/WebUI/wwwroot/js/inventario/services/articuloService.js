@@ -269,15 +269,7 @@
         }
 
         service.update = function (id, data) {
-            return mainService.getData('put', url + 'Update/' + id, data, true).then(response => {
-                if (response.code === "0") {
-                    throw response;
-                }
-
-                if (response.code === "1") {
-                    console.log(response)
-                }
-            })
+            return mainService.getData('put', url + 'Put/' + id, { data: data }, true)
         }
 
         /**
