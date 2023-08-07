@@ -17,6 +17,7 @@ const PrivateRoutes = {
   PRODUCT: "Product",
   PRODUCTION_AREA: "ProductionArea",
   INGREDIENT: "Ingredient",
+  ITEM: "Item",
 };
 
 export { PublicRoutes, PrivateRoutes };

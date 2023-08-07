@@ -8,17 +8,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import MailIcon from "@mui/icons-material/Mail";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import MoreIcon from "@mui/icons-material/MoreVert";
-import HomeIcon from "@mui/icons-material/Home";
 
 import {
   Badge,
@@ -37,6 +27,7 @@ import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useDispatch} from "react-redux";
 import { logOut } from "@/redux/slices/user.slice";
 import { PublicRoutes } from "@/core/models";
+import { ClassIcon, ChevronLeftIcon, ChevronRightIcon,ListItemButton, ListItemIcon, ListItemText, MailIcon, NotificationsIcon, MoreIcon, HomeIcon, MenuIcon} from "@/core/components";
 // import { AppStore } from "@/redux/store";
 
 const drawerWidth = 240;
@@ -267,6 +258,11 @@ export default function Admin() {
       description: "Productos",
       icon: <Inventory2Icon />,
       to: "Product",
+    },
+    {
+      description: "Item",
+      icon: <ClassIcon />,
+      to: "Items",
     },
   ];
 
