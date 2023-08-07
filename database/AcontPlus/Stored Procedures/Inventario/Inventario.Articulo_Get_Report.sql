@@ -60,7 +60,7 @@ BEGIN
 							  ,catidadFraccionado = CAST(catidadFraccionado AS VARCHAR) + '' '' +  medidaFraccionada
 							  ,sobrante           = CAST(CAST(sobrante as numeric(18,2)) as varchar) + '' '' + medida   
 						FROM v_Articulo_Fraccionado
-						WHERE idEntidad = @idEntidad '
+						WHERE idEntidad = @idEntidad AND estado = 1 '
 			
 			IF @checkBoxArticulo = 1 
 				BEGIN
@@ -156,7 +156,7 @@ BEGIN
 
 			IF @byOrderCampo = 'ar.idSubFamilia'
 				BEGIN
-					SET @byOrderCampo = 'ar.idSubFamilia'
+					SET @byOrderCampo = 'ar.idSubFamilia '
 				END
 
 			SET @sql = @sql + ' ORDER BY '+ @byOrderCampo+ ' ' +  @byOrder
@@ -284,7 +284,7 @@ BEGIN
 				,@rucProveedor = @rucProveedor
 
 			RETURN 
-		END 
+		END
 	
 	-- REPORTE DE CONSUMO DIARIO DE ARTICULOS
 	IF @tipo = 4
