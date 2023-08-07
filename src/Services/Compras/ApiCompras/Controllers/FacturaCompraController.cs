@@ -1,9 +1,9 @@
-﻿using Services.Common.Logs;
-using DataAccess;
+﻿using DataAccess;
 using Domain.ViewModels.Compras;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Services.Common.Logs;
 
 namespace ApiCompras.Controllers
 {
@@ -15,13 +15,13 @@ namespace ApiCompras.Controllers
         private readonly IConfiguration _configuration;
         public FacturaCompraController(IConfiguration configuration)
         {
-            _configuration = configuration;          
+            _configuration = configuration;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-           
+
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
@@ -67,7 +67,7 @@ namespace ApiCompras.Controllers
             finally
             {
                 _db.Close();
-            } 
+            }
             return Ok(_response);
         }
 

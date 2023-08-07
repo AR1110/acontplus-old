@@ -2,16 +2,11 @@
 using Lib.Common.Api;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Restaurant.Application.Services
 {
-    public class AppProductionAreaService: IAppProductionAreaService
+    public class AppProductionAreaService : IAppProductionAreaService
     {
         private readonly IADORepository _repository;
         private readonly RestaurantContext _context;
@@ -20,7 +15,7 @@ namespace Restaurant.Application.Services
         public AppProductionAreaService(IADORepository repository)
         {
             _repository = repository;
-            _response = new APIResponse();            
+            _response = new APIResponse();
         }
 
         public async Task<object> GetAsync(Dictionary<string, object> parameters)

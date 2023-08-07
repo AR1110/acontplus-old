@@ -1,9 +1,9 @@
-﻿using Services.Common.Logs;
-using DataAccess;
+﻿using DataAccess;
 using DataAccess.Config;
 using Domain.Models;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common.Logs;
 
 namespace WebUI.Controllers.Config
 {

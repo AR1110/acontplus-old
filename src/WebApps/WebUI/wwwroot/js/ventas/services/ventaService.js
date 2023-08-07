@@ -139,8 +139,8 @@
 
         let service = {};
 
-        service.getDataForm = function (query) {
-            return mS.getData('get', url + 'GetDataForm?json=' + JSON.stringify(query), null, true)
+        service.getDataForm = function () {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({tipo: 2}), null, true)
                     .then(response => {
                         if(response.code==='0'){
                             console.log('Status code 0: Get Data Form Customer')                            
@@ -165,13 +165,14 @@
         }
 
         service.getAll = function (query) {
+            query.tipo = 1; 
             return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true)
                 .then(response=>{
                     if(response.code=="0"){
                         throw response;
                     }
-                    if(response.code=="1"){
-                        let clientes = JSON.parse(response.payload) || [];
+                    if(response.code=="1"){ 
+                        let clientes = JSON.parse(response.payload)[0] || [];
                     
                         return clientes.map(item=>{
                             return {
@@ -187,6 +188,7 @@
                                 validationSri: item.validationSri,
                                 tipoIdentificacion: item.tipoIdentificacion,
                                 esConsumidorFinal: item.tipoIdentificacion=='CF',
+                                totalRecords: item.totalRecords,
                             }
                         })
                     }

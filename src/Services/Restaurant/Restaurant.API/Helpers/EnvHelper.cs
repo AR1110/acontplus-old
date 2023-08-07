@@ -1,6 +1,4 @@
-﻿using Restaurant.API.Extensions;
-
-namespace Restaurant.API.Helpers
+﻿namespace Restaurant.API.Helpers
 {
     public static class EnvHelper
     {

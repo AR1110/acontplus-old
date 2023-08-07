@@ -2,7 +2,6 @@
 using Contabilidad.Infrastructure.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using System.Data;
 
 namespace Contabilidad.Infrastructure.Repositories

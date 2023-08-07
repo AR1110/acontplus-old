@@ -1,10 +1,10 @@
-﻿using Services.Common.Logs;
-using DataAccess;
+﻿using DataAccess;
 using DataAccess.Compras;
 using Domain.Models;
 using Domain.ViewModels.Compras;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common.Logs;
 
 namespace WebUI.Controllers.Compras
 {

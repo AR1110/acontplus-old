@@ -1,9 +1,9 @@
 ﻿using ApiConfig.Dtos;
-using Services.Common.Logs;
 using DataAccess;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Services.Common.Logs;
 
 namespace ApiConfig.Controllers
 {

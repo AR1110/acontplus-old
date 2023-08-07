@@ -1,5 +1,4 @@
 ﻿using DataAccess;
-using Domain.Models;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,7 +23,7 @@ namespace WebUI.Controllers.Finanzas
             return View();
         }
 
-       
+
         //Gestiones Especiales         
         public async Task<IActionResult> OptionTiempoCredito(bool gestion)
         {

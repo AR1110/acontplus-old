@@ -1,9 +1,7 @@
-﻿using Services.Common.Logs;
-using DataAccess;
-using Domain.Dtos;
+﻿using DataAccess;
 using Helpers;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common.Logs;
 
 namespace ApiConfig.Controllers
 {

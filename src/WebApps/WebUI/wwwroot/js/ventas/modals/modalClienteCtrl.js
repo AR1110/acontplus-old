@@ -465,24 +465,24 @@ function ModalClienteListaCtrl($scope, clienteSvc, $uibModalInstance, tS) {
 
        
     $scope.selected = [];
-    $scope.dataSearch = {
+    $scope.dataSearch = { 
         pageIndex: 1,
-        pageSize: 100
+        pageSize: 50
     }
     
 
     
 
     $scope.copyTextSearch = function() {
-        if (!$scope.dataSearch.bySearch) return
+        if (!$scope.dataSearch.textSearch) return
 
         let copyText = document.getElementById("searchCliente");
 
         copyText.select();
         copyText.setSelectionRange(0, 99999);
 
-        navigator.clipboard.writeText($scope.dataSearch.bySearch);
-        tS.toastr('info', 'Copiado: ' + $scope.dataSearch.bySearch)
+        navigator.clipboard.writeText($scope.dataSearch.textSearch);
+        tS.toastr('info', 'Copiado: ' + $scope.dataSearch.textSearch)
     }
 
     $scope.resultModal = function(result) {
@@ -497,29 +497,43 @@ function ModalClienteListaCtrl($scope, clienteSvc, $uibModalInstance, tS) {
     }
 
     $scope.resetList = function() {
-        $scope.dataSearch.bySearch = $scope.dataSearch.bySearch || null;
+        $scope.dataSearch.textSearch = null;
         $scope.getSearchCustomer();
     }
 
+    $scope.pagechanged = function () {
+        $scope.getSearchCustomer();
+    };
+
+    $scope.changePageSize = function () {
+        $scope.dataSearch.pageIndex = 1;
+        $scope.getSearchCustomer();
+    };
 
     $scope.getSearchCustomer = function() {
         try {
-            showLoader();
-            $scope.dataSearch.bySearch = $scope.dataSearch.bySearch || null;
-            $scope.clientes = [];
-            
-            clienteSvc.getAll($scope.dataSearch).then(response => {                
+            showLoader(); 
+            $scope.clientes = []; 
+            const dataSearch = {
+                pageIndex: $scope.dataSearch.pageIndex,
+                pageSize: $scope.dataSearch.pageSize,
+                checkTextSearch: $scope.dataSearch.textSearch?true: false,
+                textSearch: $scope.dataSearch.textSearch
+            }
+            clienteSvc.getAll(dataSearch).then(response => {                
                     $scope.clientes = response;
-                    $scope.totalRecords = $scope.clientes.length > 0 ? $scope.clientes[0].totalRecords : 0
+                    $scope.dataSearch.totalRecords = $scope.clientes.length > 0 ? $scope.clientes[0].totalRecords : 0
                     hideLoader();                   
                 }
             ).catch(error => {
+                $scope.dataSearch.totalRecords = 0;
                 console.error(error)
                 hideLoader()
             })
 
         } catch (error) {
             hideLoader();
+            $scope.dataSearch.totalRecords = 0;
             console.log(error)
         }
     }

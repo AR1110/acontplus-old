@@ -1,19 +1,18 @@
-﻿using ApiRecepcion.Utils; 
-using Services.Common.Logs;
+﻿using ApiRecepcion.Utils;
 using Compras.Application;
 using DataAccess;
-using Domain.Dtos; 
+using Domain.Dtos;
 using FactElect.Application;
 using FactElect.Core;
 using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Services.Common.Logs;
 using System.Data;
 using System.Security.Claims;
 using System.Text;
 using System.Xml;
-using System.Xml.Serialization;
-using Lib.Common;
 
 namespace ApiRecepcion.Controllers
 {
@@ -116,7 +115,7 @@ namespace ApiRecepcion.Controllers
                     message = "Error al obtener los datos del comprobante"
                 });
             }
-           
+
 
         }
         [HttpGet("Preview/{id}")]
@@ -163,7 +162,7 @@ namespace ApiRecepcion.Controllers
                 _logs.LogError("Error getting data of doc: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener los datos del comprobante");
             }
-           
+
             return Ok(_response);
         }
         //[HttpGet("Export/{id}")]

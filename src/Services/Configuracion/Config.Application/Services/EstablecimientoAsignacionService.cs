@@ -3,11 +3,11 @@ using Lib.Common;
 
 namespace Config.Application.Services
 {
-    public class EstablecimientoAsignacionService:IEstablecimientoAsignacionService
+    public class EstablecimientoAsignacionService : IEstablecimientoAsignacionService
     {
         private IADORepository _repository;
         public EstablecimientoAsignacionService(IADORepository repository)
-        { 
+        {
             _repository = repository;
         }
         public async Task<string> GetAsync(Dictionary<string, object> parameters)

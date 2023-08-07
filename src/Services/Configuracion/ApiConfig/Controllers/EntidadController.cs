@@ -1,9 +1,8 @@
-﻿using Services.Common.Logs;
-using DataAccess;
-using Domain.Dtos;
+﻿using DataAccess;
 using Domain.Models;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common.Logs;
 
 namespace ApiConfig.Controllers
 {
@@ -112,7 +111,7 @@ namespace ApiConfig.Controllers
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("App.aspEntidad_Delete");
-                _db.AddDynamicParam("id", id);               
+                _db.AddDynamicParam("id", id);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

@@ -1,14 +1,10 @@
 ﻿using DataAccess;
-using Domain.Models.Almacen;
 using Helpers;
-using Inventario.Application.Services;
 using Inventario.Core.Interfaces;
-using Inventario.Core.Models;
 using Lib.Common;
 using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
-using System.Text.Json;
 
 namespace Inventario.API.Controllers.v3
 {

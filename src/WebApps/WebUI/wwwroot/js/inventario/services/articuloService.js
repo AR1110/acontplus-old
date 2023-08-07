@@ -60,6 +60,31 @@
             })
         }
 
+        /**
+         * Nueva depuracion de datos para el formulario
+         * @param {*} query 
+         * @returns 
+         */
+        service.getDataForForm = function(query){
+            return mainService.getData('get', url + 'Get?json=' + JSON.stringify({tipo: 5}), null, true).then(response=>{ 
+                if(response.code==="0"){
+                    throw response;
+                }
+                if(response.code==="1"){
+                    let dataApi = JSON.parse(response.payload); 
+                    return {
+                        establecimientos: dataApi[0],
+                        bodegas: dataApi[1],
+                        subFamilias: dataApi[2],
+                        familias: dataApi[3],
+                        medidas: dataApi[4],
+                        modelos: dataApi[5],
+                        marcas: dataApi[6],
+                    }
+                }
+            })
+        }
+
 
         //Lista de articulos fraccionados para buscador rapido 
         service.getArticlesFractionalInfo = function(query) {

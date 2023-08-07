@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Contabilidad.Core.Entities;
+using Contabilidad.Core.Interfaces;
+using Contabilidad.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Contabilidad.Core.Entities;
-using Contabilidad.Infrastructure.Data;
 using Services.Common;
-using Contabilidad.Core.Interfaces;
 
 namespace ApiContabilidad.Controllers
 {
@@ -41,13 +36,13 @@ namespace ApiContabilidad.Controllers
                     {"json",  json}
                 };
                 var result = await _categoria.GetAsync(parameters);
-                if(result == null) { return NoContent(); };
+                if (result == null) { return NoContent(); };
                 return Ok(result);
             }
             catch (Exception ex)
             {
                 return BadRequest("Error al traer las categorias");
-            } 
+            }
         }
         // GET: api/Categorias/5
         [HttpGet("{id}")]

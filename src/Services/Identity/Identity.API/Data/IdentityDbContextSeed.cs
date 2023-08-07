@@ -24,7 +24,7 @@ namespace Identity.API.Identity
                         ZipCode = "230103",
                     }
                 };
-               
+
                 var result = await userManager.CreateAsync(appUser, "Pa$$w0rd");
 
                 if (!result.Succeeded)

@@ -1,11 +1,8 @@
 ﻿using DataAccess;
 using DataAccess.Tesoreria;
-using Domain.Dtos.Contabilidad;
 using Domain.Models;
-using Domain.ViewModels.Tesoreria;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace WebUI.Controllers.GestionFinanciera
 {

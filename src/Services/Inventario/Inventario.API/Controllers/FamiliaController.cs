@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Services.Common.Logs;
 using DataAccess;
 using Domain.Models.Almacen;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common.Logs;
 
 namespace Inventario.API.Controllers
 {
@@ -81,7 +77,7 @@ namespace Inventario.API.Controllers
                 await _db.SPExecute("Almacen.Familia_Update");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("descripcion", data.descripcion);                
+                _db.AddDynamicParam("descripcion", data.descripcion);
                 _db.AddDynamicParam("estado", data.estado);
                 _response = _db.GetDefault();
             }
@@ -107,7 +103,7 @@ namespace Inventario.API.Controllers
             {
                 await _db.SPExecute("Almacen.Familia_Update_Cancel");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", id);               
+                _db.AddDynamicParam("id", id);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -131,7 +127,7 @@ namespace Inventario.API.Controllers
             try
             {
                 await _db.SPExecute("Almacen.Familia_For_Select");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));                
+                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)

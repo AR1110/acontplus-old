@@ -1,11 +1,10 @@
+using Lib.Common;
 using Microsoft.EntityFrameworkCore;
+using Restaurant.API.Helpers;
 using Restaurant.Application;
+using Restaurant.Application.Services;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
-using Restaurant.API.Helpers;
-using System.Configuration;
-using Lib.Common;
-using Restaurant.Application.Services;
 using Restaurant.Infrastructure.Repositories;
 
 namespace Restaurant.API.Extensions
@@ -28,7 +27,7 @@ namespace Restaurant.API.Extensions
             services.AddScoped<IAppTableService, AppTableService>();
             //services.AddScoped<DbAccess, DbAccess>();
             services.AddScoped<IIngredientService, IngredientService>();
-            
+
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             return services;
         }

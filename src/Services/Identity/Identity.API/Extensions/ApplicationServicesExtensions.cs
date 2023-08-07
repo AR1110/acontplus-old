@@ -1,13 +1,12 @@
-﻿using Identity.API.Errors;
-using Identity.API.Interfaces;
-using Microsoft.AspNetCore.Mvc;
-using Identity.Services;
-using Identity.API.Data.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿using Identity.API.Data.Identity;
 using Identity.API.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
+using Identity.API.Errors;
+using Identity.API.Interfaces;
+using Identity.Services;
 using Lib.Common;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Identity.API.Extensions
 {
@@ -18,7 +17,7 @@ namespace Identity.API.Extensions
         {
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(Encryption.DecryptString(configuration.GetSection("KeyEncryption").Value, configuration.GetConnectionString("DefaultConnection"))));
-            
+
             services.AddIdentityCore<AppUser>(opt =>
             {
                 // add identity options here

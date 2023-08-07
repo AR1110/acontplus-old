@@ -1,6 +1,5 @@
 ﻿using Inventario.Core.Interfaces;
 using Inventario.Infrastructure.Data;
-using Lib.Common.Api;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Data;

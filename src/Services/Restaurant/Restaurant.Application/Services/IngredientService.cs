@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Lib.Common;
 using Lib.Common.Api;
 using Newtonsoft.Json;
-using Restaurant.Core.Entities;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
 
@@ -59,6 +54,7 @@ namespace Restaurant.Application.Services
         public async Task<string> UpdateAsync(int id, ApiRequest data)
         {
             var parameters = new Dictionary<string, object>{
+                {"userRoleId", data.UserRoleId},
                 {"id", id},
                 {"json", JsonConvert.SerializeObject(data.Data)}
             };

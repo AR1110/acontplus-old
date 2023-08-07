@@ -12,7 +12,7 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-       
+
 
         builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
         ConfigHelper.AddJsonFiles(builder.Configuration);

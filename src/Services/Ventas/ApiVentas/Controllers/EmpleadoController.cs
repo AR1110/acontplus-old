@@ -1,9 +1,6 @@
 ﻿using DataAccess;
-using Domain.Models;
 using Helpers;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Services.Common.Logs;
 
 namespace ApiVentas.Controllers
@@ -44,7 +41,7 @@ namespace ApiVentas.Controllers
             return Ok(_response);
         }
 
-         
+
 
         [HttpGet("Search")]
         public async Task<IActionResult> Search(string json)
@@ -149,6 +146,6 @@ namespace ApiVentas.Controllers
             }
             return Ok(_response);
         }
-         
+
     }
 }

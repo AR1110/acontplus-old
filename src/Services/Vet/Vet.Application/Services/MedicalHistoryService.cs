@@ -1,8 +1,5 @@
 ﻿using Lib.Common;
 using Lib.Common.Api;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
-using System.Data.SqlClient;
 using Vet.Core.Entities;
 using Vet.Core.Interfaces;
 using Vet.Infrastructure.Data;

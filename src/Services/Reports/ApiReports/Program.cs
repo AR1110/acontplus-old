@@ -1,8 +1,6 @@
-using Services.Common;
-using Helpers;
-using System.Reflection;
-using Reports.Application;
 using Lib.Common;
+using Reports.Application;
+using Services.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,14 +39,14 @@ app.UseAuthorization();
 
 
 
- app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapGet("/", context =>
-                {
-                    context.Response.Redirect("swagger");
-                    return Task.CompletedTask;
-                });
-            });
+app.UseEndpoints(endpoints =>
+           {
+               endpoints.MapGet("/", context =>
+               {
+                   context.Response.Redirect("swagger");
+                   return Task.CompletedTask;
+               });
+           });
 
 app.MapControllers().RequireAuthorization();
 
