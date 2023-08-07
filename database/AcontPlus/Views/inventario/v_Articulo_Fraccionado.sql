@@ -11,6 +11,7 @@ CREATE VIEW v_Articulo_Fraccionado AS (
 		  ,af.idEntidad
 		  ,af.idUsuario
 		  ,af.estado
+		  ,ar.idSubFamilia
 		  ,ar.codigo
 		  ,articulo           = ar.descripcion
 		  ,medida             = me.descripcion

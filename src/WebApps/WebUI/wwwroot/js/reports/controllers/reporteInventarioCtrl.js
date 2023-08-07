@@ -24,6 +24,7 @@
         $scope.dataSearch.byTipoFormato = 'pdf';
         $scope.dataSearch.codTransaccion = 'S'; 
         $scope.dataSearch.tipoReporteArticulo = 'INVRV'; 
+        $scope.proveedor = {};
 
         $scope.getAsignaciones = function () {
             let dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.dataSearch.codEstab)
@@ -52,6 +53,13 @@
 
         $scope.onTab = function(e, type) {
             $scope.dataSearch.byTipoReporte = type;
+            $scope.dataSearch.checkboxArticuloFiltro = false;
+            $scope.dataSearch.checkboxUsuarioFiltro = false;
+            $scope.dataSearch.chkProveedor = false;
+            $scope.dataSearch.checkboxSubFamiliaFiltro= false;
+            $scope.dataSearch.ckFechaCaducidad = false; 
+            $scope.dataSearch.chkUbicacion = false;
+
             let contentTab = document.querySelectorAll(".tab-content .tab-pane");
             let getTabPane = contentTab[type]; 
         
@@ -133,7 +141,7 @@
                 }
             }
 
-            if($scope.datSearch.byTipoReporte==1){
+            if($scope.dataSearch.byTipoReporte==1){
                 if($scope.dataSearch.chkUbicacion){
                     if($scope.dataSearch.textUbicacion){
                         tS.toastr('warning', 'Ingrese la ubicación ');
@@ -237,7 +245,11 @@
             let dataSearch = {
                 tipo : 1,
                 checkBoxArticulo : $scope.dataSearch.checkboxArticuloFiltro,
-                idArticulo : $scope.dataSearch.idArticulo
+                idArticulo : $scope.dataSearch.idArticulo,
+                chkProveedor: $scope.dataSearch.chkProveedor,
+                numeroIdentificacion: $scope.dataSearch.numeroIdentificacion,
+                checkboxSubFamiliaFiltro: $scope.dataSearch.checkboxSubFamiliaFiltro,
+                bySubFamilia: $scope.dataSearch.bySubFamilia,
             }
             const parameters = {
                 reportParams: JSON.stringify({
