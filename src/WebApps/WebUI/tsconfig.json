@@ -11,7 +11,7 @@
         // "module": "CommonJS",
         "module": "ESNext",
         "strict": false,
-        "forceConsistentCasingInFileNames": true,
+        "forceConsistentCasingInFileNames": false,
         // "lib": [ "es2015", "dom" ],
         "lib": [
             "ES2020",
