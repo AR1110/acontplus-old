@@ -1,2 +1,4 @@
-<script lang="ts"></script>
-<h5>hi from menu</h5>
+<script lang="ts">
+    import List from "./Components/List.svelte";
+</script>
+<List />
