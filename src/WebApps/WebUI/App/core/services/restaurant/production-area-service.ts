@@ -19,7 +19,7 @@ async function get() {
 async function post(data) {
     return await client.post(url, data).then((response) => {
         if (response.status === 200) {
-            return response.data;
+            return response;
         } else {
             console.log(response);
             return null;
@@ -34,7 +34,7 @@ async function post(data) {
 async function put(id, data) {
     return await client.put(url + id, data).then((response) => {
         if (response.status === 200) {
-            return response.data;
+            return response;
         } else {
             console.log(response);
             return null;
