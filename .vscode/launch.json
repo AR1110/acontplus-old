@@ -209,7 +209,9 @@
                 ".NET Core Launch (Identity)",
                 ".NET Core Launch (Inventario)",
                 ".NET Core Launch (FactElect)",
-                ".NET Core Launch (Reports)"
+                ".NET Core Launch (Reports)",
+                ".NET Core Launch (Restaurant)",
+                ".NET Core Launch (Gateway Restaurant)"
             ],
             "stopAll": true
         },
