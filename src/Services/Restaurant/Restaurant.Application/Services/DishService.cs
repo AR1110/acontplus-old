@@ -6,13 +6,13 @@ using System.Data;
 
 namespace Restaurant.Application.Services
 {
-    public class AppRoomService : IAppRoomService
+    public class DishService
     {
         private readonly IADORepository _repository;
         private readonly RestaurantContext _context;
         private readonly APIResponse _response;
 
-        public AppRoomService(IADORepository repository)
+        public DishService(IADORepository repository)
         {
             _repository = repository;
             _response = new APIResponse();
@@ -20,7 +20,7 @@ namespace Restaurant.Application.Services
 
         public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
-            DataSet ds = await _repository.GetDataSetAsync("Restaurant.Room_Get", parameters);
+            DataSet ds = await _repository.GetDataSetAsync("Restaurant.Dish_Get", parameters);
 
             if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
             {
@@ -42,7 +42,7 @@ namespace Restaurant.Application.Services
                 {"userRoleId", request.UserRoleId},
                 {"json", Converters.SerializeDictionary(request.Data)}
             };
-            return await _repository.SPExecuteAsync("Restaunrant.Floors_Insert", parameters);
+            return await _repository.SPExecuteAsync("Restaurant.Dish_Insert", parameters);
         }
 
         public async Task<string> UpdateAsync(int id, ApiRequest request)
@@ -52,7 +52,7 @@ namespace Restaurant.Application.Services
                 {"id", id},
                 {"json", Converters.SerializeDictionary(request.Data)}
             };
-            return await _repository.SPExecuteAsync("Inventario.Floors_Update", request.Data);
+            return await _repository.SPExecuteAsync("Restaurant.Dish_Update", request.Data);
         }
 
         public async Task<string> DeleteAsync(int id, ApiRequest request)
@@ -61,7 +61,7 @@ namespace Restaurant.Application.Services
                 {"userRoleId", request.UserRoleId},
                 {"id", id}
             };
-            return await _repository.SPExecuteAsync("Inventario.Floors_Update_Cancel", request.Data);
+            return await _repository.SPExecuteAsync("Restaurant.Dish_Update_Cancel", request.Data);
         }
     }
 }

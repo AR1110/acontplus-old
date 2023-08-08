@@ -2,7 +2,7 @@
 
 namespace Restaurant.Core.Interfaces
 {
-    public interface IAppDishService
+    public interface IRoomService
     {
         Task<object> GetAsync(Dictionary<string, object> parameters);
         Task<string> AddAsync(ApiRequest request);

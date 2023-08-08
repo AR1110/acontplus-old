@@ -1,6 +1,6 @@
 ﻿namespace Restaurant.Core.Interfaces
 {
-    public interface IAppProductionAreaService
+    public interface IProductionAreaService
     {
         Task<object> GetAsync(Dictionary<string, object> parameters);
     }

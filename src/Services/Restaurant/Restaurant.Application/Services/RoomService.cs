@@ -6,13 +6,13 @@ using System.Data;
 
 namespace Restaurant.Application.Services
 {
-    public class AppFloorService : IAppFloorService
+    public class RoomService : IRoomService
     {
         private readonly IADORepository _repository;
         private readonly RestaurantContext _context;
         private readonly APIResponse _response;
 
-        public AppFloorService(IADORepository repository)
+        public RoomService(IADORepository repository)
         {
             _repository = repository;
             _response = new APIResponse();
@@ -20,7 +20,7 @@ namespace Restaurant.Application.Services
 
         public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
-            DataSet ds = await _repository.GetDataSetAsync("Restaurant.Floors_Get", parameters);
+            DataSet ds = await _repository.GetDataSetAsync("Restaurant.Room_Get", parameters);
 
             if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
             {

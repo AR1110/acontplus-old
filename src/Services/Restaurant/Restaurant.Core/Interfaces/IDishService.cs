@@ -2,7 +2,7 @@
 
 namespace Restaurant.Core.Interfaces
 {
-    public interface IAppFloorService
+    public interface IDishService
     {
         Task<object> GetAsync(Dictionary<string, object> parameters);
         Task<string> AddAsync(ApiRequest request);
@@ -10,6 +10,3 @@ namespace Restaurant.Core.Interfaces
         Task<string> DeleteAsync(int id, ApiRequest request);
     }
 }
-
-
-

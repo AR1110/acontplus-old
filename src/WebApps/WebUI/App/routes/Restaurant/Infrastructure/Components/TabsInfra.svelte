@@ -12,7 +12,7 @@
       component: Floors,
     },
     {
-      label: 'Rooms',
+      label: 'Salas',
       value: 2,
       component: Rooms,
     },

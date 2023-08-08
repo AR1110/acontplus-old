@@ -53,13 +53,13 @@ import Product from "$restaurant/Product/page.svelte"
 // export default subcategoria
 
 
-// const infrastructure = new Infrastructure({
-//     target: document.getElementById('restaurant-infrastructure'),
-// })
-// export default infrastructure
-
-
-const product = new Product({
-    target: document.getElementById('restaurant-product')
+const infrastructure = new Infrastructure({
+    target: document.getElementById('restaurant-infrastructure'),
 })
-export default product
+export default infrastructure
+
+
+// const product = new Product({
+//     target: document.getElementById('restaurant-product')
+// })
+// export default product

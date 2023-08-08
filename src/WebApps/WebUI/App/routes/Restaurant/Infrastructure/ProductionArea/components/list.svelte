@@ -20,9 +20,10 @@
 				<table class="table">
 					<thead>
 						<tr>
-							<th>N�</th>
-							<th>C�digo</th>
+							<th>N°</th>
+							<th>Código</th>
 							<th>Descripcion</th>
+							<th>Estado</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -31,6 +32,17 @@
 								<td>{index + 1}</td>
 								<td>{item.code}</td>
 								<td>{item.description}</td>
+								<td>
+									{#if item.enabled}
+										<span class="badge badge-success"
+											>Activo</span
+										>
+									{:else}
+										<span class="badge badge-danger"
+											>Inactivo</span
+										>
+									{/if}</td
+								>
 							</tr>
 						{/each}
 					</tbody>

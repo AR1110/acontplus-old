@@ -13,17 +13,17 @@ namespace Restaurant.API.Controllers
     public class RoomsController : ControllerBase
     {
         private readonly RestaurantContext _context;
-        private readonly IAppRoomService _service;
+        private readonly IRoomService _roomService;
 
-        public RoomsController(RestaurantContext context, IAppRoomService service)
+        public RoomsController(RestaurantContext context, IRoomService roomService)
         {
             _context = context;
-            _service = service;
+            _roomService = roomService;
         }
 
         // GET: api/Rooms
         [HttpGet]
-        public async Task<ActionResult> Get(string json)
+        public async Task<IActionResult> Get(string json)
         {
             try
             {
@@ -32,7 +32,7 @@ namespace Restaurant.API.Controllers
                     {"userRoleId", User.GetUserRoleId() },
                     {"json", json }
                 };
-                var response = await _service.GetAsync(parameters);
+                var response = await _roomService.GetAsync(parameters);
                 if (response == null) { return NoContent(); }
 
                 return Ok(response);
@@ -83,7 +83,7 @@ namespace Restaurant.API.Controllers
             request.UserRoleId = User.GetUserRoleId();
             try
             {
-                var response = await _service.AddAsync(request);
+                var response = await _roomService.AddAsync(request);
                 return Ok(response);
             }
             catch (Exception ex)

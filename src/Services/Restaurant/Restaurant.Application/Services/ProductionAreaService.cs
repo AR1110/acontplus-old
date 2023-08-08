@@ -6,13 +6,13 @@ using System.Data;
 
 namespace Restaurant.Application.Services
 {
-    public class AppProductionAreaService : IAppProductionAreaService
+    public class ProductionAreaService : IProductionAreaService
     {
         private readonly IADORepository _repository;
         private readonly RestaurantContext _context;
         private readonly APIResponse _response;
 
-        public AppProductionAreaService(IADORepository repository)
+        public ProductionAreaService(IADORepository repository)
         {
             _repository = repository;
             _response = new APIResponse();
