@@ -49,11 +49,11 @@ widget-chart-page product review
   color: #212529; }
   .profile-tab li a.nav-link.active,
   .customtab li a.nav-link.active {
-    border-bottom: 2px solid #fb9678;
-    color: #fb9678; }
+    border-bottom: 2px solid #d61672;
+    color: #d61672; }
   .profile-tab li a.nav-link:hover,
   .customtab li a.nav-link:hover {
-    color: #fb9678; }
+    color: #d61672; }
 
 /*******************/
 /*widgets -app*/
@@ -75,7 +75,7 @@ ul.list-icons {
     ul.list-icons li a {
       color: #212529; }
       ul.list-icons li a:hover {
-        color: #fb9678; }
+        color: #d61672; }
     ul.list-icons li i {
       padding-right: 8px; }
 

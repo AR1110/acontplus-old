@@ -28,7 +28,7 @@ Table- Footable
 ******************/
 #demo-show-entries {
   border: 0;
-  background-image: linear-gradient(#fb9678, #fb9678), linear-gradient(#e9ecef, #e9ecef);
+  background-image: linear-gradient(#d61672, #d61672), linear-gradient(#e9ecef, #e9ecef);
   background-size: 0 2px, 100% 1px;
   background-repeat: no-repeat;
   background-position: center bottom, center calc(100% - 1px);
@@ -38,14 +38,14 @@ Table- Footable
   color: #212529; }
   #demo-show-entries:focus {
     outline: none;
-    background-image: linear-gradient(#fb9678, #fb9678), linear-gradient(#e9ecef, #e9ecef);
+    background-image: linear-gradient(#d61672, #d61672), linear-gradient(#e9ecef, #e9ecef);
     background-size: 100% 2px, 100% 1px;
     box-shadow: none;
     transition-duration: 0.3s; }
 
 #demo-input-search2 {
   border: 0;
-  background-image: linear-gradient(#fb9678, #fb9678), linear-gradient(#e9ecef, #e9ecef);
+  background-image: linear-gradient(#d61672, #d61672), linear-gradient(#e9ecef, #e9ecef);
   background-size: 0 2px, 100% 1px;
   background-repeat: no-repeat;
   background-position: center bottom, center calc(100% - 1px);
@@ -58,7 +58,7 @@ Table- Footable
   color: #212529; }
   #demo-input-search2:focus {
     outline: none;
-    background-image: linear-gradient(#fb9678, #fb9678), linear-gradient(#e9ecef, #e9ecef);
+    background-image: linear-gradient(#d61672, #d61672), linear-gradient(#e9ecef, #e9ecef);
     background-size: 100% 2px, 100% 1px;
     box-shadow: none;
     transition-duration: 0.3s; }

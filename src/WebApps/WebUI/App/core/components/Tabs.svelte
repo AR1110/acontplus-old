@@ -5,10 +5,27 @@
   const handleKeyDowm = (tabValue) => (activeTabValue = tabValue);
 </script>
 
-<ul>
+<ul class="nav nav-tabs" id="myTab" role="tablist">
   {#each items as item}
-    <li class={activeTabValue === item.value ? "active" : ""}>
-      <span
+    <li class="nav-item">
+      <a
+        class="nav-link {activeTabValue === item.value ? 'active' : ''}"
+        id="{item.value}-tab"
+        data-toggle="tab"
+        href="#{item.value}"
+        role="tab"
+        aria-controls={item.value}
+        aria-expanded="true"
+        on:click={handleClick(item.value)}
+        on:keydown={handleKeyDowm(item.value)}
+        ><span class="hidden-sm-up">
+          {#if item.icon}
+            <i class={item.icon} />
+          {/if}{item.label}</span
+        >
+        <span class="hidden-xs-down">{item.label}</span></a
+      >
+      <!-- <span
         role="tab"
         on:click={handleClick(item.value)}
         on:keydown={handleKeyDowm(item.value)}
@@ -17,7 +34,7 @@
         {#if item.icon}
           <i class={item.icon} />
         {/if}{item.label}
-      </span>
+      </span> -->
     </li>
   {/each}
 </ul>
@@ -29,7 +46,7 @@
   {/if}
 {/each}
 
-<style>
+<!-- <style>
   .box {
     margin-bottom: 10px;
     padding: 40px;
@@ -67,4 +84,4 @@
     background-color: #fff;
     border-color: #dee2e6 #dee2e6 #fff;
   }
-</style>
+</style> -->
