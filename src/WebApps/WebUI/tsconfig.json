@@ -38,6 +38,9 @@
             "$routes/*": [
                 "App/routes/*"
             ],
+            "$restaurant/*": [
+                "App/routes/restaurant*"
+            ],
             "$pet/*": [
                 "App/lib/Pet/*"
             ],

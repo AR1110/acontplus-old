@@ -68,7 +68,7 @@ const production = !process.env.ROLLUP_WATCH;
 //const appObject = "stockFisico"
 // const appObject = "subcategoria"
 
-const appObject = "restaurantProductionAreas"
+const appObject = "restaurantInfrastructure"
 
 export default {
     // This `main.js` file we wrote
