@@ -6,7 +6,7 @@
         MenuService.get(JSON.stringify({ tipo: 1 })).then((response) => {
             console.log(response);
             if (response) {
-                menus = response["menus"];
+                //menus = response["menus"];
             }
         });
     });

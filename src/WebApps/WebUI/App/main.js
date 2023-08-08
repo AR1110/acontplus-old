@@ -7,6 +7,8 @@ import MotivoDiscrepancia from "./lib/StockFisico/MotivoDiscrepancia.svelte";
 import Stock from "./lib/StockFisico/index.svelte"
 import Subcategoria from "./lib/Contabilidad/Subcategoria/index.svelte"
 import Infrastructure from "$restaurant/Infrastructure/page.svelte"
+import Product from "$restaurant/Product/page.svelte"
+
 // import App from "./App.svelte"
 // const app = new App({
 //     target: document.getElementById('app'),
@@ -51,7 +53,13 @@ import Infrastructure from "$restaurant/Infrastructure/page.svelte"
 // export default subcategoria
 
 
-const infrastructure = new Infrastructure({
-    target: document.getElementById('restaurant-infrastructure'),
+// const infrastructure = new Infrastructure({
+//     target: document.getElementById('restaurant-infrastructure'),
+// })
+// export default infrastructure
+
+
+const product = new Product({
+    target: document.getElementById('restaurant-product')
 })
-export default infrastructure
+export default product
