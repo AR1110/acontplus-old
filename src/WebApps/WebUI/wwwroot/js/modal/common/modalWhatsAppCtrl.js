@@ -274,7 +274,7 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
         'CI': 'RCINGR'
     })
 
-    const reportHasService = () => ['08', '09'].includes($scope.codDoc);
+    const reportHasService = () => ['08', '09', 'CI'].includes($scope.codDoc);
     const getTypeReport = () => ['08', '09', 'CI'].includes($scope.codDoc) ? "Reporte/Download" : "Reporte/DynamicReport"
 
     $scope.generateFile = () => {
