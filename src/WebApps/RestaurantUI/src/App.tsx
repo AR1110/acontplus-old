@@ -24,8 +24,7 @@ export default function App() {
               <Route
                 path={`${PrivateRoutes.PRIVATE}/*`}
                 element={<Private />}
-              ></Route>
-              {/* <Route path={`${PrivateRoutes.POS}/*`} element={<Pos />}></Route> */}
+              ></Route> 
             </Route>
           </RoutesWithNotFound>
         </BrowserRouter>

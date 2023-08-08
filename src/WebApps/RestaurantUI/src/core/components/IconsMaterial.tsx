@@ -15,6 +15,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import MenuIcon from "@mui/icons-material/Menu"; 
 
 import CategoryIcon from '@mui/icons-material/Category';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 export {
     RemoveCircleOutlineIcon,
     SaveIcon,
@@ -30,5 +31,6 @@ export {
     MoreIcon,
     HomeIcon,
     MenuIcon,
-    CategoryIcon
+    CategoryIcon,
+    PersonOutlineIcon
 }
