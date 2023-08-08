@@ -1,10 +1,10 @@
 import { client } from "../api/axiosClient";
-let url = "Restaurants/ProductionAreas/";
+let url = "Restaurant/ProductionAreas/";
 
 async function get() {
-   return await client.get(url).then((response) => {
-      if(response.status === 200){
-         return response.data;
+   return await client.get(url).then((response) => {     
+      if(response.status === 200){        
+         return response;
       } else {
          console.log(response);
          return null;
