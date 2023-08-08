@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { productionAreaService } from "$core/services/preoduction-area-service";
+	import { productionAreaService } from "$core/services/production-area-service";
 	import { onMount } from "svelte";
 
 	let productionAreas = [];
