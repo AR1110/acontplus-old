@@ -1,0 +1,9 @@
+<script lang="ts">
+    import Breadcrumbs from "$core/components/Breadcrumbs.svelte";
+    import TabsProduct from "./Components/TabsProduct.svelte";
+
+    export let url = "/";
+</script>
+
+<Breadcrumbs title="Administrar Productos" action="" openNew={null} />
+<TabsProduct />

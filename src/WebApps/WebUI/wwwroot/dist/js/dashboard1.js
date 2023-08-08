@@ -55,12 +55,12 @@ $(function () {
         , labels: ['iPhone', 'iPad', 'iPod Touch']
         , pointSize: 3
         , fillOpacity: 0
-        , pointStrokeColors: ['#00bfc7', '#fb9678', '#9675ce']
+        , pointStrokeColors: ['#00bfc7', '#d61672', '#9675ce']
         , behaveLikeLine: true
         , gridLineColor: '#e0e0e0'
         , lineWidth: 3
         , hideHover: 'auto'
-        , lineColors: ['#00bfc7', '#fb9678', '#9675ce']
+        , lineColors: ['#00bfc7', '#d61672', '#9675ce']
         , resize: true
     });
     Morris.Area({

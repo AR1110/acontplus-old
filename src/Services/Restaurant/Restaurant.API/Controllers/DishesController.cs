@@ -12,9 +12,9 @@ namespace Restaurant.API.Controllers
     public class DishesController : ControllerBase
     {
         private readonly RestaurantContext _context;
-        private readonly IAppDishService _service;
+        private readonly IDishService _service;
 
-        public DishesController(RestaurantContext context, IAppDishService service)
+        public DishesController(RestaurantContext context, IDishService service)
         {
             _context = context;
             _service = service;

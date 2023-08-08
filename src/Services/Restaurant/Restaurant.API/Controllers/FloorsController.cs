@@ -11,9 +11,9 @@ namespace Restaurant.API.Controllers
     public class FloorsController : ControllerBase
     {
         private readonly RestaurantContext _context;
-        private readonly IAppFloorService _floorService;
+        private readonly IFloorService _floorService;
 
-        public FloorsController(RestaurantContext context, IAppFloorService floorService)
+        public FloorsController(RestaurantContext context, IFloorService floorService)
         {
             _context = context;
             _floorService = floorService;
@@ -21,7 +21,7 @@ namespace Restaurant.API.Controllers
 
         // GET: api/Floors
         [HttpGet]
-        public async Task<ActionResult> Get(string json)
+        public async Task<IActionResult> Get(string json)
         {
             try
             {
@@ -45,7 +45,7 @@ namespace Restaurant.API.Controllers
         // POST: api/Floors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult> Post(ApiRequest request)
+        public async Task<IActionResult> Post(ApiRequest request)
         {
             request.UserRoleId = User.GetUserRoleId();
             try

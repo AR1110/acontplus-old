@@ -143,7 +143,7 @@
 
             if($scope.dataSearch.byTipoReporte==1){
                 if($scope.dataSearch.chkUbicacion){
-                    if($scope.dataSearch.textUbicacion){
+                    if(!$scope.dataSearch.textUbicacion){
                         tS.toastr('warning', 'Ingrese la ubicación ');
                         return; 
                     }
