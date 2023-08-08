@@ -120,15 +120,18 @@ BEGIN
 						  ,@idSubFamilia INT
 						  ,@byOrder      VARCHAR(10)									
 						  ,@byOrderCampo VARCHAR(50)
-						  ,@rucProveedor VARCHAR(25)'
+						  ,@rucProveedor VARCHAR(25)
+						  ,@fechaInicio DATETIME
+						  ,@fechaFin DATETIME'
 
 			SET @sql = 'SELECT ar.idArticulo
 							  ,ar.descripcion
 							  ,ar.codigo
 							  ,ar.subfamilia
 							  ,ar.tarifa
+							  ,FORMAT(ar.fechaCaducidad, ''dd/MM/yyyy'') as fechaCaducidad 
 							  ,ISNULL(CAST(ar.precioConIva as numeric(15,2)),0) as precioIva
-						FROM v_Articulo_Tarifa ar WITH (NOLOCK)
+						FROM Inventario.v_Articulo_Tarifa ar WITH (NOLOCK)
 						WHERE ar.estado = 1 AND ar.idEntidad = @idEntidad '
 
 			SELECT
@@ -188,24 +191,26 @@ BEGIN
 
 			SET @sql = @sql + ' ORDER BY '+ @byOrderCampo+ ' ' +  @byOrder
 		
-			SELECT		    
-				e.ruc
-				,e.razonSocial 
-				,e.nombreComercial	
-				,ISNULL(e.telefono, '')telefonoEntidad
-				,ISNULL(e.direccion, '')direccionEntidad
-				,@filtroFecha as filtroFecha			
-				FROM dbo.Entidad e	WITH(NOLOCK)	
-				WHERE e.idEntidad = @idEntidad
+			SELECT e.ruc
+			      ,e.razonSocial 
+			      ,e.nombreComercial	
+			      ,ISNULL(e.telefono, '')telefonoEntidad
+			      ,ISNULL(e.direccion, '')direccionEntidad
+			      ,@filtroFecha as filtroFecha	
+				  ,@checkBoxFecha as caducidad
+			FROM dbo.Entidad e	WITH(NOLOCK)	
+			WHERE e.idEntidad = @idEntidad
 
 
-			EXEC sp_executesql @sql, 
-							   @params,	
-							   @idEntidad    = @idEntidad,
-							   @idSubFamilia = @idSubFamilia,
-							   @byOrder      = @byOrder,
-							   @byOrderCampo = @byOrderCampo,
-							   @rucProveedor = @rucProveedor
+			EXEC sp_executesql @sql
+							  ,@params
+							  ,@idEntidad    = @idEntidad
+							  ,@idSubFamilia = @idSubFamilia
+							  ,@fechaInicio  = @fechaInicio
+							  ,@fechaFin     = @fechaFin
+							  ,@byOrder      = @byOrder
+							  ,@byOrderCampo = @byOrderCampo
+							  ,@rucProveedor = @rucProveedor
 
 			RETURN 
 		END 
@@ -214,11 +219,13 @@ BEGIN
 	IF @tipo = 3
 		BEGIN 
 			
-			SET @params = '@idEntidad    INT								
+			SET @params = '@idEntidad    INT									
 						  ,@idSubFamilia INT
 						  ,@byOrder      VARCHAR(10)									
 						  ,@byOrderCampo VARCHAR(50)
-						  ,@rucProveedor VARCHAR(25)'
+						  ,@rucProveedor VARCHAR(25)
+						  ,@fechaInicio DATETIME
+						  ,@fechaFin DATETIME'
 
 			SET @sql = 'SELECT ar.idArticulo
 							  ,ar.descripcion
@@ -227,32 +234,31 @@ BEGIN
 							  ,CAST(ar.precioCosto AS NUMERIC(18,2)) as precioCosto
 							  ,ar.idBodega
 							  ,ar.bodega
-							  ,ar.cantidad stock
+							  ,ar.cantidad as stock
+							  ,FORMAT(ar.fechaCaducidad, ''dd/MM/yyyy'') as fechaCaducidad 
 							  ,CAST(ar.stock AS NUMERIC(18,2)) as stockTotal
 							  ,CAST(ar.stock * ar.precioCosto as numeric(15, 2)) as totalInventario
-						FROM v_Articulo_Stock ar
+						FROM Inventario.v_Articulo_Stock ar
 						WHERE ar.estado = 1 AND ar.idEntidad = @idEntidad '	
 
-			SELECT @filtroFecha         = filtroFecha
-				  ,@checkboxSubFamilia  = checkboxSubFamiliaFiltro
-				  ,@idSubFamilia        = bySubFamilia
-				  ,@checkboxStock       = checkboxStockFiltro
-				  ,@byStock             = byStock
-				  ,@byOrder             = byOrder
-				  ,@byOrderCampo        = byOrderCampo
-				  ,@chkProveedor        = chkProveedor
-				  ,@rucProveedor        = numeroIdentificacion
-			FROM OPENJSON(@json) 
-			WITH ( filtroFecha         VARCHAR(50) '$.filtroFecha'
-			      ,checkboxSubFamiliaFiltro    BIT '$.checkboxSubFamiliaFiltro'
-			      ,bySubFamilia                INT '$.bySubFamilia'
-			      ,checkboxStockFiltro         BIT '$.checkboxStockFiltro'
-			      ,byStock				       INT '$.byStock'
-			      ,byOrder             VARCHAR(10) '$.byOrder'
-			      ,byOrderCampo        VARCHAR(50) '$.byOrderCampo'
-			      ,chkProveedor                BIT '$.chkProveedor'
-			      ,numeroIdentificacion VARCHAR(25)'$.numeroIdentificacion'
-			     ) AS dt
+			SELECT
+				 @filtroFecha         = filtroFecha
+				,@checkboxSubFamilia  = checkboxSubFamiliaFiltro ,@idSubFamilia = bySubFamilia
+				,@checkboxStock       = checkboxStockFiltro      ,@byStock      = byStock
+				,@chkProveedor        = chkProveedor             ,@rucProveedor = numeroIdentificacion
+				,@checkBoxFecha       = ckFechaCaducidad         ,@fechaInicio  = fechaInicio ,@fechaFin = fechaFin
+				,@byOrder             = byOrder			 
+				,@byOrderCampo        = byOrderCampo		
+			FROM OPENJSON(@json)
+			WITH ( filtroFecha          VARCHAR(50) '$.filtroFecha'			
+				  ,checkboxSubFamiliaFiltro     BIT '$.checkboxSubFamiliaFiltro',bySubFamilia                 INT '$.bySubFamilia'	
+				  ,checkboxStockFiltro          BIT '$.checkboxStockFiltro'     ,byStock                      INT '$.byStock'	
+				  ,chkProveedor                 BIT '$.chkProveedor'            ,numeroIdentificacion VARCHAR(25) '$.numeroIdentificacion'
+				  ,chkUbicacion                 BIT '$.chkUbicacion'            ,idBodega                     INT '$.idBodega'            ,ubicacion VARCHAR(100) '$.ubicacion'
+				  ,ckFechaCaducidad             BIT '$.ckFechaCaducidad'        ,fechaInicio             DATETIME '$.fechaInicio'         ,fechaFin      DATETIME '$.fechaFin'
+				  ,byOrder              VARCHAR(10) '$.byOrder'
+				  ,byOrderCampo         VARCHAR(50) '$.byOrderCampo'	
+				) AS dt
 
 			IF @chkProveedor = 1
 				BEGIN
@@ -303,12 +309,14 @@ BEGIN
 			WHERE e.idEntidad = @idEntidad
 
 			EXEC sp_executesql @sql
-				,@params
-				,@idEntidad    = @idEntidad
-				,@idSubFamilia = @idSubFamilia
-				,@byOrder      = @byOrder
-				,@byOrderCampo = @byOrderCampo
-				,@rucProveedor = @rucProveedor
+							  ,@params
+							  ,@idEntidad    = @idEntidad
+							  ,@idSubFamilia = @idSubFamilia
+							  ,@fechaInicio  = @fechaInicio
+							  ,@fechaFin     = @fechaFin
+							  ,@byOrder      = @byOrder
+							  ,@byOrderCampo = @byOrderCampo
+							  ,@rucProveedor = @rucProveedor
 
 			RETURN 
 		END
