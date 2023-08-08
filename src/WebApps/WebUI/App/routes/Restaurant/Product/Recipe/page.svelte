@@ -23,6 +23,6 @@
         >
     </div>
 </div>
-
-<List />
 <Add openNew={isnew} modalClosed={() => closeModal()} />
+<br />
+<List />
