@@ -82,6 +82,7 @@ BEGIN
 
 			SET @sql = 'SELECT TOP 50
 							 idComprobanteIngreso = ci.idComprobanteIngreso
+							,idDocumento          = ci.idComprobanteIngreso
 							,s.codEstab
 							,total                = ci.total
 							,fechaRegistro        = FORMAT(ci.fechaRegistro,''dd/MM/yyyy'')

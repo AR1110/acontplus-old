@@ -4,15 +4,7 @@ import {
     useTheme,
 } from "@mui/material";
 
-import { ReactNode, useEffect, useState } from "react";
-import { SubjectManager } from "../models";
-import { Subscription } from "rxjs";
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const dialogOpenSubject$ = new SubjectManager<boolean>();
-// eslint-disable-next-line react-refresh/only-export-components
-export const dialogCloseSubject$ = new SubjectManager<boolean>();
-
+import { ReactNode, useEffect, useState } from "react";  
 type SizeDialog = "xs" | "sm" | "md" | "lg" | "xl";
 
 export interface DialogProps {
@@ -29,19 +21,9 @@ function DialogCustom({children, maxWidth, ...other}: DialogProps) {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("md")); 
 
-    const [open, setOpen] = useState(false);
-    let openSubject$ = new Subscription();
-    let closeSubject$ = new Subscription();
+    const [open, setOpen] = useState(false); 
 
-    useEffect(() => {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        openSubject$ = dialogOpenSubject$.getSubject.subscribe(() => handleClickOpen());
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        closeSubject$ = dialogCloseSubject$.getSubject.subscribe(() => handleClose());
-        return () => {
-            openSubject$.unsubscribe();
-            closeSubject$.unsubscribe();
-        };
+    useEffect(() => { 
     }, []);
 
     const handleClickOpen = () => {

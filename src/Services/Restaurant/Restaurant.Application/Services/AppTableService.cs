@@ -53,7 +53,7 @@ namespace Restaurant.Application.Services
                 {"id", id},
                 {"json", Converters.SerializeDictionary(request.Data)}
             };
-            return await _repository.SPExecuteAsync("Restaurant.Table_Update", request.Data);
+            return await _repository.SPExecuteAsync("Restaurant.Table_Update", parameters);
         }
 
         public async Task<string> DeleteAsync(int id, ApiRequest request)

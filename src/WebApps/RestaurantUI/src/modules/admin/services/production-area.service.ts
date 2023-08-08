@@ -28,15 +28,12 @@ export const ProductionAreaSvc = {
   },
 
   update: async (id: number, data: any): Promise<ApiResponse> => {
-    console.log(id);
-    console.log(data);
     const response = await Http({
       method: 'put',
-      url: `${PATHS.PRIVATE}${URL}` + 'Put?id=' + id,
-      data: {
-        Data: data,
-      },
+      url: `${PATHS.PRIVATE}${URL}` + id,
+      data,
     });
+    console.log(response);
     return response.data;
   },
 

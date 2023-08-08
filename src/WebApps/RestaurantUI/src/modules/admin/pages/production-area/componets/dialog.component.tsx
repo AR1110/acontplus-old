@@ -15,6 +15,7 @@ import { useEffect } from 'react';
 import { dialogDataSubject$ } from '../../table/components/TableDialog';
 import CloseIcon from '@mui/icons-material/Close';
 import { ProductionAreaSvc } from '@/modules/admin/services/production-area.service';
+import { SnackbarUtilities as Snackbar } from '@/core/utils';
 
 interface Props {
   callBackCloseDialog: () => void;
@@ -38,13 +39,15 @@ export default function DialogComponent({ callBackCloseDialog }: Props) {
       try {
         if (formik.values.id > 0) {
           await ProductionAreaSvc.update(values.id, values).then((response) => {
-            console.log(response);
             callBackCloseDialog();
+            Snackbar.success('Actualizado correctamente');
+            handleCancel();
           });
         } else {
           await ProductionAreaSvc.post(values).then((response) => {
-            console.log(response);
             callBackCloseDialog();
+            Snackbar.success('Ingresado correctamente');
+            handleCancel();
           });
         }
       } catch (error) {

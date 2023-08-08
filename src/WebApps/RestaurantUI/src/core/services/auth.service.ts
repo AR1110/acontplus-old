@@ -1,4 +1,4 @@
-import { Http } from "@/core/utils";
+import { Http } from "@/core/utilities";
 import { ApiResponse } from "../models";
 
 const login = async (username: string, password: string): Promise<ApiResponse> => {

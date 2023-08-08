@@ -47,10 +47,25 @@ BEGIN
 	IF @tipo = 1
 		BEGIN
 			
-			SELECT @idArticulo = idArticulo, @checkBoxArticulo = checkBoxArticulo FROM OPENJSON(@json) WITH (idArticulo INT '$.idArticulo',checkBoxArticulo BIT '$.checkBoxArticulo')
+			SELECT @checkBoxArticulo   = checkBoxArticulo
+				  ,@idArticulo         = idArticulo 
+				  ,@checkBoxSubFamilia = checkboxSubFamilia
+				  ,@idSubFamilia       = bySubFamilia
+				  ,@chkProveedor       = chkProveedor             
+				  ,@rucProveedor       = numeroIdentificacion
+			FROM OPENJSON(@json) 
+			WITH (checkBoxArticulo             BIT '$.checkBoxArticulo'
+			     ,idArticulo                   INT '$.idArticulo'
+				 ,checkboxSubFamilia           BIT '$.checkboxSubFamiliaFiltro'
+				 ,bySubFamilia                 INT '$.bySubFamilia'
+				 ,chkProveedor                 BIT '$.chkProveedor'            
+				 ,numeroIdentificacion VARCHAR(25) '$.numeroIdentificacion'
+			     )
 
 			SET @params = '@idEntidad INT
-			              ,@idArticulo INT'
+			              ,@idArticulo INT
+						  ,@idSubFamilia INT
+						  ,@rucProveedor VARCHAR(150)'
 
 			SET @sql = 'SELECT articulo           
 							  ,codigo
@@ -67,12 +82,22 @@ BEGIN
 					SET @sql = @sql + 'AND idArticulo = @idArticulo '
 				END 
 
+			IF @checkBoxSubFamilia = 1
+				BEGIN
+					SET @sql = @sql + 'AND idSubFamilia = @idSubFamilia '
+				END
+
+			IF @chkProveedor = 1
+				BEGIN
+					SET @sql = @sql + 'AND idArticulo IN (SELECT it.idArticulo FROM v_InventarioTransaccion it WHERE it.rucClienteProveedor = @rucProveedor AND codTransaccion = ''E'') '
+				END 
+
 			--Entidad 
 			SELECT e.ruc
 				  ,e.razonSocial 
 				  ,e.nombreComercial	
-				  ,ISNULL(e.telefono, '')telefonoEntidad
-				  ,ISNULL(e.direccion, '')direccionEntidad			
+				  ,ISNULL(e.telefono, '')as telefonoEntidad
+				  ,ISNULL(e.direccion, '') as direccionEntidad			
 				  ,tituloReporte = 'REPORTE DE ARTICULOS FRACCIONADOS'
 				  ,usuario       = @usuario			
 			FROM Entidad e WITH (NOLOCK)
@@ -80,8 +105,10 @@ BEGIN
 
 			EXEC sp_executesql  @sql
 						       ,@params 
-						       ,@idEntidad  = @idEntidad
-						       ,@idArticulo = @idArticulo
+						       ,@idEntidad    = @idEntidad
+						       ,@idArticulo   = @idArticulo
+							   ,@idSubFamilia = @idSubFamilia
+							   ,@rucProveedor = @rucProveedor
 			RETURN 
 		END 
 

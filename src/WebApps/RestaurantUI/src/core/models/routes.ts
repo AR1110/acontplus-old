@@ -3,20 +3,10 @@ const PublicRoutes = {
 };
 
 const PrivateRoutes = {
-  PRIVATE: "private",
-  ADMIN: "admin",
-  POS: "pos",
+  PRIVATE: "private", 
   DASHBOARD: "Dashboard",
-  LAYOUT: "Layout",
-  HOME: "Home",
-  CATEGORIA: "Categoria",
-  RECIPE: "Recipe",
-  DISH: "Dish",
-  TABLE: "Table",
-  CATEGORY: "Category",
-  PRODUCT: "Product",
-  PRODUCTION_AREA: "ProductionArea",
-  INGREDIENT: "Ingredient",
+  POS: "Pos"
+ 
 };
 
 export { PublicRoutes, PrivateRoutes };

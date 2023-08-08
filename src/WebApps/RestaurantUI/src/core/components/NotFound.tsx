@@ -15,7 +15,7 @@ function NotFound() {
             className="btn btn-info btn-rounded waves-effect waves-light m-b-40 text-white"
           >
             Back to home
-          </a>{" "}
+          </a> 
         </div>
       </div>
     </section>

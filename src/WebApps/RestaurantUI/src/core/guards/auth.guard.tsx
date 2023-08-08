@@ -15,7 +15,7 @@ const AuthGuard = ({ privateValidation }: Props) => {
     privateValidation ? (
       <Outlet />
     ) : (
-      <Navigate replace to={PrivateRoutes.ADMIN}></Navigate>
+      <Navigate replace to={PrivateRoutes.PRIVATE}></Navigate>
     )
   ) : (
     <Navigate replace to={PublicRoutes.LOGIN}></Navigate>
