@@ -412,6 +412,7 @@ DROP PROCEDURE IF EXISTS [Inventario].[Articulo_Report_Movement]
 GO
 
 DROP PROCEDURE if EXISTS Almacen.Articulo_Insert
-
+GO
 
 DROP PROCEDURE if exists Almacen.Articulo_Update
+GO
