@@ -218,17 +218,26 @@ BEGIN
 				RETURN
 			END 
 
-		IF (SELECT COUNT(*) FROM @tbPrices) = 0 
+		
+		IF NOT EXISTS (SELECT 1 FROM @tbArticle a
+								INNER JOIN Inventario.v_Subfamilia s ON a.idSubFamilia = s.idSubfamilia WHERE s.siglas = 'ING' AND applicationId = 1)
 			BEGIN
-				SELECT '0'code,'Error en la informacion de las tarifas de precios' as 'message'
-				RETURN
-			END 
+				IF (SELECT COUNT(*) FROM @tbPrices) = 0 
+					BEGIN
+						SELECT '0'code,'Error en la informacion de las tarifas de precios' as 'message'
+						RETURN
+					END
+			END
 
-		IF (SELECT COUNT(*) FROM @tbPrices) != 5 
+		IF NOT EXISTS (SELECT 1 FROM @tbArticle a
+								INNER JOIN Inventario.v_Subfamilia s ON a.idSubFamilia = s.idSubfamilia WHERE s.siglas = 'ING' AND applicationId = 1)
 			BEGIN
-				SELECT '0'code,'Error en la informacion, tarifas incompletas' as 'message'
-				RETURN
-			END  
+				IF (SELECT COUNT(*) FROM @tbPrices) != 5 
+					BEGIN
+						SELECT '0'code,'Error en la informacion, tarifas incompletas' as 'message'
+						RETURN
+					END 
+			END
 
 		IF EXISTS (SELECT 1 FROM Articulo WITH (NOLOCK) WHERE codigo = @codigo AND idEntidad = @idEntidad)
 			BEGIN

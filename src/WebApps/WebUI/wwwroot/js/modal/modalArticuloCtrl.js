@@ -536,6 +536,26 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
     // }
 
     //Guardar/Actualizar Articulo
+
+    setResponse = (dataRepository) => {
+        const data = {
+            idArticulo: dataRepository.idArticulo,
+            // idPresentacion: this.tipoRegistro === 1 ? mainData.data : this._params.idPresentacion,
+            // presentacion: this.tipoRegistro === 1 ? mainData.gestion : this._params.presentacion,
+            idMedida: dataRepository.idMedida,
+            codigoPrincipal: dataRepository.codigo,
+            codigoAuxiliar: dataRepository.codigoAuxiliar,
+            codigoBarra: dataRepository.codigoBarra,
+            etiquetas: dataRepository.etiquetas.map((item) => {
+                return {
+                    ...item,
+                    etiquetas: item.etiquetas.split(";"),
+                };
+            }),
+        };
+        this.$uibModalInstance.close(data);
+    }
+
     saveUpdateArticulo() {
         let titulo = this.tipoRegistro === 1 ? "Agregar" : "Actualizar";
 
@@ -726,6 +746,9 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
                 if (response.code == 1) {
                     this._toastr.toastr("success", response.message, response.titleSms);
                     dataRepository = JSON.parse(response.payload)[0];
+                    if (dataRepository) {
+                        this.setResponse(dataRepository)
+                    }
                 }
                 hideLoader();
             }).catch(error => {
@@ -740,36 +763,15 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
                 if (response.code == 1) {
                     this._toastr.toastr("success", response.message, response.titleSms);
                     dataRepository = JSON.parse(response.payload)[0];
+                    if (dataRepository) {
+                        this.setResponse(dataRepository)
+                    }
                 }
                 hideLoader();
             }).catch(error => {
                 hideLoader();
                 console.log(error)
             })
-        }
-
-
-        if (dataRepository) {
-
-            console.log(dataRepository);
-            //  let mainData = {}
-
-            const data = {
-                idArticulo: dataRepository.idArticulo,
-                // idPresentacion: this.tipoRegistro === 1 ? mainData.data : this._params.idPresentacion,
-                // presentacion: this.tipoRegistro === 1 ? mainData.gestion : this._params.presentacion,
-                idMedida: dataRepository.idMedida,
-                codigoPrincipal: dataRepository.codigo,
-                codigoAuxiliar: dataRepository.codigoAuxiliar,
-                codigoBarra: dataRepository.codigoBarra,
-                etiquetas: dataRepository.etiquetas.map((item) => {
-                    return {
-                        ...item,
-                        etiquetas: item.etiquetas.split(";"),
-                    };
-                }),
-            };
-            this.$uibModalInstance.close(data);
         }
     }
 

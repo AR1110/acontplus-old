@@ -78,12 +78,6 @@ namespace Inventario.API.Controllers.v1
             try
             {
                 await _db.SPExecute("Inventario.Articulo_Insert", true);
-                //_db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                //_db.AddDynamicParam("jsonArticulo", data.jsonArticulo);
-                //_db.AddDynamicParam("json", data.jsonpvp);
-                //_db.AddDynamicParam("idBodega", data.idBodega);
-                //_db.AddDynamicParam("ubicacion", data.ubicacion);
-
                 _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(Converters.SerializeDictionary(data.Data)));
 
@@ -105,17 +99,16 @@ namespace Inventario.API.Controllers.v1
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] ArticuloParams data)
+        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.Articulo_Update");
-                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                await _db.SPExecute("Inventario.Articulo_Update");
+                _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("jsonArticulo", data.jsonArticulo);
-                _db.AddDynamicParam("json", data.jsonpvp);
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(Converters.SerializeDictionary(data.Data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
