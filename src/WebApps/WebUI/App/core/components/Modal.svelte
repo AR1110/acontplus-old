@@ -6,6 +6,8 @@
     export let onClosed;
     export let title;
     export let iconTitle;
+    export let size = "";
+    export let fullScreen = false;
 
     const modalClose = () => {
         open = false;
@@ -17,15 +19,16 @@
 
 <div
     id="modalNew"
-    class="modal uibModalFullScreen"
+    class="modal {fullScreen ? 'uibModalFullScreen' : ''}"
     tabindex="-1"
     role="dialog"
     aria-labelledby="sampleModalLabel"
     aria-hidden={false}
     in:fade={{ duration: 300 }}
-    out:fade={{ duration: 300, easing: quintOut }}>
+    out:fade={{ duration: 300, easing: quintOut }}
+>
     <div
-        class="modal-dialog modal-dialog-centered"
+        class="modal-dialog modal-dialog-centered {size ? size : ''}"
         role="document"
         in:fly={{ y: -50, duration: 300 }}
         out:fly={{ y: -50, duration: 300, easing: quintOut }}
