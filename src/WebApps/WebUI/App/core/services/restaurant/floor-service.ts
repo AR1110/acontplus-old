@@ -1,4 +1,4 @@
-import { client } from "../api/axiosClient";
+import { client } from "../../api/axiosClient";
 let url = "Restaurant/Floor/";
 
 async function get() {

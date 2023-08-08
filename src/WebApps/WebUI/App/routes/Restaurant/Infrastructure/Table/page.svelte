@@ -1,5 +1,6 @@
 <script lang="ts">
   import Breadcrumbs from '$core/components/Breadcrumbs.svelte';
+  import List from './components/list.svelte';
   let title = 'Mesas';
 
   // Modal management
@@ -18,3 +19,4 @@
   };
 </script>
 <Breadcrumbs {title} action={'nueva'} openNew={() => openNew()} />
+<List />

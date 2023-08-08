@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { productionAreaService } from "$core/services/production-area-service";
+	import { productionAreaService } from "$core/services/restaurant/production-area-service";
 	import { onMount } from "svelte";
 
 	let productionAreas = [];
@@ -8,7 +8,6 @@
 		productionAreaService.get().then((response) => {
 			if (response) {
 				productionAreas = response.data;
-				console.log(productionAreas);
 			}
 		});
 	});
@@ -21,8 +20,8 @@
 				<table class="table">
 					<thead>
 						<tr>
-							<th>N°</th>
-							<th>Código</th>
+							<th>Nï¿½</th>
+							<th>Cï¿½digo</th>
 							<th>Descripcion</th>
 						</tr>
 					</thead>

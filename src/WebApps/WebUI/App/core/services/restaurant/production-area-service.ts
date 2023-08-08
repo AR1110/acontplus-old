@@ -1,5 +1,5 @@
-import { client } from "../api/axiosClient";
-let url = "Restaurant/Room/";
+import { client } from "../../api/axiosClient";
+let url = "Restaurant/ProductionAreas/";
 
 async function get() {
     return await client.get(url).then((response) => {
@@ -60,7 +60,7 @@ async function remove(id) {
     });
 }
 
-export const roomService = {
+export const productionAreaService = {
     get,
     post,
     put,
