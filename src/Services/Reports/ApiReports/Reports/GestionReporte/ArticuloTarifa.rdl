@@ -34,6 +34,10 @@
           <DataField>direccionEntidad</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
+        <Field Name="caducidad">
+          <DataField>caducidad</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>GestionReporte</rd:DataSetName>
@@ -72,6 +76,10 @@
         </Field>
         <Field Name="precioIva">
           <DataField>precioIva</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="fechaCaducidad">
+          <DataField>fechaCaducidad</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
       </Fields>
@@ -301,7 +309,7 @@
                 <TablixCornerRow>
                   <TablixCornerCell>
                     <CellContents>
-                      <Textbox Name="Textbox37">
+                      <Textbox Name="Textbox15">
                         <CanGrow>true</CanGrow>
                         <KeepTogether>true</KeepTogether>
                         <Paragraphs>
@@ -320,10 +328,7 @@
                             </Style>
                           </Paragraph>
                         </Paragraphs>
-                        <rd:DefaultName>Textbox37</rd:DefaultName>
-                        <Visibility>
-                          <Hidden>true</Hidden>
-                        </Visibility>
+                        <rd:DefaultName>Textbox15</rd:DefaultName>
                         <Style>
                           <Border>
                             <Style>Solid</Style>
@@ -335,9 +340,10 @@
                           <PaddingBottom>2pt</PaddingBottom>
                         </Style>
                       </Textbox>
-                      <ColSpan>3</ColSpan>
+                      <ColSpan>4</ColSpan>
                     </CellContents>
                   </TablixCornerCell>
+                  <TablixCornerCell />
                   <TablixCornerCell />
                   <TablixCornerCell />
                 </TablixCornerRow>
@@ -414,6 +420,41 @@
                   </TablixCornerCell>
                   <TablixCornerCell>
                     <CellContents>
+                      <Textbox Name="Textbox13">
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Fecha Caducidad</Value>
+                                <Style>
+                                  <FontSize>7pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox13</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Style>Solid</Style>
+                          </Border>
+                          <VerticalAlign>Middle</VerticalAlign>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixCornerCell>
+                  <TablixCornerCell>
+                    <CellContents>
                       <Textbox Name="Textbox22">
                         <CanGrow>true</CanGrow>
                         <KeepTogether>true</KeepTogether>
@@ -453,7 +494,7 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>1.78563cm</Width>
+                  <Width>1.81209cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -641,7 +682,7 @@
                   <TablixMembers>
                     <TablixMember>
                       <TablixHeader>
-                        <Size>10cm</Size>
+                        <Size>9.36022cm</Size>
                         <CellContents>
                           <Textbox Name="descripcion">
                             <CanGrow>true</CanGrow>
@@ -657,7 +698,7 @@
                                   </TextRun>
                                 </TextRuns>
                                 <Style>
-                                  <TextAlign>Left</TextAlign>
+                                  <TextAlign>Center</TextAlign>
                                 </Style>
                               </Paragraph>
                             </Paragraphs>
@@ -678,16 +719,16 @@
                       <TablixMembers>
                         <TablixMember>
                           <TablixHeader>
-                            <Size>5cm</Size>
+                            <Size>2.42063cm</Size>
                             <CellContents>
-                              <Textbox Name="subFamilia">
+                              <Textbox Name="fechaCaducidad">
                                 <CanGrow>true</CanGrow>
                                 <KeepTogether>true</KeepTogether>
                                 <Paragraphs>
                                   <Paragraph>
                                     <TextRuns>
                                       <TextRun>
-                                        <Value>=Fields!subFamilia.Value</Value>
+                                        <Value>=Fields!fechaCaducidad.Value</Value>
                                         <Style>
                                           <FontSize>7pt</FontSize>
                                         </Style>
@@ -698,7 +739,7 @@
                                     </Style>
                                   </Paragraph>
                                 </Paragraphs>
-                                <rd:DefaultName>subFamilia</rd:DefaultName>
+                                <rd:DefaultName>fechaCaducidad</rd:DefaultName>
                                 <Style>
                                   <Border>
                                     <Style>Solid</Style>
@@ -713,7 +754,46 @@
                             </CellContents>
                           </TablixHeader>
                           <TablixMembers>
-                            <TablixMember />
+                            <TablixMember>
+                              <TablixHeader>
+                                <Size>4.0475cm</Size>
+                                <CellContents>
+                                  <Textbox Name="subFamilia">
+                                    <CanGrow>true</CanGrow>
+                                    <KeepTogether>true</KeepTogether>
+                                    <Paragraphs>
+                                      <Paragraph>
+                                        <TextRuns>
+                                          <TextRun>
+                                            <Value>=Fields!subFamilia.Value</Value>
+                                            <Style>
+                                              <FontSize>7pt</FontSize>
+                                            </Style>
+                                          </TextRun>
+                                        </TextRuns>
+                                        <Style>
+                                          <TextAlign>Center</TextAlign>
+                                        </Style>
+                                      </Paragraph>
+                                    </Paragraphs>
+                                    <rd:DefaultName>subFamilia</rd:DefaultName>
+                                    <Style>
+                                      <Border>
+                                        <Style>Solid</Style>
+                                      </Border>
+                                      <VerticalAlign>Middle</VerticalAlign>
+                                      <PaddingLeft>2pt</PaddingLeft>
+                                      <PaddingRight>2pt</PaddingRight>
+                                      <PaddingTop>2pt</PaddingTop>
+                                      <PaddingBottom>2pt</PaddingBottom>
+                                    </Style>
+                                  </Textbox>
+                                </CellContents>
+                              </TablixHeader>
+                              <TablixMembers>
+                                <TablixMember />
+                              </TablixMembers>
+                            </TablixMember>
                           </TablixMembers>
                         </TablixMember>
                       </TablixMembers>
@@ -726,7 +806,7 @@
             <Top>3.1605cm</Top>
             <Left>0cm</Left>
             <Height>1.8cm</Height>
-            <Width>19.78563cm</Width>
+            <Width>20.64044cm</Width>
             <ZIndex>6</ZIndex>
             <Style>
               <Border>
@@ -738,9 +818,9 @@
         <Height>1.95295in</Height>
         <Style />
       </Body>
-      <Width>7.78962in</Width>
+      <Width>8.12616in</Width>
       <Page>
-        <PageHeight>21cm</PageHeight>
+        <PageHeight>30cm</PageHeight>
         <PageWidth>29.7cm</PageWidth>
         <LeftMargin>0.25cm</LeftMargin>
         <RightMargin>0.25cm</RightMargin>
