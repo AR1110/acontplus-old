@@ -1,0 +1,10 @@
+﻿@page
+@model WebUI.Pages.Restaurant.Tables.IndexModel
+@{
+    ViewData["Title"] = "Mesas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div id="restaurant-tables"></div>
+@section Scripts{
+    <script src="~/build/restaurant-tables.js" asp-append-version="true"></script>
+}

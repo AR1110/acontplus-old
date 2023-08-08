@@ -1,37 +1,37 @@
 
-(function(){
+(function () {
 
     'use strict';
 
-    app.factory('articuloService', ['mainService', 'formulario', function(mainService, fS){
+    app.factory('articuloService', ['mainService', 'formulario', function (mainService, fS) {
 
         let url = 'Inventario/Articulo/';
 
         let service = {};
 
-        
-        service.getAll = function(query){
-            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response=>{
-                if(response.code==="0"){
+
+        service.getAll = function (query) {
+            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+                if (response.code === "0") {
                     throw response;
                 }
 
-                if(response.code==="1"){
+                if (response.code === "1") {
                     let mainData = JSON.parse(response.payload);
-                   
+
                     let articulos = mainData[0];
-                    let totalRecords = mainData[0][0].totalRecords; 
-                    let subFamilias = mainData[1]; 
+                    let totalRecords = mainData[0][0].totalRecords;
+                    let subFamilias = mainData[1];
                     let medidas = mainData[2];
                     let marcas = mainData[3];
                     let modelos = mainData[4];
-                    let tiposIva = mainData[5];                    
+                    let tiposIva = mainData[5];
 
                     //Listado de articulos 
                     return {
                         totalRecords,
-                        articulos: articulos.map(item=>{
-                            return { 
+                        articulos: articulos.map(item => {
+                            return {
                                 idArticulo: item.idArticulo,
                                 idMedida: item.idMedida,
                                 code_unique: item.code_unique,
@@ -65,13 +65,13 @@
          * @param {*} query 
          * @returns 
          */
-        service.getDataForForm = function(query){
-            return mainService.getData('get', url + 'Get?json=' + JSON.stringify({tipo: 5}), null, true).then(response=>{ 
-                if(response.code==="0"){
+        service.getDataForForm = function (query) {
+            return mainService.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 5 }), null, true).then(response => {
+                if (response.code === "0") {
                     throw response;
                 }
-                if(response.code==="1"){
-                    let dataApi = JSON.parse(response.payload); 
+                if (response.code === "1") {
+                    let dataApi = JSON.parse(response.payload);
                     return {
                         establecimientos: dataApi[0],
                         bodegas: dataApi[1],
@@ -87,55 +87,55 @@
 
 
         //Lista de articulos fraccionados para buscador rapido 
-        service.getArticlesFractionalInfo = function(query) {
-            if(!query.hasOwnProperty('idArticulo')){
+        service.getArticlesFractionalInfo = function (query) {
+            if (!query.hasOwnProperty('idArticulo')) {
                 fS.sweetAlert('warning', 'Propiedad idArticulo no proporcionado')
                 return
             }
-            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response=>{
-                if(response.code==="0"){
+            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+                if (response.code === "0") {
                     throw response;
                 }
 
-                if(response.code==="1"){
-                    let dataRepository = JSON.parse(response.payload)[0];  
-                    return dataRepository.map(item=>{
+                if (response.code === "1") {
+                    let dataRepository = JSON.parse(response.payload)[0];
+                    return dataRepository.map(item => {
                         let tarifas = item.tarifas && JSON.parse(item.tarifas)
                         return {
                             ...item,
                             tarifas
                         }
-                    })                  
-                   
+                    })
+
                 }
             })
         }
 
         //se usa en modulo consultar precio y modal consultar Listado de Articulos 
-        service.getAllWithPrices = function(dataSearch){
-            const query = { 
-                tipo: 3, 
+        service.getAllWithPrices = function (dataSearch) {
+            const query = {
+                tipo: 3,
                 bySearch: dataSearch.bySearch,
                 pageIndex: dataSearch.pageIndex,
                 pageSize: dataSearch.pageSize,
                 byColumn: dataSearch.byColumn,
                 byStock: dataSearch.byStock,
                 checkBoxStock: dataSearch.checkBoxStock,
-              };
+            };
 
-            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response=>{
-                if(response.code==="0"){
+            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+                if (response.code === "0") {
                     throw response;
                 }
 
-                if(response.code==="1"){
+                if (response.code === "1") {
                     let mainData = JSON.parse(response.payload);
                     let articulos = mainData[0];
-                    let totalRecords = mainData[0][0].totalRecords; 
-                      
+                    let totalRecords = mainData[0][0].totalRecords;
+
                     return {
                         totalRecords,
-                        articulos: articulos.map(item=>{                            
+                        articulos: articulos.map(item => {
                             let tarifas = JSON.parse(item.tarifa)
                             return {
                                 idArticulo: item.idArticulo,
@@ -159,32 +159,32 @@
                                 stockMinimo: item.stockMinimo,
                                 tarifas,
                                 color: item.color,
-                                }
-                            })
+                            }
+                        })
 
                     }
-                
+
                 }
             })
         }
 
 
         //Articulos para listar en el modulo de articulo fraccionado 
-        service.searchForFraccionado = function(query) {
-            query.tipo = 1; 
+        service.searchForFraccionado = function (query) {
+            query.tipo = 1;
             query.pageIndex = 1;
             query.pageSize = 50
-            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response=>{
-                if(response.code==="0"){
+            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+                if (response.code === "0") {
                     throw response;
                 }
 
-                if(response.code==="1"){
+                if (response.code === "1") {
                     let mainData = JSON.parse(response.payload);
                     let articulos = mainData[0];
                     //Listado de articulos 
-                    return articulos.map(item=>{
-                        return { 
+                    return articulos.map(item => {
+                        return {
                             idArticulo: item.idArticulo,
                             idMedida: item.idMedida,
                             code_unique: item.code_unique,
@@ -202,31 +202,31 @@
                             totalRecords: item.totalRecords,
                             style: item.style
                         }
-                    })                    
+                    })
                 }
             })
         }
 
         //Se usa en modulo de consolidacion 
-        service.getForImportation = function(query){
-            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response=>{
-                if(response.code==="0"){
+        service.getForImportation = function (query) {
+            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+                if (response.code === "0") {
                     throw response;
                 }
-                if(response.code==="1"){
+                if (response.code === "1") {
                     return JSON.parse(response.payload)[0]
                 }
             })
         }
 
-        
-        service.getDataForm = function(query){
-            return mainService.getData('get', url + 'GetDataForm?json=' + JSON.stringify(query), null, true).then(response=>{
-                if(response.code==="0"){
+
+        service.getDataForm = function (query) {
+            return mainService.getData('get', url + 'GetDataForm?json=' + JSON.stringify(query), null, true).then(response => {
+                if (response.code === "0") {
                     throw response;
                 }
 
-                if(response.code==="1"){
+                if (response.code === "1") {
                     let mainDataRepository = JSON.parse(response.payload);
                     let subFamiliaRepository = mainDataRepository[0];
                     let familiaRepository = mainDataRepository[1];
@@ -243,7 +243,7 @@
 
                     let tipoIvaRepository = mainDataRepository[12];
                     let tipoIceRepository = mainDataRepository[13];
-                    
+
                     return {
                         subFamilias: subFamiliaRepository,
                         familias: familiaRepository,
@@ -253,7 +253,7 @@
                         valoracionMetodos: metodoValoracionRepository,
                         tipoArticulos: tipoArticuloRepository,
                         tarifas: tarifaRepository,
-                        etiquetaActividades:etiquetaRepository,
+                        etiquetaActividades: etiquetaRepository,
                         movimientosStocks: movimientoRepository,
                         jsonPersmission: permisoAlmacenRepository,
                         decimal: decimalAlmacenRepository,
@@ -264,26 +264,17 @@
             })
         }
 
-        service.save = function(data){
-            return mainService.getData('post', url  + 'Insert/', data, true).then(response=>{
-                if(response.code==="0"){
-                    throw response;
-                }
-
-                if(response.code==="1"){
-                    console.log(response)
-                }
-            })
-
+        service.save = function (data) {
+            return mainService.getData('post', url + 'Post', { data: data }, true)
         }
 
-        service.update = function(id, data){
-            return mainService.getData('put', url + 'Update/' + id, data, true).then(response=>{
-                if(response.code==="0"){
+        service.update = function (id, data) {
+            return mainService.getData('put', url + 'Update/' + id, data, true).then(response => {
+                if (response.code === "0") {
                     throw response;
                 }
 
-                if(response.code==="1"){
+                if (response.code === "1") {
                     console.log(response)
                 }
             })
@@ -294,18 +285,18 @@
          * @param {json} query  { busqueda: "com", condicion: false, fraccionado: false}
          * @returns 
          */
-        service.search = function(query){
-            return mainService.getData('get', url + 'Search?json=' + JSON.stringify(query), null, true).then(response=>{
-                if(response.code==="0"){
+        service.search = function (query) {
+            return mainService.getData('get', url + 'Search?json=' + JSON.stringify(query), null, true).then(response => {
+                if (response.code === "0") {
                     throw response;
                 }
-                if(response.code==="1"){
+                if (response.code === "1") {
                     let articulos = JSON.parse(response.payload) || [];
 
-                    return articulos.map(item=>{
+                    return articulos.map(item => {
                         let priceSales = JSON.parse(item.priceSale) || [];
                         let warehouses = JSON.parse(item.warehouses) || [];
-                        
+
                         return {
                             codigo: item.codigo,
                             descripcion: item.descripcion,
@@ -318,7 +309,7 @@
                             style: item.style,
                             subFamilia: item.subFamilia,
                             fraccionado: item.fraccionado,
-                            priceSales: priceSales.map(item=>{
+                            priceSales: priceSales.map(item => {
                                 return {
                                     tarifa: item.tarifa,
                                     precio: item.precio,
@@ -326,42 +317,42 @@
                             }),
                             warehouses
                         }
-                    })                       
+                    })
                 }
             })
         }
 
-        service.findByEnterCode = function(objSearch) {
+        service.findByEnterCode = function (objSearch) {
             const query = {
                 bySearch: objSearch.textSearch,
                 code: objSearch.isSearchByCode,
                 tipo: 2
             }
             return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
-                if(response.code==="0"){
+                if (response.code === "0") {
                     throw response;
                 }
 
-                if(response.code==="1"){
+                if (response.code === "1") {
                     const dataRepository = JSON.parse(response.payload)[0][0]
                     return dataRepository;
                 }
             })
         }
 
-        service.findForPurchase = function(query){
-            return mainService.getData('get', url + 'FindForPurchase?json='+ JSON.stringify(query), null, true).then(response=>{
-                if(response.code==='0'){
+        service.findForPurchase = function (query) {
+            return mainService.getData('get', url + 'FindForPurchase?json=' + JSON.stringify(query), null, true).then(response => {
+                if (response.code === '0') {
                     throw response;
                 }
 
-                if(response.code==='1'){
+                if (response.code === '1') {
                     let dataRepository = JSON.parse(response.payload);
                     let dataArticulo = dataRepository[0][0];
-                    let medidas = dataRepository[1] || []; 
-                    let etiquetas = dataRepository[2] || [];               
+                    let medidas = dataRepository[1] || [];
+                    let etiquetas = dataRepository[2] || [];
                     let articuloMapper = {
-                        codIce:  dataArticulo.codIce,
+                        codIce: dataArticulo.codIce,
                         codImpuesto: dataArticulo.codImpuesto,
                         codigoArticulo: dataArticulo.codigoArticulo,
                         codigoAuxiliar: dataArticulo.codigoAuxiliar,
@@ -373,22 +364,22 @@
                         idArticulo: dataArticulo.idArticulo,
                         idTipoIva: dataArticulo.idTipoIva,
                         llevaInventario: dataArticulo.llevaInventario,
-                        precioSinSubsidio : dataArticulo.precioSinSubsidio,
+                        precioSinSubsidio: dataArticulo.precioSinSubsidio,
                         nombreTipoIva: dataArticulo.nombreTipoIva,
                         productoFraccionable: dataArticulo.productoFraccionable,
                         stock: dataArticulo.stock,
                         tarifa: dataArticulo.tarifa,
                         valorIce: dataArticulo.valorIce,
-                    }    
-                    
-                    let medidasMapper = medidas.map(item=>({
+                    }
+
+                    let medidasMapper = medidas.map(item => ({
                         idMedida: item.idMedida,
                         descripcion: item.descripcion,
                         precioCosto: item.precioCosto,
                         // tarifas: JSON.parse(item.tarifas)
                     }))
-                    
-                   
+
+
                     let etiquetasMapper = etiquetas.map(item => ({
                         idEtiqueta: item.idEtiqueta,
                         descripcion: item.descripcion,
@@ -399,36 +390,36 @@
                         articulo: articuloMapper,
                         medidas: medidasMapper,
                         etiquetas: etiquetasMapper
-                    }                        
+                    }
                 }
             })
         }
-        
+
         /**
          * 
          * @param {*} query {tipo: 6, idArticulo: 17, idBodega: 2}
          * @returns object
          */
-        service.findForSale = function(query){
+        service.findForSale = function (query) {
 
-            if(!query.hasOwnProperty('tipo')){
+            if (!query.hasOwnProperty('tipo')) {
                 query.tipo = 6;
                 // fS.sweetAlert('warning', 'Propiedad tipo no proporcionado - listar articulo')
                 // throw ''
             }
-            if(!query.hasOwnProperty('idArticulo')){
+            if (!query.hasOwnProperty('idArticulo')) {
                 fS.sweetAlert('warning', 'Propiedad idArticulo no proporcionado')
                 throw ''
             }
-            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response=>{
-                if(response.code==='0'){
+            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+                if (response.code === '0') {
                     throw response;
                 }
 
-                if(response.code==='1'){
-                   
-                    
-                    let dataRepository = JSON.parse(response.payload);                    
+                if (response.code === '1') {
+
+
+                    let dataRepository = JSON.parse(response.payload);
                     let dataMedida = []
                     let dataInfoAdicionales = []
 
@@ -443,14 +434,14 @@
                     // }
 
                     let dataArticulo = dataRepository[0][0];
-                    if(dataRepository[1]){
+                    if (dataRepository[1]) {
                         dataMedida = dataRepository[1];
                     }
-                    if(dataRepository[2]){
+                    if (dataRepository[2]) {
                         dataInfoAdicionales = dataRepository[2]
                     }
-                     
-                    let articuloMapper = {                        
+
+                    let articuloMapper = {
                         idArticulo: dataArticulo.idArticulo,
                         idTipoIva: dataArticulo.idTipoIva,
                         idMedida: dataArticulo.idMedida,
@@ -464,17 +455,17 @@
                         stock: dataArticulo.stock,
                         codIce: dataArticulo.codIce,
                         costoNeto: dataArticulo.costoNeto,
-                        precioSinSubsidio : dataArticulo.precioSinSubsidio,
+                        precioSinSubsidio: dataArticulo.precioSinSubsidio,
                         codigoPrincipal: dataArticulo.codigoPrincipal,
                         codigoAuxiliar: dataArticulo.codigoAuxiliar,
                         codImpuesto: dataArticulo.codImpuesto,
-                        codigoPorcentaje:dataArticulo.codigoPorcentaje,
+                        codigoPorcentaje: dataArticulo.codigoPorcentaje,
                         tarifa: dataArticulo.tarifa,
                         precioCosto: dataArticulo.precioCosto,
                         cantMinimaVentaPorMayor: dataArticulo.cantMinimaVentaPorMayor
                     }
-                    
-                    medidaMapper = dataMedida.map(item=>({
+
+                    medidaMapper = dataMedida.map(item => ({
                         idMedida: item.idMedida,
                         descripcion: item.descripcion,
                         precioCosto: item.precioCosto,
@@ -489,51 +480,51 @@
                         uniqueId: item.uniqueId,
                         estado: item.estado
                     }))
-                    
-                    return { 
+
+                    return {
                         articulo: articuloMapper,
                         medidas: medidaMapper,
                         datosAdicionalesArticulo: infoAdicionalMapper
-                    }                 
+                    }
                 }
             })
         }
 
 
-        service.checkNotificationStock = function(query){ 
-            if(!query.hasOwnProperty('idArticulo')){
+        service.checkNotificationStock = function (query) {
+            if (!query.hasOwnProperty('idArticulo')) {
                 fS.sweetAlert('warning', 'Propiedad idArticulo no proporcionado')
                 throw ''
             }
             query.tipo = 7;
-            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response=>{
-                if(response.code==='0'){
+            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+                if (response.code === '0') {
                     throw response;
                 }
-                if(response.code==='1'){
-                    
+                if (response.code === '1') {
+
                     const responseApi = JSON.parse(response.payload)[0][0];
                     return responseApi;
 
                 }
-                
+
             })
         }
 
 
         //Se usa Recepcion documentos 
         service.getId = (id) => {
-           return mainService.getData("GET", url + "GetId/" + id, null, true).then(
-                 response => {
-                     if (response.code == "0") {
-                         throw response
-                     }
-                     if (response.code == "1") {
-                         return response
-                     }
-                 })
-         }
-        
+            return mainService.getData("GET", url + "GetId/" + id, null, true).then(
+                response => {
+                    if (response.code == "0") {
+                        throw response
+                    }
+                    if (response.code == "1") {
+                        return response
+                    }
+                })
+        }
+
         return service;
 
     }])
