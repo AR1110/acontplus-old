@@ -81,7 +81,7 @@ export default function Pos() {
                         Items
                     </Paper>
                 </Box>
-                <Box gridColumn="span 8">
+                <Box gridColumn={{ xs: 'span 12', sm: 'span 8' }}>
                     <Grid container spacing={{ xs: 1, md: 1 }} columns={{ xs: 12, sm: 12, md: 12 }}>
 
                         {loading ?
@@ -89,7 +89,7 @@ export default function Pos() {
                             :
                             (
                                 products.map((product, index) => (
-                                    <Grid item xs={3} sm={3} md={3} key={index}>
+                                    <Grid item xs={12} sm={6} md={3} key={index}>
                                         <ProductCard product={product} />
                                     </Grid>
                                 ))
