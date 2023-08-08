@@ -2,7 +2,7 @@ import { ChangeEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./LoginPage.css";
 import { SnackbarUtility } from "@/core/utilities";
-import { AuthService as AuthSvc } from "@/core/services/authService";
+import { AuthService as AuthSvc } from "@/core/services/auth.service";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "@/redux/slices/user.slice";
 import { DataLogin, PrivateRoutes } from "@/core/models";
