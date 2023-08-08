@@ -7,14 +7,17 @@
 
 <ul>
   {#each items as item}
-    <li class={activeTabValue === item.value ? 'active' : ''}>
+    <li class={activeTabValue === item.value ? "active" : ""}>
       <span
         role="tab"
         on:click={handleClick(item.value)}
         on:keydown={handleKeyDowm(item.value)}
-        tabindex="0">{item.label}
-      </span
+        tabindex="0"
       >
+        {#if item.icon}
+          <i class={item.icon} />
+        {/if}{item.label}
+      </span>
     </li>
   {/each}
 </ul>
