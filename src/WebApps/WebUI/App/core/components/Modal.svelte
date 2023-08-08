@@ -22,9 +22,10 @@
     role="dialog"
     aria-labelledby="sampleModalLabel"
     aria-hidden={false}
->
+    in:fade={{ duration: 300 }}
+    out:fade={{ duration: 300, easing: quintOut }}>
     <div
-        class="modal-dialog"
+        class="modal-dialog modal-dialog-centered"
         role="document"
         in:fly={{ y: -50, duration: 300 }}
         out:fly={{ y: -50, duration: 300, easing: quintOut }}

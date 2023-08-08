@@ -6,7 +6,7 @@ import ConfigEmail from "./lib/ConfigEmail/ConfigEmail.svelte"
 import MotivoDiscrepancia from "./lib/StockFisico/MotivoDiscrepancia.svelte";
 import Stock from "./lib/StockFisico/index.svelte"
 import Subcategoria from "./lib/Contabilidad/Subcategoria/index.svelte"
-import ProductionArea from "$routes/ProductionArea/page.svelte"
+import Infrastructure from "$restaurant/Infrastructure/page.svelte"
 // import App from "./App.svelte"
 // const app = new App({
 //     target: document.getElementById('app'),
@@ -51,7 +51,7 @@ import ProductionArea from "$routes/ProductionArea/page.svelte"
 // export default subcategoria
 
 
-const pa = new ProductionArea({
-    target: document.getElementById('restaurant-production-areas'),
+const infrastructure = new Infrastructure({
+    target: document.getElementById('restaurant-infrastructure'),
 })
-export default pa
+export default infrastructure
