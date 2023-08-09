@@ -3,7 +3,7 @@
 	import TabsInfra from "./Components/TabsInfra.svelte";
 </script>
 
-<Breadcrumbs title={"Infra"} action={""} openNew={null} />
+<Breadcrumbs title={"Infraestructura"} action={""} openNew={null} />
 <div class="card">
 	<div class="card-body">
 		<TabsInfra />

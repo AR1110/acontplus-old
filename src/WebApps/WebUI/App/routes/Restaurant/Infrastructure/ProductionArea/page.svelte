@@ -1,25 +1,40 @@
 <script lang="ts">
-  import Breadcrumbs from '$core/components/Breadcrumbs.svelte';
-  import Add from './components/add.svelte';
-  import List from './components/list.svelte';
-  let title = 'Areas de producción';
+	import Breadcrumbs from "$core/components/Breadcrumbs.svelte";
+	import { onMount } from "svelte";
+	import Add from "./components/add.svelte";
+	import List from "./components/list.svelte";
+	import { productionAreaService } from "$core/services/restaurant/production-area-service";
 
-  // Modal management
-  let isNew = false;
-  const openNew = () => {
-    if (openNew) {
-      isNew = true;
-    }
-  };
+	let title = "Areas de producción";
+	let productionAreas = [];
+	let isNew = false;
 
-  const closeModal = () => {
-    isNew = false;
-    setTimeout(() => {
-      window.location.reload;
-    }, 500);
-  };
+	onMount(() => {
+		get();
+	});
+
+	const get = () => {
+		productionAreaService.get().then((response) => {
+			if (response) {
+				productionAreas = response.data;
+			}
+		});
+	};
+
+	const openNew = () => {
+		if (openNew) {
+			isNew = true;
+		}
+	};
+
+	const closeModal = () => {
+		isNew = false;
+		setTimeout(() => {
+			window.location.reload;
+		}, 500);
+	};
 </script>
 
-<Breadcrumbs {title} action={'nueva'} openNew={() => openNew()} />
-<List />
-<Add openNew={isNew} modalClosed={() => closeModal()} />
+<Breadcrumbs {title} action={"nueva"} openNew={() => openNew()} />
+<List items={productionAreas} />
+<Add openNew={isNew} modalClosed={() => closeModal()} edit />
