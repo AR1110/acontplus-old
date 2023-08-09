@@ -1,6 +1,6 @@
 
 import { ErrorBoundary } from "@/core/utilities";
-import { Box, Grid, Paper } from "@mui/material";
+import { Box, Button, Grid, Paper } from "@mui/material";
 import { SyntheticEvent, useState } from "react";
 import CategoryTab from "./components/CategoryTab";
 import CustomerSearch from "./components/CustomerSearch";
@@ -8,8 +8,10 @@ import { CategoryReadDto, ProductReadDto } from "@/core/models";
 import { useAsync, useFetchAndLoad } from "@/hooks";
 import { ProductService as productSvc } from "@/core/services";
 import ProductSkeleton from "./components/ProductSkeleton";
-import ProductCard from "./components/ProductCard"; 
+import ProductCard from "./components/ProductCard";
 import { productReadAdapter } from "@/core/adapters";
+import ShoppingCart from "./components/ShoppingCart";
+import { MonetizationOnIcon, RestartAltIcon } from "@/core/components";
 
 
 interface PosState {
@@ -29,7 +31,7 @@ export default function Pos() {
     //Fetch products 
     const getProductsApi = async () => await callEndpoint(productSvc.getAll());
     const productAdapter = (response: any) => {
-        
+
         const products = productReadAdapter(JSON.parse(response.payload)[0]);
         console.log(products);
         setProducts(products);
@@ -55,7 +57,7 @@ export default function Pos() {
         <ErrorBoundary fallBackComponent={<>Error!</>}>
 
             <Box display="grid" gridTemplateColumns="repeat(12, 1fr)" gap={2}>
-                <Box gridColumn={{ xs: 'span 12', sm: 'span 8' }}>
+                <Box gridColumn={{ xs: 'span 12', sm: 'span 7' }}>
                     <Paper sx={
                         {
                             borderRadius: '16px',
@@ -63,8 +65,41 @@ export default function Pos() {
                     } elevation={3}>
                         <CategoryTab />
                     </Paper>
+
+
+                    <Box sx={{ pt: 2 }}>
+                        <Grid container spacing={{ xs: 1, md: 1 }} columns={{ xs: 12, sm: 12, md: 12 }} sx={{
+                            pr:1,                        
+                            height: "460px", // Ajusta la altura según tus necesidades
+                            overflow: 'auto', // Agrega el scroll si el contenido excede la altura
+
+                            // Consulta de medios para tamaños de pantalla más pequeños
+                            '@media (max-width: 600px)': {
+                                height: '400px', // Altura reducida para pantallas más pequeñas
+                            },
+                        }}>
+
+                            {loading ?
+                                (<ProductSkeleton />)
+                                :
+                                (
+                                    products.map((product, index) => (
+                                        <Grid
+                                            item xs={12}
+                                            sm={6}
+                                            md={3}
+                                            key={index}
+                                             
+                                        >
+                                            <ProductCard product={product} />
+                                        </Grid>
+                                    ))
+                                )
+                            }
+                        </Grid>
+                    </Box>
                 </Box>
-                <Box gridColumn={{ xs: 'span 12', sm: 'span 4' }}>
+                <Box gridColumn={{ xs: 'span 12', sm: 'span 5' }}>
                     <CustomerSearch />
 
                     <Paper sx={
@@ -78,26 +113,25 @@ export default function Pos() {
                             bgcolor: 'background.paper'
                         }
                     } elevation={3} >
-                        Items
+                        <ShoppingCart />
+                        <Box sx={{ flexGrow: 1, p: 2 }}>
+                            <Grid container spacing={2} columns={16}>
+                                <Grid item xs={8}>
+                                    <Button color="error" variant="contained" size="large" fullWidth endIcon={<RestartAltIcon />}>
+                                        Limpiar
+                                    </Button>
+                                </Grid>
+                                <Grid item xs={8}>
+                                <Button color="success" variant="contained" size="large" fullWidth endIcon={<MonetizationOnIcon />}>
+                                Pagar ahora
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </Box>
                     </Paper>
                 </Box>
-                <Box gridColumn={{ xs: 'span 12', sm: 'span 8' }}>
-                    <Grid container spacing={{ xs: 1, md: 1 }} columns={{ xs: 12, sm: 12, md: 12 }}>
 
-                        {loading ?
-                            (<ProductSkeleton />)
-                            :
-                            (
-                                products.map((product, index) => (
-                                    <Grid item xs={12} sm={6} md={3} key={index}>
-                                        <ProductCard product={product} />
-                                    </Grid>
-                                ))
-                            )
-                        }
-                    </Grid>
-                </Box>
-            </Box> 
+            </Box>
 
         </ErrorBoundary>
     );

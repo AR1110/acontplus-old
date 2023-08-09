@@ -1,9 +1,9 @@
- 
+
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import { Badge, CardActionArea } from '@mui/material';
+import { Badge, CardActionArea, Grid } from '@mui/material';
 import brand_img from '/assets/images/brand_logo.png';
 import soundBeep from '/sound/beep-29.mp3';
 import { ProductReadDto } from '@/core/models';
@@ -12,7 +12,7 @@ type ProductCardProps = {
   product: ProductReadDto
 }
 
-const customCard =  {
+const customCard = {
   display: 'flex',
   flexDirection: 'column',
   height: '100%',
@@ -20,11 +20,15 @@ const customCard =  {
   borderColor: '#6571ff !important',
   border: '1px solid',
 }
-const cardContent =  {
+const cardContent = {
   flexGrow: 1,
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
+  paddingLeft: "0.5rem!important",
+  paddingRight: "0.5rem!important",
+  paddingTop: "0.5rem!important",
+  paddingBottom: "0.25rem!important"
 }
 
 const flexRow = {
@@ -33,14 +37,14 @@ const flexRow = {
   alignItems: 'center',
 }
 
-export default function ProductCard({product}: ProductCardProps) {
+export default function ProductCard({ product }: ProductCardProps) {
 
 
-  const beep = ()=> {
+  const beep = () => {
     playSound(soundBeep);
   }
 
-  const clearSound = ()=> {
+  const clearSound = () => {
     playSound("sound/button-21.mp3");
   }
 
@@ -51,16 +55,26 @@ export default function ProductCard({product}: ProductCardProps) {
     sound.play();
     sound.onended = () => {
       // eslint-disable-next-line no-delete-var
-       
+
     };
   }
 
   return (
-    <Card sx={customCard}>
+    <Card sx={
+      {
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        borderRadius: "16px",
+        borderColor: product.code=='14P5'? '#6571ff !important': '' ,
+
+       border: product.code=='14P5'? '1px solid': '',
+      }
+    }>
       <CardActionArea onClick={beep}>
         <CardMedia
           component="img"
-          height="140"
+          height="120"
           image={brand_img}
           alt="green iguana"
         />
@@ -69,34 +83,37 @@ export default function ProductCard({product}: ProductCardProps) {
             {product.description}
           </Typography>          
         </CardContent> */}
-        <CardContent style ={{
-           flexGrow: 1,
-           display: 'flex',
-           flexDirection: 'column',
-           justifyContent: 'space-between',
-           paddingLeft: "0.5rem!important",
-          paddingRight: "0.5rem!important",
-          paddingTop: "0.5rem!important",
-          paddingBottom: "0.25rem!important"
-        }}>
-          {/* <Typography variant="body2" color="text.secondary">
-            {product.code}
+        <CardContent> 
+
+        <Grid container alignItems="center">
+          <Grid item xs>
+            <Typography gutterBottom variant="subtitle2" component="div">
+              {product.code}
+            </Typography>
+            
+          </Grid>
+          <Grid item>
+            <Typography gutterBottom variant="body2" component="div">
+            <Badge color="primary" badgeContent={`$${product.unitPrice}`} />
+            </Typography>
+          </Grid>
+        </Grid>
+        <Typography color="text.secondary" variant="caption">
+          {product.description}
+        </Typography>
+
+{/* 
+          <Typography variant="subtitle2" gutterBottom>
+            {product.description}
           </Typography>
-          <Typography variant="body2" color="text.secondary">            
-            <Badge color="primary" badgeContent={`$${product.unitPrice}`}/>                          
-          </Typography> */}
-          
-        <Typography variant="subtitle2" gutterBottom>
-        {product.description}
-      </Typography>
-        <div style={flexRow}>
-          <Typography variant="caption">{product.code}</Typography>
-          <Typography variant="body2">
-            <Badge color="primary" badgeContent={`$${product.unitPrice}`}/>  
-          </Typography>
-        </div>
+          <div style={flexRow}>
+            <Typography variant="caption">{product.code}</Typography>
+            <Typography variant="body2">
+              <Badge color="primary" badgeContent={`$${product.unitPrice}`} />
+            </Typography>
+          </div> */}
         </CardContent>
-         
+
       </CardActionArea>
     </Card>
   );

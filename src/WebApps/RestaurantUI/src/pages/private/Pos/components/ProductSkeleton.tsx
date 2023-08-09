@@ -6,9 +6,9 @@ import Skeleton from '@mui/material/Skeleton';
 export default function ProductSkeleton() { 
   return (
     <Grid container wrap="nowrap">
-      {Array.from(new Array(4)).map((item, index) => (
+      {Array.from(new Array(4)).map((_, index) => (
         <Box key={index} sx={{ width: 210, marginRight: 0.5, my: 5 }}>
-            <Skeleton variant="rectangular" width={210} height={118} />
+            <Skeleton variant="rectangular"   height={118} />
             <Box sx={{ pt: 0.5 }}>
               <Skeleton />
               <Skeleton width="60%" />

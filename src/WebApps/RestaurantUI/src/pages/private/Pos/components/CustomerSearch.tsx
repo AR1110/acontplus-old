@@ -8,7 +8,15 @@ export default function CustomerSearch() {
   return (
     <Paper
       component="form"
-      sx={{ p: '2px 4px', display: 'flex', alignItems: 'center',  borderRadius: '16px' }}
+      sx={
+        { 
+          p: '2px 4px', 
+          display: 'flex', 
+          alignItems: 'center',  
+          borderRadius: '16px',  
+        }
+      }
+      
     >
       <IconButton sx={{ p: '10px' }} aria-label="menu" color="primary">
         <PersonOutlineIcon />
