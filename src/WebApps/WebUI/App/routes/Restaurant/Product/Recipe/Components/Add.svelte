@@ -7,15 +7,15 @@
     import Grid from "$core/components/Grid.svelte";
     export let openNew;
     export let modalClosed;
-
-    let data = {} as Recipe;
-
-    onMount(() => {});
-
     const onModalClose = () => {
         openNew = false;
         modalClosed();
     };
+    let data = {} as Recipe;
+
+    onMount(() => {});
+
+   
 
     let ingredientsFounded = [];
     let ingredient = {

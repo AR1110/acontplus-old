@@ -42,6 +42,7 @@
     "@rollup/plugin-typescript": "^11.1.2",
     "svelte-french-toast": "^1.1.0",
     "svelte-input-mask": "^1.1.0",
+    "svelte-search": "^2.0.1",
     "tabulator-tables": "^5.5.0"
   }
 }
