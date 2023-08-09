@@ -118,11 +118,13 @@ BEGIN
 			
 			SET @params = '@idEntidad    INT									
 						  ,@idSubFamilia INT
+						  ,@idBodega     INT
 						  ,@byOrder      VARCHAR(10)									
 						  ,@byOrderCampo VARCHAR(50)
 						  ,@rucProveedor VARCHAR(25)
 						  ,@fechaInicio DATETIME
-						  ,@fechaFin DATETIME'
+						  ,@fechaFin DATETIME
+						  ,@ubicacion VARCHAR(300)'
 
 			SET @sql = 'SELECT ar.idArticulo
 							  ,ar.descripcion
@@ -140,6 +142,7 @@ BEGIN
 				,@checkboxStock       = checkboxStockFiltro      ,@byStock      = byStock
 				,@chkProveedor        = chkProveedor             ,@rucProveedor = numeroIdentificacion
 				,@checkBoxFecha       = ckFechaCaducidad         ,@fechaInicio  = fechaInicio ,@fechaFin = fechaFin
+				,@chkUbicacion        = chkUbicacion             ,@idBodega     = idBodega    ,@ubicacion = ubicacion
 				,@byOrder             = byOrder			 
 				,@byOrderCampo        = byOrderCampo		
 			FROM OPENJSON(@json)
@@ -147,7 +150,7 @@ BEGIN
 				  ,checkboxSubFamiliaFiltro     BIT '$.checkboxSubFamiliaFiltro',bySubFamilia                 INT '$.bySubFamilia'	
 				  ,checkboxStockFiltro          BIT '$.checkboxStockFiltro'     ,byStock                      INT '$.byStock'	
 				  ,chkProveedor                 BIT '$.chkProveedor'            ,numeroIdentificacion VARCHAR(25) '$.numeroIdentificacion'
-				  ,chkUbicacion                 BIT '$.chkUbicacion'            ,idBodega                     INT '$.idBodega'            ,ubicacion VARCHAR(100) '$.ubicacion'
+				  ,chkUbicacion                 BIT '$.chkUbicacion'            ,idBodega                     INT '$.idBodega'            ,ubicacion VARCHAR(100) '$.textUbicacion'
 				  ,ckFechaCaducidad             BIT '$.ckFechaCaducidad'        ,fechaInicio             DATETIME '$.fechaInicio'         ,fechaFin      DATETIME '$.fechaFin'
 				  ,byOrder              VARCHAR(10) '$.byOrder'
 				  ,byOrderCampo         VARCHAR(50) '$.byOrderCampo'	
@@ -160,7 +163,7 @@ BEGIN
 
 			IF @chkUbicacion = 1
 				BEGIN
-					SET @sql = @sql + 'AND ar.idArticulo IN (SELECT sa.idArticulo FROM v_Articulo_Stock sa WITH (NOLOCK) WHERE sa.idBodega = @idBodega AND sa.ubicacion LIKE ''%'' + @ubicacion + ''%'' ) '
+					SET @sql = @sql + 'AND ar.idArticulo IN (SELECT sa.idArticulo FROM Inventario.v_Articulo_Stock sa WITH (NOLOCK) WHERE sa.idBodega = @idBodega AND sa.ubicacion LIKE @ubicacion ) '
 				END 
 
 			IF @checkBoxFecha = 1
@@ -206,11 +209,13 @@ BEGIN
 							  ,@params
 							  ,@idEntidad    = @idEntidad
 							  ,@idSubFamilia = @idSubFamilia
+							  ,@idBodega     = @idBodega
 							  ,@fechaInicio  = @fechaInicio
 							  ,@fechaFin     = @fechaFin
 							  ,@byOrder      = @byOrder
 							  ,@byOrderCampo = @byOrderCampo
 							  ,@rucProveedor = @rucProveedor
+							  ,@ubicacion    = @ubicacion
 
 			RETURN 
 		END 
@@ -221,11 +226,13 @@ BEGIN
 			
 			SET @params = '@idEntidad    INT									
 						  ,@idSubFamilia INT
+						  ,@idBodega     INT
 						  ,@byOrder      VARCHAR(10)									
 						  ,@byOrderCampo VARCHAR(50)
 						  ,@rucProveedor VARCHAR(25)
 						  ,@fechaInicio DATETIME
-						  ,@fechaFin DATETIME'
+						  ,@fechaFin DATETIME
+						  ,@ubicacion VARCHAR(300)'
 
 			SET @sql = 'SELECT ar.idArticulo
 							  ,ar.descripcion
@@ -246,7 +253,8 @@ BEGIN
 				,@checkboxSubFamilia  = checkboxSubFamiliaFiltro ,@idSubFamilia = bySubFamilia
 				,@checkboxStock       = checkboxStockFiltro      ,@byStock      = byStock
 				,@chkProveedor        = chkProveedor             ,@rucProveedor = numeroIdentificacion
-				,@checkBoxFecha       = ckFechaCaducidad         ,@fechaInicio  = fechaInicio ,@fechaFin = fechaFin
+				,@checkBoxFecha       = ckFechaCaducidad         ,@fechaInicio  = fechaInicio ,@fechaFin  = fechaFin
+				,@chkUbicacion        = chkUbicacion             ,@idBodega     = idBodega    ,@ubicacion = ubicacion
 				,@byOrder             = byOrder			 
 				,@byOrderCampo        = byOrderCampo		
 			FROM OPENJSON(@json)
@@ -254,7 +262,7 @@ BEGIN
 				  ,checkboxSubFamiliaFiltro     BIT '$.checkboxSubFamiliaFiltro',bySubFamilia                 INT '$.bySubFamilia'	
 				  ,checkboxStockFiltro          BIT '$.checkboxStockFiltro'     ,byStock                      INT '$.byStock'	
 				  ,chkProveedor                 BIT '$.chkProveedor'            ,numeroIdentificacion VARCHAR(25) '$.numeroIdentificacion'
-				  ,chkUbicacion                 BIT '$.chkUbicacion'            ,idBodega                     INT '$.idBodega'            ,ubicacion VARCHAR(100) '$.ubicacion'
+				  ,chkUbicacion                 BIT '$.chkUbicacion'            ,idBodega                     INT '$.idBodega'            ,ubicacion VARCHAR(100) '$.textUbicacion'
 				  ,ckFechaCaducidad             BIT '$.ckFechaCaducidad'        ,fechaInicio             DATETIME '$.fechaInicio'         ,fechaFin      DATETIME '$.fechaFin'
 				  ,byOrder              VARCHAR(10) '$.byOrder'
 				  ,byOrderCampo         VARCHAR(50) '$.byOrderCampo'	
@@ -267,7 +275,7 @@ BEGIN
 
 			IF @chkUbicacion = 1
 				BEGIN
-					SET @sql = @sql + 'AND ar.idArticulo IN (SELECT sa.idArticulo FROM v_Articulo_Stock sa WITH (NOLOCK) WHERE sa.idBodega = @idBodega AND sa.ubicacion LIKE ''%'' + @ubicacion + ''%'' ) '
+					SET @sql = @sql + 'AND ar.idArticulo IN (SELECT sa.idArticulo FROM Inventario.v_Articulo_Stock sa WITH (NOLOCK) WHERE sa.idBodega = @idBodega AND sa.ubicacion LIKE @ubicacion  ) '
 				END 
 
 			IF @checkBoxFecha = 1
@@ -312,11 +320,13 @@ BEGIN
 							  ,@params
 							  ,@idEntidad    = @idEntidad
 							  ,@idSubFamilia = @idSubFamilia
+							  ,@idBodega     = @idBodega
 							  ,@fechaInicio  = @fechaInicio
 							  ,@fechaFin     = @fechaFin
 							  ,@byOrder      = @byOrder
 							  ,@byOrderCampo = @byOrderCampo
 							  ,@rucProveedor = @rucProveedor
+							  ,@ubicacion    = @ubicacion
 
 			RETURN 
 		END
