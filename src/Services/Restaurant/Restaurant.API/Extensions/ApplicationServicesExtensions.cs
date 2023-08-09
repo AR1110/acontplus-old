@@ -21,13 +21,12 @@ namespace Restaurant.API.Extensions
             //    optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultConnection"), builder => builder.MigrationsAssembly("Restaurant.Infrastructure"));
             //    return new RestaurantContext(optionsBuilder.Options);
             //});
-            services.AddScoped<IADORepository, ADORepository>();
-            //services.AddScoped<RestaurantContext, RestaurantContext>();
+            services.AddScoped<IADORepository, ADORepository>(); 
             services.AddScoped<IRecipe, RecipeService>();
-            services.AddScoped<IAppTableService, AppTableService>();
-            //services.AddScoped<DbAccess, DbAccess>();
+            services.AddScoped<IAppTableService, AppTableService>(); 
             services.AddScoped<IRoomService, RoomService>();
             services.AddScoped<IFloorService, FloorService>();
+            services.AddScoped<IMenuService, MenuService>();
             services.AddScoped<IIngredientService, IngredientService>();
 
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
