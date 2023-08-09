@@ -214,6 +214,7 @@
                 fechaInicio : fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
                 fechaFin : fS.formatDateTimeZone($scope.dataSearch.fechaFin),
                 chkUbicacion: $scope.dataSearch.chkUbicacion,
+                idBodega  : $scope.dataSearch.idBodega,
                 textUbicacion: $scope.dataSearch.textUbicacion,
                 bySubFamilia: $scope.dataSearch.bySubFamilia,
                 byOrderCampo: $scope.dataSearch.byOrderCampo,
