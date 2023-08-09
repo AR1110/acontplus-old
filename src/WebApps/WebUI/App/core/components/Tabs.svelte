@@ -21,7 +21,7 @@
         ><span class="hidden-sm-up">
           {#if item.icon}
             <i class={item.icon} />
-          {/if}{item.label}</span
+          {/if}</span
         >
         <span class="hidden-xs-down">{item.label}</span></a
       >
