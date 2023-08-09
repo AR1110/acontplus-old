@@ -167,24 +167,24 @@ function MainLayout() {
             <Outlet />
             </Box> */}
             <Box
-        component="main"
-        sx={{
-          backgroundColor: (theme) =>
-            theme.palette.mode === "light"
-              ? theme.palette.grey[100]
-              : theme.palette.grey[900],
-          flexGrow: 1,
-          height: "100vh",
-          overflow: "auto",
-        }}
-      >
-        <Toolbar />
-        <Container maxWidth="xl" sx={{ mt: 2, mb: 2 }}>
-          <Grid container spacing={3}>
-            <Outlet />
-          </Grid>
-        </Container>
-      </Box>
+                component="main"
+                sx={{
+                    backgroundColor: (theme) =>
+                        theme.palette.mode === "light"
+                            ? theme.palette.grey[100]
+                            : theme.palette.grey[900],
+                    flexGrow: 1,
+                    height: "100vh",
+                    overflow: "auto",
+                    p: 3
+                }}
+            >
+                <Toolbar />
+                
+                        <Outlet />
+                     
+            </Box>
+            
         </Box>
     );
 }
