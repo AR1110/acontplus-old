@@ -40,8 +40,14 @@
 </ul>
 {#each items as item}
   {#if activeTabValue == item.value}
-    <div class="box">
-      <svelte:component this={item.component} />
+    <div class="tab-content">
+      <div
+        class="tab-pane {activeTabValue === item.value ? 'active' : ''} p-10"
+        id="tab-pane-{item.value}"
+        role="tabpanel"
+      >
+        <svelte:component this={item.component} />
+      </div>
     </div>
   {/if}
 {/each}
