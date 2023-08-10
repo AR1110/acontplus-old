@@ -3,7 +3,14 @@
 	import toast from "$core/utils/toast";
 	import { onMount } from "svelte";
 	import Swal from "sweetalert2";
+  import Add from "./add.svelte";
+  import type { Floor } from "$core/interfaces/restaurant/floor";
 	let floors = [];
+
+  let edit = {} as Floor;
+
+  // In component
+  let isNew = false;
 
 	onMount(() => {
 		getFloors();
@@ -23,9 +30,15 @@
 
 	const openNew = (data) => {
 		if (openNew) {
-			//isNew = true;
+      edit = data;
+			isNew = true;
 		}
 	};
+
+  const closeModal = () => {
+    isNew = false;
+    reloadList();
+  };
 
 	// Delete production area
 	const remove = (id) => {
@@ -115,3 +128,4 @@
 		{/if}
 	</div>
 </div>
+<Add openNew={isNew} modalClosed={() => closeModal()} data={edit} />

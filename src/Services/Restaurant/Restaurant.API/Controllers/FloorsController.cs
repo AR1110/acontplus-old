@@ -65,7 +65,6 @@ namespace Restaurant.API.Controllers
                 _context.Entry(floor).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
                 return Ok("Actualizado exitosamente");
-
             }
             catch (Exception ex)
             {
@@ -110,7 +109,7 @@ namespace Restaurant.API.Controllers
 
         private bool FloorExistsCode(string code, string codEstab)
         {
-            return _context.Floors.Any(e => e.Code == code && e.CodEstab == codEstab);
+            return _context.Floors.Any(e => e.Code == code && e.CodEstab != codEstab);
         }
     }
 }
