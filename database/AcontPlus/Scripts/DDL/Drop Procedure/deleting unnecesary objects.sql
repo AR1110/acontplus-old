@@ -416,3 +416,67 @@ GO
 
 DROP PROCEDURE if exists Almacen.Articulo_Update
 GO
+
+-- Alexis Ramirez || fecha 8/8/2023 AL 8/8/2023
+
+DROP PROCEDURE IF EXISTS [dbo].[aspEntidadInsert] 
+GO 
+DROP PROCEDURE IF EXISTS [Config].[GestionGeneral_Get]
+GO
+DROP PROCEDURE IF EXISTS [dbo].[ASPFacturaCxCGetIdPay]
+GO 
+DROP PROCEDURE IF EXISTS [dbo].[ASPAsigBodegaGetByAsig]
+GO
+DROP PROCEDURE IF EXISTS [dbo].[ASPAsigBodegaGetId]
+GO 
+--
+DROP PROCEDURE IF EXISTS [dbo].[ASPAsignacionInsert]
+GO
+DROP PROCEDURE IF EXISTS [dbo].[ASPGuiaRemisionReport]
+GO 
+DROP PROCEDURE IF EXISTS [Config].[Sri_Get]
+GO 
+DROP PROCEDURE IF EXISTS [Config].[Sri_Update]
+GO 
+DROP PROCEDURE IF EXISTS [dbo].[ASPRetencionCompraReport]
+GO 
+--
+DROP PROCEDURE IF EXISTS [Ingresos].[CompronteIngreso_Report]
+GO 
+DROP PROCEDURE IF EXISTS [Almacen].[GestionGeneral_Get]
+GO 
+DROP PROCEDURE IF EXISTS [dbo].[ASPAsigPtoEmisionGetByAsig]
+GO 
+DROP PROCEDURE IF EXISTS [dbo].[ASPAsigPtoEmisionGetId]
+GO 
+DROP PROCEDURE IF EXISTS [dbo].[ASPEstadoFinacieroDv]
+GO 
+--
+DROP PROCEDURE IF EXISTS [dbo].[ASPEstadoFinacieroDv]
+GO 
+DROP PROCEDURE IF EXISTS [dbo].[ASPSucursalByAccess]
+GO 
+DROP PROCEDURE IF EXISTS [dbo].[ASPSucursalByEntidad]
+GO 
+DROP PROCEDURE IF EXISTS [dbo].[ASPSucursalByRolGet]
+GO 
+DROP PROCEDURE IF EXISTS [dbo].[ASPSucursalOption]
+GO 
+--
+DROP PROCEDURE IF EXISTS [dbo].[DeleteAsync]
+GO 
+DROP PROCEDURE IF EXISTS [dbo].[ASPSucursalOption]
+GO 
+DROP PROCEDURE IF EXISTS [App].[aspEntidad_GetId]
+GO 
+DROP PROCEDURE IF EXISTS [dbo].[ASPDocumentoLoteGet]
+GO 
+DROP PROCEDURE IF EXISTS [dbo].[ASPDocumentoLoteInsert]
+GO 
+--
+DROP PROCEDURE IF EXISTS [dbo].[ASPPuntoEmisionByRolGet]
+GO
+DROP PROCEDURE IF EXISTS [dbo].[ASPComprobanteNoAutorizadoInsert]
+GO
+DROP PROCEDURE IF EXISTS [dbo].[ASPComprobanteAutorizadoInsert]
+GO
