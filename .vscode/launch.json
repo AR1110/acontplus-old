@@ -194,6 +194,27 @@
             "justMyCode": false,
         },
         {
+            "name": ".NET Core Launch (Ventas)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Services/Ventas/ApiVentas/bin/Debug/net6.0/ApiVentas.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/Services/Ventas/ApiVentas",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            },
+            "justMyCode": false,
+        },
+        {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach"
@@ -223,7 +244,8 @@
                 ".NET Core Launch (Inventario)",
                 ".NET Core Launch (Restaurant)",
                 ".NET Core Launch (FactElect)",
-                ".NET Core Launch (Reports)"
+                ".NET Core Launch (Reports)",
+                ".NET Core Launch (Ventas)"
             ],
             "stopAll": true
         }
