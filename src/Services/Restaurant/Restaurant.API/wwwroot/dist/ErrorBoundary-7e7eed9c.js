@@ -1,1 +1,0 @@
-import{r as e,j as t}from"./index-6be2ba8b.js";class a extends e.Component{constructor(r){super(r),this.state={hasError:!1}}componentDidCatch(r,o){console.log(r,o)}static getDerivedStateFromError(r){return console.log(r),{hasError:!0}}render(){return this.state.hasError?this.props.fallBackComponent:t.jsx(t.Fragment,{children:this.props.children})}}export{a as E};

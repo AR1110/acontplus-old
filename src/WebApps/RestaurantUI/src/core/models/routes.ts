@@ -5,7 +5,8 @@ const PublicRoutes = {
 const PrivateRoutes = {
   PRIVATE: "private", 
   DASHBOARD: "Dashboard",
-  POS: "Pos"
+  SALE: "Sale",
+  ORDER: 'Order'
  
 };
 

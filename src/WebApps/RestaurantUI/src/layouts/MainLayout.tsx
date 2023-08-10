@@ -13,13 +13,15 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import CssBaseline from '@mui/material/CssBaseline';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { Grid } from '@mui/material';
+import { PrivateRoutes } from '@/core/models';
 
 const pages = ['Pedidos'];
 const settings = ['Sign out'];
 
 function MainLayout() {
+    const navigate = useNavigate();
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
@@ -31,6 +33,8 @@ function MainLayout() {
     };
 
     const handleCloseNavMenu = () => {
+        
+        navigate(`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.ORDER}`);
         setAnchorElNav(null);
     };
 
