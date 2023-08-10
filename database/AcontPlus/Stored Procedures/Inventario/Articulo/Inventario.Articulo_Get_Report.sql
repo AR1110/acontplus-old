@@ -173,7 +173,7 @@ BEGIN
 
 			IF @checkBoxSubFamilia = 1
 				BEGIN
-					SET @sql = @sql + 'AND ar.idSubFamilia = @bySubFamilia '
+					SET @sql = @sql + 'AND ar.idSubFamilia = @idSubFamilia '
 				END
 
 			IF @checkBoxStock = 1 AND @byStock = 1 
@@ -285,7 +285,7 @@ BEGIN
 
 			IF @checkboxSubFamilia = 1
 				BEGIN
-					SET @sql = @sql + ' AND ar.idSubFamilia = @bySubFamilia '
+					SET @sql = @sql + ' AND ar.idSubFamilia = @idSubFamilia '
 				END
 		
 			--Articulo con stock
