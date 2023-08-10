@@ -1,24 +1,68 @@
 ﻿<script lang="ts">
+	import type { Room } from "$core/interfaces/restaurant/room";
 	import { roomService } from "$core/services/restaurant/room-service";
-	import { onMount } from "svelte";
 	import toast from "$core/utils/toast";
+	import { onMount } from "svelte";
+	import Swal from "sweetalert2";
+	import Add from "./add.svelte";
 
+	let edit = {} as Room;
+	let isNew = false;
 	let rooms = [];
 
 	onMount(() => {
-		roomService.get(JSON.stringify({ tipo: 1 })).then((response) => {
-			console.log(response);
-			if (response === undefined) {
-				return toast({
-					type: "info",
-					message: "Sin registro",
-				});
-			}
+		getRooms();
+	});
+
+	const getRooms = () => {
+		roomService.get().then((response) => {
 			if (response) {
-				rooms = response["rooms"];
+				rooms = response;
 			}
 		});
-	});
+	};
+
+	export const reloadList = () => {
+		getRooms();
+	};
+
+	const openNew = (data) => {
+		if (openNew) {
+			edit = data;
+			isNew = true;
+		}
+	};
+
+	const closeModal = () => {
+		isNew = false;
+		reloadList();
+	};
+
+	// Delete production area
+	const remove = (id) => {
+		Swal.fire({
+			title: "¿Estás seguro?",
+			text: "¡No podrás revertir esto!",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#3085d6",
+			cancelButtonColor: "#d33",
+			confirmButtonText: "Sí, eliminarlo",
+			cancelButtonText: "Cerrar",
+		}).then((result) => {
+			if (result.isConfirmed) {
+				roomService.remove(id).then((response) => {
+					if (response.status === 200) {
+						toast({
+							type: "success",
+							message: "Eliminado exitosamente",
+						});
+					}
+					reloadList();
+				});
+			}
+		});
+	};
 </script>
 
 <div class="card">
@@ -28,6 +72,7 @@
 				<table class="table">
 					<thead>
 						<tr>
+							<th />
 							<th>N°</th>
 							<th>Código</th>
 							<th>Descripcion</th>
@@ -38,6 +83,24 @@
 					<tbody>
 						{#each rooms as item, index}
 							<tr>
+								<td>
+									<!-- svelte-ignore a11y-invalid-attribute -->
+									<a
+										href="javascript:void(0)"
+										class="btn btn-sm btn-success"
+										on:click={() => openNew(item)}
+									>
+										<i class="fas fa-edit" />
+									</a>
+									<!-- svelte-ignore a11y-invalid-attribute -->
+									<a
+										href="javascript:void(0)"
+										class="btn btn-sm btn-danger"
+										on:click={() => remove(item.id)}
+									>
+										<i class="fas fa-trash" />
+									</a>
+								</td>
 								<td>{index + 1}</td>
 								<td>{item.code}</td>
 								<td>{item.description}</td>
@@ -63,3 +126,4 @@
 		{/if}
 	</div>
 </div>
+<Add openNew={isNew} modalClosed={() => closeModal()} data={edit} />

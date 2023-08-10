@@ -34,7 +34,7 @@ namespace Restaurant.API.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var floorExist = FloorExistsCode(floor.Code, floor.CodEstab);
+            var floorExist = FloorExistsCodeEstab(floor.Code, floor.CodEstab);
             if (floorExist) return BadRequest("El código ya está en uso");
 
             try
@@ -54,7 +54,7 @@ namespace Restaurant.API.Controllers
         {
             if (id != floor.Id) return BadRequest();
 
-            var floorExist = FloorExistsCode(floor.Code, floor.CodEstab);
+            var floorExist = FloorExistsCode(floor.Id, floor.CodEstab);
             if (floorExist) return BadRequest("El código ya está en uso");
 
             var floorNotExists = !FloorExists(id);
@@ -107,9 +107,14 @@ namespace Restaurant.API.Controllers
             return _context.Floors.Any(e => e.Id == id);
         }
 
-        private bool FloorExistsCode(string code, string codEstab)
+        private bool FloorExistsCodeEstab(string code, string codEstab)
         {
-            return _context.Floors.Any(e => e.Code == code && e.CodEstab != codEstab);
+            return _context.Floors.Any(e => e.Code == code && e.CodEstab == codEstab);
+        }
+
+        private bool FloorExistsCode(int id, string code)
+        {
+            return _context.Floors.Any(e => e.Id != id && e.Code == code);  
         }
     }
 }
