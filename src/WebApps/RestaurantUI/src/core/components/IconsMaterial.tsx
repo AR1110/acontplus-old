@@ -4,10 +4,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import ClassIcon from '@mui/icons-material/Class';
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
+ 
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
@@ -21,16 +18,17 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import DeleteIcon from '@mui/icons-material/Delete';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import PersonSearchIcon from '@mui/icons-material/PersonSearch';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+
+
 export {
     RemoveCircleOutlineIcon,
     SaveIcon,
     EditIcon,
     ClassIcon,
     ChevronLeftIcon,
-    ChevronRightIcon,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
+    ChevronRightIcon, 
     MailIcon,
     NotificationsIcon,
     MoreIcon,
@@ -42,5 +40,7 @@ export {
     RemoveIcon,
     DeleteIcon,
     RestartAltIcon,
-    MonetizationOnIcon
+    MonetizationOnIcon,
+    PersonSearchIcon,
+    AddShoppingCartIcon, 
 }
