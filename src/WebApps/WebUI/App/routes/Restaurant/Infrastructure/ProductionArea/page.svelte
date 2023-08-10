@@ -37,4 +37,4 @@
 
 <Breadcrumbs {title} action={"nueva"} openNew={() => openNew()} />
 <List items={productionAreas} />
-<Add openNew={isNew} modalClosed={() => closeModal()} edit />
+<Add openNew={isNew} modalClosed={() => closeModal()} />

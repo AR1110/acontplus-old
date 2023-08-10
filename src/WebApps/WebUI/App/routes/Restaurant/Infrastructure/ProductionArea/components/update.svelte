@@ -3,7 +3,6 @@
 	import type { ProductionArea } from "$core/interfaces/restaurant/production-area";
 	import { productionAreaService } from "$core/services/restaurant/production-area-service";
 	import toast from "$core/utils/toast";
-	import { Radio } from "flowbite-svelte";
 
 	export let openNew;
 	export let modalClosed;
