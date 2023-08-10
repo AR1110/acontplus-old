@@ -38,15 +38,14 @@ BEGIN
 									,entidad = e.razonSocial
 									,nombreComercial = e.nombreComercial
 									,rol = p.codigo
-									,actividad = ISNULL(ec.actividad,'''')
+									,actividad = ''''
 									,rucEmpresa = e.ruc
 									,e.idEntidad companyId
 									,r.idUsuario
 								 FROM App.UsuarioRol r 
 								 INNER JOIN dbo.Entidad e ON e.idEntidad = r.idEntidad
 								 INNER JOIN dbo.Usuario u ON u.idUsuario = r.idUsuario
-								 INNER JOIN dbo.Politica p ON p.idPolitica = r.idRol
-								 INNER JOIN Config.EntidadConfigSri ec ON ec.idEntidad = e.idEntidad
+								 INNER JOIN dbo.Politica p ON p.idPolitica = r.idRol 
 								 WHERE r.estado = 1 '
 
 	/*Add by Ignacio */

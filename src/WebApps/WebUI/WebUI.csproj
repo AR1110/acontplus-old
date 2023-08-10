@@ -17,6 +17,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Compile Remove="App\routes\ProductionArea\**" />
 		<Compile Remove="Areas\Pet\**" />
 		<Compile Remove="Views\ComprobanteImportacion\**" />
 		<Compile Remove="wwwroot\js\controllers\almacen\**" />
@@ -25,6 +26,7 @@
 		<Compile Remove="wwwroot\js\controllers\ventas\**" />
 		<Compile Remove="wwwroot\js\svelte\app\Pet\components\**" />
 		<Compile Remove="wwwroot\lib\angular-toastr\**" />
+		<Content Remove="App\routes\ProductionArea\**" />
 		<Content Remove="Areas\Pet\**" />
 		<Content Remove="Views\ComprobanteImportacion\**" />
 		<Content Remove="wwwroot\js\controllers\almacen\**" />
@@ -33,6 +35,7 @@
 		<Content Remove="wwwroot\js\controllers\ventas\**" />
 		<Content Remove="wwwroot\js\svelte\app\Pet\components\**" />
 		<Content Remove="wwwroot\lib\angular-toastr\**" />
+		<EmbeddedResource Remove="App\routes\ProductionArea\**" />
 		<EmbeddedResource Remove="Areas\Pet\**" />
 		<EmbeddedResource Remove="Views\ComprobanteImportacion\**" />
 		<EmbeddedResource Remove="wwwroot\js\controllers\almacen\**" />
@@ -41,6 +44,7 @@
 		<EmbeddedResource Remove="wwwroot\js\controllers\ventas\**" />
 		<EmbeddedResource Remove="wwwroot\js\svelte\app\Pet\components\**" />
 		<EmbeddedResource Remove="wwwroot\lib\angular-toastr\**" />
+		<None Remove="App\routes\ProductionArea\**" />
 		<None Remove="Areas\Pet\**" />
 		<None Remove="Views\ComprobanteImportacion\**" />
 		<None Remove="wwwroot\js\controllers\almacen\**" />
@@ -4033,7 +4037,6 @@
 
 	<ItemGroup>
 		<Folder Include="App\lib\StockFisico\" />
-		<Folder Include="App\routes\ProductionArea\components\" />
 		<Folder Include="Pages\Shared\" />
 		<Folder Include="wwwroot\lib\angular-daterangepicker\" />
 	</ItemGroup>
