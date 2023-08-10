@@ -8,21 +8,25 @@
   let items = [
     {
       label: 'Pisos',
+      icon: 'fa-solid fa-house',
       value: 1,
       component: Floors,
     },
     {
       label: 'Salas',
+      icon: '',
       value: 2,
       component: Rooms,
     },
     {
       label: 'Areas de Produccion',
+      icon: '',
       value: 3,
       component: ProductionArea,
     },
     {
       label: 'Mesas',
+      icon: '',
       value: 4,
       component: Tables,
     }
