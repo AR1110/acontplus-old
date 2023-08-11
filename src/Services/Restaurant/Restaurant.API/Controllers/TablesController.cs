@@ -1,8 +1,12 @@
-﻿using Lib.Common.Api;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Restaurant.Core.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Restaurant.Core.Entities;
 using Restaurant.Infrastructure.Data;
-using Services.Common;
 
 namespace Restaurant.API.Controllers
 {
@@ -11,84 +15,91 @@ namespace Restaurant.API.Controllers
     public class TablesController : ControllerBase
     {
         private readonly RestaurantContext _context;
-        private readonly IAppTableService _tableService;
 
-        public TablesController(RestaurantContext context, IAppTableService tableService)
+        public TablesController(RestaurantContext context)
         {
             _context = context;
-            _tableService = tableService;
         }
 
-        // GET: api/Tables
+        // GET: api/AppTables
         [HttpGet]
-        public async Task<IActionResult> Get(string json)
+        public async Task<ActionResult<IEnumerable<AppTable>>> GetTables()
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId() },
-                    {"json", json}
-                };
-                var response = await _tableService.GetAsync(parameters);
-                if (response == null) { return NoContent(); }
-                return Ok(response);
-            }
-            catch (Exception)
-            {
-                return BadRequest();
-            }
+            // Select multiple tables
+            var tables = await _context.Tables.Include(x => x.Room).ToListAsync();
+
+            return tables;
+            // return await _context.Tables.ToListAsync();
         }
 
-        // POST: api/Tables
+        // POST: api/AppTables
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ApiRequest request)
+        public async Task<ActionResult<AppTable>> PostAppTable(AppTable appTable)
         {
-            request.UserRoleId = User.GetUserRoleId();
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
             try
             {
-                var response = await _tableService.AddAsync(request);
-                return Ok(response);
+                _context.Tables.Add(appTable);
+                await _context.SaveChangesAsync();
+                return Ok("Ingresado exitosamente");
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest("Error al ingresar" + ex);
             }
         }
 
+        // PUT: api/AppTables/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest request)
+        public async Task<IActionResult> PutTable(int id, AppTable appTable)
         {
-            request.UserRoleId = User.GetUserRoleId();
+            if (id != appTable.Id) return BadRequest();
+
+            var tableExist = TableExists(appTable.Id);
+            if (!tableExist) return BadRequest("No se encontró registro");
+
             try
             {
-                var response = await _tableService.UpdateAsync(id, request);
-                return Ok(response);
+                _context.Entry(appTable).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return Ok("Actualizado exitosamente");
+
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest("Error al actualizar" + ex);
             }
         }
 
-
-        // DELETE: api/Tables/5
+        // DELETE: api/AppTables/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteTable(int id)
         {
-            var request = new ApiRequest();
-            request.UserRoleId = User.GetUserRoleId();
+            var tables = TableExists(id);
+            if (!tables) return BadRequest("No se encontró registro");
 
             try
             {
-                var response = await _tableService.DeleteAsync(id, request);
-                return Ok(response);
+                var table = await _context.Tables.FindAsync(id);
+                table.Deleted = true;
+                table.Enabled = false;
+
+                _context.Entry(table).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return Ok("Eliminado exitosamente");
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest("Error al eliminar" + ex);
             }
+        }
+
+        private bool TableExists(int id)
+        {
+            return _context.Tables.Any(e => e.Id == id);
         }
     }
 }

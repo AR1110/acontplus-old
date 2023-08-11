@@ -25,7 +25,8 @@ namespace Restaurant.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Room>>> GetRooms()
         {
-            return await _context.Rooms.ToListAsync();
+            var rooms = await _context.Rooms.Include(x => x.Floor).ToListAsync();
+            return rooms;
         }
 
         // POST: api/Rooms
@@ -72,7 +73,7 @@ namespace Restaurant.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest("Error al actualizar " + ex);
+                return BadRequest("Error al actualizar " + ex.Message);
             }
         }
 

@@ -3,25 +3,42 @@
 	import toast from "$core/utils/toast";
 	import { onMount } from "svelte";
 	import Swal from "sweetalert2";
-  import Add from "./add.svelte";
-  import type { Floor } from "$core/interfaces/restaurant/floor";
+	import Add from "./add.svelte";
+	import type { Floor } from "$core/interfaces/restaurant/floor";
 	let floors = [];
+	let edit = {} as Floor;
 
-  let edit = {} as Floor;
-
-  // In component
-  let isNew = false;
+	// In component
+	let isNew = false;
+	export let codEstab  = undefined;
 
 	onMount(() => {
 		getFloors();
 	});
 
 	let getFloors = () => {
-		floorService.get().then((response) => {
+		if (!isExistsCodEstab(codEstab)) {
+			return toast({
+				type: "warning",
+				message: "Seleccione un establecimiento",
+			});
+		}
+
+		floorService.get(codEstab).then((response) => {
 			if (response) {
 				floors = response;
 			}
 		});
+	};
+
+	// Return boolean if the floor is enabled
+	const isExistsCodEstab = (codEstab) => {
+		console.log(codEstab);
+
+		if (codEstab === undefined || codEstab === null || codEstab === "") {
+			return false;
+		}
+		return true;
 	};
 
 	export const reloadList = () => {
@@ -30,15 +47,15 @@
 
 	const openNew = (data) => {
 		if (openNew) {
-      edit = data;
+			edit = data;
 			isNew = true;
 		}
 	};
 
-  const closeModal = () => {
-    isNew = false;
-    reloadList();
-  };
+	const closeModal = () => {
+		isNew = false;
+		reloadList();
+	};
 
 	// Delete production area
 	const remove = (id) => {
@@ -60,7 +77,7 @@
 							message: "Eliminado exitosamente",
 						});
 					}
-          reloadList();
+					reloadList();
 				});
 			}
 		});

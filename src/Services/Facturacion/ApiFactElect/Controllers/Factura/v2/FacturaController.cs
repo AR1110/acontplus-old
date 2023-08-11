@@ -27,7 +27,8 @@ namespace ApiFactElect.Controllers.Factura.v2
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Ventas.Factura_Get_v2", true);
+                // await _db.SPExecute("Ventas.Factura_Get_v2", true);
+                await _db.SPExecute("Ventas.Factura_Get", true);
                 _db.AddDynamicParam("idRol", idUsuarioRol);
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDataSetAsync();

@@ -1,23 +1,37 @@
 <script lang="ts">
 	import { productionAreaService } from "$core/services/restaurant/production-area-service";
 	import Modal from "$core/components/Modal.svelte";
-	import type {ProductionArea }  from "$core/interfaces/restaurant/production-area";
+	import type { ProductionArea } from "$core/interfaces/restaurant/production-area";
 	import toast from "$core/utils/toast";
 
 	export let openNew;
 	export let modalClosed;
-
-	let data = {} as ProductionArea;
+	export let data = {} as ProductionArea;
 
 	const onSave = () => {
+		if (!onValidate()) return;
+
 		productionAreaService.post(data).then((response) => {
-			if (response.status >= 200 && response.status < 300) {
-				modalClosed();
-				toast({ type: "success", message: "Agregado exitosamente" });
-				return window.location.reload();
+			if (response.status == 200) {
+				onModalClose();
+				data = {} as ProductionArea;
+				toast({ type: "success", message: response.data });
 			} else {
-				console.log(response);
-				toast({ type: "error", message: "Error al agregar" });
+				toast({ type: "error", message: response.data });
+			}
+		});
+	};
+
+	const onUpdate = () => {
+		if (!onValidate()) return;
+
+		productionAreaService.put(data.id, data).then((response) => {
+			if (response.status == 200) {
+				onModalClose();
+				data = {} as ProductionArea;
+				toast({ type: "success", message: response.data });
+			} else {
+				toast({ type: "error", message: response.data });
 			}
 		});
 	};
@@ -26,6 +40,20 @@
 		if (description === undefined || description === null) return;
 
 		data.code = description.substring(0, 3).toUpperCase();
+	};
+
+	const onValidate = () => {
+		if (data.description === undefined || data.description === null) {
+			toast({ type: "error", message: "Ingrese la descripción" });
+			return false;
+		}
+
+		if (data.code === undefined || data.code === null) {
+			toast({ type: "error", message: "Ingrese el código" });
+			return false;
+		}
+
+		return true;
 	};
 
 	const onModalClose = () => {
@@ -37,11 +65,14 @@
 {#if openNew}
 	<Modal
 		open={openNew}
-		iconTitle={"ti-plus"}
-		title={"Registrar"}
+		iconTitle={data.id > 0 ? "ti-sync" : "ti-plus"}
+		title={data.id ? "Actualizar" : "Registrar"}
 		onClosed={() => onModalClose()}
 	>
-		<form on:submit|preventDefault={onSave} autocomplete="off">
+		<form
+			on:submit|preventDefault={data.id > 0 ? onUpdate : onSave}
+			autocomplete="off"
+		>
 			<div class="modal-body">
 				<div class="form-group">
 					<label for="descripcion">

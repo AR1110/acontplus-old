@@ -9,6 +9,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
+-- DROP PROC Restaurant.Dish_Insert
 CREATE OR ALTER PROCEDURE Restaurant.Dish_Insert
 @userRoleId INT
 ,@json VARCHAR(MAX)

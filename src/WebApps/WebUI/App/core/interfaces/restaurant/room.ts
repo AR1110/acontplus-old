@@ -1,3 +1,5 @@
+import type { Floor } from "./floor";
+
 export interface Room {
    readonly id?: number;
    floorId: number;
@@ -5,4 +7,5 @@ export interface Room {
    capacity: number;
    description: string;
    enabled: boolean;
+   floor:  Floor;
 }

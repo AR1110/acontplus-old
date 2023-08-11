@@ -14,19 +14,19 @@
     },
     {
       label: 'Salas',
-      icon: '',
+      icon: 'fa-solid fa-building',
       value: 2,
       component: Rooms,
     },
     {
       label: 'Areas de Produccion',
-      icon: '',
+      icon: 'fa-solid fa-kitchen-set',
       value: 3,
       component: ProductionArea,
     },
     {
       label: 'Mesas',
-      icon: '',
+      icon: 'fa-solid fa-table',
       value: 4,
       component: Tables,
     }
