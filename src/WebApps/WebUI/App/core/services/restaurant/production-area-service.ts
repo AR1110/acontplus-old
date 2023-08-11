@@ -18,14 +18,14 @@ async function get() {
 // Post
 async function post(data) {
     return await client.post(url, data).then((response) => {
-        if (response.status === 200) {
+        if (response.status >= 200 && response.status < 300) {
             return response;
         } else {
-            console.log(response);
+            console.log(`Error request in post ${response}`);
             return null;
         }
     }).catch((err) => {
-        console.log(err);
+        console.log(`Error request ${err}`);
         return null;
     });
 };
@@ -33,10 +33,10 @@ async function post(data) {
 // Put
 async function put(id, data) {
     return await client.put(url + id, data).then((response) => {
-        if (response.status === 200) {
+        if (response.status >= 200 && response.status < 300) {
             return response;
         } else {
-            console.log(response);
+            console.log(`Error request in put ${response}`);
             return null;
         }
     }).catch((err) => {
@@ -48,14 +48,14 @@ async function put(id, data) {
 // Delete
 async function remove(id) {
     return await client.delete(url + id).then((response) => {
-        if (response.status === 200) {
-            return response.data;
+        if (response.status >= 200 && response.status < 300) {
+            return response;
         } else {
-            console.log(response);
+            console.log(`Error request in delete ${response}`);
             return null;
         }
     }).catch((err) => {
-        console.log(err);
+        console.log(`Error request ${err}`);
         return null;
     });
 }

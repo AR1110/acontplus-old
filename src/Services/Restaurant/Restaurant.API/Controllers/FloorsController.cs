@@ -1,7 +1,10 @@
 ﻿using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Restaurant.Core.Entities;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
+using Restaurant.Infrastructure.Data.Migrations;
 using Services.Common;
 
 namespace Restaurant.API.Controllers
@@ -11,47 +14,34 @@ namespace Restaurant.API.Controllers
     public class FloorsController : ControllerBase
     {
         private readonly RestaurantContext _context;
-        private readonly IFloorService _floorService;
 
-        public FloorsController(RestaurantContext context, IFloorService floorService)
+        public FloorsController(RestaurantContext context)
         {
             _context = context;
-            _floorService = floorService;
         }
 
         // GET: api/Floors
         [HttpGet]
-        public async Task<IActionResult> Get(string json)
+        public async Task<ActionResult<IEnumerable<Floor>>> Get()
         {
-            try
-            {
-                var parameters = new Dictionary<string, object>
-                {
-                    {"userRoleId", User.GetUserRoleId() },
-                    {"json", json }
-                };
-
-                var response = await _floorService.GetAsync(parameters);
-                if (response == null) { return NoContent(); }
-
-                return Ok(response);
-            }
-            catch (Exception)
-            {
-                return BadRequest();
-            }
+            return await _context.Floors.ToListAsync();
         }
 
         // POST: api/Floors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<IActionResult> Post(ApiRequest request)
+        public async Task<ActionResult<Floor>> Post(Floor floor)
         {
-            request.UserRoleId = User.GetUserRoleId();
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var floorExist = FloorExistsCode(floor.Code, floor.CodEstab);
+            if (floorExist) return BadRequest("El código ya está en uso");
+
             try
             {
-                var response = await _floorService.AddAsync(request);
-                return Ok(response);
+                _context.Floors.Add(floor);
+                await _context.SaveChangesAsync();
+                return Ok("Ingresado exitosamente");
             }
             catch (Exception ex)
             {
@@ -60,41 +50,67 @@ namespace Restaurant.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, ApiRequest request)
+        public async Task<IActionResult> Put(int id, Floor floor)
         {
-            request.UserRoleId = User.GetUserRoleId();
+            if (id != floor.Id) return BadRequest();
+
+            var floorExist = FloorExistsCode(floor.Code, floor.CodEstab);
+            if (floorExist) return BadRequest("El código ya está en uso");
+
+            var floorNotExists = !FloorExists(id);
+            if (floorNotExists) return NotFound("No existe registro");
+           
             try
             {
-                var response = await _floorService.AddAsync(request);
-                return Ok(response);
+                _context.Entry(floor).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return Ok("Actualizado exitosamente");
+
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest("Error al actualizar " + ex);
             }
         }
 
         // DELETE: api/Floors/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteFloor(int id)
         {
-            var request = new ApiRequest();
-            request.UserRoleId = User.GetUserRoleId();
+            var floor = await _context.Floors.FindAsync(id);
+            if (floor == null) return NotFound();
+
+            floor.Deleted = true;
+            floor.Enabled = false;
+
+            _context.Entry(floor).State = EntityState.Modified;
 
             try
             {
-                var response = await _floorService.DeleteAsync(id, request);
-                return Ok(response);
+                await _context.SaveChangesAsync();
+                return Ok();
             }
-            catch (Exception ex)
+            catch (DbUpdateConcurrencyException)
             {
-                return BadRequest(ex.Message);
+                if (!FloorExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
             }
         }
 
         private bool FloorExists(int id)
         {
             return _context.Floors.Any(e => e.Id == id);
+        }
+
+        private bool FloorExistsCode(string code, string codEstab)
+        {
+            return _context.Floors.Any(e => e.Code == code && e.CodEstab == codEstab);
         }
     }
 }

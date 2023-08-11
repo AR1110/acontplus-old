@@ -1,17 +1,57 @@
 ﻿<script lang="ts">
 	import { floorService } from "$core/services/restaurant/floor-service";
-	import { onMount } from "svelte";
 	import toast from "$core/utils/toast";
-
+	import { onMount } from "svelte";
+	import Swal from "sweetalert2";
 	let floors = [];
 
 	onMount(() => {
-		floorService.get(JSON.stringify({ tipo: 1 })).then((response) => {
+		getFloors();
+	});
+
+	let getFloors = () => {
+		floorService.get().then((response) => {
 			if (response) {
-				floors = response["floors"];
+				floors = response;
 			}
 		});
-	});
+	};
+
+	export const reloadList = () => {
+		getFloors();
+	};
+
+	const openNew = (data) => {
+		if (openNew) {
+			//isNew = true;
+		}
+	};
+
+	// Delete production area
+	const remove = (id) => {
+		Swal.fire({
+			title: "¿Estás seguro?",
+			text: "¡No podrás revertir esto!",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#3085d6",
+			cancelButtonColor: "#d33",
+			confirmButtonText: "Sí, eliminarlo",
+			cancelButtonText: "Cerrar",
+		}).then((result) => {
+			if (result.isConfirmed) {
+				floorService.remove(id).then((response) => {
+					if (response.status === 200) {
+						toast({
+							type: "success",
+							message: "Eliminado exitosamente",
+						});
+					}
+          reloadList();
+				});
+			}
+		});
+	};
 </script>
 
 <div class="card">
@@ -21,6 +61,7 @@
 				<table class="table">
 					<thead>
 						<tr>
+							<th />
 							<th>N°</th>
 							<th>Código</th>
 							<th>Descripcion</th>
@@ -31,6 +72,24 @@
 					<tbody>
 						{#each floors as item, index}
 							<tr>
+								<td>
+									<!-- svelte-ignore a11y-invalid-attribute -->
+									<a
+										href="javascript:void(0)"
+										class="btn btn-sm btn-success"
+										on:click={() => openNew(item)}
+									>
+										<i class="fas fa-edit" />
+									</a>
+									<!-- svelte-ignore a11y-invalid-attribute -->
+									<a
+										href="javascript:void(0)"
+										class="btn btn-sm btn-danger"
+										on:click={() => remove(item.id)}
+									>
+										<i class="fas fa-trash" />
+									</a>
+								</td>
 								<td>{index + 1}</td>
 								<td>{item.code}</td>
 								<td>{item.description}</td>

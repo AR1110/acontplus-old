@@ -1,3 +1,4 @@
+USE Acontplus
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -30,13 +31,13 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @Code VARCHAR(5)
-		,@Description VARCHAR(50)
-		,@Capacity INT
-		,@CodEstad VARCHAR(50)
-		,@Enabled BIT
-		,@CreateAt DATETIME
-		,@UserId INT
+	DECLARE @code VARCHAR(5)
+		,@description VARCHAR(50)
+		,@capacity INT
+		,@codeEstab VARCHAR(50)
+		,@enabled BIT
+		,@createAt DATETIME
+		,@userId INT
 		
 	--- Valido que sea JSON
 	IF (ISJSON(@json) = 0)
@@ -48,26 +49,26 @@ BEGIN
 	END
 
 		-- Decode JSON ---
-	SELECT @Code			= Code
-			,@Description	= Description
-			,@Capacity		= Capacity
-			,@CodEstad      = CodEstad
-			,@Enabled       = Enabled
+	SELECT @code			= code
+			,@description	= description
+			,@capacity		= capacity
+			,@codeEstab     = codEstad
+			,@enabled       = enabled
 	FROM OPENJSON(@json)
 	WITH(
-		Code VARCHAR(5)			 '$.Code'
-		,Description VARCHAR(50) '$.Description'
-		,Capacity INT			 '$.Capacity'
-		,CodEstad VARCHAR(50)	 '$.CodEstad'
-		,Enabled BIT			 '$.Enabled'
+		code VARCHAR(5)			 '$.code'
+		,description VARCHAR(50) '$.description'
+		,capacity INT			 '$.capacity'
+		,codEstad VARCHAR(50)	 '$.codEstad'
+		,enabled BIT			 '$.enabled'
 	)
 
-	SET @CreateAt = (SELECT dbo.ufnGetDateEcuador())
-	SET @UserId = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
+	SET @createAt = (SELECT dbo.ufnGetDateEcuador())
+	SET @userId = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
 
 	BEGIN TRY
 		--- Valido los registros ----
-		IF EXISTS(SELECT TOP 1 1 FROM Restaurant.[Floor] WHERE Code =  @Code AND CodEstab = @CodEstad) 
+		IF EXISTS(SELECT TOP 1 1 FROM Restaurant.[Floor] WHERE Code =  @code AND CodEstab = @codeEstab) 
 			BEGIN
 				SELECT response = (SELECT code = '0', [message]= 'El código ya encuentra en uso' FOR JSON PATH, WITHOUT_ARRAY_WRAPPER )
 				RETURN
@@ -75,7 +76,7 @@ BEGIN
 		
 		BEGIN TRAN
 			INSERT INTO Restaurant.[Floor] (Code, Description, Capacity, CreatedAt, UpdatedAt, Enabled, Deleted, CodEstab, UserId)
-			VALUES(@Code, @Description, @Capacity, @CreateAt, NULL, @Enabled, NULL, @CodEstad, @UserId)			
+			VALUES(@code, @description, @capacity, @createAt, NULL, @enabled, NULL, @codeEstab, @userId)			
 		COMMIT TRAN 
 
 		SELECT response = (SELECT code = '1', [message] = 'Ingresado correctamente' FOR JSON PATH, WITHOUT_ARRAY_WRAPPER )
@@ -92,7 +93,7 @@ BEGIN
         INSERT INTO ErroresSistema(token, method, errorNumber, errorSeverity, errorState, errorProcedure
 									, errorLine, errorMessage, idUsuario)
 
-							VALUES(NEWID(), 'StockFisico/Insert', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE()
+							VALUES(NEWID(), 'Restaurant.Floor/Insert', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE()
 									, ERROR_LINE(), ERROR_MESSAGE(), @userId)
 	END CATCH
 END
