@@ -424,5 +424,11 @@
     "inputFiles": [
       "wwwroot/js/inventario/controllers/transferenciaBodegaCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/inventario/directives/inventarioDirective.min.js",
+    "inputFiles": [
+      "wwwroot/js/inventario/directives/inventarioDirective.js"
+    ]
   }
 ]

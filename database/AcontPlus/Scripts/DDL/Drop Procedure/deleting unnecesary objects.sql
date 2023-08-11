@@ -480,3 +480,6 @@ DROP PROCEDURE IF EXISTS [dbo].[ASPComprobanteNoAutorizadoInsert]
 GO
 DROP PROCEDURE IF EXISTS [dbo].[ASPComprobanteAutorizadoInsert]
 GO
+
+--
+DROP PROCEDURE Almacen.SubFamilia_Insert
