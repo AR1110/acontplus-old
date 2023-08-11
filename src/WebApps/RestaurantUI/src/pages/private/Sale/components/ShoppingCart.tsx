@@ -41,22 +41,7 @@ export default function ShoppingCart() {
     };
   }
 
-  if(items.length === 0) return (
-//     <Grid
-//     container
-//     direction="row"
-//     justifyContent="center"
-//     alignItems="center"
-//     >
-//     <AddShoppingCartIcon   sx={{
-//       height: "4rem!important",
-//       width: '4rem',
-//       color: 'rgba(59, 130, 246, 0.5)'
-//     }} />
-//     <Typography>
-//       CART EMPTY
-//     </Typography>
-// </Grid>
+  if(items.length === 0) return ( 
 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
        
       <AddShoppingCartIcon sx={{
