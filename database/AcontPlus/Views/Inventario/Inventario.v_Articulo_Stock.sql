@@ -17,7 +17,7 @@ CREATE OR ALTER VIEW Inventario.v_Articulo_Stock WITH SCHEMABINDING AS (
 		  ,CASE WHEN ar.caducidad = 1 THEN DATEDIFF(DAY,GETDATE(),ar.fechaCaducidad) ELSE 0 END as diasCaducidad
 		  ,sf.descripcion as subfamilia
 		  ,bo.descripcion as bodega
-		  ,ubicacion = (SELECT ubicacion FROM dbo.ArticuloUbicacion au WITH (NOLOCK) WHERE au.idArticulo = st.idArticulo AND au.idBodega = st.idBodega)
+		  ,ubicacion = (SELECT au.ubicacion FROM dbo.ArticuloUbicacion au WITH (NOLOCK) WHERE au.idArticulo = st.idArticulo AND au.idBodega = st.idBodega)
 	      ,me.descripcion as medida
 	FROM dbo.Articulo            ar WITH (NOLOCK)
 	INNER JOIN dbo.SubFamilia    sf WITH (NOLOCK) ON sf.idSubFamilia = ar.idSubFamilia
