@@ -1,18 +1,15 @@
-import { CategoryReadDto } from "../models";
+import { CategoryReadDto, RawCategoryData } from "../models"; 
 
-
-class CategoryAdapter {
-    tableReadAdaptFromApi(categories: any): Array<CategoryReadDto> {
-      
-        return categories.map((category: any) => ({
-            idSubFamilia: category.idSubFamilia,
-            description: category.descripcion,
-        })
-        )
-    }
+function categoryReadAdapter(categories: RawCategoryData[]): Array<CategoryReadDto> {
+    console.log(categories)      
+    return categories.map((category) => ({
+        idSubFamilia: category.idSubFamilia,
+        description: category.descripcion,
+        s3ObjectUrl: category.s3ObjectUrl
+    })
+    )
 }
 
-const categoryAdapter = new CategoryAdapter();
 export {
-    categoryAdapter
+    categoryReadAdapter
 }

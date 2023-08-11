@@ -75,6 +75,7 @@ export const saleStore = create<SaleState>((set, get) => ({
             items: [...items], 
         })) 
         get().setTotalItems(); 
+        addSound();
     },
     async resetForm() {
         if(get().items.length===0) return;

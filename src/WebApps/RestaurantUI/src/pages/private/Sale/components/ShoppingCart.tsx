@@ -9,7 +9,6 @@ import TableRow from '@mui/material/TableRow';
 import { Avatar, ButtonBase, Card, CardHeader, Grid, IconButton, TextField, Typography } from '@mui/material';
 import { AddShoppingCartIcon, DeleteIcon } from '@/core/components';
 import { saleStore } from '@/stores/saleStore';
-import { ChangeEvent } from 'react';
 
 export default function ShoppingCart() {
     const items = saleStore(state => state.items);
@@ -49,18 +48,18 @@ export default function ShoppingCart() {
                                 key={index}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
-                                <TableCell align='left'> 
+                                <TableCell align='left'>
                                     <Grid container wrap="nowrap" spacing={1}>
                                         <Grid item>
-                                            <Avatar src={item.imgUrl}>W</Avatar>
+                                            <Avatar src={item.s3ObjectUrl}>W</Avatar>
                                         </Grid>
                                         <Grid item xs zeroMinWidth>
-                                            <Typography color='text.secondary' variant='caption' sx={{
-                                        wordBreak: 'break-all',
-                                        fontSize: '10px'
-                                    }}>
-                                        {item.description}
-                                    </Typography>  
+                                            <Typography component="span" color='text.secondary' variant='caption' sx={{
+                                                wordBreak: 'break-all',
+                                                fontSize: '10px'
+                                            }}>
+                                                {item.description}
+                                            </Typography>
                                         </Grid>
                                     </Grid>
                                 </TableCell>
@@ -96,7 +95,7 @@ export default function ShoppingCart() {
                                 </TableCell>
                             </TableRow>
                         ))}
-                        
+
                     </TableBody>
                 </Table>
             </TableContainer>

@@ -5,5 +5,5 @@ export interface CartItem {
     unitPrice: number;
     amount: number;
     total: number;
-    imgUrl: string;    
+    s3ObjectUrl: string;    
 }
