@@ -46,13 +46,15 @@ BEGIN
 	,@comprobante VARCHAR(100)
 	,@serieComprobante VARCHAR(50)
 	,@importeTotal NUMERIC(18,5)
+	,@IDType VARCHAR(2)
+	,@customerId INT
 
 	SELECT TOP 1 @claveAcceso = claveAcceso FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento
 
 	BEGIN TRY
 		BEGIN TRAN
 			
-
+			-- FACTURA
 			IF (@codDoc = '01')
 				BEGIN
 					SELECT @razonSocial = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//factura/infoTributaria/razonSocial)[1]','VARCHAR(300)')
@@ -67,6 +69,7 @@ BEGIN
 					,@importeTotal = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//factura/infoFactura/importeTotal)[1]','NUMERIC(18,5)')
 				END
 
+		    -- LIQUIDACION 
 			IF (@codDoc = '03')
 				BEGIN
 					SELECT @razonSocial = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//liquidacionCompra/infoTributaria/razonSocial)[1]','VARCHAR(300)')
@@ -79,6 +82,8 @@ BEGIN
 					+ '-' +  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//liquidacionCompra/infoTributaria/ptoEmi)[1]','VARCHAR(25)')
 					+ '-' +  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//liquidacionCompra/infoTributaria/secuencial)[1]','VARCHAR(25)')
 				END
+			
+			-- NOTA DE CREDITO - DEVOLUCIONES
 			IF (@codDoc = '04')
 				BEGIN
 					SELECT @razonSocial = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//notaCredito/infoTributaria/razonSocial)[1]','VARCHAR(300)')
@@ -92,6 +97,8 @@ BEGIN
 					+ '-' +  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//notaCredito/infoTributaria/secuencial)[1]','VARCHAR(25)')
 					,@importeTotal = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//notaCredito/infoNotaCredito/importeTotal)[1]','NUMERIC(18,5)')
 				END
+			
+			--
 			IF (@codDoc = '05')
 				BEGIN
 					SELECT @razonSocial = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//notaDebito/infoTributaria/razonSocial)[1]','VARCHAR(300)')
@@ -104,6 +111,8 @@ BEGIN
 					+ '-' +  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//notaDebito/infoTributaria/ptoEmi)[1]','VARCHAR(25)')
 					+ '-' +  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//notaDebito/infoTributaria/secuencial)[1]','VARCHAR(25)')
 				END
+			
+			-- GUIAS DE REMISION
 			IF (@codDoc = '06')
 				BEGIN
 					SELECT @razonSocial = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//guiaRemision/infoTributaria/razonSocial)[1]','VARCHAR(300)')
@@ -117,6 +126,8 @@ BEGIN
 					+ '-' +  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//guiaRemision/infoTributaria/secuencial)[1]','VARCHAR(25)')
 					,@importeTotal = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//guiaRemision/infoGuiaRemision/importeTotal)[1]','NUMERIC(18,5)')
 				END
+			
+			-- COMPROBANTE  DE RENTECION
 			IF (@codDoc = '07')
 				BEGIN
 					SELECT @razonSocial = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//comprobanteRetencion/infoTributaria/razonSocial)[1]','VARCHAR(300)')
@@ -130,41 +141,37 @@ BEGIN
 					+ '-' +  CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion/comprobante')))).value('(//comprobanteRetencion/infoTributaria/secuencial)[1]','VARCHAR(25)')
 				END
 
-			UPDATE dr SET dr.comprobante = @comprobante
-			,dr.codDoc = @codDoc
-			,dr.serieComprobante = @serieComprobante
-			,dr.rucEmisor = @identificacionCliProv
-			,dr.razonSocialEmisior = @razonSocial
-			,fechaEmision = @fechaEmision
-			,fechaAutorizacion = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion')))).value('(/autorizacion/fechaAutorizacion)[1]','VARCHAR(49)')
-			,dr.tipoEmision = 'NORMAL'
-			,dr.identificacionReceptor = @rucReceptor
-			,dr.numeroAutorizacion = @claveAcceso
-			,dr.importeTotal = @importeTotal
-			,dr.xmlDoc = @xmlDoc
-			,dr.downloaded = @downloaded
-			,versionComp = @versionComp
+			UPDATE dr 
+				SET dr.comprobante            = @comprobante
+				   ,dr.codDoc                 = @codDoc
+				   ,dr.serieComprobante       = @serieComprobante
+				   ,dr.rucEmisor              = @identificacionCliProv
+				   ,dr.razonSocialEmisior     = @razonSocial
+				   ,fechaEmision              = @fechaEmision
+				   ,fechaAutorizacion         = CONVERT(xml,dbo.f_sanitize_xml(CONVERT(VARCHAR(MAX), @xmlDoc.query('/autorizacion')))).value('(/autorizacion/fechaAutorizacion)[1]','VARCHAR(49)')
+				   ,dr.tipoEmision            = 'NORMAL'
+				   ,dr.identificacionReceptor = @rucReceptor
+				   ,dr.numeroAutorizacion     = @claveAcceso
+				   ,dr.importeTotal           = @importeTotal
+				   ,dr.xmlDoc                 = @xmlDoc
+				   ,dr.downloaded             = @downloaded
+				   ,versionComp               = @versionComp
 			FROM Recepcion.DocumentoRecibido dr WITH (ROWLOCK)
 			WHERE idDocumento = @idDocumento
 
 
 			IF (@codDoc != '07')
 				BEGIN
-					DECLARE @IDType VARCHAR(2)
-					,@customerId INT
-
+					
 					SET @identificacionCliProv = (SELECT LTRIM(RTRIM(@identificacionCliProv)))
 
 					SET @idTipoIdentificacion = (SELECT CASE 
-													WHEN LEN(@identificacionCliProv) = 10 THEN (SELECT TOP 1 idTipoIdentificacion FROM TipoIdentificacion
-																																WHERE codigoSri = '05')
-													WHEN LEN(@identificacionCliProv) = 13 THEN (SELECT TOP 1 idTipoIdentificacion FROM TipoIdentificacion
-																																WHERE codigoSri = '04')
-													WHEN LEN(@identificacionCliProv) < 10 OR LEN(@identificacionCliProv) > 13 THEN (SELECT TOP 1 idTipoIdentificacion FROM TipoIdentificacion
-																																WHERE codigoSri = '06')
+													WHEN LEN(@identificacionCliProv) = 10 THEN (SELECT TOP 1 idTipoIdentificacion FROM TipoIdentificacion WHERE codigoSri = '05')
+													WHEN LEN(@identificacionCliProv) = 13 THEN (SELECT TOP 1 idTipoIdentificacion FROM TipoIdentificacion WHERE codigoSri = '04')
+													WHEN LEN(@identificacionCliProv) < 10 OR LEN(@identificacionCliProv) > 13 THEN (SELECT TOP 1 idTipoIdentificacion FROM TipoIdentificacion WHERE codigoSri = '06')
 												END)
 						
-					IF NOT EXISTS(SELECT 1 FROM Customer.Customer WHERE IDCard = LTRIM(RTRIM(@identificacionCliProv)))
+					IF NOT EXISTS(SELECT 1 FROM Customer.Customer WHERE IDCard = @identificacionCliProv)
 						BEGIN
 							 SET @IDType = (SELECT codigoSri FROM TipoIdentificacion t WHERE t.idTipoIdentificacion = @idTipoIdentificacion)
 							 
@@ -175,7 +182,7 @@ BEGIN
 						END
 					ELSE
 						BEGIN 
-							SET @customerId = (SELECT ID FROM Customer.Customer WHERE IDCard = LTRIM(RTRIM(@identificacionCliProv)))
+								SELECT TOP 1 @customerId =  ID FROM Customer.Customer WITH (NOLOCK) WHERE IDCard = @identificacionCliProv 
 						END
 
 					IF LEN(LTRIM(RTRIM(@rucReceptor))) = 13
@@ -188,8 +195,8 @@ BEGIN
 										BEGIN
 											INSERT INTO Proveedor(idTipoIdentificacion, nombreFiscal, nombreComercial, numeroIdentificacion, direccion, idEntidad)
 											VALUES (@idTipoIdentificacion,@razonSocial, @nombreComercial, @identificacionCliProv, @direccion, @idEntidad)
+											
 											SET @idProveedor = @@IDENTITY
-
 
 											UPDATE Proveedor SET CustomerId = @customerId WHERE idProveedor = @idProveedor
 
@@ -198,23 +205,9 @@ BEGIN
 										END
 								END
 						END
+					
 					IF LEN(LTRIM(RTRIM(@rucReceptor))) = 10
 						BEGIN
-							IF EXISTS (SELECT 1 FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor)))
-								BEGIN
-						
-									SET @idEntidad = (SELECT TOP 1 idEntidad FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor)))
-							
-									IF NOT EXISTS(SELECT 1 FROM Proveedor WHERE idEntidad = @idEntidad AND LTRIM(RTRIM(numeroIdentificacion)) = LTRIM(RTRIM(@identificacionCliProv)))
-										BEGIN
-											INSERT INTO Proveedor(idTipoIdentificacion, nombreFiscal, nombreComercial, numeroIdentificacion, direccion, idEntidad)
-											VALUES (@idTipoIdentificacion,@razonSocial, @nombreComercial, @identificacionCliProv, @direccion, @idEntidad)
-											SET @idProveedor = @@IDENTITY
-
-
-											UPDATE Proveedor SET CustomerId = @customerId WHERE idProveedor = @idProveedor
-										END
-								END
 							IF EXISTS (SELECT 1 FROM Entidad WHERE LTRIM(RTRIM(ruc)) = LTRIM(RTRIM(@rucReceptor+'001')))
 								BEGIN
 						
@@ -224,8 +217,8 @@ BEGIN
 										BEGIN
 											INSERT INTO Proveedor(idTipoIdentificacion, nombreFiscal, nombreComercial, numeroIdentificacion, direccion, idEntidad)
 											VALUES (@idTipoIdentificacion,@razonSocial, @nombreComercial, @identificacionCliProv, @direccion, @idEntidad)
+											
 											SET @idProveedor = @@IDENTITY
-
 
 											UPDATE Proveedor SET CustomerId = @customerId WHERE idProveedor = @idProveedor
 										END
@@ -235,12 +228,11 @@ BEGIN
 				
 				--===========================================================Contabilidad=================================================================================================
 			
-				SELECT TOP 1 @idProveedor = pr.idProveedor FROM dbo.Proveedor pr WITH (NOLOCK) WHERE pr.numeroIdentificacion = @identificacionCliProv AND pr.idEntidad = @idEntidad
+			SELECT TOP 1 @idProveedor = pr.idProveedor FROM dbo.Proveedor pr WITH (NOLOCK) WHERE pr.numeroIdentificacion = @identificacionCliProv AND pr.idEntidad = @idEntidad
 
-				SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago ep WHERE ep.codigo = 'PE'
+			SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago ep WHERE ep.codigo = 'PE'
 
-
-				IF NOT EXISTS (SELECT 1 FROM Contabilidad.CuentaPorPagar WHERE uniqueId = @claveAcceso)
+			IF NOT EXISTS (SELECT 1 FROM Contabilidad.CuentaPorPagar WHERE uniqueId = @claveAcceso)
 					BEGIN 
 						INSERT INTO Contabilidad.CuentaPorPagar
 							  (idEstablecimiento,idProveedor,idEstadoPago,codDoc,uniqueId,serieComprobante,identificacion,fechaEmision,importeTotal,idEntidad,idUsuario)
