@@ -123,8 +123,7 @@ export default function Sale() {
                                 <Grid item xs={8}>
                                     <CustomerSearch />
                                 </Grid>
-                                <Grid item xs={1}>
-                                    {totalItems}
+                                <Grid item xs={1}> 
                                     <Badge badgeContent={totalItems} color="secondary">
                                         <AddShoppingCartIcon/>                                    
                                     </Badge>

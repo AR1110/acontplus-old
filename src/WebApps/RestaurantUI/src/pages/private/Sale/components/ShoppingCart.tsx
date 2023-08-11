@@ -6,16 +6,26 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { Button, ButtonGroup, IconButton, TextField, Typography } from '@mui/material';
-import { AddIcon, DeleteIcon, RemoveIcon } from '@/core/components';
+import { Box, Button, ButtonGroup, Grid, IconButton, TextField, Typography } from '@mui/material';
+import { AddIcon, AddShoppingCartIcon, DeleteIcon, RemoveIcon } from '@/core/components';
 import soundClear from '/sound/button-21.mp3';
 import { useState } from 'react';
 import { saleStore } from '@/stores/saleStore';
 import { shallow } from 'zustand/shallow';
- 
+
 export default function ShoppingCart() {
-   const items = saleStore(state=>state.items);
-   console.log(items);
+  const items = saleStore(state => state.items);
+  const removeItemFromCart = saleStore(state => state.removeItemFromCart)
+  const [activeColumnCant, setActiveColCant] = useState(0);
+
+  const handleMouseEnter = (productId: number) => {
+    setActiveColCant(productId);
+  };
+
+  const handleMouseLeave = () => {
+    setActiveColCant(0);
+  };
+
   const clearSound = () => {
     playSound(soundClear);
   }
@@ -30,6 +40,34 @@ export default function ShoppingCart() {
 
     };
   }
+
+  if(items.length === 0) return (
+//     <Grid
+//     container
+//     direction="row"
+//     justifyContent="center"
+//     alignItems="center"
+//     >
+//     <AddShoppingCartIcon   sx={{
+//       height: "4rem!important",
+//       width: '4rem',
+//       color: 'rgba(59, 130, 246, 0.5)'
+//     }} />
+//     <Typography>
+//       CART EMPTY
+//     </Typography>
+// </Grid>
+<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+       
+      <AddShoppingCartIcon sx={{
+        height: "5rem!important",
+       width: '5rem',
+       color: 'rgba(59, 130, 246, 0.5)'
+      }}/>
+      
+      <Typography color="text.secondary" variant="caption">CARRITO VACÍO</Typography>
+    </div>
+  )
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -50,38 +88,27 @@ export default function ShoppingCart() {
                 key={index}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
-                <TableCell component="th" scope="row">
-                  <Typography color="text.secondary" variant="caption" display="block" gutterBottom>
-                  {item.description}                    
+                <TableCell align='left'>
+                  <Typography color='text.secondary' variant='caption' sx={{  
+                      wordBreak: 'break-all'
+                  }}>
+                    {item.description}
                   </Typography>
                 </TableCell>
-                <TableCell align="center">
-                  <ButtonGroup>
-                    <Button
-                      aria-label="reduce"
-
-                    >
-                      <RemoveIcon fontSize="small" />
-                    </Button>
-                    <TextField
-                    value={item.cantidad}
-                      variant="outlined"
-                      inputProps={{ style: { textAlign: 'center' } }}
-                      size='small'
-                    // Add other TextField props here as needed
-                    />
-                    <Button
-                      aria-label="increase"
-
-                    >
-                      <AddIcon fontSize="small" />
-                    </Button>
-                  </ButtonGroup>
+                <TableCell align="center" style={{ minWidth: 10 }}> 
+                        <TextField
+                          value={item.cantidad}
+                          variant="outlined"
+                          inputProps={{ style: { textAlign: 'center', padding: '4px', width: '100%', fontSize: '5'} }}
+                          size="small"
+                        // Add other TextField props here as needed
+                        /> 
+ 
                 </TableCell>
                 <TableCell align="right">{item.unitPrice}</TableCell>
                 <TableCell align="right">{item.total}</TableCell>
                 <TableCell align="center">
-                  <IconButton aria-label="delete" onClick={clearSound}>
+                  <IconButton aria-label="delete" onClick={()=>removeItemFromCart(item.productId)}>
                     <DeleteIcon color='error' />
                   </IconButton>
                 </TableCell>

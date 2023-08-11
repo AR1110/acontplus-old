@@ -20,7 +20,7 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
-
+import StorageIcon from '@mui/icons-material/Storage';
 
 export {
     RemoveCircleOutlineIcon,
@@ -42,5 +42,6 @@ export {
     RestartAltIcon,
     MonetizationOnIcon,
     PersonSearchIcon,
-    AddShoppingCartIcon, 
+    AddShoppingCartIcon,
+    StorageIcon 
 }
