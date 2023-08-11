@@ -9,7 +9,7 @@ END
 GO
 
 
--- exec ReporteVentas.Aprob_Document '{"id":158,"codEstab":"ESTAB-000000002","codDoc":"01","codigo":"RAC","format":"pdf"}'
+-- exec ReporteVentas.Aprob_Document '{"id":664,"codEstab":"ESTAB-000000209","codDoc":"01","codigo":"RAC","format":"pdf"}'
 CREATE PROCEDURE ReporteVentas.Aprob_Document @json VARCHAR(MAX)
 AS
 BEGIN
@@ -42,7 +42,6 @@ BEGIN
 	DECLARE @headerDs VARCHAR(MAX)
 	DECLARE @detailDs VARCHAR(MAX)
 	DECLARE @paymentDs VARCHAR(MAX)
-	DECLARE @normativeDs VARCHAR(MAX)
 	DECLARE @additional VARCHAR(MAX)
 	DECLARE @dataSources VARCHAR(MAX)
 
@@ -64,7 +63,7 @@ BEGIN
 		contribuyenteEspecial varchar(50),
 		obligadoContabilidad varchar(50),
 		contribuyenteRimpe  varchar(50),
-		agenteRetencion     varchar(2),
+		agenteRetencion     varchar(150),
 		nroDoc              varchar(50),
 		claveAcceso         varchar(50),
 		ambiente            varchar(50),
@@ -72,8 +71,8 @@ BEGIN
 		fechaEmision        datetime,
 		fechaAutorizacion   varchar(50),
 		identificacionComprador varchar(50),
-		razonSocialComprador varchar(100),
-		direccionComprador  varchar(100),
+		razonSocialComprador varchar(300),
+		direccionComprador  varchar(300),
 		telefonoComprador   varchar(50),
 		emailComprador      varchar(300),
 		porcentajeIva       varchar(50),
@@ -98,7 +97,7 @@ BEGIN
 		codigo            varchar(50),
 		codigoPrincipal   varchar(50),
 		codigoAuxiliar    varchar(50),
-		descripcion       varchar(150),
+		descripcion       varchar(500),
 		medida            varchar(50),
 		cantidad          decimal(18, 2),
 		precioUnitario    decimal(18, 2),

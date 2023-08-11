@@ -23,6 +23,7 @@
         $scope.dataSearch.byTipoReporte = 0 //Consumo Diario
         $scope.dataSearch.byTipoFormato = 'pdf';
         $scope.dataSearch.codTransaccion = 'S'; 
+        $scope.dataSearch.estado = 'VI'; 
         $scope.dataSearch.tipoReporteArticulo = 'INVRV'; 
         $scope.proveedor = {};
 
@@ -141,7 +142,7 @@
                 }
             }
 
-            if($scope.dataSearch.byTipoReporte==1){
+            if($scope.dataSearch.byTipoReporte==3){
                 if($scope.dataSearch.chkUbicacion){
                     if(!$scope.dataSearch.textUbicacion){
                         tS.toastr('warning', 'Ingrese la ubicación ');
@@ -160,6 +161,9 @@
             }
             if($scope.dataSearch.byTipoReporte===2){
                 $scope.getReportArticuloFraccionado();
+            }
+            if($scope.dataSearch.byTipoReporte===3){
+                $scope.getReportCaducidad();
             }
         }
 
@@ -227,6 +231,45 @@
             const parameters = {
                 reportParams: JSON.stringify({
                     codigo: $scope.dataSearch.tipoReporteArticulo ==='INVRV'? 'INVRV': 'INVAT',
+                    format: $scope.dataSearch.byTipoFormato,
+                    aditionalParams: []
+                }),
+                dataParams: JSON.stringify(dataSearch)
+            }
+
+            const params = {
+                parameters,
+                formatType: $scope.dataSearch.byTipoFormato
+            }
+
+            _commonSvc.getReport(params)
+        } 
+
+        // REPORTE DE CADUCIDAD DE ARTICULOS 
+        $scope.getReportCaducidad = function(){
+            let dataSearch = {
+                tipo : 5,
+                codEstab: $scope.dataSearch.codEstab,
+                chkProveedor: $scope.dataSearch.chkProveedor,
+                numeroIdentificacion: $scope.dataSearch.numeroIdentificacion,
+                checkboxSubFamiliaFiltro: $scope.dataSearch.checkboxSubFamiliaFiltro,
+                bySubFamilia: $scope.dataSearch.bySubFamilia,
+                ckFechaCaducidad: $scope.dataSearch.ckFechaCaducidad,
+                fechaInicio : fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
+                fechaFin : fS.formatDateTimeZone($scope.dataSearch.fechaFin),
+                chkUbicacion: $scope.dataSearch.chkUbicacion,
+                idBodega  : $scope.dataSearch.idBodega,
+                textUbicacion: $scope.dataSearch.textUbicacion,
+                chkEstado : true,
+                estado : $scope.dataSearch.estado,
+                byTipoFormato: $scope.dataSearch.byTipoFormato,
+                byTipoReporte: $scope.dataSearch.byTipoReporte,
+                filtroFecha: $scope.dataSearch.filtroFecha
+            }
+
+            const parameters = {
+                reportParams: JSON.stringify({
+                    codigo: 'RCAA',
                     format: $scope.dataSearch.byTipoFormato,
                     aditionalParams: []
                 }),

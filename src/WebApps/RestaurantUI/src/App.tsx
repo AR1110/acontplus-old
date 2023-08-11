@@ -1,20 +1,17 @@
 import { Route, BrowserRouter, Navigate } from "react-router-dom";
 import { Suspense, lazy } from "react"; 
-import { Provider } from "react-redux";
-import { store } from "./redux/store.ts";
-import { RoutesWithNotFound, SnackbarUtilitiesConfigurator } from "@/core/utilities/index.ts"; 
+import { RoutesWithNotFound, SnackbarUtilitiesConfigurator } from "@/core/utilities/index.ts";
 import { PrivateRoutes, PublicRoutes } from "./core/models";
 import { AuthGuard } from "./core/guards";
 import { SnackbarProvider } from "notistack";
 
-const Login = lazy(() => import("@/pages/login/LoginPage"));
-const Private = lazy(() => import("@/pages/private/Private")); 
+const Login = lazy(() => import("@/pages/login/Login"));
+const Private = lazy(() => import("@/pages/private/Private"));
 
 export default function App() {
   return (
     <Suspense fallback={<>Cargando</>}>
-      <Provider store={store}>
-        <SnackbarProvider>
+      <SnackbarProvider>
         <SnackbarUtilitiesConfigurator />
         <BrowserRouter>
           <RoutesWithNotFound>
@@ -24,12 +21,11 @@ export default function App() {
               <Route
                 path={`${PrivateRoutes.PRIVATE}/*`}
                 element={<Private />}
-              ></Route> 
+              ></Route>
             </Route>
           </RoutesWithNotFound>
         </BrowserRouter>
-        </SnackbarProvider>
-      </Provider>
+      </SnackbarProvider>
     </Suspense>
   );
 }

@@ -12,11 +12,10 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
-import { AuthService as AuthSvc } from "@/core/services/auth.service";
-import { useDispatch } from "react-redux";
-import { setCredentials } from "@/redux/slices/user.slice";
 import { useNavigate } from 'react-router-dom';
-import { DataLogin, PrivateRoutes } from "@/core/models";
+import { PrivateRoutes } from "@/core/models";
+import { useAuthStore } from '@/stores/authStore';
+import { useEffect } from 'react';
 
 function Copyright(props: any) {
   return (
@@ -33,8 +32,14 @@ function Copyright(props: any) {
 
 
 export default function LoginPage() {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const login = useAuthStore(state=>state.login);
+  const {loading, successLogin} = useAuthStore(state=>({
+    loading: state.loading,
+    successLogin: state.successLogin
+  }));
+  const navigate = useNavigate(); 
+
+
   const validationSchema = yup.object({
     username: yup.string().trim("Usuario es requerido").required('Usuario es requerido'),
     password: yup
@@ -48,28 +53,13 @@ export default function LoginPage() {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      console.log(values)
-      AuthSvc.login(values.username, values.password).then(response => {
-        console.log(response)
-        if (response.code === "0") {
-          // tS.warning(response.message);
-          return;
-        }
-        if (response.code === "1") {
-          // tS.success(response.message);
-
-          const userData = response.payload as DataLogin;
-
-          const jwtToken = userData.userData[0]?.jwtToken;
-
-          AuthSvc.setPersistent("ACCESS_TOKEN", jwtToken!);
-          AuthSvc.setPersistent("USER", JSON.stringify(userData));
-          dispatch(setCredentials(userData));
-          navigate(`/${PrivateRoutes.PRIVATE}`, { replace: true });
-        }
-      })
+      login(values.username, values.password);
     }
   });
+
+  useEffect(()=>{ 
+    if(successLogin) navigate(`/${PrivateRoutes.PRIVATE}`, { replace: true }); 
+  }, [navigate, successLogin])
 
   return (
     <Grid container component="main" sx={{ height: '100vh' }}>
@@ -146,6 +136,7 @@ export default function LoginPage() {
               size='large'
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={loading}
             >
               Ingresar
             </Button>

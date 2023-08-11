@@ -5,8 +5,9 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { Badge, CardActionArea, Grid } from '@mui/material';
 import brand_img from '/assets/images/brand_logo.png';
-import soundBeep from '/sound/beep-29.mp3';
+
 import { ProductReadDto } from '@/core/models';
+import { saleStore } from '@/stores/saleStore';
 
 type ProductCardProps = {
   product: ProductReadDto
@@ -38,26 +39,19 @@ const flexRow = {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const addItemToCart = saleStore(state=>state.addItemToCart)
 
-
-  const beep = () => {
-    playSound(soundBeep);
-  }
-
-  const clearSound = () => {
-    playSound("sound/button-21.mp3");
-  }
-
-
-  function playSound(src: string): void {
-    const sound = new Audio();
-    sound.src = src;
-    sound.play();
-    sound.onended = () => {
-      // eslint-disable-next-line no-delete-var
-
-    };
-  }
+  const handleSelectItem = (item: ProductReadDto) => { 
+    addItemToCart({
+      index: 0,
+      productId: item.productId,
+      description: item.description,
+      unitPrice: item.unitPrice,
+      cantidad: 1,
+      total: item.unitPrice,
+      imgUrl: ''
+    })
+  } 
 
   return (
     <Card sx={
@@ -71,7 +65,7 @@ export default function ProductCard({ product }: ProductCardProps) {
        border: product.code=='14P5'? '1px solid': '',
       }
     }>
-      <CardActionArea onClick={beep}>
+      <CardActionArea onClick={()=>handleSelectItem(product)}>
         <CardMedia
           component="img"
           height="120"
@@ -83,7 +77,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             {product.description}
           </Typography>          
         </CardContent> */}
-        <CardContent> 
+        <CardContent  > 
 
         <Grid container alignItems="center">
           <Grid item xs>
