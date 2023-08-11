@@ -5,7 +5,7 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { Badge, CardActionArea, Grid } from '@mui/material';
 import brand_img from '/assets/images/brand_logo.png';
-import soundBeep from '/sound/beep-29.mp3';
+
 import { ProductReadDto } from '@/core/models';
 import { saleStore } from '@/stores/saleStore';
 
@@ -41,8 +41,7 @@ const flexRow = {
 export default function ProductCard({ product }: ProductCardProps) {
   const addItemToCart = saleStore(state=>state.addItemToCart)
 
-  const handleSelectItem = (item: ProductReadDto) => {
-    // playSound(soundBeep);
+  const handleSelectItem = (item: ProductReadDto) => { 
     addItemToCart({
       index: 0,
       productId: item.productId,
@@ -52,22 +51,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       total: item.unitPrice,
       imgUrl: ''
     })
-  }
-
-  const clearSound = () => {
-    playSound("sound/button-21.mp3");
-  }
-
-
-  function playSound(src: string): void {
-    const sound = new Audio();
-    sound.src = src;
-    sound.play();
-    sound.onended = () => {
-      // eslint-disable-next-line no-delete-var
-
-    };
-  }
+  } 
 
   return (
     <Card sx={

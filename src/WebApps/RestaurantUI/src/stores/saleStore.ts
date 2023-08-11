@@ -1,4 +1,5 @@
 import { CartItem } from "@/core/models";
+import { addSound, clearSound } from "@/core/utilities";
 import { create } from "zustand";
 
 interface SaleState {
@@ -28,6 +29,7 @@ export const saleStore = create<SaleState>((set, get) => ({
                 ...state, 
                 items: [...items], 
             }))
+            addSound();
         }else{
             set(state => ({
                 ...state, 
@@ -41,7 +43,8 @@ export const saleStore = create<SaleState>((set, get) => ({
             ...state,
             items: state.items.filter(_=>_.productId !== productId)
         }))
-        get().setTotalItems();       
+        get().setTotalItems(); 
+        clearSound();      
     },
     setTotalItems: ()=>set(state => ({...state, totalItems: get().items.length}))
 }))
