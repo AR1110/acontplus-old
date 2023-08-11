@@ -47,9 +47,9 @@ export default function ProductCard({ product }: ProductCardProps) {
       productId: item.productId,
       description: item.description,
       unitPrice: item.unitPrice,
-      cantidad: 1,
+      amount: 1,
       total: item.unitPrice,
-      imgUrl: ''
+      imgUrl: brand_img
     })
   } 
 

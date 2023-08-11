@@ -26,7 +26,7 @@ export default function Sale() {
     const [categories, setCategories] = useState<PosState["categories"]>([])
     const [products, setProducts] = useState<PosState["products"]>([])
     const totalItems = saleStore(state=>state.totalItems);
-
+    const resetForm = saleStore(state=>state.resetForm);
     //Fetch 
     const { loading, callEndpoint } = useFetchAndLoad();
 
@@ -135,7 +135,7 @@ export default function Sale() {
                         <Box sx={{ flexGrow: 1, p: 2 }}>
                             <Grid container spacing={2} columns={16}>
                                 <Grid item xs={8}>
-                                    <Button color="error" variant="contained" size="large" fullWidth endIcon={<RestartAltIcon />}>
+                                    <Button color="error" variant="contained" size="large" fullWidth endIcon={<RestartAltIcon />} onClick={resetForm}>
                                         Limpiar
                                     </Button>
                                 </Grid>
