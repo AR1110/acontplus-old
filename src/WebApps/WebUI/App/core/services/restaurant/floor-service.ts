@@ -13,10 +13,11 @@ async function get() {
 // Post
 async function post(data) {
     return await client.post(url, data).then((response) => {
+        console.log(response);
         let { status, data } = response;
         return { status, data };
     }, (err) => {
-        let { status, data } = err;
+        let { status, data } = err.response;
         return { status, data };
     });
 }
@@ -27,7 +28,7 @@ async function put(id, data) {
         let { status, data } = response;
         return { status, data };
     }, (err) => {
-        let { status, data } = err;
+        let { status, data } = err.response;
         return { status, data };
     });
 }
@@ -38,7 +39,7 @@ async function remove(id) {
         let { status, data } = response;
         return { status, data };
     }, (err) => {
-        let { status, data } = err;
+        let { status, data } = err.response;
         return { status, data };
     });
 }

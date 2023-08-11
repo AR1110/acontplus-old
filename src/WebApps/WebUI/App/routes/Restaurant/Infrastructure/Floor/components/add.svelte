@@ -9,7 +9,7 @@
   export let openNew;
   export let modalClosed;
 
-  let data = {} as Floor;
+  export let data = {} as Floor;
   let establecimientos = [];
 
   onMount(() => {
@@ -43,9 +43,10 @@
     if (!onValidate(data)) return;
 
     floorService.put(data.id, data).then((response) => {
-      if (response.status >= 200 && response.status < 300) {
-        modalClosed();
+      if (response.status == 200) {
+        onModalClose();
         toast({ type: 'success', message: 'Actualizado exitosamente' });
+        data = {} as Floor;
       } else {
         toast({ type: 'error', message: 'Error al actualizar' });
       }

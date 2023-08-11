@@ -23,8 +23,7 @@ namespace Restaurant.API.Extensions
             //});
             services.AddScoped<IADORepository, ADORepository>(); 
             services.AddScoped<IRecipe, RecipeService>();
-            services.AddScoped<IAppTableService, AppTableService>(); 
-            services.AddScoped<IRoomService, RoomService>();            
+            services.AddScoped<IAppTableService, AppTableService>();   
             services.AddScoped<IMenuService, MenuService>();
             services.AddScoped<IIngredientService, IngredientService>();
 
