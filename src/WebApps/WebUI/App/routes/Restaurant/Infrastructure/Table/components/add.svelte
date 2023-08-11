@@ -117,7 +117,7 @@
 						<option disabled>seleccione ítem</option>
 						{#each rooms as item}
 							<option value={item.id}>
-								{`${item.description} - ${item.code}`}
+								{`${item.floor.description} - ${item.description}`}
 							</option>
 						{/each}
 					</select>

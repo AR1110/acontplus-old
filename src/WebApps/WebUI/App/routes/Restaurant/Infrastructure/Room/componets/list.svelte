@@ -103,7 +103,7 @@
 								</td>
 								<td>{index + 1}</td>
 								<td>{item.code}</td>
-								<td>{item.description}</td>
+								<td> {item.floor.description} - {item.description}</td>
 								<td>{item.capacity}</td>
 								<td>
 									{#if item.enabled}

@@ -25,7 +25,11 @@ namespace Restaurant.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppTable>>> GetTables()
         {
-            return await _context.Tables.ToListAsync();
+            // Select multiple tables
+            var tables = await _context.Tables.Include(x => x.Room).ToListAsync();
+
+            return tables;
+            // return await _context.Tables.ToListAsync();
         }
 
         // POST: api/AppTables

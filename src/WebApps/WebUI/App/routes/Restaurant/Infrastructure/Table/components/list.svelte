@@ -108,7 +108,7 @@
 									</a>
 								</td>
 								<td>{index + 1}</td>
-								<td>{item.description}</td>
+								<td> {item.room.description}  - {item.description}</td>
 								<td>{item.numberTable}</td>
 								<td>{item.capacity}</td>
 								<td>{formatDateTime(item.createdAt)}</td>
