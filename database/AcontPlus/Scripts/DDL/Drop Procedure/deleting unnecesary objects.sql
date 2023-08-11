@@ -9,190 +9,130 @@ GO
 DROP PROCEDURE IF EXISTS [ApiPrinter].[Impresora_Get_Documemt] 
 GO
 DROP PROCEDURE IF EXISTS [dbo].[ASPReportParamsGet]
-
+GO
 DROP PROCEDURE IF EXISTS [Compra].[IngresoBodega_Delete]
 GO
-
+--
 DROP PROCEDURE IF EXISTS [Compra].[IngresoBodega_Get]
 GO
-
 DROP PROCEDURE IF EXISTS [Compra].[IngresoBodega_Get_Id]
 GO
-
 DROP PROCEDURE IF EXISTS [Compra].[IngresoBodega_GetId]
 GO
-
 DROP PROCEDURE IF EXISTS [Compra].[IngresoBodega_Insert]
 GO
-
 DROP PROCEDURE IF EXISTS [Compra].[IngresoBodega_Update]
 GO
-
+--
 DROP PROCEDURE IF EXISTS [Ventas].[Proforma_ConvertFactura]
 GO
-
 DROP PROCEDURE IF EXISTS [Ventas].[Proforma_ConvertNotaEntrega]
 GO
-
 DROP PROCEDURE IF EXISTS [Config].[GestionSistema_Get]
 GO
-
 DROP PROCEDURE IF EXISTS [Config].[GestionSistema_Update]
 GO
-
-
 DROP PROCEDURE IF EXISTS Sistema.Configuracion_Get_Data_Form
 GO
-
+--
 DROP PROCEDURE IF EXISTS [Compra].[NotaCredito_Delete]
 GO
-
 DROP PROCEDURE IF EXISTS [Compra].[NotaCredito_Get]
 GO 
-
 DROP PROCEDURE IF EXISTS [Compra].[NotaCredito_Get_Id]
 GO 
-
 DROP PROCEDURE IF EXISTS [Compra].[NotaCredito_GetId]
 GO 
-
 DROP PROCEDURE IF EXISTS [Compra].[NotaCredito_Insert]
 GO 
-
+--
 DROP PROCEDURE IF EXISTS [Compra].[NotaCredito_Update]
 GO 
- 
 DROP PROCEDURE IF EXISTS [Recepcion].[Factura_Insert]
 GO 
-
 DROP PROCEDURE IF EXISTS [Ventas].[NotaEntrega_Convert]
 GO
-
 DROP PROCEDURE IF EXISTS [Ventas].[NotaEntrega_Delete]
 GO
-
 DROP PROCEDURE IF EXISTS [Ventas].[NotaEntrega_Detele]
 GO
-
+--
 DROP PROCEDURE IF EXISTS [Config].[CantidadDecimal_Get]
 GO
-
 DROP PROCEDURE IF EXISTS [Config].[CantidadDecimal_Update]
 GO
-
-
 DROP PROCEDURE IF EXISTS [ReporteCompras].[Factura_Detalle]
 GO
-
-
 DROP PROCEDURE IF EXISTS ReporteCompras.IngresoBodega
 GO
-
 DROP PROCEDURE IF EXISTS [Config].[EntidadNotificacion_Get]
 GO
-
+--
 DROP PROCEDURE IF EXISTS [Administrador].[ActividadEtiqueta_Delete]
 GO
-
-
 DROP PROCEDURE IF EXISTS [Administrador].[ActividadEtiqueta_Get]
 GO
-
-
 DROP PROCEDURE IF EXISTS [Administrador].[ActividadEtiqueta_Insert]
 GO
-
 DROP PROCEDURE IF EXISTS [Administrador].[ActividadEtiqueta_Update]
 GO
-
-
 DROP PROCEDURE IF EXISTS [dbo].[aspManejoArticuloByDocument]
 GO
-
-
+--
 DROP PROCEDURE IF EXISTS [Administrador].[Etiqueta_Get]
 GO
-
-
 DROP PROCEDURE IF EXISTS [Administrador].[Etiqueta_Insert]
 GO
-
-
 DROP PROCEDURE IF EXISTS [dbo].[aspManejoArticuloUpdate]
 GO
-
-
 DROP PROCEDURE IF EXISTS [dbo].[aspManejoArticuloInsert]
 GO
-
 DROP PROCEDURE IF EXISTS [Almacen].[Articulo_Search]
 GO
-
+--
 DROP PROCEDURE IF EXISTS [dbo].[ASPArticuloSearchFilter]
 GO
-
 DROP PROCEDURE IF EXISTS [dbo].[ASPArticuloSearchFraccFilter]
 GO
-
-
-
 DROP PROCEDURE IF EXISTS [dbo].[ASPCategoriaCompraOption]
 GO
-
 DROP PROCEDURE IF EXISTS [dbo].[ASPCobroDetalleByCobro]
 GO
-
-
 DROP PROCEDURE IF EXISTS [dbo].[ASPCobroDetalleByDocument]
 GO
-
-
+--
 DROP PROCEDURE IF EXISTS [dbo].[ASPContraPartidaCajaRead]
 GO
-
 DROP PROCEDURE IF EXISTS [dbo].[ASPContraPartidaCreate]
 GO
-
-
 DROP PROCEDURE IF EXISTS [dbo].[ASPContraPartidaRead]
 GO
-
 DROP PROCEDURE IF EXISTS [dbo].[ASPContraPartidaUpdate]
 GO
-
 DROP PROCEDURE IF EXISTS [dbo].[aspControlCajaClose]
 GO
-
+--
 DROP PROCEDURE IF EXISTS [dbo].[aspControlCajaMovement]
 GO
-
 DROP PROCEDURE IF EXISTS [dbo].[aspControlCajaOpen]
 GO
-
 DROP PROCEDURE IF EXISTS [dbo].[aspCuotaXCobrarByCobro]
 GO
-
 DROP PROCEDURE IF EXISTS [aspCuotaXCobrarByDocument]
 GO
-
 DROP PROCEDURE IF EXISTS [dbo].[ASPCuotaxCobrarInsert]
 GO
-
+--
 DROP PROCEDURE IF EXISTS [dbo].[ASPCuotaxCobrarUpdate]
 GO
-
 DROP PROCEDURE IF EXISTS [aspCuotaXPagarByDocument]
 GO
-
 DROP PROCEDURE IF EXISTS [dbo].[aspCuotaXPagarByPago]
 GO
-
 DROP PROCEDURE IF EXISTS [dbo].[aspCuotaxPagarInsert]
 GO
-
 DROP PROCEDURE IF EXISTS [aspCuotaxPagarUpdate]
 GO
-
 -- // 1
 DROP PROCEDURE IF EXISTS [dbo].[aspActividadEmpresaBySucursal]
 GO
@@ -479,4 +419,8 @@ GO
 DROP PROCEDURE IF EXISTS [dbo].[ASPComprobanteNoAutorizadoInsert]
 GO
 DROP PROCEDURE IF EXISTS [dbo].[ASPComprobanteAutorizadoInsert]
+GO
+
+-- ALEXIS RAMIREZ -- FECHA 8/11/2023
+DROP PROCEDURE IF EXISTS [Inventario].[Control_Stock_Serv_Get]
 GO
