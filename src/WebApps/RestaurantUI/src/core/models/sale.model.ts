@@ -3,7 +3,7 @@ export interface CartItem {
     readonly productId: number;
     description: string;
     unitPrice: number;
-    cantidad: number;
+    amount: number;
     total: number;
     imgUrl: string;    
 }
