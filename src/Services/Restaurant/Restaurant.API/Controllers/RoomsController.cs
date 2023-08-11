@@ -72,7 +72,7 @@ namespace Restaurant.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest("Error al actualizar " + ex);
+                return BadRequest("Error al actualizar " + ex.Message);
             }
         }
 

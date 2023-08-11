@@ -1,13 +1,30 @@
 <script lang="ts">
 	import { productionAreaService } from "$core/services/restaurant/production-area-service";
 	import toast from "$core/utils/toast";
-
 	import Swal from "sweetalert2";
-	import Update from "./update.svelte";
+	import { onMount } from "svelte";
 	import type { ProductionArea } from "$core/interfaces/restaurant/production-area";
-	export let items = [];
+	import Add from "./add.svelte";
+
 	let isNew = false;
+	let productionAreas = [];
 	let edit = {} as ProductionArea;
+
+	onMount(() => {
+		get();
+	});
+
+	export const reloadList = () => {
+		get();
+	};
+
+	const get = () => {
+		productionAreaService.get().then((response) => {
+			if (response) {
+				productionAreas = response;
+			}
+		});
+	};
 
 	const openNew = (data) => {
 		if (openNew) {
@@ -15,11 +32,10 @@
 			isNew = true;
 		}
 	};
+
 	const closeModal = () => {
 		isNew = false;
-		setTimeout(() => {
-			window.location.reload;
-		}, 500);
+		reloadList();
 	};
 
 	// Delete production area
@@ -41,9 +57,7 @@
 							type: "success",
 							message: "Eliminado exitosamente",
 						});
-
-						// Remove from list without reload page
-						items = items.filter((item) => item.id !== id);
+						reloadList();
 					}
 				});
 			}
@@ -53,7 +67,7 @@
 
 <div class="card">
 	<div class="card-body">
-		{#if items.length > 0}
+		{#if productionAreas.length > 0}
 			<div class="table-responsive">
 				<table class="table">
 					<thead>
@@ -66,7 +80,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						{#each items as item, index}
+						{#each productionAreas as item, index}
 							<tr>
 								<td>
 									<!-- svelte-ignore a11y-invalid-attribute -->
@@ -110,4 +124,4 @@
 		{/if}
 	</div>
 </div>
-<Update openNew={isNew} modalClosed={() => closeModal()} data={edit} />
+<Add openNew={isNew} modalClosed={() => closeModal()} data={edit} />
