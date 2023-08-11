@@ -9,6 +9,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
+-- DROP PROC Restaurant.Dish_Update_Cancel
 CREATE OR ALTER PROC Restaurant.Dish_Update_Cancel
 @userRoleId INT
 ,@id INT

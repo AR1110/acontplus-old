@@ -1,3 +1,5 @@
+USE AcontPlus
+
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -19,6 +21,7 @@ GO
 -- Description:	Get dish. 
 -- =============================================
 -- Restaurant.Dish_Get 0,'{}', ''
+-- DROP PROC Restaurant.Dish_Get
 CREATE OR ALTER PROC Restaurant.Dish_Get
 @userRoleId INT
 ,@json VARCHAR(MAX)
