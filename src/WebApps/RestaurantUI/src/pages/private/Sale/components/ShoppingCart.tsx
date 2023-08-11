@@ -13,7 +13,7 @@ import { saleStore } from '@/stores/saleStore';
 export default function ShoppingCart() {
     const items = saleStore(state => state.items);
     const removeItemFromCart = saleStore(state => state.removeItemFromCart)
-    const setItemChangeAmount = saleStore(state => state.setItemChangeAmount)
+    const setItemChangeQty = saleStore(state => state.setItemChangeQty)
 
     if (items.length === 0) return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -24,7 +24,7 @@ export default function ShoppingCart() {
                 color: 'rgba(59, 130, 246, 0.5)'
             }} />
 
-            <Typography color="text.secondary" variant="caption">CARRITO VACÍO</Typography>
+            <Typography color="text.secondary" variant="caption">DATOS NO DISPONIBLES</Typography>
         </div>
     )
 
@@ -58,7 +58,7 @@ export default function ShoppingCart() {
                                                 wordBreak: 'break-all',
                                                 fontSize: '10px'
                                             }}>
-                                                {item.description}
+                                                {item.name}
                                             </Typography>
                                         </Grid>
                                     </Grid>
@@ -66,11 +66,11 @@ export default function ShoppingCart() {
                                 <TableCell align="center" style={{ minWidth: 10 }}>
                                     <TextField
                                         type="number"
-                                        value={item.amount}
+                                        value={item.qty}
                                         id="amount"
                                         name="amount"
                                         variant="outlined"
-                                        onChange={(event) => setItemChangeAmount(event, item)}
+                                        onChange={(event) => setItemChangeQty(event, item)}
                                         inputProps={
                                             {
                                                 style: {
@@ -86,8 +86,8 @@ export default function ShoppingCart() {
                                     />
 
                                 </TableCell>
-                                <TableCell align="right">{item.unitPrice}</TableCell>
-                                <TableCell align="right">{item.total}</TableCell>
+                                <TableCell align="right">${item.sellingPrice}</TableCell>
+                                <TableCell align="right">${item.totalPrice}</TableCell>
                                 <TableCell align="center">
                                     <IconButton color='error' size="small" aria-label="delete" onClick={() => removeItemFromCart(item.productId)}>
                                         <DeleteIcon fontSize="inherit" />

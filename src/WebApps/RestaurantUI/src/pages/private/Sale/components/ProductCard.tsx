@@ -45,10 +45,13 @@ export default function ProductCard({ product }: ProductCardProps) {
     addItemToCart({
       index: 0,
       productId: item.productId,
-      description: item.description,
-      unitPrice: item.unitPrice,
-      amount: 1,
-      total: item.unitPrice,
+      name: item.description,
+      qty: 1,
+      price: item.unitPrice,
+      discount: 0,
+      discountTotal: 0,
+      sellingPrice: item.unitPrice,
+      totalPrice: item.unitPrice, 
       s3ObjectUrl: item.s3ObjectUrl ? item.s3ObjectUrl : brand_img
     })
   }
