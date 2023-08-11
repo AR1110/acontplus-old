@@ -85,3 +85,7 @@ DROP TABLE IF EXISTS [dbo].[StockBodega]
 GO 
 DROP TABLE IF EXISTS [dbo].[TipoCuenta]
 GO
+
+-- ALEXIS RAMIREZ -- FECHA : 8/11/2023
+DROP TABLE IF EXISTS [Inventario].[ControlStock]
+GO 
