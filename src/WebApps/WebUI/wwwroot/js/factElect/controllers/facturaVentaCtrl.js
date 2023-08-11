@@ -165,20 +165,19 @@ function facturaVentaCtrl(
 
         try {
             let dataSearch = {
+                tipo : 1,
                 pageIndex: $scope.dataSearch.pageIndex,
                 pageSize: $scope.dataSearch.pageSize,
                 codEstab: $scope.dataSearch.codEstab,
-                checkBoxDefault: false,
                 checkBoxCliente: $scope.dataSearch.idCliente > 0,
                 byCliente: $scope.dataSearch.idCliente,
-                checkBoxFecha: true,
+                checkBoxFecha: $scope.dataSearch.nroSecuencial ? false: true,
                 checkBoxUsuario: $scope.dataSearch.byUsuario > 0,
                 byUsuario: $scope.dataSearch.byUsuario,
                 checkBoxEstado: $scope.dataSearch.byEstado ? true : false,
                 byEstado: $scope.dataSearch.byEstado,
                 fechaInicio: _fS.formatDateMoment($scope.dataSearch.fechaInicio),
                 fechaFin: _fS.formatDateMoment($scope.dataSearch.fechaFin),
-                tipoFecha: 'FE',
                 isSearchNroSequential: $scope.dataSearch.nroSecuencial? true: false,
                 nroSecuencial: $scope.dataSearch.nroSecuencial
             }

@@ -30,6 +30,7 @@ BEGIN
 	DECLARE @checkBoxFecha       BIT ,@fechaInicio      DATETIME ,@fechaFin DATETIME
 	DECLARE @checkBoxTransaccion BIT ,@idUsuario             INT
 	DECLARE @checkBoxUsuario     BIT ,@codTransaccion VARCHAR(5)
+	DECLARE @chkEstado           BIT ,@estado VARCHAR(5)
 
 	DECLARE @checkBoxInventario  BIT 
 	DECLARE @checkboxDetalleBodegaFiltro BIT 
@@ -141,8 +142,6 @@ BEGIN
 				,@checkboxSubFamilia  = checkboxSubFamiliaFiltro ,@idSubFamilia = bySubFamilia
 				,@checkboxStock       = checkboxStockFiltro      ,@byStock      = byStock
 				,@chkProveedor        = chkProveedor             ,@rucProveedor = numeroIdentificacion
-				,@checkBoxFecha       = ckFechaCaducidad         ,@fechaInicio  = fechaInicio ,@fechaFin = fechaFin
-				,@chkUbicacion        = chkUbicacion             ,@idBodega     = idBodega    ,@ubicacion = ubicacion
 				,@byOrder             = byOrder			 
 				,@byOrderCampo        = byOrderCampo		
 			FROM OPENJSON(@json)
@@ -150,8 +149,6 @@ BEGIN
 				  ,checkboxSubFamiliaFiltro     BIT '$.checkboxSubFamiliaFiltro',bySubFamilia                 INT '$.bySubFamilia'	
 				  ,checkboxStockFiltro          BIT '$.checkboxStockFiltro'     ,byStock                      INT '$.byStock'	
 				  ,chkProveedor                 BIT '$.chkProveedor'            ,numeroIdentificacion VARCHAR(25) '$.numeroIdentificacion'
-				  ,chkUbicacion                 BIT '$.chkUbicacion'            ,idBodega                     INT '$.idBodega'            ,ubicacion VARCHAR(100) '$.textUbicacion'
-				  ,ckFechaCaducidad             BIT '$.ckFechaCaducidad'        ,fechaInicio             DATETIME '$.fechaInicio'         ,fechaFin      DATETIME '$.fechaFin'
 				  ,byOrder              VARCHAR(10) '$.byOrder'
 				  ,byOrderCampo         VARCHAR(50) '$.byOrderCampo'	
 				) AS dt
@@ -161,19 +158,9 @@ BEGIN
 					SET @sql = @sql + 'AND ar.idArticulo IN (SELECT it.idArticulo FROM v_InventarioTransaccion it WHERE it.rucClienteProveedor = @rucProveedor) '
 				END
 
-			IF @chkUbicacion = 1
-				BEGIN
-					SET @sql = @sql + 'AND ar.idArticulo IN (SELECT sa.idArticulo FROM Inventario.v_Articulo_Stock sa WITH (NOLOCK) WHERE sa.idBodega = @idBodega AND sa.ubicacion LIKE @ubicacion ) '
-				END 
-
-			IF @checkBoxFecha = 1
-				BEGIN
-					SET @sql = @sql + 'AND ar.caducidad = 1 AND CAST(ar.fechaCaducidad AS DATE) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
-				END 
-
 			IF @checkBoxSubFamilia = 1
 				BEGIN
-					SET @sql = @sql + 'AND ar.idSubFamilia = @bySubFamilia '
+					SET @sql = @sql + 'AND ar.idSubFamilia = @idSubFamilia '
 				END
 
 			IF @checkBoxStock = 1 AND @byStock = 1 
@@ -253,8 +240,6 @@ BEGIN
 				,@checkboxSubFamilia  = checkboxSubFamiliaFiltro ,@idSubFamilia = bySubFamilia
 				,@checkboxStock       = checkboxStockFiltro      ,@byStock      = byStock
 				,@chkProveedor        = chkProveedor             ,@rucProveedor = numeroIdentificacion
-				,@checkBoxFecha       = ckFechaCaducidad         ,@fechaInicio  = fechaInicio ,@fechaFin  = fechaFin
-				,@chkUbicacion        = chkUbicacion             ,@idBodega     = idBodega    ,@ubicacion = ubicacion
 				,@byOrder             = byOrder			 
 				,@byOrderCampo        = byOrderCampo		
 			FROM OPENJSON(@json)
@@ -262,8 +247,6 @@ BEGIN
 				  ,checkboxSubFamiliaFiltro     BIT '$.checkboxSubFamiliaFiltro',bySubFamilia                 INT '$.bySubFamilia'	
 				  ,checkboxStockFiltro          BIT '$.checkboxStockFiltro'     ,byStock                      INT '$.byStock'	
 				  ,chkProveedor                 BIT '$.chkProveedor'            ,numeroIdentificacion VARCHAR(25) '$.numeroIdentificacion'
-				  ,chkUbicacion                 BIT '$.chkUbicacion'            ,idBodega                     INT '$.idBodega'            ,ubicacion VARCHAR(100) '$.textUbicacion'
-				  ,ckFechaCaducidad             BIT '$.ckFechaCaducidad'        ,fechaInicio             DATETIME '$.fechaInicio'         ,fechaFin      DATETIME '$.fechaFin'
 				  ,byOrder              VARCHAR(10) '$.byOrder'
 				  ,byOrderCampo         VARCHAR(50) '$.byOrderCampo'	
 				) AS dt
@@ -273,19 +256,9 @@ BEGIN
 					SET @sql = @sql + ' AND ar.idArticulo IN (SELECT it.idArticulo FROM v_InventarioTransaccion it WHERE it.rucClienteProveedor = @rucProveedor) '
 				END
 
-			IF @chkUbicacion = 1
-				BEGIN
-					SET @sql = @sql + 'AND ar.idArticulo IN (SELECT sa.idArticulo FROM Inventario.v_Articulo_Stock sa WITH (NOLOCK) WHERE sa.idBodega = @idBodega AND sa.ubicacion LIKE @ubicacion  ) '
-				END 
-
-			IF @checkBoxFecha = 1
-				BEGIN
-					SET @sql = @sql + 'AND ar.caducidad = 1 AND CAST(ar.fechaCaducidad AS DATE) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
-				END 
-
 			IF @checkboxSubFamilia = 1
 				BEGIN
-					SET @sql = @sql + ' AND ar.idSubFamilia = @bySubFamilia '
+					SET @sql = @sql + ' AND ar.idSubFamilia = @idSubFamilia '
 				END
 		
 			--Articulo con stock
@@ -331,7 +304,7 @@ BEGIN
 			RETURN 
 		END
 	
-	-- REPORTE DE CONSUMO DIARIO DE ARTICULOS
+	-- REPORTE DE CONSUMO DIARIO DE ARTICULOS --
 	IF @tipo = 4
 		BEGIN 
 			
@@ -431,6 +404,67 @@ BEGIN
 
 			RETURN 
 
+		END 
+	
+	-- REPORTE DE CADUCIDADES -- 
+	IF @tipo = 5
+		BEGIN
+			
+			SELECT @chkEstado = chkEstado,@estado = estado FROM OPENJSON(@json) WITH (chkEstado BIT '$.chkEstado',estado VARCHAR(5) '$.estado')
+
+			SET @params =  '@idEntidad INT'
+
+			SET @sql = 'SELECT descripcion as articulo
+							  ,st.codigo
+							  ,st.subfamilia
+							  ,CAST(st.precioCosto as numeric(18,2)) as precioCosto
+							  ,FORMAT(st.fechaCaducidad, ''dd/MM/yyyy'') as fechaCaducidad
+							  ,st.cantidad
+							  ,st.bodega
+							  ,(st.diasCaducidad * IIF(st.diasCaducidad < 0,-1,1) ) as diasCaducidad
+							  ,CASE WHEN st.diasCaducidad <= 0 THEN ''Caducado''
+							        WHEN st.diasCaducidad BETWEEN 1 AND 5 THEN ''Proximo a Caducar''
+									ELSE ''Vigente'' 
+							   END  as estado
+						FROM Inventario.v_Articulo_Stock st 
+						WHERE st.idEntidad = @idEntidad 
+						  AND st.caducidad = 1 '
+			
+			IF @chkEstado = 1
+				BEGIN
+					IF @estado = 'PA'
+						BEGIN
+							SET @sql = @sql + 'AND st.diasCaducidad BETWEEN 1 AND 5 '
+						END
+						
+					IF @estado = 'VI'
+						BEGIN
+							SET @sql = @sql + 'AND st.diasCaducidad >= 6 '
+						END 
+
+					IF @estado = 'CA'
+						BEGIN
+							SET @sql = @sql + 'AND st.diasCaducidad <= 0 '
+						END 
+				END 
+			--Entidad 
+			SELECT e.ruc
+				  ,e.razonSocial 
+				  ,e.nombreComercial	
+				  ,ISNULL(e.telefono, '')telefonoEntidad
+				  ,ISNULL(e.direccion, '')direccionEntidad			
+				  ,tituloReporte = CASE @estado WHEN 'PA' THEN 'ARTICULOS QUE DE 1 A 5 DÍAS CADUCAN ' 
+				                                WHEN 'VI' THEN 'ARTICULO VIGENTES'
+				                                          ELSE  'CADUCIDAD DE ARTÍCULOS' END 
+				  ,usuario       = @usuario
+				  ,CONVERT(NVARCHAR,FORMAT(@fechaInicio, 'dd/MM/yyyy') +' - ' +  FORMAT(@fechaFin, 'dd/MM/yyyy')) as filtroFecha			
+			FROM Entidad e WITH (NOLOCK)
+			WHERE e.idEntidad = @idEntidad
+
+			EXEC sp_executesql @sql
+							  ,@params
+							  ,@idEntidad      = @idEntidad
+			RETURN
 		END 
 
 	SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
