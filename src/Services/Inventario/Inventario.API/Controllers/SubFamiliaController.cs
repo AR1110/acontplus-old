@@ -1,19 +1,24 @@
 using DataAccess;
 using Domain.Models.Almacen;
 using Helpers;
+using Inventario.Core.Interfaces;
+using Inventario.Core.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Services.Common.Logs;
+using System.IO;
 
 namespace Inventario.API.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class SubFamiliaController : ControllerBase
+    public class SubFamiliaController : BaseApiController
     {
         private readonly IConfiguration _configuration;
-        public SubFamiliaController(IConfiguration configuration)
+        private readonly IStorageService _storageService;
+        public SubFamiliaController(IConfiguration configuration, IStorageService storageService)
         {
             _configuration = configuration;
+            _storageService = storageService;
         }
 
         [HttpGet("Get")]
@@ -41,20 +46,48 @@ namespace Inventario.API.Controllers
             return Ok(_response);
         }
 
-        [HttpPost("Insert")]
-        public async Task<IActionResult> Insert([FromBody] SubFamilia data)
+        [HttpPost("Post")]
+        public async Task<IActionResult> Post(string json, IFormFile file)
         {
+            var data = JsonConvert.DeserializeObject<SubFamilia>(json);
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
+            string directory = string.Empty, docName = string.Empty;
             try
             {
+                if (file != null)
+                {
+                    var fileExt = Path.GetExtension(file.FileName);
+                    directory = "subfamilias/";
+                    docName = $"{Guid.NewGuid()}{fileExt}";
+                }
                 await _db.SPExecute("Almacen.SubFamilia_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("idFamilia", data.idFamilia);
                 _db.AddDynamicParam("descripcion", data.descripcion);
                 _db.AddDynamicParam("siglas", data.siglas);
                 _db.AddDynamicParam("montoObjetivo", data.montoObjetivo);
+                _db.AddDynamicParam("imgUrl", directory + docName);
                 _response = _db.GetDefault();
+                if (_response.code == "1" && file != null)
+                {
+                 
+                    await using var memoryStream = new MemoryStream();
+
+                    await file.CopyToAsync(memoryStream);
+                    var s3 = new S3Object()
+                    {
+                        BucketName = "acontplus",
+                        InputStream = memoryStream,
+                        Name = directory + docName
+                    };
+                    var credentials = new AwsCredentials()
+                    {
+                        Key = _configuration["AwsConfiguration:AWSAccessKey"],
+                        Secret = _configuration["AwsConfiguration:AWSSecretKey"]
+                    };
+                   var s3Response = await _storageService.UploadFileAsync(s3, credentials);
+                }
             }
             catch (Exception ex)
             {
@@ -69,8 +102,8 @@ namespace Inventario.API.Controllers
             return Ok(_response);
         }
 
-        [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] SubFamilia data)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] SubFamilia data)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
@@ -98,7 +131,7 @@ namespace Inventario.API.Controllers
             return Ok(_response);
         }
 
-        [HttpDelete("Delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             GenericResponse _response = new GenericResponse();

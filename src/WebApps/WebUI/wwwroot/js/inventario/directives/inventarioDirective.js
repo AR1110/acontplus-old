@@ -122,6 +122,7 @@
                         controller: ctrl,
                         template,
                         size: 'md',
+                        isRenderRazorPartial: true,
                         params: scope.params || {},
                     })        
                           
