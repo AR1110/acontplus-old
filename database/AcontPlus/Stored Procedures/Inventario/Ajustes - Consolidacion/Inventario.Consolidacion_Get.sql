@@ -180,6 +180,7 @@ BEGIN
 					SET @sql = @sql + 'AND idArticulo IN (SELECT idArticulo FROM v_InventarioTransaccion WHERE nroDocumento = @nroDocumento) '
 				END
 		SET @sql = @sql + 'ORDER BY a.fechaModificacion DESC '
+		
 		EXEC sp_executesql @sql, @params
 							   ,@idEntidad = @idEntidad 
 							   ,@idArticulo = @idArticulo

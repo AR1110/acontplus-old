@@ -6,22 +6,39 @@
 	import Add from "./add.svelte";
 	import type { Floor } from "$core/interfaces/restaurant/floor";
 	let floors = [];
-
 	let edit = {} as Floor;
 
 	// In component
 	let isNew = false;
+	export let codEstab  = undefined;
 
 	onMount(() => {
 		getFloors();
 	});
 
 	let getFloors = () => {
-		floorService.get().then((response) => {
+		if (!isExistsCodEstab(codEstab)) {
+			return toast({
+				type: "warning",
+				message: "Seleccione un establecimiento",
+			});
+		}
+
+		floorService.get(codEstab).then((response) => {
 			if (response) {
 				floors = response;
 			}
 		});
+	};
+
+	// Return boolean if the floor is enabled
+	const isExistsCodEstab = (codEstab) => {
+		console.log(codEstab);
+
+		if (codEstab === undefined || codEstab === null || codEstab === "") {
+			return false;
+		}
+		return true;
 	};
 
 	export const reloadList = () => {

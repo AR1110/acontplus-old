@@ -21,10 +21,11 @@ namespace Restaurant.API.Controllers
         }
 
         // GET: api/Floors
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Floor>>> Get()
+        [HttpGet("{codEstab}")]
+        public async Task<ActionResult<IEnumerable<Floor>>> Get(string codEstab)
         {
-            return await _context.Floors.ToListAsync();
+            var floors = await _context.Floors.Where(x => x.CodEstab == codEstab).ToListAsync();
+            return floors;
         }
 
         // POST: api/Floors
@@ -59,7 +60,7 @@ namespace Restaurant.API.Controllers
 
             var floorNotExists = !FloorExists(id);
             if (floorNotExists) return NotFound("No existe registro");
-           
+
             try
             {
                 _context.Entry(floor).State = EntityState.Modified;
@@ -114,7 +115,7 @@ namespace Restaurant.API.Controllers
 
         private bool FloorExistsCode(int id, string code)
         {
-            return _context.Floors.Any(e => e.Id != id && e.Code == code);  
+            return _context.Floors.Any(e => e.Id != id && e.Code == code);
         }
     }
 }
