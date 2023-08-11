@@ -67,7 +67,7 @@ function ModalSubFamiliaCtrl($scope, $uibModalInstance, familiaSvc, subFamiliaSv
             let file = $scope.selectedFile
             debugger;
             if ($scope.data.idSubFamilia > 0) {
-                subFamiliaSvc.update($scope.data.idSubFamilia, $scope.data).then($scope.successReponse)
+                subFamiliaSvc.update($scope.data.idSubFamilia, file, $scope.data).then($scope.successReponse)
                     .catch(err => {
                         hideLoader();
                         console.log(err);

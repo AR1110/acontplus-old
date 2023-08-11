@@ -47,7 +47,9 @@
                                 tipoIva: item.tipoIva,
                                 tipoArticulo: item.tipoArticulo,
                                 totalRecords: item.totalRecords,
-                                style: item.style
+                                style: item.style,
+                                s3ObjectKey: item.s3ObjectKey,
+                                s3ObjectUrl: item.s3ObjectUrl
                             }
                         }),
                         subFamilias,
@@ -264,12 +266,14 @@
             })
         }
 
-        service.save = function (data) {
-            return mainService.getData('post', url + 'Post', { data: data }, true)
+        service.save = function (file, data) {
+            return mainService.getDataFile(url + "Post/?json=" + JSON.stringify({ data: data }), file, null, true);
+            //    return mainService.getData('post', url + 'Post', { data: data }, true)
         }
 
-        service.update = function (id, data) {
-            return mainService.getData('put', url + 'Put/' + id, { data: data }, true)
+        service.update = function (id, file, data) {
+            //return mainService.getData('put', url + 'Put/' + id, { data: data }, true)
+            return mainService.getDataFile(url + `Put/${id}/?json=${JSON.stringify({ data: data })}`, file, null, true);
         }
 
         /**

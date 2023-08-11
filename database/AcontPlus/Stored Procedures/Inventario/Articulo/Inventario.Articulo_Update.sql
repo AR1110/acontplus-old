@@ -17,6 +17,8 @@ CREATE PROCEDURE Inventario.Articulo_Update
 	 @userRoleId INT 
 	,@id INT
 	,@json VARCHAR(max)
+	,@s3ObjectKey VARCHAR(500) NULL
+	,@s3ObjectUrl VARCHAR(800) NULL
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -96,6 +98,12 @@ BEGIN
 	   ,porcentajeUtilidad NUMERIC(18,5) NOT NULL 
 	   ,precioPredeterminado BIT NOT NULL
 	)
+
+
+	IF(LEN(LTRIM(RTRIM(@s3ObjectKey))) = 0)
+		BEGIN
+			SELECT  @s3ObjectKey = s3ObjectKey, @s3ObjectUrl = s3ObjectUrl  FROM Articulo WHERE idArticulo = @id
+		END
 
 	BEGIN TRY
 		
@@ -329,6 +337,8 @@ BEGIN
 					,ar.precioSinSubsidio    = arj.precioSinSubsidio
 					,ar.idEtiqueta              = arj.idEtiqueta
 					,ar.cantMinimaVentaPorMayor = arj.cantMinimaVentaPorMayor
+					,ar.s3ObjectKey = @s3ObjectKey
+					,ar.s3ObjectUrl = @s3ObjectUrl
 				FROM Articulo ar WITH (NOLOCK) JOIN @tbArticle arj ON ar.idArticulo = @id
 					
 				UPDATE arpvp SET 
