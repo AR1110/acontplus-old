@@ -219,19 +219,19 @@ BEGIN
 
 			IF EXISTS (SELECT 1 FROM v_Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND codigo = @bySearch )	
 				BEGIN
-					SELECT idArticulo FROM dbo.Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND codigo = @bySearch
+					SELECT idArticulo,llevaInventario FROM dbo.Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND codigo = @bySearch
 					RETURN
 				END 
 
 			IF EXISTS (SELECT 1 FROM v_Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND codigoBarra = @bySearch)	
 				BEGIN
-					SELECT idArticulo FROM dbo.Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND codigoBarra = @bySearch
+					SELECT idArticulo,llevaInventario FROM dbo.Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND codigoBarra = @bySearch
 					RETURN
 				END 
 			
 			IF EXISTS (SELECT 1  FROM dbo.ArticuloCodigoBarra ac  WITH (NOLOCK) INNER JOIN dbo.Articulo a WITH (NOLOCK) ON a.idArticulo = ac.idArticulo WHERE a.idEntidad  = @idEntidad AND ac.codigoBarra = @bySearch AND a.estado = 1)
 				BEGIN
-					SELECT ac.idArticulo FROM dbo.ArticuloCodigoBarra ac WITH (NOLOCK) INNER JOIN dbo.Articulo a WITH (NOLOCK) ON a.idArticulo = ac.idArticulo WHERE a.idEntidad  = @idEntidad AND ac.codigoBarra = @bySearch AND a.estado = 1
+					SELECT ac.idArticulo,llevaInventario FROM dbo.ArticuloCodigoBarra ac WITH (NOLOCK) INNER JOIN dbo.Articulo a WITH (NOLOCK) ON a.idArticulo = ac.idArticulo WHERE a.idEntidad  = @idEntidad AND ac.codigoBarra = @bySearch AND a.estado = 1
 					RETURN 
 				END 
 			RETURN 
