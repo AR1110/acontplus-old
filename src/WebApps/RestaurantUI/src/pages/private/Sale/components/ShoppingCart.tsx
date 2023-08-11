@@ -1,4 +1,4 @@
-import * as React from 'react';
+ 
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -6,66 +6,26 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { Button, ButtonGroup, IconButton, TextField } from '@mui/material';
-import { AddIcon, DeleteIcon, RemoveIcon } from '@/core/components';
-import soundClear from '/sound/button-21.mp3';
-function createData(
-  name: string,
-  calories: number,
-  fat: number,
-  carbs: number,
-  protein: number,
-) {
-  return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
+import { IconButton, TextField, Typography } from '@mui/material';
+import { AddShoppingCartIcon, DeleteIcon } from '@/core/components'; 
+import { saleStore } from '@/stores/saleStore'; 
 
 export default function ShoppingCart() {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const items = saleStore(state => state.items);
+  const removeItemFromCart = saleStore(state => state.removeItemFromCart) 
 
-  const handleChangePage = (event: unknown, newPage: number) => {
-    console.log(event)
-    setPage(newPage);
-  };
+  if (items.length === 0) return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
- 
+      <AddShoppingCartIcon sx={{
+        height: "5rem!important",
+        width: '5rem',
+        color: 'rgba(59, 130, 246, 0.5)'
+      }} />
 
-  const clearSound = () => {
-    playSound(soundClear);
-  }
-
-
-  function playSound(src: string): void {
-    const sound = new Audio();
-    sound.src = src;
-    sound.play();
-    sound.onended = () => {
-      // eslint-disable-next-line no-delete-var
-
-    };
-  }
+      <Typography color="text.secondary" variant="caption">CARRITO VACÍO</Typography>
+    </div>
+  )
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -81,41 +41,32 @@ export default function ShoppingCart() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row, index) => (
+            {items.map((item, index) => (
               <TableRow
                 key={index}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
-                <TableCell component="th" scope="row">
-                  {row.name}
+                <TableCell align='left'>
+                  <Typography color='text.secondary' variant='caption' sx={{
+                    wordBreak: 'break-all'
+                  }}>
+                    {item.description}
+                  </Typography>
                 </TableCell>
-                <TableCell align="center">
-                  <ButtonGroup>
-                    <Button
-                      aria-label="reduce"
+                <TableCell align="center" style={{ minWidth: 10 }}>
+                  <TextField
+                    value={item.cantidad}
+                    variant="outlined"
+                    inputProps={{ style: { textAlign: 'center', padding: '4px', width: '100%', fontSize: '5' } }}
+                    size="small"
+                  // Add other TextField props here as needed
+                  />
 
-                    >
-                      <RemoveIcon fontSize="small" />
-                    </Button>
-                    <TextField
-                    value={1}
-                      variant="outlined"
-                      inputProps={{ style: { textAlign: 'center' } }}
-                      size='small'
-                    // Add other TextField props here as needed
-                    />
-                    <Button
-                      aria-label="increase"
-
-                    >
-                      <AddIcon fontSize="small" />
-                    </Button>
-                  </ButtonGroup>
                 </TableCell>
-                <TableCell align="right">{row.fat}</TableCell>
-                <TableCell align="right">{row.carbs}</TableCell>
+                <TableCell align="right">{item.unitPrice}</TableCell>
+                <TableCell align="right">{item.total}</TableCell>
                 <TableCell align="center">
-                  <IconButton aria-label="delete" onClick={clearSound}>
+                  <IconButton aria-label="delete" onClick={() => removeItemFromCart(item.productId)}>
                     <DeleteIcon color='error' />
                   </IconButton>
                 </TableCell>
