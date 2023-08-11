@@ -6,52 +6,16 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { Button, ButtonGroup, IconButton, TextField } from '@mui/material';
+import { Button, ButtonGroup, IconButton, TextField, Typography } from '@mui/material';
 import { AddIcon, DeleteIcon, RemoveIcon } from '@/core/components';
 import soundClear from '/sound/button-21.mp3';
-function createData(
-  name: string,
-  calories: number,
-  fat: number,
-  carbs: number,
-  protein: number,
-) {
-  return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
-
-export default function ShoppingCart() {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
-  const handleChangePage = (event: unknown, newPage: number) => {
-    console.log(event)
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
+import { useState } from 'react';
+import { saleStore } from '@/stores/saleStore';
+import { shallow } from 'zustand/shallow';
  
-
+export default function ShoppingCart() {
+   const items = saleStore(state=>state.items);
+   console.log(items);
   const clearSound = () => {
     playSound(soundClear);
   }
@@ -81,13 +45,15 @@ export default function ShoppingCart() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row, index) => (
+            {items.map((item, index) => (
               <TableRow
                 key={index}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-                  {row.name}
+                  <Typography color="text.secondary" variant="caption" display="block" gutterBottom>
+                  {item.description}                    
+                  </Typography>
                 </TableCell>
                 <TableCell align="center">
                   <ButtonGroup>
@@ -98,7 +64,7 @@ export default function ShoppingCart() {
                       <RemoveIcon fontSize="small" />
                     </Button>
                     <TextField
-                    value={1}
+                    value={item.cantidad}
                       variant="outlined"
                       inputProps={{ style: { textAlign: 'center' } }}
                       size='small'
@@ -112,8 +78,8 @@ export default function ShoppingCart() {
                     </Button>
                   </ButtonGroup>
                 </TableCell>
-                <TableCell align="right">{row.fat}</TableCell>
-                <TableCell align="right">{row.carbs}</TableCell>
+                <TableCell align="right">{item.unitPrice}</TableCell>
+                <TableCell align="right">{item.total}</TableCell>
                 <TableCell align="center">
                   <IconButton aria-label="delete" onClick={clearSound}>
                     <DeleteIcon color='error' />

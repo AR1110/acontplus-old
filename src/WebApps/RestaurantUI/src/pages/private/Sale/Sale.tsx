@@ -12,6 +12,7 @@ import ProductCard from "./components/ProductCard";
 import { productReadAdapter } from "@/core/adapters";
 import ShoppingCart from "./components/ShoppingCart";
 import { AddShoppingCartIcon, MonetizationOnIcon, RestartAltIcon } from "@/core/components";
+import { saleStore } from "@/stores/saleStore";
 
 
 interface PosState {
@@ -24,6 +25,7 @@ export default function Sale() {
     const [value, setValue] = useState(0);
     const [categories, setCategories] = useState<PosState["categories"]>([])
     const [products, setProducts] = useState<PosState["products"]>([])
+    const totalItems = saleStore(state=>state.totalItems);
 
     //Fetch 
     const { loading, callEndpoint } = useFetchAndLoad();
@@ -122,9 +124,9 @@ export default function Sale() {
                                     <CustomerSearch />
                                 </Grid>
                                 <Grid item xs={1}>
-                                <Badge badgeContent={4} color="secondary">
-                                <AddShoppingCartIcon/>
-                                    
+                                    {totalItems}
+                                    <Badge badgeContent={totalItems} color="secondary">
+                                        <AddShoppingCartIcon/>                                    
                                     </Badge>
                                 </Grid>
                             </Grid>

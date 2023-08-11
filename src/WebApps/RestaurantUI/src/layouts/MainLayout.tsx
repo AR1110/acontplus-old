@@ -15,13 +15,15 @@ import AdbIcon from '@mui/icons-material/Adb';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Grid } from '@mui/material';
-import { PrivateRoutes } from '@/core/models';
+import { PrivateRoutes, PublicRoutes } from '@/core/models';
+import { useAuthStore } from '@/stores/authStore';
 
 const pages = ['Pedidos'];
 const settings = ['Sign out'];
 
 function MainLayout() {
     const navigate = useNavigate();
+    const closeSession = useAuthStore(state=>state.logOut);
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
@@ -41,6 +43,14 @@ function MainLayout() {
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
+
+    
+    const logout = () => { 
+        closeSession();
+        navigate(`/${PublicRoutes.LOGIN}`, { replace: true });
+    };
+    
+ 
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -157,8 +167,8 @@ function MainLayout() {
                                 onClose={handleCloseUserMenu}
                             >
                                 {settings.map((setting) => (
-                                    <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                        <Typography textAlign="center">{setting}</Typography>
+                                    <MenuItem key={setting} onClick={logout}>
+                                        <Typography textAlign="center" >{setting}</Typography>
                                     </MenuItem>
                                 ))}
                             </Menu>
