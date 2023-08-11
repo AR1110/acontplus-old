@@ -14,8 +14,9 @@ CREATE OR ALTER VIEW Inventario.v_Subfamilia WITH SCHEMABINDING AS (
 		,s.idEntidad
 		,s.montoObjetivo
 		,s.importacion
-		,s.imgUrl
 		,s.applicationId
+		,s.s3ObjectUrl
+		,s.s3ObjectKey
 		,e.ruc
 		,e.razonSocial empresa
 	FROM dbo.SubFamilia s WITH(NOLOCK)

@@ -253,6 +253,9 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<bool>("Enabled")
                         .HasColumnType("bit");
 
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Summary")
                         .HasMaxLength(500)
                         .IsUnicode(false)
@@ -264,7 +267,7 @@ namespace Restaurant.Infrastructure.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(500)");
 
-                    b.Property<int>("TypeId")
+                    b.Property<int?>("TypeId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")

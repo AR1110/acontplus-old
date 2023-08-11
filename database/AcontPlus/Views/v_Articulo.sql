@@ -15,6 +15,7 @@ SELECT  a.idArticulo
 	,iva		 = CAST(CAST(ti.porcentaje as decimal(15,0)) AS varchar)--+'%'
 	,stock       = CAST(a.stock AS decimal(15,2))
 	,stockMinimo  = CAST(a.stockMinimo AS decimal(15,2))
+	,siglaSubfamilia = sf.siglas
 	,subFamilia   = sf.descripcion 
 	,marca        = m.descripcion 
 	,medida		  = me.descripcion 
@@ -38,7 +39,8 @@ SELECT  a.idArticulo
 	,colorRow = CASE WHEN a.stock <= 0                            THEN 'badge badge-danger'
 					 WHEN a.stock > 0 AND a.stock < a.stockMinimo THEN 'badge badge-warning' 
 					 ELSE ''
-				END 
+				END
+	,a.idUsuario
 FROM dbo.Articulo           a WITH(NOLOCK)
 INNER JOIN dbo.TipoIva     ti WITH(NOLOCK) ON ti.idTipoIva      = a.idTipoIva 
 LEFT JOIN dbo.SubFamilia   sf WITH(NOLOCK) ON sf.idSubFamilia   = a.idSubFamilia

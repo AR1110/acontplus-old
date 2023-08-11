@@ -42,6 +42,17 @@
             <input type="text" ng-model="data.montoObjetivo" class="form-control border-select" valid-number maxlength="50" placeholder="0.00">
         </div>
     </div>
+    <div class="row">
+        <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="form-group">
+                <label>Imagen: </label>
+                <input type="file"
+                       class="form-control"
+                       ngf-select 
+                       ng-model="selectedFile" />
+            </div>
+        </div>
+    </div>
     <div ng-if="tipoRegistro==2 && showStatus">
         <label for="">Estado: </label>
         <md-radio-group ng-model="data.estado">

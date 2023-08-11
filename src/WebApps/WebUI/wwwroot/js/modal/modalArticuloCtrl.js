@@ -724,7 +724,7 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
 
         const senData = {
             jsonArticulo: JSON.stringify(this.data),
-            jsonpvp: JSON.stringify(this.gridOptions.data),
+            jsonPvp: JSON.stringify(this.gridOptions.data),
             idBodega: this.data.idBodega,
             ubicacion: this.data.ubicacion,
         };

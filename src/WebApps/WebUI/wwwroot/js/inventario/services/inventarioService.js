@@ -90,16 +90,16 @@
             })
         }
 
-        service.save = function (data) {
-            return mS.getData('post', url + 'Insert', data, true);
+        service.save = function (file, data) {
+            return mS.getDataFile(url + "Post/?json=" + JSON.stringify(data), file, null, true);
         }
 
         service.update = function (id, data) {
-            return mS.getData('put', url + 'Update/' + id, data, true);
+            return mS.getData('put', url + id, data, true);
         }
 
         service.delete = function (id) {
-            return mS.getData('delete', url + 'Delete/' + id, null, true);
+            return mS.getData('delete', url + id, null, true);
         }
 
         service.listForSelect = function (query) {
