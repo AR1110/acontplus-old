@@ -64,7 +64,7 @@ namespace Identity.Services
                     new Claim("idUsuarioRol", Convert.ToString(authRequest.idUsuarioRol)),
                     new Claim("userRoleId", Convert.ToString(authRequest.idUsuarioRol)),
                     new Claim("nroIdentificacion", authRequest.nroIdentificacion),
-                    new Claim("companyUniqueId", authRequest.rucEmpresa),
+                    new Claim("companyRuc", authRequest.rucEmpresa),
                     new Claim("companyId", Convert.ToString(authRequest.companyId)),
                     new Claim("razonSocial", authRequest.razonSocial),
                     new Claim("urlGateway", authRequest.urlGateway)
