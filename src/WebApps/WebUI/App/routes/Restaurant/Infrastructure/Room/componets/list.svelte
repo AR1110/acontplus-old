@@ -2,29 +2,13 @@
 	import type { Room } from "$core/interfaces/restaurant/room";
 	import { roomService } from "$core/services/restaurant/room-service";
 	import toast from "$core/utils/toast";
-	import { onMount } from "svelte";
 	import Swal from "sweetalert2";
 	import Add from "./add.svelte";
 
+	export let rooms = [] as Room[];
 	let edit = {} as Room;
+	export let reloadList;
 	let isNew = false;
-	let rooms = [];
-
-	onMount(() => {
-		getRooms();
-	});
-
-	const getRooms = () => {
-		roomService.get().then((response) => {
-			if (response) {
-				rooms = response;
-			}
-		});
-	};
-
-	export const reloadList = () => {
-		getRooms();
-	};
 
 	const openNew = (data) => {
 		if (openNew) {
@@ -103,7 +87,9 @@
 								</td>
 								<td>{index + 1}</td>
 								<td>{item.code}</td>
-								<td> {item.floor.description} - {item.description}</td>
+								<td>
+									{item.floor.description} - {item.description}</td
+								>
 								<td>{item.capacity}</td>
 								<td>
 									{#if item.enabled}

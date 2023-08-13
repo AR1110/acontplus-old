@@ -1,8 +1,8 @@
 import { client } from "../../api/axiosClient";
 let url = "Restaurant/Rooms/";
 
-async function get() {
-    return await client.get(`${url}`).then((response) => {
+async function get(codEstab: string) {
+    return await client.get(url + codEstab).then((response) => {
         if (response.status != 200) return null;
         return response.data;
     }, (err) => {
