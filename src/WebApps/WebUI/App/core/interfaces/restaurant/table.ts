@@ -1,3 +1,5 @@
+import type { Room } from "./room";
+
 export interface Table {
    readonly id?: number;
    roomId: number;
@@ -5,4 +7,6 @@ export interface Table {
    description: string;
    capacity: number;
    enabled: boolean;
+   createdAt: string;
+   room: Room;
 }

@@ -1,30 +1,14 @@
 <script lang="ts">
-	import { onMount } from "svelte";
 	import { tableService } from "$core/services/restaurant/table-service";
 	import type { Table } from "$core/interfaces/restaurant/table";
 	import Swal from "sweetalert2";
 	import toast from "$core/utils/toast";
 	import Add from "./add.svelte";
 
-	let tables = [];
+	export let reloadList;
+	export let tables = [] as Table[];
 	let edit = {} as Table;
 	let isNew = false;
-
-	onMount(() => {
-		get();
-	});
-
-	export const reloadList = () => {
-		get();
-	};
-
-	const get = () => {
-		tableService.get().then((response) => {
-			if (response) {
-				tables = response;
-			}
-		});
-	};
 
 	function formatDateTime(dateString) {
 		const date = new Date(dateString);
