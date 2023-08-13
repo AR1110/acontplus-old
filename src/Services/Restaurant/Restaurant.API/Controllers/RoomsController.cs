@@ -22,7 +22,7 @@ namespace Restaurant.API.Controllers
         }
 
         // GET: api/Rooms
-        [HttpGet]
+        [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<Room>>> GetRooms()
         {
             var rooms = await _context.Rooms.Include(x => x.Floor).ToListAsync();
@@ -30,10 +30,10 @@ namespace Restaurant.API.Controllers
         }
 
         // GET: get by codeEstab
-        [HttpGet("{codEstab}")]
-        public async Task<ActionResult<IEnumerable<Room>>> GetByCode(string codEstab)
+        [HttpGet("GetByCode/{CodEstab}")]
+        public async Task<ActionResult<IEnumerable<Room>>> GetByCode(string CodEstab)
         {
-            var rooms = await _context.Rooms.Include(x => x.Floor).Where(x => x.Floor.CodEstab == codEstab).ToListAsync();
+            var rooms = await _context.Rooms.Include(x => x.Floor).Where(x => x.Floor.CodEstab == CodEstab).ToListAsync();
             return rooms;
         }
 
