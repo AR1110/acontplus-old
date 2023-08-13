@@ -4,15 +4,51 @@
 	import Add from "./components/add.svelte";
 	import List from "./components/list.svelte";
 	import { estabAsignService } from "$core/services/restaurant/estab-asign-service";
+	import toast from "$core/utils/toast";
+	import { floorService } from "$core/services/restaurant/floor-service";
 
-	let isNew = false;
-	let reloadList;
 	let establecimientos = [];
 	let codEstab = "";
+	let floors = [];
+
+	let isNew = false;
 
 	onMount(() => {
-		getEstabAsign();
+		getCodEstab();
 	});
+	const getCodEstab = () => {
+		estabAsignService.get(JSON.stringify({ tipo: 1 })).then((response) => {
+			if (response) {
+				establecimientos = response;
+				codEstab = establecimientos[0].codEstab;
+				getFloors(codEstab);
+			}
+		});
+	};
+
+	let getFloors = (codEstab: string) => {
+		if (!isExistsCodEstab(getCodEstab)) {
+			return toast({
+				type: "warning",
+				message: "Seleccione un establecimiento",
+			});
+		}
+
+		floorService.getByCode(codEstab).then((response) => {
+			if (response) {
+				floors = response;
+				console.log(floors);
+			}
+		});
+	};
+
+	const isExistsCodEstab = (codEstab) => {
+		console.log(codEstab);
+		if (codEstab === undefined || codEstab === null || codEstab === "") {
+			return false;
+		}
+		return true;
+	};
 
 	const openNew = () => {
 		if (openNew) {
@@ -22,27 +58,26 @@
 
 	const closeModal = () => {
 		isNew = false;
-		reloadList();
+		getFloors(codEstab);
 	};
 
-	const getEstabAsign = () => {
-		estabAsignService.get(JSON.stringify({ tipo: 1 })).then((response) => {
-			if (response) {
-				establecimientos = response;
-				codEstab = establecimientos[0].codEstab;
-			}
-		});
+	const selectEstab = (e) => {
+		getFloors(codEstab);
+	};
+
+	const reloadList = () => {
+		getFloors(codEstab);
 	};
 </script>
 
-<Breadcrumbs title={"Pisos"} action={"Nueva"} openNew={() => openNew()} />
-<div class="form-group">
-	<label for="select">Establecimientos</label>
-	<select class="form-control" id="select">
-		{#each establecimientos as item}
-			<option value={item.codEstab}>{item.nombreComercial}</option>
-		{/each}
-	</select>
-</div>
-<List bind:reloadList codEstab={codEstab} />
+<Breadcrumbs
+	title={"Pisos"}
+	action={"Nueva"}
+	openNew={() => openNew()}
+	select={true}
+	bind:establecimientos
+	{selectEstab}
+/>
+
+<List reloadList={reloadList} {floors} />
 <Add openNew={isNew} modalClosed={() => closeModal()} />

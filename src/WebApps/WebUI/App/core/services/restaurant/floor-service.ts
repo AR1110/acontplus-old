@@ -1,14 +1,24 @@
 import { client } from '../../api/axiosClient';
 let url = 'Restaurant/Floors/';
 
-async function get(codEstab: string) {
-    return await client.get(url + codEstab).then((response) => {
+async function get() {
+    return await client.get(url + "Get").then((response) => {
         if (response.status != 200) return null;
         return response.data;
     }, (err) => {
         return null;
     });
 }
+
+async function getByCode(codEstab: string) {
+    return await client.get(url + "GetByCode/" + codEstab).then((response) => {
+        if (response.status != 200) return null;
+        return response.data;
+    }, (err) => {
+        return null;
+    });
+}
+
 
 // Post
 async function post(data) {
@@ -46,6 +56,7 @@ async function remove(id) {
 
 export const floorService = {
     get,
+    getByCode,
     post,
     put,
     remove,

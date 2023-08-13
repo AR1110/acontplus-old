@@ -29,6 +29,14 @@ namespace Restaurant.API.Controllers
             return rooms;
         }
 
+        // GET: get by codeEstab
+        [HttpGet("{codEstab}")]
+        public async Task<ActionResult<IEnumerable<Room>>> GetByCode(string codEstab)
+        {
+            var rooms = await _context.Rooms.Include(x => x.Floor).Where(x => x.Floor.CodEstab == codEstab).ToListAsync();
+            return rooms;
+        }
+
         // POST: api/Rooms
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]

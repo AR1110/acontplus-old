@@ -1,49 +1,17 @@
 ﻿<script lang="ts">
 	import { floorService } from "$core/services/restaurant/floor-service";
 	import toast from "$core/utils/toast";
-	import { onMount } from "svelte";
 	import Swal from "sweetalert2";
 	import Add from "./add.svelte";
 	import type { Floor } from "$core/interfaces/restaurant/floor";
-	let floors = [];
+
+	export let floors = [] as Floor[];
+	export let reloadList;
 	let edit = {} as Floor;
+
 
 	// In component
 	let isNew = false;
-	export let codEstab  = undefined;
-
-	onMount(() => {
-		getFloors();
-	});
-
-	let getFloors = () => {
-		if (!isExistsCodEstab(codEstab)) {
-			return toast({
-				type: "warning",
-				message: "Seleccione un establecimiento",
-			});
-		}
-
-		floorService.get(codEstab).then((response) => {
-			if (response) {
-				floors = response;
-			}
-		});
-	};
-
-	// Return boolean if the floor is enabled
-	const isExistsCodEstab = (codEstab) => {
-		console.log(codEstab);
-
-		if (codEstab === undefined || codEstab === null || codEstab === "") {
-			return false;
-		}
-		return true;
-	};
-
-	export const reloadList = () => {
-		getFloors();
-	};
 
 	const openNew = (data) => {
 		if (openNew) {
@@ -53,8 +21,6 @@
 	};
 
 	const closeModal = () => {
-		isNew = false;
-		reloadList();
 	};
 
 	// Delete production area
