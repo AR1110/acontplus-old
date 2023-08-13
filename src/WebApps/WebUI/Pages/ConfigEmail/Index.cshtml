@@ -4,12 +4,7 @@
     ViewData["Title"] = "Config. Email";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-
-
 <div id="configEmail"></div>
 @section Scripts{
-    @* <script src="~/js/config/controllers/configEmailCtrl.js" asp-append-version="true"></script> *@
-                    <script src="~/build/configEmail.js" asp-append-version="true"></script>
-
+    <script src="~/build/bundle.js" asp-append-version="true"></script>
 }

@@ -1,7 +1,6 @@
 ﻿import Pet from "./lib/Pet/Pet.svelte";
 import PetMedicalHistory from "./lib/PetMedicalHistory/PetMedicalHistory.svelte";
 import PetBreed from "./lib/PetBreed/PetBreed.svelte"; 
-import Counter from "./core/components/Counter.svelte";
 import ConfigEmail from "./lib/ConfigEmail/ConfigEmail.svelte"
 import MotivoDiscrepancia from "./lib/StockFisico/MotivoDiscrepancia.svelte";
 import Stock from "./lib/StockFisico/index.svelte"
@@ -9,57 +8,54 @@ import Subcategoria from "./lib/Contabilidad/Subcategoria/index.svelte"
 import Infrastructure from "$restaurant/Infrastructure/page.svelte"
 import Product from "$restaurant/Product/page.svelte"
 
-// import App from "./App.svelte"
-// const app = new App({
-//     target: document.getElementById('app'),
-// })
-// export default app
+let target = document.querySelector("#pet")
+if (target) {
+    new Pet({ target })
+}
 
-// const breed = new PetBreed({
-//     target: document.getElementById('pet-breed'),
-// })
-// export default breed
+target = document.querySelector("#pet-breed")
+if (target) {
+    new PetBreed({ target })
+}
 
-// const pet = new Pet({
-//     target: document.getElementById('pet'),
-// })
-// export default pet
+target = document.querySelector("#petMH")
+if (target) {
+    new PetMedicalHistory({ target })
+}
 
-// const petMH = new PetMedicalHistory({
-//     target: document.getElementById('petMH'),
-// })
-// export default petMH
+target = document.querySelector("#configEmail")
+if (target) {
+    new ConfigEmail({ target })
+}
 
+target = document.querySelector("#motivoDiscrepancia")
+if (target) {
+    new MotivoDiscrepancia({ target })
+}
 
-// const configEmail = new ConfigEmail({
-//     target: document.getElementById('configEmail'),
-// })
-// export default configEmail
+target = document.querySelector("#stockFisico")
+if (target) {
+    new Stock({ target })
+}
 
-// const motivoDiscrepancia = new MotivoDiscrepancia({
-//     target: document.getElementById('motivoDiscrepancia'),
-// })
-// export default motivoDiscrepancia
-
-// const stock = new Stock({
-//     target: document.getElementById('stockFisico'),
-// })
-// export default stock
+target = document.querySelector("#subcategoria")
+if (target) {
+    new Subcategoria({ target })
+}
 
 
-// const subcategoria = new Subcategoria({
-//     target: document.getElementById('subcategoria'),
-// })
-// export default subcategoria
+target = document.querySelector("#restaurant-infrastructure")
+if (target) {
+    new Infrastructure({ target })
+}
 
+target = document.querySelector("#restaurant-product")
+if (target) {
+    new Product({ target })
+}
 
-const infrastructure = new Infrastructure({
-    target: document.getElementById('restaurant-infrastructure'),
+import App from "./App.svelte"
+const app = new App({
+    target: document.body
 })
-export default infrastructure
-
-
-// const product = new Product({
-//     target: document.getElementById('restaurant-product')
-// })
-// export default product
+export default app

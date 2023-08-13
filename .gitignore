@@ -75,3 +75,4 @@ bin-release/
 /src/WebApps/RestaurantUI/.vs/RestaurantUI/v17
 /src/WebApps/RestaurantUI/.vs
 *.user
+/src/WebApps/WebUI/wwwroot/build/bundle.js

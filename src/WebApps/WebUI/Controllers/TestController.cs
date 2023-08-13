@@ -29,7 +29,7 @@ namespace WebUI.Controllers
         //    return Ok(response);
         //}
         [HttpPost]
-        public async Task<IActionResult> EncryptText()
+        public IActionResult EncryptText()
         {
             string textToEncrypt = "";
             textToEncrypt = Request.Form["txtToEncrypt"].ToString();
