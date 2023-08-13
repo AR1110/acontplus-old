@@ -3,7 +3,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import { Badge, CardActionArea, Grid } from '@mui/material';
+import { Badge, CardActionArea, Grid, Tooltip } from '@mui/material';
 import brand_img from '/assets/images/brand_logo.png';
 
 import { ProductReadDto } from '@/core/models';
@@ -39,19 +39,22 @@ const flexRow = {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const addItemToCart = saleStore(state=>state.addItemToCart)
+  const addItemToCart = saleStore(state => state.addItemToCart)
 
-  const handleSelectItem = (item: ProductReadDto) => { 
+  const handleSelectItem = (item: ProductReadDto) => {
     addItemToCart({
       index: 0,
       productId: item.productId,
-      description: item.description,
-      unitPrice: item.unitPrice,
-      amount: 1,
-      total: item.unitPrice,
-      imgUrl: brand_img
+      name: item.description,
+      qty: 1,
+      price: item.unitPrice,
+      discount: 0,
+      discountTotal: 0,
+      sellingPrice: item.unitPrice,
+      totalPrice: item.unitPrice, 
+      s3ObjectUrl: item.s3ObjectUrl ? item.s3ObjectUrl : brand_img
     })
-  } 
+  }
 
   return (
     <Card sx={
@@ -60,16 +63,29 @@ export default function ProductCard({ product }: ProductCardProps) {
         flexDirection: 'column',
         height: '100%',
         borderRadius: "16px",
-        borderColor: product.code=='14P5'? '#6571ff !important': '' ,
+        borderColor: product.code == '14P5' ? '#6571ff !important' : '',
 
-       border: product.code=='14P5'? '1px solid': '',
+        border: product.code == '14P5' ? '1px solid' : '',
       }
     }>
-      <CardActionArea onClick={()=>handleSelectItem(product)}>
+      <CardActionArea onClick={() => handleSelectItem(product)}>
+        <Tooltip title="Stock">
+          <Badge
+            badgeContent={product.stock}
+            color='success'
+            overlap="circular"
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+            }}
+            style={{ position: 'absolute', margin: '20px' }}
+          />
+
+        </Tooltip>
         <CardMedia
           component="img"
           height="120"
-          image={brand_img}
+          image={product.s3ObjectUrl ? product.s3ObjectUrl: brand_img}
           alt="green iguana"
         />
         {/* <CardContent>
@@ -77,26 +93,26 @@ export default function ProductCard({ product }: ProductCardProps) {
             {product.description}
           </Typography>          
         </CardContent> */}
-        <CardContent  > 
+        <CardContent  >
 
-        <Grid container alignItems="center">
-          <Grid item xs>
-            <Typography gutterBottom variant="subtitle2" component="div">
-              {product.code}
-            </Typography>
-            
-          </Grid>
-          <Grid item>
-            <Typography gutterBottom variant="body2" component="div">
-            <Badge color="primary" badgeContent={`$${product.unitPrice}`} />
-            </Typography>
-          </Grid>
-        </Grid>
-        <Typography color="text.secondary" variant="caption">
-          {product.description}
-        </Typography>
+          <Grid container alignItems="center">
+            <Grid item xs>
+              <Typography gutterBottom variant="subtitle2" component="div">
+                {product.code}
+              </Typography>
 
-{/* 
+            </Grid>
+            <Grid item>
+              <Typography gutterBottom variant="body2" component="div">
+                <Badge color="primary" badgeContent={`$${product.unitPrice}`} />
+              </Typography>
+            </Grid>
+          </Grid>
+          <Typography color="text.secondary" variant="caption">
+            {product.description}
+          </Typography>
+
+          {/* 
           <Typography variant="subtitle2" gutterBottom>
             {product.description}
           </Typography>

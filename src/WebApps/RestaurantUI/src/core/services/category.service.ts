@@ -6,8 +6,7 @@ export const CategoryService = {
   getAll: ()=> {
     const controller = loadAbort(); //Cancelar peticion 
     const query = JSON.stringify({
-      pageIndex: 1,
-      pageSize: 50,
+      pageIndex:1,pageSize:25,maxSize:5
     })
  
     return {

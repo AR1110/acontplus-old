@@ -475,11 +475,12 @@ app.component("articuloSearchBarcode", {
                        ng-enter="$ctrl.getDataArticuloByEnterCode()"     
                        id="inputBarcode" 
                        ng-focus="$ctrl.focusDescripcionArticulo('#inputBarcode')" 
-                       placeholder="Ej: COMP1">
+                       placeholder="Ej: COMP1"> 
                 `,
     bindings: {
         tipoDoc: '=',
         setItemArticuloEnDetalle: '&',
+        idBodega: '='
     },
     controller: InputSearchBarcodeCtrl
 

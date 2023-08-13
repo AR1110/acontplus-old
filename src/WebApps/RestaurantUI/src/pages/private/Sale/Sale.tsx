@@ -13,6 +13,7 @@ import { productReadAdapter } from "@/core/adapters";
 import ShoppingCart from "./components/ShoppingCart";
 import { AddShoppingCartIcon, MonetizationOnIcon, RestartAltIcon } from "@/core/components";
 import { saleStore } from "@/stores/saleStore";
+import CartTotals from "./components/CartTotals";
 
 
 interface PosState {
@@ -132,6 +133,9 @@ export default function Sale() {
                         </Box>
                        
                         <ShoppingCart />
+                        
+                        <CartTotals/>
+
                         <Box sx={{ flexGrow: 1, p: 2 }}>
                             <Grid container spacing={2} columns={16}>
                                 <Grid item xs={8}>

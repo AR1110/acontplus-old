@@ -5,8 +5,9 @@ import { CategoryIcon } from '@/core/components';
 import { useState } from 'react';
 import { CategoryReadDto } from '@/core/models/category.models';
 import { useAsync, useFetchAndLoad } from '@/hooks';
-import { CategoryService as CategorySvc } from '@/core/services';
-import { categoryAdapter } from '@/core/adapters';
+import { CategoryService as CategorySvc } from '@/core/services'; 
+import { categoryReadAdapter } from '@/core/adapters';
+import { Avatar } from '@mui/material';
 
 export default function ScrollableTabsButtonVisible() {
   const [categories, setCategories] = useState<Array<CategoryReadDto>>([]); 
@@ -17,7 +18,7 @@ export default function ScrollableTabsButtonVisible() {
   const getApiData = async () => await callEndpoint(CategorySvc.getAll());
 
   const categoriesMapper = function (response: any) {    
-    setCategories(categoryAdapter.tableReadAdaptFromApi(JSON.parse(response.payload)));
+    setCategories(categoryReadAdapter(JSON.parse(response.payload)));
   };
 
   useAsync(getApiData, categoriesMapper, () => {
@@ -44,7 +45,8 @@ export default function ScrollableTabsButtonVisible() {
         }}
       >
         {categories.map((item, index) =>(
-          <Tab key={index} icon={<CategoryIcon />} label={item.description} wrapped/>
+          <Tab key={index} icon={<Avatar alt={item.description} src={item.s3ObjectUrl}
+           > <CategoryIcon/></Avatar>} label={item.description} wrapped/>
         ))}
         {/* <Tab icon={<CategoryIcon />} label="FAVORITES" /> */}
         {/* <Tab icon={<CategoryIcon />} label="NEARBY" />

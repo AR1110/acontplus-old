@@ -9,12 +9,11 @@ import TableRow from '@mui/material/TableRow';
 import { Avatar, ButtonBase, Card, CardHeader, Grid, IconButton, TextField, Typography } from '@mui/material';
 import { AddShoppingCartIcon, DeleteIcon } from '@/core/components';
 import { saleStore } from '@/stores/saleStore';
-import { ChangeEvent } from 'react';
 
 export default function ShoppingCart() {
     const items = saleStore(state => state.items);
     const removeItemFromCart = saleStore(state => state.removeItemFromCart)
-    const setItemChangeAmount = saleStore(state => state.setItemChangeAmount)
+    const setItemChangeQty = saleStore(state => state.setItemChangeQty)
 
     if (items.length === 0) return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -25,7 +24,7 @@ export default function ShoppingCart() {
                 color: 'rgba(59, 130, 246, 0.5)'
             }} />
 
-            <Typography color="text.secondary" variant="caption">CARRITO VACÍO</Typography>
+            <Typography color="text.secondary" variant="caption">DATOS NO DISPONIBLES</Typography>
         </div>
     )
 
@@ -49,29 +48,29 @@ export default function ShoppingCart() {
                                 key={index}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
-                                <TableCell align='left'> 
+                                <TableCell align='left'>
                                     <Grid container wrap="nowrap" spacing={1}>
                                         <Grid item>
-                                            <Avatar src={item.imgUrl}>W</Avatar>
+                                            <Avatar src={item.s3ObjectUrl}>W</Avatar>
                                         </Grid>
                                         <Grid item xs zeroMinWidth>
-                                            <Typography color='text.secondary' variant='caption' sx={{
-                                        wordBreak: 'break-all',
-                                        fontSize: '10px'
-                                    }}>
-                                        {item.description}
-                                    </Typography>  
+                                            <Typography component="span" color='text.secondary' variant='caption' sx={{
+                                                wordBreak: 'break-all',
+                                                fontSize: '10px'
+                                            }}>
+                                                {item.name}
+                                            </Typography>
                                         </Grid>
                                     </Grid>
                                 </TableCell>
                                 <TableCell align="center" style={{ minWidth: 10 }}>
                                     <TextField
                                         type="number"
-                                        value={item.amount}
+                                        value={item.qty}
                                         id="amount"
                                         name="amount"
                                         variant="outlined"
-                                        onChange={(event) => setItemChangeAmount(event, item)}
+                                        onChange={(event) => setItemChangeQty(event, item)}
                                         inputProps={
                                             {
                                                 style: {
@@ -87,8 +86,8 @@ export default function ShoppingCart() {
                                     />
 
                                 </TableCell>
-                                <TableCell align="right">{item.unitPrice}</TableCell>
-                                <TableCell align="right">{item.total}</TableCell>
+                                <TableCell align="right">${item.sellingPrice}</TableCell>
+                                <TableCell align="right">${item.totalPrice}</TableCell>
                                 <TableCell align="center">
                                     <IconButton color='error' size="small" aria-label="delete" onClick={() => removeItemFromCart(item.productId)}>
                                         <DeleteIcon fontSize="inherit" />
@@ -96,7 +95,7 @@ export default function ShoppingCart() {
                                 </TableCell>
                             </TableRow>
                         ))}
-                        
+
                     </TableBody>
                 </Table>
             </TableContainer>

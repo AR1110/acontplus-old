@@ -3,7 +3,7 @@ import { AuthService } from "@/core/services";
 import { SnackbarUtility } from ".";
 
 const instance = axios.create({
-  baseURL: import.meta.env.DEV ? "https://localhost:7112/gateway/" : "",
+  baseURL: import.meta.env.DEV ? "https://localhost:7112/gateway/" : "http://205.209.99.71:8093/gateway/",
 });
 
 //   console.log("init Axios interceptor");
