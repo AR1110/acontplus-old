@@ -4,6 +4,25 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<style>
+    .thumbnail {
+        width: 100px;
+        height: auto;
+    }
+
+        .thumbnail:hover {
+            top: -50px;
+            left: -35px;
+            width: 500px;
+            height: auto;
+            display: block;
+            z-index: 999;
+            cursor: pointer;
+            -webkit-transition-property: all;
+            -webkit-transition-duration: 0.3s;
+            -webkit-transition-timing-function: ease;
+        }
+</style>
 <div ng-controller="subFamiliaCtrl">
     <div class="row page-titles">
         <div class="col-md-5 align-self-center">
@@ -56,7 +75,7 @@
                             <thead>
                                 <tr>
                                     <th ng-if="accion.editar || accion.eliminar">Op</th>
-                                    <th>img</th>
+                                    <th>Imagen</th>
                                     <th>N°</th>
                                     <th>Familia</th>
                                     <th>SubFamilia</th>
@@ -67,19 +86,19 @@
                             </thead>
                             <tbody>
                                 <tr ng-repeat="sf in subFamilias | filter:buscar">
-                                    <td ng-if="accion.editar || accion.eliminar">
+                                    <td ng-if="accion.editar || accion.eliminar" style="vertical-align: middle">
                                         <button type="button" ng-if="accion.editar" class="btn btn-info btn-xs" btn-add-update-sub-familia results="resultModal(item)" params="sf"><i class="ti-pencil"></i></button>
                                         <button type="button" ng-if="accion.eliminar" class="btn btn-danger btn-xs" ng-click="delete(sf)"><i class="ti-trash"></i></button>
                                     </td>
-                                    <td>
-                                        <img class="img-fluid img-thumbnail" width="50" src="https://acontplus.s3.us-east-2.amazonaws.com/articulos/8b4c7335-e023-487d-ac88-d46f80702786.jpg" />
+                                    <td style="vertical-align: middle">
+                                        <img class="img-fluid img-thumbnail" ng-class="{thumbnail: sf.s3ObjectUrl.length > 0}" width="50" src="{{sf.s3ObjectUrl}}" />
                                     </td>
-                                    <td>{{$index+1}}</td>
-                                    <td>{{sf.nombreFamilia}}</td>
-                                    <td>{{sf.descripcion}}</td>
-                                    <td>{{sf.codigo}}</td>
-                                    <td>{{sf.montoObjetivo|currency:'$'}}</td>
-                                    <td ng-bind-html="sf.estado|estadoPrimario"></td>
+                                    <td style="vertical-align: middle">{{$index+1}}</td>
+                                    <td style="vertical-align: middle">{{sf.nombreFamilia}}</td>
+                                    <td style="vertical-align: middle">{{sf.descripcion}}</td>
+                                    <td style="vertical-align: middle">{{sf.codigo}}</td>
+                                    <td style="vertical-align: middle">{{sf.montoObjetivo|currency:'$'}}</td>
+                                    <td style="vertical-align: middle" ng-bind-html="sf.estado|estadoPrimario"></td>
                                 </tr>
                                 <tr ng-if="subFamilias.length===0" class="text-center">
                                     <td colspan="8">No hay registros en esta tabla</td>
@@ -103,6 +122,6 @@
 
 </div>
 @section Scripts{
-        <script src="~/lib/xlsx/xlsx.full.min.js" asp-append-version="true"></script>
-        <script src="~/js/inventario/controllers/subFamiliaCtrl.min.js" asp-append-version="true"></script>
+    <script src="~/lib/xlsx/xlsx.full.min.js" asp-append-version="true"></script>
+    <script src="~/js/inventario/controllers/subFamiliaCtrl.min.js" asp-append-version="true"></script>
 }

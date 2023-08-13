@@ -48,12 +48,14 @@
                 <label>Imagen: </label>
                 <input type="file"
                        class="form-control"
-                       ngf-select 
+                       ngf-select
+                       ngf-pattern="'image/*'"
+                       ngf-accept="'image/*'"
                        ng-model="selectedFile" />
             </div>
         </div>
     </div>
-    <div ng-if="tipoRegistro==2 && showStatus">
+    <div ng-if="tipoRegistro==2">
         <label for="">Estado: </label>
         <md-radio-group ng-model="data.estado">
             <md-radio-button class="md-primary" ng-value="true">Activo</md-radio-button>

@@ -1,7 +1,25 @@
 ﻿@{
     ViewData["title"] = "Articulo";
 }
+<style>
+    .thumbnail {
+        width: 100px;
+        height: auto;
+    }
 
+        .thumbnail:hover {
+            top: -50px;
+            left: -35px;
+            width: 500px;
+            height: auto;
+            display: block;
+            z-index: 999;
+            cursor: pointer;
+            -webkit-transition-property: all;
+            -webkit-transition-duration: 0.3s;
+            -webkit-transition-timing-function: ease;
+        }
+</style>
 <div ng-controller="articuloCtrl">
     <div class="row page-titles">
         <div class="col-md-5 align-self-center">
@@ -154,6 +172,7 @@
                             <th md-column></th>
                             <th md-column>Op.</th>
                             <th md-column>N°</th>
+                            <th md-column>Imagen</th>
                             <th md-column>Código</th>
                             <th md-column>Descripción</th>
                             <th md-column>Medida</th>
@@ -175,25 +194,29 @@
                             <td md-cell>
                                 <md-menu>
                                     <md-button aria-label="Open demo menu" class="md-icon-button"
-                                        ng-click="$mdMenu.open($event)">
+                                               ng-click="$mdMenu.open($event)">
                                         <icon class="mdi mdi-menu"></icon>
                                     </md-button>
                                     <md-menu-content class="md-dense">
                                         <md-menu-item ng-if="accion.editar">
                                             <md-button ng-click="openModalEditar(a)">
-                                                <span md-menu-align-target><i class="ti-pencil"></i>
-                                                    Editar</span>
+                                                <span md-menu-align-target>
+                                                    <i class="ti-pencil"></i>
+                                                    Editar
+                                                </span>
                                             </md-button>
                                         </md-menu-item>
 
                                         <md-menu-item ng-if="accion.eliminar || !a.articulo.estado">
                                             <md-button ng-click="askToDelete(a)">
-                                                <span md-menu-align-target><i class="ti-trash"></i>
-                                                    Eliminar</span>
+                                                <span md-menu-align-target>
+                                                    <i class="ti-trash"></i>
+                                                    Eliminar
+                                                </span>
                                             </md-button>
                                         </md-menu-item>
 
-                                        
+
 
                                         <md-menu-item>
                                             <md-button ng-click="updateStockArticle(a)">
@@ -223,7 +246,7 @@
                                         <!--Historial Compras-->
                                         <md-menu-item>
                                             <md-button ng-click="openModalHistorialCompra(a)"
-                                                title="Historial Compras">
+                                                       title="Historial Compras">
                                                 <span md-menu-align-target>
                                                     <icon class="mdi mdi-history"></icon> Hist. Compras
                                                 </span>
@@ -233,21 +256,25 @@
                                     </md-menu-content>
                                 </md-menu>
                                 <button type="button" class="btn btn-outline-success btn-xs" ng-show="a.imagen"
-                                    ng-click="openModalImagen(a)">
+                                        ng-click="openModalImagen(a)">
                                     <i class="fas fa-file-image"></i>
                                 </button>
                             </td>
                             <td md-cell>{{$index+1}}</td>
+                            <td md-cell style="vertical-align: middle">
+                                <img class="img-fluid img-thumbnail" ng-class="{thumbnail: a.s3ObjectUrl.length > 0}" width="50" src="{{a.s3ObjectUrl}}" />
+                            </td>
                             <td md-cell>{{a.codigo}}</td>
                             <td md-cell>
                                 <span tooltip uib-tooltip="{{a.observaciones}}" tooltip-trigger="'mouseenter'"
-                                    tooltip-placement="{{a.observaciones?'top':''}}">{{a.descripcion}}</span>
+                                      tooltip-placement="{{a.observaciones?'top':''}}">{{a.descripcion}}</span>
                             </td>
                             <td md-cell>{{a.medida}}</td>
                             <td md-cell>{{a.subFamilia}}</td>
                             <td md-cell>
                                 <h6>
-                                    <span ng-class="a.style" estab-stock article="a">{{a.stock}}
+                                    <span ng-class="a.style" estab-stock article="a">
+                                        {{a.stock}}
                                     </span>
                                 </h6>
                             </td>

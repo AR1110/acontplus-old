@@ -1,9 +1,13 @@
 ﻿using DataAccess;
 using Domain.ViewModels.Almacen;
 using Helpers;
+using Inventario.Core.Interfaces;
+using Inventario.Core.Models;
 using Lib.Common;
 using Lib.Common.Api;
+using Lib.Common.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Services.Common;
 using Services.Common.Logs;
 
@@ -15,9 +19,11 @@ namespace Inventario.API.Controllers.v1
     public class ArticuloController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public ArticuloController(IConfiguration configuration)
+        private readonly IStorageService _storageService;
+        public ArticuloController(IConfiguration configuration, IStorageService storageService)
         {
             _configuration = configuration;
+            _storageService = storageService;
         }
 
         [HttpGet]
@@ -27,7 +33,7 @@ namespace Inventario.API.Controllers.v1
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.Articulo_Get");
+                await _db.SPExecute("Inventario.Articulo_Get");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
                 _response = _db.GetDataSetAsync();
@@ -71,19 +77,49 @@ namespace Inventario.API.Controllers.v1
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ApiRequest data)
+        public async Task<IActionResult> Post(string json, IFormFile file)
         {
+
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
+            var data = JsonConvert.DeserializeObject<ApiRequest>(json);
+            var s3file = new S3FileDto();
+
             try
             {
+                if (file != null)
+                {
+                    var fileExt = Path.GetExtension(file.FileName);
+                    s3file.BucketName = _configuration["S3Bucket:Name"];
+                    s3file.Region = _configuration["S3Bucket:Region"];
+                    s3file.S3ObjectKey = $"subfamilias/{Guid.NewGuid()}{fileExt}";
+                    s3file.S3ObjectUrl = $"https://{s3file.BucketName}.s3.{s3file.Region}.amazonaws.com/{s3file.S3ObjectKey}";
+                }
                 await _db.SPExecute("Inventario.Articulo_Insert", true);
                 _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(Converters.SerializeDictionary(data.Data)));
-
-                //si viene archivo: capturar nombre y enviar a bd
+                _db.AddDynamicParam("s3ObjectKey", s3file.S3ObjectKey ?? "");
+                _db.AddDynamicParam("s3ObjectUrl", s3file.S3ObjectUrl ?? "");
                 _response = _db.GetDefault();
-                //si viene archivo y el insert es correcto, envia al iservicestorage de amazon, si es correcto no hace nada y sino deberia de null el urlResource del nombre del archivo
+                if (_response.code == "1" && file != null)
+                {
+
+                    await using var memoryStream = new MemoryStream();
+
+                    await file.CopyToAsync(memoryStream);
+                    var s3 = new S3Object()
+                    {
+                        BucketName = s3file.BucketName,
+                        InputStream = memoryStream,
+                        Name = s3file.S3ObjectKey
+                    };
+                    var credentials = new AwsCredentials()
+                    {
+                        Key = _configuration["AwsConfiguration:AWSAccessKey"],
+                        Secret = _configuration["AwsConfiguration:AWSSecretKey"]
+                    };
+                    var s3Response = await _storageService.UploadFileAsync(s3, credentials);
+                }
             }
             catch (Exception ex)
             {
@@ -98,18 +134,47 @@ namespace Inventario.API.Controllers.v1
             return Ok(_response);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+        [HttpPost("{id}")]
+        public async Task<IActionResult> Put(int id, string json, IFormFile file)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
+            var data = JsonConvert.DeserializeObject<ApiRequest>(json);
+            var s3file = new S3FileDto();
             try
             {
+                if (file != null)
+                {
+                    var fileExt = Path.GetExtension(file.FileName);
+                    s3file.BucketName = _configuration["S3Bucket:Name"];
+                    s3file.Region = _configuration["S3Bucket:Region"];
+                    s3file.S3ObjectKey = $"subfamilias/{Guid.NewGuid()}{fileExt}";
+                    s3file.S3ObjectUrl = $"https://{s3file.BucketName}.s3.{s3file.Region}.amazonaws.com/{s3file.S3ObjectKey}";
+                }
                 await _db.SPExecute("Inventario.Articulo_Update");
                 _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(Converters.SerializeDictionary(data.Data)));
+                _db.AddDynamicParam("s3ObjectKey", s3file.S3ObjectKey ?? "");
+                _db.AddDynamicParam("s3ObjectUrl", s3file.S3ObjectUrl ?? "");
                 _response = _db.GetDefault();
+                if (_response.code == "1" && file != null)
+                {
+                    await using var memoryStream = new MemoryStream();
+                    await file.CopyToAsync(memoryStream);
+                    var s3 = new S3Object()
+                    {
+                        BucketName = s3file.BucketName,
+                        InputStream = memoryStream,
+                        Name = s3file.S3ObjectKey
+                    };
+                    var credentials = new AwsCredentials()
+                    {
+                        Key = _configuration["AwsConfiguration:AWSAccessKey"],
+                        Secret = _configuration["AwsConfiguration:AWSSecretKey"]
+                    };
+                    var s3Response = await _storageService.UploadFileAsync(s3, credentials);
+                }
             }
             catch (Exception ex)
             {

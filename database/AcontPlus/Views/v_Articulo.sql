@@ -41,6 +41,8 @@ SELECT  a.idArticulo
 					 ELSE ''
 				END
 	,a.idUsuario
+	,a.s3ObjectKey
+	,a.s3ObjectUrl
 FROM dbo.Articulo           a WITH(NOLOCK)
 INNER JOIN dbo.TipoIva     ti WITH(NOLOCK) ON ti.idTipoIva      = a.idTipoIva 
 LEFT JOIN dbo.SubFamilia   sf WITH(NOLOCK) ON sf.idSubFamilia   = a.idSubFamilia

@@ -82,6 +82,8 @@
                         estado: item.estado,
                         siglas: item.siglas,
                         codigo: item.codigo,
+                        s3ObjectUrl: item.s3ObjectUrl,
+                        s3ObjectKey: item.s3ObjectKey,
                         montoObjetivo: item.montoObjetivo,
                         nombreFamilia: item.nombreFamilia,
                         totalRecords: item.totalRecords,
@@ -94,8 +96,8 @@
             return mS.getDataFile(url + "Post/?json=" + JSON.stringify(data), file, null, true);
         }
 
-        service.update = function (id, data) {
-            return mS.getData('put', url + id, data, true);
+        service.update = function (id, file, data) {
+            return mS.getDataFile(url + `Put/${id}/?json=${JSON.stringify(data)}`, file, null, true);
         }
 
         service.delete = function (id) {

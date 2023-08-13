@@ -15,11 +15,8 @@ DROP PROCEDURE Inventario.Articulo_Insert
 GO
 CREATE PROCEDURE Inventario.Articulo_Insert @userRoleId INT
 	,@json NVARCHAR(MAX)
-	-- @userRoleId INT 
-	--,@jsonArticulo VARCHAR(max)
-	--,@json VARCHAR(max)
-	--,@idBodega INT 
-	--,@ubicacion VARCHAR(90) 
+	,@s3ObjectKey VARCHAR(500) NULL
+	,@s3ObjectUrl VARCHAR(800) NULL
 AS
 
 BEGIN
@@ -96,6 +93,12 @@ BEGIN
 	   ,porcentajeUtilidad NUMERIC(18,5) NOT NULL 
 	   ,precioPredeterminado BIT NOT NULL
 	)
+
+	IF(LEN(LTRIM(RTRIM(@s3ObjectKey))) = 0)
+		BEGIN
+			SET @s3ObjectKey = NULL
+			SET @s3ObjectUrl = NULL
+		END
 
 	BEGIN TRY 
 		
@@ -269,12 +272,12 @@ BEGIN
 				(code_unique,idSubFamilia,idMarca,idModelo,idTipoIce,idTipoArticulo,idTipoIva,idMedida
 				,idEtiqueta,precioCosto,precioSinSubsidio,codigo,codigoAuxiliar,codigoBarra,valorIce,descripcion,llevaInventario
 				,datosAdicionales,productoFraccionable,datosLote,Lote,fechaCreacion,fechaCaducidadLote,stockMinimo
-				,stockMaximo,observaciones,caducidad,fechaCaducidad,idEntidad,idUsuario,fechaRegistro,cantMinimaVentaPorMayor)
+				,stockMaximo,observaciones,caducidad,fechaCaducidad,idEntidad,idUsuario,fechaRegistro,cantMinimaVentaPorMayor, s3ObjectKey, s3ObjectUrl)
 			SELECT 
 				 @code,idSubFamilia,idMarca,idModelo,idTipoIce,idTipoArticulo,idTipoIva,idMedida
 				,idEtiqueta,precioCosto,precioSinSubsidio,codigo,codigoAuxiliar,codigoBarra,valorIce,descripcion,llevaInventario
 				,datosAdicionales,productoFraccionable,datosLote,lote,fechaCreacion,fechaCaducidadlote,stockMinimo
-				,stockMaximo,observaciones,caducidad,fechaCaducidad,@idEntidad,@idUsuario,dbo.ufnGetDateEcuador(),cantMinimaVentaPorMayor
+				,stockMaximo,observaciones,caducidad,fechaCaducidad,@idEntidad,@idUsuario,dbo.ufnGetDateEcuador(),cantMinimaVentaPorMayor, @s3ObjectKey, @s3ObjectUrl
 			FROM @tbArticle
 
 			SET @idArticulo = @@IDENTITY

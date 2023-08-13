@@ -326,11 +326,14 @@
                             <div class="input-group">
                                 <select class="form-control border-select" ng-model="$ctrl.data.idMarca">
                                     <option ng-value="item.idMarca" ng-repeat="item in $ctrl.marcas">
-                                        {{item.descripcion}}</option>
+                                        {{item.descripcion}}
+                                    </option>
                                 </select>
                                 <div class="input-group-append">
                                     <button class="btn btn-outline-secondary btn-sm" btn-add-update-marca results="$ctrl.resultModalMarca(item)"
-                                        tabindex="-1"><i class="fa fa-plus fa-xs"></i></button>
+                                            tabindex="-1">
+                                        <i class="fa fa-plus fa-xs"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -338,12 +341,13 @@
                             <label for="">Modelo: </label>
                             <div class="input-group">
                                 <select class="form-control border-select" ng-model="$ctrl.data.idModelo"
-                                    ng-options="m.idModelo as m.modelo group by m.marca for m in $ctrl.modelos">
+                                        ng-options="m.idModelo as m.modelo group by m.marca for m in $ctrl.modelos">
                                 </select>
                                 <div class="input-group-append">
                                     <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary btn-sm" btn-add-update-modelo results="$ctrl.resultModalModelo(item)" tabindex="-1"><i
-                                                class="fa fa-plus fa-xs"></i></button>
+                                        <button class="btn btn-outline-secondary btn-sm" btn-add-update-modelo results="$ctrl.resultModalModelo(item)" tabindex="-1">
+                                            <i class="fa fa-plus fa-xs"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -352,29 +356,30 @@
                             <label for="">ICE: </label>
                             <select class="form-control border-select" ng-model="$ctrl.data.idTipoIce">
                                 <option ng-value="item.idTipoIce" ng-repeat="item in $ctrl.tipoIces">
-                                    {{item.descripcion}}</option>
+                                    {{item.descripcion}}
+                                </option>
                             </select>
                         </div>
                         @*<div class="form-group col-lg-2 col-md-1 col-sm-6 col-xs-6">
-                        <label for="">Valor.: </label>
-                        <input type="text" ng-model="tipoIce.valor" class="form-control" placeholder="0">
-                        </div>*@
+            <label for="">Valor.: </label>
+            <input type="text" ng-model="tipoIce.valor" class="form-control" placeholder="0">
+            </div>*@
                     </div>
                     <div class="row">
                         <div class="form-group col-lg-4 col-md-3 col-sm-6 col-xs-6">
                             <label>Stock Mínimo: </label>
                             <input type="text" class="form-control border-select" value="1" ng-model="$ctrl.data.stockMinimo"
-                                valid-number placeholder="0">
+                                   valid-number placeholder="0">
                         </div>
                         <div class="form-group col-lg-4 col-md-3 col-sm-6 col-xs-6">
                             <label for="">Stock Máximo: </label>
                             <input type="text" class="form-control border-select" value="2" ng-model="$ctrl.data.stockMaximo"
-                                valid-number placeholder="0">
+                                   valid-number placeholder="0">
                         </div>
                         <div class="form-group col-lg-4 col-md-4 col-sm-6 col-xs-6">
                             <label for="">Observación: </label>
                             <textarea name="textarea" ng-model="$ctrl.data.observaciones"
-                                class="form-control border-select"></textarea>
+                                      class="form-control border-select"></textarea>
                         </div>
                     </div>
 
@@ -393,14 +398,15 @@
                         <div class="form-group col-lg-6 col-md-6 col-sm-6 col-xs-6">
                             <label for="">Bodega: </label>
                             <select class="custom-select border-select" ng-model="$ctrl.data.idBodega">
-                                <option ng-value="item.idBodega" ng-repeat="item in $ctrl.bodegas">{{item.descripcion}}
+                                <option ng-value="item.idBodega" ng-repeat="item in $ctrl.bodegas">
+                                    {{item.descripcion}}
                                 </option>
                             </select>
                         </div>
                         <div class="form-group col-lg-6 col-md-6 col-sm-6 col-xs-6">
                             <label for="">Ubicación</label>
                             <input type="text" ng-model="articuloUbicacion.ubicacion" class="form-control"
-                                placeholder="Ej: S/N" />
+                                   placeholder="Ej: S/N" />
                         </div>
                     </div>
 
@@ -426,13 +432,26 @@
                             <div ng-show="$ctrl.data.datosLote">
                                 <label for="">Lote: <span class="text-danger">*</span> </label>
                                 <input type="text" ng-model="$ctrl.data.lote" class="form-control"
-                                    placeholder="LO-01" />
+                                       placeholder="LO-01" />
 
                                 <label for="">Fecha Creación: <span class="text-danger">*</span> </label>
                                 <input type="date" ng-model="$ctrl.data.fechaCreacion" class="form-control" />
 
                                 <label for="">Fecha Caducidad: <span class="text-danger">*</span> </label>
                                 <input type="date" ng-model="$ctrl.data.fechaCaducidadLote" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-lg-6 col-md-6 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label>Imagen: </label>
+                                <input type="file"
+                                       class="form-control"
+                                       ngf-select
+                                       ngf-pattern="'image/*'"
+                                       ngf-accept="'image/*'"
+                                       ng-model="$ctrl.selectedFile" />
                             </div>
                         </div>
                     </div>

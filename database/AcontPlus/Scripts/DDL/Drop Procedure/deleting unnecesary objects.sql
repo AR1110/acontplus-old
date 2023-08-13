@@ -421,6 +421,10 @@ GO
 DROP PROCEDURE IF EXISTS [dbo].[ASPComprobanteAutorizadoInsert]
 GO
 
+--
+DROP PROCEDURE Almacen.SubFamilia_Insert
+GO
+
 -- ALEXIS RAMIREZ -- FECHA 8/11/2023
 DROP PROCEDURE IF EXISTS [Inventario].[Control_Stock_Serv_Get]
 GO

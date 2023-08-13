@@ -606,14 +606,6 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
                     return;
                 }
             }
-            //if (_form.campo($scope.data.precioVenta)) {
-            //    logger.warning('Por favor, ingrese el Precio de Venta del Articulo', $scope.tituloModal);
-            //    return;
-            //}
-            //if (_form.campo($scope.data.precioConIva)) {
-            //    logger.warning('Por favor, ingrese el Precio con IVA del Articulo', $scope.tituloModal);
-            //    return;
-            //}
         }
 
         if (this.tipoRegistro == 1 || this.tipoRegistro == 2) {
@@ -625,10 +617,6 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
                 );
                 return;
             }
-            //if (_form.campo($scope.familia.idFamilia)) {
-            //    logger.warning('Por favor, seleccione la Familia del Articulo', $scope.tituloModal);
-            //    return;
-            //}
             if (
                 this._form.campo(this.data.idSubFamilia) ||
                 this.data.idSubFamilia === 0
@@ -729,17 +717,10 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
             ubicacion: this.data.ubicacion,
         };
 
-
-        // let URL =
-        //     this.tipoRegistro === 1 ?
-        //         "/Articulo/Post" :
-        //         "/Articulo/Put?idArticulo=" + this.data.idArticulo;
-        // const method = this.tipoRegistro === 1 ? "post" : "put";
         showLoader();
-        let response = {}
         let dataRepository = {};
         if (this.tipoRegistro === 1) {
-            this.articuloSvc.save(senData).then(response => {
+            this.articuloSvc.save(this.selectedFile, senData).then(response => {
                 if (response.id == 0 || response.code == 0) {
                     this._toastr.toastr("warning", response.message, response.titleSms);
                 }
@@ -756,7 +737,7 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
                 console.log(error)
             })
         } else {
-            this.articuloSvc.update(senData).then(response => {
+            this.articuloSvc.update(this.data.idArticulo, this.selectedFile, senData).then(response => {
                 if (response.id == 0 || response.code == 0) {
                     this._toastr.toastr("warning", response.message, response.titleSms);
                 }
