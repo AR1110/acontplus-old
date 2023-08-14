@@ -11,6 +11,10 @@ namespace Services.Common
         public static int GetCompanyId(this ClaimsPrincipal user)
         {
             return Convert.ToInt32(user.FindFirst("companyId")?.Value);
+        }        
+        public static string GetCompanyRuc(this ClaimsPrincipal user)
+        {
+            return user.FindFirst("companyRuc")?.Value;
         }
         public static int GetUserRoleId(this ClaimsPrincipal user)
         {
