@@ -12,6 +12,7 @@
 
 	export let data = {} as Table;
 	let rooms = [] as Room[];
+	let codEstab = "";
 
 	onMount(() => {
 		getRooms();

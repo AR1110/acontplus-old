@@ -58,7 +58,7 @@
 
 	const closeModal = () => {
 		isNew = false;
-		getFloors(codEstab);
+		reloadList();
 	};
 
 	const selectEstab = (e) => {
@@ -66,7 +66,7 @@
 	};
 
 	const reloadList = () => {
-		getFloors(codEstab);
+		getCodEstab();
 	};
 </script>
 
@@ -79,5 +79,5 @@
 	{selectEstab}
 />
 
-<List reloadList={reloadList} {floors} />
+<List {reloadList} {floors} />
 <Add openNew={isNew} modalClosed={() => closeModal()} />

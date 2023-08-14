@@ -29,7 +29,7 @@
 	const getRooms = (codEstab: string) => {
 		if (!isExistCodEstab(codEstab)) return;
 
-		roomService.get(codEstab).then((response) => {
+		roomService.getByCode(codEstab).then((response) => {
 			if (response) {
 				rooms = response;
 			}
