@@ -47,6 +47,7 @@ namespace Restaurant.API.Controllers
             var floorExist = FloorExistsCodeEstab(floor.Code, floor.CodEstab);
             if (floorExist) return BadRequest("El código ya está en uso");
 
+            floor.UserId = User.GetUserId();    
             try
             {
                 _context.Floors.Add(floor);
@@ -70,6 +71,7 @@ namespace Restaurant.API.Controllers
             var floorNotExists = !FloorExists(id);
             if (floorNotExists) return NotFound("No existe registro");
 
+            floor.UserId = User.GetUserId();
             try
             {
                 _context.Entry(floor).State = EntityState.Modified;
@@ -91,6 +93,7 @@ namespace Restaurant.API.Controllers
 
             floor.Deleted = true;
             floor.Enabled = false;
+            floor.UserId = User.GetUserId();
 
             _context.Entry(floor).State = EntityState.Modified;
 

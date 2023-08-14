@@ -6,6 +6,7 @@
 	import { estabAsignService } from "$core/services/restaurant/estab-asign-service";
 	import toast from "$core/utils/toast";
 	import { floorService } from "$core/services/restaurant/floor-service";
+	import SelectEstablecimiento from "../Components/SelectEstablecimiento.svelte";
 
 	let establecimientos = [];
 	let codEstab = "";
@@ -59,23 +60,16 @@
 		reloadList();
 	};
 
-	const selectEstab = (e) => {
-		getFloors(codEstab);
-	};
-
 	const reloadList = () => {
 		getCodEstab();
 	};
+
+	const changeEstab = (codEstab) => {
+		getFloors(codEstab);
+	};
 </script>
 
-<Breadcrumbs
-	title={"Pisos"}
-	action={"Nueva"}
-	openNew={() => openNew()}
-	select={true}
-	bind:establecimientos
-	{selectEstab}
-/>
-
+<Breadcrumbs title={"Pisos"} action={"Nueva"} openNew={() => openNew()} />
+<SelectEstablecimiento {establecimientos} {changeEstab} />
 <List {reloadList} {floors} />
 <Add openNew={isNew} modalClosed={() => closeModal()} />

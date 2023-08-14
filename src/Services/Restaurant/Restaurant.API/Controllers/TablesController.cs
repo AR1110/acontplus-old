@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Core.Entities;
 using Restaurant.Infrastructure.Data;
+using Services.Common;
 
 namespace Restaurant.API.Controllers
 {
@@ -25,18 +26,13 @@ namespace Restaurant.API.Controllers
         [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<AppTable>>> GetTables()
         {
-            // Select multiple tables
-            var tables = await _context.Tables.Include(x => x.Room).ToListAsync();
-
-            return tables;
-            // return await _context.Tables.ToListAsync();
+            return await _context.Tables.Include(x => x.Room).ToListAsync();
         }
             
         [HttpGet("GetByCode/{codEstab}")]
         public async Task<ActionResult<IEnumerable<AppTable>>> GetByCode(string codEstab)
         {
-            var tables = await _context.Tables.Include(x => x.Room).Where(x => x.Room.Floor.CodEstab == codEstab).ToListAsync();
-            return tables;
+            return await _context.Tables.Include(x => x.Room).Where(x => x.Room.Floor.CodEstab == codEstab).ToListAsync();
         }
 
         // POST: api/AppTables
@@ -46,6 +42,7 @@ namespace Restaurant.API.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
+            appTable.UserId = User.GetUserId();
             try
             {
                 _context.Tables.Add(appTable);
@@ -68,6 +65,7 @@ namespace Restaurant.API.Controllers
             var tableExist = TableExists(appTable.Id);
             if (!tableExist) return BadRequest("No se encontró registro");
 
+            appTable.UserId = User.GetUserId();
             try
             {
                 _context.Entry(appTable).State = EntityState.Modified;
@@ -93,6 +91,7 @@ namespace Restaurant.API.Controllers
                 var table = await _context.Tables.FindAsync(id);
                 table.Deleted = true;
                 table.Enabled = false;
+                table.UserId = User.GetUserId();
 
                 _context.Entry(table).State = EntityState.Modified;
                 await _context.SaveChangesAsync();

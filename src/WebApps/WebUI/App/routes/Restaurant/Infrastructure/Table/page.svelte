@@ -5,6 +5,7 @@
 	import List from "./components/list.svelte";
 	import { estabAsignService } from "$core/services/restaurant/estab-asign-service";
 	import { tableService } from "$core/services/restaurant/table-service";
+	import SelectEstablecimiento from "../Components/SelectEstablecimiento.svelte";
 	let title = "Mesas";
 
 	// Modal management
@@ -46,23 +47,16 @@
 		reloadList();
 	};
 
-	const changeEstab = (event) => {
-		codEstab = event.target.value;
+	const reloadList = () => {
 		getTable(codEstab);
 	};
 
-	const reloadList = () => {
+	const changeEstab = (codEstab) => {
 		getTable(codEstab);
 	};
 </script>
 
-<Breadcrumbs
-	{title}
-	action={"Nueva"}
-	openNew={() => openNew()}
-	select={true}
-	bind:establecimientos
-	selectEstab={changeEstab}
-/>
-<List reloadList={reloadList} tables={tables}  />
+<Breadcrumbs {title} action={"Nueva"} openNew={() => openNew()} />
+<SelectEstablecimiento {establecimientos} {changeEstab} />
+<List {reloadList} {tables} />
 <Add openNew={isNew} modalClosed={() => closeModal()} />

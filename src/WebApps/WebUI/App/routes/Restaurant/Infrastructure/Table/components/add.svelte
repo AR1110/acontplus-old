@@ -28,7 +28,7 @@
 	const onSave = () => {
 		if (!onValidate(data)) return;
 
-		tableService.post(data).then((response) => {			
+		tableService.post(data).then((response) => {
 			if (response.status == 200) {
 				onModalClose();
 				toast({ type: "success", message: response.data });
