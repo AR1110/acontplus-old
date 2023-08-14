@@ -12,7 +12,6 @@
 
 	export let data = {} as Table;
 	let rooms = [] as Room[];
-	let codEstab = "";
 
 	onMount(() => {
 		getRooms();
@@ -29,8 +28,7 @@
 	const onSave = () => {
 		if (!onValidate(data)) return;
 
-		tableService.post(data).then((response) => {
-			debugger;
+		tableService.post(data).then((response) => {			
 			if (response.status == 200) {
 				onModalClose();
 				toast({ type: "success", message: response.data });

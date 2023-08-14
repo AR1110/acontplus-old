@@ -37,13 +37,11 @@
 		floorService.getByCode(codEstab).then((response) => {
 			if (response) {
 				floors = response;
-				console.log(floors);
 			}
 		});
 	};
 
 	const isExistsCodEstab = (codEstab) => {
-		console.log(codEstab);
 		if (codEstab === undefined || codEstab === null || codEstab === "") {
 			return false;
 		}

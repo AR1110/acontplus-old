@@ -3,7 +3,7 @@ let url = "Restaurant/Rooms/";
 
 
 async function get() {
-return await client.get(url).then((response) => {
+    return await client.get(url + "Get").then((response) => {
         if (response.status != 200) return null;
         return response.data;
     }, (err) => {

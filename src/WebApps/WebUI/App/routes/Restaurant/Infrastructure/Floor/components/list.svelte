@@ -9,7 +9,6 @@
 	export let reloadList;
 	let edit = {} as Floor;
 
-
 	// In component
 	let isNew = false;
 
@@ -19,7 +18,6 @@
 			isNew = true;
 		}
 	};
-	
 
 	// Delete production area
 	const remove = (id) => {
@@ -45,6 +43,11 @@
 				});
 			}
 		});
+	};
+
+	const closeModal = () => {
+		isNew = false;
+		reloadList();
 	};
 </script>
 
