@@ -30,7 +30,6 @@
 	const getTable = (codEstab) => {
 		tableService.get(codEstab).then((response) => {
 			if (response) {
-				console.log(response);
 				tables = response;
 			}
 		});
@@ -65,5 +64,5 @@
 	bind:establecimientos
 	selectEstab={changeEstab}
 />
-<List reloadList={reloadList} tables={tables} />
+<List reloadList={reloadList} tables={tables}  />
 <Add openNew={isNew} modalClosed={() => closeModal()} />

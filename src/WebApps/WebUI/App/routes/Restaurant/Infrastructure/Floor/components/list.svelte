@@ -19,9 +19,7 @@
 			isNew = true;
 		}
 	};
-
-	const closeModal = () => {
-	};
+	
 
 	// Delete production area
 	const remove = (id) => {

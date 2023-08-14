@@ -1,8 +1,18 @@
 import { client } from "../../api/axiosClient";
 let url = "Restaurant/Rooms/";
 
-async function get(CodEstab: string) {
-    return await client.get(url + "GetByCode/"+ CodEstab).then((response) => {
+
+async function get() {
+return await client.get(url).then((response) => {
+        if (response.status != 200) return null;
+        return response.data;
+    }, (err) => {
+        return null;
+    });
+}
+
+async function getByCode(CodEstab: string) {
+    return await client.get(url + "GetByCode/" + CodEstab).then((response) => {
         if (response.status != 200) return null;
         return response.data;
     }, (err) => {
@@ -45,6 +55,7 @@ async function remove(id) {
 
 export const roomService = {
     get,
+    getByCode,
     post,
     put,
     remove
