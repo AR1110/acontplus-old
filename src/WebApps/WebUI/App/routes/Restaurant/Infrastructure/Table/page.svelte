@@ -6,6 +6,7 @@
 	import { estabAsignService } from "$core/services/restaurant/estab-asign-service";
 	import { tableService } from "$core/services/restaurant/table-service";
 	import SelectEstablecimiento from "../Components/SelectEstablecimiento.svelte";
+  import { hideLoader, showLoader } from "$core/utils/loading-spinner";
 	let title = "Mesas";
 
 	// Modal management
@@ -19,7 +20,9 @@
 	});
 
 	const getCodEstab = () => {
+		showLoader();
 		estabAsignService.get(JSON.stringify({ tipo: 1 })).then((response) => {
+			hideLoader();
 			if (response) {
 				establecimientos = response;
 				codEstab = establecimientos[0].codEstab;
@@ -29,7 +32,9 @@
 	};
 
 	const getTable = (codEstab) => {
+		showLoader();
 		tableService.get(codEstab).then((response) => {
+			hideLoader();
 			if (response) {
 				tables = response;
 			}

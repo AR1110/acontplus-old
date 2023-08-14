@@ -3,6 +3,7 @@
 	import Modal from "$core/components/Modal.svelte";
 	import type { ProductionArea } from "$core/interfaces/restaurant/production-area";
 	import toast from "$core/utils/toast";
+  import { hideLoader, showLoader } from "$core/utils/loading-spinner";
 
 	export let openNew;
 	export let modalClosed;
@@ -10,8 +11,9 @@
 
 	const onSave = () => {
 		if (!onValidate()) return;
-
+		showLoader();
 		productionAreaService.post(data).then((response) => {
+			hideLoader();
 			if (response.status == 200) {
 				onModalClose();
 				data = {} as ProductionArea;
@@ -25,7 +27,9 @@
 	const onUpdate = () => {
 		if (!onValidate()) return;
 
+		showLoader();
 		productionAreaService.put(data.id, data).then((response) => {
+			hideLoader();
 			if (response.status == 200) {
 				onModalClose();
 				data = {} as ProductionArea;

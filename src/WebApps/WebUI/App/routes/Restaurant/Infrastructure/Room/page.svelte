@@ -6,6 +6,7 @@
 	import List from "./componets/list.svelte";
 	import { roomService } from "$core/services/restaurant/room-service";
 	import SelectEstablecimiento from "../Components/SelectEstablecimiento.svelte";
+  import { hideLoader, showLoader } from "$core/utils/loading-spinner";
 
 	let establecimientos = [];
 	let rooms = [];
@@ -18,7 +19,9 @@
 	});
 
 	const getCodEstab = () => {
+		showLoader();
 		estabAsignService.get(JSON.stringify({ tipo: 1 })).then((response) => {
+			hideLoader();
 			if (response) {
 				establecimientos = response;
 				codEstab = establecimientos[0].codEstab;
@@ -30,7 +33,9 @@
 	const getRooms = (codEstab: string) => {
 		if (!isExistCodEstab(codEstab)) return;
 
+		showLoader();
 		roomService.getByCode(codEstab).then((response) => {
+			hideLoader();
 			if (response) {
 				rooms = response;
 			}

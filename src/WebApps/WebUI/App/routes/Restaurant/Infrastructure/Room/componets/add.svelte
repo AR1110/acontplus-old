@@ -4,6 +4,7 @@
 	import type { Room } from "$core/interfaces/restaurant/room";
 	import { floorService } from "$core/services/restaurant/floor-service";
 	import { roomService } from "$core/services/restaurant/room-service";
+  import { hideLoader, showLoader } from "$core/utils/loading-spinner";
 	import toast from "$core/utils/toast";
 	import { onMount } from "svelte";
 
@@ -33,8 +34,9 @@
 	const onSave = () => {
 		if (!onValidate(data)) return;
 
+		showLoader();
 		roomService.post(data).then((response) => {
-			debugger;
+			hideLoader();
 			if (response.status == 200) {
 				onModalClose();
 				toast({ type: "success", message: response.data });
@@ -48,7 +50,9 @@
 	const onUpdate = () => {
 		if (!onValidate(data)) return;
 
+		showLoader();
 		roomService.put(data.id, data).then((response) => {
+			hideLoader();
 			if (response.status == 200) {
 				onModalClose();
 				toast({ type: "success", message: "Actualizado exitosamente" });

@@ -5,6 +5,7 @@
 	import { floorService } from "$core/services/restaurant/floor-service";
 	import { onMount } from "svelte";
 	import { estabAsignService } from "$core/services/restaurant/estab-asign-service";
+  import { hideLoader, showLoader } from "$core/utils/loading-spinner";
 
 	export let openNew;
 	export let modalClosed;
@@ -27,8 +28,9 @@
 	const onSave = () => {
 		if (!onValidate(data)) return;
 
+		showLoader();
 		floorService.post(data).then((response) => {
-			debugger;
+			hideLoader();
 			if (response.status == 200) {
 				onModalClose();
 				toast({ type: "success", message: response.data });
@@ -42,7 +44,9 @@
 	const onUpdate = () => {
 		if (!onValidate(data)) return;
 
+		showLoader();
 		floorService.put(data.id, data).then((response) => {
+			hideLoader();
 			if (response.status == 200) {
 				onModalClose();
 				toast({ type: "success", message: "Actualizado exitosamente" });

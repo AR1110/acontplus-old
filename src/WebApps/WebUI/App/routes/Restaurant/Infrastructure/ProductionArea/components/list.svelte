@@ -5,6 +5,7 @@
 	import { onMount } from "svelte";
 	import type { ProductionArea } from "$core/interfaces/restaurant/production-area";
 	import Add from "./add.svelte";
+  import { hideLoader, showLoader } from "$core/utils/loading-spinner";
 
 	let isNew = false;
 	let productionAreas = [];
@@ -19,7 +20,9 @@
 	};
 
 	const get = () => {
+		showLoader();
 		productionAreaService.get().then((response) => {
+			hideLoader();
 			if (response) {
 				productionAreas = response;
 			}

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { hideLoader, showLoader } from './../../../../core/utils/loading-spinner.js';
 	import Breadcrumbs from "$core/components/Breadcrumbs.svelte";
 	import { onMount } from "svelte";
 	import Add from "./components/add.svelte";
@@ -18,7 +19,9 @@
 		getCodEstab();
 	});
 	const getCodEstab = () => {
+		showLoader()
 		estabAsignService.get(JSON.stringify({ tipo: 1 })).then((response) => {
+			hideLoader()
 			if (response) {
 				establecimientos = response;
 				codEstab = establecimientos[0].codEstab;
@@ -35,7 +38,9 @@
 			});
 		}
 
+		showLoader();
 		floorService.getByCode(codEstab).then((response) => {
+			hideLoader();
 			if (response) {
 				floors = response;
 			}
