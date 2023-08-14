@@ -22,10 +22,18 @@ namespace Restaurant.API.Controllers
         }
 
         // GET: api/Rooms
-        [HttpGet]
+        [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<Room>>> GetRooms()
         {
             var rooms = await _context.Rooms.Include(x => x.Floor).ToListAsync();
+            return rooms;
+        }
+
+        // GET: get by codeEstab
+        [HttpGet("GetByCode/{CodEstab}")]
+        public async Task<ActionResult<IEnumerable<Room>>> GetByCode(string CodEstab)
+        {
+            var rooms = await _context.Rooms.Include(x => x.Floor).Where(x => x.Floor.CodEstab == CodEstab).ToListAsync();
             return rooms;
         }
 

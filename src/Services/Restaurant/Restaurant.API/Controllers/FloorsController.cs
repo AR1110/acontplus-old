@@ -20,13 +20,22 @@ namespace Restaurant.API.Controllers
             _context = context;
         }
 
+        [HttpGet]
+        [Route("Get")]
+        public async Task<ActionResult<IEnumerable<Floor>>> Get()
+        {
+           return await _context.Floors.ToListAsync();
+        }
+
         // GET: api/Floors
-        [HttpGet("{codEstab}")]
-        public async Task<ActionResult<IEnumerable<Floor>>> Get(string codEstab)
+        [HttpGet("GetByCode/{codEstab}")]
+        public async Task<ActionResult<IEnumerable<Floor>>> GetByCode(string codEstab)
         {
             var floors = await _context.Floors.Where(x => x.CodEstab == codEstab).ToListAsync();
             return floors;
         }
+
+        // GET: api/Floors/5
 
         // POST: api/Floors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

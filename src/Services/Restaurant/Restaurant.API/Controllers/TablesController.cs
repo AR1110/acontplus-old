@@ -22,7 +22,7 @@ namespace Restaurant.API.Controllers
         }
 
         // GET: api/AppTables
-        [HttpGet]
+        [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<AppTable>>> GetTables()
         {
             // Select multiple tables
@@ -30,6 +30,13 @@ namespace Restaurant.API.Controllers
 
             return tables;
             // return await _context.Tables.ToListAsync();
+        }
+            
+        [HttpGet("GetByCode/{codEstab}")]
+        public async Task<ActionResult<IEnumerable<AppTable>>> GetByCode(string codEstab)
+        {
+            var tables = await _context.Tables.Include(x => x.Room).Where(x => x.Room.Floor.CodEstab == codEstab).ToListAsync();
+            return tables;
         }
 
         // POST: api/AppTables

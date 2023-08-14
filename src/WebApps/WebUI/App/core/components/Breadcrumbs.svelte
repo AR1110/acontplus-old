@@ -2,6 +2,9 @@
   export let title;
   export let openNew;
   export let action;
+  export let select;
+  export let establecimientos;
+  export let selectEstab;
 </script>
 
 <div class="row page-titles">
@@ -11,6 +14,17 @@
   {#if openNew}
     <div class="col-md-7 align-self-center text-right">
       <div class="d-flex justify-content-end align-items-center">
+        {#if select}
+        <div class="col-md-6 align-self-center text-right">
+          <div class="d-flex justify-content-end align-items-center">
+            <select class="form-control" id="select">
+              {#each establecimientos as item}
+                <option on:change={selectEstab} value={item.codEstab}>{item.nombreComercial}</option>
+              {/each}
+            </select>
+          </div>
+        </div>
+      {/if}
         <button
           type="button"
           on:click={() => openNew()}
