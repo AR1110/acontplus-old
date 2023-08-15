@@ -40,8 +40,12 @@ BEGIN
 	DECLARE @codigoAuxiliar VARCHAR(50)
 	DECLARE @code VARCHAR(15)
 	DECLARE @payload VARCHAR(MAX)
-
 	DECLARE @inventory VARCHAR(5)
+
+	---- Add ----
+	DECLARE @siglaFamilia VARCHAR(5)
+	DECLARE @siglaSubFamilia VARCHAR(5)
+	   
 
 	SELECT @jsonArticulo = jsonArticulo
 		,@jsonPvp = jsonPvp
@@ -319,6 +323,27 @@ BEGIN
 							 WHERE art.idArticulo = @idArticulo FOR JSON PATH 
 							 )
 
+			----- INSERT INTO  -------
+			SELECT @siglaFamilia		= f.siglas
+					, @siglaSubFamilia	= sf.siglas 
+			FROM SubFamilia sf
+			INNER JOIN Familia f ON f.idFamilia = sf.idFamilia
+			WHERE sf.idEntidad = @idEntidad AND sf.idSubFamilia = @idSubFamilia
+
+			IF(@siglaFamilia = 'RES' AND @siglaSubFamilia != 'ING')
+				BEGIN
+					INSERT INTO Restaurant.Item
+					(ProductId, ProductionAreaId, Summary, Cooking, Recipe, Instructions, Content, CreatedAt, UpdatedAt
+					,Enabled, Deleted, UserId)
+					VALUES(@idArticulo, NULL, NULL, 1, NULL, NULL, NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario)
+				END
+
+			IF(@siglaFamilia = 'RES' AND @siglaSubFamilia = 'ING')
+				BEGIN
+					INSERT INTO Restaurant.Ingredient
+					(ProductId, Summary, TypeId, Quantity, Unit, Content, CreatedAt, UpdatedAt, Enabled, Deleted, UserId)
+					VALUES(@idArticulo, NULL, NULL, NULL, NULL, NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario)
+				END
 		COMMIT TRAN 
 		SELECT '1'code,'Registrado Correctamente' as 'message', @payload as payload
 		RETURN;
