@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Restaurant.Core.Entities
 {
@@ -13,7 +13,8 @@ namespace Restaurant.Core.Entities
         public int? TaxPercentId { get; set; }
         [Column(TypeName = "numeric(18,5), not null")]
         public decimal? TaxValue { get; set; }
-        public float Quantity { get; set; }
+        [Column(TypeName = "numeric(18,5), not null")]
+        public decimal Quantity { get; set; }
         [Column(TypeName = "numeric(18,5), not null")]
         public decimal Cost { get; set; }
         [Column(TypeName = "numeric(18,5), not null")]

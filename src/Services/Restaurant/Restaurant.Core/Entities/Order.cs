@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Restaurant.Core.Entities
@@ -12,7 +12,7 @@ namespace Restaurant.Core.Entities
         [Required]
         [MaxLength(18)]
         public string Serie { get; set; }
-        public int CustomerId { get; set; }
+        public int CustomerCompanyId { get; set; }
         [Column(TypeName = "numeric(18,5), null")]
         public decimal? Tax { get; set; }
         [Column(TypeName = "numeric(18,5), null")]

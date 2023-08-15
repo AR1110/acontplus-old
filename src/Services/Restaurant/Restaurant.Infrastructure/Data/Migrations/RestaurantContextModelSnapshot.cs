@@ -334,7 +334,7 @@ namespace Restaurant.Infrastructure.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<int>("CustomerId")
+                    b.Property<int>("CustomerCompanyId")
                         .HasColumnType("int");
 
                     b.Property<bool?>("Deleted")
@@ -412,8 +412,8 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric(18,5), not null");
 
-                    b.Property<float>("Quantity")
-                        .HasColumnType("real");
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("numeric(18,5), not null");
 
                     b.Property<int?>("TaxId")
                         .HasColumnType("int");
