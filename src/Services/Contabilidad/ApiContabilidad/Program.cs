@@ -22,15 +22,7 @@ builder.Services.AddApplicationServices(builder.Configuration);
 
 builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddSwaggerDocumentation();
-
-//builder.Services.AddTransient<IConfiguration>(sp =>
-//{
-//    IConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
-//    configurationBuilder.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
-//    return configurationBuilder.Build();
-//});
 
 string[] origins = builder.Configuration.GetSection("SafeOrigins").Value.Split('|');
 builder.Services.AddCors(options =>
