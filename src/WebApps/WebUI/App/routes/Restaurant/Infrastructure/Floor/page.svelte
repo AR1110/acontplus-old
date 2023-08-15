@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { hideLoader, showLoader } from './../../../../core/utils/loading-spinner.js';
 	import Breadcrumbs from "$core/components/Breadcrumbs.svelte";
 	import { onMount } from "svelte";
 	import Add from "./components/add.svelte";
@@ -6,6 +7,7 @@
 	import { estabAsignService } from "$core/services/restaurant/estab-asign-service";
 	import toast from "$core/utils/toast";
 	import { floorService } from "$core/services/restaurant/floor-service";
+	import SelectEstablecimiento from "../Components/SelectEstablecimiento.svelte";
 
 	let establecimientos = [];
 	let codEstab = "";
@@ -17,7 +19,9 @@
 		getCodEstab();
 	});
 	const getCodEstab = () => {
+		showLoader()
 		estabAsignService.get(JSON.stringify({ tipo: 1 })).then((response) => {
+			hideLoader()
 			if (response) {
 				establecimientos = response;
 				codEstab = establecimientos[0].codEstab;
@@ -34,16 +38,16 @@
 			});
 		}
 
+		showLoader();
 		floorService.getByCode(codEstab).then((response) => {
+			hideLoader();
 			if (response) {
 				floors = response;
-				console.log(floors);
 			}
 		});
 	};
 
 	const isExistsCodEstab = (codEstab) => {
-		console.log(codEstab);
 		if (codEstab === undefined || codEstab === null || codEstab === "") {
 			return false;
 		}
@@ -58,26 +62,19 @@
 
 	const closeModal = () => {
 		isNew = false;
-		getFloors(codEstab);
-	};
-
-	const selectEstab = (e) => {
-		getFloors(codEstab);
+		reloadList();
 	};
 
 	const reloadList = () => {
+		getCodEstab();
+	};
+
+	const changeEstab = (codEstab) => {
 		getFloors(codEstab);
 	};
 </script>
 
-<Breadcrumbs
-	title={"Pisos"}
-	action={"Nueva"}
-	openNew={() => openNew()}
-	select={true}
-	bind:establecimientos
-	{selectEstab}
-/>
-
-<List reloadList={reloadList} {floors} />
+<Breadcrumbs title={"Pisos"} action={"Nueva"} openNew={() => openNew()} />
+<SelectEstablecimiento {establecimientos} {changeEstab} />
+<List {reloadList} {floors} />
 <Add openNew={isNew} modalClosed={() => closeModal()} />

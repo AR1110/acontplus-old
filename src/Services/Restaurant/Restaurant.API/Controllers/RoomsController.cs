@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Core.Entities;
 using Restaurant.Infrastructure.Data;
+using Services.Common;
 
 namespace Restaurant.API.Controllers
 {
@@ -25,16 +26,14 @@ namespace Restaurant.API.Controllers
         [HttpGet("Get")]
         public async Task<ActionResult<IEnumerable<Room>>> GetRooms()
         {
-            var rooms = await _context.Rooms.Include(x => x.Floor).ToListAsync();
-            return rooms;
+            return await _context.Rooms.Include(x => x.Floor).ToListAsync();
         }
 
         // GET: get by codeEstab
         [HttpGet("GetByCode/{CodEstab}")]
         public async Task<ActionResult<IEnumerable<Room>>> GetByCode(string CodEstab)
         {
-            var rooms = await _context.Rooms.Include(x => x.Floor).Where(x => x.Floor.CodEstab == CodEstab).ToListAsync();
-            return rooms;
+            return await _context.Rooms.Include(x => x.Floor).Where(x => x.Floor.CodEstab == CodEstab).ToListAsync();
         }
 
         // POST: api/Rooms
@@ -47,7 +46,7 @@ namespace Restaurant.API.Controllers
             var roomExists = RoomExists(room.FloorId, room.Code);
             if (roomExists) return BadRequest("El código ya está en uso");
 
-
+            room.UserId = User.GetUserId();
             try
             {
                 _context.Rooms.Add(room);
@@ -67,12 +66,13 @@ namespace Restaurant.API.Controllers
         {
             if (id != room.Id) return BadRequest();
 
-            var roomExists = RoomExistsUpdate(room.Id,room.FloorId, room.Code);
+            var roomExists = RoomExistsUpdate(room.Id, room.FloorId, room.Code);
             if (roomExists) return BadRequest("El código ya está en uso por otro piso");
 
             var roomsNotExists = !RoomExists(room.Id);
             if (roomsNotExists) return NotFound("No se ha encontrado registro");
 
+            room.UserId = User.GetUserId();
             try
             {
                 _context.Entry(room).State = EntityState.Modified;
@@ -95,10 +95,12 @@ namespace Restaurant.API.Controllers
 
             try
             {
-                var floor = await _context.Rooms.FindAsync(id);
-                floor.Deleted = true;
-                floor.Enabled = false;
-                _context.Entry(floor).State = EntityState.Modified;
+                var room = await _context.Rooms.FindAsync(id);
+                room.Deleted = true;
+                room.Enabled = false;
+                room.UserId = User.GetUserId();
+
+                _context.Entry(room).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
 
                 return Ok("Eliminado exitosamente");

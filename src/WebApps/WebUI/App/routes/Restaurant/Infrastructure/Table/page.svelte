@@ -5,6 +5,8 @@
 	import List from "./components/list.svelte";
 	import { estabAsignService } from "$core/services/restaurant/estab-asign-service";
 	import { tableService } from "$core/services/restaurant/table-service";
+	import SelectEstablecimiento from "../Components/SelectEstablecimiento.svelte";
+  import { hideLoader, showLoader } from "$core/utils/loading-spinner";
 	let title = "Mesas";
 
 	// Modal management
@@ -18,7 +20,9 @@
 	});
 
 	const getCodEstab = () => {
+		showLoader();
 		estabAsignService.get(JSON.stringify({ tipo: 1 })).then((response) => {
+			hideLoader();
 			if (response) {
 				establecimientos = response;
 				codEstab = establecimientos[0].codEstab;
@@ -28,9 +32,10 @@
 	};
 
 	const getTable = (codEstab) => {
+		showLoader();
 		tableService.get(codEstab).then((response) => {
+			hideLoader();
 			if (response) {
-				console.log(response);
 				tables = response;
 			}
 		});
@@ -47,23 +52,16 @@
 		reloadList();
 	};
 
-	const changeEstab = (event) => {
-		codEstab = event.target.value;
+	const reloadList = () => {
 		getTable(codEstab);
 	};
 
-	const reloadList = () => {
+	const changeEstab = (codEstab) => {
 		getTable(codEstab);
 	};
 </script>
 
-<Breadcrumbs
-	{title}
-	action={"Nueva"}
-	openNew={() => openNew()}
-	select={true}
-	bind:establecimientos
-	selectEstab={changeEstab}
-/>
-<List reloadList={reloadList} tables={tables} />
+<Breadcrumbs {title} action={"Nueva"} openNew={() => openNew()} />
+<SelectEstablecimiento {establecimientos} {changeEstab} />
+<List {reloadList} {tables} />
 <Add openNew={isNew} modalClosed={() => closeModal()} />

@@ -5,6 +5,8 @@
 	import Add from "./componets/add.svelte";
 	import List from "./componets/list.svelte";
 	import { roomService } from "$core/services/restaurant/room-service";
+	import SelectEstablecimiento from "../Components/SelectEstablecimiento.svelte";
+  import { hideLoader, showLoader } from "$core/utils/loading-spinner";
 
 	let establecimientos = [];
 	let rooms = [];
@@ -17,7 +19,9 @@
 	});
 
 	const getCodEstab = () => {
+		showLoader();
 		estabAsignService.get(JSON.stringify({ tipo: 1 })).then((response) => {
+			hideLoader();
 			if (response) {
 				establecimientos = response;
 				codEstab = establecimientos[0].codEstab;
@@ -29,7 +33,9 @@
 	const getRooms = (codEstab: string) => {
 		if (!isExistCodEstab(codEstab)) return;
 
-		roomService.get(codEstab).then((response) => {
+		showLoader();
+		roomService.getByCode(codEstab).then((response) => {
+			hideLoader();
 			if (response) {
 				rooms = response;
 			}
@@ -41,11 +47,6 @@
 			return false;
 		}
 		return true;
-	};
-
-	const changeEstab = (event) => {
-		codEstab = event.target.value;
-		getRooms(codEstab);
 	};
 
 	const openNew = () => {
@@ -62,15 +63,18 @@
 	const reloadList = () => {
 		getRooms(codEstab);
 	};
+
+	const changeEstab = (codEstab) => {
+		getRooms(codEstab);
+	};
 </script>
 
 <Breadcrumbs
 	title={"Salas"}
 	action={"Nueva"}
 	openNew={() => openNew()}
-	select={true}
-	bind:establecimientos
- 	selectEstab={changeEstab}
 />
+
+<SelectEstablecimiento establecimientos={establecimientos} {changeEstab} />
 <List reloadList={reloadList} {rooms} />
 <Add openNew={isNew} modalClosed={() => closeModal()} />

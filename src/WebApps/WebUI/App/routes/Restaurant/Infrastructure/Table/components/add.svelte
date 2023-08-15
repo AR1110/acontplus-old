@@ -4,6 +4,7 @@
 	import type { Table } from "$core/interfaces/restaurant/table";
 	import { roomService } from "$core/services/restaurant/room-service";
 	import { tableService } from "$core/services/restaurant/table-service";
+  import { hideLoader, showLoader } from "$core/utils/loading-spinner";
 	import toast from "$core/utils/toast";
 	import { onMount } from "svelte";
 
@@ -27,9 +28,9 @@
 
 	const onSave = () => {
 		if (!onValidate(data)) return;
-
+		showLoader();
 		tableService.post(data).then((response) => {
-			debugger;
+			hideLoader();
 			if (response.status == 200) {
 				onModalClose();
 				toast({ type: "success", message: response.data });
@@ -43,7 +44,9 @@
 	const onUpdate = () => {
 		if (!onValidate(data)) return;
 
+		showLoader();
 		tableService.put(data.id, data).then((response) => {
+			hideLoader();
 			if (response.status == 200) {
 				onModalClose();
 				toast({ type: "success", message: "Actualizado exitosamente" });
