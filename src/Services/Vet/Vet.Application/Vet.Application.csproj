@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="ReportViewerCore.NETCore" Version="15.1.17" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="ReportViewerCore.NETCore" />
   </ItemGroup>
 
   <ItemGroup>

@@ -6,7 +6,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Ocelot" Version="18.0.0" />
+		<PackageReference Include="Ocelot" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\Services\Common\Lib.Common\Lib.Common.csproj" />

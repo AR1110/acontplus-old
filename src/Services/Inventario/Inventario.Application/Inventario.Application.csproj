@@ -7,9 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.Core" Version="3.7.200.4" />
-    <PackageReference Include="AWSSDK.S3" Version="3.7.201.2" />
-    <PackageReference Include="ReportViewerCore.NETCore" Version="15.1.17" />
+    <PackageReference Include="AWSSDK.Core" />
+    <PackageReference Include="AWSSDK.S3" />
+    <PackageReference Include="ReportViewerCore.NETCore" />
   </ItemGroup>
 
   <ItemGroup>
