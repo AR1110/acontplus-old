@@ -57,3 +57,6 @@ GO
 CREATE NONCLUSTERED INDEX IX_IT_TarifaId
     ON Inventario.Transaccion(idTarifa);   
 GO 
+
+
+

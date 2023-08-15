@@ -199,9 +199,6 @@ BEGIN
 											SET @idProveedor = @@IDENTITY
 
 											UPDATE Proveedor SET CustomerId = @customerId WHERE idProveedor = @idProveedor
-
-
-										
 										END
 								END
 						END

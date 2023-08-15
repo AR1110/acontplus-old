@@ -76,7 +76,7 @@ BEGIN
 
        INSERT INTO ErroresSistema
         (token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, errorDate, idUsuario)
-    VALUES
+		VALUES
         (NEWID(), 'Ingredient/Post', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @userId)
     END CATCH
 
