@@ -7,7 +7,12 @@
 	let items = [] as Item[];
 
 	onMount(async () => {
-    let params = JSON.stringify({ idSubFamilia: 1,pageIndex: 1, pageSize: 10 });
+    let params = JSON.stringify({
+      checkSubFamilia: false,
+      idSubFamilia: 0,
+      pageIndex: 1,
+      pageSize: 10
+    });
 		itemService.get(params).then((res) => {
 			if (res) {
 				items = res["items"];
