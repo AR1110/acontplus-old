@@ -22,6 +22,7 @@ namespace Restaurant.API.Extensions
             services.AddScoped<IMenuService, MenuService>();
             services.AddScoped<IIngredientService, IngredientService>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IItemService, ItemService>();
 
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             return services;
