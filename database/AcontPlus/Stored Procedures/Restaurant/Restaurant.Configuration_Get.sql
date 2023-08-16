@@ -21,7 +21,7 @@ BEGIN
 	SELECT TOP 1  @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 	SELECT @codEstab = codEstab FROM OPENJSON(@json) WITH(codEstab VARCHAR(20)  '$.codEstab')
 
-	SET @tableNames = 'Table,ConfigDecimal,SubCategorias'
+	SET @tableNames = 'Table,ConfigDecimal,SubCategorias,Impuesto,TarifaImpuesto'
 	SELECT rt.* FROM Restaurant.v_Table rt
 	INNER JOIN Restaurant.v_Room rr ON rr.id = rt.roomId
 	INNER JOIN Restaurant.v_Floor rf ON rf.id = rr.floorId
@@ -42,6 +42,15 @@ BEGIN
 	LEFT JOIN Familia f ON f.idFamilia = sf.idFamilia
 	WHERE sf.idEntidad = @idEntidad
 	AND sf.applicationId IS NOT NULL
-    ORDER BY sf.idSubFamilia DESC    
+    ORDER BY sf.idSubFamilia DESC  
+    
+	SELECT * FROM Sri.Impuesto WITH (NOLOCK) 
+	SELECT * FROM Sri.TarifaImpuesto WITH (NOLOCK)
+
+    SELECT pa.idPtoEmi_asig, ea.codEstab_Asig, pe.idPuntoEmision, pe.ptoEmi, pa.predeterminado, pa.estado
+	FROM Config.PtoEmi_Asig pa  WITH (NOLOCK) 
+	INNER JOIN  Config.Estab_Asig ea WITH (NOLOCK)  ON ea.codEstab_Asig = pa.codEstab_Asig
+	INNER JOIN PuntoEmision pe On pa.idPuntoEmision = pe.idPuntoEmision
+ 	WHERE ea.idUsuarioRol = @userRoleId
 END
 GO
