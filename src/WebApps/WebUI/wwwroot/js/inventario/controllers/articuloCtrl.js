@@ -196,7 +196,7 @@
                 item.expanded = !item.expanded;
                 item.view = {};
 
-                mS.getData('get', '/Articulo/GetId?id=' + item.idArticulo).then(response => {
+                articuloSvc.getId(item.idArticulo).then(response => {
                     if (response.code === "0") {
                         hideLoader();
                         console.log(response)
@@ -208,15 +208,15 @@
 
                         if (item.view.caducidad) {
 
-                            item.view.fechaCaducidad = new Date(a.view.fechaCaducidad)
+                            item.view.fechaCaducidad = new Date(item.view.fechaCaducidad)
 
                         } else {
                             item.view.fechaCaducidad = null;
                         }
 
                         if (item.view.datosLote) {
-                            item.view.fechaCreacion = new Date(a.view.fechaCreacion);
-                            item.view.fechaCaducidadLote = new Date(a.view.fechaCaducidadLote)
+                            item.view.fechaCreacion = new Date(item.view.fechaCreacion);
+                            item.view.fechaCaducidadLote = new Date(item.view.fechaCaducidadLote)
                         } else {
                             item.view.fechaCreacion = null;
                             item.view.fechaCaducidadLote = null

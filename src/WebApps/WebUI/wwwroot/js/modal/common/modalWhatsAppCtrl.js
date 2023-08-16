@@ -269,13 +269,13 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
         '04': 'RNCC',
         '06': 'RGR',
         '07': 'RRC',
-        '08': 'RNE',
+        'NE': 'RNE',
         '09': 'PR',
         'CI': 'RCINGR'
     })
 
-    const reportHasService = () => ['08', '09', 'CI'].includes($scope.codDoc);
-    const getTypeReport = () => ['08', '09', 'CI'].includes($scope.codDoc) ? "Reporte/Download" : "Reporte/DynamicReport"
+    const reportHasService = () => ['NE', '09', 'CI'].includes($scope.codDoc);
+    const getTypeReport = () => ['NE', '09', 'CI'].includes($scope.codDoc) ? "Reporte/Download" : "Reporte/DynamicReport"
 
     $scope.generateFile = () => {
         let format = 'pdf'
