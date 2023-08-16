@@ -29,8 +29,9 @@ BEGIN
 	DECLARE @tipo INT
 	DECLARE @LicensePlate AS VARCHAR(15)
 	DECLARE @userId AS INT
+	DECLARE @Id AS INT
 	DECLARE @VehicleId AS INT 
-	DECLARE @Id INT
+	DECLARE @CustomerId AS INT
 
 	DECLARE @tbVehicle AS TABLE (
 	    [VehicleTypeId] INT NOT NULL
@@ -69,7 +70,7 @@ BEGIN
 			) as dt
 
 			-- RUPERERATING IN VARIABLES --
-			SELECT @LicensePlate = LicensePlate,@userId = UserId FROM @tbVehicle
+			SELECT @LicensePlate = LicensePlate,@userId = UserId, @CustomerId = CustomerId FROM @tbVehicle
 
 		BEGIN TRAN
 			IF EXISTS (SELECT 1 FROM Mechanical.v_Vehicle WITH (NOLOCK) WHERE LicensePlate = @LicensePlate)
