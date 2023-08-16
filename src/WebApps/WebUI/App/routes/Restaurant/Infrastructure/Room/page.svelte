@@ -84,5 +84,5 @@
 <Breadcrumbs title={"Salas"} action={"Nueva"} openNew={() => openNew()} />
 
 <SelectEstablecimiento {establecimientos} {changeEstab} />
-<List {reloadList} {rooms} />
-<Add openNew={isNew} modalClosed={() => closeModal()} floors={floors} />
+<List {reloadList} {rooms} {floors} />
+<Add openNew={isNew} modalClosed={() => closeModal()} {floors} />
