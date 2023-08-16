@@ -17,17 +17,19 @@ namespace Identity.API.Controllers.v2
     {
         private readonly IConfiguration _config;
         private readonly ITokenService _tokenService;
-        public AccountController(IConfiguration config, ITokenService tokenService)
+        private readonly LogWriter _log;
+        public AccountController(IConfiguration config, ITokenService tokenService, LogWriter log)
         {
             _config = config;
             _tokenService = tokenService;
+            _log = log;
         }
 
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto authRequest)
         {
-            LogWriter _logs = new LogWriter(_config);
+            
             LoginDao _l = new LoginDao(_config);
             GenericResponse _gr = await _l.LoginRestaurantAsync(authRequest);
             var codSms = _gr.id as string;
@@ -52,7 +54,7 @@ namespace Identity.API.Controllers.v2
                     loginDataDto.idUsuario = loginData.idUsuario;
                     var jwtToken = _tokenService.GenerateJwtToken(loginDataDto);
                     if (jwtToken == null) { return Unauthorized(); }
-                    _logs.LogActivity("Login successful: idRol -> " + Convert.ToString(loginDataDto.idUsuarioRol) + " \n jwt: " + jwtToken);
+                    _log.LogActivity("Login successful: idRol -> " + Convert.ToString(loginDataDto.idUsuarioRol) + " \n jwt: " + jwtToken);
 
                     if (jwtToken == null)
                     {
@@ -65,7 +67,7 @@ namespace Identity.API.Controllers.v2
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error while login into AcontplusWeb: " + ex.ToString());
+                _log.LogActivity("Error while login into AcontplusWeb: " + ex.ToString());
                 return BadRequest("Error on login");
             }
         }
@@ -74,7 +76,7 @@ namespace Identity.API.Controllers.v2
         [HttpPost("loginApp")]
         public async Task<IActionResult> LoginApp([FromBody] LoginDto authRequest)
         {
-            LogWriter _logs = new LogWriter(_config);
+            
             LoginDao _l = new LoginDao(_config);
             GenericResponse _gr = await _l.LoginAppAsync(authRequest);
             var codSms = _gr.id as string;
@@ -99,7 +101,7 @@ namespace Identity.API.Controllers.v2
 
                     var jwtToken = _tokenService.GenerateJwtToken(loginDataDto);
                     if (jwtToken == null) { return Unauthorized(); }
-                    _logs.LogActivity("Login successful: idRol -> " + Convert.ToString(loginDataDto.idUsuarioRol) + " \n jwt: " + jwtToken);
+                    _log.LogActivity("Login successful: idRol -> " + Convert.ToString(loginDataDto.idUsuarioRol) + " \n jwt: " + jwtToken);
 
                     if (jwtToken == null)
                     {
@@ -112,7 +114,7 @@ namespace Identity.API.Controllers.v2
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error while login into AcontplusWeb: " + ex.ToString());
+                _log.LogActivity("Error while login into AcontplusWeb: " + ex.ToString());
                 return BadRequest("Error on login");
             }
         }

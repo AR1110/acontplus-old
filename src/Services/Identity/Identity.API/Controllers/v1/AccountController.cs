@@ -26,14 +26,16 @@ namespace Identity.API.Controllers.v1
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
         private readonly IConfiguration _config;
+        private readonly LogWriter _log;
         public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
-            ITokenService tokenService, IMapper mapper, IConfiguration config)
+            ITokenService tokenService, IMapper mapper, IConfiguration config, LogWriter log)
         {
             _mapper = mapper;
             _tokenService = tokenService;
             _signInManager = signInManager;
             _userManager = userManager;
             _config = config;
+            _log = log;
         }
 
         [HttpGet]
@@ -132,7 +134,7 @@ namespace Identity.API.Controllers.v1
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginDto authRequest)
         {
-            LogWriter _logs = new LogWriter(_config);
+            
             LoginDao _l = new LoginDao(_config);
             GenericResponse _gr = await _l.LoginAsync(authRequest);
             var codSms = _gr.id as string;
@@ -157,7 +159,7 @@ namespace Identity.API.Controllers.v1
                     loginDataDto.idUsuario = loginData.idUsuario;
                     var jwtToken = _tokenService.GenerateJwtToken(loginDataDto);
                     if (jwtToken == null) { return Unauthorized(); }
-                    _logs.LogActivity("Login successful: idRol -> " + Convert.ToString(loginDataDto.idUsuarioRol) + " \n jwt: " + jwtToken);
+                    _log.LogActivity("Login successful: idRol -> " + Convert.ToString(loginDataDto.idUsuarioRol) + " \n jwt: " + jwtToken);
 
                     if (jwtToken == null)
                     {
@@ -170,7 +172,7 @@ namespace Identity.API.Controllers.v1
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error while login into AcontplusWeb: " + ex.ToString());
+                _log.LogActivity("Error while login into AcontplusWeb: " + ex.ToString());
                 return BadRequest("Error on login");
             }
         }
