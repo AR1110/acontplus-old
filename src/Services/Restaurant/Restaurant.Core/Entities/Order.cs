@@ -8,6 +8,8 @@ namespace Restaurant.Core.Entities
     {
         public int EstablecimientoId { get; set; }
         public int PuntoEmisionId { get; set; }
+        public AppTable AppTable { get; set; }
+        public int? TableId { get; set; }
         public int Sequence { get; set; }
         [Required]
         [MaxLength(18)]

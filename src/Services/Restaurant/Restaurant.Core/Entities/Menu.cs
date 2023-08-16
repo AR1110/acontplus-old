@@ -12,7 +12,8 @@ namespace Restaurant.Core.Entities
         public string Title { get; set; }
         [MaxLength(500)]
         public string Summary { get; set; }
-        public int? TypeId { get; set; }
+        public MenuType MenuType { get; set; }
+        public int? MenuTypeId { get; set; }
         public string Content { get; set; }
         public List<MenuItem> MenuItems { get; set; }
     }

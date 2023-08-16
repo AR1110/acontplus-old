@@ -15,8 +15,10 @@ namespace Restaurant.Infrastructure.Data
         }
         public DbSet<Item> Items { get; set; }
         public DbSet<Recipe> Recipes { get; set; }
+        public DbSet<IngredientType> IngredientTypes { get; set; }
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<ProductionArea> ProductionAreas { get; set; }
+        public DbSet<MenuType> MenuTypes { get; set; }
         public DbSet<Menu> Menus { get; set; }
         public DbSet<MenuItem> MenuItems { get; set; }
         public DbSet<Floor> Floors { get; set; }
@@ -61,12 +63,14 @@ namespace Restaurant.Infrastructure.Data
 
             builder.Entity<Item>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Recipe>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<IngredientType>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Ingredient>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<ProductionArea>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Floor>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Room>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<AppTable>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
 
+            builder.Entity<MenuType>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Menu>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Menu>().HasMany(x => x.MenuItems).WithOne(m => m.Menu).HasForeignKey(m => m.MenuId);
             builder.Entity<MenuItem>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");

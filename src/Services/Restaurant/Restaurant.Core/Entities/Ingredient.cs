@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Restaurant.Core.Entities
@@ -8,10 +8,10 @@ namespace Restaurant.Core.Entities
     {
         [Required]
         public int ProductId { get; set; }
+        public IngredientType IngredientType { get; set;}
+        public int? IngredientTypeId { get; set; }
         [MaxLength(500)]
-
         public string Summary { get; set; }
-        public int? TypeId { get; set; }
         public int? Quantity { get; set; }
         public int? Unit { get; set; }
         public string Content { get; set; }
