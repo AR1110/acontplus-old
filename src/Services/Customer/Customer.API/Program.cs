@@ -1,6 +1,7 @@
-using Customer.API.Extensions;
+﻿using Customer.API.Extensions;
 using Lib.Common;
 using Services.Common;
+using Services.Common.Logs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,7 @@ builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddSwaggerDocumentation();
 
+builder.Services.AddSingleton<LogWriter>();
 
 var app = builder.Build();
 

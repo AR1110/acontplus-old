@@ -18,16 +18,19 @@ namespace Customer.API.Controllers
         private readonly RucService _cConsultaSri;
         private readonly CedulaService _cedulasSri;
         private readonly CustomerContext _customerContext;
+        private readonly LogWriter _log;
         public ConsultasController(RucService cConsultaSri,
             CedulaService cedulasSri,
             IConfiguration configuration,
-            CustomerContext customerContext
+            CustomerContext customerContext,
+            LogWriter log
             )
         {
             _cConsultaSri = cConsultaSri;
             _cedulasSri = cedulasSri;
             _configuration = configuration;
             _customerContext = customerContext;
+            _log = log;
         }
         [AllowAnonymous]
         [HttpGet("GetRucSRI")]
@@ -36,7 +39,7 @@ namespace Customer.API.Controllers
         public ActionResult<DatosPersonaSriUpdate> GetRucSRI([FromQuery] RUCSriDTo rUCSriDTo)
         {
 
-            LogWriter _log = new LogWriter(_configuration);
+            
             DatosPersonaSriUpdate _response = new DatosPersonaSriUpdate();
             try
             {
@@ -116,7 +119,7 @@ namespace Customer.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<CCedulaSriDto> GetCedulaSri([FromQuery] RUCSriDTo rUCSriDTo)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             CCedulaSriDto _response = new CCedulaSriDto();
             try
             {
