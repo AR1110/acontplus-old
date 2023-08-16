@@ -36,7 +36,7 @@ namespace ApiCompras.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al obtener datos de Compra No Habitual: " + ex.ToString());
+                _logs.LogActivity("Error al obtener datos de Compra No Habitual: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos de Compra No Habitual");
             }
             finally
@@ -64,7 +64,7 @@ namespace ApiCompras.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al guardar datos de Compra No Habitual: " + ex.ToString());
+                _logs.LogActivity("Error al guardar datos de Compra No Habitual: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al guardar los datos de Compra No Habitual");
             }
             finally
@@ -93,7 +93,7 @@ namespace ApiCompras.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al editar datos de Compra No Habitual: " + ex.ToString());
+                _logs.LogActivity("Error al editar datos de Compra No Habitual: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al editar los datos de Compra No Habitual");
             }
             finally
@@ -118,7 +118,7 @@ namespace ApiCompras.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al anular datos de Compra No Habitual: " + ex.ToString());
+                _logs.LogActivity("Error al anular datos de Compra No Habitual: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al anular los datos de Compra No Habitual");
             }
             finally

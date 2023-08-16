@@ -37,7 +37,7 @@ namespace WebUI.Controllers.Restaurant
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Get: \n" + ex.ToString());
+                _log.LogActivity("Error in Get: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener los datos");
             }
             finally
@@ -59,7 +59,7 @@ namespace WebUI.Controllers.Restaurant
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while saving config tpv: \n" + ex.ToString());
+                _log.LogActivity("Error while saving config tpv: \n" + ex.ToString());
                 _response.Create(code: "0", "Error al guardar la configuración");
             }
             finally
@@ -81,7 +81,7 @@ namespace WebUI.Controllers.Restaurant
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while updating config tpv: \n" + ex.ToString());
+                _log.LogActivity("Error while updating config tpv: \n" + ex.ToString());
                 _response.Create(code: "0", "Error al actualizar la configuración");
             }
             finally
@@ -103,7 +103,7 @@ namespace WebUI.Controllers.Restaurant
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while updating config tpv: \n" + ex.ToString());
+                _log.LogActivity("Error while updating config tpv: \n" + ex.ToString());
                 _response.Create(code: "0", "Error al actualizar la configuración");
             }
             finally

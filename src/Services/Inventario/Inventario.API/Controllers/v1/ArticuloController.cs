@@ -41,7 +41,7 @@ namespace Inventario.API.Controllers.v1
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar articulos: \n" + ex.ToString());
+                _log.LogActivity("Error al listar articulos: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar articulos");
             }
             finally
@@ -66,7 +66,7 @@ namespace Inventario.API.Controllers.v1
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al obtener datos del articulo: \n" + ex.ToString());
+                _log.LogActivity("Error al obtener datos del articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos del articulo");
             }
             finally
@@ -124,7 +124,7 @@ namespace Inventario.API.Controllers.v1
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al insertar articulo: \n" + ex.ToString());
+                _log.LogActivity("Error al insertar articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar articulo");
             }
             finally
@@ -179,7 +179,7 @@ namespace Inventario.API.Controllers.v1
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al actualizar articulo: \n" + ex.ToString());
+                _log.LogActivity("Error al actualizar articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar articulo");
             }
             finally
@@ -204,7 +204,7 @@ namespace Inventario.API.Controllers.v1
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al eliminar articulo: \n" + ex.ToString());
+                _log.LogActivity("Error al eliminar articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar articulo");
             }
             finally
@@ -229,7 +229,7 @@ namespace Inventario.API.Controllers.v1
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Get Search: \n" + ex.ToString());
+                _log.LogActivity("Error on Get Search: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener las bodegas");
             }
             finally
@@ -254,7 +254,7 @@ namespace Inventario.API.Controllers.v1
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Get For purchase: \n" + ex.ToString());
+                _log.LogActivity("Error on Get For purchase: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos de articulo para compra");
             }
             finally
@@ -279,7 +279,7 @@ namespace Inventario.API.Controllers.v1
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Get For Sales: \n" + ex.ToString());
+                _log.LogActivity("Error on Get For Sales: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos de articulo para venta");
             }
             finally
@@ -304,7 +304,7 @@ namespace Inventario.API.Controllers.v1
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al obtener datos del form-articulo: \n" + ex.ToString());
+                _log.LogActivity("Error al obtener datos del form-articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos del form-articulo");
             }
             finally

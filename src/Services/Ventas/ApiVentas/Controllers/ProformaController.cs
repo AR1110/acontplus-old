@@ -32,7 +32,7 @@ namespace ApiVentas.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar proformas: \n" + ex.ToString());
+                _log.LogActivity("Error al listar proformas: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar proformas");
             }
             finally
@@ -59,7 +59,7 @@ namespace ApiVentas.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al insertar proforma: \n" + ex.ToString());
+                _log.LogActivity("Error al insertar proforma: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar proforma");
             }
             finally
@@ -86,7 +86,7 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al actualizar nota entrega: \n" + ex.ToString());
+                _log.LogActivity("Error al actualizar nota entrega: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar la nota de entrega");
             }
             finally
@@ -112,7 +112,7 @@ namespace ApiVentas.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al eliminar proforma: \n" + ex.ToString());
+                _log.LogActivity("Error al eliminar proforma: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar proforma");
             }
             finally
@@ -137,7 +137,7 @@ namespace ApiVentas.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al obtener datos del doc. proforma: \n" + ex.ToString());
+                _log.LogActivity("Error al obtener datos del doc. proforma: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos del doc. proforma");
             }
             finally

@@ -30,7 +30,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error getting data to print: \n" + ex.ToString());
+                _log.LogActivity("Error getting data to print: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener los datos para imprimir");
             }
             finally

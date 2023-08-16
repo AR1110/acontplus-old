@@ -31,7 +31,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar medidas: \n" + ex.ToString());
+                _log.LogActivity("Error al listar medidas: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar medidas");
             }
             finally
@@ -56,7 +56,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al insertar medida: \n" + ex.ToString());
+                _log.LogActivity("Error al insertar medida: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar medida");
             }
             finally
@@ -83,7 +83,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al actualizar medida: \n" + ex.ToString());
+                _log.LogActivity("Error al actualizar medida: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar medida");
             }
             finally
@@ -108,7 +108,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al eliminar medida: \n" + ex.ToString());
+                _log.LogActivity("Error al eliminar medida: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar medida");
             }
             finally
@@ -132,7 +132,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar medidas para Select: \n" + ex.ToString());
+                _log.LogActivity("Error al listar medidas para Select: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar medidas para Select");
             }
             finally

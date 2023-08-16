@@ -33,7 +33,7 @@ namespace ApiConfig.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Get Email-Config : \n" + ex.ToString());
+                _log.LogActivity("Error on Get Email-Config : \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener los datos de la configuracion de email");
             }
             finally
@@ -60,7 +60,7 @@ namespace ApiConfig.Controllers
             {
                 _response.Create(code: "0", message: "Error al actualizar");
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Put EmailConfig: \n" + ex.ToString());
+                _log.LogActivity("Error on Put EmailConfig: \n" + ex.ToString());
             }
             finally
             {

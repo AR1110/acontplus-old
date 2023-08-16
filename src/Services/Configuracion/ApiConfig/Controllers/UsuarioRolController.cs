@@ -31,7 +31,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while getting user role: \n" + ex.ToString());
+                _log.LogActivity("Error while getting user role: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error getting user role");
             }
             finally

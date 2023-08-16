@@ -35,7 +35,7 @@ namespace ApiLogistica.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error al listar guia remision: " + ex.ToString());
+                _logs.LogActivity("Error al listar guia remision: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar guia remision");
             }
             finally
@@ -63,7 +63,7 @@ namespace ApiLogistica.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error while creating Guide Rem.: \n " + ex.ToString());
+                _logs.LogActivity("Error while creating Guide Rem.: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al crear Guia de Remisión");
             }
             finally
@@ -92,7 +92,7 @@ namespace ApiLogistica.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error while updating Guide Rem.: \n " + ex.ToString());
+                _logs.LogActivity("Error while updating Guide Rem.: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar Guia de Remisión");
             }
             finally
@@ -118,7 +118,7 @@ namespace ApiLogistica.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error while deleting Guide Rem.: \n " + ex.ToString());
+                _logs.LogActivity("Error while deleting Guide Rem.: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar guia de remisión");
             }
             finally
@@ -146,7 +146,7 @@ namespace ApiLogistica.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error while get id Guide Rem.: \n " + ex.ToString());
+                _logs.LogActivity("Error while get id Guide Rem.: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al get id guia de remisión");
             }
             finally

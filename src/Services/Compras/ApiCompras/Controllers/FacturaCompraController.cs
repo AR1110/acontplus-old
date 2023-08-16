@@ -35,7 +35,7 @@ namespace ApiCompras.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error al obtener datos de Factura Compras: " + ex.ToString());
+                _logs.LogActivity("Error al obtener datos de Factura Compras: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos de Facturas Compras");
             }
             finally
@@ -61,7 +61,7 @@ namespace ApiCompras.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error al obtener datos de Factura Compras por Id: " + ex.ToString());
+                _logs.LogActivity("Error al obtener datos de Factura Compras por Id: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos de Facturas Compras por Id");
             }
             finally
@@ -89,7 +89,7 @@ namespace ApiCompras.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error al guardar datos de la Factura Compra: " + ex.ToString());
+                _logs.LogActivity("Error al guardar datos de la Factura Compra: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al guardar los datos de la Factura Compra");
             }
             finally
@@ -118,7 +118,7 @@ namespace ApiCompras.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error al editar datos de Factura Compra: " + ex.ToString());
+                _logs.LogActivity("Error al editar datos de Factura Compra: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al editar los datos de la Factura Compra");
             }
             finally
@@ -144,7 +144,7 @@ namespace ApiCompras.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error al anular la factura compra: " + ex.ToString());
+                _logs.LogActivity("Error al anular la factura compra: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al anular la factura");
             }
             finally
@@ -171,7 +171,7 @@ namespace ApiCompras.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error al obtener facturas por proveedor: " + ex.ToString());
+                _logs.LogActivity("Error al obtener facturas por proveedor: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener facturas por proveedor");
             }
             finally

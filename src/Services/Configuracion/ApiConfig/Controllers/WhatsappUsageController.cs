@@ -33,7 +33,7 @@ namespace ApiConfig.Controllers
             {
                 _response.Create(code: "0", message: "Error al obtener el uso de whatsapp");
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on get: \n" + ex.ToString());
+                _log.LogActivity("Error on get: \n" + ex.ToString());
             }
             finally
             {
@@ -57,7 +57,7 @@ namespace ApiConfig.Controllers
             {
                 _response.Create(code: "0", message: "Error al guardar el uso de whatsapp");
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on post: \n" + ex.ToString());
+                _log.LogActivity("Error on post: \n" + ex.ToString());
             }
             finally
             {
@@ -82,7 +82,7 @@ namespace ApiConfig.Controllers
             {
                 _response.Create(code: "0", message: "Error al actualizar el uso de whatsapp");
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on put: \n" + ex.ToString());
+                _log.LogActivity("Error on put: \n" + ex.ToString());
             }
             finally
             {
@@ -106,7 +106,7 @@ namespace ApiConfig.Controllers
             {
                 _response.Create(code: "0", message: "Error al eliminar el uso de whatsapp");
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on delete: \n" + ex.ToString());
+                _log.LogActivity("Error on delete: \n" + ex.ToString());
             }
             finally
             {

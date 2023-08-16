@@ -35,7 +35,7 @@ namespace ApiConfig.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Get Firma Electronica: \n" + ex.ToString());
+                _log.LogActivity("Error on Get Firma Electronica: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener la firma electronica");
             }
             finally
@@ -84,7 +84,7 @@ namespace ApiConfig.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Insert Firma Electronica: \n" + ex.ToString());
+                _log.LogActivity("Error on Insert Firma Electronica: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al registrar la firma electronica");
             }
             finally
@@ -132,7 +132,7 @@ namespace ApiConfig.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Update Firma Electronica: \n" + ex.ToString());
+                _log.LogActivity("Error on Update Firma Electronica: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Actualizar la firma electronica");
             }
             finally
@@ -165,7 +165,7 @@ namespace ApiConfig.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Update Firma Electronica: \n" + ex.ToString());
+                _log.LogActivity("Error on Update Firma Electronica: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Actualizar la firma electronica");
             }
             finally

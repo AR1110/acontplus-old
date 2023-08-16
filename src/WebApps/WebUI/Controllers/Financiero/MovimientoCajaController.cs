@@ -59,7 +59,7 @@ namespace WebUI.Controllers.GestionFinanciera
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in GetMoneda: \n" + ex.ToString());
+                _log.LogActivity("Error in GetMoneda: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally
@@ -83,7 +83,7 @@ namespace WebUI.Controllers.GestionFinanciera
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Report: \n" + ex.ToString());
+                _log.LogActivity("Error in Report: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally

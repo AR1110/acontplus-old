@@ -32,7 +32,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while getting reports: \n" + ex.ToString());
+                _log.LogActivity("Error while getting reports: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error getting reports");
             }
             finally
@@ -60,7 +60,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while insert report: \n" + ex.ToString());
+                _log.LogActivity("Error while insert report: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar el reporte");
             }
             finally
@@ -90,7 +90,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while updating report: \n" + ex.ToString());
+                _log.LogActivity("Error while updating report: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar el reporte");
             }
             finally
@@ -114,7 +114,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while deleting report: \n" + ex.ToString());
+                _log.LogActivity("Error while deleting report: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar el reporte");
             }
             finally

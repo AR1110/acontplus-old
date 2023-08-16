@@ -33,7 +33,7 @@ namespace ApiVentas.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error al listar clientes: " + ex.ToString());
+                _logs.LogActivity("Error al listar clientes: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar clientes");
             }
             finally
@@ -61,7 +61,7 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error while getting data form customer: " + ex.ToString());
+                _logs.LogActivity("Error while getting data form customer: " + ex.ToString());
                 _response.Create(code: "0", message: "Error while getting data form customer");
             }
             finally { _db.Close(); }
@@ -85,7 +85,7 @@ namespace ApiVentas.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error while searching data form customer: " + ex.ToString());
+                _logs.LogActivity("Error while searching data form customer: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al buscar cliente");
             }
             finally { _db.Close(); }
@@ -109,7 +109,7 @@ namespace ApiVentas.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error while creating customer: \n " + ex.ToString());
+                _logs.LogActivity("Error while creating customer: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al crear el cliente");
             }
             finally
@@ -136,7 +136,7 @@ namespace ApiVentas.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error while updating customer: \n " + ex.ToString());
+                _logs.LogActivity("Error while updating customer: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar el cliente");
             }
             finally
@@ -162,7 +162,7 @@ namespace ApiVentas.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error while deleting customer: \n " + ex.ToString());
+                _logs.LogActivity("Error while deleting customer: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar el cliente");
             }
             finally
@@ -186,7 +186,7 @@ namespace ApiVentas.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error while getting customer find by id: \n " + ex.ToString());
+                _logs.LogActivity("Error while getting customer find by id: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos de cliente");
             }
             finally

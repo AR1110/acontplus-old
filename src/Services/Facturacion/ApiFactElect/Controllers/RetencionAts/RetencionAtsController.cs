@@ -33,7 +33,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al obtener la solicitud: " + ex.ToString());
+                _logs.LogActivity("Error al obtener la solicitud: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener la solicitud");
             }
             finally
@@ -69,7 +69,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al guardar la retención: " + ex.ToString());
+                _logs.LogActivity("Error al guardar la retención: " + ex.ToString());
                 _response.Create(code: "0", "Error al guardar la retención");
             }
             finally
@@ -94,7 +94,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al actualizar la retención: " + ex.ToString());
+                _logs.LogActivity("Error al actualizar la retención: " + ex.ToString());
                 _response.Create(code: "0", "Error al actualizar la retención");
             }
             finally
@@ -119,7 +119,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al anular la retención: " + ex.ToString());
+                _logs.LogActivity("Error al anular la retención: " + ex.ToString());
                 _response.Create(code: "0", "Error al anular la retención");
             }
             finally
@@ -143,7 +143,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al eliminar la retención: " + ex.ToString());
+                _logs.LogActivity("Error al eliminar la retención: " + ex.ToString());
                 _response.Create(code: "0", "Error al eliminar la retención");
             }
             finally

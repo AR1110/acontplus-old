@@ -32,7 +32,7 @@ namespace ApiRecepcion.Controllers
             {
                 _response.Create(code: "0", message: "Error al guardar");
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Get compra habitual: \n" + ex.ToString());
+                _log.LogActivity("Error on Get compra habitual: \n" + ex.ToString());
             }
             finally
             {
@@ -56,7 +56,7 @@ namespace ApiRecepcion.Controllers
             {
                 _response.Create(code: "0", message: "Error al guardar");
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Post compra habitual: \n" + ex.ToString());
+                _log.LogActivity("Error on Post compra habitual: \n" + ex.ToString());
             }
             finally
             {
@@ -81,7 +81,7 @@ namespace ApiRecepcion.Controllers
             {
                 _response.Create(code: "0", message: "Error al guardar");
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Put compra habitual: \n" + ex.ToString());
+                _log.LogActivity("Error on Put compra habitual: \n" + ex.ToString());
             }
             finally
             {
@@ -105,7 +105,7 @@ namespace ApiRecepcion.Controllers
             {
                 _response.Create(code: "0", message: "Error al guardar");
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Delete compra habitual: \n" + ex.ToString());
+                _log.LogActivity("Error on Delete compra habitual: \n" + ex.ToString());
             }
             finally
             {

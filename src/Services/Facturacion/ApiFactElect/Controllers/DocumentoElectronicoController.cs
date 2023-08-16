@@ -37,7 +37,7 @@ namespace ApiFactElect.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al obtener la solicitud: " + ex.ToString());
+                _logs.LogActivity("Error al obtener la solicitud: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener la solicitud");
             }
             finally
@@ -62,7 +62,7 @@ namespace ApiFactElect.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al obtener la solicitud: " + ex.ToString());
+                _logs.LogActivity("Error al obtener la solicitud: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener la solicitud");
             }
             finally
@@ -87,7 +87,7 @@ namespace ApiFactElect.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error while getting data form: " + ex.ToString());
+                _logs.LogActivity("Error while getting data form: " + ex.ToString());
                 _response.Create(code: "0", message: "Error while getting data form");
             }
             finally { _db.Close(); }
@@ -120,7 +120,7 @@ namespace ApiFactElect.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error while getting data form: " + ex.ToString());
+                _logs.LogActivity("Error while getting data form: " + ex.ToString());
                 return BadRequest("Error al obtener el xml");
             }
         }
@@ -140,7 +140,7 @@ namespace ApiFactElect.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error while updating doc: \n " + ex.ToString());
+                _logs.LogActivity("Error while updating doc: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar el documento");
             }
             finally

@@ -33,7 +33,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al obtener el proveedor: " + ex.ToString());
+                _logs.LogActivity("Error al obtener el proveedor: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener el proveedor");
             }
             finally
@@ -58,7 +58,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al registrar el proveedor: " + ex.ToString());
+                _logs.LogActivity("Error al registrar el proveedor: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al registrar el proveedor");
             }
             finally
@@ -82,7 +82,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al actualizar el proveedor: " + ex.ToString());
+                _logs.LogActivity("Error al actualizar el proveedor: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar el proveedor");
             }
             finally

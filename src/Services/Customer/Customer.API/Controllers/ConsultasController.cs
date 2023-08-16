@@ -104,7 +104,7 @@ namespace Customer.API.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error GetRucSRI: " + ex.ToString());
+                _log.LogActivity("Error GetRucSRI: " + ex.ToString());
                 _response.Error = ex.Message;
                 _response.NetworkError = true;
             }
@@ -178,7 +178,7 @@ namespace Customer.API.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error GetCedulaSri: " + ex.ToString());
+                _log.LogActivity("Error GetCedulaSri: " + ex.ToString());
                 _response.Error = ex.Message;
                 _response.NetworkError = true;
             }

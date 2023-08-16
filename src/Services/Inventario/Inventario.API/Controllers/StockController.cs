@@ -32,7 +32,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al actualizar la Salida de Stock: " + ex.ToString());
+                _logs.LogActivity("Error al actualizar la Salida de Stock: " + ex.ToString());
                 _response.Create(code: "0", "Error al actualizar el Stock - Salida");
             }
             finally
@@ -57,7 +57,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al actualizar la Entrada del Stock: " + ex.ToString());
+                _logs.LogActivity("Error al actualizar la Entrada del Stock: " + ex.ToString());
                 _response.Create(code: "0", "Error al actualizar el Stock - Entrada");
             }
             finally
@@ -82,7 +82,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al actualizar la Transferencia del Stock: " + ex.ToString());
+                _logs.LogActivity("Error al actualizar la Transferencia del Stock: " + ex.ToString());
                 _response.Create(code: "0", "Error al actualizar el Stock - Transferencia");
             }
             finally
@@ -107,7 +107,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al actualizar el Ajuste del Stock: " + ex.ToString());
+                _logs.LogActivity("Error al actualizar el Ajuste del Stock: " + ex.ToString());
                 _response.Create(code: "0", "Error al actualizar el Stock - Ajuste");
             }
             finally

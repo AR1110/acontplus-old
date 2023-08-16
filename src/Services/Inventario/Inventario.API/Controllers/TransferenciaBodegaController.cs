@@ -32,7 +32,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Get Search: \n" + ex.ToString());
+                _log.LogActivity("Error on Get Search: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener las trans. a bodegas");
             }
             finally
@@ -55,7 +55,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in GetId: \n" + ex.ToString());
+                _log.LogActivity("Error in GetId: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally
@@ -80,7 +80,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Insert: \n" + ex.ToString());
+                _log.LogActivity("Error on Insert: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar Trans. Bodega");
             }
             finally
@@ -106,7 +106,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Update: \n" + ex.ToString());
+                _log.LogActivity("Error on Update: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar Trans. Bodega");
             }
             finally
@@ -131,7 +131,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Delete: \n" + ex.ToString());
+                _log.LogActivity("Error on Delete: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar Trans. Bodega");
             }
             finally

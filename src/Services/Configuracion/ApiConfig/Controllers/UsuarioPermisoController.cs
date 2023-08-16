@@ -32,7 +32,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error  getting user permission: \n" + ex.ToString());
+                _log.LogActivity("Error  getting user permission: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error getting user permission");
             }
             finally
@@ -57,7 +57,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error  updating user permission: \n" + ex.ToString());
+                _log.LogActivity("Error  updating user permission: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error updating user permission");
             }
             finally
@@ -83,7 +83,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while checking permission user: \n" + ex.ToString());
+                _log.LogActivity("Error while checking permission user: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error while checking permission user");
             }
             finally

@@ -47,7 +47,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al obtener los documentos recibidos: " + ex.ToString());
+                _logs.LogActivity("Error al obtener los documentos recibidos: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener los documentos recibidos");
             }
             finally
@@ -108,7 +108,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error getting data of doc: " + ex.ToString());
+                _logs.LogActivity("Error getting data of doc: " + ex.ToString());
                 return new BadRequestObjectResult(new
                 {
                     code = 0,
@@ -159,7 +159,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error getting data of doc: " + ex.ToString());
+                _logs.LogActivity("Error getting data of doc: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener los datos del comprobante");
             }
 
@@ -264,7 +264,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al importar el archivo: " + ex.ToString());
+                _logs.LogActivity("Error al importar el archivo: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al importar el archivo");
             }
             finally
@@ -369,7 +369,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al importar el archivo: " + ex.ToString());
+                _logs.LogActivity("Error al importar el archivo: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al importar el archivo");
             }
             finally
@@ -396,7 +396,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al importar el archivo: " + ex.ToString());
+                _logs.LogActivity("Error al importar el archivo: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al importar el archivo");
             }
             finally
@@ -421,7 +421,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al verificar la clave acceso en el sri: " + ex.ToString());
+                _logs.LogActivity("Error al verificar la clave acceso en el sri: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al verificar la clave acceso en el sri");
             }
             finally
@@ -445,7 +445,7 @@ namespace ApiRecepcion.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error al importar el archivo: " + ex.ToString());
+                _logs.LogActivity("Error al importar el archivo: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al importar el archivo");
             }
             finally
@@ -472,7 +472,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al descargar el archivo xml: " + ex.ToString());
+                _logs.LogActivity("Error al descargar el archivo xml: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al descargar el archivo xml");
             }
             finally
@@ -517,7 +517,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al importar el archivo: " + ex.ToString());
+                _logs.LogActivity("Error al importar el archivo: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al importar el archivo");
             }
             finally
@@ -543,7 +543,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al eliminar el archivo: " + ex.ToString());
+                _logs.LogActivity("Error al eliminar el archivo: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar el archivo");
             }
             finally

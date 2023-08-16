@@ -33,7 +33,7 @@ namespace ApiConfig.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar tiempo credito: \n" + ex.ToString());
+                _log.LogActivity("Error al listar tiempo credito: \n" + ex.ToString());
                 _response.Create("0", "Error al listar tiempo credito");
             }
             finally
@@ -60,7 +60,7 @@ namespace ApiConfig.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al crear tiempo creditos: \n" + ex.ToString());
+                _log.LogActivity("Error al crear tiempo creditos: \n" + ex.ToString());
                 _response.Create("0", "Error al crear tiempo creditos");
             }
             finally
@@ -89,7 +89,7 @@ namespace ApiConfig.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al actualizar tiempo creditos: \n" + ex.ToString());
+                _log.LogActivity("Error al actualizar tiempo creditos: \n" + ex.ToString());
                 _response.Create("0", "Error al actualizar tiempo creditos");
             }
             finally
@@ -117,7 +117,7 @@ namespace ApiConfig.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al eliminar tiempo creditos: \n" + ex.ToString());
+                _log.LogActivity("Error al eliminar tiempo creditos: \n" + ex.ToString());
                 _response.Create("0", "Error al eliminar tiempo creditos");
             }
             finally

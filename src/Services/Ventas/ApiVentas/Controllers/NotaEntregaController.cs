@@ -32,7 +32,7 @@ namespace ApiVentas.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar nota entregas: \n" + ex.ToString());
+                _log.LogActivity("Error al listar nota entregas: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar nota entregas");
             }
             finally
@@ -57,7 +57,7 @@ namespace ApiVentas.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al obtener datos de nota entregas: \n" + ex.ToString());
+                _log.LogActivity("Error al obtener datos de nota entregas: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos de nota entregas");
             }
             finally
@@ -85,7 +85,7 @@ namespace ApiVentas.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al insertar nota entrega: \n" + ex.ToString());
+                _log.LogActivity("Error al insertar nota entrega: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar nota de entrega");
             }
             finally
@@ -113,7 +113,7 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al actualizar nota entrega: \n" + ex.ToString());
+                _log.LogActivity("Error al actualizar nota entrega: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar la nota de entrega");
             }
             finally
@@ -139,7 +139,7 @@ namespace ApiVentas.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al eliminar la factura: \n" + ex.ToString());
+                _log.LogActivity("Error al eliminar la factura: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar la fcatura");
             }
             finally

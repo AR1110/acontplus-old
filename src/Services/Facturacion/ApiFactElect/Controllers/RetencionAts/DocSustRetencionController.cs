@@ -49,7 +49,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al guardar la retencion: " + ex.ToString());
+                _logs.LogActivity("Error al guardar la retencion: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al guardar la retencion");
             }
             finally
@@ -76,7 +76,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al actualizar la retencion: " + ex.ToString());
+                _logs.LogActivity("Error al actualizar la retencion: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar la retencion");
             }
             finally
@@ -102,7 +102,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al eliminar la retencion: " + ex.ToString());
+                _logs.LogActivity("Error al eliminar la retencion: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar la retencion");
             }
             finally

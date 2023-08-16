@@ -31,7 +31,7 @@ namespace ApiFactElect.Controllers
             {
                 _response.Create(code: "0", message: "Error al obtener las notificaciones");
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on get NotificacionTrib: \n" + ex.ToString());
+                _log.LogActivity("Error on get NotificacionTrib: \n" + ex.ToString());
             }
             finally
             {
@@ -55,7 +55,7 @@ namespace ApiFactElect.Controllers
             {
                 _response.Create(code: "0", message: "Error al guardar las notificacion");
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on post NotificacionTrib: \n" + ex.ToString());
+                _log.LogActivity("Error on post NotificacionTrib: \n" + ex.ToString());
             }
             finally
             {

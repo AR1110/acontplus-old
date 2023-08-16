@@ -31,7 +31,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar modelos: \n" + ex.ToString());
+                _log.LogActivity("Error al listar modelos: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar modelos");
             }
             finally
@@ -57,7 +57,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al insertar modelos: \n" + ex.ToString());
+                _log.LogActivity("Error al insertar modelos: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar modelos");
             }
             finally
@@ -85,7 +85,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al actualizar modelos: \n" + ex.ToString());
+                _log.LogActivity("Error al actualizar modelos: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar modelos");
             }
             finally
@@ -110,7 +110,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al eliminar modelos: \n" + ex.ToString());
+                _log.LogActivity("Error al eliminar modelos: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar modelos");
             }
             finally
@@ -134,7 +134,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar modelos para Select: \n" + ex.ToString());
+                _log.LogActivity("Error al listar modelos para Select: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar modelos para Select");
             }
             finally

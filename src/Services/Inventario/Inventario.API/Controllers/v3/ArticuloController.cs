@@ -35,7 +35,7 @@ namespace Inventario.API.Controllers.v3
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar articulos: \n" + ex.ToString());
+                _log.LogActivity("Error al listar articulos: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar articulos");
             }
             finally
@@ -61,7 +61,7 @@ namespace Inventario.API.Controllers.v3
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al obtener datos del articulo: \n" + ex.ToString());
+                _log.LogActivity("Error al obtener datos del articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos del articulo");
             }
             finally
@@ -85,7 +85,7 @@ namespace Inventario.API.Controllers.v3
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Get Search: \n" + ex.ToString());
+                _log.LogActivity("Error on Get Search: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener las Articulos");
             }
             finally

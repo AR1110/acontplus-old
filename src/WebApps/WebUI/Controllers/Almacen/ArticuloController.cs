@@ -65,7 +65,7 @@ namespace WebUI.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in articulo getId: \n" + ex.ToString());
+                _log.LogActivity("Error in articulo getId: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos del articulo");
             }
             finally
@@ -91,7 +91,7 @@ namespace WebUI.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in articulo GetIdBySale: \n" + ex.ToString());
+                _log.LogActivity("Error in articulo GetIdBySale: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos del articulo");
             }
             finally
@@ -118,7 +118,7 @@ namespace WebUI.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in articulo GetIdByPurchase: \n" + ex.ToString());
+                _log.LogActivity("Error in articulo GetIdByPurchase: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos del articulo");
             }
             finally
@@ -142,7 +142,7 @@ namespace WebUI.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while search articles: \n" + ex.ToString());
+                _log.LogActivity("Error while search articles: \n" + ex.ToString());
                 _response.Create(code: "0", "Error al buscar articulo");
             }
             finally
@@ -179,7 +179,7 @@ namespace WebUI.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in articulo GetFormData: \n" + ex.ToString());
+                _log.LogActivity("Error in articulo GetFormData: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos del articulo");
             }
             finally

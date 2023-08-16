@@ -30,7 +30,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error getting data submenu by idMenu: \n" + ex.ToString());
+                _log.LogActivity("Error getting data submenu by idMenu: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener los datos por idMenu");
             }
             finally
@@ -54,7 +54,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error deleting the submenu: \n" + ex.ToString());
+                _log.LogActivity("Error deleting the submenu: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar el submenu");
             }
             finally

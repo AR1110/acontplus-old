@@ -39,7 +39,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar SubFamilias: \n" + ex.ToString());
+                _log.LogActivity("Error al listar SubFamilias: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar SubFamilias");
             }
             finally
@@ -99,7 +99,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al insertar subfamilia: \n" + ex.ToString());
+                _log.LogActivity("Error al insertar subfamilia: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar subfamilia");
             }
             finally
@@ -160,7 +160,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al actualizar subfamilia: \n" + ex.ToString());
+                _log.LogActivity("Error al actualizar subfamilia: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar subfamilia");
             }
             finally
@@ -185,7 +185,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al eliminar subfamilia: \n" + ex.ToString());
+                _log.LogActivity("Error al eliminar subfamilia: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar subfamilia");
             }
             finally
@@ -210,7 +210,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar SubFamilias para Select: \n" + ex.ToString());
+                _log.LogActivity("Error al listar SubFamilias para Select: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar SubFamilias para Select");
             }
             finally

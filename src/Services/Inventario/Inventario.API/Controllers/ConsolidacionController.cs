@@ -33,7 +33,7 @@ namespace Inventario.API.Controllers
             {
                 _response.Create(code: "0", message: "Error al obtener los datos");
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Get: \n" + ex.ToString());
+                _log.LogActivity("Error on Get: \n" + ex.ToString());
             }
             finally
             {
@@ -57,7 +57,7 @@ namespace Inventario.API.Controllers
             {
                 _response.Create(code: "0", message: "Error al guardar");
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Post: \n" + ex.ToString());
+                _log.LogActivity("Error on Post: \n" + ex.ToString());
             }
             finally
             {
@@ -82,7 +82,7 @@ namespace Inventario.API.Controllers
             {
                 _response.Create(code: "0", message: "Error al actualizar");
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Put: \n" + ex.ToString());
+                _log.LogActivity("Error on Put: \n" + ex.ToString());
             }
             finally
             {
@@ -106,7 +106,7 @@ namespace Inventario.API.Controllers
             {
                 _response.Create(code: "0", message: "Error al eliminar");
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Delete: \n" + ex.ToString());
+                _log.LogActivity("Error on Delete: \n" + ex.ToString());
             }
             finally
             {

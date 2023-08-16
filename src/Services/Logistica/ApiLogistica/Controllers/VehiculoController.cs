@@ -40,7 +40,7 @@ namespace ApiLogistica.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error al listar vehiculos: " + ex.ToString());
+                _logs.LogActivity("Error al listar vehiculos: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar vehiculos");
             }
             finally
@@ -69,7 +69,7 @@ namespace ApiLogistica.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error while creating vehicle: \n " + ex.ToString());
+                _logs.LogActivity("Error while creating vehicle: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al crear el vehiculo");
             }
             finally
@@ -99,7 +99,7 @@ namespace ApiLogistica.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error while updating vehicle: \n " + ex.ToString());
+                _logs.LogActivity("Error while updating vehicle: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar el vehiculo");
             }
             finally
@@ -125,7 +125,7 @@ namespace ApiLogistica.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error while deleting vehicle: \n " + ex.ToString());
+                _logs.LogActivity("Error while deleting vehicle: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar el vehiculo");
             }
             finally
@@ -152,7 +152,7 @@ namespace ApiLogistica.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error while search vehicle: \n " + ex.ToString());
+                _logs.LogActivity("Error while search vehicle: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al buscar el vehiculo");
             }
             finally

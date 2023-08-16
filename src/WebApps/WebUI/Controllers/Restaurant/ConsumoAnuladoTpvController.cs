@@ -34,7 +34,7 @@ namespace WebUI.Controllers.Restaurant
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Get: \n" + ex.ToString());
+                _log.LogActivity("Error in Get: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener los datos");
             }
             finally
@@ -56,7 +56,7 @@ namespace WebUI.Controllers.Restaurant
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while saving consumo anulado tpv: \n" + ex.ToString());
+                _log.LogActivity("Error while saving consumo anulado tpv: \n" + ex.ToString());
                 _response.Create(code: "0", "Error al guardar el consumo anulado");
             }
             finally
@@ -78,7 +78,7 @@ namespace WebUI.Controllers.Restaurant
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while updating consumo anulado tpv: \n" + ex.ToString());
+                _log.LogActivity("Error while updating consumo anulado tpv: \n" + ex.ToString());
                 _response.Create(code: "0", "Error al actualizar el consumo anulado");
             }
             finally
@@ -100,7 +100,7 @@ namespace WebUI.Controllers.Restaurant
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while deleting consumo anulado tpv: \n" + ex.ToString());
+                _log.LogActivity("Error while deleting consumo anulado tpv: \n" + ex.ToString());
                 _response.Create(code: "0", "Error al eliminar el consumo anulado");
             }
             finally

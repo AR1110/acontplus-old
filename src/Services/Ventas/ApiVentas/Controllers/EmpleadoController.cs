@@ -31,7 +31,7 @@ namespace ApiVentas.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error al listar empleados: " + ex.ToString());
+                _logs.LogActivity("Error al listar empleados: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar empleados");
             }
             finally
@@ -60,7 +60,7 @@ namespace ApiVentas.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error while searching data form employee: " + ex.ToString());
+                _logs.LogActivity("Error while searching data form employee: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al buscar empleado");
             }
             finally { _db.Close(); }
@@ -84,7 +84,7 @@ namespace ApiVentas.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error while creating employee: \n " + ex.ToString());
+                _logs.LogActivity("Error while creating employee: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al crear el empleado");
             }
             finally
@@ -111,7 +111,7 @@ namespace ApiVentas.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error while updating employee: \n " + ex.ToString());
+                _logs.LogActivity("Error while updating employee: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar el empleado");
             }
             finally
@@ -137,7 +137,7 @@ namespace ApiVentas.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error while deleting employee: \n " + ex.ToString());
+                _logs.LogActivity("Error while deleting employee: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar el empleado");
             }
             finally

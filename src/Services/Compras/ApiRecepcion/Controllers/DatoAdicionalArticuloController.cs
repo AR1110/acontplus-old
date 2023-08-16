@@ -30,7 +30,7 @@ namespace ApiRecepcion.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar Familias: \n" + ex.ToString());
+                _log.LogActivity("Error al listar Familias: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar Familias");
             }
             finally
@@ -56,7 +56,7 @@ namespace ApiRecepcion.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al insertar dato adicional articulo: \n" + ex.ToString());
+                _log.LogActivity("Error al insertar dato adicional articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar dato adicional articulo");
             }
             finally
@@ -81,7 +81,7 @@ namespace ApiRecepcion.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al eliminar dato adicional articulo: \n" + ex.ToString());
+                _log.LogActivity("Error al eliminar dato adicional articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al dato adicional articulo");
             }
             finally

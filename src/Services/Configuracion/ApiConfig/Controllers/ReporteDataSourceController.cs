@@ -33,7 +33,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while getting reports: \n" + ex.ToString());
+                _log.LogActivity("Error while getting reports: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error getting reports");
             }
             finally
@@ -57,7 +57,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while insert datasource: \n" + ex.ToString());
+                _log.LogActivity("Error while insert datasource: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error insert report");
             }
             finally
@@ -82,7 +82,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while updating datasource: \n" + ex.ToString());
+                _log.LogActivity("Error while updating datasource: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error updating ds");
             }
             finally
@@ -106,7 +106,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while deleting datasource: \n" + ex.ToString());
+                _log.LogActivity("Error while deleting datasource: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error deleting ds");
             }
             finally

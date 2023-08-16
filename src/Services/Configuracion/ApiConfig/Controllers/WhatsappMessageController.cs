@@ -32,7 +32,7 @@ namespace ApiConfig.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error while insert whatsapp message: \n" + ex.ToString());
+                _log.LogActivity("Error while insert whatsapp message: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar el whatsapp");
             }
             finally
@@ -60,7 +60,7 @@ namespace ApiConfig.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error while insert whatsapp message: \n" + ex.ToString());
+                _log.LogActivity("Error while insert whatsapp message: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar el whatsapp");
             }
             finally

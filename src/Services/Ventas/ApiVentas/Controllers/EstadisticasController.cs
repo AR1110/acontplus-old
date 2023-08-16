@@ -31,7 +31,7 @@ namespace ApiVentas.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error al listar datos para dashboard: " + ex.ToString());
+                _logs.LogActivity("Error al listar datos para dashboard: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar datos para dashboard");
             }
             finally

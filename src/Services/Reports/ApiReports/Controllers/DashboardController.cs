@@ -30,7 +30,7 @@ namespace ApiReports.Controllers
             {
                 _response.Create(code: "0", message: "Error al obtener las estadísticas");
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Get Statistis: \n" + ex.ToString());
+                _log.LogActivity("Error on Get Statistis: \n" + ex.ToString());
             }
             finally
             {

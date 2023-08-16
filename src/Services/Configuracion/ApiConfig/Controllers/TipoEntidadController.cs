@@ -33,7 +33,7 @@ namespace ApiConfig.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar tipo entidad: \n" + ex.ToString());
+                _log.LogActivity("Error al listar tipo entidad: \n" + ex.ToString());
                 _response.Create("0", "Error al listar tipo entidad");
             }
             finally
@@ -60,7 +60,7 @@ namespace ApiConfig.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al crear tipo entidad: \n" + ex.ToString());
+                _log.LogActivity("Error al crear tipo entidad: \n" + ex.ToString());
                 _response.Create("0", "Error al crear tipo entidad");
             }
             finally
@@ -89,7 +89,7 @@ namespace ApiConfig.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al actualizar tipo entidad: \n" + ex.ToString());
+                _log.LogActivity("Error al actualizar tipo entidad: \n" + ex.ToString());
                 _response.Create("0", "Error al actualizar tipo entidad");
             }
             finally
@@ -117,7 +117,7 @@ namespace ApiConfig.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al eliminar tipo entidad: \n" + ex.ToString());
+                _log.LogActivity("Error al eliminar tipo entidad: \n" + ex.ToString());
                 _response.Create("0", "Error al eliminar tipo entidad");
             }
             finally
@@ -144,7 +144,7 @@ namespace ApiConfig.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al lista tipo entidad para el formulario: \n" + ex.ToString());
+                _log.LogActivity("Error al lista tipo entidad para el formulario: \n" + ex.ToString());
                 _response.Create("0", "Error al lista tipo entidad para el formulario");
             }
             finally

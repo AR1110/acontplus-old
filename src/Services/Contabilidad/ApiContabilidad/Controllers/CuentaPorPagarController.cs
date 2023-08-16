@@ -36,7 +36,7 @@ namespace ApiContabilidad.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error on Cuenta Por Pagar -> Get: \n" + ex.ToString());
+                _log.LogActivity("Error on Cuenta Por Pagar -> Get: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al traer las cuentas por pagar");
             }
             finally
@@ -62,7 +62,7 @@ namespace ApiContabilidad.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error on Cuenta Por Pagar -> Post: \n" + ex.ToString());
+                _log.LogActivity("Error on Cuenta Por Pagar -> Post: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar las cuentas por pagar");
             }
             finally
@@ -88,7 +88,7 @@ namespace ApiContabilidad.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error on Cuenta Por Pagar -> Put: \n" + ex.ToString());
+                _log.LogActivity("Error on Cuenta Por Pagar -> Put: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar las cuentas por pagar");
             }
             finally

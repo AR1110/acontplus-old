@@ -36,7 +36,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al obtener los detalles temporales: " + ex.ToString());
+                _logs.LogActivity("Error al obtener los detalles temporales: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener los detalles temporales");
             }
             finally
@@ -61,7 +61,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al insertar el detalle temporal: " + ex.ToString());
+                _logs.LogActivity("Error al insertar el detalle temporal: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar el detalle");
             }
             finally
@@ -86,7 +86,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al actualizar el detalle temporal: " + ex.ToString());
+                _logs.LogActivity("Error al actualizar el detalle temporal: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar el detalle");
             }
             finally

@@ -34,7 +34,7 @@ namespace ApiContabilidad.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error on Cuenta Por Cobrar -> Get: \n" + ex.ToString());
+                _log.LogActivity("Error on Cuenta Por Cobrar -> Get: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al traer las cuentas por cobrar");
             }
             finally
@@ -60,7 +60,7 @@ namespace ApiContabilidad.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error on Cuenta Por Cobrar -> Post: \n" + ex.ToString());
+                _log.LogActivity("Error on Cuenta Por Cobrar -> Post: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Insertar las cuotas por cobrar");
             }
             finally
@@ -86,7 +86,7 @@ namespace ApiContabilidad.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error on Cuenta Por Cobrar -> Put: \n" + ex.ToString());
+                _log.LogActivity("Error on Cuenta Por Cobrar -> Put: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar las Cuota por Cobrar");
             }
             finally

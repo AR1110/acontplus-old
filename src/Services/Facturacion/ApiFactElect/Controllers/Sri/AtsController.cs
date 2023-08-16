@@ -87,7 +87,7 @@ namespace ApiFactElect.Controllers.Sri
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error while download ats: \n" + ex.ToString());
+                _log.LogActivity("Error while download ats: \n" + ex.ToString());
                 _response.Create("0", ex.Message);
             }
 

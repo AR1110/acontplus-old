@@ -35,7 +35,7 @@ namespace ApiFactElect.Controllers.Factura.v2
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al obtener datos de factura: \n" + ex.ToString());
+                _log.LogActivity("Error al obtener datos de factura: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos de factura");
             }
             finally
@@ -63,7 +63,7 @@ namespace ApiFactElect.Controllers.Factura.v2
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al crear la factura: \n" + ex.ToString());
+                _log.LogActivity("Error al crear la factura: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al crear la factura");
             }
             finally
@@ -92,7 +92,7 @@ namespace ApiFactElect.Controllers.Factura.v2
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Update Invoice: \n" + ex.ToString());
+                _log.LogActivity("Error in Update Invoice: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar la factura");
             }
             finally
@@ -118,7 +118,7 @@ namespace ApiFactElect.Controllers.Factura.v2
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al eliminar la factura: \n" + ex.ToString());
+                _log.LogActivity("Error al eliminar la factura: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar la fcatura");
             }
             finally

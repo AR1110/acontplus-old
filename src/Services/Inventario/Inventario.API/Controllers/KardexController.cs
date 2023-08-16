@@ -28,7 +28,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error on getting kardex" + ex.ToString());
+                _log.LogActivity("Error on getting kardex" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener el kardex");
             }
             finally
@@ -52,7 +52,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error on getting kardex" + ex.ToString());
+                _log.LogActivity("Error on getting kardex" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener el kardex");
             }
             finally

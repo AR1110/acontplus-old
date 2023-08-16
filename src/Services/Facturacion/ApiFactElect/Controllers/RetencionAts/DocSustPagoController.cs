@@ -50,7 +50,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al guardar el pago: " + ex.ToString());
+                _logs.LogActivity("Error al guardar el pago: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al guardar el pago");
             }
             finally
@@ -77,7 +77,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al actualizar el pago: " + ex.ToString());
+                _logs.LogActivity("Error al actualizar el pago: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar el pago");
             }
             finally
@@ -103,7 +103,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al eliminar el pago: " + ex.ToString());
+                _logs.LogActivity("Error al eliminar el pago: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar el pago");
             }
             finally

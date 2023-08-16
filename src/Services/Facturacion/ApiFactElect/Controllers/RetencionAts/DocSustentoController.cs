@@ -49,7 +49,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al guardar el documento de sustento: " + ex.ToString());
+                _logs.LogActivity("Error al guardar el documento de sustento: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al guardar el documento de sustento");
             }
             finally
@@ -76,7 +76,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al actualizar el documento de sustento: " + ex.ToString());
+                _logs.LogActivity("Error al actualizar el documento de sustento: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar el documento de sustento");
             }
             finally
@@ -103,7 +103,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al eliminar el documento de sustento: " + ex.ToString());
+                _logs.LogActivity("Error al eliminar el documento de sustento: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar el documento de sustento");
             }
             finally

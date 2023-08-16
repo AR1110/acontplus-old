@@ -157,7 +157,7 @@ namespace Identity.API.Controllers.v1
                     loginDataDto.idUsuario = loginData.idUsuario;
                     var jwtToken = _tokenService.GenerateJwtToken(loginDataDto);
                     if (jwtToken == null) { return Unauthorized(); }
-                    _logs.LogInfo("Login successful: idRol -> " + Convert.ToString(loginDataDto.idUsuarioRol) + " \n jwt: " + jwtToken);
+                    _logs.LogActivity("Login successful: idRol -> " + Convert.ToString(loginDataDto.idUsuarioRol) + " \n jwt: " + jwtToken);
 
                     if (jwtToken == null)
                     {
@@ -170,7 +170,7 @@ namespace Identity.API.Controllers.v1
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error while login into AcontplusWeb: " + ex.ToString());
+                _logs.LogActivity("Error while login into AcontplusWeb: " + ex.ToString());
                 return BadRequest("Error on login");
             }
         }

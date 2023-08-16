@@ -30,7 +30,7 @@ namespace ApiFactElect.Controllers
             {
                 _response.Create(code: "0", message: "Error al obtener los errores");
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on get DocElectErrror: \n" + ex.ToString());
+                _log.LogActivity("Error on get DocElectErrror: \n" + ex.ToString());
             }
             finally
             {

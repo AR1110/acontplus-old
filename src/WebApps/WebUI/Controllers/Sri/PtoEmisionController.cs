@@ -41,7 +41,7 @@ namespace WebUI.Controllers.Sri
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Insert: \n" + ex.ToString());
+                _log.LogActivity("Error in Insert: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al guardar");
             }
             finally
@@ -69,7 +69,7 @@ namespace WebUI.Controllers.Sri
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Update: \n" + ex.ToString());
+                _log.LogActivity("Error in Update: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar");
             }
             finally
@@ -94,7 +94,7 @@ namespace WebUI.Controllers.Sri
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Delete: \n" + ex.ToString());
+                _log.LogActivity("Error in Delete: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Eliminar");
             }
             finally

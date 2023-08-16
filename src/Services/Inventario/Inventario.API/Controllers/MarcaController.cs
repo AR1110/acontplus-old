@@ -31,7 +31,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar Marcas: \n" + ex.ToString());
+                _log.LogActivity("Error al listar Marcas: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar Marcas");
             }
             finally
@@ -56,7 +56,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al insertar marca: \n" + ex.ToString());
+                _log.LogActivity("Error al insertar marca: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar marca");
             }
             finally
@@ -83,7 +83,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al actualizar marca: \n" + ex.ToString());
+                _log.LogActivity("Error al actualizar marca: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar marca");
             }
             finally
@@ -108,7 +108,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al eliminar marca: \n" + ex.ToString());
+                _log.LogActivity("Error al eliminar marca: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar marca");
             }
             finally
@@ -133,7 +133,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar marcas para Select: \n" + ex.ToString());
+                _log.LogActivity("Error al listar marcas para Select: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar marcas para Select");
             }
             finally

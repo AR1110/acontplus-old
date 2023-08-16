@@ -45,7 +45,7 @@ namespace WebUI.Controllers.Config
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in GetDataForm: \n" + ex.ToString());
+                _log.LogActivity("Error in GetDataForm: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally

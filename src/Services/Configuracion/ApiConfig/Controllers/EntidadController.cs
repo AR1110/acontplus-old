@@ -32,7 +32,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al obtener lista de entidades : \n" + ex.ToString());
+                _log.LogActivity("Error al obtener lista de entidades : \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener lista de entidades");
             }
             finally
@@ -61,7 +61,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al crear entidad : \n" + ex.ToString());
+                _log.LogActivity("Error al crear entidad : \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al crear entidad");
             }
             finally
@@ -92,7 +92,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al crear entidad : \n" + ex.ToString());
+                _log.LogActivity("Error al crear entidad : \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al crear entidad");
             }
             finally
@@ -116,7 +116,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al eliminar entidad : \n" + ex.ToString());
+                _log.LogActivity("Error al eliminar entidad : \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar entidad");
             }
             finally

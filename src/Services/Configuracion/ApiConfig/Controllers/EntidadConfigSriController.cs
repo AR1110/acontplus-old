@@ -33,7 +33,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al obtener EntidadConfigSri : \n" + ex.ToString());
+                _log.LogActivity("Error al obtener EntidadConfigSri : \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener EntidadConfigSri");
             }
             finally
@@ -64,7 +64,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al actualizar EntidadConfigSri : \n" + ex.ToString());
+                _log.LogActivity("Error al actualizar EntidadConfigSri : \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar EntidadConfigSri");
             }
             finally

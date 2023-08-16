@@ -33,7 +33,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while getting users: \n" + ex.ToString());
+                _log.LogActivity("Error while getting users: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error getting users");
             }
             finally
@@ -57,7 +57,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while searching users: \n" + ex.ToString());
+                _log.LogActivity("Error while searching users: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error searching users");
             }
             finally
@@ -81,7 +81,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while insert users: \n" + ex.ToString());
+                _log.LogActivity("Error while insert users: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error insert users");
             }
             finally
@@ -106,7 +106,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while updating users: \n" + ex.ToString());
+                _log.LogActivity("Error while updating users: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error updating users");
             }
             finally
@@ -129,7 +129,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while deleting users: \n" + ex.ToString());
+                _log.LogActivity("Error while deleting users: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error deleting users");
             }
             finally

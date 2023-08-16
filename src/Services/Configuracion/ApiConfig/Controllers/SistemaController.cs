@@ -32,7 +32,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al obtener datos del configuracion del sistema: \n" + ex.ToString());
+                _log.LogActivity("Error al obtener datos del configuracion del sistema: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos de Configuracion");
             }
             finally
@@ -58,7 +58,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al actualizar datos de Configuracion: \n" + ex.ToString());
+                _log.LogActivity("Error al actualizar datos de Configuracion: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar datos de Configuracion");
             }
             finally

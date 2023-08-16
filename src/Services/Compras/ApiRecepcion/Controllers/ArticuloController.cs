@@ -33,7 +33,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al obtener los articulos: " + ex.ToString());
+                _logs.LogActivity("Error al obtener los articulos: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener los articulos");
 
             }

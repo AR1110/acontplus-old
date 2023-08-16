@@ -31,7 +31,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Get: \n" + ex.ToString());
+                _log.LogActivity("Error on Get: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener la solicitud");
             }
             finally
@@ -56,7 +56,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Post: \n" + ex.ToString());
+                _log.LogActivity("Error on Post: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al guardar");
             }
             finally
@@ -80,7 +80,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Put: \n" + ex.ToString());
+                _log.LogActivity("Error on Put: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar");
             }
             finally

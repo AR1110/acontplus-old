@@ -39,7 +39,7 @@ namespace ApiLogistica.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error al listar transportistas: " + ex.ToString());
+                _logs.LogActivity("Error al listar transportistas: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar transportistas");
             }
             finally
@@ -67,7 +67,7 @@ namespace ApiLogistica.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error while creating transport: \n " + ex.ToString());
+                _logs.LogActivity("Error while creating transport: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al crear el transportista");
             }
             finally
@@ -95,7 +95,7 @@ namespace ApiLogistica.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error while updating transport: \n " + ex.ToString());
+                _logs.LogActivity("Error while updating transport: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar el transportista");
             }
             finally
@@ -121,7 +121,7 @@ namespace ApiLogistica.Controllers
             catch (Exception ex)
             {
                 LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error while deleting transport: \n " + ex.ToString());
+                _logs.LogActivity("Error while deleting transport: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar el transportisa");
             }
             finally

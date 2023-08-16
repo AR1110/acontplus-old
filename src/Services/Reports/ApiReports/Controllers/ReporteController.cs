@@ -77,7 +77,7 @@ namespace ApiReports.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Download: \n" + ex.ToString());
+                _log.LogActivity("Error in Download: \n" + ex.ToString());
                 ReportError.ReportNotFound(_response);
             }
             return File(_response.Content, _response.ContentType, _response.FileName);
@@ -162,7 +162,7 @@ namespace ApiReports.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in DynamicReport: \n" + ex.ToString());
+                _log.LogActivity("Error in DynamicReport: \n" + ex.ToString());
                 ReportError.ReportNotFound(_response);
                 if (data.sendToWhatsapp)
                 {

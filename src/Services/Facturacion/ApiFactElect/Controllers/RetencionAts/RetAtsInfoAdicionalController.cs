@@ -53,7 +53,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al guardar la InfoAdicional: " + ex.ToString());
+                _logs.LogActivity("Error al guardar la InfoAdicional: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al guardar la InfoAdicional");
             }
             finally
@@ -80,7 +80,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al actualizar la InfoAdicional: " + ex.ToString());
+                _logs.LogActivity("Error al actualizar la InfoAdicional: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar la InfoAdicional");
             }
             finally
@@ -106,7 +106,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al eliminar la InfoAdicional: " + ex.ToString());
+                _logs.LogActivity("Error al eliminar la InfoAdicional: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar la InfoAdicional");
             }
             finally

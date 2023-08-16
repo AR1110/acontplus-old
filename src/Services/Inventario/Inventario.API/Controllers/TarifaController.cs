@@ -31,7 +31,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar tarifas: \n" + ex.ToString());
+                _log.LogActivity("Error al listar tarifas: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar tarifas");
             }
             finally
@@ -57,7 +57,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al insertar tarifa: \n" + ex.ToString());
+                _log.LogActivity("Error al insertar tarifa: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar tarifa");
             }
             finally
@@ -83,7 +83,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al actualizar tarifa: \n" + ex.ToString());
+                _log.LogActivity("Error al actualizar tarifa: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar tarifa");
             }
             finally
@@ -108,7 +108,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al eliminar medida: \n" + ex.ToString());
+                _log.LogActivity("Error al eliminar medida: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar medida");
             }
             finally
@@ -132,7 +132,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar tarifas para Select: \n" + ex.ToString());
+                _log.LogActivity("Error al listar tarifas para Select: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar tarifas para Select");
             }
             finally

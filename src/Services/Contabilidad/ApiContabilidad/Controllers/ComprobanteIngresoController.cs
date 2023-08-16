@@ -35,7 +35,7 @@ namespace ApiContabilidad.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error on Comprobante Ingreso -> Get: \n" + ex.ToString());
+                _log.LogActivity("Error on Comprobante Ingreso -> Get: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al traer los Comprobantes de Ingreso");
             }
             finally
@@ -60,7 +60,7 @@ namespace ApiContabilidad.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error on Comprobante Ingreso -> Insert: \n" + ex.ToString());
+                _log.LogActivity("Error on Comprobante Ingreso -> Insert: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al registrar los Comprobantes de Ingreso");
             }
             finally
@@ -85,7 +85,7 @@ namespace ApiContabilidad.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error on Comprobante Ingreso -> Cancel: \n" + ex.ToString());
+                _log.LogActivity("Error on Comprobante Ingreso -> Cancel: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Cancelar los Comprobantes de Ingreso");
             }
             finally

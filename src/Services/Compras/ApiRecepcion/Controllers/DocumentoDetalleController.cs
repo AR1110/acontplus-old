@@ -48,7 +48,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error on DocumentoDetalle/Post: " + idDocumento.ToString() + "-> \n" + ex.ToString());
+                _log.LogActivity("Error on DocumentoDetalle/Post: " + idDocumento.ToString() + "-> \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al guardar el detalle");
             }
             finally
@@ -79,7 +79,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error on DocumentoDetalle/Delete: " + id.ToString() + "-> \n" + ex.ToString());
+                _log.LogActivity("Error on DocumentoDetalle/Delete: " + id.ToString() + "-> \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar el articulo del stock");
             }
             finally

@@ -38,7 +38,7 @@ namespace WebUI.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Get: \n" + ex.ToString());
+                _log.LogActivity("Error in Get: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally
@@ -61,7 +61,7 @@ namespace WebUI.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in GetId: \n" + ex.ToString());
+                _log.LogActivity("Error in GetId: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally
@@ -86,7 +86,7 @@ namespace WebUI.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Search: \n" + ex.ToString());
+                _log.LogActivity("Error in Search: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally

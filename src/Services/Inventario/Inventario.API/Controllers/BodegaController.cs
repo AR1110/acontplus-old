@@ -29,7 +29,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Get: \n" + ex.ToString());
+                _log.LogActivity("Error on Get: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener las bodegas");
             }
             finally
@@ -53,7 +53,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Post: \n" + ex.ToString());
+                _log.LogActivity("Error on Post: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al guardar la bodega");
             }
             finally
@@ -77,7 +77,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Put: \n" + ex.ToString());
+                _log.LogActivity("Error on Put: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar la bodega");
             }
             finally
@@ -101,7 +101,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Delete: \n" + ex.ToString());
+                _log.LogActivity("Error on Delete: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al elimianr la bodega");
             }
             finally

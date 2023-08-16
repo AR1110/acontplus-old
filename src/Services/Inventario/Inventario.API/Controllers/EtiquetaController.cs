@@ -34,7 +34,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al listar etiquetas: \n" + ex.ToString());
+                _log.LogActivity("Error al listar etiquetas: \n" + ex.ToString());
                 _response.Create("0", "Error al listar etiquetas");
             }
             finally
@@ -60,7 +60,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al crear etiquetas: \n" + ex.ToString());
+                _log.LogActivity("Error al crear etiquetas: \n" + ex.ToString());
                 _response.Create("0", "Error al crear etiquetas");
             }
             finally
@@ -88,7 +88,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al actualizar etiquetas: \n" + ex.ToString());
+                _log.LogActivity("Error al actualizar etiquetas: \n" + ex.ToString());
                 _response.Create("0", "Error al actualizar etiquetas");
             }
             finally
@@ -115,7 +115,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al eliminar etiquetas: \n" + ex.ToString());
+                _log.LogActivity("Error al eliminar etiquetas: \n" + ex.ToString());
                 _response.Create("0", "Error al eliminar etiquetas");
             }
             finally
