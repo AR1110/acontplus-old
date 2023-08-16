@@ -8,16 +8,18 @@ namespace WebUI.Controllers.Reports
     public class TipoImpresoraController : Controller
     {
         private readonly IConfiguration _configuration;
-        public TipoImpresoraController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public TipoImpresoraController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {

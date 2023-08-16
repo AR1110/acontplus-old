@@ -14,11 +14,12 @@ namespace WebUI.Controllers.Config
         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
 
-
-        public EstabAsigController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public EstabAsigController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
+            _log = log;
         }
 
         [HttpGet]
@@ -34,7 +35,7 @@ namespace WebUI.Controllers.Config
         public async Task<IActionResult> GetDataForm(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {

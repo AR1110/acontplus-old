@@ -10,11 +10,12 @@ namespace WebUI.Controllers.Ventas
     public class RetencionVentaController : Controller
     {
         private readonly IConfiguration _configuration;
-
         private RetencionVentaDao _rv;
-        public RetencionVentaController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public RetencionVentaController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
             _rv = new RetencionVentaDao(_configuration);
         }
 
@@ -62,7 +63,7 @@ namespace WebUI.Controllers.Ventas
         public async Task<IActionResult> GetId(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {

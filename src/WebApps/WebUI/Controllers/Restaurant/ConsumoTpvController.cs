@@ -10,11 +10,13 @@ namespace WebUI.Controllers.Restaurant
     {
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _environment;
+        private readonly LogWriter _log;
         public ConsumoTpvController(IConfiguration config,
-            IWebHostEnvironment environment)
+            IWebHostEnvironment environment, LogWriter log)
         {
             _configuration = config;
             _environment = environment;
+            _log = log;
         }
         public IActionResult Index()
         {
@@ -29,7 +31,7 @@ namespace WebUI.Controllers.Restaurant
         public async Task<IActionResult> Get(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -53,7 +55,7 @@ namespace WebUI.Controllers.Restaurant
         public async Task<IActionResult> Post(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -77,7 +79,7 @@ namespace WebUI.Controllers.Restaurant
         public async Task<IActionResult> Put(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -101,7 +103,7 @@ namespace WebUI.Controllers.Restaurant
         public async Task<IActionResult> Delete(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -125,7 +127,7 @@ namespace WebUI.Controllers.Restaurant
         public async Task<IActionResult> Print(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {

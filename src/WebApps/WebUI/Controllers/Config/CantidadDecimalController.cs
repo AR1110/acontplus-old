@@ -11,19 +11,20 @@ namespace WebUI.Controllers.Config
         private readonly IConfiguration _configuration;
 
         private DataAccessObject _dao;
-
-        public CantidadDecimalController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public CantidadDecimalController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
 
             _dao = new DataAccessObject(_configuration);
+            _log = log;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {

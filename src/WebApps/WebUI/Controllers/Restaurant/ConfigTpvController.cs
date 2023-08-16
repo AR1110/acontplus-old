@@ -10,16 +10,14 @@ namespace WebUI.Controllers.Restaurant
     {
         private readonly IConfiguration _config;
 
-
         private readonly LogWriter _log;
+
         private readonly DbAccess _db;
-        public ConfigTpvController(IConfiguration config)
+        public ConfigTpvController(IConfiguration config, LogWriter log)
         {
             _config = config;
-
-
-            _log = new LogWriter(_config);
             _db = new DbAccess(_config);
+            _log = log;
         }
         public IActionResult Index()
         {

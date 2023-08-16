@@ -12,16 +12,16 @@ namespace WebUI.Controllers.Config
     public class EntidadConfigSriController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-
+        private readonly LogWriter _log;
 
         private DataAccessObject _dao;
         private readonly ILogger<EntidadConfigSriController> _logger;
-        public EntidadConfigSriController(ILogger<EntidadConfigSriController> logger, IConfiguration configuration)
+        public EntidadConfigSriController(ILogger<EntidadConfigSriController> logger, IConfiguration configuration, LogWriter log)
         {
             _logger = logger;
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-
+            _log = log;
         }
 
 
@@ -30,7 +30,7 @@ namespace WebUI.Controllers.Config
         public async Task<IActionResult> Get(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {

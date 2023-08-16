@@ -15,7 +15,7 @@ namespace WebUI.Controllers.Restaurant
         {
             _config = config;
             _db = new DbAccess(_config);
-            _log = new LogWriter(_config);
+            
         }
         public IActionResult Index()
         {

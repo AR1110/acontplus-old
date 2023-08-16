@@ -10,13 +10,14 @@ namespace WebUI.Controllers.Compras
     public class NotaCreditoProveedorController : Controller
     {
         private readonly IConfiguration _configuration;
-
+        private readonly LogWriter _log;
 
         private NotaCreditoProveedorDao _ncprov;
-        public NotaCreditoProveedorController(IConfiguration configuration)
+        public NotaCreditoProveedorController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _ncprov = new NotaCreditoProveedorDao(_configuration);
+            _log = log;
         }
 
         public IActionResult Index()
@@ -44,7 +45,7 @@ namespace WebUI.Controllers.Compras
         public async Task<IActionResult> GetId(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {

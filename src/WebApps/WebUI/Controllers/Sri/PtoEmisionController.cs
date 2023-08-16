@@ -11,10 +11,11 @@ namespace WebUI.Controllers.Sri
         // GET: Establecimiento
         private readonly IConfiguration _configuration;
         private TipoAmbienteDao _tipA;
-
-        public PtoEmisionController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public PtoEmisionController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
             _tipA = new TipoAmbienteDao(_configuration);
         }
 
@@ -28,7 +29,7 @@ namespace WebUI.Controllers.Sri
         public async Task<IActionResult> Insert([FromBody] PtoEmision data)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -55,7 +56,7 @@ namespace WebUI.Controllers.Sri
         public async Task<IActionResult> Update(int id, [FromBody] PtoEmision data)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -83,7 +84,7 @@ namespace WebUI.Controllers.Sri
         public async Task<IActionResult> Delete(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {

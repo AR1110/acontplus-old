@@ -9,9 +9,11 @@ namespace WebUI.Controllers.Ventas
     {
         private readonly IConfiguration _configuration;
         GenericResponse _gr = new();
-        public FacturaVentaController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public FacturaVentaController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
         public IActionResult Index(int id)
@@ -29,7 +31,7 @@ namespace WebUI.Controllers.Ventas
         public async Task<IActionResult> GetId(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -54,7 +56,7 @@ namespace WebUI.Controllers.Ventas
         public async Task<IActionResult> GetDataForm(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {

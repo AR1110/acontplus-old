@@ -17,13 +17,14 @@ namespace WebUI.Controllers.Compras
         private DataAccessObject _dao;
 
         private IngresoBodegaDao _ib;
-
-        public IngresoBodegaController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public IngresoBodegaController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
             _lc = new LiquidacionCompraDao(_configuration);
             _ib = new IngresoBodegaDao(_configuration);
+            _log = log;
         }
 
 
@@ -43,7 +44,7 @@ namespace WebUI.Controllers.Compras
         public async Task<IActionResult> GetId(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {

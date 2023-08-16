@@ -8,16 +8,18 @@ namespace WebUI.Controllers
     public class GestionFinancieraController : Controller
     {
         private readonly IConfiguration _configuration;
-        public GestionFinancieraController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public GestionFinancieraController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {

@@ -12,13 +12,12 @@ namespace WebUI.Controllers.Ventas
         private NotaCreditoDao _nc;
         private GenericResponse _gr = new();
         private IConfiguration _configuration;
+        private readonly LogWriter _log;
 
-
-
-
-        public NotaCreditoClienteController(IConfiguration config)
+        public NotaCreditoClienteController(IConfiguration config, LogWriter log)
         {
             _configuration = config;
+            _log = log;
 
             _nc = new NotaCreditoDao(_configuration);
         }
@@ -47,7 +46,7 @@ namespace WebUI.Controllers.Ventas
         public async Task<IActionResult> GetId(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
