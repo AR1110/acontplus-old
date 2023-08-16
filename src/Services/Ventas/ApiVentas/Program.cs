@@ -1,9 +1,10 @@
-using ApiVentas.Extensions;
+﻿using ApiVentas.Extensions;
 using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Services.Common;
+using Services.Common.Logs;
 
 namespace ApiVentas
 {
@@ -41,6 +42,8 @@ namespace ApiVentas
                 setup.SubstituteApiVersionInUrl = true;
             });
             builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
+
+            builder.Services.AddSingleton<LogWriter>();
 
             var app = builder.Build();
 

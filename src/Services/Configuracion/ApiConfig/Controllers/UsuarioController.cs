@@ -13,16 +13,18 @@ namespace ApiConfig.Controllers
 
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        public UsuarioController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public UsuarioController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _db = new DbAccess(_configuration);
+            _log = log;
         }
 
         [HttpGet("{json}")]
         public async Task<IActionResult> Get(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {
@@ -33,7 +35,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while getting users: \n" + ex.ToString());
+                _log.LogActivity("Error while getting users: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error getting users");
             }
             finally
@@ -47,7 +49,7 @@ namespace ApiConfig.Controllers
         [HttpGet("Search/{json}")]
         public async Task<IActionResult> Search(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {
@@ -57,7 +59,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while searching users: \n" + ex.ToString());
+                _log.LogActivity("Error while searching users: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error searching users");
             }
             finally
@@ -70,7 +72,7 @@ namespace ApiConfig.Controllers
         [HttpPost("{json}")]
         public async Task<IActionResult> Post(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {
@@ -81,7 +83,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while insert users: \n" + ex.ToString());
+                _log.LogActivity("Error while insert users: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error insert users");
             }
             finally
@@ -94,7 +96,7 @@ namespace ApiConfig.Controllers
         [HttpPut("{id}/{json}")]
         public async Task<IActionResult> Put(int id, string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {
@@ -106,7 +108,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while updating users: \n" + ex.ToString());
+                _log.LogActivity("Error while updating users: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error updating users");
             }
             finally
@@ -119,7 +121,7 @@ namespace ApiConfig.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {
@@ -129,7 +131,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while deleting users: \n" + ex.ToString());
+                _log.LogActivity("Error while deleting users: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error deleting users");
             }
             finally

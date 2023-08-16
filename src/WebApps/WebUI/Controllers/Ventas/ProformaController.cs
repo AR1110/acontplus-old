@@ -10,14 +10,14 @@ namespace WebUI.Controllers.Ventas
     {
         private readonly IConfiguration _configuration;
 
-
+        private readonly LogWriter _log;
 
         private ProformaDao _prof;
 
-        public ProformaController(IConfiguration configuration)
+        public ProformaController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
-
+            _log = log;
             _prof = new ProformaDao(_configuration);
         }
         public IActionResult Index()
@@ -30,7 +30,7 @@ namespace WebUI.Controllers.Ventas
         public async Task<IActionResult> GetId(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -41,7 +41,7 @@ namespace WebUI.Controllers.Ventas
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in GetId: \n" + ex.ToString());
+                _log.LogActivity("Error in GetId: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally

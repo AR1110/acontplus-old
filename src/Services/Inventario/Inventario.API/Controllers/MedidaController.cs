@@ -1,4 +1,4 @@
-using DataAccess;
+﻿using DataAccess;
 using Domain.Models.Almacen;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +11,11 @@ namespace Inventario.API.Controllers
     public class MedidaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public MedidaController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public MedidaController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
         [HttpGet("Get")]
@@ -30,8 +32,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar medidas: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al listar medidas: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar medidas");
             }
             finally
@@ -55,8 +57,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al insertar medida: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al insertar medida: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar medida");
             }
             finally
@@ -82,8 +84,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al actualizar medida: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al actualizar medida: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar medida");
             }
             finally
@@ -107,8 +109,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al eliminar medida: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al eliminar medida: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar medida");
             }
             finally
@@ -131,8 +133,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar medidas para Select: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al listar medidas para Select: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar medidas para Select");
             }
             finally

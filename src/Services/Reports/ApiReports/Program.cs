@@ -1,6 +1,7 @@
-using Lib.Common;
+﻿using Lib.Common;
 using Reports.Application;
 using Services.Common;
+using Services.Common.Logs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,8 @@ builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 builder.Services.AddSingleton<ReportService>();
 
 builder.Services.AddSwaggerDocumentation();
+
+builder.Services.AddSingleton<LogWriter>();
 
 var app = builder.Build();
 

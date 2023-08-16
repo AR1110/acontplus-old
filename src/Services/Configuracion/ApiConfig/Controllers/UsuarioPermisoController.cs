@@ -12,16 +12,18 @@ namespace ApiConfig.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        public UsuarioPermisoController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public UsuarioPermisoController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _db = new DbAccess(_configuration);
+            _log = log;
         }
 
         [HttpGet("Get/{json}")]
         public async Task<IActionResult> Get(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {
@@ -32,7 +34,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error  getting user permission: \n" + ex.ToString());
+                _log.LogActivity("Error  getting user permission: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error getting user permission");
             }
             finally
@@ -45,7 +47,7 @@ namespace ApiConfig.Controllers
         [HttpPut]
         public async Task<IActionResult> Put([FromBody] UsuarioPemisoDto data)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {
@@ -57,7 +59,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error  updating user permission: \n" + ex.ToString());
+                _log.LogActivity("Error  updating user permission: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error updating user permission");
             }
             finally
@@ -71,7 +73,7 @@ namespace ApiConfig.Controllers
         [HttpGet("CheckHasPermission/{json}")]
         public async Task<IActionResult> CheckHasPermission(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {
@@ -83,7 +85,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while checking permission user: \n" + ex.ToString());
+                _log.LogActivity("Error while checking permission user: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error while checking permission user");
             }
             finally
@@ -98,7 +100,7 @@ namespace ApiConfig.Controllers
         //[HttpPost]
         //public async Task<IActionResult> Post(UsuarioPemisoDto data)
         //{
-        //    LogWriter _log = new LogWriter(_configuration);
+        //    
         //    var _response = new GenericResponse();
         //    try
         //    {

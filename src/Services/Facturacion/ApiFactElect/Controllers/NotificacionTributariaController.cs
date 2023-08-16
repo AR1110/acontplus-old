@@ -12,9 +12,11 @@ namespace ApiFactElect.Controllers
     public class NotificacionTributariaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public NotificacionTributariaController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public NotificacionTributariaController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
@@ -30,8 +32,8 @@ namespace ApiFactElect.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al obtener las notificaciones");
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on get NotificacionTrib: \n" + ex.ToString());
+                
+                _log.LogActivity("Error on get NotificacionTrib: \n" + ex.ToString());
             }
             finally
             {
@@ -54,8 +56,8 @@ namespace ApiFactElect.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al guardar las notificacion");
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on post NotificacionTrib: \n" + ex.ToString());
+                
+                _log.LogActivity("Error on post NotificacionTrib: \n" + ex.ToString());
             }
             finally
             {

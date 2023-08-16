@@ -8,9 +8,11 @@ namespace WebUI.Controllers.Ventas
     public class NotaEntregaController : Controller
     {
         private IConfiguration _configuration;
-        public NotaEntregaController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public NotaEntregaController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
         public IActionResult Index()
         {
@@ -24,7 +26,7 @@ namespace WebUI.Controllers.Ventas
         public async Task<IActionResult> GetId(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -35,7 +37,7 @@ namespace WebUI.Controllers.Ventas
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in GetId: \n" + ex.ToString());
+                _log.LogActivity("Error in GetId: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally

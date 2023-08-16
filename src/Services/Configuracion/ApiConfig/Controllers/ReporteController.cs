@@ -12,15 +12,17 @@ namespace ApiConfig.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        public ReporteController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public ReporteController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _db = new DbAccess(_configuration);
+            _log = log;
         }
         [HttpGet("Get/{json}")]
         public async Task<IActionResult> Get(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -32,7 +34,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while getting reports: \n" + ex.ToString());
+                _log.LogActivity("Error while getting reports: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error getting reports");
             }
             finally
@@ -44,7 +46,7 @@ namespace ApiConfig.Controllers
         [HttpPost("Post")]
         public async Task<IActionResult> Post([FromBody] ReporteDto data)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -60,7 +62,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while insert report: \n" + ex.ToString());
+                _log.LogActivity("Error while insert report: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar el reporte");
             }
             finally
@@ -72,7 +74,7 @@ namespace ApiConfig.Controllers
         [HttpPut("Put/{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] ReporteDto data)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -90,7 +92,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while updating report: \n" + ex.ToString());
+                _log.LogActivity("Error while updating report: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar el reporte");
             }
             finally
@@ -102,7 +104,7 @@ namespace ApiConfig.Controllers
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -114,7 +116,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while deleting report: \n" + ex.ToString());
+                _log.LogActivity("Error while deleting report: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar el reporte");
             }
             finally

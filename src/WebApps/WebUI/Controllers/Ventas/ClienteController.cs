@@ -8,9 +8,11 @@ namespace WebUI.Controllers
     public class ClienteController : Controller
     {
         private readonly IConfiguration _configuration;
-        public ClienteController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public ClienteController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
         public IActionResult Index()
@@ -27,7 +29,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> Get(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -38,7 +40,7 @@ namespace WebUI.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Get: \n" + ex.ToString());
+                _log.LogActivity("Error in Get: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally
@@ -51,7 +53,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> GetId(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -61,7 +63,7 @@ namespace WebUI.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in GetId: \n" + ex.ToString());
+                _log.LogActivity("Error in GetId: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally
@@ -75,7 +77,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> Search(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -86,7 +88,7 @@ namespace WebUI.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Search: \n" + ex.ToString());
+                _log.LogActivity("Error in Search: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally

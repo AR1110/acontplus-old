@@ -1,10 +1,11 @@
-using Inventario.API.Extensions;
+﻿using Inventario.API.Extensions;
 using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
+using Services.Common.Logs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +44,8 @@ builder.Services.AddVersionedApiExplorer(setup =>
 });
 
 builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
+
+builder.Services.AddSingleton<LogWriter>();
 
 var app = builder.Build();
 

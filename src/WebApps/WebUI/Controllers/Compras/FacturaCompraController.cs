@@ -15,8 +15,9 @@ namespace WebUI.Controllers.Compras
         private DataAccessObject _dao;
         private ArticuloDao _a;
         private FacturaCompraDao _fc;
+        private readonly LogWriter _log;
 
-        public FacturaCompraController(IConfiguration configuration)
+        public FacturaCompraController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
@@ -24,6 +25,7 @@ namespace WebUI.Controllers.Compras
 
             _a = new ArticuloDao(_configuration);
             _fc = new FacturaCompraDao(_configuration);
+            _log = log;
         }
 
 
@@ -45,7 +47,7 @@ namespace WebUI.Controllers.Compras
         public async Task<IActionResult> GetId(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -56,7 +58,7 @@ namespace WebUI.Controllers.Compras
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in GetId: \n" + ex.ToString());
+                _log.LogActivity("Error in GetId: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally
@@ -70,7 +72,7 @@ namespace WebUI.Controllers.Compras
         public async Task<IActionResult> GetDataForm(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -81,7 +83,7 @@ namespace WebUI.Controllers.Compras
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in GetDataForm: \n" + ex.ToString());
+                _log.LogActivity("Error in GetDataForm: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally

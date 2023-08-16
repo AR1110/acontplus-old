@@ -1,6 +1,7 @@
-using Lib.Common;
+﻿using Lib.Common;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
+using Services.Common.Logs;
 using Services.Common.Middleware;
 using Vet.API.Extensions;
 
@@ -25,6 +26,8 @@ builder.Services.AddSwaggerDocumentation();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 //builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
+
+builder.Services.AddSingleton<LogWriter>();
 
 var app = builder.Build();
 

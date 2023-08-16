@@ -1,9 +1,10 @@
-using Identity.API.Extensions;
+﻿using Identity.API.Extensions;
 using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Services.Common;
+using Services.Common.Logs;
 using Services.Common.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,6 +46,8 @@ builder.Services.AddVersionedApiExplorer(setup =>
 
 
 builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
+
+builder.Services.AddSingleton<LogWriter>();
 
 var app = builder.Build();
 

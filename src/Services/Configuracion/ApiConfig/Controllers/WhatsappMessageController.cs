@@ -12,9 +12,11 @@ namespace ApiConfig.Controllers
     public class WhatsappMessageController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public WhatsappMessageController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public WhatsappMessageController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
         [HttpPost("Post")]
         public async Task<IActionResult> Post([FromBody] RequestApiDto parameters)
@@ -31,8 +33,8 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error while insert whatsapp message: \n" + ex.ToString());
+                
+                _log.LogActivity("Error while insert whatsapp message: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar el whatsapp");
             }
             finally
@@ -59,8 +61,8 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error while insert whatsapp message: \n" + ex.ToString());
+                
+                _log.LogActivity("Error while insert whatsapp message: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar el whatsapp");
             }
             finally

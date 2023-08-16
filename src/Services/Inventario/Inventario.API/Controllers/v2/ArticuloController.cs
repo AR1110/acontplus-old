@@ -13,16 +13,18 @@ namespace Inventario.API.Controllers.v2
     public class ArticuloController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public ArticuloController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public ArticuloController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetId(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -32,7 +34,7 @@ namespace Inventario.API.Controllers.v2
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in articulo getId: \n" + ex.ToString());
+                _log.LogActivity("Error in articulo getId: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos del articulo");
             }
             finally
@@ -56,8 +58,8 @@ namespace Inventario.API.Controllers.v2
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al obtener datos del form-articulo: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al obtener datos del form-articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos del form-articulo");
             }
             finally
@@ -82,8 +84,8 @@ namespace Inventario.API.Controllers.v2
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Get Search: \n" + ex.ToString());
+                
+                _log.LogActivity("Error on Get Search: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener las bodegas");
             }
             finally
@@ -99,7 +101,7 @@ namespace Inventario.API.Controllers.v2
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             try
             {
                 await _db.SPExecute("Almacen.Articulo_Insert_v2");
@@ -109,7 +111,7 @@ namespace Inventario.API.Controllers.v2
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al insertar articulo: \n" + ex.ToString());
+                _log.LogActivity("Error al insertar articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar articulo");
             }
             finally
@@ -134,8 +136,8 @@ namespace Inventario.API.Controllers.v2
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al actualizar articulo: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al actualizar articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar articulo");
             }
             finally
@@ -159,8 +161,8 @@ namespace Inventario.API.Controllers.v2
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al eliminar articulo: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al eliminar articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar articulo");
             }
             finally

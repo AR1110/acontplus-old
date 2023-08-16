@@ -10,10 +10,12 @@ namespace ApiFactElect.Controllers
     public class DocumentoElectronicoErrorController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public DocumentoElectronicoErrorController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public DocumentoElectronicoErrorController(IConfiguration configuration, LogWriter log)
         {
 
             _configuration = configuration;
+            _log = log;
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
@@ -29,8 +31,8 @@ namespace ApiFactElect.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al obtener los errores");
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on get DocElectErrror: \n" + ex.ToString());
+                
+                _log.LogActivity("Error on get DocElectErrror: \n" + ex.ToString());
             }
             finally
             {

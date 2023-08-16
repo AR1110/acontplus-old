@@ -1,5 +1,6 @@
-using Lib.Common;
+﻿using Lib.Common;
 using Services.Common;
+using Services.Common.Logs;
 
 namespace ApiLogistica
 {
@@ -18,6 +19,8 @@ namespace ApiLogistica
             builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 
             builder.Services.AddSwaggerDocumentation();
+
+            builder.Services.AddSingleton<LogWriter>();
 
             var app = builder.Build();
 

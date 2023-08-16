@@ -13,10 +13,12 @@ namespace ApiFactElect.Controllers.RetencionAts
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        public DocSustentoController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public DocSustentoController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _db = new DbAccess(_configuration);
+            _log = log;
         }
         // GET: api/<DocSustentoController>
         [HttpGet]
@@ -36,7 +38,7 @@ namespace ApiFactElect.Controllers.RetencionAts
         [HttpPost("{idRetencionAts}")]
         public async Task<IActionResult> Post(int idRetencionAts, string json)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -49,7 +51,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al guardar el documento de sustento: " + ex.ToString());
+                _log.LogActivity("Error al guardar el documento de sustento: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al guardar el documento de sustento");
             }
             finally
@@ -63,7 +65,7 @@ namespace ApiFactElect.Controllers.RetencionAts
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, string json)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -76,7 +78,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al actualizar el documento de sustento: " + ex.ToString());
+                _log.LogActivity("Error al actualizar el documento de sustento: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar el documento de sustento");
             }
             finally
@@ -90,7 +92,7 @@ namespace ApiFactElect.Controllers.RetencionAts
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -103,7 +105,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al eliminar el documento de sustento: " + ex.ToString());
+                _log.LogActivity("Error al eliminar el documento de sustento: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar el documento de sustento");
             }
             finally

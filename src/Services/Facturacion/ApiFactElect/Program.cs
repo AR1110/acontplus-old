@@ -1,10 +1,11 @@
-using ApiFactElect.Extensions;
+﻿using ApiFactElect.Extensions;
 using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
+using Services.Common.Logs;
 
 namespace ApiFactElect
 {
@@ -66,6 +67,8 @@ namespace ApiFactElect
                         policy.WithOrigins(origins);
                     });
             });
+
+            builder.Services.AddSingleton<LogWriter>();
 
             var app = builder.Build();
 

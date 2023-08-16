@@ -1,4 +1,4 @@
-using DataAccess;
+﻿using DataAccess;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
@@ -10,9 +10,11 @@ namespace ApiVentas.Controllers
     public class EstadisticasController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public EstadisticasController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public EstadisticasController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
         [HttpGet("Get")]
@@ -30,8 +32,8 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogError("Error al listar datos para dashboard: " + ex.ToString());
+               
+                _log.LogActivity("Error al listar datos para dashboard: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar datos para dashboard");
             }
             finally
