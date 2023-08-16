@@ -17,16 +17,18 @@ namespace ApiReports.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly ReportService _report;
-        public ReporteController(IConfiguration configuration, ReportService report)
+        private readonly LogWriter _log;
+        public ReporteController(IConfiguration configuration, ReportService report, LogWriter log)
         {
             _configuration = configuration;
             _report = report;
+            _log = log;
         }
         //method for backend request to db
         [HttpPost("Download")]
         public async Task<IActionResult> Download(ApiReportParamsDto data)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             Request.Headers.TryGetValue("Authorization", out StringValues headerValues);
             string jsonWebToken = headerValues.FirstOrDefault();
             FileModel _response = new FileModel();
@@ -85,7 +87,7 @@ namespace ApiReports.Controllers
         //[HttpPost("ExportExcel")]
         //public async Task<IActionResult> ExportExcel(ApiReportParamsDto data)
         //{
-        //    LogWriter _log = new LogWriter(_configuration);
+        //    
         //    Request.Headers.TryGetValue("Authorization", out StringValues headerValues);
         //    string jsonWebToken = headerValues.FirstOrDefault();
         //    FileModel _response = new FileModel();
@@ -127,7 +129,7 @@ namespace ApiReports.Controllers
         [HttpPost("DynamicReport")]
         public async Task<IActionResult> DynamicReport([FromBody] ApiReportParamsDto data)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             DbAccess _db = new DbAccess(_configuration);
             FileModel _response = new FileModel();
             string mimeType = string.Empty, fileName = string.Empty;
