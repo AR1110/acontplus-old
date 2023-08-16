@@ -1,6 +1,4 @@
-﻿using Services.Common.Logs;
-
-namespace Mechanical.Api
+﻿namespace Mechanical.Api
 {
     public class Program
     {
@@ -14,8 +12,6 @@ namespace Mechanical.Api
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
-            builder.Services.AddSingleton<LogWriter>();
 
             var app = builder.Build();
 
