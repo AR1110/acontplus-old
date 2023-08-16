@@ -58,8 +58,12 @@ export default function LoginPage() {
   });
 
   useEffect(()=>{ 
-    if(successLogin) navigate(`/${PrivateRoutes.PRIVATE}`, { replace: true }); 
-  }, [navigate, successLogin])
+    if(successLogin) {
+      console.log(successLogin)
+      navigate(`/${PrivateRoutes.PRIVATE}`, { replace: true });
+    }
+   
+  }, [successLogin])
 
   return (
     <Grid container component="main" sx={{ height: '100vh' }}>
@@ -124,7 +128,7 @@ export default function LoginPage() {
               onBlur={formik.handleBlur}
               error={formik.touched.password && Boolean(formik.errors.password)}
               helperText={formik.touched.password && formik.errors.password}
-              autoComplete="current-password"
+              autoComplete="password"
             />
             {/* <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}

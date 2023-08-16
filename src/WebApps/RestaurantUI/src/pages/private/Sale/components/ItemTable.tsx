@@ -6,16 +6,16 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { Avatar, ButtonBase, Card, CardHeader, Grid, IconButton, TextField, Typography } from '@mui/material';
+import { Avatar, Grid, IconButton, TextField, Typography } from '@mui/material';
 import { AddShoppingCartIcon, DeleteIcon } from '@/core/components';
 import { saleStore } from '@/stores/saleStore';
 
-export default function ShoppingCart() {
-    const items = saleStore(state => state.items);
+export default function ItemaTable() {
+    const cartItems = saleStore(state => state.cartItems);
     const removeItemFromCart = saleStore(state => state.removeItemFromCart)
     const setItemChangeQty = saleStore(state => state.setItemChangeQty)
 
-    if (items.length === 0) return (
+    if (cartItems.length === 0) return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 
             <AddShoppingCartIcon sx={{
@@ -24,7 +24,7 @@ export default function ShoppingCart() {
                 color: 'rgba(59, 130, 246, 0.5)'
             }} />
 
-            <Typography color="text.secondary" variant="caption">DATOS NO DISPONIBLES</Typography>
+            <Typography color="text.secondary" variant="caption"></Typography>
         </div>
     )
 
@@ -43,7 +43,7 @@ export default function ShoppingCart() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {items.map((item, index) => (
+                        {cartItems.map((item, index) => (
                             <TableRow
                                 key={index}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}

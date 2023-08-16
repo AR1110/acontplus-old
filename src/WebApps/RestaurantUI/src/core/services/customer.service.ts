@@ -1,4 +1,4 @@
-import { PATHS } from "@/core/constants/path"
+import { PATHS } from "@/core/constants"
 import { Http } from "@/core/utilities"
 import { ApiResponse } from "@/core/models"
 import { customerReadAdapter } from "../adapters"

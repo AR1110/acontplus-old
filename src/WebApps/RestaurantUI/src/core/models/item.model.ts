@@ -1,0 +1,45 @@
+
+export interface RawItemData {
+    id: number //idItem 
+    userId: number
+    productId: number
+    descripcion: string
+    s3ObjectUrl: string
+    stockMinimo: number
+    stock: number
+    codigo: string
+    codigoAuxiliar: string
+    tipoIva: string
+    tipoArticulo: string            
+    totalRecords: number
+}
+
+export interface ItemReadDto {
+    id: number //idItem 
+    userId: number
+    productId: number
+    description: string
+    s3ObjectUrl: string
+    minStock: number
+    stock: number
+    code: string
+    auxiliaryCode: string
+    vatRate: string
+    itemType: string            
+    totalRecords: number
+}
+
+export interface ItemSearch {
+    checkSubFamilia: boolean
+    idSubFamilia: number
+    pageIndex: number,
+    pageSize: number
+}
+
+export const itemSearchInitialState: ItemSearch = {
+    checkSubFamilia: false,
+    idSubFamilia: 0, 
+    pageIndex: 1, 
+    pageSize: 50
+}
+
