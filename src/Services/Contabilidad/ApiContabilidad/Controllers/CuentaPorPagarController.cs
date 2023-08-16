@@ -14,17 +14,19 @@ namespace ApiContabilidad.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _dbAccess;
-        public CuentaPorPagarController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public CuentaPorPagarController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _dbAccess = new DbAccess(_configuration);
+            _log = log;
         }
 
         // GET: api/<CuentaPorPagarController>
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -50,7 +52,7 @@ namespace ApiContabilidad.Controllers
         [HttpPost("{json}")]
         public async Task<IActionResult> Post(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -76,7 +78,7 @@ namespace ApiContabilidad.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, CuentaPorPagarDto data)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {

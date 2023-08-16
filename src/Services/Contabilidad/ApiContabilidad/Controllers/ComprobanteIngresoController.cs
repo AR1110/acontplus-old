@@ -13,17 +13,19 @@ namespace ApiContabilidad.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _dbAccess;
-        public ComprobanteIngresoController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public ComprobanteIngresoController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _dbAccess = new DbAccess(_configuration);
+            _log = log;
         }
 
         // GET: api/<CuentaPorCobrarController>
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -48,7 +50,7 @@ namespace ApiContabilidad.Controllers
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert([FromBody] RequestApiDto paremeter)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -73,7 +75,7 @@ namespace ApiContabilidad.Controllers
         [HttpPut("Cancel")]
         public async Task<IActionResult> Cancel([FromBody] RequestApiDto paremeter)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
