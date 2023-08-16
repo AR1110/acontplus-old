@@ -16,16 +16,18 @@ namespace ApiFactElect.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        public DocumentoElectronicoController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public DocumentoElectronicoController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _db = new DbAccess(_configuration);
+            _log = log;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -37,7 +39,7 @@ namespace ApiFactElect.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error al obtener la solicitud: " + ex.ToString());
+                _log.LogActivity("Error al obtener la solicitud: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener la solicitud");
             }
             finally
@@ -50,7 +52,7 @@ namespace ApiFactElect.Controllers
         [HttpGet("GetByStatus")]
         public async Task<IActionResult> GetByStatus(string json)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -62,7 +64,7 @@ namespace ApiFactElect.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error al obtener la solicitud: " + ex.ToString());
+                _log.LogActivity("Error al obtener la solicitud: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener la solicitud");
             }
             finally
@@ -75,7 +77,7 @@ namespace ApiFactElect.Controllers
         [HttpGet("GetDataForm")]
         public async Task<IActionResult> GetDataForm()
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -87,7 +89,7 @@ namespace ApiFactElect.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error while getting data form: " + ex.ToString());
+                _log.LogActivity("Error while getting data form: " + ex.ToString());
                 _response.Create(code: "0", message: "Error while getting data form");
             }
             finally { _db.Close(); }
@@ -96,7 +98,7 @@ namespace ApiFactElect.Controllers
         [HttpGet("GetXmlSri/{id}")]
         public async Task<IActionResult> GetXmlSri(int id)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             FileModel _response = new FileModel();
             try
             {
@@ -120,7 +122,7 @@ namespace ApiFactElect.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error while getting data form: " + ex.ToString());
+                _log.LogActivity("Error while getting data form: " + ex.ToString());
                 return BadRequest("Error al obtener el xml");
             }
         }
@@ -128,7 +130,7 @@ namespace ApiFactElect.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -140,7 +142,7 @@ namespace ApiFactElect.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error while updating doc: \n " + ex.ToString());
+                _log.LogActivity("Error while updating doc: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar el documento");
             }
             finally
