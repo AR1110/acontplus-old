@@ -39,7 +39,7 @@ namespace DataAccess
             catch (Exception ex)
             {
                 Close();
-                //LogWriter _log = new LogWriter(_config);
+                //
                 //_log.LogError("Error in SPExecute: " + ex.ToString());
             }
         }
@@ -60,7 +60,7 @@ namespace DataAccess
             catch (Exception ex)
             {
                 Close();
-                //LogWriter _log = new LogWriter(_config);
+                //
                 //_log.LogError("Error in AddParameter: " + ex.ToString());
             }
         }
@@ -80,7 +80,7 @@ namespace DataAccess
             catch (Exception ex)
             {
                 Close();
-                //LogWriter _log = new LogWriter(_config);
+                //
                 //_log.LogError("Error in AddDynamicParam: " + ex.ToString());
             }
         }
@@ -107,7 +107,7 @@ namespace DataAccess
             }
             catch (Exception ex)
             {
-                //LogWriter _log = new LogWriter(_config);
+                //
                 //_log.LogError("Error in OnlyExecute: " + ex.ToString());
             }
             finally
@@ -127,7 +127,7 @@ namespace DataAccess
             }
             catch (Exception ex)
             {
-                //LogWriter _log = new LogWriter(_config);
+                //
                 //_log.LogError("Error in ExecuteReader: " + ex.ToString());
             }
             finally
@@ -160,7 +160,7 @@ namespace DataAccess
             }
             catch (Exception ex)
             {
-                //LogWriter _log = new LogWriter(_config);
+                //
 
                 //_log.LogError("Error in GetDataSet: " + ex.ToString());
                 if (ds.Tables.Count > 0)
@@ -196,7 +196,7 @@ namespace DataAccess
             }
             catch (Exception ex)
             {
-                //LogWriter _log = new LogWriter(_config);
+                //
 
                 //_log.LogError("Error in GetDataTable: " + ex.ToString());
                 DtError(ref dt, ex.ToString());
@@ -296,7 +296,7 @@ namespace DataAccess
             }
             catch (Exception ex)
             {
-                //LogWriter _log = new LogWriter(_config);
+                //
                 //_log.LogError("Error in Close: " + ex.ToString());
             }
         }
