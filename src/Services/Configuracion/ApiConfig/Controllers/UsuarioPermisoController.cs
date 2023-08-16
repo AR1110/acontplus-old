@@ -12,16 +12,18 @@ namespace ApiConfig.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        public UsuarioPermisoController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public UsuarioPermisoController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _db = new DbAccess(_configuration);
+            _log = log;
         }
 
         [HttpGet("Get/{json}")]
         public async Task<IActionResult> Get(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {
@@ -45,7 +47,7 @@ namespace ApiConfig.Controllers
         [HttpPut]
         public async Task<IActionResult> Put([FromBody] UsuarioPemisoDto data)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {
@@ -71,7 +73,7 @@ namespace ApiConfig.Controllers
         [HttpGet("CheckHasPermission/{json}")]
         public async Task<IActionResult> CheckHasPermission(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {
@@ -98,7 +100,7 @@ namespace ApiConfig.Controllers
         //[HttpPost]
         //public async Task<IActionResult> Post(UsuarioPemisoDto data)
         //{
-        //    LogWriter _log = new LogWriter(_configuration);
+        //    
         //    var _response = new GenericResponse();
         //    try
         //    {

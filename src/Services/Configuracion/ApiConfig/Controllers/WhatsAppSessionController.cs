@@ -12,9 +12,11 @@ namespace ApiConfig.Controllers
     public class WhatsAppSessionController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public WhatsAppSessionController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public WhatsAppSessionController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
         [HttpGet("Get")]
         public async Task<IActionResult> Get(string json)
@@ -31,7 +33,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error while getting whatsapp: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error getting whatsapp");
             }
@@ -56,7 +58,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error while insert whatsapp: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar el whatsapp");
             }
@@ -81,7 +83,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error while updating whatsapp: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar el whatsapp");
             }
@@ -106,7 +108,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error while deleting whatsapp: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar el whatsapp");
             }

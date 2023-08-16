@@ -13,16 +13,18 @@ namespace ApiConfig.Controllers
 
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        public UsuarioController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public UsuarioController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _db = new DbAccess(_configuration);
+            _log = log;
         }
 
         [HttpGet("{json}")]
         public async Task<IActionResult> Get(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {
@@ -47,7 +49,7 @@ namespace ApiConfig.Controllers
         [HttpGet("Search/{json}")]
         public async Task<IActionResult> Search(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {
@@ -70,7 +72,7 @@ namespace ApiConfig.Controllers
         [HttpPost("{json}")]
         public async Task<IActionResult> Post(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {
@@ -94,7 +96,7 @@ namespace ApiConfig.Controllers
         [HttpPut("{id}/{json}")]
         public async Task<IActionResult> Put(int id, string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {
@@ -119,7 +121,7 @@ namespace ApiConfig.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {

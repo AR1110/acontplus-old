@@ -1,4 +1,4 @@
-using DataAccess;
+﻿using DataAccess;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
@@ -10,10 +10,11 @@ namespace ApiConfig.Controllers
     public class TipoEntidadController : ControllerBase
     {
         public readonly IConfiguration _configuration;
-
-        public TipoEntidadController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public TipoEntidadController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
         [HttpGet]
@@ -32,7 +33,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al listar tipo entidad: \n" + ex.ToString());
                 _response.Create("0", "Error al listar tipo entidad");
             }
@@ -59,7 +60,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al crear tipo entidad: \n" + ex.ToString());
                 _response.Create("0", "Error al crear tipo entidad");
             }
@@ -88,7 +89,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al actualizar tipo entidad: \n" + ex.ToString());
                 _response.Create("0", "Error al actualizar tipo entidad");
             }
@@ -116,7 +117,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al eliminar tipo entidad: \n" + ex.ToString());
                 _response.Create("0", "Error al eliminar tipo entidad");
             }
@@ -143,7 +144,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al lista tipo entidad para el formulario: \n" + ex.ToString());
                 _response.Create("0", "Error al lista tipo entidad para el formulario");
             }

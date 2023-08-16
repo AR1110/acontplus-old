@@ -11,16 +11,18 @@ namespace ApiConfig.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        public UsuarioRolController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public UsuarioRolController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _db = new DbAccess(_configuration);
+            _log = log;
         }
 
         [HttpGet("Get/{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {

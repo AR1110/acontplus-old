@@ -1,7 +1,8 @@
-using ApiConfig.Extensions;
+﻿using ApiConfig.Extensions;
 using Lib.Common;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
+using Services.Common.Logs;
 
 namespace ApiConfig
 {
@@ -41,6 +42,8 @@ namespace ApiConfig
                         policy.WithOrigins(origins);
                     });
             });
+
+            builder.Services.AddSingleton<LogWriter>();
 
             var app = builder.Build();
 

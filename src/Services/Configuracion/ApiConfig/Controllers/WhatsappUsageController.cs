@@ -13,9 +13,11 @@ namespace ApiConfig.Controllers
     public class WhatsappUsageController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public WhatsappUsageController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public WhatsappUsageController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
         [HttpGet]
         public async Task<ActionResult<GenericResponse>> Get(string json)
@@ -32,7 +34,7 @@ namespace ApiConfig.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al obtener el uso de whatsapp");
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error on get: \n" + ex.ToString());
             }
             finally
@@ -56,7 +58,7 @@ namespace ApiConfig.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al guardar el uso de whatsapp");
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error on post: \n" + ex.ToString());
             }
             finally
@@ -81,7 +83,7 @@ namespace ApiConfig.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al actualizar el uso de whatsapp");
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error on put: \n" + ex.ToString());
             }
             finally
@@ -105,7 +107,7 @@ namespace ApiConfig.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al eliminar el uso de whatsapp");
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error on delete: \n" + ex.ToString());
             }
             finally
