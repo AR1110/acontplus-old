@@ -1,17 +1,6 @@
-export interface Establecimiento {
-  codEstab_Asig: string;
-  idUsuarioRol: string;
-  codEstab: string;
-  predeterminado: boolean;
-  idEstablecimiento: number;
-  ruc: number;
-  nombreComercial: string;
-  estab: number;
-  obligadoContabilidad: string;
-  dirEstablecimiento: string;
-  contribuyenteRimpe: string;
-  actividad: string;
-}
+import { Establecimiento } from ".";
+
+ 
 
 export interface UserData {
   idRol: number;
@@ -29,7 +18,7 @@ export interface UserData {
 }
 
 export interface DataLogin {
-  establecimientos: Array<Establecimiento>;
+  establecimientos: string;
   menus: string;
   subMenus: string;
   userData: Array<UserData>;

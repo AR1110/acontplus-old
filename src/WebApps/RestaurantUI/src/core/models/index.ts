@@ -2,8 +2,12 @@ export * from './api-response';
 export * from './axios-call.model';
 export * from './category.models';
 export * from './customer.model';
+export * from './decimal.model';
+export * from './estab.model';
+export * from './item.model';
 export * from './product.model';
 export * from './routes';
-export * from './sale.model'
+export * from './sale.model';
+export * from './table.mode';
 export * from './typeWithKey';
 export * from './userModel';

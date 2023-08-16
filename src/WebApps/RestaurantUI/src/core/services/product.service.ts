@@ -1,15 +1,12 @@
-import { PATHS } from '@/core/constants/path';
+import { PATHS } from '@/core/constants';
 import { Http, loadAbort } from '@/core/utilities';
+import { ProductFilter } from '../models';
 
 const URL = 'Articulo/'
 export const ProductService = {
-    getAll: () => {
+    getAll: (json: ProductFilter) => {
         const controller = loadAbort(); //Cancelar peticion 
-        const query = JSON.stringify({
-            tipo: 1,
-            pageIndex: 1,
-            pageSize: 50,
-        })
+        const query = JSON.stringify(json)
 
         return {
             call: Http({
@@ -22,5 +19,5 @@ export const ProductService = {
             }),
             controller
         }
-    }
+    }, 
 };

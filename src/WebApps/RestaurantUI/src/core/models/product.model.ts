@@ -17,3 +17,20 @@ export interface ProductReadDto {
     stock: number;
     s3ObjectUrl: string
 }
+
+
+export interface ProductFilter {
+    tipo: number,
+    checkBoxSubFamilia: boolean
+    bySubFamilia: number,
+    pageIndex: number,
+    pageSize: number,
+}
+
+export const productFilterInitialState:  ProductFilter = {
+    tipo: 1,
+    checkBoxSubFamilia: false,
+    bySubFamilia: 0,
+    pageIndex: 1,
+    pageSize: 50
+}

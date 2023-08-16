@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios"; 
-import { AuthService } from "@/core/services";
+import { getToken } from "@/core/services";
 import { SnackbarUtility } from ".";
 
 const instance = axios.create({
@@ -8,7 +8,7 @@ const instance = axios.create({
 
 //   console.log("init Axios interceptor");
 const updateHeader = (request: any) => {
-  const token = "Bearer " + AuthService.getToken();
+  const token = "Bearer " + getToken();
   const newHeaders = {
     Authorization: token,
     "Content-Type": "application/json",

@@ -17,7 +17,7 @@ export default function App() {
           <RoutesWithNotFound>
             <Route path="/" element={<Navigate to={PrivateRoutes.PRIVATE}></Navigate>}></Route>
             <Route path={PublicRoutes.LOGIN} element={<Login />}></Route>
-            <Route element={<AuthGuard privateValidation={true} />}>
+            <Route element={<AuthGuard privateValidation/>}>
               <Route
                 path={`${PrivateRoutes.PRIVATE}/*`}
                 element={<Private />}

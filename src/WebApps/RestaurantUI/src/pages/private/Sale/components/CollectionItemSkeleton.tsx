@@ -3,11 +3,11 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box'; 
 import Skeleton from '@mui/material/Skeleton';
  
-export default function ProductSkeleton() { 
+export default function ItemSkeleton() { 
   return (
     <Grid container wrap="nowrap">
       {Array.from(new Array(4)).map((_, index) => (
-        <Box key={index} sx={{ width: 210, marginRight: 0.5, my: 5 }}>
+        <Box key={index} sx={{ width: 210, marginRight: 0.5}}>
             <Skeleton variant="rectangular"   height={118} />
             <Box sx={{ pt: 0.5 }}>
               <Skeleton />

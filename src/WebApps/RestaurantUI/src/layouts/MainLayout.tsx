@@ -14,7 +14,6 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Grid } from '@mui/material';
 import { PrivateRoutes, PublicRoutes } from '@/core/models';
 import { useAuthStore } from '@/stores/authStore';
 
@@ -23,7 +22,7 @@ const settings = ['Sign out'];
 
 function MainLayout() {
     const navigate = useNavigate();
-    const closeSession = useAuthStore(state=>state.logOut);
+    const closeSession = useAuthStore(state => state.logOut);
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
@@ -35,7 +34,7 @@ function MainLayout() {
     };
 
     const handleCloseNavMenu = () => {
-        
+
         navigate(`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.ORDER}`);
         setAnchorElNav(null);
     };
@@ -44,13 +43,13 @@ function MainLayout() {
         setAnchorElUser(null);
     };
 
-    
-    const logout = () => { 
+
+    const logout = () => {
         closeSession();
         navigate(`/${PublicRoutes.LOGIN}`, { replace: true });
     };
-    
- 
+
+
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -194,11 +193,11 @@ function MainLayout() {
                 }}
             >
                 <Toolbar />
-                
-                        <Outlet />
-                     
+
+                <Outlet />
+
             </Box>
-            
+
         </Box>
     );
 }

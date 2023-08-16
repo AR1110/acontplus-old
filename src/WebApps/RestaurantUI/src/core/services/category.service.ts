@@ -1,4 +1,4 @@
-import { PATHS } from '@/core/constants/path';
+import { PATHS } from '@/core/constants';
 import { Http, loadAbort } from '@/core/utilities'; 
 
 const URL = 'SubFamilia/'

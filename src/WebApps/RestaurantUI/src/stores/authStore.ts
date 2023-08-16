@@ -1,5 +1,5 @@
-import { DataLogin, UserData, UserEmptyState } from "@/core/models";
-import { AuthService } from "@/core/services";
+import { DataLogin, Establecimiento, UserData, UserEmptyState } from "@/core/models";
+import { AuthService, getEstabs, getUsetData, persistenceClear, setEstabs, setToken, setUserData } from "@/core/services";
 import { SnackbarUtility } from "@/core/utilities"; 
 import { create } from "zustand";
 
@@ -9,6 +9,7 @@ type AuthState = {
     loading: boolean
     successLogin: boolean
     user: UserData
+    estabs: Array<Establecimiento>
     login: (username: string, password: string) => void;
     logOut: () => void
 }
@@ -17,7 +18,9 @@ export const useAuthStore = create<AuthState>((set) => (
     {
         loading: false,
         successLogin: false,
-        user: AuthService.getUser() ? AuthService.getUser() : UserEmptyState,
+        user: getUsetData() ? getUsetData() : UserEmptyState,
+        estabs: getEstabs() ? getEstabs() : [],
+        
         login:  (username: string, password: string) => {
             
             set(state => ({
@@ -32,15 +35,15 @@ export const useAuthStore = create<AuthState>((set) => (
                     SnackbarUtility.warning(response.message);
                 }
                 if (response.code === "1") {                   
-                    SnackbarUtility.success("Inciando Sessión");
+                    SnackbarUtility.success("Inciando Sessión"); 
+                    const dataLogin = response.payload as DataLogin;                    
+                    const userData = dataLogin.userData[0];
 
-                    const userData = response.payload as DataLogin;
-
-                    const jwtToken = userData.userData[0]?.jwtToken;
-
-                    AuthService.setPersistent("ACCESS_TOKEN", jwtToken!);
-                    AuthService.setPersistent("USER", JSON.stringify(userData)); 
+                    if(!userData?.jwtToken) return
                   
+                    setToken(userData.jwtToken)
+                    setUserData(userData);
+                    setEstabs(JSON.parse(dataLogin.establecimientos)) 
                     set(state => ({
                         ...state,
                         successLogin: true
@@ -50,16 +53,18 @@ export const useAuthStore = create<AuthState>((set) => (
             }).finally(() => {
                 set(state => ({
                     ...state,
-                    loading: false
+                    loading: false,
+                    successLogin: false
                 }))
             })
         },
-        logOut: () => {
-            AuthService.clearStorageToken();
+        logOut: () => {  
+            persistenceClear()
             set(state => ({
                 ...state,
                 user: UserEmptyState
             }))
+            
         }
     }
 )
