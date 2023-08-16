@@ -1,4 +1,4 @@
-namespace Mechanical.Api
+﻿namespace Mechanical.Api
 {
     public class Program
     {
