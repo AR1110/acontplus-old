@@ -18,14 +18,15 @@ namespace WebUI.Controllers.Ingresos
 
         private IConfiguration _configuration;
 
-
-        public RetencionCompraController(IConfiguration config)
+        private readonly LogWriter _log;
+        public RetencionCompraController(IConfiguration config, LogWriter log)
         {
             _configuration = config;
 
             _dao = new DataAccessObject(_configuration);
             _gra = new GenerateRetencionDao(_configuration);
             _rc = new RetencionCompraDao(_configuration);
+            _log = log;
         }
 
         //private readonly IWebHostEnvironment _hostingEnviromet; 
@@ -56,7 +57,7 @@ namespace WebUI.Controllers.Ingresos
         public async Task<IActionResult> GetId(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -67,7 +68,7 @@ namespace WebUI.Controllers.Ingresos
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in GetId: \n" + ex.ToString());
+                _log.LogActivity("Error in GetId: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             return Ok(_response);

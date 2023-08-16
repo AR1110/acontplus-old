@@ -11,15 +11,17 @@ namespace ApiConfig.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        public SubMenuController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public SubMenuController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _db = new DbAccess(_configuration);
+            _log = log;
         }
         [HttpGet("FindByIdMenu/{idMenu}")]
         public async Task<IActionResult> FindByIdMenu(int idMenu)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -30,7 +32,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error getting data submenu by idMenu: \n" + ex.ToString());
+                _log.LogActivity("Error getting data submenu by idMenu: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener los datos por idMenu");
             }
             finally
@@ -43,7 +45,7 @@ namespace ApiConfig.Controllers
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -54,7 +56,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error deleting the submenu: \n" + ex.ToString());
+                _log.LogActivity("Error deleting the submenu: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar el submenu");
             }
             finally

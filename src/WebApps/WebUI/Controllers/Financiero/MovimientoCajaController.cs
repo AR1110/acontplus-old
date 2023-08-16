@@ -12,12 +12,12 @@ namespace WebUI.Controllers.GestionFinanciera
         private readonly IConfiguration _configuration;
 
         private MovimientoCajaDao _movc;
-
-        public MovimientoCajaController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public MovimientoCajaController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _movc = new MovimientoCajaDao(_configuration);
-
+            _log = log;
         }
 
 
@@ -48,7 +48,7 @@ namespace WebUI.Controllers.GestionFinanciera
         public async Task<IActionResult> GetMoneda(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -59,7 +59,7 @@ namespace WebUI.Controllers.GestionFinanciera
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in GetMoneda: \n" + ex.ToString());
+                _log.LogActivity("Error in GetMoneda: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally
@@ -72,7 +72,7 @@ namespace WebUI.Controllers.GestionFinanciera
         public async Task<IActionResult> Report(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -83,7 +83,7 @@ namespace WebUI.Controllers.GestionFinanciera
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Report: \n" + ex.ToString());
+                _log.LogActivity("Error in Report: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally

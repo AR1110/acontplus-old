@@ -13,15 +13,17 @@ namespace ApiConfig.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        public ReporteDataSourceController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public ReporteDataSourceController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _db = new DbAccess(_configuration);
+            _log = log;
         }
         [HttpGet("{json}")]
         public async Task<IActionResult> Get(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {
@@ -33,7 +35,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while getting reports: \n" + ex.ToString());
+                _log.LogActivity("Error while getting reports: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error getting reports");
             }
             finally
@@ -45,7 +47,7 @@ namespace ApiConfig.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] DataSourceDto data)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -57,7 +59,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while insert datasource: \n" + ex.ToString());
+                _log.LogActivity("Error while insert datasource: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error insert report");
             }
             finally
@@ -69,7 +71,7 @@ namespace ApiConfig.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] DataSourceDto data)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -82,7 +84,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while updating datasource: \n" + ex.ToString());
+                _log.LogActivity("Error while updating datasource: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error updating ds");
             }
             finally
@@ -94,7 +96,7 @@ namespace ApiConfig.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -106,7 +108,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while deleting datasource: \n" + ex.ToString());
+                _log.LogActivity("Error while deleting datasource: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error deleting ds");
             }
             finally

@@ -10,9 +10,11 @@ namespace ApiReports.Controllers
     public class DashboardController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public DashboardController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public DashboardController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
         [HttpGet]
         public async Task<ActionResult<GenericResponse>> Get(string json)
@@ -29,8 +31,8 @@ namespace ApiReports.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al obtener las estadísticas");
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Get Statistis: \n" + ex.ToString());
+                
+                _log.LogActivity("Error on Get Statistis: \n" + ex.ToString());
             }
             finally
             {

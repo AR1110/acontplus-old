@@ -11,16 +11,18 @@ namespace ApiConfig.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        public SolicitudController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public SolicitudController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _db = new DbAccess(_configuration);
+            _log = log;
         }
 
         [HttpGet("Get/{json}")]
         public async Task<IActionResult> Get(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {
@@ -32,7 +34,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al obtener datos de solicitud: \n" + ex.ToString());
+                _log.LogActivity("Error al obtener datos de solicitud: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos de solicitud");
             }
             finally
@@ -45,7 +47,7 @@ namespace ApiConfig.Controllers
         [HttpPost("Post/{json}")]
         public async Task<IActionResult> Post(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {
@@ -57,7 +59,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al insertar datos de solicitud: \n" + ex.ToString());
+                _log.LogActivity("Error al insertar datos de solicitud: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar datos de solicitud");
             }
             finally
@@ -70,7 +72,7 @@ namespace ApiConfig.Controllers
         [HttpPut("Put/{json}")]
         public async Task<IActionResult> Put(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {
@@ -82,7 +84,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al actualizar datos de solicitud: \n" + ex.ToString());
+                _log.LogActivity("Error al actualizar datos de solicitud: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar datos de solicitud");
             }
             finally
@@ -95,7 +97,7 @@ namespace ApiConfig.Controllers
         [HttpDelete("Delete/{json}")]
         public async Task<IActionResult> Delete(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {
@@ -107,7 +109,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al eliminar datos de solicitud: \n" + ex.ToString());
+                _log.LogActivity("Error al eliminar datos de solicitud: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al verificar datos de solicitud");
             }
             finally
@@ -120,7 +122,7 @@ namespace ApiConfig.Controllers
         [HttpGet("Check/{json}")]
         public async Task<IActionResult> Check(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {
@@ -132,7 +134,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al verificar datos de solicitud: \n" + ex.ToString());
+                _log.LogActivity("Error al verificar datos de solicitud: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al verificar datos de solicitud");
             }
             finally

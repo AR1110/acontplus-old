@@ -13,10 +13,12 @@ namespace ApiRecepcion.Controllers
     {
         private readonly IConfiguration _config;
         private readonly DbAccess _db;
-        public DocumentoDetalleController(IConfiguration config)
+        private readonly LogWriter _log;
+        public DocumentoDetalleController(IConfiguration config, LogWriter log)
         {
             _config = config;
             _db = new DbAccess(_config);
+            _log = log;
         }
         // GET: api/<DocumentoDetalleController>
         [HttpGet]
@@ -36,7 +38,7 @@ namespace ApiRecepcion.Controllers
         [HttpPost("{idDocumento}/{idArticulo}")]
         public async Task<IActionResult> Post(int idDocumento, int idArticulo)
         {
-            LogWriter _log = new LogWriter(_config);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -48,7 +50,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error on DocumentoDetalle/Post: " + idDocumento.ToString() + "-> \n" + ex.ToString());
+                _log.LogActivity("Error on DocumentoDetalle/Post: " + idDocumento.ToString() + "-> \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al guardar el detalle");
             }
             finally
@@ -68,7 +70,7 @@ namespace ApiRecepcion.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            LogWriter _log = new LogWriter(_config);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -79,7 +81,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error on DocumentoDetalle/Delete: " + id.ToString() + "-> \n" + ex.ToString());
+                _log.LogActivity("Error on DocumentoDetalle/Delete: " + id.ToString() + "-> \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar el articulo del stock");
             }
             finally

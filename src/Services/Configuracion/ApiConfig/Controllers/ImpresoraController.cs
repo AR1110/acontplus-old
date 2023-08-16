@@ -1,4 +1,4 @@
-using DataAccess;
+﻿using DataAccess;
 using Domain.Dtos;
 using Helpers;
 using Lib.Common;
@@ -12,9 +12,11 @@ namespace ApiConfig.Controllers
     public class ImpresoraController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public ImpresoraController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public ImpresoraController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
 
@@ -32,8 +34,8 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Get Printers: \n" + ex.ToString());
+                
+                _log.LogActivity("Error on Get Printers: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener las impresoras");
             }
             finally
@@ -58,8 +60,8 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error in GetDataForm: \n" + ex.ToString());
+                
+                _log.LogActivity("Error in GetDataForm: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally
@@ -82,8 +84,8 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error in GetId: \n" + ex.ToString());
+                
+                _log.LogActivity("Error in GetId: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally
@@ -108,8 +110,8 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error in Post Printer: \n" + ex.ToString());
+                
+                _log.LogActivity("Error in Post Printer: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al guardar los datos");
             }
             finally
@@ -133,9 +135,9 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
 
-                _log.LogError("Error in Put Printers: \n" + ex.ToString());
+                _log.LogActivity("Error in Put Printers: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar");
             }
             finally
@@ -159,8 +161,8 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error in Delete Printer: \n" + ex.ToString());
+                
+                _log.LogActivity("Error in Delete Printer: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar");
             }
             finally

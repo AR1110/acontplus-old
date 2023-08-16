@@ -1,5 +1,6 @@
-using Lib.Common;
+﻿using Lib.Common;
 using Services.Common;
+using Services.Common.Logs;
 
 namespace testWebApi
 {
@@ -55,6 +56,8 @@ namespace testWebApi
             //builder.Services.AddScoped<CustomCookieAuthenticationEvents>();
 
             //builder.Services.AddHttpContextAccessor();
+
+            builder.Services.AddSingleton<LogWriter>();
 
             var app = builder.Build();
 

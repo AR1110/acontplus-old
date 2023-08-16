@@ -11,15 +11,17 @@ namespace ApiConfig.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        public ImpresionController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public ImpresionController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _db = new DbAccess(_configuration);
+            _log = log;
         }
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -30,7 +32,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error getting data to print: \n" + ex.ToString());
+                _log.LogActivity("Error getting data to print: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener los datos para imprimir");
             }
             finally

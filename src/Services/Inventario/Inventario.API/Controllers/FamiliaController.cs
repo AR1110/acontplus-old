@@ -1,4 +1,4 @@
-using DataAccess;
+﻿using DataAccess;
 using Domain.Models.Almacen;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +11,11 @@ namespace Inventario.API.Controllers
     public class FamiliaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public FamiliaController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public FamiliaController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
         [HttpGet("Get")]
@@ -30,8 +32,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar Familias: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al listar Familias: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar Familias");
             }
             finally
@@ -56,8 +58,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al insertar familia: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al insertar familia: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar familia");
             }
             finally
@@ -83,8 +85,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al actualizar familiar: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al actualizar familiar: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar familia");
             }
             finally
@@ -108,8 +110,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al eliminar familiar: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al eliminar familiar: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar familia");
             }
             finally
@@ -132,8 +134,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar Familias para Select: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al listar Familias para Select: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar para Select");
             }
             finally

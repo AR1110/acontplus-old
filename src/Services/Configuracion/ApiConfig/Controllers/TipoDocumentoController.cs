@@ -11,9 +11,11 @@ namespace ApiConfig.Controllers
     {
 
         private readonly IConfiguration _configuration;
-        public TipoDocumentoController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public TipoDocumentoController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
         [HttpGet("Get")]
         public async Task<IActionResult> Get(string json)
@@ -30,8 +32,8 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar docs: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al listar docs: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar docs");
             }
             finally

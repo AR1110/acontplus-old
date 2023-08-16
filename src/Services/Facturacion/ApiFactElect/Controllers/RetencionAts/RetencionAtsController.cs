@@ -13,15 +13,17 @@ namespace ApiFactElect.Controllers.RetencionAts
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        public RetencionAtsController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public RetencionAtsController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _db = new DbAccess(_configuration);
+            _log = log;
         }
         [HttpGet("{json}")]
         public async Task<IActionResult> Get(string json)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -33,7 +35,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al obtener la solicitud: " + ex.ToString());
+                _log.LogActivity("Error al obtener la solicitud: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener la solicitud");
             }
             finally
@@ -45,7 +47,7 @@ namespace ApiFactElect.Controllers.RetencionAts
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] RetencionAtsDto data)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -69,7 +71,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al guardar la retención: " + ex.ToString());
+                _log.LogActivity("Error al guardar la retención: " + ex.ToString());
                 _response.Create(code: "0", "Error al guardar la retención");
             }
             finally
@@ -81,7 +83,7 @@ namespace ApiFactElect.Controllers.RetencionAts
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, RetencionAtsDto data)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -94,7 +96,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al actualizar la retención: " + ex.ToString());
+                _log.LogActivity("Error al actualizar la retención: " + ex.ToString());
                 _response.Create(code: "0", "Error al actualizar la retención");
             }
             finally
@@ -106,7 +108,7 @@ namespace ApiFactElect.Controllers.RetencionAts
         [HttpPut("Cancel/{id}")]
         public async Task<IActionResult> Cancel(int id)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -119,7 +121,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al anular la retención: " + ex.ToString());
+                _log.LogActivity("Error al anular la retención: " + ex.ToString());
                 _response.Create(code: "0", "Error al anular la retención");
             }
             finally
@@ -131,7 +133,7 @@ namespace ApiFactElect.Controllers.RetencionAts
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -143,7 +145,7 @@ namespace ApiFactElect.Controllers.RetencionAts
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al eliminar la retención: " + ex.ToString());
+                _log.LogActivity("Error al eliminar la retención: " + ex.ToString());
                 _response.Create(code: "0", "Error al eliminar la retención");
             }
             finally

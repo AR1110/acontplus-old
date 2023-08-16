@@ -12,9 +12,11 @@ namespace ApiVentas.Controllers
     public class ProformaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public ProformaController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public ProformaController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
         [HttpGet("Get")]
@@ -31,8 +33,8 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar proformas: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al listar proformas: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar proformas");
             }
             finally
@@ -58,8 +60,8 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al insertar proforma: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al insertar proforma: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar proforma");
             }
             finally
@@ -73,7 +75,7 @@ namespace ApiVentas.Controllers
         public async Task<IActionResult> Update(int id, [FromBody] ProformaViewModel data)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -86,7 +88,7 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al actualizar nota entrega: \n" + ex.ToString());
+                _log.LogActivity("Error al actualizar nota entrega: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar la nota de entrega");
             }
             finally
@@ -111,8 +113,8 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al eliminar proforma: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al eliminar proforma: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar proforma");
             }
             finally
@@ -136,8 +138,8 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al obtener datos del doc. proforma: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al obtener datos del doc. proforma: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos del doc. proforma");
             }
             finally

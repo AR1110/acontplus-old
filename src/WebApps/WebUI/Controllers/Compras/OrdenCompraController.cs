@@ -16,15 +16,15 @@ namespace WebUI.Controllers.Compras
 
         GenericResponse _gr = new();
         private OrdenCompraDao _oc;
-
-        public OrdenCompraController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public OrdenCompraController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
             _oc = new OrdenCompraDao(_configuration);
             _oc = new OrdenCompraDao(_configuration);
 
-
+            _log = log;
         }
 
 
@@ -51,7 +51,7 @@ namespace WebUI.Controllers.Compras
         public async Task<IActionResult> GetId(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -62,7 +62,7 @@ namespace WebUI.Controllers.Compras
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in GetId: \n" + ex.ToString());
+                _log.LogActivity("Error in GetId: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally

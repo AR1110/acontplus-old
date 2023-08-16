@@ -12,23 +12,25 @@ namespace WebUI.Controllers
     {
         // GET: Articulo
         private readonly IConfiguration _configuration;
+        private readonly LogWriter _log;
         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
 
         GenericResponse _gr = new();
         private ArticuloDao _a;
-        //private readonly LogWriter _log;
+        //
         private readonly DbAccess _db;
 
-        public ArticuloController(IConfiguration configuration)
+        public ArticuloController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
 
 
             _a = new ArticuloDao(_configuration);
-            //_log = new LogWriter(_configuration);
+            //
             _db = new DbAccess(_configuration);
+            _log = log;
         }
 
 
@@ -55,7 +57,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> GetId(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -65,7 +67,7 @@ namespace WebUI.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in articulo getId: \n" + ex.ToString());
+                _log.LogActivity("Error in articulo getId: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos del articulo");
             }
             finally
@@ -80,7 +82,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> GetIdBySale(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -91,7 +93,7 @@ namespace WebUI.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in articulo GetIdBySale: \n" + ex.ToString());
+                _log.LogActivity("Error in articulo GetIdBySale: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos del articulo");
             }
             finally
@@ -107,7 +109,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> GetIdByPurchase(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -118,7 +120,7 @@ namespace WebUI.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in articulo GetIdByPurchase: \n" + ex.ToString());
+                _log.LogActivity("Error in articulo GetIdByPurchase: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos del articulo");
             }
             finally
@@ -131,7 +133,7 @@ namespace WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> Search(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {
@@ -142,7 +144,7 @@ namespace WebUI.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while search articles: \n" + ex.ToString());
+                _log.LogActivity("Error while search articles: \n" + ex.ToString());
                 _response.Create(code: "0", "Error al buscar articulo");
             }
             finally
@@ -168,7 +170,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> GetFormData(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -179,7 +181,7 @@ namespace WebUI.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in articulo GetFormData: \n" + ex.ToString());
+                _log.LogActivity("Error in articulo GetFormData: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos del articulo");
             }
             finally

@@ -12,16 +12,18 @@ namespace ApiFactElect.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        public FacturaController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public FacturaController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _db = new DbAccess(_configuration);
+            _log = log;
         }
 
         [HttpGet("Get")]
         public async Task<IActionResult> Get(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {
@@ -33,7 +35,7 @@ namespace ApiFactElect.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al obtener datos de factura: \n" + ex.ToString());
+                _log.LogActivity("Error al obtener datos de factura: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos de factura");
             }
             finally
@@ -46,7 +48,7 @@ namespace ApiFactElect.Controllers
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert([FromBody] FacturaParams data)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             var _response = new GenericResponse();
             try
             {
@@ -61,7 +63,7 @@ namespace ApiFactElect.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al crear la factura: \n" + ex.ToString());
+                _log.LogActivity("Error al crear la factura: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al crear la factura");
             }
             finally
@@ -75,7 +77,7 @@ namespace ApiFactElect.Controllers
         public async Task<IActionResult> Update(int id, [FromBody] FacturaParams data)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -90,7 +92,7 @@ namespace ApiFactElect.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Update Invoice: \n" + ex.ToString());
+                _log.LogActivity("Error in Update Invoice: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar la factura");
             }
             finally
@@ -105,7 +107,7 @@ namespace ApiFactElect.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -116,7 +118,7 @@ namespace ApiFactElect.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al eliminar la factura: \n" + ex.ToString());
+                _log.LogActivity("Error al eliminar la factura: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar la fcatura");
             }
             finally

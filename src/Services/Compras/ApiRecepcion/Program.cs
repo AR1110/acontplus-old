@@ -1,7 +1,8 @@
-using Compras.Application;
+﻿using Compras.Application;
 using Lib.Common;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
+using Services.Common.Logs;
 using System.Reflection;
 namespace ApiRecepcion
 {
@@ -38,6 +39,7 @@ namespace ApiRecepcion
 
 
             builder.Services.AddScoped<FileTxt>();
+            builder.Services.AddSingleton<LogWriter>();
 
             var app = builder.Build();
 

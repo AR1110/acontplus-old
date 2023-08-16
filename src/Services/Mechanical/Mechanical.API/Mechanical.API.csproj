@@ -22,7 +22,7 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Swashbuckle.AspNetCore"/>
+		<PackageReference Include="Swashbuckle.AspNetCore" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -39,5 +39,9 @@
 
 	<ItemGroup>
 	  <Folder Include="Controllers\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
 	</ItemGroup>
 </Project>

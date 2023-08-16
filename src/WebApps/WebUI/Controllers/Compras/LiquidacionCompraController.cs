@@ -17,13 +17,14 @@ namespace WebUI.Controllers.Compras
         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
 
+        private readonly LogWriter _log;
 
-        public LiquidacionCompraController(IConfiguration configuration)
+        public LiquidacionCompraController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
             _lc = new LiquidacionCompraDao(_configuration);
-
+            _log = log;
         }
         public IActionResult Index()
         {
@@ -34,7 +35,7 @@ namespace WebUI.Controllers.Compras
         public async Task<IActionResult> Insert([FromBody] LiquidacionCompraViewModel data)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -48,7 +49,7 @@ namespace WebUI.Controllers.Compras
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al crear la liquidacion de compra: \n" + ex.ToString());
+                _log.LogActivity("Error al crear la liquidacion de compra: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al crear la liquidacion compra");
             }
             return Ok(_response);
@@ -70,7 +71,7 @@ namespace WebUI.Controllers.Compras
         public async Task<IActionResult> GetId(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -81,7 +82,7 @@ namespace WebUI.Controllers.Compras
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in GetId: \n" + ex.ToString());
+                _log.LogActivity("Error in GetId: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally
@@ -95,7 +96,7 @@ namespace WebUI.Controllers.Compras
         public async Task<IActionResult> Update(int id, [FromBody] LiquidacionCompraViewModel data)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -110,7 +111,7 @@ namespace WebUI.Controllers.Compras
             }
             catch (Exception ex)
             {
-                _log.LogError("Error al actualizar la liquidacion de compra: \n" + ex.ToString());
+                _log.LogActivity("Error al actualizar la liquidacion de compra: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar la liquidacion compra");
             }
             return Ok(_response);

@@ -1,4 +1,4 @@
-using DataAccess;
+﻿using DataAccess;
 using Domain.Enums;
 using Domain.Models;
 using FactElect.Application;
@@ -15,9 +15,11 @@ namespace ApiFactElect.Controllers.Sri
     public class AtsController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public AtsController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public AtsController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
         private AtsXml _atsXml = new AtsXml();
         [HttpGet("Get")]
@@ -86,8 +88,8 @@ namespace ApiFactElect.Controllers.Sri
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error while download ats: \n" + ex.ToString());
+                
+                _log.LogActivity("Error while download ats: \n" + ex.ToString());
                 _response.Create("0", ex.Message);
             }
 

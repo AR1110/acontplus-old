@@ -1,9 +1,10 @@
-using Lib.Common;
+﻿using Lib.Common;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 using Restaurant.API.Extensions;
 using Restaurant.Infrastructure.Data;
 using Services.Common;
+using Services.Common.Logs;
 using Services.Common.Middleware;
 
 internal class Program
@@ -40,6 +41,8 @@ internal class Program
         builder.Services.AddSwaggerDocumentation();
 
         //builder.Services.AddCustomJwtAuthentication();
+
+        builder.Services.AddSingleton<LogWriter>();
 
         var app = builder.Build();
         app.UseMiddleware<ExceptionMiddleware>();

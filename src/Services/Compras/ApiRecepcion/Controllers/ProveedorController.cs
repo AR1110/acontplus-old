@@ -12,16 +12,18 @@ namespace ApiRecepcion.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        public ProveedorController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public ProveedorController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _db = new DbAccess(configuration);
+            _log = log;
         }
 
         [HttpGet("{json}")]
         public async Task<IActionResult> Get(string json)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -33,7 +35,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al obtener el proveedor: " + ex.ToString());
+                _log.LogActivity("Error al obtener el proveedor: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener el proveedor");
             }
             finally
@@ -46,7 +48,7 @@ namespace ApiRecepcion.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(string json)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             var _response = new GenericResponse();
             try
             {
@@ -58,7 +60,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al registrar el proveedor: " + ex.ToString());
+                _log.LogActivity("Error al registrar el proveedor: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al registrar el proveedor");
             }
             finally
@@ -70,7 +72,7 @@ namespace ApiRecepcion.Controllers
         [HttpPut("{json}")]
         public async Task<IActionResult> Put(string json)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -82,7 +84,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al actualizar el proveedor: " + ex.ToString());
+                _log.LogActivity("Error al actualizar el proveedor: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar el proveedor");
             }
             finally

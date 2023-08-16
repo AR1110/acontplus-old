@@ -1,4 +1,4 @@
-using DataAccess;
+﻿using DataAccess;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
@@ -10,10 +10,11 @@ namespace ApiConfig.Controllers
     public class TiempoCreditoController : ControllerBase
     {
         public readonly IConfiguration _configuration;
-
-        public TiempoCreditoController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public TiempoCreditoController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
         [HttpGet]
@@ -32,8 +33,8 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar tiempo credito: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al listar tiempo credito: \n" + ex.ToString());
                 _response.Create("0", "Error al listar tiempo credito");
             }
             finally
@@ -59,8 +60,8 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al crear tiempo creditos: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al crear tiempo creditos: \n" + ex.ToString());
                 _response.Create("0", "Error al crear tiempo creditos");
             }
             finally
@@ -88,8 +89,8 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al actualizar tiempo creditos: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al actualizar tiempo creditos: \n" + ex.ToString());
                 _response.Create("0", "Error al actualizar tiempo creditos");
             }
             finally
@@ -116,8 +117,8 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al eliminar tiempo creditos: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al eliminar tiempo creditos: \n" + ex.ToString());
                 _response.Create("0", "Error al eliminar tiempo creditos");
             }
             finally

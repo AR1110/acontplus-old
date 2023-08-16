@@ -14,17 +14,19 @@ namespace ApiContabilidad.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _dbAccess;
-        public CuentaPorPagarController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public CuentaPorPagarController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _dbAccess = new DbAccess(_configuration);
+            _log = log;
         }
 
         // GET: api/<CuentaPorPagarController>
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -36,7 +38,7 @@ namespace ApiContabilidad.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error on Cuenta Por Pagar -> Get: \n" + ex.ToString());
+                _log.LogActivity("Error on Cuenta Por Pagar -> Get: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al traer las cuentas por pagar");
             }
             finally
@@ -50,7 +52,7 @@ namespace ApiContabilidad.Controllers
         [HttpPost("{json}")]
         public async Task<IActionResult> Post(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -62,7 +64,7 @@ namespace ApiContabilidad.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error on Cuenta Por Pagar -> Post: \n" + ex.ToString());
+                _log.LogActivity("Error on Cuenta Por Pagar -> Post: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar las cuentas por pagar");
             }
             finally
@@ -76,7 +78,7 @@ namespace ApiContabilidad.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, CuentaPorPagarDto data)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -88,7 +90,7 @@ namespace ApiContabilidad.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error on Cuenta Por Pagar -> Put: \n" + ex.ToString());
+                _log.LogActivity("Error on Cuenta Por Pagar -> Put: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar las cuentas por pagar");
             }
             finally

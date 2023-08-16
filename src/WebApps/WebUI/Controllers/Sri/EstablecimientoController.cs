@@ -9,10 +9,11 @@ namespace WebUI.Controllers.Sri
     {
         // GET: Establecimiento
         private readonly IConfiguration _configuration;
-
-        public EstablecimientoController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public EstablecimientoController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
 
         }
         public IActionResult Index()
@@ -24,7 +25,7 @@ namespace WebUI.Controllers.Sri
         public async Task<IActionResult> Get(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -35,7 +36,7 @@ namespace WebUI.Controllers.Sri
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Get: \n" + ex.ToString());
+                _log.LogActivity("Error in Get: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally
@@ -49,7 +50,7 @@ namespace WebUI.Controllers.Sri
         public async Task<IActionResult> GetId(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -59,7 +60,7 @@ namespace WebUI.Controllers.Sri
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in GetId: \n" + ex.ToString());
+                _log.LogActivity("Error in GetId: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally
@@ -73,7 +74,7 @@ namespace WebUI.Controllers.Sri
         public async Task<IActionResult> GetDataForm()
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -82,7 +83,7 @@ namespace WebUI.Controllers.Sri
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in GetDataForm: \n" + ex.ToString());
+                _log.LogActivity("Error in GetDataForm: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally
@@ -96,7 +97,7 @@ namespace WebUI.Controllers.Sri
         public async Task<IActionResult> Insert(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -107,7 +108,7 @@ namespace WebUI.Controllers.Sri
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Insert: \n" + ex.ToString());
+                _log.LogActivity("Error in Insert: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al guardar");
             }
             finally
@@ -121,7 +122,7 @@ namespace WebUI.Controllers.Sri
         public async Task<IActionResult> Update(int id, string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -133,7 +134,7 @@ namespace WebUI.Controllers.Sri
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Update: \n" + ex.ToString());
+                _log.LogActivity("Error in Update: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar");
             }
             finally
@@ -147,7 +148,7 @@ namespace WebUI.Controllers.Sri
         public async Task<IActionResult> Delete(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -158,7 +159,7 @@ namespace WebUI.Controllers.Sri
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Delete: \n" + ex.ToString());
+                _log.LogActivity("Error in Delete: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar");
             }
             finally

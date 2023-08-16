@@ -14,16 +14,18 @@ namespace ApiRecepcion.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        public Doc_Rec_DetailTempController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public Doc_Rec_DetailTempController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _db = new DbAccess(configuration);
+            _log = log;
         }
 
         [HttpGet("{idDocumento}")]
         public async Task<IActionResult> GetId(int idDocumento)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             var _response = new GenericResponse();
             try
             {
@@ -36,7 +38,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al obtener los detalles temporales: " + ex.ToString());
+                _log.LogActivity("Error al obtener los detalles temporales: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener los detalles temporales");
             }
             finally
@@ -49,7 +51,7 @@ namespace ApiRecepcion.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] RequestApiDto parameters)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -61,7 +63,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al insertar el detalle temporal: " + ex.ToString());
+                _log.LogActivity("Error al insertar el detalle temporal: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar el detalle");
             }
             finally
@@ -74,7 +76,7 @@ namespace ApiRecepcion.Controllers
         [HttpPut]
         public async Task<IActionResult> Put([FromBody] RequestApiDto parameters)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -86,7 +88,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogError("Error al actualizar el detalle temporal: " + ex.ToString());
+                _log.LogActivity("Error al actualizar el detalle temporal: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar el detalle");
             }
             finally

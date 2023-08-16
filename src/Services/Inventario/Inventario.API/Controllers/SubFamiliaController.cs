@@ -1,4 +1,4 @@
-using Amazon.Util.Internal;
+﻿using Amazon.Util.Internal;
 using DataAccess;
 using Domain.Models.Almacen;
 using Helpers;
@@ -18,10 +18,12 @@ namespace Inventario.API.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly IStorageService _storageService;
-        public SubFamiliaController(IConfiguration configuration, IStorageService storageService)
+        private readonly LogWriter _log;
+        public SubFamiliaController(IConfiguration configuration, IStorageService storageService, LogWriter log)
         {
             _configuration = configuration;
             _storageService = storageService;
+            _log = log;
         }
 
         [HttpGet("Get")]
@@ -38,8 +40,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar SubFamilias: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al listar SubFamilias: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar SubFamilias");
             }
             finally
@@ -98,8 +100,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al insertar subfamilia: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al insertar subfamilia: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar subfamilia");
             }
             finally
@@ -159,8 +161,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al actualizar subfamilia: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al actualizar subfamilia: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar subfamilia");
             }
             finally
@@ -184,8 +186,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al eliminar subfamilia: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al eliminar subfamilia: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar subfamilia");
             }
             finally
@@ -209,8 +211,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar SubFamilias para Select: \n" + ex.ToString());
+                
+                _log.LogActivity("Error al listar SubFamilias para Select: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar SubFamilias para Select");
             }
             finally
