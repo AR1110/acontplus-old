@@ -12,9 +12,11 @@ namespace ApiVentas.Controllers
     public class ClienteController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public ClienteController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public ClienteController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
         [HttpGet("Get")]
@@ -32,8 +34,8 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogActivity("Error al listar clientes: " + ex.ToString());
+               
+                _log.LogActivity("Error al listar clientes: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar clientes");
             }
             finally
@@ -47,7 +49,7 @@ namespace ApiVentas.Controllers
         [HttpGet("GetDataForm")]
         public async Task<IActionResult> GetDataForm(string json)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
@@ -61,7 +63,7 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error while getting data form customer: " + ex.ToString());
+                _log.LogActivity("Error while getting data form customer: " + ex.ToString());
                 _response.Create(code: "0", message: "Error while getting data form customer");
             }
             finally { _db.Close(); }
@@ -84,8 +86,8 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogActivity("Error while searching data form customer: " + ex.ToString());
+               
+                _log.LogActivity("Error while searching data form customer: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al buscar cliente");
             }
             finally { _db.Close(); }
@@ -108,8 +110,8 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogActivity("Error while creating customer: \n " + ex.ToString());
+               
+                _log.LogActivity("Error while creating customer: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al crear el cliente");
             }
             finally
@@ -135,8 +137,8 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogActivity("Error while updating customer: \n " + ex.ToString());
+               
+                _log.LogActivity("Error while updating customer: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar el cliente");
             }
             finally
@@ -161,8 +163,8 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogActivity("Error while deleting customer: \n " + ex.ToString());
+               
+                _log.LogActivity("Error while deleting customer: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar el cliente");
             }
             finally
@@ -185,8 +187,8 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogActivity("Error while getting customer find by id: \n " + ex.ToString());
+               
+                _log.LogActivity("Error while getting customer find by id: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos de cliente");
             }
             finally

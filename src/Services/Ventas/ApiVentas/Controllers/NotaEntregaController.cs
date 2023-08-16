@@ -12,9 +12,11 @@ namespace ApiVentas.Controllers
     public class NotaEntregaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public NotaEntregaController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public NotaEntregaController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
         [HttpGet("Get")]
@@ -31,7 +33,7 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al listar nota entregas: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar nota entregas");
             }
@@ -56,7 +58,7 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al obtener datos de nota entregas: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos de nota entregas");
             }
@@ -84,7 +86,7 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al insertar nota entrega: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar nota de entrega");
             }
@@ -99,7 +101,7 @@ namespace ApiVentas.Controllers
         public async Task<IActionResult> Update(int id, [FromBody] NotaEntregaViewModel data)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -138,7 +140,7 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al eliminar la factura: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar la fcatura");
             }

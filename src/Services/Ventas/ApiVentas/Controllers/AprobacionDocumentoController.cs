@@ -1,4 +1,4 @@
-using DataAccess;
+﻿using DataAccess;
 using Domain.Models.Ventas;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +11,11 @@ namespace ApiVentas.Controllers
     public class AprobacionDocumentoController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public AprobacionDocumentoController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public AprobacionDocumentoController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
         [HttpGet("Get")]
@@ -30,7 +32,7 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al listar aprob. docs: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar aprob. docs.");
             }
@@ -59,7 +61,7 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al insertar aprob. doc.: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar aprob. doc.");
             }
@@ -87,7 +89,7 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al actualizar aprob. doc: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar aprob. doc");
             }
@@ -113,7 +115,7 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al eliminar la aprob. doc: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar aprob. doc");
             }
@@ -137,7 +139,7 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error in GetId: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }

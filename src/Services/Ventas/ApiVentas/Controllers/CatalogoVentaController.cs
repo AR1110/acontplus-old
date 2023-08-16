@@ -1,4 +1,4 @@
-using DataAccess;
+﻿using DataAccess;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
@@ -10,9 +10,11 @@ namespace ApiVentas.Controllers
     public class CatalogoVentaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public CatalogoVentaController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public CatalogoVentaController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
         [HttpGet()]
@@ -29,7 +31,7 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al obtener catalogo venta: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener catalogo venta");
             }
