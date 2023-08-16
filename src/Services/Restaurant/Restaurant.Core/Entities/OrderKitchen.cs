@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Restaurant.Core.Entities
 {
@@ -7,9 +7,7 @@ namespace Restaurant.Core.Entities
     {
         public Order Order { get; set; }
         public int OrderId { get; set; }
-        public int? ChefId { get; set; }
-        public AppTable Table { get; set; }
-        public int TableId { get; set; }
+        public int? ChefId { get; set; } 
         [Column(TypeName = "numeric(18,5), null")]
         public decimal? Progress { get; set; }
         public bool Completed { get; set; } = false;
