@@ -11,9 +11,11 @@ namespace ApiLogistica.Controllers
     public class TransportistaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public TransportistaController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public TransportistaController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
         /*
@@ -38,8 +40,8 @@ namespace ApiLogistica.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogActivity("Error al listar transportistas: " + ex.ToString());
+               
+                _log.LogActivity("Error al listar transportistas: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar transportistas");
             }
             finally
@@ -66,8 +68,8 @@ namespace ApiLogistica.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogActivity("Error while creating transport: \n " + ex.ToString());
+               
+                _log.LogActivity("Error while creating transport: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al crear el transportista");
             }
             finally
@@ -94,8 +96,8 @@ namespace ApiLogistica.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogActivity("Error while updating transport: \n " + ex.ToString());
+               
+                _log.LogActivity("Error while updating transport: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar el transportista");
             }
             finally
@@ -120,8 +122,8 @@ namespace ApiLogistica.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogActivity("Error while deleting transport: \n " + ex.ToString());
+               
+                _log.LogActivity("Error while deleting transport: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar el transportisa");
             }
             finally

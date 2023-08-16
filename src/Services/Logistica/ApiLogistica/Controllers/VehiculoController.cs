@@ -10,11 +10,12 @@ namespace ApiLogistica.Controllers
     [ApiController]
     public class VehiculoController : ControllerBase
     {
-
         private readonly IConfiguration _configuration;
-        public VehiculoController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public VehiculoController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
         /*
@@ -39,8 +40,8 @@ namespace ApiLogistica.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogActivity("Error al listar vehiculos: " + ex.ToString());
+               
+                _log.LogActivity("Error al listar vehiculos: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar vehiculos");
             }
             finally
@@ -68,8 +69,8 @@ namespace ApiLogistica.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogActivity("Error while creating vehicle: \n " + ex.ToString());
+               
+                _log.LogActivity("Error while creating vehicle: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al crear el vehiculo");
             }
             finally
@@ -98,8 +99,8 @@ namespace ApiLogistica.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogActivity("Error while updating vehicle: \n " + ex.ToString());
+               
+                _log.LogActivity("Error while updating vehicle: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar el vehiculo");
             }
             finally
@@ -124,8 +125,8 @@ namespace ApiLogistica.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogActivity("Error while deleting vehicle: \n " + ex.ToString());
+               
+                _log.LogActivity("Error while deleting vehicle: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar el vehiculo");
             }
             finally
@@ -151,8 +152,8 @@ namespace ApiLogistica.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogActivity("Error while search vehicle: \n " + ex.ToString());
+               
+                _log.LogActivity("Error while search vehicle: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al buscar el vehiculo");
             }
             finally
