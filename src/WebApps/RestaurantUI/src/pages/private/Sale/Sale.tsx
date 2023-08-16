@@ -1,6 +1,6 @@
 
 import { ErrorBoundary } from "@/core/utilities";
-import { Grid } from "@mui/material";
+import { Grid, useMediaQuery } from "@mui/material";
 import CategoryTab from "./components/CategoryTab";
 import { saleStore } from "@/stores/saleStore";
 import { useAsync, useFetchAndLoad } from "@/hooks";
@@ -10,12 +10,14 @@ import CollectionItem from "./components/CollectionItem";
 import SaleRight from "./components/SaleRight";
 import { useAuthStore } from "@/stores/authStore";
 import { Establecimiento } from "@/core/models";
+import CustomBottomNavigation from "./components/CustomBottomNavigation";
 
 
 export default function Sale() { 
+    const isMobile = useMediaQuery('(max-width:900px)');
     const setDataForm = saleStore(state =>  state.setDataForm)    
     const estabs = useAuthStore(state => state.estabs);
-    const dataEstab = estabs[0] as Establecimiento
+    const dataEstab = estabs[0] as Establecimiento;
     
     const { itemSearch, setCollectionItems } = saleStore(state => ({
         itemSearch: state.itemSearch,
@@ -71,10 +73,13 @@ export default function Sale() {
                     </Grid>
                 </Grid>
                 <Grid item xs={12} md={5}>
-                    <SaleRight />
+                    {
+                        isMobile ? <></> : <SaleRight/>
+                    }                    
                   
                 </Grid>
             </Grid> 
+            <CustomBottomNavigation isMobile={isMobile}/>
         </ErrorBoundary>
     );
 }

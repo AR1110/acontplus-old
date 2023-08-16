@@ -1,1 +1,0 @@
-import{m as r,j as e,n as i,P as t}from"./index-7204ef2d.js";function s(){const a=r(),n=()=>{a(`/${t.PRIVATE}/${t.SALE}`,{replace:!0})};return e.jsx("div",{children:e.jsx(i,{variant:"contained",onClick:n,children:"Nuevo Pedido"})})}export{s as default};
