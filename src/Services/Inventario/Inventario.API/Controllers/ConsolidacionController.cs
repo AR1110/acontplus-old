@@ -13,9 +13,11 @@ namespace Inventario.API.Controllers
     public class ConsolidacionController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public ConsolidacionController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public ConsolidacionController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
         [HttpGet]
         public async Task<ActionResult<GenericResponse>> Get(string json)
@@ -32,7 +34,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al obtener los datos");
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error on Get: \n" + ex.ToString());
             }
             finally
@@ -56,7 +58,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al guardar");
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error on Post: \n" + ex.ToString());
             }
             finally
@@ -81,7 +83,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al actualizar");
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error on Put: \n" + ex.ToString());
             }
             finally
@@ -105,7 +107,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al eliminar");
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error on Delete: \n" + ex.ToString());
             }
             finally

@@ -11,17 +11,18 @@ namespace Inventario.API.Controllers
     {
         public readonly IConfiguration _configuration;
         public readonly DbAccess _db;
-
-        public EtiquetaController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public EtiquetaController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _db = new DbAccess(configuration);
+            _log = log;
         }
 
         [HttpGet("Get/{json}")]
         public async Task<IActionResult> Get(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -47,7 +48,7 @@ namespace Inventario.API.Controllers
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -73,7 +74,7 @@ namespace Inventario.API.Controllers
         [HttpPut("Update/{id}")]
         public async Task<IActionResult> Update(int id, string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -101,7 +102,7 @@ namespace Inventario.API.Controllers
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {

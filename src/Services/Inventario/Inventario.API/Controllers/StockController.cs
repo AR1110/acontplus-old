@@ -11,16 +11,18 @@ namespace Inventario.API.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        public StockController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public StockController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _db = new DbAccess(_configuration);
+            _log = log;
         }
 
         [HttpPut("Sales/{json}")]
         public async Task<IActionResult> Sales(string json)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -32,7 +34,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error al actualizar la Salida de Stock: " + ex.ToString());
+                _log.LogActivity("Error al actualizar la Salida de Stock: " + ex.ToString());
                 _response.Create(code: "0", "Error al actualizar el Stock - Salida");
             }
             finally
@@ -45,7 +47,7 @@ namespace Inventario.API.Controllers
         [HttpPut("Purchases/{json}")]
         public async Task<IActionResult> Purchases(string json)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -57,7 +59,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error al actualizar la Entrada del Stock: " + ex.ToString());
+                _log.LogActivity("Error al actualizar la Entrada del Stock: " + ex.ToString());
                 _response.Create(code: "0", "Error al actualizar el Stock - Entrada");
             }
             finally
@@ -70,7 +72,7 @@ namespace Inventario.API.Controllers
         [HttpPut("Transfer/{json}")]
         public async Task<IActionResult> Transfer(string json)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -82,7 +84,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error al actualizar la Transferencia del Stock: " + ex.ToString());
+                _log.LogActivity("Error al actualizar la Transferencia del Stock: " + ex.ToString());
                 _response.Create(code: "0", "Error al actualizar el Stock - Transferencia");
             }
             finally
@@ -95,7 +97,7 @@ namespace Inventario.API.Controllers
         [HttpPut("Adjustment/{json}")]
         public async Task<IActionResult> Adjustment(string json)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -107,7 +109,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error al actualizar el Ajuste del Stock: " + ex.ToString());
+                _log.LogActivity("Error al actualizar el Ajuste del Stock: " + ex.ToString());
                 _response.Create(code: "0", "Error al actualizar el Stock - Ajuste");
             }
             finally

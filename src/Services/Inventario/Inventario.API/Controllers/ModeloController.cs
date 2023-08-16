@@ -1,4 +1,4 @@
-using DataAccess;
+﻿using DataAccess;
 using Domain.Models.Almacen;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +11,11 @@ namespace Inventario.API.Controllers
     public class ModeloController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public ModeloController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public ModeloController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
         [HttpGet("Get")]
@@ -30,7 +32,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al listar modelos: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar modelos");
             }
@@ -56,7 +58,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al insertar modelos: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar modelos");
             }
@@ -84,7 +86,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al actualizar modelos: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar modelos");
             }
@@ -109,7 +111,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al eliminar modelos: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar modelos");
             }
@@ -133,7 +135,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al listar modelos para Select: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar modelos para Select");
             }

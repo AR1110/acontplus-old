@@ -1,4 +1,4 @@
-using DataAccess;
+﻿using DataAccess;
 using Domain.Models;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +11,11 @@ namespace Inventario.API.Controllers
     public class MarcaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public MarcaController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public MarcaController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
         [HttpGet("Get")]
@@ -30,7 +32,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al listar Marcas: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar Marcas");
             }
@@ -55,7 +57,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al insertar marca: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar marca");
             }
@@ -82,7 +84,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al actualizar marca: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar marca");
             }
@@ -107,7 +109,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al eliminar marca: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar marca");
             }
@@ -132,7 +134,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al listar marcas para Select: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar marcas para Select");
             }

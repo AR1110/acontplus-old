@@ -1,4 +1,4 @@
-using DataAccess;
+﻿using DataAccess;
 using Domain.Models;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +11,11 @@ namespace Inventario.API.Controllers
     public class TarifaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public TarifaController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public TarifaController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
         [HttpGet("Get")]
@@ -30,7 +32,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al listar tarifas: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar tarifas");
             }
@@ -56,7 +58,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al insertar tarifa: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar tarifa");
             }
@@ -82,7 +84,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al actualizar tarifa: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar tarifa");
             }
@@ -107,7 +109,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al eliminar medida: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar medida");
             }
@@ -131,7 +133,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al listar tarifas para Select: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar tarifas para Select");
             }

@@ -10,14 +10,16 @@ namespace Inventario.API.Controllers
     public class KardexController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public KardexController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public KardexController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
         [HttpGet("Filters")]
         public async Task<IActionResult> Filters()
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
@@ -40,7 +42,7 @@ namespace Inventario.API.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             try

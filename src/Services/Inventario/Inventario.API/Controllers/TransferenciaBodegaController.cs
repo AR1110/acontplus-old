@@ -1,4 +1,4 @@
-using DataAccess;
+﻿using DataAccess;
 using Domain.Models.Inventario;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +11,11 @@ namespace Inventario.API.Controllers
     public class TransferenciaBodegaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public TransferenciaBodegaController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public TransferenciaBodegaController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
 
@@ -31,7 +33,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error on Get Search: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener las trans. a bodegas");
             }
@@ -45,7 +47,7 @@ namespace Inventario.API.Controllers
         public async Task<IActionResult> GetId(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+            
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -79,7 +81,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error on Insert: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar Trans. Bodega");
             }
@@ -105,7 +107,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error on Update: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar Trans. Bodega");
             }
@@ -130,7 +132,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error on Delete: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar Trans. Bodega");
             }
