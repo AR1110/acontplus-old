@@ -1,13 +1,27 @@
-import { CartItem, Summary } from "@/core/models";
+import { 
+    CartItem, 
+    ItemSearch, 
+    ItemReadDto, 
+    Summary, 
+    itemSearchInitialState, 
+    DataFormSale, 
+    dataFormInitialState 
+} from "@/core/models"; 
 import { addSound, clearSound } from "@/core/utilities";
 import { ChangeEvent } from "react";
 import Swal from "sweetalert2";
 import { create } from "zustand";
 
-interface SaleState {
+interface SaleState { 
+    itemSearch: ItemSearch
+    setItemSearch(itemSearch:ItemSearch ): void
+    collectionItems: Array<ItemReadDto>
     totalItems: number;
-    items: Array<CartItem>
+    cartItems: Array<CartItem>
     summary: Summary, 
+    dataForm:  DataFormSale,
+    setDataForm(dataForm: DataFormSale): void
+    setCollectionItems(products: Array<ItemReadDto>): void
     addItemToCart(cartItem: CartItem): void
     removeItemFromCart(productId: number): void
     setTotalItems(): void,
@@ -16,20 +30,43 @@ interface SaleState {
     resetForm(): void
 }
 
-export const saleStore = create<SaleState>((set, get) => ({
+
+
+export const saleStore = create<SaleState>((set, get) => ({ 
+    itemSearch: itemSearchInitialState,
+    setItemSearch: (itemSearch)=>{
+        set(state=>({
+            ...state,
+            itemSearch
+        }))
+    },
+    collectionItems: [],
     totalItems: 0,
-    items: [],
+    cartItems: [],
     summary: {
         tax: 0,
         taxAmount: 0,
         total: 0,
         netTotal: 0
+    }, 
+    dataForm: dataFormInitialState,
+    setDataForm(dataForm){
+        set(state=>({
+            ...state,
+            dataForm
+        }))
+    },
+    setCollectionItems: (collectionItems)=>{
+        set(state=>({
+            ...state,
+            collectionItems
+        }))
     },
     addItemToCart: (item) => { 
-        const {items, setTotalItems, caculateTotals} = get();
+        const {cartItems, setTotalItems, caculateTotals} = get();
         
-        if(items.some(itemCompare=> itemCompare.productId===item.productId)) {
-            for(const itemToModify of items) {
+        if(cartItems.some(itemCompare=> itemCompare.productId===item.productId)) {
+            for(const itemToModify of cartItems) {
                 if(itemToModify.productId===item.productId) {
                     itemToModify.qty = itemToModify.qty + 1;
                     itemToModify.totalPrice = itemToModify.qty * itemToModify.sellingPrice;
@@ -39,13 +76,13 @@ export const saleStore = create<SaleState>((set, get) => ({
             }
             set(state => ({
                 ...state, 
-                items: [...items], 
+                cartItems: [...cartItems], 
             }))
            
         }else{
             set(state => ({
                 ...state, 
-                items: [item, ...state.items], 
+                cartItems: [item, ...state.cartItems], 
             }))
         }
         setTotalItems();
@@ -56,7 +93,7 @@ export const saleStore = create<SaleState>((set, get) => ({
         const {setTotalItems, caculateTotals} = get();
         set((state)=>({
             ...state,
-            items: state.items.filter(_=>_.productId !== productId)
+            cartItems: state.cartItems.filter(_=>_.productId !== productId)
         }))
         setTotalItems();
         caculateTotals(); 
@@ -64,17 +101,17 @@ export const saleStore = create<SaleState>((set, get) => ({
     },
     setTotalItems: ()=>set(state => ({
         ...state, 
-        totalItems: state.items.reduce((total, item) => total + item.qty, 0)
+        totalItems: state.cartItems.reduce((total, item) => total + item.qty, 0)
     })),
     setItemChangeQty: (event, item)=>{
-        const {items, setTotalItems, caculateTotals} = get();
+        const {cartItems, setTotalItems, caculateTotals} = get();
         let qty = Number(event.target.value)
       
         if(qty < 1){
            
             qty = 1; 
         }
-        for(const itemToModify of items){
+        for(const itemToModify of cartItems){
             if(itemToModify.productId===item.productId){
                 itemToModify.qty = qty;
                 itemToModify.totalPrice = itemToModify.qty * itemToModify.sellingPrice;
@@ -83,14 +120,14 @@ export const saleStore = create<SaleState>((set, get) => ({
         }
         set(state => ({
             ...state, 
-            items: [...items], 
+            cartItems: [...cartItems], 
         })) 
         setTotalItems(); 
         caculateTotals();
         addSound();
     },
     async resetForm() {
-        if(get().items.length===0) return;
+        if(get().cartItems.length===0) return;
 
         console.log("resetForm")
         const {isConfirmed} = await Swal.fire({
@@ -107,16 +144,16 @@ export const saleStore = create<SaleState>((set, get) => ({
             set(state=>({
                 ...state,
                 totalItems: 0, 
-                items: []
+                cartItems: []
             }))
             clearSound();
             get().caculateTotals();
         }
     },
     caculateTotals(){
-        const {items} = get(); 
+        const {cartItems} = get(); 
         let total = 0;
-        for(const item of items){
+        for(const item of cartItems){
             total += item.totalPrice;            
         }
 

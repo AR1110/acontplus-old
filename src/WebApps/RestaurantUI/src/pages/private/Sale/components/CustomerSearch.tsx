@@ -1,12 +1,8 @@
-import * as React from 'react';
-import Paper from '@mui/material/Paper';
-import InputBase from '@mui/material/InputBase'; 
-import IconButton from '@mui/material/IconButton'; 
-import CircularProgress from '@mui/material/CircularProgress';
-import { PersonOutlineIcon, PersonSearchIcon } from '@/core/components';
+import * as React from 'react'; 
+import CircularProgress from '@mui/material/CircularProgress'; 
 
 import { Autocomplete, Box, Grid, TextField, Typography } from '@mui/material';
-import { ChangeEvent, useState } from 'react';
+import { useState } from 'react';
 import { CustomerReadDto } from '@/core/models';
 import {CustomerService as customerSvc}  from '@/core/services';
  
@@ -38,6 +34,7 @@ export default function CustomerSearch() {
   return (   
   <Autocomplete
   id="customer-search" 
+  size='small'
   fullWidth
   onInputChange={handleInputChange}
   autoHighlight
@@ -69,11 +66,12 @@ export default function CustomerSearch() {
     <TextField
       {...params}
       label="Cliente"
+      margin='normal'
       InputProps={{
         ...params.InputProps,
         endAdornment: (
           <React.Fragment>
-            {loading ? <CircularProgress color="inherit" size={20} /> : null}
+            {loading ? <CircularProgress color="inherit"   /> : null}
             {params.InputProps.endAdornment}
           </React.Fragment>
         ),

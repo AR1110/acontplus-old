@@ -6,52 +6,54 @@ import Typography from '@mui/material/Typography';
 import { Badge, CardActionArea, Grid, Tooltip } from '@mui/material';
 import brand_img from '/assets/images/brand_logo.png';
 
-import { ProductReadDto } from '@/core/models';
+import { ItemReadDto } from '@/core/models';
 import { saleStore } from '@/stores/saleStore';
 
-type ProductCardProps = {
-  product: ProductReadDto
+type ItemCardProps = {
+  item: ItemReadDto 
 }
 
-const customCard = {
-  display: 'flex',
-  flexDirection: 'column',
-  height: '100%',
-  borderRadius: "16px",
-  borderColor: '#6571ff !important',
-  border: '1px solid',
-}
-const cardContent = {
-  flexGrow: 1,
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'space-between',
-  paddingLeft: "0.5rem!important",
-  paddingRight: "0.5rem!important",
-  paddingTop: "0.5rem!important",
-  paddingBottom: "0.25rem!important"
-}
+// const customCard = {
+//   display: 'flex',
+//   flexDirection: 'column',
+//   height: '100%',
+//   borderRadius: "16px",
+//   borderColor: '#6571ff !important',
+//   border: '1px solid',
+// }
+// const cardContent = {
+//   flexGrow: 1,
+//   display: 'flex',
+//   flexDirection: 'column',
+//   justifyContent: 'space-between',
+//   paddingLeft: "0.5rem!important",
+//   paddingRight: "0.5rem!important",
+//   paddingTop: "0.5rem!important",
+//   paddingBottom: "0.25rem!important"
+// }
 
-const flexRow = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-}
+// const flexRow = {
+//   display: 'flex',
+//   justifyContent: 'space-between',
+//   alignItems: 'center',
+// }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ItemCard({ item }: ItemCardProps) {
   const addItemToCart = saleStore(state => state.addItemToCart)
+  const cartItems = saleStore(state => state.cartItems)
 
-  const handleSelectItem = (item: ProductReadDto) => {
+  const handleSelectItem = (item: ItemReadDto) => {
     addItemToCart({
       index: 0,
       productId: item.productId,
-      name: item.description,
+      code: item.code,
+      name: item.description,      
       qty: 1,
-      price: item.unitPrice,
+      price: 0,
       discount: 0,
       discountTotal: 0,
-      sellingPrice: item.unitPrice,
-      totalPrice: item.unitPrice, 
+      sellingPrice: 0,
+      totalPrice: 0,
       s3ObjectUrl: item.s3ObjectUrl ? item.s3ObjectUrl : brand_img
     })
   }
@@ -61,17 +63,17 @@ export default function ProductCard({ product }: ProductCardProps) {
       {
         display: 'flex',
         flexDirection: 'column',
-        height: '100%',
+        height: '200px', 
         borderRadius: "16px",
-        borderColor: product.code == '14P5' ? '#6571ff !important' : '',
+        borderColor: cartItems.some(cartItem=>cartItem.code===item.code) ? '#6571ff !important' : '',
 
-        border: product.code == '14P5' ? '1px solid' : '',
+        border: cartItems.some(cartItem=>cartItem.code===item.code) ? '1px solid' : '',
       }
     }>
-      <CardActionArea onClick={() => handleSelectItem(product)}>
+      <CardActionArea onClick={() => handleSelectItem(item)}>
         <Tooltip title="Stock">
           <Badge
-            badgeContent={product.stock}
+            badgeContent={item.stock}
             color='success'
             overlap="circular"
             anchorOrigin={{
@@ -85,12 +87,12 @@ export default function ProductCard({ product }: ProductCardProps) {
         <CardMedia
           component="img"
           height="120"
-          image={product.s3ObjectUrl ? product.s3ObjectUrl: brand_img}
+          image={item.s3ObjectUrl ? item.s3ObjectUrl: brand_img}
           alt="green iguana"
         />
         {/* <CardContent>
           <Typography variant="subtitle2" gutterBottom component="div">
-            {product.description}
+            {item.description}
           </Typography>          
         </CardContent> */}
         <CardContent  >
@@ -98,30 +100,19 @@ export default function ProductCard({ product }: ProductCardProps) {
           <Grid container alignItems="center">
             <Grid item xs>
               <Typography gutterBottom variant="subtitle2" component="div">
-                {product.code}
+                {item.code}
               </Typography>
 
             </Grid>
             <Grid item>
               <Typography gutterBottom variant="body2" component="div">
-                <Badge color="primary" badgeContent={`$${product.unitPrice}`} />
+                <Badge color="primary" badgeContent={`$${0}`} />
               </Typography>
             </Grid>
           </Grid>
           <Typography color="text.secondary" variant="caption">
-            {product.description}
-          </Typography>
-
-          {/* 
-          <Typography variant="subtitle2" gutterBottom>
-            {product.description}
-          </Typography>
-          <div style={flexRow}>
-            <Typography variant="caption">{product.code}</Typography>
-            <Typography variant="body2">
-              <Badge color="primary" badgeContent={`$${product.unitPrice}`} />
-            </Typography>
-          </div> */}
+            {item.description}
+          </Typography> 
         </CardContent>
 
       </CardActionArea>

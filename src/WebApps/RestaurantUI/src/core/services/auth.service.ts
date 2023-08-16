@@ -13,18 +13,12 @@ const login = async (username: string, password: string): Promise<ApiResponse> =
   });
   return response.data;
 };
-
-const setPersistent = (key: string, value: string) => {
-  localStorage.setItem(key, value);
-};
+ 
 
 const getToken = function (): string | null {
   return localStorage.getItem("ACCESS_TOKEN");
 };
-const getUser = function () {
-  const user = localStorage.getItem("USER");
-  return user ? JSON.parse(user) : null;
-};
+ 
 
 const decodeToken = function () {
   const token = getToken();
@@ -57,10 +51,8 @@ const clearStorageToken = () => {
 };
 
 export const AuthService = {
-  login,
-  setPersistent,
-  getToken,
-  getUser,
+  login, 
+  getToken, 
   decodeToken,
   isTokenExpired,
   clearStorageToken,
