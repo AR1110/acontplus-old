@@ -143,6 +143,9 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<bool>("Enabled")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("IngredientTypeId")
+                        .HasColumnType("int");
+
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
@@ -154,9 +157,6 @@ namespace Restaurant.Infrastructure.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(500)");
 
-                    b.Property<int?>("TypeId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("Unit")
                         .HasColumnType("int");
 
@@ -167,6 +167,8 @@ namespace Restaurant.Infrastructure.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("IngredientTypeId");
 
                     b.ToTable("Ingredient", "Restaurant");
                 });
@@ -737,6 +739,15 @@ namespace Restaurant.Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Room");
+                });
+
+            modelBuilder.Entity("Restaurant.Core.Entities.Ingredient", b =>
+                {
+                    b.HasOne("Restaurant.Core.Entities.IngredientType", "IngredientType")
+                        .WithMany()
+                        .HasForeignKey("IngredientTypeId");
+
+                    b.Navigation("IngredientType");
                 });
 
             modelBuilder.Entity("Restaurant.Core.Entities.Item", b =>
