@@ -1,5 +1,6 @@
-using Lib.Common;
+﻿using Lib.Common;
 using Services.Common;
+using Services.Common.Logs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,8 @@ builder.Services.AddCors(options =>
             policy.WithOrigins(origins);
         });
 });
+
+builder.Services.AddSingleton<LogWriter>();
 
 var app = builder.Build();
 

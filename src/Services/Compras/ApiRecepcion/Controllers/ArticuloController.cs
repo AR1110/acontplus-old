@@ -12,16 +12,18 @@ namespace ApiRecepcion.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        public ArticuloController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public ArticuloController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
             _db = new DbAccess(_configuration);
         }
 
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             var _response = new GenericResponse();
             try
             {
@@ -33,7 +35,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error al obtener los articulos: " + ex.ToString());
+                _log.LogActivity("Error al obtener los articulos: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener los articulos");
 
             }

@@ -15,16 +15,18 @@ namespace ApiCompras.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
-        public CompraNoHabitualController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public CompraNoHabitualController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _db = new DbAccess(_configuration);
+            _log = log;
         }
         // GET: api/<CompraNoHabitualController>
         [HttpGet("{json}")]
         public async Task<IActionResult> Get(string json)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -36,7 +38,7 @@ namespace ApiCompras.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error al obtener datos de Compra No Habitual: " + ex.ToString());
+                _log.LogActivity("Error al obtener datos de Compra No Habitual: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos de Compra No Habitual");
             }
             finally
@@ -49,7 +51,7 @@ namespace ApiCompras.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ComprobanteDto data)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -64,7 +66,7 @@ namespace ApiCompras.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error al guardar datos de Compra No Habitual: " + ex.ToString());
+                _log.LogActivity("Error al guardar datos de Compra No Habitual: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al guardar los datos de Compra No Habitual");
             }
             finally
@@ -77,7 +79,7 @@ namespace ApiCompras.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] ComprobanteDto data)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -93,7 +95,7 @@ namespace ApiCompras.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error al editar datos de Compra No Habitual: " + ex.ToString());
+                _log.LogActivity("Error al editar datos de Compra No Habitual: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al editar los datos de Compra No Habitual");
             }
             finally
@@ -106,7 +108,7 @@ namespace ApiCompras.Controllers
         [HttpPut("Cancel/{id}")]
         public async Task<IActionResult> Cancel(int id)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -118,7 +120,7 @@ namespace ApiCompras.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error al anular datos de Compra No Habitual: " + ex.ToString());
+                _log.LogActivity("Error al anular datos de Compra No Habitual: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al anular los datos de Compra No Habitual");
             }
             finally

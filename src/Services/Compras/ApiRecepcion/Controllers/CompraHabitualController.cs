@@ -12,9 +12,11 @@ namespace ApiRecepcion.Controllers
     public class CompraHabitualController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public CompraHabitualController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public CompraHabitualController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
         [HttpGet("Get")]
         public async Task<IActionResult> Get(string json)
@@ -31,7 +33,7 @@ namespace ApiRecepcion.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al guardar");
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error on Get compra habitual: \n" + ex.ToString());
             }
             finally
@@ -55,7 +57,7 @@ namespace ApiRecepcion.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al guardar");
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error on Post compra habitual: \n" + ex.ToString());
             }
             finally
@@ -80,7 +82,7 @@ namespace ApiRecepcion.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al guardar");
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error on Put compra habitual: \n" + ex.ToString());
             }
             finally
@@ -104,7 +106,7 @@ namespace ApiRecepcion.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al guardar");
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error on Delete compra habitual: \n" + ex.ToString());
             }
             finally

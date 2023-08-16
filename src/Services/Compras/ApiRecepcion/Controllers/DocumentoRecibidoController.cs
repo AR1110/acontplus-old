@@ -24,18 +24,20 @@ namespace ApiRecepcion.Controllers
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
         private readonly FileTxt _txtComp;
-        public DocumentoRecibidoController(IConfiguration configuration, FileTxt txtComp)
+        private readonly LogWriter _log;
+        public DocumentoRecibidoController(IConfiguration configuration, FileTxt txtComp, LogWriter log)
         {
             _configuration = configuration;
             _db = new DbAccess(_configuration);
             _txtComp = txtComp;
+            _log = log;
         }
 
         [HttpGet("Get/{json}")]
         public async Task<IActionResult> Get(string json)
         {
             //var correlationId = HttpContext.Request.Headers["X-IdUsuarioRol"].ToString();
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -47,7 +49,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error al obtener los documentos recibidos: " + ex.ToString());
+                _log.LogActivity("Error al obtener los documentos recibidos: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener los documentos recibidos");
             }
             finally
@@ -60,7 +62,7 @@ namespace ApiRecepcion.Controllers
         [HttpGet("GetId/{id}")]
         public async Task<IActionResult> GetId(int id)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
 
             GenericResponse _response = new GenericResponse();
             try
@@ -108,7 +110,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error getting data of doc: " + ex.ToString());
+                _log.LogActivity("Error getting data of doc: " + ex.ToString());
                 return new BadRequestObjectResult(new
                 {
                     code = 0,
@@ -121,7 +123,7 @@ namespace ApiRecepcion.Controllers
         [HttpGet("Preview/{id}")]
         public async Task<IActionResult> Preview(int id)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
 
             GenericResponse _response = new GenericResponse();
             try
@@ -159,7 +161,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error getting data of doc: " + ex.ToString());
+                _log.LogActivity("Error getting data of doc: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener los datos del comprobante");
             }
 
@@ -168,7 +170,7 @@ namespace ApiRecepcion.Controllers
         //[HttpGet("Export/{id}")]
         //public async Task<IActionResult> Export(int id)
         //{
-        //    LogWriter _logs = new LogWriter(_configuration);
+        //   
         //    ComprobanteElectronico ceXml = new ComprobanteElectronico();
 
         //    GenericResponse _response = new GenericResponse();
@@ -216,7 +218,7 @@ namespace ApiRecepcion.Controllers
         [HttpPost("Read")]
         public async Task<IActionResult> Post(IFormFile file)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
 
             if (file.ContentType != "text/plain")
@@ -264,7 +266,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error al importar el archivo: " + ex.ToString());
+                _log.LogActivity("Error al importar el archivo: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al importar el archivo");
             }
             finally
@@ -276,7 +278,7 @@ namespace ApiRecepcion.Controllers
         [HttpPost("UploadXml")]
         public async Task<IActionResult> UploadXml(string json, IFormFile file)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
 
             if (file.ContentType != "text/xml")
@@ -369,7 +371,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error al importar el archivo: " + ex.ToString());
+                _log.LogActivity("Error al importar el archivo: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al importar el archivo");
             }
             finally
@@ -382,7 +384,7 @@ namespace ApiRecepcion.Controllers
         [HttpPost("Post")]
         public async Task<IActionResult> Post(RequestApiDto parameters)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -396,7 +398,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error al importar el archivo: " + ex.ToString());
+                _log.LogActivity("Error al importar el archivo: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al importar el archivo");
             }
             finally
@@ -409,7 +411,7 @@ namespace ApiRecepcion.Controllers
         [HttpPost("CheckExistenceXml")]
         public async Task<IActionResult> CheckExistenceXml(string claveAcceso)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -421,7 +423,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error al verificar la clave acceso en el sri: " + ex.ToString());
+                _log.LogActivity("Error al verificar la clave acceso en el sri: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al verificar la clave acceso en el sri");
             }
             finally
@@ -444,8 +446,8 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _logs = new LogWriter(_configuration);
-                _logs.LogActivity("Error al importar el archivo: " + ex.ToString());
+               
+                _log.LogActivity("Error al importar el archivo: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al importar el archivo");
             }
             finally
@@ -458,7 +460,7 @@ namespace ApiRecepcion.Controllers
         [HttpPut("Put/{id}")]
         public async Task<IActionResult> Put(int id)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -472,7 +474,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error al descargar el archivo xml: " + ex.ToString());
+                _log.LogActivity("Error al descargar el archivo xml: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al descargar el archivo xml");
             }
             finally
@@ -485,7 +487,7 @@ namespace ApiRecepcion.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Upload(int id, IFormFile file)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
 
             if (file.ContentType != "text/plain")
@@ -517,7 +519,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error al importar el archivo: " + ex.ToString());
+                _log.LogActivity("Error al importar el archivo: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al importar el archivo");
             }
             finally
@@ -530,7 +532,7 @@ namespace ApiRecepcion.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            LogWriter _logs = new LogWriter(_configuration);
+           
             GenericResponse _response = new GenericResponse();
 
             try
@@ -543,7 +545,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                _logs.LogActivity("Error al eliminar el archivo: " + ex.ToString());
+                _log.LogActivity("Error al eliminar el archivo: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar el archivo");
             }
             finally

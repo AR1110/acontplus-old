@@ -10,9 +10,11 @@ namespace ApiRecepcion.Controllers
     public class DatoAdicionalArticuloController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public DatoAdicionalArticuloController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public DatoAdicionalArticuloController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
         [HttpGet("Get")]
@@ -29,7 +31,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al listar Familias: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar Familias");
             }
@@ -55,7 +57,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al insertar dato adicional articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar dato adicional articulo");
             }
@@ -80,7 +82,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
+                
                 _log.LogActivity("Error al eliminar dato adicional articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al dato adicional articulo");
             }
