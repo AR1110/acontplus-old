@@ -1,36 +1,56 @@
- 
-export interface RawProductData  {
-    idArticulo: number;
-    descripcion: string;
-    precioCosto: number;
-    codigo: string;
-    stock: number
-    s3ObjectUrl: string;
+//Product
+export interface RawProductSaleData {
+    idArticulo: number,
+    idMedida: number,
+    idTipoIva: number,    
+    descripcion: string,    
+    llevaInventario: boolean,        
+    precioCosto: number,
+    precioSinSubsidio: number,    
+    tarifa: number,
+    codigoPorcentaje: number,
+    codigoArticulo: number,
+    stock: number    
 }
 
-
-export interface ProductReadDto {
-    productId: number;
-    description: string;
-    unitPrice: number;
-    code: string;
-    stock: number;
-    s3ObjectUrl: string
+export interface ProductSaleReadDto {
+    productId: number,
+    measureId: number,
+    vatRatId: number,    
+    description: string,    
+    takesInventory: boolean,        
+    costPrice: number,
+    priceWithoutSubsidy: number, 
+    productCode: number,
+    stock: number    
 }
 
-
-export interface ProductFilter {
-    tipo: number,
-    checkBoxSubFamilia: boolean
-    bySubFamilia: number,
-    pageIndex: number,
-    pageSize: number,
+//Tarifa Api
+export interface RawRateData {
+    idTarifa: number,
+    precioVenta: number,
+    precioConIva: number,
+    tarifa: string, 
 }
 
-export const productFilterInitialState:  ProductFilter = {
-    tipo: 1,
-    checkBoxSubFamilia: false,
-    bySubFamilia: 0,
-    pageIndex: 1,
-    pageSize: 50
-}
+//Medida Api
+export interface RawMeasure {
+    idMedida: number
+    descripcion: string
+    tarifas: string
+ }
+
+ //Tarifa para el adapter
+ export interface Rate {
+    rateId: number
+    salePrice: number
+    priceWithVat: number
+    description: string
+ }
+
+ //Medida para el adapter
+ export interface Measure{
+    measureId: number
+    description: string,
+    rates: Array<Rate>
+ }

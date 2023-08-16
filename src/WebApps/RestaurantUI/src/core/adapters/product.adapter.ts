@@ -1,18 +1,39 @@
-import { ProductReadDto, RawProductData } from "../models";
+import { Measure, ProductSaleReadDto, RawMeasure, RawProductSaleData, RawRateData } from "../models";
 
-function productReadAdapter(products: RawProductData[]): Array<ProductReadDto> {
-    console.log(products)
-    return products.map((product) => ({
-            productId: product.idArticulo,
-            description: product.descripcion,            
-            unitPrice: product.precioCosto,
-            code: product.codigo,
-            stock: product.stock,
-            s3ObjectUrl: product.s3ObjectUrl
-        })
-    )
+function productSaleReadAdapter(product: RawProductSaleData): ProductSaleReadDto {
+
+    return ({
+        productId: product.idArticulo,
+        measureId: product.idMedida,
+        vatRatId: product.idTipoIva,
+        description: product.descripcion,
+        takesInventory: product.llevaInventario,
+        costPrice: product.precioCosto,
+        priceWithoutSubsidy: product.precioSinSubsidio,
+        productCode: product.codigoArticulo,
+        stock: product.stock
+    })
 }
 
+function productSaleRateReadAdapter(measures: RawMeasure[]): Array<Measure> {
+
+    return measures.map(item => {
+        let rates: RawRateData[] = JSON.parse(item.tarifas);
+        return {
+            measureId: item.idMedida,
+            description: item.descripcion,
+            rates: rates.map(rate => ({
+                rateId: rate.idTarifa,
+                salePrice: rate.precioVenta,
+                priceWithVat: rate.precioConIva,
+                description: rate.tarifa
+            }))
+        }
+    })
+}
+
+
 export {
-    productReadAdapter
+    productSaleReadAdapter,
+    productSaleRateReadAdapter
 }
