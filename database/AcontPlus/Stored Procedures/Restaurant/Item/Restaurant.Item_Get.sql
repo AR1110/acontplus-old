@@ -12,7 +12,7 @@ GO
 -- Create date: 2023-08-14 
 -- Description:	Get Item
 -- =============================================
--- Restaurant.Item_Get 139, '{"checkSubFamilia": 0,"idSubFamilia":1,"pageIndex":1,"pageSize":50}', ''
+-- Restaurant.Item_Get 139, '{"checkSubFamilia": false,"idSubFamilia":1,"pageIndex":1,"pageSize":50}', ''
 IF OBJECT_ID(N'Restaurant.Item_Get', N'P') IS NOT NULL
 	DROP PROCEDURE Restaurant.Item_Get
 GO
@@ -55,10 +55,10 @@ BEGIN
 
 	SET @sql = 'SELECT 
 				Id					= ri.Id
-				,summary			= ri.Summary
+				,summary			= ISNULL(ri.Summary, ''_'')
 				,cooking			= ri.Cooking
 				,recipe				= ri.Recipe
-				,instructions		= ri.Instructions
+				,instructions		= ISNULL(ri.Instructions, ''_'')
 				,createdAt			= ri.CreatedAt
 				,updatedAt			= ri.UpdatedAt
 				,enabled			= ri.Enabled
