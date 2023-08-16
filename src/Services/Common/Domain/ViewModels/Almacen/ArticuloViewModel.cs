@@ -52,14 +52,6 @@ namespace Domain.ViewModels.Almacen
 
     }
 
-    public class ArticuloParams
-    {
-        public string jsonArticulo { get; set; }
-        public string jsonpvp { get; set; }
-        public int idBodega { get; set; }
-        public string ubicacion { get; set; }
-    }
-
     public class ArticuloMedidasFraccionado
     {
         public ArticuloViewModel articulo { get; set; }

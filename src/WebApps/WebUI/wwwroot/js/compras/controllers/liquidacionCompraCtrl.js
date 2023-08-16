@@ -59,7 +59,9 @@
                 $scope.copiaLiquidacionCompras = [];
                 $scope.sumTotalColumna(); 
                 let dataSearch = {
+                    tipo : 1,
                     codEstab: $scope.dataSearch.codEstab,
+                    checkBoxFecha : $scope.dataSearch.nroSecuencial ? false: true,
                     fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
                     checkBoxProveedor: $scope.dataSearch.idProveedor > 0,
@@ -86,13 +88,23 @@
         }
 
         $scope.initiload = () => {
-            _mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response => {
-                let results = JSON.parse(response.payload) || [];
-                $scope.establecimientos = results[0];
-                let codEstab = $scope.establecimientos.length > 0 ? $scope.establecimientos[0].codEstab : 0;
-                $scope.dataSearch.codEstab = codEstab;
-                $scope.getLiquidacionesCompra();
-            })
+
+            _commonSvc.getEstabAsign().then(response => {
+           
+                $scope.establecimientos = response; 
+                
+                if($scope.establecimientos.length>0){ 
+                    let codEstab = $scope.establecimientos.length>0?$scope.establecimientos[0].codEstab: 0;            
+                    $scope.dataSearch.codEstab = codEstab;
+                    $scope.getLiquidacionesCompra();
+                }else{
+                    hideLoader();
+                    tS.toastr('warning', 'No tienes asignado ningún Establecimiento')
+                }
+            }).catch(err => {
+                hideLoader();
+                console.error(err);
+            })  
 
             _commonSvc.getEstadoDocByCodDoc(TIPO_DOC.codigo).then(response => {
                 $scope.estadoPagos = response;

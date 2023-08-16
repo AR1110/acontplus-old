@@ -34,6 +34,10 @@
           <DataField>direccionEntidad</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
+        <Field Name="caducidad">
+          <DataField>caducidad</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>GestionReporte</rd:DataSetName>
@@ -72,6 +76,10 @@
         </Field>
         <Field Name="precioIva">
           <DataField>precioIva</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
+        <Field Name="fechaCaducidad">
+          <DataField>fechaCaducidad</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
       </Fields>
@@ -213,8 +221,8 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
-            <Top>1.6948cm</Top>
-            <Left>0.03593cm</Left>
+            <Top>1.65952cm</Top>
+            <Left>2.23197cm</Left>
             <Height>0.6cm</Height>
             <Width>15.61804cm</Width>
             <ZIndex>3</ZIndex>
@@ -301,7 +309,7 @@
                 <TablixCornerRow>
                   <TablixCornerCell>
                     <CellContents>
-                      <Textbox Name="Textbox37">
+                      <Textbox Name="Textbox15">
                         <CanGrow>true</CanGrow>
                         <KeepTogether>true</KeepTogether>
                         <Paragraphs>
@@ -320,10 +328,7 @@
                             </Style>
                           </Paragraph>
                         </Paragraphs>
-                        <rd:DefaultName>Textbox37</rd:DefaultName>
-                        <Visibility>
-                          <Hidden>true</Hidden>
-                        </Visibility>
+                        <rd:DefaultName>Textbox15</rd:DefaultName>
                         <Style>
                           <Border>
                             <Style>Solid</Style>
@@ -453,7 +458,7 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>1.78563cm</Width>
+                  <Width>1.81209cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -641,7 +646,7 @@
                   <TablixMembers>
                     <TablixMember>
                       <TablixHeader>
-                        <Size>10cm</Size>
+                        <Size>9.36022cm</Size>
                         <CellContents>
                           <Textbox Name="descripcion">
                             <CanGrow>true</CanGrow>
@@ -657,7 +662,7 @@
                                   </TextRun>
                                 </TextRuns>
                                 <Style>
-                                  <TextAlign>Left</TextAlign>
+                                  <TextAlign>Center</TextAlign>
                                 </Style>
                               </Paragraph>
                             </Paragraphs>
@@ -678,7 +683,7 @@
                       <TablixMembers>
                         <TablixMember>
                           <TablixHeader>
-                            <Size>5cm</Size>
+                            <Size>4.0475cm</Size>
                             <CellContents>
                               <Textbox Name="subFamilia">
                                 <CanGrow>true</CanGrow>
@@ -726,7 +731,7 @@
             <Top>3.1605cm</Top>
             <Left>0cm</Left>
             <Height>1.8cm</Height>
-            <Width>19.78563cm</Width>
+            <Width>18.21981cm</Width>
             <ZIndex>6</ZIndex>
             <Style>
               <Border>
@@ -738,9 +743,9 @@
         <Height>1.95295in</Height>
         <Style />
       </Body>
-      <Width>7.78962in</Width>
+      <Width>7.17315in</Width>
       <Page>
-        <PageHeight>21cm</PageHeight>
+        <PageHeight>30cm</PageHeight>
         <PageWidth>29.7cm</PageWidth>
         <LeftMargin>0.25cm</LeftMargin>
         <RightMargin>0.25cm</RightMargin>

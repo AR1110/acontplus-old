@@ -1,7 +1,7 @@
-using Services.Common;
-using Helpers;
-using System.Reflection;
+using ApiConfig.Extensions;
 using Lib.Common;
+using Newtonsoft.Json.Serialization;
+using Services.Common;
 
 namespace ApiConfig
 {
@@ -15,7 +15,14 @@ namespace ApiConfig
             builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
             ConfigHelper.AddJsonFiles(builder.Configuration);
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                                       .AddNewtonsoftJson(x =>
+                                       {
+                                           x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                                           x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
+                                       });
+
+            builder.Services.AddApplicationServices(builder.Configuration);
 
             builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 
@@ -51,11 +58,10 @@ namespace ApiConfig
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
+                endpoints.MapGet("/", context =>
                 {
-                    string projectName = Assembly.GetExecutingAssembly().FullName.Split(',')[0];
-                    //await context.Response.WriteAsync($"{projectName} is running at {string.Join(", ", app.Urls)}");
                     context.Response.Redirect("swagger");
+                    return Task.CompletedTask;
                 });
             });
 

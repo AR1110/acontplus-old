@@ -4,7 +4,7 @@
 
     app.factory('familiaService', function ($injector) {
 
-        let url = 'Familia/';
+        let url = 'Inventario/Familia/';
         let mS = $injector.get('mainService');
         let service = {};
 
@@ -63,7 +63,7 @@
      */
     app.factory('subFamiliaService', function ($injector) {
 
-        let url = 'SubFamilia/';
+        let url = 'Inventario/SubFamilia/';
         let mS = $injector.get('mainService');
         let service = {};
 
@@ -82,6 +82,8 @@
                         estado: item.estado,
                         siglas: item.siglas,
                         codigo: item.codigo,
+                        s3ObjectUrl: item.s3ObjectUrl,
+                        s3ObjectKey: item.s3ObjectKey,
                         montoObjetivo: item.montoObjetivo,
                         nombreFamilia: item.nombreFamilia,
                         totalRecords: item.totalRecords,
@@ -90,16 +92,16 @@
             })
         }
 
-        service.save = function (data) {
-            return mS.getData('post', url + 'Insert', data, true);
+        service.save = function (file, data) {
+            return mS.getDataFile(url + "Post/?json=" + JSON.stringify(data), file, null, true);
         }
 
-        service.update = function (id, data) {
-            return mS.getData('put', url + 'Update/' + id, data, true);
+        service.update = function (id, file, data) {
+            return mS.getDataFile(url + `Put/${id}/?json=${JSON.stringify(data)}`, file, null, true);
         }
 
         service.delete = function (id) {
-            return mS.getData('delete', url + 'Delete/' + id, null, true);
+            return mS.getData('delete', url + id, null, true);
         }
 
         service.listForSelect = function (query) {
@@ -126,7 +128,7 @@
      */
     app.factory('marcaService', function ($injector) {
 
-        let url = 'Marca/';
+        let url = 'Inventario/Marca/';
         let mS = $injector.get('mainService');
         let service = {};
 
@@ -186,7 +188,7 @@
      */
     app.factory('modeloService', function ($injector) {
 
-        let url = 'Modelo/';
+        let url = 'Inventario/Modelo/';
         let mS = $injector.get('mainService');
         let service = {};
 
@@ -235,7 +237,7 @@
      */
     app.factory('medidaService', function ($injector) {
 
-        let url = 'Medida/';
+        let url = 'Inventario/Medida/';
         let mS = $injector.get('mainService');
         let service = {};
 
@@ -280,7 +282,7 @@
     */
     app.factory('tarifaService', function ($injector) {
 
-        let url = 'Tarifa/';
+        let url = 'Inventario/Tarifa/';
         let mS = $injector.get('mainService');
         let service = {};
 

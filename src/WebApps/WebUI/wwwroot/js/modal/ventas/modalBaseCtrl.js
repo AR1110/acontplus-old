@@ -785,7 +785,8 @@ export class ModalBaseCtrl {
             if(typeof this.getInvoiceByCustomer === 'function'){
                 this.getInvoiceByCustomer();
             }
-
+            this.resetCantidadToZeroAndRecalculateTotals();
+            this.uiGridInvoice.idBodega = this.idBodega;
             this.$scope.$apply();
         } catch (error) {
             console.trace(error)
@@ -825,6 +826,8 @@ export class ModalBaseCtrl {
                 for (let item of this.gridOptions.data) {
                     item.idBodega = this.idBodega;
                 }
+                this.resetCantidadToZeroAndRecalculateTotals();
+                this.uiGridInvoice.idBodega = this.idBodega;
                 this.$scope.$apply();
             } else {
                 this.idBodega = this.cloneIdBodega;
@@ -833,6 +836,27 @@ export class ModalBaseCtrl {
         } catch (error) {
             console.log(error)
         }
+    }
+
+
+    resetCantidadToZeroAndRecalculateTotals () {
+        try {
+            const self = this;
+            for(let rowEntity of this.gridOptions.data){
+                if(!rowEntity.llevaInventario) continue;
+
+                rowEntity.cantidad = 0;
+                let objCalculo = self.uiGridInvoice.calculoColDef(rowEntity)
+                objCalculo["calculoTotalDetalle"]();
+                
+            }
+            self.data = Object.assign(self.data, self.uiGridInvoice.getTotales());
+            this.$scope.$apply();
+            console.log(this.gridOptions.data)
+        } catch (error) {
+            console.log(error);
+        }
+        
     }
 
 
@@ -1287,16 +1311,30 @@ export class ModalBaseCtrl {
             showConfirmButton: true,
             showCancelButton: true, 
             cancelButtonText: 'Cancelar'
-        }).then(async result => {
-            if (result.isConfirmed) {
-                this.cliente = item;
-                await this.openModalClienteUpdate();
-                this.cliente = {}
-            }
-        })
+        }) 
 
     }
 
+
+    /**
+     * 
+     * Funcionando temporalmente 
+     * 
+     * Funcion que se ejecutara en el bloque de validacion de notificacion y stock 
+     */
+
+
+    recalculateTotals(entity){
+        const self = this; 
+        const objCalculo = self.uiGridInvoice.calculoColDef(entity, 0);
+
+        objCalculo["precioUnitario"] && objCalculo["precioUnitario"]();
+
+        objCalculo["calculoTotalDetalle"]();
+
+        self.data = Object.assign(self.data, self.uiGridInvoice.getTotales());
+ 
+    }
 
 
 

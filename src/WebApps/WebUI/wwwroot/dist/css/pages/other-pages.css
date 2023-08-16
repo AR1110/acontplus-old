@@ -84,7 +84,7 @@ Grid page
 Date paginator page
 ******************/
 .dp-selected[style] {
-  background-color: #fb9678 !important; }
+  background-color: #d61672 !important; }
 
 .datepaginator-sm .pagination li a,
 .datepaginator-lg .pagination li a,
@@ -125,8 +125,8 @@ list and media
 
 .list-group-item.active,
 .list-group .list-group-item.active:hover {
-  background: #fb9678;
-  border-color: #fb9678; }
+  background: #d61672;
+  border-color: #d61672; }
 
 .list-group-item.disabled {
   color: #6c757d;
@@ -171,7 +171,7 @@ list and media
   cursor: pointer; }
 
 .twitter-typeahead .tt-menu .tt-suggestion:hover {
-  background-color: #fb9678;
+  background-color: #d61672;
   color: #fff; }
 
 .twitter-typeahead .empty-message {

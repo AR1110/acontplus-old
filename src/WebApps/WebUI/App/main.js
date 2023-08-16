@@ -1,31 +1,61 @@
 ﻿import Pet from "./lib/Pet/Pet.svelte";
 import PetMedicalHistory from "./lib/PetMedicalHistory/PetMedicalHistory.svelte";
 import PetBreed from "./lib/PetBreed/PetBreed.svelte"; 
-import Counter from "./core/components/Counter.svelte";
 import ConfigEmail from "./lib/ConfigEmail/ConfigEmail.svelte"
-// import App from "./App.svelte"
-// const app = new App({
-//     target: document.getElementById('app'),
-// })
-// export default app
+import MotivoDiscrepancia from "./lib/StockFisico/MotivoDiscrepancia.svelte";
+import Stock from "./lib/StockFisico/index.svelte"
+import Subcategoria from "./lib/Contabilidad/Subcategoria/index.svelte"
+import Infrastructure from "$restaurant/Infrastructure/page.svelte"
+import Product from "$restaurant/Product/page.svelte"
 
-// const breed = new PetBreed({
-//     target: document.getElementById('pet-breed'),
-// })
-// export default breed
+let target = document.querySelector("#pet")
+if (target) {
+    new Pet({ target })
+}
 
-// const pet = new Pet({
-//     target: document.getElementById('pet'),
-// })
-// export default pet
+target = document.querySelector("#pet-breed")
+if (target) {
+    new PetBreed({ target })
+}
 
-// const petMH = new PetMedicalHistory({
-//     target: document.getElementById('petMH'),
-// })
-// export default petMH
+target = document.querySelector("#petMH")
+if (target) {
+    new PetMedicalHistory({ target })
+}
+
+target = document.querySelector("#configEmail")
+if (target) {
+    new ConfigEmail({ target })
+}
+
+target = document.querySelector("#motivoDiscrepancia")
+if (target) {
+    new MotivoDiscrepancia({ target })
+}
+
+target = document.querySelector("#stockFisico")
+if (target) {
+    new Stock({ target })
+}
+
+target = document.querySelector("#subcategoria")
+if (target) {
+    new Subcategoria({ target })
+}
 
 
-const configEmail = new ConfigEmail({
-    target: document.getElementById('configEmail'),
+target = document.querySelector("#restaurant-infrastructure")
+if (target) {
+    new Infrastructure({ target })
+}
+
+target = document.querySelector("#restaurant-product")
+if (target) {
+    new Product({ target })
+}
+
+import App from "./App.svelte"
+const app = new App({
+    target: document.body
 })
-export default configEmail
+export default app

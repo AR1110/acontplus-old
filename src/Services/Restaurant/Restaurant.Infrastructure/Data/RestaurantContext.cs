@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Restaurant.Core.Entities;
 using System.Reflection;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Restaurant.Infrastructure.Data
 {
@@ -13,14 +13,18 @@ namespace Restaurant.Infrastructure.Data
         {
 
         }
-        public DbSet<Dish> Dishes { get; set; }
+        public DbSet<Item> Items { get; set; }
         public DbSet<Recipe> Recipes { get; set; }
+        public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<ProductionArea> ProductionAreas { get; set; }
+        public DbSet<Menu> Menus { get; set; }
+        public DbSet<MenuItem> MenuItems { get; set; }
         public DbSet<Floor> Floors { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<AppTable> Tables { get; set; }
-
-
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<OrderKitchen> OrderKitchens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -55,12 +59,25 @@ namespace Restaurant.Infrastructure.Data
 
             builder.ApplyUtcDateTimeConverter();
 
-            builder.Entity<Dish>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<Item>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Recipe>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<Ingredient>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<ProductionArea>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Floor>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Room>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<AppTable>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+
+            builder.Entity<Menu>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<Menu>().HasMany(x => x.MenuItems).WithOne(m => m.Menu).HasForeignKey(m => m.MenuId);
+            builder.Entity<MenuItem>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+
+            builder.Entity<Order>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<Order>().HasMany(x => x.OrderItems).WithOne(m => m.Order).HasForeignKey(m => m.OrderId);
+
+            builder.Entity<OrderItem>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+
+            builder.Entity<OrderKitchen>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            
         }
         public override int SaveChanges()
         {

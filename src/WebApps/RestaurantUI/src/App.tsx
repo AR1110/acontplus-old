@@ -1,56 +1,31 @@
 import { Route, BrowserRouter, Navigate } from "react-router-dom";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy } from "react"; 
+import { RoutesWithNotFound, SnackbarUtilitiesConfigurator } from "@/core/utilities/index.ts";
+import { PrivateRoutes, PublicRoutes } from "./core/models";
+import { AuthGuard } from "./core/guards";
 import { SnackbarProvider } from "notistack";
-import { Provider } from "react-redux";
-import { store } from "./redux/store.ts";
-import { RoutesWithNotFound, SnackbarUtilsConfigurator } from "@/core/utils";
-import { PrivateRoutes, PublicRoutes } from "@/core/models/";
-import AuthGuard from "@/core/guards/auth.guard.tsx";
-import RecipeComponent from "./pages/recipe/RecipeComponent.tsx";
-import Dish from "./pages/Dish/Dish.tsx";
 
-const Login = lazy(() => import("@/pages/auth/components/Login"));
-const Home = lazy(() => import("@/pages/Home/Home"));
-const Pos = lazy(() => import("@/pages/Pos/Pos"));
-const Categoria = lazy(() => import("@/pages/Categoria/Categoria"));
-const TableComponent = lazy(() => import("@/pages/table/Table"));
+const Login = lazy(() => import("@/pages/login/Login"));
+const Private = lazy(() => import("@/pages/private/Private"));
 
-function App() {
+export default function App() {
   return (
     <Suspense fallback={<>Cargando</>}>
-      <Provider store={store}>
-        <SnackbarProvider>
-          <SnackbarUtilsConfigurator />
-          {/* <RouterProvider router={router} />; */}
-          <BrowserRouter>
-            <RoutesWithNotFound>
-              {/* Rutas Publicas */}
-              <Route path="/" element={<Navigate to={PrivateRoutes.POS} />} />
-              <Route path={PublicRoutes.LOGIN} element={<Login />} />
-
-              {/* Rutas privadas */}
-              <Route element={<AuthGuard />}>
-                <Route path={PrivateRoutes.HOME} element={<Home />}></Route>
-                <Route path={PrivateRoutes.POS} element={<Pos />}></Route>
-                <Route
-                  path={PrivateRoutes.RECIPE}
-                  element={<RecipeComponent />}
-                ></Route>
-                <Route path={PrivateRoutes.DISH} element={<Dish />}></Route>
-                <Route
-                  path={PrivateRoutes.CATEGORIA}
-                  element={<Categoria />}
-                ></Route>
-                <Route
-                  path={PrivateRoutes.TABLE}
-                  element={<TableComponent />}
-                ></Route>
-              </Route>
-            </RoutesWithNotFound>
-          </BrowserRouter>
-        </SnackbarProvider>
-      </Provider>
+      <SnackbarProvider>
+        <SnackbarUtilitiesConfigurator />
+        <BrowserRouter>
+          <RoutesWithNotFound>
+            <Route path="/" element={<Navigate to={PrivateRoutes.PRIVATE}></Navigate>}></Route>
+            <Route path={PublicRoutes.LOGIN} element={<Login />}></Route>
+            <Route element={<AuthGuard privateValidation={true} />}>
+              <Route
+                path={`${PrivateRoutes.PRIVATE}/*`}
+                element={<Private />}
+              ></Route>
+            </Route>
+          </RoutesWithNotFound>
+        </BrowserRouter>
+      </SnackbarProvider>
     </Suspense>
   );
 }
-export default App;

@@ -21,7 +21,8 @@ CREATE VIEW v_movimiento_caja AS (
 	,entidadFinanciera = sef.descripcion
 	,valor = mc.valor
 	,observacion = mc.observaciones
-	,usuario = u.nombreUsuario							
+	,usuario = u.nombreUsuario	
+	,em.nroIdentificacion
 	FROM dbo.MovimientoCaja mc	WITH(NOLOCK)
 	INNER JOIN dbo.Entidad e WITH(NOLOCK)    ON e.idEntidad = mc.idEntidad
 	INNER JOIN Sri.Establecimiento s WITH(NOLOCK)  ON s.codEstab = mc.codEstab

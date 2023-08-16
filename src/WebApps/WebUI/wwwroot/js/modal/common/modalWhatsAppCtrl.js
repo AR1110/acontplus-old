@@ -14,6 +14,10 @@ ModalWhatsAppCtrl.$inject = [
 
 function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
     $scope.client = {}
+    $scope.whatsapp = {}
+    $scope.connected_devices = []
+    $scope.current_device = {}
+
     $scope.hasPermissions = _token.role == 'RT' ? true : false
 
     let parser = new UAParser(navigator.userAgent)
@@ -28,7 +32,34 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
     $scope.codDoc = params.codDoc
     $scope.comprobante = params.comprobante + ': ' + params.serieComprobante
 
-    $scope.whatsapp = {}
+    let idInstance = "7103845341"
+    let apiTokenInstance = "a59cd09ed1f449d8981586c7cf24526dfa9c8e6eedf1489b8c"
+    $scope.getInstanceStatus = () => {
+        $http.get(`https://api.green-api.com/waInstance${idInstance}/getStateInstance/${apiTokenInstance}`).then(
+            (response) => {
+                let { stateInstance } = response.data
+                if (stateInstance === "authorized") {
+                    $scope.session.is_logged_in = true
+                } else {
+                    getQrCode()
+                }
+            }
+        )
+    }
+
+    $scope.connectGreenApi = () => {
+        $http.get(`https://api.green-api.com/waInstance${idInstance}/getSettings/${apiTokenInstance}`).then(
+            response => {
+                if (response.data) {
+                    let { wid } = response.data
+                    $scope.current_device.device = wid
+                    $scope.getInstanceStatus()
+                }
+            }
+        )
+    }
+    $scope.connectGreenApi();
+
     $scope.hasPhoneNumber = true
     let phoneNumbers
     if (params.telefono) {
@@ -37,9 +68,9 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
         $scope.hasPhoneNumber = false
     }
 
-    //console.log(phoneNumbers)
     $scope.phoneNumbers = []
     if (phoneNumbers) {
+        //Only cellphone numbers
         for (const p of phoneNumbers) {
             if (p.length == 10) {
                 $scope.phoneNumbers.push({
@@ -48,9 +79,6 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
             }
         }
     }
-
-
-    console.log($scope.phoneNumbers)
 
     if ($scope.phoneNumbers.length == 0) {
         $scope.hasPhoneNumber = false
@@ -63,7 +91,6 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
     } else {
         $scope.whatsapp.message = 'ACONTPLUS adjunta el siguiente comprobante:'
     }
-
 
     $scope.validatePhoneNumber = (phone) => {
         if (!phone) {
@@ -84,7 +111,6 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
     }
 
     $scope.addOtherNumber = (value) => {
-        console.log(value)
         if (value == '0') {
             Swal.fire({
                 text: "Igrese el numero de whatsapp a enviar",
@@ -112,223 +138,25 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
                 }
             })
         }
-
     }
 
-    $scope.insert = () => {
-        let data = {
-            browser: JSON.stringify(parserResults.browser),
-            os: JSON.stringify(parserResults.os),
-        }
-        mS.getData('post', 'WhatsAppSession/Post', { data: data }, true).then(response => {
-            if (response.code == '1') {
-                let temp = JSON.parse(response.payload)
-                $scope.client.id = temp[0].id
-                $scope.client.description = 'Session with token: ' + temp[0].id
-                $scope.login()
-            }
-            if (response.code == '0') {
-                tS.toastr('warning', response.message)
-            }
-        }).catch(error => {
-            console.log(error)
-        })
-    }
-
-    $scope.initialLoad = () => {
-        let data = {
-            browser: JSON.stringify(parserResults.browser),
-            os: JSON.stringify(parserResults.os),
-        }
-        mS.getData('get', 'WhatsAppSession/Get?json=' + JSON.stringify(data), null, true).then(response => {
-            if (response.code == '1') {
-                $scope.session.id = JSON.parse(response.payload)[0].id
-                $scope.client.id = JSON.parse(response.payload)[0].id
-                $scope.login()
-            }
-            if (response.code == '0') {
-                $scope.insert()
-            }
-        }).catch(error => {
-            console.log(error)
-        })
-    }
-    //$scope.initialLoad()
-
-
-
-    /***************************************************************/
-
-    /**USING WHATSAPP WEB PEDRO LOPEZ */
-
-    /************************************************************ */
-
-    const _env = 1
-    let url = _env == 1 ? 'http://localhost:8000' : 'http://74.50.85.164:8000'
-
-    // $scope.login = () => {
-    //     //console.log($scope.client)
-    //     socket.emit('create-session', {
-    //         id: $scope.client.id,
-    //     }, () => {
-    //         console.log()
-    //     })
-    // }
-
-
-    $scope.getOldSession = () => {
-        //socket.emit('get-session', { id: $scope.session.id })
-    }
-
-    // socket.on('message', (msg) => {
-    //     if ($scope.session.id == msg.id) {
-    //         hideLoader()
-    //         $scope.session.message = msg.text
-    //         tS.toastr('info', msg.text, 'Estado')
-    //     }
-    // })
-
-    //socket.on('hello', (data) => {
-    //    console.log(data)
-    //})
-
-
-
-    //socket.on('qr', (data) => {
-    //    if (data) {
-    //        showLoader()
-    //        //console.log(session)
-    //        if ($scope.session.id == data.id) {
-    //            //$scope.session.src = data.src
-    //            let image = document.getElementById("qrcode");
-    //            image.src = data.src
-    //        } else {
-    //            //$scope.logout(data.id)
-    //        }
-    //        hideLoader()
-    //    }
-    //})
-
-    //socket.on('ready', (data) => {
-    //    console.log(data)
-    //    if (data.id == $scope.session.id) {
-    //        $scope.session.is_logged_in = true
-    //        let image = document.getElementById("qrcode");
-    //        image.setAttribute('src', '');
-    //        tS.toastr("info", data.text)
-    //    }
-    //})
-
-    // socket.on('authenticated', function (data) {
-    //     if (data.id == $scope.session.id) {
-    //         $scope.session.is_logged_in = true
-    //         let image = document.getElementById("qrcode");
-    //         image.setAttribute('src', '');
-    //         tS.toastr("info", data.text)
-    //     }
-    // })
-    // socket.on('remote_session_saved', function (data) {
-    //     if (data.id == $scope.session.id) {
-    //         $scope.session.is_logged_in = true
-    //         tS.toastr("info", data.text)
-    //     }
-    // })
-
-
-    /************************************************************** */
-    /*******************************END ****************************/
-
-    /***************************************************************/
-
-    /** USING GO-WHATSAPP MULTIDEVICE */
-
-    /************************************************************ */
     const http = axios.create({
-        baseURL: 'http://74.50.85.164:3000'
+        baseURL: "https://api.green-api.com"
     })
-
-    $scope.mainApp = {
-        app_ws: null,
-        app_host: '74.50.85.164:3000',
-        app_name: 'Whatsapp API Multi Device ({{ .AppVersion }})',
-        is_logged_in: false,
-        connected_devices: null,
-        type_group: "g.us",
-        type_user: "s.whatsapp.net"
-    }
-    $scope.connected_devices = []
-
-    $scope.current_device = {}
-    $scope.getSockets = () => {
-
-        if (window["WebSocket"]) {
-            let wsType = location.protocol !== 'https:' ? 'ws://' : 'wss://'
-            //$scope.mainApp.app_ws = new WebSocket(wsType + document.location.host + "/ws");
-            $scope.mainApp.app_ws = new WebSocket(wsType + $scope.mainApp.app_host + "/ws");
-
-            $scope.mainApp.app_ws.onopen = (evt) => {
-                $scope.mainApp.app_ws.send(JSON.stringify({
-                    "code": "FETCH_DEVICES",
-                    "message": "List device"
-                }))
-            };
-
-            $scope.mainApp.app_ws.onmessage = (evt) => {
-                const message = JSON.parse(evt.data)
-                switch (message.code) {
-                    case 'LOGIN_SUCCESS':
-                        //showSuccessInfo(message.message)
-                        //$('#modalLogin').modal('hide');
-
-                        tS.toastr('info', 'message.message')
-
-                        // fetch devices
-                        $scope.mainApp.app_ws.send(JSON.stringify({ "code": "FETCH_DEVICES" }))
-                        break;
-                    case 'LIST_DEVICES':
-                        //this.connected_devices = message.result
-                        if (message.result) {
-                            $scope.connected_devices = message.result
-
-                            $scope.current_device.device = '+' + $scope.connected_devices[0].device.substring(0, $scope.connected_devices[0].device.indexOf('.'))
-
-                            console.log($scope.current_device)
-                            //console.log($scope.connected_devices)
-                            if ($scope.current_device.device) {
-                                $scope.session.is_logged_in = true
-                            }
-                        } else {
-                            if (!$scope.session.is_logged_in) {
-                                getQrCode()
-                            }
-                        }
-
-                        $scope.$digest()
-                        break;
-                    default:
-                        console.log(message)
-                }
-            };
-        } else {
-            console.error('Your browser does not support WebSockets');
-        }
-    }
-    $scope.getSockets()
 
     function getQrCode() {
         return new Promise(async (resolve, reject) => {
             try {
-                let response = await http.get(`/app/login`)
-                let results = response.data.results
-                console.log(results)
-                // this.login_link = results.qr_link;
-                // this.login_duration_sec = results.qr_duration;
-
-                // let image = document.getElementById("qrcode");
-                // image.src = results.qr_link
+                let url = `/waInstance${idInstance}/qr/${apiTokenInstance}` // `/app/login`
+                let response = await http.get(url)
                 if ($scope.hasPermissions) {
                     tS.toastr("info", "Por favor escanee el codigo QR, con su cuenta de whatsapp")
-                    $scope.session.src = results.qr_link
+                    if (response) {
+                        let { type, message } = response.data
+                        if (type === "qrCode") {
+                            $scope.session.src = "data:image/png;base64," + message
+                        }
+                    }
                 } else {
                     tS.toastr("info", "Ha perdido session de whatsapp, comuniquese con el administrador del sistema")
                 }
@@ -338,8 +166,6 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
 
                 setTimeout(() => {
                     if (!$scope.session.is_logged_in) {
-                        console.log('Refreshing QR')
-                        //tS.toastr('info', 'Obteniendo nuevo QR')
                         getQrCode()
                     }
                 }, (results.qr_duration * 1000))
@@ -355,21 +181,25 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
 
     let totalMessages = 1
 
-    function sendSms(message) {
-
+    function sendSms(message, firstMessage = null) {
         return new Promise(async (resolve, reject) => {
             try {
-                //this.message_loading = true;
                 showLoader()
-                let phone = phoneNumberFormatter($scope.whatsapp.number)
-
-                let payload = new FormData();
-                payload.append("phone", phone)
-                payload.append("message", message ? message : $scope.whatsapp.message)
-                let response = await http.post(`/send/message`, payload)
-                //this.sendMessageReset();
+                let url = `/waInstance${idInstance}/sendMessage/${apiTokenInstance}`
+                let payload = {
+                    chatId: phoneNumberFormatter($scope.whatsapp.number),
+                    message: message ? message : $scope.whatsapp.message,
+                }
+                let response = await http.post(url, JSON.stringify(payload), {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
                 resolve(response.data.message)
                 totalMessages++
+                if (firstMessage) {
+                    $scope.sendFiles()
+                }
             } catch (error) {
                 if (error.response) {
                     reject(error.response.data.message)
@@ -378,25 +208,21 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
                 }
             } finally {
                 hideLoader()
-                //this.message_loading = false;
             }
         })
     }
 
-    $scope.sendMedia = (caption, file, lastMessage = null) => {
-
+    $scope.sendMedia = (caption, file, lastMessage = null, contentTye = null) => {
         return new Promise(async (resolve, reject) => {
             try {
-                //this.message_loading = true;
                 showLoader()
+                let url = `/waInstance${idInstance}/sendFileByUpload/${apiTokenInstance}`
                 let payload = new FormData();
                 let phone = phoneNumberFormatter($scope.whatsapp.number)
                 payload.append("caption", caption)
-                payload.append("phone", phone)
+                payload.append("chatId", phone)
                 payload.append("file", file)
-
-                let response = await http.post(`/send/file`, payload)
-                //this.sendMessageReset();
+                let response = await http.post(url, payload)
                 resolve(response.data.message)
                 totalMessages++
                 if (lastMessage) {
@@ -405,19 +231,15 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
                         messageAdd = `Si tiene alguna observación, favor comunicarse con la empresa *${params.nombreComercial}* al siguiente número: *${params.telefonoEstablecimiento}*`
                         sendSms(messageAdd)
                     }
-
                     setTimeout(() => {
                         sendSms(`Gracias por preferirnos, este comprobante se adjuntara a su correo electrónico!.`)
                     }, 2000)
 
                     setTimeout(() => {
-                        sendSms(`*_No es necesario responder a este número_*`)
+                        sendSms(`*_Por favor responda con un OK y agregue este número a sus contactos_*`)
                         saveHistory()
                     }, 3000)
-
                 }
-
-
             } catch (error) {
                 if (error.response) {
                     reject(error.response.data.message)
@@ -426,36 +248,16 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
                 }
             } finally {
                 hideLoader()
-                //this.message_loading = false;
             }
         })
-
-        // let data = {
-        //     number: $scope.whatsapp.number,
-        //     caption: caption,
-        //     fileName: response.fileName,
-        //     contentTye: response.contentTye,
-        //     base64: response.base64
-        // }
-        // console.log(data)
-        // mS.getData('post', url + '/send-media', data).then(
-        //     response => {
-        //         console.log(response)
-        //     }
-        // ).catch(error => {
-        //     console.log(error)
-        // })
     }
 
     $scope.generateXml = () => {
         mS.getFile('get', 'DocumentoElectronico/GetXmlSri/' + params.idDocumentoElectronico, null, true).then(response => {
-            //$scope.fileName = response
             let fileName = response.headers()['content-disposition'].split(';')[1].split('=')[1].replace('"', "")
             fileName = fileName.replace('"', "")
-
             const file = new File([response.data], fileName, { type: response.headers()["content-type"], })
-
-            $scope.sendMedia(fileName, file)
+            $scope.sendMedia(fileName, file, null, "text/xml")
         }).catch(error => {
             console.log(error)
         })
@@ -472,10 +274,8 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
         'CI': 'RCINGR'
     })
 
-    
-    const reportHasService =()=>['08', '09'].includes($scope.codDoc);
-    const getTypeReport =()=> ['08', '09', 'CI'].includes($scope.codDoc) ? "Reporte/Download" :  "Reporte/DynamicReport"
-
+    const reportHasService = () => ['08', '09', 'CI'].includes($scope.codDoc);
+    const getTypeReport = () => ['08', '09', 'CI'].includes($scope.codDoc) ? "Reporte/Download" : "Reporte/DynamicReport"
 
     $scope.generateFile = () => {
         let format = 'pdf'
@@ -495,10 +295,6 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
         }
         let url = getTypeReport();
         mS.getFile('post', url, JSON.stringify(parameters), true).then(response => {
-
-            // let serverData = new Blob([response.data], {
-            //     type: response.headers()["content-type"],
-            // });
             let fileName = response
                 .headers()["content-disposition"].split(";")[1]
                 .split("=")[1];
@@ -516,12 +312,26 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
         if (formatted.startsWith('0')) {
             formatted = '593' + formatted.substr(1)
         }
-        // if (!formatted.endsWith('@c.us')) {
-        //     formatted += '@c.us'
-        // }
+        if (!formatted.endsWith('@c.us')) {
+            formatted += '@c.us'
+        }
         return formatted
     }
 
+    $scope.sendFiles = () => {
+        switch ($scope.type) {
+            case 'SRI':
+                $scope.generateXml()
+                $scope.generateFile()
+                break
+            case 'GenericFile':
+                $scope.generateFile()
+                break
+            default:
+                break
+        }
+    }
+    //first request
     $scope.sendMessage = () => {
         try {
             totalMessages = 0
@@ -533,63 +343,7 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
                 tS.toastr('warning', 'El mensaje no puede estar vacio!')
                 return
             }
-
-
-            sendSms()
-
-            switch ($scope.type) {
-                case 'SRI':
-                    $scope.generateXml()
-                    // if (!$scope.generateXml()) {
-                    //     tS.toastr('warning', 'No se pudo general el xml para enviar por correo')
-                    //     return
-                    // }
-                    // if (!$scope.generateFile()) {
-                    //     return
-                    // }
-                    $scope.generateFile()
-                    break
-                case 'GenericFile':
-                    // if (!$scope.generateFile()) {
-                    //     return
-                    // }
-                    $scope.generateFile()
-                    break
-                default:
-                    break
-            }
-
-            // let data = { number: $scope.whatsapp.number, message: $scope.whatsapp.message }
-            // mS.getData('post', url + '/send-message', data).then(
-            //     response => {
-            //         if (response.status) {
-            //             switch ($scope.type) {
-            //                 case 'SRI':
-            //                     $scope.generateXml()
-            //                     // if (!$scope.generateXml()) {
-            //                     //     tS.toastr('warning', 'No se pudo general el xml para enviar por correo')
-            //                     //     return
-            //                     // }
-            //                     // if (!$scope.generateFile()) {
-            //                     //     return
-            //                     // }
-            //                     $scope.generateFile()
-            //                     break
-            //                 case 'GenericFile':
-            //                     // if (!$scope.generateFile()) {
-            //                     //     return
-            //                     // }
-            //                     $scope.generateFile()
-            //                     break
-            //                 default:
-            //                     break
-            //             }
-            //         }
-            //         console.log(response)
-            //     }
-            // ).catch(error => {
-            //     console.log(error)
-            // })
+            sendSms(null, true)
         } catch (error) {
             console.log(error)
         }
@@ -599,7 +353,15 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
         return new Promise(async (resolve, reject) => {
             try {
                 showLoader()
-                await http.get(`/app/logout`)
+                let url = `/waInstance${idInstance}/logout/${apiTokenInstance}`
+                let result = await http.get(url)
+                if (result) {
+                    let { isLogout } = result.data
+                    if (isLogout) {
+                        tS.toastr('info', "Logout success")
+                        getQrCode()
+                    }
+                }
                 resolve()
             } catch (error) {
                 if (error.response) {
@@ -613,90 +375,8 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
         })
     }
 
-    $scope.logout = async () => {
-        try {
-            await logoutApi()
-            tS.toastr('info', "Logout success")
-            $scope.session.is_logged_in = false
-            // fetch devices
-            $scope.mainApp.app_ws.send(JSON.stringify({ "code": "FETCH_DEVICES" }))
-        } catch (err) {
-            console.log(err)
-        }
-    }
-
-    function reconnectApi() {
-        return new Promise(async (resolve, reject) => {
-            try {
-                await http.get(`/app/reconnect`)
-                resolve()
-            } catch (error) {
-                if (error.response) {
-                    reject(error.response.data.message)
-                } else {
-                    reject(error.message)
-                }
-            }
-        })
-    }
-
-    $scope.reconnect = async () => {
-        try {
-            await reconnectApi()
-            tS.toastr('info', "Reconnect success")
-            // fetch devices
-            $scope.mainApp.app_ws.send(JSON.stringify({ "code": "FETCH_DEVICES" }))
-        } catch (err) {
-            console.log(err)
-        }
-    }
-
-    /************************************************************** */
-    /*******************************END ****************************/
-
-
-
-    /** USING VENOM */
-
-    /************************************************************ */
-
-
-    /************************************************************** */
-    /*******************************END ****************************/
-
-
-
-
-    /** STATISCS */
-
-    /************************************************************ */
-
-    function saveHistory() {
-        let data = {
-            browser: JSON.stringify(parserResults.browser),
-            os: JSON.stringify(parserResults.os),
-            emisor: $scope.current_device.device,
-            receptor: $scope.whatsapp.number,
-            mensaje: $scope.whatsapp.message,
-            totalMensajes: totalMessages,
-            params: JSON.stringify(params)
-        }
-        mS.getData('post', 'WhatsappMessage/Post', { data: data }, true).then(response => {
-            if (response.code == '1') {
-                //console.log(response.message)
-                tS.toastr("info", response.message)
-            }
-        }).catch(err => {
-            console.log(err)
-        })
-    }
-
-    /************************************************************** */
-    /*******************************END ****************************/
-
-
-    $scope.askToLogout = () => {
-        Swal.fire({
+    $scope.askToLogout = async () => {
+        let { isConfirmed } = await Swal.fire({
             //title: '',
             text: "Esta seguro de cerrar la session?",
             icon: 'warning',
@@ -711,8 +391,36 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
                 $scope.logout()
             }
         })
+        if (isConfirmed) {
+            await logoutApi()
+            $scope.session.is_logged_in = false
+        }
     }
 
+    /** STATISCS */
+    /************************************************************ */
+    function saveHistory() {
+        let data = {
+            browser: JSON.stringify(parserResults.browser),
+            os: JSON.stringify(parserResults.os),
+            emisor: $scope.current_device.device,
+            receptor: $scope.whatsapp.number,
+            mensaje: $scope.whatsapp.message,
+            totalMensajes: totalMessages,
+            params: JSON.stringify(params)
+        }
+        mS.getData('post', 'WhatsappMessage/Post', { data: data }, true).then(response => {
+            if (response.code == '1') {
+                tS.toastr("info", response.message)
+            } else {
+                console.log(response)
+            }
+        }).catch(err => {
+            console.log(err)
+        })
+    }
+    /************************************************************** */
+    /*******************************END ****************************/
     $scope.closeModal = function () {
         uibModal.close()
     }

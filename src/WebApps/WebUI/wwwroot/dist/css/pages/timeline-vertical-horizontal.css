@@ -126,7 +126,7 @@ Timeline page
   border-left-width: 0; }
 
 .timeline-badge.primary {
-  background-color: #fb9678; }
+  background-color: #d61672; }
 
 .timeline-badge.success {
   background-color: #00c292; }
@@ -157,14 +157,14 @@ Horizontal Timeline page
 ******************/
 .cd-horizontal-timeline .events a {
   padding-bottom: 6px;
-  color: #fb9678; }
+  color: #d61672; }
 
 .cd-horizontal-timeline .filling-line,
 .cd-horizontal-timeline .events a.selected::after {
-  background: #fb9678; }
+  background: #d61672; }
 
 .cd-horizontal-timeline .events a.selected::after {
-  border-color: #fb9678; }
+  border-color: #d61672; }
 
 .cd-horizontal-timeline .m-t-40 {
   margin-top: 40px !important; }

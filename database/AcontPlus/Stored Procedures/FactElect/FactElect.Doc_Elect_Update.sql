@@ -15,7 +15,8 @@ BEGIN
 
 	DECLARE @idEntidad INT	
 	DECLARE @codEstado INT
-	DECLARE @message VARCHAR(100)
+	DECLARE @message VARCHAR(100) = 'No actualizado'
+	DECLARE @codeResponse VARCHAR(1) = '0'
 
 	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idRol	
 
@@ -32,16 +33,19 @@ BEGIN
 			IF @codEstado = 2
 				BEGIN 
 					UPDATE DocumentoElectronico SET isAutomatic = 1 WHERE idDocumentoElectronico = @id
+					SET @codeResponse = '1'
 					SET @message = 'Enviado a autorizar en el SRI'
-				END 
+				END
 
-			ELSE IF @codEstado = 5 OR @codEstado = 0
+			IF (@codEstado IN (0,5))
 				BEGIN
 					UPDATE DocumentoElectronico SET codEstado = 1 WHERE idDocumentoElectronico = @id
+					SET @codeResponse = '1'
 					SET @message = 'El Xml se esta Actualizando'
 				END
+
 		COMMIT TRAN 
-		SELECT '1'code, @message 'message'
+		SELECT @codeResponse , @message 'message'
 		RETURN
 	END TRY
 	

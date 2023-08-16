@@ -40,53 +40,53 @@ BEGIN
 			,@montoCredito DECIMAL(10,5)
 			,@nota NVARCHAR(300)
 			,@validationSri BIT
+			,@IDType VARCHAR(2)
+			,@customerId INT
 	
 	SELECT  @idEntidad = idEntidad ,@idUsuario = idUsuario  FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
 
 
-
-	SELECT 
-		 @idEmpleado = IIF(idEmpleado = 0,NULL,idEmpleado) 
-		,@idTipoIdentificacion = IIF(idTipoIdentificacion = 0,NULL,idTipoIdentificacion)
-		,@idTipoClienteProveedor = IIF(idTipoClienteProveedor = 0,NULL,idTipoClienteProveedor)
-		,@idTipoEntidad = IIF(idTipoEntidad = 0,NULL,idTipoEntidad)
-		,@idCiudad = IIF(idCiudad = 0,NULL,idCiudad)
-		,@idSubContribuyente = IIF(idSubContribuyente = 0,NULL,idSubContribuyente)
-		,@idTiempoCredito = IIF(idTiempoCredito = 0,NULL,idTiempoCredito)
-		,@idEmpresa = IIF(idEmpresa = 0,NULL,idEmpresa)
-		,@idCargo = IIF(idCargo = 0,NULL,idCargo)
-		,@numeroIdentificacion = numeroIdentificacion
-		,@nombreFiscal = nombreFiscal
-		,@nombreComercial = nombreComercial
-		,@direccion = direccion
-		,@telefono = telefono
-		,@correo = correo
-		,@placa = placa
-		,@nota = nota
-		,@montoCredito = ISNULL(montoCredito,0)
-		,@validationSri = validationSri
+	SELECT @idEmpleado             = IIF(idEmpleado = 0,NULL,idEmpleado) 
+		  ,@idTipoIdentificacion   = IIF(idTipoIdentificacion = 0,NULL,idTipoIdentificacion)
+		  ,@idTipoClienteProveedor = IIF(idTipoClienteProveedor = 0,NULL,idTipoClienteProveedor)
+		  ,@idTipoEntidad          = IIF(idTipoEntidad = 0,NULL,idTipoEntidad)
+		  ,@idCiudad               = IIF(idCiudad = 0,NULL,idCiudad)
+		  ,@idSubContribuyente     = IIF(idSubContribuyente = 0,NULL,idSubContribuyente)
+		  ,@idTiempoCredito        = IIF(idTiempoCredito = 0,NULL,idTiempoCredito)
+		  ,@idEmpresa              = IIF(idEmpresa = 0,NULL,idEmpresa)
+		  ,@idCargo                = IIF(idCargo = 0,NULL,idCargo)
+		  ,@numeroIdentificacion   = numeroIdentificacion
+		  ,@nombreFiscal           = nombreFiscal
+		  ,@nombreComercial        = nombreComercial
+		  ,@direccion              = direccion
+		  ,@telefono               = telefono
+		  ,@correo                 = correo
+		  ,@placa                  = placa
+		  ,@nota                   = nota
+		  ,@montoCredito           = ISNULL(montoCredito,0)
+		  ,@validationSri          = validationSri
 	FROM OPENJSON(@json)
-	WITH(idEmpleado INT '$.idEmpleado'
-	    ,idTipoIdentificacion INT '$.idTipoIdentificacion'
-	    ,idTipoClienteProveedor INT '$.idTipoClienteProveedor'
-	    ,idTipoEntidad INT '$.idTipoEntidad'
-	    ,idCiudad INT '$.idCiudad'
-	    ,idSubContribuyente INT '$.idSubContribuyente'
-	    ,idTiempoCredito INT '$.idTiempoCredito'
-	    ,idEmpresa INT '$.idEmpresa'
-	    ,idCargo INT '$.idCargo'
-		,numeroIdentificacion NVARCHAR(50) '$.numeroIdentificacion'
-		,nombreFiscal NVARCHAR(100) '$.nombreFiscal'
-		,nombreComercial NVARCHAR(100) '$.nombreComercial'
-		,direccion NVARCHAR(200) '$.direccion'
-		,telefono VARCHAR(150) '$.telefono'
-		,correo VARCHAR(200) '$.correo'
-		,placa VARCHAR(150) '$.placa'
-		,montoCredito DECIMAL(15,5) '$.montoCredito'
-		,nota NVARCHAR(300) '$.nota'
-		,validationSri BIT '$.validationSri')
+	WITH(idEmpleado                    INT '$.idEmpleado'
+	    ,idTipoIdentificacion          INT '$.idTipoIdentificacion'
+	    ,idTipoClienteProveedor        INT '$.idTipoClienteProveedor'
+	    ,idTipoEntidad                 INT '$.idTipoEntidad'
+	    ,idCiudad                      INT '$.idCiudad'
+	    ,idSubContribuyente            INT '$.idSubContribuyente'
+	    ,idTiempoCredito               INT '$.idTiempoCredito'
+	    ,idEmpresa                     INT '$.idEmpresa'
+	    ,idCargo				       INT '$.idCargo'
+		,numeroIdentificacion  VARCHAR(50) '$.numeroIdentificacion'
+		,nombreFiscal         VARCHAR(100) '$.nombreFiscal'
+		,nombreComercial      VARCHAR(100) '$.nombreComercial'
+		,direccion            VARCHAR(200) '$.direccion'
+		,telefono             VARCHAR(150) '$.telefono'
+		,correo               VARCHAR(200) '$.correo'
+		,placa                VARCHAR(150) '$.placa'
+		,montoCredito        DECIMAL(15,5) '$.montoCredito'
+		,nota                 VARCHAR(300) '$.nota'
+		,validationSri                 BIT '$.validationSri')
 
-	IF EXISTS (SELECT 1 FROM Cliente WHERE numeroIdentificacion = @numeroIdentificacion AND idEntidad = @idEntidad)
+	IF EXISTS (SELECT 1 FROM Cliente WITH (NOLOCK) WHERE numeroIdentificacion = @numeroIdentificacion AND idEntidad = @idEntidad)
 		BEGIN
 			SELECT '0'code,'Este cliente ya se encuentra registrado' as 'message'
 			RETURN 
@@ -94,10 +94,6 @@ BEGIN
 
 	BEGIN TRY 
 		BEGIN TRAN
-
-		DECLARE @IDType VARCHAR(2)
-			,@customerId INT
-
 			IF NOT EXISTS(SELECT 1 FROM Customer.Customer WHERE IDCard = LTRIM(RTRIM(@numeroIdentificacion)))
 				BEGIN
 					SET @IDType = (SELECT codigoSri FROM TipoIdentificacion t WHERE t.idTipoIdentificacion = @idTipoIdentificacion)

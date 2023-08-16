@@ -1,10 +1,10 @@
-﻿using Services.Common.Logs;
-using DataAccess;
+﻿using DataAccess;
 using DataAccess.Almacen;
 using Domain.Models;
 using Domain.ViewModels.Almacen;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common.Logs;
 
 namespace WebUI.Controllers
 {
@@ -130,7 +130,7 @@ namespace WebUI.Controllers
 
         [HttpGet]
         public async Task<IActionResult> Search(string json)
-        {            
+        {
             LogWriter _log = new LogWriter(_configuration);
             var _response = new GenericResponse();
             try
@@ -188,30 +188,6 @@ namespace WebUI.Controllers
             }
             return Ok(_response);
         }
-
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ArticuloParams data)
-        {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("jsonArticulo", data.jsonArticulo);
-            parameters.Add("json", data.jsonpvp);
-            parameters.Add("idBodega", data.idBodega);
-            parameters.Add("ubicacion", data.ubicacion ?? "");
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Almacen.Articulo_Insert", parameters)));
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> Put(int idArticulo, [FromBody] ArticuloParams data)
-        {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("id", idArticulo);
-            parameters.Add("jsonArticulo", data.jsonArticulo);
-            parameters.Add("json", data.jsonpvp);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Almacen.Articulo_Update", parameters)));
-        }
-
 
         public async Task<IActionResult> Delete(int idArticulo)
         {

@@ -3,14 +3,11 @@ const PublicRoutes = {
 };
 
 const PrivateRoutes = {
-  PRIVATE: "private",
-  LAYOUT: "Layout",
-  HOME: "Home",
-  POS: "Pos",
-  CATEGORIA: "Categoria",
-  RECIPE: "Recipe",
-  DISH: "Dish",
-  TABLE: "Table",
+  PRIVATE: "private", 
+  DASHBOARD: "Dashboard",
+  SALE: "Sale",
+  ORDER: 'Order'
+ 
 };
 
 export { PublicRoutes, PrivateRoutes };

@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Core.Entities;
+using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
+using Restaurant.Infrastructure.Data.Migrations;
+using Services.Common;
 
 namespace Restaurant.API.Controllers
 {
@@ -21,42 +20,87 @@ namespace Restaurant.API.Controllers
             _context = context;
         }
 
-        // GET: api/Floors
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Floor>>> GetFloors()
+        [Route("Get")]
+        public async Task<ActionResult<IEnumerable<Floor>>> Get()
         {
-            return await _context.Floors.ToListAsync();
+           return await _context.Floors.ToListAsync();
+        }
+
+        // GET: api/Floors
+        [HttpGet("GetByCode/{codEstab}")]
+        public async Task<ActionResult<IEnumerable<Floor>>> GetByCode(string codEstab)
+        {
+            var floors = await _context.Floors.Where(x => x.CodEstab == codEstab).ToListAsync();
+            return floors;
         }
 
         // GET: api/Floors/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Floor>> GetFloor(int id)
+
+        // POST: api/Floors
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<Floor>> Post(Floor floor)
         {
-            var floor = await _context.Floors.FindAsync(id);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            if (floor == null)
+            var floorExist = FloorExistsCodeEstab(floor.Code, floor.CodEstab);
+            if (floorExist) return BadRequest("El código ya está en uso");
+
+            floor.UserId = User.GetUserId();    
+            try
             {
-                return NotFound();
+                _context.Floors.Add(floor);
+                await _context.SaveChangesAsync();
+                return Ok("Ingresado exitosamente");
             }
-
-            return floor;
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        // PUT: api/Floors/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutFloor(int id, Floor floor)
+        public async Task<IActionResult> Put(int id, Floor floor)
         {
-            if (id != floor.Id)
+            if (id != floor.Id) return BadRequest();
+
+            var floorExist = FloorExistsCode(floor.Id, floor.CodEstab);
+            if (floorExist) return BadRequest("El código ya está en uso");
+
+            var floorNotExists = !FloorExists(id);
+            if (floorNotExists) return NotFound("No existe registro");
+
+            floor.UserId = User.GetUserId();
+            try
             {
-                return BadRequest();
+                _context.Entry(floor).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return Ok("Actualizado exitosamente");
             }
+            catch (Exception ex)
+            {
+                return BadRequest("Error al actualizar " + ex);
+            }
+        }
+
+        // DELETE: api/Floors/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteFloor(int id)
+        {
+            var floor = await _context.Floors.FindAsync(id);
+            if (floor == null) return NotFound();
+
+            floor.Deleted = true;
+            floor.Enabled = false;
+            floor.UserId = User.GetUserId();
 
             _context.Entry(floor).State = EntityState.Modified;
 
             try
             {
                 await _context.SaveChangesAsync();
+                return Ok();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -69,44 +113,21 @@ namespace Restaurant.API.Controllers
                     throw;
                 }
             }
-
-            return NoContent();
-        }
-
-        // POST: api/Floors
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Floor>> PostFloor(Floor floor)
-        {
-            if (string.IsNullOrWhiteSpace(floor.CodEstab))
-            {
-                return NoContent();
-            }
-            _context.Floors.Add(floor);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetFloor", new { id = floor.Id }, floor);
-        }
-
-        // DELETE: api/Floors/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteFloor(int id)
-        {
-            var floor = await _context.Floors.FindAsync(id);
-            if (floor == null)
-            {
-                return NotFound();
-            }
-
-            _context.Floors.Remove(floor);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
         }
 
         private bool FloorExists(int id)
         {
             return _context.Floors.Any(e => e.Id == id);
+        }
+
+        private bool FloorExistsCodeEstab(string code, string codEstab)
+        {
+            return _context.Floors.Any(e => e.Code == code && e.CodEstab == codEstab);
+        }
+
+        private bool FloorExistsCode(int id, string code)
+        {
+            return _context.Floors.Any(e => e.Id != id && e.Code == code);
         }
     }
 }

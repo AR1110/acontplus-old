@@ -1,0 +1,51 @@
+USE Acontplus
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		IGNACIO MANCHU
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+-- DROP PROC Restaurant.Dish_Update_Cancel
+CREATE OR ALTER PROC Restaurant.Dish_Update_Cancel
+@userRoleId INT
+,@id INT
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DECLARE @UserId INT
+
+	IF (@id = 0)
+	BEGIN
+		SELECT response = (SELECT code = '0', [message]= 'No se puede proceder a eliminar' FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
+		RETURN
+	END
+
+	BEGIN TRY
+		SET @UserId = (SELECT idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId)
+		BEGIN TRAN 
+
+			UPDATE Restaurant.[Dish]
+			SET Deleted = 1
+				, Enabled = 0
+				, UserId = @UserId
+			WHERE Id = @id
+
+ 		COMMIT TRAN
+		SELECT response = (SELECT code = '1', [message] = 'Eliminado correctamente' FOR JSON PATH, WITHOUT_ARRAY_WRAPPER )
+	END TRY
+	BEGIN CATCH
+		SELECT response = (SELECT code = '0', [message] = 'Error al registrar en base de datos' + ERROR_Message() FOR JSON PATH, WITHOUT_ARRAY_WRAPPER )
+        IF (@@TRANCOUNT > 0)
+            BEGIN
+				ROLLBACK TRAN
+			END			
+        INSERT INTO ErroresSistema
+		(token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, idUsuario)
+		VALUES(NEWID(), 'Restaurant.Dish/Delete', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), @userId)
+	END CATCH
+END
+GO

@@ -442,7 +442,7 @@
                         }
                         if (response.code === '1') {
                             fS.sweetAlert('success', response.message);
-                            $scope.aprobComprobantes();
+                            $scope.getAprobComprobantes();
                         }
                     }).catch(error => {
                         hideLoader();

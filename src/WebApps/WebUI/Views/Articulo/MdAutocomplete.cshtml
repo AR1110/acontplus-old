@@ -52,7 +52,11 @@
     }
 
     .zindex {
+        z-index: 999999 !important;        
+    }
+    .contentArticlePopover {
         z-index: 999999 !important;
+        max-width: 400px !important;
     }
 </style>
 
@@ -111,7 +115,10 @@
                                 {{ item.subFamilia}}
                             </td>
                             <td class="suggestion-column text-center">
-                                {{ item.medida}}
+                                <span article-fraccionado-info-drtv article="item" class="{{item.fraccionado}}">
+                                     {{ item.medida}}
+                                 </span> 
+                                
                             </td>
                             <td class="suggestion-column text-center">
                                 {{ item.marca}}
@@ -119,12 +126,12 @@
                             <td class="suggestion-column text-center" ng-repeat="pvp in item.priceSale">
                                 <span class="font-weight-bold">${{pvp.precio}}</span>
                             </td>
-                            <td class="suggestion-column text-center" ng-repeat="ub in item.warehouses">
+                            <td class="suggestion-column text-center" ng-if="item.warehouses.length >0" ng-repeat="ub in item.warehouses">
                                 {{ub.ubicacion}}
                             </td>
-                            @* <td ng-click="$ctrl.showDetailTarifa(item)" stop-event >
-                            <i class="ti-eye"></i>
-                            </td> *@
+                             <td class="suggestion-column text-center" ng-if="item.warehouses.length ===0">
+
+                             </td>
                         </tr>
                     </tbody>
                 </table>

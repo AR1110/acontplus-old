@@ -322,7 +322,7 @@
         }
     })
 
-    app.directive('estabStock', function (mainService, $compile, $timeout) {
+    app.directive('estabStock', function (mainService, $compile, $timeout, articuloService) {
         return {
             restrict: 'A',
             scope: {
@@ -356,7 +356,7 @@
                                             </div>   
                                              `;
 
-                        mainService.getData('get', '/Articulo/GetId?id=' + scope.article.idArticulo).then(response => {
+                        articuloService.getId(scope.article.idArticulo).then(response => {
                             const results = JSON.parse(response.payload) || [];
 
                             scope.branchs = results[4].map(val => {
@@ -1331,7 +1331,7 @@
 
 
 
-    app.directive('empleadoSearchDrtv', function ($compile,mainService) {
+    app.directive('empleadoSearchDrtv', function ($compile,empleadoService) {
         return {
             restrict: 'A',
             scope: {
@@ -1345,18 +1345,8 @@
                 }
                 scope.search = function (textSearch) {
                     if (textSearch.length > 1) {
-                        return mainService.getData('get', '/Empleado/Search?busqueda=' + textSearch).then(response => {
-                            let empleados = response.data || [];
-                            return empleados.map(item=>(
-                                {
-                                    idEmpleado: item.idEmpleado,
-                                    idTipoIdentificacion: item.idTipoIdentificacion,
-                                    nroIdentificacion: item.nroIdentificacion,
-                                    nombreCompleto: item.nombreCompleto,
-                                    estado: item.estado,
-                                }
-                            )) 
-                        }).catch(error=>{
+                        return empleadoService.search({textSearch})
+                        .catch(error=>{
                             console.log(error)
                         })
                     }
@@ -1477,6 +1467,93 @@
         };
     });
 
+
+
+    app.directive('articleFraccionadoInfoDrtv', function ($compile, $timeout, articuloService) {
+        return {
+            restrict: 'A',
+            scope: {
+                article: "=",
+                placement: "@"
+            },
+            link: function (scope, element) {
+                var popoverOptions = {
+                    title: '<i class="mdi mdi-information-outline"></i> Artículo Fraccionado',
+                    content: function () {
+                        var popoverContent = ` <div class="table-responsive">
+                                                <table class="table table-sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>N°.</th>
+                                                            <th>Medida</th>
+                                                            <th>Stock</th>
+                                                            <th ng-repeat="item in tarifas">
+                                                            {{item.tarifa}}
+                                                            </th> 
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="small">
+                                                        <tr ng-repeat="item in articlesFractionals">
+                                                            <td>{{$index+1}}</td>
+                                                            <td>{{item.medida}}</td>
+                                                            <td>{{item.stock}}</td>
+                                                            <td ng-repeat="tt in item.tarifas">
+                                                                {{tt.precioVenta}} 
+                                                            </td>
+                                                        <tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>   
+                                             `;
+
+                                             const query = {
+                                                tipo: 4,
+                                                idArticulo: scope.article.idArticulo
+                                             }
+                        articuloService.getArticlesFractionalInfo(query).then(response => {
+                            scope.tarifas = response[0].tarifas;
+                            scope.articlesFractionals = response;
+                            console.log(response);                    
+                        }).catch(error=>{
+                            console.log(error)
+                        })
+
+                        // Compile the popover content with the scope
+                        let compiledContent = $compile(popoverContent)(scope);
+                        scope.$apply();
+                        return compiledContent;
+
+                    },
+                    placement: scope.placement || 'left',
+                    trigger: 'outsideClick',
+                    html: true,
+                    customClass: 'contentArticlePopover',
+                    container: 'body'
+                };
+
+
+                // // Initialize the popover using element.popover()
+                $(element).popover(popoverOptions);
+
+                // // Open popover on element click
+                element.on('mouseover', function (event) {
+                    $(element).popover('show');
+                });
+
+                // // Close popover on outside click
+                $(document).on('mouseover', function (event) {
+                    if (!$(element).is(event.target) && !$(element).has(event.target).length && $('.popover').has(event.target).length === 0) {
+                        $(element).popover('hide');
+                    }
+                });
+
+                // Clean up the popover when the directive is destroyed
+                // scope.$on('$destroy', function () {
+                //     $(element).popover('destroy');
+                // });
+            }
+        };
+    })
     //filters 
 
      

@@ -1,23 +1,57 @@
 {
     "extends": "@tsconfig/svelte/tsconfig.json",
-
-    "include": ["**/*"],
+    "include": [
+        "**/*"
+    ],
     "exclude": [
         "node_modules/*"
     ],
-
     "compilerOptions": {
-        "target": "es2015",
+        "target": "esnext",
         // "module": "CommonJS",
-        "strict": true,
-        "forceConsistentCasingInFileNames": true,
+        "module": "ESNext",
+        "strict": false,
+        "forceConsistentCasingInFileNames": false,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
         // "lib": [ "es2015", "dom" ],
+        "lib": [
+            "ES2020",
+            "DOM",
+            "DOM.Iterable"
+        ],
         "baseUrl": ".",
         "paths": {
-            "$lib/*": ["App/lib/*"],
-            "$pet/*": ["App/lib/Pet/*"], 
-            "$petbreed/*": ["App/lib/PetBreed/*"],
-            "$petmedicalhistory/*": ["App/lib/PetMedicalHistory/*"],
+            "$core/*": [
+                "App/core/*"
+            ],
+            "$interfaces/*": [
+                "App/core/interfaces/*"
+            ],
+            "$services/*": [
+                "App/core/services/*"
+            ],
+            "$utils/*": [
+                "App/core/utils/*"
+            ],
+            "$lib/*": [
+                "App/lib/*"
+            ],
+            "$routes/*": [
+                "App/routes/*"
+            ],
+            "$restaurant/*": [
+                "App/routes/restaurant/*"
+            ],
+            "$pet/*": [
+                "App/lib/Pet/*"
+            ],
+            "$petbreed/*": [
+                "App/lib/PetBreed/*"
+            ],
+            "$petmedicalhistory/*": [
+                "App/lib/PetMedicalHistory/*"
+            ],
         }
     }
 }

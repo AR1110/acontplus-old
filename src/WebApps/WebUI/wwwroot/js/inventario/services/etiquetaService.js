@@ -4,7 +4,7 @@
     'use strict';
 
     app.factory('etiquetaService', function(mainService){
-        let url = 'Etiqueta/';
+        let url = 'Inventario/Etiqueta/';
 
         let service = {}
         

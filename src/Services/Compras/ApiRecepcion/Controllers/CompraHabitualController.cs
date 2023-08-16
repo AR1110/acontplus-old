@@ -1,8 +1,9 @@
-﻿using Services.Common.Logs;
-using DataAccess;
+﻿using DataAccess;
 using Domain.Dtos;
 using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common.Logs;
 
 namespace ApiRecepcion.Controllers
 {
@@ -48,7 +49,7 @@ namespace ApiRecepcion.Controllers
             {
                 await _db.SPExecute("Recepcion.CompraHabitual_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(DataHelper.SerializeDictionary(parameters.data)));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(Converters.SerializeDictionary(parameters.data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

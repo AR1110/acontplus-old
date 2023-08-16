@@ -1,8 +1,9 @@
-﻿using Services.Common.Logs;
-using DataAccess;
+﻿using DataAccess;
 using Domain.Dtos;
 using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common.Logs;
 
 namespace ApiConfig.Controllers
 {
@@ -25,7 +26,35 @@ namespace ApiConfig.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Config.WhatsAppMessage_Insert");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("json", DataHelper.SerializeDictionary(parameters.data));
+                _db.AddDynamicParam("json", Converters.SerializeDictionary(parameters.data));
+                _response = _db.GetDefault();
+            }
+            catch (Exception ex)
+            {
+                LogWriter _log = new LogWriter(_configuration);
+                _log.LogError("Error while insert whatsapp message: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al insertar el whatsapp");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+
+
+
+        [HttpPost("PostApp")]
+        public async Task<IActionResult> PostApp([FromBody] RequestApiDto parameters)
+        {
+            GenericResponse _response = new GenericResponse();
+            DbAccess _db = new DbAccess(_configuration);
+            try
+            {
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                await _db.SPExecute("Config.WhatsAppMessage_Insert_v2");
+                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _db.AddDynamicParam("json", Converters.SerializeDictionary(parameters.data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

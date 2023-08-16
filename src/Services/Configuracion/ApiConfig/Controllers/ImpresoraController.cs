@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Services.Common.Logs;
 using DataAccess;
 using Domain.Dtos;
 using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common.Logs;
 
 namespace ApiConfig.Controllers
 {
@@ -75,7 +72,7 @@ namespace ApiConfig.Controllers
         [HttpGet("GetId/{id}")]
         public async Task<IActionResult> GetId(int id)
         {
-            DbAccess _db = new DbAccess(_configuration);          
+            DbAccess _db = new DbAccess(_configuration);
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -106,7 +103,7 @@ namespace ApiConfig.Controllers
             {
                 await _db.SPExecute("ApiPrinter.Impresora_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", DataHelper.SerializeDictionary(parameters.data));
+                _db.AddDynamicParam("json", Converters.SerializeDictionary(parameters.data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -131,7 +128,7 @@ namespace ApiConfig.Controllers
             {
                 await _db.SPExecute("ApiPrinter.Impresora_Update");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", DataHelper.SerializeDictionary(parameters.data));
+                _db.AddDynamicParam("json", Converters.SerializeDictionary(parameters.data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

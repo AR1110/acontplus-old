@@ -1,17 +1,18 @@
-import { ApiProduct, Product } from "../models";
-// API wants a nested, complicated object
-export const ApiProductAdapter = (product: ApiProduct): Product => ({
-  idProduct: product.idProduct,
-  description: product.description,
-  iva: product.iva,
-  stock: product.stock,
-  stockMinimo: product.stockMinimo,
-  subFamilia: product.subFamilia,
-  marca: product.marca,
-  medidad: product.medidad,
-  style: product.style,
-  precio: product.precio,
-  images: product.images ? product.images.split(",") : [],
-  creationAt: product.creationAt ? product.creationAt : undefined,
-  updatedAt: product.updatedAt ? product.updatedAt : undefined,
-});
+import { ProductReadDto, RawProductData } from "../models";
+
+function productReadAdapter(products: RawProductData[]): Array<ProductReadDto> {
+    console.log(products)
+    return products.map((product) => ({
+            productId: product.idArticulo,
+            description: product.descripcion,            
+            unitPrice: product.precioCosto,
+            code: product.codigo,
+            stock: product.stock,
+            s3ObjectUrl: product.s3ObjectUrl
+        })
+    )
+}
+
+export {
+    productReadAdapter
+}

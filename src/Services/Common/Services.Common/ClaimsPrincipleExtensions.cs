@@ -8,9 +8,13 @@ namespace Services.Common
         {
             return user.FindFirst(ClaimTypes.Name)?.Value;
         }
-        public static string GetCompanyId(this ClaimsPrincipal user)
+        public static int GetCompanyId(this ClaimsPrincipal user)
         {
-            return user.FindFirst("companyId")?.Value;
+            return Convert.ToInt32(user.FindFirst("companyId")?.Value);
+        }        
+        public static string GetCompanyRuc(this ClaimsPrincipal user)
+        {
+            return user.FindFirst("companyRuc")?.Value;
         }
         public static int GetUserRoleId(this ClaimsPrincipal user)
         {

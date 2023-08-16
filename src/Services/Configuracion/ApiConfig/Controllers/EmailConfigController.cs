@@ -1,7 +1,7 @@
 ﻿using DataAccess;
 using Domain.Dtos;
 using Helpers;
-using Microsoft.AspNetCore.Http;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 using System.Security.Claims;
@@ -53,7 +53,7 @@ namespace ApiConfig.Controllers
                 await _db.SPExecute("Config.EmailConfig_Update");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
                 _db.AddDynamicParam("idEmailConfig", id);
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(DataHelper.SerializeDictionary(parameters.data)));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(Converters.SerializeDictionary(parameters.data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

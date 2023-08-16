@@ -1,28 +1,26 @@
-import { Http } from "@/core/utils";
+import { PATHS } from '@/core/constants/path';
+import { Http, loadAbort } from '@/core/utilities';
 
-// Doc: get all product
-const getProduct  = () => {
-  return Http({
-    method: "get",
-    url: "Articulo/Search?json={'busqueda': ''}",
-  });
+const URL = 'Articulo/'
+export const ProductService = {
+    getAll: () => {
+        const controller = loadAbort(); //Cancelar peticion 
+        const query = JSON.stringify({
+            tipo: 1,
+            pageIndex: 1,
+            pageSize: 50,
+        })
+
+        return {
+            call: Http({
+                method: 'get',
+                url: `${PATHS.INVENTARIO}${URL}Get`,
+                params: {
+                    json: query
+                },
+                signal: controller.signal
+            }),
+            controller
+        }
+    }
 };
-
-// Doc: get product by id
-const getProductById = (id: number) => {
-  return Http({
-    method: "get",
-    url: `Articulo/${id}`,
-  });
-};
-
-// Doc: search product
-const searchProduct = (search: string) => {
-  return Http({
-    method: "get",
-    url: `Articulo/Search?json={'busqueda': '${search}'}`,
-  });
-};
-
-
-export default { getProduct, getProductById, searchProduct };

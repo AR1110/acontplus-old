@@ -51,10 +51,13 @@ class BaseSearchArticulo {
             /**
              * return object {idArticulo: 0}
              */
+            showLoader();
             this.articuloSvc.findByEnterCode({textSearch: this.searchText, isSearchByCode: true}).then(response=>{
+                hideLoader();
                 this.selectArticleSearch(response)
                 this.searchText = null                
-            }).catch(error => {             
+            }).catch(error => {  
+                hideLoader();           
                 console.log(error);
             })
         } catch (error) {
@@ -71,9 +74,8 @@ class BaseSearchArticulo {
         if (!item || !item.hasOwnProperty('idArticulo')) return
 
         this.dataArticulo = {
-            idArticulo: item.idArticulo,
-            idPresentacion: item.idPresentacion,
-            presentacion: 'A'
+            idArticulo: item.idArticulo, 
+            llevaInventario: item.llevaInventario
         }
         this.selectedItem = null
 
@@ -97,42 +99,70 @@ class BaseSearchArticulo {
 
     getDataArticuloParaVenta() {
         try {
-            console.log(this.idBodega)
+            
             showLoader();
             this.dataArticulo.idBodega = this.idBodega;
+            this.dataArticulo.tipo = 6;
 
             /**
              * return object {articulo, medidas, datosAdicionales}
              */
-            this.articuloSvc.findForSale(this.dataArticulo).then(async result => {
-                hideLoader();               
-                let {code, message, titleSms} = result.response
-               
-                if (code === "1") {
+            this.articuloSvc.findForSale(this.dataArticulo).then(async dataArticuloApi => {
+
+                //Cuando el articulo no lleva inventario 
+                if(!dataArticuloApi.articulo.llevaInventario) {
+                    hideLoader();
                     this.setItemArticuloEnDetalle({
-                        item: result
+                        item: dataArticuloApi
                     })
                     return
                 }
-                
-                let {isConfirmed} = await Swal.fire({
-                    title: `<small>${titleSms}</small>`,
-                    icon: 'warning',
-                    html: `<small>${message}</small>`,
-                    allowOutsideClick: false,
-                    allowEscapeKey: false,
-                })
-
-                if (isConfirmed) {
-                    if (code === "0") {
-                        $("#custom-template-md-autocomplete-articulo").focus();
-                    }
-                    if (code === "2") {
+                this.articuloSvc.checkNotificationStock({
+                    idArticulo: this.dataArticulo.idArticulo,
+                    cantidad: 1,
+                    idBodega: this.dataArticulo.idBodega,
+                }).then(async responseApi=>{
+                    hideLoader();
+                    
+                    let {code, message, titleSms} = responseApi; 
+                    console.log(responseApi);
+                    if (code === "1") { 
                         this.setItemArticuloEnDetalle({
-                            item: result
+                            item: dataArticuloApi
                         })
+                        return 
                     }
-                }
+                    
+                    let {isConfirmed} = await Swal.fire({
+                        title: `<small>${titleSms}</small>`,
+                        icon: 'warning',
+                        html: `<small>${message}</small>`,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                    })
+
+                    if (isConfirmed) {
+                        if (code === "0") {
+                            $("#custom-template-md-autocomplete-articulo").focus();
+                        }
+                        if (code === "2") {
+                            this.setItemArticuloEnDetalle({
+                                item: dataArticuloApi
+                            })
+                        }
+                    }
+
+
+                }).catch(error => {
+                    hideLoader();
+                    console.log(error);
+                })
+                //hideLoader();
+                // this.setItemArticuloEnDetalle({
+                //     item: result
+                // })
+                // hideLoader();               
+                
             }).catch(error => {
                 hideLoader();
                 console.log(error);
@@ -183,6 +213,8 @@ class BaseSearchArticulo {
 
 }
 
+
+//Buscador de articulo general con pvp contado 
 class MdArticuloCtrl extends BaseSearchArticulo {
 
     static $inject = ['articuloService', 'mainService', '$rootScope', '$scope', '$timeout', '$q', 'commonService', 'modalService', 'nombreModal', 'nombreModalInventario', 'toastService']
@@ -357,6 +389,27 @@ class MdArticuloCtrl extends BaseSearchArticulo {
         }
         
     }
+
+
+    
+    async openModalArticuloFraccionadoInfo(item) {
+        try {
+            const {fileCtrl, controllers, templates} = this.nombreModalInventario.ARTICULO;
+            let ctrl = (await import(fileCtrl))[controllers['AFI']];
+            let template = templates['AFI'];
+            let modalRef = this._modalSvc.openModalCustom({
+                controller: ctrl,
+                template,
+                size: 'md',
+                params: item,
+                windowClass: 'zindex'
+            })
+    
+            
+        } catch (error) {
+            console.log(error)
+        }
+    }
 }
 
 
@@ -422,11 +475,12 @@ app.component("articuloSearchBarcode", {
                        ng-enter="$ctrl.getDataArticuloByEnterCode()"     
                        id="inputBarcode" 
                        ng-focus="$ctrl.focusDescripcionArticulo('#inputBarcode')" 
-                       placeholder="Ej: COMP1">
+                       placeholder="Ej: COMP1"> 
                 `,
     bindings: {
         tipoDoc: '=',
         setItemArticuloEnDetalle: '&',
+        idBodega: '='
     },
     controller: InputSearchBarcodeCtrl
 

@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.110";
+} from "./modalBaseCtrl.js?v=0.118";
 
 class ModalFacturaCtrl extends ModalBaseCtrl {
 
@@ -455,7 +455,8 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
         'formulario', 
         'toastService', 
         'params', 
-        'storageService'
+        'storageService',
+        'articuloService'
     ]
 
     constructor(
@@ -470,7 +471,8 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
         _fS, 
         _tS, 
         _params, 
-        _storageSvc
+        _storageSvc,
+        articuloSvc
     ) {
         super({
             $scope,
@@ -489,6 +491,8 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
 
         this._params = _params;
         this._storageSvc = _storageSvc;
+        this.articuloSvc = articuloSvc;
+
 
         let {
             TIPO_REGISTRO
@@ -639,7 +643,9 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
                 actividadTipoIva: this.actividadTipoIva,
-                codigoDoc: 'FV'
+                codigoDoc: 'FV', 
+                idBodega: this.idBodega,
+                parentScope: this
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
@@ -820,10 +826,11 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
         'nombreModal', 
         'formulario', 
         'toastService', 
-        'params'
+        'params',
+        'articuloService'
     ]
 
-    constructor($scope, $timeout, $uibModalInstance, facturaSvc, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params) {
+    constructor($scope, $timeout, $uibModalInstance, facturaSvc, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params, articuloSvc) {
         super({
             $scope,
             $timeout,
@@ -837,6 +844,7 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
         })
 
         this.facturaSvc = facturaSvc;
+        this.articuloSvc = articuloSvc;
 
         this.historyDatosAdicionales = [];
         this.datosAdicionalesArticulo = [];
@@ -969,7 +977,9 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
                 actividadTipoIva: this.actividadTipoIva,
-                codigoDoc: 'FV'
+                codigoDoc: 'FV',
+                idBodega: this.idBodega,
+                parentScope: this
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
@@ -1107,9 +1117,9 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
 
 export class ModalFacturaDetalleCtrl extends ModalFacturaCtrl {
 
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params']
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'params', 'articuloService']
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params) {
+    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params, articuloSvc) {
         super({
             $scope,
             $timeout,
@@ -1122,6 +1132,7 @@ export class ModalFacturaDetalleCtrl extends ModalFacturaCtrl {
             _tS
         })
         const self = this;
+        this.articuloSvc = articuloSvc;
 
         this.CELL_TEMPLATE_OPTION = `
         <a  ng-click="grid.appScope.$ctrl.openModalDatoAdicionalArticle(row.entity)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
@@ -1199,7 +1210,9 @@ export class ModalFacturaDetalleCtrl extends ModalFacturaCtrl {
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
                 actividadTipoIva: this.actividadTipoIva,
-                codigoDoc: 'FV'
+                codigoDoc: 'FV',
+                idBodega: this.idBodega,
+                parentScope: this
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
@@ -1239,7 +1252,8 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
         'nombreModal', 
         'formulario', 
         'toastService', 
-        'params'
+        'params',
+        'articuloService'
     ]
 
     constructor(
@@ -1253,7 +1267,8 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
         _nombreModalConst, 
         _fS, 
         _tS, 
-        _params
+        _params,
+        articuloSvc
     ) {
         super({
             $scope,
@@ -1267,9 +1282,16 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
             _tS
         })
 
+        this.facturaSvc = facturaSvc;
+        this.articuloSvc = articuloSvc;
+
+
+        this.newCustomer = false;
         this.historyDatosAdicionales = [];
 
-        this.facturaSvc = facturaSvc;
+
+
+
         let {
             TIPO_REGISTRO,
             data
@@ -1382,7 +1404,9 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
                 actividadTipoIva: this.actividadTipoIva,
-                codigoDoc: 'FV'
+                codigoDoc: 'FV',
+                idBodega: this.idBodega,
+                parentScope: this
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
@@ -1440,6 +1464,16 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
             console.log('ERROR AL OBTENER DATOS DEL CLIENTE', error)
             this.$scope.$apply();
         }
+    }
+
+
+    receiveDataCustomerSRI(result) {
+        if(result.idCliente===0) {
+            this.newCustomer = true;
+        }else{
+            this.newCustomer = false;
+        }
+        this.cliente = result; 
     }
 
     async onSave() {

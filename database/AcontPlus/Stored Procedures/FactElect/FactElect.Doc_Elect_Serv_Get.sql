@@ -40,7 +40,7 @@ BEGIN
 	BEGIN
 		SET @sql = 'SELECT TOP (@cantDocs) idDocumentoElectronico,xmlAcontPlus,claveAcceso, convert(varchar,dc.ambiente) ambiente, codEstado
 						FROM dbo.DocumentoElectronico dc WITH (NOLOCK) 
- 						WHERE dc.codEstado IN (@codEstado, 7) AND isAutomatic = 1 '
+ 						WHERE dc.codEstado IN (@codEstado, 7) AND dc.xmlAcontPlus IS NOT NULL AND isAutomatic = 1 '
 	END
 
 	IF @codEstado = 3

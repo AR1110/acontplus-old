@@ -101,20 +101,8 @@
                             <div class="autocomplete-suggestion-uib-typeahead">
                                 <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
                             </div>
-                        </script> 
+                        </script>  
 
-                        <input type="text" id="clienteSearchInvoice" name="clienteSearchInvoice" class="form-control border-select"
-                            ng-model="$ctrl.cliente.nombreFiscal" cliente-search-drtv on-select="$ctrl.onSelectedClienteChange(result)"
-                            on-keyup-cliente="$ctrl.onKeyupCustomer()" placeholder="Ingrese C.I o Nombre Comercial"
-                            onclick="select();">
-
-                        <script type="text/ng-template" id="autocompleteClienteTemplate.html">
-                            <div class="autocomplete-suggestion-uib-typeahead">
-                                <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
-                            </div>
-                        </script>
-
-                        
 
                         <div class="input-group-append">
 
@@ -213,7 +201,7 @@
                         <div class="form-group">
                             <label for="searchBarcode">Buscar por Código</label>
                             <articulo-search-barcode tipo-doc="$ctrl.TIPO_DOC_NE"
-                                set-item-articulo-en-detalle="$ctrl.setItemArticuloEnDetalle(item)"></articulo-search-barcode>
+                                set-item-articulo-en-detalle="$ctrl.setItemArticuloEnDetalle(item)" id-bodega="$ctrl.idBodega"></articulo-search-barcode>
                         </div>
                     </div>
                 </div>

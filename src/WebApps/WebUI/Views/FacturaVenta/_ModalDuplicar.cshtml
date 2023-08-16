@@ -48,7 +48,7 @@
                     <div class="input-group">
                         <select name="tiempoCredito" id="tiempoCedito" class="form-control border-select"
                             ng-model="$ctrl.data.idTiempoCredito" ng-change="$ctrl.onChangeTiempoCredito()"
-                            ng-disabled="!$ctrl.ventaComprobantePermission.tiempoCedito.update">
+                            ng-disabled="!$ctrl.ventaComprobantePermission.tiempoCredito.update">
                             <option ng-value="item.idTiempoCredito" ng-repeat="item in $ctrl.tiempoCreditos">
                                 {{item.descripcion}}</option>
                         </select>
@@ -85,21 +85,19 @@
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label>Cliente: <span class="text-danger">*</span></label>
-                    <div class="input-group"> 
-                        <input type="text" 
-                        id="clienteSearchInvoice" 
-                        name="clienteSearchInvoice" 
-                        class="form-control border-select"
-                        ng-model="$ctrl.cliente.nombreFiscal" 
-                        cliente-search-drtv on-select="$ctrl.onSelectedClienteChange(result)"
-                        on-keyup-cliente="$ctrl.onKeyupSearchCliente()" placeholder="Ingrese C.I o Nombre Comercial"
-                            onclick="select();">
+                    <div class="input-group">
+                        <input type="text" id="clienteSearchInvoice" name="clienteSearchInvoice"
+                            class="form-control border-select" ng-model="$ctrl.cliente.nombreFiscal"
+                            customer-search-sale-drtv on-select="$ctrl.onSelectedClienteChange(result)"
+                            on-keyup="$ctrl.onKeyupCustomer()" function-trigger="$ctrl.receiveDataCustomerSRI(result)"
+                            placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
 
-                        <script type="text/ng-template" id="autocompleteClienteTemplate.html">
+                        <script type="text/ng-template" id="customerSearchSaleTemplate.html">
                             <div class="autocomplete-suggestion-uib-typeahead">
                                 <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
                             </div>
-                        </script> 
+                        </script>
+
 
                         <div class="input-group-append">
 
@@ -179,6 +177,48 @@
         </div>
 
 
+        <div class="row" ng-show="$ctrl.newCustomer">
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
+                <div class="form-group">
+                    <label>Razon Social Comprador</label>
+                    <input type="text" name="name" class="form-control border-select"
+                        ng-model="$ctrl.cliente.razonSocialComprador" value="" />
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
+                <div class="form-group">
+                    <label>Dirección</label>
+                    <input type="text" name="name" ng-model="$ctrl.cliente.direccionComprador"
+                        class="form-control border-select" value="" />
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" autocomplete="off" name="name" ng-model="$ctrl.cliente.email"
+                        class="form-control border-select" value="" placeholder="example@gmail.com" />
+                </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
+                @*<div class="form-inline">
+                <label>Teléfono</label>
+                <input type="tel" name="name" autocomplete="off" ng-model="$ctrl.cliente.telefono"
+                class="form-control border-select" maxlength="10" value="" />
+                <button class="btn btn-primary"><i class="ti-edit"></i></button>
+                </div>*@
+                <div class="container">
+                    <label>Teléfono</label>
+                    <div class="form-inline">
+                        <input type="tel" name="name" autocomplete="off" ng-model="$ctrl.cliente.telefono"
+                            class="form-control mr-1 border-select" maxlength="10" value="" />
+                        <button type="button" class="btn btn-default btn-sm" title="Editar Datos" hidden><i
+                                class="ti-pencil text-warning"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <div class="row">
             <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12">
                 <div class="row">
@@ -194,7 +234,7 @@
                         <div class="form-group">
                             <label for="searchBarcode">Buscar por Código</label>
                             <articulo-search-barcode tipo-doc="$ctrl.TIPO_DOC_FV"
-                                set-item-articulo-en-detalle="$ctrl.setItemArticuloEnDetalle(item)"></articulo-search-barcode>
+                                set-item-articulo-en-detalle="$ctrl.setItemArticuloEnDetalle(item)" id-bodega="$ctrl.idBodega"></articulo-search-barcode>
                         </div>
                     </div>
 

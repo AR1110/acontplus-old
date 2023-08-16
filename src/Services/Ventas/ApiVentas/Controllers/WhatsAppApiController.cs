@@ -32,10 +32,10 @@ namespace ApiVentas.Controllers
                 //  new PhoneNumber("whatsapp:+593960588365"));
                 //messageOptions.From = new PhoneNumber("whatsapp:+14155238886");
                 //messageOptions.Body = "Your appointment is coming up on July 21 at 3PM";
-                
+
 
                 //var messageR = MessageResource.Create(messageOptions);
-                
+
                 //Console.WriteLine(messageR.Body); 
                 return Ok("");
             }

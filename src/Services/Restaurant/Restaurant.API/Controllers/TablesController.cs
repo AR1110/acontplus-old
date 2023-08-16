@@ -1,8 +1,11 @@
-﻿using Lib.Common.Api;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Core.Entities;
-using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
 using Services.Common;
 
@@ -13,124 +16,91 @@ namespace Restaurant.API.Controllers
     public class TablesController : ControllerBase
     {
         private readonly RestaurantContext _context;
-        private readonly IAppTableService _tableService;
 
-        public TablesController(RestaurantContext context, IAppTableService tableService)
+        public TablesController(RestaurantContext context)
         {
             _context = context;
-            _tableService = tableService;
         }
 
-        // GET: api/Tables
-        [HttpGet]
-        public async Task<ActionResult<APIResponse>> GetTables(string json)
+        // GET: api/AppTables
+        [HttpGet("Get")]
+        public async Task<ActionResult<IEnumerable<AppTable>>> GetTables()
         {
-            var data = new Dictionary<string, object> {
-                {"userRoleId", User.GetUserRoleId()}, {"json", json}
-            };
-
-            return await _tableService.GetAsync(data);
-            //return await _context.Tables.ToListAsync();
+            return await _context.Tables.Include(x => x.Room).ToListAsync();
         }
-
-        // GET: api/Tables/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<AppTable>> GetTable(int id)
+            
+        [HttpGet("GetByCode/{codEstab}")]
+        public async Task<ActionResult<IEnumerable<AppTable>>> GetByCode(string codEstab)
         {
-            var table = await _context.Tables.FindAsync(id);
-
-            if (table == null)
-            {
-                return NotFound();
-            }
-
-            return table;
+            return await _context.Tables.Include(x => x.Room).Where(x => x.Room.Floor.CodEstab == codEstab).ToListAsync();
         }
 
-        // PUT: api/Tables/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTable(int id, AppTable table)
-        {
-            if (id != table.Id)
-            {
-                return BadRequest();
-            }
-
-            //_context.Entry(table).State = EntityState.Modified;
-
-            var tableFounded = await _context.Tables.FindAsync(id);
-            tableFounded.RoomId = table.RoomId;
-            tableFounded.Capacity = table.Capacity;
-            tableFounded.NumberTable = table.NumberTable;
-            tableFounded.Description = table.Description;
-            tableFounded.Enabled = table.Enabled;
-            tableFounded.UpdatedAt = table.UpdatedAt;
-            tableFounded.UserId = User.GetUserId();
-
-            try
-            {
-                _context.Update(tableFounded);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TableExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return Ok(tableFounded);
-        }
-
-        // POST: api/Tables
+        // POST: api/AppTables
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<AppTable>> PostTable(AppTable table)
+        public async Task<ActionResult<AppTable>> PostAppTable(AppTable appTable)
         {
-            table.UserId = User.GetUserId();
-            _context.Tables.Add(table);
-            await _context.SaveChangesAsync();
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            return CreatedAtAction("GetTable", new { id = table.Id }, table);
+            appTable.UserId = User.GetUserId();
+            try
+            {
+                _context.Tables.Add(appTable);
+                await _context.SaveChangesAsync();
+                return Ok("Ingresado exitosamente");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Error al ingresar" + ex);
+            }
         }
 
-        // DELETE: api/Tables/5
+        // PUT: api/AppTables/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutTable(int id, AppTable appTable)
+        {
+            if (id != appTable.Id) return BadRequest();
+
+            var tableExist = TableExists(appTable.Id);
+            if (!tableExist) return BadRequest("No se encontró registro");
+
+            appTable.UserId = User.GetUserId();
+            try
+            {
+                _context.Entry(appTable).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return Ok("Actualizado exitosamente");
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Error al actualizar" + ex);
+            }
+        }
+
+        // DELETE: api/AppTables/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTable(int id)
         {
-            var table = await _context.Tables.FindAsync(id);
-            if (table == null)
-            {
-                return NotFound();
-            }
+            var tables = TableExists(id);
+            if (!tables) return BadRequest("No se encontró registro");
 
-            //_context.Tables.Remove(table);
-
-            table.Deleted = true;
-            table.Enabled = false;
-            _context.Entry(table).State = EntityState.Modified;
             try
             {
+                var table = await _context.Tables.FindAsync(id);
+                table.Deleted = true;
+                table.Enabled = false;
+                table.UserId = User.GetUserId();
+
+                _context.Entry(table).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
+                return Ok("Eliminado exitosamente");
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!TableExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest("Error al eliminar" + ex);
             }
-            return Ok();
         }
 
         private bool TableExists(int id)

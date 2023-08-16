@@ -1,6 +1,6 @@
 {
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:7111",
+    "BaseUrl": "https://localhost:7112",
     "RateLimitOptions": {
       "ClientIdHeader": "Test",
       "ClientWhitelist": [],
@@ -14,7 +14,7 @@
     },
     "RequestIdKey": "OcRequestId"
   },
-  "Routes": [    
+  "Routes": [
     {
       "DownstreamHostAndPorts": [
         {
@@ -26,22 +26,6 @@
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Post" ],
       "UpstreamPathTemplate": "/gateway/Account{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 44331
-        }
-      ],
-      "DownstreamPathTemplate": "/api/v3/Articulo{everything}",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/gateway/Articulo{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -83,13 +67,45 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5094
+          "Port": 7111
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/Restaurant{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7079
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "UpstreamPathTemplate": "/gateway/Venta{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7149
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "UpstreamPathTemplate": "/gateway/Inventario{everything}"
     }
   ]
 }

@@ -20,7 +20,7 @@ export class KardexCtrl {
             let heightBrowser = $(window).height();
             let widthBrowser = $(window).width();
 
-            if (this.kardexs  && this.kardexs.length > 0) {
+            if (this.kardexs && this.kardexs.length > 0) {
                 if (widthBrowser < 1280 || widthBrowser < 1024) {
                     this.tableTabulatorKardex.options.columns[0].frozen = false;
                     this.tableTabulatorKardex.options.columns[0].widthGrow = 0;
@@ -324,7 +324,7 @@ export class KardexCtrl {
                 }
                 if (response.code === "1") {
                     let tempArray = JSON.parse(response.payload) || []
-                    this.kardexs = tempArray[2];
+                    this.kardexs = tempArray[2] || [];
                     if (this.kardexs.length === 0) {
                         hideLoader();
                         this.toast.toastr('info', 'No se encontraron los resultados');
@@ -415,6 +415,7 @@ export class KardexCtrl {
                 codigo: "KRG",
                 format: formatType,
                 codEstab: this.dataSearch.codEstab,
+                hasParams: true,
                 aditionalParams: []
             }),
 
@@ -488,13 +489,13 @@ export class ModalKardexCtrl extends KardexCtrl {
             this.establecimientos = response;
 
             if (this.establecimientos.length > 0) {
-                this.dataSearch.codEstab = this.establecimientos[0].codEstab;            
+                this.dataSearch.codEstab = this.establecimientos[0].codEstab;
 
                 let dataEstab = this.establecimientos.find(item => item.codEstab === this.dataSearch.codEstab);
                 this._commonSvc.getDataFormEstabAsig(dataEstab).then(response => {
                     this.bodegas = response[1];
                     this.dataSearch.byBodega = this.bodegas[0].idBodega
-        
+
                 })
             } else {
                 taostr.warning('warning', 'NO TIENES ASIGNADO NINGÚN ESTABLECIMIENTO');
@@ -514,12 +515,12 @@ export class ModalKardexCtrl extends KardexCtrl {
 
 export class ModalFiltroKardex {
     static $inject = [
-        "$uibModalInstance", 
-        "mainService", 
+        "$uibModalInstance",
+        "mainService",
         "commonService",
-        "articuloService", 
-        "formulario", 
-        "toastService", 
+        "articuloService",
+        "formulario",
+        "toastService",
         "params"
     ]
     constructor($uibModalInstance, _mS, _commonSvc, articuloSvc, _form, _tS, _params) {
@@ -591,13 +592,13 @@ export class ModalFiltroKardex {
 
 
     articuloSearch(textSearch) {
-        if(textSearch.length < 2) return;
+        if (textSearch.length < 2) return;
 
-        
-        return this.articuloSvc.search({busqueda: textSearch})
-        .catch(error=>{
-            console.log(error)
-        })
+
+        return this.articuloSvc.search({ busqueda: textSearch })
+            .catch(error => {
+                console.log(error)
+            })
         // return this._commonSvc.articuloSearchGeneral({
         //     textSearch
         // });

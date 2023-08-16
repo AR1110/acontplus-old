@@ -4,46 +4,61 @@
 
     app.controller('clienteCtrl', clienteCtrl);
     
-    clienteCtrl.$inject=['$scope', 'clienteService', 'toastService',];
+    clienteCtrl.$inject=['$scope', 'clienteService', 'toastService', 'commonService'];
 
-    function clienteCtrl($scope, clienteSvc, tS){
-        'use strict';
-        
-        $scope.maxSize = 5;
-        $scope.totalRecords = 0;
-        $scope.pageIndex = 1;
-        $scope.pageSize = 1000;
-        $scope.recordsQuantity = [10, 25, 50, 100, 500, 1000];
+    function clienteCtrl($scope, clienteSvc, tS, commonSvc){
+        'use strict'; 
+        $scope.recordsQuantity = [10, 25, 50, 100];
         
         $scope.dataSearch = {
             pageIndex: 1,
-            pageSize: 100    
+            pageSize: 50  ,
+            maxSize: 5          
         }
 
         $scope.onKeyupSearchCliente = function(){                        
             $scope.getClientes();
         }
 
-        $scope.resetList = function(){
-            $scope.dataSearch.bySearch = null;
+        $scope.refresh = function(){
+            $scope.dataSearch.textSearch = null;
             $scope.getClientes();
         }
+
+        $scope.pagechanged = function () {
+            $scope.getClientes();
+        };
+
+        $scope.changePageSize = function () {
+            $scope.dataSearch.pageIndex = 1;
+            $scope.getClientes();
+        };
 
         
         $scope.getClientes = function() {       
             try {  
                 showLoader();
-                $scope.dataSearch.bySearch || null;
+              
                 $scope.clientes = [];
-                clienteSvc.getAll($scope.dataSearch).then(response=>{
+               
+                const dataSearch = {
+                    pageIndex: $scope.dataSearch.pageIndex,
+                    pageSize: $scope.dataSearch.pageSize,
+                    checkTextSearch: $scope.dataSearch.textSearch?true: false,
+                    textSearch: $scope.dataSearch.textSearch
+                }
+                clienteSvc.getAll(dataSearch).then(response=>{
                     hideLoader();                    
                     $scope.clientes = response;
-                    $scope.totalRecords = $scope.clientes.length > 0? $scope.clientes[0].totalRecords:0                                                            
+                    $scope.dataSearch.totalRecords = $scope.clientes.length > 0? $scope.clientes[0].totalRecords:0;
+                    console.log($scope.dataSearch)                                                            
                 }).catch(error => {
+                    $scope.dataSearch.totalRecords = 0;
                     console.log(error);
                     hideLoader();
                 })                        
-            } catch (error) {            
+            } catch (error) {    
+                $scope.dataSearch.totalRecords = 0;        
                 console.log(error)   
                 hideLoader();
             }
@@ -53,8 +68,7 @@
         
         $scope.resultModal = function(item){
             try {                          
-                if(typeof item==='object'){
-                    console.log(item)
+                if(typeof item==='object'){ 
                     $scope.getClientes();
                 }
             } catch (err) {
@@ -96,6 +110,32 @@
                 console.log(e)
             }
         }
+
+
+        $scope.getReport = function (format) { 
+            let dataParms = {      
+                tipo: 4                        
+            }
+
+            const parameters = {
+                hasService: false,
+                reportParams: JSON.stringify({
+                    hasParams: false,
+                    codigo: 'RCL',
+                    format,
+                    aditionalParams: [
+
+                    ]
+                }),
+                dataParams: JSON.stringify(dataParms)
+            }
+
+            commonSvc.getReport({
+                parameters,
+                formatType: format
+            })
+        }
+
     }
 
 

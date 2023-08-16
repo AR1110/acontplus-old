@@ -1,7 +1,15 @@
-import { ApiCategory, Category } from "../models/category";
-// API wants a nested, complicated object
-export const ApiCategoryAdapter = (category: ApiCategory): Category => ({
-  id: category.id,
-  name: category.name,
-  image: category.image,
-});
+import { CategoryReadDto, RawCategoryData } from "../models"; 
+
+function categoryReadAdapter(categories: RawCategoryData[]): Array<CategoryReadDto> {
+    console.log(categories)      
+    return categories.map((category) => ({
+        idSubFamilia: category.idSubFamilia,
+        description: category.descripcion,
+        s3ObjectUrl: category.s3ObjectUrl
+    })
+    )
+}
+
+export {
+    categoryReadAdapter
+}

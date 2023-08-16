@@ -1,9 +1,8 @@
-using Services.Common;
-using Helpers;
-using System.Reflection;
 using Compras.Application;
 using Lib.Common;
-
+using Newtonsoft.Json.Serialization;
+using Services.Common;
+using System.Reflection;
 namespace ApiRecepcion
 {
     public class Program
@@ -16,7 +15,12 @@ namespace ApiRecepcion
             builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
             ConfigHelper.AddJsonFiles(builder.Configuration);
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                            .AddNewtonsoftJson(x =>
+                            {
+                                x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                                x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
+                            });
 
             builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 
@@ -40,7 +44,7 @@ namespace ApiRecepcion
             app.UseHttpsRedirection();
 
             app.UseSwaggerDocumentation();
-            
+
             app.UseRouting();
 
             //app.UseCors();
@@ -49,7 +53,7 @@ namespace ApiRecepcion
 
             app.UseAuthorization();
 
-            
+
 
             app.UseEndpoints(endpoints =>
             {

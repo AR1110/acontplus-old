@@ -53,8 +53,8 @@
 </head>
 <body class="skin-blue card-no-border" ng-cloak ng-app="loginApp" ng-controller="loginCtrl">
     <div id="loaderCss"></div>
-    <section id="wrapper" class="login-register" style="background-image:url(../assets/images/background/fondo.jpg);">
-        
+    <section id="wrapper" class="login-register" style="background-image:url(../assets/images/background/fondo.webp);">
+
         <div class="login-box card">
              <img class="card-img-top img-fluid" src="~/assets/images/logo/logo.jpg" alt="Img logo">
             <div class="card-body">
@@ -149,12 +149,12 @@
 
     @if (ViewData["ReturnUrl"] != null)
     {
-        <script type="text/javascript">
-            window.onload = function () {
-                var returnUrl = '@ViewData["ReturnUrl"]';
-                $('#returnUrl').val(returnUrl);
-            };
-        </script>
+            <script type="text/javascript">
+                window.onload = function () {
+                    var returnUrl = '@ViewData["ReturnUrl"]';
+                    $('#returnUrl').val(returnUrl);
+                };
+            </script>
     }
 </body>
 </html>

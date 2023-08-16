@@ -1,9 +1,7 @@
-﻿using Services.Common.Logs;
-using DataAccess;
-using Domain.ViewModels;
+﻿using DataAccess;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+using Services.Common.Logs;
 
 namespace WebUI.Controllers.Ventas
 {
@@ -19,8 +17,9 @@ namespace WebUI.Controllers.Ventas
             return View();
         }
 
-       
 
+
+        //Por eliminar mas adelante 
         [HttpGet]
         public async Task<IActionResult> GetId(int id)
         {
@@ -46,6 +45,6 @@ namespace WebUI.Controllers.Ventas
             return Ok(_response);
 
         }
-        
+
     }
 }

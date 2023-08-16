@@ -23,7 +23,7 @@
 		debugger;
 		showLoader();
 		await client
-			.get(`/gateway/EstabAsig/?json=` + JSON.stringify({ tipo: 1 }))
+			.get(`EstabAsig/?json=` + JSON.stringify({ tipo: 1 }))
 			.then((response) => {
 				if (response.code == 1) {
 					establecimientos = JSON.parse(response.payload);
@@ -49,7 +49,7 @@
 		showLoader();
 		await client
 			.get(
-				"/gateway/MedicalHistories/?json=" +
+				"Vet/MedicalHistories/?json=" +
 					JSON.stringify({ codEstab: codEstab })
 			)
 			.then((response) => {
@@ -77,7 +77,7 @@
 		//Open window
 		//window.open(url);
 		showLoader();
-		await clientFile(`/gateway/MedicalHistories/Report/` + id)
+		await clientFile(`Vet/MedicalHistories/Report/` + id)
 			.then((response) => {
 				var ieEDGE = navigator.userAgent.match(/Edge/g);
 				var ie = navigator.userAgent.match(/.NET/g); // IE 11+
@@ -144,7 +144,7 @@
 		});
 		if (isConfirmed) {
 			await client
-				.delete("/gateway/MedicalHistories/" + id)
+				.delete("Vet/MedicalHistories/" + id)
 				.then((response) => {
 					console.log(response);
 					toast({

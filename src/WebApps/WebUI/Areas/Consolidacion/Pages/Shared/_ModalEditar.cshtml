@@ -1,14 +1,10 @@
 <style>
     .grid-articles {
         width: 100%;
-        height: 600px;
+        height: 300px;
     }
 
-    .ui-grid,
-    .ui-grid-viewport {
-        width: 100% !important;
-        height: 600px !important;
-    }
+    @*.ui-grid,.ui-grid-viewport{width:100%!important;height:300px!important;}*@
 </style>
 <form autocomplete="off" ng-submit="onSave()">
     <div class="modal-header bg-info text-white">
@@ -20,7 +16,8 @@
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="establecimiento">Estab.: <span class="text-danger">*</span></label>
-                    <select name="establecimiento" id="establecimiento" class="form-control border-select" ng-model="data.codEstab" disabled>
+                    <select name="establecimiento" id="establecimiento" class="form-control border-select"
+                        ng-model="data.codEstab" disabled>
                         <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                             {{item.nombreComercial}}
                         </option>
@@ -31,7 +28,8 @@
             <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="puntoEmision">Punto Emisión: <span class="text-danger">*</span></label>
-                    <select id="puntoEmision" name="puntoEmision" class="form-control border-select" ng-model="data.idPuntoEmision" disabled>
+                    <select id="puntoEmision" name="puntoEmision" class="form-control border-select"
+                        ng-model="data.idPuntoEmision" disabled>
                         <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
                             {{item.ptoEmi}}
                         </option>
@@ -42,13 +40,15 @@
             <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="fechaEmision">Fecha Emisión <span class="text-danger">*</span></label>
-                    <input type="date" name="fechaEmision" ng-disabled="disabledInputFechaEmision" ng-model="data.fechaEmision" class="form-control border-select">
+                    <input type="date" name="fechaEmision" ng-disabled="disabledInputFechaEmision"
+                        ng-model="data.fechaEmision" class="form-control border-select">
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="bodegas">Bodega</label>
-                <select name="bodegas" id="bodegas" class="form-control border-select" ng-model="idBodega" ng-change="askToChangeBodega()">
+                <select name="bodegas" id="bodegas" class="form-control border-select" ng-model="idBodega"
+                    ng-change="askToChangeBodega()">
                     <option ng-value="item.idBodega" ng-repeat="item in bodegas">{{item.bodega}}</option>
                 </select>
             </div>
@@ -56,26 +56,20 @@
 
         <div class="row">
             <div class="col-lg-5 col-md-5 col-sm-12 col-12">
-                <md-autocomplete-articulo-component tipo-doc="TIPO_DOC"
-                                                    placeholder="'Buscar Articulo'"
-                                                    abrir-modal-articulo="abrirModalArticulo(item)"
-                                                    get-data-articulo="getDataIdArticulo(item)"
-                                                    set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)"
-                                                    scope-parent="$scope">
+                <md-autocomplete-articulo-component tipo-doc="TIPO_DOC" placeholder="'Buscar Articulo'"
+                    abrir-modal-articulo="abrirModalArticulo(item)" get-data-articulo="getDataIdArticulo(item)"
+                    set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)" scope-parent="$scope">
                 </md-autocomplete-articulo-component>
             </div>
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-                <button type="button" class="btn btn-outline-info btn-lg" ng-click="advancedSearch($event)"><i class="ti-search"></i> Busqueda Avanzada</button>
+                <button type="button" class="btn btn-outline-info btn-lg" ng-click="advancedSearch($event)"><i
+                        class="ti-search"></i> Busqueda Avanzada</button>
             </div>
         </div>
 
 
-        <div id="grid" ui-grid="gridOptions"
-             ui-grid-edit
-             ui-grid-resize-columns
-             ui-grid-cellNav
-             ui-grid-auto-resize
-             class="grid">
+        <div id="grid" ui-grid="gridOptions" ui-grid-edit ui-grid-resize-columns ui-grid-cellNav ui-grid-auto-resize
+            class="grid">
         </div>
 
         <!--Sub Totales -->

@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.37";
+} from "./modalBaseCtrl.js?v=0.52";
 
 
 class ModalNotaEntregaCtrl extends ModalBaseCtrl {
@@ -279,18 +279,8 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl {
         Swal.fire({
             icon: 'warning',
             title: 'Datos Incorrectos',
-            html: 'Número de identificación inválido, desea editar?',
-            showConfirmButton: true,
-            showCancelButton: true,
-            confirmButtonText: 'Editar',
-            cancelButtonText: 'Cancelar'
-        }).then(async result => {
-            if (result.isConfirmed) {
-                this.cliente = item;
-                await this.openModalClienteUpdate();
-                this.cliente = {}
-            }
-        })
+            html: 'Número de identificación inválido, desea editar?', 
+        }) 
 
     }
 
@@ -317,7 +307,8 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
         'nombreModal', 
         'formulario', 
         'toastService', 
-        'params'
+        'params',
+        'articuloService'
     ]
 
     constructor(
@@ -333,7 +324,8 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
         _nombreModalConst, 
         _fS, 
         _tS, 
-        _params
+        _params,
+        articuloSvc
     ) {
         super({
             $scope,
@@ -354,6 +346,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
         this.notaEntregaSvc = notaEntregaSvc,
 
         this._storageSvc = _storageSvc;
+        this.articuloSvc = articuloSvc;
 
         let {
             TIPO_REGISTRO
@@ -480,7 +473,9 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
                 actividadTipoIva: this.actividadTipoIva,
-                codigoDoc: 'NE'
+                codigoDoc: 'NE',
+                idBodega: this.idBodega,
+                parentScope: this
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
@@ -819,7 +814,7 @@ export class ModalNotaEntregaDetalleCtrl extends ModalNotaEntregaCtrl {
         '$uibModalInstance', 
         'mainService', 
         'commonService', 
-       
+        'articuloService',
         'modalService', 
         'nombreModal', 
         'formulario', 
@@ -833,7 +828,7 @@ export class ModalNotaEntregaDetalleCtrl extends ModalNotaEntregaCtrl {
         $uibModalInstance, 
         _mS, 
         _commonSvc, 
-       
+        articuloSvc,       
         _modalSvc, 
         _nombreModalConst, 
         _fS, 
@@ -852,7 +847,7 @@ export class ModalNotaEntregaDetalleCtrl extends ModalNotaEntregaCtrl {
             _tS
         })
         
-       
+       this.articuloSvc = articuloSvc;
 
       
 
@@ -932,7 +927,9 @@ export class ModalNotaEntregaDetalleCtrl extends ModalNotaEntregaCtrl {
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
                 actividadTipoIva: this.actividadTipoIva,
-                codigoDoc: 'NE'
+                codigoDoc: 'NE',
+                idBodega: this.idBodega,
+                parentScope: this
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
@@ -973,7 +970,8 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
         'nombreModal', 
         'formulario', 
         'toastService', 
-        'params'
+        'params',
+        'articuloService'
     ]
 
     constructor(
@@ -988,7 +986,8 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
         _nombreModalConst, 
         _fS,
         _tS, 
-        _params
+        _params,
+        articuloSvc
     ) {
         super({
             $scope,
@@ -1001,9 +1000,10 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
             _fS,
             _tS
         })
-        
+       
         this.notaEntregaSvc = notaEntregaSvc;
         this.facturaSvc = facturaSvc;
+        this.articuloSvc = articuloSvc;
 
         this.historyDatosAdicionales = [];
         this.datosAdicionalesArticulo = [];
@@ -1124,7 +1124,9 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
                 actividadTipoIva: this.actividadTipoIva,
-                codigoDoc: 'NE'
+                codigoDoc: 'NE',
+                idBodega: this.idBodega,
+                parentScope: this
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
@@ -1148,6 +1150,8 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
             hideLoader();
         }
     }
+
+   
 
     async onSelectedClienteChange(item) {
         try {
@@ -1273,7 +1277,8 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
         'nombreModal', 
         'formulario', 
         'toastService', 
-        'params'
+        'params',
+        'articuloService'
     ]
 
     constructor(
@@ -1288,7 +1293,8 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
         _nombreModalConst, 
         _fS, 
         _tS, 
-        _params
+        _params,
+        articuloSvc
     ) {
         super({
             $scope,
@@ -1302,8 +1308,11 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
             _tS
         })
 
+        this.newCustomer = false;
+
         this.notaEntregaSvc = notaEntregaSvc;
         this.facturaSvc = facturaSvc;
+        this.articuloSvc = articuloSvc;
 
         this.historyDatosAdicionales = [];
 
@@ -1423,7 +1432,9 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
                 actividadTipoIva: this.actividadTipoIva,
-                codigoDoc: 'NE'
+                codigoDoc: 'NE',
+                idBodega: this.idBodega,
+                parentScope: this
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
@@ -1457,6 +1468,15 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
 
             hideLoader();
         }
+    }
+
+    receiveDataCustomerSRI(result) {
+        if (result.idCliente === 0) {
+            this.newCustomer = true;
+        } else {
+            this.newCustomer = false;
+        }
+        this.cliente = result; 
     }
 
     async onSelectedClienteChange(item) {

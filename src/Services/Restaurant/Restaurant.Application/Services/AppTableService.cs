@@ -1,37 +1,68 @@
 ﻿using Lib.Common;
 using Lib.Common.Api;
 using Restaurant.Core.Interfaces;
+using Restaurant.Infrastructure.Data;
+using System.Data;
 
 namespace Restaurant.Application.Services
 {
     public class AppTableService : IAppTableService
     {
         private readonly IADORepository _repository;
+        private readonly RestaurantContext _context;
         private readonly APIResponse _response;
+
+
         public AppTableService(IADORepository repository)
         {
             _repository = repository;
             _response = new APIResponse();
         }
-        public async Task<APIResponse> GetAsync(Dictionary<string, object> parameters)
+
+        public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
-            try
+            DataSet ds = await _repository.GetDataSetAsync("Restaurant.Tables_Get", parameters);
+
+            if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
             {
-                var dt = await _repository.GetDataTableAsync("Restaurant.Tables_Get", parameters);
-                if (DataValidation.DataTableIsNull(dt))
+                if (ds.Tables.Count > 0)
                 {
-                    _response.Create(code: "0", "La transacción no devolvio respuesta");
+                    ds = new DataSet();
                 }
-                else
-                {
-                    _response.Create(code: "1", payload: Converters.DataTableToJSON(dt));
-                }
+                return null;
             }
-            catch (Exception ex)
+            else
             {
-                _response.Create(code: "0", "Error on get tables");
+                return Converters.DataSetToJSON(ds);
             }
-            return _response;
+        }
+
+        public async Task<string> AddAsync(ApiRequest request)
+        {
+            var parameters = new Dictionary<string, object>{
+                {"userRoleId", request.UserRoleId},
+                {"json", Converters.SerializeDictionary(request.Data)}
+            };
+            return await _repository.SPExecuteAsync("Restaurant.Table_Insert", parameters);
+        }
+
+        public async Task<string> UpdateAsync(int id, ApiRequest request)
+        {
+            var parameters = new Dictionary<string, object>{
+                {"userRoleId", request.UserRoleId},
+                {"id", id},
+                {"json", Converters.SerializeDictionary(request.Data)}
+            };
+            return await _repository.SPExecuteAsync("Restaurant.Table_Update", parameters);
+        }
+
+        public async Task<string> DeleteAsync(int id, ApiRequest request)
+        {
+            var parameters = new Dictionary<string, object>{
+                {"userRoleId", request.UserRoleId},
+                {"id", id}
+            };
+            return await _repository.SPExecuteAsync("Restaurant.Table_Delete", request.Data);
         }
     }
 }

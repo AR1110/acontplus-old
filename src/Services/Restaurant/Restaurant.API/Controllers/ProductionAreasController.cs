@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Core.Entities;
 using Restaurant.Infrastructure.Data;
@@ -28,18 +23,26 @@ namespace Restaurant.API.Controllers
             return await _context.ProductionAreas.ToListAsync();
         }
 
-        // GET: api/ProductionAreas/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ProductionArea>> GetProductionArea(int id)
+        // POST: api/ProductionAreas
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<ProductionArea>> PostProductionArea(ProductionArea productionArea)
         {
-            var productionArea = await _context.ProductionAreas.FindAsync(id);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            if (productionArea == null)
+            var productionAreaExists = ProductionAreaExists(productionArea.Code);
+            if (productionAreaExists) return BadRequest("El código ya está en uso");
+
+            try
             {
-                return NotFound();
+                _context.ProductionAreas.Add(productionArea);
+                await _context.SaveChangesAsync();
+                return Ok("Ingresado exitosamente");
             }
-
-            return productionArea;
+            catch (Exception ex)
+            {
+                return BadRequest("Error en ingresar " + ex.Message);
+            }
         }
 
         // PUT: api/ProductionAreas/5
@@ -47,41 +50,23 @@ namespace Restaurant.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutProductionArea(int id, ProductionArea productionArea)
         {
-            if (id != productionArea.Id)
-            {
-                return BadRequest();
-            }
+            if (id != productionArea.Id) return BadRequest();
 
-            _context.Entry(productionArea).State = EntityState.Modified;
+            var productionAreaExists = ProductionAreaExistsUpdate(productionArea.Id, productionArea.Code);
+            if (productionAreaExists) return BadRequest("El código ya está en uso");
+
 
             try
             {
+                _context.Entry(productionArea).State = EntityState.Modified;
+
                 await _context.SaveChangesAsync();
+                return Ok("Actualizado exitosamente");
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!ProductionAreaExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest("Error en actualizar " + ex.Message);
             }
-
-            return NoContent();
-        }
-
-        // POST: api/ProductionAreas
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<ProductionArea>> PostProductionArea(ProductionArea productionArea)
-        {
-            _context.ProductionAreas.Add(productionArea);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetProductionArea", new { id = productionArea.Id }, productionArea);
         }
 
         // DELETE: api/ProductionAreas/5
@@ -89,20 +74,32 @@ namespace Restaurant.API.Controllers
         public async Task<IActionResult> DeleteProductionArea(int id)
         {
             var productionArea = await _context.ProductionAreas.FindAsync(id);
-            if (productionArea == null)
+            if (productionArea == null) return NotFound("No se ha encontrado registro");
+
+            try
             {
-                return NotFound();
+                productionArea.Deleted = true;
+                productionArea.Enabled = false;
+                productionArea.UpdatedAt = DateTime.Now;
+
+                _context.Entry(productionArea).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return Ok("Eliminado exitosamente");
             }
-
-            _context.ProductionAreas.Remove(productionArea);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                return BadRequest("Error al eliminar " + ex);
+            }
         }
 
-        private bool ProductionAreaExists(int id)
+        private bool ProductionAreaExists(string code)
         {
-            return _context.ProductionAreas.Any(e => e.Id == id);
+            return _context.ProductionAreas.Any(e => e.Code == code);
+        }
+
+        private bool ProductionAreaExistsUpdate(int id, string code)
+        {
+            return _context.ProductionAreas.Any(e => e.Id != id && e.Code == code);
         }
     }
 }

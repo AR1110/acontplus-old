@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Lib.Common\Lib.Common.csproj" />
+    <ProjectReference Include="..\Contabilidad.Core\Contabilidad.Core.csproj" />
+    <ProjectReference Include="..\Contabilidad.Infrastructure\Contabilidad.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

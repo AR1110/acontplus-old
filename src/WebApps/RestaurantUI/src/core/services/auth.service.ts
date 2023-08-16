@@ -1,7 +1,8 @@
-import { Http } from "@/core/utils";
+import { Http } from "@/core/utilities";
+import { ApiResponse } from "../models";
 
-const login = (username: string, password: string) => {
-  return Http({
+const login = async (username: string, password: string): Promise<ApiResponse> => {
+  const response = await Http({
     method: "post",
     url: "account/login",
     data: {
@@ -10,6 +11,7 @@ const login = (username: string, password: string) => {
       external: true,
     },
   });
+  return response.data;
 };
 
 const setPersistent = (key: string, value: string) => {
@@ -29,7 +31,10 @@ const decodeToken = function () {
   if (!token) {
     return null;
   }
-  const object = JSON.parse(atob(token.split(".")[1]));
+  const tokenToAtob = token.split(".");
+  if(!tokenToAtob) return null;
+
+  const object = JSON.parse(tokenToAtob[1]!);
   return object;
 };
 
@@ -43,6 +48,7 @@ const isTokenExpired = function () {
   if (token?.exp * 1000 < new Date().getTime()) {
     return true;
   }
+  return false;
 };
 
 const clearStorageToken = () => {

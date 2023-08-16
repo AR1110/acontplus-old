@@ -49,6 +49,7 @@
 		<None Remove="Reports\GestionReporte\RetencionCompraRG.rdlc" />
 		<None Remove="Reports\GestionReporte\RetencionVentaRG.rdlc" />
 		<None Remove="Reports\GuiaRemision.rdlc" />
+		<None Remove="Reports\Inventario\ArticuloFraccionado.rdl" />
 		<None Remove="Reports\Inventario\ConsolidacionInventario.rdlc" />
 		<None Remove="Reports\Inventario\ConsumoDiario.rdl" />
 		<None Remove="Reports\Inventario\Kardex.rdlc" />
@@ -60,6 +61,7 @@
 		<None Remove="Reports\Retencion.rdlc" />
 		<None Remove="Reports\Test.rdlc" />
 		<None Remove="Reports\Ventas\AprobDocument.rdl" />
+		<None Remove="Reports\Ventas\Clientes.rdl" />
 		<None Remove="Reports\Ventas\NotaCreditoCliente.rdlc" />
 		<None Remove="Reports\Ventas\NotaEntrega.rdlc" />
 		<None Remove="Reports\Ventas\Proforma.rdlc" />
@@ -153,6 +155,9 @@
 		<Content Include="Reports\GuiaRemision.rdlc">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
+		<Content Include="Reports\Inventario\ArticuloFraccionado.rdl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 		<Content Include="Reports\Inventario\ConsolidacionInventario.rdlc">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
@@ -188,6 +193,9 @@
 		</Content>
 		<Content Include="Reports\ConsumoEmpresaTpv.rdl">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Reports\Ventas\Clientes.rdl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Reports\Ventas\NotaCreditoCliente.rdlc">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>

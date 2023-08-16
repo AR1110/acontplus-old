@@ -33,90 +33,89 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	
+	DECLARE @codEstab VARCHAR(50)			 
+	DECLARE @checkBoxPersona  BIT
+	DECLARE @checkBoxEstado BIT 
+	DECLARE @checkBoxDocumento BIT
+	DECLARE @checkBoxUsuario BIT
+	DECLARE @fechaInicio DATETIME 
+	DECLARE @fechaFin DATETIME
+	DECLARE @nroIdentificacion NVARCHAR(100)
+	DECLARE @byUsuarioSearch INT
+	DECLARE @idTipoDocumento INT
+	DECLARE @byComprobante INT
+	DECLARE @byEstado INT 
+	DECLARE @codTipoDoc CHAR(2)
+	DECLARE @nroSecuencialTipoDoc VARCHAR(13)
+	DECLARE @isSearchNroDoc BIT 
+	DECLARE @nroSecuencialDoc VARCHAR(13)
+	DECLARE @isViewOtherDocs BIT 
 	DECLARE @tipo AS INT 
 	DECLARE @idEntidad AS INT
 	DECLARE @idUsuario AS INT
 	DECLARE @idComprobanteIngreso AS INT 
 	DECLARE @idCuentaPorCobrar INT
 	DECLARE @codDoc AS VARCHAR(5)
+	DECLARE @params NVARCHAR(MAX)
+	DECLARE @sql NVARCHAR(MAX)
 
 	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
 
-	SELECT TOP 1 @idUsuario = idUsuario , @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
+	SELECT TOP 1 @idUsuario = idUsuario , @idEntidad = idEntidad FROM v_Usuario WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
 	-- ====================== Lista Principal de Comprobantes de Ingreso ===============================================
 	IF @tipo = 1
 		BEGIN
-			DECLARE @codEstab VARCHAR(50)			 
-			DECLARE @checkBoxPersona  BIT
-			DECLARE @checkBoxEstado BIT 
-			DECLARE @checkBoxDocumento BIT
-			DECLARE @checkBoxUsuario BIT
-			DECLARE @fechaInicio DATETIME 
-			DECLARE @fechaFin DATETIME
-			DECLARE @nroIdentificacion NVARCHAR(100)
-			DECLARE @byUsuarioSearch INT
-			DECLARE @idTipoDocumento INT
-			DECLARE @byComprobante INT
-			DECLARE @byEstado INT 
 
-			DECLARE @codTipoDoc CHAR(2)
-			DECLARE @nroSecuencialTipoDoc VARCHAR(13)
-			DECLARE @isSearchNroDoc BIT 
-			DECLARE @nroSecuencialDoc VARCHAR(13)
+			SET @params = '@idEntidad         INT
+						  ,@fechaI            DATETIME
+						  ,@fechaF            DATETIME
+						  ,@nroIdentificacion NVARCHAR(100)
+						  ,@idTipoDocumento   INT
+						  ,@idComprobante     INT
+						  ,@estado            INT
+						  ,@idUsuario         INT
+						  ,@byUsuarioSearch	  INT
+						  ,@codEstab          VARCHAR(50)
+						  ,@nroSecuencialTipoDoc VARCHAR(13)
+						  ,@nroSecuencialDoc  VARCHAR(13)'
 
-			DECLARE @isViewOtherDocs BIT 
-			
-
-			DECLARE @params NVARCHAR(MAX) = '@idEntidad         INT
-											,@fechaI            DATETIME
-											,@fechaF            DATETIME
-											,@nroIdentificacion NVARCHAR(100)
-											,@idTipoDocumento   INT
-											,@idComprobante     INT
-											,@estado            INT
-											,@idUsuario         INT
-											,@byUsuarioSearch	INT
-											,@codEstab          VARCHAR(50)
-											,@nroSecuencialTipoDoc VARCHAR(13)
-											,@nroSecuencialDoc  VARCHAR(13)'
-			DECLARE @sql NVARCHAR(MAX) = 'SELECT TOP 50
-													 idComprobanteIngreso = ci.idComprobanteIngreso
-													,s.codEstab
-													,total                = ci.total
-													,fechaRegistro        = FORMAT(ci.fechaRegistro,''dd/MM/yyyy'')
-													,abono                = ci.abono
-													,cambio               = ci.cambio
-													,nroDoc               = td.codigo+ ''-'' + s.estab + ''-'' +Helper.F_Auto_Sequential(ci.nroDocumento)
-													,cliente              = ci.nombreFiscal
-													,nroIdentificacion    = ci.nroIdentificacion  
-													,caja                 =''Ninguna''
-													,style                = CASE WHEN ci.estado = 0 THEN ''table-danger'' ELSE ''''       END 
-													,estado               = CASE WHEN ci.estado = 0 THEN ''Anulado''      ELSE ''Activo'' END 
-													,usuario              = u.nombreUsuario
-										 FROM dbo.ComprobanteIngreso   ci WITH (NOLOCK) 
-										 INNER JOIN Sri.Establecimiento s WITH (NOLOCK) ON s.codEstab         = ci.codEstab
-										 INNER JOIN dbo.TipoDocumento  td WITH (NOLOCK) ON td.idTipoDocumento = ci.idTipoDocumento
-										 INNER JOIN dbo.Usuario         u WITH (NOLOCK) ON u.idUsuario        = ci.idUsuario
-										 WHERE ci.idEntidad = @idEntidad AND s.codEstab = @codEstab '
+			SET @sql = 'SELECT TOP 50
+							 idComprobanteIngreso = ci.idComprobanteIngreso
+							,idDocumento          = ci.idComprobanteIngreso
+							,s.codEstab
+							,total                = ci.total
+							,fechaRegistro        = FORMAT(ci.fechaRegistro,''dd/MM/yyyy'')
+							,abono                = ci.abono
+							,cambio               = ci.cambio
+							,nroDoc               = td.codigo+ ''-'' + s.estab + ''-'' +Helper.F_Auto_Sequential(ci.nroDocumento)
+							,cliente              = ci.nombreFiscal
+							,nroIdentificacion    = ci.nroIdentificacion  
+							,caja                 =''Ninguna''
+							,style                = CASE WHEN ci.estado = 0 THEN ''table-danger'' ELSE ''''       END 
+							,estado               = CASE WHEN ci.estado = 0 THEN ''Anulado''      ELSE ''Activo'' END 
+							,usuario              = u.nombreUsuario
+					FROM dbo.ComprobanteIngreso   ci WITH (NOLOCK) 
+					INNER JOIN Sri.Establecimiento s WITH (NOLOCK) ON s.codEstab         = ci.codEstab
+					INNER JOIN dbo.TipoDocumento  td WITH (NOLOCK) ON td.idTipoDocumento = ci.idTipoDocumento
+					INNER JOIN dbo.Usuario         u WITH (NOLOCK) ON u.idUsuario        = ci.idUsuario
+					WHERE ci.idEntidad = @idEntidad AND s.codEstab = @codEstab '
 
 			SELECT 
-				 @checkBoxDocumento = checkBoxDocumento
-				,@checkBoxEstado    = checkBoxEstado 
-				,@checkBoxPersona   = checkBoxPersona
-				,@checkBoxUsuario   = checkBoxUsuario
-			--	,@byComprobante     = byComprobante
-				,@byUsuarioSearch   = byUsuario
-				,@nroIdentificacion = nroIdentificacion
-				,@codEstab          = codEstab
-			--	,@byTipoDocumento   = byTipoDocumento
-				,@byEstado          = byEstado
-				,@fechaInicio       = CONVERT(DATETIME, fechaInicio, 121)
-				,@fechaFin          = CONVERT(DATETIME, fechaFin, 121)
-				,@codTipoDoc        = codTipoDoc
+				 @checkBoxDocumento    = checkBoxDocumento
+				,@checkBoxEstado       = checkBoxEstado 
+				,@checkBoxPersona      = checkBoxPersona
+				,@checkBoxUsuario      = checkBoxUsuario
+				,@byUsuarioSearch      = byUsuario
+				,@nroIdentificacion    = nroIdentificacion
+				,@codEstab             = codEstab
+				,@byEstado             = byEstado
+				,@fechaInicio          = CONVERT(DATETIME, fechaInicio, 121)
+				,@fechaFin             = CONVERT(DATETIME, fechaFin, 121)
+				,@codTipoDoc           = codTipoDoc
 				,@nroSecuencialTipoDoc = LTRIM(TRIM(nroSecuencialTipoDoc))
-				,@isSearchNroDoc    = isSearchNroDoc
-				,@nroSecuencialDoc  = LTRIM(TRIM(nroSecuencialDoc))
+				,@isSearchNroDoc       = isSearchNroDoc
+				,@nroSecuencialDoc     = LTRIM(TRIM(nroSecuencialDoc))
 			FROM OPENJSON(@json)
 			WITH ( 
 				  checkBoxPersona   BIT           '$.checkBoxPersona'
@@ -127,25 +126,18 @@ BEGIN
 				 ,fechaFin          VARCHAR(60)   '$.fechaFin'
 				 ,nroIdentificacion NVARCHAR(100) '$.nroIdentificacion'
 				 ,codEstab          VARCHAR(100)  '$.codEstab'
-				-- ,byTipoDocumento   INT           '$.byTipoDocumento'
-				-- ,byComprobante     INT           '$.byComprobante'
 				 ,byUsuario         INT           '$.byUsuario'
 				 ,byEstado          INT           '$.byEstado'
 				 ,codTipoDoc        CHAR(2)       '$.codTipoDoc'
 				 ,nroSecuencialTipoDoc VARCHAR(13) '$.nroSecuencialTipoDoc'
-				 ,isSearchNroDoc   BIT            '$.isSearchNroDoc'
-				 ,nroSecuencialDoc VARCHAR(13)    '$.nroSecuencialDoc'
+				 ,isSearchNroDoc    BIT            '$.isSearchNroDoc'
+				 ,nroSecuencialDoc  VARCHAR(13)    '$.nroSecuencialDoc'
 				 )
-
 
 			SELECT @isViewOtherDocs = JSON_VALUE(jsonPermission, '$.additional.viewOthersDocs.view') FROM Config.UserPermission WITH (NOLOCK) WHERE codModule ='V' AND idUsuarioRol = @idUsuarioRol
 		
-			
-
-
 			IF @isSearchNroDoc = 1
 				BEGIN
-					--SET @sql = @sql + ' AND ci.idComprobanteIngreso IN (SELECT cd.idComprobanteIngreso FROM CobroDocumento cd WHERE cd.idTipoDocumento = @idTipoDocumento AND cd.idComprobante = @idComprobante) '
 					SET @sql = @sql + ' AND ci.nroDocumento = @nroSecuencialDoc '
 				END  
 			ELSE 
@@ -180,18 +172,19 @@ BEGIN
 		 
 			EXEC sp_executesql  @sql
 					           ,@params
-					           ,@idEntidad         = @idEntidad
-					           ,@codEstab          = @codEstab
-					           ,@fechaI            = @fechaInicio
-					           ,@fechaF            = @fechaFin
-					           ,@nroIdentificacion = @nroIdentificacion
-					           ,@idUsuario         = @idUsuario
-					           ,@byUsuarioSearch   = @byUsuarioSearch
-					           ,@estado            = @byEstado
-					           ,@idTipoDocumento   = @idTipoDocumento
-					           ,@idComprobante     = @byComprobante
+					           ,@idEntidad            = @idEntidad
+					           ,@codEstab             = @codEstab
+					           ,@fechaI               = @fechaInicio
+					           ,@fechaF               = @fechaFin
+					           ,@nroIdentificacion    = @nroIdentificacion
+					           ,@idUsuario            = @idUsuario
+					           ,@byUsuarioSearch      = @byUsuarioSearch
+					           ,@estado               = @byEstado
+					           ,@idTipoDocumento      = @idTipoDocumento
+					           ,@idComprobante        = @byComprobante
 							   ,@nroSecuencialTipoDoc = @nroSecuencialTipoDoc
-							   ,@nroSecuencialDoc  = @nroSecuencialDoc
+							   ,@nroSecuencialDoc     = @nroSecuencialDoc
+			RETURN 
 		END 
 
 	-- ====================== Historial para mostrar los detalles del comprobante de ingreso ===========================
@@ -243,6 +236,8 @@ BEGIN
 			INNER JOIN Contabilidad.CuotaPorCobrar  cc WITH (NOLOCK) ON cc.idCuotaPorCobrar  = cd.idCuotaPorCobrar
 			INNER JOIN Contabilidad.CuentaPorCobrar cx WITH (NOLOCK) ON cx.idCuentaPorCobrar = cc.idCuentaPorCobrar
 			WHERE co.idComprobanteIngreso = @idComprobanteIngreso
+
+			RETURN 
 		END
 
 	-- ====================== Historial para mostrar los comprobantes de ingreso por Documento =========================
@@ -307,6 +302,8 @@ BEGIN
 			INNER JOIN dbo.CobroDetalle             cc WITH (NOLOCK) ON cc.idCobro                = co.idCobro
 			INNER JOIN Contabilidad.CuotaPorCobrar  cx WITH (NOLOCK) ON cx.idCuotaPorCobrar       = cc.idCuotaPorCobrar
 			WHERE hc.idCuentaPorCobrar = @idCuentaPorCobrar
+
+			RETURN 
 		END 
 END
 GO

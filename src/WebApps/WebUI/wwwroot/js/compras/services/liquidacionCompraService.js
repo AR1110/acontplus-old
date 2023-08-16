@@ -20,20 +20,14 @@
                     return results.map(item=>({
                         codEstab: item.codEstab,
                         idLiquidacionCompra: item.idLiquidacionCompra,
-                        idTipoDocumento: item.idTipoDocumento,
                         fechaEmision: item.fechaEmision,
-                        fechaVencimiento: item.fechaVencimiento,
                         total: item.total,
-                        abono: item.abono,
-                        saldo: item.saldo,
                         nroDocumento: item.nroDocumento,
                         nombreFiscal: item.nombreFiscal,
                         estadoFinanciero: item.estadoFinanciero,
-                        estadoSri: item.estadoSri,
-                        claveAcceso: item.claveAcceso,
                         style: item.style,
                         usuario: item.usuario,
-                        codDoc: item.codDoc, // Por especificar correctemnte
+                        codDoc: item.codDoc,
                         codEstado: item.codDoc
                     }))
                 }

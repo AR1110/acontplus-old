@@ -1,18 +1,18 @@
-﻿using ApiRecepcion.Utils; 
-using Services.Common.Logs;
+﻿using ApiRecepcion.Utils;
 using Compras.Application;
 using DataAccess;
-using Domain.Dtos; 
+using Domain.Dtos;
 using FactElect.Application;
 using FactElect.Core;
 using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Services.Common.Logs;
 using System.Data;
 using System.Security.Claims;
 using System.Text;
 using System.Xml;
-using System.Xml.Serialization;
 
 namespace ApiRecepcion.Controllers
 {
@@ -115,7 +115,7 @@ namespace ApiRecepcion.Controllers
                     message = "Error al obtener los datos del comprobante"
                 });
             }
-           
+
 
         }
         [HttpGet("Preview/{id}")]
@@ -162,7 +162,7 @@ namespace ApiRecepcion.Controllers
                 _logs.LogError("Error getting data of doc: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener los datos del comprobante");
             }
-           
+
             return Ok(_response);
         }
         //[HttpGet("Export/{id}")]
@@ -388,10 +388,10 @@ namespace ApiRecepcion.Controllers
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
 
-                await _db.SPExecute("Recepcion.Documento_Insert");
+                await _db.SPExecute("Recepcion.Documento_Insert", true);
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 //_db.AddDynamicParam("jsonData", SqlValidation.ValidateSqlString(data.jsonData));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(DataHelper.SerializeDictionary(parameters.data)));
+                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(Converters.SerializeDictionary(parameters.data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -439,7 +439,7 @@ namespace ApiRecepcion.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Recepcion.Documento_Migrate");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("json", DataHelper.SerializeDictionary(parameters.data));
+                _db.AddDynamicParam("json", Converters.SerializeDictionary(parameters.data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

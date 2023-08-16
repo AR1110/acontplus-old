@@ -21,7 +21,7 @@ module.exports = {
     parserOptions: {
         sourceType: "module",
         ecmaVersion: 2020,
-        project: "./tsconfig.json",
+        project: "./src/WebApps/WebUI/tsconfig.json",
         extraFileExtensions: [".svelte"]
     },
     env: {

@@ -20,11 +20,11 @@ internal sealed class UserAuthenticationRepository : IUserAuthenticationReposito
     {
         _userManager = userManager;
         _configuration = configuration;
-        _mapper = mapper;   
+        _mapper = mapper;
     }
 
 
-    public async Task<string> CreateTokenAsync() 
+    public async Task<string> CreateTokenAsync()
     {
         var signingCredentials = GetSigningCredentials();
         var claims = await GetClaims();

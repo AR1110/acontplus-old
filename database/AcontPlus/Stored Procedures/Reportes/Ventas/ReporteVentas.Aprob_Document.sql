@@ -9,7 +9,7 @@ END
 GO
 
 
--- exec ReporteVentas.Aprob_Document '{"id":129,"docDestino":"NE","codigo":"P-NE","format":"pdf"}'
+-- exec ReporteVentas.Aprob_Document '{"id":664,"codEstab":"ESTAB-000000209","codDoc":"01","codigo":"RAC","format":"pdf"}'
 CREATE PROCEDURE ReporteVentas.Aprob_Document @json VARCHAR(MAX)
 AS
 BEGIN
@@ -36,31 +36,17 @@ BEGIN
 	--Cliente 
 	DECLARE @cliente VARCHAR(150)
 
-	--Decimales 
-	DECLARE @jsonConfig AS VARCHAR(MAX)
-	DECLARE @nroPrecio INT
-	DECLARE @nroCantidad INT 
-	DECLARE @nroIva INT 
-	DECLARE @nroDescuentoDetalle INT 
-	DECLARE @nroTotalDetalle INT 
-	DECLARE @nroTotalSubTotal INT 
-	DECLARE @nroDescuento INT 
-	DECLARE @nroIce INT 
-
 	--Report 
 	DECLARE @imagen VARBINARY(MAX)
 	DECLARE @rdlcParams VARCHAR(MAX)
 	DECLARE @headerDs VARCHAR(MAX)
 	DECLARE @detailDs VARCHAR(MAX)
 	DECLARE @paymentDs VARCHAR(MAX)
-	DECLARE @normativeDs VARCHAR(MAX)
 	DECLARE @additional VARCHAR(MAX)
 	DECLARE @dataSources VARCHAR(MAX)
 
 	--Email 
-	DECLARE @subject VARCHAR(100)
-	DECLARE @email VARCHAR(50) = 'acontplusweb@gmail.com' --correo servidor 
-	DECLARE @password VARCHAR(50) = 'guzupdzsynqgamav'  -- passwrod 
+	DECLARE @subject VARCHAR(100) 
 	DECLARE @nameDoc VARCHAR(150)
 	DECLARE @dataMail VARCHAR(MAX)
 	DECLARE @cc VARCHAR(100)
@@ -77,7 +63,7 @@ BEGIN
 		contribuyenteEspecial varchar(50),
 		obligadoContabilidad varchar(50),
 		contribuyenteRimpe  varchar(50),
-		agenteRetencion     varchar(2),
+		agenteRetencion     varchar(150),
 		nroDoc              varchar(50),
 		claveAcceso         varchar(50),
 		ambiente            varchar(50),
@@ -85,8 +71,8 @@ BEGIN
 		fechaEmision        datetime,
 		fechaAutorizacion   varchar(50),
 		identificacionComprador varchar(50),
-		razonSocialComprador varchar(100),
-		direccionComprador  varchar(100),
+		razonSocialComprador varchar(300),
+		direccionComprador  varchar(300),
 		telefonoComprador   varchar(50),
 		emailComprador      varchar(300),
 		porcentajeIva       varchar(50),
@@ -102,7 +88,7 @@ BEGIN
 		irbpnr              decimal(18, 2),
 		propina             decimal(18, 2),
 		importeTotal        decimal(18, 2),
-		observacion         varchar(100)
+		observacion         varchar(100) NULL
 	)
 
 	-- Crear tabla para almacenar los detalles del documento
@@ -111,7 +97,7 @@ BEGIN
 		codigo            varchar(50),
 		codigoPrincipal   varchar(50),
 		codigoAuxiliar    varchar(50),
-		descripcion       varchar(150),
+		descripcion       varchar(500),
 		medida            varchar(50),
 		cantidad          decimal(18, 2),
 		precioUnitario    decimal(18, 2),
@@ -152,32 +138,9 @@ BEGIN
 	INNER JOIN dbo.PuntoEmision pe WITH (NOLOCK) ON pe.idPuntoEmision = ad.idPuntoEmision
 	WHERE idAprob_Document = @id
 
-	SELECT TOP 1 @imagen = imagen, @mimeType = mimeType FROM Config.Estab_Logo WITH (NOLOCK) WHERE codEstab = @codEstab
-
-	SELECT TOP 1 @jsonConfig = jsonConfig FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CD'
+	SELECT TOP 1 @imagen = imagen, @mimeType = mimeType FROM Config.Estab_Logo WITH (NOLOCK) WHERE codEstab = @codEstab 
 	
-	--Decimales 
-	SELECT 
-		@nroPrecio           = ISNULL(nroPrecio, 2)
-	   ,@nroCantidad         = ISNULL(nroCantidad, 2)
-	   ,@nroIva              = ISNULL(nroIva, 2)
-	   ,@nroDescuentoDetalle = ISNULL(nroDescuentoDetalle, 2)
-	   ,@nroTotalDetalle     = ISNULL(nroTotalDetalle, 2)
-	   ,@nroTotalSubTotal    = ISNULL(nroTotalSubTotal, 2)
-	   ,@nroDescuento        = ISNULL(nroDescuento, 2)
-	   ,@nroIce              = ISNULL(nroIce, 2)
-	FROM OPENJSON(@jsonConfig)
-	WITH (codTransaccion  VARCHAR(5) '$.codTransaccion'
-		 ,nroPrecio              INT '$.nroPrecio'
-		 ,nroCantidad            INT '$.nroCantidad'
-		 ,nroIva                 INT '$.nroIva'
-		 ,nroDescuentoDetalle    INT '$.nroDescuentoDetalle'
-		 ,nroTotalDetalle        INT '$.nroTotalDetalle'
-		 ,nroTotalSubTotal       INT '$.nroTotalSubTotal'
-		 ,nroDescuento           INT '$.nroDescuento'
-		 ,nroIce                 INT '$.nroIce') as dt
-	WHERE dt.codTransaccion = 'V'
-
+ 
 	INSERT INTO @tbComprobante (ruc, razonSocial, nombreComercial, telefonoEntidad, emailEntidad, dirMatriz, contribuyenteEspecial,
 		obligadoContabilidad, contribuyenteRimpe, agenteRetencion, nroDoc, claveAcceso, ambiente, emision, fechaEmision,
 		fechaAutorizacion, identificacionComprador, razonSocialComprador, direccionComprador, telefonoComprador, emailComprador,
@@ -206,18 +169,56 @@ BEGIN
 		telefonoComprador = cl.telefono,
 		emailComprador = cl.correo,
 		porcentajeIva = 'SUBTOTAL IVA ' + CAST(CAST(ti.porcentaje AS numeric(15, 0)) AS nvarchar) + '%',
-		totalSinImpuestos = Herramientas.Round_Out(ad.totalSinImpuestos, @nroTotalSubTotal),
-		subTotalIva12 = ISNULL(Herramientas.Round_Out((SELECT SUM(ad_d.baseImponible) FROM Ventas.Aprob_Document_Detailt ad_d WHERE ad_d.uniqueId = @uniqueId AND ad_d.codigoPorcentaje = 2), @nroTotalSubTotal), 0.00),
-		subTotalNetoIva = ISNULL(Herramientas.Round_Out((SELECT SUM(ad_d.precioTotalSinImpuesto) FROM Ventas.Aprob_Document_Detailt ad_d WHERE ad_d.uniqueId = @uniqueId AND ad_d.codigoPorcentaje = 2), @nroTotalSubTotal), 0.00),
-		subtotalIva0 = ISNULL(Herramientas.Round_Out((SELECT SUM(ad_d.baseImponible) FROM Ventas.Aprob_Document_Detailt ad_d WHERE ad_d.uniqueId = @uniqueId AND ad_d.codigoPorcentaje = 0), @nroTotalSubTotal), 0.00),
-		subtotalNoObjetoIva = ISNULL(Herramientas.Round_Out((SELECT SUM(ad_d.baseImponible) FROM Ventas.Aprob_Document_Detailt ad_d WHERE ad_d.uniqueId = @uniqueId AND ad_d.codigoPorcentaje = 6), @nroTotalSubTotal), 0.00),
-		subtotalExcentoIva = ISNULL(Herramientas.Round_Out((SELECT SUM(ad_d.baseImponible) FROM Ventas.Aprob_Document_Detailt ad_d WHERE ad_d.uniqueId = @uniqueId AND ad_d.codigoPorcentaje = 7), @nroTotalSubTotal), 0.00),
-		totalDescuento = Herramientas.Round_Out(ad.totalDescuento, @nroDescuento),
+		totalSinImpuestos = CAST(ad.totalSinImpuestos as numeric(18,2)),
+		subTotalIva12 = CAST(
+							 ISNULL(
+									(
+									  SELECT SUM(ad_d.baseImponible) FROM Ventas.Aprob_Document_Detailt ad_d WHERE ad_d.uniqueId = @uniqueId AND ad_d.codigoPorcentaje = 2
+									), 0.00
+									) as numeric(18, 2)
+							 ),
+
+		subTotalNetoIva = CAST(
+								ISNULL(
+										(
+										   SELECT SUM(ad_d.precioTotalSinImpuesto) FROM Ventas.Aprob_Document_Detailt ad_d WHERE ad_d.uniqueId = @uniqueId AND ad_d.codigoPorcentaje = 2
+										), 0.00
+									  ) as numeric(18,2)
+								),
+		subtotalIva0 = CAST(
+							ISNULL(
+									(
+										SELECT SUM(ad_d.baseImponible) FROM Ventas.Aprob_Document_Detailt ad_d WHERE ad_d.uniqueId = @uniqueId AND ad_d.codigoPorcentaje = 0
+									), 0.00
+								  ) AS numeric(18,2)
+							),
+		subtotalNoObjetoIva = CAST(
+									ISNULL(
+											(
+												SELECT SUM(ad_d.baseImponible) FROM Ventas.Aprob_Document_Detailt ad_d WHERE ad_d.uniqueId = @uniqueId AND ad_d.codigoPorcentaje = 6
+											), 0.00
+										  ) AS numeric(18,2)
+									),
+		subtotalExcentoIva = CAST(
+									ISNULL(
+											(
+												SELECT SUM(ad_d.baseImponible) FROM Ventas.Aprob_Document_Detailt ad_d WHERE ad_d.uniqueId = @uniqueId AND ad_d.codigoPorcentaje = 7
+											), 0.00
+										  ) AS numeric(18,2)
+								 ),
+		totalDescuento = CAST(ad.totalDescuento AS numeric(18, 2)),
 		tipoIva = ti.descripcion,
-		valorIva = Herramientas.Round_Out(Herramientas.Round_Out((SELECT SUM(ad_d.precioTotalSinImpuesto) FROM Ventas.Aprob_Document_Detailt ad_d WHERE ad_d.uniqueId = @uniqueId AND ad_d.codigoPorcentaje = 2), @nroTotalSubTotal) * ti.porcentaje / 100, @nroIva),
-		irbpnr = Herramientas.Round_Out(0, 2),
-		propina = Herramientas.Round_Out(0, 2),
-		importeTotal = Herramientas.Round_Out(ad.importeTotal, @nroTotalSubTotal),
+		valorIva = CAST(
+						(
+						 (SELECT SUM(ad_d.precioTotalSinImpuesto) 
+						  FROM Ventas.Aprob_Document_Detailt ad_d 
+						  WHERE ad_d.uniqueId = @uniqueId AND ad_d.codigoPorcentaje = 2
+						 ) * ti.porcentaje / 100
+						) as numeric(18,2)
+					  ),
+		irbpnr = CAST(0 AS numeric(18, 2)),
+		propina = CAST(0 as numeric(18,2)),
+		importeTotal = CAST(ad.importeTotal as numeric(18,2)),
 		observacion = ad.observacion
 	FROM Ventas.Aprob_Document ad
 	INNER JOIN Entidad e ON e.idEntidad = ad.idEntidad
@@ -234,10 +235,10 @@ BEGIN
 		codigoAuxiliar    = ad_d.codigoAuxiliar,
 		descripcion       = ad_d.descripcion,
 		medida            = m.descripcion,
-		cantidad          = Herramientas.Round_Out(ad_d.cantidad, @nroCantidad),
-		precioUnitario    = Herramientas.Round_Out(ad_d.precioUnitario, @nroPrecio),
-		descuento         = Herramientas.Round_Out(ad_d.descuento, @nroDescuentoDetalle),
-		precioSinImpuesto = Herramientas.Round_Out(ad_d.precioTotalSinImpuesto, @nroTotalDetalle)
+		cantidad          = CAST(ad_d.cantidad as numeric(18,2)),
+		precioUnitario    = CAST(ad_d.precioUnitario as numeric(18)),
+		descuento         = cast(ad_d.descuento as numeric(18,2)),
+		precioSinImpuesto = cast(ad_d.precioTotalSinImpuesto as numeric(18,2))
 	FROM Ventas.Aprob_Document_Detailt ad_d
 	INNER JOIN Medida m ON m.codigo = ad_d.codMedida
 	WHERE ad_d.uniqueId = @uniqueId
@@ -264,13 +265,13 @@ BEGIN
 								FOR JSON PATH
 							  )
 
-			SET @normativeDs = (SELECT descripcion FROM Config.Normativa n WHERE n.estado = 1 AND n.idEntidad = @idEntidad FOR JSON PATH)
+ 
 
 			SET @additional = (SELECT * FROM @tbInfoAdicional FOR JSON PATH 
 						
 							)
 
-			SET @dataSources = (SELECT headerDs = @headerDs, detailDs = @detailDs, paymentDs = ISNULL(@paymentDs,'[]'), normativeDs = ISNULL(@normativeDs, '[]'), infoAdicionalDs = ISNULL(@additional,'[]') FOR JSON PATH)
+			SET @dataSources = (SELECT headerDs = @headerDs, detailDs = @detailDs, paymentDs = ISNULL(@paymentDs,'[]'), infoAdicionalDs = ISNULL(@additional,'[]') FOR JSON PATH)
 
 			SET @dataMail = (SELECT 'Prefactura Nro. '+@nroDoc documento, @fecha fechaEmision,  @cliente cliente, @importeTotal importeTotal,
 								@razonSocial razonSocial,
@@ -281,17 +282,11 @@ BEGIN
 					,mimeType =  @mimeType
 				   ,claveAcceso = @claveAcceso
 				   ,rdlcParams = @rdlcParams
-				   ,dataSources = @dataSources
-				   ,ISNULL(@email,'') as 'from'
-				   ,ISNULL(@password,'') as 'password'
+				   ,dataSources = @dataSources 
 				   ,ISNULL(@subject,'') as 'subject'
 				   ,ISNULL(@cc,'') as 'cc'  
-				   ,ISNULL(@nameDoc,'') as 'invoiceName'
-				   ,'logoAcontPlus.jpg' logo
-				   ,'smtp.gmail.com' host
-				   ,587 as 'port'
-				   ,1 EnableSsl
-				   ,dataMail = @dataMail
+				   ,ISNULL(@nameDoc,'') as 'invoiceName' 
+				   ,dataMail = @dataMail 
 		END 
 
 	IF @docDestino='NE'

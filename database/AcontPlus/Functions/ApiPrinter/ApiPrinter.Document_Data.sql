@@ -283,14 +283,17 @@ BEGIN
 		BEGIN 
 			SET @header = (	
 							SELECT 
+								 
 								 mc.razonSocial
-								 ,mc.ruc
+								,mc.ruc
 								,mc.establecimiento
 								,dirMatriz = mc.dirEstablecimiento
 								,fechaEmision =  CONVERT(NVARCHAR, FORMAT(mc.fechaEmision, 'dd/MM/yyyy hh:mm')) 						
 								,nroDoc= UPPER(mc.tipoDoc) + ' : ' + mc.codDoc + '-'+ mc.estab+ '-'+ dbo.AFTAutoComplete(mc.nroDoc)
 								--,mc.entregadoPor
 								-- mc.recibidoPor
+								,mc.tipoDoc
+								,mc.nroIdentificacion
 								,labelEmpleado = IIF(mc.codDoc='IC', 'Recib. por: ', 'Entrg. por: ') 
 								,empleado =  mc.empleado
 								,entidadFinanciera = UPPER(mc.entidadFinanciera)

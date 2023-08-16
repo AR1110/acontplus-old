@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Services.Common.Logs;
-using Services.Common.Utils;
+using Services.Lib.Common;
 using System.Data;
 using System.Net;
 
@@ -93,8 +93,8 @@ namespace Customer.API.Controllers
                 _response = _cConsultaSri.GetRucSri(rUCSriDTo.Ruc, cookieContainer, htmlResponse);
                 if (_response.Establecimientos.Count > 0)
                 {
-                   _response.direccion = _response.Establecimientos[0].direccionCompleta;
-                    if (_response.Establecimientos[0].nombreFantasiaComercial!=null)
+                    _response.direccion = _response.Establecimientos[0].direccionCompleta;
+                    if (_response.Establecimientos[0].nombreFantasiaComercial != null)
                     {
                         _response.nombreComercial = _response.Establecimientos[0].nombreFantasiaComercial.ToString();
                     }

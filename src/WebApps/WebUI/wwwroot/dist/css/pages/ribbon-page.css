@@ -156,8 +156,8 @@ ribbons page
   height: 0;
   content: '';
   border: 30px solid transparent;
-  border-top-color: #fb9678;
-  border-left-color: #fb9678; }
+  border-top-color: #d61672;
+  border-left-color: #d61672; }
 
 .ribbon-corner.ribbon-right:before {
   right: 0;
@@ -182,44 +182,44 @@ ribbons page
   padding: 0 10px 6px 10px; }
 
 .ribbon-custom {
-  background: #fb9678; }
+  background: #d61672; }
 
 .ribbon-bookmark.ribbon-right.ribbon-custom:before {
-  border-right-color: #fb9678;
+  border-right-color: #d61672;
   border-left-color: transparent; }
 
 .ribbon-bookmark.ribbon-vertical-l.ribbon-custom:before,
 .ribbon-bookmark.ribbon-vertical-r.ribbon-custom:before {
-  border-right-color: #fb9678;
+  border-right-color: #d61672;
   border-bottom-color: transparent; }
 
 .ribbon-primary {
-  background: #fb9678; }
+  background: #d61672; }
 
 .ribbon-bookmark.ribbon-primary:before {
-  border-color: #fb9678;
+  border-color: #d61672;
   border-right-color: transparent; }
 
 .ribbon-bookmark.ribbon-right.ribbon-primary:before {
-  border-right-color: #fb9678;
+  border-right-color: #d61672;
   border-left-color: transparent; }
 
 .ribbon-bookmark.ribbon-vertical-l.ribbon-primary:before,
 .ribbon-bookmark.ribbon-vertical-r.ribbon-primary:before {
-  border-right-color: #fb9678;
+  border-right-color: #d61672;
   border-bottom-color: transparent; }
 
 .ribbon-primary.ribbon-corner:before {
-  border-top-color: #fb9678;
-  border-left-color: #fb9678; }
+  border-top-color: #d61672;
+  border-left-color: #d61672; }
 
 .ribbon-primary.ribbon-corner.ribbon-right:before {
-  border-right-color: #fb9678;
+  border-right-color: #d61672;
   border-left-color: transparent; }
 
 .ribbon-primary.ribbon-corner.ribbon-bottom:before {
   border-top-color: transparent;
-  border-bottom-color: #fb9678; }
+  border-bottom-color: #d61672; }
 
 .ribbon-success {
   background: #00c292; }

@@ -14,7 +14,7 @@ namespace Restaurant.Application
         }
         public async Task<List<Recipe>> GetAsync()
         {
-            var response = await _context.Recipes.ToListAsync(); 
+            var response = await _context.Recipes.ToListAsync();
             return response;
         }
         public async Task<Recipe> GetByIdAsync(int id)

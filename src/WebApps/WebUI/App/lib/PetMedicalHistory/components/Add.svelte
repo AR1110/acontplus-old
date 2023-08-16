@@ -62,16 +62,16 @@
 
 	onMount(async () => {
 		console.log("starting");
-		await client.get("/gateway/Diseases/").then((response) => {
+		await client.get("Vet/Diseases/").then((response) => {
 			diseases = response;
 		});
-		await client.get("/gateway/DiseaseStatus/").then((response) => {
+		await client.get("Vet/DiseaseStatus/").then((response) => {
 			diseasesStatuses = response;
 		});
-		await client.get("/gateway/Behaviors/").then((response) => {
+		await client.get("Vet/Behaviors/").then((response) => {
 			behaviors = response;
 		});
-		await client.get("/gateway/BehaviorStatus/").then((response) => {
+		await client.get("Vet/BehaviorStatus/").then((response) => {
 			behaviorsStatuses = response;
 		});
 
@@ -80,7 +80,7 @@
 		}
 		if (editStatus) {
 			await client
-				.get("/gateway/MedicalHistories/" + historyEdited.id)
+				.get("Vet/MedicalHistories/" + historyEdited.id)
 				.then((response) => {
 					let tempArray = JSON.parse(response.payload);
 					console.log(tempArray);
@@ -159,7 +159,7 @@
 			diseaseStatusId: ds,
 		};
 		await client
-			.put("/gateway/HealthChecks/" + id, checkUpdated)
+			.put("Vet/HealthChecks/" + id, checkUpdated)
 			.then((response) => {
 				toast({
 					type: "success",
@@ -204,7 +204,7 @@
 			behaviorStatusId: bs,
 		};
 		await client
-			.put("/gateway/BehaviorTests/" + id, testUpdated)
+			.put("Vet/BehaviorTests/" + id, testUpdated)
 			.then((response) => {
 				toast({
 					type: "success",
@@ -244,7 +244,7 @@
 				textSearch: value,
 			};
 			await client
-				.get(`/gateway/pets/search?json=` + JSON.stringify(data))
+				.get(`Vet/pets/search?json=` + JSON.stringify(data))
 				.then((response) => {
 					hideLoader();
 					if (response.code == 1) {
@@ -312,7 +312,7 @@
 			observations: medicalHistory.observations,
 		};
 		await client
-			.post("/gateway/MedicalHistories/", newHistory)
+			.post("Vet/MedicalHistories/", newHistory)
 			.then((response) => {
 				toast({
 					type: "success",
@@ -362,7 +362,7 @@
 		};
 		await client
 			.put(
-				"/gateway/MedicalHistories/" + medicalHistory.id,
+				"Vet/MedicalHistories/" + medicalHistory.id,
 				updatedHistory
 			)
 			.then((response) => {

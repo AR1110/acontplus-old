@@ -2,7 +2,7 @@
 using DataAccess;
 using Domain.Models;
 using Helpers;
-using Microsoft.AspNetCore.Http;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common.Logs;
@@ -151,16 +151,16 @@ namespace ApiConfig.Controllers
             try
             {
                 int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                
+
                 var data = JsonConvert.DeserializeObject<FirmaElectronica>(json);
                 await _db.SPExecute("Config.FirmaElectronica_Update");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("idFirmaElectronica", data.idFirmaElectronica);
-                _db.AddDynamicParam("contrasenia", data.contrasenia);               
+                _db.AddDynamicParam("contrasenia", data.contrasenia);
                 _db.AddDynamicParam("fechaCaducidad", data.fechaCaducidad);
                 _db.AddDynamicParam("estado", data.estado);
                 _response = _db.GetDefault();
-                 
+
             }
             catch (Exception ex)
             {

@@ -1,6 +1,5 @@
 ﻿using Helpers;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 using System.Security.Cryptography;
 
 namespace WebUI.Controllers
@@ -9,15 +8,18 @@ namespace WebUI.Controllers
     {
         private readonly IConfiguration _config;
         private readonly string _connectionStrings = string.Empty;
-        GenericResponse _gr = new();
+        private GenericResponse _gr = new();
+
         public TestController(IConfiguration config)
         {
             _config = config;
         }
+
         public IActionResult Index()
         {
             return View();
         }
+
         //public async Task<IActionResult> TestDateInServer()
         //{
         //    string date = Request.Form["dateTest"].ToString();
@@ -27,15 +29,14 @@ namespace WebUI.Controllers
         //    return Ok(response);
         //}
         [HttpPost]
-        public async Task<IActionResult> EncryptText()
+        public IActionResult EncryptText()
         {
             string textToEncrypt = "";
             textToEncrypt = Request.Form["txtToEncrypt"].ToString();
-            var encrypted = Encryption.EncryptString(_config.GetSection("keyEncrypt").Value, textToEncrypt);
+            var encrypted = Encryption.EncryptString(_config.GetSection("KeyEncryption").Value, textToEncrypt);
 
             //var client = new HttpClient(new HttpClientHandler()
             //{
-
             //    AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip,
             //    Credentials = CredentialCache.DefaultCredentials,
             //    UseDefaultCredentials = true
@@ -54,6 +55,7 @@ namespace WebUI.Controllers
             //Console.WriteLine(await response.Content.ReadAsStringAsync());
             return Ok(encrypted);
         }
+
         [HttpPost]
         public IActionResult GenerateRandomKey()
         {
@@ -64,6 +66,7 @@ namespace WebUI.Controllers
             }
             return Ok(Convert.ToBase64String(key));
         }
+
         //public IActionResult GetPrinter()
         //{
         //    string printers = string.Empty;

@@ -1,13 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Services.Common.Logs;
 using DataAccess;
 using Domain.ViewModels.Logistica;
 using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Services.Common.Logs;
 
 namespace ApiLogistica.Controllers
 {

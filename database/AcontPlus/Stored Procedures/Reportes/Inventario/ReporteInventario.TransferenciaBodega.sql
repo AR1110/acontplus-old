@@ -21,7 +21,8 @@ BEGIN
 		nroDoc = dbo.AFTGenerarNroDocumento(tb.estab+tb.ptoEmi,tb.nroDoc),
 		fechaEmision = FORMAT(tb.fechaEmision, 'dd/MM/yyyy HH:mm'),
 		tb.bodegaOrigen,
-		tb.bodegaDestino
+		tb.bodegaDestino,
+		tb.observacion
 	FROM v_Transferencia_Bodega tb	
 	WHERE idTransferenciaBodega = @id
 

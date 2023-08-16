@@ -1,7 +1,25 @@
 ﻿@{
     ViewData["title"] = "Articulo";
 }
+<style>
+    .thumbnail {
+        width: 100px;
+        height: auto;
+    }
 
+        .thumbnail:hover {
+            top: -50px;
+            left: -35px;
+            width: 500px;
+            height: auto;
+            display: block;
+            z-index: 999;
+            cursor: pointer;
+            -webkit-transition-property: all;
+            -webkit-transition-duration: 0.3s;
+            -webkit-transition-timing-function: ease;
+        }
+</style>
 <div ng-controller="articuloCtrl">
     <div class="row page-titles">
         <div class="col-md-5 align-self-center">
@@ -18,37 +36,111 @@
         </div>
     </div>
 
-
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-3 col-xl-3 col-md-12 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>SubFamilia</span>
+                        <select name="subFamilia" id="subFamilia" class="form form-control border-select" ng-model="dataSearch.idSubFamilia" ng-change="searchArticulo()">
+                            <option value="">Todos</option>
+                            <option ng-value="item.idSubFamilia" ng-repeat="item in subFamilias">
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-xl-3 col-md-12 col-sm-12 col-12">
+                     <div class="form-group">
+                        <span>Medida</span>
+                        <select name="medida" id="medida" class="form form-control border-select" ng-model="dataSearch.idMedida" ng-change="searchArticulo()">
+                            <option value="">Todos</option>
+                            <option ng-value="item.idMedida" ng-repeat="item in medidas">
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-xl-3 col-md-12 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>Marca</span>
+                        <select name="marca" id="marca" class="form form-control border-select" ng-model="dataSearch.idMarca" ng-change="searchArticulo()">
+                            <option value="">Todos</option>
+                            <option ng-value="item.idMarca" ng-repeat="item in marcas">
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-xl-3 col-md-12 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>Modelos</span>
+                        <select name="modelo" id="modelo" class="form form-control border-select" ng-model="dataSearch.idModelo" ng-change="searchArticulo()">
+                            <option value="">Todos</option>
+                            <option ng-value="item.idModelo" ng-repeat="item in modelos">
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-xl-3 col-md-12 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>Tipo Iva</span>
+                        <select name="tipoIva" id="tipoIva" class="form form-control border-select" ng-model="dataSearch.idTipoIva" ng-change="searchArticulo()">
+                            <option value="">Todos</option>
+                            <option ng-value="item.idTipoIva" ng-repeat="item in tiposIva">
+                                {{item.descripcion}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-xl-3 col-md-12 col-sm-12 col-12">
+                    <div class="form-group">
+                        <spna>Stock</spna>
+                        <select class="form-control border-select" ng-model="dataSearch.byStock" ng-change="searchArticulo()">    
+                            <option value="">Todos</option>                            
+                            <option ng-value="1">Con Stock</option>
+                            <option ng-value="2">Sin Stock</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-xl-2 col-md-12 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>Estado</span>
+                        <select name="" id="" class="form-control border-select" ng-model="dataSearch.status" ng-change="searchArticulo()">
+                            <option value="">Todos</option>
+                            <option ng-value="1">Activo</option>
+                            <option ng-value="0">Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-xl-2 col-md-12 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>Fraccionado</span>
+                        <md-switch ng-model="dataSearch.checkBoxFraccionado" aria-label="Inventario" ng-change="searchArticulo()">
+                        {{ dataSearch.checkBoxFraccionado?'SI':'NO' }}
+                    </md-switch>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-xl-2 col-md-12 col-sm-12 col-12">
+                    <div class="form-group">
+                        <span>Inventario</span>
+                        <md-switch ng-model="dataSearch.checkBoxInventario" ng-change="searchArticulo()" aria-label="Switch 1">
+                        {{dataSearch.checkBoxInventario?'SI':'NO'}}
+                    </md-switch>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <div class="card">
-        <div class="card-body">
-            @* <md-toolbar class="md-table-toolbar md-default">
-                <div class="md-toolbar-tools">
-                    <div class="col-lg-9 col-md-9 col-sm-1">
-                        <button class="btn btn-info" ng-click="openModalFiltro()">
-                            <i class="fa fa-filter"></i> Filtro
-                        </button>
-
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-                        <form class="form-material">
-                            <div class="input-group">
-                                <input type="text" class="form-control" ng-model="dataSearch.bySearch"
-                                    ng-change="searchArticulo()" placeholder="Buscar Articulo" />
-                                <div class="input-group-append">
-                                    <button class="btn btn-secondary btn-sm" ng-click="searchArticulo()">
-                                        <i class="fas fa-redo"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </md-toolbar> *@
+        <div class="card-body"> 
             
-            <div class="row">
-                
+            <div class="row">   
                 <div class="col-lg-9 col-md-9 col-sm-1">
                     <span class="form-group pull-left page-size form-inline">
                         <select class="form-control control-color" ng-model="dataSearch.pageSize"
@@ -64,10 +156,7 @@
                             <div class="input-group-append">
                                 <button class="btn btn-secondary btn-sm" ng-click="searchArticulo()">
                                     <i class="fas fa-redo"></i>
-                                </button>
-                                <button class="btn btn-info btn-sm" ng-click="openModalFiltro()">
-                                    <i class="fas fa-filter"></i>
-                                </button>
+                                </button> 
                             </div>
                         </div>
                     </form>
@@ -83,9 +172,10 @@
                             <th md-column></th>
                             <th md-column>Op.</th>
                             <th md-column>N°</th>
+                            <th md-column>Imagen</th>
                             <th md-column>Código</th>
                             <th md-column>Descripción</th>
-                            <th md-column>T. Articulo</th>
+                            <th md-column>Medida</th>
                             <th md-column>Sub Familia</th>
                             <th md-column>Stock</th>
                             <th md-column>Estado</th>
@@ -104,31 +194,29 @@
                             <td md-cell>
                                 <md-menu>
                                     <md-button aria-label="Open demo menu" class="md-icon-button"
-                                        ng-click="$mdMenu.open($event)">
+                                               ng-click="$mdMenu.open($event)">
                                         <icon class="mdi mdi-menu"></icon>
                                     </md-button>
                                     <md-menu-content class="md-dense">
                                         <md-menu-item ng-if="accion.editar">
                                             <md-button ng-click="openModalEditar(a)">
-                                                <span md-menu-align-target><i class="ti-pencil"></i>
-                                                    Editar</span>
+                                                <span md-menu-align-target>
+                                                    <i class="ti-pencil"></i>
+                                                    Editar
+                                                </span>
                                             </md-button>
                                         </md-menu-item>
 
                                         <md-menu-item ng-if="accion.eliminar || !a.articulo.estado">
                                             <md-button ng-click="askToDelete(a)">
-                                                <span md-menu-align-target><i class="ti-trash"></i>
-                                                    Eliminar</span>
-                                            </md-button>
-                                        </md-menu-item>
-
-                                        <md-menu-item ng-if="accion.impuesto">
-                                            <md-button ng-click="abrirModalImpuestoArticulo(a)">
                                                 <span md-menu-align-target>
-                                                    <icon class="ti-money"></icon> Impuesto
+                                                    <i class="ti-trash"></i>
+                                                    Eliminar
                                                 </span>
                                             </md-button>
                                         </md-menu-item>
+
+
 
                                         <md-menu-item>
                                             <md-button ng-click="updateStockArticle(a)">
@@ -158,7 +246,7 @@
                                         <!--Historial Compras-->
                                         <md-menu-item>
                                             <md-button ng-click="openModalHistorialCompra(a)"
-                                                title="Historial Compras">
+                                                       title="Historial Compras">
                                                 <span md-menu-align-target>
                                                     <icon class="mdi mdi-history"></icon> Hist. Compras
                                                 </span>
@@ -168,21 +256,25 @@
                                     </md-menu-content>
                                 </md-menu>
                                 <button type="button" class="btn btn-outline-success btn-xs" ng-show="a.imagen"
-                                    ng-click="openModalImagen(a)">
+                                        ng-click="openModalImagen(a)">
                                     <i class="fas fa-file-image"></i>
                                 </button>
                             </td>
                             <td md-cell>{{$index+1}}</td>
+                            <td md-cell style="vertical-align: middle">
+                                <img class="img-fluid img-thumbnail" ng-class="{thumbnail: a.s3ObjectUrl.length > 0}" width="50" src="{{a.s3ObjectUrl}}" />
+                            </td>
                             <td md-cell>{{a.codigo}}</td>
                             <td md-cell>
                                 <span tooltip uib-tooltip="{{a.observaciones}}" tooltip-trigger="'mouseenter'"
-                                    tooltip-placement="{{a.observaciones?'top':''}}">{{a.descripcion}}</span>
+                                      tooltip-placement="{{a.observaciones?'top':''}}">{{a.descripcion}}</span>
                             </td>
-                            <td md-cell>{{a.tipoArticulo}}</td>
+                            <td md-cell>{{a.medida}}</td>
                             <td md-cell>{{a.subFamilia}}</td>
                             <td md-cell>
                                 <h6>
-                                    <span ng-class="a.style" estab-stock article="a">{{a.stock}}
+                                    <span ng-class="a.style" estab-stock article="a">
+                                        {{a.stock}}
                                     </span>
                                 </h6>
                             </td>
