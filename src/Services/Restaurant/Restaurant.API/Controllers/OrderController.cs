@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Lib.Common.Api;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Restaurant.Core.Entities;
 using Restaurant.Core.Interfaces;
@@ -40,15 +41,16 @@ namespace Restaurant.API.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Order data)
+        public async Task<IActionResult> Post([FromBody] ApiRequest data)
         {
             try
             {
-                var parameters = new Dictionary<string, object> {
-                    { "userRoleId", User.GetUserRoleId() },
-                    { "json", JsonConvert.SerializeObject(data) }
-                };
-                var response = await _orderService.AddAsync(parameters);
+                //var parameters = new Dictionary<string, object> {
+                //    { "userRoleId", User.GetUserRoleId() },
+                //    { "json", JsonConvert.SerializeObject(data) }
+                //};
+                data.UserRoleId = User.GetUserRoleId();
+                var response = await _orderService.AddAsync(data);
                 if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo guardar"); }
                 return Ok(response);
             }
