@@ -69,7 +69,7 @@ namespace DataAccess.Administracion
                     if (dt.Tables.Count > 0)
                     {
                         _gr.id = "1";
-                        _gr.data = Converters.DataSetToJSON(dt);
+                        _gr.data = Converters.DataSetToJSON(dt, true);
                     }
                 }
             }
