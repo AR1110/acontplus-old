@@ -1,5 +1,5 @@
 ﻿using Domain.Dtos;
-using Helpers;
+
 using Lib.Common;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Reporting.NETCore;
@@ -167,6 +167,11 @@ namespace Reports.Application
                 }
                 return lr.Render(format, null, out mimeType, out _, out _, out _, out _);
             }
+        }
+        public static DataTable JsonToDataTable(string json)
+        {
+            DataTable dt = (DataTable)JsonConvert.DeserializeObject(json, (typeof(DataTable)));
+            return dt;
         }
     }
 }
