@@ -12,7 +12,7 @@ GO
 -- Create date: 2023-08-14 
 -- Description:	Get Item
 -- =============================================
--- Restaurant.Item_Get 139, '{"checkSubFamilia": false,"idSubFamilia":1,"pageIndex":1,"pageSize":50}', ''
+-- Restaurant.Item_Get 139, '{"checkSubFamilia": false,"idSubFamilia":0,"pageIndex":0,"pageSize":0, "tipo": 2}', ''
 IF OBJECT_ID(N'Restaurant.Item_Get', N'P') IS NOT NULL
 	DROP PROCEDURE Restaurant.Item_Get
 GO
@@ -32,18 +32,21 @@ BEGIN
 	DECLARE @sql NVARCHAR(MAX)
 	DECLARE @idEntidad INT
 	DECLARE @params NVARCHAR(MAX)
+    DECLARE @tipo INT
 
 			
 	SELECT @checkSubFamilia	= checkSubFamilia
 			,@idSubFamilia  = idSubFamilia
 			,@pageIndex		= pageIndex
 			,@pageSize		= pageSize
+            ,@tipo          = tipo
 	FROM OPENJSON(@json) 
 	WITH(
-		checkSubFamilia	BIT '$.checkSubFamilia'
-		,idSubFamilia	INT '$.idSubFamilia'
-		,pageIndex		INT '$.pageIndex'
-		,pageSize		INT '$.pageSize'
+        tipo                INT '$.tipo'
+		,checkSubFamilia	BIT '$.checkSubFamilia'
+		,idSubFamilia	    INT '$.idSubFamilia'
+		,pageIndex		    INT '$.pageIndex'
+		,pageSize		    INT '$.pageSize'        
 	)
 
 	SELECT TOP 1  @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
@@ -82,20 +85,28 @@ BEGIN
 				LEFT JOIN Restaurant.ProductionArea pa ON pa.Id = ri.ProductionAreaId
 				WHERE a.idEntidad = @idEntidad ' 
 
-	IF @checkSubFamilia = 1
-		BEGIN			
-			SET @sql = @sql + ' AND a.idSubFamilia = @idSubFamilia '
-		END
+    IF @tipo = 1
+        BEGIN
+            IF @checkSubFamilia = 1
+		        BEGIN			
+			        SET @sql = @sql + ' AND a.idSubFamilia = @idSubFamilia '
+		        END
 
-	SET @sql = @sql + ' ORDER BY ri.CreatedAt DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
+	        SET @sql = @sql + ' ORDER BY ri.CreatedAt DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
 		
-	SET @tableNames = 'items'
-	EXEC sp_executesql @sql 
-						,@params
-						,@idEntidad		= @idEntidad
-						,@idSubFamilia	= @idSubFamilia
-						,@pageIndex		= @pageIndex
-						,@pageSize		= @pageSize
-	
+	        SET @tableNames = 'items'
+	        EXEC sp_executesql @sql 
+						        ,@params
+						        ,@idEntidad		= @idEntidad
+						        ,@idSubFamilia	= @idSubFamilia
+						        ,@pageIndex		= @pageIndex
+						        ,@pageSize		= @pageSize
+        END
+
+    IF @tipo = 2
+        BEGIN
+            SET @tableNames = 'ingredientType'
+            SELECT * FROM Restaurant.IngredientType
+        END	
 END
 GO

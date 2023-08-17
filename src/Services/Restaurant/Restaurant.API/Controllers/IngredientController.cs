@@ -1,16 +1,19 @@
-using Lib.Common.Api;
+﻿using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.Core.Interfaces;
 using Services.Common;
+using Services.Common.Logs;
 
 namespace Restaurant.API.Controllers
 {
     public class IngredientController : BaseApiController
     {
         private readonly IIngredientService _ingredient;
-        public IngredientController(IIngredientService ingredient)
+        private readonly LogWriter _log;
+        public IngredientController(IIngredientService ingredient, LogWriter log)
         {
             _ingredient = ingredient;
+            _log = log;
         }
         [HttpGet]
         public async Task<IActionResult> Get(string json)
@@ -23,11 +26,16 @@ namespace Restaurant.API.Controllers
                     {"json", json}
                 };
                 var response = await _ingredient.GetAsync(parameters);
-                if (response == null) { return NoContent(); };
+                if (response == null)
+                {
+                    _log.LogActivity("No se pudo obtener la data");
+                    return NoContent();
+                };
                 return Ok(response);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
+                _log.LogActivity("Error en el catch \n" + ex.Message);
                 return BadRequest("Error on getting ingredients, testing hot reload: " + ex.Message);
             }
         }
@@ -37,7 +45,10 @@ namespace Restaurant.API.Controllers
             try
             {
                 var response = await _ingredient.GetByIdAsync(id);
-                if (response == null) { return NoContent(); };
+                if (response == null)
+                {
+                    return NoContent();
+                };
                 return Ok(response);
             }
             catch (System.Exception ex)
@@ -52,14 +63,21 @@ namespace Restaurant.API.Controllers
             {
                 data.UserRoleId = User.GetUserRoleId();
                 var response = await _ingredient.AddAsync(data);
-                if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("Cant Save"); };
+                if (response == null | string.IsNullOrEmpty(response))
+                {
+                    _log.LogActivity($"Can't save, error");
+                    return BadRequest("Cant Save");
+                };
                 return Ok(response);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
+                _log.LogActivity("Error catch on post \n" + ex.Message);
                 return BadRequest("Error on Post: " + ex.Message);
             }
         }
+
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
         {
@@ -67,11 +85,16 @@ namespace Restaurant.API.Controllers
             {
                 data.UserRoleId = User.GetUserRoleId();
                 var response = await _ingredient.UpdateAsync(id, data);
-                if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("Cant Update"); };
+                if (response == null | string.IsNullOrEmpty(response))
+                {
+                    _log.LogActivity("Can't update");
+                    return BadRequest("Cant Update");
+                };
                 return Ok(response);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
+                _log.LogActivity($"Error catch \n {ex.Message}");
                 return BadRequest("Error on Post: " + ex.Message);
             }
         }
