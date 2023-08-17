@@ -1,4 +1,4 @@
-import { DataLogin, Establecimiento, UserData, UserEmptyState } from "@/core/models";
+import { DataLogin, Establecimiento, UserData, UserEmptyState, estabInitialState } from "@/core/models";
 import { AuthService, getEstabs, getUsetData, persistenceClear, setEstabs, setToken, setUserData } from "@/core/services";
 import { SnackbarUtility } from "@/core/utilities"; 
 import { create } from "zustand";
@@ -10,6 +10,8 @@ type AuthState = {
     successLogin: boolean
     user: UserData
     estabs: Array<Establecimiento>
+    dataEstab: Establecimiento
+    setDataEstab(dataEstab: Establecimiento): void
     login: (username: string, password: string) => void;
     logOut: () => void
 }
@@ -20,7 +22,13 @@ export const useAuthStore = create<AuthState>((set) => (
         successLogin: false,
         user: getUsetData() ? getUsetData() : UserEmptyState,
         estabs: getEstabs() ? getEstabs() : [],
-        
+        dataEstab:  estabInitialState, 
+        setDataEstab(dataEstab) {
+            set(state=>({
+                ...state,
+                dataEstab
+            }))
+        },
         login:  (username: string, password: string) => {
             
             set(state => ({
@@ -47,7 +55,7 @@ export const useAuthStore = create<AuthState>((set) => (
                     set(state => ({
                         ...state,
                         successLogin: true
-                    }))
+                    })) 
                 }
 
             }).finally(() => {

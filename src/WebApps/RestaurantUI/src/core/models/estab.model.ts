@@ -12,3 +12,18 @@ export interface Establecimiento {
     contribuyenteRimpe: string;
     actividad: string;
 }
+
+export const estabInitialState: Establecimiento = {
+    codEstab_Asig: "",
+    idUsuarioRol: "",
+    codEstab: "",
+    predeterminado: false,
+    idEstablecimiento: 0,
+    ruc: 0,
+    nombreComercial: "",
+    estab: 0,
+    obligadoContabilidad: "",
+    dirEstablecimiento: "",
+    contribuyenteRimpe: "",
+    actividad: ""
+}

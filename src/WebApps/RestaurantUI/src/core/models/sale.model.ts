@@ -1,4 +1,5 @@
-import { CategoryReadDto, DecimalSale, TableReadDto } from ".";
+import { CategoryReadDto, DecimalSale, TableReadDto, Tax, TaxRate, WarehouseAsign } from ".";
+import { EmissionPointAsign } from "./emission-point.model";
 
 export interface Summary {
     tax: number;
@@ -26,8 +27,12 @@ export interface CartItem {
 
 export interface DataFormSale {
     categories: Array<CategoryReadDto>
-    tables: Array<TableReadDto>,
-    decimal: DecimalSale  
+    tables: Array<TableReadDto>
+    decimal: DecimalSale
+    taxes: Array<Tax>
+    taxRates: Array<TaxRate>
+    warehouses: Array<WarehouseAsign>
+    emissionPoints: Array<EmissionPointAsign>
 } 
 
 
@@ -44,5 +49,9 @@ export const dataFormInitialState: DataFormSale = {
         nroDescuento: 0,
         importeTotal: 0,
         nroIce: 0
-    } 
+    },
+    taxes: [],
+    taxRates: [],
+    warehouses: [],
+    emissionPoints: []
 }

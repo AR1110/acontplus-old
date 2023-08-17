@@ -12,13 +12,13 @@ export default function TableSelect() {
   };
 
   return (
-    <FormControl margin='normal'  size="small" fullWidth>
+    <FormControl margin='normal' size="small" fullWidth>
       <InputLabel id="Mesa">Mesa</InputLabel>
       <Select
         labelId="Mesa"
         id="demo-select-small"
         value={age}
-        label="Mesa" 
+        label="Mesa"
         onChange={handleChange}
       >
         <MenuItem value="">

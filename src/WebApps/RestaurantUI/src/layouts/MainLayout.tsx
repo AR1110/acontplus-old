@@ -14,7 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { PrivateRoutes, PublicRoutes } from '@/core/models';
+import { Establecimiento, PrivateRoutes, PublicRoutes } from '@/core/models';
 import { useAuthStore } from '@/stores/authStore';
 
 const pages = ['Pedidos'];
@@ -25,6 +25,10 @@ function MainLayout() {
     const closeSession = useAuthStore(state => state.logOut);
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+
+    const estabs = useAuthStore(state => state.estabs);
+    const dataEstab = estabs[0] as Establecimiento;
+
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
@@ -112,7 +116,7 @@ function MainLayout() {
                                 ))}
                             </Menu>
                         </Box>
-                        <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+                        {/* <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} /> */}
                         <Typography
                             variant="h5"
                             noWrap
@@ -142,8 +146,11 @@ function MainLayout() {
                                 </Button>
                             ))}
                         </Box>
-
+                        <Typography sx={{ display: { xs: 'flex'}, mr: 1 }} variant="body2">
+                            Estab: {dataEstab.nombreComercial}
+                        </Typography>
                         <Box sx={{ flexGrow: 0 }}>
+
                             <Tooltip title="Open settings">
                                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                                     <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
@@ -174,11 +181,7 @@ function MainLayout() {
                         </Box>
                     </Toolbar>
                 </Container>
-            </AppBar>
-            {/* <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}>
-                <Toolbar />
-            <Outlet />
-            </Box> */}
+            </AppBar> 
             <Box
                 component="main"
                 sx={{

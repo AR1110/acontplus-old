@@ -23,7 +23,7 @@ instance.interceptors.request.use((request) => {
     // Ignorar las solicitudes que contienen "assets" en la URL
     if (request.url?.includes("assets") || request.headers?.Authorization) {
       return request;
-    }
+    } 
     return updateHeader(request);
   }
 );

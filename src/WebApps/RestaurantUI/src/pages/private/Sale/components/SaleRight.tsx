@@ -1,5 +1,5 @@
 import { Box, Button, Divider, Grid, List, ListItem, ListItemText, Paper, Typography, useMediaQuery } from '@mui/material'
- 
+
 import CustomerSearch from './CustomerSearch'
 import { MonetizationOnIcon, RestartAltIcon } from '@/core/components'
 import TableSelect from './TableSelect'
@@ -11,16 +11,16 @@ const listItemCustom = {
     paddingBottom: '2px'
 }
 
- 
+
 
 export default function SaleRight() {
     const isMobile = useMediaQuery('(max-width:900px)');
     const summary = saleStore(state => state.summary);
     const resetForm = saleStore(state => state.resetForm);
-    
+
     return (
-        <Paper elevation={isMobile?0: 0} sx={{
-            borderRadius: isMobile ? 'none': '12px',
+        <Paper elevation={isMobile ? 0 : 0} sx={{
+            borderRadius: isMobile ? 'none' : '12px',
             p: 1,
             display: 'flex',
             flexDirection: 'column',

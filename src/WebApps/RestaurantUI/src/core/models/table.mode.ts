@@ -1,6 +1,6 @@
 
 export interface RawTableData {
-    tableId: string
+    id: string
     description: string
 }
 

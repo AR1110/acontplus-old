@@ -1,15 +1,12 @@
-
-
-import * as React from 'react';
+ 
 import BottomNavigation from '@mui/material/BottomNavigation';
-import BottomNavigationAction from '@mui/material/BottomNavigationAction';
-import FolderIcon from '@mui/icons-material/Folder';
+import BottomNavigationAction from '@mui/material/BottomNavigationAction'; 
 import RestoreIcon from '@mui/icons-material/Restore';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { Badge, Paper } from '@mui/material';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { saleStore } from '@/stores/saleStore';
-import { useState } from 'react';
+import { SyntheticEvent, useState } from 'react';
 import ItemDialog from './ItemDialog';
 
 interface CBNProps {
@@ -19,7 +16,8 @@ export default function CustomBottomNavigation({ isMobile }: CBNProps) {
     const [value, setValue] = useState('recents');
     const [open, setOpen] = useState(false);
     const totalItems = saleStore(state => state.totalItems)
-    const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    const handleChange = (event: SyntheticEvent, newValue: string) => {
+        console.log(event)
         setValue(newValue); 
         if(newValue==='ITEMS'){
             setOpen(true)

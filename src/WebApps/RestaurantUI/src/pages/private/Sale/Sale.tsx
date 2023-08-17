@@ -1,70 +1,63 @@
 
 import { ErrorBoundary } from "@/core/utilities";
 import { Grid, useMediaQuery } from "@mui/material";
-import CategoryTab from "./components/CategoryTab";
-import { saleStore } from "@/stores/saleStore";
+import CategoryTab from "./components/CategoryTab"; 
 import { useAsync, useFetchAndLoad } from "@/hooks";
-import { ItemService, SaleService } from "@/core/services";
-import { categoryReadAdapter, decimalSaleReadAdapter, itemReadAdapter, tableReadAdapter } from "@/core/adapters";
+import { ItemService, SaleService } from "@/core/services"; 
 import CollectionItem from "./components/CollectionItem";
 import SaleRight from "./components/SaleRight";
-import { useAuthStore } from "@/stores/authStore";
+ 
 import { Establecimiento } from "@/core/models";
 import CustomBottomNavigation from "./components/CustomBottomNavigation";
+import { saleStore, useAuthStore } from "@/stores";
+import { useEffect } from "react";
+import { itemReadAdapter } from "@/core/adapters";
 
 
-export default function Sale() { 
+export default function Sale() {
     const isMobile = useMediaQuery('(max-width:900px)');
-    const setDataForm = saleStore(state =>  state.setDataForm)    
+
+    const setDataForm = saleStore(state => state.setDataForm)
+    const setDataEstab = useAuthStore(state => state.setDataEstab);
     const estabs = useAuthStore(state => state.estabs);
-    const dataEstab = estabs[0] as Establecimiento;
-    
+        
     const { itemSearch, setCollectionItems } = saleStore(state => ({
         itemSearch: state.itemSearch,
         setCollectionItems: state.setCollectionItems
     }));
-    
+
+    useEffect(()=>{  
+        let dataEstab = estabs[0] as Establecimiento
+        setDataEstab(dataEstab)
+        SaleService.getDataForForm(JSON.stringify({
+            codEstab: dataEstab.codEstab
+        })).then(response=>{
+            setDataForm(response)
+        })                   
+    }, [])
+
+  
     //Fetch 
     const { loading, callEndpoint } = useFetchAndLoad();
-
-    //Fetch  
-    const getDataForFormApi = async () => await callEndpoint(SaleService.getDataForForm(JSON.stringify({
-        codEstab: dataEstab.codEstab
-    })));
     const getItemsApi = async () => await callEndpoint(ItemService.getAll(itemSearch));
  
-    const adaptDataForm = (response: any) => {
-        const {subCategorias, configDecimal, table} = response;
-        setDataForm({
-            categories: categoryReadAdapter(subCategorias),
-            decimal: decimalSaleReadAdapter(configDecimal[0]),
-            tables: tableReadAdapter(table)
-
-        })    
-    }
-
-    const itemAdapter = (response: any) => { 
-        setCollectionItems([]) 
+    const itemAdapter = (response: any) => {
+        setCollectionItems([])
         const items = itemReadAdapter(response.items || []);
-        setCollectionItems(items)
+        setCollectionItems(items) 
+    } 
 
-    }
- 
-    useAsync(getDataForFormApi, adaptDataForm, () => {
-        console.log('init')
-    }, []);
-
-    //useEffect React
+    //se ejecuta cada vez que cambian la categoria
     useAsync(getItemsApi, itemAdapter, () => {
         console.log('init')
-    }, [itemSearch]); 
+    }, [itemSearch]);
 
     return (
         <ErrorBoundary fallBackComponent={<>Error!</>}>
-       
+
             <Grid container spacing={2}>
                 <Grid item xs={12} md={7}>
-                    <Grid item xs={12} md={12}>
+                    <Grid item xs={12} md={12}>  
                         <CategoryTab />
                     </Grid>
 
@@ -74,12 +67,12 @@ export default function Sale() {
                 </Grid>
                 <Grid item xs={12} md={5}>
                     {
-                        isMobile ? <></> : <SaleRight/>
-                    }                    
-                  
+                        isMobile ? <></> : <SaleRight />
+                    }
+
                 </Grid>
-            </Grid> 
-            <CustomBottomNavigation isMobile={isMobile}/>
+            </Grid>
+            <CustomBottomNavigation isMobile={isMobile} />
         </ErrorBoundary>
     );
 }

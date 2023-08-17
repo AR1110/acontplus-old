@@ -7,7 +7,7 @@ import {
     DataFormSale, 
     dataFormInitialState 
 } from "@/core/models"; 
-import { addSound, clearSound } from "@/core/utilities";
+import { SnackbarUtility, addSound, clearSound } from "@/core/utilities";
 import { ChangeEvent } from "react";
 import Swal from "sweetalert2";
 import { create } from "zustand";
@@ -88,6 +88,7 @@ export const saleStore = create<SaleState>((set, get) => ({
         setTotalItems();
         caculateTotals();
         addSound();
+        SnackbarUtility.success('Agregado correctamente')
     },
     removeItemFromCart: (productId: number) => {
         const {setTotalItems, caculateTotals} = get();

@@ -1,4 +1,6 @@
+import { categoryReadAdapter, decimalSaleReadAdapter, emissionPointAdapter, tableReadAdapter, taxAdapter, taxRateAdapter, warehouseAdapter } from "../adapters"
 import { PATHS } from "../constants"
+import { ApiResponse } from "../models"
 import { Http, loadAbort } from "../utilities"
 
 type tableSearch = {
@@ -6,18 +8,38 @@ type tableSearch = {
 }
 const URL = 'Configuration'
 export const SaleService = {
-    getDataForForm: (json: string) => {
-        const controller = loadAbort(); //Cancelar peticion  
-        return {
-            call: Http({
+    async getDataForForm(json: string) {
+        const resultAxios = await Http({
                 method: 'get',
                 url: `${PATHS.PRIVATE}${URL}`,
                 params: {
                     json
-                },
-                signal: controller.signal
-            }),
-            controller
+                }        
+        })
+
+        const { 
+            subCategorias, 
+            configDecimal, 
+            table, 
+            impuesto, 
+            tarifaImpuesto, 
+            bodega_Asign,
+            ptoEmi_Asig
+        } = resultAxios.data;
+
+        let categories = categoryReadAdapter(subCategorias || []); 
+        return{
+            categories: [{
+                idSubFamilia: 0,
+                description: 'Todos',
+                s3ObjectUrl: ''
+            }, ...categories], 
+            decimal: decimalSaleReadAdapter(configDecimal[0]),
+            tables: tableReadAdapter(table || []),
+            taxes: taxAdapter(impuesto),
+            taxRates: taxRateAdapter(tarifaImpuesto), 
+            warehouses: warehouseAdapter(bodega_Asign || []),
+            emissionPoints: emissionPointAdapter(ptoEmi_Asig || [])
         }
     }, 
 }
