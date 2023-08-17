@@ -1,3 +1,4 @@
+﻿using System.Collections;
 using System.Data;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -20,8 +21,30 @@ namespace Lib.Common
             string JSONString = JsonConvert.SerializeObject(table, options);
             return JSONString;
         }
-        public static object DataSetToJSON(DataSet ds)
+        public static object DataSetToJSON(DataSet ds, bool oldConverter = false)
         {
+            if (oldConverter)
+            {
+                ArrayList root = new ArrayList();
+                List<Dictionary<string, object>> table;
+                Dictionary<string, object> data;
+
+                foreach (DataTable dt in ds.Tables)
+                {
+                    table = new List<Dictionary<string, object>>();
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        data = new Dictionary<string, object>();
+                        foreach (DataColumn col in dt.Columns)
+                        {
+                            data.Add(col.ColumnName, dr[col]);
+                        }
+                        table.Add(data);
+                    }
+                    root.Add(table);
+                }
+                return JsonConvert.SerializeObject(root);
+            }
             DefaultContractResolver contractResolver = new DefaultContractResolver
             {
                 NamingStrategy = new CamelCaseNamingStrategy()
@@ -31,11 +54,7 @@ namespace Lib.Common
                 ContractResolver = contractResolver,
                 Formatting = Formatting.Indented
             };
-            return JsonConvert.SerializeObject(ds, new JsonSerializerSettings
-            {
-                ContractResolver = contractResolver,
-                Formatting = Formatting.Indented
-            });
+            return JsonConvert.SerializeObject(ds, options);
         }
         public static DataTable JsonToDataTable(string json)
         {
