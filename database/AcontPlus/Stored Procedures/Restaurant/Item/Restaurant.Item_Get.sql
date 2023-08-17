@@ -62,6 +62,7 @@ BEGIN
 				,cooking			= ri.Cooking
 				,recipe				= ri.Recipe
 				,instructions		= ISNULL(ri.Instructions, ''_'')
+                ,content            = ISNULL(ri.content, ''_'')
 				,createdAt			= ri.CreatedAt
 				,updatedAt			= ri.UpdatedAt
 				,enabled			= ri.Enabled

@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { itemService } from "$core/services/restaurant/item-service";
   import Modal from "$core/components/Modal.svelte";
   import type { Item } from "$core/interfaces/restaurant/item";
   import type { ProductionArea } from "$core/interfaces/restaurant/production-area";
   import { productionAreaService } from "$core/services/restaurant/production-area-service";
   import { onMount } from "svelte";
+  import toast from "$core/utils/toast";
 
   export let openNew;
   export let modalClosed;
@@ -13,7 +15,6 @@
 
   onMount(() => {
     getProductionArea();
-    getProducts();
   });
 
   const getProductionArea = () => {
@@ -22,8 +23,22 @@
     });
   };
 
-  // Get products => Articulos
-  const getProducts = () => {};
+  const onUpdate = () => {
+    let newObject = {
+      itemJson: data,
+      productionAreaJson: { productionAreaId: data.productionAreaId },
+    };
+
+    itemService.put(data.id, { data: newObject }).then((res) => {
+      if (res.status === 200) {
+        onModalClose();
+        toast({ type: "success", message: res.data });
+        data = {} as Item;
+      } else {
+        toast({ type: "warning", message: res.data });
+      }
+    });
+  };
 
   const onModalClose = () => {
     openNew = false;
@@ -40,24 +55,14 @@
     fullScreen={true}
   >
     <div class="modal-body">
-      <form>
+      <form on:submit|preventDefault={onUpdate} autocomplete="off">
         <div class="row">
           <div class="col-6">
             <div class="form-group input-group-lg">
-              <label for="exampleFormControlSelect1">Producto</label>
-              <select class="form-control" id="exampleFormControlSelect1">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-              </select>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="form-group  input-group-lg">
               <label for="production-area">Areas de producción</label>
-              <select class="form-control" id="production-area">
+              <select bind:value={data.productionAreaId}
+                      class="form-control"
+                      id="production-area">
                 <option disabled>seleccione</option>
                 {#each productionAreas as productionArea}
                   <option value={productionArea.id}>
@@ -67,28 +72,63 @@
               </select>
             </div>
           </div>
+          <div class="col-6">
+            <div class="form-group">
+              <label for="summary">Resumen</label>
+              <input
+                bind:value={data.summary}
+                class="form-control form-control-lg"
+                type="text"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-6">
+            <div class="form-group">
+              <label for="recipe">Receta</label>
+              <textarea
+                bind:value={data.recipe}
+                class="form-control"
+                id="recipe"
+                rows="3"
+              />
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-group">
+              <label for="instructions">Instrucciones</label>
+              <textarea
+                bind:value={data.instructions}
+                class="form-control"
+                id="instructions"
+                rows="3"
+              />
+            </div>
+          </div>
         </div>
         <div class="row">
           <div class="col-6">
             <div class="form-group">
-              <label for="exampleFormControlTextarea1">Example textarea</label>
+              <label for="instructions">Contenido</label>
               <textarea
+                bind:value={data.content}
                 class="form-control"
-                id="exampleFormControlTextarea1"
+                id="instructions"
                 rows="3"
               />
             </div>
           </div>
-          <div class="col-6">
-            <div class="form-group">
-              <label for="exampleFormControlTextarea1">Example textarea</label>
-              <textarea
-                class="form-control"
-                id="exampleFormControlTextarea1"
-                rows="3"
-              />
-            </div>
-          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">
+            <i class="ti-save" /> Guardar</button
+          >
+          <button
+            type="button"
+            class="btn btn-dark"
+            on:click={() => onModalClose()}>&times; Cerrar</button
+          >
         </div>
       </form>
     </div>

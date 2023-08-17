@@ -57,9 +57,9 @@ namespace Restaurant.Application.Services
             var parameters = new Dictionary<string, object>{
                 {"userRoleId", request.UserRoleId},
                 {"id", id},
-                {"json", Converters.SerializeDictionary(request.Data)}
+                {"json", SqlValidation.ValidateSqlString(Converters.SerializeDictionary(request.Data))}
             };
-            return await _repository.SPExecuteAsync("Restaurant.Item_Update", request.Data);
+            return await _repository.SPExecuteAsync("Restaurant.Item_Update", parameters);
         }
 
         public async Task<string> DeleteAsync(int id, ApiRequest request)

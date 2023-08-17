@@ -1,6 +1,5 @@
 USE ACONTPLUS
 GO
-
 --Author: Ivan Paz - Modified: Ignacio Manchu.
 --Date: 2023-08-04
 --Description: SP FOR UPDATE INGREDIENTS

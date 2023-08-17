@@ -19,7 +19,6 @@
          pageSize: 10,
          tipo: 1,
 		});
-
 		itemService.get(params).then((res) => {
 			if (res) {
 				items = res["items"];
