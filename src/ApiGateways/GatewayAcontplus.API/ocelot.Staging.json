@@ -1,6 +1,6 @@
 {
   "GlobalConfiguration": {
-    "BaseUrl": "http://205.209.99.71:8093/",
+    "BaseUrl": "http://172.31.30.67:81/",
     "RateLimitOptions": {
       "ClientIdHeader": "Test",
       "ClientWhitelist": [
@@ -17,48 +17,10 @@
   },
   "Routes": [
     {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8091
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Reporte/Download",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Post"
-      ],
-      "UpstreamPathTemplate": "/gateway/Reporte/Download"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "205.209.99.71",
-          "Port": 8091
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Reporte/DynamicReport",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Post"
-      ],
-      "UpstreamPathTemplate": "/gateway/Reporte/DynamicReport"
-    },
-    {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "205.209.99.71",
-          "Port": 8094
+          "Host": "172.31.30.67",
+          "Port": 84
         }
       ],
       "DownstreamPathTemplate": "/api/Account{everything}",
@@ -76,8 +38,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8096
+          "Host": "172.31.30.67",
+          "Port": 93
         }
       ],
       "DownstreamPathTemplate": "/api/CompraHabitual{everything}",
@@ -102,8 +64,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8096
+          "Host": "172.31.30.67",
+          "Port": 93
         }
       ],
       "DownstreamPathTemplate": "/api/DocumentoRecibido{everything}",
@@ -119,27 +81,21 @@
     },
     {
       "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
+        "AllowedScopes": [],
         "AuthenticationProviderKey": "Bearer"
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8096
+          "Host": "localhost",
+          "Port": 12786
         }
       ],
       "DownstreamPathTemplate": "/api/Proveedor/{everything}",
       "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get",
-        "Post",
-        "Put",
-        "Delete",
-        "Options"
-      ],
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/Proveedor/{everything}"
     },
+
     {
       "AuthenticationOptions": {
         "AllowedScopes": [
@@ -148,8 +104,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8096
+          "Host": "172.31.30.67",
+          "Port": 93
         }
       ],
       "DownstreamPathTemplate": "/api/Doc_Rec_DetailTemp{everything}",
@@ -171,16 +127,16 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8096
+          "Host": "172.31.30.67",
+          "Port": 94
         }
       ],
-      "DownstreamPathTemplate": "/api/Articulo{everything}",
+      "DownstreamPathTemplate": "/api/Reporte/Download",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
-        "Get"
+        "Post"
       ],
-      "UpstreamPathTemplate": "/gateway/Recepcion/Articulo{everything}"
+      "UpstreamPathTemplate": "/gateway/Reporte/Download"
     },
     {
       "AuthenticationOptions": {
@@ -190,8 +146,28 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8097
+          "Host": "172.31.30.67",
+          "Port": 94
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Reporte/DynamicReport",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Post"
+      ],
+      "UpstreamPathTemplate": "/gateway/Reporte/DynamicReport"
+    },
+
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.30.67",
+          "Port": 90
         }
       ],
       "DownstreamPathTemplate": "/api/Factura{everything}",
@@ -213,8 +189,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8096
+          "Host": "172.31.30.67",
+          "Port": 93
         }
       ],
       "DownstreamPathTemplate": "/api/DocumentoDetalle/{everything}",
@@ -233,8 +209,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8096
+          "Host": "172.31.30.67",
+          "Port": 93
         }
       ],
       "DownstreamPathTemplate": "/api/DocumentoDetalle/{id}",
@@ -252,8 +228,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8097
+          "Host": "172.31.30.67",
+          "Port": 90
         }
       ],
       "DownstreamPathTemplate": "/api/DocumentoElectronico{everything}",
@@ -274,8 +250,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8097
+          "Host": "172.31.30.67",
+          "Port": 90
         }
       ],
       "DownstreamPathTemplate": "/api/DocumentoElectronicoError/{id}",
@@ -293,8 +269,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 54948
+          "Host": "172.31.30.67",
+          "Port": 90
         }
       ],
       "DownstreamPathTemplate": "/api/NotificacionTributaria{everything}",
@@ -313,8 +289,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8097
+          "Host": "172.31.30.67",
+          "Port": 90
         }
       ],
       "DownstreamPathTemplate": "/api/RetencionAts/{everything}",
@@ -335,8 +311,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8097
+          "Host": "172.31.30.67",
+          "Port": 90
         }
       ],
       "DownstreamPathTemplate": "/api/RetencionAts",
@@ -354,8 +330,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8097
+          "Host": "172.31.30.67",
+          "Port": 90
         }
       ],
       "DownstreamPathTemplate": "/api/RetencionAts/cancel/{id}",
@@ -373,8 +349,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8097
+          "Host": "172.31.30.67",
+          "Port": 90
         }
       ],
       "DownstreamPathTemplate": "/api/DocSustento{everything}",
@@ -394,8 +370,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8097
+          "Host": "172.31.30.67",
+          "Port": 90
         }
       ],
       "DownstreamPathTemplate": "/api/DocSustImpuesto{everything}",
@@ -415,8 +391,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8097
+          "Host": "172.31.30.67",
+          "Port": 90
         }
       ],
       "DownstreamPathTemplate": "/api/DocSustPago{everything}",
@@ -436,8 +412,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8097
+          "Host": "172.31.30.67",
+          "Port": 90
         }
       ],
       "DownstreamPathTemplate": "/api/DocSustRetencion{everything}",
@@ -457,8 +433,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8097
+          "Host": "172.31.30.67",
+          "Port": 90
         }
       ],
       "DownstreamPathTemplate": "/api/RetAtsInfoAdicional/{everything}",
@@ -477,8 +453,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8097
+          "Host": "172.31.30.67",
+          "Port": 90
         }
       ],
       "DownstreamPathTemplate": "/api/RetAtsInfoAdicional{everything}",
@@ -498,8 +474,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8098
+          "Host": "172.31.30.67",
+          "Port": 85
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte/Post",
@@ -517,8 +493,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8098
+          "Host": "172.31.30.67",
+          "Port": 85
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte/{method}/{everything}",
@@ -538,8 +514,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8098
+          "Host": "172.31.30.67",
+          "Port": 85
         }
       ],
       "DownstreamPathTemplate": "/api/Impresion/?json={json}",
@@ -557,8 +533,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8099
+          "Host": "172.31.30.67",
+          "Port": 89
         }
       ],
       "DownstreamPathTemplate": "/api/CuentaPorPagar/{everything}",
@@ -578,8 +554,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8099
+          "Host": "172.31.30.67",
+          "Port": 89
         }
       ],
       "DownstreamPathTemplate": "/api/CuentaPorPagar?json={json}",
@@ -597,8 +573,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8099
+          "Host": "172.31.30.67",
+          "Port": 89
         }
       ],
       "DownstreamPathTemplate": "/api/CuentaPorPagar/{id}?json={json}",
@@ -616,8 +592,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8001
+          "Host": "172.31.30.67",
+          "Port": 88
         }
       ],
       "DownstreamPathTemplate": "/api/CompraNoHabitual/{everything}",
@@ -638,8 +614,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8001
+          "Host": "172.31.30.67",
+          "Port": 88
         }
       ],
       "DownstreamPathTemplate": "/api/CompraNoHabitual",
@@ -657,8 +633,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8001
+          "Host": "172.31.30.67",
+          "Port": 88
         }
       ],
       "DownstreamPathTemplate": "/api/CompraNoHabitual/Cancel/{id}",
@@ -676,8 +652,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8001
+          "Host": "172.31.30.67",
+          "Port": 88
         }
       ],
       "DownstreamPathTemplate": "/api/FacturaCompra{everything}",
@@ -699,8 +675,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8098
+          "Host": "172.31.30.67",
+          "Port": 85
         }
       ],
       "DownstreamPathTemplate": "/api/ReporteDataSource/",
@@ -718,8 +694,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8098
+          "Host": "172.31.30.67",
+          "Port": 85
         }
       ],
       "DownstreamPathTemplate": "/api/ReporteDataSource/{everything}",
@@ -733,14 +709,36 @@
     },
     {
       "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.30.67",
+          "Port": 85
+        }
+      ],
+      "DownstreamPathTemplate": "/api/FirmaElectronica{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/gateway/FirmaElectronica{everything}"
+    },
+
+    {
+      "AuthenticationOptions": {
         "AllowedScopes": [
         ],
         "AuthenticationProviderKey": "Bearer"
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8098
+          "Host": "172.31.30.67",
+          "Port": 85
         }
       ],
       "DownstreamPathTemplate": "/api/Usuario/{everything}",
@@ -761,8 +759,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8098
+          "Host": "172.31.30.67",
+          "Port": 85
         }
       ],
       "DownstreamPathTemplate": "/api/UsuarioRol/Get/{id}",
@@ -780,8 +778,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8098
+          "Host": "172.31.30.67",
+          "Port": 85
         }
       ],
       "DownstreamPathTemplate": "/api/UsuarioPermiso/{everything}",
@@ -801,8 +799,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8098
+          "Host": "172.31.30.67",
+          "Port": 85
         }
       ],
       "DownstreamPathTemplate": "/api/UsuarioPermiso",
@@ -820,8 +818,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8098
+          "Host": "172.31.30.67",
+          "Port": 85
         }
       ],
       "DownstreamPathTemplate": "/api/UsuarioPermiso/CheckHasPermission/{everything}",
@@ -834,8 +832,8 @@
     {
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8002
+          "Host": "172.31.30.67",
+          "Port": 86
         }
       ],
       "DownstreamPathTemplate": "/api/Consultas/{everything}",
@@ -853,8 +851,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8098
+          "Host": "172.31.30.67",
+          "Port": 85
         }
       ],
       "DownstreamPathTemplate": "/api/Solicitud/{everything}",
@@ -875,8 +873,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8098
+          "Host": "172.31.30.67",
+          "Port": 85
         }
       ],
       "DownstreamPathTemplate": "/api/Solicitud/Check/{everything}",
@@ -894,8 +892,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8098
+          "Host": "172.31.30.67",
+          "Port": 85
         }
       ],
       "DownstreamPathTemplate": "/api/Sistema/{everything}",
@@ -914,8 +912,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8004
+          "Host": "172.31.30.67",
+          "Port": 96
         }
       ],
       "DownstreamPathTemplate": "/api/Cliente{everything}",
@@ -937,8 +935,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8096
+          "Host": "172.31.30.67",
+          "Port": 93
         }
       ],
       "DownstreamPathTemplate": "/api/Cliente/GetDataForm/{json}",
@@ -956,8 +954,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8003
+          "Host": "172.31.30.67",
+          "Port": 92
         }
       ],
       "DownstreamPathTemplate": "/api/Kardex?json={json}",
@@ -975,8 +973,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8003
+          "Host": "172.31.30.67",
+          "Port": 92
         }
       ],
       "DownstreamPathTemplate": "/api/Kardex/Filters",
@@ -994,8 +992,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8098
+          "Host": "172.31.30.67",
+          "Port": 85
         }
       ],
       "DownstreamPathTemplate": "/api/EntidadConfigSri/{everything}",
@@ -1016,8 +1014,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8098
+          "Host": "172.31.30.67",
+          "Port": 85
         }
       ],
       "DownstreamPathTemplate": "/api/SubMenu/{everything}",
@@ -1038,8 +1036,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8098
+          "Host": "172.31.30.67",
+          "Port": 85
         }
       ],
       "DownstreamPathTemplate": "/api/WhatsAppSession{everything}",
@@ -1060,8 +1058,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8096
+          "Host": "172.31.30.67",
+          "Port": 93
         }
       ],
       "DownstreamPathTemplate": "/api/DatoAdicionalArticulo{everything}",
@@ -1074,7 +1072,7 @@
         "Options"
       ],
       "UpstreamPathTemplate": "/gateway/DatoAdicionalArticulo{everything}"
-    },     
+    },
     {
       "AuthenticationOptions": {
         "AllowedScopes": [
@@ -1083,8 +1081,30 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8098
+          "Host": "172.31.30.67",
+          "Port": 96
+        }
+      ],
+      "DownstreamPathTemplate": "/api/NotaEntrega{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/gateway/NotaEntrega{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.30.67",
+          "Port": 85
         }
       ],
       "DownstreamPathTemplate": "/api/WhatsappMessage{everything}",
@@ -1105,8 +1125,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8003
+          "Host": "172.31.30.67",
+          "Port": 92
         }
       ],
       "DownstreamPathTemplate": "/api/PrecioMasivo{everything}",
@@ -1117,7 +1137,7 @@
         "Put"
       ],
       "UpstreamPathTemplate": "/gateway/PrecioMasivo{everything}"
-    },      
+    },
     {
       "AuthenticationOptions": {
         "AllowedScopes": [
@@ -1126,8 +1146,52 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8091
+          "Host": "172.31.30.67",
+          "Port": 96
+        }
+      ],
+      "DownstreamPathTemplate": "/api/AprobacionDocumento{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/gateway/AprobacionDocumento{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.30.67",
+          "Port": 96
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Proforma{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "Get",
+        "Post",
+        "Put",
+        "Delete"
+      ],
+      "UpstreamPathTemplate": "/gateway/Proforma{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [
+        ],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.30.67",
+          "Port": 94
         }
       ],
       "DownstreamPathTemplate": "/api/Dashboard{everything}",
@@ -1145,8 +1209,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8099
+          "Host": "172.31.30.67",
+          "Port": 89
         }
       ],
       "DownstreamPathTemplate": "/api/CuentaPorCobrar{everything}",
@@ -1167,8 +1231,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8099
+          "Host": "172.31.30.67",
+          "Port": 89
         }
       ],
       "DownstreamPathTemplate": "/api/ComprobanteIngreso{everything}",
@@ -1189,8 +1253,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8004
+          "Host": "172.31.30.67",
+          "Port": 96
         }
       ],
       "DownstreamPathTemplate": "/api/CatalogoVenta{everything}",
@@ -1208,8 +1272,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8098
+          "Host": "172.31.30.67",
+          "Port": 85
         }
       ],
       "DownstreamPathTemplate": "/api/WhatsappUsage{everything}",
@@ -1230,8 +1294,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8003
+          "Host": "172.31.30.67",
+          "Port": 92
         }
       ],
       "DownstreamPathTemplate": "/api/Consolidacion{everything}",
@@ -1252,8 +1316,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 7074
+          "Host": "172.31.30.67",
+          "Port": 85
         }
       ],
       "DownstreamPathTemplate": "/api/TipoEntidad{everything}",
@@ -1274,7 +1338,7 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
+          "Host": "172.31.30.67",
           "Port": 44354
         }
       ],
@@ -1287,7 +1351,7 @@
         "Delete"
       ],
       "UpstreamPathTemplate": "/gateway/TiempoCredito{everything}"
-    },    
+    },
     {
       "AuthenticationOptions": {
         "AllowedScopes": [
@@ -1296,7 +1360,7 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
+          "Host": "172.31.30.67",
           "Port": 44395
         }
       ],
@@ -1318,7 +1382,7 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
+          "Host": "172.31.30.67",
           "Port": 42629
         }
       ],
@@ -1340,8 +1404,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8098
+          "Host": "172.31.30.67",
+          "Port": 85
         }
       ],
       "DownstreamPathTemplate": "/api/Impresora{everything}",
@@ -1361,8 +1425,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8010
+          "Host": "172.31.30.67",
+          "Port": 97
         }
       ],
       "DownstreamPathTemplate": "/api/Genderes{everything}",
@@ -1382,8 +1446,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8010
+          "Host": "172.31.30.67",
+          "Port": 97
         }
       ],
       "DownstreamPathTemplate": "/api/PetTypes{everything}",
@@ -1403,8 +1467,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8010
+          "Host": "172.31.30.67",
+          "Port": 97
         }
       ],
       "DownstreamPathTemplate": "/api/Breeds{everything}",
@@ -1424,8 +1488,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8010
+          "Host": "172.31.30.67",
+          "Port": 97
         }
       ],
       "DownstreamPathTemplate": "/api/Pets{everything}",
@@ -1445,8 +1509,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8010
+          "Host": "172.31.30.67",
+          "Port": 97
         }
       ],
       "DownstreamPathTemplate": "/api/Diseases{everything}",
@@ -1466,8 +1530,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8010
+          "Host": "172.31.30.67",
+          "Port": 97
         }
       ],
       "DownstreamPathTemplate": "/api/DiseaseStatus{everything}",
@@ -1487,8 +1551,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8010
+          "Host": "172.31.30.67",
+          "Port": 97
         }
       ],
       "DownstreamPathTemplate": "/api/Behaviors{everything}",
@@ -1508,8 +1572,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8010
+          "Host": "172.31.30.67",
+          "Port": 97
         }
       ],
       "DownstreamPathTemplate": "/api/BehaviorStatus{everything}",
@@ -1529,8 +1593,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8010
+          "Host": "172.31.30.67",
+          "Port": 97
         }
       ],
       "DownstreamPathTemplate": "/api/HealthChecks{everything}",
@@ -1550,8 +1614,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8010
+          "Host": "172.31.30.67",
+          "Port": 97
         }
       ],
       "DownstreamPathTemplate": "/api/BehaviorTests{everything}",
@@ -1571,8 +1635,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8010
+          "Host": "172.31.30.67",
+          "Port": 97
         }
       ],
       "DownstreamPathTemplate": "/api/MedicalHistories{everything}",
@@ -1593,8 +1657,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8003
+          "Host": "172.31.30.67",
+          "Port": 92
         }
       ],
       "DownstreamPathTemplate": "/api/v3/Articulo{everything}",
@@ -1614,12 +1678,12 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8003
+          "Host": "172.31.30.67",
+          "Port": 92
         }
       ],
       "DownstreamPathTemplate": "/api/TransferenciaBodega{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -1635,8 +1699,8 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8098
+          "Host": "172.31.30.67",
+          "Port": 85
         }
       ],
       "DownstreamPathTemplate": "/api/EstabAsig{everything}",
@@ -1656,12 +1720,12 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8003
+          "Host": "172.31.30.67",
+          "Port": 92
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -1677,12 +1741,12 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8098
+          "Host": "172.31.30.67",
+          "Port": 85
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -1698,12 +1762,12 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8005
+          "Host": "172.31.30.67",
+          "Port": 91
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "Get",
         "Post",
@@ -1720,30 +1784,14 @@
       },
       "DownstreamHostAndPorts": [
         {
-          "Host": "205.209.99.71",
-          "Port": 8099
+          "Host": "172.31.30.67",
+          "Port": 89
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "UpstreamPathTemplate": "/gateway/Contabilidad{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "205.209.99.71",
-          "Port": 8004
-        }
-      ],
-      "DownstreamPathTemplate": "/api{everything}",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/gateway/Venta{everything}"
     }
   ]
 }
