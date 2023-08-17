@@ -1,7 +1,7 @@
 USE ACONTPLUS
 GO
 
---Author: Ivan Paz
+--Author: Ivan Paz - Modified: Ignacio Manchu.
 --Date: 2023-08-04
 --Description: SP FOR UPDATE INGREDIENTS
 CREATE OR ALTER PROCEDURE Restaurant.Ingredient_Update
@@ -32,14 +32,14 @@ BEGIN
         END
 
     DECLARE @summary VARCHAR(500)
-    ,@typeId INT
+    ,@ingredientTypeId INT
     ,@quantity INT
     ,@unit INT
     ,@content VARCHAR(MAX)
     ,@enabled BIT
 
     SELECT @summary = summary
-    , @typeId = typeId
+    , @ingredientTypeId = ingredientTypeId
     , @quantity = quantity
     , @unit = unit
     , @content = content
@@ -47,7 +47,7 @@ BEGIN
     FROM OPENJSON(@ingredientJson)
     WITH(
         summary VARCHAR(500) '$.summary',
-        typeId INT '$.typeId',
+        ingredientTypeId INT '$.ingredientTypeId',
         quantity INT '$.quantity',
         unit INT '$.unit',
         content VARCHAR(MAX) '$.content',
@@ -63,7 +63,7 @@ BEGIN
 
             UPDATE Restaurant.Ingredient SET
             summary = @summary,
-            typeID = @typeId,
+            IngredientTypeId = @ingredientTypeId,
             quantity = @quantity,
             unit = @unit,
             content = @content,
