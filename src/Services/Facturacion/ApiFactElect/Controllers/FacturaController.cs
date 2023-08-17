@@ -1,6 +1,6 @@
 ﻿using DataAccess;
 using Domain.ViewModels;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -23,7 +23,7 @@ namespace ApiFactElect.Controllers
         [HttpGet("Get")]
         public async Task<IActionResult> Get(string json)
         {
-            
+
             var _response = new GenericResponse();
             try
             {
@@ -48,7 +48,7 @@ namespace ApiFactElect.Controllers
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert([FromBody] FacturaParams data)
         {
-            
+
             var _response = new GenericResponse();
             try
             {
@@ -77,7 +77,7 @@ namespace ApiFactElect.Controllers
         public async Task<IActionResult> Update(int id, [FromBody] FacturaParams data)
         {
             DbAccess _db = new DbAccess(_configuration);
-            
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -107,7 +107,7 @@ namespace ApiFactElect.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            
+
             GenericResponse _response = new GenericResponse();
             try
             {

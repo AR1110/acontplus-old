@@ -1,7 +1,7 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using System.Data;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Reporting.NETCore;
-using System.Data;
 using Vet.Core.Interfaces;
 using Vet.Core.Utils;
 using Vet.Infrastructure.Data;

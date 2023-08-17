@@ -1,4 +1,6 @@
-﻿using Customer.API.Dtos;
+﻿using System.Data;
+using System.Net;
+using Customer.API.Dtos;
 using Customer.API.Services;
 using Customer.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -7,8 +9,6 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Services.Common.Logs;
 using Services.Lib.Common;
-using System.Data;
-using System.Net;
 
 namespace Customer.API.Controllers
 {
@@ -39,7 +39,7 @@ namespace Customer.API.Controllers
         public ActionResult<DatosPersonaSriUpdate> GetRucSRI([FromQuery] RUCSriDTo rUCSriDTo)
         {
 
-            
+
             DatosPersonaSriUpdate _response = new DatosPersonaSriUpdate();
             try
             {
@@ -119,7 +119,7 @@ namespace Customer.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public ActionResult<CCedulaSriDto> GetCedulaSri([FromQuery] RUCSriDTo rUCSriDTo)
         {
-            
+
             CCedulaSriDto _response = new CCedulaSriDto();
             try
             {

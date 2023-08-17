@@ -1,8 +1,8 @@
-﻿using Config.Core.Interfaces;
+﻿using System.Data;
+using Config.Core.Interfaces;
 using Config.Infrastructure.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using System.Data;
 
 namespace Config.Infrastructure.Repositories
 {

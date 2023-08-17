@@ -1,5 +1,5 @@
 ﻿using DataAccess;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -19,7 +19,7 @@ namespace Inventario.API.Controllers
         [HttpGet("Filters")]
         public async Task<IActionResult> Filters()
         {
-            
+
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
@@ -42,7 +42,7 @@ namespace Inventario.API.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            
+
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             try

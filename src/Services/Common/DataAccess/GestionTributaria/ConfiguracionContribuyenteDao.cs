@@ -1,10 +1,10 @@
-﻿using Domain.Models.GestionTributaria;
+﻿using System.Data;
+using System.Data.SqlClient;
+using Domain.Models.GestionTributaria;
 using Domain.ViewModels.GestionTributaria;
-using Helpers;
+using Lib.Common;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace DataAccess.GestionTributaria
 {

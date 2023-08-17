@@ -1,6 +1,6 @@
 ﻿using DataAccess;
 using Domain.ViewModels.Compras;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common.Logs;
@@ -35,7 +35,7 @@ namespace ApiCompras.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error al obtener datos de Factura Compras: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos de Facturas Compras");
             }
@@ -61,7 +61,7 @@ namespace ApiCompras.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error al obtener datos de Factura Compras por Id: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos de Facturas Compras por Id");
             }
@@ -89,7 +89,7 @@ namespace ApiCompras.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error al guardar datos de la Factura Compra: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al guardar los datos de la Factura Compra");
             }
@@ -118,7 +118,7 @@ namespace ApiCompras.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error al editar datos de Factura Compra: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al editar los datos de la Factura Compra");
             }
@@ -144,7 +144,7 @@ namespace ApiCompras.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error al anular la factura compra: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al anular la factura");
             }
@@ -171,7 +171,7 @@ namespace ApiCompras.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error al obtener facturas por proveedor: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener facturas por proveedor");
             }

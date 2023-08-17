@@ -1,6 +1,6 @@
 ﻿using DataAccess;
 using Domain.Models;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common.Logs;
@@ -35,7 +35,7 @@ namespace ApiVentas.Controllers.v2
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error al listar clientes: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar clientes");
             }
@@ -49,7 +49,7 @@ namespace ApiVentas.Controllers.v2
         [HttpGet("GetDataForm")]
         public async Task<IActionResult> GetDataForm(string json)
         {
-           
+
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
@@ -86,7 +86,7 @@ namespace ApiVentas.Controllers.v2
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error while searching data form customer: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al buscar cliente");
             }
@@ -110,7 +110,7 @@ namespace ApiVentas.Controllers.v2
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error while creating customer: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al crear el cliente");
             }
@@ -137,7 +137,7 @@ namespace ApiVentas.Controllers.v2
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error while updating customer: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar el cliente");
             }
@@ -164,7 +164,7 @@ namespace ApiVentas.Controllers.v2
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error while updating customer: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar el cliente");
             }
@@ -190,7 +190,7 @@ namespace ApiVentas.Controllers.v2
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error while deleting customer: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar el cliente");
             }
@@ -214,7 +214,7 @@ namespace ApiVentas.Controllers.v2
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error while getting customer find by id: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos de cliente");
             }

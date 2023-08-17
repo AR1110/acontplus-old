@@ -1,13 +1,8 @@
-﻿using Lib.Common;
+﻿using System.Data;
+using Lib.Common;
 using Lib.Common.Api;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Restaurant.Application.Services
 {

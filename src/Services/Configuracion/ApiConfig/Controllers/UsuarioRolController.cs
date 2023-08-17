@@ -1,5 +1,5 @@
 ﻿using DataAccess;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -22,7 +22,7 @@ namespace ApiConfig.Controllers
         [HttpGet("Get/{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            
+
             var _response = new GenericResponse();
             try
             {

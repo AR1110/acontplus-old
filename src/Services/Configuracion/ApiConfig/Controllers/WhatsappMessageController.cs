@@ -1,6 +1,5 @@
 ﻿using DataAccess;
 using Domain.Dtos;
-using Helpers;
 using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
@@ -33,7 +32,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error while insert whatsapp message: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar el whatsapp");
             }
@@ -61,7 +60,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error while insert whatsapp message: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar el whatsapp");
             }

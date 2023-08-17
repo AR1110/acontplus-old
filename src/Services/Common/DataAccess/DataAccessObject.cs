@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
-using System.Data;
+﻿using System.Data;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess
 {

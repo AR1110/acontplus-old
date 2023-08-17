@@ -1,6 +1,6 @@
 ﻿using DataAccess.Compras;
 using Domain.ViewModels.Compras;
-using Helpers;
+using Lib.Common;
 
 namespace WebUI.Internal.Compras
 {

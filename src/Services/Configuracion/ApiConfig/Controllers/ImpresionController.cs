@@ -1,5 +1,5 @@
 ﻿using DataAccess;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -21,7 +21,7 @@ namespace ApiConfig.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            
+
             GenericResponse _response = new GenericResponse();
             try
             {

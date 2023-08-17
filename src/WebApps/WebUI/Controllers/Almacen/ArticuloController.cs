@@ -1,8 +1,7 @@
 ﻿using DataAccess;
 using DataAccess.Almacen;
 using Domain.Models;
-using Domain.ViewModels.Almacen;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -57,7 +56,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> GetId(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -82,7 +81,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> GetIdBySale(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -109,7 +108,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> GetIdByPurchase(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -133,7 +132,7 @@ namespace WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> Search(string json)
         {
-            
+
             var _response = new GenericResponse();
             try
             {
@@ -170,7 +169,7 @@ namespace WebUI.Controllers
         public async Task<IActionResult> GetFormData(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            
+
             GenericResponse _response = new GenericResponse();
             try
             {

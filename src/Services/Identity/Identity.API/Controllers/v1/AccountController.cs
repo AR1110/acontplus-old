@@ -1,18 +1,18 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using DataAccess;
 using Domain.Dtos;
 using Domain.ViewModels;
-using Helpers;
 using Identity.API.Dtos;
 using Identity.API.Entities;
 using Identity.API.Errors;
 using Identity.API.Extensions;
 using Identity.API.Interfaces;
+using Lib.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
-using System.Security.Claims;
 
 namespace Identity.API.Controllers.v1
 {
@@ -134,7 +134,7 @@ namespace Identity.API.Controllers.v1
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginDto authRequest)
         {
-            
+
             LoginDao _l = new LoginDao(_config);
             GenericResponse _gr = await _l.LoginAsync(authRequest);
             var codSms = _gr.id as string;

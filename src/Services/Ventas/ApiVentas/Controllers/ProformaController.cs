@@ -1,6 +1,6 @@
 ﻿using DataAccess;
 using Domain.ViewModels.Ventas;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common.Logs;
@@ -33,7 +33,7 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al listar proformas: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar proformas");
             }
@@ -60,7 +60,7 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al insertar proforma: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar proforma");
             }
@@ -75,7 +75,7 @@ namespace ApiVentas.Controllers
         public async Task<IActionResult> Update(int id, [FromBody] ProformaViewModel data)
         {
             DbAccess _db = new DbAccess(_configuration);
-            
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -113,7 +113,7 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al eliminar proforma: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar proforma");
             }
@@ -138,7 +138,7 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al obtener datos del doc. proforma: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos del doc. proforma");
             }

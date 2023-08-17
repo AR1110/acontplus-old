@@ -1,6 +1,5 @@
 ﻿using DataAccess;
 using Domain.Dtos;
-using Helpers;
 using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
@@ -25,7 +24,7 @@ namespace ApiRecepcion.Controllers
         [HttpGet("{idDocumento}")]
         public async Task<IActionResult> GetId(int idDocumento)
         {
-           
+
             var _response = new GenericResponse();
             try
             {
@@ -51,7 +50,7 @@ namespace ApiRecepcion.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] RequestApiDto parameters)
         {
-           
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -76,7 +75,7 @@ namespace ApiRecepcion.Controllers
         [HttpPut]
         public async Task<IActionResult> Put([FromBody] RequestApiDto parameters)
         {
-           
+
             GenericResponse _response = new GenericResponse();
             try
             {

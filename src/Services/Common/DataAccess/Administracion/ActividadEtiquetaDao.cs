@@ -1,9 +1,9 @@
 ﻿
+using System.Data;
 using Domain.Models;
 using Domain.Models.Administracion;
-using Helpers;
+using Lib.Common;
 using Microsoft.Extensions.Configuration;
-using System.Data;
 
 namespace DataAccess.Administracion
 {

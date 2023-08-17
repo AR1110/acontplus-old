@@ -1,5 +1,5 @@
-using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using Vet.Core.Entities;
 
 namespace Vet.Infrastructure.Data

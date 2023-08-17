@@ -1,6 +1,6 @@
 ﻿using DataAccess;
 using Domain.ViewModels.Logistica;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common.Logs;
@@ -35,7 +35,7 @@ namespace ApiLogistica.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error al listar guia remision: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar guia remision");
             }
@@ -63,7 +63,7 @@ namespace ApiLogistica.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error while creating Guide Rem.: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al crear Guia de Remisión");
             }
@@ -92,7 +92,7 @@ namespace ApiLogistica.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error while updating Guide Rem.: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar Guia de Remisión");
             }
@@ -118,7 +118,7 @@ namespace ApiLogistica.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error while deleting Guide Rem.: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar guia de remisión");
             }
@@ -146,7 +146,7 @@ namespace ApiLogistica.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error while get id Guide Rem.: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al get id guia de remisión");
             }

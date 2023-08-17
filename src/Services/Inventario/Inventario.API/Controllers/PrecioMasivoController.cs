@@ -1,6 +1,5 @@
 ﻿using DataAccess;
 using Domain.Dtos;
-using Helpers;
 using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
@@ -32,7 +31,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error on Get: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener la solicitud");
             }
@@ -57,7 +56,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error on Post: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al guardar");
             }
@@ -81,7 +80,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error on Put: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar");
             }

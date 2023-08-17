@@ -1,8 +1,5 @@
 ﻿using Lib.Common.Api;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Restaurant.Core.Common;
-using Restaurant.Core.Entities;
 using Restaurant.Core.Interfaces;
 using Services.Common;
 

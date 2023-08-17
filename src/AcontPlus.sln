@@ -54,8 +54,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GatewayAcontplus.API", "Api
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess", "Services\Common\DataAccess\DataAccess.csproj", "{5F646DC9-C063-4117-87B3-E584FFE249E0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Helpers", "Services\Common\Helpers\Helpers.csproj", "{57611AA0-36EA-4267-9695-F55D273CA643}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Services\Common\Domain\Domain.csproj", "{3B4789B2-E97A-4C0B-84FC-91F8BF5AA668}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Compras", "Compras", "{D8359EE2-5FBD-426D-8ECF-AD9B19FD73ED}"
@@ -140,9 +138,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mechanical.API", "Services\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mechanical.Infrastructure", "Services\Mechanical\Mechanical.Infrastructure\Mechanical.Infrastructure.csproj", "{074A7B04-68C3-4D8A-84BF-7277AFA7BBD6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mechanical.Application", "Services\Mechanical\Mechanical.Application\Mechanical.Application.csproj", "{47D3F9B2-E7B4-49A2-88F1-26942EEE8F39}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mechanical.Application", "Services\Mechanical\Mechanical.Application\Mechanical.Application.csproj", "{47D3F9B2-E7B4-49A2-88F1-26942EEE8F39}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mechanical.Core", "Services\Mechanical\Mechanical.Core\Mechanical.Core.csproj", "{F4E8BA40-4FB6-4018-A6AF-5A3FAE4EE97C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mechanical.Core", "Services\Mechanical\Mechanical.Core\Mechanical.Core.csproj", "{F4E8BA40-4FB6-4018-A6AF-5A3FAE4EE97C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -210,10 +208,6 @@ Global
 		{5F646DC9-C063-4117-87B3-E584FFE249E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F646DC9-C063-4117-87B3-E584FFE249E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F646DC9-C063-4117-87B3-E584FFE249E0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{57611AA0-36EA-4267-9695-F55D273CA643}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{57611AA0-36EA-4267-9695-F55D273CA643}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{57611AA0-36EA-4267-9695-F55D273CA643}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{57611AA0-36EA-4267-9695-F55D273CA643}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3B4789B2-E97A-4C0B-84FC-91F8BF5AA668}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3B4789B2-E97A-4C0B-84FC-91F8BF5AA668}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B4789B2-E97A-4C0B-84FC-91F8BF5AA668}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -359,7 +353,6 @@ Global
 		{4159BD97-A2BE-485D-9960-CA146DB79B2E} = {8489F03A-21B6-4434-9151-E11DF256305C}
 		{B03D81D4-1429-4589-8F69-11BC891C56AC} = {B297D85F-586A-44FA-BBAC-E966C01212F8}
 		{5F646DC9-C063-4117-87B3-E584FFE249E0} = {8489F03A-21B6-4434-9151-E11DF256305C}
-		{57611AA0-36EA-4267-9695-F55D273CA643} = {8489F03A-21B6-4434-9151-E11DF256305C}
 		{3B4789B2-E97A-4C0B-84FC-91F8BF5AA668} = {8489F03A-21B6-4434-9151-E11DF256305C}
 		{D8359EE2-5FBD-426D-8ECF-AD9B19FD73ED} = {AB00732E-FD38-40C9-AF09-10FC514B3AFA}
 		{D7DBEFBB-BC0D-42F4-9756-71A637AE9B23} = {D8359EE2-5FBD-426D-8ECF-AD9B19FD73ED}

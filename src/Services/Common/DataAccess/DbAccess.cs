@@ -1,7 +1,8 @@
-﻿using Helpers;
-using Microsoft.Extensions.Configuration;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
+using Lib.Common;
+using Microsoft.Extensions.Configuration;
+using Services.Lib.Common;
 
 namespace DataAccess
 {
@@ -187,7 +188,7 @@ namespace DataAccess
                     using (SqlDataAdapter dataAdapter = new SqlDataAdapter(_command))
                     {
                         dataAdapter.Fill(dt);
-                        if (DataHelper.DataTableIsNull(dt))
+                        if (DataValidation.DataTableIsNull(dt))
                         {
                             DtWarning(ref dt);
                         }
@@ -217,13 +218,13 @@ namespace DataAccess
                 using (SqlDataAdapter dataAdapter = new SqlDataAdapter(_command))
                 {
                     dataAdapter.Fill(dt);
-                    if (DataHelper.DataTableIsNull(dt))
+                    if (DataValidation.DataTableIsNull(dt))
                     {
                         _response.Create(code: "0", "La transacción no devolvio respuesta");
                     }
                     else
                     {
-                        _response = DataHelper.BindData<GenericResponse>(dt);
+                        _response = DataTableMapper.BindData<GenericResponse>(dt);
                     }
                 }
             }
@@ -238,14 +239,14 @@ namespace DataAccess
                 using (SqlDataAdapter dataAdapter = new SqlDataAdapter(_command))
                 {
                     dataAdapter.Fill(dt);
-                    if (DataHelper.DataTableIsNull(dt))
+                    if (DataValidation.DataTableIsNull(dt))
                     {
                         _response.Create(code: "0", "La transacción no devolvio respuesta");
                         //DtWarning(ref dt);
                     }
                     else
                     {
-                        _response.Create(code: "1", payload: DataHelper.DataTableToJSON(dt));
+                        _response.Create(code: "1", payload: Converters.DataTableToJSON(dt));
                     }
                 }
             }
@@ -270,7 +271,7 @@ namespace DataAccess
                     }
                     else
                     {
-                        _response.Create(code: "1", payload: DataHelper.DataSetToJSON(ds));
+                        _response.Create(code: "1", payload: Converters.DataSetToJSON(ds));
                     }
                 }
             }

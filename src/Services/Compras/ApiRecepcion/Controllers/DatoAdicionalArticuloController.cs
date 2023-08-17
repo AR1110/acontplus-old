@@ -1,5 +1,5 @@
 ﻿using DataAccess;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -31,7 +31,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al listar Familias: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar Familias");
             }
@@ -57,7 +57,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al insertar dato adicional articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar dato adicional articulo");
             }
@@ -82,7 +82,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al eliminar dato adicional articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al dato adicional articulo");
             }

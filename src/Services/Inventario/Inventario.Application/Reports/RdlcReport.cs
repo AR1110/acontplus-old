@@ -1,10 +1,10 @@
+using System.Data;
 using Inventario.Core.Interfaces;
 using Inventario.Infrastructure.Data;
 using Lib.Common;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Reporting.NETCore;
-using System.Data;
 
 namespace Inventario.Application.Reports;
 public class RdlcReport : IRdlcReport

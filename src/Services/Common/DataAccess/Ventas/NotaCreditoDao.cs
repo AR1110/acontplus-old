@@ -1,11 +1,11 @@
-﻿using Domain.Models.InfoAdicional;
+﻿using System.Data;
+using System.Data.SqlClient;
+using Domain.Models.InfoAdicional;
 using Domain.Models.Ventas;
 using Domain.ViewModels.Ventas;
-using Helpers;
+using Lib.Common;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace DataAccess.Ventas
 {
@@ -39,7 +39,7 @@ namespace DataAccess.Ventas
                     if (dt.Rows.Count > 0)
                     {
                         _gr.id = "1";
-                        _gr.data = DataHelper.DataTableToJSON(dt);
+                        _gr.data = Converters.DataTableToJSON(dt);
                     }
                 }
             }

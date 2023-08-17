@@ -1,6 +1,6 @@
 ﻿using DataAccess;
 using Domain.Dtos;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -23,7 +23,7 @@ namespace ApiConfig.Controllers
         [HttpGet("Get/{json}")]
         public async Task<IActionResult> Get(string json)
         {
-            
+
             var _response = new GenericResponse();
             try
             {
@@ -47,7 +47,7 @@ namespace ApiConfig.Controllers
         [HttpPut]
         public async Task<IActionResult> Put([FromBody] UsuarioPemisoDto data)
         {
-            
+
             var _response = new GenericResponse();
             try
             {
@@ -73,7 +73,7 @@ namespace ApiConfig.Controllers
         [HttpGet("CheckHasPermission/{json}")]
         public async Task<IActionResult> CheckHasPermission(string json)
         {
-            
+
             var _response = new GenericResponse();
             try
             {

@@ -1,5 +1,5 @@
 ﻿using DataAccess;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -31,7 +31,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al listar cajas: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar cajas");
             }

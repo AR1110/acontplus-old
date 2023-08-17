@@ -1,7 +1,7 @@
-﻿using Customer.Core.Entities;
+﻿using System.Reflection;
+using Customer.Core.Entities;
 using Customer.Infrastructure.Data.Config;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 
 namespace Customer.Infrastructure.Data
 {

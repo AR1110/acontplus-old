@@ -1,5 +1,6 @@
-﻿using Helpers;
-using System.Data;
+﻿using System.Data;
+using Lib.Common;
+using Services.Lib.Common;
 
 namespace Domain.Models
 {
@@ -22,7 +23,7 @@ namespace Domain.Models
                 }
                 else
                 {
-                    _response = DataHelper.BindData<GenericResponse>(dt);
+                    _response = DataTableMapper.BindData<GenericResponse>(dt);
                 }
             }
             catch (Exception ex)
@@ -48,7 +49,7 @@ namespace Domain.Models
                 }
                 else
                 {
-                    _response.Create(code: "1", payload: DataHelper.DataTableToJSON(dt));
+                    _response.Create(code: "1", payload: Converters.DataTableToJSON(dt));
                 }
             }
             catch (Exception ex)
@@ -75,7 +76,7 @@ namespace Domain.Models
                 }
                 else
                 {
-                    _response.Create(code: "1", payload: DataHelper.DataSetToJSON(ds));
+                    _response.Create(code: "1", payload: Converters.DataSetToJSON(ds));
                 }
             }
             catch (Exception ex)

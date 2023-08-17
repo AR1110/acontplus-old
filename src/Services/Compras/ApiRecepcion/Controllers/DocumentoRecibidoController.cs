@@ -1,18 +1,17 @@
-﻿using ApiRecepcion.Utils;
+﻿using System.Data;
+using System.Security.Claims;
+using System.Text;
+using System.Xml;
+using ApiRecepcion.Utils;
 using Compras.Application;
 using DataAccess;
 using Domain.Dtos;
 using FactElect.Application;
 using FactElect.Core;
-using Helpers;
 using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common.Logs;
-using System.Data;
-using System.Security.Claims;
-using System.Text;
-using System.Xml;
 
 namespace ApiRecepcion.Controllers
 {
@@ -37,7 +36,7 @@ namespace ApiRecepcion.Controllers
         public async Task<IActionResult> Get(string json)
         {
             //var correlationId = HttpContext.Request.Headers["X-IdUsuarioRol"].ToString();
-           
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -62,7 +61,7 @@ namespace ApiRecepcion.Controllers
         [HttpGet("GetId/{id}")]
         public async Task<IActionResult> GetId(int id)
         {
-           
+
 
             GenericResponse _response = new GenericResponse();
             try
@@ -123,7 +122,7 @@ namespace ApiRecepcion.Controllers
         [HttpGet("Preview/{id}")]
         public async Task<IActionResult> Preview(int id)
         {
-           
+
 
             GenericResponse _response = new GenericResponse();
             try
@@ -218,7 +217,7 @@ namespace ApiRecepcion.Controllers
         [HttpPost("Read")]
         public async Task<IActionResult> Post(IFormFile file)
         {
-           
+
             GenericResponse _response = new GenericResponse();
 
             if (file.ContentType != "text/plain")
@@ -232,14 +231,14 @@ namespace ApiRecepcion.Controllers
                 FileData.SaveFile(path, file);
                 DataTable dt = new DataTable("Comprobantes");
                 dt = await _txtComp.GetDocs(FileData.GetFileByte(file));
-                if (!DataHelper.DataTableIsNull(dt))
+                if (!DataValidation.DataTableIsNull(dt))
                 {
                     await _db.SPExecute("Recepcion.Documento_Check_Existence");
                     _db.AddDynamicParam("json", JsonConvert.SerializeObject(dt));
                     var dtExistent = _db.GetDataTable();
                     if (dtExistent.Columns.Contains("code") && dtExistent.Rows[0].Field<string>("code") == "-1")
                     {
-                        _response.Create(code: "1", payload: DataHelper.DataTableToJSON(dt));
+                        _response.Create(code: "1", payload: Converters.DataTableToJSON(dt));
                     }
                     else
                     {
@@ -255,7 +254,7 @@ namespace ApiRecepcion.Controllers
                                         where subRow2 == null
                                         select row1).ToList();
                             DataTable filteredDataTable = diff.CopyToDataTable();
-                            _response.Create(code: "1", payload: DataHelper.DataTableToJSON(filteredDataTable));
+                            _response.Create(code: "1", payload: Converters.DataTableToJSON(filteredDataTable));
                         }
                     }
                 }
@@ -278,7 +277,7 @@ namespace ApiRecepcion.Controllers
         [HttpPost("UploadXml")]
         public async Task<IActionResult> UploadXml(string json, IFormFile file)
         {
-           
+
             GenericResponse _response = new GenericResponse();
 
             if (file.ContentType != "text/xml")
@@ -384,7 +383,7 @@ namespace ApiRecepcion.Controllers
         [HttpPost("Post")]
         public async Task<IActionResult> Post(RequestApiDto parameters)
         {
-           
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -411,7 +410,7 @@ namespace ApiRecepcion.Controllers
         [HttpPost("CheckExistenceXml")]
         public async Task<IActionResult> CheckExistenceXml(string claveAcceso)
         {
-           
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -446,7 +445,7 @@ namespace ApiRecepcion.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error al importar el archivo: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al importar el archivo");
             }
@@ -460,7 +459,7 @@ namespace ApiRecepcion.Controllers
         [HttpPut("Put/{id}")]
         public async Task<IActionResult> Put(int id)
         {
-           
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -487,7 +486,7 @@ namespace ApiRecepcion.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Upload(int id, IFormFile file)
         {
-           
+
             GenericResponse _response = new GenericResponse();
 
             if (file.ContentType != "text/plain")
@@ -532,7 +531,7 @@ namespace ApiRecepcion.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-           
+
             GenericResponse _response = new GenericResponse();
 
             try

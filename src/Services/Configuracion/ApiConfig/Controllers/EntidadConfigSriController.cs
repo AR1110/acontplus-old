@@ -1,6 +1,6 @@
 ﻿using DataAccess;
 using Domain.Models;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common.Logs;
@@ -24,7 +24,7 @@ namespace ApiConfig.Controllers
         [HttpGet("Get")]
         public async Task<IActionResult> Get(string json)
         {
-            
+
             var _response = new GenericResponse();
             try
             {
@@ -48,7 +48,7 @@ namespace ApiConfig.Controllers
         [HttpPut("Update/{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] ParamsRequesteViewModel data)
         {
-            
+
             var _response = new GenericResponse();
             try
             {

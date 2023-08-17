@@ -1,9 +1,9 @@
-﻿using Domain.Models;
-using Helpers;
+﻿using System.Data;
+using System.Data.SqlClient;
+using Domain.Models;
+using Lib.Common;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace DataAccess.Administracion
 {
@@ -36,7 +36,7 @@ namespace DataAccess.Administracion
                     if (dt.Rows.Count > 0)
                     {
                         _gr.id = "1";
-                        _gr.data = DataHelper.DataTableToJSON(dt);
+                        _gr.data = Converters.DataTableToJSON(dt);
                     }
                 }
             }
@@ -69,7 +69,7 @@ namespace DataAccess.Administracion
                     if (dt.Tables.Count > 0)
                     {
                         _gr.id = "1";
-                        _gr.data = DataHelper.DataSetToJSON(dt);
+                        _gr.data = Converters.DataSetToJSON(dt);
                     }
                 }
             }

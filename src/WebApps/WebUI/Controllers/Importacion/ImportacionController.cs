@@ -1,6 +1,6 @@
 ﻿using DataAccess;
 using Domain.Models;
-
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Importacion
@@ -50,7 +50,7 @@ namespace WebUI.Controllers.Importacion
         [HttpPost]
         public async Task<IActionResult> Post(string codImportacion, [FromBody] ImportacionParams data)
         {
-            string storedProcedure = DataHelper.StoredProcedureDynamic(codImportacion);
+            string storedProcedure = StoredProcedureDynamic(codImportacion);
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", data.jsonParams);

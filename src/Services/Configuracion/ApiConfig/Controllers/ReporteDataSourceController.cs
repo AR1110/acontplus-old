@@ -1,6 +1,6 @@
 ﻿using ApiConfig.Dtos;
 using DataAccess;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common.Logs;
@@ -23,7 +23,7 @@ namespace ApiConfig.Controllers
         [HttpGet("{json}")]
         public async Task<IActionResult> Get(string json)
         {
-            
+
             var _response = new GenericResponse();
             try
             {
@@ -47,7 +47,7 @@ namespace ApiConfig.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] DataSourceDto data)
         {
-            
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -71,7 +71,7 @@ namespace ApiConfig.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] DataSourceDto data)
         {
-            
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -96,7 +96,7 @@ namespace ApiConfig.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            
+
             GenericResponse _response = new GenericResponse();
             try
             {

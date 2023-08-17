@@ -1,5 +1,5 @@
 ﻿using DataAccess;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -31,7 +31,7 @@ namespace ApiFactElect.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al obtener los errores");
-                
+
                 _log.LogActivity("Error on get DocElectErrror: \n" + ex.ToString());
             }
             finally

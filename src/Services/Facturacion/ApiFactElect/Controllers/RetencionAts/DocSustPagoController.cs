@@ -1,5 +1,5 @@
 ﻿using DataAccess;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -39,7 +39,7 @@ namespace ApiFactElect.Controllers.RetencionAts
         [HttpPost("{idDocSust}")]
         public async Task<IActionResult> Post(int idDocSust, string json)
         {
-           
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -66,7 +66,7 @@ namespace ApiFactElect.Controllers.RetencionAts
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, string json)
         {
-           
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -93,7 +93,7 @@ namespace ApiFactElect.Controllers.RetencionAts
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-           
+
             GenericResponse _response = new GenericResponse();
             try
             {

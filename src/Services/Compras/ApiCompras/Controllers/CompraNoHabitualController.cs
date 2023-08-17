@@ -1,6 +1,6 @@
 ﻿using DataAccess;
 using Domain.Dtos.Compras;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -26,7 +26,7 @@ namespace ApiCompras.Controllers
         [HttpGet("{json}")]
         public async Task<IActionResult> Get(string json)
         {
-           
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -51,7 +51,7 @@ namespace ApiCompras.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ComprobanteDto data)
         {
-           
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -79,7 +79,7 @@ namespace ApiCompras.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] ComprobanteDto data)
         {
-           
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -108,7 +108,7 @@ namespace ApiCompras.Controllers
         [HttpPut("Cancel/{id}")]
         public async Task<IActionResult> Cancel(int id)
         {
-           
+
             GenericResponse _response = new GenericResponse();
             try
             {

@@ -1,9 +1,9 @@
-﻿using Inventario.Core.Interfaces;
+﻿using System.Data;
+using System.Data.Common;
+using Inventario.Core.Interfaces;
 using Inventario.Infrastructure.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using System.Data;
-using System.Data.Common;
 
 namespace Inventario.Infrastructure.Repositories
 {

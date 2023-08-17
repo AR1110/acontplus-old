@@ -1,9 +1,9 @@
-﻿using Compras.Application;
+﻿using System.Reflection;
+using Compras.Application;
 using Lib.Common;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
 using Services.Common.Logs;
-using System.Reflection;
 namespace ApiRecepcion
 {
     public class Program

@@ -1,5 +1,5 @@
 ﻿using DataAccess;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -22,7 +22,7 @@ namespace Inventario.API.Controllers
         [HttpPut("Sales/{json}")]
         public async Task<IActionResult> Sales(string json)
         {
-           
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -47,7 +47,7 @@ namespace Inventario.API.Controllers
         [HttpPut("Purchases/{json}")]
         public async Task<IActionResult> Purchases(string json)
         {
-           
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -72,7 +72,7 @@ namespace Inventario.API.Controllers
         [HttpPut("Transfer/{json}")]
         public async Task<IActionResult> Transfer(string json)
         {
-           
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -97,7 +97,7 @@ namespace Inventario.API.Controllers
         [HttpPut("Adjustment/{json}")]
         public async Task<IActionResult> Adjustment(string json)
         {
-           
+
             GenericResponse _response = new GenericResponse();
             try
             {

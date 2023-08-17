@@ -1,6 +1,5 @@
 ﻿using DataAccess;
 using Domain.Dtos;
-using Helpers;
 using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
@@ -34,7 +33,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error on Get Printers: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener las impresoras");
             }
@@ -60,7 +59,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error in GetDataForm: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
@@ -84,7 +83,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error in GetId: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
@@ -110,7 +109,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error in Post Printer: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al guardar los datos");
             }
@@ -135,7 +134,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                
+
 
                 _log.LogActivity("Error in Put Printers: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar");
@@ -161,7 +160,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error in Delete Printer: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar");
             }

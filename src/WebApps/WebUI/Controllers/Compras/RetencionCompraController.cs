@@ -3,7 +3,7 @@ using DataAccess.Compras;
 using DataAccess.RetencionIvaRenta;
 using Domain.Models;
 using Domain.ViewModels;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -57,7 +57,7 @@ namespace WebUI.Controllers.Ingresos
         public async Task<IActionResult> GetId(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            
+
             GenericResponse _response = new GenericResponse();
             try
             {

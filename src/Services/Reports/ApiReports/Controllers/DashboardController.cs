@@ -1,5 +1,5 @@
 ﻿using DataAccess;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -31,7 +31,7 @@ namespace ApiReports.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al obtener las estadísticas");
-                
+
                 _log.LogActivity("Error on Get Statistis: \n" + ex.ToString());
             }
             finally

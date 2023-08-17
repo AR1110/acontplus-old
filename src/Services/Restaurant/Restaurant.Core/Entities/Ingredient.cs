@@ -8,7 +8,7 @@ namespace Restaurant.Core.Entities
     {
         [Required]
         public int ProductId { get; set; }
-        public IngredientType IngredientType { get; set;}
+        public IngredientType IngredientType { get; set; }
         public int? IngredientTypeId { get; set; }
         [MaxLength(500)]
         public string Summary { get; set; }

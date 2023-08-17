@@ -1,10 +1,9 @@
-﻿using Domain.Dtos;
-
+﻿using System.Data;
+using Domain.Dtos;
 using Lib.Common;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Reporting.NETCore;
 using Newtonsoft.Json;
-using System.Data;
 
 namespace Reports.Application
 {
@@ -142,7 +141,7 @@ namespace Reports.Application
                 {
                     foreach (var item in parameters.dataSources)
                     {
-                        lr.DataSources.Add(new ReportDataSource(item.Key, DataHelper.JsonToDataTable(JsonConvert.SerializeObject(item.Value))));
+                        lr.DataSources.Add(new ReportDataSource(item.Key, JsonToDataTable(JsonConvert.SerializeObject(item.Value))));
                     }
                 }
 

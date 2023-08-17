@@ -1,9 +1,9 @@
-﻿using Domain.ViewModels.Ventas;
-using Helpers;
+﻿using System.Data;
+using System.Data.SqlClient;
+using Domain.ViewModels.Ventas;
+using Lib.Common;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace DataAccess.Ventas
 {

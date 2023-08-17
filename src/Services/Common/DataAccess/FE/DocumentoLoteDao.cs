@@ -1,9 +1,9 @@
-﻿using Domain.Models;
-using Helpers;
-using Microsoft.Extensions.Configuration;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
 using System.Text;
+using Domain.Models;
+using Lib.Common;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.FE
 {
@@ -34,7 +34,7 @@ namespace DataAccess.FE
                     if (dt.Rows.Count > 0)
                     {
                         _response.id = "1";
-                        _response.data = DataHelper.DataTableToJSON(dt);
+                        _response.data = Converters.DataTableToJSON(dt);
                     }
                 }
             }
@@ -65,7 +65,7 @@ namespace DataAccess.FE
                     _response = DbResponse.SPDataTable(ds.Tables[0]);
                     if (_response.id == "1")
                     {
-                        _response.data = DataHelper.DataTableToJSON(ds.Tables[1]);
+                        _response.data = Converters.DataTableToJSON(ds.Tables[1]);
                     }
                 }
             }

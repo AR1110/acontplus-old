@@ -1,7 +1,7 @@
-﻿using Helpers;
-using Microsoft.Extensions.Configuration;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
+using Lib.Common;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Ventas
 {
@@ -31,7 +31,7 @@ namespace DataAccess.Ventas
                         dataAdapter.Fill(dt);
                         if (dt.Rows.Count > 0)
                         {
-                            response = DataHelper.DataTableToJSON(dt);
+                            response = Converters.DataTableToJSON(dt);
                         }
                         dataAdapter.Dispose();
                     }

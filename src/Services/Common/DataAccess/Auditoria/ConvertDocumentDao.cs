@@ -1,7 +1,7 @@
-﻿using Helpers;
-using Microsoft.Extensions.Configuration;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
+using Lib.Common;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Auditoria
 {
@@ -37,7 +37,7 @@ namespace DataAccess.Auditoria
                     if (dt.Rows.Count > 0)
                     {
                         _gr.id = "1";
-                        _gr.data = DataHelper.DataTableToJSON(dt);
+                        _gr.data = Converters.DataTableToJSON(dt);
                     }
                 }
             }

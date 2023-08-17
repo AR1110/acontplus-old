@@ -1,9 +1,9 @@
-﻿using Domain.Models;
-using Domain.ViewModels;
-using Helpers;
-using Microsoft.Extensions.Configuration;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
+using Domain.Models;
+using Domain.ViewModels;
+using Lib.Common;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess
 {
@@ -35,7 +35,7 @@ namespace DataAccess
                     if (dt.Rows.Count > 0)
                     {
                         _response.id = "1";
-                        _response.data = DataHelper.DataTableToJSON(dt);
+                        _response.data = Converters.DataTableToJSON(dt);
                     }
                 }
             }

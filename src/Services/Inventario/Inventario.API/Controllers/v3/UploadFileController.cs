@@ -1,6 +1,6 @@
-﻿using Helpers;
-using Inventario.Core.Interfaces;
+﻿using Inventario.Core.Interfaces;
 using Inventario.Core.Models;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Inventario.API.Controllers.v3

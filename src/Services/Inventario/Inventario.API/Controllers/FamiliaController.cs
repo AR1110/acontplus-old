@@ -1,6 +1,6 @@
 ﻿using DataAccess;
 using Domain.Models.Almacen;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -32,7 +32,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al listar Familias: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar Familias");
             }
@@ -58,7 +58,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al insertar familia: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar familia");
             }
@@ -85,7 +85,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al actualizar familiar: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar familia");
             }
@@ -110,7 +110,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al eliminar familiar: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar familia");
             }
@@ -134,7 +134,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al listar Familias para Select: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar para Select");
             }

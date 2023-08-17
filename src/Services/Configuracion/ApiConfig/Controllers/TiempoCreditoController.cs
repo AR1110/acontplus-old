@@ -1,5 +1,5 @@
 ﻿using DataAccess;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -33,7 +33,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al listar tiempo credito: \n" + ex.ToString());
                 _response.Create("0", "Error al listar tiempo credito");
             }
@@ -60,7 +60,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al crear tiempo creditos: \n" + ex.ToString());
                 _response.Create("0", "Error al crear tiempo creditos");
             }
@@ -89,7 +89,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al actualizar tiempo creditos: \n" + ex.ToString());
                 _response.Create("0", "Error al actualizar tiempo creditos");
             }
@@ -117,7 +117,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al eliminar tiempo creditos: \n" + ex.ToString());
                 _response.Create("0", "Error al eliminar tiempo creditos");
             }

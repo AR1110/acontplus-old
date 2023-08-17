@@ -1,6 +1,6 @@
 ﻿using DataAccess;
 using Domain.Models.Logistica;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -40,7 +40,7 @@ namespace ApiLogistica.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error al listar transportistas: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar transportistas");
             }
@@ -68,7 +68,7 @@ namespace ApiLogistica.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error while creating transport: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al crear el transportista");
             }
@@ -96,7 +96,7 @@ namespace ApiLogistica.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error while updating transport: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar el transportista");
             }
@@ -122,7 +122,7 @@ namespace ApiLogistica.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error while deleting transport: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar el transportisa");
             }

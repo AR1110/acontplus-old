@@ -1,6 +1,6 @@
 ﻿using DataAccess;
 using Domain.Models.Logistica;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -40,7 +40,7 @@ namespace ApiLogistica.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error al listar vehiculos: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar vehiculos");
             }
@@ -64,12 +64,12 @@ namespace ApiLogistica.Controllers
                 _db.AddDynamicParam("placa", data.placa);
                 _db.AddDynamicParam("marca", data.marca);
                 _db.AddDynamicParam("modelo", data.modelo);
-                _db.AddDynamicParam("observacion", DataHelper.ToDBNullOrDefault(data.observacion));
+                _db.AddDynamicParam("observacion", DataValidation.ToDBNullOrDefault(data.observacion));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error while creating vehicle: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al crear el vehiculo");
             }
@@ -94,12 +94,12 @@ namespace ApiLogistica.Controllers
                 _db.AddDynamicParam("placa", data.placa);
                 _db.AddDynamicParam("marca", data.marca);
                 _db.AddDynamicParam("modelo", data.modelo);
-                _db.AddDynamicParam("observacion", DataHelper.ToDBNullOrDefault(data.observacion));
+                _db.AddDynamicParam("observacion", DataValidation.ToDBNullOrDefault(data.observacion));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error while updating vehicle: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar el vehiculo");
             }
@@ -125,7 +125,7 @@ namespace ApiLogistica.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error while deleting vehicle: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar el vehiculo");
             }
@@ -152,7 +152,7 @@ namespace ApiLogistica.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error while search vehicle: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al buscar el vehiculo");
             }

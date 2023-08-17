@@ -1,5 +1,5 @@
 ﻿using DataAccess;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -21,7 +21,7 @@ namespace ApiConfig.Controllers
         [HttpGet("FindByIdMenu/{idMenu}")]
         public async Task<IActionResult> FindByIdMenu(int idMenu)
         {
-            
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -45,7 +45,7 @@ namespace ApiConfig.Controllers
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            
+
             GenericResponse _response = new GenericResponse();
             try
             {

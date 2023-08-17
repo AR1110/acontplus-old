@@ -1,9 +1,9 @@
 ﻿using DataAccess;
 using Domain.Dtos;
 using Domain.ViewModels;
-using Helpers;
 using Identity.API.Dtos;
 using Identity.API.Interfaces;
+using Lib.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
@@ -29,7 +29,7 @@ namespace Identity.API.Controllers.v2
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto authRequest)
         {
-            
+
             LoginDao _l = new LoginDao(_config);
             GenericResponse _gr = await _l.LoginRestaurantAsync(authRequest);
             var codSms = _gr.id as string;
@@ -76,7 +76,7 @@ namespace Identity.API.Controllers.v2
         [HttpPost("loginApp")]
         public async Task<IActionResult> LoginApp([FromBody] LoginDto authRequest)
         {
-            
+
             LoginDao _l = new LoginDao(_config);
             GenericResponse _gr = await _l.LoginAppAsync(authRequest);
             var codSms = _gr.id as string;

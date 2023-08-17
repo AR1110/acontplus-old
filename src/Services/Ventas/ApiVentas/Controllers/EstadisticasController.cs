@@ -1,5 +1,5 @@
 ﻿using DataAccess;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -32,7 +32,7 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error al listar datos para dashboard: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar datos para dashboard");
             }

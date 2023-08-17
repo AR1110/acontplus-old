@@ -1,12 +1,12 @@
-﻿using DataAccess;
+﻿using System.Data;
+using System.Text;
+using DataAccess;
 using Domain.Enums;
 using Domain.Models;
 using FactElect.Application;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
-using System.Data;
-using System.Text;
 
 namespace ApiFactElect.Controllers.Sri
 {
@@ -88,7 +88,7 @@ namespace ApiFactElect.Controllers.Sri
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error while download ats: \n" + ex.ToString());
                 _response.Create("0", ex.Message);
             }

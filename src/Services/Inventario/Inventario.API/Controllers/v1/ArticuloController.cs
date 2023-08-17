@@ -1,6 +1,4 @@
 ﻿using DataAccess;
-using Domain.ViewModels.Almacen;
-using Helpers;
 using Inventario.Core.Interfaces;
 using Inventario.Core.Models;
 using Lib.Common;
@@ -42,7 +40,7 @@ namespace Inventario.API.Controllers.v1
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al listar articulos: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar articulos");
             }
@@ -67,7 +65,7 @@ namespace Inventario.API.Controllers.v1
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al obtener datos del articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos del articulo");
             }
@@ -125,7 +123,7 @@ namespace Inventario.API.Controllers.v1
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al insertar articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar articulo");
             }
@@ -180,7 +178,7 @@ namespace Inventario.API.Controllers.v1
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al actualizar articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar articulo");
             }
@@ -205,7 +203,7 @@ namespace Inventario.API.Controllers.v1
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al eliminar articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar articulo");
             }
@@ -230,7 +228,7 @@ namespace Inventario.API.Controllers.v1
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error on Get Search: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener las bodegas");
             }
@@ -255,7 +253,7 @@ namespace Inventario.API.Controllers.v1
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error on Get For purchase: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos de articulo para compra");
             }
@@ -280,7 +278,7 @@ namespace Inventario.API.Controllers.v1
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error on Get For Sales: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos de articulo para venta");
             }
@@ -305,7 +303,7 @@ namespace Inventario.API.Controllers.v1
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al obtener datos del form-articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos del form-articulo");
             }

@@ -1,6 +1,6 @@
-﻿using Restaurant.Core.Entities;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text.Json;
+using Restaurant.Core.Entities;
 
 namespace Restaurant.Infrastructure.Data
 {

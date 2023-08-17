@@ -1,6 +1,6 @@
 ﻿using DataAccess;
 using Domain.Models;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -23,7 +23,7 @@ namespace ApiConfig.Controllers
         [HttpGet("Get")]
         public async Task<IActionResult> Get(string json)
         {
-            
+
             var _response = new GenericResponse();
             try
             {
@@ -47,7 +47,7 @@ namespace ApiConfig.Controllers
         [HttpPost("Create")]
         public async Task<IActionResult> Create([FromBody] Entidad data)
         {
-            
+
             var _response = new GenericResponse();
             try
             {
@@ -56,9 +56,9 @@ namespace ApiConfig.Controllers
                 _db.AddDynamicParam("ruc", data.ruc);
                 _db.AddDynamicParam("razonSocial", data.razonSocial);
                 _db.AddDynamicParam("nombreComercial", data.nombreComercial);
-                _db.AddDynamicParam("email", DataHelper.ToDBNullOrDefault(data.email));
-                _db.AddDynamicParam("telefono", DataHelper.ToDBNullOrDefault(data.telefono));
-                _db.AddDynamicParam("direccion", DataHelper.ToDBNullOrDefault(data.direccion));
+                _db.AddDynamicParam("email", DataValidation.ToDBNullOrDefault(data.email));
+                _db.AddDynamicParam("telefono", DataValidation.ToDBNullOrDefault(data.telefono));
+                _db.AddDynamicParam("direccion", DataValidation.ToDBNullOrDefault(data.direccion));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -76,7 +76,7 @@ namespace ApiConfig.Controllers
         [HttpPut("Update/{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] Entidad data)
         {
-            
+
             var _response = new GenericResponse();
             try
             {
@@ -87,9 +87,9 @@ namespace ApiConfig.Controllers
                 _db.AddDynamicParam("idCiudad", data.idCiudad);
                 _db.AddDynamicParam("razonSocial", data.razonSocial);
                 _db.AddDynamicParam("nombreComercial", data.nombreComercial);
-                _db.AddDynamicParam("email", DataHelper.ToDBNullOrDefault(data.email));
-                _db.AddDynamicParam("telefono", DataHelper.ToDBNullOrDefault(data.telefono));
-                _db.AddDynamicParam("direccion", DataHelper.ToDBNullOrDefault(data.direccion));
+                _db.AddDynamicParam("email", DataValidation.ToDBNullOrDefault(data.email));
+                _db.AddDynamicParam("telefono", DataValidation.ToDBNullOrDefault(data.telefono));
+                _db.AddDynamicParam("direccion", DataValidation.ToDBNullOrDefault(data.direccion));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -107,7 +107,7 @@ namespace ApiConfig.Controllers
         [HttpPut("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            
+
             var _response = new GenericResponse();
             try
             {

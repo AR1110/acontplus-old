@@ -1,8 +1,8 @@
-﻿using Domain.Models.GestionFinanciera;
-using Helpers;
-using Microsoft.Extensions.Configuration;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
+using Domain.Models.GestionFinanciera;
+using Lib.Common;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.GestionFinanciera
 {
@@ -36,7 +36,7 @@ namespace DataAccess.GestionFinanciera
                     if (dt.Rows.Count > 0)
                     {
                         _gr.id = "1";
-                        _gr.data = DataHelper.DataTableToJSON(dt);
+                        _gr.data = Converters.DataTableToJSON(dt);
                     }
                 }
             }
@@ -64,7 +64,7 @@ namespace DataAccess.GestionFinanciera
                     cmd.Parameters.AddWithValue("codEstab", data.codEstab);
                     cmd.Parameters.AddWithValue("idSubEntidadFinanciera", data.idSubEntidadFinanciera);
                     cmd.Parameters.AddWithValue("valor", data.valor);
-                    cmd.Parameters.AddWithValue("observaciones", DataHelper.ToDBNullOrDefault(data.observaciones));
+                    cmd.Parameters.AddWithValue("observaciones", DataValidation.ToDBNullOrDefault(data.observaciones));
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
                     SqlDataReader reader = cmd.ExecuteReader();

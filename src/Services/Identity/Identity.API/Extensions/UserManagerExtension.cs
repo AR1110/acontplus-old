@@ -1,7 +1,7 @@
-﻿using Identity.API.Entities;
+﻿using System.Security.Claims;
+using Identity.API.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace Identity.API.Extensions
 {

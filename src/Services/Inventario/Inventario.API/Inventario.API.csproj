@@ -24,7 +24,6 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-				<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" />
 		<PackageReference Include="Swashbuckle.AspNetCore" />
@@ -32,7 +31,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Common\DataAccess\DataAccess.csproj" />
-		<ProjectReference Include="..\..\Common\Helpers\Helpers.csproj" />
 		<ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
 		<ProjectReference Include="..\Inventario.Application\Inventario.Application.csproj" />
 		<ProjectReference Include="..\Inventario.Infrastructure\Inventario.Infrastructure.csproj" />

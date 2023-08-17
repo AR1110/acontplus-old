@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using Restaurant.Core.Common;
 using Restaurant.Core.Entities;
 using Restaurant.Core.Interfaces;
-using System.Security.Claims;
 
 namespace Restaurant.API.Controllers
 {

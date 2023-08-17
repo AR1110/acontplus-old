@@ -1,8 +1,8 @@
-﻿using FactElect.Core.Models;
-using Helpers;
-using Microsoft.Extensions.Configuration;
-using System.Text;
+﻿using System.Text;
 using System.Xml;
+using FactElect.Core.Models;
+using Lib.Common;
+using Microsoft.Extensions.Configuration;
 
 namespace FactElect.Application
 {
@@ -121,7 +121,7 @@ namespace FactElect.Application
                         }
                     }
                 }
-                if (DataHelper.IsXml(_response.xmlSri))
+                if (DataValidation.IsXml(_response.xmlSri))
                 {
                     //OBTIENE DATO DEL XML RESPONSE                    
                     XmlDocument xdoc = new XmlDocument();

@@ -1,8 +1,8 @@
-﻿using Domain.Models;
-using Helpers;
-using Microsoft.Extensions.Configuration;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
+using Domain.Models;
+using Lib.Common;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Aplicacion
 {
@@ -34,7 +34,7 @@ namespace DataAccess.Aplicacion
                     if (dt.Rows.Count > 0)
                     {
                         _response.id = "1";
-                        _response.data = DataHelper.DataTableToJSON(dt);
+                        _response.data = Converters.DataTableToJSON(dt);
                     }
                 }
             }
@@ -67,7 +67,7 @@ namespace DataAccess.Aplicacion
                     if (dt.Rows.Count > 0)
                     {
                         _response.id = "1";
-                        _response.data = DataHelper.DataTableToJSON(dt);
+                        _response.data = Converters.DataTableToJSON(dt);
                     }
                 }
             }
@@ -93,9 +93,9 @@ namespace DataAccess.Aplicacion
                     cmd.Parameters.AddWithValue("ruc", data.ruc);
                     cmd.Parameters.AddWithValue("razonSocial", data.razonSocial);
                     cmd.Parameters.AddWithValue("nombreComercial", data.nombreComercial);
-                    cmd.Parameters.AddWithValue("email", DataHelper.ToDBNullOrDefault(data.email));
-                    cmd.Parameters.AddWithValue("telefono", DataHelper.ToDBNullOrDefault(data.telefono));
-                    cmd.Parameters.AddWithValue("direccion", DataHelper.ToDBNullOrDefault(data.direccion));
+                    cmd.Parameters.AddWithValue("email", DataValidation.ToDBNullOrDefault(data.email));
+                    cmd.Parameters.AddWithValue("telefono", DataValidation.ToDBNullOrDefault(data.telefono));
+                    cmd.Parameters.AddWithValue("direccion", DataValidation.ToDBNullOrDefault(data.direccion));
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -131,9 +131,9 @@ namespace DataAccess.Aplicacion
                     cmd.Parameters.AddWithValue("idCiudad", data.idCiudad);
                     cmd.Parameters.AddWithValue("razonSocial", data.razonSocial);
                     cmd.Parameters.AddWithValue("nombreComercial", data.nombreComercial);
-                    cmd.Parameters.AddWithValue("email", DataHelper.ToDBNullOrDefault(data.email));
-                    cmd.Parameters.AddWithValue("telefono", DataHelper.ToDBNullOrDefault(data.telefono));
-                    cmd.Parameters.AddWithValue("direccion", DataHelper.ToDBNullOrDefault(data.direccion));
+                    cmd.Parameters.AddWithValue("email", DataValidation.ToDBNullOrDefault(data.email));
+                    cmd.Parameters.AddWithValue("telefono", DataValidation.ToDBNullOrDefault(data.telefono));
+                    cmd.Parameters.AddWithValue("direccion", DataValidation.ToDBNullOrDefault(data.direccion));
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
                     SqlDataReader reader = cmd.ExecuteReader();

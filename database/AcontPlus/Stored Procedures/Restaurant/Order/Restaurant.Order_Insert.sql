@@ -16,6 +16,7 @@ BEGIN
 	DECLARE @itemsJson NVARCHAR(MAX)
     ,@establecimientoId INT
     ,@puntoEmisionId INT
+    ,@tableId INT
     ,@secuence INT
     ,@serie VARCHAR(18)
     ,@customerCompanyId INT
@@ -27,9 +28,8 @@ BEGIN
     
     SELECT       @itemsJson = items
         ,@establecimientoId = establecimientoId
-        ,@puntoEmisionId    = puntoEmisionId
-        ,@secuence          = secuence
-        ,@serie             = serie
+        ,@puntoEmisionId    = puntoEmisionId 
+        ,@tableId           = tableId
         ,@customerCompanyId = customerCompanyId
         ,@tax               = tax
         ,@discount          = discount
@@ -39,8 +39,7 @@ BEGIN
             items NVARCHAR(MAX) '$.items' AS JSON,
             establecimientoId INT '$.establecimientoId',
             puntoEmisionId INT '$.puntoEmisionId',
-            secuence INT '$.secuence',
-            serie VARCHAR(18) '$.serie',
+            tableId INT '$.tableId',
             customerCompanyId INT '$.customerCompanyId',
             tax NUMERIC(18,5) '$.tax',
             discount NUMERIC(18,5) '$.discount',
@@ -94,8 +93,8 @@ BEGIN
     DECLARE @id INT = 0
 	BEGIN TRY
 		BEGIN TRAN
-            INSERT INTO Restaurant.[Order](EstablecimientoId, PuntoEmisionId, [Sequence], Serie, CustomerCompanyId, Tax, Discount, Total, [Enabled], UserId)
-            VALUES(@establecimientoId, @puntoEmisionId, @secuence, @serie, @customerCompanyId, @tax, @discount, @total, 1, @userId)
+            INSERT INTO Restaurant.[Order](EstablecimientoId, PuntoEmisionId, TableId, [Sequence], Serie, CustomerCompanyId, Tax, Discount, Total, [Enabled], UserId)
+            VALUES(@establecimientoId, @puntoEmisionId, @tableId, @secuence, @serie, @customerCompanyId, @tax, @discount, @total, 1, @userId)
 	        SET @id = (SELECT SCOPE_IDENTITY())
             IF (@id > 0)
                 BEGIN
@@ -104,10 +103,14 @@ BEGIN
                     --falta table id
                     DECLARE @totalCook INT = 0
 
-                    --IF (@totalCook > 0)
-                    --    BEGIN
-                    --        INSERT INTO Restaurant.[OrderKitchen] (OrderId, TableId)
-                    --    END
+                    SET @totalCount = (SELECT COUNT(*) FROM Restaurant.Item i INNER JOIN @tblItems ii ON i.Id = ii.ItemId)
+
+                    IF (@totalCook > 0)
+                        BEGIN
+                            INSERT INTO Restaurant.[OrderKitchen] (OrderId, TableId)
+                        END
+
+
 
                 END
 		COMMIT TRAN

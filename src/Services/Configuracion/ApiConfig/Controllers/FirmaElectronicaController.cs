@@ -1,7 +1,6 @@
 ﻿using ApiConfig.Helpers;
 using DataAccess;
 using Domain.Models;
-using Helpers;
 using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -36,7 +35,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error on Get Firma Electronica: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener la firma electronica");
             }
@@ -85,7 +84,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error on Insert Firma Electronica: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al registrar la firma electronica");
             }
@@ -133,7 +132,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error on Update Firma Electronica: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Actualizar la firma electronica");
             }
@@ -166,7 +165,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error on Update Firma Electronica: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Actualizar la firma electronica");
             }

@@ -1,7 +1,7 @@
 ﻿using DataAccess;
-using Helpers;
 using Inventario.Core.Interfaces;
 using Inventario.Core.Models;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -36,7 +36,7 @@ namespace Inventario.API.Controllers.v3
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al listar articulos: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar articulos");
             }
@@ -62,7 +62,7 @@ namespace Inventario.API.Controllers.v3
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al obtener datos del articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos del articulo");
             }
@@ -86,7 +86,7 @@ namespace Inventario.API.Controllers.v3
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error on Get Search: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener las Articulos");
             }

@@ -1,5 +1,5 @@
 ﻿using DataAccess;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -10,7 +10,7 @@ namespace WebUI.Controllers.Restaurant
         private readonly IConfiguration _config;
 
 
-        
+
         private readonly DbAccess _db;
         private readonly LogWriter _log;
 
@@ -19,7 +19,7 @@ namespace WebUI.Controllers.Restaurant
             _config = config;
 
 
-            
+
             _db = new DbAccess(_config);
             _log = log;
         }

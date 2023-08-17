@@ -32,7 +32,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error in Get: \n" + ex.ToString());
                 return BadRequest();
             }

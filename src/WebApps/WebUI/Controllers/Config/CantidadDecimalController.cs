@@ -1,6 +1,6 @@
 ﻿using DataAccess;
 using Domain.Models;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -24,7 +24,7 @@ namespace WebUI.Controllers.Config
         public async Task<IActionResult> Get(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            
+
             GenericResponse _response = new GenericResponse();
             try
             {

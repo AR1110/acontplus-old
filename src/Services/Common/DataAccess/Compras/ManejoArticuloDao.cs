@@ -1,9 +1,9 @@
-﻿using Domain.Models.Compras;
-using Domain.ViewModels.Compras;
-using Helpers;
-using Microsoft.Extensions.Configuration;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
+using Domain.Models.Compras;
+using Domain.ViewModels.Compras;
+using Lib.Common;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Compras
 {

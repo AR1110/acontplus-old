@@ -1,5 +1,5 @@
 ﻿using DataAccess;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -22,7 +22,7 @@ namespace ApiConfig.Controllers
         [HttpGet("Get/{json}")]
         public async Task<IActionResult> Get(string json)
         {
-            
+
             var _response = new GenericResponse();
             try
             {
@@ -47,7 +47,7 @@ namespace ApiConfig.Controllers
         [HttpPost("Post/{json}")]
         public async Task<IActionResult> Post(string json)
         {
-            
+
             var _response = new GenericResponse();
             try
             {
@@ -72,7 +72,7 @@ namespace ApiConfig.Controllers
         [HttpPut("Put/{json}")]
         public async Task<IActionResult> Put(string json)
         {
-            
+
             var _response = new GenericResponse();
             try
             {
@@ -97,7 +97,7 @@ namespace ApiConfig.Controllers
         [HttpDelete("Delete/{json}")]
         public async Task<IActionResult> Delete(string json)
         {
-            
+
             var _response = new GenericResponse();
             try
             {
@@ -122,7 +122,7 @@ namespace ApiConfig.Controllers
         [HttpGet("Check/{json}")]
         public async Task<IActionResult> Check(string json)
         {
-            
+
             var _response = new GenericResponse();
             try
             {

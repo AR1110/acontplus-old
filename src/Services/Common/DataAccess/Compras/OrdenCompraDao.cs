@@ -1,10 +1,10 @@
-﻿using Domain.Models.Compras;
+﻿using System.Data;
+using System.Data.SqlClient;
+using Domain.Models.Compras;
 using Domain.ViewModels.Compras;
-using Helpers;
+using Lib.Common;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace DataAccess.Compras
 {
@@ -38,7 +38,7 @@ namespace DataAccess.Compras
                     if (dt.Rows.Count > 0)
                     {
                         _gr.id = "1";
-                        _gr.data = DataHelper.DataTableToJSON(dt);
+                        _gr.data = Converters.DataTableToJSON(dt);
                     }
                 }
             }

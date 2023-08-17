@@ -1,6 +1,5 @@
 ﻿using DataAccess;
 using Domain.Dtos;
-using Helpers;
 using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
@@ -33,7 +32,7 @@ namespace ApiRecepcion.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al guardar");
-                
+
                 _log.LogActivity("Error on Get compra habitual: \n" + ex.ToString());
             }
             finally
@@ -57,7 +56,7 @@ namespace ApiRecepcion.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al guardar");
-                
+
                 _log.LogActivity("Error on Post compra habitual: \n" + ex.ToString());
             }
             finally
@@ -82,7 +81,7 @@ namespace ApiRecepcion.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al guardar");
-                
+
                 _log.LogActivity("Error on Put compra habitual: \n" + ex.ToString());
             }
             finally
@@ -106,7 +105,7 @@ namespace ApiRecepcion.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al guardar");
-                
+
                 _log.LogActivity("Error on Delete compra habitual: \n" + ex.ToString());
             }
             finally

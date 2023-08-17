@@ -1,6 +1,6 @@
 ﻿using DataAccess;
 using Domain.Models;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -29,7 +29,7 @@ namespace WebUI.Controllers.Sri
         public async Task<IActionResult> Insert([FromBody] PtoEmision data)
         {
             DbAccess _db = new DbAccess(_configuration);
-            
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -56,7 +56,7 @@ namespace WebUI.Controllers.Sri
         public async Task<IActionResult> Update(int id, [FromBody] PtoEmision data)
         {
             DbAccess _db = new DbAccess(_configuration);
-            
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -84,7 +84,7 @@ namespace WebUI.Controllers.Sri
         public async Task<IActionResult> Delete(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            
+
             GenericResponse _response = new GenericResponse();
             try
             {

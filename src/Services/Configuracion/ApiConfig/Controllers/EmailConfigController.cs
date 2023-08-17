@@ -1,10 +1,9 @@
-﻿using DataAccess;
+﻿using System.Security.Claims;
+using DataAccess;
 using Domain.Dtos;
-using Helpers;
 using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
-using System.Security.Claims;
 
 namespace ApiConfig.Controllers
 {
@@ -34,7 +33,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error on Get Email-Config : \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener los datos de la configuracion de email");
             }
@@ -61,7 +60,7 @@ namespace ApiConfig.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al actualizar");
-                
+
                 _log.LogActivity("Error on Put EmailConfig: \n" + ex.ToString());
             }
             finally

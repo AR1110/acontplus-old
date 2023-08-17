@@ -1,6 +1,6 @@
 ﻿using DataAccess;
 using Domain.Models.Inventario;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -33,7 +33,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error on Get Search: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener las trans. a bodegas");
             }
@@ -47,7 +47,7 @@ namespace Inventario.API.Controllers
         public async Task<IActionResult> GetId(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -81,7 +81,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error on Insert: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar Trans. Bodega");
             }
@@ -107,7 +107,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error on Update: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar Trans. Bodega");
             }
@@ -132,7 +132,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error on Delete: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar Trans. Bodega");
             }

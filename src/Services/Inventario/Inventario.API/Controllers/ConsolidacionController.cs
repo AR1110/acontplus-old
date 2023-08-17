@@ -1,10 +1,9 @@
-﻿using DataAccess;
+﻿using System.Security.Claims;
+using DataAccess;
 using Domain.Dtos;
-using Helpers;
 using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
-using System.Security.Claims;
 
 namespace Inventario.API.Controllers
 {
@@ -34,7 +33,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al obtener los datos");
-                
+
                 _log.LogActivity("Error on Get: \n" + ex.ToString());
             }
             finally
@@ -58,7 +57,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al guardar");
-                
+
                 _log.LogActivity("Error on Post: \n" + ex.ToString());
             }
             finally
@@ -83,7 +82,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al actualizar");
-                
+
                 _log.LogActivity("Error on Put: \n" + ex.ToString());
             }
             finally
@@ -107,7 +106,7 @@ namespace Inventario.API.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al eliminar");
-                
+
                 _log.LogActivity("Error on Delete: \n" + ex.ToString());
             }
             finally

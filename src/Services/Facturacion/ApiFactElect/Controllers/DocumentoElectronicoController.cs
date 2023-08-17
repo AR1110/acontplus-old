@@ -1,11 +1,11 @@
-﻿using DataAccess;
-using Domain.Models;
-using Helpers;
-using Microsoft.AspNetCore.Mvc;
-using Services.Common.Logs;
-using System.Data;
+﻿using System.Data;
 using System.Text;
 using System.Web;
+using DataAccess;
+using Domain.Models;
+using Lib.Common;
+using Microsoft.AspNetCore.Mvc;
+using Services.Common.Logs;
 
 namespace ApiFactElect.Controllers
 {
@@ -27,7 +27,7 @@ namespace ApiFactElect.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-           
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -52,7 +52,7 @@ namespace ApiFactElect.Controllers
         [HttpGet("GetByStatus")]
         public async Task<IActionResult> GetByStatus(string json)
         {
-           
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -77,7 +77,7 @@ namespace ApiFactElect.Controllers
         [HttpGet("GetDataForm")]
         public async Task<IActionResult> GetDataForm()
         {
-           
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -98,7 +98,7 @@ namespace ApiFactElect.Controllers
         [HttpGet("GetXmlSri/{id}")]
         public async Task<IActionResult> GetXmlSri(int id)
         {
-           
+
             FileModel _response = new FileModel();
             try
             {
@@ -130,7 +130,7 @@ namespace ApiFactElect.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id)
         {
-           
+
             GenericResponse _response = new GenericResponse();
             try
             {

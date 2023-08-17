@@ -1,11 +1,11 @@
-﻿using Domain.Models;
+﻿using System.Data;
+using System.Data.SqlClient;
+using Domain.Models;
 using Domain.Models.InfoAdicional;
 using Domain.ViewModels;
-using Helpers;
+using Lib.Common;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace DataAccess.Compras
 {
@@ -41,7 +41,7 @@ namespace DataAccess.Compras
                     if (dt.Rows.Count > 0)
                     {
                         _gr.id = "1";
-                        _gr.data = DataHelper.DataTableToJSON(dt);
+                        _gr.data = Converters.DataTableToJSON(dt);
                     }
                 }
             }
@@ -159,7 +159,7 @@ namespace DataAccess.Compras
                     cmd.Parameters.AddWithValue("idPuntoEmision", data.retencionCompra.idPuntoEmision);
                     cmd.Parameters.AddWithValue("total", data.retencionCompra.total);
                     cmd.Parameters.AddWithValue("fechaEmision", data.retencionCompra.fechaEmision);
-                    cmd.Parameters.AddWithValue("concepto", DataHelper.ToDBNullOrDefault(data.retencionCompra.concepto));
+                    cmd.Parameters.AddWithValue("concepto", DataValidation.ToDBNullOrDefault(data.retencionCompra.concepto));
                     var p = JsonConvert.SerializeObject(data.dataDetalle); cmd.Parameters.Add(new SqlParameter("json", p));
                     var infoAdicional = JsonConvert.SerializeObject(data.adicional); cmd.Parameters.Add(new SqlParameter("jsonInfoAdicional", infoAdicional));
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -202,7 +202,7 @@ namespace DataAccess.Compras
                     cmd.Parameters.AddWithValue("idProveedor", data.retencionCompra.idProveedor);
                     cmd.Parameters.AddWithValue("total", data.retencionCompra.total);
                     cmd.Parameters.AddWithValue("fechaEmision", data.retencionCompra.fechaEmision);
-                    cmd.Parameters.AddWithValue("concepto", DataHelper.ToDBNullOrDefault(data.retencionCompra.concepto));
+                    cmd.Parameters.AddWithValue("concepto", DataValidation.ToDBNullOrDefault(data.retencionCompra.concepto));
                     var p = JsonConvert.SerializeObject(data.dataDetalle); cmd.Parameters.Add(new SqlParameter("json", p));
                     var infoAdicional = JsonConvert.SerializeObject(data.adicional); cmd.Parameters.Add(new SqlParameter("jsonInfoAdicional", infoAdicional));
                     cmd.CommandType = CommandType.StoredProcedure;

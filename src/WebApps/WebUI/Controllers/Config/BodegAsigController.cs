@@ -1,7 +1,7 @@
 ﻿using DataAccess;
 using Domain.Models;
 using Domain.Models.Config;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Config

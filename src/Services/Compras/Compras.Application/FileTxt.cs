@@ -1,7 +1,7 @@
-﻿using DataAccess;
-using Microsoft.Extensions.Configuration;
-using System.Data;
+﻿using System.Data;
 using System.Text;
+using DataAccess;
+using Microsoft.Extensions.Configuration;
 
 namespace Compras.Application
 {

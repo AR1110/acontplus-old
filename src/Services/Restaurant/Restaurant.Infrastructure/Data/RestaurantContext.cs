@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Restaurant.Core.Entities;
-using System.Reflection;
 
 namespace Restaurant.Infrastructure.Data
 {
@@ -81,7 +81,7 @@ namespace Restaurant.Infrastructure.Data
             builder.Entity<OrderItem>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
 
             builder.Entity<OrderKitchen>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
-            
+
         }
         public override int SaveChanges()
         {

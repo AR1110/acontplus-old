@@ -1,5 +1,5 @@
 ﻿using DataAccess;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -38,7 +38,7 @@ namespace ApiRecepcion.Controllers
         [HttpPost("{idDocumento}/{idArticulo}")]
         public async Task<IActionResult> Post(int idDocumento, int idArticulo)
         {
-            
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -70,7 +70,7 @@ namespace ApiRecepcion.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            
+
             GenericResponse _response = new GenericResponse();
             try
             {

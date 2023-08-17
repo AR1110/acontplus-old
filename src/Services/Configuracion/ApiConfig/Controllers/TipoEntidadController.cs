@@ -1,5 +1,5 @@
 ﻿using DataAccess;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -33,7 +33,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al listar tipo entidad: \n" + ex.ToString());
                 _response.Create("0", "Error al listar tipo entidad");
             }
@@ -60,7 +60,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al crear tipo entidad: \n" + ex.ToString());
                 _response.Create("0", "Error al crear tipo entidad");
             }
@@ -89,7 +89,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al actualizar tipo entidad: \n" + ex.ToString());
                 _response.Create("0", "Error al actualizar tipo entidad");
             }
@@ -117,7 +117,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al eliminar tipo entidad: \n" + ex.ToString());
                 _response.Create("0", "Error al eliminar tipo entidad");
             }
@@ -144,7 +144,7 @@ namespace ApiConfig.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al lista tipo entidad para el formulario: \n" + ex.ToString());
                 _response.Create("0", "Error al lista tipo entidad para el formulario");
             }

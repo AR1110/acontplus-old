@@ -1,6 +1,5 @@
 ﻿using DataAccess;
 using Domain.Dtos;
-using Helpers;
 using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
@@ -24,7 +23,7 @@ namespace Inventario.API.Controllers.v2
         public async Task<IActionResult> GetId(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -58,7 +57,7 @@ namespace Inventario.API.Controllers.v2
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al obtener datos del form-articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener datos del form-articulo");
             }
@@ -84,7 +83,7 @@ namespace Inventario.API.Controllers.v2
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error on Get Search: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener las bodegas");
             }
@@ -101,7 +100,7 @@ namespace Inventario.API.Controllers.v2
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
-            
+
             try
             {
                 await _db.SPExecute("Almacen.Articulo_Insert_v2");
@@ -136,7 +135,7 @@ namespace Inventario.API.Controllers.v2
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al actualizar articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar articulo");
             }
@@ -161,7 +160,7 @@ namespace Inventario.API.Controllers.v2
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al eliminar articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar articulo");
             }

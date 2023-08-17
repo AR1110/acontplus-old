@@ -1,6 +1,6 @@
+using System.Data;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using System.Data;
 
 namespace Lib.Common
 {

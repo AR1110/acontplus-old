@@ -1,6 +1,5 @@
 ﻿using DataAccess;
 using Domain.Dtos;
-using Helpers;
 using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
@@ -25,7 +24,7 @@ namespace ApiContabilidad.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -50,7 +49,7 @@ namespace ApiContabilidad.Controllers
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert([FromBody] RequestApiDto paremeter)
         {
-            
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -75,7 +74,7 @@ namespace ApiContabilidad.Controllers
         [HttpPut("Cancel")]
         public async Task<IActionResult> Cancel([FromBody] RequestApiDto paremeter)
         {
-            
+
             GenericResponse _response = new GenericResponse();
             try
             {

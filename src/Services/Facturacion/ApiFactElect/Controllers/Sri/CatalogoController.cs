@@ -1,7 +1,7 @@
-﻿using DataAccess;
-using Helpers;
+﻿using System.Data;
+using DataAccess;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
 
 namespace ApiFactElect.Controllers.Sri
 {
@@ -21,7 +21,7 @@ namespace ApiFactElect.Controllers.Sri
                 DbAccess db = new DbAccess(_config);
                 await db.SPExecute("Sri.Catalogo_Get");
                 DataTable dt = db.GetDataTable();
-                _response.Create(code: "1", payload: DataHelper.DataTableToJSON(dt));
+                _response.Create(code: "1", payload: Converters.DataTableToJSON(dt));
             }
             catch (Exception ex)
             {

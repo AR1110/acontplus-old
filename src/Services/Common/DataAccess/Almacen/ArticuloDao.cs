@@ -1,11 +1,11 @@
 ﻿
+using System.Data;
+using System.Data.SqlClient;
 using Domain.Dtos;
 using Domain.Models.Almacen;
 using Domain.ViewModels.Almacen;
-using Helpers;
+using Lib.Common;
 using Microsoft.Extensions.Configuration;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace DataAccess.Almacen
 {

@@ -1,10 +1,9 @@
-﻿using DataAccess;
+﻿using System.Security.Claims;
+using DataAccess;
 using Domain.Dtos;
-using Helpers;
 using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
-using System.Security.Claims;
 
 namespace ApiConfig.Controllers
 {
@@ -34,7 +33,7 @@ namespace ApiConfig.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al obtener el uso de whatsapp");
-                
+
                 _log.LogActivity("Error on get: \n" + ex.ToString());
             }
             finally
@@ -58,7 +57,7 @@ namespace ApiConfig.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al guardar el uso de whatsapp");
-                
+
                 _log.LogActivity("Error on post: \n" + ex.ToString());
             }
             finally
@@ -83,7 +82,7 @@ namespace ApiConfig.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al actualizar el uso de whatsapp");
-                
+
                 _log.LogActivity("Error on put: \n" + ex.ToString());
             }
             finally
@@ -107,7 +106,7 @@ namespace ApiConfig.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al eliminar el uso de whatsapp");
-                
+
                 _log.LogActivity("Error on delete: \n" + ex.ToString());
             }
             finally

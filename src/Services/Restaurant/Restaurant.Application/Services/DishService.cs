@@ -1,8 +1,8 @@
-﻿using Lib.Common;
+﻿using System.Data;
+using Lib.Common;
 using Lib.Common.Api;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
-using System.Data;
 
 namespace Restaurant.Application.Services
 {

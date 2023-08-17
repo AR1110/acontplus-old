@@ -1,16 +1,13 @@
-﻿using Amazon.Util.Internal;
-using DataAccess;
+﻿using DataAccess;
 using Domain.Models.Almacen;
-using Helpers;
 using Inventario.Core.Interfaces;
 using Inventario.Core.Models;
+using Lib.Common;
 using Lib.Common.Dtos;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common;
 using Services.Common.Logs;
-using System.IO;
 
 namespace Inventario.API.Controllers
 {
@@ -40,7 +37,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al listar SubFamilias: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar SubFamilias");
             }
@@ -100,7 +97,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al insertar subfamilia: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar subfamilia");
             }
@@ -161,7 +158,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al actualizar subfamilia: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar subfamilia");
             }
@@ -186,7 +183,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al eliminar subfamilia: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar subfamilia");
             }
@@ -211,7 +208,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al listar SubFamilias para Select: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar SubFamilias para Select");
             }

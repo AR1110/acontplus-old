@@ -1,5 +1,5 @@
 ﻿using DataAccess;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -32,7 +32,7 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error al listar empleados: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar empleados");
             }
@@ -61,7 +61,7 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error while searching data form employee: " + ex.ToString());
                 _response.Create(code: "0", message: "Error al buscar empleado");
             }
@@ -85,7 +85,7 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error while creating employee: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al crear el empleado");
             }
@@ -112,7 +112,7 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error while updating employee: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar el empleado");
             }
@@ -138,7 +138,7 @@ namespace ApiVentas.Controllers
             }
             catch (Exception ex)
             {
-               
+
                 _log.LogActivity("Error while deleting employee: \n " + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar el empleado");
             }

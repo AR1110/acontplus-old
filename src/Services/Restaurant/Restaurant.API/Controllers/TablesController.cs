@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Core.Entities;
 using Restaurant.Infrastructure.Data;
@@ -28,7 +23,7 @@ namespace Restaurant.API.Controllers
         {
             return await _context.Tables.Include(x => x.Room).ToListAsync();
         }
-            
+
         [HttpGet("GetByCode/{codEstab}")]
         public async Task<ActionResult<IEnumerable<AppTable>>> GetByCode(string codEstab)
         {

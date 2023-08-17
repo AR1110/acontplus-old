@@ -1,6 +1,6 @@
 ﻿using DataAccess;
 using Domain.Models.Administracion;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.GestionFinanciera

@@ -15,7 +15,7 @@ namespace Restaurant.API.Extensions
         {
             services.AddDbContext<RestaurantContext>(options =>
             options.UseSqlServer(Encryption.DecryptString(configuration.GetSection("KeyEncryption").Value, configuration.GetConnectionString("DefaultConnection"))));
-            
+
             services.AddScoped<IADORepository, ADORepository>();
             services.AddScoped<IRecipe, RecipeService>();
             services.AddScoped<IAppTableService, AppTableService>();

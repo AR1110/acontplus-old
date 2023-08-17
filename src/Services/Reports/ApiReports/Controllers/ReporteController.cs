@@ -1,13 +1,13 @@
-﻿using DataAccess;
+﻿using System.Data;
+using DataAccess;
 using Domain.Dtos;
 using Domain.Models;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Primitives;
 using Reports.Application;
 using Services.Common.Logs;
-using System.Data;
 
 namespace ApiReports.Controllers
 {
@@ -28,7 +28,7 @@ namespace ApiReports.Controllers
         [HttpPost("Download")]
         public async Task<IActionResult> Download(ApiReportParamsDto data)
         {
-            
+
             Request.Headers.TryGetValue("Authorization", out StringValues headerValues);
             string jsonWebToken = headerValues.FirstOrDefault();
             FileModel _response = new FileModel();
@@ -129,7 +129,7 @@ namespace ApiReports.Controllers
         [HttpPost("DynamicReport")]
         public async Task<IActionResult> DynamicReport([FromBody] ApiReportParamsDto data)
         {
-            
+
             DbAccess _db = new DbAccess(_configuration);
             FileModel _response = new FileModel();
             string mimeType = string.Empty, fileName = string.Empty;

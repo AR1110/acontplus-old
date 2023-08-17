@@ -1,6 +1,6 @@
 ﻿using DataAccess;
 using Domain.Models;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -32,7 +32,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al listar tarifas: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar tarifas");
             }
@@ -58,7 +58,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al insertar tarifa: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar tarifa");
             }
@@ -84,7 +84,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al actualizar tarifa: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar tarifa");
             }
@@ -109,7 +109,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al eliminar medida: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar medida");
             }
@@ -133,7 +133,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                
+
                 _log.LogActivity("Error al listar tarifas para Select: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar tarifas para Select");
             }

@@ -1,7 +1,7 @@
-﻿using Helpers;
-using Microsoft.Extensions.Configuration;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
+using Lib.Common;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess
 {
@@ -27,7 +27,7 @@ namespace DataAccess
                 using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
                     SqlCommand cmd = new SqlCommand("ASPGenerarNroDc", con);
-                    cmd.Parameters.AddWithValue("puntoEmision", DataHelper.ToDBNullOrDefault(puntoEmision));
+                    cmd.Parameters.AddWithValue("puntoEmision", DataValidation.ToDBNullOrDefault(puntoEmision));
                     cmd.Parameters.AddWithValue("idPuntoEmision", idPuntoEmision);
                     cmd.Parameters.AddWithValue("nroDocumento", nroDocumento);
                     cmd.Parameters.AddWithValue("codigoDocumento", codigoDocumento);
@@ -66,7 +66,7 @@ namespace DataAccess
                 using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("ASPGenerarNroDv", con);
-                    cmd.Parameters.AddWithValue("puntoEmision", DataHelper.ToDBNullOrDefault(puntoEmision));
+                    cmd.Parameters.AddWithValue("puntoEmision", DataValidation.ToDBNullOrDefault(puntoEmision));
                     cmd.Parameters.AddWithValue("idPuntoEmision", idPuntoEmision);
                     cmd.Parameters.AddWithValue("nroDocumento", nroDocumento);
                     cmd.Parameters.AddWithValue("codigoDocumento", codigoDocumento);

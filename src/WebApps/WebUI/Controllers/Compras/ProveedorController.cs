@@ -1,7 +1,7 @@
 ﻿using DataAccess;
 using DataAccess.Compras;
 using Domain.Models;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers

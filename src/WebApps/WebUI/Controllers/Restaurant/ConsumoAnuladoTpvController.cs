@@ -1,5 +1,5 @@
 ﻿using DataAccess;
-using Helpers;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -15,7 +15,7 @@ namespace WebUI.Controllers.Restaurant
         {
             _config = config;
             _db = new DbAccess(_config);
-            
+
         }
         public IActionResult Index()
         {

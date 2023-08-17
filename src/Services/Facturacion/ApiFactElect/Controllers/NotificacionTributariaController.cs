@@ -1,6 +1,5 @@
 ﻿using DataAccess;
 using Domain.Dtos;
-using Helpers;
 using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
@@ -32,7 +31,7 @@ namespace ApiFactElect.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al obtener las notificaciones");
-                
+
                 _log.LogActivity("Error on get NotificacionTrib: \n" + ex.ToString());
             }
             finally
@@ -56,7 +55,7 @@ namespace ApiFactElect.Controllers
             catch (Exception ex)
             {
                 _response.Create(code: "0", message: "Error al guardar las notificacion");
-                
+
                 _log.LogActivity("Error on post NotificacionTrib: \n" + ex.ToString());
             }
             finally
