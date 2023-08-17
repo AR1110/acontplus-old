@@ -1,17 +1,20 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Restaurant.Core.Entities;
 using Restaurant.Core.Interfaces;
 using Services.Common;
+using Services.Common.Logs;
 
 namespace Restaurant.API.Controllers
 {
     public class OrderController : BaseApiController
     {
         private readonly IOrderService _orderService;
-        public OrderController(IOrderService orderService)
+        private readonly LogWriter _log;
+        public OrderController(IOrderService orderService, LogWriter log)
         {
             _orderService = orderService;
+            _log = log;
         }
         [HttpGet]
         public async Task<IActionResult> Get(string json)
@@ -23,11 +26,16 @@ namespace Restaurant.API.Controllers
                     { "json", json}
                 };
                 var orders = await _orderService.GetAsync(parameters);
-                if (orders == null | string.IsNullOrEmpty(orders)) { return NoContent(); }
+                if (orders == null | string.IsNullOrEmpty(orders))
+                {
+                    _log.LogActivity("No se encontro datos");
+                    return NoContent();
+                }
                 return Ok(orders);
             }
-            catch (System.Exception)
+            catch (Exception ex)
             {
+                _log.LogActivity("Error on Get: \n" + ex.ToString());
                 return BadRequest("Error on get");
             }
         }
