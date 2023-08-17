@@ -5,13 +5,15 @@ import { Autocomplete, Box, Grid, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 import { CustomerReadDto } from '@/core/models';
 import {CustomerService as customerSvc}  from '@/core/services';
+import { saleStore } from '@/stores';
  
 
 export default function CustomerSearch() { 
-  const [value, setValue] = React.useState<CustomerReadDto | null>(null);
+  const [value, setValue] = useState<CustomerReadDto | null>(null);
   const [inputValue, setInputValue] = useState('');
   const [customers, setCustomers] = useState<Array<CustomerReadDto>>([]);
   const [loading, setLoading] = useState(false);
+  const setSummary = saleStore(state=>state.setSummary)
   
   const customerSearch =  (textSearch: string) => { 
     if(textSearch.length < 2) return
@@ -35,12 +37,19 @@ export default function CustomerSearch() {
   <Autocomplete
   id="customer-search" 
   size='small'
-  fullWidth
+  fullWidth  
   onInputChange={handleInputChange}
   autoHighlight
   getOptionLabel={(option) => option.taxName}
   options={customers}
   loading={loading}
+  onChange={(event, newValue) => {
+    if (newValue) {
+      // Aquí tienes el valor seleccionado (newValue)
+      console.log(newValue.customerId);
+      setSummary(newValue.customerId)
+    }
+  }}
   renderOption={(props, option) => {
     console.log(props)
     console.log(option)

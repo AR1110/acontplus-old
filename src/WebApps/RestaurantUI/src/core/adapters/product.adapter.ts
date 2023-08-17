@@ -11,7 +11,9 @@ function productSaleReadAdapter(product: RawProductSaleData): ProductSaleReadDto
         costPrice: product.precioCosto,
         priceWithoutSubsidy: product.precioSinSubsidio,
         productCode: product.codigoArticulo,
-        stock: product.stock
+        stock: product.stock,
+        s3ObjectKey: product.s3ObjectKey,
+        s3ObjectUrl: product.s3ObjectUrl
     })
 }
 
@@ -21,12 +23,13 @@ function productSaleRateReadAdapter(measures: RawMeasure[]): Array<Measure> {
         let rates: RawRateData[] = JSON.parse(item.tarifas);
         return {
             measureId: item.idMedida,
-            description: item.descripcion,
+            description: item.medida,
             rates: rates.map(rate => ({
                 rateId: rate.idTarifa,
                 salePrice: rate.precioVenta,
                 priceWithVat: rate.precioConIva,
-                description: rate.tarifa
+                description: rate.tarifa,
+                default:  rate.precioPredeterminado
             }))
         }
     })

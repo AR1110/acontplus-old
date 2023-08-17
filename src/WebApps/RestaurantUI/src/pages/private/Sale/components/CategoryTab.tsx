@@ -32,7 +32,7 @@ export default function ScrollableTabsButtonVisible() {
 
       <Paper sx={{
         borderRadius: '12px',
-      }} elevation={1}>
+      }} elevation={0}>
 
         <Tabs
           value={value}
