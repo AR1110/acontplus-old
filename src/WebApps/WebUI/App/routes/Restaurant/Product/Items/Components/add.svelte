@@ -16,7 +16,6 @@
     getProducts();
   });
 
-  // Get prodction areas
   const getProductionArea = () => {
     productionAreaService.get().then((res) => {
       if (res) productionAreas = res;
@@ -36,7 +35,7 @@
   <Modal
     open={openNew}
     iconTitle={data.id > 0 ? "ti-sync" : "ti-plus"}
-    title={data.id > 0 ? "Actualizar sala" : "Registrar sala"}
+    title={data.id > 0 ? "Actualizar" : "Registrar"}
     onClosed={() => onModalClose()}
     fullScreen={true}
   >

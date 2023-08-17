@@ -1,4 +1,4 @@
-using Lib.Common.Api;
+﻿using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.Core.Interfaces;
 using Services.Common;
@@ -60,6 +60,8 @@ namespace Restaurant.API.Controllers
                 return BadRequest("Error on Post: " + ex.Message);
             }
         }
+
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
         {
