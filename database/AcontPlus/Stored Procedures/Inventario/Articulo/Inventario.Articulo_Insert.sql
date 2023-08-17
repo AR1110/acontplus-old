@@ -341,8 +341,8 @@ BEGIN
 			IF(@siglaFamilia = 'RES' AND @siglaSubFamilia = 'ING')
 				BEGIN
 					INSERT INTO Restaurant.Ingredient
-					(ProductId, Summary, TypeId, Quantity, Unit, Content, CreatedAt, UpdatedAt, Enabled, Deleted, UserId)
-					VALUES(@idArticulo, NULL, NULL, NULL, NULL, NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario)
+					(ProductId, Summary, Quantity, Unit, Content, CreatedAt, UpdatedAt, Enabled, Deleted, UserId, IngredientTypeId)
+					VALUES(@idArticulo, (SELECT  descripcion FROM @tbArticle), NULL, NULL, NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario, NULL)
 				END
 		COMMIT TRAN 
 		SELECT '1'code,'Registrado Correctamente' as 'message', @payload as payload

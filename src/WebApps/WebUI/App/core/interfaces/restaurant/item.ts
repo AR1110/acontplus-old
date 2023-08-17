@@ -1,4 +1,5 @@
-export interface Item {
+
+export interface Item {   
     readonly id: number;
     summary: string;
     cooking: boolean;
@@ -20,6 +21,6 @@ export interface Item {
     tipoIva: string;
     tipoArticulo: string;
     style: string;
-    productionAreaId: number;
+    readonly productionAreaId: number;
     descriptionProductionArea: string;
 }
