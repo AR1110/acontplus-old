@@ -17,7 +17,19 @@ BEGIN
 	SET LANGUAGE SPANISH;
     DECLARE @itemJson NVARCHAR(MAX)
             ,@productionAreaJson NVARCHAR(MAX)
+            ,@recipeJson NVARCHAR(MAX)
             ,@productId INT
+
+    CREATE TABLE #RecipeTemp(
+         id            INT
+         ,itemId       INT
+         ,unit         INT
+         ,weight       NUMERIC(18,5)
+         ,netWeigth    NUMERIC(18,5)
+         ,ingredientId INT            
+         ,instructions VARCHAR(MAX) 
+         ,quantity     DECIMAL(18,5)
+    )
 
     IF ISJSON(@json) = 0
         BEGIN
@@ -28,7 +40,10 @@ BEGIN
     SELECT @itemJson                = itemJson
             ,@productionAreaJson    = productionAreaJson
     FROM OPENJSON(@json) 
-    WITH (itemJson NVARCHAR(MAX) '$.itemJson' AS JSON, productionAreaJson NVARCHAR(MAX) '$.productionAreaJson' AS JSON)
+    WITH (itemJson NVARCHAR(MAX) '$.itemJson' AS JSON
+            , productionAreaJson NVARCHAR(MAX) '$.productionAreaJson' AS JSON
+            , recipeJson NVARCHAR(MAX) '$.recipeJson'
+    )
 
     SELECT @productId = productId FROM OPENJSON(@itemJson) WITH(productId INT '$.productId')
 
@@ -67,7 +82,21 @@ BEGIN
         ,content         VARCHAR(500) '$.content'
         ,enabled         BIT          '$.enabled'
     )
-    
+
+    INSERT INTO #RecipeTemp(id, itemId, unit, weight, netWeigth, ingredientId, instructions, quantity)
+    SELECT id, itemId, unit, weight, netWeigth, ingredientId, instructions, quantity 
+    FROM OPENJSON(@recipeJson)
+    WITH(
+      id            INT             '$.id'
+      ,itemId       INT             '$.itemId'
+      ,unit         INT             '$.unit'
+      ,weight       NUMERIC(18,5)   '$.weight'
+      ,netWeigth    NUMERIC(18,5)   '$.netWeigth'
+      ,ingredientId INT             '$.ingredientId'
+      ,instructions VARCHAR(MAX)    '$.instructions'
+      ,quantity     DECIMAL(18,5)   '$.quantity'
+    )
+     
 	BEGIN TRY               
 		BEGIN TRAN
             UPDATE Restaurant.Item
@@ -79,6 +108,14 @@ BEGIN
                 ,content         = @content
                 ,enabled         = @enabled
             WHERE Id = @id
+
+
+            --INSERT INTO Restaurant.Recipe
+            --(ItemId, Unit, Weight, NetWeight, CreatedAt, UpdatedAt, Enabled, Deleted, UserId, IngredientId, Instructions, Quantity)
+            --SELECT * FROM #RecipeTemp rp
+            --INNER JOIN Restaurant.Recipe r ON rp.id = r.Id
+            --WHERE 
+             
 		COMMIT TRAN
         SELECT dbo.ufn_spresponse('1', 'Actualizado exitosamente', NULL)
 
