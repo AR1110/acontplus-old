@@ -590,8 +590,40 @@ BEGIN
 			  AND a.estado = 1
 			  AND a.stock > 0
 			  AND a.idArticulo NOT IN (SELECT d.idArticulo FROM ConsolidacionInventarioDetalle d) 
+            RETURN 
 		END 
 
+    -- DATOS PARA EL RESTAURANTE - ORDEN 
+    IF @tipo = 10
+        BEGIN 
+            SELECT @idArticulo = idArticulo FROM OPENJSON(@json) WITH (idArticulo INT '$.idArticulo')
+
+			SELECT idArticulo
+					,idMedida
+					,idTipoIva
+					,descripcion
+					,llevaInventario
+					,precioCosto
+					,precioSinSubsidio = ISNULL(precioSinSubsidio,0)
+					,tarifaImpuesto
+					,tarifa            = porcentaje
+					,codigoPorcentaje  = CAST(codigoPorcentaje as varchar)
+					,codigoArticulo    = codigo 
+					,stock    
+                    ,s3ObjectKey
+	                ,s3ObjectUrl
+			FROM Inventario.v_Articulo WHERE idArticulo = @idArticulo 
+
+			SELECT 
+				a.idMedida
+			   ,a.medida
+			   ,tarifas		 = (SELECT idTarifa, precioVenta, precioConIva, tarifa, precioPredeterminado
+								FROM Inventario.v_Articulo_Tarifa  vat
+								WHERE vat.idArticulo = a.idArticulo
+								ORDER BY precioPredeterminado DESC FOR JSON PATH) 
+			FROM Inventario.v_Articulo a WHERE idArticulo = @idArticulo AND estado = 1 
+            RETURN 
+        END 
 	SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
 	RETURN 
 END

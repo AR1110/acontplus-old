@@ -11,7 +11,7 @@ export const ProductService = {
         const json = JSON.stringify(Object.assign({
             idArticulo: productId,
             idBodega: warehouseId,
-            tipo: 6
+            tipo: 10
         }))
 
         const resultAxios = await Http({
@@ -32,17 +32,11 @@ export const ProductService = {
 
         if(response.code==='1'){
             let repositoryData = JSON.parse(response.payload);
-            let measureReposData = []
-            
+            console.log(repositoryData) 
             let productReposData = repositoryData[0][0];
-
-            if (repositoryData[1]) {
-                measureReposData = repositoryData[1];
-            } 
-            
+            let measureReposData = repositoryData[1];
             product = productSaleReadAdapter(productReposData),
-            measures = productSaleRateReadAdapter(measureReposData)
-            
+            measures = productSaleRateReadAdapter(measureReposData)            
         }
         
         return {

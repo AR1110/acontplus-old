@@ -1,9 +1,9 @@
-type ApiResponseCode = "0" | "1";
+type ApiResponseCode = "0" | "1" | "2";
 export interface ApiResponse {
   code: ApiResponseCode;
   message: string;
   payload: any;
-  title?: string;
+  titleSms?: string;
 }
 
 // export interface AxiosResponse {
