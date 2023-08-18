@@ -20,7 +20,7 @@ export interface RawCustomerData  {
 
 
 export interface CustomerReadDto {
-    readonly idCustomer: number;
+    readonly customerId: number;
     taxName: string
     tradeName: string;
     identificationNumber: string;

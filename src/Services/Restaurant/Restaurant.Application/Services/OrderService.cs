@@ -1,4 +1,5 @@
-using Lib.Common;
+﻿using Lib.Common;
+using Lib.Common.Api;
 using Restaurant.Core.Interfaces;
 
 namespace Restaurant.Application.Services
@@ -22,8 +23,12 @@ namespace Restaurant.Application.Services
                 return null;
             }
         }
-        public async Task<string> AddAsync(Dictionary<string, object> parameters)
+        public async Task<string> AddAsync(ApiRequest data)
         {
+            var parameters = new Dictionary<string, object>{
+                { "userRoleId", data.UserRoleId },
+                { "json", SqlValidation.ValidateSqlString(Converters.SerializeDictionary(data.Data)) }
+            };
             return await _repository.SPExecuteAsync("Restaurant.Order_Insert", parameters);
         }
     }

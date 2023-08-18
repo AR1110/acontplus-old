@@ -271,7 +271,7 @@ namespace DataAccess
                     }
                     else
                     {
-                        _response.Create(code: "1", payload: Converters.DataSetToJSON(ds));
+                        _response.Create(code: "1", payload: Converters.DataSetToJSON(ds, true));
                     }
                 }
             }

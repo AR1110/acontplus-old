@@ -125,7 +125,7 @@ class BaseSearchArticulo {
                     hideLoader();
                     
                     let {code, message, titleSms} = responseApi; 
-                    console.log(responseApi);
+                  
                     if (code === "1") { 
                         this.setItemArticuloEnDetalle({
                             item: dataArticuloApi
