@@ -59,7 +59,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                 $scope.cargos = cargos;
                 
                 if ($scope.tipoRegistro ===1) {
-                    $scope.data.idTipoIdentificacion = $scope.tiposIdentificacion[0].idTipoIdentificacion;
+                    $scope.data.idTipoIdentificacion = $scope.tiposIdentificacion.find(item=>item.codigo==='R').idTipoIdentificacion;
                     $scope.data.codigoIdentificacion = $scope.tiposIdentificacion[0].codigo;
 
                     $scope.data.idTiempoCredito = $scope.tiempoCreditos.length > 0 ? $scope.tiempoCreditos[0].idTiempoCredito : 0;
@@ -178,8 +178,8 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
             let inputTextNumeroIdentificacion = $("#numeroIdentificacion");
 
             let query = {
-                dataExists: '1',
-                bySearch: $scope.data.numeroIdentificacion,
+                tipo: 3,
+                textSearch: $scope.data.numeroIdentificacion,
                 codigoIdentificacion
             }
 
