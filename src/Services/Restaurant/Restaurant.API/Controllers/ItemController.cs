@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.Core.Interfaces;
 using Services.Common;
+using Services.Common.Logs;
 
 namespace Restaurant.API.Controllers
 {
@@ -10,9 +11,12 @@ namespace Restaurant.API.Controllers
     public class ItemController : ControllerBase
     {
         private readonly IItemService _item;
-        public ItemController(IItemService item)
+        private readonly LogWriter _log;
+
+        public ItemController(IItemService item, LogWriter log)
         {
             _item = item;
+            _log = log;
         }
 
         [HttpGet]
@@ -58,11 +62,16 @@ namespace Restaurant.API.Controllers
             {
                 data.UserRoleId = User.GetUserRoleId();
                 var response = await _item.UpdateAsync(id, data);
-                if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("Cant Update"); };
+                if (response == null | string.IsNullOrEmpty(response))
+                {
+                    _log.LogActivity("No se pudo actualizar Ítem");
+                    return BadRequest("Cant Update");
+                };
                 return Ok(response);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
+                _log.LogActivity("Error en catch \n" + ex.Message);
                 return BadRequest("Error on Post: " + ex.Message);
             }
         }
