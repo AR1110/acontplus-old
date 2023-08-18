@@ -1,11 +1,7 @@
 import { categoryReadAdapter, decimalSaleReadAdapter, emissionPointAdapter, tableReadAdapter, taxAdapter, taxRateAdapter, warehouseAdapter } from "../adapters"
 import { PATHS } from "../constants"
-import { ApiResponse } from "../models"
-import { Http, loadAbort } from "../utilities"
-
-type tableSearch = {
-    codEstab: string
-}
+import { Http } from "../utilities"
+ 
 const URL = 'Configuration'
 export const SaleService = {
     async getDataForForm(json: string) {
@@ -28,6 +24,7 @@ export const SaleService = {
         } = resultAxios.data;
 
         let categories = categoryReadAdapter(subCategorias || []); 
+      
         return{
             categories: [{
                 idSubFamilia: 0,
@@ -41,5 +38,6 @@ export const SaleService = {
             warehouses: warehouseAdapter(bodega_Asign || []),
             emissionPoints: emissionPointAdapter(ptoEmi_Asig || [])
         }
-    }, 
+    },
+
 }

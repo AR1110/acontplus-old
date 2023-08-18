@@ -44,6 +44,7 @@ export default function Sale() {
     const itemAdapter = (response: any) => {
         setCollectionItems([])
         const items = itemReadAdapter(response.items || []);
+        
         setCollectionItems(items) 
     } 
 

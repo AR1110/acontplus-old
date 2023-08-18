@@ -9,8 +9,10 @@ export interface RawProductSaleData {
     precioSinSubsidio: number,    
     tarifa: number,
     codigoPorcentaje: number,
-    codigoArticulo: number,
+    codigoArticulo: string,
     stock: number    
+    s3ObjectKey: string
+    s3ObjectUrl: string
 }
 
 export interface ProductSaleReadDto {
@@ -21,8 +23,10 @@ export interface ProductSaleReadDto {
     takesInventory: boolean,        
     costPrice: number,
     priceWithoutSubsidy: number, 
-    productCode: number,
+    productCode: string,
     stock: number    
+    s3ObjectKey: string
+    s3ObjectUrl: string
 }
 
 //Tarifa Api
@@ -31,12 +35,13 @@ export interface RawRateData {
     precioVenta: number,
     precioConIva: number,
     tarifa: string, 
+    precioPredeterminado: boolean
 }
 
 //Medida Api
 export interface RawMeasure {
     idMedida: number
-    descripcion: string
+    medida: string
     tarifas: string
  }
 
@@ -45,7 +50,8 @@ export interface RawMeasure {
     rateId: number
     salePrice: number
     priceWithVat: number
-    description: string
+    description: string,
+    default: boolean
  }
 
  //Medida para el adapter

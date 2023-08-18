@@ -3,9 +3,11 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { saleStore } from '@/stores';
 
 export default function TableSelect() {
   const [age, setAge] = React.useState('');
+  const dataForm = saleStore(state=>state.dataForm);
 
   const handleChange = (event: SelectChangeEvent) => {
     setAge(event.target.value);
@@ -21,12 +23,15 @@ export default function TableSelect() {
         label="Mesa"
         onChange={handleChange}
       >
+        
         <MenuItem value="">
           <em>None</em>
         </MenuItem>
-        <MenuItem value={10}>Ten</MenuItem>
-        <MenuItem value={20}>Twenty</MenuItem>
-        <MenuItem value={30}>Thirty</MenuItem>
+        {dataForm.tables.map((option, key) => (
+          <MenuItem key={key} value={option.tableId}>
+            {option.description}
+          </MenuItem>
+        ))}
       </Select>
     </FormControl>
   );

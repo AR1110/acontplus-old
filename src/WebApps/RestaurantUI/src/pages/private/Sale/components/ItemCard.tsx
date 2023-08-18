@@ -12,6 +12,7 @@ import { ProductService } from '@/core/services';
 import { useAuthStore } from '@/stores';
 import { SnackbarUtility } from '@/core/utilities';
 import { useState } from 'react';
+import Swal from 'sweetalert2';
 
 type ItemCardProps = {
     item: ItemReadDto
@@ -43,13 +44,18 @@ type ItemCardProps = {
 // }
 
 export default function ItemCard({ item }: ItemCardProps) {
-    const addItemToCart = saleStore(state => state.addItemToCart)
+    const { addItemToCart, getItemQty } = saleStore(state => ({ 
+        addItemToCart: state.addItemToCart, 
+        getItemQty: state.getItemQty 
+    }))
     const { cartItems, dataForm } = saleStore(state => ({
         cartItems: state.cartItems,
-        dataForm: state.dataForm
+        dataForm: state.dataForm,
     }))
     const dataEstab = useAuthStore(state => state.dataEstab)
     // const [warehouses, setWarehouses] = useState<Array<WarehouseAsign>>([])
+
+
 
     const handleSelectItem = (item: ItemReadDto) => {
         let warehouses: Array<WarehouseAsign> = dataForm.warehouses.filter(warehouse => warehouse.codEstab_Asig === dataEstab.codEstab_Asig);
@@ -64,29 +70,59 @@ export default function ItemCard({ item }: ItemCardProps) {
 
         ProductService.findForSale(item.productId, dataWarehouse.idBodega).then(response => {
             const { product, measures } = response;
-            const measureData = measures.find(measure=>measure.measureId===product.measureId) as Measure;
+            const measureData = measures.find(measure => measure.measureId === product.measureId) as Measure;
 
-            addItemToCart({
-                index: 0,
-                productId: item.productId,
-                code: item.code,
-                name: item.description,
-                qty: 1,
-                price: measureData.rates[0]?.salePrice!,
-                discount: 0,
-                discountTotal: 0,
-                sellingPrice: measureData.rates[0]?.salePrice!,
-                totalPrice: measureData.rates[0]?.salePrice!,
-                s3ObjectUrl: item.s3ObjectUrl ? item.s3ObjectUrl : brand_img
+            if (!product.takesInventory) {
+                addItem();
+            }
+
+            ProductService.checkNotificationStock({
+                idArticulo: product.productId,
+                cantidad: getItemQty(item.productId) ,
+                idBodega: dataWarehouse.idBodega
+            }).then(async response => {
+                const { code, message, titleSms } = response;
+                if (code === "1") {
+                    addItem();
+                    return
+                }
+
+                let { isConfirmed } = await Swal.fire({
+                    title: `<small>${titleSms}</small>`,
+                    icon: 'warning',
+                    html: `<small>${message}</small>`,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                })
+
+                if (isConfirmed) {
+                    if (code === "2") {
+                        addItem();
+                    }
+                }
             })
             console.log(product)
             console.log(measures)
+
+            function addItem() {
+                addItemToCart({
+                    index: 0,
+                    productId: product.productId,
+                    code: product.productCode,
+                    name: product.description,
+                    qty: 1,
+                    price: measureData.rates[0]?.salePrice!,
+                    discount: 0,
+                    discountTotal: 0,
+                    sellingPrice: measureData.rates[0]?.salePrice!,
+                    totalPrice: measureData.rates[0]?.salePrice!,
+                    s3ObjectUrl: product.s3ObjectUrl ? product.s3ObjectUrl : brand_img,
+                    takesInventory: product.takesInventory
+                })
+            }
+
         })
 
-        console.log(item)
-        // addItemToCart({
-
-        // })
     }
 
     return (

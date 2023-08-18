@@ -608,8 +608,10 @@ BEGIN
 					,tarifaImpuesto
 					,tarifa            = porcentaje
 					,codigoPorcentaje  = CAST(codigoPorcentaje as varchar)
-					,codigo
-					,stock
+					,codigoArticulo    = codigo 
+					,stock    
+                    ,s3ObjectKey
+	                ,s3ObjectUrl
 			FROM Inventario.v_Articulo WHERE idArticulo = @idArticulo 
 
 			SELECT 

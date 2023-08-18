@@ -2,6 +2,7 @@ import { CategoryReadDto, DecimalSale, TableReadDto, Tax, TaxRate, WarehouseAsig
 import { EmissionPointAsign } from "./emission-point.model";
 
 export interface Summary {
+    customerId: number
     tax: number;
     taxAmount: number;
     total: number // With discount on items
@@ -22,6 +23,7 @@ export interface CartItem {
     sellingPrice: number;
     totalPrice: number;
     s3ObjectUrl: string;    
+    takesInventory: boolean
 }
 
 
