@@ -916,7 +916,7 @@
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/DatoAdicionalArticulo{everything}"
     },
-     
+
     {
       "AuthenticationOptions": {
         "AllowedScopes": [],
@@ -948,7 +948,7 @@
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
       "UpstreamPathTemplate": "/gateway/PrecioMasivo{everything}"
-    },     
+    },
     {
       "AuthenticationOptions": {
         "AllowedScopes": [],
@@ -1292,6 +1292,7 @@
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "UpstreamPathTemplate": "/gateway/Contabilidad{everything}"
     },
+
     {
       "AuthenticationOptions": {
         "AllowedScopes": [],
@@ -1323,6 +1324,23 @@
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/Restaurant{everything}"
+    },
+
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7023
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "UpstreamPathTemplate": "/gateway/Mechanical{everything}"
     }
   ]
 }

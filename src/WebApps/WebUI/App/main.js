@@ -7,6 +7,7 @@ import Stock from "./lib/StockFisico/index.svelte"
 import Subcategoria from "./lib/Contabilidad/Subcategoria/index.svelte"
 import Infrastructure from "$restaurant/Infrastructure/page.svelte"
 import Product from "$restaurant/Product/page.svelte"
+import Vehicle from "$mechanical/Vehicle/page.svelte"
 
 let target = document.querySelector("#pet")
 if (target) {
@@ -53,6 +54,12 @@ target = document.querySelector("#restaurant-product")
 if (target) {
     new Product({ target })
 }
+
+target = document.querySelector("#mechanical-vehicle")
+if (target) {
+    new Vehicle({ target })
+}
+
 
 import App from "./App.svelte"
 const app = new App({
