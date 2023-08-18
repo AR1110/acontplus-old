@@ -12,7 +12,7 @@ GO
 -- Create date: 2023-08-14 
 -- Description:	Get Item
 -- =============================================
--- Restaurant.Item_Get 139, '{"checkSubFamilia": false,"idSubFamilia":0,"pageIndex":0,"pageSize":0, "tipo": 2}', ''
+-- Restaurant.Item_Get 139, '{"checkSubFamilia":true,"idSubFamilia":1,"pageIndex":1,"pageSize":10, "tipo": 1}', ''
 IF OBJECT_ID(N'Restaurant.Item_Get', N'P') IS NOT NULL
 	DROP PROCEDURE Restaurant.Item_Get
 GO
@@ -62,6 +62,7 @@ BEGIN
 				,cooking			= ri.Cooking
 				,recipe				= ri.Recipe
 				,instructions		= ISNULL(ri.Instructions, ''_'')
+                ,content            = ISNULL(ri.content, ''_'')
 				,createdAt			= ri.CreatedAt
 				,updatedAt			= ri.UpdatedAt
 				,enabled			= ri.Enabled

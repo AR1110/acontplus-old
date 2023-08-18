@@ -1,8 +1,16 @@
 export interface Recipe {
-    id?: string;
-    itemId: number;
-    ingredientId: number;
-    quantity: number;
-    unit: number;
-    instructions: string;
+  readonly id?: number;
+  unit: number;
+  weight: number;
+  netWeight: number;
+  createdAt: string;
+  updatedAt: string;
+  enabled: boolean;
+  deleted: boolean;
+  userId: number;
+  ingredientId: number;
+  descriptionIngredient: string;
+  instructions: string;
+  quantity: number;
+  itemId: number;
 }
