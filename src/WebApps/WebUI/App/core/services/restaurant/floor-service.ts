@@ -23,7 +23,6 @@ async function getByCode(codEstab: string) {
 // Post
 async function post(data) {
     return await client.post(url, data).then((response) => {
-        console.log(response);
         let { status, data } = response;
         return { status, data };
     }, (err) => {

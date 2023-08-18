@@ -1,7 +1,9 @@
 <script lang="ts">
+  import type { Ingredient } from "$core/interfaces/restaurant/ingredient";
   import type { Item } from "$core/interfaces/restaurant/item";
   import Add from "./add.svelte";
   export let items = [] as Item[];
+  export let ingredientes = [] as Ingredient[];
 
   // Local variables
   let edit = {} as Item;
@@ -65,4 +67,4 @@
 {:else}
   <div class="alert alert-info" role="alert">No hay items registrados</div>
 {/if}
-<Add openNew={isNew} modalClosed={() => closeModal()} data={edit} />
+<Add openNew={isNew} modalClosed={() => closeModal()} data={edit} ingredientes={ingredientes} />
