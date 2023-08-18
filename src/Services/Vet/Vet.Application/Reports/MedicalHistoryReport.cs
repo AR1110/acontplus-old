@@ -96,7 +96,7 @@ namespace Vet.Application.Reports
             //var pet = medicalHistory.Pet;
             //var healtTests = medicalHistory.HealthChecks;
 
-            return data;
+            //return data;
         }
     }
 }
