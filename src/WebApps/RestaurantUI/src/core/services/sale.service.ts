@@ -2,7 +2,7 @@ import { categoryReadAdapter, decimalSaleReadAdapter, emissionPointAdapter, tabl
 import { PATHS } from "../constants"
 import { Http } from "../utilities"
  
-const URL = 'Configuration'
+const URL = 'Configuration'; 
 export const SaleService = {
     async getDataForForm(json: string) {
         const resultAxios = await Http({
@@ -12,7 +12,7 @@ export const SaleService = {
                     json
                 }        
         })
-
+        console.log(resultAxios)
         const { 
             subCategorias, 
             configDecimal, 
@@ -38,6 +38,5 @@ export const SaleService = {
             warehouses: warehouseAdapter(bodega_Asign || []),
             emissionPoints: emissionPointAdapter(ptoEmi_Asig || [])
         }
-    },
-
+    }
 }

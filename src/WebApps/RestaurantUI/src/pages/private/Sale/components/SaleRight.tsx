@@ -9,6 +9,10 @@ import TableSelect from './TableSelect'
 import ItemaTable from './ItemTable'
 import { saleStore } from '@/stores/saleStore'
 import Swal from 'sweetalert2'
+import { SnackbarUtility } from '@/core/utilities'
+import { summaryToApi } from '@/core/adapters'
+import { useAuthStore } from '@/stores'
+import { OrdenService } from '@/core/services'
 
 const listItemCustom = {
     paddingTop: '2px',
@@ -19,14 +23,30 @@ const listItemCustom = {
 
 export default function SaleRight() {
     const isMobile = useMediaQuery('(max-width:900px)');
-    const {summary, cartItems, dataForm} = saleStore(state => ({
+    const {summary, items, dataForm} = saleStore(state => ({
         summary: state.summary,
-        cartItems: state.cartItems,
-        dataForm: state.dataForm
+        items: state.items,
+        dataForm: state.dataForm        
     }));
+    const {dataEstab} = useAuthStore(state => ({
+        dataEstab: state.dataEstab
+    }));
+
     const resetForm = saleStore(state => state.resetForm);
 
     const askToSave = async function(){
+        if(!(summary.customerCompanyId > 0)){
+            SnackbarUtility.warning('Seleccione el cliente');
+            return
+        }
+        if(!(summary.tableId>0)){
+            SnackbarUtility.warning('Seleccione la Mesa');
+            return
+        }
+        if(items.length===0){
+            SnackbarUtility.warning('Agregue');
+            return
+        }
         let {isConfirmed} = await Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -38,20 +58,22 @@ export default function SaleRight() {
         })
 
         if(isConfirmed){
+            console.log(dataForm.emissionPoints)
+            summary.establecimientoId = dataEstab.idEstablecimiento;
+            summary.puntoEmisionId = dataForm.emissionPoints.find(
+                pto=>pto.codEstab_Asig===dataEstab.codEstab_Asig && (pto.predeterminado)
+            )?.idPuntoEmision ?? 0
+            const data = summaryToApi(summary, items)
             
-            // itemId INT '$.itemId',
-            //             taxId INT '$.taxId',
-            //             taxPercentId INT '$.taxPercentId',
-            //             taxValue INT'$.taxValue',
-            //             quantity NUMERIC (18,5) '$.quantity',
-            //             cost NUMERIC(18,5) '$.cost',
-            //             price NUMERIC(18,5) '$.price',
-            //             discount NUMERIC(18,5) '$.discount',
-            //             total NUMERIC(18,5) '$.total'
-            console.log(dataForm)
-            console.log(cartItems)
-            console.log(summary)
-
+            OrdenService.post(data).then(response=>{
+                console.log(response)
+                if(response.code==='0'){
+                    SnackbarUtility.warning(response.message)
+                }
+                if(response.code==="1"){
+                    SnackbarUtility.success(response.message)
+                }
+            })
         }
 
     }
@@ -119,7 +141,7 @@ export default function SaleRight() {
                         </Button>
                     </Grid>
                     <Grid item xs={16} md={8} lg={8}>
-                        <Button color="success" disabled={cartItems.length===0} variant="contained" size="large" onClick={()=>askToSave()} fullWidth endIcon={<SaveIcon />}>
+                        <Button color="success" disabled={items.length===0} variant="contained" size="large" onClick={()=>askToSave()} fullWidth endIcon={<SaveIcon />}>
                             Guardar
                         </Button>
                     </Grid>
