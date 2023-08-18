@@ -5,14 +5,15 @@
     "Exp": 30
   },
   "ConnectionStrings": {
+    //AWS Dev
+    "DefaultConnection": "Lv5U39vA40I/cLivr1EniMlIW8l3nrk4VSLC0L0dabbd1/B3h3weE73KeTkh8kgAeIHjjRGGZtPXe7zFJhy1EHemlLAEOgDdbFEf+19pbNKL/bNjZtLmJ0U/FTeYCLgMadUbY5NJdeRlccl3wO8MqMSM+0eR8GTw+fUbuWpm/sg2MhCnjAuEiCpwO7cTuAzfkJw+i1fZ8gpjw8ilAf9JiG0WOUgU9VjCuLA0cdwgtWjPyRlw7MpLY3kAFmlDbNLblLWdkD74c5yZqXqzQ9lo0Y7BF1obKRJjNtrWim8TqNNBh7MLijIPVbFXG8b4YVyM"
+
+    //AWS Staging
+    //"DefaultConnection": "gTXBfoVBwU9LM09FhynwyNO4/ItiLc/bBmeBqkzywsqkXAW94SojjSF6b4dvY7EJZcLs4nM8McE2gx1l7Wb9NRLnoQnPCUW4+Kvh/umg/GXKDZjHQL6gk8PWvzS2GDNsKJnHG9ZEWZI6umLc+Y+7LeyFg2fdQ10zFombUnyyteYL0eTNhnHNh6LVwctPDlp7woSVY6KcccreXYyMvR1hgsfwTI1KuUTbd1ZIkSc2GfQt5FxCVBg3GV2Q3k+EEesP"
+    
     //server prd
     //"DefaultConnection": "15orHggFJStXJQcdxKmB7zey8uGNzXHuauqQWdK0DuJSXf2VjmpzLdOKMIjnPzUYDFU4K/2AlmAPe4XV3sr0jD1QPcPxAQWkxXEgLqGTVaQajPJ/KJrm8KZDwI36E+mYhZ13pPEikypvCqS5nH8ZW+GpuwlHSi+siBjQR0TLGX3cezz565QfmVeVE74T5S1ws5jgLD7BFTOvt6OjNqy7xBRS34jFpp58kUlz0xKbjmSBOhJh18J/NhaxVpiNmju0fagJDeXzw1LNVZNQXNTfDg=="
 
-    //Dev
-    //"DefaultConnection": "o0tfRyHLaUr3ks/qnM+AO7Qe2scVLo79TA61RJwcyY/DN0g4gGhjL4ZJgCjqWBU+E+4S1xMX6On1rZJ7pzOaTQlTdG5mo7i3vICWzn6GheO/Nqq5N2JuC0gfLt6hvQ1eE+NsVepWQX6EXEo44mYGoOqfvDxcfsGtLLHp5XEKTAuyn9fRvguye7FiMrhSA3qFdxLqb+9WQx7FiFAiH2KDXCLy5V/mnkG0pIhKCmAyknCHEUzebGs1WFvsY+lNsuYcRV7onfuCRENyuoa71zihlQ=="
-
-    //AWS
-    "DefaultConnection": "gTXBfoVBwU9LM09FhynwyNO4/ItiLc/bBmeBqkzywsqkXAW94SojjSF6b4dvY7EJZcLs4nM8McE2gx1l7Wb9NRLnoQnPCUW4+Kvh/umg/GXKDZjHQL6gk8PWvzS2GDNsKJnHG9ZEWZI6umLc+Y+7LeyFg2fdQ10zFombUnyyteYL0eTNhnHNh6LVwctPDlp7woSVY6KcccreXYyMvR1hgsfwTI1KuUTbd1ZIkSc2GfQt5FxCVBg3GV2Q3k+EEesP"
   },
   "ApiGateways": {
     "Acontplus": "https://localhost:7060"
