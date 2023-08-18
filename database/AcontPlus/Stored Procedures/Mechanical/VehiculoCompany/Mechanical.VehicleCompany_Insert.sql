@@ -42,10 +42,8 @@ BEGIN
 	   ,[Year] INT NOT NULL
 	   ,[Color] VARCHAR(150) NOT NULL
 	   ,[CustomerId] INT NOT NULL
-       ,[CompanyId] INT NOT NULL
-	   ,[UserId] INT NOT NULL
 	   ,[Observation] VARCHAR(300) NULL
-	   ,[Enabled] BIT NOT NULL
+	   ,[Enabled] BIT DEFAULT 1 
 	   ,[CreatedAt] DATETIME2 NOT NULL
 	)
 
@@ -66,8 +64,8 @@ BEGIN
             SELECT @jsonCustomer = customer, @jsonVehicle = vehicle  FROM OPENJSON(@json) WITH (customer NVARCHAR(MAX) '$.customer' as json,vehicle NVARCHAR(MAX) '$.vehicle' as json)
 
 			INSERT INTO @tbVehicle
-				  ([VehicleTypeId],[LicensePlate],[Brand],[Model],[Year],[Color],[CustomerId],[CompanyId],[UserId],[Observation],[Enabled],[CreatedAt])
-			SELECT [VehicleTypeId],[LicensePlate],[Brand],[Model],[Year],[Color],[CustomerId],[CompanyId],[UserId],[Observation],[Enabled],[CreatedAt]
+				  ([VehicleTypeId],[LicensePlate],[Brand],[Model],[Year],[Color],[CustomerId],[Observation])
+			SELECT [VehicleTypeId],[LicensePlate],[Brand],[Model],[Year],[Color],[CustomerId],[Observation]
 			FROM OPENJSON(@jsonVehicle) WITH
 			(
 				[VehicleTypeId]        INT '$.vehicleTypeId'
@@ -77,11 +75,7 @@ BEGIN
 			   ,[Year]                 INT '$.year' 
 			   ,[Color]       VARCHAR(150) '$.color' 
 			   ,[CustomerId]           INT '$.customerId' 
-			   ,[CompanyId]            INT '$.companyId' 
-			   ,[UserId]               INT '$.userId'
 			   ,[Observation] VARCHAR(300) '$.observation'
-			   ,[Enabled]              BIT '$.enabled'
-			   ,[CreatedAt]      DATETIME2 '$.createdAt'
 			) as dt
 
             INSERT INTO @tbCustomer 
@@ -99,7 +93,9 @@ BEGIN
 			
 
             --=========================== RUPERERATING IN VARIABLES ======================================================================--
-			SELECT @LicensePlate = LicensePlate,@userId = UserId, @CustomerId = CustomerId, @CompanyId = CompanyId FROM @tbVehicle
+			SELECT @LicensePlate = LicensePlate, @CustomerId = CustomerId FROM @tbVehicle
+			
+            SELECT TOP 1 @userId = idUsuario, @CompanyId = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
             SELECT @IDCard = IDCard FROM @tbCustomer 
 
@@ -152,7 +148,7 @@ BEGIN
                 -- CUSTOMER RECORD -- 
 			    INSERT INTO [Mechanical].[VehicleCompany]
 					 ([VehicleId],[CompanyId],[UserId],[CustomerId],[Observation],[CreatedAt],[Enabled])
-			    SELECT @VehicleId,[CompanyId],[UserId],@CustomerId ,[Observation],[CreatedAt],[Enabled] FROM @tbVehicle
+			    SELECT @VehicleId, @CompanyId, @userId, @CustomerId,[Observation],[CreatedAt],[Enabled] FROM @tbVehicle
 
 			    SELECT @Id = SCOPE_IDENTITY()
 

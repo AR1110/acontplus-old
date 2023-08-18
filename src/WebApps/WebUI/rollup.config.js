@@ -34,6 +34,7 @@ export default {
                 { find: "$lib", replacement: path.resolve(__dirname, "../WebUI/App/lib") },
                 { find: "$routes", replacement: path.resolve(__dirname, "../WebUI/App/routes") },
                 { find: "$restaurant", replacement: path.resolve(__dirname, "../WebUI/App/routes/Restaurant") },
+                { find: "$mechanical", replacement: path.resolve(__dirname, "../WebUI/App/routes/Mechanical") },
                 { find: "$pet", replacement: path.resolve(__dirname, "../WebUI/App/lib") + "/Pet" },
                 { find: "$petbreed", replacement: path.resolve(__dirname, "../WebUI/App/lib") + "/PetBreed" },
                 { find: "$petmedicalhistory", replacement: path.resolve(__dirname, "../WebUI/App/lib") + "/PetMedicalHistory" },

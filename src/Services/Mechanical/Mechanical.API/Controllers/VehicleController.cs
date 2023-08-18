@@ -2,6 +2,7 @@
 using Mechanical.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
+using Services.Common.Logs;
 
 namespace Mechanical.API.Controllers
 {
@@ -10,10 +11,12 @@ namespace Mechanical.API.Controllers
     public class VehicleController : BaseApiController
     {
         private readonly IVehicleService _vehicleService;
+        private readonly LogWriter _log;
 
-        public VehicleController(IVehicleService vehicleService)
+        public VehicleController(IVehicleService vehicleService, LogWriter log)
         {
             _vehicleService = vehicleService;
+            _log = log;
         }
 
         [HttpGet]
@@ -26,11 +29,15 @@ namespace Mechanical.API.Controllers
                     { "json", json}
                 };
                 var vehicles = await _vehicleService.GetAsync(parameters);
-                if (vehicles == null | string.IsNullOrEmpty((string)vehicles)) { return NoContent(); }
+                if (vehicles == null | string.IsNullOrEmpty((string)vehicles))
+                {
+                    return NoContent();
+                }
                 return Ok(vehicles);
             }
-            catch (System.Exception)
+            catch (Exception ex)
             {
+                _log.LogActivity("Error on Get: \n" + ex.ToString());
                 return BadRequest("Error on get");
             }
         }
@@ -48,8 +55,9 @@ namespace Mechanical.API.Controllers
                 if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo guardar"); }
                 return Ok(response);
             }
-            catch (System.Exception)
+            catch (Exception ex)
             {
+                _log.LogActivity("Error on Post: \n" + ex.ToString());
                 return BadRequest("Error On Save");
             }
         }
@@ -68,14 +76,15 @@ namespace Mechanical.API.Controllers
                 if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo Actualizar"); }
                 return Ok(response);
             }
-            catch (System.Exception)
+            catch (Exception ex)
             {
+                _log.LogActivity("Error on Put: \n" + ex.ToString());
                 return BadRequest("Error On Edit");
             }
         }
 
         [HttpDelete]
-        public async Task<IActionResult> Put(int Id)
+        public async Task<IActionResult> Delete(int Id)
         {
             try
             {
@@ -87,8 +96,9 @@ namespace Mechanical.API.Controllers
                 if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo Eliminar"); }
                 return Ok(response);
             }
-            catch (System.Exception)
+            catch (Exception ex)
             {
+                _log.LogActivity("Error on Delete: \n" + ex.ToString());
                 return BadRequest("Error On Delete");
             }
         }

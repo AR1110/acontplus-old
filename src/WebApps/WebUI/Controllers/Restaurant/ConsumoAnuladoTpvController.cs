@@ -11,11 +11,11 @@ namespace WebUI.Controllers.Restaurant
         private readonly IConfiguration _config;
         private readonly DbAccess _db;
         private readonly LogWriter _log;
-        public ConsumoAnuladoTpvController(IConfiguration config)
+        public ConsumoAnuladoTpvController(IConfiguration config, LogWriter log)
         {
             _config = config;
             _db = new DbAccess(_config);
-
+            _log = log;
         }
         public IActionResult Index()
         {
