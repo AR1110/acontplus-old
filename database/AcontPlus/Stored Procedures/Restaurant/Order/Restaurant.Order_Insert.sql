@@ -14,6 +14,7 @@ BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE @itemsJson NVARCHAR(MAX)
+    ,@jsonPayments NVARCHAR(MAX)
     ,@establecimientoId INT
     ,@puntoEmisionId INT
     ,@tableId INT
@@ -27,6 +28,7 @@ BEGIN
 
     
     SELECT       @itemsJson = items
+        ,@jsonPayments      = payments
         ,@establecimientoId = establecimientoId
         ,@puntoEmisionId    = puntoEmisionId 
         ,@tableId           = tableId
@@ -37,6 +39,7 @@ BEGIN
     FROM OPENJSON(@json)
         WITH(
             items NVARCHAR(MAX) '$.items' AS JSON,
+            payments NVARCHAR(MAX) '$.payments' AS JSON,
             establecimientoId INT '$.establecimientoId',
             puntoEmisionId INT '$.puntoEmisionId',
             tableId INT '$.tableId',
@@ -88,6 +91,20 @@ BEGIN
             RETURN
         END
 
+
+    --IF (ISJSON(@jsonPayments) = 1)
+    --    BEGIN
+    --        DECLARE @tblPayments AS TABLE(
+    --            total NUMERIC(18,5) NOT NULL,
+
+    --        )
+    --    END
+    --ELSE
+    --    BEGIN
+    --        SELECT dbo.ufn_spresponse('0', 'Los pagos no son validos', NULL)
+    --        RETURN
+    --    END
+
     SET @userId = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId)
 
     DECLARE @id INT = 0
@@ -103,15 +120,13 @@ BEGIN
                     --falta table id
                     DECLARE @totalCook INT = 0
 
-                    SET @totalCount = (SELECT COUNT(*) FROM Restaurant.Item i INNER JOIN @tblItems ii ON i.Id = ii.ItemId)
+                    SET @totalCook = (SELECT COUNT(*) FROM Restaurant.Item i INNER JOIN @tblItems ii ON i.Id = ii.ItemId WHERE i.Cooking = 1)
 
                     IF (@totalCook > 0)
                         BEGIN
-                            INSERT INTO Restaurant.[OrderKitchen] (OrderId, TableId)
+                            INSERT INTO Restaurant.[OrderKitchen] (OrderId, [Enabled], UserId)
+                            VALUES(@id, 1, @userId)
                         END
-
-
-
                 END
 		COMMIT TRAN
 
