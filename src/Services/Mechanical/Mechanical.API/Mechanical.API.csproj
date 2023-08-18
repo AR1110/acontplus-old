@@ -9,7 +9,10 @@
     <ProjectReference Include="..\..\Common\Lib.Common\Lib.Common.csproj" />
     <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
   </ItemGroup>
+
   <ItemGroup>
+    <PackageReference Include="AutoMapper" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -20,9 +23,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" />
+    <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" />
   </ItemGroup>
@@ -40,6 +46,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Mechanical.Application\Mechanical.Application.csproj" />
     <ProjectReference Include="..\Mechanical.Core\Mechanical.Core.csproj" />
+    <ProjectReference Include="..\Mechanical.Infrastructure\Mechanical.Infrastructure.csproj" />
   </ItemGroup>
 </Project>
