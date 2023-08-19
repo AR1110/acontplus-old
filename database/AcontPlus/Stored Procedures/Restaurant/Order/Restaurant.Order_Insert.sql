@@ -105,6 +105,13 @@ BEGIN
     --        RETURN
     --    END
 
+    SELECT @secuence = cd.secuencial
+			FROM v_ConfigDocumento cd
+				INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab
+			WHERE pa.idUsuarioRol = @userRoleId
+			AND cd.codDoc = 'OR'
+
+    SET @serie = (SELECT CONVERT(VARCHAR, @secuence))
     SET @userId = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId)
 
     DECLARE @id INT = 0
