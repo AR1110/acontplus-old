@@ -6,12 +6,18 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { saleStore } from '@/stores';
 
 export default function TableSelect() {
-  const [age, setAge] = React.useState('');
+  const [table, setAge] = React.useState('');
   const dataForm = saleStore(state=>state.dataForm);
+  const setSummary = saleStore(state=>state.setSummary)
+  const summary = saleStore(state=>state.summary)
 
   const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value);
+     setSummary({
+      ...summary,
+      tableId: Number(event.target.value)
+     }) 
   };
+  
 
   return (
     <FormControl margin='normal' size="small" fullWidth>
@@ -19,12 +25,12 @@ export default function TableSelect() {
       <Select
         labelId="Mesa"
         id="demo-select-small"
-        value={age}
+        value={summary.tableId.toString()}
         label="Mesa"
         onChange={handleChange}
       >
         
-        <MenuItem value="">
+        <MenuItem value={0}>
           <em>None</em>
         </MenuItem>
         {dataForm.tables.map((option, key) => (

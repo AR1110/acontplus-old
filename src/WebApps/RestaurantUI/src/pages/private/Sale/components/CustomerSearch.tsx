@@ -14,13 +14,14 @@ export default function CustomerSearch() {
   const [customers, setCustomers] = useState<Array<CustomerReadDto>>([]);
   const [loading, setLoading] = useState(false);
   const setSummary = saleStore(state=>state.setSummary)
+  const summary = saleStore(state=>state.summary)
   
   const customerSearch =  (textSearch: string) => { 
     if(textSearch.length < 2) return
     setLoading(true);
     setCustomers([])
     customerSvc.search(textSearch).then(response=>{
-      console.log(response)
+      console.log(response) 
       setCustomers(response)
     }).finally(()=>{
       setLoading(false);
@@ -46,8 +47,11 @@ export default function CustomerSearch() {
   onChange={(event, newValue) => {
     if (newValue) {
       // Aquí tienes el valor seleccionado (newValue)
-      console.log(newValue.customerId);
-      setSummary(newValue.customerId)
+      console.log(newValue.customerId, event);
+      setSummary({
+        ...summary,
+        customerCompanyId: newValue.customerId
+      })
     }
   }}
   renderOption={(props, option) => {

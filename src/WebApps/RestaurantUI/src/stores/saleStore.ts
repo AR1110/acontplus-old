@@ -1,5 +1,5 @@
 import { 
-    CartItem, 
+    ItemRead, 
     ItemSearch, 
     ItemReadDto, 
     Summary, 
@@ -19,17 +19,17 @@ interface SaleState {
     setItemSearch(itemSearch:ItemSearch ): void
     collectionItems: Array<ItemReadDto>
     totalItems: number;
-    cartItems: Array<CartItem>
+    items: Array<ItemRead>
     summary: Summary, 
-    setSummary(customerId: number): void
+    setSummary(summary: Summary): void
     dataForm:  DataFormSale,
     getItemQty(productId: number): number
     setDataForm(dataForm: DataFormSale): void
     setCollectionItems(products: Array<ItemReadDto>): void
-    addItemToCart(cartItem: CartItem): void
+    addItemToCart(item: ItemRead): void
     removeItemFromCart(productId: number): void
     setTotalItems(): void,
-    setItemChangeQty(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, cartItem: CartItem): void
+    setItemChangeQty(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, cartItem: ItemRead): void
     caculateTotals(): void
     resetForm(): void
 }
@@ -46,30 +46,31 @@ export const saleStore = create<SaleState>((set, get) => ({
     },
     collectionItems: [],
     totalItems: 0,
-    cartItems: [],
+    items: [],
     summary: {
+        establecimientoId: 0,
+        puntoEmisionId: 0,
+        customerCompanyId: 0,
+        tableId: 0,
         tax: 0,
         taxAmount: 0,
+        discount: 0,
         total: 0,
-        netTotal: 0,
-        customerId: 0
+        netTotal: 0
     }, 
-    setSummary(customerId){
+    setSummary(summary: Summary){
         set(state=>({
             ...state,
-            summary: {
-                ...state.summary,
-                customerId
-            }
+            summary
         }))
     },
     dataForm: dataFormInitialState,
     getItemQty: (productId: number)=>{
-        const {cartItems} = get();
-        const dataCartItem = cartItems.find(cartItem=>cartItem.productId===productId);
+        const {items} = get();
+        const dataCartItem = items.find(cartItem=>cartItem.productId===productId);
         let qty = 1;
         if(dataCartItem) {
-            qty = dataCartItem.qty;
+            qty = dataCartItem.quantity;
         }
         return qty;
     },
@@ -86,26 +87,26 @@ export const saleStore = create<SaleState>((set, get) => ({
         }))
     },
     addItemToCart: (item) => { 
-        const {cartItems, setTotalItems, caculateTotals} = get();
+        const {items, setTotalItems, caculateTotals} = get();
         
-        if(cartItems.some(itemCompare=> itemCompare.productId===item.productId)) {
-            for(const itemToModify of cartItems) {
+        if(items.some(itemCompare=> itemCompare.productId===item.productId)) {
+            for(const itemToModify of items) {
                 if(itemToModify.productId===item.productId) {
-                    itemToModify.qty = itemToModify.qty + 1;
-                    itemToModify.totalPrice = itemToModify.qty * itemToModify.sellingPrice;
+                    itemToModify.quantity = itemToModify.quantity + 1;
+                    itemToModify.total = itemToModify.quantity * itemToModify.price;
                     break 
                 }
 
             }
             set(state => ({
                 ...state, 
-                cartItems: [...cartItems], 
+                items: [...items], 
             }))
            
         }else{
             set(state => ({
                 ...state, 
-                cartItems: [item, ...state.cartItems], 
+                items: [item, ...state.items], 
             }))
         }
         setTotalItems();
@@ -117,7 +118,7 @@ export const saleStore = create<SaleState>((set, get) => ({
         const {setTotalItems, caculateTotals} = get();
         set((state)=>({
             ...state,
-            cartItems: state.cartItems.filter(_=>_.productId !== productId)
+            items: state.items.filter(_=>_.productId !== productId)
         }))
         setTotalItems();
         caculateTotals(); 
@@ -125,11 +126,11 @@ export const saleStore = create<SaleState>((set, get) => ({
     },
     setTotalItems: ()=>set(state => ({
         ...state, 
-        totalItems: state.cartItems.reduce((total, item) => total + item.qty, 0)
+        totalItems: state.items.reduce((total, item) => total + item.quantity, 0)
     })),
 
     async setItemChangeQty(event, item){
-        const {cartItems, setTotalItems, caculateTotals, dataForm} = get();
+        const {items, setTotalItems, caculateTotals, dataForm} = get();
         
         let qty = Number(event.target.value)
       
@@ -188,16 +189,16 @@ export const saleStore = create<SaleState>((set, get) => ({
 
         function setItem (){
 
-            for(const itemToModify of cartItems){
+            for(const itemToModify of items){
                 if(itemToModify.productId===item.productId){
-                    itemToModify.qty = qty;
-                    itemToModify.totalPrice = itemToModify.qty * itemToModify.sellingPrice;
+                    itemToModify.quantity = qty;
+                    itemToModify.total = itemToModify.quantity * itemToModify.price;
                     break
                 }
             }
             set(state => ({
                 ...state, 
-                cartItems: [...cartItems], 
+                items: [...items], 
             })) 
             setTotalItems(); 
             caculateTotals();
@@ -206,7 +207,7 @@ export const saleStore = create<SaleState>((set, get) => ({
 
     },
     async resetForm() {
-        if(get().cartItems.length===0) return;
+        if(get().items.length===0) return;
 
         console.log("resetForm")
         const {isConfirmed} = await Swal.fire({
@@ -231,10 +232,10 @@ export const saleStore = create<SaleState>((set, get) => ({
         }
     },
     caculateTotals(){
-        const {cartItems} = get(); 
+        const {items} = get(); 
         let total = 0;
-        for(const item of cartItems){
-            total += item.totalPrice;            
+        for(const item of items){
+            total += item.total;            
         }
 
         set(state=>({

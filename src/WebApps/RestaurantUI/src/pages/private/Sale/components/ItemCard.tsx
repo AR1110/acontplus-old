@@ -48,8 +48,8 @@ export default function ItemCard({ item }: ItemCardProps) {
         addItemToCart: state.addItemToCart, 
         getItemQty: state.getItemQty 
     }))
-    const { cartItems, dataForm } = saleStore(state => ({
-        cartItems: state.cartItems,
+    const { items, dataForm } = saleStore(state => ({
+        items: state.items,
         dataForm: state.dataForm,
     }))
     const dataEstab = useAuthStore(state => state.dataEstab)
@@ -58,6 +58,7 @@ export default function ItemCard({ item }: ItemCardProps) {
 
 
     const handleSelectItem = (item: ItemReadDto) => {
+      
         let warehouses: Array<WarehouseAsign> = dataForm.warehouses.filter(warehouse => warehouse.codEstab_Asig === dataEstab.codEstab_Asig);
 
         let dataWarehouse = {} as WarehouseAsign
@@ -101,21 +102,28 @@ export default function ItemCard({ item }: ItemCardProps) {
                     }
                 }
             })
+            console.log(item)
             console.log(product)
             console.log(measures)
-
+            console.log(dataForm)
+            let taxRateData = dataForm.taxRates.find(item=>item.taxRateCode===product.taxRateCode);
+            
             function addItem() {
                 addItemToCart({
                     index: 0,
                     productId: product.productId,
-                    code: product.productCode,
-                    name: product.description,
-                    qty: 1,
+                    code: product.productCode,                    
+                    itemId: item.itemId,
+                    taxId: dataForm.taxes.find(tax=>tax.code===taxRateData?.taxCode)?.taxId ?? 0,
+                    taxPercentId: taxRateData?.taxRateId ?? 0,
+                    taxValue: taxRateData?.percentage ?? 0,                    
+                    description: product.description,
+                    quantity: 1,
+                    cost: 0,
                     price: measureData.rates[0]?.salePrice!,
                     discount: 0,
                     discountTotal: 0,
-                    sellingPrice: measureData.rates[0]?.salePrice!,
-                    totalPrice: measureData.rates[0]?.salePrice!,
+                    total: measureData.rates[0]?.salePrice!,
                     s3ObjectUrl: product.s3ObjectUrl ? product.s3ObjectUrl : brand_img,
                     takesInventory: product.takesInventory
                 })
@@ -132,9 +140,9 @@ export default function ItemCard({ item }: ItemCardProps) {
                 flexDirection: 'column',
                 height: '200px',
                 borderRadius: "16px",
-                borderColor: cartItems.some(cartItem => cartItem.code === item.code) ? '#6571ff !important' : '',
+                borderColor: items.some(cartItem => cartItem.productId === item.productId) ? '#6571ff !important' : '',
 
-                border: cartItems.some(cartItem => cartItem.code === item.code) ? '1px solid' : '',
+                border: items.some(cartItem => cartItem.productId === item.productId) ? '1px solid' : '',
             }
         }>
             <CardActionArea onClick={() => handleSelectItem(item)}>

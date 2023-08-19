@@ -1,9 +1,10 @@
 import { RawItemData, ItemReadDto } from "../models"; 
 
 function itemReadAdapter(items: RawItemData[]): Array<ItemReadDto> {     
- 
+
+    console.log(items)
     return items.map((item) => ({
-        id: item.id, //idItem 
+        itemId: item.id, //idItem 
         userId: item.userId,
         productId: item.productId,
         description: item.descripcion,
