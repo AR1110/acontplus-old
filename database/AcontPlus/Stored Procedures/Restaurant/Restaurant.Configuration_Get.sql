@@ -21,7 +21,7 @@ BEGIN
 	SELECT TOP 1  @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 	SELECT @codEstab = codEstab FROM OPENJSON(@json) WITH(codEstab VARCHAR(20)  '$.codEstab')
 
-	SET @tableNames = 'Table,ConfigDecimal,SubCategorias,Impuesto,TarifaImpuesto,PtoEmi_Asig,Bodega_Asign'
+	SET @tableNames = 'Table,ConfigDecimal,SubCategorias,Impuesto,TarifaImpuesto,PtoEmi_Asig,Bodega_Asign,Floor'
 	SELECT rt.* FROM Restaurant.v_Table rt
 	INNER JOIN Restaurant.v_Room rr ON rr.id = rt.roomId
 	INNER JOIN Restaurant.v_Floor rf ON rf.id = rr.floorId
@@ -55,5 +55,7 @@ BEGIN
  	WHERE ea.idUsuarioRol = @userRoleId
 
     SELECT * FROM v_Bodega_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId
+
+    SELECT * FROM Restaurant.[Floor] WHERE CodEstab = @codEstab
 END
 GO

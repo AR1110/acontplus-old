@@ -27,7 +27,6 @@
 
       showLoader();
 		itemService.get(params).then((res) => {
-         console.log(res);
          hideLoader();
 			if (res) {
 				items = res["items"];

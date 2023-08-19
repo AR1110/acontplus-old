@@ -69,8 +69,13 @@ BEGIN
 				SELECT '0'code,'La sigla: '+@siglas+' ya se encuentra registrada' as 'message'
 				RETURN; 
 			END
+
+        IF @applicationId IS NULL OR @applicationId = ''
+            BEGIN
+                SET @applicationId = 1
+            END
 		BEGIN TRAN 
-			      INSERT INTO SubFamilia(idFamilia,descripcion,siglas,codigo,montoObjetivo,ultimoSecuencial,idUsuario,idEntidad, applicationId, imgUrl)
+			      INSERT INTO SubFamilia(idFamilia,descripcion,siglas,codigo,montoObjetivo,ultimoSecuencial,idUsuario,idEntidad, applicationId, s3ObjectUrl)
 
 				  SELECT CASE WHEN @idFamilia = 0 THEN NULL ELSE @idFamilia END
 						,@descripcion,@siglas,@code,@montoObjetivo,1,@idUsuario,@idEntidad, @applicationId, @imgUrl
