@@ -32,6 +32,7 @@
     let newObject = {
       itemJson: data,
       productionAreaJson: { productionAreaId: data.productionAreaId },
+      recipeJson: recipe,
     };
 
     itemService.put(data.id, { data: newObject }).then((res) => {
@@ -46,7 +47,6 @@
   };
 
   const onPushRecipe = (data: Ingredient, itemId: number) => {
-    alert("hola");
     recipe.push({
       id: 0,
       unit: 0,
@@ -63,13 +63,24 @@
       quantity: 0,
       itemId: itemId,
     });
-    alert(JSON.stringify(recipe));
-    alert("Datos de pueblo");
+
+    recipe = [...recipe];
   };
 
   const changeProductionArea = (e) => {
-    alert(e.target.value);
+    let id = parseInt(e.target.value);
+    let filter = ingredientes.filter((x) => x.id == id);
+
+    let index = filter[0];
+    onPushRecipe(index, data.id);
   };
+
+  const removeRecipe = (index: number) => {
+    console.log(recipe);
+   let newRecipe =  recipe.splice(index, 1);
+   console.log(newRecipe);
+    recipe = [...newRecipe];
+  }
 
   const onModalClose = () => {
     openNew = false;
@@ -159,9 +170,11 @@
           <div class="col-6">
             <div class="form-group">
               <label for="ingredients">Ingredientes</label>
-              <select on:change={() => changeProductionArea(event)}
+              <select
+                on:change={() => changeProductionArea(event)}
                 class="form-control form-control-lg"
-                id="ingredients">
+                id="ingredients"
+              >
                 {#each ingredientes as ingrediente}
                   <option value={ingrediente.id}>
                     {ingrediente.summary}
@@ -176,19 +189,54 @@
           <table class="table">
             <thead>
               <tr>
-                <th scope="col">#</th>
-                <th scope="col">First</th>
-                <th scope="col">Last</th>
-                <th scope="col">Handle</th>
+                <th scope="col"></th>
+                <th scope="col">Ingrediente</th>
+                <th scope="col">Unit</th>
+                <th scope="col">Peso</th>
+                <th scope="col">Peso neto</th>
+                <th scope="col">Cantidad</th>
               </tr>
             </thead>
             <tbody>
-              {#each recipe as item}
+              {#each recipe as item, index}
                 <tr>
-                  <th scope="row">{item.id}</th>
+                  <th scope="row">
+                    <button
+                      type="button"
+                      class="btn btn-danger btn-sm"
+                      on:click={() => {removeRecipe(index)}}
+                    >
+                      <i class="ti-trash" />
+                    </button>
                   <td>{item.descriptionIngredient}</td>
-                  <td>{item.quantity}</td>
-                  <td>{item.unit}</td>
+                  <td>
+                    <input
+                      bind:value={item.unit}
+                      class="form-control form-control-sm"
+                      type="number"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      bind:value={item.weight}
+                      class="form-control form-control-sm"
+                      type="number"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      bind:value={item.netWeight}
+                      class="form-control form-control-sm"
+                      type="number"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      bind:value={item.quantity}
+                      class="form-control form-control-sm"
+                      type="number"
+                    />
+                  </td>
                 </tr>
               {/each}
             </tbody>
