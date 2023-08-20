@@ -382,6 +382,7 @@
 
         service.checkClientByIdentification = function (query, codigoIdentificacion, callback) {
             mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+                console.log(response)
                 if (response.code === '0') {
                     callback(codigoIdentificacion)
                     // return response;

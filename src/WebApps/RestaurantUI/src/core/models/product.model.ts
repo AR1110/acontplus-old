@@ -8,7 +8,7 @@ export interface RawProductSaleData {
     precioCosto: number,
     precioSinSubsidio: number,    
     tarifa: number,
-    codigoPorcentaje: number,
+    codigoPorcentaje: string,
     codigoArticulo: string,
     stock: number    
     s3ObjectKey: string
@@ -18,7 +18,8 @@ export interface RawProductSaleData {
 export interface ProductSaleReadDto {
     productId: number,
     measureId: number,
-    vatRatId: number,    
+    vatRatId: number, 
+    taxRateCode: string   
     description: string,    
     takesInventory: boolean,        
     costPrice: number,
