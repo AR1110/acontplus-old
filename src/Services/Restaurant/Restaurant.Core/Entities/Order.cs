@@ -19,8 +19,12 @@ namespace Restaurant.Core.Entities
         public decimal? Tax { get; set; }
         [Column(TypeName = "numeric(18,5), null")]
         public decimal? Discount { get; set; }
+        [Column(TypeName = "numeric(18,5), null")]
+        public decimal? Tip { get; set; }
         [Column(TypeName = "numeric(18,5), not null")]
         public decimal Total { get; set; }
+        [MaxLength(500)]
+        public string Obs { get; set; }
         public List<OrderItem> OrderItems { get; set; }
     }
 }
