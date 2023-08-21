@@ -12,7 +12,9 @@ namespace Restaurant.Core.Entities
         public double Quantity { get; set; }
         public int Unit { get; set; }
         public string Instructions { get; set; }
-        public float? Weight { get; set; }
-        public float NetWeight { get; set; }
+        [Column(TypeName = "numeric(18,5), null")]
+        public decimal? Weight { get; set; }
+        [Column(TypeName = "numeric(18,5), null")]
+        public decimal NetWeight { get; set; }
     }
 }

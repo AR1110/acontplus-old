@@ -5,21 +5,25 @@
 namespace Restaurant.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AlterOrder : Migration
+    public partial class CHANGE_IN_RECIPE : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "CustomerId",
+            migrationBuilder.AlterColumn<decimal>(
+                name: "Weight",
                 schema: "Restaurant",
-                table: "Order",
-                newName: "CustomerCompanyId");
+                table: "Recipe",
+                type: "numeric(18,5)",
+                nullable: true,
+                oldClrType: typeof(float),
+                oldType: "real",
+                oldNullable: true);
 
             migrationBuilder.AlterColumn<decimal>(
-                name: "Quantity",
+                name: "NetWeight",
                 schema: "Restaurant",
-                table: "OrderItem",
+                table: "Recipe",
                 type: "numeric(18,5)",
                 nullable: false,
                 oldClrType: typeof(float),
@@ -29,16 +33,20 @@ namespace Restaurant.Infrastructure.Data.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "CustomerCompanyId",
+            migrationBuilder.AlterColumn<float>(
+                name: "Weight",
                 schema: "Restaurant",
-                table: "Order",
-                newName: "CustomerId");
+                table: "Recipe",
+                type: "real",
+                nullable: true,
+                oldClrType: typeof(decimal),
+                oldType: "numeric(18,5)",
+                oldNullable: true);
 
             migrationBuilder.AlterColumn<float>(
-                name: "Quantity",
+                name: "NetWeight",
                 schema: "Restaurant",
-                table: "OrderItem",
+                table: "Recipe",
                 type: "real",
                 nullable: false,
                 oldClrType: typeof(decimal),

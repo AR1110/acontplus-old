@@ -29,6 +29,8 @@
   };
 
   const onUpdate = () => {
+    console.log(recipe);
+
     let newObject = {
       itemJson: data,
       productionAreaJson: { productionAreaId: data.productionAreaId },
@@ -63,7 +65,6 @@
       quantity: 0,
       itemId: itemId,
     });
-
     recipe = [...recipe];
   };
 
@@ -77,10 +78,10 @@
 
   const removeRecipe = (index: number) => {
     console.log(recipe);
-   let newRecipe =  recipe.splice(index, 1);
-   console.log(newRecipe);
+    let newRecipe = recipe.splice(index, 1);
+    console.log(newRecipe);
     recipe = [...newRecipe];
-  }
+  };
 
   const onModalClose = () => {
     openNew = false;
@@ -189,11 +190,12 @@
           <table class="table">
             <thead>
               <tr>
-                <th scope="col"></th>
+                <th scope="col" />
                 <th scope="col">Ingrediente</th>
                 <th scope="col">Unit</th>
                 <th scope="col">Peso</th>
                 <th scope="col">Peso neto</th>
+                <th scope="col">Instrucciones</th>
                 <th scope="col">Cantidad</th>
               </tr>
             </thead>
@@ -204,36 +206,43 @@
                     <button
                       type="button"
                       class="btn btn-danger btn-sm"
-                      on:click={() => {removeRecipe(index)}}
+                      on:click={() => {
+                        removeRecipe(index);
+                      }}
                     >
                       <i class="ti-trash" />
                     </button>
-                  <td>{item.descriptionIngredient}</td>
+                  </th><td>{item.descriptionIngredient}</td>
                   <td>
                     <input
                       bind:value={item.unit}
-                      class="form-control form-control-sm"
+                      class="form-control form-control"
                       type="number"
                     />
                   </td>
                   <td>
                     <input
                       bind:value={item.weight}
-                      class="form-control form-control-sm"
+                      class="form-control form-control"
                       type="number"
                     />
                   </td>
                   <td>
                     <input
                       bind:value={item.netWeight}
-                      class="form-control form-control-sm"
+                      class="form-control form-control"
                       type="number"
                     />
                   </td>
                   <td>
+                    <div class="form-group">
+                      <textarea class="form-control" rows="2" />
+                    </div>
+                  </td>
+                  <td>
                     <input
                       bind:value={item.quantity}
-                      class="form-control form-control-sm"
+                      class="form-control form-control"
                       type="number"
                     />
                   </td>
