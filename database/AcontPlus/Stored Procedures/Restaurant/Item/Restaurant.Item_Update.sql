@@ -4,6 +4,7 @@ GO
 --- Author: Ignacio Manchu.
 --- Description: Update 
 --- Date: 2023-08-17
+--- Restaurant.Item_Update 139, 5, ''
 IF OBJECT_ID('Restaurant.Item_Update') IS NOT NULL
 	DROP PROC Restaurant.Item_Update
 GO 
@@ -18,7 +19,8 @@ BEGIN
     DECLARE @itemJson NVARCHAR(MAX)
             ,@productionAreaJson NVARCHAR(MAX)
             ,@recipeJson NVARCHAR(MAX)
-            ,@productId INT
+            ,@productId INT           
+            ,@date DATETIME = (SELECT dbo.ufnGetDateEcuador())
 
     CREATE TABLE #RecipeTemp(
          id            INT
@@ -39,10 +41,11 @@ BEGIN
 
     SELECT @itemJson                = itemJson
             ,@productionAreaJson    = productionAreaJson
+            ,@recipeJson            = recipeJson
     FROM OPENJSON(@json) 
     WITH (itemJson NVARCHAR(MAX) '$.itemJson' AS JSON
             , productionAreaJson NVARCHAR(MAX) '$.productionAreaJson' AS JSON
-            , recipeJson NVARCHAR(MAX) '$.recipeJson'
+            , recipeJson NVARCHAR(MAX) '$.recipeJson' AS JSON
     )
 
     SELECT @productId = productId FROM OPENJSON(@itemJson) WITH(productId INT '$.productId')
@@ -83,8 +86,8 @@ BEGIN
         ,enabled         BIT          '$.enabled'
     )
 
-    INSERT INTO #RecipeTemp(id, itemId, unit, weight, netWeigth, ingredientId, instructions, quantity)
-    SELECT id, itemId, unit, weight, netWeigth, ingredientId, instructions, quantity 
+
+    SELECT ISNULL(id, 0), ISNULL(itemId, 0), ISNULL(unit, 0), weight, netWeigth, ingredientId, instructions, quantity     
     FROM OPENJSON(@recipeJson)
     WITH(
       id            INT             '$.id'
@@ -109,13 +112,17 @@ BEGIN
                 ,enabled         = @enabled
             WHERE Id = @id
 
+            ---- Insert Recipe ----
+            INSERT INTO Restaurant.Recipe
+                   (ItemId, Unit, Weight, NetWeight, CreatedAt, UpdatedAt, Enabled, Deleted, UserId, IngredientId, Instructions, Quantity)
 
-            --INSERT INTO Restaurant.Recipe
-            --(ItemId, Unit, Weight, NetWeight, CreatedAt, UpdatedAt, Enabled, Deleted, UserId, IngredientId, Instructions, Quantity)
-            --SELECT * FROM #RecipeTemp rp
-            --INNER JOIN Restaurant.Recipe r ON rp.id = r.Id
-            --WHERE 
-             
+            SELECT rt.itemId, rt.unit, rt.weight, rt.netWeigth, @date, NULL, NULL, NULL, @userId, rt.ingredientId, rt.instructions, rt.quantity
+            FROM #RecipeTemp rt
+            ---- Update Recipe ----
+            
+
+            ---- Delete Recipe ----
+            
 		COMMIT TRAN
         SELECT dbo.ufn_spresponse('1', 'Actualizado exitosamente', NULL)
 

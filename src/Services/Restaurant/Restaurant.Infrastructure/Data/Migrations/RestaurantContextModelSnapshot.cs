@@ -707,8 +707,8 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<int>("ItemId")
                         .HasColumnType("int");
 
-                    b.Property<float>("NetWeight")
-                        .HasColumnType("real");
+                    b.Property<decimal>("NetWeight")
+                        .HasColumnType("numeric(18,5), null");
 
                     b.Property<double>("Quantity")
                         .HasColumnType("float");
@@ -722,8 +722,8 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<float?>("Weight")
-                        .HasColumnType("real");
+                    b.Property<decimal?>("Weight")
+                        .HasColumnType("numeric(18,5), null");
 
                     b.HasKey("Id");
 
