@@ -7,7 +7,6 @@ namespace ApiConfig.Controllers
 {
     public class EstabAsigController : BaseApiController
     {
-        private readonly IConfiguration _configuration;
         private readonly IEstablecimientoAsignacionService _estab;
         private readonly LogWriter _log;
         public EstabAsigController(IEstablecimientoAsignacionService service, LogWriter log)
