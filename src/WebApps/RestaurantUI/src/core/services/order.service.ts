@@ -1,43 +1,19 @@
 import { categoryReadAdapter, decimalSaleReadAdapter, emissionPointAdapter, tableReadAdapter, taxAdapter, taxRateAdapter, warehouseAdapter } from "../adapters"
 import { PATHS } from "../constants"
+import { ApiResponse } from "../models"
 import { Http } from "../utilities"
  
-const URL = 'Orden'
+const URL = 'Order'
 export const OrdenService = {
-    async getDataForForm(json: string) {
+    async post(data: {}) {
         const resultAxios = await Http({
-                method: 'get',
+                method: 'post',
                 url: `${PATHS.PRIVATE}${URL}`,
-                params: {
-                    json
-                }        
+                data: {data}       
         })
 
-        const { 
-            subCategorias, 
-            configDecimal, 
-            table, 
-            impuesto, 
-            tarifaImpuesto, 
-            bodega_Asign,
-            ptoEmi_Asig
-        } = resultAxios.data;
-
-        let categories = categoryReadAdapter(subCategorias || []); 
-      
-        return{
-            categories: [{
-                idSubFamilia: 0,
-                description: 'Todos',
-                s3ObjectUrl: ''
-            }, ...categories], 
-            decimal: decimalSaleReadAdapter(configDecimal[0]),
-            tables: tableReadAdapter(table || []),
-            taxes: taxAdapter(impuesto),
-            taxRates: taxRateAdapter(tarifaImpuesto), 
-            warehouses: warehouseAdapter(bodega_Asign || []),
-            emissionPoints: emissionPointAdapter(ptoEmi_Asig || [])
-        }
+        const response: ApiResponse = resultAxios.data;
+         return response;
     },
 
 }

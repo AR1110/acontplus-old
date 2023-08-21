@@ -1,5 +1,6 @@
 import { Http } from "@/core/utilities";
 import { ApiResponse } from "../models";
+import { PERSIS_USER } from "../constants";
 
 const login = async (username: string, password: string): Promise<ApiResponse> => {
   const response = await Http({
@@ -16,7 +17,7 @@ const login = async (username: string, password: string): Promise<ApiResponse> =
  
 
 const getToken = function (): string | null {
-  return localStorage.getItem("ACCESS_TOKEN");
+  return localStorage.getItem(PERSIS_USER.auth_token);
 };
  
 
@@ -25,10 +26,11 @@ const decodeToken = function () {
   if (!token) {
     return null;
   }
+ 
   const tokenToAtob = token.split(".");
   if(!tokenToAtob) return null;
 
-  const object = JSON.parse(tokenToAtob[1]!);
+  const object = JSON.parse(atob(tokenToAtob[1]!));
   return object;
 };
 

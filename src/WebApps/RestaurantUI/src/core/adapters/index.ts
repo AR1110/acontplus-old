@@ -4,6 +4,7 @@ export * from './decimal.adapter';
 export * from './emission-point.adapter';
 export * from './item.adapter';
 export * from './product.adapter';
+export * from './sale.adapter';
 export * from './table.adapter';
 export * from './tax-rate.adapter';
 export * from './tax.adapter';

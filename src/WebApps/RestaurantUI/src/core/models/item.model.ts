@@ -15,7 +15,7 @@ export interface RawItemData {
 }
 
 export interface ItemReadDto {
-    id: number //idItem 
+    itemId: number //idItem 
     userId: number
     productId: number
     description: string

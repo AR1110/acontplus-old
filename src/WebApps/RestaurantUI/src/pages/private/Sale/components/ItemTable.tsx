@@ -11,11 +11,11 @@ import { AddShoppingCartIcon, DeleteIcon } from '@/core/components';
 import { saleStore } from '@/stores/saleStore';
 
 export default function ItemaTable() {
-    const cartItems = saleStore(state => state.cartItems);
+    const items = saleStore(state => state.items);
     const removeItemFromCart = saleStore(state => state.removeItemFromCart)
     const setItemChangeQty = saleStore(state => state.setItemChangeQty)
 
-    if (cartItems.length === 0) return (
+    if (items.length === 0) return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 
             <AddShoppingCartIcon sx={{
@@ -58,7 +58,7 @@ export default function ItemaTable() {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {cartItems.map((item, index) => (
+                    {items.map((item, index) => (
                         <TableRow
                             key={index}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -73,7 +73,7 @@ export default function ItemaTable() {
                                             wordBreak: 'break-all',
                                             fontSize: '10px'
                                         }}>
-                                            {item.name}
+                                            {item.description}
                                         </Typography>
                                     </Grid>
                                 </Grid>
@@ -81,7 +81,7 @@ export default function ItemaTable() {
                             <TableCell align="center" style={{ minWidth: 10 }}>
                                 <TextField
                                     type="number"
-                                    value={item.qty}
+                                    value={item.quantity}
                                     id="amount"
                                     name="amount"
                                     variant="outlined"
@@ -101,8 +101,8 @@ export default function ItemaTable() {
                                 />
 
                             </TableCell>
-                            <TableCell align="right">${item.sellingPrice}</TableCell>
-                            <TableCell align="right">${item.totalPrice}</TableCell>
+                            <TableCell align="right">${item.price}</TableCell>
+                            <TableCell align="right">${item.total}</TableCell>
                             <TableCell align="center">
                                 <IconButton color='error' size="small" aria-label="delete" onClick={() => removeItemFromCart(item.productId)}>
                                     <DeleteIcon fontSize="inherit" />

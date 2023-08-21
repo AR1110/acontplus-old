@@ -11,7 +11,7 @@ export interface RawTaxRateData {
 export interface TaxRate {
     taxRateId: number
     taxCode: string
-    code: string
+    taxRateCode: string
     description: string
     percentage: number    
 }

@@ -1,11 +1,12 @@
 import { Measure, ProductSaleReadDto, RawMeasure, RawProductSaleData, RawRateData } from "../models";
 
 function productSaleReadAdapter(product: RawProductSaleData): ProductSaleReadDto {
-
+    console.log(product)
     return ({
         productId: product.idArticulo,
         measureId: product.idMedida,
         vatRatId: product.idTipoIva,
+        taxRateCode: product.codigoPorcentaje,
         description: product.descripcion,
         takesInventory: product.llevaInventario,
         costPrice: product.precioCosto,

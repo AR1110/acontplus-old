@@ -2,29 +2,69 @@ import { CategoryReadDto, DecimalSale, TableReadDto, Tax, TaxRate, WarehouseAsig
 import { EmissionPointAsign } from "./emission-point.model";
 
 export interface Summary {
-    customerId: number
+    establecimientoId: number
+    puntoEmisionId : number
+    customerCompanyId : number
+    tableId: number
     tax: number;
     taxAmount: number;
+    discount: number
     total: number // With discount on items
     netTotal: number // Net - (tax + discount on total)
 
 }
 
+export interface ItemBase {
+    index: number
+    productId: number
+    code: string    
+    itemId: number
+    taxId: number
+    taxPercentId: number
+    taxValue: number
+    description: string
+    quantity: number
+    cost: number
+    price: number
+    discount: number
+    discountTotal: number
+    total: number
+}
 
-export interface CartItem {
-    index: number;
-    readonly productId: number;
-    readonly code: string
-    name: string;
-    qty: number;
-    price: number;
-    discount: number;
-    discountTotal: number; 
-    sellingPrice: number;
-    totalPrice: number;
+export interface ItemRead extends ItemBase {
     s3ObjectUrl: string;    
     takesInventory: boolean
 }
+
+
+//Start To Api 
+export interface ItemPostDto {
+    itemId: number
+    taxId: number
+    taxPercentId: number
+    taxValue: number
+    quantity: number
+    cost: number
+    price: number
+    discount: number
+    total: number
+}
+export interface SummaryPostDto {
+    establecimientoId: number
+    puntoEmisionId: number
+    customerCompanyId: number
+    tableId: number
+    tax: number;
+    //taxAmount: number;
+    total: number // With discount on items
+   // netTotal: number // Net - (tax + discount on total)
+    discount: number
+    items: Array<ItemPostDto>
+
+}
+
+
+// End To Api
 
 
 export interface DataFormSale {
