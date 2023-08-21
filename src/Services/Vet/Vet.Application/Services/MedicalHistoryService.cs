@@ -8,12 +8,10 @@ namespace Vet.Application.Services
 {
     public class MedicalHistoryService : IMedicalHistory
     {
-        private readonly VetContext _context;
         private readonly IADORepository _generic;
         private readonly APIResponse _response;
-        public MedicalHistoryService(VetContext vetContext, IADORepository genericRepository)
+        public MedicalHistoryService(IADORepository genericRepository)
         {
-            _context = vetContext;
             _response = new APIResponse();
             _generic = genericRepository;
         }
@@ -51,17 +49,17 @@ namespace Vet.Application.Services
             }
             return _response;
         }
-        public async Task<APIResponse> AddAsync(MedicalHistory medicalHistory)
-        {
-            return _response;
-        }
-        public async Task<APIResponse> UpdateAsync(int id, MedicalHistory medicalHistory)
-        {
-            return _response;
-        }
-        public async Task<APIResponse> DeleteAsync(int id)
-        {
-            return _response;
-        }
+        //public async Task<APIResponse> AddAsync(MedicalHistory medicalHistory)
+        //{
+        //    return _response;
+        //}
+        //public async Task<APIResponse> UpdateAsync(int id, MedicalHistory medicalHistory)
+        //{
+        //    return _response;
+        //}
+        //public async Task<APIResponse> DeleteAsync(int id)
+        //{
+        //    return _response;
+        //}
     }
 }

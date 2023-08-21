@@ -121,9 +121,6 @@ namespace DataAccess
         {
             var loginData = new LoginViewModelV2();
             var userData = new List<LoginData>();
-            string menus = "";
-            string subMenus = "";
-            string establecmientos = "";
             var returnUrl = data.returnUrl;
             if (returnUrl == "/")
             {
@@ -204,9 +201,6 @@ namespace DataAccess
         {
             var loginData = new LoginViewModelV2();
             var userData = new List<LoginData>();
-            string menus = "";
-            string subMenus = "";
-            string establecmientos = "";
             var returnUrl = data.returnUrl;
             if (returnUrl == "/")
             {

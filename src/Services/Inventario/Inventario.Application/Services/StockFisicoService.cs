@@ -10,7 +10,6 @@ namespace Inventario.Application.Services
     public class StockFisicoService : IStockFisicoService
     {
         private readonly IADORepository _repository;
-        private readonly InventarioContext _context;
         private readonly APIResponse _response;
         public StockFisicoService(IADORepository repository)
         {
