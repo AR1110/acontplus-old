@@ -14,7 +14,7 @@ BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE @itemsJson NVARCHAR(MAX)
-    ,@jsonPayments NVARCHAR(MAX)
+    ,@paymentsJson NVARCHAR(MAX)
     ,@establecimientoId INT
     ,@puntoEmisionId INT
     ,@tableId INT
@@ -24,11 +24,12 @@ BEGIN
     ,@tax NUMERIC(18,5)
     ,@discount NUMERIC(18,5)
     ,@total NUMERIC(18,5)
+    ,@codDoc VARCHAR(2)
     ,@userId INT
 
     
     SELECT       @itemsJson = items
-        ,@jsonPayments      = payments
+        ,@paymentsJson      = payments
         ,@establecimientoId = establecimientoId
         ,@puntoEmisionId    = puntoEmisionId 
         ,@tableId           = tableId
@@ -36,6 +37,7 @@ BEGIN
         ,@tax               = tax
         ,@discount          = discount
         ,@total             = total
+        ,@codDoc            = codDoc
     FROM OPENJSON(@json)
         WITH(
             items NVARCHAR(MAX) '$.items' AS JSON,
@@ -46,7 +48,8 @@ BEGIN
             customerCompanyId INT '$.customerCompanyId',
             tax NUMERIC(18,5) '$.tax',
             discount NUMERIC(18,5) '$.discount',
-            total NUMERIC(18,5) '$.total'
+            total NUMERIC(18,5) '$.total',
+            codDoc VARCHAR(2) '$.codDoc'
         )
 
 
@@ -92,7 +95,7 @@ BEGIN
         END
 
 
-    --IF (ISJSON(@jsonPayments) = 1)
+    --IF (ISJSON(@paymentsJson) = 1)
     --    BEGIN
     --        DECLARE @tblPayments AS TABLE(
     --            total NUMERIC(18,5) NOT NULL,
@@ -105,13 +108,15 @@ BEGIN
     --        RETURN
     --    END
 
-    SELECT @secuence = cd.secuencial
+    DECLARE @estab VARCHAR(3), @ptoEmi VARCHAR(3)
+
+    SELECT @secuence = cd.secuencial, @estab = pa.estab, @ptoEmi = pa.ptoEmi
 			FROM v_ConfigDocumento cd
-				INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab
+				INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab AND cd.idPuntoEmision = @puntoEmisionId
 			WHERE pa.idUsuarioRol = @userRoleId
 			AND cd.codDoc = 'OR'
 
-    SET @serie = (SELECT CONVERT(VARCHAR, @secuence))
+    SET @serie = (SELECT @estab + '-' + @ptoEmi +'-'+ RIGHT('000000000' + CONVERT(VARCHAR, @secuence), 9))
     SET @userId = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId)
 
     DECLARE @id INT = 0
@@ -131,15 +136,15 @@ BEGIN
 
                     IF (@totalCook > 0)
                         BEGIN
-                            INSERT INTO Restaurant.[OrderKitchen] (OrderId, [Enabled], UserId)
-                            VALUES(@id, 1, @userId)
+                            INSERT INTO Restaurant.[OrderKitchen] (OrderId, [Enabled], Completed, UserId)
+                            VALUES(@id, 1, 0, @userId)
                         END
                 END
 		COMMIT TRAN
 
-        IF (@id > 0) 
+        IF (@id > 0)
             SELECT dbo.ufn_spresponse('1', 'Exitos al guardar', NULL)
-        ELSE 
+        ELSE
             SELECT dbo.ufn_spresponse('0', 'No se pudo guardar la orden', NULL)	
     END TRY
 	BEGIN CATCH

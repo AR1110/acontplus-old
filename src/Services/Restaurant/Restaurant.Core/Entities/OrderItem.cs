@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Restaurant.Core.Entities
 {
@@ -23,5 +24,7 @@ namespace Restaurant.Core.Entities
         public decimal Discount { get; set; }
         [Column(TypeName = "numeric(18,5), not null")]
         public decimal Total { get; set; }
+        [MaxLength(500)]
+        public string Obs { get; set; }
     }
 }
