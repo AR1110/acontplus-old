@@ -34,6 +34,24 @@ export default function SaleRight() {
 
     const resetForm = saleStore(state => state.resetForm);
 
+    const onClickResetFrom =async () => {
+        if(items.length===0) return; 
+        const {isConfirmed} = await Swal.fire({
+            title: 'Reiniciar',
+            html: '<small>¿Está seguro de que desea restablecer el producto ?</small>',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',            
+            confirmButtonText: 'Si, restablecer',
+            // confirmButtonColor: '#3085d6',            
+            cancelButtonText: 'No, cancelar'
+        })
+        if(isConfirmed){
+            resetForm();
+        }
+    }
+
     const askToSave = async function(){
         if(!(summary.customerCompanyId > 0)){
             SnackbarUtility.warning('Seleccione el cliente');
@@ -47,7 +65,7 @@ export default function SaleRight() {
             SnackbarUtility.warning('Agregue');
             return
         }
-        let {isConfirmed} = await Swal.fire({
+        const {isConfirmed} = await Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
             icon: 'warning',
@@ -70,8 +88,9 @@ export default function SaleRight() {
                 if(response.code==='0'){
                     SnackbarUtility.warning(response.message)
                 }
-                if(response.code==="1"){
+                if(response.code==="1"){                    
                     SnackbarUtility.success(response.message)
+                    resetForm();
                 }
             })
         }
@@ -136,7 +155,7 @@ export default function SaleRight() {
             <Box sx={{ flexGrow: 1, p: 2 }}>
                 <Grid container spacing={2} columns={16}>
                     <Grid item xs={16} md={8} lg={8}>
-                        <Button color="error" variant="contained" size="large" fullWidth endIcon={<RestartAltIcon />} onClick={resetForm}>
+                        <Button color="error" variant="contained" size="large" fullWidth endIcon={<RestartAltIcon />} onClick={onClickResetFrom}>
                             Limpiar
                         </Button>
                     </Grid>
