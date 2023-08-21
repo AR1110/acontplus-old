@@ -31,14 +31,15 @@ BEGIN
             ,@userId INT
 
     CREATE TABLE #RecipeTemp(
-         id            INT
-         ,itemId       INT
-         ,unit         INT
-         ,weight       NUMERIC(18,5)
-         ,netWeigth    NUMERIC(18,5)
-         ,ingredientId INT            
-         ,instructions VARCHAR(MAX) 
-         ,quantity     FLOAT
+         id             INT
+         ,itemId        INT
+         ,unit          INT
+         ,weight        NUMERIC(18,5)
+         ,netWeigth     NUMERIC(18,5)
+         ,ingredientId  INT            
+         ,instructions  VARCHAR(MAX) 
+         ,quantity      FLOAT
+         ,enabled       BIT
     )
 
     IF ISJSON(@json) = 0
@@ -65,6 +66,7 @@ BEGIN
             , ISNULL(ingredientId, 0)
             , ISNULL(instructions, NULL)
             , ISNULL(quantity, 0)
+            , enabled
     FROM OPENJSON(@recipeJson)
     WITH(
       id            INT             '$.id'
@@ -75,6 +77,7 @@ BEGIN
       ,ingredientId INT             '$.ingredientId'
       ,instructions VARCHAR(MAX)    '$.instructions'
       ,quantity     FLOAT           '$.quantity'
+      ,enabled      BIT             '$.enabled'
     )
    
     SELECT @productId = productId FROM OPENJSON(@itemJson) WITH(productId INT '$.productId')
@@ -104,7 +107,7 @@ BEGIN
         ,content         VARCHAR(500) '$.content'
         ,enabled         BIT          '$.enabled'
     )
-         
+             
 	BEGIN TRY               
 		BEGIN TRAN
             UPDATE Restaurant.Item
@@ -121,12 +124,23 @@ BEGIN
             INSERT INTO Restaurant.Recipe
                    (ItemId, Unit, Weight, NetWeight, CreatedAt, UpdatedAt, Enabled, Deleted, UserId, IngredientId, Instructions, Quantity)
 
-            SELECT rt.itemId, rt.unit, rt.weight, rt.netWeigth, @date, NULL, NULL, NULL, @userId, rt.ingredientId, rt.instructions, rt.quantity
+            SELECT rt.itemId, rt.unit, rt.weight, rt.netWeigth, @date, NULL,enabled, NULL, @userId, rt.ingredientId, rt.instructions, rt.quantity
             FROM #RecipeTemp rt
-            ---- Update Recipe ----
+            WHERE rt.itemId NOT IN (SELECT TOP 1 1 FROM Restaurant.Recipe)
+          
             
-
-            ---- Delete Recipe ----
+            ---- Update Recipe ----
+            UPDATE rr
+            SET rr.Unit          = rt.unit
+                ,rr.Weight       = rt.weight
+                ,rr.NetWeight    = rt.netWeigth
+                ,rr.Enabled      = rt.enabled
+                ,rr.IngredientId = rt.ingredientId
+                ,rr.Instructions = rt.instructions
+                ,rr.Quantity     = rt.quantity
+                ,rr.UpdatedAt    = @date
+            FROM Restaurant.Recipe rr
+            INNER JOIN #RecipeTemp rt ON rt.itemId = rr.ItemId AND rt.id = rt.id                     
             
 		COMMIT TRAN
         SELECT dbo.ufn_spresponse('1', 'Actualizado exitosamente', NULL)
