@@ -2,7 +2,7 @@
 export interface Voucher {
     customerCompanyId: number,    
     payingAmount: number
-    receivedAmount: number 
+    receivedAmount: string 
     changeReturn: number
     codEstab: string    
 }
@@ -26,7 +26,7 @@ export const checkoutInitialState: Checkout = {
     voucher: {
         customerCompanyId: 0,
         payingAmount: 0,
-        receivedAmount: 0,
+        receivedAmount: "0",
         changeReturn: 0,
         codEstab: ""
     },

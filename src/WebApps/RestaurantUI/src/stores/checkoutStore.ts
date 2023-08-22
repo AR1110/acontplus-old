@@ -7,9 +7,9 @@ type State = {
 }
 
 type Actions = {
-    setVoucher(payingAmount: number, receivedAmount: number ): void
-    setChangeReturn(value: number): void
-
+    setVoucher(payingAmount: number, receivedAmount: string ): void
+    setChangeReturn(value: number): void 
+    setReceivedAmount(value: string): void //Actualizar el abono 
 }
 
 export const useCheckoutStore = create<State & Actions>((set)=>({
@@ -24,7 +24,13 @@ export const useCheckoutStore = create<State & Actions>((set)=>({
         )
     },
     setChangeReturn(value){
-       console.log('tet')
-        
+       console.log('tet')        
+    },
+    setReceivedAmount(receivedAmount){
+        set(
+            produce((state: State)=>{
+                state.checkout.voucher.receivedAmount = receivedAmount;
+            })
+        )
     }
 }))

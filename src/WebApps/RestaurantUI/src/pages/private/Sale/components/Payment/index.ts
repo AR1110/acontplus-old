@@ -1,2 +1,2 @@
-export { default as Payment } from './Payment';
-export { default as PaymentAction } from './PaymentAction';
+export { default as Payment } from './Checkout';
+export { default as PaymentAction } from './CheckoutAction';

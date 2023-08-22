@@ -7,32 +7,39 @@ import { addSound, clearSound } from '@/core/utilities';
 
 const grids = [7, 8, 9, 4, 5, 6, 1, 2, 3, ".", 0]
 
-export default function Calculator() {
-    const onClickButton = (value: number | string) => {
-        console.log(value)
+interface CalculatorProps {
+    clearButton():void
+    onClickButton(value: number | string): void
+}
+
+export default function Calculator({clearButton, onClickButton}:CalculatorProps) {
+    const onClickCalculatorButton = (value: number | string) => { 
         addSound();
+        onClickButton(value)
     }
+
     const onClickClearButton = () => {
-        clearSound()
+        clearButton();
+        clearSound();
     }
     return (
         <Box sx={{ flexGrow: 1 }}>
             <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 12, sm: 12, md: 12 }}>
                 <Grid item xs={4} sm={4} md={4} >
-                    <CalculatorButton >$5</CalculatorButton>
+                    <CalculatorButton>$5</CalculatorButton>
                 </Grid>
                 <Grid item xs={4} sm={4} md={4} >
-                    <CalculatorButton  >$10</CalculatorButton>
+                    <CalculatorButton>$10</CalculatorButton>
                 </Grid>
                 <Grid item xs={4} sm={4} md={4} >
-                    <CalculatorButton  >$20</CalculatorButton>
+                    <CalculatorButton>$20</CalculatorButton>
                 </Grid>
              
 
                 {
                     grids.map((value, index) => (
                         <Grid item xs={4} sm={4} md={4} key={index}>
-                            <CalculatorButton onClick={() => onClickButton(value)}>{value}</CalculatorButton>
+                            <CalculatorButton onClick={() => onClickCalculatorButton(value)}>{value}</CalculatorButton>
                         </Grid>
                     ))
                 } 

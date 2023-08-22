@@ -4,7 +4,7 @@ import { Button, Typography } from "@mui/material";
 import { Fragment } from "react";
 
 
-export default function PaymentAction() {
+export default function CheckoutAction() {
     return (
         <>
             <Button color="inherit" startIcon={<SaveIcon />}>Guardar</Button>
