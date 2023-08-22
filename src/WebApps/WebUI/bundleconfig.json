@@ -430,5 +430,11 @@
     "inputFiles": [
       "wwwroot/js/inventario/directives/inventarioDirective.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/ventas/services/ventaService.min.js",
+    "inputFiles": [
+      "wwwroot/js/ventas/services/ventaService.js"
+    ]
   }
 ]

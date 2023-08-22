@@ -22,8 +22,8 @@ export const SaleService = {
             bodega_Asign,
             ptoEmi_Asig
         } = resultAxios.data;
-
-        let categories = categoryReadAdapter(subCategorias || []); 
+        console.log(resultAxios.data)
+        const categories = categoryReadAdapter(subCategorias || []); 
       
         return{
             categories: [{

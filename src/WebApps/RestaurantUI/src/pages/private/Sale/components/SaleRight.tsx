@@ -4,10 +4,10 @@ import {
     Divider, Grid, List, ListItem, ListItemText, Paper, Typography, useMediaQuery } from '@mui/material'
 
 import CustomerSearch from './CustomerSearch'
-import { RestartAltIcon, SaveIcon } from '@/core/components'
+import { ArrowForwardIosIcon, RestartAltIcon, SaveIcon } from '@/core/components'
 import TableSelect from './TableSelect'
 import ItemaTable from './ItemTable'
-import { saleStore } from '@/stores/saleStore'
+import { useSaleStore } from '@/stores/saleStore'
 import Swal from 'sweetalert2'
 import { SnackbarUtility } from '@/core/utilities'
 import { summaryToApi } from '@/core/adapters'
@@ -23,7 +23,7 @@ const listItemCustom = {
 
 export default function SaleRight() {
     const isMobile = useMediaQuery('(max-width:900px)');
-    const {summary, items, dataForm} = saleStore(state => ({
+    const {summary, items, dataForm} = useSaleStore(state => ({
         summary: state.summary,
         items: state.items,
         dataForm: state.dataForm        
@@ -32,7 +32,8 @@ export default function SaleRight() {
         dataEstab: state.dataEstab
     }));
 
-    const resetForm = saleStore(state => state.resetForm);
+    const resetForm = useSaleStore(state => state.resetForm);
+    const payment = useSaleStore(state=>state.payment);
 
     const onClickResetFrom =async () => {
         if(items.length===0) return; 
@@ -53,47 +54,48 @@ export default function SaleRight() {
     }
 
     const askToSave = async function(){
-        if(!(summary.customerCompanyId > 0)){
-            SnackbarUtility.warning('Seleccione el cliente');
-            return
-        }
-        if(!(summary.tableId>0)){
-            SnackbarUtility.warning('Seleccione la Mesa');
-            return
-        }
-        if(items.length===0){
-            SnackbarUtility.warning('Agregue');
-            return
-        }
-        const {isConfirmed} = await Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        })
+        payment.openDialogCustom();
+        // if(!(summary.customerCompanyId > 0)){
+        //     SnackbarUtility.warning('Seleccione el cliente');
+        //     return
+        // }
+        // if(!(summary.tableId>0)){
+        //     SnackbarUtility.warning('Seleccione la Mesa');
+        //     return
+        // }
+        // if(items.length===0){
+        //     SnackbarUtility.warning('Agregue');
+        //     return
+        // }
+        // const {isConfirmed} = await Swal.fire({
+        //     title: 'Are you sure?',
+        //     text: "You won't be able to revert this!",
+        //     icon: 'warning',
+        //     showCancelButton: true,
+        //     confirmButtonColor: '#3085d6',
+        //     cancelButtonColor: '#d33',
+        //     confirmButtonText: 'Yes, delete it!'
+        // })
 
-        if(isConfirmed){
-            console.log(dataForm.emissionPoints)
-            summary.establecimientoId = dataEstab.idEstablecimiento;
-            summary.puntoEmisionId = dataForm.emissionPoints.find(
-                pto=>pto.codEstab_Asig===dataEstab.codEstab_Asig && (pto.predeterminado)
-            )?.idPuntoEmision ?? 0
-            const data = summaryToApi(summary, items)
+        // if(isConfirmed){
+        //     console.log(dataForm.emissionPoints)
+        //     summary.establecimientoId = dataEstab.idEstablecimiento;
+        //     summary.puntoEmisionId = dataForm.emissionPoints.find(
+        //         pto=>pto.codEstab_Asig===dataEstab.codEstab_Asig && (pto.predeterminado)
+        //     )?.idPuntoEmision ?? 0
+        //     const data = summaryToApi(summary, items)
             
-            OrdenService.post(data).then(response=>{
-                console.log(response)
-                if(response.code==='0'){
-                    SnackbarUtility.warning(response.message)
-                }
-                if(response.code==="1"){                    
-                    SnackbarUtility.success(response.message)
-                    resetForm();
-                }
-            })
-        }
+        //     OrdenService.post(data).then(response=>{
+        //         console.log(response)
+        //         if(response.code==='0'){
+        //             SnackbarUtility.warning(response.message)
+        //         }
+        //         if(response.code==="1"){                    
+        //             SnackbarUtility.success(response.message)
+        //             resetForm();
+        //         }
+        //     })
+        // }
 
     }
 
@@ -160,8 +162,8 @@ export default function SaleRight() {
                         </Button>
                     </Grid>
                     <Grid item xs={16} md={8} lg={8}>
-                        <Button color="success" disabled={items.length===0} variant="contained" size="large" onClick={()=>askToSave()} fullWidth endIcon={<SaveIcon />}>
-                            Guardar
+                        <Button color="success" disabled={items.length===0} variant="contained" size="large" onClick={()=>askToSave()} fullWidth endIcon={<ArrowForwardIosIcon />}>
+                            Ir a pago
                         </Button>
                     </Grid>
                 </Grid>

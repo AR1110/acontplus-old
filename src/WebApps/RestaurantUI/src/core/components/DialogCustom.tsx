@@ -22,9 +22,7 @@ function DialogCustom({children, maxWidth, ...other}: DialogProps) {
     const fullScreen = useMediaQuery(theme.breakpoints.down("md")); 
 
     const [open, setOpen] = useState(false); 
-
-    useEffect(() => { 
-    }, []);
+ 
 
     const handleClickOpen = () => {
         console.log('open Modal')

@@ -21,6 +21,11 @@ import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import StorageIcon from '@mui/icons-material/Storage'; 
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import BackspaceIcon from '@mui/icons-material/Backspace';
+import SwipeLeftIcon from '@mui/icons-material/SwipeLeft';
+import CloseIcon from '@mui/icons-material/Close';
+import TaskIcon from '@mui/icons-material/Task';
 export {
     RemoveCircleOutlineIcon,
     SaveIcon,
@@ -42,5 +47,10 @@ export {
     MonetizationOnIcon,
     PersonSearchIcon,
     AddShoppingCartIcon,
-    StorageIcon 
+    StorageIcon,
+    ArrowForwardIosIcon,
+    BackspaceIcon,
+    SwipeLeftIcon,
+    CloseIcon,
+    TaskIcon
 }

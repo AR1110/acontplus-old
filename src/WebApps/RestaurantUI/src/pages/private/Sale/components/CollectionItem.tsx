@@ -2,14 +2,14 @@
 import { Box,Grid} from '@mui/material';
 import CollectionItemSkeleton from './CollectionItemSkeleton';
 import ItemCard from './ItemCard';
-import { saleStore } from '@/stores/saleStore';
+import { useSaleStore } from '@/stores/saleStore';
 
 interface CollectionItemProps {
     loading: boolean
 }
 
 export default function CollectionItem({ loading }: CollectionItemProps) {
-    const collectionItems = saleStore(state => state.collectionItems);
+    const collectionItems = useSaleStore(state => state.collectionItems);
     return (
         <Box sx={{ pt: 2 }}>
             <Grid container spacing={{ xs: 1, md: 1 }} columns={{ xs: 12, sm: 12, md: 12 }} sx={{
