@@ -10,7 +10,7 @@
   import Modal from "$core/components/Modal.svelte";
   import toast from "$core/utils/toast";
   import Grid from "$core/components/Grid.svelte";
-    import { showLoader } from "$core/utils/loading-spinner";
+  import { showLoader } from "$core/utils/loading-spinner";
 
   export let openNew;
   export let modalClosed;
@@ -19,6 +19,7 @@
   export let recipe = [] as Recipe[];
 
   let productionAreas = [] as ProductionArea[];
+  let validatorParam = [undefined, null, "", 0]
 
   onMount(() => {
     getProductionArea();
@@ -31,13 +32,15 @@
   };
 
   const onUpdate = () => {
+    if (!onValidation(data)) return;
+    if (!onValidationRecipe(recipe)) return;
+
     showLoader();
     let newObject = {
       itemJson: data,
       productionAreaJson: { productionAreaId: data.productionAreaId },
       recipeJson: recipe,
     };
-
     itemService.put(data.id, { data: newObject }).then((response) => {
       hideLoader();
       if (response.status === 200) {
@@ -83,6 +86,48 @@
     modalClosed();
   };
 
+  const onValidation = (item: Item) => {
+    let isValid = true;
+    try {
+      if (validatorParam.includes(item.productionAreaId)) {
+        toast({ type: "warning", message: "Debe seleccionar un area de producción" });
+        isValid = false;
+      }
+      return isValid;
+    } catch (error) {
+      toast({ type: "error", message: error });
+      return false;
+    }
+  }
+
+  const onValidationRecipe = (recipe) => {
+    let isValid = true;
+    for (let index = 0; index < recipe.length; index++) {
+      const element = recipe[index];
+      try {
+        if (validatorParam.includes(element.unit)) {
+          toast({ type: "warning", message: "Debe ingresar una Unidad" });
+          isValid = false;
+          return isValid;
+        }
+        if (validatorParam.includes(element.netWeight)) {
+          toast({ type: "warning", message: "Debe ingresar un Peso Neto" });
+          isValid = false;
+          return isValid;
+        }
+        if (validatorParam.includes(element.quantity)) {
+          toast({ type: "warning", message: "Debe ingresar una Cantidad" });
+          isValid = false;
+          return isValid;
+        }
+        return isValid;
+        break;
+      } catch (error) {
+        toast({ type: "error", message: "Debe ingresar los valores requeridos" });
+        return false;
+      }
+    }
+  }
 
   let columns = [
     {
