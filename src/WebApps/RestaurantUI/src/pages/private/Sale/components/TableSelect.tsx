@@ -3,13 +3,13 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { saleStore } from '@/stores';
+import { useSaleStore } from '@/stores';
 
 export default function TableSelect() {
   const [table, setAge] = React.useState('');
-  const dataForm = saleStore(state=>state.dataForm);
-  const setSummary = saleStore(state=>state.setSummary)
-  const summary = saleStore(state=>state.summary)
+  const dataForm = useSaleStore(state=>state.dataForm);
+  const setSummary = useSaleStore(state=>state.setSummary)
+  const summary = useSaleStore(state=>state.summary)
 
   const handleChange = (event: SelectChangeEvent) => {
      setSummary({
