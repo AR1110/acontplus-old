@@ -6,7 +6,8 @@ import {
     itemSearchInitialState,
     DataFormSale,
     dataFormInitialState,
-    WarehouseAsign
+    WarehouseAsign,
+    summaryInitialState
 } from "@/core/models";
 import { ProductService } from "@/core/services";
 import { SnackbarUtility, addSound, clearSound } from "@/core/utilities";
@@ -32,11 +33,25 @@ interface SaleState {
     setItemChangeQty(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, cartItem: ItemRead): void
     caculateTotals(): void
     resetForm(): void
+
+    //Pagos
+    payment: {
+        isOpen: boolean
+        openDialogCustom():void
+        closeDialogCustom(): void
+    },
+    
+    //Navigation 
+    navigation: {
+        isOpen: boolean
+        openDialogCustom():void
+        closeDialogCustom(): void
+    }
 }
 
 
 
-export const saleStore = create<SaleState>((set, get) => ({
+export const useSaleStore = create<SaleState>((set, get) => ({
     itemSearch: itemSearchInitialState,
     setItemSearch: (itemSearch) => {
         set(state => ({
@@ -47,17 +62,7 @@ export const saleStore = create<SaleState>((set, get) => ({
     collectionItems: [],
     totalItems: 0,
     items: [],
-    summary: {
-        establecimientoId: 0,
-        puntoEmisionId: 0,
-        customerCompanyId: 0,
-        tableId: 0,
-        tax: 0,
-        taxAmount: 0,
-        discount: 0,
-        total: 0,
-        netTotal: 0
-    },
+    summary: summaryInitialState,
     setSummary(summary: Summary) {
         set(state => ({
             ...state,
@@ -211,7 +216,7 @@ export const saleStore = create<SaleState>((set, get) => ({
         set(state => ({
             ...state,
             totalItems: 0,
-            cartItems: []
+            items: []
         }))
         clearSound();
         get().caculateTotals();
@@ -232,5 +237,47 @@ export const saleStore = create<SaleState>((set, get) => ({
                 netTotal: total
             }
         }))
+    },
+    payment: {
+        isOpen: false,
+        openDialogCustom() {
+            set(state=>({
+                ...state,
+                payment: {
+                    ...state.payment,
+                    isOpen: true
+                }
+            }))
+        },
+        closeDialogCustom() {
+            set(state=>({
+                ...state,
+                payment: {
+                    ...state.payment,
+                    isOpen: false
+                }
+            }))
+        },
+    },
+    navigation: {
+        isOpen: false,
+        openDialogCustom() {
+            set(state=>({
+                ...state,
+                navigation: {
+                    ...state.navigation,
+                    isOpen: true
+                }
+            }))
+        },
+        closeDialogCustom() {
+            set(state=>({
+                ...state,
+                navigation: {
+                    ...state.navigation,
+                    isOpen: false
+                }
+            }))
+        },
     }
 }))

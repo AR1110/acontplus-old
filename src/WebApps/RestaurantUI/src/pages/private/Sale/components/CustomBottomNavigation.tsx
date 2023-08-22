@@ -4,7 +4,7 @@ import RestoreIcon from "@mui/icons-material/Restore";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { Badge, Paper } from "@mui/material";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
-import { saleStore } from "@/stores/saleStore";
+import { useSaleStore } from "@/stores/saleStore";
 import { SyntheticEvent, useState } from "react";
 import ItemDialog from "./ItemDialog";
 
@@ -13,19 +13,19 @@ interface CBNProps {
 }
 
 export default function CustomBottomNavigation({ isMobile }: CBNProps) {
-  const [value, setValue] = useState("recents");
-  const [open, setOpen] = useState(false);
-  const totalItems = saleStore((state) => state.totalItems);
+  const [value, setValue] = useState("recents"); 
+  const totalItems = useSaleStore((state) => state.totalItems);
+
+  const navigation = useSaleStore(state=>state.navigation);
+
   const handleChange = (event: SyntheticEvent, newValue: string) => {
     console.log(event);
     setValue(newValue);
     if (newValue === "ITEMS") {
-      setOpen(true);
+      navigation.openDialogCustom();
     }
-  };
-  const handleDialogClose = () => {
-    setOpen(false);
-  };
+  }; 
+
   if (!isMobile) return <></>;
 
   return (
@@ -53,8 +53,7 @@ export default function CustomBottomNavigation({ isMobile }: CBNProps) {
             </Badge>
           }
         />
-      </BottomNavigation>
-      <ItemDialog open={open} handleClose={handleDialogClose} />
+      </BottomNavigation> 
     </Paper>
   );
 }

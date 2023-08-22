@@ -8,12 +8,12 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { Avatar, Grid, IconButton, TextField, Typography } from '@mui/material';
 import { AddShoppingCartIcon, DeleteIcon } from '@/core/components';
-import { saleStore } from '@/stores/saleStore';
+import { useSaleStore } from '@/stores/saleStore';
 
 export default function ItemaTable() {
-    const items = saleStore(state => state.items);
-    const removeItemFromCart = saleStore(state => state.removeItemFromCart)
-    const setItemChangeQty = saleStore(state => state.setItemChangeQty)
+    const items = useSaleStore(state => state.items);
+    const removeItemFromCart = useSaleStore(state => state.removeItemFromCart)
+    const setItemChangeQty = useSaleStore(state => state.setItemChangeQty)
 
     if (items.length === 0) return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -40,10 +40,7 @@ export default function ItemaTable() {
     //     }
     // }
 
-    const onChangeQty = function(){
-
-    }
-
+  
 
     return (
         <TableContainer sx={{ maxHeight: 300 }} component={Paper}>

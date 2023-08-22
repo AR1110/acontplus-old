@@ -1,52 +1,62 @@
 
 import { ErrorBoundary } from "@/core/utilities";
-import { Grid, useMediaQuery } from "@mui/material";
-import CategoryTab from "./components/CategoryTab"; 
+import { Box, Grid,  useMediaQuery } from "@mui/material";
+import CategoryTab from "./components/CategoryTab";
 import { useAsync, useFetchAndLoad } from "@/hooks";
-import { ItemService, SaleService } from "@/core/services"; 
+import { ItemService, SaleService } from "@/core/services";
 import CollectionItem from "./components/CollectionItem";
 import SaleRight from "./components/SaleRight";
- 
+
 import { Establecimiento } from "@/core/models";
 import CustomBottomNavigation from "./components/CustomBottomNavigation";
-import { saleStore, useAuthStore } from "@/stores";
+import { useSaleStore, useAuthStore } from "@/stores";
 import { useEffect } from "react";
 import { itemReadAdapter } from "@/core/adapters";
+import FullScreenDialog from "@/core/components/FullScreenDialog";
+import Calculator from "@/core/components/Calculator/Calculator";
+import { CloseIcon, SwipeLeftIcon } from "@/core/components";
+import { Payment, PaymentAction } from "./components/Payment";
+
 
 
 export default function Sale() {
     const isMobile = useMediaQuery('(max-width:900px)');
 
-    const setDataForm = saleStore(state => state.setDataForm)
+    const setDataForm = useSaleStore(state => state.setDataForm)
     const setDataEstab = useAuthStore(state => state.setDataEstab);
     const estabs = useAuthStore(state => state.estabs);
-        
-    const { itemSearch, setCollectionItems } = saleStore(state => ({
+
+    const { itemSearch, setCollectionItems } = useSaleStore(state => ({
         itemSearch: state.itemSearch,
         setCollectionItems: state.setCollectionItems
     }));
 
-    useEffect(()=>{  
-        let dataEstab = estabs[0] as Establecimiento
+    //Event Payment 
+    const payment = useSaleStore(state => state.payment)
+    //Even Navigation 
+    const navigation = useSaleStore(state => state.navigation)
+
+    useEffect(() => {
+        const dataEstab = estabs[0] as Establecimiento
         setDataEstab(dataEstab)
         SaleService.getDataForForm(JSON.stringify({
             codEstab: dataEstab.codEstab
-        })).then(response=>{
+        })).then(response => {
             setDataForm(response)
-        })                   
+        })
     }, [])
 
-  
+
     //Fetch 
     const { loading, callEndpoint } = useFetchAndLoad();
     const getItemsApi = async () => await callEndpoint(ItemService.getAll(itemSearch));
- 
+
     const itemAdapter = (response: any) => {
         setCollectionItems([])
         const items = itemReadAdapter(response.items || []);
-        
-        setCollectionItems(items) 
-    } 
+
+        setCollectionItems(items)
+    }
 
     //se ejecuta cada vez que cambian la categoria
     useAsync(getItemsApi, itemAdapter, () => {
@@ -58,7 +68,7 @@ export default function Sale() {
 
             <Grid container spacing={2}>
                 <Grid item xs={12} md={7}>
-                    <Grid item xs={12} md={12}>  
+                    <Grid item xs={12} md={12}>
                         <CategoryTab />
                     </Grid>
 
@@ -73,7 +83,36 @@ export default function Sale() {
 
                 </Grid>
             </Grid>
+
+            {/* start dialog payment */}
+            <FullScreenDialog
+                icon={<CloseIcon />}
+                dialogTitle="Pago"
+                isOpen={payment.isOpen}
+                handleClose={payment.closeDialogCustom}
+                actions={<PaymentAction/>}
+            >
+                <Box sx={{ flexGrow: 1 }}>
+                    <Grid container spacing={2} columns={16}>
+                        <Grid item xs={16} sm={16} md={6} lg={6}>
+                            <Calculator />
+                        </Grid>
+                        <Grid item xs={16} sm={16} md={10} lg={10}>
+                            <Payment/>
+                        </Grid>
+                    </Grid>
+                </Box>
+            </FullScreenDialog>
+            {/* end dialog payment */}
+
+            {/* start Items carito movil */}
+            <FullScreenDialog icon={<SwipeLeftIcon />} dialogTitle="Carito" isOpen={navigation.isOpen} handleClose={navigation.closeDialogCustom}>
+                <SaleRight />
+            </FullScreenDialog>
+            {/* end Items carito movil */}
+
             <CustomBottomNavigation isMobile={isMobile} />
+
         </ErrorBoundary>
     );
 }
