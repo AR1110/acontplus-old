@@ -4,7 +4,7 @@ const CalculatorButton = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     ...theme.typography.h4,
     cursor: "pointer",
-    padding: theme.spacing(4),
+    padding: theme.spacing(3),
     textAlign: 'center',
     color: theme.palette.text.secondary,
     transition: 'background-color 0.3s ease-in-out',

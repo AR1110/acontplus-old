@@ -89,19 +89,9 @@ export default function Sale() {
                 icon={<CloseIcon />}
                 dialogTitle="Pago"
                 isOpen={payment.isOpen}
-                handleClose={payment.closeDialogCustom}
-                actions={<PaymentAction/>}
+                handleClose={payment.closeDialogCustom} 
             >
-                <Box sx={{ flexGrow: 1 }}>
-                    <Grid container spacing={2} columns={16}>
-                        <Grid item xs={16} sm={16} md={6} lg={6}>
-                            <Calculator />
-                        </Grid>
-                        <Grid item xs={16} sm={16} md={10} lg={10}>
-                            <Payment/>
-                        </Grid>
-                    </Grid>
-                </Box>
+               <Payment/>
             </FullScreenDialog>
             {/* end dialog payment */}
 
