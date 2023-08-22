@@ -23,7 +23,9 @@ BEGIN
     ,@tableId INT
     ,@secuence INT
     ,@serie VARCHAR(18)
+    ,@fechaEmision DATETIME2
     ,@customerCompanyId INT
+    ,@subtotalSinImpuestos NUMERIC(18,5)
     ,@tax NUMERIC(18,5)
     ,@discount NUMERIC(18,5)
     ,@tip NUMERIC(18,5)
@@ -31,6 +33,7 @@ BEGIN
     ,@obs VARCHAR(500)
     ,@codDoc VARCHAR(2)
     ,@userId INT
+    ,@estadoPagoId INT
 
     
     SELECT       @itemsJson = items
@@ -39,6 +42,7 @@ BEGIN
         ,@puntoEmisionId    = puntoEmisionId 
         ,@tableId           = tableId
         ,@customerCompanyId = customerCompanyId
+        ,@subtotalSinImpuestos = subtotalSinImpuestos
         ,@tax               = tax
         ,@discount          = discount
         ,@tip               = tip
@@ -53,6 +57,7 @@ BEGIN
             puntoEmisionId INT '$.puntoEmisionId',
             tableId INT '$.tableId',
             customerCompanyId INT '$.customerCompanyId',
+            subtotalSinImpuestos NUMERIC(18,5) '$.subtotalSinImpuestos',
             tax NUMERIC(18,5) '$.tax',
             discount NUMERIC(18,5) '$.discount',
             tip NUMERIC(18,5) '$.tip',
@@ -105,20 +110,38 @@ BEGIN
         END
 
 
-    --IF (ISJSON(@paymentsJson) = 1)
-    --    BEGIN
-    --        DECLARE @tblPayments AS TABLE(
-    --            total NUMERIC(18,5) NOT NULL,
+    IF (ISJSON(@paymentsJson) = 1)
+        BEGIN
+            DECLARE @tblPayments AS TABLE(
+                formaPagoId INT NOT NULL,
+                abono NUMERIC(18,5) NOT NULL,
+                total NUMERIC(18,5) NOT NULL
+            )
 
-    --        )
-    --    END
-    --ELSE
-    --    BEGIN
-    --        SELECT dbo.ufn_spresponse('0', 'Los pagos no son validos', NULL)
-    --        RETURN
-    --    END
+            INSERT INTO @tblPayments(formaPagoId, abono, total)
+            SELECT formaPagoId, abono, total FROM OPENJSON(@paymentsJson) WITH (
+                                                                                formaPagoId INT '$.formaPagoId',
+                                                                                abono NUMERIC(18,5) '$.abono',
+                                                                                total NUMERIC(18,5) '$.total'
+                                                                                )
+            IF EXISTS(SELECT 1 FROM @tblPayments WHERE abono = total)
+                BEGIN
+                    SELECT TOP 1 @estadoPagoId = idEstadoPago FROM dbo.EstadoPago WITH(NOLOCK) WHERE codigo = 'CBR'
+                END
+            ELSE
+                BEGIN
+                    SELECT TOP 1 @estadoPagoId = idEstadoPago FROM dbo.EstadoPago WITH(NOLOCK) WHERE codigo = 'PE'
+                END
+        END
+    ELSE
+        BEGIN
+            SELECT dbo.ufn_spresponse('0', 'Los pagos no son validos', NULL)
+            RETURN
+        END
 
-    DECLARE @estab VARCHAR(3), @ptoEmi VARCHAR(3)
+    DECLARE @companyId INT 
+    ,@estab VARCHAR(3)
+    ,@ptoEmi VARCHAR(3)
 
     SELECT @secuence = cd.secuencial, @estab = pa.estab, @ptoEmi = pa.ptoEmi
 			FROM v_ConfigDocumento cd
@@ -126,8 +149,9 @@ BEGIN
 			WHERE pa.idUsuarioRol = @userRoleId
 			AND cd.codDoc = 'OR'
 
-    SET @serie = (SELECT @estab + '-' + @ptoEmi +'-'+ RIGHT('000000000' + CONVERT(VARCHAR, @secuence), 9))
-    SET @userId = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId)
+    SET @serie = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @secuence, DEFAULT)) --(SELECT @estab + '-' + @ptoEmi +'-'+ RIGHT('000000000' + CONVERT(VARCHAR, @secuence), 9))
+   
+    SELECT @companyId = idEntidad , @userId =  idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId
 
     DECLARE @id INT = 0
 	BEGIN TRY
@@ -153,17 +177,19 @@ BEGIN
                     DECLARE @documentoId INT
                     ,@nroDocumento INT
 
-
                     IF (@codDoc = 'NE')
                         BEGIN
-                            SET @nroDocumento = (SELECT  cd.secuencial 
+                            SET @nroDocumento = (SELECT cd.secuencial
 			                                        FROM v_ConfigDocumento cd
 				                                        INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab AND cd.idPuntoEmision = @puntoEmisionId
 			                                        WHERE pa.idUsuarioRol = @userRoleId
-			                                        AND cd.codDoc = 'OR')
-                            --INSERT INTO NotaEntrega (idCliente, idPuntoEmision, idTiempoCredito, nroDocumento, subTotalSinImpuestos, propina, iva, total, observacion, fechaRegistro, idUsuario, idEntidad, fechaEmision, idTipoDocumento, fechaVencimiento, idEstadoPago, tarifa)
-                            --VALUES(@customerCompanyId, @puntoEmisionId, )
+			                                        AND cd.codDoc = 'NE')
+                            INSERT INTO NotaEntrega (idCliente, idPuntoEmision, idTiempoCredito, nroDocumento, subTotalSinImpuestos, propina, iva, total, observacion, fechaRegistro, idUsuario, idEntidad, fechaEmision, fechaVencimiento, idEstadoPago)
+                            VALUES(@customerCompanyId, @puntoEmisionId, 1, @nroDocumento, @subtotalSinImpuestos, @tip, @tax, @total, @obs, dbo.ufnGetDateEcuador(), @userId, @companyId,  @fechaEmision, @fechaEmision, @estadoPagoId)
                             SET @documentoId = (SELECT SCOPE_IDENTITY())
+
+                            
+
                         END
                 END
 		COMMIT TRAN
