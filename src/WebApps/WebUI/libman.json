@@ -3,7 +3,7 @@
   "defaultProvider": "cdnjs",
   "libraries": [
     {
-      "library": "jquery@3.6.4",
+      "library": "jquery@3.6.4" ,
       "destination": "wwwroot/lib/jquery/"
     },
     {
@@ -23,7 +23,7 @@
       "destination": "wwwroot/lib/popper/"
     },
     {
-      "library": "angular-ui-grid@4.12.2",
+      "library": "angular-ui-grid@4.12.4",
       "destination": "wwwroot/lib/angular-ui-grid/"
     },
     {
@@ -39,7 +39,7 @@
       "destination": "wwwroot/lib/jquery-sparklines/"
     },
     {
-      "library": "font-awesome@6.4.0",
+      "library": "font-awesome@6.4.2",
       "destination": "wwwroot/assets/icons/font-awesome/"
     },
     {
@@ -51,7 +51,7 @@
       "destination": "wwwroot/lib/danialfarid-angular-file-upload/"
     },
     {
-      "library": "limonte-sweetalert2@11.7.17",
+      "library": "limonte-sweetalert2@11.7.27",
       "destination": "wwwroot/lib/limonte-sweetalert2/"
     },
     {
@@ -87,7 +87,7 @@
       "destination": "wwwroot/lib/angular-file-saver/"
     },
     {
-      "library": "Chart.js@3.9.1",
+      "library": "Chart.js@4.3.3",
       "destination": "wwwroot/lib/Chart.js/"
     },
     {
@@ -111,7 +111,7 @@
       "destination": "wwwroot/lib/ngMask/"
     },
     {
-      "library": "MaterialDesign-Webfont@7.0.96",
+      "library": "MaterialDesign-Webfont@7.2.96",
       "destination": "wwwroot/assets/icons/MaterialDesign-Webfont/"
     },
     {
@@ -131,7 +131,7 @@
       "destination": "wwwroot/lib/angular-filter/"
     },
     {
-      "library": "microsoft-signalr@7.0.9",
+      "library": "microsoft-signalr@7.0.10",
       "destination": "wwwroot/lib/microsoft-signalr/"
     },
     {
@@ -147,7 +147,7 @@
       "destination": "wwwroot/lib/angular-media-queries/"
     },
     {
-      "library": "tabulator@5.5.0",
+      "library": "tabulator@5.5.1",
       "destination": "wwwroot/lib/tabulator/"
     },
     {

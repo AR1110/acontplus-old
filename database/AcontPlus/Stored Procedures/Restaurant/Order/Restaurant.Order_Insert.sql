@@ -1,3 +1,6 @@
+USE Acontplus
+GO
+
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -23,7 +26,9 @@ BEGIN
     ,@customerCompanyId INT
     ,@tax NUMERIC(18,5)
     ,@discount NUMERIC(18,5)
+    ,@tip NUMERIC(18,5)
     ,@total NUMERIC(18,5)
+    ,@obs VARCHAR(500)
     ,@codDoc VARCHAR(2)
     ,@userId INT
 
@@ -36,7 +41,9 @@ BEGIN
         ,@customerCompanyId = customerCompanyId
         ,@tax               = tax
         ,@discount          = discount
+        ,@tip               = tip
         ,@total             = total
+        ,@obs               = obs
         ,@codDoc            = codDoc
     FROM OPENJSON(@json)
         WITH(
@@ -48,7 +55,9 @@ BEGIN
             customerCompanyId INT '$.customerCompanyId',
             tax NUMERIC(18,5) '$.tax',
             discount NUMERIC(18,5) '$.discount',
+            tip NUMERIC(18,5) '$.tip',
             total NUMERIC(18,5) '$.total',
+            obs VARCHAR(500) '$.obs',
             codDoc VARCHAR(2) '$.codDoc'
         )
 
@@ -64,7 +73,8 @@ BEGIN
                 cost NUMERIC(18,5) NOT NULL,
                 price NUMERIC(18,5) NOT NULL,
                 discount NUMERIC(18,5),
-                total NUMERIC(18,5) NOT NULL            
+                total NUMERIC(18,5) NOT NULL,
+                obs VARCHAR(500)
             )
 
             INSERT INTO @tblItems(itemId, taxId, taxPercentId, taxValue, quantity, cost, price, discount, total)
@@ -138,6 +148,22 @@ BEGIN
                         BEGIN
                             INSERT INTO Restaurant.[OrderKitchen] (OrderId, [Enabled], Completed, UserId)
                             VALUES(@id, 1, 0, @userId)
+                        END
+
+                    DECLARE @documentoId INT
+                    ,@nroDocumento INT
+
+
+                    IF (@codDoc = 'NE')
+                        BEGIN
+                            SET @nroDocumento = (SELECT  cd.secuencial 
+			                                        FROM v_ConfigDocumento cd
+				                                        INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab AND cd.idPuntoEmision = @puntoEmisionId
+			                                        WHERE pa.idUsuarioRol = @userRoleId
+			                                        AND cd.codDoc = 'OR')
+                            --INSERT INTO NotaEntrega (idCliente, idPuntoEmision, idTiempoCredito, nroDocumento, subTotalSinImpuestos, propina, iva, total, observacion, fechaRegistro, idUsuario, idEntidad, fechaEmision, idTipoDocumento, fechaVencimiento, idEstadoPago, tarifa)
+                            --VALUES(@customerCompanyId, @puntoEmisionId, )
+                            SET @documentoId = (SELECT SCOPE_IDENTITY())
                         END
                 END
 		COMMIT TRAN
