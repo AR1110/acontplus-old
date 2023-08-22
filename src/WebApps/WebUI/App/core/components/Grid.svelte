@@ -9,6 +9,7 @@
     onMount(() => {
         debugger;
         let table = new Tabulator(tableComponent, {
+            layout: "fitColumns", //fit columns to width of table (optional)
             data: dataArray, //link data to table
             reactiveData: true, //enable data reactivity
             columns: columns, //define table columns

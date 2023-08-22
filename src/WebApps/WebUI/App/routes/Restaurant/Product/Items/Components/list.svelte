@@ -1,13 +1,19 @@
 <script lang="ts">
+	import { hideLoader, showLoader } from './../../../../../core/utils/loading-spinner.js';
   import type { Ingredient } from "$core/interfaces/restaurant/ingredient";
   import type { Item } from "$core/interfaces/restaurant/item";
+  import { RecipeService } from "$core/services/restaurant/recipe-service";
   import Add from "./add.svelte";
+  import type { Recipe } from '$core/interfaces/restaurant/recipe.js';
+
   export let items = [] as Item[];
   export let ingredientes = [] as Ingredient[];
+  export let reloadList;
 
   // Local variables
   let edit = {} as Item;
   let isNew = false;
+  let listRecipe = [] as Recipe[];
 
   const editItem = (item) => {
     if (editItem) {
@@ -16,8 +22,20 @@
     }
   };
 
+  const getRecipeById = (item: Item) => {
+    showLoader();
+    RecipeService.getByItem(item.id).then((response) => {
+      hideLoader();
+      if (response) {
+        listRecipe = response["recipe"];
+      }
+      editItem(item);
+    });
+  };
+
   const closeModal = () => {
     isNew = false;
+    reloadList();
   };
 </script>
 
@@ -41,7 +59,7 @@
               <a
                 href="javascript:void(0)"
                 class="btn btn-sm btn-success"
-                on:click={() => editItem(item)}
+                on:click={() => getRecipeById(item)}
               >
                 <i class="fas fa-edit" />
               </a>
@@ -67,4 +85,12 @@
 {:else}
   <div class="alert alert-info" role="alert">No hay items registrados</div>
 {/if}
-<Add openNew={isNew} modalClosed={() => closeModal()} data={edit} ingredientes={ingredientes} />
+
+
+<Add
+  openNew={isNew}
+  modalClosed={() => closeModal()}
+  data={edit}
+  ingredientes={ingredientes}
+  recipe={listRecipe}
+/>

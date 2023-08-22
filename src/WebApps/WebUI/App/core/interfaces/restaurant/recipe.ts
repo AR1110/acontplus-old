@@ -9,7 +9,7 @@ export interface Recipe {
   deleted: boolean;
   userId: number;
   ingredientId: number;
-  descriptionIngredient: string;
+  summary: string;
   instructions: string;
   quantity: number;
   itemId: number;
