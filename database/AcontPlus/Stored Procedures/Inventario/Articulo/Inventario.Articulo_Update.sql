@@ -44,7 +44,11 @@ BEGIN
 	DECLARE @codigoAuxiliar VARCHAR(50)
 
 	DECLARE @payload NVARCHAR(MAX)
-	DECLARE @inventory VARCHAR(5) 
+	DECLARE @inventory VARCHAR(5)
+    
+    --- Agregado por Ignacio ----
+    DECLARE @siglaFamilia VARCHAR(5)
+	DECLARE @siglaSubFamilia VARCHAR(5)
 
 
 	SELECT @jsonArticulo = jsonArticulo
@@ -371,6 +375,36 @@ BEGIN
 				SELECT @ultimoSecuencial = COUNT(*)+1 FROM dbo.Articulo WITH (NOLOCK) WHERE idSubFamilia = @idSubFamilia
 
 			    UPDATE dbo.SubFamilia SET ultimoSecuencial = @ultimoSecuencial WHERE idSubFamilia = @idSubFamilia
+
+                ----- GET CODE SubFamilia and Familia - by Ignacio -----
+                SELECT @siglaFamilia	= f.siglas
+					, @siglaSubFamilia	= sf.siglas
+			    FROM SubFamilia sf
+			    INNER JOIN Familia f ON f.idFamilia = sf.idFamilia
+			    WHERE sf.idEntidad = @idEntidad 
+                AND sf.idSubFamilia = @idSubFamilia
+
+                IF(@siglaFamilia = 'RES' AND @siglaSubFamilia != 'ING')
+                    BEGIN
+                        IF NOT EXISTS(SELECT TOP 1 1 FROM Restaurant.Item WHERE ProductId = @id)
+                        BEGIN 
+                            INSERT INTO Restaurant.Item
+					        (ProductId, ProductionAreaId, Summary, Cooking, Recipe, Instructions, Content, CreatedAt, UpdatedAt
+					        ,Enabled, Deleted, UserId)
+					        VALUES(@id, NULL, NULL, 1, NULL, NULL, NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario)
+                        END
+                    END
+
+                IF(@siglaFamilia = 'RES' AND @siglaSubFamilia = 'ING')
+                    BEGIN 
+                        IF NOT EXISTS(SELECT TOP 1 1 FROM Restaurant.Ingredient WHERE ProductId = @id)
+                        BEGIN 
+                            INSERT INTO Restaurant.Ingredient
+					        (ProductId, Summary, Quantity, Unit, Content, CreatedAt, UpdatedAt, Enabled, Deleted, UserId, IngredientTypeId)
+					        VALUES(@id, (SELECT  descripcion FROM @tbArticle), NULL, NULL, NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario, NULL)
+                        END
+                    END
+
 
 				 SET @payload = (SELECT 
 								idArticulo

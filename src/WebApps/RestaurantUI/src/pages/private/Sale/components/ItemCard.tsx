@@ -53,13 +53,10 @@ export default function ItemCard({ item }: ItemCardProps) {
         dataForm: state.dataForm,
     }))
     const dataEstab = useAuthStore(state => state.dataEstab)
-    // const [warehouses, setWarehouses] = useState<Array<WarehouseAsign>>([])
-
-
-
+    // const [warehouses, setWarehouses] = useState<Array<WarehouseAsign>>([]) 
     const handleSelectItem = (item: ItemReadDto) => {
       
-        let warehouses: Array<WarehouseAsign> = dataForm.warehouses.filter(warehouse => warehouse.codEstab_Asig === dataEstab.codEstab_Asig);
+        const warehouses: Array<WarehouseAsign> = dataForm.warehouses.filter(warehouse => warehouse.codEstab_Asig === dataEstab.codEstab_Asig);
 
         let dataWarehouse = {} as WarehouseAsign
         if (warehouses.length > 0) {
@@ -88,7 +85,7 @@ export default function ItemCard({ item }: ItemCardProps) {
                     return
                 }
 
-                let { isConfirmed } = await Swal.fire({
+                const { isConfirmed } = await Swal.fire({
                     title: `<small>${titleSms}</small>`,
                     icon: 'warning',
                     html: `<small>${message}</small>`,
@@ -106,7 +103,7 @@ export default function ItemCard({ item }: ItemCardProps) {
             console.log(product)
             console.log(measures)
             console.log(dataForm)
-            let taxRateData = dataForm.taxRates.find(item=>item.taxRateCode===product.taxRateCode);
+            const taxRateData = dataForm.taxRates.find(item=>item.taxRateCode===product.taxRateCode);
             
             function addItem() {
                 addItemToCart({
@@ -120,10 +117,10 @@ export default function ItemCard({ item }: ItemCardProps) {
                     description: product.description,
                     quantity: 1,
                     cost: 0,
-                    price: measureData.rates[0]?.salePrice!,
+                    price: measureData.rates[0]?.salePrice ?? 0,
                     discount: 0,
                     discountTotal: 0,
-                    total: measureData.rates[0]?.salePrice!,
+                    total: measureData.rates[0]?.salePrice ?? 0,
                     s3ObjectUrl: product.s3ObjectUrl ? product.s3ObjectUrl : brand_img,
                     takesInventory: product.takesInventory
                 })
