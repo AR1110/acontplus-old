@@ -11,7 +11,7 @@ export interface Summary {
     discount: number
     total: number // With discount on items
     netTotal: number // Net - (tax + discount on total)
-
+    tip: number //Propina
 }
 
 export interface ItemBase {
@@ -96,4 +96,16 @@ export const dataFormInitialState: DataFormSale = {
     taxRates: [],
     warehouses: [],
     emissionPoints: []
+}
+export const summaryInitialState: Summary = {
+    establecimientoId: 0,
+    puntoEmisionId : 0,
+    customerCompanyId : 0,
+    tableId: 0,
+    tax: 0,
+    taxAmount: 0,
+    discount: 0,
+    total: 0, // With discount on items
+    netTotal: 0, // Net - (tax + discount on total)
+    tip: 0 //Propina
 }

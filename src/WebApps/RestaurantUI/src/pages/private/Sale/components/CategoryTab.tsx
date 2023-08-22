@@ -4,13 +4,13 @@ import Tab from '@mui/material/Tab';
 import { CategoryIcon } from '@/core/components';
 import { useState } from 'react';
 import { Avatar, Paper } from '@mui/material';
-import { saleStore } from '@/stores/saleStore';
+import { useSaleStore } from '@/stores/saleStore';
 import { itemSearchInitialState } from '@/core/models';
 import { ErrorBoundary } from '@/core/utilities';
 
 export default function ScrollableTabsButtonVisible() {
-  const setItemSearch = saleStore(state => state.setItemSearch);
-  const categories = saleStore(state => state.dataForm.categories)
+  const setItemSearch = useSaleStore(state => state.setItemSearch);
+  const categories = useSaleStore(state => state.dataForm.categories)
   const [value, setValue] = useState(0);
 
   const handleChange = (_: React.SyntheticEvent, index: number) => {
@@ -20,7 +20,7 @@ export default function ScrollableTabsButtonVisible() {
       setItemSearch({
         ...itemSearchInitialState,
         checkSubFamilia: true,
-        idSubFamilia: categories[index - 1]?.idSubFamilia!
+        idSubFamilia: categories[index - 1]?.idSubFamilia ?? 0
       })
     }
     setValue(index);

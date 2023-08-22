@@ -5,7 +5,7 @@ import { Autocomplete, Box, Grid, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 import { CustomerReadDto } from '@/core/models';
 import {CustomerService as customerSvc}  from '@/core/services';
-import { saleStore } from '@/stores';
+import { useSaleStore } from '@/stores';
  
 
 export default function CustomerSearch() { 
@@ -13,8 +13,8 @@ export default function CustomerSearch() {
   const [inputValue, setInputValue] = useState('');
   const [customers, setCustomers] = useState<Array<CustomerReadDto>>([]);
   const [loading, setLoading] = useState(false);
-  const setSummary = saleStore(state=>state.setSummary)
-  const summary = saleStore(state=>state.summary)
+  const setSummary = useSaleStore(state=>state.setSummary)
+  const summary = useSaleStore(state=>state.summary)
   
   const customerSearch =  (textSearch: string) => { 
     if(textSearch.length < 2) return

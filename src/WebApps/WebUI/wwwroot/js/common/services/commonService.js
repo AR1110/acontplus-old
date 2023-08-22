@@ -17,6 +17,7 @@ export class CommonService {
         "ventaService"
     ];
 
+
     constructor(
         $rootScope,
         $http,
@@ -50,7 +51,7 @@ export class CommonService {
         this.articuloSvc = articuloSvc;
         this.empleadoSvc = empleadoSvc;
         this.ventaSvc = ventaSvc;
-
+ 
         // this.$http.get('/TipoDocumento/GetAll').then(({data:response})=>{
         //     this.tipoDoc = response.data.reduce((groups, item)=>{
         //         let val = item.codigo

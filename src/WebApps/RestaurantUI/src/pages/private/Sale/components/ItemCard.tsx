@@ -7,11 +7,10 @@ import { Badge, CardActionArea, Grid, Tooltip } from '@mui/material';
 import brand_img from '/assets/images/brand_logo.png';
 
 import { ItemReadDto, Measure, WarehouseAsign } from '@/core/models';
-import { saleStore } from '@/stores/saleStore';
+import { useSaleStore } from '@/stores/saleStore';
 import { ProductService } from '@/core/services';
 import { useAuthStore } from '@/stores';
-import { SnackbarUtility } from '@/core/utilities';
-import { useState } from 'react';
+import { SnackbarUtility } from '@/core/utilities'; 
 import Swal from 'sweetalert2';
 
 type ItemCardProps = {
@@ -44,11 +43,11 @@ type ItemCardProps = {
 // }
 
 export default function ItemCard({ item }: ItemCardProps) {
-    const { addItemToCart, getItemQty } = saleStore(state => ({ 
+    const { addItemToCart, getItemQty } = useSaleStore(state => ({ 
         addItemToCart: state.addItemToCart, 
         getItemQty: state.getItemQty 
     }))
-    const { items, dataForm } = saleStore(state => ({
+    const { items, dataForm } = useSaleStore(state => ({
         items: state.items,
         dataForm: state.dataForm,
     }))

@@ -74,6 +74,7 @@
                         importeTotal: decimal.importeTotal || 3,
                     }
 
+
                     let tipoIvasMapper = tipoIvas.map(item=>({
                             idTipoIva: item.idTipoIva,
                             descripcion: item.descripcion,
@@ -183,8 +184,7 @@
                                 telefono: item.telefono,
                                 correo: item.correo,
                                 estado: item.estado,
-                                consumidorFinal: item.consumidorFinal,
-                                totalRecords: item.totalRecords,
+                                consumidorFinal: item.consumidorFinal, 
                                 validationSri: item.validationSri,
                                 tipoIdentificacion: item.tipoIdentificacion,
                                 esConsumidorFinal: item.tipoIdentificacion=='CF',
@@ -456,19 +456,12 @@
             let textChip = item || "";
             textChip = fS.removeAccents(textChip);
             item = textChip.toLowerCase();
-        }
-
-
-        
-
-
-
+        } 
         return service;
         
     })
-
-    //====================================NO SUBIR HASTA QUE SE HAYA ACTUALIZADO 
-    //==========================================
+  
+     //NO SUBIR HASTA QUE SE HAYA ACTUALIZADO  
     app.factory('empleadoService', function($injector){
         // let url = 'Venta/Empleado/';
         let url = 'Empleado/';
@@ -586,5 +579,5 @@
 
     }) 
 
-
+ 
 })(window.angular)
