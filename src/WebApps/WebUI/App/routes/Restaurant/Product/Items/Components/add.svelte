@@ -54,7 +54,7 @@
   };
 
   const onPushRecipe = (data: Ingredient, itemId: number) => {
-    recipe.push({
+    let newObject = {
       id: 0,
       unit: 0,
       weight: 0,
@@ -69,20 +69,27 @@
       instructions: "",
       quantity: 0,
       itemId: itemId,
-    });
-    recipe = [...recipe];
+    };
+    recipe.push(newObject);
   };
 
   const changeProductionArea = (e) => {
     let id = parseInt(e.target.value);
-    let filter = ingredientes.filter((x) => x.id == id);
+    let filter = ingredientes.find((x) => x.id == id);
 
-    let index = filter[0];
-    onPushRecipe(index, data.id);
+    // Verify exists ingredient in array
+    let exists = recipe.find((x) => x.ingredientId == filter.id);
+    if (exists) {
+      toast({ type: "warning", message: "El ingrediente ya existe" });
+      return;
+    }
+
+    onPushRecipe(filter, data.id);
   };
 
   const onModalClose = () => {
     openNew = false;
+    recipe = [];
     modalClosed();
   };
 
