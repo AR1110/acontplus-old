@@ -1,6 +1,7 @@
 export * from './api-response';
 export * from './axios-call.model';
 export * from './category.models';
+export * from './checkout.model';
 export * from './customer.model';
 export * from './decimal.model';
 export * from './emission-point.model';

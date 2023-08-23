@@ -11,7 +11,7 @@ import { useSaleStore } from '@/stores/saleStore'
 import Swal from 'sweetalert2'
 import { SnackbarUtility } from '@/core/utilities'
 import { summaryToApi } from '@/core/adapters'
-import { useAuthStore } from '@/stores'
+import { useAuthStore, useCheckoutStore } from '@/stores'
 import { OrdenService } from '@/core/services'
 
 const listItemCustom = {
@@ -31,6 +31,9 @@ export default function SaleRight() {
     const {dataEstab} = useAuthStore(state => ({
         dataEstab: state.dataEstab
     }));
+
+    //store checkout 
+    const setVoucher = useCheckoutStore(state=>state.setVoucher)
 
     const resetForm = useSaleStore(state => state.resetForm);
     const payment = useSaleStore(state=>state.payment);
@@ -54,6 +57,7 @@ export default function SaleRight() {
     }
 
     const askToSave = async function(){
+        setVoucher(summary.total, summary.total.toString(), 0);
         payment.openDialogCustom();
         // if(!(summary.customerCompanyId > 0)){
         //     SnackbarUtility.warning('Seleccione el cliente');

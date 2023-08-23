@@ -1,6 +1,6 @@
 
 import { ErrorBoundary } from "@/core/utilities";
-import { Box, Grid,  useMediaQuery } from "@mui/material";
+import { Grid,  useMediaQuery } from "@mui/material";
 import CategoryTab from "./components/CategoryTab";
 import { useAsync, useFetchAndLoad } from "@/hooks";
 import { ItemService, SaleService } from "@/core/services";
@@ -12,10 +12,9 @@ import CustomBottomNavigation from "./components/CustomBottomNavigation";
 import { useSaleStore, useAuthStore } from "@/stores";
 import { useEffect } from "react";
 import { itemReadAdapter } from "@/core/adapters";
-import FullScreenDialog from "@/core/components/FullScreenDialog";
-import Calculator from "@/core/components/Calculator/Calculator";
-import { CloseIcon, SwipeLeftIcon } from "@/core/components";
-import { Payment, PaymentAction } from "./components/Payment";
+import FullScreenDialog from "@/core/components/FullScreenDialog"; 
+import { CloseIcon, SwipeLeftIcon } from "@/core/components"; 
+import Checkout from "./components/Payment/Checkout";
 
 
 
@@ -87,21 +86,11 @@ export default function Sale() {
             {/* start dialog payment */}
             <FullScreenDialog
                 icon={<CloseIcon />}
-                dialogTitle="Pago"
+                dialogTitle="Cobro"
                 isOpen={payment.isOpen}
-                handleClose={payment.closeDialogCustom}
-                actions={<PaymentAction/>}
+                handleClose={payment.closeDialogCustom} 
             >
-                <Box sx={{ flexGrow: 1 }}>
-                    <Grid container spacing={2} columns={16}>
-                        <Grid item xs={16} sm={16} md={6} lg={6}>
-                            <Calculator />
-                        </Grid>
-                        <Grid item xs={16} sm={16} md={10} lg={10}>
-                            <Payment/>
-                        </Grid>
-                    </Grid>
-                </Box>
+               <Checkout/>
             </FullScreenDialog>
             {/* end dialog payment */}
 

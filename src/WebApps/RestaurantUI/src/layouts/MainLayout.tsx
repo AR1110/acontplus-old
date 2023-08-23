@@ -12,7 +12,6 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
-import CssBaseline from '@mui/material/CssBaseline';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Establecimiento, PrivateRoutes, PublicRoutes } from '@/core/models';
 import { useAuthStore } from '@/stores/authStore';
@@ -55,9 +54,8 @@ function MainLayout() {
 
 
 
-    return (
-        <Box sx={{ display: 'flex' }}>
-            <CssBaseline />
+    return (  
+        <Box sx={{ display: 'flex' }}> 
             <AppBar position="fixed">
                 <Container maxWidth="xl">
                     <Toolbar disableGutters>
@@ -199,9 +197,8 @@ function MainLayout() {
 
                 <Outlet />
 
-            </Box>
-
-        </Box>
+            </Box> 
+        </Box> 
     );
 }
 export default MainLayout;
