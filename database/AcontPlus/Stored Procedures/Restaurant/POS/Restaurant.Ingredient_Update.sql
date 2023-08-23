@@ -1,8 +1,9 @@
 USE ACONTPLUS
 GO
---Author: Ivan Paz - Modified: Ignacio Manchu.
---Date: 2023-08-04
---Description: SP FOR UPDATE INGREDIENTS
+-- Author: Ivan Paz - Modified: Ignacio Manchu.
+-- Date: 2023-08-04
+-- Description: SP FOR UPDATE INGREDIENTS
+-- Restaurant.Ingredient_Update 139, 1, '{"productJson": {"productId": 5},"ingredientJson": {"id": 1,"summary": "PESCADO","quantity": 0,"unit": 0,"content": "HOLA MUBDO DESDE ECUADOR","productDescription": "PESCADO","s3ObjectUrl": "https://acontplus.s3.us-east-2.amazonaws.com/0703885640001/articulos/0d8eb508-f8f0-42cd-baa0-e33bf7029e8c.jpg","ingredientTypeId": 2,"productId": 5}}'
 CREATE OR ALTER PROCEDURE Restaurant.Ingredient_Update
     @userRoleId INT,
     @id INT,
@@ -11,15 +12,29 @@ AS
 BEGIN
     SET NOCOUNT ON;
     DECLARE @productJson NVARCHAR(MAX)
-    ,@ingredientJson NVARCHAR(MAX)
-    ,@userId INT
+            ,@ingredientJson NVARCHAR(MAX)
+            ,@userId INT
+            ,@productId INT
+
+    CREATE TABLE #TableIngredient(
+        id INT
+        ,summary VARCHAR(500)
+        ,ingredientTypeId INT
+        ,quantity INT
+        ,unit INT
+        ,content VARCHAR(MAX)
+        ,enabled BIT
+    )
+
 
     SELECT @productJson = productJson
     , @ingredientJson = ingredientJson
-    FROM OPENJSON(@json) WITH(productJson NVARCHAR(MAX) '$.productJson' AS JSON, ingredientJson NVARCHAR(MAX) '$.ingredientJson' AS JSON)
-
-    DECLARE @productId INT
-
+    FROM OPENJSON(@json) 
+    WITH(
+        productJson NVARCHAR(MAX)       '$.productJson' AS JSON
+        , ingredientJson NVARCHAR(MAX)  '$.ingredientJson' AS JSON
+    )
+          
     SELECT @productId = productId
     FROM OPENJSON(@productJson) WITH(productId INT '$.productId')
 
@@ -30,49 +45,39 @@ BEGIN
             RETURN
         END
 
-    DECLARE @summary VARCHAR(500)
-    ,@ingredientTypeId INT
-    ,@quantity INT
-    ,@unit INT
-    ,@content VARCHAR(MAX)
-    ,@enabled BIT
-
-    SELECT @summary = summary
-    , @ingredientTypeId = ingredientTypeId
-    , @quantity = quantity
-    , @unit = unit
-    , @content = content
-    , @enabled = [enabled]
-    FROM OPENJSON(@ingredientJson)
+    INSERT INTO #TableIngredient
+    SELECT * FROM OPENJSON(@ingredientJson)
     WITH(
-        summary VARCHAR(500) '$.summary',
-        ingredientTypeId INT '$.ingredientTypeId',
-        quantity INT '$.quantity',
-        unit INT '$.unit',
-        content VARCHAR(MAX) '$.content',
-        [enabled] BIT '$.enabled'
+        id INT                  '$.id',
+        summary VARCHAR(500)    '$.summary',
+        ingredientTypeId INT    '$.ingredientTypeId',
+        quantity INT            '$.quantity',
+        unit INT                '$.unit',
+        content VARCHAR(MAX)    '$.content',
+        enabled BIT             '$.enabled'
     )
-
+    
     SET @userId = (SELECT idUsuario
-    FROM V_usuario
+    FROM v_usuario
     WHERE idUsuarioRol = @userRoleId)
 
     BEGIN TRY
         BEGIN TRAN
-
-            UPDATE Restaurant.Ingredient SET
-            summary = @summary,
-            IngredientTypeId = @ingredientTypeId,
-            quantity = @quantity,
-            unit = @unit,
-            content = @content,
-            updatedAt = dbo.ufnGetDateEcuador(),
-            [enabled] = @enabled,
-            userId = @userId
-            WHERE id = @id
-
+            UPDATE ri
+            SET ri.Summary           = ti.summary
+                ,ri.IngredientTypeId = ti.ingredientTypeId
+                ,ri.Quantity         = ti.quantity
+                ,ri.Unit             = ti.unit
+                ,ri.Content          = ti.content
+                ,ri.UpdatedAt        = dbo.ufnGetDateEcuador()
+                
+            FROM Restaurant.Ingredient ri
+            INNER JOIN #TableIngredient ti ON ti.id = ri.Id
+            WHERE ri.id = @id
         COMMIT TRAN
-            SELECT dbo.ufn_spresponse('1', 'Actualizado exitosamente', NULL)
+
+        SELECT dbo.ufn_spresponse('1', 'Actualizado exitosamente', NULL)
+        RETURN
         
     END TRY
     BEGIN CATCH
