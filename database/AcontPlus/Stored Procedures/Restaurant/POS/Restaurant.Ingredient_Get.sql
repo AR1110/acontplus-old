@@ -18,5 +18,5 @@ BEGIN
            ,productDescription = va.descripcion
            ,s3ObjectUrl        = ISNULL(va.s3ObjectUrl, '')
     FROM Restaurant.Ingredient ri
-    INNER JOIN v_Articulo va ON va.idArticulo = ri.ProductId
+    INNER JOIN Inventario.v_Articulo va ON va.idArticulo = ri.ProductId
 END
