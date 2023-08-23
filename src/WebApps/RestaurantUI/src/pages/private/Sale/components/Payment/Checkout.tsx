@@ -8,66 +8,89 @@ import { useState } from 'react';
 
 export default function Checkout() {
     const { voucher } = useCheckoutStore(state => state.checkout);
-    const setReceivedAmount = useCheckoutStore(state=>state.setReceivedAmount)
+    const { setReceivedAmount, setChangeReturn } = useCheckoutStore(state => ({
+        setReceivedAmount: state.setReceivedAmount,
+        setChangeReturn: state.setChangeReturn
+    }))
+
     const [isReplaceReceivedAmount, setIsReplaceReceivedAmount] = useState(true)
+    const [isOptionReceivedAmount, setIsOptionReceivedAmount] = useState(false)
 
     const onChangeReceivedAmount = (event: React.ChangeEvent<HTMLInputElement>) => {
         const inputValue = event.target.value.replace(/[^0-9.]/g, '');
         const numeroStr = voucher.receivedAmount.toString();
-         if(!inputValue){
-            setReceivedAmount('0')  
-            return  
-         }
-         console.log(numeroStr)
-         if(numeroStr==="0"){
-            setReceivedAmount('') 
-         }
-         setReceivedAmount(inputValue)    
-    }; 
-    
-    const checkoutClearButton = ()=>{
+        if (!inputValue) {
+            setReceivedAmount('0')
+            return
+        } 
+        if (numeroStr === "0") {
+            setReceivedAmount('')
+        }
+        setReceivedAmount(inputValue)
+        setChangeReturn()
+    };
+
+    const handleClickOptionReceivedAmount = (inputValue: number) => {
+        setReceivedAmount(inputValue.toString());
+        setIsOptionReceivedAmount(true)
+        setChangeReturn()
+    }
+
+    const handleChangeSetReceivedAmount = (value: number | string) => {
         const numeroStr = voucher.receivedAmount.toString();
-        let receivedAmount = "0"; 
-        console.log(voucher.receivedAmount)
-        if(voucher.receivedAmount==="0"){
-            setReceivedAmount(receivedAmount)
+        const valueCalculator = value.toString();
+        if (numeroStr === "0" && (valueCalculator === "0")) return
+
+
+        if (value === "." && numeroStr.split(".").length > 1) return
+
+        if (numeroStr === "0" && valueCalculator === '.') {
+            setReceivedAmount(numeroStr + valueCalculator);
+            setChangeReturn()
             return
         }
-        if(voucher.receivedAmount!=="0"){            
+        if (numeroStr === "0" || isOptionReceivedAmount) {
+            setReceivedAmount(valueCalculator);            
+            setIsOptionReceivedAmount(false);
+            setChangeReturn()
+            return
+        }
+        if (isReplaceReceivedAmount) {
+            setReceivedAmount(valueCalculator)
+            setIsReplaceReceivedAmount(false);
+            setChangeReturn()
+            return
+        }
+
+        setReceivedAmount(numeroStr + valueCalculator)
+        setChangeReturn()
+    }
+
+    const checkoutClearButton = () => {
+        const numeroStr = voucher.receivedAmount.toString();
+        let receivedAmount = "0";
+        console.log(voucher.receivedAmount)
+        if (voucher.receivedAmount === "0") {
+            setReceivedAmount(receivedAmount);
+            setChangeReturn()
+            return
+        }
+        if (voucher.receivedAmount !== "0") {
             const nuevoNumeroStr = numeroStr.substring(0, numeroStr.length - 1); // Elimina los últimos "cantidad" dígitos
-            receivedAmount = nuevoNumeroStr? nuevoNumeroStr : '0';
+            receivedAmount = nuevoNumeroStr ? nuevoNumeroStr : '0';
         }
         setReceivedAmount(receivedAmount)
+        setChangeReturn()
     }
- 
-    const handleChangeSetReceivedAmount = (value: number | string)=>{         
-        const numeroStr = voucher.receivedAmount.toString();
-        if(value===0) {
-            setReceivedAmount("0")
-            return
-        }
 
-        console.log(isReplaceReceivedAmount)
-        if(isReplaceReceivedAmount){
-            if(value==='.') return
-            setReceivedAmount(value.toString())
-            setIsReplaceReceivedAmount(false);
-            return
-        }
-
-        // if(numeroStr==="0"){
-        //     setReceivedAmount(value.toString())
-        //     return
-        // }
-        console.log(0)
-
-        setReceivedAmount(numeroStr + value.toString())    
-    }
- 
     return (
         <Grid container spacing={2} columns={{ xs: 4, sm: 8, md: 12 }}>
             <Grid item xs={12} sm={5} md={5}>
-                <Calculator clearButton={checkoutClearButton} onClickButton={handleChangeSetReceivedAmount} />
+                <Calculator
+                    clearButton={checkoutClearButton}
+                    onClickButton={handleChangeSetReceivedAmount}
+                    onClickOptionValue={handleClickOptionReceivedAmount}
+                />
             </Grid>
             <Grid item xs={12} sm={7} md={7}>
                 <Box sx={{ flexGrow: 1 }}>
@@ -122,7 +145,7 @@ export default function Checkout() {
                                         </Grid>
                                         <Grid item>
                                             <Typography gutterBottom variant="h5" component="div" color="error">
-                                                $4.50
+                                                ${voucher.changeReturn}
                                             </Typography>
                                         </Grid>
                                     </Grid>

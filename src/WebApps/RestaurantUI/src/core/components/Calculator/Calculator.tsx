@@ -8,12 +8,13 @@ import { addSound, clearSound } from '@/core/utilities';
 const grids = [7, 8, 9, 4, 5, 6, 1, 2, 3, ".", 0]
 
 interface CalculatorProps {
-    clearButton():void
+    clearButton(): void
     onClickButton(value: number | string): void
+    onClickOptionValue(value: number): void
 }
 
-export default function Calculator({clearButton, onClickButton}:CalculatorProps) {
-    const onClickCalculatorButton = (value: number | string) => { 
+export default function Calculator({ clearButton, onClickButton, onClickOptionValue }: CalculatorProps) {
+    const onClickCalculatorButton = (value: number | string) => {
         addSound();
         onClickButton(value)
     }
@@ -22,19 +23,23 @@ export default function Calculator({clearButton, onClickButton}:CalculatorProps)
         clearButton();
         clearSound();
     }
+    const onClickOption = (value: number)=>{
+        onClickOptionValue(value)
+        addSound();
+    }
     return (
         <Box sx={{ flexGrow: 1 }}>
             <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 12, sm: 12, md: 12 }}>
                 <Grid item xs={4} sm={4} md={4} >
-                    <CalculatorButton>$5</CalculatorButton>
+                    <CalculatorButton onClick={() => onClickOption(5)}>$5</CalculatorButton>
                 </Grid>
                 <Grid item xs={4} sm={4} md={4} >
-                    <CalculatorButton>$10</CalculatorButton>
+                    <CalculatorButton onClick={() => onClickOption(10)}>$10</CalculatorButton>
                 </Grid>
                 <Grid item xs={4} sm={4} md={4} >
-                    <CalculatorButton>$20</CalculatorButton>
+                    <CalculatorButton onClick={() => onClickOption(20)}>$20</CalculatorButton>
                 </Grid>
-             
+
 
                 {
                     grids.map((value, index) => (
@@ -42,7 +47,7 @@ export default function Calculator({clearButton, onClickButton}:CalculatorProps)
                             <CalculatorButton onClick={() => onClickCalculatorButton(value)}>{value}</CalculatorButton>
                         </Grid>
                     ))
-                } 
+                }
                 <Grid item xs={4} sm={4} md={4}>
                     <CalculatorButton onClick={onClickClearButton}>
                         <BackspaceIcon />
