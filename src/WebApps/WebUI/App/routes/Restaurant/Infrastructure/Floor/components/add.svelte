@@ -86,7 +86,6 @@
 			}
 			return isValid;
 		} catch (error) {
-			console.log(error);
 			return false;
 		}
 	};

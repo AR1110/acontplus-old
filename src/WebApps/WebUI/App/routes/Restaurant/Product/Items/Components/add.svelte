@@ -1,22 +1,25 @@
 <script lang="ts">
+	import { hideLoader } from './../../../../../core/utils/loading-spinner.js';
   import { itemService } from "$core/services/restaurant/item-service";
-  import Modal from "$core/components/Modal.svelte";
   import type { Item } from "$core/interfaces/restaurant/item";
   import type { ProductionArea } from "$core/interfaces/restaurant/production-area";
   import type { Ingredient } from "$core/interfaces/restaurant/ingredient";
   import type { Recipe } from "$core/interfaces/restaurant/recipe";
-
   import { productionAreaService } from "$core/services/restaurant/production-area-service";
   import { onMount } from "svelte";
+  import Modal from "$core/components/Modal.svelte";
   import toast from "$core/utils/toast";
+  import Grid from "$core/components/Grid.svelte";
+  import { showLoader } from "$core/utils/loading-spinner";
 
   export let openNew;
   export let modalClosed;
   export let data = {} as Item;
   export let ingredientes = [] as Ingredient[];
+  export let recipe = [] as Recipe[];
 
   let productionAreas = [] as ProductionArea[];
-  let recipe = [] as Recipe[];
+  let validatorParam = [undefined, null, "", 0]
 
   onMount(() => {
     getProductionArea();
@@ -29,21 +32,23 @@
   };
 
   const onUpdate = () => {
-    console.log(recipe);
+    if (!onValidation(data)) return;
+    if (!onValidationRecipe(recipe)) return;
 
+    showLoader();
     let newObject = {
       itemJson: data,
       productionAreaJson: { productionAreaId: data.productionAreaId },
       recipeJson: recipe,
     };
-
-    itemService.put(data.id, { data: newObject }).then((res) => {
-      if (res.status === 200) {
+    itemService.put(data.id, { data: newObject }).then((response) => {
+      hideLoader();
+      if (response.status === 200) {
         onModalClose();
-        toast({ type: "success", message: res.data.message });
+        toast({ type: "success", message: response.data.message });
         data = {} as Item;
       } else {
-        toast({ type: "warning", message: res.data.message });
+        toast({ type: "warning", message: response.data.message });
       }
     });
   };
@@ -60,7 +65,7 @@
       deleted: false,
       userId: 0,
       ingredientId: data.id,
-      descriptionIngredient: data.summary,
+      summary: data.summary,
       instructions: "",
       quantity: 0,
       itemId: itemId,
@@ -76,17 +81,102 @@
     onPushRecipe(index, data.id);
   };
 
-  const removeRecipe = (index: number) => {
-    console.log(recipe);
-    let newRecipe = recipe.splice(index, 1);
-    console.log(newRecipe);
-    recipe = [...newRecipe];
-  };
-
   const onModalClose = () => {
     openNew = false;
     modalClosed();
   };
+
+  const onValidation = (item: Item) => {
+    let isValid = true;
+    try {
+      if (validatorParam.includes(item.productionAreaId)) {
+        toast({ type: "warning", message: "Debe seleccionar un area de producción" });
+        isValid = false;
+      }
+      return isValid;
+    } catch (error) {
+      toast({ type: "error", message: error });
+      return false;
+    }
+  }
+
+  const onValidationRecipe = (recipe) => {
+    let isValid = true;
+    for (let index = 0; index < recipe.length; index++) {
+      const element = recipe[index];
+      try {
+        if (validatorParam.includes(element.unit)) {
+          toast({ type: "warning", message: "Debe ingresar una Unidad" });
+          isValid = false;
+          return isValid;
+        }
+        if (validatorParam.includes(element.netWeight)) {
+          toast({ type: "warning", message: "Debe ingresar un Peso Neto" });
+          isValid = false;
+          return isValid;
+        }
+        if (validatorParam.includes(element.quantity)) {
+          toast({ type: "warning", message: "Debe ingresar una Cantidad" });
+          isValid = false;
+          return isValid;
+        }
+        return isValid;
+        break;
+      } catch (error) {
+        toast({ type: "error", message: "Debe ingresar los valores requeridos" });
+        return false;
+      }
+    }
+  }
+
+  let columns = [
+    {
+      title: "Ingrediente",
+      field: "summary",
+      widthGrow: 1,
+    },
+    {
+      title: "Unit",
+      field: "unit",
+      widthGrow: 1,
+      editor: true,
+    },
+    {
+      title: "Peso",
+      field: "weight",
+      widthGrow: 3,
+      editor: true,
+    },
+    {
+      title: "Peso neto",
+      field: "netWeight",
+      widthGrow: 3,
+      editor: true,
+    },
+    {
+      title: "Instrucciones",
+      field: "instructions",
+      widthGrow: 3,
+      editor: true,
+    },
+    {
+      title: "Cantidad",
+      field: "quantity",
+      widthGrow: 3,
+      editor: true,
+    },
+    {
+      title: "Estado",
+      field: "enabled",
+      widthGrow: 1,
+      widthShrink: 0,
+      widthFixed: true,
+      hozAlign: "center",
+      formatter: "tickCross",
+      sorter: "boolean",
+      editor: true,
+    }
+  ];
 </script>
 
 {#if openNew}
@@ -137,7 +227,7 @@
                 bind:value={data.recipe}
                 class="form-control"
                 id="recipe"
-                rows="3"
+                rows="4"
               />
             </div>
           </div>
@@ -148,7 +238,7 @@
                 bind:value={data.instructions}
                 class="form-control"
                 id="instructions"
-                rows="3"
+                rows="4"
               />
             </div>
           </div>
@@ -186,71 +276,7 @@
           </div>
         </div>
 
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col" />
-                <th scope="col">Ingrediente</th>
-                <th scope="col">Unit</th>
-                <th scope="col">Peso</th>
-                <th scope="col">Peso neto</th>
-                <th scope="col">Instrucciones</th>
-                <th scope="col">Cantidad</th>
-              </tr>
-            </thead>
-            <tbody>
-              {#each recipe as item, index}
-                <tr>
-                  <th scope="row">
-                    <button
-                      type="button"
-                      class="btn btn-danger btn-sm"
-                      on:click={() => {
-                        removeRecipe(index);
-                      }}
-                    >
-                      <i class="ti-trash" />
-                    </button>
-                  </th><td>{item.descriptionIngredient}</td>
-                  <td>
-                    <input
-                      bind:value={item.unit}
-                      class="form-control form-control"
-                      type="number"
-                    />
-                  </td>
-                  <td>
-                    <input
-                      bind:value={item.weight}
-                      class="form-control form-control"
-                      type="number"
-                    />
-                  </td>
-                  <td>
-                    <input
-                      bind:value={item.netWeight}
-                      class="form-control form-control"
-                      type="number"
-                    />
-                  </td>
-                  <td>
-                    <div class="form-group">
-                      <textarea class="form-control" rows="2" />
-                    </div>
-                  </td>
-                  <td>
-                    <input
-                      bind:value={item.quantity}
-                      class="form-control form-control"
-                      type="number"
-                    />
-                  </td>
-                </tr>
-              {/each}
-            </tbody>
-          </table>
-        </div>
+        <Grid dataArray={recipe} {columns} />
 
         <div class="modal-footer">
           <button type="submit" class="btn btn-success">
@@ -266,3 +292,4 @@
     </div>
   </Modal>
 {/if}
+

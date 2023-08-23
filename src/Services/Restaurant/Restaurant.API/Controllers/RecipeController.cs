@@ -3,15 +3,19 @@ using Microsoft.AspNetCore.Mvc;
 using Restaurant.Core.Common;
 using Restaurant.Core.Entities;
 using Restaurant.Core.Interfaces;
+using Services.Common.Logs;
 
 namespace Restaurant.API.Controllers
 {
     public class RecipeController : BaseApiController
     {
         private readonly IRecipe _recipe;
-        public RecipeController(IRecipe recipe)
+        private LogWriter _log;
+
+        public RecipeController(IRecipe recipe, LogWriter log)
         {
             _recipe = recipe;
+            _log = log;
         }
         [HttpGet]
         public async Task<ActionResult<StructureResponse>> Get()
@@ -45,6 +49,22 @@ namespace Restaurant.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("GetByItem/{id}")]
+        public async Task<IActionResult> GetByItem(int id)
+        {
+            try
+            {
+                var result = await _recipe.GetByItem(id);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error en catch " + ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Recipe recipe)
         {

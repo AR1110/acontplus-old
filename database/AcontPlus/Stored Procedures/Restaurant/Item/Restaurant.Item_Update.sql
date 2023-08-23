@@ -4,10 +4,10 @@ GO
 --- Author: Ignacio Manchu.
 --- Description: Update 
 --- Date: 2023-08-17
---- Restaurant.Item_Update 139, 1, '{"itemJson": {"id": 1,"summary": "TEST","cooking": true, "recipe": "TEST DE LOS DATOS", "instructions": "DATOS", "content": "DATOS", "createdAt": "2023-08-21T17:15:03.1933333","updatedAt": null, "enabled": true, "deleted": false, "userId": 115, "productId": 1, "descripcion": "MAITO DE PESCADO", "s3ObjectUrl": "https://acontplus.s3.us-east-2.amazonaws.com/0703885640001/articulos/5db50980-91b2-4cf1-ad0d-f1b74ac8e60a.jpg", "stockMinimo": 0, "stock": 0, "codigo": "PLA1", "codigoAuxiliar": "AUX-PLA1", "tipoIva": "12%", "tipoArticulo": "Ninguna", "style": "badge badge-danger", "productionAreaId": 1, "descripcionProductionArea": null, "totalRecords": 1 },"productionAreaJson": { "productionAreaId": 1 },"recipeJson": [{"id": 0,"unit": 3,"weight": 5,"netWeight": 5,"createdAt": "","updatedAt": "","enabled": true,"deleted": false,"userId": 0, "ingredientId": 1,"descriptionIngredient": "PESCADO","instructions": "","quantity": 5,"itemId": 1}]}'
+--- Restaurant.Item_Update 139, 1, '{"itemJson": {"id": 1,"summary": "TEST","cooking": true, "recipe": "TEST DE LOS DATOS", "instructions": "DATOS", "content": "DATOS", "createdAt": "2023-08-21T17:15:03.1933333","updatedAt": null, "enabled": true, "deleted": false, "userId": 115, "productId": 1, "descripcion": "MAITO DE PESCADO", "s3ObjectUrl": "https://acontplus.s3.us-east-2.amazonaws.com/0703885640001/articulos/5db50980-91b2-4cf1-ad0d-f1b74ac8e60a.jpg", "stockMinimo": 0, "stock": 0, "codigo": "PLA1", "codigoAuxiliar": "AUX-PLA1", "tipoIva": "12%", "tipoArticulo": "Ninguna", "style": "badge badge-danger", "productionAreaId": 1, "descripcionProductionArea": null, "totalRecords": 1 },"productionAreaJson": { "productionAreaId": 1 },"recipeJson": [{"id": 0,"unit": 3,"weight": 5,"netWeight": 5,"createdAt": "","updatedAt": "","enabled": true,"deleted": false,"userId": 0, "ingredientId": 3,"summary": "PESCADO","instructions": "","quantity": 5,"itemId": 1}]}'
 IF OBJECT_ID('Restaurant.Item_Update') IS NOT NULL
 	DROP PROC Restaurant.Item_Update
-GO 
+GO
 CREATE PROC Restaurant.Item_Update
 @userRoleId INT
 ,@id INT
@@ -29,6 +29,7 @@ BEGIN
             ,@content VARCHAR(MAX)
             ,@enabled BIT
             ,@userId INT
+            ,@itemId INT
 
     CREATE TABLE #RecipeTemp(
          id             INT
@@ -40,6 +41,7 @@ BEGIN
          ,instructions  VARCHAR(MAX) 
          ,quantity      FLOAT
          ,enabled       BIT
+         ,deleted       BIT
     )
 
     IF ISJSON(@json) = 0
@@ -67,6 +69,7 @@ BEGIN
             , ISNULL(instructions, NULL)
             , ISNULL(quantity, 0)
             , enabled
+            , deleted
     FROM OPENJSON(@recipeJson)
     WITH(
       id            INT             '$.id'
@@ -78,6 +81,7 @@ BEGIN
       ,instructions VARCHAR(MAX)    '$.instructions'
       ,quantity     FLOAT           '$.quantity'
       ,enabled      BIT             '$.enabled'
+      ,deleted      BIT             '$.deleted'
     )
    
     SELECT @productId = productId FROM OPENJSON(@itemJson) WITH(productId INT '$.productId')
@@ -107,7 +111,9 @@ BEGIN
         ,content         VARCHAR(500) '$.content'
         ,enabled         BIT          '$.enabled'
     )
-             
+
+    SET @itemId = (SELECT TOP 1 itemId FROM #RecipeTemp)
+        
 	BEGIN TRY               
 		BEGIN TRAN
             UPDATE Restaurant.Item
@@ -122,25 +128,28 @@ BEGIN
 
             ---- Insert Recipe ----
             INSERT INTO Restaurant.Recipe
-                   (ItemId, Unit, Weight, NetWeight, CreatedAt, UpdatedAt, Enabled, Deleted, UserId, IngredientId, Instructions, Quantity)
-
-            SELECT rt.itemId, rt.unit, rt.weight, rt.netWeigth, @date, NULL,enabled, NULL, @userId, rt.ingredientId, rt.instructions, rt.quantity
-            FROM #RecipeTemp rt
-            WHERE rt.itemId NOT IN (SELECT TOP 1 1 FROM Restaurant.Recipe)
-          
+            (ItemId, Unit, Weight, NetWeight, CreatedAt, UpdatedAt, Enabled, Deleted, UserId, IngredientId, Instructions, Quantity)
             
-            ---- Update Recipe ----
+            SELECT rt.itemId, rt.unit, rt.weight, rt.netWeigth, @date,NULL,rt.enabled,NULL, @userId, rt.ingredientId, rt.instructions, rt.quantity
+            FROM #RecipeTemp rt
+            WHERE rt.ingredientId NOT IN(SELECT rr.IngredientId 
+                                         FROM Restaurant.Recipe rr 
+                                         WHERE rr.ItemId = (SELECT TOP 1 itemId FROM #RecipeTemp))                     
+            
+            --- Update Recipe -  si existe un registro de ingredient => Actualiza ----
             UPDATE rr
             SET rr.Unit          = rt.unit
                 ,rr.Weight       = rt.weight
                 ,rr.NetWeight    = rt.netWeigth
                 ,rr.Enabled      = rt.enabled
+                ,rr.Deleted      = rt.deleted
                 ,rr.IngredientId = rt.ingredientId
                 ,rr.Instructions = rt.instructions
                 ,rr.Quantity     = rt.quantity
                 ,rr.UpdatedAt    = @date
             FROM Restaurant.Recipe rr
-            INNER JOIN #RecipeTemp rt ON rt.itemId = rr.ItemId AND rt.id = rt.id                     
+            INNER JOIN #RecipeTemp rt ON rt.itemId = rr.ItemId AND rt.id = rt.id
+            WHERE rr.IngredientId = rt.ingredientId AND rt.itemId = rt.itemId
             
 		COMMIT TRAN
         SELECT dbo.ufn_spresponse('1', 'Actualizado exitosamente', NULL)
