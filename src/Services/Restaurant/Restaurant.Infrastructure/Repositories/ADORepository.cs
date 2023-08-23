@@ -18,33 +18,43 @@ namespace Restaurant.Infrastructure.Repositories
         public async Task<DataTable> GetDataTableAsync(string spName, Dictionary<string, object> parameters)
         {
             DataTable dt = null;
-            using (var command = _context.Database.GetDbConnection().CreateCommand())
+
+            using (var cmd = _context.Database.GetDbConnection().CreateCommand())
             {
-                command.CommandText = spName;
-                if (parameters.Count > 0)
+                bool wasOpen = cmd.Connection.State == ConnectionState.Open;
+                try
                 {
-                    foreach (var parameter in parameters)
+                    cmd.CommandText = spName;
+                    if (parameters.Count > 0)
                     {
-                        //AddSqlParameter(parameter.Key, parameter.Value);
-                        if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                        foreach (var parameter in parameters)
                         {
-                            SqlParameter sqlParam = new SqlParameter();
-                            sqlParam.ParameterName = parameter.Key;
-                            sqlParam.SqlDbType = GetDbType(parameter.Value);
-                            sqlParam.Value = parameter.Value ?? DBNull.Value;
-                            command.Parameters.Add(sqlParam);
+                            //AddSqlParameter(parameter.Key, parameter.Value);
+                            if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                            {
+                                SqlParameter sqlParam = new SqlParameter();
+                                sqlParam.ParameterName = parameter.Key;
+                                sqlParam.SqlDbType = GetDbType(parameter.Value);
+                                sqlParam.Value = parameter.Value ?? DBNull.Value;
+                                cmd.Parameters.Add(sqlParam);
+                            }
                         }
                     }
+
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    if (!wasOpen) await _context.Database.OpenConnectionAsync();
+                    using (SqlDataAdapter adapter = new SqlDataAdapter())
+                    {
+                        adapter.SelectCommand = (SqlCommand)cmd;
+                        dt = new DataTable();
+                        adapter.Fill(dt);
+                    }
+                }
+                finally
+                {
+                    if (!wasOpen) cmd.Connection.Close();
                 }
 
-                command.CommandType = CommandType.StoredProcedure;
-                await _context.Database.OpenConnectionAsync();
-                using (SqlDataAdapter adapter = new SqlDataAdapter())
-                {
-                    adapter.SelectCommand = (SqlCommand)command;
-                    dt = new DataTable();
-                    adapter.Fill(dt);
-                }
             }
             return dt;
         }
@@ -52,67 +62,84 @@ namespace Restaurant.Infrastructure.Repositories
         public async Task<DataSet> GetDataSetAsync(string spName, Dictionary<string, object> parameters)
         {
             DataSet ds = null;
-            using (var command = _context.Database.GetDbConnection().CreateCommand())
+            using (var cmd = _context.Database.GetDbConnection().CreateCommand())
             {
-                command.CommandText = spName;
-                if (parameters.Count > 0)
+                bool wasOpen = cmd.Connection.State == ConnectionState.Open;
+                try
                 {
-                    foreach (var parameter in parameters)
+                    cmd.CommandText = spName;
+                    if (parameters.Count > 0)
                     {
-                        if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                        foreach (var parameter in parameters)
                         {
-                            AddSqlParameter(command, parameter.Key, parameter.Value);
+                            if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                            {
+                                AddSqlParameter(cmd, parameter.Key, parameter.Value);
+                            }
                         }
                     }
+
+                    string outParam = "@tableNames";
+                    AddSqlParameterOut(cmd, outParam, SqlDbType.VarChar, 500);
+
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    if (!wasOpen) await _context.Database.OpenConnectionAsync();
+                    using (SqlDataAdapter adapter = new SqlDataAdapter())
+                    {
+                        adapter.SelectCommand = (SqlCommand)cmd;
+                        ds = new DataSet();
+                        adapter.Fill(ds);
+                    }
+
+                    string[] tableNames = GetParameter(cmd, outParam).ToString().Split(',');
+
+                    for (int i = 0; i < tableNames.Length; i++)
+                    {
+                        ds.Tables[i].TableName = tableNames[i];
+                    }
+                    return ds;
                 }
-
-                string outParam = "@tableNames";
-                AddSqlParameterOut(command, outParam, SqlDbType.VarChar, 500);
-
-                command.CommandType = CommandType.StoredProcedure;
-                await _context.Database.OpenConnectionAsync();
-                using (SqlDataAdapter adapter = new SqlDataAdapter())
+                finally
                 {
-                    adapter.SelectCommand = (SqlCommand)command;
-                    ds = new DataSet();
-                    adapter.Fill(ds);
-                }
-
-                string[] tableNames = GetParameter(command, outParam).ToString().Split(',');
-
-                for (int i = 0; i < tableNames.Length; i++)
-                {
-                    ds.Tables[i].TableName = tableNames[i];
+                    if (!wasOpen) cmd.Connection.Close();
                 }
             }
-            return ds;
         }
 
         public async Task<string> SPExecuteAsync(string spName, Dictionary<string, object> parameters)
         {
             string response = string.Empty;
-            using (var command = _context.Database.GetDbConnection().CreateCommand())
+            using (var cmd = _context.Database.GetDbConnection().CreateCommand())
             {
-                command.CommandText = spName;
-                if (parameters.Count > 0)
+                bool wasOpen = cmd.Connection.State == ConnectionState.Open;
+                try
                 {
-                    foreach (var parameter in parameters)
+                    cmd.CommandText = spName;
+                    if (parameters.Count > 0)
                     {
-                        if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                        foreach (var parameter in parameters)
                         {
-                            AddSqlParameter(command, parameter.Key, parameter.Value);
+                            if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                            {
+                                AddSqlParameter(cmd, parameter.Key, parameter.Value);
+                            }
                         }
                     }
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    if (!wasOpen) await _context.Database.OpenConnectionAsync();
+                    var reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        response = reader.GetString(0);
+                    }
+                    return response;
                 }
-                command.CommandType = CommandType.StoredProcedure;
-                await _context.Database.OpenConnectionAsync();
-                var reader = command.ExecuteReader();
-                while (reader.Read())
+                finally
                 {
-                    response = reader.GetString(0);
+                    if (!wasOpen) cmd.Connection.Close();
                 }
+
             }
-            return response;
         }
 
         public static object GetParameter(DbCommand command, string parameterName)
