@@ -37,7 +37,6 @@ namespace Mechanical.Infrastructure.Data.Migrations
                         .HasColumnType("varchar(100)");
 
                     b.Property<string>("Color")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");

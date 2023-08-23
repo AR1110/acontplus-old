@@ -31,9 +31,9 @@ BEGIN
 
     BEGIN TRY 
         BEGIN TRAN 
-            UPDATE Mechanical.VehicleCompany SET Deleted = 1,[Enabled] = 0 WHERE Id = @id
+            UPDATE Mechanical.VehicleCompany SET Deleted = 1,[Enabled] = 0, UpdatedAt = GETDATE() WHERE Id = @id
         COMMIT TRAN 
-        SELECT dbo.ufn_spresponse('0', 'Eliminado Correctamente', NULL)
+        SELECT dbo.ufn_spresponse('1', 'Eliminado Correctamente', NULL)
     END TRY 
 
     BEGIN CATCH 
