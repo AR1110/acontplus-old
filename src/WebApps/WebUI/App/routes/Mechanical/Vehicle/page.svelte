@@ -1,17 +1,24 @@
 <script lang="ts">
-    import { hideLoader, showLoader } from './../../../core/utils/loading-spinner.js';
-	import Breadcrumbs from "$core/components/Breadcrumbs.svelte";
-	import { onMount } from "svelte";
-    import Add from '$routes/Mechanical/Vehicle/components/add.svelte';
+  import Breadcrumbs from "$core/components/Breadcrumbs.svelte";
+  import Add from "$routes/Mechanical/Vehicle/components/add.svelte";
+  import List from "$routes/Mechanical/Vehicle/components/list.svelte";
 
-    let isNew = false;
+  let isNew = false;
 
-    const openNew = () => {
-		if (openNew) {
-			isNew = true;
-		}
-	};
+  const openNew = () => {
+    if (openNew) {
+      isNew = true;
+    }
+  };
+
+  const closeModal = () => {
+    isNew = false;
+    reloadList();
+  };
+
+  const reloadList = () => {};
 </script>
 
-<Breadcrumbs title= {"Vehículos"} action= {"Nuevo"} openNew= {()=> openNew()}/>
-<Add />
+<Breadcrumbs title={"Vehículos"} action={"Nuevo"} openNew={() => openNew()} />
+  <List {reloadList} />
+  <Add openNew={isNew} modalClosed={() => closeModal()} />

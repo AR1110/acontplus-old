@@ -6,11 +6,11 @@ GO
 CREATE VIEW v_Cliente AS (
 
 SELECT c.*
-,e.ruc rucEntidad
-,e.razonSocial entidad
-,emp.razonSocial empresa
-,ti.descripcion tipoIdentificacion
-,ti.codigoSri codIdentSri
+      ,e.ruc rucEntidad
+      ,e.razonSocial entidad
+      ,emp.razonSocial empresa
+      ,ti.descripcion tipoIdentificacion
+      ,ti.codigoSri codIdentSri
 FROM Cliente c WITH(NOLOCK)
 INNER JOIN Entidad e WITH(NOLOCK) ON c.idEntidad = e.idEntidad
 INNER JOIN TipoIdentificacion ti WITH(NOLOCK) ON c.idTipoIdentificacion = ti.idTipoIdentificacion 
