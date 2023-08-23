@@ -1,4 +1,4 @@
-import { Checkout, Voucher, checkoutInitialState } from "@/core/models"
+import { Checkout, checkoutInitialState } from "@/core/models"
 import { create } from "zustand"
 import { produce } from 'immer';
 import { RoundNumber } from "@/core/utilities";
@@ -8,19 +8,26 @@ type State = {
 }
 
 type Actions = {
-    setVoucher(payingAmount: number, receivedAmount: string, changeReturn: number): void
+    setVoucher(data: {
+        payingAmount: number,
+        receivedAmount: string, 
+        changeReturn: number,
+        creationDate: Date | string
+    }): void
     setChangeReturn(): void
     setReceivedAmount(value: string): void //Actualizar el abono     
 }
 
 export const useCheckoutStore = create<State & Actions>((set, get) => ({
     checkout: checkoutInitialState,
-    setVoucher(payingAmount, receivedAmount) { 
+    setVoucher(data) { 
         set(
             produce((state: State) => {
-                state.checkout.voucher.payingAmount = payingAmount;
-                state.checkout.voucher.receivedAmount = receivedAmount;
+                state.checkout.voucher.payingAmount = data.payingAmount;
+                state.checkout.voucher.receivedAmount = data.receivedAmount;
                 state.checkout.voucher.changeReturn = 0;
+                state.checkout.voucher.creationDate = data.creationDate;
+                
             })
         )
     },

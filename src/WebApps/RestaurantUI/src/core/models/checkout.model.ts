@@ -5,6 +5,7 @@ export interface Voucher {
     receivedAmount: string 
     changeReturn: number
     codEstab: string    
+    creationDate: Date | string
 }
 
 export interface Payment {
@@ -28,7 +29,8 @@ export const checkoutInitialState: Checkout = {
         payingAmount: 0,
         receivedAmount: "0",
         changeReturn: 0,
-        codEstab: ""
+        codEstab: "",
+        creationDate: ""
     },
     payments: {
         paymentTypeId: 0,

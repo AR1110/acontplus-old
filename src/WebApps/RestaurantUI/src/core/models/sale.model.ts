@@ -1,17 +1,30 @@
-import { CategoryReadDto, DecimalSale, TableReadDto, Tax, TaxRate, WarehouseAsign } from ".";
+import { CategoryReadDto, DecimalSale, PaymentSubType, PaymentType, TableReadDto, Tax, TaxRate, WarehouseAsign } from ".";
 import { EmissionPointAsign } from "./emission-point.model";
 
 export interface Summary {
     establecimientoId: number
     puntoEmisionId : number
     customerCompanyId : number
+    bodegaId: number
     tableId: number
+    subTotalSinImpuestos: number
     tax: number;
     taxAmount: number;
     discount: number
     total: number // With discount on items
     netTotal: number // Net - (tax + discount on total)
-    tip: number //Propina
+    tip: number //Propina    
+    obs: string
+    codDoc: string
+}
+
+//Impuesto Articulos 
+export interface ItemTaxes {
+    uuid: string
+    taxId: number
+    taxPercentId: number
+    taxBase: number
+    taxValue: number
 }
 
 export interface ItemBase {
@@ -32,8 +45,10 @@ export interface ItemBase {
 }
 
 export interface ItemRead extends ItemBase {
+    uuid: string
     s3ObjectUrl: string;    
     takesInventory: boolean
+    taxes: Array<ItemTaxes>
 }
 
 
@@ -59,8 +74,9 @@ export interface SummaryPostDto {
     total: number // With discount on items
    // netTotal: number // Net - (tax + discount on total)
     discount: number
-    items: Array<ItemPostDto>
-
+    items: any
+    taxes: any
+    payments: any
 }
 
 
@@ -75,6 +91,8 @@ export interface DataFormSale {
     taxRates: Array<TaxRate>
     warehouses: Array<WarehouseAsign>
     emissionPoints: Array<EmissionPointAsign>
+    paymentTypes: Array<PaymentType>
+    paymentSubTypes: Array<PaymentSubType>
 } 
 
 
@@ -95,17 +113,24 @@ export const dataFormInitialState: DataFormSale = {
     taxes: [],
     taxRates: [],
     warehouses: [],
-    emissionPoints: []
+    emissionPoints: [],
+    paymentTypes:[],
+    paymentSubTypes: []
 }
+
 export const summaryInitialState: Summary = {
     establecimientoId: 0,
-    puntoEmisionId : 0,
-    customerCompanyId : 0,
+    puntoEmisionId: 0,
+    customerCompanyId: 0,
+    bodegaId: 0,
     tableId: 0,
+    subTotalSinImpuestos: 0,
     tax: 0,
     taxAmount: 0,
     discount: 0,
-    total: 0, // With discount on items
-    netTotal: 0, // Net - (tax + discount on total)
-    tip: 0 //Propina
+    total: 0,
+    netTotal: 0,
+    tip: 0,
+    obs: "",
+    codDoc: "NE",
 }
