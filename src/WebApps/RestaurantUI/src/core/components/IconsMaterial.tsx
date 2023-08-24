@@ -27,6 +27,7 @@ import SwipeLeftIcon from '@mui/icons-material/SwipeLeft';
 import CloseIcon from '@mui/icons-material/Close';
 import TaskIcon from '@mui/icons-material/Task';
 import PaymentsIcon from '@mui/icons-material/Payments';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 export {
     RemoveCircleOutlineIcon,
     SaveIcon,
@@ -54,5 +55,6 @@ export {
     SwipeLeftIcon,
     CloseIcon,
     TaskIcon,
-    PaymentsIcon
+    PaymentsIcon,
+    CalendarMonthIcon
 }

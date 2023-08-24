@@ -103,16 +103,20 @@ export default function ItemCard({ item }: ItemCardProps) {
             console.log(measures)
             console.log(dataForm)
             const taxRateData = dataForm.taxRates.find(item=>item.taxRateCode===product.taxRateCode);
-            
+            const taxId = dataForm.taxes.find(tax => tax.code === taxRateData?.taxCode)?.taxId ?? 0
+            const taxPercentId = taxRateData?.taxRateId ?? 0
+            const taxValue = measureData.rates[0]?.priceWithVat ?? 0
+            const uuid = crypto.randomUUID();
+
             function addItem() {
                 addItemToCart({
                     index: 0,
                     productId: product.productId,
-                    code: product.productCode,                    
+                    code: product.productCode,
                     itemId: item.itemId,
-                    taxId: dataForm.taxes.find(tax=>tax.code===taxRateData?.taxCode)?.taxId ?? 0,
-                    taxPercentId: taxRateData?.taxRateId ?? 0,
-                    taxValue: taxRateData?.percentage ?? 0,                    
+                    taxId: taxId,
+                    taxPercentId: taxPercentId,
+                    taxValue:taxValue,
                     description: product.description,
                     quantity: 1,
                     cost: 0,
@@ -121,7 +125,15 @@ export default function ItemCard({ item }: ItemCardProps) {
                     discountTotal: 0,
                     total: measureData.rates[0]?.salePrice ?? 0,
                     s3ObjectUrl: product.s3ObjectUrl ? product.s3ObjectUrl : brand_img,
-                    takesInventory: product.takesInventory
+                    takesInventory: product.takesInventory,
+                    taxes: [{
+                        uuid: uuid,
+                        taxId: taxId,
+                        taxPercentId: taxPercentId,
+                        taxBase: 0,
+                        taxValue: taxValue,                        
+                    }],
+                    uuid: uuid
                 })
             }
 

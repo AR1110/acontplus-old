@@ -1,4 +1,15 @@
-import { categoryReadAdapter, decimalSaleReadAdapter, emissionPointAdapter, tableReadAdapter, taxAdapter, taxRateAdapter, warehouseAdapter } from "../adapters"
+import { 
+    categoryReadAdapter, 
+    decimalSaleReadAdapter, 
+    emissionPointAdapter, 
+    tableReadAdapter, 
+    taxAdapter, 
+    taxRateAdapter, 
+    warehouseAdapter,
+    paymentSubTypeAdapter,
+    paymentTypeAdapter
+ } from "../adapters"
+
 import { PATHS } from "../constants"
 import { Http } from "../utilities"
  
@@ -20,7 +31,9 @@ export const SaleService = {
             impuesto, 
             tarifaImpuesto, 
             bodega_Asign,
-            ptoEmi_Asig
+            ptoEmi_Asig,
+            entidadFinanciera,
+            subEntidadFinanciera
         } = resultAxios.data;
         console.log(resultAxios.data)
         const categories = categoryReadAdapter(subCategorias || []); 
@@ -36,7 +49,10 @@ export const SaleService = {
             taxes: taxAdapter(impuesto),
             taxRates: taxRateAdapter(tarifaImpuesto), 
             warehouses: warehouseAdapter(bodega_Asign || []),
-            emissionPoints: emissionPointAdapter(ptoEmi_Asig || [])
+            emissionPoints: emissionPointAdapter(ptoEmi_Asig || []),
+            paymentTypes: paymentTypeAdapter(entidadFinanciera || []),
+            paymentSubTypes: paymentSubTypeAdapter(subEntidadFinanciera || []),
+
         }
     }
 }

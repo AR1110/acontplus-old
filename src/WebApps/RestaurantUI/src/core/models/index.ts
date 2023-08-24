@@ -7,6 +7,7 @@ export * from './decimal.model';
 export * from './emission-point.model';
 export * from './estab.model';
 export * from './item.model';
+export * from './payment-type';
 export * from './product.model';
 export * from './routes';
 export * from './sale.model';
