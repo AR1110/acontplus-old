@@ -1,6 +1,7 @@
 ﻿using DataAccess;
 using Domain.Dtos;
 using Lib.Common;
+using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -30,7 +31,7 @@ namespace ApiFactElect.Controllers.RetencionAts
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("FactElect.RetencionAts_Get");
                 _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
@@ -54,18 +55,18 @@ namespace ApiFactElect.Controllers.RetencionAts
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("FactElect.RetencionAts_Insert");
                 _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("infoCompRet", SqlValidation.ValidateSqlString(data.infoCompRet));
-                _db.AddDynamicParam("docsSust", SqlValidation.ValidateSqlString(data.docsSust));
-                _db.AddDynamicParam("impuestos", SqlValidation.ValidateSqlString(data.impuestos));
-                _db.AddDynamicParam("retenciones", SqlValidation.ValidateSqlString(data.retenciones));
+                _db.AddDynamicParam("infoCompRet", SqlStringParam.Sanitize(data.infoCompRet));
+                _db.AddDynamicParam("docsSust", SqlStringParam.Sanitize(data.docsSust));
+                _db.AddDynamicParam("impuestos", SqlStringParam.Sanitize(data.impuestos));
+                _db.AddDynamicParam("retenciones", SqlStringParam.Sanitize(data.retenciones));
                 if (!string.IsNullOrEmpty(data.reembolsos))
                 {
-                    _db.AddDynamicParam("reembolsos", SqlValidation.ValidateSqlString(data.reembolsos));
+                    _db.AddDynamicParam("reembolsos", SqlStringParam.Sanitize(data.reembolsos));
                 }
-                _db.AddDynamicParam("payments", SqlValidation.ValidateSqlString(data.payments));
+                _db.AddDynamicParam("payments", SqlStringParam.Sanitize(data.payments));
                 if (!string.IsNullOrEmpty(data.infoAdicional))
                 {
-                    _db.AddDynamicParam("infoAdicional", SqlValidation.ValidateSqlString(data.infoAdicional));
+                    _db.AddDynamicParam("infoAdicional", SqlStringParam.Sanitize(data.infoAdicional));
                 }
                 _response = _db.GetDefault();
             }
@@ -91,7 +92,7 @@ namespace ApiFactElect.Controllers.RetencionAts
                 await _db.SPExecute("FactElect.RetencionAts_Update");
                 _db.AddDynamicParam("idRol", idUsuarioRol);
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("infoCompRet", SqlValidation.ValidateSqlString(data.infoCompRet));
+                _db.AddDynamicParam("infoCompRet", SqlStringParam.Sanitize(data.infoCompRet));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

@@ -3,6 +3,7 @@ using DataAccess.Tesoreria;
 using Domain.Dtos.Contabilidad;
 using Domain.Models;
 using Lib.Common;
+using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.GestionFinanciera
@@ -40,7 +41,7 @@ namespace WebUI.Controllers.GestionFinanciera
             GenericResponse _response = new GenericResponse();
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
+            parameters.Add("json", SqlStringParam.Sanitize(json));
             _response = DbResponse.SPDataTable(await _dao.GetDataTableAsync("GestFinanc.ComprobanteEgreso_Get", parameters));
             return Ok(_response);
         }
@@ -51,10 +52,10 @@ namespace WebUI.Controllers.GestionFinanciera
             GenericResponse _response = new GenericResponse();
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("comprobante", SqlValidation.ValidateSqlString(data.comprobante));
-            parameters.Add("pagos", SqlValidation.ValidateSqlString(data.cobrosPagos));
-            parameters.Add("pagoDetalle", SqlValidation.ValidateSqlString(data.detalles));
-            parameters.Add("historial", SqlValidation.ValidateSqlString(data.historial));
+            parameters.Add("comprobante", SqlStringParam.Sanitize(data.comprobante));
+            parameters.Add("pagos", SqlStringParam.Sanitize(data.cobrosPagos));
+            parameters.Add("pagoDetalle", SqlStringParam.Sanitize(data.detalles));
+            parameters.Add("historial", SqlStringParam.Sanitize(data.historial));
             _response = DbResponse.SPDefault(await _dao.GetDataTableAsync("GestFinanc.ComprobanteEgreso_Insert", parameters));
             return Ok(_response);
         }

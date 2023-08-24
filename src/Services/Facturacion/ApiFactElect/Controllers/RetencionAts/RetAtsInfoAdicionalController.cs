@@ -1,5 +1,6 @@
 ﻿using DataAccess;
 using Lib.Common;
+using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -49,7 +50,7 @@ namespace ApiFactElect.Controllers.RetencionAts
                 Dictionary<string, object> parameters = new Dictionary<string, object>
                 {
                     { "idUsuarioRol", idUsuarioRol },
-                    { "json", SqlValidation.ValidateSqlString(json) }
+                    { "json", SqlStringParam.Sanitize(json) }
                 };
                 _response = _db.GetDefault();
             }
@@ -77,7 +78,7 @@ namespace ApiFactElect.Controllers.RetencionAts
                 await _db.SPExecute("FactElect.RetAts_InfoAdicional_Update");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

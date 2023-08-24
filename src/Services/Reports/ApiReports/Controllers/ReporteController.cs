@@ -2,7 +2,7 @@
 using DataAccess;
 using Domain.Dtos;
 using Domain.Models;
-using Lib.Common;
+using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Primitives;
@@ -136,7 +136,7 @@ namespace ApiReports.Controllers
             try
             {
                 await _db.SPExecute("Reporte.Management_Get_To_Print");
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(data.dataParams));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(data.dataParams));
                 var _dt = _db.GetDataTableAsync();
                 //data.reportParams = _dt.payload;
                 //var _dataReport = ConverToModelReportParams(data);
