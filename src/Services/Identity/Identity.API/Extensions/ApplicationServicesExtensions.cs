@@ -15,7 +15,7 @@ namespace Identity.API.Extensions
         public static IServiceCollection AddApplicationServices(this IServiceCollection services,
             IConfiguration configuration)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
+            services.AddDbContextPool<ApplicationDbContext>(options =>
             options.UseSqlServer(Encryption.DecryptString(configuration.GetSection("KeyEncryption").Value, configuration.GetConnectionString("DefaultConnection"))));
 
             services.AddIdentityCore<AppUser>(opt =>

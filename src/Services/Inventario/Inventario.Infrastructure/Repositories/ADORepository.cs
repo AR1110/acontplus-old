@@ -23,31 +23,30 @@ namespace Inventario.Infrastructure.Repositories
                 bool wasOpen = command.Connection.State == ConnectionState.Open;
                 try
                 {
+                    command.CommandText = spName;
+                    if (parameters.Count > 0)
+                    {
+                        foreach (var parameter in parameters)
+                        {
+                            if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                            {
+                                AddSqlParameter(command, parameter.Key, parameter.Value);
+                            }
+                        }
+                    }
 
+                    command.CommandType = CommandType.StoredProcedure;
+                    if (!wasOpen) await _context.Database.OpenConnectionAsync();
+                    using (SqlDataAdapter adapter = new SqlDataAdapter())
+                    {
+                        adapter.SelectCommand = (SqlCommand)command;
+                        dt = new DataTable();
+                        adapter.Fill(dt);
+                    }
                 }
                 finally
                 {
                     if (!wasOpen) command.Connection.Close();
-                }
-                command.CommandText = spName;
-                if (parameters.Count > 0)
-                {
-                    foreach (var parameter in parameters)
-                    {
-                        if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
-                        {
-                            AddSqlParameter(command, parameter.Key, parameter.Value);
-                        }
-                    }
-                }
-
-                command.CommandType = CommandType.StoredProcedure;
-                if (!wasOpen) await _context.Database.OpenConnectionAsync();
-                using (SqlDataAdapter adapter = new SqlDataAdapter())
-                {
-                    adapter.SelectCommand = (SqlCommand)command;
-                    dt = new DataTable();
-                    adapter.Fill(dt);
                 }
             }
             return dt;
@@ -60,41 +59,40 @@ namespace Inventario.Infrastructure.Repositories
                 bool wasOpen = command.Connection.State == ConnectionState.Open;
                 try
                 {
+                    command.CommandText = spName;
+                    if (parameters.Count > 0)
+                    {
+                        foreach (var parameter in parameters)
+                        {
+                            if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                            {
+                                AddSqlParameter(command, parameter.Key, parameter.Value);
+                            }
+                        }
+                    }
 
+                    string outParam = "@tableNames";
+                    AddSqlParameterOut(command, outParam, SqlDbType.VarChar, 500);
+
+                    command.CommandType = CommandType.StoredProcedure;
+                    if (!wasOpen) await _context.Database.OpenConnectionAsync();
+                    using (SqlDataAdapter adapter = new SqlDataAdapter())
+                    {
+                        adapter.SelectCommand = (SqlCommand)command;
+                        ds = new DataSet();
+                        adapter.Fill(ds);
+                    }
+
+                    string[] tableNames = GetParameter(command, outParam).ToString().Split(',');
+
+                    for (int i = 0; i < tableNames.Length; i++)
+                    {
+                        ds.Tables[i].TableName = tableNames[i];
+                    }
                 }
                 finally
                 {
                     if (!wasOpen) command.Connection.Close();
-                }
-                command.CommandText = spName;
-                if (parameters.Count > 0)
-                {
-                    foreach (var parameter in parameters)
-                    {
-                        if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
-                        {
-                            AddSqlParameter(command, parameter.Key, parameter.Value);
-                        }
-                    }
-                }
-
-                string outParam = "@tableNames";
-                AddSqlParameterOut(command, outParam, SqlDbType.VarChar, 500);
-
-                command.CommandType = CommandType.StoredProcedure;
-                if (!wasOpen) await _context.Database.OpenConnectionAsync();
-                using (SqlDataAdapter adapter = new SqlDataAdapter())
-                {
-                    adapter.SelectCommand = (SqlCommand)command;
-                    ds = new DataSet();
-                    adapter.Fill(ds);
-                }
-
-                string[] tableNames = GetParameter(command, outParam).ToString().Split(',');
-
-                for (int i = 0; i < tableNames.Length; i++)
-                {
-                    ds.Tables[i].TableName = tableNames[i];
                 }
             }
             return ds;
@@ -107,29 +105,28 @@ namespace Inventario.Infrastructure.Repositories
                 bool wasOpen = command.Connection.State == ConnectionState.Open;
                 try
                 {
-
+                    command.CommandText = spName;
+                    if (parameters.Count > 0)
+                    {
+                        foreach (var parameter in parameters)
+                        {
+                            if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                            {
+                                AddSqlParameter(command, parameter.Key, parameter.Value);
+                            }
+                        }
+                    }
+                    command.CommandType = CommandType.StoredProcedure;
+                    if (!wasOpen) await _context.Database.OpenConnectionAsync();
+                    var reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        response = reader["response"].ToString();
+                    }
                 }
                 finally
                 {
                     if (!wasOpen) command.Connection.Close();
-                }
-                command.CommandText = spName;
-                if (parameters.Count > 0)
-                {
-                    foreach (var parameter in parameters)
-                    {
-                        if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
-                        {
-                            AddSqlParameter(command, parameter.Key, parameter.Value);
-                        }
-                    }
-                }
-                command.CommandType = CommandType.StoredProcedure;
-                if (!wasOpen) await _context.Database.OpenConnectionAsync();
-                var reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    response = reader["response"].ToString();
                 }
             }
             return response;

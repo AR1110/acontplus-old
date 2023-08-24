@@ -12,7 +12,7 @@ namespace Mechanical.API.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<MechanicalContext>(options =>
+            services.AddDbContextPool<MechanicalContext>(options =>
             options.UseSqlServer(Encryption.DecryptString(configuration.GetSection("KeyEncryption").Value, configuration.GetConnectionString("DefaultConnection"))));
 
             services.AddScoped<IADORepository, ADORepository>();

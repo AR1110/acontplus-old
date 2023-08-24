@@ -11,7 +11,7 @@ namespace ApiContabilidad.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<ContabilidadContext>(options =>
+            services.AddDbContextPool<ContabilidadContext>(options =>
             options.UseSqlServer(Encryption.DecryptString(configuration.GetSection("KeyEncryption").Value, configuration.GetConnectionString("DefaultConnection"))));
             services.AddScoped<IADORepository, ADORepository>();
             services.AddScoped<ISubCategoriaService, SubCategoriaService>();

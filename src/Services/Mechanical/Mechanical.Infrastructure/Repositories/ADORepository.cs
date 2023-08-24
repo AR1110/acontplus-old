@@ -29,14 +29,9 @@ namespace Mechanical.Infrastructure.Repositories
                     {
                         foreach (var parameter in parameters)
                         {
-                            //AddSqlParameter(parameter.Key, parameter.Value);
                             if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
                             {
-                                SqlParameter sqlParam = new SqlParameter();
-                                sqlParam.ParameterName = parameter.Key;
-                                sqlParam.SqlDbType = SqlTypes.GetDbType(parameter.Value);
-                                sqlParam.Value = parameter.Value ?? DBNull.Value;
-                                command.Parameters.Add(sqlParam);
+                                AddSqlParameter(command, parameter.Key, parameter.Value);
                             }
                         }
                     }
@@ -139,12 +134,6 @@ namespace Mechanical.Infrastructure.Repositories
             }
             return response;
         }
-
-        public static object GetParameter(DbCommand command, string parameterName)
-        {
-            return command.Parameters[parameterName].Value;
-        }
-
         private static void AddSqlParameter(DbCommand cmd, string name, object value)
         {
             SqlParameter sqlParam = new SqlParameter();
@@ -161,6 +150,10 @@ namespace Mechanical.Infrastructure.Repositories
             sqlParam.Size = size;
             sqlParam.Direction = ParameterDirection.Output;
             cmd.Parameters.Add(sqlParam);
+        }
+        public static object GetParameter(DbCommand command, string parameterName)
+        {
+            return command.Parameters[parameterName].Value;
         }
     }
 }

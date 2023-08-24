@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Data.Common;
 using Contabilidad.Core.Interfaces;
 using Contabilidad.Infrastructure.Data;
 using Lib.Common.DbUtils;
@@ -27,14 +28,9 @@ namespace Contabilidad.Infrastructure.Repositories
                     {
                         foreach (var parameter in parameters)
                         {
-                            //AddSqlParameter(parameter.Key, parameter.Value);
                             if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
                             {
-                                SqlParameter sqlParam = new SqlParameter();
-                                sqlParam.ParameterName = parameter.Key;
-                                sqlParam.SqlDbType = SqlTypes.GetDbType(parameter.Value);
-                                sqlParam.Value = parameter.Value ?? DBNull.Value;
-                                command.Parameters.Add(sqlParam);
+                                AddSqlParameter(command, parameter.Key, parameter.Value);
                             }
                         }
                     }
@@ -70,14 +66,14 @@ namespace Contabilidad.Infrastructure.Repositories
                         {
                             if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
                             {
-                                SqlParameter sqlParam = new SqlParameter();
-                                sqlParam.ParameterName = parameter.Key;
-                                sqlParam.SqlDbType = SqlTypes.GetDbType(parameter.Value);
-                                sqlParam.Value = parameter.Value ?? DBNull.Value;
-                                command.Parameters.Add(sqlParam);
+                                AddSqlParameter(command, parameter.Key, parameter.Value);
                             }
                         }
                     }
+
+                    string outParam = "@tableNames";
+                    AddSqlParameterOut(command, outParam, SqlDbType.VarChar, 500);
+
                     command.CommandType = CommandType.StoredProcedure;
                     if (!wasOpen) await _context.Database.OpenConnectionAsync();
                     using (SqlDataAdapter adapter = new SqlDataAdapter())
@@ -85,6 +81,12 @@ namespace Contabilidad.Infrastructure.Repositories
                         adapter.SelectCommand = (SqlCommand)command;
                         ds = new DataSet();
                         adapter.Fill(ds);
+                    }
+                    string[] tableNames = GetParameter(command, outParam).ToString().Split(',');
+
+                    for (int i = 0; i < tableNames.Length; i++)
+                    {
+                        ds.Tables[i].TableName = tableNames[i];
                     }
                 }
                 finally
@@ -109,11 +111,7 @@ namespace Contabilidad.Infrastructure.Repositories
                         {
                             if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
                             {
-                                SqlParameter sqlParam = new SqlParameter();
-                                sqlParam.ParameterName = parameter.Key;
-                                sqlParam.SqlDbType = SqlTypes.GetDbType(parameter.Value);
-                                sqlParam.Value = parameter.Value ?? DBNull.Value;
-                                command.Parameters.Add(sqlParam);
+                                AddSqlParameter(command, parameter.Key, parameter.Value);
                             }
                         }
                     }
@@ -127,6 +125,27 @@ namespace Contabilidad.Infrastructure.Repositories
                 }
             }
             return id;
+        }
+        private static void AddSqlParameter(DbCommand cmd, string name, object value)
+        {
+            SqlParameter sqlParam = new SqlParameter();
+            sqlParam.ParameterName = name;
+            sqlParam.SqlDbType = SqlTypes.GetDbType(value);
+            sqlParam.Value = value ?? DBNull.Value;
+            cmd.Parameters.Add(sqlParam);
+        }
+        private static void AddSqlParameterOut(DbCommand cmd, string parameterName, SqlDbType sqlDbType, int size)
+        {
+            SqlParameter sqlParam = new SqlParameter();
+            sqlParam.ParameterName = parameterName;
+            sqlParam.SqlDbType = sqlDbType;
+            sqlParam.Size = size;
+            sqlParam.Direction = ParameterDirection.Output;
+            cmd.Parameters.Add(sqlParam);
+        }
+        public static object GetParameter(DbCommand command, string parameterName)
+        {
+            return command.Parameters[parameterName].Value;
         }
     }
 }

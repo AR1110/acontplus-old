@@ -30,14 +30,9 @@ namespace Restaurant.Infrastructure.Repositories
                     {
                         foreach (var parameter in parameters)
                         {
-                            //AddSqlParameter(parameter.Key, parameter.Value);
                             if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
                             {
-                                SqlParameter sqlParam = new SqlParameter();
-                                sqlParam.ParameterName = parameter.Key;
-                                sqlParam.SqlDbType = SqlTypes.GetDbType(parameter.Value); ;
-                                sqlParam.Value = parameter.Value ?? DBNull.Value;
-                                cmd.Parameters.Add(sqlParam);
+                                AddSqlParameter(cmd, parameter.Key, parameter.Value);
                             }
                         }
                     }
@@ -137,19 +132,10 @@ namespace Restaurant.Infrastructure.Repositories
                 finally
                 {
                     if (!wasOpen) cmd.Connection.Close();
-                } 
+                }
             }
             return response;
         }
-
-        public static object GetParameter(DbCommand command, string parameterName)
-        {
-            return command.Parameters[parameterName].Value;
-        }
-
-        //https://ajaxhispano.com/ask/alguien-tiene-una-funcion-c-que-mapee-el-tipo-de-datos-sql-de-una-columna-a-su-equivalente-clr-58667/
-
-
         private static void AddSqlParameter(DbCommand cmd, string name, object value)
         {
             SqlParameter sqlParam = new SqlParameter();
@@ -166,6 +152,10 @@ namespace Restaurant.Infrastructure.Repositories
             sqlParam.Size = size;
             sqlParam.Direction = ParameterDirection.Output;
             cmd.Parameters.Add(sqlParam);
+        }
+        public static object GetParameter(DbCommand command, string parameterName)
+        {
+            return command.Parameters[parameterName].Value;
         }
     }
 }
