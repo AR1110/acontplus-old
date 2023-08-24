@@ -21,14 +21,15 @@ BEGIN
 	SELECT TOP 1  @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 	SELECT @codEstab = codEstab FROM OPENJSON(@json) WITH(codEstab VARCHAR(20)  '$.codEstab')
 
-	SET @tableNames = 'Table,ConfigDecimal,SubCategorias,Impuesto,TarifaImpuesto,PtoEmi_Asig,Bodega_Asign,Floor,EntidadFinancieras,SubEntidadFinancieras'
-	SELECT rt.* FROM Restaurant.v_Table rt
+	SET @tableNames = 'ConfigDecimal,Table,SubCategorias,Impuesto,TarifaImpuesto,PtoEmi_Asig,Bodega_Asign,Floor,EntidadFinancieras,SubEntidadFinancieras'
+	
+    SELECT * FROM v_ConfigDecimal WHERE idEntidad = @idEntidad AND codTrasaccion = 'V'
+    
+    SELECT rt.* FROM Restaurant.v_Table rt
 	INNER JOIN Restaurant.v_Room rr ON rr.id = rt.roomId
 	INNER JOIN Restaurant.v_Floor rf ON rf.id = rr.floorId
 	WHERE rf.codEstab = @codEstab
 	   
-	SELECT * FROM v_ConfigDecimal WHERE idEntidad = @idEntidad AND codTrasaccion = 'V'
-
     SELECT
 		idSubFamilia    = sf.idSubFamilia
 		,idFamilia      = ISNULL(sf.idFamilia,0)

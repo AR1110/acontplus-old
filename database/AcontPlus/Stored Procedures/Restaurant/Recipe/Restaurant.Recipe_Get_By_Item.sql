@@ -4,7 +4,7 @@ GO
 --- Author: Ignacio Manchu.
 --- Description: Update
 --- Date: 2023-08-17
---- Restaurant.Recipe_Get_By_Item 1, ''
+--- Restaurant.Recipe_Get_By_Item 3, ''
 IF OBJECT_ID('Restaurant.Recipe_Get_By_Item') IS NOT NULL
    DROP PROC Restaurant.Recipe_Get_By_Item
 GO 
