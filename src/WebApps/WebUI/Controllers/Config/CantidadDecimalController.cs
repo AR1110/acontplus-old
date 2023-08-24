@@ -1,6 +1,7 @@
 ﻿using DataAccess;
 using Domain.Models;
 using Lib.Common;
+using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -30,7 +31,7 @@ namespace WebUI.Controllers.Config
             {
                 await _db.SPExecute("Config.CantidadDecimal_Get");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("jsonParams", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("jsonParams", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)

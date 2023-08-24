@@ -3,6 +3,7 @@ using Inventario.Core.Interfaces;
 using Inventario.Core.Models;
 using Lib.Common;
 using Lib.Common.Api;
+using Lib.Common.DbUtils;
 using Lib.Common.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -35,7 +36,7 @@ namespace Inventario.API.Controllers.v1
             {
                 await _db.SPExecute("Inventario.Articulo_Get");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
@@ -97,7 +98,7 @@ namespace Inventario.API.Controllers.v1
                 }
                 await _db.SPExecute("Inventario.Articulo_Insert", true);
                 _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(Converters.SerializeDictionary(data.Data)));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(Converters.SerializeDictionary(data.Data)));
                 _db.AddDynamicParam("s3ObjectKey", s3file.S3ObjectKey ?? "");
                 _db.AddDynamicParam("s3ObjectUrl", s3file.S3ObjectUrl ?? "");
                 _response = _db.GetDefault();
@@ -154,7 +155,7 @@ namespace Inventario.API.Controllers.v1
                 await _db.SPExecute("Inventario.Articulo_Update");
                 _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(Converters.SerializeDictionary(data.Data)));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(Converters.SerializeDictionary(data.Data)));
                 _db.AddDynamicParam("s3ObjectKey", s3file.S3ObjectKey ?? "");
                 _db.AddDynamicParam("s3ObjectUrl", s3file.S3ObjectUrl ?? "");
                 _response = _db.GetDefault();
@@ -223,7 +224,7 @@ namespace Inventario.API.Controllers.v1
             {
                 await _db.SPExecute("Almacen.Articulo_Get_Search");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
@@ -248,7 +249,7 @@ namespace Inventario.API.Controllers.v1
             {
                 await _db.SPExecute("Almacen.Articulo_Get_Id_By_Purchase");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
@@ -273,7 +274,7 @@ namespace Inventario.API.Controllers.v1
             {
                 await _db.SPExecute("Almacen.Articulo_Get_Id_By_Sale");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
@@ -298,7 +299,7 @@ namespace Inventario.API.Controllers.v1
             {
                 await _db.SPExecute("Sistema.Almacen_Get_Data_Form");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)

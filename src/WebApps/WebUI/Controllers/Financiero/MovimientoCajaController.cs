@@ -2,6 +2,7 @@
 using DataAccess.GestionFinanciera;
 using Domain.Models.GestionFinanciera;
 using Lib.Common;
+using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -54,7 +55,7 @@ namespace WebUI.Controllers.GestionFinanciera
             {
                 await _db.SPExecute("ReporteIngresos.Ingreso_Egreso_Caja");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
@@ -78,7 +79,7 @@ namespace WebUI.Controllers.GestionFinanciera
             {
                 await _db.SPExecute("ReporteIngresos.Ingreso_Egreso_Caja");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)

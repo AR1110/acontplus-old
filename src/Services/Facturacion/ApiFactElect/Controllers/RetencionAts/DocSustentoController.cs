@@ -1,5 +1,6 @@
 ﻿using DataAccess;
 using Lib.Common;
+using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -46,7 +47,7 @@ namespace ApiFactElect.Controllers.RetencionAts
                 await _db.SPExecute("FactElect.RetAts_Doc_Sust_Insert");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("idRetencionAts", idRetencionAts);
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -73,7 +74,7 @@ namespace ApiFactElect.Controllers.RetencionAts
                 await _db.SPExecute("FactElect.RetAts_Doc_Sust_Update");
                 _db.AddDynamicParam("idUsuarioRol ", idUsuarioRol);
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

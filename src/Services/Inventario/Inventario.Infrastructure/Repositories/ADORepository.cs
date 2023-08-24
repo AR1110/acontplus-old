@@ -2,6 +2,7 @@
 using System.Data.Common;
 using Inventario.Core.Interfaces;
 using Inventario.Infrastructure.Data;
+using Lib.Common.DbUtils;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,15 @@ namespace Inventario.Infrastructure.Repositories
             DataTable dt = null;
             using (var command = _context.Database.GetDbConnection().CreateCommand())
             {
+                bool wasOpen = command.Connection.State == ConnectionState.Open;
+                try
+                {
+
+                }
+                finally
+                {
+                    if (!wasOpen) command.Connection.Close();
+                }
                 command.CommandText = spName;
                 if (parameters.Count > 0)
                 {
@@ -32,7 +42,7 @@ namespace Inventario.Infrastructure.Repositories
                 }
 
                 command.CommandType = CommandType.StoredProcedure;
-                await _context.Database.OpenConnectionAsync();
+                if (!wasOpen) await _context.Database.OpenConnectionAsync();
                 using (SqlDataAdapter adapter = new SqlDataAdapter())
                 {
                     adapter.SelectCommand = (SqlCommand)command;
@@ -47,6 +57,15 @@ namespace Inventario.Infrastructure.Repositories
             DataSet ds = null;
             using (var command = _context.Database.GetDbConnection().CreateCommand())
             {
+                bool wasOpen = command.Connection.State == ConnectionState.Open;
+                try
+                {
+
+                }
+                finally
+                {
+                    if (!wasOpen) command.Connection.Close();
+                }
                 command.CommandText = spName;
                 if (parameters.Count > 0)
                 {
@@ -63,7 +82,7 @@ namespace Inventario.Infrastructure.Repositories
                 AddSqlParameterOut(command, outParam, SqlDbType.VarChar, 500);
 
                 command.CommandType = CommandType.StoredProcedure;
-                await _context.Database.OpenConnectionAsync();
+                if (!wasOpen) await _context.Database.OpenConnectionAsync();
                 using (SqlDataAdapter adapter = new SqlDataAdapter())
                 {
                     adapter.SelectCommand = (SqlCommand)command;
@@ -85,6 +104,15 @@ namespace Inventario.Infrastructure.Repositories
             string response = string.Empty;
             using (var command = _context.Database.GetDbConnection().CreateCommand())
             {
+                bool wasOpen = command.Connection.State == ConnectionState.Open;
+                try
+                {
+
+                }
+                finally
+                {
+                    if (!wasOpen) command.Connection.Close();
+                }
                 command.CommandText = spName;
                 if (parameters.Count > 0)
                 {
@@ -97,7 +125,7 @@ namespace Inventario.Infrastructure.Repositories
                     }
                 }
                 command.CommandType = CommandType.StoredProcedure;
-                await _context.Database.OpenConnectionAsync();
+                if (!wasOpen) await _context.Database.OpenConnectionAsync();
                 var reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -110,7 +138,7 @@ namespace Inventario.Infrastructure.Repositories
         {
             SqlParameter sqlParam = new SqlParameter();
             sqlParam.ParameterName = name;
-            sqlParam.SqlDbType = GetDbType(value);
+            sqlParam.SqlDbType = SqlTypes.GetDbType(value);
             sqlParam.Value = value ?? DBNull.Value;
             cmd.Parameters.Add(sqlParam);
         }
@@ -126,31 +154,6 @@ namespace Inventario.Infrastructure.Repositories
         public static object GetParameter(DbCommand command, string parameterName)
         {
             return command.Parameters[parameterName].Value;
-        }
-        public static SqlDbType GetDbType(object obj)
-        {
-            Type type = obj.GetType();
-            switch (type.Name)
-            {
-                case "Int32":
-                    return SqlDbType.Int;
-                case "Int64":
-                    return SqlDbType.BigInt;
-                case "String":
-                    return SqlDbType.VarChar;
-                case "Boolean":
-                    return SqlDbType.Bit;
-                case "Decimal":
-                    return SqlDbType.Decimal;
-                case "Guid":
-                    return SqlDbType.UniqueIdentifier;
-                case "XmlDocument":
-                    return SqlDbType.Xml;
-                case "Byte[]":
-                    return SqlDbType.VarBinary;
-                default:
-                    return SqlDbType.Variant;
-            }
         }
     }
 }

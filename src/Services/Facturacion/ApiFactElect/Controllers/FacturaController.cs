@@ -1,6 +1,7 @@
 ﻿using DataAccess;
 using Domain.ViewModels;
 using Lib.Common;
+using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -30,7 +31,7 @@ namespace ApiFactElect.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Ventas.Factura_Get", true);
                 _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
@@ -55,9 +56,9 @@ namespace ApiFactElect.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Ventas.Factura_Insert", true);
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("jsonFactura", SqlValidation.ValidateSqlString(data.factura));
-                _db.AddDynamicParam("jsonDetalle", SqlValidation.ValidateSqlString(data.detalle));
-                _db.AddDynamicParam("jsonInfoAdicional", SqlValidation.ValidateSqlString(data.adicional));
+                _db.AddDynamicParam("jsonFactura", SqlStringParam.Sanitize(data.factura));
+                _db.AddDynamicParam("jsonDetalle", SqlStringParam.Sanitize(data.detalle));
+                _db.AddDynamicParam("jsonInfoAdicional", SqlStringParam.Sanitize(data.adicional));
                 _db.AddDynamicParam("infoAdicionalArticulo", data.infoAdicionalArticulo);
                 _response = _db.GetDefault();
             }
@@ -84,9 +85,9 @@ namespace ApiFactElect.Controllers
                 await _db.SPExecute("Ventas.Factura_Update", true);
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("jsonFactura", SqlValidation.ValidateSqlString(data.factura));
-                _db.AddDynamicParam("jsonDetalle", SqlValidation.ValidateSqlString(data.detalle));
-                _db.AddDynamicParam("jsonInfoAdicional", SqlValidation.ValidateSqlString(data.adicional));
+                _db.AddDynamicParam("jsonFactura", SqlStringParam.Sanitize(data.factura));
+                _db.AddDynamicParam("jsonDetalle", SqlStringParam.Sanitize(data.detalle));
+                _db.AddDynamicParam("jsonInfoAdicional", SqlStringParam.Sanitize(data.adicional));
                 _db.AddDynamicParam("infoAdicionalArticulo", data.infoAdicionalArticulo);
                 _response = _db.GetDefault();
             }

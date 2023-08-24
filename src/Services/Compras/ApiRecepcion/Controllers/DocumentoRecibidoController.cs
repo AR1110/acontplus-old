@@ -9,6 +9,7 @@ using Domain.Dtos;
 using FactElect.Application;
 using FactElect.Core;
 using Lib.Common;
+using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common.Logs;
@@ -43,7 +44,7 @@ namespace ApiRecepcion.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Recepcion.Documento_Get");
                 _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
@@ -359,7 +360,7 @@ namespace ApiRecepcion.Controllers
 
                     await _db.SPExecute("Recepcion.Documento_UploadXml");
                     _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
-                    _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                    _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                     _db.AddDynamicParam("codDoc", codDoc);
                     _db.AddDynamicParam("claveAcceso", claveAcceso);
                     _db.AddDynamicParam("versionComp", versionComp);
@@ -392,7 +393,7 @@ namespace ApiRecepcion.Controllers
                 await _db.SPExecute("Recepcion.Documento_Insert", true);
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 //_db.AddDynamicParam("jsonData", SqlValidation.ValidateSqlString(data.jsonData));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(Converters.SerializeDictionary(parameters.data)));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(Converters.SerializeDictionary(parameters.data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

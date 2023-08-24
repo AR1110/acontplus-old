@@ -1,6 +1,7 @@
 ﻿using DataAccess;
 using Domain.Dtos;
 using Lib.Common;
+using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -30,7 +31,7 @@ namespace ApiContabilidad.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _dbAccess.SPExecute("Contabilidad.CuentaPorCobrar_Get");
                 _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _dbAccess.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _dbAccess.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _dbAccess.GetDataSetAsync();
             }
             catch (Exception ex)

@@ -1,6 +1,6 @@
 ﻿using DataAccess;
 using Domain.Models;
-using Lib.Common;
+using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Config
@@ -24,7 +24,7 @@ namespace WebUI.Controllers.Config
             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idRol", idRol);
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
+            parameters.Add("json", SqlStringParam.Sanitize(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Config.EntidadNotificacion_Get", parameters)));
         }
 
@@ -34,7 +34,7 @@ namespace WebUI.Controllers.Config
             int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idRol", idRol);
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
+            parameters.Add("json", SqlStringParam.Sanitize(json));
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Config.EntidadNotificacion_Update", parameters)));
         }
     }

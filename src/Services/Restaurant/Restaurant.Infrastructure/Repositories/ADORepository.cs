@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Data.Common;
+using Lib.Common.DbUtils;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Core.Interfaces;
@@ -34,7 +35,7 @@ namespace Restaurant.Infrastructure.Repositories
                             {
                                 SqlParameter sqlParam = new SqlParameter();
                                 sqlParam.ParameterName = parameter.Key;
-                                sqlParam.SqlDbType = GetDbType(parameter.Value);
+                                sqlParam.SqlDbType = SqlTypes.GetDbType(parameter.Value); ;
                                 sqlParam.Value = parameter.Value ?? DBNull.Value;
                                 cmd.Parameters.Add(sqlParam);
                             }
@@ -97,13 +98,13 @@ namespace Restaurant.Infrastructure.Repositories
                     {
                         ds.Tables[i].TableName = tableNames[i];
                     }
-                    return ds;
                 }
                 finally
                 {
                     if (!wasOpen) cmd.Connection.Close();
                 }
             }
+            return ds;
         }
 
         public async Task<string> SPExecuteAsync(string spName, Dictionary<string, object> parameters)
@@ -132,14 +133,13 @@ namespace Restaurant.Infrastructure.Repositories
                     {
                         response = reader.GetString(0);
                     }
-                    return response;
                 }
                 finally
                 {
                     if (!wasOpen) cmd.Connection.Close();
-                }
-
+                } 
             }
+            return response;
         }
 
         public static object GetParameter(DbCommand command, string parameterName)
@@ -148,37 +148,13 @@ namespace Restaurant.Infrastructure.Repositories
         }
 
         //https://ajaxhispano.com/ask/alguien-tiene-una-funcion-c-que-mapee-el-tipo-de-datos-sql-de-una-columna-a-su-equivalente-clr-58667/
-        public static SqlDbType GetDbType(object obj)
-        {
-            Type type = obj.GetType();
-            switch (type.Name)
-            {
-                case "Int32":
-                    return SqlDbType.Int;
-                case "Int64":
-                    return SqlDbType.BigInt;
-                case "String":
-                    return SqlDbType.VarChar;
-                case "Boolean":
-                    return SqlDbType.Bit;
-                case "Decimal":
-                    return SqlDbType.Decimal;
-                case "Guid":
-                    return SqlDbType.UniqueIdentifier;
-                case "XmlDocument":
-                    return SqlDbType.Xml;
-                case "Byte[]":
-                    return SqlDbType.VarBinary;
-                default:
-                    return SqlDbType.Variant;
-            }
-        }
+
 
         private static void AddSqlParameter(DbCommand cmd, string name, object value)
         {
             SqlParameter sqlParam = new SqlParameter();
             sqlParam.ParameterName = name;
-            sqlParam.SqlDbType = GetDbType(value);
+            sqlParam.SqlDbType = SqlTypes.GetDbType(value);
             sqlParam.Value = value ?? DBNull.Value;
             cmd.Parameters.Add(sqlParam);
         }
