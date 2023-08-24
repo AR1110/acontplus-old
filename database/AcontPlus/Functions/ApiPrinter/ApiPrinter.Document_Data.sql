@@ -147,6 +147,7 @@ BEGIN
 							,nombreComercial = REPLACE(s.nombreComercial   , '&', '%26')   
 							,ruc = e.ruc
 							,direccion = e.direccion 
+                            ,dirMatriz = REPLACE(ISNULL(s.dirEstablecimiento, 'S/N'), '&', '%26') 
 							,email = s.correo 
 							,telefonoEntidad = ISNULL(s.telefono, 'SN') 
 							,fechaEmision = CONVERT(NVARCHAR, FORMAT(ne.fechaEmision, 'dd/MM/yyyy hh:mm')) 
@@ -218,6 +219,7 @@ BEGIN
 								,nombreComercial = REPLACE(s.nombreComercial   , '&', '%26')   
 								,ruc = e.ruc
 								,direccionEntidad = e.direccion
+                                ,dirMatriz = REPLACE(ISNULL(s.dirEstablecimiento, 'S/N'), '&', '%26') 
 								,telefonoEntidad = ISNULL(s.telefono, 'S/N')  
 								,emailEntidad = s.correo 	
 								,razonSocialCliente = REPLACE(cl.nombreFiscal   , '&', '%26')   
