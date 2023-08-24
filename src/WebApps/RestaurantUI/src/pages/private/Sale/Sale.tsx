@@ -1,20 +1,21 @@
 
-import { ErrorBoundary } from "@/core/utilities";
-import { Grid,  useMediaQuery } from "@mui/material";
+import { ErrorBoundary, SnackbarUtility } from "@/core/utilities";
+import { Grid, useMediaQuery } from "@mui/material";
 import CategoryTab from "./components/CategoryTab";
 import { useAsync, useFetchAndLoad } from "@/hooks";
-import { ItemService, SaleService } from "@/core/services";
+import { ItemService, OrdenService, SaleService } from "@/core/services";
 import CollectionItem from "./components/CollectionItem";
 import SaleRight from "./components/SaleRight";
 
 import { Establecimiento } from "@/core/models";
 import CustomBottomNavigation from "./components/CustomBottomNavigation";
-import { useSaleStore, useAuthStore } from "@/stores";
+import { useSaleStore, useAuthStore, useCheckoutStore } from "@/stores";
 import { useEffect } from "react";
-import { itemReadAdapter } from "@/core/adapters";
-import FullScreenDialog from "@/core/components/FullScreenDialog"; 
-import { CloseIcon, SwipeLeftIcon } from "@/core/components"; 
+import { itemReadAdapter, itemToApi, summaryToApi, warehouseAdapter } from "@/core/adapters";
+import FullScreenDialog from "@/core/components/FullScreenDialog";
+import { CloseIcon, SwipeLeftIcon } from "@/core/components";
 import Checkout from "./components/Payment/Checkout";
+import Swal from "sweetalert2";
 
 
 
@@ -22,7 +23,15 @@ export default function Sale() {
     const isMobile = useMediaQuery('(max-width:900px)');
 
     const setDataForm = useSaleStore(state => state.setDataForm)
+    const { summary, setSummary } = useSaleStore(state => ({
+        summary: state.summary,
+        setSummary: state.setSummary,
+    }))
+    const dataForm = useSaleStore(state => state.dataForm);
+    const items = useSaleStore(state => state.items);
+
     const setDataEstab = useAuthStore(state => state.setDataEstab);
+    const dataEstab = useAuthStore(state => state.dataEstab);
     const estabs = useAuthStore(state => state.estabs);
 
     const { itemSearch, setCollectionItems } = useSaleStore(state => ({
@@ -31,9 +40,14 @@ export default function Sale() {
     }));
 
     //Event Payment 
-    const payment = useSaleStore(state => state.payment)
+    const payment = useSaleStore(state => state.payment);
+
     //Even Navigation 
-    const navigation = useSaleStore(state => state.navigation)
+    const navigation = useSaleStore(state => state.navigation);
+
+    //Checkout
+    const checkout = useCheckoutStore(state => state.checkout);
+
 
     useEffect(() => {
         const dataEstab = estabs[0] as Establecimiento
@@ -41,7 +55,22 @@ export default function Sale() {
         SaleService.getDataForForm(JSON.stringify({
             codEstab: dataEstab.codEstab
         })).then(response => {
+            const warehouseData = response.warehouses.filter(
+                warehouse => warehouse.codEstab_Asig === dataEstab.codEstab_Asig
+            ).find(warehouse => (warehouse.defaultBodega));
+
+            const emissionPointData = response.emissionPoints.filter(
+                emissionPoint => emissionPoint.codEstab_Asig === dataEstab.codEstab_Asig
+            ).find(emissionPoint => (emissionPoint.predeterminado));
+
             setDataForm(response)
+            setSummary({
+                ...summary,
+                establecimientoId: dataEstab.idEstablecimiento,
+                puntoEmisionId: emissionPointData?.idPuntoEmision ?? 0,
+                bodegaId: warehouseData?.idBodega ?? 0
+            }
+            )
         })
     }, [])
 
@@ -61,6 +90,46 @@ export default function Sale() {
     useAsync(getItemsApi, itemAdapter, () => {
         console.log('init')
     }, [itemSearch]);
+
+
+    const saveSale = async () => {
+        const { isConfirmed } = await Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        })
+
+        if(!isConfirmed) return
+        const summaryResult = summaryToApi(summary);
+        const itemsResult = itemToApi(items);
+        const taxesResult = items.map(item=>item.taxes);
+        const payments = {
+            formaPagoId: dataForm.paymentTypes.find(pay=>pay.code==="EFE")?.paymentTypeId,
+            total: checkout.voucher.payingAmount,
+            abono: checkout.voucher.receivedAmount,
+            cambio: checkout.voucher.changeReturn
+        }
+        const data = {
+            ...summaryResult,
+            items: itemsResult,
+            taxes: taxesResult,
+            payments
+        }
+        OrdenService.post(data).then(response => {
+            console.log(response)
+            if (response.code === '0') {
+                SnackbarUtility.warning(response.message)
+            }
+            if (response.code === "1") {
+                SnackbarUtility.success(response.message)
+                // resetForm();
+            }
+        })
+    }
 
     return (
         <ErrorBoundary fallBackComponent={<>Error!</>}>
@@ -88,9 +157,9 @@ export default function Sale() {
                 icon={<CloseIcon />}
                 dialogTitle="Cobro"
                 isOpen={payment.isOpen}
-                handleClose={payment.closeDialogCustom} 
+                handleClose={payment.closeDialogCustom}
             >
-               <Checkout/>
+                <Checkout saveSale={saveSale} />
             </FullScreenDialog>
             {/* end dialog payment */}
 

@@ -57,7 +57,13 @@ export default function SaleRight() {
     }
 
     const askToSave = async function(){
-        setVoucher(summary.total, summary.total.toString(), 0);
+       
+        setVoucher({ 
+            payingAmount: summary.total, 
+            receivedAmount: summary.total.toString(), 
+            changeReturn: 0,
+            creationDate: new Date() 
+        });
         payment.openDialogCustom();
         // if(!(summary.customerCompanyId > 0)){
         //     SnackbarUtility.warning('Seleccione el cliente');

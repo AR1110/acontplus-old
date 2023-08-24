@@ -4,6 +4,7 @@ using System.Web;
 using DataAccess;
 using Domain.Models;
 using Lib.Common;
+using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -34,7 +35,7 @@ namespace ApiFactElect.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("FactElect.Doc_Elect_Get", true);
                 _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
@@ -59,7 +60,7 @@ namespace ApiFactElect.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("FactElect.Doc_Elect_GetByStatus", true);
                 _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)

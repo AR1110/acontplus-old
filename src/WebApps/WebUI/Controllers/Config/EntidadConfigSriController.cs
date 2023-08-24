@@ -1,6 +1,7 @@
 ﻿using DataAccess;
 using Domain.Models;
 using Lib.Common;
+using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common.Logs;
@@ -35,7 +36,7 @@ namespace WebUI.Controllers.Config
             try
             {
                 await _db.SPExecute("Config.Sri_Get");
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)

@@ -1,5 +1,6 @@
 ﻿using Lib.Common;
 using Lib.Common.Api;
+using Lib.Common.DbUtils;
 using Restaurant.Core.Interfaces;
 
 namespace Restaurant.Application.Services
@@ -27,7 +28,7 @@ namespace Restaurant.Application.Services
         {
             var parameters = new Dictionary<string, object>{
                 { "userRoleId", data.UserRoleId },
-                { "json", SqlValidation.ValidateSqlString(Converters.SerializeDictionary(data.Data)) }
+                { "json", SqlStringParam.Sanitize(Converters.SerializeDictionary(data.Data)) }
             };
             return await _repository.SPExecuteAsync("Restaurant.Order_Insert", parameters);
         }

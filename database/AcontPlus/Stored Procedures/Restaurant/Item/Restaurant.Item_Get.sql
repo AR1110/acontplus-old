@@ -6,7 +6,7 @@ GO
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
-GO
+GO  
 -- =============================================
 -- Author:		IGNACIO MANCHU
 -- Create date: 2023-08-14 
@@ -33,8 +33,7 @@ BEGIN
 	DECLARE @idEntidad INT
 	DECLARE @params NVARCHAR(MAX)
     DECLARE @tipo INT
-
-			
+    			
 	SELECT @checkSubFamilia	= checkSubFamilia
 			,@idSubFamilia  = idSubFamilia
 			,@pageIndex		= pageIndex
@@ -51,38 +50,33 @@ BEGIN
 
 	SELECT TOP 1  @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-	SET @params = '@idEntidad INT
-				   ,@idSubFamilia INT
-				   ,@pageIndex INT
-				   ,@pageSize INT'
+	SET @params = N'@idEntidad INT, @idSubFamilia INT, @pageIndex INT, @pageSize INT'
 
-	SET @sql = 'SELECT 
-				Id					= ri.Id
-				,summary			= ISNULL(ri.Summary, ''_'')
-				,cooking			= ri.Cooking
-				,recipe				= ri.Recipe
-				,instructions		= ISNULL(ri.Instructions, ''_'')
-                ,content            = ISNULL(ri.content, ''_'')
-				,createdAt			= ri.CreatedAt
-				,updatedAt			= ri.UpdatedAt
-				,enabled			= ri.Enabled
-				,deleted			= ri.Deleted
-				,userId				= ri.UserId
-				,productId			= ri.ProductId
-				,descripcion		= a.descripcion
-				,s3ObjectUrl		= a.s3ObjectUrl
-				,stockMinimo		= a.stockMinimo
-				,stock				= a.stock
-				,codigo				= a.codigo
-				,codigoAuxiliar		= a.codigoAuxiliar
-				,tipoIva			= CAST(CAST(a.porcentaje AS DECIMAL(15,0)) AS VARCHAR)+''%''
-				,tipoArticulo		= ISNULL(a.tipoArticulo,''Ninguna'')
-				,style				= a.colorRow 
-				,ProductionAreaId   = pa.Id
-				,descripcionProductionArea    = pa.Description
-				,totalRecords		= COUNT(*) OVER()
+	SET @sql = N'SELECT Id					= ri.Id
+				        ,summary			= ISNULL(ri.Summary, ''_'')
+				        ,cooking			= ri.Cooking
+				        ,recipe				= ri.Recipe
+				        ,instructions		= ISNULL(ri.Instructions, ''_'')
+                        ,content            = ISNULL(ri.content, ''_'')
+				        ,createdAt			= ri.CreatedAt
+				        ,updatedAt			= ri.UpdatedAt
+				        ,enabled			= ri.Enabled
+				        ,deleted			= ri.Deleted
+				        ,userId				= ri.UserId
+				        ,productId			= ri.ProductId
+				        ,descripcion		= a.descripcion
+				        ,s3ObjectUrl		= a.s3ObjectUrl
+				        ,stockMinimo		= a.stockMinimo
+				        ,stock				= a.stock
+				        ,codigo				= a.codigo
+				        ,codigoAuxiliar		= a.codigoAuxiliar
+				        ,tipoIva			= CAST(CAST(a.porcentaje AS DECIMAL(15,0)) AS VARCHAR)+''%''
+				        ,tipoArticulo		= ISNULL(a.tipoArticulo,''Ninguna'')
+				        ,style				= a.colorRow 
+				        ,ProductionAreaId   = pa.Id
+				        ,descripcionProductionArea    = pa.Description				
 				FROM Restaurant.Item ri
-				INNER JOIN v_Articulo a ON a.idArticulo = ri.ProductId
+				INNER JOIN Inventario.v_Articulo a ON a.idArticulo = ri.ProductId
 				LEFT JOIN Restaurant.ProductionArea pa ON pa.Id = ri.ProductionAreaId
 				WHERE a.idEntidad = @idEntidad ' 
 
@@ -93,15 +87,10 @@ BEGIN
 			        SET @sql = @sql + ' AND a.idSubFamilia = @idSubFamilia '
 		        END
 
-	        SET @sql = @sql + ' ORDER BY ri.CreatedAt DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
+	        SET @sql = @sql + ' ORDER BY ri.CreatedAt DESC'
 		
 	        SET @tableNames = 'items'
-	        EXEC sp_executesql @sql 
-						        ,@params
-						        ,@idEntidad		= @idEntidad
-						        ,@idSubFamilia	= @idSubFamilia
-						        ,@pageIndex		= @pageIndex
-						        ,@pageSize		= @pageSize
+	        EXEC sp_executesql @sql ,@params, @idEntidad, @idSubFamilia, @pageIndex, @pageSize
         END
 
     IF @tipo = 2

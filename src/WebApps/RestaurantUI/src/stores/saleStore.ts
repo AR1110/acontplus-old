@@ -14,16 +14,32 @@ import { SnackbarUtility, addSound, clearSound } from "@/core/utilities";
 import { ChangeEvent } from "react";
 import Swal from "sweetalert2";
 import { create } from "zustand";
-
-interface SaleState {
+import {produce} from 'immer';
+ 
+type State = {
     itemSearch: ItemSearch
-    setItemSearch(itemSearch: ItemSearch): void
     collectionItems: Array<ItemReadDto>
     totalItems: number;
     items: Array<ItemRead>
     summary: Summary,
+    dataForm: DataFormSale
+    //Pagos
+    payment: {
+        isOpen: boolean
+        openDialogCustom():void
+        closeDialogCustom(): void
+    },    
+    //Navigation 
+    navigation: {
+        isOpen: boolean
+        openDialogCustom():void
+        closeDialogCustom(): void
+    }
+}
+
+type Actions = {
+    setItemSearch(itemSearch: ItemSearch): void    
     setSummary(summary: Summary): void
-    dataForm: DataFormSale,
     getItemQty(productId: number): number
     setDataForm(dataForm: DataFormSale): void
     setCollectionItems(products: Array<ItemReadDto>): void
@@ -33,25 +49,8 @@ interface SaleState {
     setItemChangeQty(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, cartItem: ItemRead): void
     caculateTotals(): void
     resetForm(): void
-
-    //Pagos
-    payment: {
-        isOpen: boolean
-        openDialogCustom():void
-        closeDialogCustom(): void
-    },
-    
-    //Navigation 
-    navigation: {
-        isOpen: boolean
-        openDialogCustom():void
-        closeDialogCustom(): void
-    }
 }
-
-
-
-export const useSaleStore = create<SaleState>((set, get) => ({
+export const useSaleStore = create<State & Actions>((set, get) => ({
     itemSearch: itemSearchInitialState,
     setItemSearch: (itemSearch) => {
         set(state => ({
@@ -64,10 +63,11 @@ export const useSaleStore = create<SaleState>((set, get) => ({
     items: [],
     summary: summaryInitialState,
     setSummary(summary: Summary) {
-        set(state => ({
-            ...state,
-            summary
-        }))
+        set(
+            produce((state: State)=>{
+                state.summary = summary;
+            })
+        ) 
     },
     dataForm: dataFormInitialState,
     getItemQty: (productId: number) => {

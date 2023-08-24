@@ -2,6 +2,7 @@
 using Inventario.Core.Interfaces;
 using Inventario.Core.Models;
 using Lib.Common;
+using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -31,7 +32,7 @@ namespace Inventario.API.Controllers.v3
             {
                 await _db.SPExecute("Almacen.Articulo_Get");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
@@ -81,7 +82,7 @@ namespace Inventario.API.Controllers.v3
             try
             {
                 await _db.SPExecute("Inventario.Articulo_Search_v3");
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)

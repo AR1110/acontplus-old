@@ -14,7 +14,7 @@ function itemToApi(items: ItemRead[]): Array<ItemPostDto> {
     }))
 }
 
-function summaryToApi(summary: Summary, items: ItemRead[]): SummaryPostDto {
+function summaryToApi(summary: Summary): SummaryPostDto {
     return {
         establecimientoId: summary.establecimientoId,
         puntoEmisionId: summary.puntoEmisionId,
@@ -23,11 +23,14 @@ function summaryToApi(summary: Summary, items: ItemRead[]): SummaryPostDto {
         tax: summary.tax,
         discount: summary.discount,
         total: summary.total,
-        items: itemToApi(items)
+        items: [],
+        taxes: [],
+        payments: {}        
     }
 }
 
 
 export {
+    itemToApi,
     summaryToApi
 }

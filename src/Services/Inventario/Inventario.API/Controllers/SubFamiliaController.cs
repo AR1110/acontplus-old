@@ -3,6 +3,7 @@ using Domain.Models.Almacen;
 using Inventario.Core.Interfaces;
 using Inventario.Core.Models;
 using Lib.Common;
+using Lib.Common.DbUtils;
 using Lib.Common.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -32,7 +33,7 @@ namespace Inventario.API.Controllers
             {
                 await _db.SPExecute("Inventario.Subfamilia_Get");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
@@ -203,7 +204,7 @@ namespace Inventario.API.Controllers
             {
                 await _db.SPExecute("Almacen.SubFamilia_For_Select");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)

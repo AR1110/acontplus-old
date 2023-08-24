@@ -21,7 +21,7 @@ function productSaleReadAdapter(product: RawProductSaleData): ProductSaleReadDto
 function productSaleRateReadAdapter(measures: RawMeasure[]): Array<Measure> {
 
     return measures.map(item => {
-        let rates: RawRateData[] = JSON.parse(item.tarifas);
+        const rates: RawRateData[] = JSON.parse(item.tarifas);
         return {
             measureId: item.idMedida,
             description: item.medida,
