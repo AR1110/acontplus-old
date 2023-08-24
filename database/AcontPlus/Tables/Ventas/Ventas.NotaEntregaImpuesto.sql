@@ -20,6 +20,7 @@ GO
 
 CREATE TABLE Ventas.NotaEntregaImpuesto (
 		Id INT NOT NULL PRIMARY KEY IDENTITY (1,1)
+    ,Uuid UNIQUEIDENTIFIER NOT NULL
 	,NotaEntregaDetalleId BIGINT NULL CONSTRAINT fk_NotaEntregaImpuesto_NotaEntregaDetalle FOREIGN KEY (NotaEntregaDetalleId) REFERENCES NotaEntregaDetalle (idNotaEntregaDetalle) ON DELETE CASCADE
 	,TaxId INT NOT NULL CONSTRAINT fk_NotaEntregaImpuesto_SriImpuesto FOREIGN KEY (TaxId) REFERENCES Sri.Impuesto(idImpuesto)
 	,TaxPercentId INT NOT NULL CONSTRAINT fk_NotaEntregaImpuesto_SriPorcentajeImpuesto FOREIGN KEY (TaxPercentId) REFERENCES Sri.TarifaImpuesto (idTarifaImpuesto)

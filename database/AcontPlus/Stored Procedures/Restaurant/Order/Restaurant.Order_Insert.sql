@@ -80,7 +80,7 @@ BEGIN
                 itemId INT NOT NULL,
                 taxId INT NOT NULL,
                 taxPercentId INT NOT NULL,
-                taxValue INT NOT NULL,
+                taxValue NUMERIC (18,5) NOT NULL,
                 quantity NUMERIC (18,5) NOT NULL,
                 cost NUMERIC(18,5) NOT NULL,
                 price NUMERIC(18,5) NOT NULL,
@@ -97,7 +97,7 @@ BEGIN
                         itemId INT '$.itemId',
                         taxId INT '$.taxId',
                         taxPercentId INT '$.taxPercentId',
-                        taxValue INT'$.taxValue',
+                        taxValue NUMERIC (18,5)'$.taxValue',
                         quantity NUMERIC (18,5) '$.quantity',
                         cost NUMERIC(18,5) '$.cost',
                         price NUMERIC(18,5) '$.price',
@@ -106,14 +106,14 @@ BEGIN
                       )
             IF (SELECT COUNT(*) FROM @tblItems) = 0
                 BEGIN
-                    SELECT Common.SpResponse('0', 'No se pudo recuperar el detalle', NULL)
+                    SELECT Common.ufnSpResponse('0', 'No se pudo recuperar el detalle', NULL)
                     RETURN
                 END
 
         END
     ELSE
         BEGIN
-            SELECT Common.SpResponse('0', 'El detalle no es valido', NULL)
+            SELECT Common.ufnSpResponse('0', 'El detalle no es valido', NULL)
             RETURN
         END
 
@@ -126,8 +126,8 @@ BEGIN
                 taxBase NUMERIC(18,5) NOT NULL,
                 taxValue NUMERIC(18,5) NOT NULL
             )
-            INSERT INTO @tblTaxes(uuid, taxId, taxPercentId, taxValue)
-            SELECT uuid, taxId, taxPercentId, taxValue FROM OPENJSON(@taxesJson) WITH (
+            INSERT INTO @tblTaxes(uuid, taxId, taxPercentId, taxBase, taxValue)
+            SELECT uuid, taxId, taxPercentId, taxBase, taxValue FROM OPENJSON(@taxesJson) WITH (
                                                         uuid UNIQUEIDENTIFIER '$.uuid',
                                                         taxId INT '$.taxId',
                                                         taxPercentId INT '$.taxPercentId',
@@ -136,14 +136,14 @@ BEGIN
                                                      )
               IF (SELECT COUNT(*) FROM @tblTaxes) = 0
                 BEGIN
-                    SELECT Common.SpResponse('0', 'No se pudo recuperar los impuestos', NULL)
+                    SELECT Common.ufnSpResponse('0', 'No se pudo recuperar los impuestos', NULL)
                     RETURN
                 END
             
         END
     ELSE
         BEGIN
-            SELECT Common.SpResponse('0', 'Los impuestos no son validos', NULL)
+            SELECT Common.ufnSpResponse('0', 'Los impuestos no son validos', NULL)
             RETURN
         END
 
@@ -173,7 +173,7 @@ BEGIN
         END
     ELSE
         BEGIN
-            SELECT Common.SpResponse('0', 'Los pagos no son validos', NULL)
+            SELECT Common.ufnSpResponse('0', 'Los pagos no son validos', NULL)
             RETURN
         END
 
@@ -199,10 +199,21 @@ BEGIN
 	        SET @id = (SELECT SCOPE_IDENTITY())
             IF (@id > 0)
                 BEGIN
-                    INSERT INTO Restaurant.OrderItem(OrderId, ItemId, TaxId, TaxPercentId, TaxValue, Quantity, Cost, Price, Discount, Total, [Enabled], UserId)
-                    SELECT @id, itemId, taxId, taxPercentId, taxValue, quantity, cost, price, discount, total, 1, @userId FROM @tblItems
+                    INSERT INTO Restaurant.OrderItem(OrderId, Uuid, ItemId, TaxId, TaxPercentId, TaxValue, Quantity, Cost, Price, Discount, Total, [Enabled], UserId)
+                    SELECT @id, uuid, itemId, taxId, taxPercentId, taxValue, quantity, cost, price, discount, total, 1, @userId FROM @tblItems
                     --falta table id
                     DECLARE @totalCook INT = 0
+
+                    
+                                    UPDATE cf SET cf.ultimaSecuencia = vcf.secuencial + 1 
+                                    FROM ConfiguracionDocumento cf WITH (ROWLOCK)
+                                        JOIN (
+                                                SELECT cd.idConfiguracionDocumento, cd.secuencial
+			                                        FROM v_ConfigDocumento cd
+				                                        INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab AND cd.idPuntoEmision = @puntoEmisionId
+			                                        WHERE pa.idUsuarioRol = @userRoleId
+			                                        AND cd.codDoc = 'OR'
+                                        ) AS vcf ON cf.idConfiguracionDocumento = vcf.idConfiguracionDocumento
 
                     SET @totalCook = (SELECT COUNT(*) FROM Restaurant.Item i INNER JOIN @tblItems ii ON i.Id = ii.ItemId WHERE i.Cooking = 1)
 
@@ -235,21 +246,54 @@ BEGIN
                                     INNER JOIN Inventario.v_Articulo a ON ri.ProductId = a.idArticulo
 
                                     INSERT INTO Ventas.NotaEntregaImpuesto(TaxId, TaxPercentId, [Percent], TaxBase, TaxValue, UserId)
-                                    SELECT t.taxId, t.taxPercentId, ti.porcentaje, t.taxBase, t.taxValue, @userId FROM @tblTaxes t 
+                                    SELECT t.taxId, t.taxPercentId, ti.porcentaje, t.taxBase, t.taxValue, @userId
+                                    FROM @tblTaxes t 
                                             INNER JOIN Sri.TarifaImpuesto ti ON t.TaxPercentId = ti.idTarifaImpuesto
 
+                                    UPDATE ne SET ne.NotaEntregaDetalleId = i.idNotaEntregaDetalle
+
+                                    FROM Ventas.NotaEntregaImpuesto ne 
+                                    JOIN (
+                                        SELECT ii.uuid, nd.idNotaEntregaDetalle FROM @tblItems ii 
+                                            INNER JOIN NotaEntregaDetalle nd ON ii.uuid = nd.uuid
+                                    ) AS i ON ne.Uuid = i.uuid
+
+                                    UPDATE cf SET cf.ultimaSecuencia = vcf.secuencial + 1 
+                                    FROM ConfiguracionDocumento cf WITH (ROWLOCK)
+                                        JOIN (
+                                                SELECT cd.idConfiguracionDocumento, cd.secuencial
+			                                        FROM v_ConfigDocumento cd
+				                                        INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab AND cd.idPuntoEmision = @puntoEmisionId
+			                                        WHERE pa.idUsuarioRol = @userRoleId
+			                                        AND cd.codDoc = 'NE'
+                                        ) AS vcf ON cf.idConfiguracionDocumento = vcf.idConfiguracionDocumento
+
+                                    DECLARE @serieDocument VARCHAR(18) = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @nroDocumento, DEFAULT))
+                                    
+                                    EXEC Contabilidad.CuentaPorCobrar_Insert 'NE'
+			                                                                ,@documentoId
+													                        ,@puntoEmisionId
+													                        ,1
+													                        ,@customerCompanyId
+														                    ,@nroDocumento
+													                        ,@serieDocument
+													                        ,@fechaEmision
+													                        ,@fechaEmision
+													                        ,@total
+													                        ,@companyId
+													                        ,@userId
                                 END
                         END
                 END
 		COMMIT TRAN
 
         IF (@id > 0)
-            SELECT Common.SpResponse('1', 'Exitos al guardar', NULL)
+            SELECT Common.ufnSpResponse('1', 'Exitos al guardar', NULL)
         ELSE
-            SELECT Common.SpResponse('0', 'No se pudo guardar la orden', NULL)	
+            SELECT Common.ufnSpResponse('0', 'No se pudo guardar la orden', NULL)	
     END TRY
 	BEGIN CATCH
-		 SELECT Common.SpResponse('0', 'Error al guardar el orden', NULL)
+		 SELECT Common.ufnSpResponse('0', 'Error al guardar el orden', NULL)
         
         IF (@@TRANCOUNT > 0)
             ROLLBACK TRAN
