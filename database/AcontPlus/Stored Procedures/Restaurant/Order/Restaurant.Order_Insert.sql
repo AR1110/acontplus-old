@@ -106,14 +106,14 @@ BEGIN
                       )
             IF (SELECT COUNT(*) FROM @tblItems) = 0
                 BEGIN
-                    SELECT dbo.ufn_spresponse('0', 'No se pudo recuperar el detalle', NULL)
+                    SELECT Common.SpResponse('0', 'No se pudo recuperar el detalle', NULL)
                     RETURN
                 END
 
         END
     ELSE
         BEGIN
-            SELECT dbo.ufn_spresponse('0', 'El detalle no es valido', NULL)
+            SELECT Common.SpResponse('0', 'El detalle no es valido', NULL)
             RETURN
         END
 
@@ -136,14 +136,14 @@ BEGIN
                                                      )
               IF (SELECT COUNT(*) FROM @tblTaxes) = 0
                 BEGIN
-                    SELECT dbo.ufn_spresponse('0', 'No se pudo recuperar los impuestos', NULL)
+                    SELECT Common.SpResponse('0', 'No se pudo recuperar los impuestos', NULL)
                     RETURN
                 END
             
         END
     ELSE
         BEGIN
-            SELECT dbo.ufn_spresponse('0', 'Los impuestos no son validos', NULL)
+            SELECT Common.SpResponse('0', 'Los impuestos no son validos', NULL)
             RETURN
         END
 
@@ -173,7 +173,7 @@ BEGIN
         END
     ELSE
         BEGIN
-            SELECT dbo.ufn_spresponse('0', 'Los pagos no son validos', NULL)
+            SELECT Common.SpResponse('0', 'Los pagos no son validos', NULL)
             RETURN
         END
 
@@ -244,12 +244,12 @@ BEGIN
 		COMMIT TRAN
 
         IF (@id > 0)
-            SELECT dbo.ufn_spresponse('1', 'Exitos al guardar', NULL)
+            SELECT Common.SpResponse('1', 'Exitos al guardar', NULL)
         ELSE
-            SELECT dbo.ufn_spresponse('0', 'No se pudo guardar la orden', NULL)	
+            SELECT Common.SpResponse('0', 'No se pudo guardar la orden', NULL)	
     END TRY
 	BEGIN CATCH
-		 SELECT dbo.ufn_spresponse('0', 'Error al guardar el orden', NULL)
+		 SELECT Common.SpResponse('0', 'Error al guardar el orden', NULL)
         
         IF (@@TRANCOUNT > 0)
             ROLLBACK TRAN

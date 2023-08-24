@@ -55,19 +55,6 @@ namespace ApiFactElect
 
             builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
-
-            string[] origins = builder.Configuration.GetSection("SafeOrigins").Value.Split('|');
-            builder.Services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(
-                    policy =>
-                    {
-                        policy.AllowAnyHeader();
-                        policy.AllowAnyMethod();
-                        policy.WithOrigins(origins);
-                    });
-            });
-
             builder.Services.AddSingleton<LogWriter>();
 
             var app = builder.Build();
@@ -91,8 +78,6 @@ namespace ApiFactElect
             app.UseApiVersioning();
 
             app.UseRouting();
-
-            app.UseCors();
 
             app.UseAuthentication();
 

@@ -13,6 +13,9 @@ go
 drop table Restaurant.Item
 go
 
+drop view Restaurant.v_Item
+go
+
 
 drop table Restaurant.Menu
 go
