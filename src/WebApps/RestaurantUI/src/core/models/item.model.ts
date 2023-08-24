@@ -35,6 +35,7 @@ export interface ItemSearch {
     idSubFamilia: number
     pageIndex: number,
     pageSize: number
+    checkBySearch: boolean
 }
 
 export const itemSearchInitialState: ItemSearch = {
@@ -42,6 +43,7 @@ export const itemSearchInitialState: ItemSearch = {
     checkSubFamilia: false,
     idSubFamilia: 0, 
     pageIndex: 1, 
-    pageSize: 50
+    pageSize: 50,
+    checkBySearch: true
 }
 
