@@ -1,8 +1,16 @@
-import { RawItemData, ItemReadDto } from "../models"; 
+import { RawItemData, ItemReadDto, RawProductPVPData, ProductPVPReadDto } from "../models"; 
+
+
+function pvpReadAdapter(pvp: RawProductPVPData): ProductPVPReadDto {
+    return({
+         salePrice: pvp.precioVenta,
+         priceWithVat: pvp.precioConIva
+    })
+}
 
 function itemReadAdapter(items: RawItemData[]): Array<ItemReadDto> {     
 
-    console.log(items)
+    
     return items.map((item) => ({
         itemId: item.id, //idItem 
         userId: item.userId,
@@ -15,7 +23,8 @@ function itemReadAdapter(items: RawItemData[]): Array<ItemReadDto> {
         auxiliaryCode: item.codigoAuxiliar,
         vatRate: item.tipoIva,
         itemType: item.tipoArticulo,           
-        totalRecords: item.totalRecords   
+        totalRecords: item.totalRecords,
+        pvps: pvpReadAdapter(JSON.parse(item.pvp)) 
     })
     )
 }

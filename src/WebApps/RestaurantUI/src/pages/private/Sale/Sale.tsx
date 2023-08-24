@@ -83,7 +83,7 @@ export default function Sale() {
     const itemAdapter = (response: any) => {
         setCollectionItems([])
         const items = itemReadAdapter(response.items || []);
-
+        console.log(items)
         setCollectionItems(items)
     }
 
@@ -113,7 +113,7 @@ export default function Sale() {
         if(!isConfirmed) return
         const summaryResult = summaryToApi(summary);
         const itemsResult = itemToApi(items);
-        const taxesResult = items.map(item=>item.taxes);
+        const taxesResult = items.flatMap(item=>item.taxes);
         const payments = {
             formaPagoId: dataForm.paymentTypes.find(pay=>pay.code==="EFE")?.paymentTypeId,
             total: checkout.voucher.payingAmount,

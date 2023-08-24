@@ -1,3 +1,4 @@
+ 
 //Product
 export interface RawProductSaleData {
     idArticulo: number,
@@ -15,6 +16,9 @@ export interface RawProductSaleData {
     s3ObjectUrl: string
 }
 
+
+
+
 export interface ProductSaleReadDto {
     productId: number,
     measureId: number,
@@ -27,7 +31,7 @@ export interface ProductSaleReadDto {
     productCode: string,
     stock: number    
     s3ObjectKey: string
-    s3ObjectUrl: string
+    s3ObjectUrl: string 
 }
 
 //Tarifa Api

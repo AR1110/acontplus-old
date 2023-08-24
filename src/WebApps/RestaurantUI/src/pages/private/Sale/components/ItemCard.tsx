@@ -80,6 +80,7 @@ export default function ItemCard({ item }: ItemCardProps) {
 
             if (!product.takesInventory) {
                 addItem();
+                return
             }
 
             ProductService.checkNotificationStock({
@@ -131,7 +132,7 @@ export default function ItemCard({ item }: ItemCardProps) {
                         uuid: uuid,
                         taxId: taxId,
                         taxPercentId: taxPercentId,
-                        taxBase: 0,
+                        taxBase:  measureData.rates[0]?.salePrice ?? 0,
                         taxValue: taxValue,                        
                     }],
                     uuid: uuid
@@ -190,7 +191,7 @@ export default function ItemCard({ item }: ItemCardProps) {
                         </Grid>
                         <Grid item>
                             <Typography gutterBottom variant="body2" component="div">
-                                <Badge color="primary" badgeContent={`$${0}`} />
+                                <Badge color="primary" badgeContent={`$${item.pvps.priceWithVat}`} />
                             </Typography>
                         </Grid>
                     </Grid>
