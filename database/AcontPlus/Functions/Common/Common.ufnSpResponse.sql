@@ -1,4 +1,9 @@
-CREATE OR ALTER FUNCTION dbo.ufn_spresponse
+USE Acontplus
+GO
+DROP FUNCTION IF EXISTS ufn_spresponse
+GO
+
+CREATE OR ALTER FUNCTION Common.ufnSpResponse
 (
     @code VARCHAR(1),
     @message VARCHAR(300),
