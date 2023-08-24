@@ -33,7 +33,6 @@
 
   const onUpdate = () => {
     if (!onValidation(data)) return;
-    if (!onValidationRecipe(recipe)) return;
 
     showLoader();
     let newObject = {
@@ -106,36 +105,7 @@
       return false;
     }
   }
-
-  const onValidationRecipe = (recipe) => {
-    let isValid = true;
-    for (let index = 0; index < recipe.length; index++) {
-      const element = recipe[index];
-      try {
-        if (validatorParam.includes(element.unit)) {
-          toast({ type: "warning", message: "Debe ingresar una Unidad" });
-          isValid = false;
-          return isValid;
-        }
-        if (validatorParam.includes(element.netWeight)) {
-          toast({ type: "warning", message: "Debe ingresar un Peso Neto" });
-          isValid = false;
-          return isValid;
-        }
-        if (validatorParam.includes(element.quantity)) {
-          toast({ type: "warning", message: "Debe ingresar una Cantidad" });
-          isValid = false;
-          return isValid;
-        }
-        return isValid;
-        break;
-      } catch (error) {
-        toast({ type: "error", message: "Debe ingresar los valores requeridos" });
-        return false;
-      }
-    }
-  }
-
+ 
   let columns = [
     {
       title: "Ingrediente",
@@ -147,18 +117,21 @@
       field: "unit",
       widthGrow: 1,
       editor: true,
+      validator: ["integer"],
     },
     {
       title: "Peso",
       field: "weight",
       widthGrow: 3,
       editor: true,
+      validator: ["numeric"],
     },
     {
       title: "Peso neto",
       field: "netWeight",
       widthGrow: 3,
       editor: true,
+      validator: ["required", "numeric"],
     },
     {
       title: "Instrucciones",
@@ -171,6 +144,7 @@
       field: "quantity",
       widthGrow: 3,
       editor: true,
+      validator: ["required", "numeric"],
     },
     {
       title: "Estado",

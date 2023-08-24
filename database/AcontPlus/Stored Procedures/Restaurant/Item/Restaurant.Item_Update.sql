@@ -46,7 +46,7 @@ BEGIN
 
     IF ISJSON(@json) = 0
         BEGIN
-            SELECT dbo.ufn_spresponse('0', 'Formato incorrecto', NULL)
+            SELECT Common.ufnSpResponse('0', 'Formato incorrecto', NULL)
             RETURN
         END
 
@@ -88,7 +88,7 @@ BEGIN
 
     IF EXISTS(SELECT TOP 1 1 FROM Restaurant.Item WHERE ProductId = @productId AND Id != @id)
         BEGIN
-            SELECT dbo.ufn_spresponse('0', 'Este ítem ya se encuentra registrado', NULL)
+            SELECT Common.ufnSpResponse('0', 'Este ítem ya se encuentra registrado', NULL)
             RETURN
         END
             
@@ -152,11 +152,11 @@ BEGIN
             WHERE rr.IngredientId = rt.ingredientId AND rt.itemId = rt.itemId
             
 		COMMIT TRAN
-        SELECT dbo.ufn_spresponse('1', 'Actualizado exitosamente', NULL)
+        SELECT Common.ufnSpResponse('1', 'Actualizado exitosamente', NULL)
 
 	END TRY
 	BEGIN CATCH
-		SELECT dbo.ufn_spresponse('0', 'Error al actualizar el ingrediente', NULL)
+		SELECT Common.ufnSpResponse('0', 'Error al actualizar el ingrediente', NULL)
         
         IF (@@TRANCOUNT > 0) ROLLBACK TRAN
 

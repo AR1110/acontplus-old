@@ -41,7 +41,7 @@ BEGIN
     IF EXISTS(SELECT 1 FROM Restaurant.Ingredient
                         WHERE productId = @productId AND id !=@id)
         BEGIN
-            SELECT dbo.ufn_spresponse('0', 'Este ingrediente ya se encuentra registrado', NULL)
+            SELECT Common.ufnSpResponse('0', 'Este ingrediente ya se encuentra registrado', NULL)
             RETURN
         END
 
@@ -76,12 +76,12 @@ BEGIN
             WHERE ri.id = @id
         COMMIT TRAN
 
-        SELECT dbo.ufn_spresponse('1', 'Actualizado exitosamente', NULL)
+        SELECT Common.ufnSpResponse('1', 'Actualizado exitosamente', NULL)
         RETURN
         
     END TRY
     BEGIN CATCH
-        SELECT dbo.ufn_spresponse('0', 'Error al actualizar el ingrediente', NULL)
+        SELECT Common.ufnSpResponse('0', 'Error al actualizar el ingrediente', NULL)
         
         IF (@@TRANCOUNT > 0)
             ROLLBACK TRAN
