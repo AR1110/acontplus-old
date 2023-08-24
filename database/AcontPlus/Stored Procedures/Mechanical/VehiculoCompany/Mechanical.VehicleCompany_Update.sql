@@ -51,6 +51,7 @@ BEGIN
           --=========================== SAVING THE JSON DATA ====================================================================== --
           SELECT @jsonCustomer = customer, @jsonVehicle = vehicle  FROM OPENJSON(@json) WITH (customer NVARCHAR(MAX) '$.customer' as json,vehicle NVARCHAR(MAX) '$.vehicle' as json)
 
+
           SELECT @VehicleTypeId = [VehicleTypeId]
                 ,@VehicleId     = [VehicleId]
                 ,@LicensePlate  = [LicensePlate]
@@ -66,7 +67,7 @@ BEGIN
 			FROM OPENJSON(@jsonVehicle) WITH
 			(
 				[VehicleTypeId]        INT '$.vehicleTypeId'
-			   ,[VehicleId]            INT '$.VehicleId'
+			   ,[VehicleId]            INT '$.vehicleId'
 			   ,[LicensePlate] VARCHAR(10) '$.licensePlate'
 			   ,[Brand]       VARCHAR(150) '$.brand'
 			   ,[Model]       VARCHAR(150) '$.model'

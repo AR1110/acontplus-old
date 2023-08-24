@@ -1,6 +1,9 @@
-﻿using Lib.Common.Api;
+﻿using Lib.Common;
+using Lib.Common.Api;
 using Mechanical.Core.Interfaces;
+using Mechanical.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Services.Common;
 using Services.Common.Logs;
 
@@ -11,10 +14,12 @@ namespace Mechanical.API.Controllers
     public class VehicleController : BaseApiController
     {
         private readonly IVehicleService _vehicleService;
+        private readonly MechanicalContext _context;
         private readonly LogWriter _log;
 
-        public VehicleController(IVehicleService vehicleService, LogWriter log)
+        public VehicleController(MechanicalContext context, IVehicleService vehicleService, LogWriter log)
         {
+            _context = context;
             _vehicleService = vehicleService;
             _log = log;
         }
@@ -46,10 +51,12 @@ namespace Mechanical.API.Controllers
         public async Task<IActionResult> Post([FromBody] ApiRequest data)
         {
             try
+
+            // Es esto el controlller? si po que no lees ajaa vechiclecontroller
             {
                 var parameters = new Dictionary<string, object> {
                     { "userRoleId", User.GetUserRoleId() },
-                    { "json", data }
+                    { "json", SqlValidation.ValidateSqlString(Converters.SerializeDictionary(data.Data))}
                 };
                 var response = await _vehicleService.AddAsync(parameters);
                 if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo guardar"); }
@@ -62,15 +69,15 @@ namespace Mechanical.API.Controllers
             }
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Put(int Id, [FromBody] ApiRequest data)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
         {
             try
             {
                 var parameters = new Dictionary<string, object> {
                     { "userRoleId", User.GetUserRoleId() },
-                    { "id", Id  },
-                    { "json", data }
+                    { "id", id  },
+                    { "json", SqlValidation.ValidateSqlString(Converters.SerializeDictionary(data.Data)) }
                 };
                 var response = await _vehicleService.UpdateAsync(parameters);
                 if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo Actualizar"); }
@@ -83,14 +90,14 @@ namespace Mechanical.API.Controllers
             }
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> Delete(int Id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
                 var parameters = new Dictionary<string, object> {
                     { "userRoleId", User.GetUserRoleId() },
-                    { "id", Id  }
+                    { "id", id  }
                 };
                 var response = await _vehicleService.DeleteAsync(parameters);
                 if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo Eliminar"); }
@@ -100,6 +107,26 @@ namespace Mechanical.API.Controllers
             {
                 _log.LogActivity("Error on Delete: \n" + ex.ToString());
                 return BadRequest("Error On Delete");
+            }
+        }
+
+        [HttpPut("PutState/{id}/{state}")]
+        public async Task<IActionResult> PutState(int id, bool state)
+        {
+            try
+            {
+                var vehicle = await _context.VehicleCompanys.FindAsync(id);
+                if (vehicle == null) return NotFound();
+
+                vehicle.Enabled = state;
+                _context.Update(vehicle);
+                await _context.SaveChangesAsync();
+                return Ok("Habilitado exitosamente");
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error on PutState: \n" + ex.ToString());
+                return BadRequest("Error On PutState");
             }
         }
     }

@@ -372,7 +372,7 @@ BEGIN
 					SET @sql = @sql + 'AND tt.idUsuario = @idUsuario '
 				END
 
-			SET @sql = @sql + 'ORDER BY tt.fechaRegistro ASC '
+			SET @sql = @sql + 'ORDER BY tt.articulo,tt.fechaRegistro ASC '
 
 			--Entidad 
 			SELECT e.ruc

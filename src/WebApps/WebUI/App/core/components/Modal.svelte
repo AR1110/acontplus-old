@@ -7,6 +7,7 @@
     export let title;
     export let iconTitle;
     export let size = "";
+    export let scroll = "";
     export let fullScreen = false;
 
     const modalClose = () => {

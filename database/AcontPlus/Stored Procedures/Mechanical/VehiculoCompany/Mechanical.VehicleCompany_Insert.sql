@@ -31,7 +31,7 @@ BEGIN
 	DECLARE @LicensePlate VARCHAR(15)
 	DECLARE @userId INT, @CompanyId INT
 	DECLARE @VehicleId INT,@CustomerId INT, @CustomerIdAdmin INT
-    DECLARE @jsonCustomer VARCHAR(MAX),@jsonVehicle AS VARCHAR(MAX)
+    DECLARE @jsonCustomer VARCHAR(MAX),@jsonVehicle AS VARCHAR(MAX), @cardTypeId varchar
     DECLARE @IDCard VARCHAR(15)
 
 	DECLARE @tbVehicle AS TABLE (
@@ -44,7 +44,7 @@ BEGIN
 	   ,[CustomerId] INT NOT NULL
 	   ,[Observation] VARCHAR(300) NULL
 	   ,[Enabled] BIT DEFAULT 1 
-	   ,[CreatedAt] DATETIME2 NOT NULL
+	   ,[CreatedAt] DATETIME2 DEFAULT GETDATE() NOT NULL
 	)
 
     DECLARE @tbCustomer AS TABLE(
@@ -60,8 +60,10 @@ BEGIN
     )
 
 	BEGIN TRY 
+            
 		    --=========================== SAVING THE JSON DATA ====================================================================== --
-            SELECT @jsonCustomer = customer, @jsonVehicle = vehicle  FROM OPENJSON(@json) WITH (customer NVARCHAR(MAX) '$.customer' as json,vehicle NVARCHAR(MAX) '$.vehicle' as json)
+            SELECT @jsonCustomer = customer, @jsonVehicle = vehicle, @cardTypeId = cardTypeId FROM OPENJSON(@json) WITH (customer NVARCHAR(MAX) '$.customer' as json,vehicle NVARCHAR(MAX) '$.vehicle' as json, cardTypeId INT '$.cardTypeId')
+
 
 			INSERT INTO @tbVehicle
 				  ([VehicleTypeId],[LicensePlate],[Brand],[Model],[Year],[Color],[CustomerId],[Observation])
@@ -79,16 +81,16 @@ BEGIN
 			) as dt
 
             INSERT INTO @tbCustomer 
-                  (IDType, IDCard, BusinessName, TradeName, email, telephone, [Address])
-            SELECT IDType, IDCard, BusinessName, TradeName, email, telephone, [Address] FROM OPENJSON(@jsonCustomer) WITH 
+                  (IDType,IDCard, CardTypeId,BusinessName,TradeName,email,telephone,[Address])
+            SELECT IDType,IDCard,@cardTypeId,BusinessName,TradeName,email,telephone,[Address] FROM OPENJSON(@jsonCustomer) WITH 
             (
-                IDType         VARCHAR(2) '$.IDType'
-               ,IDCard        VARCHAR(15) '$.IDCard'
-               ,BusinessName VARCHAR(300) '$.BusinessName'
-               ,TradeName    VARCHAR(300) '$.TradeName'
-               ,Email        VARCHAR(500) '$.Email'
+                IDType         VARCHAR(2) '$.idType'
+               ,IDCard        VARCHAR(15) '$.idCard'
+               ,BusinessName VARCHAR(300) '$.businessName'
+               ,TradeName    VARCHAR(300) '$.tradeName'
+               ,Email        VARCHAR(500) '$.email'
                ,telephone    VARCHAR(300) '$.telephone'
-               ,[Address]    VARCHAR(500) '$.Address'
+               ,[Address]    VARCHAR(500) '$.address'
             )
 			
 
@@ -138,7 +140,7 @@ BEGIN
                         SELECT @CustomerIdAdmin = SCOPE_IDENTITY()
                     END 
                 
-                IF NOT EXISTS (SELECT 1 FROM v_Cliente WITH (NOLOCK) WHERE IDCard = @IDCard AND idEntidad = @CompanyId)
+                IF NOT EXISTS (SELECT 1 FROM v_Cliente WITH (NOLOCK) WHERE numeroIdentificacion = @IDCard AND idEntidad = @CompanyId)
                     BEGIN
                         INSERT INTO dbo.Cliente
                                 (idEntidad,idTipoIdentificacion,numeroIdentificacion,nombreFiscal,nombreComercial,direccion,correo,telefono,validationSri,customerId)
@@ -162,17 +164,19 @@ BEGIN
 	END TRY 
 
 	BEGIN CATCH
-		SELECT dbo.ufn_spresponse('0', 'Error al guardar el Vehículo', NULL)
-        
-        IF (@@TRANCOUNT > 0)
-            BEGIN
-                 ROLLBACK TRAN
+		
+        IF (@@TRANCOUNT > 0) 
+            BEGIN 
+                ROLLBACK TRAN
+            END 
 
-                 INSERT INTO ErroresSistema
-                 (token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, errorDate, idUsuario)
-		         VALUES
-                 (NEWID(), 'Mechanical/Post', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @userId)
-	        END 
+        INSERT INTO ErroresSistema
+        (token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, errorDate, idUsuario)
+		VALUES
+        (NEWID(), 'Mechanical/Post', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @userId)
+	         
+        SELECT dbo.ufn_spresponse('0', 'Error al guardar el Vehículo', NULL)
+
     END CATCH 
 END
 GO

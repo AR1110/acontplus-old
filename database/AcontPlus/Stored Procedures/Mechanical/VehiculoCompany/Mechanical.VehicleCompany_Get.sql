@@ -30,20 +30,70 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	DECLARE @tipo INT
+    DECLARE @CompanyId INT
+    DECLARE @Id INT
+    DECLARE @CustomerId INT
 
+    SELECT TOP 1 @CompanyId = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
 	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
 
+    -- GET LIST -- 
 	IF @tipo = 1
 		BEGIN
-			SET @tableNames = 'Vehicles'
-			SELECT Id,VehicleType,LicensePlate,TradeName,IDCard FROM Mechanical.v_Vehicle WITH (NOLOCK) WHERE CompanyId = 7 AND Deleted IS NULL
+			SET @tableNames = 'vehicles'
+			SELECT Id
+                  ,VehicleType
+                  ,LicensePlate
+                  ,TradeName
+                  ,IDCard 
+                  ,CASE Code WHEN 'CM' THEN 'fa fa-truck' 
+                             WHEN 'AB' THEN 'fa fa-bus'
+                             WHEN 'TR' THEN 'fa fa-bus'
+                             WHEN 'MC' THEN 'fa fa-motorcycle'
+                             WHEN 'AT' THEN 'fa fa-car'
+                   END as icon
+                  ,[Enabled]
+            FROM Mechanical.v_Vehicle 
+            WITH (NOLOCK) 
+            WHERE CompanyId = @CompanyId AND Deleted IS NULL
+            ORDER BY Id DESC
 		END
 
+    -- GET DATAFORM -- 
 	IF @tipo = 2
 		BEGIN
-			SET @tableNames = 'VehicleType'
-			SELECT Id as VehicleTypeId, [Description] FROM Mechanical.VehicleType WITH (NOLOCK) WHERE Deleted IS NULL AND [Enabled] = 1
+			SET @tableNames = 'vehicleTypes'
+			SELECT Id as vehicleTypeId, [Description] FROM Mechanical.VehicleType WITH (NOLOCK) WHERE Deleted IS NULL AND [Enabled] = 1
 		END 
+
+    -- GET DATAFORM UPDATE O GET ID -- 
+    IF @tipo = 3
+        BEGIN
+            SET @tableNames = 'customer,vehicle'
+
+            SELECT @Id = Id FROM OPENJSON(@json) WITH (Id INT '$.id')
+
+            SELECT TOP 1 @CustomerId = CustomerId FROM Mechanical.v_Vehicle WITH (NOLOCK) WHERE Id = @Id
+
+            SELECT numeroIdentificacion as idCard
+                  ,nombreFiscal as businessName
+                  ,correo as email
+            FROM v_Cliente WITH (NOLOCK)
+            WHERE idCliente = @CustomerId
+
+            SELECT Id
+                  ,VehicleTypeId
+                  ,vehicleId 
+                  ,CustomerId
+                  ,LicensePlate
+                  ,Brand
+                  ,Model
+                  ,[Year]
+                  ,Color
+                  ,[Enabled]
+            FROM Mechanical.v_Vehicle WITH (NOLOCK) 
+            WHERE Id = @Id
+        END 
 END
 GO
