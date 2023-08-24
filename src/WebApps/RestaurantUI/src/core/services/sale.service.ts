@@ -32,8 +32,8 @@ export const SaleService = {
             tarifaImpuesto, 
             bodega_Asign,
             ptoEmi_Asig,
-            entidadFinanciera,
-            subEntidadFinanciera
+            entidadFinancieras,
+            subEntidadFinancieras
         } = resultAxios.data;
         console.log(resultAxios.data)
         const categories = categoryReadAdapter(subCategorias || []); 
@@ -50,8 +50,8 @@ export const SaleService = {
             taxRates: taxRateAdapter(tarifaImpuesto), 
             warehouses: warehouseAdapter(bodega_Asign || []),
             emissionPoints: emissionPointAdapter(ptoEmi_Asig || []),
-            paymentTypes: paymentTypeAdapter(entidadFinanciera || []),
-            paymentSubTypes: paymentSubTypeAdapter(subEntidadFinanciera || []),
+            paymentTypes: paymentTypeAdapter(entidadFinancieras || []),
+            paymentSubTypes: paymentSubTypeAdapter(subEntidadFinancieras || []),
 
         }
     }
