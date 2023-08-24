@@ -1,17 +1,17 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Lib.Common
+namespace Lib.Common.DbUtils
 {
-    public static class SqlValidation
+    public static class SqlStringParam
     {
-        public static string ValidateSqlString(string input)
+        public static string Sanitize(string input)
         {
-            Regex expression =
+            var expression =
               new Regex(@";|=|<|>| or | and |select 
               | insert | update | drop | xp_ | --| exec"
             );
 
-            string result =
+            var result =
               expression.Replace(input, new
               MatchEvaluator(MatchEvaluatorHandler));
 

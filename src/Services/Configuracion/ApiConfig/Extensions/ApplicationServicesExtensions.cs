@@ -11,7 +11,7 @@ namespace ApiConfig.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<ConfigContext>(options =>
+            services.AddDbContextPool<ConfigContext>(options =>
             options.UseSqlServer(Encryption.DecryptString(configuration.GetSection("KeyEncryption").Value, configuration.GetConnectionString("DefaultConnection"))));
             services.AddScoped<IADORepository, ADORepository>();
             services.AddScoped<IEstablecimientoAsignacionService, EstablecimientoAsignacionService>();

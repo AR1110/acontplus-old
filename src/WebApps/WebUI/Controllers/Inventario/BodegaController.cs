@@ -1,6 +1,7 @@
 ﻿using DataAccess;
 using Domain.Models;
 using Lib.Common;
+using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Inventario
@@ -34,7 +35,7 @@ namespace WebUI.Controllers.Inventario
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
+            parameters.Add("json", SqlStringParam.Sanitize(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Inventario.Bodega_Get", parameters)));
         }
 

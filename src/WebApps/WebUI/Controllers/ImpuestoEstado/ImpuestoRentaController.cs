@@ -3,6 +3,7 @@ using DataAccess.GestionTributaria;
 using Domain.Models;
 using Domain.Models.GestionTributaria;
 using Lib.Common;
+using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.ImpuestoEstado
@@ -97,7 +98,7 @@ namespace WebUI.Controllers.ImpuestoEstado
         public async Task<IActionResult> GetAll(string json)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
+            parameters.Add("json", SqlStringParam.Sanitize(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Sri.CodigoRetencion_Get", parameters)));
 
         }
@@ -106,7 +107,7 @@ namespace WebUI.Controllers.ImpuestoEstado
         public async Task<IActionResult> Insert(string json)
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
+            parameters.Add("json", SqlStringParam.Sanitize(json));
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Sri.CodigoRetencion_Insert", parameters)));
         }
 
@@ -115,7 +116,7 @@ namespace WebUI.Controllers.ImpuestoEstado
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("id", id);
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
+            parameters.Add("json", SqlStringParam.Sanitize(json));
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Sri.CodigoRetencion_Update", parameters)));
         }
     }

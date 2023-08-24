@@ -1,4 +1,4 @@
-using Lib.Common;
+﻿using Lib.Common;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.API.Helpers;
 using Restaurant.Application;
@@ -13,7 +13,7 @@ namespace Restaurant.API.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<RestaurantContext>(options =>
+            services.AddDbContextPool<RestaurantContext>(options =>
             options.UseSqlServer(Encryption.DecryptString(configuration.GetSection("KeyEncryption").Value, configuration.GetConnectionString("DefaultConnection"))));
 
             services.AddScoped<IADORepository, ADORepository>();

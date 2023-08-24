@@ -3,6 +3,7 @@ using DataAccess.Compras;
 using Domain.Models;
 using Domain.ViewModels.Compras;
 using Lib.Common;
+using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common.Logs;
@@ -42,9 +43,9 @@ namespace WebUI.Controllers.Compras
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Compra.Liquidacion_Insert");
                 _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("jsonLiquidacion", SqlValidation.ValidateSqlString(JsonConvert.SerializeObject(data.liquidacion)));
-                _db.AddDynamicParam("jsonDetalle", SqlValidation.ValidateSqlString(JsonConvert.SerializeObject(data.detalle)));
-                _db.AddDynamicParam("jsonInfoAdicional", SqlValidation.ValidateSqlString(JsonConvert.SerializeObject(data.adicional)));
+                _db.AddDynamicParam("jsonLiquidacion", SqlStringParam.Sanitize(JsonConvert.SerializeObject(data.liquidacion)));
+                _db.AddDynamicParam("jsonDetalle", SqlStringParam.Sanitize(JsonConvert.SerializeObject(data.detalle)));
+                _db.AddDynamicParam("jsonInfoAdicional", SqlStringParam.Sanitize(JsonConvert.SerializeObject(data.adicional)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -62,7 +63,7 @@ namespace WebUI.Controllers.Compras
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
+            parameters.Add("json", SqlStringParam.Sanitize(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Compra.Liquidacion_Get", parameters)));
         }
 
@@ -104,9 +105,9 @@ namespace WebUI.Controllers.Compras
                 await _db.SPExecute("Compra.Liquidacion_Update");
                 _db.AddDynamicParam("idRol", idUsuarioRol);
                 _db.AddDynamicParam("idLiquidacionCompra", id);
-                _db.AddDynamicParam("jsonLiquidacion", SqlValidation.ValidateSqlString(JsonConvert.SerializeObject(data.liquidacion)));
-                _db.AddDynamicParam("jsonDetalle", SqlValidation.ValidateSqlString(JsonConvert.SerializeObject(data.detalle)));
-                _db.AddDynamicParam("jsonInfoAdicional", SqlValidation.ValidateSqlString(JsonConvert.SerializeObject(data.adicional)));
+                _db.AddDynamicParam("jsonLiquidacion", SqlStringParam.Sanitize(JsonConvert.SerializeObject(data.liquidacion)));
+                _db.AddDynamicParam("jsonDetalle", SqlStringParam.Sanitize(JsonConvert.SerializeObject(data.detalle)));
+                _db.AddDynamicParam("jsonInfoAdicional", SqlStringParam.Sanitize(JsonConvert.SerializeObject(data.adicional)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

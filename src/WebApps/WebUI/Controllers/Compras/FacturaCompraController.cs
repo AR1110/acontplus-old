@@ -3,6 +3,7 @@ using DataAccess.Almacen;
 using DataAccess.Compras;
 using Domain.Models;
 using Lib.Common;
+using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -39,7 +40,7 @@ namespace WebUI.Controllers.Compras
         {
             Dictionary<string, object> parameters = new Dictionary<string, object>();
             parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
+            parameters.Add("json", SqlStringParam.Sanitize(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Compra.Factura_Get", parameters)));
         }
 
@@ -78,7 +79,7 @@ namespace WebUI.Controllers.Compras
             {
                 await _db.SPExecute("Compra.Factura_Get_Data_Form");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)

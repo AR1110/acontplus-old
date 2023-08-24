@@ -1,6 +1,7 @@
 ﻿using DataAccess;
 using Domain.Dtos.Contabilidad;
 using Lib.Common;
+using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -33,7 +34,7 @@ namespace ApiContabilidad.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _dbAccess.SPExecute("Contabilidad.CuentaPorPagar_Get");
                 _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _dbAccess.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _dbAccess.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _dbAccess.GetDataSetAsync();
             }
             catch (Exception ex)
@@ -59,7 +60,7 @@ namespace ApiContabilidad.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _dbAccess.SPExecute("Contabilidad.CuentaPorPagar_Insert");
                 _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _dbAccess.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _dbAccess.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _dbAccess.GetDefault();
             }
             catch (Exception ex)
@@ -85,7 +86,7 @@ namespace ApiContabilidad.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value); await _dbAccess.SPExecute("Contabilidad.CuentaPorPagar_Update");
                 _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _dbAccess.AddDynamicParam("idCuentaPorPagar", id);
-                _dbAccess.AddDynamicParam("json", SqlValidation.ValidateSqlString(data.cuotas));
+                _dbAccess.AddDynamicParam("json", SqlStringParam.Sanitize(data.cuotas));
                 _response = _dbAccess.GetDefault();
             }
             catch (Exception ex)

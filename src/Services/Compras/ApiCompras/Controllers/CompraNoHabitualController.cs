@@ -1,6 +1,7 @@
 ﻿using DataAccess;
 using Domain.Dtos.Compras;
 using Lib.Common;
+using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -33,7 +34,7 @@ namespace ApiCompras.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Compra.Documento_Ingreso_Get");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
@@ -58,10 +59,10 @@ namespace ApiCompras.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Compra.Documento_Ingreso_Insert");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("comprobante", SqlValidation.ValidateSqlString(data.comprobante));
-                _db.AddDynamicParam("detalles", SqlValidation.ValidateSqlString(data.detalles));
-                _db.AddDynamicParam("impuestos", SqlValidation.ValidateSqlString(data.impuestos));
-                _db.AddDynamicParam("artInfoAdicionales", SqlValidation.ValidateSqlString(data.artInfoAdicionales));
+                _db.AddDynamicParam("comprobante", SqlStringParam.Sanitize(data.comprobante));
+                _db.AddDynamicParam("detalles", SqlStringParam.Sanitize(data.detalles));
+                _db.AddDynamicParam("impuestos", SqlStringParam.Sanitize(data.impuestos));
+                _db.AddDynamicParam("artInfoAdicionales", SqlStringParam.Sanitize(data.artInfoAdicionales));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -87,10 +88,10 @@ namespace ApiCompras.Controllers
                 await _db.SPExecute("Compra.Documento_Ingreso_Update");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("idDocumentoIngreso", id);
-                _db.AddDynamicParam("Comprobante", SqlValidation.ValidateSqlString(data.comprobante));
-                _db.AddDynamicParam("detalles", SqlValidation.ValidateSqlString(data.detalles));
-                _db.AddDynamicParam("impuestos", SqlValidation.ValidateSqlString(data.impuestos));
-                _db.AddDynamicParam("artInfoAdicionales", SqlValidation.ValidateSqlString(data.artInfoAdicionales));
+                _db.AddDynamicParam("Comprobante", SqlStringParam.Sanitize(data.comprobante));
+                _db.AddDynamicParam("detalles", SqlStringParam.Sanitize(data.detalles));
+                _db.AddDynamicParam("impuestos", SqlStringParam.Sanitize(data.impuestos));
+                _db.AddDynamicParam("artInfoAdicionales", SqlStringParam.Sanitize(data.artInfoAdicionales));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

@@ -1,5 +1,6 @@
 ﻿using DataAccess;
 using Lib.Common;
+using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -25,7 +26,7 @@ namespace WebUI.Controllers.Sistema
             {
                 await _db.SPExecute("Sistema.Configuracion_Get_Data_Form");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)

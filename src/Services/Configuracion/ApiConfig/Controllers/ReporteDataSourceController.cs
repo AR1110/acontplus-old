@@ -1,6 +1,7 @@
 ﻿using ApiConfig.Dtos;
 using DataAccess;
 using Lib.Common;
+using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common.Logs;
@@ -30,7 +31,7 @@ namespace ApiConfig.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Config.ReporteDS_Get");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)

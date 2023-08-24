@@ -4,6 +4,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Mechanical.Core.Interfaces;
 using Mechanical.Infrastructure.Data;
+using Lib.Common.DbUtils;
 
 namespace Mechanical.Infrastructure.Repositories
 {
@@ -20,30 +21,33 @@ namespace Mechanical.Infrastructure.Repositories
             DataTable dt = null;
             using (var command = _context.Database.GetDbConnection().CreateCommand())
             {
-                command.CommandText = spName;
-                if (parameters.Count > 0)
+                bool wasOpen = command.Connection.State == ConnectionState.Open;
+                try
                 {
-                    foreach (var parameter in parameters)
+                    command.CommandText = spName;
+                    if (parameters.Count > 0)
                     {
-                        //AddSqlParameter(parameter.Key, parameter.Value);
-                        if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                        foreach (var parameter in parameters)
                         {
-                            SqlParameter sqlParam = new SqlParameter();
-                            sqlParam.ParameterName = parameter.Key;
-                            sqlParam.SqlDbType = GetDbType(parameter.Value);
-                            sqlParam.Value = parameter.Value ?? DBNull.Value;
-                            command.Parameters.Add(sqlParam);
+                            if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                            {
+                                AddSqlParameter(command, parameter.Key, parameter.Value);
+                            }
                         }
                     }
-                }
 
-                command.CommandType = CommandType.StoredProcedure;
-                await _context.Database.OpenConnectionAsync();
-                using (SqlDataAdapter adapter = new SqlDataAdapter())
+                    command.CommandType = CommandType.StoredProcedure;
+                    if (!wasOpen) await _context.Database.OpenConnectionAsync();
+                    using (SqlDataAdapter adapter = new SqlDataAdapter())
+                    {
+                        adapter.SelectCommand = (SqlCommand)command;
+                        dt = new DataTable();
+                        adapter.Fill(dt);
+                    }
+                }
+                finally
                 {
-                    adapter.SelectCommand = (SqlCommand)command;
-                    dt = new DataTable();
-                    adapter.Fill(dt);
+                    if (!wasOpen) command.Connection.Close();
                 }
             }
             return dt;
@@ -54,35 +58,43 @@ namespace Mechanical.Infrastructure.Repositories
             DataSet ds = null;
             using (var command = _context.Database.GetDbConnection().CreateCommand())
             {
-                command.CommandText = spName;
-                if (parameters.Count > 0)
+                bool wasOpen = command.Connection.State == ConnectionState.Open;
+                try
                 {
-                    foreach (var parameter in parameters)
+                    command.CommandText = spName;
+                    if (parameters.Count > 0)
                     {
-                        if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                        foreach (var parameter in parameters)
                         {
-                            AddSqlParameter(command, parameter.Key, parameter.Value);
+                            if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                            {
+                                AddSqlParameter(command, parameter.Key, parameter.Value);
+                            }
                         }
                     }
+
+                    string outParam = "@tableNames";
+                    AddSqlParameterOut(command, outParam, SqlDbType.VarChar, 500);
+
+                    command.CommandType = CommandType.StoredProcedure;
+                    if (!wasOpen) await _context.Database.OpenConnectionAsync();
+                    using (SqlDataAdapter adapter = new SqlDataAdapter())
+                    {
+                        adapter.SelectCommand = (SqlCommand)command;
+                        ds = new DataSet();
+                        adapter.Fill(ds);
+                    }
+
+                    string[] tableNames = GetParameter(command, outParam).ToString().Split(',');
+
+                    for (int i = 0; i < tableNames.Length; i++)
+                    {
+                        ds.Tables[i].TableName = tableNames[i];
+                    }
                 }
-
-                string outParam = "@tableNames";
-                AddSqlParameterOut(command, outParam, SqlDbType.VarChar, 500);
-
-                command.CommandType = CommandType.StoredProcedure;
-                await _context.Database.OpenConnectionAsync();
-                using (SqlDataAdapter adapter = new SqlDataAdapter())
+                finally
                 {
-                    adapter.SelectCommand = (SqlCommand)command;
-                    ds = new DataSet();
-                    adapter.Fill(ds);
-                }
-
-                string[] tableNames = GetParameter(command, outParam).ToString().Split(',');
-
-                for (int i = 0; i < tableNames.Length; i++)
-                {
-                    ds.Tables[i].TableName = tableNames[i];
+                    if (!wasOpen) command.Connection.Close();
                 }
             }
             return ds;
@@ -93,65 +105,40 @@ namespace Mechanical.Infrastructure.Repositories
             string response = string.Empty;
             using (var command = _context.Database.GetDbConnection().CreateCommand())
             {
-                command.CommandText = spName;
-                if (parameters.Count > 0)
+                bool wasOpen = command.Connection.State == ConnectionState.Open;
+                try
                 {
-                    foreach (var parameter in parameters)
+                    command.CommandText = spName;
+                    if (parameters.Count > 0)
                     {
-                        if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                        foreach (var parameter in parameters)
                         {
-                            AddSqlParameter(command, parameter.Key, parameter.Value);
+                            if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
+                            {
+                                AddSqlParameter(command, parameter.Key, parameter.Value);
+                            }
                         }
                     }
+                    command.CommandType = CommandType.StoredProcedure;
+                    if (!wasOpen) await _context.Database.OpenConnectionAsync();
+                    var reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        response = reader.GetString(0);
+                    }
                 }
-                command.CommandType = CommandType.StoredProcedure;
-                await _context.Database.OpenConnectionAsync();
-                var reader = command.ExecuteReader();
-                while (reader.Read())
+                finally
                 {
-                    response = reader.GetString(0);
+                    if (!wasOpen) command.Connection.Close();
                 }
             }
             return response;
         }
-
-        public static object GetParameter(DbCommand command, string parameterName)
-        {
-            return command.Parameters[parameterName].Value;
-        }
-
-        //https://ajaxhispano.com/ask/alguien-tiene-una-funcion-c-que-mapee-el-tipo-de-datos-sql-de-una-columna-a-su-equivalente-clr-58667/
-        public static SqlDbType GetDbType(object obj)
-        {
-            Type type = obj.GetType();
-            switch (type.Name)
-            {
-                case "Int32":
-                    return SqlDbType.Int;
-                case "Int64":
-                    return SqlDbType.BigInt;
-                case "String":
-                    return SqlDbType.VarChar;
-                case "Boolean":
-                    return SqlDbType.Bit;
-                case "Decimal":
-                    return SqlDbType.Decimal;
-                case "Guid":
-                    return SqlDbType.UniqueIdentifier;
-                case "XmlDocument":
-                    return SqlDbType.Xml;
-                case "Byte[]":
-                    return SqlDbType.VarBinary;
-                default:
-                    return SqlDbType.Variant;
-            }
-        }
-
         private static void AddSqlParameter(DbCommand cmd, string name, object value)
         {
             SqlParameter sqlParam = new SqlParameter();
             sqlParam.ParameterName = name;
-            sqlParam.SqlDbType = GetDbType(value);
+            sqlParam.SqlDbType = SqlTypes.GetDbType(value);
             sqlParam.Value = value ?? DBNull.Value;
             cmd.Parameters.Add(sqlParam);
         }
@@ -163,6 +150,10 @@ namespace Mechanical.Infrastructure.Repositories
             sqlParam.Size = size;
             sqlParam.Direction = ParameterDirection.Output;
             cmd.Parameters.Add(sqlParam);
+        }
+        public static object GetParameter(DbCommand command, string parameterName)
+        {
+            return command.Parameters[parameterName].Value;
         }
     }
 }

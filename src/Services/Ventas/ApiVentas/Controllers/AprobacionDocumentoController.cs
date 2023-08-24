@@ -1,6 +1,7 @@
 ﻿using DataAccess;
 using Domain.Models.Ventas;
 using Lib.Common;
+using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -27,7 +28,7 @@ namespace ApiVentas.Controllers
             {
                 await _db.SPExecute("Ventas.Aprob_Document_Get", true);
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
@@ -52,11 +53,11 @@ namespace ApiVentas.Controllers
             {
                 await _db.SPExecute("Ventas.Aprob_Document_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("comprobante", SqlValidation.ValidateSqlString(data.comprobante));
-                _db.AddDynamicParam("detalle", SqlValidation.ValidateSqlString(data.detalle));
-                _db.AddDynamicParam("historial", SqlValidation.ValidateSqlString(data.historial));
-                _db.AddDynamicParam("infoAdicional", SqlValidation.ValidateSqlString(data.infoAdicional));
-                _db.AddDynamicParam("historialVenta", SqlValidation.ValidateSqlString(data.historialVenta));
+                _db.AddDynamicParam("comprobante", SqlStringParam.Sanitize(data.comprobante));
+                _db.AddDynamicParam("detalle", SqlStringParam.Sanitize(data.detalle));
+                _db.AddDynamicParam("historial", SqlStringParam.Sanitize(data.historial));
+                _db.AddDynamicParam("infoAdicional", SqlStringParam.Sanitize(data.infoAdicional));
+                _db.AddDynamicParam("historialVenta", SqlStringParam.Sanitize(data.historialVenta));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -82,9 +83,9 @@ namespace ApiVentas.Controllers
                 await _db.SPExecute("Ventas.Aprob_Document_Update");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("comprobante", SqlValidation.ValidateSqlString(data.comprobante));
-                _db.AddDynamicParam("detalle", SqlValidation.ValidateSqlString(data.detalle));
-                _db.AddDynamicParam("historialVenta", SqlValidation.ValidateSqlString(data.historialVenta));
+                _db.AddDynamicParam("comprobante", SqlStringParam.Sanitize(data.comprobante));
+                _db.AddDynamicParam("detalle", SqlStringParam.Sanitize(data.detalle));
+                _db.AddDynamicParam("historialVenta", SqlStringParam.Sanitize(data.historialVenta));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
