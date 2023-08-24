@@ -6,6 +6,7 @@ namespace Restaurant.Core.Entities
     [Table("OrderItem", Schema = "Restaurant")]
     public class OrderItem : BaseEntity
     {
+        public Guid Uuid { get; set; }
         public Order Order { get; set; }
         public int OrderId { get; set; }
         public Item Item { get; set; }

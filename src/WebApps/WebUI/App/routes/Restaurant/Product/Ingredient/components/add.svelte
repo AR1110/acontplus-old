@@ -26,12 +26,13 @@
 
     IngredientService.put(ingredient.id, { data: params }).then((response) => {
       hideLoader();
+      console.log(response);
       if (response.status == 200) {
         onModalClose();
-        toast({ type: "success", message: response.data });
+        toast({ type: "success", message: response.data.message });
         ingredient = {} as Ingredient;
       } else {
-        toast({ type: "warning", message: response.data });
+        toast({ type: "warning", message: response.data.message });
       }
     });
   };
