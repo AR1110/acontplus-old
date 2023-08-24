@@ -1,12 +1,14 @@
-import { PaymentsIcon, SaveIcon, TaskIcon } from '@/core/components'
-import Calculator from '@/core/components/Calculator/Calculator';
-import HtmlTooltip from '@/core/components/HtmlTooltip';
-import { useCheckoutStore, useSaleStore } from '@/stores'
+import { CalendarMonthIcon, PaymentsIcon, SaveIcon } from '@/core/components'
+import Calculator from '@/core/components/Calculator/Calculator'; 
+import { useCheckoutStore } from '@/stores'
 import { Box, Button, Card, CardActions, CardContent, Divider, FormControl, Grid, InputLabel, OutlinedInput, Typography } from '@mui/material'
 import { useState } from 'react';
 
+type CheckoutProps = {
+    saveSale(): void
+}
 
-export default function Checkout() {
+export default function Checkout({saveSale}:CheckoutProps) {
     const { voucher } = useCheckoutStore(state => state.checkout);
     const { setReceivedAmount, setChangeReturn } = useCheckoutStore(state => ({
         setReceivedAmount: state.setReceivedAmount,
@@ -111,8 +113,33 @@ export default function Checkout() {
                                     </Typography>
                                 </Grid>
                             </Grid>
-                            <Divider sx={{ my: 5 }} />
+                            <Divider sx={{ my: 2 }} />
+
                             <Grid item xs={12} sm container>
+                             
+                                <Grid item xs>
+                                    <FormControl fullWidth margin='normal'>
+                                        <InputLabel htmlFor="dateValue">Fecha</InputLabel>
+                                        <OutlinedInput inputRef={(input) => input?.focus()}
+                                            id="dateValue"
+                                            type='date'
+                                            value={voucher.receivedAmount} 
+                                            startAdornment={<CalendarMonthIcon />}
+                                            label="Date Value"
+                                            inputProps={{
+                                                style: {
+                                                    textAlign: 'right',
+                                                    fontSize: 30,
+                                                },
+                                            }}
+                                        />
+
+                                    </FormControl>
+                                </Grid>
+                            </Grid>
+
+                            <Grid item xs={12} sm container>
+                             
                                 <Grid item xs>
                                     <FormControl fullWidth margin='normal'>
                                         <InputLabel htmlFor="cashValue">Efectivo</InputLabel>
@@ -168,7 +195,7 @@ export default function Checkout() {
                                         }
                                     >
                                     </HtmlTooltip> */}
-                                    <Button variant='contained' color="success" startIcon={<SaveIcon fontSize="large" style={{
+                                    <Button variant='contained' onClick={saveSale} color="success" startIcon={<SaveIcon fontSize="large" style={{
                                         fontSize: 40
                                     }} />} size='large' fullWidth sx={{
                                         height: 80

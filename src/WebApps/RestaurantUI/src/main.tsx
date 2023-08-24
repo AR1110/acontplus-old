@@ -1,15 +1,13 @@
  
 import ReactDOM from "react-dom/client"; 
-
+import React from "react";
+import { CssBaseline, ThemeProvider, createTheme } from "@mui/material"; 
 import "./App.css";
 import App from "./App.tsx";  
-import { CssBaseline, ThemeProvider, createTheme } from "@mui/material"; 
-import React from "react";
 
 const darkTheme = createTheme({
   palette: {
-    mode: 'light', 
-      
+    mode: 'light',       
   },
   
 });
