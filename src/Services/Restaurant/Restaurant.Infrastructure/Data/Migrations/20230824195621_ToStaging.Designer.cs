@@ -12,8 +12,8 @@ using Restaurant.Infrastructure.Data;
 namespace Restaurant.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(RestaurantContext))]
-    [Migration("20230821194753_Initial")]
-    partial class Initial
+    [Migration("20230824195621_ToStaging")]
+    partial class ToStaging
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -586,6 +586,9 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("Uuid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ItemId");
@@ -710,8 +713,8 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<int>("ItemId")
                         .HasColumnType("int");
 
-                    b.Property<float>("NetWeight")
-                        .HasColumnType("real");
+                    b.Property<decimal>("NetWeight")
+                        .HasColumnType("numeric(18,5), null");
 
                     b.Property<double>("Quantity")
                         .HasColumnType("float");
@@ -725,8 +728,8 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<float?>("Weight")
-                        .HasColumnType("real");
+                    b.Property<decimal?>("Weight")
+                        .HasColumnType("numeric(18,5), null");
 
                     b.HasKey("Id");
 
