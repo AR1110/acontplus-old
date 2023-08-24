@@ -14,9 +14,15 @@ BEGIN
     SET NOCOUNT ON;
 
     SET @tableNames = 'ingredients'
-    SELECT ri.*
-           ,productDescription = va.descripcion
-           ,s3ObjectUrl        = ISNULL(va.s3ObjectUrl, '')
+    SELECT ri.Id
+           ,summary             = ISNULL(ri.Summary, '')
+           ,quantity            = ISNULL(ri.quantity, 0)
+           ,unit                = ISNULL(ri.unit, 0)
+           ,content             = ISNULL(ri.content, '')          
+           ,productDescription  = va.descripcion
+           ,s3ObjectUrl         = ISNULL(va.s3ObjectUrl, '')
+           ,ingredientTypeId    = ri.IngredientTypeId
+           ,productId           = ri.ProductId
     FROM Restaurant.Ingredient ri
-    INNER JOIN v_Articulo va ON va.idArticulo = ri.ProductId
+    INNER JOIN Inventario.v_Articulo va ON va.idArticulo = ri.ProductId
 END
