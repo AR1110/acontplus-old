@@ -212,6 +212,8 @@ BEGIN
 		SET @sql = @sql + 'AND rucEmisor = @rucProveedor '
 	END
 
+    SET @sql = @sql + ' ORDER BY CAST(fechaEmision AS DATE) DESC'
+
 	EXEC sp_executesql @sql
 		,@params
 		,@codEstab = @codEstab
