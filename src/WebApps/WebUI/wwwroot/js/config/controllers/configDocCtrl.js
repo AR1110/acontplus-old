@@ -59,7 +59,7 @@ function configDocCtrl($scope, _commonSvc, mS, tS) {
         mS.getData('get', '/TipoDocumento/GetConfiguration?idPuntoEmision=' + $scope.idPuntoEmision).then(function (response) {                
             hideLoader();
             if (response.id == 0) {
-                toast.toastr('warning', response.message);
+                tS.toastr('warning', response.message);
             };
             $scope.configurationDocs = response.data;
         }).catch(error => {
@@ -70,11 +70,11 @@ function configDocCtrl($scope, _commonSvc, mS, tS) {
 
     $scope.saveConfig = function (item) {
         if ($scope.idPuntoEmision === undefined || $scope.idPuntoEmision == null || $scope.idPuntoEmision == 0) {
-            toast.toastr('warning', 'Seleccione el punto de emisión');
+            tS.toastr('warning', 'Seleccione el punto de emisión');
             return;
         }
         if (item.configDoc.ultimaSecuencia === undefined || item.configDoc.ultimaSecuencia == null || item.configDoc.ultimaSecuencia == 0) {
-            toast.toastr('warning', 'Ingrese el número de secuencia');
+            tS.toastr('warning', 'Ingrese el número de secuencia');
             return;
         }
 
@@ -90,11 +90,11 @@ function configDocCtrl($scope, _commonSvc, mS, tS) {
         mS.getData('post', '/TipoDocumento/SaveConfig', data).then(response=>{
             hideLoader();
             if (response.id == 0) {
-                toast.toastr('warning', response.message);
+                tS.toastr('warning', response.message);
                 return;
             };
             if (response.id == 1) {
-                toast.toastr('success', response.message);
+                tS.toastr('success', response.message);
                 $scope.getConfigDocs();
             };
         }).catch(error => {

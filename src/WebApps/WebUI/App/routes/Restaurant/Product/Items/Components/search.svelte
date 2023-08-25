@@ -15,7 +15,7 @@
       <div class="input-group mb-3">
         <input
           type="text"
-          class="form-control"
+          class="form-control form-control-lg search-input"
           placeholder="Buscar..."
           aria-label=""
           aria-describedby="basic-addon1"

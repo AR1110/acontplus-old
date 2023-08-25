@@ -436,5 +436,11 @@
     "inputFiles": [
       "wwwroot/js/ventas/services/ventaService.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/config/controllers/configDocCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/config/controllers/configDocCtrl.js"
+    ]
   }
 ]

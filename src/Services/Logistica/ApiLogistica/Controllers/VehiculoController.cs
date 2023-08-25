@@ -65,7 +65,7 @@ namespace ApiLogistica.Controllers
                 _db.AddDynamicParam("placa", data.placa);
                 _db.AddDynamicParam("marca", data.marca);
                 _db.AddDynamicParam("modelo", data.modelo);
-                _db.AddDynamicParam("observacion", DataValidation.ToDBNullOrDefault(data.observacion));
+                _db.AddDynamicParam("observacion", data.observacion);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -95,7 +95,7 @@ namespace ApiLogistica.Controllers
                 _db.AddDynamicParam("placa", data.placa);
                 _db.AddDynamicParam("marca", data.marca);
                 _db.AddDynamicParam("modelo", data.modelo);
-                _db.AddDynamicParam("observacion", DataValidation.ToDBNullOrDefault(data.observacion));
+                _db.AddDynamicParam("observacion", data.observacion);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

@@ -1,7 +1,11 @@
-﻿
+﻿@page
+@model WebUI.Pages.ConfigDoc.IndexModel
+
 @{
     ViewData["title"] = "Config Docs";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <div class="row page-titles">
     <div class="col-md-5 align-self-center">
         <h4 class="text-themecolor"> Configurar Documentos</h4>
@@ -10,16 +14,16 @@
 
 <div ng-controller="configDocCtrl">
     <div class="card">
-        <div class="card-body"> 
+        <div class="card-body">
             <div class="row">
                 <div class="col-12">
-                    <form ng-submit="saveDocConfig()" class="form-material">                       
+                    <form ng-submit="saveDocConfig()" class="form-material">
                         <div class="row">
                             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
                                 <div class="form-group">
-                                    <label>Sucursal:</label>                                    
-                                    <select class="form-control" ng-model="codEstab" ng-change="onChangeEstab()">     
-                                        <option ng-value="item.codEstab" ng-repeat="item in establecimientos">{{item.nombreComercial}}</option>                                   
+                                    <label>Sucursal:</label>
+                                    <select class="form-control" ng-model="codEstab" ng-change="onChangeEstab()">
+                                        <option ng-value="item.codEstab" ng-repeat="item in establecimientos">{{item.nombreComercial}}</option>
                                     </select>
                                 </div>
                             </div>
@@ -42,7 +46,7 @@
                                         <th md-column>Generar Nro.</th>
                                         <th md-column>Ultima Secuencia</th>
                                         <th md-column ng-if="accion.crear"></th>
-                                    </tr>                                
+                                    </tr>
                                 </thead>
                                 <tbody md-body>
                                     <tr md-row ng-repeat="item in configurationDocs">
@@ -53,7 +57,7 @@
                                             </md-switch>
                                         </td>
                                         <td md-cell style="vertical-align:middle;">
-                                            <input type="number" ng-disabled="!item.configDoc.generacionNro" class="form-control" ng-model="item.configDoc.ultimaSecuencia" min="1" />
+                                            <input type="number" ng-disabled="!item.configDoc.generacionNro" onclick="this.select()" class="form-control" ng-model="item.configDoc.ultimaSecuencia" min="1" />
                                         </td>
                                         <td md-cell style="vertical-align:middle;" align="center" ng-if="accion.crear">
                                             <button type="button" class="btn btn-success btn-sm" ng-if="accion.crear" ng-disabled="!item.configDoc.ultimaSecuencia" ng-click="saveConfig(item)"><i class="ti-save"></i></button>
@@ -63,13 +67,13 @@
                             </table>
                         </md-table-container>
                     </form>
-                    
+
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
     <br />
-</div> 
+</div>
 
 @section Scripts{
     <script src="~/js/config/controllers/configDocCtrl.js" asp-append-version="true"></script>
