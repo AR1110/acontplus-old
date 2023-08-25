@@ -4,11 +4,14 @@ import { RoutesWithNotFound, SnackbarUtilitiesConfigurator } from "@/core/utilit
 import { PrivateRoutes, PublicRoutes } from "./core/models";
 import { AuthGuard } from "./core/guards";
 import { SnackbarProvider } from "notistack";
+import BackdropLoader from "./core/components/BackdropLoader";
+import { useLoaderStore } from "./stores";
 
 const Login = lazy(() => import("@/pages/login/Login"));
 const Private = lazy(() => import("@/pages/private/Private"));
 
 export default function App() {
+  const {loading}  = useLoaderStore();
   return (
     <Suspense fallback={<>Cargando</>}>
       <SnackbarProvider>
@@ -25,6 +28,7 @@ export default function App() {
             </Route>
           </RoutesWithNotFound>
         </BrowserRouter>
+        <BackdropLoader open={loading}/>
       </SnackbarProvider>
     </Suspense>
   );

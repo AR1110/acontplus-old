@@ -22,7 +22,7 @@ export const ProductService = {
             }
         });
 
-        let response: ApiResponse = resultAxios.data;
+        const response: ApiResponse = resultAxios.data;
         let product = {} as ProductSaleReadDto
         let measures: Array<Measure> = []
         
@@ -31,10 +31,10 @@ export const ProductService = {
         }
 
         if(response.code==='1'){
-            let repositoryData = JSON.parse(response.payload);
+            const repositoryData = JSON.parse(response.payload);
             console.log(repositoryData) 
-            let productReposData = repositoryData[0][0];
-            let measureReposData = repositoryData[1];
+            const productReposData = repositoryData[0][0];
+            const measureReposData = repositoryData[1];
             product = productSaleReadAdapter(productReposData),
             measures = productSaleRateReadAdapter(measureReposData)            
         }
@@ -53,7 +53,7 @@ export const ProductService = {
             }
         });
 
-        let response: ApiResponse = resultAxios.data;
+        const response: ApiResponse = resultAxios.data;
         
         if (response.code === '0') {
             throw response;
