@@ -10,7 +10,7 @@
 
   let items = [] as Item[];
   let ingredientes = [] as Ingredient[];
-  let isNew = false;
+  let timer;
 
   onMount(async () => {
     get();
@@ -18,16 +18,8 @@
   });
 
   const get = () => {
-    let params = JSON.stringify({
-      checkSubFamilia: false,
-      idSubFamilia: 0,
-      pageIndex: 1,
-      pageSize: 10,
-      tipo: 1,
-    });
-
     showLoader();
-    itemService.get(params).then((response) => {
+    itemService.get(JSON.stringify({ idSubFamilia: 0, pageIndex: 1, pageSize: 10, tipo: 1 })).then((response) => {
       hideLoader();
       if (response) {
         items = response["items"];
@@ -47,10 +39,37 @@
   };
 
   const reloadList = () => {
-		get();
-	};
+    get();
+  };
 
+  const search = (e) => {
+    let newParams = {
+      idSubFamilia: 0,
+      pageIndex: 1,
+      pageSize: 10,
+      tipo: 1,
+    }
+
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      if (e.target.value != "") {
+        newParams["textSearch"] = e.target.value;
+      } else {
+        delete newParams["textSearch"];
+      }
+      console.log(newParams);
+
+      showLoader();
+      itemService.get(JSON.stringify(newParams)).then((response) => {
+        hideLoader();
+        items = [] as Item[];
+        if (response) {
+          items = response["items"];
+        }
+      });
+    }, 750);
+  };
 </script>
 
-<Search />
+<Search {search} />
 <List {reloadList} {items} {ingredientes} />

@@ -22,8 +22,7 @@ export const SaleService = {
                 params: {
                     json
                 }        
-        })
-        console.log(resultAxios)
+        }) 
         const { 
             subCategorias, 
             configDecimal, 
@@ -34,8 +33,7 @@ export const SaleService = {
             ptoEmi_Asig,
             entidadFinancieras,
             subEntidadFinancieras
-        } = resultAxios.data;
-        console.log(resultAxios.data)
+        } = resultAxios.data; 
         const categories = categoryReadAdapter(subCategorias || []); 
       
         return{

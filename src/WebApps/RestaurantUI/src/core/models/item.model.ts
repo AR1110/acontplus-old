@@ -1,3 +1,4 @@
+import { ProductPVPReadDto } from "."
 
 export interface RawItemData {
     id: number //idItem 
@@ -11,7 +12,8 @@ export interface RawItemData {
     codigoAuxiliar: string
     tipoIva: string
     tipoArticulo: string            
-    totalRecords: number
+    totalRecords: number    
+    pvp: string
 }
 
 export interface ItemReadDto {
@@ -27,6 +29,7 @@ export interface ItemReadDto {
     vatRate: string
     itemType: string            
     totalRecords: number
+    pvps: ProductPVPReadDto
 }
 
 export interface ItemSearch {
