@@ -65,20 +65,20 @@ internal class Program
 
         app.MapFallbackToFile("index.html");
 
-        using var scope = app.Services.CreateScope();
-        var services = scope.ServiceProvider;
-        var context = services.GetRequiredService<RestaurantContext>();
-        var logger = services.GetRequiredService<ILogger<Program>>();
+        //using var scope = app.Services.CreateScope();
+        //var services = scope.ServiceProvider;
+        //var context = services.GetRequiredService<RestaurantContext>();
+        //var logger = services.GetRequiredService<ILogger<Program>>();
 
-        try
-        {
-            await context.Database.MigrateAsync();
-            await RestaurantContextSeed.SeedAsync(context);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "An error occured during migration");
-        }
+        //try
+        //{
+        //    await context.Database.MigrateAsync();
+        //    await RestaurantContextSeed.SeedAsync(context);
+        //}
+        //catch (Exception ex)
+        //{
+        //    logger.LogError(ex, "An error occured during migration");
+        //}
 
 
         await app.RunAsync();

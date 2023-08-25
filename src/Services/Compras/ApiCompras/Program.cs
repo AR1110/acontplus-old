@@ -22,20 +22,6 @@ builder.Services.AddSwaggerDocumentation();
 //    return configurationBuilder.Build();
 //});
 
-
-
-string[] origins = builder.Configuration.GetSection("SafeOrigins").Value.Split('|');
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(
-        policy =>
-        {
-            policy.AllowAnyHeader();
-            policy.AllowAnyMethod();
-            policy.WithOrigins(origins);
-        });
-});
-
 builder.Services.AddSingleton<LogWriter>();
 
 var app = builder.Build();
@@ -45,8 +31,6 @@ app.UseSwaggerDocumentation();
 app.UseRouting();
 
 app.UseHttpsRedirection();
-
-app.UseCors();
 
 app.UseAuthentication();
 

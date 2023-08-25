@@ -68,9 +68,19 @@ export default function ItemCard({ item }: ItemCardProps) {
         ProductService.findForSale(item.productId, dataWarehouse.idBodega).then(response => {
             const { product, measures } = response;
             const measureData = measures.find(measure => measure.measureId === product.measureId) as Measure;
+            console.log(item)
+            console.log(product)
+            console.log(measures)
+            console.log(dataForm)
+            const taxRateData = dataForm.taxRates.find(item=>item.taxRateCode===product.taxRateCode);
+            const taxId = dataForm.taxes.find(tax => tax.code === taxRateData?.taxCode)?.taxId ?? 0
+            const taxPercentId = taxRateData?.taxRateId ?? 0
+            const taxValue = measureData.rates[0]?.priceWithVat ?? 0
+            const uuid = crypto.randomUUID();
 
             if (!product.takesInventory) {
                 addItem();
+                return
             }
 
             ProductService.checkNotificationStock({
@@ -98,15 +108,7 @@ export default function ItemCard({ item }: ItemCardProps) {
                     }
                 }
             })
-            console.log(item)
-            console.log(product)
-            console.log(measures)
-            console.log(dataForm)
-            const taxRateData = dataForm.taxRates.find(item=>item.taxRateCode===product.taxRateCode);
-            const taxId = dataForm.taxes.find(tax => tax.code === taxRateData?.taxCode)?.taxId ?? 0
-            const taxPercentId = taxRateData?.taxRateId ?? 0
-            const taxValue = measureData.rates[0]?.priceWithVat ?? 0
-            const uuid = crypto.randomUUID();
+            
 
             function addItem() {
                 addItemToCart({
@@ -130,7 +132,7 @@ export default function ItemCard({ item }: ItemCardProps) {
                         uuid: uuid,
                         taxId: taxId,
                         taxPercentId: taxPercentId,
-                        taxBase: 0,
+                        taxBase:  measureData.rates[0]?.salePrice ?? 0,
                         taxValue: taxValue,                        
                     }],
                     uuid: uuid
@@ -189,7 +191,7 @@ export default function ItemCard({ item }: ItemCardProps) {
                         </Grid>
                         <Grid item>
                             <Typography gutterBottom variant="body2" component="div">
-                                <Badge color="primary" badgeContent={`$${0}`} />
+                                <Badge color="primary" badgeContent={`$${item.pvps.priceWithVat}`} />
                             </Typography>
                         </Grid>
                     </Grid>

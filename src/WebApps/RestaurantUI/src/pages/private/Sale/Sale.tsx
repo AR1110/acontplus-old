@@ -63,6 +63,7 @@ export default function Sale() {
                 emissionPoint => emissionPoint.codEstab_Asig === dataEstab.codEstab_Asig
             ).find(emissionPoint => (emissionPoint.predeterminado));
 
+            console.log(response)
             setDataForm(response)
             setSummary({
                 ...summary,
@@ -82,7 +83,7 @@ export default function Sale() {
     const itemAdapter = (response: any) => {
         setCollectionItems([])
         const items = itemReadAdapter(response.items || []);
-
+        console.log(items)
         setCollectionItems(items)
     }
 
@@ -103,10 +104,16 @@ export default function Sale() {
             confirmButtonText: 'Yes, delete it!'
         })
 
+        console.log(dataForm)
+        if(dataForm.paymentTypes.length===0){
+            SnackbarUtility.warning('Forma pago registradods')
+            return
+        }
+
         if(!isConfirmed) return
         const summaryResult = summaryToApi(summary);
         const itemsResult = itemToApi(items);
-        const taxesResult = items.map(item=>item.taxes);
+        const taxesResult = items.flatMap(item=>item.taxes);
         const payments = {
             formaPagoId: dataForm.paymentTypes.find(pay=>pay.code==="EFE")?.paymentTypeId,
             total: checkout.voucher.payingAmount,
@@ -119,7 +126,7 @@ export default function Sale() {
             taxes: taxesResult,
             payments
         }
-        OrdenService.post(data).then(response => {
+        OrdenService.post({data}).then(response => {
             console.log(response)
             if (response.code === '0') {
                 SnackbarUtility.warning(response.message)

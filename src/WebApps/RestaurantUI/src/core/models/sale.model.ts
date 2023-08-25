@@ -54,6 +54,7 @@ export interface ItemRead extends ItemBase {
 
 //Start To Api 
 export interface ItemPostDto {
+    uuid: string
     itemId: number
     taxId: number
     taxPercentId: number
@@ -65,6 +66,7 @@ export interface ItemPostDto {
     total: number
 }
 export interface SummaryPostDto {
+
     establecimientoId: number
     puntoEmisionId: number
     customerCompanyId: number

@@ -30,19 +30,6 @@ namespace ApiConfig
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddSwaggerDocumentation();
 
-
-            string[] origins = builder.Configuration.GetSection("SafeOrigins").Value.Split('|');
-            builder.Services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(
-                    policy =>
-                    {
-                        policy.AllowAnyHeader();
-                        policy.AllowAnyMethod();
-                        policy.WithOrigins(origins);
-                    });
-            });
-
             builder.Services.AddSingleton<LogWriter>();
 
             var app = builder.Build();
@@ -50,8 +37,6 @@ namespace ApiConfig
             app.UseSwaggerDocumentation();
 
             app.UseRouting();
-
-            app.UseCors();
 
             app.UseHttpsRedirection();
 

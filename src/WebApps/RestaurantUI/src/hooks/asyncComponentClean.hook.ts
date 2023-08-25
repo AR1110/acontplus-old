@@ -12,8 +12,8 @@ export const useAsync = (
 ) => {
   useEffect(() => {
     let isActive = true;
-    asyncFn().then((result) => { 
-      console.log(result)
+    asyncFn().then((result) => {  
+      
       if (isActive) successFunction(result.data);
     });
     return () => { 

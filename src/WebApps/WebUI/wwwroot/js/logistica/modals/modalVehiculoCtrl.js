@@ -33,6 +33,8 @@ function ModalVehiculoCtrl($scope, $uibModalInstance, vehiculoSvc, tS, params){
                 return
             }
             showLoader();
+            $scope.data.observacion = $scope.data.observacion ? $scope.data.observacion : ''
+
 
             if($scope.data.idVehiculo>0){
                 vehiculoSvc.update($scope.data.idVehiculo, $scope.data)

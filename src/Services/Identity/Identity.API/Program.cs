@@ -15,13 +15,6 @@ ConfigHelper.AddJsonFiles(builder.Configuration);
 // Add services to the container.
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddControllers();
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("CorsPolicy", policy =>
-    {
-        policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("*");
-    });
-});
 builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 
 builder.Services.AddSwaggerDocumentation();
@@ -69,9 +62,6 @@ app.UseHttpsRedirection();
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseStatusCodePagesWithReExecute("/errors/{0}");
-
-
-app.UseCors("CorsPolicy");
 
 app.UseAuthentication();
 

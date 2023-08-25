@@ -1,7 +1,5 @@
 ﻿using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Restaurant.Core.Entities;
 using Restaurant.Core.Interfaces;
 using Services.Common;
 using Services.Common.Logs;
@@ -54,8 +52,9 @@ namespace Restaurant.API.Controllers
                 if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo guardar"); }
                 return Ok(response);
             }
-            catch (System.Exception)
+            catch (Exception ex)
             {
+                _log.LogActivity("Error on save: " + ex.ToString());
                 return BadRequest("Error On Save");
             }
         }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Restaurant.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class ToStaging : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -290,8 +290,8 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     Quantity = table.Column<double>(type: "float", nullable: false),
                     Unit = table.Column<int>(type: "int", nullable: false),
                     Instructions = table.Column<string>(type: "varchar(max)", unicode: false, nullable: true),
-                    Weight = table.Column<float>(type: "real", nullable: true),
-                    NetWeight = table.Column<float>(type: "real", nullable: false),
+                    Weight = table.Column<decimal>(type: "numeric(18,5)", nullable: true),
+                    NetWeight = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Enabled = table.Column<bool>(type: "bit", nullable: false),
@@ -388,6 +388,7 @@ namespace Restaurant.Infrastructure.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Uuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     OrderId = table.Column<int>(type: "int", nullable: false),
                     ItemId = table.Column<int>(type: "int", nullable: false),
                     TaxId = table.Column<int>(type: "int", nullable: true),

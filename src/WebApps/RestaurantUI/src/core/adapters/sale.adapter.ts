@@ -2,6 +2,7 @@ import { ItemRead, ItemPostDto, Summary, SummaryPostDto } from "../models";
 
 function itemToApi(items: ItemRead[]): Array<ItemPostDto> {
     return items.map(item => ({
+        uuid: item.uuid,
         itemId: item.itemId,
         taxId: item.taxId,
         taxPercentId: item.taxPercentId,

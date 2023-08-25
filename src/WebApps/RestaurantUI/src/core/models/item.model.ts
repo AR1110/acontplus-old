@@ -1,3 +1,4 @@
+import { ProductPVPReadDto } from "."
 
 export interface RawItemData {
     id: number //idItem 
@@ -11,7 +12,8 @@ export interface RawItemData {
     codigoAuxiliar: string
     tipoIva: string
     tipoArticulo: string            
-    totalRecords: number
+    totalRecords: number    
+    pvp: string
 }
 
 export interface ItemReadDto {
@@ -27,6 +29,7 @@ export interface ItemReadDto {
     vatRate: string
     itemType: string            
     totalRecords: number
+    pvps: ProductPVPReadDto
 }
 
 export interface ItemSearch {
@@ -35,6 +38,7 @@ export interface ItemSearch {
     idSubFamilia: number
     pageIndex: number,
     pageSize: number
+    checkBySearch: boolean
 }
 
 export const itemSearchInitialState: ItemSearch = {
@@ -42,6 +46,7 @@ export const itemSearchInitialState: ItemSearch = {
     checkSubFamilia: false,
     idSubFamilia: 0, 
     pageIndex: 1, 
-    pageSize: 50
+    pageSize: 50,
+    checkBySearch: true
 }
 
