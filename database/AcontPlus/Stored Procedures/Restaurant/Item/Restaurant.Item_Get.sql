@@ -12,7 +12,7 @@ GO
 -- Create date: 2023-08-14 
 -- Description:	Get Item
 -- =============================================
--- Restaurant.Item_Get 139, '{"idSubFamilia":0,"pageIndex":1,"pageSize":10,"tipo":1}', ''
+-- Restaurant.Item_Get 139, '{"idSubFamilia":0,"pageIndex":1,"pageSize":10,"tipo":1, "textSearch": "tilapia"}', ''
 IF OBJECT_ID(N'Restaurant.Item_Get', N'P') IS NOT NULL
 	DROP PROCEDURE Restaurant.Item_Get
 GO
@@ -107,7 +107,9 @@ BEGIN
             --- Filter by search ----
             IF @textSearch IS NOT NULL
                 BEGIN
-                    SET @sql = @sql + ' AND ri.Summary + '' '' + ri.Recipe LIKE ''%''+@textSearch+''%'' '
+                    SET @sql = @sql + ' AND a.descripcion LIKE ''%''+@textSearch+''%'' 
+                                        OR ri.Summary LIKE ''%''+@textSearch+''%'' 
+                                        OR ri.Instructions LIKE ''%''+@textSearch+''%'' '
                 END
                 
 	        SET @sql = @sql + ' ORDER BY ri.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
