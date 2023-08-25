@@ -38,6 +38,7 @@ BEGIN
     ,@quickSale BIT
     ,@userId INT
     ,@estadoPagoId INT
+    ,@ambiente INT
     
     SELECT       @itemsJson     = items
         ,@taxesJson             = taxes
@@ -200,7 +201,8 @@ BEGIN
     ,@estab VARCHAR(3)
     ,@ptoEmi VARCHAR(3)
     ,@idTipoDocumento INT
-    ,@orderId INT
+    ,@orderId INT 
+    ,@tiempoCreditoId INT = 1
 
     SELECT @sequence = cd.secuencial
         , @estab = pa.estab
@@ -253,11 +255,13 @@ BEGIN
                             ,@serieDocument VARCHAR(18)
 
                             -------------------------DOCUMENTOS DE VENTA-------------------------------
-                            SET @nroDocumento = (SELECT cd.secuencial FROM v_ConfigDocumento cd
-				                                                      INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab 
-                                                                                                    AND cd.idPuntoEmision = @puntoEmisionId
-			                                                          WHERE pa.idUsuarioRol = @userRoleId
-			                                                              AND cd.codDoc = @codDoc)
+                            SELECT @nroDocumento = cd.secuencial
+                                ,@ambiente = cd.ambiente
+                            FROM v_ConfigDocumento cd
+				            INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab 
+                                                         AND cd.idPuntoEmision = @puntoEmisionId
+			                 WHERE pa.idUsuarioRol = @userRoleId
+			                    AND cd.codDoc = @codDoc
 
                             IF (@customerCompanyId = 0) 
                                 SELECT TOP 1 @customerCompanyId = idCliente FROM v_Cliente WHERE codIdentSri = '07'
@@ -265,7 +269,7 @@ BEGIN
                             IF (@codDoc = 'NE')
                                 BEGIN
                                     INSERT INTO NotaEntrega (idCliente, idPuntoEmision, idTiempoCredito, nroDocumento, subTotalSinImpuestos, propina, iva, total, tarifa, observacion, fechaRegistro, idUsuario, idEntidad, fechaEmision, fechaVencimiento, idEstadoPago)
-                                    VALUES(@customerCompanyId, @puntoEmisionId, 1, @nroDocumento, @subtotalSinImpuestos, @tip, @tax, @total, @taxPercent, @obs, dbo.ufnGetDateEcuador(), @userId, @companyId,  @fechaEmision, @fechaEmision, @estadoPagoId)
+                                    VALUES(@customerCompanyId, @puntoEmisionId, @tiempoCreditoId, @nroDocumento, @subtotalSinImpuestos, @tip, @tax, @total, @taxPercent, @obs, dbo.ufnGetDateEcuador(), @userId, @companyId,  @fechaEmision, @fechaEmision, @estadoPagoId)
                                     SET @documentoId = (SELECT SCOPE_IDENTITY())
 
                                     IF (@documentoId > 0)
@@ -292,8 +296,38 @@ BEGIN
 
                             --IF (@codDoc = 'FV')
                             --    BEGIN
-                                    
-                            --    END
+                                    -- comprobante 
+			                            --INSERT INTO Factura (idCliente ,idPuntoEmision ,idEstadoPago ,idTipoDocumento ,idTiempoCredito ,ambiente ,porcentaje
+				                           -- ,idEntidad ,idUsuario ,claveAcceso,nroFactura,fechaEmision,fechaVencimiento,subTotalSinImpuestos,subTotalIva
+				                           -- ,subTotalNetoIva,subTotalIvaCero,subTotalNetoIvaCero,subTotalNoObjetoIva,subTotalNetoNoObjetoIva
+				                           -- ,subTotalExentoIva,subTotalNetoExentoIva,totalDescuento,porcentajeDescuento,totalIce,irbpnr,propina
+				                           -- ,iva,recargo,transporte,total,observacion,fechaRegistro,placa)
+		
+			                            --VALUES(@customerCompanyId, @puntoEmisionId, @estadoPagoId, @idTipoDocumento ,@tiempoCreditoId ,@ambiente ,tarifa
+				                           -- ,@idEntidad ,@idUsuario ,@claveAcceso ,@sequence ,@fechaEmision ,@fechaEmision ,subTotalSinImpuestos ,subTotalIva
+				                           -- ,subTotalNetoIva ,subTotalIvaCero ,subTotalNetoIvaCero ,subTotalNoObjetoIva ,subTotalNetoNoObjetoIva
+				                           -- ,subTotalExentoIva ,subTotalNetoExentoIva ,totalDescuento ,porcentajeDescuento ,totalIce ,irbpnr ,propina
+				                           -- ,iva ,recargo ,transporte ,total ,observacion ,dbo.ufnGetdateEcuador() ,placa)
+			                             
+                               --         SET @documentoId = (SELECT SCOPE_IDENTITY())
+			                            -- comprobante 
+
+			                            ----detalle 
+			                            --INSERT INTO FacturaDetalle (idFactura,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioVenta,precioSinSubsidio
+				                           -- ,precioConIva,valorDescuento,porcentajeDescuento,total,nota,descripcion,precioCosto,porcentajeIva,iva)
+			                            --SELECT @idFactura, td.idArticulo, td.idTarifa, td.idBodega, td.idMedida, td.idTipoIva, td.ice, td.cantidad, td.precioUnitario,td.precioSinSubsidio
+			                            --,td.precioConIva, td.valorDescuento, td.porcentajeDescuento, td.total, td.nota, td.descripcion, a.precioCosto, ti.porcentaje, (porcentaje/100) * total
+			                            --FROM @tblDetails td 
+			                            --INNER JOIN Articulo a WITH (NOLOCK) ON a.idArticulo = td.idArticulo
+			                            --LEFT JOIN TipoIva ti ON td.idTipoIva = ti.idTipoIva
+
+
+            --                            INSERT INTO dbo.DocumentoElectronico (ambiente,codDoc,idDocumento,idContribuyente,nroDocumento,idPuntoEmision,numEstab,ptoEmision,claveAcceso
+												-- ,versionComp,isAutomatic,fechaEmision,codigoAutorizacion,idUsuario,idEntidad)
+
+										  --SELECT @ambiente,@codDoc,@idFactura,@idCliente,@secuencial,@idPuntoEmision,@estab,@ptoEmi,@claveAcceso
+											 --   ,@versionComp,@isAutomatic,@fechaEmision,@claveAcceso,@idUsuario,@idEntidad
+                                --END
 
                              UPDATE cf SET cf.ultimaSecuencia = vcf.secuencial + 1
                              FROM ConfiguracionDocumento cf WITH (ROWLOCK)
@@ -317,7 +351,7 @@ BEGIN
                             ,@payAutomatic BIT
                             ,@printerAutomatic BIT
                             ,@idCuentaPorCobrar INT
-                            ,@tiempoCreditoId INT = 1
+                           
                             ,@codEstab VARCHAR(15)
 
                             SET @codEstab = (SELECT codEstab FROM Sri.Establecimiento WHERE idEstablecimiento = @establecimientoId)
