@@ -23,6 +23,7 @@ export default function Sale() {
     const isMobile = useMediaQuery('(max-width:900px)');
 
     const setDataForm = useSaleStore(state => state.setDataForm)
+    const resetForm = useSaleStore(state => state.resetForm)
     const { summary, setSummary } = useSaleStore(state => ({
         summary: state.summary,
         setSummary: state.setSummary,
@@ -94,6 +95,12 @@ export default function Sale() {
 
 
     const saveSale = async () => {
+       
+        if(dataForm.paymentTypes.length===0){
+            SnackbarUtility.warning('Forma pago registradods')
+            return
+        }
+
         const { isConfirmed } = await Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -103,8 +110,7 @@ export default function Sale() {
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, delete it!'
         })
-
-        console.log(dataForm)
+ 
         if(dataForm.paymentTypes.length===0){
             SnackbarUtility.warning('Forma pago registradods')
             return
@@ -126,14 +132,15 @@ export default function Sale() {
             taxes: taxesResult,
             payments
         }
-        OrdenService.post({data}).then(response => {
+        OrdenService.post(data).then(response => {
             console.log(response)
             if (response.code === '0') {
                 SnackbarUtility.warning(response.message)
             }
-            if (response.code === "1") {
+            if (response.code === "1") {                
                 SnackbarUtility.success(response.message)
-                // resetForm();
+                payment.closeDialogCustom();
+                resetForm();
             }
         })
     }

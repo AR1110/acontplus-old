@@ -9,6 +9,7 @@ export interface Summary {
     tableId: number
     subTotalSinImpuestos: number
     tax: number;
+    taxPercent: number
     taxAmount: number;
     discount: number
     total: number // With discount on items
@@ -16,6 +17,8 @@ export interface Summary {
     tip: number //Propina    
     obs: string
     codDoc: string
+    quickSale: boolean
+    creationDate: Date
 }
 
 //Impuesto Articulos 
@@ -32,6 +35,7 @@ export interface ItemBase {
     productId: number
     code: string    
     itemId: number
+    feeId: number
     taxId: number
     taxPercentId: number
     taxValue: number
@@ -69,9 +73,12 @@ export interface SummaryPostDto {
 
     establecimientoId: number
     puntoEmisionId: number
+    bodegaId: number
     customerCompanyId: number
     tableId: number
+    subtotalSinImpuestos: number
     tax: number;
+    taxPercent: number
     //taxAmount: number;
     total: number // With discount on items
    // netTotal: number // Net - (tax + discount on total)
@@ -79,6 +86,11 @@ export interface SummaryPostDto {
     items: any
     taxes: any
     payments: any
+    tip: number
+    obs: string
+    codDoc: string
+    quickSale: boolean
+    fechaEmision: Date
 }
 
 
@@ -128,6 +140,7 @@ export const summaryInitialState: Summary = {
     tableId: 0,
     subTotalSinImpuestos: 0,
     tax: 0,
+    taxPercent: 0,
     taxAmount: 0,
     discount: 0,
     total: 0,
@@ -135,4 +148,6 @@ export const summaryInitialState: Summary = {
     tip: 0,
     obs: "",
     codDoc: "NE",
+    quickSale: true,
+    creationDate: new Date()
 }

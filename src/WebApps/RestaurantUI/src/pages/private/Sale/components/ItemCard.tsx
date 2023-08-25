@@ -116,6 +116,7 @@ export default function ItemCard({ item }: ItemCardProps) {
                     productId: product.productId,
                     code: product.productCode,
                     itemId: item.itemId,
+                    feeId: measureData.rates[0]?.rateId ?? 0,
                     taxId: taxId,
                     taxPercentId: taxPercentId,
                     taxValue:taxValue,
