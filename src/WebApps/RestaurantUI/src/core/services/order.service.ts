@@ -5,7 +5,7 @@ import { Http } from "../utilities"
  
 const URL = 'Order'
 export const OrdenService = {
-    async post(data: {}) {
+    async post(data: object) {
         const resultAxios = await Http({
                 method: 'post',
                 url: `${PATHS.PRIVATE}${URL}`,

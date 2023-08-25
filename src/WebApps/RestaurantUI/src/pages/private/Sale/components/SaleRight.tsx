@@ -57,7 +57,11 @@ export default function SaleRight() {
     }
 
     const askToSave = async function(){
-       
+        if(!(summary.tableId > 0)){
+            SnackbarUtility.warning('Seleccione la Mesa')
+            return            
+        }
+               
         setVoucher({ 
             payingAmount: summary.total, 
             receivedAmount: summary.total.toString(), 
