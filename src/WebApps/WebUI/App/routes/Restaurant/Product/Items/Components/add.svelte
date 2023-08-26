@@ -2,9 +2,7 @@
 	import { hideLoader } from './../../../../../core/utils/loading-spinner.js';
   import { itemService } from "$core/services/restaurant/item-service";
   import type { Item } from "$core/interfaces/restaurant/item";
-  import type { ProductionArea } from "$core/interfaces/restaurant/production-area";
   import type { Ingredient } from "$core/interfaces/restaurant/ingredient";
-  import type { Recipe } from "$core/interfaces/restaurant/recipe";
   import { productionAreaService } from "$core/services/restaurant/production-area-service";
   import { onMount } from "svelte";
   import Modal from "$core/components/Modal.svelte";
@@ -15,10 +13,9 @@
   export let openNew;
   export let modalClosed;
   export let data = {} as Item;
-  export let ingredientes = [] as Ingredient[];
-  export let recipe = [] as Recipe[];
-
-  let productionAreas = [] as ProductionArea[];
+  export let ingredientes = [];
+  export let recipe = [];
+  let productionAreas = [];
   let validatorParam = [undefined, null, "", 0]
 
   onMount(() => {

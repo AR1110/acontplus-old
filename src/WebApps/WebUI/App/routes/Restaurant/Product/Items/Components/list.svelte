@@ -1,26 +1,26 @@
 <script lang="ts">
-	import { hideLoader, showLoader } from './../../../../../core/utils/loading-spinner.js';
-  import type { Ingredient } from "$core/interfaces/restaurant/ingredient";
   import type { Item } from "$core/interfaces/restaurant/item";
+  import type { Recipe } from "$core/interfaces/restaurant/recipe.js";
   import { RecipeService } from "$core/services/restaurant/recipe-service";
-  import Add from "./add.svelte";
-  import type { Recipe } from '$core/interfaces/restaurant/recipe.js';
+  import { hideLoader, showLoader } from "$core/utils/loading-spinner";
 
-  export let items = [] as Item[];
-  export let ingredientes = [] as Ingredient[];
+  import Add from "./add.svelte";
+
+  export let items;
+  export let ingredientes;
   export let reloadList;
 
   // Local variables
-  let edit = {} as Item;
   let isNew = false;
+  let edit = {} as Item;
   let listRecipe = [] as Recipe[];
 
-  const editItem = (item) => {
-    if (editItem) {
-      edit = item;
-      isNew = true;
-    }
-  };
+  // For pagination
+  let page = 0;
+  let pageIndex = 0;
+  let pageSize = 10;
+
+
 
   const getRecipeById = (item: Item) => {
     showLoader();
@@ -33,7 +33,18 @@
     });
   };
 
-  const closeModal = () => {
+  function onPageChange(event) {
+    console.log(event.detail.page);
+  }
+
+  function editItem (item) {
+    if (editItem) {
+      edit = item;
+      isNew = true;
+    }
+  };
+
+  function closeModal () {
     isNew = false;
     reloadList();
   };
@@ -80,17 +91,24 @@
           </tr>
         {/each}
       </tbody>
+      <!-- <div slot="bottom">
+        <Pagination
+          {page}
+          {pageSize}
+        
+          
+        />
+      </div> -->
     </table>
   </div>
 {:else}
-  <div class="alert alert-info" role="alert">No hay items registrados</div>
+  <p class="text-center text-italic">No hay items registrados</p>
 {/if}
-
 
 <Add
   openNew={isNew}
   modalClosed={() => closeModal()}
   data={edit}
-  ingredientes={ingredientes}
+  {ingredientes}
   recipe={listRecipe}
 />
