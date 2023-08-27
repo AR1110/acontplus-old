@@ -97,53 +97,53 @@ export default function Sale() {
 
     const saveSale = async () => {
        
-        if(dataForm.paymentTypes.length===0){
-            SnackbarUtility.warning('Forma pago registradods')
-            return
-        }
+        // if(dataForm.paymentTypes.length===0){
+        //     SnackbarUtility.warning('Forma pago registradods')
+        //     return
+        // }
 
-        const { isConfirmed } = await Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        })
+        // const { isConfirmed } = await Swal.fire({
+        //     title: 'Are you sure?',
+        //     text: "You won't be able to revert this!",
+        //     icon: 'warning',
+        //     showCancelButton: true,
+        //     confirmButtonColor: '#3085d6',
+        //     cancelButtonColor: '#d33',
+        //     confirmButtonText: 'Yes, delete it!'
+        // })
  
-        if(dataForm.paymentTypes.length===0){
-            SnackbarUtility.warning('Forma pago registradods')
-            return
-        }
+        // if(dataForm.paymentTypes.length===0){
+        //     SnackbarUtility.warning('Forma pago registradods')
+        //     return
+        // }
 
-        if(!isConfirmed) return
-        const summaryResult = summaryToApi(summary);
-        const itemsResult = itemToApi(items);
-        const taxesResult = items.flatMap(item=>item.taxes);
-        const payments = {
-            formaPagoId: dataForm.paymentTypes.find(pay=>pay.code==="EFE")?.paymentTypeId,
-            total: checkout.voucher.payingAmount,
-            abono: checkout.voucher.receivedAmount,
-            cambio: checkout.voucher.changeReturn
-        }
-        const data = {
-            ...summaryResult,
-            items: itemsResult,
-            taxes: taxesResult,
-            payments
-        }
-        OrdenService.post(data).then(response => {
-            console.log(response)
-            if (response.code === '0') {
-                SnackbarUtility.warning(response.message)
-            }
-            if (response.code === "1") {                
-                SnackbarUtility.success(response.message)
-                payment.closeDialogCustom();
-                resetForm();
-            }
-        })
+        // if(!isConfirmed) return
+        // const summaryResult = summaryToApi(summary);
+        // const itemsResult = itemToApi(items);
+        // const taxesResult = items.flatMap(item=>item.taxes);
+        // const payments = {
+        //     formaPagoId: dataForm.paymentTypes.find(pay=>pay.code==="EFE")?.paymentTypeId,
+        //     total: checkout.voucher.payingAmount,
+        //     abono: checkout.voucher.receivedAmount,
+        //     cambio: checkout.voucher.changeReturn
+        // }
+        // const data = {
+        //     ...summaryResult,
+        //     items: itemsResult,
+        //     taxes: taxesResult,
+        //     payments
+        // }
+        // OrdenService.post(data).then(response => {
+        //     console.log(response)
+        //     if (response.code === '0') {
+        //         SnackbarUtility.warning(response.message)
+        //     }
+        //     if (response.code === "1") {                
+        //         SnackbarUtility.success(response.message)
+        //         payment.closeDialogCustom();
+        //         resetForm();
+        //     }
+        // })
     }
 
     return (

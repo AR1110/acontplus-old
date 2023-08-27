@@ -104,9 +104,7 @@ export interface DataFormSale {
     taxes: Array<Tax>
     taxRates: Array<TaxRate>
     warehouses: Array<WarehouseAsign>
-    emissionPoints: Array<EmissionPointAsign>
-    paymentTypes: Array<PaymentType>
-    paymentSubTypes: Array<PaymentSubType>
+    emissionPoints: Array<EmissionPointAsign> 
 } 
 
 
@@ -127,9 +125,7 @@ export const dataFormInitialState: DataFormSale = {
     taxes: [],
     taxRates: [],
     warehouses: [],
-    emissionPoints: [],
-    paymentTypes:[],
-    paymentSubTypes: []
+    emissionPoints: [], 
 }
 
 export const summaryInitialState: Summary = {

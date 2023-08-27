@@ -1,4 +1,5 @@
 
+//Start Api
 export interface RawPaymentType {
     idEntidadFinanciera: number,
     descripcion: string,    
@@ -14,6 +15,9 @@ export interface RawPaymentSubType {
     controlCaja: boolean
 }
 
+//End Api
+
+//Start Adapter Front End
 export interface PaymentType {
     paymentTypeId: number
     description: string
@@ -27,3 +31,5 @@ export interface PaymentSubType {
     code: string 
     isControlBox: boolean
 }
+
+//Start Adapter Front End

@@ -1,12 +1,30 @@
- 
+
 export interface Voucher {
-    customerCompanyId: number,    
+    customerCompanyId: number,
+    customerIdentification: string
+    customerName: string
     payingAmount: number
-    receivedAmount: string 
+    receivedAmount: string
     changeReturn: number
-    codEstab: string    
+    totalBalance: number
+    codEstab: string
     creationDate: Date | string
+    nroDoc: string
 }
+
+// {
+//     "importeTotal": 9.06,
+//     "mora": 0,
+//     "totalSaldoDoc": 9.06,
+//     "saldo": 9.06,
+//     "abono": 0,
+//     "idCliente": 11,
+//     "numeroIdentificacion": "9999999999999",
+//     "nombreFiscal": "CONSUMIDOR FINAL",
+//     "codEstab": "ESTAB-000000117",
+//     "fechaEmision": "08/27/2023",
+//     "serieComprobante": "002-002-000000020"
+// }
 
 export interface Payment {
     paymentTypeId: number
@@ -23,14 +41,36 @@ export interface Checkout {
     payments: Payment
 }
 
+export interface PaymentDetail  {
+    idCuentaPorCobrar: number
+    idCuotaPorCobrar: number,
+    abono: number
+    interes : number
+    diasMora : number
+    mora : number
+    cuota: number
+    saldo: number
+    secuencial: number
+} 
+
+export interface PaymentHistory{
+    idCuentaPorCobrar: number                    
+    abono: number,
+    diasMora : number
+    mora : number
+}
 export const checkoutInitialState: Checkout = {
     voucher: {
         customerCompanyId: 0,
+        customerIdentification: "",
+        customerName: "",
         payingAmount: 0,
         receivedAmount: "0",
         changeReturn: 0,
+        totalBalance: 0,
         codEstab: "",
-        creationDate: ""
+        creationDate: "",
+        nroDoc: ""
     },
     payments: {
         paymentTypeId: 0,

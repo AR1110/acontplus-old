@@ -3,7 +3,7 @@ export const enum PATHS {
     INVENTARIO = "Inventario/",
     SALE = 'Venta/',  
     ACCOUNTING = 'Contabilidad/'
-
+    
 }
   
 
