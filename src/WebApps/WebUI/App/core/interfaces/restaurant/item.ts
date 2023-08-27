@@ -23,4 +23,5 @@ export interface Item {
     style: string;
     readonly productionAreaId: number;
     descriptionProductionArea: string;
+    totalRecords: number;
 }
