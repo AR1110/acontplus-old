@@ -130,6 +130,15 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
             $scope.estadoServicios = results[0];
             $scope.establecimientos = results[1];
             $scope.tempPuntosEmision = results[2];
+
+            if($scope.establecimientos.length>0){
+                
+                let dataEstab = $scope.establecimientos.find(item => (item.predeterminado));
+                $scope.dataSearch.estab = dataEstab.estab;
+                $scope.puntosEmision = $scope.tempPuntosEmision.filter(item => item.codEstab_Asig === $scope.codEstab_Asig);
+                $scope.getComprobantes();
+            }
+
         })
     }
     $scope.initiload()
@@ -148,8 +157,9 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
             $scope.dataSearch.ptoEmi = null;
 
             if ([null, undefined, ""].includes($scope.codEstab_Asig)) {
+                _tS.toastr('warning', 'No Disponible')
                 $scope.dataSearch.checkBoxEstab = false;
-
+                return
             } else {
                 $scope.dataSearch.checkBoxEstab = true;
 
@@ -563,3 +573,4 @@ function documentoElectronicoCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreMod
         $window.location.href = '/DocumentoElectronico/Index';
     }
 }
+
