@@ -1,14 +1,7 @@
-import {
-    ArticuloTarifaGridOption
-} from "./../helpers/articuloTarifaGridOption.min.js?v=0.23";
+import { ArticuloTarifaGridOption } from "./../helpers/articuloTarifaGridOption.min.js?v=0.23";
 
 class ModalBaseCtrl {
-    constructor({
-        $scope,
-        _mS,
-        _commonSvc,
-        _form
-    }) {
+    constructor({ $scope, _mS, _commonSvc, _form }) {
         this.$scope = $scope;
         this._mS = _mS;
         this._commonSvc = _commonSvc;
@@ -20,9 +13,7 @@ class ModalBaseCtrl {
     async resultModalMedida(result) {
         try {
             if (typeof result !== "object") return;
-            const {
-                medidas
-            } = await this.articuloSvc.getDataForm({});
+            const { medidas } = await this.articuloSvc.getDataForm({});
             this.medidas = medidas;
             this.data.idMedida = this.medidas.at(this.medidas.length - 1).idMedida;
         } catch (error) {
@@ -102,9 +93,9 @@ class ModalBaseCtrl {
 }
 
 /**
-* Clase para gestionar Insert, Update al Articulo
-* @params _params {idArticulo: 1, ...}
-*/
+ * Clase para gestionar Insert, Update al Articulo
+ * @params _params {idArticulo: 1, ...}
+ */
 class ModalArticuloCtrl extends ModalBaseCtrl {
     static $inject = [
         "$q",
@@ -121,7 +112,6 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
         "formulario",
         "params",
         "decodeToken",
-
     ];
 
     constructor(
@@ -208,9 +198,9 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
             //  //Tipo Articulo
             this.tipoArticulos = tipoArticulos;
             this.data.idTipoArticulo =
-                this.tipoArticulos.length > 0 ?
-                    this.tipoArticulos[0].idTipoArticulo :
-                    0;
+                this.tipoArticulos.length > 0
+                    ? this.tipoArticulos[0].idTipoArticulo
+                    : 0;
 
             //  //Medida
             this.medidas = medidas;
@@ -333,15 +323,9 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
     }
 
     setCodigoSecuencialArticulo() {
-        if (
-            this.subFamilias.length === 0 ||
-            (this._params && this._params.isImport)
-        )
-            return;
-        const {
-            codigo,
-            idSubFamilia
-        } = this.subFamilias[0];
+        if (this.subFamilias.length === 0 || (this._params && this._params.isImport)) return;
+
+        const { codigo, idSubFamilia } = this.subFamilias[0];
         this.data.idSubFamilia = idSubFamilia;
         this.setCodigo(codigo);
     }
@@ -350,9 +334,7 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
         if (this._params && this._params.isImport) return;
 
         if (this.tipoRegistro === 1 && this.subFamilias.length > 0) {
-            let {
-                codigo
-            } = this.subFamilias.find(
+            let { codigo } = this.subFamilias.find(
                 (val) => val.idSubFamilia === this.data.idSubFamilia
             );
             this.setCodigo(codigo);
@@ -383,45 +365,47 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
 
     getDataArticulo() {
         try {
-            this.articuloSvc.getId(this._params.idArticulo).then((response) => {
-                const results = JSON.parse(response.payload);
-                this.data = results[0][0];
-                this.tipoIva = this.tipoIvas.find(
-                    (item) => item.idTipoIva === this.data.idTipoIva
-                );
-                this.tarifaInstance.setPrecioCosto = this.data.precioCosto;
-                this.tarifaInstance.setPorcentajeIva = this.tipoIva.porcentaje;
-
-                this.gridOptions.data = results[1].map((item) => {
-                    let ganancia = item.precioVenta - this.data.precioCosto;
-                    item.ganancia = this._form.roundNumber(ganancia, 5);
-                    return item;
-                });
-
-                if (this.data.caducidad) {
-                    this.data.fechaCaducidad = new Date(this.data.fechaCaducidad);
-                } else {
-                    this.data.fechaCaducidad = null;
-                }
-
-                if (this.data.datosLote) {
-                    this.data.fechaCreacion = new Date(this.data.fechaCreacion);
-                    this.data.fechaCaducidadLote = new Date(
-                        this.data.fechaCaducidadLote
+            this.articuloSvc
+                .getId(this._params.idArticulo)
+                .then((response) => {
+                    const results = JSON.parse(response.payload);
+                    this.data = results[0][0];
+                    this.tipoIva = this.tipoIvas.find(
+                        (item) => item.idTipoIva === this.data.idTipoIva
                     );
-                } else {
-                    this.data.fechaCreacion = null;
-                    this.data.fechaCaducidadLote = null;
-                }
+                    this.tarifaInstance.setPrecioCosto = this.data.precioCosto;
+                    this.tarifaInstance.setPorcentajeIva = this.tipoIva.porcentaje;
 
-                //Cuando es editar el articulo desde Importación
-                if (this._params.isUpdateImport) {
-                    console.log("is update import", this._params.isUpdateImport);
-                }
-            }).catch(error => {
+                    this.gridOptions.data = results[1].map((item) => {
+                        let ganancia = item.precioVenta - this.data.precioCosto;
+                        item.ganancia = this._form.roundNumber(ganancia, 5);
+                        return item;
+                    });
 
-                console.log(error)
-            })
+                    if (this.data.caducidad) {
+                        this.data.fechaCaducidad = new Date(this.data.fechaCaducidad);
+                    } else {
+                        this.data.fechaCaducidad = null;
+                    }
+
+                    if (this.data.datosLote) {
+                        this.data.fechaCreacion = new Date(this.data.fechaCreacion);
+                        this.data.fechaCaducidadLote = new Date(
+                            this.data.fechaCaducidadLote
+                        );
+                    } else {
+                        this.data.fechaCreacion = null;
+                        this.data.fechaCaducidadLote = null;
+                    }
+
+                    //Cuando es editar el articulo desde Importación
+                    if (this._params.isUpdateImport) {
+                        console.log("is update import", this._params.isUpdateImport);
+                    }
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
         } catch (error) {
             console.log(error);
         }
@@ -431,7 +415,12 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
     onTabArticulo(step) {
         this.step = step;
         if (this.step === 3) {
-            this._cb = new ArticuloCodigoBarra(this._mS, this._form, this._params, this.articuloSvc);
+            this._cb = new ArticuloCodigoBarra(
+                this._mS,
+                this._form,
+                this._params,
+                this.articuloSvc
+            );
         }
 
         if (this.step === 4 || this.tipoRegistro === 2) {
@@ -449,11 +438,11 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
         try {
             if (typeof result !== "object") return;
 
-            const {
-                subFamilias
-            } = await this.articuloSvc.getDataForm({});
+            const { subFamilias } = await this.articuloSvc.getDataForm({});
             this.subFamilias = subFamilias;
-            this.setCodigoSecuencialArticulo();
+            const {idSubFamilia, codigo} = this.subFamilias.at(this.subFamilias.length - 1)  
+            this.data.idSubFamilia = idSubFamilia;
+            this.setCodigo(codigo);
         } catch (error) {
             console.log(error);
         }
@@ -463,9 +452,7 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
         try {
             if (typeof result !== "object") return;
 
-            let {
-                marcas
-            } = await this.articuloSvc.getDataForm({});
+            let { marcas } = await this.articuloSvc.getDataForm({});
             this.marcas = marcas;
             this.data.idMarca = this.marcas.at(this.marcas.length - 1).idMarca;
         } catch (error) {
@@ -476,9 +463,7 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
     async resultModalModelo(result) {
         try {
             if (typeof result !== "object") return;
-            const {
-                modelos
-            } = await this.articuloSvc.getDataForm({});
+            const { modelos } = await this.articuloSvc.getDataForm({});
             this.modelos = modelos;
             this.data.idModelo = this.modelos.at(this.modelos.length - 1).idModelo;
         } catch (error) {
@@ -554,7 +539,7 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
             }),
         };
         this.$uibModalInstance.close(data);
-    }
+    };
 
     saveUpdateArticulo() {
         let titulo = this.tipoRegistro === 1 ? "Agregar" : "Actualizar";
@@ -720,39 +705,45 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
         showLoader();
         let dataRepository = {};
         if (this.tipoRegistro === 1) {
-            this.articuloSvc.save(this.selectedFile, senData).then(response => {
-                if (response.id == 0 || response.code == 0) {
-                    this._toastr.toastr("warning", response.message, response.titleSms);
-                }
-                if (response.code == 1) {
-                    this._toastr.toastr("success", response.message, response.titleSms);
-                    dataRepository = JSON.parse(response.payload)[0];
-                    if (dataRepository) {
-                        this.setResponse(dataRepository)
+            this.articuloSvc
+                .save(this.selectedFile, senData)
+                .then((response) => {
+                    if (response.id == 0 || response.code == 0) {
+                        this._toastr.toastr("warning", response.message, response.titleSms);
                     }
-                }
-                hideLoader();
-            }).catch(error => {
-                hideLoader();
-                console.log(error)
-            })
+                    if (response.code == 1) {
+                        this._toastr.toastr("success", response.message, response.titleSms);
+                        dataRepository = JSON.parse(response.payload)[0];
+                        if (dataRepository) {
+                            this.setResponse(dataRepository);
+                        }
+                    }
+                    hideLoader();
+                })
+                .catch((error) => {
+                    hideLoader();
+                    console.log(error);
+                });
         } else {
-            this.articuloSvc.update(this.data.idArticulo, this.selectedFile, senData).then(response => {
-                if (response.id == 0 || response.code == 0) {
-                    this._toastr.toastr("warning", response.message, response.titleSms);
-                }
-                if (response.code == 1) {
-                    this._toastr.toastr("success", response.message, response.titleSms);
-                    dataRepository = JSON.parse(response.payload)[0];
-                    if (dataRepository) {
-                        this.setResponse(dataRepository)
+            this.articuloSvc
+                .update(this.data.idArticulo, this.selectedFile, senData)
+                .then((response) => {
+                    if (response.id == 0 || response.code == 0) {
+                        this._toastr.toastr("warning", response.message, response.titleSms);
                     }
-                }
-                hideLoader();
-            }).catch(error => {
-                hideLoader();
-                console.log(error)
-            })
+                    if (response.code == 1) {
+                        this._toastr.toastr("success", response.message, response.titleSms);
+                        dataRepository = JSON.parse(response.payload)[0];
+                        if (dataRepository) {
+                            this.setResponse(dataRepository);
+                        }
+                    }
+                    hideLoader();
+                })
+                .catch((error) => {
+                    hideLoader();
+                    console.log(error);
+                });
         }
     }
 
@@ -782,9 +773,9 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
 
 //-------------------------------------LISTA DE ARTICULO CON INFORMACIÓN COMPLETA------------------------
 /**
-* Clase para gestionar el buscador avanzado del articulo, trae las bodegas y pvps
-* @params null
-*/
+ * Clase para gestionar el buscador avanzado del articulo, trae las bodegas y pvps
+ * @params null
+ */
 
 ModalArticuloGeneralCtrl.$inject = [
     "$scope",
@@ -818,22 +809,23 @@ function ModalArticuloGeneralCtrl(
 
     $scope.activated = false;
 
-    $scope.tipoBusquedas = [{
-        codigo: "DESC",
-        descripcion: "Descripción",
-    },
-    {
-        codigo: "COD",
-        descripcion: "Código",
-    },
-    {
-        codigo: "AUX",
-        descripcion: "Código Auxiliar",
-    },
-    {
-        codigo: "BAR",
-        descripcion: "Código Barra",
-    },
+    $scope.tipoBusquedas = [
+        {
+            codigo: "DESC",
+            descripcion: "Descripción",
+        },
+        {
+            codigo: "COD",
+            descripcion: "Código",
+        },
+        {
+            codigo: "AUX",
+            descripcion: "Código Auxiliar",
+        },
+        {
+            codigo: "BAR",
+            descripcion: "Código Barra",
+        },
     ];
 
     $scope.dynamicPopover = {
@@ -872,14 +864,13 @@ function ModalArticuloGeneralCtrl(
                 return;
             }
             $scope.activated = true;
-            $scope.dataSearch.checkBoxStock = [1, 2].includes($scope.dataSearch.byStock)
+            $scope.dataSearch.checkBoxStock = [1, 2].includes(
+                $scope.dataSearch.byStock
+            );
             artSvc
                 .getAllWithPrices($scope.dataSearch)
                 .then((response) => {
-                    let {
-                        articulos,
-                        totalRecords
-                    } = response;
+                    let { articulos, totalRecords } = response;
                     $scope.activated = false;
 
                     $scope.articulos = articulos;
@@ -944,13 +935,8 @@ function ModalArticuloGeneralCtrl(
 
     //   //Presentacion del imagen
     $scope.getImagen = async function (item) {
-        const {
-            MODAL_CTRL,
-            MODAL_IMAGEN_DETALLE_CSHTML
-        } = nombreModal.articulo;
-        const {
-            ModalArticuloImagenDetalleCtrl
-        } = await import(
+        const { MODAL_CTRL, MODAL_IMAGEN_DETALLE_CSHTML } = nombreModal.articulo;
+        const { ModalArticuloImagenDetalleCtrl } = await import(
             "./../modal/" + MODAL_CTRL
         );
         modalSvc.openModalCustom({
@@ -982,13 +968,15 @@ class ArticuloCodigoBarra {
     }
 
     getCodigoBarraArticulo() {
-        this.articulSvc.getId(this._params.idArticulo)
+        this.articulSvc
+            .getId(this._params.idArticulo)
             .then((response) => {
                 const results = JSON.parse(response.payload);
                 this.articuloCodigoBarras = results[2];
-            }).catch((err) => {
-                console.log(err);
             })
+            .catch((err) => {
+                console.log(err);
+            });
     }
 
     coloresCodigoBarra(item) {
@@ -1020,9 +1008,9 @@ class ArticuloCodigoBarra {
         this.data.idArticulo = this._params.idArticulo;
 
         const URL =
-            this.tipoRegistro == 1 ?
-                "/CodigoBarraArticulo/Post" :
-                "/CodigoBarraArticulo/Put?idArticuloCodigoBarra=" +
+            this.tipoRegistro == 1
+                ? "/CodigoBarraArticulo/Post"
+                : "/CodigoBarraArticulo/Put?idArticuloCodigoBarra=" +
                 this.data.idArticuloCodigoBarra;
 
         this._mS.getData("post", URL, this.data).then(
@@ -1058,9 +1046,7 @@ class ArticuloCodigoBarra {
     }
 
     async deleteArtCodeBarra(item) {
-        let {
-            isConfirmed
-        } = await Swal.fire({
+        let { isConfirmed } = await Swal.fire({
             icon: "warning",
             html: `<small>Esta seguro/a de eliminar este Código de Barra del Articulo ahora?</small>`,
             showConfirmButton: true,
@@ -1111,13 +1097,15 @@ class UbicacionArticulo {
     getUbicacionArticulo() {
         if (!this._params) return;
 
-        this.articulSvc.getId(this._params.idArticulo)
+        this.articulSvc
+            .getId(this._params.idArticulo)
             .then((response) => {
                 const results = JSON.parse(response.payload);
                 this.articuloUbicaciones = results[3];
-            }).catch(error => {
-                console.error(error)
             })
+            .catch((error) => {
+                console.error(error);
+            });
     }
 
     getEstablecimientos() {
@@ -1173,9 +1161,9 @@ class UbicacionArticulo {
         this.data.idArticulo = this._params.idArticulo;
 
         const URL =
-            this.tipoRegistro === 1 ?
-                "/UbicacionArticulo/Post" :
-                "/UbicacionArticulo/Put?id=" + this.data.idArticuloUbicacion;
+            this.tipoRegistro === 1
+                ? "/UbicacionArticulo/Post"
+                : "/UbicacionArticulo/Put?id=" + this.data.idArticuloUbicacion;
         const method = this.tipoRegistro === 1 ? "post" : "put";
         this._mS.getData(method, URL, this.data).then((response) => {
             if (response.id == "0") {
@@ -1204,9 +1192,7 @@ class UbicacionArticulo {
     }
 
     async deleteUbicacionArt(item) {
-        const {
-            isConfirmed
-        } = await Swal.fire({
+        const { isConfirmed } = await Swal.fire({
             icon: "warning",
             html: `<small>Esta seguro/a de eliminar este Ubicación del Articulo ahora?</small>`,
             showConfirmButton: true,
@@ -1240,8 +1226,8 @@ class UbicacionArticulo {
 }
 
 /**-----------------------------------------------------------------------------------------------------------
-* -----------------------------------------------MODAL FILTRO-------------------------------------------------
-*/
+ * -----------------------------------------------MODAL FILTRO-------------------------------------------------
+ */
 
 class ModalFiltroCtrl {
     static $inject = [
@@ -1260,19 +1246,13 @@ class ModalFiltroCtrl {
         this._form = _form;
         this.dataSearch = _params;
         this.dataSearch.status =
-            this.dataSearch.status === null || this.dataSearch.status == undefined ?
-                "1" :
-                this.dataSearch.status;
+            this.dataSearch.status === null || this.dataSearch.status == undefined
+                ? "1"
+                : this.dataSearch.status;
     }
 
     async $onInit() {
-        const {
-            subFamilias,
-            familias,
-            medidas,
-            marcas,
-            modelos
-        } =
+        const { subFamilias, familias, medidas, marcas, modelos } =
             await this._commonSvc.getGestionAlmacen();
         this.tipoIvas = await this._commonSvc.getAllTipoIva();
         this.subFamilias = subFamilias;
@@ -1336,8 +1316,8 @@ class ModalFiltroCtrl {
 }
 
 /**
-*
-*/
+ *
+ */
 
 class ModalArticuloDetalleCtrl extends ModalBaseCtrl {
     static $inject = [
@@ -1392,7 +1372,8 @@ class ModalArticuloDetalleCtrl extends ModalBaseCtrl {
 
     async $onInit() {
         //  let results = await this.articuloSvc.getDataForm({})
-        let dataArticulo = await this.articuloSvc.getId(this._params.idArticulo)
+        let dataArticulo = await this.articuloSvc
+            .getId(this._params.idArticulo)
             .then((response) => JSON.parse(response.payload));
         //  const {
         //      subFamilias,
@@ -1419,87 +1400,88 @@ class ModalArticuloDetalleCtrl extends ModalBaseCtrl {
 
     //Definimos los nombres de la columna de Tarifa
     getColumnDefs = () => {
-        return [{
-            name: "idTarifa",
-            field: "idTarifa",
-            visible: false,
-        },
-        {
-            name: "tarifa",
-            field: "tarifa",
-            enableCellEdit: false,
-            width: "15%",
-            minWidth: 100,
-        },
-        {
-            name: "Tipo Iva",
-            field: "porcentajeIva",
-            type: "number",
-            enableCellEdit: false,
-            width: "4%",
-            minWidth: 75,
-        },
-        {
-            name: "precioVenta",
-            field: "precioVenta",
-            enableCellEditOnFocus: false,
-            enableCellEdit: false,
-            allowCellFocus: false,
-            type: "number",
-            width: "20%",
-            minWidth: 75,
-        },
-        {
-            name: "precioConIva",
-            field: "precioConIva",
-            enableCellEditOnFocus: false,
-            enableCellEdit: false,
-            allowCellFocus: false,
-            type: "number",
-            width: "20%",
-            minWidth: 100,
-        },
-        {
-            name: "porcentajeUtilidad",
-            field: "porcentajeUtilidad",
-            type: "number",
-            enableCellEditOnFocus: false,
-            enableCellEdit: false,
-            allowCellFocus: false,
-            width: "20%",
-            minWidth: 100,
-        },
-
-        {
-            name: "Utilidad",
-            field: "ganancia",
-            type: "number",
-            enableCellEditOnFocus: false,
-            width: "10%",
-            minWidth: 100,
-        },
-        {
-            name: "P. precioPredeterminado",
-            field: "precioPredeterminado",
-            visible: false,
-        },
-        {
-            name: "Estado",
-            field: "predeterminadaVal",
-            enableCellEdit: false,
-            type: "checkbox",
-            //cellTemplate: '<div class="text-center"><input type="checkbox"' +
-            //    'name="radio" value="radio" ng-click="grid.appScope.updateDefault(row.entity)"/></div>', //'<md-switch style="display:inline;" title="Actualizar estado" aria-label="Predeterminado" ng-click="grid.appScope.updateDefault(row)"></md-switch>',
-
-            width: "15%",
-            minWidth: 100,
-            cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
-                if (row.entity.precioPredeterminado) {
-                    row.entity.predeterminadaVal = "Predeterminado";
-                    return "blue";
-                }
+        return [
+            {
+                name: "idTarifa",
+                field: "idTarifa",
+                visible: false,
             },
-        },
+            {
+                name: "tarifa",
+                field: "tarifa",
+                enableCellEdit: false,
+                width: "15%",
+                minWidth: 100,
+            },
+            {
+                name: "Tipo Iva",
+                field: "porcentajeIva",
+                type: "number",
+                enableCellEdit: false,
+                width: "4%",
+                minWidth: 75,
+            },
+            {
+                name: "precioVenta",
+                field: "precioVenta",
+                enableCellEditOnFocus: false,
+                enableCellEdit: false,
+                allowCellFocus: false,
+                type: "number",
+                width: "20%",
+                minWidth: 75,
+            },
+            {
+                name: "precioConIva",
+                field: "precioConIva",
+                enableCellEditOnFocus: false,
+                enableCellEdit: false,
+                allowCellFocus: false,
+                type: "number",
+                width: "20%",
+                minWidth: 100,
+            },
+            {
+                name: "porcentajeUtilidad",
+                field: "porcentajeUtilidad",
+                type: "number",
+                enableCellEditOnFocus: false,
+                enableCellEdit: false,
+                allowCellFocus: false,
+                width: "20%",
+                minWidth: 100,
+            },
+
+            {
+                name: "Utilidad",
+                field: "ganancia",
+                type: "number",
+                enableCellEditOnFocus: false,
+                width: "10%",
+                minWidth: 100,
+            },
+            {
+                name: "P. precioPredeterminado",
+                field: "precioPredeterminado",
+                visible: false,
+            },
+            {
+                name: "Estado",
+                field: "predeterminadaVal",
+                enableCellEdit: false,
+                type: "checkbox",
+                //cellTemplate: '<div class="text-center"><input type="checkbox"' +
+                //    'name="radio" value="radio" ng-click="grid.appScope.updateDefault(row.entity)"/></div>', //'<md-switch style="display:inline;" title="Actualizar estado" aria-label="Predeterminado" ng-click="grid.appScope.updateDefault(row)"></md-switch>',
+
+                width: "15%",
+                minWidth: 100,
+                cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                    if (row.entity.precioPredeterminado) {
+                        row.entity.predeterminadaVal = "Predeterminado";
+                        return "blue";
+                    }
+                },
+            },
         ];
     };
 
@@ -1509,11 +1491,11 @@ class ModalArticuloDetalleCtrl extends ModalBaseCtrl {
 }
 
 /**
-*
-* ------------------------------------------------Impuesto Articulo----------------
-*
-*
-*/
+ *
+ * ------------------------------------------------Impuesto Articulo----------------
+ *
+ *
+ */
 class ModalArticuloImpuestoCtrl {
     static $inject = ["mainService", "$uibModalInstance", "formulario", "params"];
     constructor(_mS, $uibModalInstance, _form, _params) {
@@ -1606,9 +1588,9 @@ class ModalArticuloImpuestoCtrl {
         this.data.idArticulo = this._params.idArticulo;
 
         let url =
-            this.data.tipoRegistro == 1 ?
-                "/ImpuestoArticulo/Post" :
-                "/ImpuestoArticulo/Update?idImpuestoArticulo=" +
+            this.data.tipoRegistro == 1
+                ? "/ImpuestoArticulo/Post"
+                : "/ImpuestoArticulo/Update?idImpuestoArticulo=" +
                 this.data.idImpuestoArticulo;
         this._mS.getData("post", url, this.data).then((response) => {
             if (response.id === "0") {
@@ -1631,12 +1613,8 @@ class ModalArticuloImpuestoCtrl {
         this.data.tipoRegistro = 2;
     }
 
-    async eliminarImpuestoArticulo({
-        idImpuestoArticulo
-    }) {
-        let {
-            isConfirmed
-        } = await Swal.fire({
+    async eliminarImpuestoArticulo({ idImpuestoArticulo }) {
+        let { isConfirmed } = await Swal.fire({
             icon: "warning",
             html: `<small>Esta seguro/a de eliminar este Impuesto Articulo ahora?</small>`,
             showConfirmButton: true,
@@ -1676,10 +1654,10 @@ class ModalArticuloImpuestoCtrl {
 }
 
 /**
-*
-* ---------------------------------GESTION DE IMAGEN------------------------------
-* Agregar y eliminar
-*/
+ *
+ * ---------------------------------GESTION DE IMAGEN------------------------------
+ * Agregar y eliminar
+ */
 
 class ModalArticuloImagenCtrl {
     static $inject = [
@@ -1813,14 +1791,20 @@ class ModalArticuloImagenCtrl {
 }
 
 /**
-*
-* -------------------------------------Presentacion de Imagen--------------------------
-*
-*
-*/
+ *
+ * -------------------------------------Presentacion de Imagen--------------------------
+ *
+ *
+ */
 
 class ModalArticuloImagenDetalleCtrl {
-    static $inject = ["$scope", "mainService", "$uibModalInstance", "params", "articuloService"];
+    static $inject = [
+        "$scope",
+        "mainService",
+        "$uibModalInstance",
+        "params",
+        "articuloService",
+    ];
 
     constructor($scope, _mS, $uibModalInstance, _params, articulSvc) {
         this.$scope = $scope;
@@ -1874,11 +1858,11 @@ class ModalArticuloImagenDetalleCtrl {
 }
 
 /**
-*
-*
-* --------------------------------Modal Articulo Fraccionado----------------------------
-*
-*/
+ *
+ *
+ * --------------------------------Modal Articulo Fraccionado----------------------------
+ *
+ */
 
 class ModalArticuloFraccionadoCtrl extends ModalBaseCtrl {
     static $inject = [
@@ -1932,11 +1916,9 @@ class ModalArticuloFraccionadoCtrl extends ModalBaseCtrl {
         try {
             showLoader();
 
-            const {
-                medidas,
-                tarifas,
-                decimal
-            } = await this.articuloSvc.getDataForm({});
+            const { medidas, tarifas, decimal } = await this.articuloSvc.getDataForm(
+                {}
+            );
 
             this.medidas = medidas;
             this.data.idMedida =
@@ -1988,27 +1970,29 @@ class ModalArticuloFraccionadoCtrl extends ModalBaseCtrl {
     selectedArticuloChange(item) {
         try {
             showLoader();
-            this.articuloSvc.getId(item.idArticulo).then(response => {
-                hideLoader();
-                const results = JSON.parse(response.payload);
-                this.data = results[0][0];
-                this.data.selectedArticulo = item;
+            this.articuloSvc
+                .getId(item.idArticulo)
+                .then((response) => {
+                    hideLoader();
+                    const results = JSON.parse(response.payload);
+                    this.data = results[0][0];
+                    this.data.selectedArticulo = item;
 
-                this.gridOptions.data = results[1].map((item) => {
-                    item.precioVenta = 0;
-                    item.precioConIva = 0;
-                    item.porcentajeUtilidad = 0;
-                    item.ganancia = 0;
-                    return item;
+                    this.gridOptions.data = results[1].map((item) => {
+                        item.precioVenta = 0;
+                        item.precioConIva = 0;
+                        item.porcentajeUtilidad = 0;
+                        item.ganancia = 0;
+                        return item;
+                    });
+                })
+                .catch((error) => {
+                    hideLoader();
                 });
-            }).catch(error => {
-                hideLoader();
-            })
         } catch (error) {
             hideLoader();
             console.log(error);
         }
-
     }
 
     recalculateTarifaAdd() {
@@ -2033,10 +2017,7 @@ class ModalArticuloFraccionadoCtrl extends ModalBaseCtrl {
                     this._form.sweetAlert("warning", response.message, response.titleSms);
                 }
                 if (response.id === "1") {
-                    let {
-                        fraccionado: data,
-                        pvps
-                    } = response.data;
+                    let { fraccionado: data, pvps } = response.data;
 
                     this.data = {
                         ...this._params,
@@ -2100,9 +2081,9 @@ class ModalArticuloFraccionadoCtrl extends ModalBaseCtrl {
         };
 
         const url =
-            this.tipoRegistro == 1 ?
-                "/ArticuloFraccionado/Post" :
-                `/ArticuloFraccionado/Put?id=${this._params.idArticuloFraccionado}`;
+            this.tipoRegistro == 1
+                ? "/ArticuloFraccionado/Post"
+                : `/ArticuloFraccionado/Put?id=${this._params.idArticuloFraccionado}`;
         const method = this.tipoRegistro === 1 ? "post" : "put";
         this._mS.getData(method, url, data).then((response) => {
             if (response.id == "0") {
@@ -2121,15 +2102,12 @@ class ModalArticuloFraccionadoCtrl extends ModalBaseCtrl {
     }
 }
 
-
-ModalArticuloFraccionadoInfoCtrl.$inject = ['$scope', '$uibModalInstance'];
+ModalArticuloFraccionadoInfoCtrl.$inject = ["$scope", "$uibModalInstance"];
 
 function ModalArticuloFraccionadoInfoCtrl($scope, $uibModalInstance) {
-
-
     $scope.closeModal = function () {
         $uibModalInstance.close();
-    }
+    };
 }
 
 export {
@@ -2141,5 +2119,5 @@ export {
     ModalArticuloImpuestoCtrl,
     ModalArticuloDetalleCtrl,
     ModalFiltroCtrl,
-    ModalArticuloFraccionadoInfoCtrl
+    ModalArticuloFraccionadoInfoCtrl,
 };

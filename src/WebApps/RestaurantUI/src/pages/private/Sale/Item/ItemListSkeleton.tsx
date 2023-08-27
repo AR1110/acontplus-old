@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box'; 
 import Skeleton from '@mui/material/Skeleton';
  
-export default function ItemSkeleton() { 
+export default function ItemListSkeleton() { 
   return (
     <Grid container wrap="nowrap">
       {Array.from(new Array(4)).map((_, index) => (

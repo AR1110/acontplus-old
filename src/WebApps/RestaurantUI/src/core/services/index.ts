@@ -1,3 +1,4 @@
+export * from './account-receivable.service';
 export * from './auth.service';
 export * from './customer.service';
 export * from './item.service';

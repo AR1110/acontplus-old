@@ -1,14 +1,14 @@
  
-import { Box,Grid} from '@mui/material';
-import CollectionItemSkeleton from './CollectionItemSkeleton';
+import { Box,Grid} from '@mui/material'; 
 import ItemCard from './ItemCard';
 import { useSaleStore } from '@/stores/saleStore';
+import ItemListSkeleton from './ItemListSkeleton';
 
-interface CollectionItemProps {
+interface ItemListProps {
     loading: boolean
 }
 
-export default function CollectionItem({ loading }: CollectionItemProps) {
+export default function ItemList({ loading }: ItemListProps) {
     const collectionItems = useSaleStore(state => state.collectionItems);
     return (
         <Box sx={{ pt: 2 }}>
@@ -23,7 +23,7 @@ export default function CollectionItem({ loading }: CollectionItemProps) {
                 },
             }}> 
                 {loading ?
-                    (<CollectionItemSkeleton />)
+                    (<ItemListSkeleton />)
                     :
                     (
                         collectionItems.map((item, index) => (

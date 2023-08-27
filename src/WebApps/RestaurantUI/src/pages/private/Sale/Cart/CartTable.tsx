@@ -10,7 +10,7 @@ import { Avatar, Grid, IconButton, TextField, Typography } from '@mui/material';
 import { AddShoppingCartIcon, DeleteIcon } from '@/core/components';
 import { useSaleStore } from '@/stores/saleStore';
 
-export default function ItemaTable() {
+export default function CartTable() {
     const items = useSaleStore(state => state.items);
     const removeItemFromCart = useSaleStore(state => state.removeItemFromCart)
     const setItemChangeQty = useSaleStore(state => state.setItemChangeQty)

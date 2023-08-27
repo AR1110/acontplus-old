@@ -1,10 +1,8 @@
 
 import { ErrorBoundary, SnackbarUtility } from "@/core/utilities";
-import { Grid, useMediaQuery } from "@mui/material";
-import CategoryTab from "./components/CategoryTab";
+import { Grid, useMediaQuery } from "@mui/material"; 
 import { useAsync, useFetchAndLoad } from "@/hooks";
-import { ItemService, OrdenService, SaleService } from "@/core/services";
-import CollectionItem from "./components/CollectionItem";
+import { ItemService, OrdenService, SaleService } from "@/core/services"; 
 import SaleRight from "./components/SaleRight";
 
 import { Establecimiento } from "@/core/models";
@@ -14,8 +12,11 @@ import { useEffect } from "react";
 import { itemReadAdapter, itemToApi, summaryToApi, warehouseAdapter } from "@/core/adapters";
 import FullScreenDialog from "@/core/components/FullScreenDialog";
 import { CloseIcon, SwipeLeftIcon } from "@/core/components";
-import Checkout from "./components/Payment/Checkout";
-import Swal from "sweetalert2";
+ 
+import Swal from "sweetalert2"; 
+import ItemList from "./Item/ItemList";
+import Category from "./Category/Category";
+import Checkout from "./Checkout/Checkout";
 
 
 
@@ -23,6 +24,7 @@ export default function Sale() {
     const isMobile = useMediaQuery('(max-width:900px)');
 
     const setDataForm = useSaleStore(state => state.setDataForm)
+    const resetForm = useSaleStore(state => state.resetForm)
     const { summary, setSummary } = useSaleStore(state => ({
         summary: state.summary,
         setSummary: state.setSummary,
@@ -94,6 +96,12 @@ export default function Sale() {
 
 
     const saveSale = async () => {
+       
+        if(dataForm.paymentTypes.length===0){
+            SnackbarUtility.warning('Forma pago registradods')
+            return
+        }
+
         const { isConfirmed } = await Swal.fire({
             title: 'Are you sure?',
             text: "You won't be able to revert this!",
@@ -103,8 +111,7 @@ export default function Sale() {
             cancelButtonColor: '#d33',
             confirmButtonText: 'Yes, delete it!'
         })
-
-        console.log(dataForm)
+ 
         if(dataForm.paymentTypes.length===0){
             SnackbarUtility.warning('Forma pago registradods')
             return
@@ -126,14 +133,15 @@ export default function Sale() {
             taxes: taxesResult,
             payments
         }
-        OrdenService.post({data}).then(response => {
+        OrdenService.post(data).then(response => {
             console.log(response)
             if (response.code === '0') {
                 SnackbarUtility.warning(response.message)
             }
-            if (response.code === "1") {
+            if (response.code === "1") {                
                 SnackbarUtility.success(response.message)
-                // resetForm();
+                payment.closeDialogCustom();
+                resetForm();
             }
         })
     }
@@ -144,11 +152,11 @@ export default function Sale() {
             <Grid container spacing={2}>
                 <Grid item xs={12} md={7}>
                     <Grid item xs={12} md={12}>
-                        <CategoryTab />
+                        <Category/>
                     </Grid>
 
                     <Grid item xs={12} sm={12} md={12} lg={12}>
-                        <CollectionItem loading={loading} />
+                        <ItemList loading={loading} />
                     </Grid>
                 </Grid>
                 <Grid item xs={12} md={5}>
@@ -166,7 +174,7 @@ export default function Sale() {
                 isOpen={payment.isOpen}
                 handleClose={payment.closeDialogCustom}
             >
-                <Checkout saveSale={saveSale} />
+                <Checkout />
             </FullScreenDialog>
             {/* end dialog payment */}
 

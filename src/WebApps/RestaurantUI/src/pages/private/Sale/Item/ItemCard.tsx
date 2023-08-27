@@ -9,7 +9,7 @@ import brand_img from '/assets/images/brand_logo.png';
 import { ItemReadDto, Measure, WarehouseAsign } from '@/core/models';
 import { useSaleStore } from '@/stores/saleStore';
 import { ProductService } from '@/core/services';
-import { useAuthStore } from '@/stores';
+import { useAuthStore, useLoaderStore } from '@/stores';
 import { SnackbarUtility } from '@/core/utilities'; 
 import Swal from 'sweetalert2';
 
@@ -53,6 +53,10 @@ export default function ItemCard({ item }: ItemCardProps) {
     }))
     const dataEstab = useAuthStore(state => state.dataEstab)
     // const [warehouses, setWarehouses] = useState<Array<WarehouseAsign>>([]) 
+
+    const {showLoader}  = useLoaderStore();
+
+
     const handleSelectItem = (item: ItemReadDto) => {
       
         const warehouses: Array<WarehouseAsign> = dataForm.warehouses.filter(warehouse => warehouse.codEstab_Asig === dataEstab.codEstab_Asig);
@@ -65,6 +69,7 @@ export default function ItemCard({ item }: ItemCardProps) {
             return
         }
 
+        showLoader(true)
         ProductService.findForSale(item.productId, dataWarehouse.idBodega).then(response => {
             const { product, measures } = response;
             const measureData = measures.find(measure => measure.measureId === product.measureId) as Measure;
@@ -116,6 +121,7 @@ export default function ItemCard({ item }: ItemCardProps) {
                     productId: product.productId,
                     code: product.productCode,
                     itemId: item.itemId,
+                    feeId: measureData.rates[0]?.rateId ?? 0,
                     taxId: taxId,
                     taxPercentId: taxPercentId,
                     taxValue:taxValue,
@@ -139,7 +145,7 @@ export default function ItemCard({ item }: ItemCardProps) {
                 })
             }
 
-        })
+        }).finally(()=>showLoader(false))
 
     }
 
