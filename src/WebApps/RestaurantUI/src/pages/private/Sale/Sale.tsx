@@ -1,10 +1,8 @@
 
 import { ErrorBoundary, SnackbarUtility } from "@/core/utilities";
-import { Grid, useMediaQuery } from "@mui/material";
-import CategoryTab from "./components/CategoryTab";
+import { Grid, useMediaQuery } from "@mui/material"; 
 import { useAsync, useFetchAndLoad } from "@/hooks";
-import { ItemService, OrdenService, SaleService } from "@/core/services";
-import CollectionItem from "./components/CollectionItem";
+import { ItemService, OrdenService, SaleService } from "@/core/services"; 
 import SaleRight from "./components/SaleRight";
 
 import { Establecimiento } from "@/core/models";
@@ -14,8 +12,11 @@ import { useEffect } from "react";
 import { itemReadAdapter, itemToApi, summaryToApi, warehouseAdapter } from "@/core/adapters";
 import FullScreenDialog from "@/core/components/FullScreenDialog";
 import { CloseIcon, SwipeLeftIcon } from "@/core/components";
-import Checkout from "./components/Payment/Checkout";
-import Swal from "sweetalert2";
+ 
+import Swal from "sweetalert2"; 
+import ItemList from "./Item/ItemList";
+import Category from "./Category/Category";
+import Checkout from "./Checkout/Checkout";
 
 
 
@@ -151,11 +152,11 @@ export default function Sale() {
             <Grid container spacing={2}>
                 <Grid item xs={12} md={7}>
                     <Grid item xs={12} md={12}>
-                        <CategoryTab />
+                        <Category/>
                     </Grid>
 
                     <Grid item xs={12} sm={12} md={12} lg={12}>
-                        <CollectionItem loading={loading} />
+                        <ItemList loading={loading} />
                     </Grid>
                 </Grid>
                 <Grid item xs={12} md={5}>
@@ -173,7 +174,7 @@ export default function Sale() {
                 isOpen={payment.isOpen}
                 handleClose={payment.closeDialogCustom}
             >
-                <Checkout saveSale={saveSale} />
+                <Checkout />
             </FullScreenDialog>
             {/* end dialog payment */}
 

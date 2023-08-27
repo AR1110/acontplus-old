@@ -23,20 +23,21 @@ BEGIN
     ,@puntoEmisionId INT
     ,@bodegaId INT
     ,@tableId INT
-    ,@secuence INT
+    ,@sequence INT
     ,@serie VARCHAR(18)
     ,@fechaEmision DATETIME2
     ,@customerCompanyId INT
     ,@subtotalSinImpuestos NUMERIC(18,5)
     ,@tax NUMERIC(18,5)
+    ,@taxPercent NUMERIC(4,2)
     ,@discount NUMERIC(18,5)
     ,@tip NUMERIC(18,5)
     ,@total NUMERIC(18,5)
     ,@obs VARCHAR(500)
     ,@codDoc VARCHAR(2)
+    ,@quickSale BIT
     ,@userId INT
     ,@estadoPagoId INT
-
     
     SELECT       @itemsJson     = items
         ,@taxesJson             = taxes
@@ -45,14 +46,17 @@ BEGIN
         ,@puntoEmisionId        = puntoEmisionId
         ,@bodegaId              = bodegaId
         ,@tableId               = tableId
+        ,@fechaEmision          = fechaEmision
         ,@customerCompanyId     = customerCompanyId
         ,@subtotalSinImpuestos  = subtotalSinImpuestos
+        ,@taxPercent            = taxPercent
         ,@tax                   = tax
         ,@discount              = discount
         ,@tip                   = tip
         ,@total                 = total
         ,@obs                   = obs
         ,@codDoc                = codDoc
+        ,@quickSale             = quickSale
     FROM OPENJSON(@json)
         WITH(
             items NVARCHAR(MAX) '$.items' AS JSON,
@@ -62,15 +66,28 @@ BEGIN
             puntoEmisionId INT '$.puntoEmisionId',
             bodegaId INT '$.bodegaId',
             tableId INT '$.tableId',
+            fechaEmision DATETIME2 '$.fechaEmision',
             customerCompanyId INT '$.customerCompanyId',
             subtotalSinImpuestos NUMERIC(18,5) '$.subtotalSinImpuestos',
             tax NUMERIC(18,5) '$.tax',
+            taxPercent NUMERIC(4,2) '$.taxPercent',
             discount NUMERIC(18,5) '$.discount',
             tip NUMERIC(18,5) '$.tip',
             total NUMERIC(18,5) '$.total',
             obs VARCHAR(500) '$.obs',
-            codDoc VARCHAR(2) '$.codDoc'
+            codDoc VARCHAR(2) '$.codDoc',
+            quickSale BIT '$.quickSale'
         )
+
+    IF NOT EXISTS (SELECT 1 FROM v_ConfigDocumento cd
+				        INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab AND cd.idPuntoEmision = @puntoEmisionId
+			            WHERE pa.idUsuarioRol = @userRoleId
+			            AND cd.codDoc = 'OR')
+                BEGIN
+                    --declare @payload VARCHAR(500) = (select @puntoEmisionId ptoEmi, @userRoleId userRoleId for json path)
+                    SELECT Common.ufnSpResponse('0', 'Aun no se ha configurado el secuencial, para ordenes de restaurante',  DEFAULT)
+                    RETURN
+                END
 
 
     IF (ISJSON(@itemsJson) = 1)
@@ -80,6 +97,7 @@ BEGIN
                 itemId INT NOT NULL,
                 taxId INT NOT NULL,
                 taxPercentId INT NOT NULL,
+                feeId INT NOT NULL,
                 taxValue NUMERIC (18,5) NOT NULL,
                 quantity NUMERIC (18,5) NOT NULL,
                 cost NUMERIC(18,5) NOT NULL,
@@ -89,14 +107,15 @@ BEGIN
                 obs VARCHAR(500)
             )
 
-            INSERT INTO @tblItems(uuid, itemId, taxId, taxPercentId, taxValue, quantity, cost, price, discount, total)
-            SELECT uuid, itemId, taxId, taxPercentId, taxValue, quantity, cost, price, discount, total 
+            INSERT INTO @tblItems(uuid, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total)
+            SELECT uuid, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total 
             FROM OPENJSON(@itemsJson)
                 WITH (
                         uuid UNIQUEIDENTIFIER '$.uuid',
                         itemId INT '$.itemId',
                         taxId INT '$.taxId',
                         taxPercentId INT '$.taxPercentId',
+                        feeId INT '$.feeId',
                         taxValue NUMERIC (18,5)'$.taxValue',
                         quantity NUMERIC (18,5) '$.quantity',
                         cost NUMERIC(18,5) '$.cost',
@@ -180,115 +199,160 @@ BEGIN
     DECLARE @companyId INT 
     ,@estab VARCHAR(3)
     ,@ptoEmi VARCHAR(3)
+    ,@idTipoDocumento INT
+    ,@orderId INT
 
-    SELECT @secuence = cd.secuencial, @estab = pa.estab, @ptoEmi = pa.ptoEmi
-			FROM v_ConfigDocumento cd
-				INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab AND cd.idPuntoEmision = @puntoEmisionId
-			WHERE pa.idUsuarioRol = @userRoleId
-			AND cd.codDoc = 'OR'
+    SELECT @sequence = cd.secuencial
+        , @estab = pa.estab
+        , @ptoEmi = pa.ptoEmi
+        , @idTipoDocumento = cd.idTipoDocumento
+	FROM v_ConfigDocumento cd
+		INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab
+                                    AND cd.idPuntoEmision = @puntoEmisionId
+	WHERE pa.idUsuarioRol = @userRoleId
+	    AND cd.codDoc = 'OR'
 
-    SET @serie = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @secuence, DEFAULT)) --(SELECT @estab + '-' + @ptoEmi +'-'+ RIGHT('000000000' + CONVERT(VARCHAR, @secuence), 9))
-   
     SELECT @companyId = idEntidad , @userId =  idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId
 
-    DECLARE @id INT = 0
 	BEGIN TRY
 		BEGIN TRAN
-            INSERT INTO Restaurant.[Order](EstablecimientoId, PuntoEmisionId, TableId, [Sequence], Serie, CustomerCompanyId, Tax, Discount, Total, [Enabled], UserId)
-            VALUES(@establecimientoId, @puntoEmisionId, @tableId, @secuence, @serie, @customerCompanyId, @tax, @discount, @total, 1, @userId)
-	        SET @id = (SELECT SCOPE_IDENTITY())
-            IF (@id > 0)
+            ----------------ORDER------------------
+            SET @serie = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @sequence, DEFAULT))   
+            INSERT INTO Restaurant.[Order](EstablecimientoId, puntoEmisionId, TableId, [Sequence], Serie, CustomerCompanyId, Tax, Discount, Total, [Enabled], UserId)
+            VALUES(@establecimientoId, @puntoEmisionId, @tableId, @sequence, @serie, @customerCompanyId, @tax, @discount, @total, 1, @userId)
+	        SET @orderId = (SELECT SCOPE_IDENTITY())
+
+            IF (@orderId > 0)
                 BEGIN
                     INSERT INTO Restaurant.OrderItem(OrderId, Uuid, ItemId, TaxId, TaxPercentId, TaxValue, Quantity, Cost, Price, Discount, Total, [Enabled], UserId)
-                    SELECT @id, uuid, itemId, taxId, taxPercentId, taxValue, quantity, cost, price, discount, total, 1, @userId FROM @tblItems
-                    --falta table id
-                    DECLARE @totalCook INT = 0
-
+                    SELECT @orderId, uuid, itemId, taxId, taxPercentId, taxValue, quantity, cost, price, discount, total, 1, @userId FROM @tblItems
                     
-                                    UPDATE cf SET cf.ultimaSecuencia = vcf.secuencial + 1 
-                                    FROM ConfiguracionDocumento cf WITH (ROWLOCK)
-                                        JOIN (
-                                                SELECT cd.idConfiguracionDocumento, cd.secuencial
-			                                        FROM v_ConfigDocumento cd
-				                                        INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab AND cd.idPuntoEmision = @puntoEmisionId
-			                                        WHERE pa.idUsuarioRol = @userRoleId
-			                                        AND cd.codDoc = 'OR'
-                                        ) AS vcf ON cf.idConfiguracionDocumento = vcf.idConfiguracionDocumento
-
+                    DECLARE @totalCook INT = 0
                     SET @totalCook = (SELECT COUNT(*) FROM Restaurant.Item i INNER JOIN @tblItems ii ON i.Id = ii.ItemId WHERE i.Cooking = 1)
 
                     IF (@totalCook > 0)
+                        INSERT INTO Restaurant.[OrderKitchen] (OrderId, [Enabled], Completed, UserId)
+                        VALUES(@orderId, 1, 0, @userId)
+                    
+                    UPDATE cf SET cf.ultimaSecuencia = vcf.secuencial + 1 
+                    FROM ConfiguracionDocumento cf WITH (ROWLOCK)
+                        JOIN (
+                                SELECT cd.idConfiguracionDocumento, cd.secuencial
+			                        FROM v_ConfigDocumento cd
+				                        INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab 
+                                                                    AND cd.idPuntoEmision = @puntoEmisionId
+			                        WHERE pa.idUsuarioRol = @userRoleId
+			                        AND cd.codDoc = 'OR'
+                        ) AS vcf ON cf.idConfiguracionDocumento = vcf.idConfiguracionDocumento
+                 
+                    ----------------VENTA RAPIDA------------
+                    IF (@quickSale = 1)
                         BEGIN
-                            INSERT INTO Restaurant.[OrderKitchen] (OrderId, [Enabled], Completed, UserId)
-                            VALUES(@id, 1, 0, @userId)
-                        END
+                             DECLARE @documentoId INT
+                            ,@nroDocumento INT
+                            ,@serieDocument VARCHAR(18)
 
-                    DECLARE @documentoId INT
-                    ,@nroDocumento INT
+                            -------------------------DOCUMENTOS DE VENTA-------------------------------
+                            SET @nroDocumento = (SELECT cd.secuencial FROM v_ConfigDocumento cd
+				                                                      INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab 
+                                                                                                    AND cd.idPuntoEmision = @puntoEmisionId
+			                                                          WHERE pa.idUsuarioRol = @userRoleId
+			                                                              AND cd.codDoc = @codDoc)
 
-                    IF (@codDoc = 'NE')
-                        BEGIN
-                            SET @nroDocumento = (SELECT cd.secuencial
-			                                        FROM v_ConfigDocumento cd
-				                                        INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab AND cd.idPuntoEmision = @puntoEmisionId
-			                                        WHERE pa.idUsuarioRol = @userRoleId
-			                                        AND cd.codDoc = 'NE')
-                            INSERT INTO NotaEntrega (idCliente, idPuntoEmision, idTiempoCredito, nroDocumento, subTotalSinImpuestos, propina, iva, total, observacion, fechaRegistro, idUsuario, idEntidad, fechaEmision, fechaVencimiento, idEstadoPago)
-                            VALUES(@customerCompanyId, @puntoEmisionId, 1, @nroDocumento, @subtotalSinImpuestos, @tip, @tax, @total, @obs, dbo.ufnGetDateEcuador(), @userId, @companyId,  @fechaEmision, @fechaEmision, @estadoPagoId)
-                            SET @documentoId = (SELECT SCOPE_IDENTITY())
+                            IF (@customerCompanyId = 0) 
+                                SELECT TOP 1 @customerCompanyId = idCliente FROM v_Cliente WHERE codIdentSri = '07'
 
-                            IF (@documentoId > 0)
+                            IF (@codDoc = 'NE')
                                 BEGIN
-                                  INSERT INTO NotaEntregaDetalle(idNotaEntrega, idArticulo, idBodega, idMedida, descripcion, cantidad, precioVenta, precioConIva, valorDescuento, porcentajeDescuento, total, nota, fechaRegistro, uuid)
-                                  SELECT @documentoId, a.idArticulo, @bodegaId, a.idMedida, a.descripcion, i.quantity, i.price, i.total + i.taxValue, i.discount, 0, i.total, i.obs, dbo.ufnGetDateEcuador(), i.uuid
-                                  FROM @tblItems i
-                                    INNER JOIN Restaurant.v_Item ri ON i.itemId = ri.Id
-                                    INNER JOIN Inventario.v_Articulo a ON ri.ProductId = a.idArticulo
+                                    INSERT INTO NotaEntrega (idCliente, idPuntoEmision, idTiempoCredito, nroDocumento, subTotalSinImpuestos, propina, iva, total, tarifa, observacion, fechaRegistro, idUsuario, idEntidad, fechaEmision, fechaVencimiento, idEstadoPago)
+                                    VALUES(@customerCompanyId, @puntoEmisionId, 1, @nroDocumento, @subtotalSinImpuestos, @tip, @tax, @total, @taxPercent, @obs, dbo.ufnGetDateEcuador(), @userId, @companyId,  @fechaEmision, @fechaEmision, @estadoPagoId)
+                                    SET @documentoId = (SELECT SCOPE_IDENTITY())
 
-                                    INSERT INTO Ventas.NotaEntregaImpuesto(TaxId, TaxPercentId, [Percent], TaxBase, TaxValue, UserId)
-                                    SELECT t.taxId, t.taxPercentId, ti.porcentaje, t.taxBase, t.taxValue, @userId
-                                    FROM @tblTaxes t 
-                                            INNER JOIN Sri.TarifaImpuesto ti ON t.TaxPercentId = ti.idTarifaImpuesto
+                                    IF (@documentoId > 0)
+                                        BEGIN
+                                          INSERT INTO NotaEntregaDetalle(idNotaEntrega, idArticulo, idBodega, idMedida, descripcion, cantidad, precioVenta, idTarifa, iva, precioConIva, valorDescuento, porcentajeDescuento, total, nota, fechaRegistro, uuid)
+                                          SELECT @documentoId, a.idArticulo, @bodegaId, a.idMedida, a.descripcion, i.quantity, i.price, i.feeId, i.taxValue, i.total + i.taxValue, i.discount, 0, i.total, i.obs, dbo.ufnGetDateEcuador(), i.uuid
+                                          FROM @tblItems i
+                                            INNER JOIN Restaurant.v_Item ri ON i.itemId = ri.Id
+                                            INNER JOIN Inventario.v_Articulo a ON ri.ProductId = a.idArticulo
 
-                                    UPDATE ne SET ne.NotaEntregaDetalleId = i.idNotaEntregaDetalle
+                                            INSERT INTO Ventas.NotaEntregaImpuesto(TaxId, TaxPercentId, [Percent], TaxBase, TaxValue, Uuid, UserId)
+                                            SELECT t.taxId, t.taxPercentId, ti.porcentaje, t.taxBase, t.taxValue, t.uuid, @userId
+                                            FROM @tblTaxes t 
+                                                    INNER JOIN Sri.TarifaImpuesto ti ON t.TaxPercentId = ti.idTarifaImpuesto
 
-                                    FROM Ventas.NotaEntregaImpuesto ne 
-                                    JOIN (
-                                        SELECT ii.uuid, nd.idNotaEntregaDetalle FROM @tblItems ii 
-                                            INNER JOIN NotaEntregaDetalle nd ON ii.uuid = nd.uuid
-                                    ) AS i ON ne.Uuid = i.uuid
-
-                                    UPDATE cf SET cf.ultimaSecuencia = vcf.secuencial + 1 
-                                    FROM ConfiguracionDocumento cf WITH (ROWLOCK)
-                                        JOIN (
-                                                SELECT cd.idConfiguracionDocumento, cd.secuencial
-			                                        FROM v_ConfigDocumento cd
-				                                        INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab AND cd.idPuntoEmision = @puntoEmisionId
-			                                        WHERE pa.idUsuarioRol = @userRoleId
-			                                        AND cd.codDoc = 'NE'
-                                        ) AS vcf ON cf.idConfiguracionDocumento = vcf.idConfiguracionDocumento
-
-                                    DECLARE @serieDocument VARCHAR(18) = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @nroDocumento, DEFAULT))
-                                    
-                                    EXEC Contabilidad.CuentaPorCobrar_Insert 'NE'
-			                                                                ,@documentoId
-													                        ,@puntoEmisionId
-													                        ,1
-													                        ,@customerCompanyId
-														                    ,@nroDocumento
-													                        ,@serieDocument
-													                        ,@fechaEmision
-													                        ,@fechaEmision
-													                        ,@total
-													                        ,@companyId
-													                        ,@userId
+                                            UPDATE ne SET ne.NotaEntregaDetalleId = i.idNotaEntregaDetalle
+                                            FROM Ventas.NotaEntregaImpuesto ne 
+                                            JOIN (
+                                                SELECT ii.uuid, nd.idNotaEntregaDetalle FROM @tblItems ii 
+                                                    INNER JOIN NotaEntregaDetalle nd ON ii.uuid = nd.uuid
+                                            ) AS i ON ne.Uuid = i.uuid
+                                        END
                                 END
-                        END
+
+                            --IF (@codDoc = 'FV')
+                            --    BEGIN
+                                    
+                            --    END
+
+                             UPDATE cf SET cf.ultimaSecuencia = vcf.secuencial + 1
+                             FROM ConfiguracionDocumento cf WITH (ROWLOCK)
+                                JOIN (
+                                        SELECT cd.idConfiguracionDocumento, cd.secuencial
+			                                FROM v_ConfigDocumento cd
+				                                INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab 
+                                                                            AND cd.idPuntoEmision = @puntoEmisionId
+			                                WHERE pa.idUsuarioRol = @userRoleId
+			                                    AND cd.codDoc = @codDoc
+                                ) AS vcf ON cf.idConfiguracionDocumento = vcf.idConfiguracionDocumento
+
+                            SET @serieDocument = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @nroDocumento, DEFAULT))
+
+                            --------------------END DOCUMENTOS---------------------
+
+                            EXEC Contabilidad.CuentaPorCobrar_Insert @codDoc, @documentoId, @puntoEmisionId, 1, @customerCompanyId, @nroDocumento, @serieDocument, @fechaEmision, @fechaEmision, @total, @companyId, @userId
+
+                            --------------------PAYLOADS------------------
+                            DECLARE @payload NVARCHAR(MAX)
+                            ,@payAutomatic BIT
+                            ,@printerAutomatic BIT
+                            ,@idCuentaPorCobrar INT
+                            ,@tiempoCreditoId INT = 1
+                            ,@codEstab VARCHAR(15)
+
+                            SET @codEstab = (SELECT codEstab FROM Sri.Establecimiento WHERE idEstablecimiento = @establecimientoId)
+
+						    SELECT TOP 1 @payAutomatic = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.payAutomatic'),
+                            @printerAutomatic = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.printerAutomatic') 
+                            FROM Config.Sistema WITH (NOLOCK) 
+                            WHERE idEntidad = @companyId 
+                                AND codConfig = 'CV' 
+				
+				            SELECT TOP 1 @idCuentaPorCobrar = idCuentaPorCobrar
+                            FROM Contabilidad.CuentaPorCobrar WITH (NOLOCK)
+                            WHERE codDoc = @codDoc
+                                AND idDocumento = @documentoId
+
+				            SET @payload = (SELECT
+					               idDocumento             = @documentoId
+			                      ,idTipoDocumento         = @idTipoDocumento
+					              ,codEstab                = @codEstab
+					              ,tiempoCredito           = @tiempoCreditoId
+					              ,idCliente               = @customerCompanyId
+					              ,codDoc                  = @codDoc
+					              ,idCuentaPorCobrar       = @idCuentaPorCobrar
+					              ,payAutomatic            = @payAutomatic
+					              ,printerAutomatic        = @printerAutomatic
+					            FOR JSON PATH)
+                            --------END PAYLOADS--------
+                    END
+                    ----------------END VENTA RAPIDA--------
                 END
+            -----------------END ORDER -----------------
 		COMMIT TRAN
 
-        IF (@id > 0)
-            SELECT Common.ufnSpResponse('1', 'Exitos al guardar', NULL)
+        IF (@orderId > 0)
+            SELECT Common.ufnSpResponse('1', 'Exitos al guardar', @payload)
         ELSE
             SELECT Common.ufnSpResponse('0', 'No se pudo guardar la orden', NULL)	
     END TRY

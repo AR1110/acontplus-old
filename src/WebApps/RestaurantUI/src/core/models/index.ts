@@ -1,3 +1,4 @@
+export * from './account-receivable.model';
 export * from './api-response';
 export * from './axios-call.model';
 export * from './category.models';
@@ -6,7 +7,7 @@ export * from './customer.model';
 export * from './decimal.model';
 export * from './emission-point.model';
 export * from './estab.model';
-export * from './item.model';
+export * from './item.model'; 
 export * from './payment-type';
 export * from './product-pvp.model';
 export * from './product.model';

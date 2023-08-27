@@ -1124,7 +1124,7 @@ export class CommonService {
                             idArticulo: item.idArticulo,
                             idEtiqueta: item.idEtiqueta,
                             idInfoAdicional: item.idInfoAdicional,
-                            jsonAdicional: tem.jsonAdicional && JSON.parse(item.jsonAdicional) || [],
+                            jsonAdicional: item.jsonAdicional && JSON.parse(item.jsonAdicional) || [],
                             selected: item.selected,
                             estado: item.estado
                         }))

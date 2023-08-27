@@ -8,7 +8,7 @@ import { useSaleStore } from '@/stores/saleStore';
 import { itemSearchInitialState } from '@/core/models';
 import { ErrorBoundary } from '@/core/utilities';
 
-export default function ScrollableTabsButtonVisible() {
+export default function Category() {
   const setItemSearch = useSaleStore(state => state.setItemSearch);
   const categories = useSaleStore(state => state.dataForm.categories)
   const [value, setValue] = useState(0);
