@@ -90,7 +90,7 @@ export interface SummaryPostDto {
     obs: string
     codDoc: string
     quickSale: boolean
-    fechaEmision: Date
+    fechaEmision: Date,    
 }
 
 

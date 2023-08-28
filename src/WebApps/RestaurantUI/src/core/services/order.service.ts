@@ -1,14 +1,16 @@
-import { categoryReadAdapter, decimalSaleReadAdapter, emissionPointAdapter, tableReadAdapter, taxAdapter, taxRateAdapter, warehouseAdapter } from "../adapters"
 import { PATHS } from "../constants"
 import { ApiResponse } from "../models"
 import { Http } from "../utilities"
 
 const URL = 'Order'
 export const OrdenService = {
-    async get() {
+    async get(obj: object) {
         const resultAxios = await Http({
             method: 'get',
             url: `${PATHS.PRIVATE}${URL}`,
+            params: {
+                json: JSON.stringify(obj)
+            }
         })
 
         const response: ApiResponse = resultAxios.data;

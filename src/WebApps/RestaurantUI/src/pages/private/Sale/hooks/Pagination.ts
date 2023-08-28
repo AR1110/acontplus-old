@@ -21,7 +21,10 @@ function usePagination(data: Array<ItemReadDto>, itemsPerPage: number) {
 
   function jump(page: number) {
     const pageNumber = Math.max(1, page);
-    setCurrentPage(currentPage => Math.min(pageNumber, maxPage));
+    setCurrentPage(currentPage => {
+      console.log(currentPage)
+      return Math.min(pageNumber, maxPage)
+    });
   }
 
   return { next, prev, jump, currentData, currentPage, maxPage };

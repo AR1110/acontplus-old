@@ -17,7 +17,7 @@ export default function Order() {
 
     const getOrders = async ()=>{
         showLoader(true)
-        await OrdenService.get().then(response=>{
+        await OrdenService.get({pageIndex: 1, pageSize: 2}).then(response=>{
             console.log(response)
         }).finally(()=>showLoader(false))
     }

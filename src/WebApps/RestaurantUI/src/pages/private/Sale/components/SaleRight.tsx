@@ -18,6 +18,7 @@ import { OrdenService, PrintService } from '@/core/services'
 import CartTable from '../Cart/CartTable'
 import { useRef, useState } from 'react'; 
 import { QueryParams } from '@/core/models';
+import { PATHS } from '@/core/constants';
 
 const listItemCustom = {
     paddingTop: '2px',
@@ -89,7 +90,7 @@ export default function SaleRight() {
     };
 
 
-    const askToSave = async function (codDoc: string) {
+    const askToSave = async function (codDoc?: string) {
        
 
         // setVoucher({
@@ -137,18 +138,24 @@ export default function SaleRight() {
             const data = {
                 ...summaryResult,
                 codDoc,
+                quickSale: ['FV', 'NE'].includes(codDoc!) ? true : false,
                 items: itemsResult,
                 taxes: taxesResult,
                 payments: {}
             }
             showLoader(true);
             OrdenService.post(data).then(response => {
-                console.log(response)
+              
                 if (response.code === '0') {
                     SnackbarUtility.warning(response.message)
                 }
                 if (response.code === "1") {    
                     SnackbarUtility.success(response.message);
+                    //Order 
+                    if(!codDoc) {
+                        resetForm();
+                        return
+                    }
 
                     const queryParams: QueryParams = JSON.parse(response.payload)[0];
                     if(queryParams.payAutomatic){
@@ -247,7 +254,7 @@ export default function SaleRight() {
                         <ButtonGroup variant="contained" color='success' ref={anchorRef} aria-label="split button" fullWidth size='large' sx={{
                             height: 50, 
                         }}>
-                            <Button startIcon={<SaveIcon />} onClick={()=>askToSave('NE')}>Guardar</Button>
+                            <Button startIcon={<SaveIcon />} onClick={()=>askToSave()}>Guardar</Button>
                             <Button
                                 size="small"
                                 aria-controls={open ? 'split-button-menu' : undefined}
