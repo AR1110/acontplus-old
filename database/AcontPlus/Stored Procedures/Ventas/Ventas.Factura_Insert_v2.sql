@@ -355,9 +355,7 @@ BEGIN
 			END
 
 
-		SELECT TOP 1 @secuencial = ultimaSecuencia FROM dbo.ConfiguracionDocumento WHERE idPuntoEmision = @idPuntoEmision AND idTipoDocumento = @idTipoDocumento
-
-		SELECT TOP 1 @isAutomatic = isAutomatic FROM factElect.Config_Comprob_Elect WHERE codEstab = @codEstab
+		SELECT TOP 1 @secuencial = ultimaSecuencia, @isAutomatic = autoSriAuth  FROM Config.v_ConfigDocumento WHERE idPuntoEmision = @idPuntoEmision AND idTipoDocumento = @idTipoDocumento
 
 		SELECT @claveAcceso = dbo.ufnGeneraClaveAcceso(dbo.AFTDeleteCero(@estab), @codDoc, @ambiente, @emision, dbo.AFTConvertDate(@fechaEmision), @ruc, @estab + @ptoEmi, Helper.F_Auto_Sequential(@secuencial))
 

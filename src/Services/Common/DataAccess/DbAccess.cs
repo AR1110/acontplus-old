@@ -102,19 +102,7 @@ namespace DataAccess
         }
         public void OnlyExecute()
         {
-            try
-            {
-                _command.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                //
-                //_log.LogError("Error in OnlyExecute: " + ex.ToString());
-            }
-            finally
-            {
-                _connection.Close();
-            }
+            _command.ExecuteNonQuery();
         }
         public object ExecuteScalar()
         {

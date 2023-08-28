@@ -7,7 +7,7 @@
         height: 100px;
         text-align: center;
         padding-top: 10px;
-       /* margin: 10px; */
+        /* margin: 10px; */
     }
 
     .dragover {
@@ -20,49 +20,48 @@
     <button type="button" class="close" ng-click="$ctrl.closeModal()">&times;</button>
 </div>
 
-<div class="modal-body">   
+<div class="modal-body">
     <div class="row">
-       
+
         <div class="col-xl-4 col-lg-4 col-md-12 col-12">
             <div class="card">
-               
-                <div class="card-body shadow">                    
+
+                <div class="card-body shadow">
                     <center class="m-t-30">
-                        <img ngf-src="$ctrl.file" ng-if="$ctrl.file" ngf-no-object-url="false" class="img-fluid" >                      
+                        <img ngf-src="$ctrl.file" ng-if="$ctrl.file" ngf-no-object-url="false" class="img-fluid">
                         <div type="file" ng-if="!$ctrl.file"
-                            ngf-select="$ctrl.onSave()"
-                            ng-model="$ctrl.file"
-                            class="drop-box"
-                            ngf-drag-over-class="'dragover'"                            
-                            ngf-accept="'image/*'"
-                           
-                            ngf-validate="{size: {min: 10, max: '20MB'}, width: {min: 100, max:10000}, height: {min: 100, max: 300} ratio: '2x1', duration: {min: '10s', max: '5m'}">
+                             ngf-select="$ctrl.onSave()"
+                             ng-model="$ctrl.file"
+                             class="drop-box"
+                             ngf-drag-over-class="'dragover'"
+                             ngf-accept="'image/*'"
+                             ngf-validate="{size: {min: 10, max: '20MB'}, width: {min: 100, max:10000}, height: {min: 100, max: 300} ratio: '2x1', duration: {min: '10s', max: '5m'}">
                             Haga clic para cargar imagen.
                         </div>
                         <div class="text-center justify-content-md-center mt-2" ng-if="$ctrl.file">
-                            <div class="btn-group" role="group" aria-label="Btn Delete">                           
-                                <button type="button" class="btn btn-danger" ng-click="$ctrl.removeImg()"><i class="far fa-times-circle"></i> Eliminar</button>                                
-                            </div>                                                    
+                            <div class="btn-group" role="group" aria-label="Btn Delete">
+                                <button type="button" class="btn btn-danger" ng-click="$ctrl.removeImg()"><i class="far fa-times-circle"></i> Eliminar</button>
+                            </div>
                         </div>
                     </center>
                     <div><hr></div>
                     <small class="text-muted">RUC</small>
                     <h6>{{$ctrl.data.ruc}}</h6>
-                    
+
                     <small class="text-muted p-t-30 db">Nombre Comercial</small>
                     <h6>{{$ctrl.data.nombreComercial}}</h6>
-                    
+
                     <small class="text-muted p-t-30 db">Nro. Establecimiento</small>
-                    <h6>{{$ctrl.data.estab}}</h6>                                    
-                </div> 
+                    <h6>{{$ctrl.data.estab}}</h6>
+                </div>
 
                 @* <div class="card-footer text-center">
-                   
-                    <button class="btn btn-theme"
-                            type="button">+
-                    </button>                  
-                </div>                                      *@
-                                
+
+                        <button class="btn btn-theme"
+                                type="button">+
+                        </button>
+                    </div>                                      *@
+
             </div>
         </div>
         <!-- Column -->
@@ -73,94 +72,96 @@
                     <md-tab label="DATOS">
                         <md-content class="md-padding">
                             <div class="row">
-                                <div class="col-md-12 col-12 b-r"> <strong>RUC</strong>
+                                <div class="col-md-12 col-12 b-r">
+                                    <strong>RUC</strong>
                                     <br>
                                     <p class="text-muted">{{$ctrl.data.ruc}}</p>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6 col-12 b-r"> <strong>Npmbre Comercial</strong>
+                                <div class="col-md-6 col-12 b-r">
+                                    <strong>Npmbre Comercial</strong>
                                     <br>
                                     <p class="text-muted">{{$ctrl.data.nombreComercial}}</p>
                                 </div>
-                                <div class="col-md-6 col-12 b-r"> <strong>Nro. Establecimiento</strong>
+                                <div class="col-md-6 col-12 b-r">
+                                    <strong>Nro. Establecimiento</strong>
                                     <br>
                                     <p class="text-muted">{{$ctrl.data.estab}}</p>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6  col-12 b-r"> <strong>Tipo Contribuyente</strong><br>
+                                <div class="col-md-6  col-12 b-r">
+                                    <strong>Tipo Contribuyente</strong><br>
                                     <span class="text-muted" uib-tooltip="{{$ctrl.data.contribuyenteRimpe}}" tooltip-placement="bottom">
                                         {{$ctrl.tipoContribuyente}}
-                                    </span>                                                                                                         
+                                    </span>
                                 </div>
-                                
-                                <div class="col-md-6 col-12 b-r"> <strong>Actividad</strong><br>
+
+                                <div class="col-md-6 col-12 b-r">
+                                    <strong>Actividad</strong><br>
                                     <p class="text-muted">{{$ctrl.actividadEconomica}}</p>
-                                </div>                                                                                   
-                            </div>    
+                                </div>
+                            </div>
 
                             <div class="row">
-                                <div class="col-md-6 col-12 b-r"> <strong>Agente Retención</strong>
+                                <div class="col-md-6 col-12 b-r">
+                                    <strong>Agente Retención</strong>
                                     <br>
                                     <p class="text-muted">{{$ctrl.data.agenteRetencion}}</p>
-                                </div> 
+                                </div>
 
-                                <div class="col-md-6 col-12 b-r"> <strong>Obliga llevar contabilidad</strong>
+                                <div class="col-md-6 col-12 b-r">
+                                    <strong>Obliga llevar contabilidad</strong>
                                     <br>
                                     <p class="text-muted">{{$ctrl.data.obligadoContabilidad}}</p>
-                                </div>                                                                    
-                            </div>      
+                                </div>
+                            </div>
 
                             <div class="row">
-                                <div class="col-md-6 col-12 b-r"> <strong>Cantón</strong>
+                                <div class="col-md-6 col-12 b-r">
+                                    <strong>Cantón</strong>
                                     <br>
                                     <p class="text-muted">{{$ctrl.canton}}</p>
                                 </div>
-                                <div class="col-md-6 col-12 b-r"> <strong>Ubicacion</strong>
+                                <div class="col-md-6 col-12 b-r">
+                                    <strong>Ubicacion</strong>
                                     <br>
                                     <p class="text-muted">{{$ctrl.data.dirEstablecimiento}}</p>
-                                </div>                               
-                            </div>                                    
+                                </div>
+                            </div>
                         </md-content>
                     </md-tab>
-                        
+
                     <md-tab label="FACT. ELECTRÓNICA">
                         <md-content class="md-padding">
                             <div class="row justify-content-between">
                                 <div class="col-lg-4 col-md-6 col-sm-12 col-12">
-                                    <label id="autorizacionComprobante">Autorización Comprobante</label>                            
-                                    <md-radio-group ng-model="$ctrl.dataFactElect.isAutomatic" ng-change="$ctrl.configSaveFactElect()" aria-labelledby="autorizacionComprobante">
-                                        <md-radio-button ng-value="0" class="md-primary">Manual</md-radio-button>
-                                        <md-radio-button ng-value="1" class="md-primary">Automática</md-radio-button>                                
+                                    <label id="autorizacionComprobante">Autorización Comprobante</label>
+                                    <md-radio-group ng-model="$ctrl.data.autoSriAuth" ng-change="$ctrl.configSaveFactElect()" aria-labelledby="autorizacionComprobante">
+                                        <md-radio-button ng-value="true" class="md-primary">Manual</md-radio-button>
+                                        <md-radio-button ng-value="false" class="md-primary">Automática</md-radio-button>
                                     </md-radio-group>
-                                </div>                            
+                                </div>
                             </div>
-                           
+
                             <hr />
                         </md-content>
                     </md-tab>
 
                     <md-tab label="PUNTO EMISION">
                         <md-content class="md-padding">
-                            @await Html.PartialAsync("~/Views/Establecimiento/PuntoEmision/_PuntosEmision.cshtml")                                                        
+                            @await Html.PartialAsync("~/Pages/Establecimiento/PuntoEmision/_PuntosEmision.cshtml")
                         </md-content>
                     </md-tab>
                 </md-tabs>
-            </md-content>           
+            </md-content>
         </div>
         <!-- Column -->
     </div>
-    
-    
-
-    
-
-
-
 </div>
 
-<div class="modal-footer">  
+<div class="modal-footer">
     <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">
         &times; Cerrar
     </button>

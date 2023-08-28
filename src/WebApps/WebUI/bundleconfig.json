@@ -442,5 +442,17 @@
     "inputFiles": [
       "wwwroot/js/config/controllers/configDocCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/sri/modalEstablecimientoCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/sri/modalEstablecimientoCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/sri/establecimientoCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/sri/establecimientoCtrl.js"
+    ]
   }
 ]

@@ -55,6 +55,7 @@ BEGIN
 		,contribuyenteRimpe
 		,correo
 		,estado
+        ,autoSriAuth
 	FROM Sri.Establecimiento 
 	WHERE idEstablecimiento = @id
 
@@ -65,14 +66,8 @@ BEGIN
 				,imagen
 				,mimeType
 				,nombreImagen
-			FROM Config.Estab_Logo 
-			WHERE codEstab = @codEstab 
-
-			SELECT
-				 idConfig_Comprob_Elect
-				,isAutomatic
-			FROM FactElect.Config_Comprob_Elect 
-			WHERE codEstab = @codEstab 
+			FROM Config.Estab_Logo
+			WHERE codEstab = @codEstab
 
 			SELECT idPuntoEmision
 					,pe.ambiente

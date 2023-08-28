@@ -31,7 +31,7 @@ class EstablecimientoCtrl{
     async getEstablecimientos(){
         try {
             showLoader();
-            await this._mS.getData('get', '/Establecimiento/Get?json=' + JSON.stringify(this.dataSearch)).then(response=>{
+            await this._mS.getData('get', 'Config/Establecimiento/Get?json=' + JSON.stringify(this.dataSearch), null, true).then(response=>{
                 if(response.code==='0'){                
                     console.warn(response.message)
                     return
@@ -85,7 +85,8 @@ class EstablecimientoCtrl{
             controller,
             template,
             params,
-            size
+            size,
+            isRenderRazorPartial: true
         }).result.then(result=>{
             if(typeof result==='object'){
                 this.getEstablecimientos();
@@ -124,7 +125,7 @@ class EstablecimientoCtrl{
         })
 
         if(isConfirmed){
-            this._mS.getData('delete', `/Establecimiento/Delete?id=${item.idEstablecimiento}`).then(response=>{
+            this._mS.getData('delete', `Config/Establecimiento/Delete?id=${item.idEstablecimiento}`, null, true).then(response=>{
                 if(response.code==='0'){
                     this._tS.toastr('warning', response.message)
                 }

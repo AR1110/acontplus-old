@@ -1,32 +1,27 @@
 <script lang="ts">
-	import { hideLoader } from './../../../../../core/utils/loading-spinner.js';
+  import { hideLoader } from "./../../../../../core/utils/loading-spinner.js";
   import { itemService } from "$core/services/restaurant/item-service";
   import type { Item } from "$core/interfaces/restaurant/item";
   import type { Ingredient } from "$core/interfaces/restaurant/ingredient";
-  import { productionAreaService } from "$core/services/restaurant/production-area-service";
-  import { onMount } from "svelte";
   import Modal from "$core/components/Modal.svelte";
   import toast from "$core/utils/toast";
   import Grid from "$core/components/Grid.svelte";
   import { showLoader } from "$core/utils/loading-spinner";
+  import { useItemStore } from "$routes/Restaurant/store/itemStore.js";
 
-  export let openNew;
-  export let modalClosed;
-  export let data = {} as Item;
-  export let ingredientes = [];
-  export let recipe = [];
+  //export let modalClosed;
+  let data;
+  let recipe = [];
   let productionAreas = [];
-  let validatorParam = [undefined, null, "", 0]
+  let validatorParam = [undefined, null, "", 0];
 
-  onMount(() => {
-    getProductionArea();
+  let ingredientes = [];
+
+  const unSuscribe = useItemStore.subscribe((values) => {
+    (ingredientes = values.ingredientes),
+      (productionAreas = values.productionAreas),
+      (data = values.dataUpdate);
   });
-
-  const getProductionArea = () => {
-    productionAreaService.get().then((res) => {
-      if (res) productionAreas = res;
-    });
-  };
 
   const onUpdate = () => {
     if (!onValidation(data)) return;
@@ -41,6 +36,7 @@
       hideLoader();
       if (response.status === 200) {
         onModalClose();
+        useItemStore.get();
         toast({ type: "success", message: response.data.message });
         data = {} as Item;
       } else {
@@ -84,16 +80,21 @@
   };
 
   const onModalClose = () => {
-    openNew = false;
+    useItemStore.update((state) => ({
+      ...state,
+      isOpen: false,
+    }));
     recipe = [];
-    modalClosed();
   };
 
   const onValidation = (item: Item) => {
     let isValid = true;
     try {
       if (validatorParam.includes(item.productionAreaId)) {
-        toast({ type: "warning", message: "Debe seleccionar un area de producción" });
+        toast({
+          type: "warning",
+          message: "Debe seleccionar un area de producción",
+        });
         isValid = false;
       }
       return isValid;
@@ -101,8 +102,8 @@
       toast({ type: "error", message: error });
       return false;
     }
-  }
- 
+  };
+
   let columns = [
     {
       title: "Ingrediente",
@@ -153,13 +154,14 @@
       formatter: "tickCross",
       sorter: "boolean",
       editor: true,
-    }
+    },
   ];
+
 </script>
 
-{#if openNew}
+{#if $useItemStore.isOpen}
   <Modal
-    open={openNew}
+    open={$useItemStore.isOpen}
     iconTitle={data.id > 0 ? "ti-sync" : "ti-plus"}
     title={data.id > 0 ? "Actualizar" : "Registrar"}
     onClosed={() => onModalClose()}
@@ -270,4 +272,3 @@
     </div>
   </Modal>
 {/if}
-

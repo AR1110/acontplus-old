@@ -1,55 +1,91 @@
 <script lang="ts">
-  import type { Item } from "$core/interfaces/restaurant/item";
-  import type { Recipe } from "$core/interfaces/restaurant/recipe.js";
-  import { RecipeService } from "$core/services/restaurant/recipe-service";
-  import { hideLoader, showLoader } from "$core/utils/loading-spinner";
-
+  import { useItemStore } from "$routes/Restaurant/store/itemStore";
+  import { onMount } from "svelte";
+  import Pagination from "../../Components/Pagination.svelte";
   import Add from "./add.svelte";
 
-  export let items;
-  export let ingredientes;
-  export let reloadList;
+  let items = [];
+  let timer;
+  let recordsQuantity = [10, 25, 50, 100];
 
-  // Local variables
-  let isNew = false;
-  let edit = {} as Item;
-  let listRecipe = [] as Recipe[];
+  const unSuscribe = useItemStore.subscribe((values) => {
+    items = values.items;
+  });
 
-  // For pagination
-  let page = 0;
-  let pageIndex = 0;
-  let pageSize = 10;
-
-
-
-  const getRecipeById = (item: Item) => {
-    showLoader();
-    RecipeService.getByItem(item.id).then((response) => {
-      hideLoader();
-      if (response) {
-        listRecipe = response["recipe"];
-      }
-      editItem(item);
-    });
-  };
+  let page;
+  let pageSize = recordsQuantity[0];
 
   function onPageChange(event) {
-    console.log(event.detail.page);
+    page = event.detail.page;
+    useItemStore.get({ pageIndex: page + 1 });
   }
 
-  function editItem (item) {
-    if (editItem) {
-      edit = item;
-      isNew = true;
-    }
+  const onChange = (e) => {
+    pageSize = parseInt(e.target.value);
+    useItemStore.get({ pageSize: pageSize });
   };
 
-  function closeModal () {
-    isNew = false;
-    reloadList();
+  const search = (e) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      if (e.target.value != "") {
+        useItemStore.get({ textSearch: e.target.value });
+      } else {
+        useItemStore.get();
+      }
+    }, 750);
   };
+
+  const clearInput = () => {
+    document.querySelector("input").value = "";
+    search({ target: { value: "" } });
+  };
+
+  onMount(() => {
+    useItemStore.get({ pageSize: pageSize });
+    useItemStore.getProductionArea();
+    return () => unSuscribe();
+  });
 </script>
 
+<!-- Add select and search container -->
+
+<div class="row">
+  <div class="col-lg-9 col-md-9 col-sm-1">
+    <span class="form-group pull-left page-size form-inline">
+      <select class="form-control control-color" on:change={(e) => onChange(e)}>
+        {#each recordsQuantity as record}
+          <option value={record}>{record}</option>
+        {/each}
+      </select>
+    </span>
+  </div>
+  <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+    <div class="input-group mb-3">
+      <input
+        type="text"
+        class="form-control form-control-lg search-input"
+        placeholder="Buscar..."
+        aria-label=""
+        aria-describedby="basic-addon1"
+        on:keyup={(e) => {
+          search(e);
+        }}
+      />
+      <div class="input-group-append">
+        <button
+          class="btn btn-outline-secondary"
+          on:click={() => {
+            clearInput();
+          }}
+          type="button"><i class="fa fa-sync" /></button
+        >
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add table -->
 {#if items.length > 0}
   <div class="resposive-table">
     <table class="table">
@@ -70,7 +106,7 @@
               <a
                 href="javascript:void(0)"
                 class="btn btn-sm btn-success"
-                on:click={() => getRecipeById(item)}
+                on:click={() => useItemStore.getIngredient(item)}
               >
                 <i class="fas fa-edit" />
               </a>
@@ -91,24 +127,18 @@
           </tr>
         {/each}
       </tbody>
-      <!-- <div slot="bottom">
-        <Pagination
-          {page}
-          {pageSize}
-        
-          
-        />
-      </div> -->
     </table>
+
+    <!-- Add pagination -->
+    <Pagination
+      {page}
+      {pageSize}
+      count={items[0]["totalRecords"]}
+      on:pageChange={onPageChange}
+    />
   </div>
 {:else}
   <p class="text-center text-italic">No hay items registrados</p>
 {/if}
 
-<Add
-  openNew={isNew}
-  modalClosed={() => closeModal()}
-  data={edit}
-  {ingredientes}
-  recipe={listRecipe}
-/>
+<Add />

@@ -89,3 +89,6 @@ GO
 -- ALEXIS RAMIREZ -- FECHA : 8/11/2023
 DROP TABLE IF EXISTS [Inventario].[ControlStock]
 GO 
+
+DROP TABLE IF EXISTS FactElect.Config_Comprob_Elect
+GO
