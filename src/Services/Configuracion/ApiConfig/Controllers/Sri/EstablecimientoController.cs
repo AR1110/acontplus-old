@@ -1,28 +1,21 @@
 ﻿using DataAccess;
-using Lib.Common;
 using Lib.Common.DbUtils;
+using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
-namespace WebUI.Controllers.Sri
+namespace ApiConfig.Controllers.Sri
 {
-    public class EstablecimientoController : Controller
+    public class EstablecimientoController : BaseApiController
     {
-        // GET: Establecimiento
         private readonly IConfiguration _configuration;
         private readonly LogWriter _log;
         public EstablecimientoController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _log = log;
-
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        [HttpGet]
+        [HttpGet("Get")]
         public async Task<IActionResult> Get(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
@@ -47,7 +40,7 @@ namespace WebUI.Controllers.Sri
             return Ok(_response);
         }
 
-        [HttpGet]
+        [HttpGet("GetId")]
         public async Task<IActionResult> GetId(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
@@ -71,7 +64,7 @@ namespace WebUI.Controllers.Sri
             return Ok(_response);
         }
 
-        [HttpGet]
+        [HttpGet("GetDataForm")]
         public async Task<IActionResult> GetDataForm()
         {
             DbAccess _db = new DbAccess(_configuration);
@@ -119,7 +112,7 @@ namespace WebUI.Controllers.Sri
             return Ok(_response);
         }
 
-        [HttpPut]
+        [HttpPut("Update/{id}/{json}")]
         public async Task<IActionResult> Update(int id, string json)
         {
             DbAccess _db = new DbAccess(_configuration);
@@ -144,7 +137,29 @@ namespace WebUI.Controllers.Sri
             }
             return Ok(_response);
         }
-
+        [HttpPut("PutSriAuth/{id}/{autoSriAuth}")]
+        public async Task<IActionResult> PutSriAuth(int id, bool autoSriAuth)
+        {
+            GenericResponse _response = new GenericResponse();
+            try
+            {
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
+                    var query = @"UPDATE Sri.Establecimiento SET autoSriAuth = @autoSriAuth WHERE idEstablecimiento = @id";
+                    await _db.QueryExecute(query);
+                    _db.AddDynamicParam("id", id);
+                    _db.AddDynamicParam("autoSriAuth", autoSriAuth);
+                    _db.OnlyExecute();
+                    _response.Create(code: "1", message: "Actualizado exitosamente");
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error in Put Sri Auto: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al actualizar");
+            }
+            return Ok(_response);
+        }
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {

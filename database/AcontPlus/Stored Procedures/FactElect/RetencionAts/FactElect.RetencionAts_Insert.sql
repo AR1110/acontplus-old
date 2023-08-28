@@ -373,7 +373,7 @@ BEGIN
 
 			--DocumentoElectronico
 			DECLARE @isAutomatic INT = 0
-			set @isAutomatic = (SELECT isAutomatic FROM factElect.Config_Comprob_Elect WHERE codEstab = (SELECT TOP 1 codEstab FROM @tblInfoCompRet))
+			set @isAutomatic = (SELECT TOP 1 autoSriAuth FROM  Config.v_ConfigDocumento WHERE codEstab = (SELECT TOP 1 codEstab FROM @tblInfoCompRet))
 
 			INSERT INTO dbo.DocumentoElectronico(ambiente,codDoc, idDocumento,nroDocumento,idPuntoEmision,numEstab,ptoEmision,claveAcceso,versionComp,isAutomatic,fechaEmision,codigoAutorizacion,idUsuario,idEntidad, codEstado, ruc, numeroIdentificacion, codEstab, idContribuyente)
 			SELECT @ambiente,'07',@idRetencionAts,CONVERT(bigint,@secuencial), @idPuntoEmision,estab,ptoEmi,@claveAcceso,'2.0.0',@isAutomatic,@fechaEmision,@claveAcceso,@idUsuario,@idEntidad, 1, @ruc, identificacionSujetoRetenido, codEstab, @idProveedor FROM @tblInfoCompRet

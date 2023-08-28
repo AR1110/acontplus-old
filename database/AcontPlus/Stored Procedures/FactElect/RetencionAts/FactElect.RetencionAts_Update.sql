@@ -174,7 +174,7 @@ BEGIN
 			DECLARE @isAutomatic INT
 			,@idDoc BIGINT
 
-			SET @isAutomatic = (SELECT isAutomatic FROM FactElect.Config_Comprob_Elect WITH (NOLOCK) WHERE codEstab = (SELECT TOP 1 codEstab FROM @tblInfoCompRet))
+			SET @isAutomatic = (SELECT TOP 1 autoSriAuth FROM  Config.v_ConfigDocumento WHERE codEstab = (SELECT TOP 1 codEstab FROM @tblInfoCompRet))
 
 			SET @idDoc = (SELECT idDocumentoElectronico FROM DocumentoElectronico WITH (NOLOCK)
 														WHERE idDocumento = @id 
