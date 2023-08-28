@@ -105,10 +105,9 @@ export default function Checkout() {
     }
 
 
-
-    useEffect(() => {
+    const initiload = async()=>{
         showLoader(true);
-        AccountReceivableService.get({
+        await AccountReceivableService.get({
             tipo: 3,
             codEstab: queryParams.codEstab,
             idCuentaPorCobrar: queryParams.idCuentaPorCobrar,
@@ -141,6 +140,10 @@ export default function Checkout() {
                 SnackbarUtility.warning(response.message)
             }
         }).finally(() => showLoader(false))
+    }
+
+    useEffect(() => {
+        initiload();
     }, [])
 
     const getValuePayment = () => {
@@ -232,7 +235,7 @@ export default function Checkout() {
             }
 
             showLoader(true)
-            Http({
+            await Http({
                 method: 'post',
                 url: `${PATHS.ACCOUNTING}ComprobanteIngreso/Insert`,
                 data: {

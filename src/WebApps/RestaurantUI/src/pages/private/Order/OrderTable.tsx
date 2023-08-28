@@ -203,6 +203,7 @@ export default function OrderTable() {
     event: React.MouseEvent<unknown>,
     property: keyof Data,
   ) => {
+    console.log(event)
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
@@ -218,6 +219,7 @@ export default function OrderTable() {
   };
 
   const handleClick = (event: React.MouseEvent<unknown>, name: string) => {
+    console.log(event)
     const selectedIndex = selected.indexOf(name);
     let newSelected: readonly string[] = [];
 
@@ -238,6 +240,7 @@ export default function OrderTable() {
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
+    console.log(event)
     setPage(newPage);
   };
 

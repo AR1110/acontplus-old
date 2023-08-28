@@ -17,7 +17,7 @@ import { Establecimiento, PrivateRoutes, PublicRoutes } from '@/core/models';
 import { useAuthStore } from '@/stores/authStore';
 
 const pages = ['Pedidos'];
-const settings = ['Sign out'];
+const settings = ['Cerrar sesión'];
 
 function MainLayout() {
     const navigate = useNavigate();
@@ -145,7 +145,7 @@ function MainLayout() {
                             ))}
                         </Box>
                         <Typography sx={{ display: { xs: 'flex'}, mr: 1 }} variant="body2">
-                            Estab: {dataEstab.nombreComercial}
+                            Estab: {dataEstab?.nombreComercial}
                         </Typography>
                         <Box sx={{ flexGrow: 0 }}>
 
