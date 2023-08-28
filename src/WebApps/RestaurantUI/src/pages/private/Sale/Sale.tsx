@@ -55,7 +55,7 @@ export default function Sale() {
         const dataEstab = estabs[0] as Establecimiento
         setDataEstab(dataEstab)
         SaleService.getDataForForm(JSON.stringify({
-            codEstab: dataEstab.codEstab
+            codEstab: dataEstab?.codEstab
         })).then(response => {
             const warehouseData = response.warehouses.filter(
                 warehouse => warehouse.codEstab_Asig === dataEstab.codEstab_Asig

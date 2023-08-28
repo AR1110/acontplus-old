@@ -7,13 +7,16 @@ import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { useSaleStore } from "@/stores/saleStore";
 import { SyntheticEvent, useState } from "react";
 import ItemDialog from "./ItemDialog";
+import { useNavigate } from "react-router-dom";
+import { PrivateRoutes } from "@/core/models";
 
 interface CBNProps {
   isMobile: boolean;
 }
 
-export default function CustomBottomNavigation({ isMobile }: CBNProps) {
+ function CustomBottomNavigation({ isMobile }: CBNProps) {
   const [value, setValue] = useState("recents"); 
+  const navigate = useNavigate();
   const totalItems = useSaleStore((state) => state.totalItems);
 
   const navigation = useSaleStore(state=>state.navigation);
@@ -24,10 +27,16 @@ export default function CustomBottomNavigation({ isMobile }: CBNProps) {
     if (newValue === "ITEMS") {
       navigation.openDialogCustom();
     }
+    if (newValue === "ORDER") {      
+      handleGoToOrder();
+    }
   }; 
 
-  if (!isMobile) return <></>;
+  const handleGoToOrder = () => {
+    navigate(`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.ORDER}`, { replace: true })
+}
 
+  if (!isMobile) return <></>;
   return (
     <Paper
       sx={{ position: "fixed", bottom: 0, left: 0, right: 0, mt: 2 }}
@@ -35,8 +44,8 @@ export default function CustomBottomNavigation({ isMobile }: CBNProps) {
     >
       <BottomNavigation value={value} onChange={handleChange}>
         <BottomNavigationAction
-          label="Recents"
-          value="recents"
+          label="Ordenes"
+          value="ORDER"
           icon={<RestoreIcon />}
         />
         <BottomNavigationAction
@@ -57,3 +66,5 @@ export default function CustomBottomNavigation({ isMobile }: CBNProps) {
     </Paper>
   );
 }
+
+export default CustomBottomNavigation

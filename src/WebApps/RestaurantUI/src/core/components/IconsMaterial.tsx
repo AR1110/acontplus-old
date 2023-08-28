@@ -31,6 +31,7 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import MoveUpIcon from '@mui/icons-material/MoveUp';
 export {
     RemoveCircleOutlineIcon,
     SaveIcon,
@@ -62,5 +63,6 @@ export {
     CalendarMonthIcon,
     SearchIcon,
     RefreshIcon,
-    ArrowDropDownIcon
+    ArrowDropDownIcon,
+    MoveUpIcon
 }

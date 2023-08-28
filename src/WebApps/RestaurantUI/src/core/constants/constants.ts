@@ -2,8 +2,8 @@ export const enum PATHS {
     PRIVATE = "Restaurant/",
     INVENTARIO = "Inventario/",
     SALE = 'Venta/',  
-    ACCOUNTING = 'Contabilidad/'
-    
+    ACCOUNTING = 'Contabilidad/',
+    CONFIG = 'Config/'
 }
   
 

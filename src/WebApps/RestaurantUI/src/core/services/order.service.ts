@@ -2,18 +2,41 @@ import { categoryReadAdapter, decimalSaleReadAdapter, emissionPointAdapter, tabl
 import { PATHS } from "../constants"
 import { ApiResponse } from "../models"
 import { Http } from "../utilities"
- 
+
 const URL = 'Order'
 export const OrdenService = {
-    async post(data: object) {
+    async get() {
         const resultAxios = await Http({
-                method: 'post',
-                url: `${PATHS.PRIVATE}${URL}`,
-                data: {data}       
+            method: 'get',
+            url: `${PATHS.PRIVATE}${URL}`,
         })
 
         const response: ApiResponse = resultAxios.data;
-         return response;
+        console.log(response)
+        return response;
+    },
+    async post(data: object) {
+        const resultAxios = await Http({
+            method: 'post',
+            url: `${PATHS.PRIVATE}${URL}`,
+            data: { data }
+        })
+
+        const response: ApiResponse = resultAxios.data;
+        return response;
+    },
+
+    async updateState(id: number) {
+        const resultAxios = await Http({
+            method: 'put',
+            url: `${PATHS.PRIVATE}${URL}`,
+            params: {
+                id
+            }
+        })
+
+        const response: ApiResponse = resultAxios.data;
+        return response;
     },
 
 }

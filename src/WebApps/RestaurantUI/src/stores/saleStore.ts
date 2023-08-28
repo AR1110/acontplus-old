@@ -50,10 +50,9 @@ type Actions = {
 export const useSaleStore = create<State & Actions>((set, get) => ({
     itemSearch: itemSearchInitialState,
     setItemSearch: (itemSearch) => {
-        set(state => ({
-            ...state,
+        set({            
             itemSearch
-        }))
+        })
     },
     collectionItems: [],
     totalItems: 0,
@@ -77,16 +76,14 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         return qty;
     },
     setDataForm(dataForm) {
-        set(state => ({
-            ...state,
+        set({
             dataForm
-        }))
+        })
     },
     setCollectionItems: (collectionItems) => {
-        set(state => ({
-            ...state,
+        set({
             collectionItems
-        }))
+        })
     },
     addItemToCart: (item) => {
         const { items, setTotalItems, caculateTotals } = get();
@@ -118,16 +115,14 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
     },
     removeItemFromCart: (productId: number) => {
         const { setTotalItems, caculateTotals } = get();
-        set((state) => ({
-            ...state,
+        set((state) => ({ 
             items: state.items.filter(_ => _.productId !== productId)
         }))
         setTotalItems();
         caculateTotals();
         clearSound();
     },
-    setTotalItems: () => set(state => ({
-        ...state,
+    setTotalItems: () => set(state => ({ 
         totalItems: state.items.reduce((total, item) => total + item.quantity, 0)
     })),
 
@@ -209,12 +204,10 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
 
     },
     async resetForm() {
-
-        set(state => ({
-            ...state,
+        set({ 
             totalItems: 0,
             items: []
-        }))
+        })
         clearSound();
         get().caculateTotals();
 
@@ -238,43 +231,35 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
     payment: {
         isOpen: false,
         openDialogCustom() {
-            set(state=>({
-                ...state,
-                payment: {
-                    ...state.payment,
-                    isOpen: true
-                }
-            }))
+            set(
+                produce((state:State)=>{
+                    state.payment.isOpen = true
+                }) 
+            )
         },
         closeDialogCustom() {
-            set(state=>({
-                ...state,
-                payment: {
-                    ...state.payment,
-                    isOpen: false
-                }
-            }))
+            set(
+                produce((state:State)=>{
+                    state.payment.isOpen = false
+                }) 
+            )
         },
     },
     navigation: {
         isOpen: false,
         openDialogCustom() {
-            set(state=>({
-                ...state,
-                navigation: {
-                    ...state.navigation,
-                    isOpen: true
-                }
-            }))
+            set(
+                produce((state:State)=>{
+                    state.navigation.isOpen = true
+                }) 
+            )
         },
         closeDialogCustom() {
-            set(state=>({
-                ...state,
-                navigation: {
-                    ...state.navigation,
-                    isOpen: false
-                }
-            }))
+            set(
+                produce((state:State)=>{
+                    state.payment.isOpen = false
+                }) 
+            )
         },
     }
 }))

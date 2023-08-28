@@ -15,7 +15,7 @@ BEGIN
 	DECLARE @sql NVARCHAR(MAX) = 'SELECT 
 										idNotificacionTributaria
 									   ,receptor
-									   ,fechaEnvio
+									   ,fechaEnvio =   FORMAT(fechaEnvio, ''dd/MM/yyyy  HH:mm'') 
 									   ,estado
 									   ,msgError 
 								  FROM factelect.notificaciontributaria
