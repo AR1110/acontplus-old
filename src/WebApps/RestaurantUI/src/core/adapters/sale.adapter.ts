@@ -35,7 +35,8 @@ function summaryToApi(summary: Summary): SummaryPostDto {
         obs: summary.obs,
         codDoc: summary.codDoc,  
         quickSale: summary.quickSale ,
-        fechaEmision: summary.creationDate,        
+        fechaEmision: summary.creationDate, 
+        uuid: crypto.randomUUID()       
     }
 }
 
