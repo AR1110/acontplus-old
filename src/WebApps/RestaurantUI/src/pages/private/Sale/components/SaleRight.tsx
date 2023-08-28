@@ -14,10 +14,11 @@ import Swal from 'sweetalert2'
 import { SnackbarUtility } from '@/core/utilities'
 import { itemToApi, summaryToApi } from '@/core/adapters'
 import { useAuthStore, useCheckoutStore, useLoaderStore } from '@/stores'
-import { OrdenService } from '@/core/services'
+import { OrdenService, PrintService } from '@/core/services'
 import CartTable from '../Cart/CartTable'
 import { useRef, useState } from 'react'; 
 import { QueryParams } from '@/core/models';
+import { PATHS } from '@/core/constants';
 
 const listItemCustom = {
     paddingTop: '2px',
@@ -89,7 +90,7 @@ export default function SaleRight() {
     };
 
 
-    const askToSave = async function () {
+    const askToSave = async function (codDoc?: string) {
        
 
         // setVoucher({
@@ -136,23 +137,47 @@ export default function SaleRight() {
             // }
             const data = {
                 ...summaryResult,
+                codDoc,
+                quickSale: ['FV', 'NE'].includes(codDoc!) ? true : false,
                 items: itemsResult,
                 taxes: taxesResult,
                 payments: {}
             }
             showLoader(true);
             OrdenService.post(data).then(response => {
-                console.log(response)
+              
                 if (response.code === '0') {
                     SnackbarUtility.warning(response.message)
                 }
-                if (response.code === "1") {     
-                    const queryParams: QueryParams = JSON.parse(response.payload)[0];
-                    console.log(queryParams)
-                    setQueryParams(queryParams);
+                if (response.code === "1") {    
                     SnackbarUtility.success(response.message);
-                    payment.openDialogCustom();                    
-                   // resetForm();
+                    //Order 
+                    if(!codDoc) {
+                        resetForm();
+                        return
+                    }
+
+                    const queryParams: QueryParams = JSON.parse(response.payload)[0];
+                    if(queryParams.payAutomatic){
+                        setQueryParams(queryParams);
+                        payment.openDialogCustom();
+                        return  
+                    }
+                 
+                    
+                    if(queryParams.printerAutomatic){
+                        PrintService.getPrinter({
+                            idDocument: queryParams.idDocumento,
+                            idTipoDocumento: queryParams.idTipoDocumento,
+                            codEstab: queryParams.codEstab,
+                            codDoc: queryParams.codDoc,
+                            nroIdentificacion: ''
+                        })  
+                    }else{
+                        resetForm();
+                    } 
+                      
+                   
                 }
             }).finally(()=>showLoader(false))
 
@@ -229,7 +254,7 @@ export default function SaleRight() {
                         <ButtonGroup variant="contained" color='success' ref={anchorRef} aria-label="split button" fullWidth size='large' sx={{
                             height: 50, 
                         }}>
-                            <Button startIcon={<SaveIcon />} onClick={askToSave}>Guardar</Button>
+                            <Button startIcon={<SaveIcon />} onClick={()=>askToSave()}>Guardar</Button>
                             <Button
                                 size="small"
                                 aria-controls={open ? 'split-button-menu' : undefined}
@@ -262,8 +287,8 @@ export default function SaleRight() {
                                     <Paper>
                                         <ClickAwayListener onClickAway={handleClose}>
                                             <MenuList id="split-button-menu" autoFocusItem>
-                                                <MenuItem>Factura</MenuItem>
-                                                <MenuItem>Nota Entrega</MenuItem>
+                                                <MenuItem  onClick={()=>askToSave('FV')}>Factura</MenuItem>
+                                                <MenuItem  onClick={()=>askToSave('NE')}>Nota Entrega</MenuItem>
 
                                             </MenuList>
                                         </ClickAwayListener>

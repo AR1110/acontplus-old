@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { Box, Button, Card, CardActions, CardContent, CardHeader, Divider, FormControl, Grid, InputLabel, OutlinedInput, Typography } from '@mui/material'
 import { CalendarMonthIcon, PaymentsIcon, SaveIcon } from '@/core/components'
 import Calculator from '@/core/components/Calculator/Calculator';
-import { AccountReceivableService } from '@/core/services';
+import { AccountReceivableService, PrintService } from '@/core/services';
 import { CheckoutUtility, ErrorBoundary, Http, RoundNumber, SnackbarUtility } from '@/core/utilities';
 import { useCheckoutStore, useLoaderStore, useSaleStore } from '@/stores'
 import {
@@ -105,10 +105,9 @@ export default function Checkout() {
     }
 
 
-
-    useEffect(() => {
+    const initiload = async()=>{
         showLoader(true);
-        AccountReceivableService.get({
+        await AccountReceivableService.get({
             tipo: 3,
             codEstab: queryParams.codEstab,
             idCuentaPorCobrar: queryParams.idCuentaPorCobrar,
@@ -141,6 +140,10 @@ export default function Checkout() {
                 SnackbarUtility.warning(response.message)
             }
         }).finally(() => showLoader(false))
+    }
+
+    useEffect(() => {
+        initiload();
     }, [])
 
     const getValuePayment = () => {
@@ -232,7 +235,7 @@ export default function Checkout() {
             }
 
             showLoader(true)
-            Http({
+            await Http({
                 method: 'post',
                 url: `${PATHS.ACCOUNTING}ComprobanteIngreso/Insert`,
                 data: {
@@ -242,6 +245,16 @@ export default function Checkout() {
                 const response: ApiResponse = resultAxios.data;
                 if(response.code==="1"){
                     SnackbarUtility.success(response.message);
+                    
+                    if(queryParams.printerAutomatic){
+                        PrintService.getPrinter({
+                            idDocument: queryParams.idDocumento,
+                            idTipoDocumento: queryParams.idTipoDocumento,
+                            codEstab: queryParams.codEstab,
+                            codDoc: queryParams.codDoc,
+                            nroIdentificacion: ''
+                        })  
+                    }
                     resetForm();
                     payment.closeDialogCustom();                       
                 }else{

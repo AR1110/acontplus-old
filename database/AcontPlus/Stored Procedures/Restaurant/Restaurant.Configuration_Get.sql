@@ -21,7 +21,7 @@ BEGIN
 	SELECT TOP 1  @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 	SELECT @codEstab = codEstab FROM OPENJSON(@json) WITH(codEstab VARCHAR(20)  '$.codEstab')
 
-	SET @tableNames = 'ConfigDecimal,Table,SubCategorias,Impuesto,TarifaImpuesto,PtoEmi_Asig,Bodega_Asign,Floor,EntidadFinancieras,SubEntidadFinancieras'
+	SET @tableNames = 'ConfigDecimal,Table,SubCategorias,Impuesto,TarifaImpuesto,PtoEmi_Asig,Bodega_Asign,Floor'
 	
     SELECT * FROM v_ConfigDecimal WHERE idEntidad = @idEntidad AND codTrasaccion = 'V'
     
@@ -59,15 +59,15 @@ BEGIN
 
     SELECT * FROM Restaurant.[Floor] WHERE CodEstab = @codEstab
 
-    SELECT idEntidadFinanciera,descripcion,detalle,codigo FROM dbo.EntidadFinanciera WITH (NOLOCK) WHERE estado = 1
+    --SELECT idEntidadFinanciera,descripcion,detalle,codigo FROM dbo.EntidadFinanciera WITH (NOLOCK) WHERE estado = 1
 
-    SELECT idEntidadFinanciera
-            , idSubEntidadFinanciera
-            , descripcion
-            , codigo
-            , interes
-            ,controlCaja 
-    FROM dbo.SubEntidadFinanciera WITH (NOLOCK) 
-    WHERE idEntidad = @idEntidad AND estado = 1
+    --SELECT idEntidadFinanciera
+    --        , idSubEntidadFinanciera
+    --        , descripcion
+    --        , codigo
+    --        , interes
+    --        ,controlCaja 
+    --FROM dbo.SubEntidadFinanciera WITH (NOLOCK) 
+    --WHERE idEntidad = @idEntidad AND estado = 1
 END
 GO

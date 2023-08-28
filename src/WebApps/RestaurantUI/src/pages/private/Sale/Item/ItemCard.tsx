@@ -154,7 +154,7 @@ export default function ItemCard({ item }: ItemCardProps) {
             {
                 display: 'flex',
                 flexDirection: 'column',
-                height: '200px',
+                height: '190px',
                 borderRadius: "16px",
                 borderColor: items.some(cartItem => cartItem.productId === item.productId) ? '#6571ff !important' : '',
 

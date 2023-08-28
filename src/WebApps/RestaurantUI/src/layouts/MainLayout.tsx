@@ -15,11 +15,13 @@ import AdbIcon from '@mui/icons-material/Adb';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Establecimiento, PrivateRoutes, PublicRoutes } from '@/core/models';
 import { useAuthStore } from '@/stores/authStore';
+import { useMediaQuery } from '@mui/material';
 
 const pages = ['Pedidos'];
-const settings = ['Sign out'];
+const settings = ['Cerrar sesión'];
 
 function MainLayout() {
+    const isMobile = useMediaQuery('(max-width:900px)');
     const navigate = useNavigate();
     const closeSession = useAuthStore(state => state.logOut);
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -54,8 +56,8 @@ function MainLayout() {
 
 
 
-    return (  
-        <Box sx={{ display: 'flex' }}> 
+    return (
+        <Box sx={{ display: 'flex' }}>
             <AppBar position="fixed">
                 <Container maxWidth="xl">
                     <Toolbar disableGutters>
@@ -78,7 +80,15 @@ function MainLayout() {
                             AcontPlus
                         </Typography>
 
-                        <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                        <Box sx={{
+                            flexGrow: 1,
+                            display: {
+                                // xs: 'none',
+                                xs: 'none',
+                                md: 'none'
+                            }
+                        }
+                        } >
                             <IconButton
                                 size="large"
                                 aria-label="account of current user"
@@ -122,7 +132,8 @@ function MainLayout() {
                             href=""
                             sx={{
                                 mr: 2,
-                                display: { xs: 'flex', md: 'none' },
+                                // display: { xs: 'flex', md: 'none' },
+                                display: { xs: 'none', md: 'none' },
                                 flexGrow: 1,
                                 fontFamily: 'monospace',
                                 fontWeight: 700,
@@ -144,8 +155,9 @@ function MainLayout() {
                                 </Button>
                             ))}
                         </Box>
-                        <Typography sx={{ display: { xs: 'flex'}, mr: 1 }} variant="body2">
-                            Estab: {dataEstab.nombreComercial}
+
+                        <Typography sx={{ display: { xs: 'flex' }, mr: 1 }} variant="body2">
+                            Estab: {dataEstab?.nombreComercial}
                         </Typography>
                         <Box sx={{ flexGrow: 0 }}>
 
@@ -179,7 +191,7 @@ function MainLayout() {
                         </Box>
                     </Toolbar>
                 </Container>
-            </AppBar> 
+            </AppBar>
             <Box
                 component="main"
                 sx={{
@@ -197,8 +209,8 @@ function MainLayout() {
 
                 <Outlet />
 
-            </Box> 
-        </Box> 
+            </Box>
+        </Box>
     );
 }
 export default MainLayout;

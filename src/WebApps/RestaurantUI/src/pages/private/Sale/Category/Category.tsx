@@ -30,15 +30,15 @@ export default function Category() {
   return (
     <ErrorBoundary fallBackComponent={<>Error al cargar categorias!</>}>
 
-      <Paper sx={{
-        borderRadius: '12px',
+      <Paper   sx={{
+        borderRadius: '12px', 
       }} elevation={0}>
 
         <Tabs
           value={value}
           onChange={handleChange}
           variant="scrollable"
-          scrollButtons
+          scrollButtons          
           aria-label="Tabs Categories"
           sx={{
             [`& .${tabsClasses.scrollButtons}`]: {
