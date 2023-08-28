@@ -464,15 +464,15 @@ app.constant('nombreModal', {
         MODAL_CTRL: 'sri/modalEstablecimientoCtrl.js' + CHANGE_VERSION(),
         MODAL_NUEVO: {
             controller: 'ModalEstablecimientoCtrl',
-            template: 'Establecimiento/_ModalNuevo.cshtml'
+            template: '~/Pages/Establecimiento/Shared/_ModalNuevo.cshtml'
         },
         MODAL_EDIT: {
             controller: 'ModalEstablecimientoCtrl',
-            template: 'Establecimiento/_ModalEditar.cshtml'
+            template: '~/Pages/Establecimiento/Shared/_ModalEditar.cshtml'
         },
         MODAL_CONFIG: {
             controller: 'ModalEstablecimientoConfigCtrl',
-            template: 'Establecimiento/_ModalConfig.cshtml'
+            template: '~/Pages/Establecimiento/Shared/_ModalConfig.cshtml'
         }
     },
     factura_compra: {
@@ -697,11 +697,11 @@ app.constant('nombreModal', {
         MODAL_CTRL: 'sri/modalEstablecimientoCtrl.js' + CHANGE_VERSION(),
         MODAL_NUEVO: {
             controller: 'ModalPtoEmisionCtrl',
-            template: 'Establecimiento/PuntoEmision/_ModalNuevo.cshtml'
+            template: '~/Pages/Establecimiento/PuntoEmision/_ModalNuevo.cshtml'
         },
         MODAL_EDIT: {
             controller: 'ModalPtoEmisionCtrl',
-            template: 'Establecimiento/PuntoEmision/_ModalEditar.cshtml'
+            template: '~/Pages/Establecimiento/PuntoEmision/_ModalEditar.cshtml'
         }
     },
 

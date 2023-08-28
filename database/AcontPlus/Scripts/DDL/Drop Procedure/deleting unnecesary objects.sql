@@ -428,3 +428,6 @@ GO
 -- ALEXIS RAMIREZ -- FECHA 8/11/2023
 DROP PROCEDURE IF EXISTS [Inventario].[Control_Stock_Serv_Get]
 GO
+
+DROP PROCEDURE IF EXISTS FactElect.Config_Comprob_Elect_Update
+GO

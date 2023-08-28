@@ -1,6 +1,9 @@
-﻿
+﻿@page
+@model WebUI.Pages.Establecimiento.IndexModel
+
 @{
     ViewData["title"] = "Establecimiento";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div ng-controller="establecimientoCtrl as $ctrl">
@@ -11,7 +14,7 @@
         <div class="col-md-7 align-self-center text-right">
             <div class="d-flex justify-content-end align-items-center">
                 <button type="button" class="btn btn-info m-l-15" ng-click="$ctrl.openModalNew()"> <i class="ti-plus"></i> Nuevo</button>
-            </div>            
+            </div>
         </div>
     </div>
     <div class="row">
@@ -106,6 +109,6 @@
 
 </div>
 
-@section Scripts{    
+@section Scripts{
     <script src="~/js/controllers/sri/establecimientoCtrl.js" asp-append-version="true"></script>
 }
