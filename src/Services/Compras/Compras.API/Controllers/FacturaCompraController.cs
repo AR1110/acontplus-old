@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common.Logs;
 
-namespace ApiCompras.Controllers
+namespace Compras.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

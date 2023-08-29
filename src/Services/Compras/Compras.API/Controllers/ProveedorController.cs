@@ -4,7 +4,7 @@ using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
-namespace ApiRecepcion.Controllers
+namespace Compras.API.Controllers
 {
 
     [Route("api/[controller]")]

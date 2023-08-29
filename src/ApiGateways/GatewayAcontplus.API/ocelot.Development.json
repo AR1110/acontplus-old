@@ -35,7 +35,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5266
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/CompraHabitual{everything}",
@@ -51,7 +51,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5266
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/DocumentoRecibido{everything}",
@@ -67,7 +67,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5266
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/Proveedor/{everything}",
@@ -83,7 +83,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5266
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/Doc_Rec_DetailTemp{everything}",
@@ -99,7 +99,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5266
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/Articulo{everything}",
@@ -131,7 +131,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5266
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/DocumentoDetalle/{everything}",
@@ -147,7 +147,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5266
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/DocumentoDetalle/{id}",
@@ -403,7 +403,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7152
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/CompraNoHabitual/{everything}",
@@ -419,7 +419,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7152
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/FacturaCompra{everything}",
@@ -435,7 +435,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7152
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/CompraNoHabitual",
@@ -908,7 +908,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5266
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/DatoAdicionalArticulo{everything}",

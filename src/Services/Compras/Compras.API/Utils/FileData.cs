@@ -1,4 +1,4 @@
-﻿namespace ApiRecepcion.Utils
+﻿namespace Compras.API.Utils
 {
     public static class FileData
     {

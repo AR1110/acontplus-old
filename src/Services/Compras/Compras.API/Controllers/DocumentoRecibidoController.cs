@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using System.Xml;
-using ApiRecepcion.Utils;
+using Compras.API.Utils;
 using Compras.Application;
 using DataAccess;
 using Domain.Dtos;
@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common.Logs;
 
-namespace ApiRecepcion.Controllers
+namespace Compras.API.Controllers
 {
 
     [Route("api/[controller]")]
