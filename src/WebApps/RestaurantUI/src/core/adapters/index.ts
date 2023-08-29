@@ -3,6 +3,7 @@ export * from './customer.adapter';
 export * from './decimal.adapter';
 export * from './emission-point.adapter';
 export * from './item.adapter';
+export * from './order.adapter';
 export * from './payment-type.adapter';
 export * from './product.adapter';
 export * from './sale.adapter';

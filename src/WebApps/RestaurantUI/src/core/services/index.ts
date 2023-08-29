@@ -4,7 +4,7 @@ export * from './customer.service';
 export * from './item.service';
 export * from './order.service';
 export * from './persist-user.service';
-export * from './print.service';
 export * from './product.service';
 export * from './sale.service';
+export * from './shared.service';
 export * from './table.service';

@@ -1,8 +1,7 @@
-import { PATHS } from "../constants"
-import { ApiResponse, Print } from "../models" 
-import { Http, SnackbarUtility } from "../utilities"
 
-const URL = 'Impresion/';
+import { PATHS } from "../constants"
+import { ApiResponse} from "../models" 
+import { Http, SnackbarUtility } from "../utilities"
 
 export const print = (params: any)=>{
     const urlPrinter = params[0].urlPrinter + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + encodeURIComponent(params[0].dataSources) + '&rdlcParams=' + params[0].rdlcParams
@@ -19,13 +18,13 @@ export const print = (params: any)=>{
 }
 
 
-export const PrintService = {
-    async getPrinter(params: Print) {
+const SharedService = {
+    async getPrinter(id: number) {
         const resultAxios = await Http({
             method: 'get',
-            url: `${PATHS.CONFIG}${URL}?`,
+            url: `${PATHS.CONFIG}Impresion/?`,
             params: {
-                json: JSON.stringify(params)
+                id
             }
         })
 
@@ -36,5 +35,14 @@ export const PrintService = {
         if(response.code==="1"){
             print(JSON.parse(response.payload));
         }       
-    }    
+    },
+    download() {
+        console.log('')
+    }
+
+
 }
+
+export {
+    SharedService
+};

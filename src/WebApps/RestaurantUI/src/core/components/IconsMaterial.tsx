@@ -32,6 +32,9 @@ import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import MoveUpIcon from '@mui/icons-material/MoveUp';
+import PrintIcon from '@mui/icons-material/Print';
+import SaveAltSharpIcon from '@mui/icons-material/SaveAltSharp';
+import ShareSharpIcon from '@mui/icons-material/ShareSharp';
 export {
     RemoveCircleOutlineIcon,
     SaveIcon,
@@ -64,5 +67,8 @@ export {
     SearchIcon,
     RefreshIcon,
     ArrowDropDownIcon,
-    MoveUpIcon
+    MoveUpIcon,
+    PrintIcon,
+    SaveAltSharpIcon,
+    ShareSharpIcon
 }

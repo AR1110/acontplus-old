@@ -114,7 +114,7 @@ export default function ItemCard({ item }: ItemCardProps) {
                 }
             })
             
-
+            console.log(product)
             function addItem() {
                 addItemToCart({
                     index: 0,
@@ -127,8 +127,8 @@ export default function ItemCard({ item }: ItemCardProps) {
                     taxValue:taxValue,
                     description: product.description,
                     quantity: 1,
-                    cost: 0,
-                    price: measureData.rates[0]?.salePrice ?? 0,
+                    cost: product.costPrice, //Precio Costo
+                    price: measureData.rates[0]?.salePrice ?? 0, //Precio Unitario - Precio Venta
                     discount: 0,
                     discountTotal: 0,
                     total: measureData.rates[0]?.salePrice ?? 0,

@@ -13,7 +13,7 @@ export const OrdenService = {
             }
         })
 
-        const response: ApiResponse = resultAxios.data;
+        const response = resultAxios.data;
         console.log(response)
         return response;
     },

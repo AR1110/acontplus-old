@@ -1,16 +1,20 @@
 import { RefreshIcon, SearchIcon } from "@/core/components";
-import { PrivateRoutes } from "@/core/models";
+import { PrivateRoutes, OrderReadDto } from "@/core/models";
 import { AppBar, Button, Grid, IconButton, Paper, TextField, Toolbar, Tooltip, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import OrderTable from "./OrderTable";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { OrdenService } from "@/core/services";
 import { useLoaderStore } from "@/stores";
+import { SnackbarUtility } from "@/core/utilities";
+import { orderReadAdapter } from "@/core/adapters";
 
 
 export default function Order() {
     const navigate = useNavigate();
-    const showLoader = useLoaderStore(state=>state.showLoader)
+    const showLoader = useLoaderStore(state=>state.showLoader);
+    const [orders, setOrders] = useState<Array<OrderReadDto>>([])
+
     const handleNewOrder = () => {
         navigate(`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.SALE}`, { replace: true })
     }
@@ -18,7 +22,7 @@ export default function Order() {
     const getOrders = async ()=>{
         showLoader(true)
         await OrdenService.get({pageIndex: 1, pageSize: 2}).then(response=>{
-            console.log(response)
+            setOrders(orderReadAdapter(response))           
         }).finally(()=>showLoader(false))
     }
 
@@ -64,7 +68,7 @@ export default function Order() {
                 </Toolbar>
             </AppBar>
 
-            <OrderTable />
+            <OrderTable orders={orders} />
 
             {/* <Typography sx={{ my: 5, mx: 2 }} color="text.secondary" align="center">
       No users for this project yet

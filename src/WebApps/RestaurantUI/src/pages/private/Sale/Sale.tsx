@@ -1,7 +1,7 @@
 
 import { ErrorBoundary, SnackbarUtility } from "@/core/utilities";
 import { Grid, useMediaQuery } from "@mui/material"; 
-import { useAsync, useFetchAndLoad } from "@/hooks";
+import { useAsync, useFetchAndLoad, useMobileDetect } from "@/hooks";
 import { ItemService, OrdenService, SaleService } from "@/core/services"; 
 import SaleRight from "./components/SaleRight";
 
@@ -21,7 +21,7 @@ import Checkout from "./Checkout/Checkout";
 
 
 export default function Sale() {
-    const isMobile = useMediaQuery('(max-width:900px)');
+    const {isMobile} = useMobileDetect();
 
     const setDataForm = useSaleStore(state => state.setDataForm)
     const resetForm = useSaleStore(state => state.resetForm)
@@ -184,7 +184,7 @@ export default function Sale() {
             </FullScreenDialog>
             {/* end Items carito movil */}
 
-            <CustomBottomNavigation isMobile={isMobile} />
+            <CustomBottomNavigation />
 
         </ErrorBoundary>
     );

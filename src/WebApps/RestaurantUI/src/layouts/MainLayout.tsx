@@ -11,17 +11,14 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Establecimiento, PrivateRoutes, PublicRoutes } from '@/core/models';
 import { useAuthStore } from '@/stores/authStore';
-import { useMediaQuery } from '@mui/material';
 
 const pages = ['Pedidos'];
 const settings = ['Cerrar sesión'];
 
 function MainLayout() {
-    const isMobile = useMediaQuery('(max-width:900px)');
     const navigate = useNavigate();
     const closeSession = useAuthStore(state => state.logOut);
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);

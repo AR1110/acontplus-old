@@ -14,23 +14,19 @@ import Swal from 'sweetalert2'
 import { SnackbarUtility } from '@/core/utilities'
 import { itemToApi, summaryToApi } from '@/core/adapters'
 import { useAuthStore, useCheckoutStore, useLoaderStore } from '@/stores'
-import { OrdenService, PrintService } from '@/core/services'
+import { OrdenService, SharedService } from '@/core/services'
 import CartTable from '../Cart/CartTable'
 import { useRef, useState } from 'react'; 
-import { QueryParams } from '@/core/models';
-import { PATHS } from '@/core/constants';
+import { QueryParams } from '@/core/models'; 
 
-const listItemCustom = {
+const styleListItem = {
     paddingTop: '2px',
     paddingBottom: '2px'
 }
 
-
-
 export default function SaleRight() {
     const isMobile = useMediaQuery('(max-width:900px)');
-
-
+    
     const { summary, items, dataForm } = useSaleStore(state => ({
         summary: state.summary,
         items: state.items,
@@ -145,7 +141,7 @@ export default function SaleRight() {
             }
             showLoader(true);
             OrdenService.post(data).then(response => {
-              
+                showLoader(false)
                 if (response.code === '0') {
                     SnackbarUtility.warning(response.message)
                 }
@@ -166,20 +162,12 @@ export default function SaleRight() {
                  
                     
                     if(queryParams.printerAutomatic){
-                        PrintService.getPrinter({
-                            idDocument: queryParams.idDocumento,
-                            idTipoDocumento: queryParams.idTipoDocumento,
-                            codEstab: queryParams.codEstab,
-                            codDoc: queryParams.codDoc,
-                            nroIdentificacion: ''
-                        })  
+                        SharedService.getPrinter(1)  
                     }else{
                         resetForm();
                     } 
-                      
-                   
                 }
-            }).finally(()=>showLoader(false))
+            }).finally(()=> showLoader(false))
 
     }
 
@@ -210,7 +198,7 @@ export default function SaleRight() {
             {/* Totals */}
             <List>
                 <Divider />
-                <ListItem sx={listItemCustom}>
+                <ListItem sx={styleListItem}>
                     <ListItemText>
                         <Typography variant="subtitle2" gutterBottom>
                             SubTotal
@@ -219,7 +207,7 @@ export default function SaleRight() {
                     <Typography variant="subtitle2">${summary.total.toFixed(2)}</Typography>
 
                 </ListItem>
-                <ListItem sx={listItemCustom}>
+                <ListItem sx={styleListItem}>
                     <ListItemText>
                         <Typography variant="subtitle2" gutterBottom>
                             IVA (12%)

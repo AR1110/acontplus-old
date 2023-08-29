@@ -10,20 +10,18 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useState } from 'react';
 import { IconButton, Tooltip } from '@mui/material';
-import { DeleteIcon, MoveUpIcon } from '@/core/components';
+import { DeleteIcon, MoveUpIcon, PrintIcon, SaveAltSharpIcon, ShareSharpIcon} from '@/core/components';
 import Swal from 'sweetalert2';
 import { OrdenService } from '@/core/services';
 import { SnackbarUtility } from '@/core/utilities';
 import { useLoaderStore } from '@/stores';
+import { OrderReadDto } from '@/core/models';
 
+type OrderTableProps = {
+    orders: Array<OrderReadDto>
+}
 
-const rows = [
-    { id: 1, nroDoc: 'Frozen yoghurt', customerName: 'Gorge Manda', createDate: '08/28/2023', total: 6.0, estado: "  Pendiente", userName: "Emilio" },
-    { id: 2, nroDoc: 'Frozen yoghurt', customerName: 'Gorge Manda', createDate: '08/28/2023', total: 6.0, estado: "  Pendiente", userName: "Emilio" },
-    { id: 3, nroDoc: 'Frozen yoghurt', customerName: 'Gorge Manda', createDate: '08/28/2023', total: 6.0, estado: "  Pendiente", userName: "Emilio" },
-];
-
-export default function OrderTable() {
+export default function OrderTable({orders}: OrderTableProps) {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const showLoader = useLoaderStore(state => state.showLoader)
@@ -77,17 +75,13 @@ export default function OrderTable() {
             },
             confirmButtonText: `Continuar`,
             cancelButtonText: 'Cerrar',
-        })
-
-        console.log(value)
-
-
+        }) 
     }
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%' }}>
-                <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableContainer component={Paper} sx={{ maxHeight: 440 }}>
+                    <Table sx={{ minWidth: 650 }} aria-label="simple table" stickyHeader >
                         <TableHead>
                             <TableRow>
                                 <TableCell>N°</TableCell>
@@ -101,7 +95,7 @@ export default function OrderTable() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {rows.map((row, index) => (
+                            {orders.map((order, index) => (
                                 <TableRow
                                     key={index}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -112,21 +106,37 @@ export default function OrderTable() {
                                     <TableCell>
 
                                         <Tooltip describeChild title="Transformar a NE O FV">
-                                            <IconButton aria-label="delete" onClick={() => handleTransformToDoc(row.id)}>
+                                            <IconButton aria-label="delete" onClick={() => handleTransformToDoc(order.orderId)}>
                                                 <MoveUpIcon />
                                             </IconButton>
                                         </Tooltip>
-                                        <IconButton aria-label="delete" onClick={() => handleUpdateState(row.id)}>
+                                        <IconButton aria-label="delete" onClick={() => handleUpdateState(order.orderId)}>
                                             <DeleteIcon />
                                         </IconButton>
+                                        <Tooltip describeChild title="Impresión">
+                                            <IconButton aria-label="Impresión" onClick={() => handleUpdateState(order.orderId)}>
+                                                <PrintIcon />
+                                            </IconButton>
+                                        </Tooltip>
 
+                                        <Tooltip describeChild title="Descargar PDF">
+                                            <IconButton aria-label="Impresión" onClick={() => handleUpdateState(order.orderId)}>
+                                                <SaveAltSharpIcon />
+                                            </IconButton>
+                                        </Tooltip>
+
+                                        <Tooltip describeChild title="Compartir por WhatsApp">
+                                            <IconButton aria-label="Impresión" onClick={() => handleUpdateState(order.orderId)}>
+                                                <ShareSharpIcon />
+                                            </IconButton>
+                                        </Tooltip>                                                                                
                                     </TableCell>
-                                    <TableCell align="center">{row.nroDoc}</TableCell>
-                                    <TableCell align="center">{row.createDate}</TableCell>
-                                    <TableCell align="center">{row.customerName}</TableCell>
-                                    <TableCell align="right">{row.total}</TableCell>
-                                    <TableCell align="center">{row.estado}</TableCell>
-                                    <TableCell align="center">{row.userName}</TableCell>
+                                    <TableCell align="center">{order.serie}</TableCell>
+                                    <TableCell align="center">{order.createdAt}</TableCell>
+                                    <TableCell align="center">...</TableCell>
+                                    <TableCell align="right">{order.total}</TableCell>
+                                    <TableCell align="center">-</TableCell>
+                                    <TableCell align="center">-</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -135,7 +145,7 @@ export default function OrderTable() {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25]}
                     component="div"
-                    count={rows.length}
+                    count={orders.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}

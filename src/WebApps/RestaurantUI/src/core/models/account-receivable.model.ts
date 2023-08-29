@@ -1,4 +1,5 @@
 export interface QueryParams {
+    orderId: number
     idDocumento: number
     idTipoDocumento: number
     codEstab: string
@@ -11,6 +12,7 @@ export interface QueryParams {
 }
 
 export const queryParamsInitialState: QueryParams = {
+    orderId: 0,
     idDocumento: 0,
     idTipoDocumento: 0,
     codEstab: "",

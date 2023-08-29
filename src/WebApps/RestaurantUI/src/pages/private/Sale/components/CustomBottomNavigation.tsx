@@ -9,12 +9,10 @@ import { SyntheticEvent, useState } from "react";
 import ItemDialog from "./ItemDialog";
 import { useNavigate } from "react-router-dom";
 import { PrivateRoutes } from "@/core/models";
+import { useMobileDetect } from "@/hooks";
 
-interface CBNProps {
-  isMobile: boolean;
-}
-
- function CustomBottomNavigation({ isMobile }: CBNProps) {
+ function CustomBottomNavigation() {
+  const {isMobile} = useMobileDetect();
   const [value, setValue] = useState("recents"); 
   const navigate = useNavigate();
   const totalItems = useSaleStore((state) => state.totalItems);
