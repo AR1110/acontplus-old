@@ -16,7 +16,8 @@ AS
 BEGIN 
 	SET NOCOUNT ON;
 
-	DECLARE @itemsJson NVARCHAR(MAX)
+	DECLARE @uuid UNIQUEIDENTIFIER
+    ,@itemsJson NVARCHAR(MAX)
     ,@taxesJson NVARCHAR(MAX)
     ,@paymentsJson NVARCHAR(MAX)
     ,@establecimientoId INT
@@ -39,8 +40,10 @@ BEGIN
     ,@userId INT
     ,@estadoPagoId INT
     ,@ambiente INT
+    ,@autoSriAuth BIT
     
-    SELECT       @itemsJson     = items
+    SELECT @uuid                = uuid
+        ,@itemsJson             = items
         ,@taxesJson             = taxes
         ,@paymentsJson          = payments
         ,@establecimientoId     = establecimientoId
@@ -60,6 +63,7 @@ BEGIN
         ,@quickSale             = quickSale
     FROM OPENJSON(@json)
         WITH(
+            uuid UNIQUEIDENTIFIER '$.uuid',
             items NVARCHAR(MAX) '$.items' AS JSON,
             taxes NVARCHAR(MAX) '$.taxes' AS JSON,
             payments NVARCHAR(MAX) '$.payments' AS JSON,
@@ -80,7 +84,7 @@ BEGIN
             quickSale BIT '$.quickSale'
         )
 
-    IF NOT EXISTS (SELECT 1 FROM v_ConfigDocumento cd
+    IF NOT EXISTS (SELECT 1 FROM Config.v_ConfigDocumento cd
 				        INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab AND cd.idPuntoEmision = @puntoEmisionId
 			            WHERE pa.idUsuarioRol = @userRoleId
 			            AND cd.codDoc = 'OR')
@@ -167,7 +171,6 @@ BEGIN
             RETURN
         END
 
-
     IF (ISJSON(@paymentsJson) = 1)
         BEGIN
             DECLARE @tblPayments AS TABLE(
@@ -197,24 +200,26 @@ BEGIN
             RETURN
         END
 
-    DECLARE @companyId INT 
+    DECLARE @companyId INT
+    ,@ruc VARCHAR(13)
     ,@estab VARCHAR(3)
     ,@ptoEmi VARCHAR(3)
     ,@idTipoDocumento INT
     ,@orderId INT 
     ,@tiempoCreditoId INT = 1
+    ,@tipoDocumentoId INT
 
     SELECT @sequence = cd.secuencial
         , @estab = pa.estab
         , @ptoEmi = pa.ptoEmi
         , @idTipoDocumento = cd.idTipoDocumento
-	FROM v_ConfigDocumento cd
+	FROM Config.v_ConfigDocumento cd
 		INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab
                                     AND cd.idPuntoEmision = @puntoEmisionId
 	WHERE pa.idUsuarioRol = @userRoleId
 	    AND cd.codDoc = 'OR'
 
-    SELECT @companyId = idEntidad , @userId =  idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId
+    SELECT @companyId = idEntidad, @ruc = rucEmpresa, @userId =  idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId
 
 	BEGIN TRY
 		BEGIN TRAN
@@ -240,7 +245,7 @@ BEGIN
                     FROM ConfiguracionDocumento cf WITH (ROWLOCK)
                         JOIN (
                                 SELECT cd.idConfiguracionDocumento, cd.secuencial
-			                        FROM v_ConfigDocumento cd
+			                        FROM Config.v_ConfigDocumento cd
 				                        INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab 
                                                                     AND cd.idPuntoEmision = @puntoEmisionId
 			                        WHERE pa.idUsuarioRol = @userRoleId
@@ -257,7 +262,9 @@ BEGIN
                             -------------------------DOCUMENTOS DE VENTA-------------------------------
                             SELECT @nroDocumento = cd.secuencial
                                 ,@ambiente = cd.ambiente
-                            FROM v_ConfigDocumento cd
+                                ,@autoSriAuth = cd.autoSriAuth
+                                ,@tipoDocumentoId = cd.idTipoDocumento
+                            FROM Config.v_ConfigDocumento cd
 				            INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab 
                                                          AND cd.idPuntoEmision = @puntoEmisionId
 			                 WHERE pa.idUsuarioRol = @userRoleId
@@ -296,42 +303,48 @@ BEGIN
 
                             IF (@codDoc = 'FV')
                                 BEGIN
-			                            INSERT INTO Factura (idCliente ,idPuntoEmision ,idEstadoPago ,idTipoDocumento ,idTiempoCredito ,ambiente ,porcentaje
-				                            ,idEntidad ,idUsuario ,claveAcceso,nroFactura,fechaEmision,fechaVencimiento,subTotalSinImpuestos,subTotalIva
-				                            ,subTotalNetoIva,subTotalIvaCero,subTotalNetoIvaCero,subTotalNoObjetoIva,subTotalNetoNoObjetoIva
-				                            ,subTotalExentoIva,subTotalNetoExentoIva,totalDescuento,porcentajeDescuento,totalIce,irbpnr,propina
-				                            ,iva,recargo,transporte,total,observacion,fechaRegistro)
+                                    DECLARE @claveAcceso VARCHAR(49)
+                                    SET @claveAcceso = (SELECT dbo.ufnGeneraClaveAcceso(dbo.AFTDeleteCero(@estab), '01', @ambiente, 1, dbo.AFTConvertDate(@fechaEmision), @ruc, @estab + @ptoEmi, Helper.F_Auto_Sequential(@nroDocumento)))
+
+			                        INSERT INTO Factura (idCliente ,idPuntoEmision ,idEstadoPago ,idTipoDocumento ,idTiempoCredito ,ambiente ,porcentaje
+				                        ,idEntidad ,idUsuario ,claveAcceso,nroFactura,fechaEmision,fechaVencimiento,subTotalSinImpuestos,subTotalIva
+				                        ,subTotalNetoIva,subTotalIvaCero,subTotalNetoIvaCero,subTotalNoObjetoIva,subTotalNetoNoObjetoIva
+				                        ,subTotalExentoIva,subTotalNetoExentoIva,totalDescuento,porcentajeDescuento,totalIce,irbpnr,propina
+				                        ,iva,recargo,transporte,total,observacion,fechaRegistro)
 		
-			                            VALUES(@customerCompanyId, @puntoEmisionId, @estadoPagoId, @idTipoDocumento ,@tiempoCreditoId ,@ambiente, @tarifa
-				                            ,@companyId ,@userId ,@claveAcceso ,@sequence ,@fechaEmision ,@fechaEmision ,subTotalSinImpuestos ,subTotalIva
-				                            ,subTotalNetoIva ,subTotalIvaCero ,subTotalNetoIvaCero ,subTotalNoObjetoIva ,subTotalNetoNoObjetoIva
-				                            ,subTotalExentoIva ,subTotalNetoExentoIva ,totalDescuento ,porcentajeDescuento ,totalIce ,irbpnr ,propina
-				                            ,iva ,recargo ,transporte ,total ,@obs, dbo.ufnGetdateEcuador())
-			                             
-                                        SET @documentoId = (SELECT SCOPE_IDENTITY()) 
+			                        VALUES(@customerCompanyId, @puntoEmisionId, @estadoPagoId, @idTipoDocumento ,@tiempoCreditoId ,@ambiente, @taxPercent
+				                        ,@companyId, @userId, @claveAcceso, @sequence, @fechaEmision, @fechaEmision, 0, 0
+                                        ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+				                        ,@tax ,0 ,0 ,@total ,@obs, dbo.ufnGetdateEcuador())
+			                         
+                                    SET @documentoId = (SELECT SCOPE_IDENTITY()) 
 
-			                            --detalle 
-			                            INSERT INTO FacturaDetalle (idFactura,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioVenta,precioSinSubsidio
-				                            ,precioConIva,valorDescuento,porcentajeDescuento,total,nota,descripcion,precioCosto,porcentajeIva,iva)
-			                            SELECT @documentoId, td.idArticulo, td.idTarifa, td.idBodega, td.idMedida, td.idTipoIva, td.ice, td.cantidad, td.precioUnitario,td.precioSinSubsidio
-			                            ,td.precioConIva, td.valorDescuento, td.porcentajeDescuento, td.total, td.nota, td.descripcion, a.precioCosto, ti.porcentaje, (porcentaje/100) * total
-			                            FROM @tblDetails td 
-			                            INNER JOIN Articulo a WITH (NOLOCK) ON a.idArticulo = td.idArticulo
-			                            LEFT JOIN TipoIva ti ON td.idTipoIva = ti.idTipoIva
+			                        --detalle 
+                                    --falta id tipo iva
+			                        INSERT INTO FacturaDetalle (idFactura,idArticulo,idTarifa,idBodega,idMedida,ice,cantidad,precioVenta,precioSinSubsidio
+				                        ,precioConIva,valorDescuento,porcentajeDescuento,total,nota,descripcion,precioCosto,porcentajeIva,iva)
+			                        SELECT @documentoId, a.idArticulo, i.feeId, @bodegaId, a.idMedida, 0, i.quantity, i.cost,0
+			                        ,i.taxValue, i.discount, 0, i.total, i.obs, a.descripcion, a.precioCosto, 0, (porcentaje/100) * total
+			                        FROM @tblItems i
+                                        INNER JOIN Restaurant.v_Item ri ON i.itemId = ri.Id
+                                        INNER JOIN Inventario.v_Articulo a ON ri.ProductId = a.idArticulo
 
 
-                                        INSERT INTO dbo.DocumentoElectronico (ambiente,codDoc,idDocumento,idContribuyente,nroDocumento,idPuntoEmision,numEstab,ptoEmision,claveAcceso
-												 ,versionComp,isAutomatic,fechaEmision,codigoAutorizacion,idUsuario,idEntidad)
+                                    INSERT INTO dbo.DocumentoElectronico (ambiente,codDoc,idDocumento,idContribuyente,nroDocumento,idPuntoEmision,numEstab,ptoEmision,claveAcceso
+										 ,versionComp,isAutomatic,fechaEmision,codigoAutorizacion,idUsuario,idEntidad)
 
-										  SELECT @ambiente,@codDoc,@documentoId, @customerCompanyId,@sequence,@puntoEmisionId,@estab,@ptoEmi,@claveAcceso
-											    ,'1.1.0',@isAutomatic,@fechaEmision,@claveAcceso,@userId,@companyId
+									SELECT @ambiente,@codDoc,@documentoId, @customerCompanyId,@sequence,@puntoEmisionId,@estab,@ptoEmi,@claveAcceso
+									    ,'1.1.0',@autoSriAuth,@fechaEmision,@claveAcceso,@userId,@companyId
                                 END
+
+                            INSERT INTO Restaurant.OrderDocument(OrderId, DocumentoId, TipoDocumentoId, [Enabled], UserId)
+                            VALUES(@orderId, @documentoId, @tipoDocumentoId, 1, @userId)
 
                              UPDATE cf SET cf.ultimaSecuencia = vcf.secuencial + 1
                              FROM ConfiguracionDocumento cf WITH (ROWLOCK)
                                 JOIN (
                                         SELECT cd.idConfiguracionDocumento, cd.secuencial
-			                                FROM v_ConfigDocumento cd
+			                                FROM Config.v_ConfigDocumento cd
 				                                INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab 
                                                                             AND cd.idPuntoEmision = @puntoEmisionId
 			                                WHERE pa.idUsuarioRol = @userRoleId
