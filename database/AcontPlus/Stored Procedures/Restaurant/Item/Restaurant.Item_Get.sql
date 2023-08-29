@@ -13,6 +13,7 @@ GO
 -- Description:	Get Item
 -- =============================================
 -- Restaurant.Item_Get 139, '{"idSubFamilia":0,"pageIndex":1,"pageSize":10,"tipo":1, "textSearch": "tilapia"}', ''
+-- Restaurant.Item_Get 139, '{"tipo":2}', ''
 IF OBJECT_ID(N'Restaurant.Item_Get', N'P') IS NOT NULL
 	DROP PROCEDURE Restaurant.Item_Get
 GO
