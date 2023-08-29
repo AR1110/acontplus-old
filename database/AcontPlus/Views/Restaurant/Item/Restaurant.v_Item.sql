@@ -16,6 +16,7 @@ CREATE OR ALTER VIEW Restaurant.v_Item WITH SCHEMABINDING AS (
 		,i.Deleted
 		,i.UserId
 		,a.idArticulo
+        ,a.descripcion productName
 	FROM Restaurant.Item i WITH (NOLOCK)
 		INNER JOIN dbo.Articulo a WITH (NOLOCK) ON i.ProductId = a.idArticulo
 )

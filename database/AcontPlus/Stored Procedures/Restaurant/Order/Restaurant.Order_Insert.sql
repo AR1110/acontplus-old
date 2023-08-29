@@ -351,6 +351,53 @@ BEGIN
 			                                    AND cd.codDoc = @codDoc
                                 ) AS vcf ON cf.idConfiguracionDocumento = vcf.idConfiguracionDocumento
 
+
+                            ----------INVENTARIO
+                            DECLARE @inventory BIT 
+
+                            SET @inventory = (SELECT inventario FROM Config.v_Sistema WHERE idEntidad = @companyId AND codConfig = 'CI')
+
+                            IF (@inventory = 1)
+                                BEGIN
+                                   DECLARE @idArticulo INT
+	                               ,@idBodega INT
+	                               ,@idMedida INT
+	                               ,@idTarifa INT
+	                               ,@cantidad NUMERIC(18,2)
+	                               ,@precioUnitario NUMERIC(18,5)
+	                               ,@precioCosto NUMERIC(18,5) 
+	                               ,@precioTotalSinImpuesto NUMERIC(18,5)
+                                   ,@codDocTran VARCHAR(2)
+
+                                   SET @codDocTran = (SELECT IIF(@codDoc = 'FV', 'FE', 'NE'))
+
+                                   IF EXISTS (SELECT 1 FROM @tblItems i 
+                                         INNER JOIN Restaurant.v_Item ri ON i.itemId = ri.Id
+                                         INNER JOIN Articulo a WITH (NOLOCK) ON ri.idArticulo = a.idArticulo WHERE a.llevaInventario = 1)
+						                BEGIN 
+							                DECLARE cursor_inventory CURSOR LOCAL FOR
+							                SELECT a.idArticulo, @bodegaId, a.idMedida, i.feeId, i.quantity
+                                            ,i.price, a.precioCosto, i.total
+							                FROM @tblItems i
+                                            INNER JOIN Restaurant.v_Item ri ON i.itemId = ri.Id
+							                INNER JOIN Articulo a WITH (NOLOCK) ON ri.idArticulo = a.idArticulo 
+							                WHERE a.llevaInventario = 1
+
+							                OPEN cursor_inventory
+								                FETCH NEXT FROM cursor_inventory INTO @idArticulo, @idBodega, @idMedida, @idTarifa ,@cantidad
+                                                ,@precioUnitario, @precioCosto, @precioTotalSinImpuesto
+								                WHILE @@FETCH_STATUS = 0
+									                BEGIN
+										                EXEC Inventario.Transaccion_Insert 'S', @codDocTran, @fechaEmision, @documentoId,  @idArticulo, @idBodega ,@idMedida,@idTarifa,@cantidad,@precioUnitario,@precioCosto,@precioTotalSinImpuesto, @userId
+										                FETCH NEXT FROM cursor_inventory INTO @idArticulo,@idBodega,@idMedida, @idTarifa,@cantidad,@precioUnitario,@precioCosto,@precioTotalSinImpuesto
+									                END
+							                CLOSE cursor_inventory
+							                DEALLOCATE cursor_inventory  
+						                END
+                                END
+                            
+                            ---INVENTARIOS
+
                             SET @serieDocument = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @nroDocumento, DEFAULT))
 
                             --------------------END DOCUMENTOS---------------------
