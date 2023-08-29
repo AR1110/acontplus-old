@@ -35,11 +35,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 12786
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/CompraHabitual{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/CompraHabitual{everything}"
     },
@@ -51,11 +51,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 12786
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/DocumentoRecibido{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/DocumentoRecibido{everything}"
     },
@@ -67,11 +67,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 12786
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/Proveedor/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/Proveedor/{everything}"
     },
@@ -83,11 +83,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 12786
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/Doc_Rec_DetailTemp{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/Doc_Rec_DetailTemp{everything}"
     },
@@ -99,11 +99,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 12786
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/Articulo{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get" ],
       "UpstreamPathTemplate": "/gateway/Recepcion/Articulo{everything}"
     },
@@ -131,11 +131,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 12786
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/DocumentoDetalle/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Post", "Put" ],
       "UpstreamPathTemplate": "/gateway/DocumentoDetalle/{everything}"
     },
@@ -147,11 +147,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 12786
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/DocumentoDetalle/{id}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Delete" ],
       "UpstreamPathTemplate": "/gateway/DocumentoDetalle/{id}"
     },
@@ -403,7 +403,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7152
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/CompraNoHabitual/{everything}",
@@ -419,7 +419,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7152
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/FacturaCompra{everything}",
@@ -435,7 +435,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7152
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/CompraNoHabitual",
@@ -908,11 +908,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 12786
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/DatoAdicionalArticulo{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/DatoAdicionalArticulo{everything}"
     },
