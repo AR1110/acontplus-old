@@ -1,24 +1,25 @@
 <script lang="ts">
-  import Modal from "./../../../../../core/components/Modal.svelte";
-  import type { Ingredient } from "$core/interfaces/restaurant/ingredient";
-  import type { IngredientType } from "$core/interfaces/restaurant/ingredient-type";
-  import toast from "$core/utils/toast";
   import { hideLoader, showLoader } from "$core/utils/loading-spinner";
   import { IngredientService } from "$core/services/restaurant/ingredient-service";
+  import { useIngredientStore } from "$routes/Restaurant/store/ingredientsStore";
+  import Modal from "$core/components/Modal.svelte";
+  import toast from "$core/utils/toast";
+  import type { Ingredient } from "$core/interfaces/restaurant/ingredient";
 
-  export let openNew;
-  export let closeModal;
-  export let ingredient = {} as Ingredient;
-  export let ingredientType = [] as IngredientType[];
-
+  let ingredient;
+  let ingredientType = [];
   let paramValidation = [undefined, null, "", 0];
+
+  useIngredientStore.subscribe((values) => {
+    (ingredient = values.dataUpdate), (ingredientType = values.ingredientType);
+  });
 
   const update = () => {
     if (!onValidate(ingredient)) return;
     showLoader();
 
     let params = {
-      productJson:  {
+      productJson: {
         productId: ingredient.productId,
       },
       ingredientJson: ingredient,
@@ -29,6 +30,7 @@
       console.log(response);
       if (response.status == 200) {
         onModalClose();
+        useIngredientStore.get();
         toast({ type: "success", message: response.data.message });
         ingredient = {} as Ingredient;
       } else {
@@ -58,13 +60,16 @@
   };
 
   const onModalClose = () => {
-    closeModal();
+    useIngredientStore.update((state) => ({
+      ...state,
+      isOpen: false,
+    }));
   };
 </script>
 
-{#if openNew}
+{#if $useIngredientStore.isOpen}
   <Modal
-    open={openNew}
+    open={$useIngredientStore.isOpen}
     iconTitle={ingredient.id > 0 ? "ti-sync" : "ti-plus"}
     title={ingredient.id > 0 ? "Actualizar" : "Registrar"}
     onClosed={() => onModalClose()}
