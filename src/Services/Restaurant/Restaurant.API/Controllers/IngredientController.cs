@@ -39,7 +39,7 @@ namespace Restaurant.API.Controllers
                 return BadRequest("Error on getting ingredients, testing hot reload: " + ex.Message);
             }
         }
-        [HttpGet("{id}")]
+        [HttpGet("GetById/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             try

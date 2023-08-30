@@ -44,6 +44,7 @@
   onMount(() => {
     useItemStore.get({ pageSize: pageSize });
     useItemStore.getProductionArea();
+    useItemStore.getIngredient();
     return () => unSuscribe();
   });
 </script>
@@ -106,7 +107,7 @@
               <a
                 href="javascript:void(0)"
                 class="btn btn-sm btn-success"
-                on:click={() => useItemStore.getIngredient(item)}
+                on:click={() => useItemStore.getRecipe(item)}
               >
                 <i class="fas fa-edit" />
               </a>
