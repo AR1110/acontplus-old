@@ -24,6 +24,20 @@ namespace Restaurant.Application.Services
                 return null;
             }
         }
+
+        public async Task<string> PrintAsync(Dictionary<string, object> parameters)
+        {
+            var dt = await _repository.GetDataTableAsync("Restaurant.Order_Print", parameters);
+            if (!DataValidation.DataTableIsNull(dt))
+            {
+                return Converters.DataTableToJSON(dt);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public async Task<string> AddAsync(ApiRequest data)
         {
             var parameters = new Dictionary<string, object>{

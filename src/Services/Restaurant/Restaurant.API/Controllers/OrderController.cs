@@ -38,6 +38,31 @@ namespace Restaurant.API.Controllers
                 return BadRequest("Error on get");
             }
         }
+
+        [HttpGet("Print/{id}")]
+        public async Task<IActionResult> Print(int id)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, object>{
+                    { "userRoleId", User.GetUserRoleId()},
+                    { "id", id}
+                };
+                var prints = await _orderService.PrintAsync(parameters);
+                if (prints == null | string.IsNullOrEmpty(prints))
+                {
+                    _log.LogActivity("No se encontró datos");
+                    return NoContent();
+                }
+                return Ok(prints);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity($"Error on print {ex.Message}");
+                return BadRequest("Error on print " + ex.Message);
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ApiRequest data)
         {
