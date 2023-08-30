@@ -1,41 +1,32 @@
-import {
-    Box,
-    Button,
-    ButtonGroup,
-    ClickAwayListener,
-    Divider, Grid, Grow, List, ListItem, ListItemText, MenuItem, MenuList, Paper, Popper, Typography, useMediaQuery
-} from '@mui/material'
-
-import CustomerSearch from './CustomerSearch'
-import { ArrowDropDownIcon, ArrowForwardIosIcon, RestartAltIcon, SaveIcon } from '@/core/components'
-import TableSelect from './TableSelect';
-import { useSaleStore } from '@/stores/saleStore'
-import Swal from 'sweetalert2'
-import { SnackbarUtility } from '@/core/utilities'
-import { itemToApi, summaryToApi } from '@/core/adapters'
-import { useAuthStore, useCheckoutStore, useLoaderStore } from '@/stores'
-import { OrdenService, SharedService } from '@/core/services'
-import CartTable from '../Cart/CartTable'
-import { useRef, useState } from 'react'; 
-import { QueryParams } from '@/core/models'; 
+import { Box, Button, ButtonGroup, ClickAwayListener, Divider, Grid, Grow, List, ListItem, ListItemText, MenuItem, MenuList, Paper, Popper, Typography } from '@mui/material'
+import CartItem from '../CartItem/CartItem'
+import { useAuthStore, useCheckoutStore, useLoaderStore, useSaleStore } from '@/stores';
+import CustomerSearch from '../components/CustomerSearch';
+import TableSelect from '../components/TableSelect';
+import { useRef, useState } from 'react';
+import Swal from 'sweetalert2';
+import { SnackbarUtility } from '@/core/utilities';
+import { itemToApi, summaryToApi } from '@/core/adapters';
+import { OrdenService, SharedService } from '@/core/services';
+import { QueryParams } from '@/core/models';
+import { AddShoppingCartIcon, ArrowDropDownIcon, RestartAltIcon, SaveIcon } from '@/core/components';
 
 const styleListItem = {
     paddingTop: '2px',
     paddingBottom: '2px'
 }
 
-export default function SaleRight() {
-    const isMobile = useMediaQuery('(max-width:900px)');
-    
-    const { summary, items, dataForm } = useSaleStore(state => ({
+const Cart = () => {
+    const cartItems = useSaleStore(state => state.items);
+    const { summary, dataForm } = useSaleStore(state => ({
         summary: state.summary,
         items: state.items,
         dataForm: state.dataForm
     }));
 
     //store checkout 
-    const {setVoucher, setQueryParams} = useCheckoutStore(state => ({
-        setVoucher: state.setVoucher, 
+    const { setVoucher, setQueryParams } = useCheckoutStore(state => ({
+        setVoucher: state.setVoucher,
         setQueryParams: state.setQueryParams
     }))
 
@@ -43,13 +34,13 @@ export default function SaleRight() {
     const payment = useSaleStore(state => state.payment);
     const dataEstab = useAuthStore(state => state.dataEstab);
 
-    const {showLoader}  = useLoaderStore();
+    const { showLoader } = useLoaderStore();
     //Options Save
     const [open, setOpen] = useState(false);
     const anchorRef = useRef<HTMLDivElement>(null);
 
     const onClickResetFrom = async () => {
-        if (items.length === 0) return;
+        if (cartItems.length === 0) return;
         const { isConfirmed } = await Swal.fire({
             title: 'Reiniciar',
             html: '<small>¿Está seguro de que desea restablecer el producto ?</small>',
@@ -66,7 +57,7 @@ export default function SaleRight() {
         }
     }
 
-    
+
 
     //Cart Footer
     const handleClose = (event: Event) => {
@@ -87,7 +78,7 @@ export default function SaleRight() {
 
 
     const askToSave = async function (codDoc?: string) {
-       
+
 
         // setVoucher({
         //     payingAmount: summary.total,
@@ -101,15 +92,15 @@ export default function SaleRight() {
         //     SnackbarUtility.warning('Seleccione el cliente');
         //     return
         // }
-        if(!(summary.tableId>0)){
+        if (!(summary.tableId > 0)) {
             SnackbarUtility.warning('Seleccione la Mesa');
             return
         }
-        if(items.length===0){
+        if (cartItems.length === 0) {
             SnackbarUtility.warning('Agregue Item');
             return
         }
-        const {isConfirmed} = await Swal.fire({
+        const { isConfirmed } = await Swal.fire({
             title: 'Guardar el Orden?',
             text: "Ya no será posible modificar la venta - para hacer cambios, tendrás que cancelar esta y crear una nueva.!",
             icon: 'warning',
@@ -120,67 +111,66 @@ export default function SaleRight() {
             cancelButtonText: 'No, cancelar!'
         })
 
-        if(!isConfirmed) return
-        
-            const summaryResult = summaryToApi(summary);
-            const itemsResult = itemToApi(items);
-            const taxesResult = items.flatMap(item=>item.taxes);
-            // const payments = {
-            //     formaPagoId: dataForm.paymentTypes.find(pay=>pay.code==="EFE")?.paymentTypeId,
-            //     total: checkout.voucher.payingAmount,
-            //     abono: checkout.voucher.receivedAmount,
-            //     cambio: checkout.voucher.changeReturn
-            // }
-            const data = {
-                ...summaryResult,
-                codDoc,
-                quickSale: ['FV', 'NE'].includes(codDoc!) ? true : false,
-                items: itemsResult,
-                taxes: taxesResult,
-                payments: {}
+        if (!isConfirmed) return
+
+        const summaryResult = summaryToApi(summary);
+        const itemsResult = itemToApi(cartItems);
+        const taxesResult = cartItems.flatMap(item => item.taxes);
+        // const payments = {
+        //     formaPagoId: dataForm.paymentTypes.find(pay=>pay.code==="EFE")?.paymentTypeId,
+        //     total: checkout.voucher.payingAmount,
+        //     abono: checkout.voucher.receivedAmount,
+        //     cambio: checkout.voucher.changeReturn
+        // }
+        const data = {
+            ...summaryResult,
+            codDoc,
+            quickSale: ['FV', 'NE'].includes(codDoc!) ? true : false,
+            items: itemsResult,
+            taxes: taxesResult,
+            payments: {}
+        }
+        showLoader(true);
+        OrdenService.post(data).then(response => {
+            showLoader(false)
+            if (response.code === '0') {
+                SnackbarUtility.warning(response.message)
             }
-            showLoader(true);
-            OrdenService.post(data).then(response => {
-                showLoader(false)
-                if (response.code === '0') {
-                    SnackbarUtility.warning(response.message)
+            if (response.code === "1") {
+                SnackbarUtility.success(response.message);
+                //Order 
+                if (!codDoc) {
+                    resetForm();
+                    return
                 }
-                if (response.code === "1") {    
-                    SnackbarUtility.success(response.message);
-                    //Order 
-                    if(!codDoc) {
-                        resetForm();
-                        return
-                    }
 
-                    const queryParams: QueryParams = JSON.parse(response.payload)[0];
-                    if(queryParams.payAutomatic){
-                        setQueryParams(queryParams);
-                        payment.openDialogCustom();
-                        return  
-                    }
-                 
-                    
-                    if(queryParams.printerAutomatic){
-                        SharedService.getPrinter(1)  
-                    }else{
-                        resetForm();
-                    } 
+                const queryParams: QueryParams = JSON.parse(response.payload)[0];
+                if (queryParams.payAutomatic) {
+                    setQueryParams(queryParams);
+                    payment.openDialogCustom();
+                    return
                 }
-            }).finally(()=> showLoader(false))
 
-    }
+
+                if (queryParams.printerAutomatic) {
+                    SharedService.getPrinter(1)
+                } else {
+                    resetForm();
+                }
+            }
+        }).finally(() => showLoader(false)) 
+    } 
 
     return (
-        <Paper elevation={isMobile ? 0 : 0} sx={{
-            borderRadius: isMobile ? 'none' : '12px',
+        <Paper elevation={0} sx={{
+            borderRadius: '12px',
             p: 1,
             display: 'flex',
             flexDirection: 'column',
             flexGrow: 1,
+            maxHeight: 550,
             bgcolor: 'background.paper'
         }} >
-
             <Grid container
                 direction="row"
                 justifyContent="space-between"
@@ -193,7 +183,28 @@ export default function SaleRight() {
                 </Grid>
             </Grid>
 
-            <CartTable />
+            {
+                cartItems.length === 0 ? (<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+
+                    <AddShoppingCartIcon sx={{
+                        height: "5rem!important",
+                        width: '5rem',
+                        color: 'rgba(59, 130, 246, 0.5)'
+                    }} />
+
+                    <Typography color="text.secondary" variant="caption"></Typography>
+                </div>) : (
+
+                    <List sx={{ width: '100%', maxHeight: 300, overflowY: 'auto', pb: 5, bgcolor: 'background.paper' }}>
+                        {cartItems.map((item, index) => (
+                            <CartItem item={item} key={index} />
+
+                        ))}
+                    </List>
+
+                )
+            }
+
 
             {/* Totals */}
             <List>
@@ -240,9 +251,9 @@ export default function SaleRight() {
                             Ir a pago
                         </Button> */}
                         <ButtonGroup variant="contained" color='success' ref={anchorRef} aria-label="split button" fullWidth size='large' sx={{
-                            height: 50, 
+                            height: 50,
                         }}>
-                            <Button startIcon={<SaveIcon />} onClick={()=>askToSave()}>Guardar</Button>
+                            <Button startIcon={<SaveIcon />} onClick={() => askToSave()}>Guardar</Button>
                             <Button
                                 size="small"
                                 aria-controls={open ? 'split-button-menu' : undefined}
@@ -275,8 +286,8 @@ export default function SaleRight() {
                                     <Paper>
                                         <ClickAwayListener onClickAway={handleClose}>
                                             <MenuList id="split-button-menu" autoFocusItem>
-                                                <MenuItem  onClick={()=>askToSave('FV')}>Factura</MenuItem>
-                                                <MenuItem  onClick={()=>askToSave('NE')}>Nota Entrega</MenuItem>
+                                                <MenuItem onClick={() => askToSave('FV')}>Factura</MenuItem>
+                                                <MenuItem onClick={() => askToSave('NE')}>Nota Entrega</MenuItem>
 
                                             </MenuList>
                                         </ClickAwayListener>
@@ -291,3 +302,5 @@ export default function SaleRight() {
         </Paper>
     )
 }
+
+export default Cart

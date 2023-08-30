@@ -15,7 +15,7 @@ export const getToken = () => {
 export const setUserData = (userData: UserData)=>{
     localStorage.setItem(PERSIS_USER.user_data, JSON.stringify(userData))
 }
-export const getUsetData = (): UserData =>{
+export const getUserData = (): UserData =>{
     const userData = localStorage.getItem(PERSIS_USER.user_data);    
     return userData? JSON.parse(userData) : {}
 }

@@ -9,10 +9,10 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <React.StrictMode>
+  // <React.StrictMode>
        <DarkModeProvider> {/*Dark or light mode */}
        <App/>    
        </DarkModeProvider>
   
-  </React.StrictMode>
+  // </React.StrictMode>
 );

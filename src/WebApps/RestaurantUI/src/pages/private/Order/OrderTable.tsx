@@ -26,7 +26,7 @@ export default function OrderTable({orders}: OrderTableProps) {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const showLoader = useLoaderStore(state => state.showLoader)
 
-    const handleChangePage = (event: unknown, newPage: number) => {
+    const handleChangePage = (_: unknown, newPage: number) => {
         setPage(newPage);
     };
 
@@ -61,6 +61,7 @@ export default function OrderTable({orders}: OrderTableProps) {
     }
 
     const handleTransformToDoc = async (id: number) => {
+        console.log(id)
         const { value } = await Swal.fire({
             title: 'Seleccione el Documento',
             input: 'select',
@@ -71,7 +72,13 @@ export default function OrderTable({orders}: OrderTableProps) {
             inputPlaceholder: '...',
             showCancelButton: true,
             inputValidator: (value) => {
-                if (!value) return 'Seleccione el documento';
+                return new Promise((resolve) => {
+                    if (value) {
+                      resolve()
+                    } else {
+                      resolve('Seleccione le documento :)')
+                    }
+                })
             },
             confirmButtonText: `Continuar`,
             cancelButtonText: 'Cerrar',

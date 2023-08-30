@@ -17,18 +17,23 @@ import { useAuthStore } from '@/stores/authStore';
 import { Badge } from '@mui/material';
 import { ModeToggleButton, NotificationsIcon } from '@/core/components';
 import { Brightness4 } from '@mui/icons-material';
+import { useEffect } from 'react';
+import { getEstabs, getUserData } from '@/core/services';
 
 const pages = ['Pedidos'];
 const settings = ['Cerrar sesión'];
 
 function MainLayout() {
     const navigate = useNavigate();
+    const setDataEstab = useAuthStore(state => state.setDataEstab);
+    const dataEstab = useAuthStore(state => state.dataEstab);
     const closeSession = useAuthStore(state => state.logOut);
+    
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
-    const estabs = useAuthStore(state => state.estabs);
-    const dataEstab = estabs[0] as Establecimiento;
+    // const estabs = useAuthStore(state => state.estabs);
+    // const dataEstab = estabs[0] as Establecimiento;
 
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -54,6 +59,9 @@ function MainLayout() {
         navigate(`/${PublicRoutes.LOGIN}`, { replace: true });
     };
 
+    useEffect(()=>{
+        setDataEstab(getEstabs(), getEstabs()[0]!) 
+    }, [])
 
 
     return (
