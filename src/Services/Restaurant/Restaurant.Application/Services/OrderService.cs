@@ -12,17 +12,18 @@ namespace Restaurant.Application.Services
         {
             _repository = repository;
         }
-        public async Task<string> GetAsync(Dictionary<string, object> parameters)
+        public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
-            var dt = await _repository.GetDataTableAsync("Restaurant.Order_Get", parameters);
-            if (!DataValidation.DataTableIsNull(dt))
-            {
-                return Converters.DataTableToJSON(dt);
-            }
-            else
+            var ds = await _repository.GetDataSetAsync("Restaurant.Order_Get", parameters);
+            if (ds.Tables.Count == 0)
             {
                 return null;
             }
+            else
+            {
+                return Converters.DataSetToJSON(ds);
+            }
+
         }
         public async Task<string> AddAsync(ApiRequest data)
         {
@@ -32,9 +33,19 @@ namespace Restaurant.Application.Services
             };
             return await _repository.SPExecuteAsync("Restaurant.Order_Insert", parameters);
         }
+
         public async Task<string> PrintAsync(Dictionary<string, object> parameters)
         {
             return await _repository.SPExecuteAsync("Restaurant.Order_Print", parameters);
+        }
+
+        public async Task<string> PutAsync(ApiRequest data)
+        {
+            var parameters = new Dictionary<string, object>{
+                { "userRoleId", data.UserRoleId },
+                { "json", SqlStringParam.Sanitize(Converters.SerializeDictionary(data.Data)) }
+            };
+            return await _repository.SPExecuteAsync("", parameters);
         }
     }
 }

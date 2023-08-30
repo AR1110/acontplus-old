@@ -83,5 +83,22 @@ namespace Restaurant.API.Controllers
                 return BadRequest("Error On Save");
             }
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put([FromBody] ApiRequest data)
+        {
+            try
+            {                
+                data.UserRoleId = User.GetUserRoleId();
+                var response = await _orderService.PutAsync(data);
+                if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo actualizar"); }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error on Put: " + ex.ToString());
+                return BadRequest("Error On Put");
+            }
+        }
     }
 }
