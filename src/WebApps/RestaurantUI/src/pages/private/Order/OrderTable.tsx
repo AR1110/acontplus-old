@@ -12,7 +12,7 @@ import { useState } from 'react';
 import { IconButton, Tooltip } from '@mui/material';
 import { DeleteIcon, MoveUpIcon, PrintIcon, SaveAltSharpIcon, ShareSharpIcon} from '@/core/components';
 import Swal from 'sweetalert2';
-import { OrdenService } from '@/core/services';
+import { OrdenService, SharedService } from '@/core/services';
 import { SnackbarUtility } from '@/core/utilities';
 import { useLoaderStore } from '@/stores';
 import { OrderReadDto } from '@/core/models';
@@ -77,6 +77,11 @@ export default function OrderTable({orders}: OrderTableProps) {
             cancelButtonText: 'Cerrar',
         }) 
     }
+
+    const handleAskToPrint = (orderId: number)=>{
+        SharedService.askToPrint(orderId)
+    }
+
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%' }}>
@@ -95,7 +100,7 @@ export default function OrderTable({orders}: OrderTableProps) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {orders.map((order, index) => (
+                            {orders.slice(0, 2).map((order, index) => (
                                 <TableRow
                                     key={index}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -114,7 +119,7 @@ export default function OrderTable({orders}: OrderTableProps) {
                                             <DeleteIcon />
                                         </IconButton>
                                         <Tooltip describeChild title="Impresión">
-                                            <IconButton aria-label="Impresión" onClick={() => handleUpdateState(order.orderId)}>
+                                            <IconButton aria-label="Impresión" onClick={() => handleAskToPrint(order.orderId)}>
                                                 <PrintIcon />
                                             </IconButton>
                                         </Tooltip>

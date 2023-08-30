@@ -14,6 +14,9 @@ import MenuItem from '@mui/material/MenuItem';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Establecimiento, PrivateRoutes, PublicRoutes } from '@/core/models';
 import { useAuthStore } from '@/stores/authStore';
+import { Badge } from '@mui/material';
+import { ModeToggleButton, NotificationsIcon } from '@/core/components';
+import { Brightness4 } from '@mui/icons-material';
 
 const pages = ['Pedidos'];
 const settings = ['Cerrar sesión'];
@@ -157,7 +160,7 @@ function MainLayout() {
                             Estab: {dataEstab?.nombreComercial}
                         </Typography>
                         <Box sx={{ flexGrow: 0 }}>
-
+                        <ModeToggleButton />
                             <Tooltip title="Open settings">
                                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                                     <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />

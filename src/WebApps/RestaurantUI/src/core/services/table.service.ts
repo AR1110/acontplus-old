@@ -1,9 +1,9 @@
 import { PATHS } from "../constants"
 import { Http, loadAbort } from "../utilities"
 
-type tableSearch = {
-    codEstab: string
-}
+// type tableSearch = {
+//     codEstab: string
+// }
 export const TableService = {
     getAll: () => {
         const controller = loadAbort(); //Cancelar peticion 
