@@ -22,6 +22,7 @@ type CartItemProps = {
 const CartItem = ({ index, item }: CartItemProps) => {
     const removeItemFromCart = useSaleStore(state => state.removeItemFromCart)
     const setItemChangeQty = useSaleStore(state => state.setItemChangeQty)
+    const setChangeValueOrderItem = useSaleStore(state => state.setChangeValueOrderItem)
 
     const [expanded, setExpanded] = useState(false);
     const handleExpandClick = () => {
@@ -42,7 +43,7 @@ const CartItem = ({ index, item }: CartItemProps) => {
                 }}
                     primary={item.description}
                     secondary={
-                        <React.Fragment>
+                        <Box>
                             {/* <Typography
                                 sx={{ display: 'inline' }}
                                 component="span"
@@ -81,14 +82,14 @@ const CartItem = ({ index, item }: CartItemProps) => {
                                 </Grid>
                                 <Grid item xs={12} sm={4} md={4} >
                                     <Typography variant="body2" color="text.primary">
-                                        <strong>Precio:</strong> ${item.price.toFixed(2)}
+                                        Precio: ${item.price.toFixed(2)}
                                     </Typography>
                                     <Typography variant="body2" color="text.primary">
-                                        <strong>Total:</strong> ${item.total}
+                                        Total: ${item.total}
                                     </Typography>
                                 </Grid>
                             </Grid>
-                        </React.Fragment>
+                        </Box>
                     }
                 />
             </ListItem>
@@ -96,9 +97,12 @@ const CartItem = ({ index, item }: CartItemProps) => {
                 <Box sx={{ pl: 10, mb: 1 }}>
                     <TextField
                         label="Comentario"
-                        id="comentario"
+                        id="obs"
                         size="small"
                         fullWidth
+                        onBlur={(e) => {
+                            setChangeValueOrderItem(index, "obs", e.target.value)
+                        }}
                         value={item.obs}
                     />
                 </Box>

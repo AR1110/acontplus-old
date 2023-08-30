@@ -80,6 +80,7 @@ export default function ItemCard({ item }: ItemCardProps) {
             const taxValue = measureData.rates[0]?.priceWithVat ?? 0
             const uuid = crypto.randomUUID();
 
+            console.log(measureData)
             if (!product.takesInventory) {
                 addItem();
                 return
@@ -140,7 +141,8 @@ export default function ItemCard({ item }: ItemCardProps) {
                         taxBase:  measureData.rates[0]?.salePrice ?? 0,
                         taxValue: taxValue,                        
                     }],
-                    uuid: uuid
+                    uuid: uuid,
+                    obs: undefined
                 })
             }
 
