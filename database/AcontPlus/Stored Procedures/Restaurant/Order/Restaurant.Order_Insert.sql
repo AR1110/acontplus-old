@@ -224,13 +224,13 @@ BEGIN
 	BEGIN TRY
 		BEGIN TRAN
             ----------------ORDER------------------
-            SET @serie = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @sequence, DEFAULT))   
-            INSERT INTO Restaurant.[Order](EstablecimientoId, puntoEmisionId, TableId, [Sequence], Serie, CustomerCompanyId, Tax, Discount, Total, [Enabled], UserId)
-            VALUES(@establecimientoId, @puntoEmisionId, @tableId, @sequence, @serie, @customerCompanyId, @tax, @discount, @total, 1, @userId)
-	        SET @orderId = (SELECT SCOPE_IDENTITY())
-
-            IF (@orderId > 0)
+            IF NOT EXISTS (SELECT 1 FROM Restaurant.[Order] WHERE Uuid = @uuid)
                 BEGIN
+                    SET @serie = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @sequence, DEFAULT))   
+                    INSERT INTO Restaurant.[Order](EstablecimientoId, puntoEmisionId, TableId, [Sequence], Serie, CustomerCompanyId, Tax, Discount, Total, [Enabled], UserId)
+                    VALUES(@establecimientoId, @puntoEmisionId, @tableId, @sequence, @serie, @customerCompanyId, @tax, @discount, @total, 1, @userId)
+	                SET @orderId = (SELECT SCOPE_IDENTITY())
+                    
                     INSERT INTO Restaurant.OrderItem(OrderId, Uuid, ItemId, TaxId, TaxPercentId, TaxValue, Quantity, Cost, Price, Discount, Total, [Enabled], UserId)
                     SELECT @orderId, uuid, itemId, taxId, taxPercentId, taxValue, quantity, cost, price, discount, total, 1, @userId FROM @tblItems
                     
@@ -251,9 +251,15 @@ BEGIN
 			                        WHERE pa.idUsuarioRol = @userRoleId
 			                        AND cd.codDoc = 'OR'
                         ) AS vcf ON cf.idConfiguracionDocumento = vcf.idConfiguracionDocumento
-                 
-                    ----------------VENTA RAPIDA------------
-                    IF (@quickSale = 1)
+                END
+            ELSE
+                BEGIN
+                   SET @orderId = (SELECT Id FROM Restaurant.[Order] WHERE Uuid = @uuid)
+                END
+            -----------------END ORDER -----------------
+
+            ----------------VENTA RAPIDA------------
+            IF (@quickSale = 1)
                         BEGIN
                              DECLARE @documentoId INT
                             ,@nroDocumento INT
@@ -435,12 +441,15 @@ BEGIN
 					              ,idCuentaPorCobrar       = @idCuentaPorCobrar
 					              ,payAutomatic            = @payAutomatic
 					              ,printerAutomatic        = @printerAutomatic
+                                  ,orderId                 = @orderId
 					            FOR JSON PATH)
                             --------END PAYLOADS--------
                     END
+                ELSE
+                    BEGIN
+                        SET @payload = (SELECT orderId = @orderId FOR JSON PATH)
+                    END
                     ----------------END VENTA RAPIDA--------
-                END
-            -----------------END ORDER -----------------
 		COMMIT TRAN
 
         IF (@orderId > 0)
