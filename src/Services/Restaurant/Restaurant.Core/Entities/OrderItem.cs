@@ -27,5 +27,6 @@ namespace Restaurant.Core.Entities
         public decimal Total { get; set; }
         [MaxLength(500)]
         public string Obs { get; set; }
+        public int FeeId { get; set; }
     }
 }

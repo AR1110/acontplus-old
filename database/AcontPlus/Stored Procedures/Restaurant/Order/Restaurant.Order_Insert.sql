@@ -41,6 +41,7 @@ BEGIN
     ,@estadoPagoId INT
     ,@ambiente INT
     ,@autoSriAuth BIT
+    ,@establecimientoId INT
     
     SELECT @uuid                = uuid
         ,@itemsJson             = items

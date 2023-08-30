@@ -39,13 +39,14 @@ namespace Restaurant.Application.Services
             return await _repository.SPExecuteAsync("Restaurant.Order_Print", parameters);
         }
 
-        public async Task<string> PutAsync(ApiRequest data)
+        public async Task<string> PutAsync(int id, ApiRequest data)
         {
             var parameters = new Dictionary<string, object>{
                 { "userRoleId", data.UserRoleId },
+                { "id", id },
                 { "json", SqlStringParam.Sanitize(Converters.SerializeDictionary(data.Data)) }
             };
-            return await _repository.SPExecuteAsync("", parameters);
+            return await _repository.SPExecuteAsync("Restaurant.Order_Update", parameters);
         }
     }
 }

@@ -86,18 +86,22 @@ namespace Restaurant.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put([FromBody] ApiRequest data)
+        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
         {
             try
-            {                
+            {
                 data.UserRoleId = User.GetUserRoleId();
-                var response = await _orderService.PutAsync(data);
-                if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo actualizar"); }
+                var response = await _orderService.PutAsync(id, data);
+                if (response == null | string.IsNullOrEmpty(response))
+                {
+                    _log.LogActivity("Error on update");
+                    return BadRequest("No se pudo actualizar");
+                }
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error on Put: " + ex.ToString());
+                _log.LogActivity("Error on put catch " + ex.ToString());
                 return BadRequest("Error On Put");
             }
         }
