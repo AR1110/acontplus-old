@@ -13,7 +13,7 @@ AS
 BEGIN 
 	SET NOCOUNT ON;
 
-	SELECT o.*, ISNULL(od.DocumentoId,0) DocumentoId, ISNULL(td.codigo,'') codDoc FROM Restaurant.[Order] o 
+	SELECT o.*, ISNULL(od.DocumentoId,0) DocumentoId, ISNULL(td.codigo,'') codDoc, o FROM Restaurant.[Order] o 
         LEFT JOIN Restaurant.OrderDocument od WITH(NOLOCK) ON o.Id = od.OrderId
         LEFT JOIN TipoDocumento td WITH(NOLOCK) ON od.TipoDocumentoId = td.idTipoDocumento
     ORDER BY o.Id DESC
