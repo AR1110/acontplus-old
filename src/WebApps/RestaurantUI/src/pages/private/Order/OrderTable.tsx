@@ -10,7 +10,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useState } from 'react';
 import { IconButton, Tooltip } from '@mui/material';
-import { DeleteIcon, MoveUpIcon, PrintIcon, SaveAltSharpIcon, ShareSharpIcon} from '@/core/components';
+import { DeleteIcon, EditIcon, MoveUpIcon, PrintIcon, SaveAltSharpIcon, ShareSharpIcon} from '@/core/components';
 import Swal from 'sweetalert2';
 import { OrdenService, SharedService } from '@/core/services';
 import { SnackbarUtility } from '@/core/utilities';
@@ -82,6 +82,16 @@ export default function OrderTable({orders}: OrderTableProps) {
         SharedService.askToPrint(orderId)
     }
 
+    const handleEdit = (orderId: number)=>{
+        showLoader(true)
+        OrdenService.get({
+            id: orderId,
+            tipo: 2
+        }).then(response=>{
+            console.log(response)
+        }).finally(()=>showLoader(false))
+    }
+
     return (
         <Box sx={{ width: '100%' }}>
             <Paper sx={{ width: '100%' }}>
@@ -118,6 +128,11 @@ export default function OrderTable({orders}: OrderTableProps) {
                                         <IconButton aria-label="delete" onClick={() => handleUpdateState(order.orderId)}>
                                             <DeleteIcon />
                                         </IconButton>
+                                        <Tooltip describeChild title="Editar">
+                                            <IconButton aria-label="Editar" onClick={() => handleEdit(order.orderId)}>
+                                                <EditIcon />
+                                            </IconButton>
+                                        </Tooltip>
                                         <Tooltip describeChild title="Impresión">
                                             <IconButton aria-label="Impresión" onClick={() => handleAskToPrint(order.orderId)}>
                                                 <PrintIcon />
