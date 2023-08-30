@@ -7,7 +7,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close'; 
-import SaleRight from './SaleRight';
+import Cart from '../Cart/Cart';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -65,7 +65,7 @@ export default function ItemDialog({open, handleClose}: ItemDialogProps) {
           Items Añadidos
         </BootstrapDialogTitle>
         <DialogContent dividers>
-            <SaleRight/>          
+            <Cart/>          
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={handleClose}>

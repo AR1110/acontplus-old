@@ -21,8 +21,10 @@ export default function Order() {
 
     const getOrders = async ()=>{
         showLoader(true)
-        await OrdenService.get({pageIndex: 1, pageSize: 2}).then(response=>{
-            setOrders(orderReadAdapter(response))           
+        await OrdenService.get({pageIndex: 1, pageSize: 2, tipo: 1}).then(response=>{
+            console.log(response)
+            console.log(response)
+            setOrders(orderReadAdapter(response.orders))           
         }).finally(()=>showLoader(false))
     }
 

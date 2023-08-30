@@ -1,9 +1,8 @@
 
 import { ErrorBoundary, SnackbarUtility } from "@/core/utilities";
-import { Grid, useMediaQuery } from "@mui/material"; 
+import { Grid, useMediaQuery } from "@mui/material";
 import { useAsync, useFetchAndLoad, useMobileDetect } from "@/hooks";
 import { ItemService, OrdenService, SaleService } from "@/core/services"; 
-import SaleRight from "./components/SaleRight";
 
 import { Establecimiento } from "@/core/models";
 import CustomBottomNavigation from "./components/CustomBottomNavigation";
@@ -12,16 +11,17 @@ import { useEffect } from "react";
 import { itemReadAdapter, itemToApi, summaryToApi, warehouseAdapter } from "@/core/adapters";
 import FullScreenDialog from "@/core/components/FullScreenDialog";
 import { CloseIcon, SwipeLeftIcon } from "@/core/components";
- 
-import Swal from "sweetalert2"; 
+
+import Swal from "sweetalert2";
 import ItemList from "./Item/ItemList";
 import Category from "./Category/Category";
 import Checkout from "./Checkout/Checkout";
+import Cart from "./Cart/Cart";
 
 
 
 export default function Sale() {
-    const {isMobile} = useMobileDetect();
+    const { isMobile } = useMobileDetect();
 
     const setDataForm = useSaleStore(state => state.setDataForm)
     const resetForm = useSaleStore(state => state.resetForm)
@@ -32,10 +32,9 @@ export default function Sale() {
     const dataForm = useSaleStore(state => state.dataForm);
     const items = useSaleStore(state => state.items);
 
-    const setDataEstab = useAuthStore(state => state.setDataEstab);
-    const dataEstab = useAuthStore(state => state.dataEstab);
+    
     const estabs = useAuthStore(state => state.estabs);
-
+    const dataEstab = useAuthStore(state => state.dataEstab);
     const { itemSearch, setCollectionItems } = useSaleStore(state => ({
         itemSearch: state.itemSearch,
         setCollectionItems: state.setCollectionItems
@@ -52,8 +51,8 @@ export default function Sale() {
 
 
     useEffect(() => {
-        const dataEstab = estabs[0] as Establecimiento
-        setDataEstab(dataEstab)
+        // const dataEstab = estabs[0] as Establecimiento
+        // setDataEstab(dataEstab)
         SaleService.getDataForForm(JSON.stringify({
             codEstab: dataEstab?.codEstab
         })).then(response => {
@@ -96,7 +95,7 @@ export default function Sale() {
 
 
     const saveSale = async () => {
-       
+
         // if(dataForm.paymentTypes.length===0){
         //     SnackbarUtility.warning('Forma pago registradods')
         //     return
@@ -111,7 +110,7 @@ export default function Sale() {
         //     cancelButtonColor: '#d33',
         //     confirmButtonText: 'Yes, delete it!'
         // })
- 
+
         // if(dataForm.paymentTypes.length===0){
         //     SnackbarUtility.warning('Forma pago registradods')
         //     return
@@ -152,7 +151,7 @@ export default function Sale() {
             <Grid container spacing={2}>
                 <Grid item xs={12} md={7}>
                     <Grid item xs={12} md={12}>
-                        <Category/>
+                        <Category />
                     </Grid>
 
                     <Grid item xs={12} sm={12} md={12} lg={12}>
@@ -161,7 +160,7 @@ export default function Sale() {
                 </Grid>
                 <Grid item xs={12} md={5}>
                     {
-                        isMobile ? <></> : <SaleRight />
+                        isMobile ? <></> : <Cart />
                     }
 
                 </Grid>
@@ -180,7 +179,7 @@ export default function Sale() {
 
             {/* start Items carito movil */}
             <FullScreenDialog icon={<SwipeLeftIcon />} dialogTitle="Carito" isOpen={navigation.isOpen} handleClose={navigation.closeDialogCustom}>
-                <SaleRight />
+                <Cart />
             </FullScreenDialog>
             {/* end Items carito movil */}
 

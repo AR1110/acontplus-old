@@ -29,7 +29,7 @@ function ItemPagination() {
         <Pagination
             count={count}
             page={page}
-            onChange={(e, page) => handleChange(page)}
+            onChange={(_, page) => handleChange(page)}
             size='large'
             color="primary"
             showFirstButton

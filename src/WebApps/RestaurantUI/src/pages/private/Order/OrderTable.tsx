@@ -10,7 +10,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useState } from 'react';
 import { IconButton, Tooltip } from '@mui/material';
-import { DeleteIcon, MoveUpIcon, PrintIcon, SaveAltSharpIcon, ShareSharpIcon} from '@/core/components';
+import { DeleteIcon, EditIcon, MoveUpIcon, PrintIcon, SaveAltSharpIcon, ShareSharpIcon} from '@/core/components';
 import Swal from 'sweetalert2';
 import { OrdenService, SharedService } from '@/core/services';
 import { SnackbarUtility } from '@/core/utilities';
@@ -26,7 +26,7 @@ export default function OrderTable({orders}: OrderTableProps) {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const showLoader = useLoaderStore(state => state.showLoader)
 
-    const handleChangePage = (event: unknown, newPage: number) => {
+    const handleChangePage = (_: unknown, newPage: number) => {
         setPage(newPage);
     };
 
@@ -61,6 +61,7 @@ export default function OrderTable({orders}: OrderTableProps) {
     }
 
     const handleTransformToDoc = async (id: number) => {
+        console.log(id)
         const { value } = await Swal.fire({
             title: 'Seleccione el Documento',
             input: 'select',
@@ -71,7 +72,13 @@ export default function OrderTable({orders}: OrderTableProps) {
             inputPlaceholder: '...',
             showCancelButton: true,
             inputValidator: (value) => {
-                if (!value) return 'Seleccione el documento';
+                return new Promise((resolve) => {
+                    if (value) {
+                      resolve()
+                    } else {
+                      resolve('Seleccione le documento :)')
+                    }
+                })
             },
             confirmButtonText: `Continuar`,
             cancelButtonText: 'Cerrar',
@@ -80,6 +87,16 @@ export default function OrderTable({orders}: OrderTableProps) {
 
     const handleAskToPrint = (orderId: number)=>{
         SharedService.askToPrint(orderId)
+    }
+
+    const handleEdit = (orderId: number)=>{
+        showLoader(true)
+        OrdenService.get({
+            id: orderId,
+            tipo: 2
+        }).then(response=>{
+            console.log(response)
+        }).finally(()=>showLoader(false))
     }
 
     return (
@@ -118,6 +135,11 @@ export default function OrderTable({orders}: OrderTableProps) {
                                         <IconButton aria-label="delete" onClick={() => handleUpdateState(order.orderId)}>
                                             <DeleteIcon />
                                         </IconButton>
+                                        <Tooltip describeChild title="Editar">
+                                            <IconButton aria-label="Editar" onClick={() => handleEdit(order.orderId)}>
+                                                <EditIcon />
+                                            </IconButton>
+                                        </Tooltip>
                                         <Tooltip describeChild title="Impresión">
                                             <IconButton aria-label="Impresión" onClick={() => handleAskToPrint(order.orderId)}>
                                                 <PrintIcon />
