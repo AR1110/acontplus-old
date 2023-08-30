@@ -7,6 +7,6 @@ namespace Restaurant.Core.Interfaces
         Task<object> GetAsync(Dictionary<string, object> parameters);
         Task<string> PrintAsync(Dictionary<string, object> parameters);
         Task<string> AddAsync(ApiRequest data);
-        Task<string> PutAsync(ApiRequest data);
+        Task<string> PutAsync(int id, ApiRequest data);
     }
 }
