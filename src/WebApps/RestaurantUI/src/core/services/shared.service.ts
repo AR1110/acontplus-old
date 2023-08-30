@@ -42,13 +42,15 @@ class Shared {
     async print(params: any) {
 
         for (const param of params) {
-            const urlPrinter = `
+            console.log(param)
+            const urlPrint = `
             ${param.urlPrinter}?rdlcProps=
-            ${param.rdlcProps}&dataSources=
-            ${encodeURIComponent(param.dataSources)}&rdlcParams=
-            ${param.rdlcParams}
+            ${JSON.stringify(param.rdlcProps)}&dataSources=
+            ${encodeURIComponent(JSON.stringify(param.dataSources))}&rdlcParams=
+            ${JSON.stringify(param.rdlcParams)}
             `
-            await fetch(urlPrinter).then(function (response) {
+            console.log(urlPrint)
+            await fetch(urlPrint).then(function (response) {
                 if (response.ok) {
                     SnackbarUtility.success("Impresion correcta!")
                 } else {
