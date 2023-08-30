@@ -2,42 +2,43 @@ import {
     ItemRead,
     ItemSearch,
     ItemReadDto,
-    Summary,
+    Order,
     itemSearchInitialState,
     DataFormSale,
-    dataFormInitialState, 
-    summaryInitialState
-} from "@/core/models"; 
+    dataFormInitialState,
+    orderInitialState
+} from "@/core/models";
 import { SnackbarUtility, addSound, clearSound } from "@/core/utilities";
-import { ChangeEvent } from "react"; 
+import { ChangeEvent } from "react";
 import { create } from "zustand";
-import {produce} from 'immer';
- 
+import { produce } from 'immer';
+
 type State = {
-   
+
     itemSearch: ItemSearch
     collectionItems: Array<ItemReadDto>
     totalItems: number;
     items: Array<ItemRead>
-    summary: Summary,
+    order: Order,
     dataForm: DataFormSale
     //Pagos
     payment: {
         isOpen: boolean
-        openDialogCustom():void
+        openDialogCustom(): void
         closeDialogCustom(): void
-    },    
+    },
     //Navigation 
     navigation: {
         isOpen: boolean
-        openDialogCustom():void
+        openDialogCustom(): void
         closeDialogCustom(): void
     }
 }
 
 type Actions = {
-    setItemSearch(itemSearch: ItemSearch): void    
-    setSummary(summary: Summary): void
+    setDataEdit(obj: object): void
+    setItemSearch(itemSearch: ItemSearch): void
+    setSummary(order: Order): void
     getItemQty(productId: number): number
     setDataForm(dataForm: DataFormSale): void
     setCollectionItems(products: Array<ItemReadDto>): void
@@ -50,21 +51,56 @@ type Actions = {
 }
 export const useSaleStore = create<State & Actions>((set, get) => ({
     itemSearch: itemSearchInitialState,
+    setDataEdit(obj: any) {
+        const { order, orderItems } = obj;
+        const orderAdapt = {
+            orderId: order.id,
+            establecimientoId: order.establecimientoId,
+            puntoEmisionId: order.puntoEmisionId,
+            customerCompanyId: order.customerCompanyId,
+            bodegaId: 0,
+            tableId: order.tableId,
+            subTotalSinImpuestos: 0,
+            tax: order.tax,
+            taxPercent: order.taxPercent,
+            taxAmount: 0,
+            discount: order.discount,
+            total: order.total,
+            netTotal: 0,
+            tip: 0,
+            obs: "",
+            codDoc: order.codDoc,
+            quickSale: false,
+            createdAt: new Date(order.createdAt)
+        }
+        set(
+            produce((state: State) => {
+                state.order = orderAdapt;
+                state.items = orderItems.map((orderItem: any) => {
+                    console.log(orderItem)
+                    return orderItem;
+
+                })
+
+            })
+        )
+        console.log(obj)
+    },
     setItemSearch: (itemSearch) => {
-        set({            
+        set({
             itemSearch
         })
     },
     collectionItems: [],
     totalItems: 0,
     items: [],
-    summary: summaryInitialState,
-    setSummary(summary: Summary) {
+    order: orderInitialState,
+    setSummary(order: Order) {
         set(
-            produce((state: State)=>{
-                state.summary = summary;
+            produce((state: State) => {
+                state.order = order;
             })
-        ) 
+        )
     },
     dataForm: dataFormInitialState,
     getItemQty: (productId: number) => {
@@ -114,16 +150,16 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         addSound();
         SnackbarUtility.success('Agregado correctamente')
     },
-    removeItemFromCart: (productId: number) => {
+    removeItemFromCart: (indexItem: number) => {
         const { setTotalItems, caculateTotals } = get();
-        set((state) => ({ 
-            items: state.items.filter(_ => _.productId !== productId)
+        set((state) => ({
+            items: state.items.filter((_, index) => index !== indexItem)
         }))
         setTotalItems();
         caculateTotals();
         clearSound();
     },
-    setTotalItems: () => set(state => ({ 
+    setTotalItems: () => set(state => ({
         totalItems: state.items.reduce((total, item) => total + item.quantity, 0)
     })),
 
@@ -205,10 +241,13 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
 
     },
     async resetForm() {
-        set({ 
-            totalItems: 0,
-            items: []
-        })
+        set(
+            produce((state: State)=>{ 
+                state.order.orderId = 0;
+                state.totalItems = 0;
+                state.items = []                
+            })
+        )
         clearSound();
         get().caculateTotals();
 
@@ -220,29 +259,27 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
             total += item.total;
         }
 
-        set(state => ({
-            ...state,
-            summary: {
-                ...state.summary,
-                total,
-                netTotal: total
-            }
-        }))
+        set(
+            produce((state: State) => {
+                state.order.total = total;
+                state.order.netTotal = total;
+            })
+        )
     },
     payment: {
         isOpen: false,
         openDialogCustom() {
             set(
-                produce((state:State)=>{
+                produce((state: State) => {
                     state.payment.isOpen = true
-                }) 
+                })
             )
         },
         closeDialogCustom() {
             set(
-                produce((state:State)=>{
+                produce((state: State) => {
                     state.payment.isOpen = false
-                }) 
+                })
             )
         },
     },
@@ -250,16 +287,16 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         isOpen: false,
         openDialogCustom() {
             set(
-                produce((state:State)=>{
+                produce((state: State) => {
                     state.navigation.isOpen = true
-                }) 
+                })
             )
         },
         closeDialogCustom() {
             set(
-                produce((state:State)=>{
+                produce((state: State) => {
                     state.payment.isOpen = false
-                }) 
+                })
             )
         },
     }

@@ -1,7 +1,9 @@
 import { CategoryReadDto, DecimalSale, PaymentSubType, PaymentType, TableReadDto, Tax, TaxRate, WarehouseAsign } from ".";
+import { DOC_TYPE } from "../constants";
 import { EmissionPointAsign } from "./emission-point.model";
 
-export interface Summary {
+export interface Order {
+    orderId: number
     establecimientoId: number
     puntoEmisionId : number
     customerCompanyId : number
@@ -18,7 +20,10 @@ export interface Summary {
     obs: string
     codDoc: string
     quickSale: boolean
-    creationDate: Date
+    createdAt: Date
+    //Opcionales - se usa cuando se actualiza el orden 
+    saveDoc?: boolean
+    updateOrder?: boolean
 }
 
 //Impuesto Articulos 
@@ -31,6 +36,8 @@ export interface ItemTaxes {
 }
 
 export interface ItemBase {
+    readonly id: number
+    readonly orderId: number
     index: number
     productId: number
     code: string    
@@ -53,11 +60,13 @@ export interface ItemRead extends ItemBase {
     s3ObjectUrl: string;    
     takesInventory: boolean
     taxes: Array<ItemTaxes>
+    obs?: string
 }
 
 
 //Start To Api 
 export interface ItemPostDto {
+    readonly orderId?: number
     uuid: string
     itemId: number
     taxId: number
@@ -129,7 +138,8 @@ export const dataFormInitialState: DataFormSale = {
     emissionPoints: [], 
 }
 
-export const summaryInitialState: Summary = {
+export const orderInitialState: Order = {
+    orderId: 0,
     establecimientoId: 0,
     puntoEmisionId: 0,
     customerCompanyId: 0,
@@ -144,7 +154,9 @@ export const summaryInitialState: Summary = {
     netTotal: 0,
     tip: 0,
     obs: "",
-    codDoc: "NE",
+    codDoc: DOC_TYPE.OR, //Type doc default Orden 
     quickSale: true,
-    creationDate: new Date()
+    createdAt: new Date(), 
+    saveDoc: false,
+    updateOrder: false
 }

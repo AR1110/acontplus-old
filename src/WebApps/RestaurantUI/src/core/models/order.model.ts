@@ -26,6 +26,7 @@
 
   export interface OrderReadDto {
     orderId: number
+    documentoId: number
     establecimientoId: number
     puntoEmisionId: number
     serie: string

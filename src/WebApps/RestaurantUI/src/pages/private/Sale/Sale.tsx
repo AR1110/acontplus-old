@@ -25,8 +25,8 @@ export default function Sale() {
 
     const setDataForm = useSaleStore(state => state.setDataForm)
     const resetForm = useSaleStore(state => state.resetForm)
-    const { summary, setSummary } = useSaleStore(state => ({
-        summary: state.summary,
+    const { order, setSummary } = useSaleStore(state => ({
+        order: state.order,
         setSummary: state.setSummary,
     }))
     const dataForm = useSaleStore(state => state.dataForm);
@@ -67,7 +67,7 @@ export default function Sale() {
             console.log(response)
             setDataForm(response)
             setSummary({
-                ...summary,
+                ...order,
                 establecimientoId: dataEstab.idEstablecimiento,
                 puntoEmisionId: emissionPointData?.idPuntoEmision ?? 0,
                 bodegaId: warehouseData?.idBodega ?? 0
@@ -147,7 +147,7 @@ export default function Sale() {
 
     return (
         <ErrorBoundary fallBackComponent={<>Error!</>}>
-
+              {JSON.stringify(order)}
             <Grid container spacing={2}>
                 <Grid item xs={12} md={7}>
                     <Grid item xs={12} md={12}>

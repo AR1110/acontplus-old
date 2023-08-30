@@ -13,8 +13,7 @@ export const OrdenService = {
             }
         })
 
-        const response = resultAxios.data;
-        console.log(response)
+        const response = resultAxios.data; 
         return response;
     },
     async post(data: object) {
@@ -25,6 +24,20 @@ export const OrdenService = {
         })
 
         const response: ApiResponse = resultAxios.data;
+        return response;
+    },
+
+    async put(id: number, data: object) {
+        const resultAxios = await Http({
+            method: 'put',
+            url: `${PATHS.PRIVATE}${URL}`,
+            params: {
+                id
+            },
+            data: { data }
+        })
+
+        const response: ApiResponse = resultAxios.data; 
         return response;
     },
 

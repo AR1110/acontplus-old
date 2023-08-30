@@ -10,21 +10,24 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useState } from 'react';
 import { IconButton, Tooltip } from '@mui/material';
-import { DeleteIcon, EditIcon, MoveUpIcon, PrintIcon, SaveAltSharpIcon, ShareSharpIcon} from '@/core/components';
+import { DeleteIcon, EditIcon, MoveUpIcon, PrintIcon, SaveAltSharpIcon, ShareSharpIcon } from '@/core/components';
 import Swal from 'sweetalert2';
 import { OrdenService, SharedService } from '@/core/services';
 import { SnackbarUtility } from '@/core/utilities';
-import { useLoaderStore } from '@/stores';
-import { OrderReadDto } from '@/core/models';
+import { useLoaderStore, useSaleStore } from '@/stores';
+import { OrderReadDto, PrivateRoutes } from '@/core/models';
+import { useNavigate } from 'react-router-dom';
 
 type OrderTableProps = {
     orders: Array<OrderReadDto>
 }
 
-export default function OrderTable({orders}: OrderTableProps) {
+export default function OrderTable({ orders }: OrderTableProps) {
+    const navigate = useNavigate();
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-    const showLoader = useLoaderStore(state => state.showLoader)
+    const showLoader = useLoaderStore(state => state.showLoader);
+    const setDataEdit = useSaleStore(state=>state.setDataEdit) 
 
     const handleChangePage = (_: unknown, newPage: number) => {
         setPage(newPage);
@@ -74,29 +77,33 @@ export default function OrderTable({orders}: OrderTableProps) {
             inputValidator: (value) => {
                 return new Promise((resolve) => {
                     if (value) {
-                      resolve()
+                        resolve()
                     } else {
-                      resolve('Seleccione le documento :)')
+                        resolve('Seleccione le documento :)')
                     }
                 })
             },
             confirmButtonText: `Continuar`,
             cancelButtonText: 'Cerrar',
-        }) 
+        })
     }
 
-    const handleAskToPrint = (orderId: number)=>{
+    const handleAskToPrint = (orderId: number) => {
         SharedService.askToPrint(orderId)
     }
 
-    const handleEdit = (orderId: number)=>{
+    const handleEdit = (orderId: number) => {
         showLoader(true)
         OrdenService.get({
             id: orderId,
             tipo: 2
-        }).then(response=>{
-            console.log(response)
-        }).finally(()=>showLoader(false))
+        }).then(response => { 
+            setDataEdit({
+                order: response.order[0],
+                orderItems: response.orderItems
+            }) 
+            navigate(`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.SALE}`, { replace: true })           
+        }).finally(() => showLoader(false))
     }
 
     return (
@@ -117,7 +124,7 @@ export default function OrderTable({orders}: OrderTableProps) {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {orders.slice(0, 2).map((order, index) => (
+                            {orders.slice(0, 50).map((order, index) => (
                                 <TableRow
                                     key={index}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -127,19 +134,27 @@ export default function OrderTable({orders}: OrderTableProps) {
                                     </TableCell>
                                     <TableCell>
 
-                                        <Tooltip describeChild title="Transformar a NE O FV">
-                                            <IconButton aria-label="delete" onClick={() => handleTransformToDoc(order.orderId)}>
-                                                <MoveUpIcon />
-                                            </IconButton>
-                                        </Tooltip>
+                                        {
+                                            !(order.documentoId > 0) && (<Tooltip describeChild title="Transformar a NE O FV">
+                                                <IconButton aria-label="delete" onClick={() => handleTransformToDoc(order.orderId)}>
+                                                    <MoveUpIcon />
+                                                </IconButton>
+                                            </Tooltip>)
+                                        }
                                         <IconButton aria-label="delete" onClick={() => handleUpdateState(order.orderId)}>
                                             <DeleteIcon />
                                         </IconButton>
-                                        <Tooltip describeChild title="Editar">
-                                            <IconButton aria-label="Editar" onClick={() => handleEdit(order.orderId)}>
-                                                <EditIcon />
-                                            </IconButton>
-                                        </Tooltip>
+
+                                        {
+                                            !(order.documentoId > 0) && (
+                                                <Tooltip describeChild title="Editar">
+                                                    <IconButton aria-label="Editar" onClick={() => handleEdit(order.orderId)}>
+                                                        <EditIcon />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            )
+                                        }
+
                                         <Tooltip describeChild title="Impresión">
                                             <IconButton aria-label="Impresión" onClick={() => handleAskToPrint(order.orderId)}>
                                                 <PrintIcon />
@@ -156,7 +171,7 @@ export default function OrderTable({orders}: OrderTableProps) {
                                             <IconButton aria-label="Impresión" onClick={() => handleUpdateState(order.orderId)}>
                                                 <ShareSharpIcon />
                                             </IconButton>
-                                        </Tooltip>                                                                                
+                                        </Tooltip>
                                     </TableCell>
                                     <TableCell align="center">{order.serie}</TableCell>
                                     <TableCell align="center">{order.createdAt}</TableCell>
