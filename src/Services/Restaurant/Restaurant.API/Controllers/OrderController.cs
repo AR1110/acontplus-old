@@ -1,5 +1,6 @@
 ﻿using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
+using Restaurant.Core.Entities;
 using Restaurant.Core.Interfaces;
 using Services.Common;
 using Services.Common.Logs;
@@ -25,7 +26,7 @@ namespace Restaurant.API.Controllers
                     { "json", json}
                 };
                 var orders = await _orderService.GetAsync(parameters);
-                if (orders == null | string.IsNullOrEmpty(orders))
+                if (orders == null)
                 {
                     _log.LogActivity("No se encontro datos");
                     return NoContent();
