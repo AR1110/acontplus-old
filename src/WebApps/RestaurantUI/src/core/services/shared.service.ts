@@ -43,12 +43,7 @@ class Shared {
 
         for (const param of params) {
             console.log(param)
-            const urlPrint = `
-            ${param.urlPrinter}?rdlcProps=
-            ${JSON.stringify(param.rdlcProps)}&dataSources=
-            ${encodeURIComponent(JSON.stringify(param.dataSources))}&rdlcParams=
-            ${JSON.stringify(param.rdlcParams)}
-            `
+            const urlPrint = `${param.urlPrinter}?rdlcProps=${param.rdlcProps}&dataSources=${encodeURIComponent(param.dataSources)}&rdlcParams=${param.rdlcParams}`
             console.log(urlPrint)
             await fetch(urlPrint).then(function (response) {
                 if (response.ok) {

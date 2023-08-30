@@ -54,6 +54,6 @@ BEGIN
 		estado = CAST(1 AS BIT),
 		copyPrint = CAST(0 AS BIT)
 	FROM TipoDocumento WITH (NOLOCK)
-    WHERE codigo IN ('FV', 'NE', 'PR', 'IC', 'EC', 'A', 'OR')
+    WHERE codigo IN ('FV', 'NE', 'PR', 'IC', 'EC', 'A', 'OR', 'ORC')
 END
 GO
