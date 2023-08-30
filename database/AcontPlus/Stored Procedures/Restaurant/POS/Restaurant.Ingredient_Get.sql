@@ -4,7 +4,7 @@ GO
 --Author: Ivan Paz - Ignacio Manchu.
 --Date: 2023-08-04
 --Description: SP FOR GET INGREDIENTS
--- Restaurant.Ingredient_Get 111, '{"pageIndex": 1,"pageSize": 10}', ''
+-- Restaurant.Ingredient_Get 139, '{"pageIndex": 1,"pageSize": 10}', ''
 CREATE OR ALTER PROCEDURE Restaurant.Ingredient_Get
     @userRoleId INT,
     @json VARCHAR(MAX),
