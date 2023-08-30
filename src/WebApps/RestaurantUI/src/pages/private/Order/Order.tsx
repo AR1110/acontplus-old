@@ -12,23 +12,21 @@ import { orderReadAdapter } from "@/core/adapters";
 
 export default function Order() {
     const navigate = useNavigate();
-    const showLoader = useLoaderStore(state=>state.showLoader);
+    const showLoader = useLoaderStore(state => state.showLoader);
     const [orders, setOrders] = useState<Array<OrderReadDto>>([])
 
     const handleNewOrder = () => {
         navigate(`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.SALE}`, { replace: true })
     }
 
-    const getOrders = async ()=>{
+    const getOrders = async () => {
         showLoader(true)
-        await OrdenService.get({pageIndex: 1, pageSize: 2, tipo: 1}).then(response=>{
-            console.log(response)
-            console.log(response)
-            setOrders(orderReadAdapter(response.orders))           
-        }).finally(()=>showLoader(false))
+        await OrdenService.get({ pageIndex: 1, pageSize: 2, tipo: 1 }).then(response => {
+            setOrders(orderReadAdapter(response.orders))
+        }).finally(() => showLoader(false))
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         getOrders();
     }, [])
 

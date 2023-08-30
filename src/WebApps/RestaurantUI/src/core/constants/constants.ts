@@ -16,5 +16,6 @@ export const enum PERSIS_USER {
 
 export const enum DOC_TYPE {
     FV = 'FV',
-    NE = 'NE'    
+    NE = 'NE' ,
+    OR ='OR'   
 }

@@ -73,10 +73,7 @@ export default function ItemCard({ item }: ItemCardProps) {
         ProductService.findForSale(item.productId, dataWarehouse.idBodega).then(response => {
             const { product, measures } = response;
             const measureData = measures.find(measure => measure.measureId === product.measureId) as Measure;
-            console.log(item)
-            console.log(product)
-            console.log(measures)
-            console.log(dataForm)
+         
             const taxRateData = dataForm.taxRates.find(item=>item.taxRateCode===product.taxRateCode);
             const taxId = dataForm.taxes.find(tax => tax.code === taxRateData?.taxCode)?.taxId ?? 0
             const taxPercentId = taxRateData?.taxRateId ?? 0
@@ -117,6 +114,8 @@ export default function ItemCard({ item }: ItemCardProps) {
             console.log(product)
             function addItem() {
                 addItemToCart({
+                    orderId: 0,
+                    id: 0,
                     index: 0,
                     productId: product.productId,
                     code: product.productCode,
@@ -156,9 +155,9 @@ export default function ItemCard({ item }: ItemCardProps) {
                 flexDirection: 'column',
                 height: '190px',
                 borderRadius: "16px",
-                borderColor: items.some(cartItem => cartItem.productId === item.productId) ? '#6571ff !important' : '',
+                borderColor: items.some(cartItem => cartItem.itemId === item.itemId) ? '#6571ff !important' : '',
 
-                border: items.some(cartItem => cartItem.productId === item.productId) ? '1px solid' : '',
+                border: items.some(cartItem => cartItem.itemId === item.itemId) ? '1px solid' : '',
             }
         }>
             <CardActionArea onClick={() => handleSelectItem(item)}>

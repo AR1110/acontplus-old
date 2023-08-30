@@ -9,11 +9,11 @@ export default function TableSelect() {
   const [table, setAge] = React.useState('');
   const dataForm = useSaleStore(state=>state.dataForm);
   const setSummary = useSaleStore(state=>state.setSummary)
-  const summary = useSaleStore(state=>state.summary)
+  const order = useSaleStore(state=>state.order)
 
   const handleChange = (event: SelectChangeEvent) => {
      setSummary({
-      ...summary,
+      ...order,
       tableId: Number(event.target.value)
      }) 
   };
@@ -25,7 +25,7 @@ export default function TableSelect() {
       <Select
         labelId="Mesa"
         id="demo-select-small"
-        value={summary.tableId.toString()}
+        value={order.tableId.toString()}
         label="Mesa"
         onChange={handleChange}
       >

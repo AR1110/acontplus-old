@@ -1,13 +1,13 @@
- 
+
 import Swal from "sweetalert2"
 import { PATHS } from "../constants"
-import { ApiResponse} from "../models" 
+import { ApiResponse } from "../models"
 import { Http, SnackbarUtility } from "../utilities"
 
 
 
 class Shared {
-    async askToPrint(orderId: number){
+    async askToPrint(orderId: number) {
         const {
             isConfirmed
         } = await Swal.fire({
@@ -23,42 +23,48 @@ class Shared {
         }
     }
 
-    async getPrinter(orderId: number){
+    async getPrinter(orderId: number) {
         const resultAxios = await Http({
             method: 'get',
-            url: `${PATHS.PRIVATE}Order/Print/${orderId}`, 
+            url: `${PATHS.PRIVATE}Order/Print/${orderId}`,
         })
-    
+
         const response: ApiResponse = resultAxios.data;
-        if(response.code==="0"){
+        if (response.code === "0") {
             SnackbarUtility.warning(response.message)
         }
-        if(response.code==="1"){
+        if (response.code === "1") {
             this.print(JSON.parse(response.payload));
-        }       
+        }
     }
-    
 
-    print(params: any){
-        const urlPrinter = params[0].urlPrinter + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + encodeURIComponent(params[0].dataSources) + '&rdlcParams=' + params[0].rdlcParams
-    
-        fetch(urlPrinter).then(function (response) {
-            if (response.ok) {
-                SnackbarUtility.success("Impresion correcta!") 
-            } else {
-                SnackbarUtility.warning("Error!")            
-            }
-        }).catch(function (error) {
-            SnackbarUtility.error('Hubo un problema al imprimir:' + error.message);
-        })
+
+    async print(params: any) {
+
+        for (const param of params) {
+            console.log(param)
+            const urlPrint = `${param.urlPrinter}?rdlcProps=${param.rdlcProps}&dataSources=${encodeURIComponent(param.dataSources)}&rdlcParams=${param.rdlcParams}`
+            console.log(urlPrint)
+            await fetch(urlPrint).then(function (response) {
+                if (response.ok) {
+                    SnackbarUtility.success("Impresion correcta!")
+                } else {
+                    SnackbarUtility.warning("Error!")
+                }
+            }).catch(function (error) {
+                SnackbarUtility.error('Hubo un problema al imprimir:' + error.message);
+            })
+        }
+
+        // console.log(params)
+
     }
 
 }
 
- 
-
-export const SharedService  = new Shared()
- 
 
 
- 
+export const SharedService = new Shared()
+
+
+

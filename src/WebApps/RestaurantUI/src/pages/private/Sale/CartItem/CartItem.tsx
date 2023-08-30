@@ -9,24 +9,33 @@ import Typography from '@mui/material/Typography';
 import { Box, Button, ButtonGroup, Collapse, Grid, IconButton, TextField } from '@mui/material';
 import { AddIcon, CommentIcon, DoDisturbOnTwoToneIcon, RemoveIcon } from '@/core/components';
 import { useSaleStore } from '@/stores';
+import { ItemRead } from '@/core/models';
+import { useState } from 'react';
 
-export default function AlignItemsList({ item }: { item: any }) {
+
+type CartItemProps = {
+    index: number
+    item: ItemRead
+}
+
+
+const CartItem = ({ index, item }: CartItemProps) => {
     const removeItemFromCart = useSaleStore(state => state.removeItemFromCart)
     const setItemChangeQty = useSaleStore(state => state.setItemChangeQty)
 
-    const [expanded, setExpanded] = React.useState(false);
+    const [expanded, setExpanded] = useState(false);
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
     return (
         <>
             <ListItem alignItems="flex-start" secondaryAction={
-                <IconButton aria-label="Quitar" onClick={() => removeItemFromCart(item.productId)}>
+                <IconButton aria-label="Quitar" onClick={() => removeItemFromCart(index)}>
                     <DoDisturbOnTwoToneIcon />
                 </IconButton>
             }>
                 <ListItemAvatar>
-                    <Avatar alt={item.descripcion} src={item.s3ObjectUrl} sx={{ width: 56, height: 56 }}>P</Avatar>
+                    <Avatar alt={item.description} src={item.s3ObjectUrl} sx={{ width: 56, height: 56 }}>P</Avatar>
                 </ListItemAvatar>
                 <ListItemText sx={{
                     pl: 1
@@ -98,3 +107,5 @@ export default function AlignItemsList({ item }: { item: any }) {
         </>
     );
 }
+
+export default CartItem;

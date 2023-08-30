@@ -10,6 +10,7 @@ import { itemToApi, summaryToApi } from '@/core/adapters';
 import { OrdenService, SharedService } from '@/core/services';
 import { QueryParams } from '@/core/models';
 import { AddShoppingCartIcon, ArrowDropDownIcon, RestartAltIcon, SaveIcon } from '@/core/components';
+import { DOC_TYPE } from '@/core/constants';
 
 const styleListItem = {
     paddingTop: '2px',
@@ -18,8 +19,8 @@ const styleListItem = {
 
 const Cart = () => {
     const cartItems = useSaleStore(state => state.items);
-    const { summary, dataForm } = useSaleStore(state => ({
-        summary: state.summary,
+    const { order, dataForm } = useSaleStore(state => ({
+        order: state.order,
         items: state.items,
         dataForm: state.dataForm
     }));
@@ -77,7 +78,7 @@ const Cart = () => {
     };
 
 
-    const askToSave = async function (codDoc?: string) {
+    const askToSave = async function (codDoc: string) {
 
 
         // setVoucher({
@@ -92,7 +93,7 @@ const Cart = () => {
         //     SnackbarUtility.warning('Seleccione el cliente');
         //     return
         // }
-        if (!(summary.tableId > 0)) {
+        if (!(order.tableId > 0)) {
             SnackbarUtility.warning('Seleccione la Mesa');
             return
         }
@@ -113,7 +114,7 @@ const Cart = () => {
 
         if (!isConfirmed) return
 
-        const summaryResult = summaryToApi(summary);
+        const summaryResult = summaryToApi(order);
         const itemsResult = itemToApi(cartItems);
         const taxesResult = cartItems.flatMap(item => item.taxes);
         // const payments = {
@@ -125,7 +126,7 @@ const Cart = () => {
         const data = {
             ...summaryResult,
             codDoc,
-            quickSale: ['FV', 'NE'].includes(codDoc!) ? true : false,
+            quickSale: ['FV', 'NE'].includes(codDoc) ? true : false,
             items: itemsResult,
             taxes: taxesResult,
             payments: {}
@@ -137,14 +138,15 @@ const Cart = () => {
                 SnackbarUtility.warning(response.message)
             }
             if (response.code === "1") {
+                const queryParams: QueryParams = JSON.parse(response.payload)[0];
                 SnackbarUtility.success(response.message);
+               
                 //Order 
-                if (!codDoc) {
+                if (codDoc ===DOC_TYPE.OR) {
                     resetForm();
                     return
                 }
 
-                const queryParams: QueryParams = JSON.parse(response.payload)[0];
                 if (queryParams.payAutomatic) {
                     setQueryParams(queryParams);
                     payment.openDialogCustom();
@@ -197,7 +199,7 @@ const Cart = () => {
 
                     <List sx={{ width: '100%', maxHeight: 300, overflowY: 'auto', pb: 5, bgcolor: 'background.paper' }}>
                         {cartItems.map((item, index) => (
-                            <CartItem item={item} key={index} />
+                            <CartItem item={item} index={index} key={index} />
 
                         ))}
                     </List>
@@ -215,7 +217,7 @@ const Cart = () => {
                             SubTotal
                         </Typography>
                     </ListItemText>
-                    <Typography variant="subtitle2">${summary.total.toFixed(2)}</Typography>
+                    <Typography variant="subtitle2">${order.subTotalSinImpuestos.toFixed(2)}</Typography>
 
                 </ListItem>
                 <ListItem sx={styleListItem}>
@@ -224,7 +226,7 @@ const Cart = () => {
                             IVA (12%)
                         </Typography>
                     </ListItemText>
-                    <Typography variant="subtitle2">${summary.taxAmount.toFixed(2)}</Typography>
+                    <Typography variant="subtitle2">${order.tax.toFixed(2)}</Typography> 
                 </ListItem>
                 <Divider />
                 <ListItem>
@@ -233,27 +235,34 @@ const Cart = () => {
                             Total
                         </Typography>
                     </ListItemText>
-                    <Typography color="error" variant="h6" gutterBottom>${summary.netTotal.toFixed(2)}</Typography>
+                  
+                    <Typography color="error" variant="h6" gutterBottom>${order.total.toFixed(2)}</Typography> 
                 </ListItem>
             </List>
             {/**End totals */}
             <Box sx={{ flexGrow: 1, p: 2 }}>
                 <Grid container spacing={2} columns={16}>
-                    <Grid item xs={16} md={8} lg={8}>
+                    <Grid item xs={16} md={6} lg={6}>
                         <Button color="error" variant="contained" size="large" fullWidth startIcon={<RestartAltIcon />} onClick={onClickResetFrom} sx={{
                             height: 50
                         }}>
                             Limpiar
                         </Button>
                     </Grid>
-                    <Grid item xs={16} md={8} lg={8}>
+                    <Grid item xs={16} md={10} lg={10}>
                         {/* <Button color="success" disabled={items.length===0} variant="contained" size="large" onClick={()=>askToSave()} fullWidth endIcon={<ArrowForwardIosIcon />}>
                             Ir a pago
                         </Button> */}
                         <ButtonGroup variant="contained" color='success' ref={anchorRef} aria-label="split button" fullWidth size='large' sx={{
                             height: 50,
                         }}>
-                            <Button startIcon={<SaveIcon />} onClick={() => askToSave()}>Guardar</Button>
+                            <Button startIcon={<SaveIcon />} onClick={() => askToSave(DOC_TYPE.OR)}>
+
+                                {
+                                    order.orderId > 0 ? 'Actualizar' : 'Guardar'
+                                }
+
+                            </Button>
                             <Button
                                 size="small"
                                 aria-controls={open ? 'split-button-menu' : undefined}
@@ -286,8 +295,8 @@ const Cart = () => {
                                     <Paper>
                                         <ClickAwayListener onClickAway={handleClose}>
                                             <MenuList id="split-button-menu" autoFocusItem>
-                                                <MenuItem onClick={() => askToSave('FV')}>Factura</MenuItem>
-                                                <MenuItem onClick={() => askToSave('NE')}>Nota Entrega</MenuItem>
+                                                <MenuItem onClick={() => askToSave(DOC_TYPE.FV)}>Factura</MenuItem>
+                                                <MenuItem onClick={() => askToSave(DOC_TYPE.NE)}>Nota Entrega</MenuItem>
 
                                             </MenuList>
                                         </ClickAwayListener>

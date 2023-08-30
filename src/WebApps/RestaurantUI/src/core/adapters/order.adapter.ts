@@ -4,6 +4,7 @@ function orderReadAdapter(orders: RawOrderData[]): Array<OrderReadDto> {
     console.log(orders);
     return orders.map(order => ({
         orderId: order.id,
+        documentoId: order.documentoId,
         establecimientoId: order.establecimientoId,
         puntoEmisionId: order.puntoEmisionId,
         serie: order.serie,
