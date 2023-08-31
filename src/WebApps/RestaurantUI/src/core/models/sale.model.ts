@@ -24,6 +24,7 @@ export interface Order {
     //Opcionales - se usa cuando se actualiza el orden 
     saveDoc?: boolean
     updateOrder?: boolean
+    uuid?: string
 }
 
 //Impuesto Articulos 
@@ -36,8 +37,8 @@ export interface ItemTaxes {
 }
 
 export interface ItemBase {
-    readonly id: number
-    readonly orderId: number
+    id: number
+    orderId: number
     index: number
     productId: number
     code: string    
@@ -66,6 +67,7 @@ export interface ItemRead extends ItemBase {
 
 //Start To Api 
 export interface ItemPostDto {
+    readonly orderItemId: number
     readonly orderId?: number
     uuid: string
     itemId: number
@@ -79,7 +81,7 @@ export interface ItemPostDto {
     total: number
 }
 export interface SummaryPostDto {
-
+    orderId: number
     establecimientoId: number
     puntoEmisionId: number
     bodegaId: number
@@ -100,7 +102,7 @@ export interface SummaryPostDto {
     codDoc: string
     quickSale: boolean
     fechaEmision: Date,   
-    uuid: string 
+    uuid?: string 
 }
 
 

@@ -4,6 +4,7 @@ import { hideLoader, showLoader } from "$core/utils/loading-spinner";
 import { IngredientService } from "$core/services/restaurant/ingredient-service";
 import { productionAreaService } from "$core/services/restaurant/production-area-service";
 import type { Item } from "$core/interfaces/restaurant/item";
+import { RecipeService } from "../../../core/services/restaurant/recipe-service";
 
 type StateModal = {
   isOpen: boolean;
@@ -14,7 +15,7 @@ type State = {
   items: any;
   ingredientes: [];
   productionAreas: [];
-  recipes: any,
+  recipes: any;
   dataUpdate: Item;
 };
 const initiatlState: State = {
@@ -65,7 +66,6 @@ const createItemStore = () => {
     showLoader();
     let json = { pageIndex: 1, pageSize: 10, tipo: 1 };
 
-
     let query = Object.assign(json, params ? params : json);
 
     update((state) => {
@@ -89,15 +89,37 @@ const createItemStore = () => {
       });
   };
 
-  const getIngredient = (item: any) => {
-    console.log(item);
-    IngredientService.get(JSON.stringify({ id: item.id }))
+  const getIngredient = () => {
+    IngredientService.get(JSON.stringify({ pageIndex: 1, pageSize: 10 }))
       .then((response) => {
         hideLoader();
         if (response) {
           update((state) => ({
             ...state,
             ingredientes: response["ingredients"],
+          }));
+        }
+      })
+      .finally(() => {
+        hideLoader();
+      });
+  };
+
+  const getRecipe = (item: any) => {
+    RecipeService.getByItem(item.id)
+      .then((response) => {
+        hideLoader();
+        if (response) {
+          update((state) => ({
+            ...state,
+            recipes: response["recipe"],
+            isOpen: true,
+            dataUpdate: item,
+          }));
+        } else {
+          update((state) => ({
+            ...state,
+            recipes: [],
             isOpen: true,
             dataUpdate: item,
           }));
@@ -132,6 +154,7 @@ const createItemStore = () => {
     get,
     getIngredient,
     getProductionArea,
+    getRecipe,
   };
 };
 

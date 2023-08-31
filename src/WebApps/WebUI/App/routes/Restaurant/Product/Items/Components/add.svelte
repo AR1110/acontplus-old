@@ -20,7 +20,8 @@
   const unSuscribe = useItemStore.subscribe((values) => {
     (ingredientes = values.ingredientes),
       (productionAreas = values.productionAreas),
-      (data = values.dataUpdate);
+      (data = values.dataUpdate),
+      (recipe = values.recipes);
   });
 
   const onUpdate = () => {
@@ -156,7 +157,6 @@
       editor: true,
     },
   ];
-
 </script>
 
 {#if $useItemStore.isOpen}

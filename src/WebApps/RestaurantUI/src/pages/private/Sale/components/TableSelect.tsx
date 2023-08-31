@@ -7,7 +7,8 @@ import { useSaleStore } from '@/stores';
 
 export default function TableSelect() {
   const [table, setAge] = React.useState('');
-  const dataForm = useSaleStore(state=>state.dataForm);
+  const tables = useSaleStore(state=>state.dataForm.tables);
+  
   const setSummary = useSaleStore(state=>state.setSummary)
   const order = useSaleStore(state=>state.order)
 
@@ -33,7 +34,7 @@ export default function TableSelect() {
         <MenuItem value={0}>
           <em>None</em>
         </MenuItem>
-        {dataForm.tables.map((option, key) => (
+        {tables.map((option, key) => (
           <MenuItem key={key} value={option.tableId}>
             {option.description}
           </MenuItem>
