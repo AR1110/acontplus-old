@@ -14,7 +14,7 @@ export default function CustomerSearch() {
   const [customers, setCustomers] = useState<Array<CustomerReadDto>>([]);
   const [loading, setLoading] = useState(false);
   const setSummary = useSaleStore(state=>state.setSummary)
-  const summary = useSaleStore(state=>state.summary)
+  const summary = useSaleStore(state=>state.order)
   
   const customerSearch =  (textSearch: string) => { 
     if(textSearch.length < 2) return

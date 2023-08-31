@@ -149,7 +149,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
 
         if (items.some(itemCompare => itemCompare.productId === item.productId)) {
 
-            const newArray = items.map((itemToModify, index) => {
+            const newArray = items.map((itemToModify) => {
                 if(itemToModify.productId === item.productId) {
                     const sumQty = itemToModify.quantity + 1;
                     const sumTotal = sumQty * itemToModify.price;
