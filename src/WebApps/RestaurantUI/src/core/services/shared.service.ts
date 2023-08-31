@@ -41,19 +41,41 @@ class Shared {
 
     async print(params: any) {
 
+        // await fetch(params[0].urlPrinter + "/GetPrinters")
+        //     .then(response => response.json())
+        //     .then(data => { console.log(data); })
+        //     .catch(function (error) {
+        //         SnackbarUtility.error('Hubo un problema al obtener las impresoras:' + error.message);
+        //     })
+
         for (const param of params) {
-            console.log(param)
-            const urlPrint = `${param.urlPrinter}?rdlcProps=${param.rdlcProps}&dataSources=${encodeURIComponent(param.dataSources)}&rdlcParams=${param.rdlcParams}`
-            console.log(urlPrint)
-            await fetch(urlPrint).then(function (response) {
-                if (response.ok) {
-                    SnackbarUtility.success("Impresion correcta!")
-                } else {
-                    SnackbarUtility.warning("Error!")
-                }
-            }).catch(function (error) {
-                SnackbarUtility.error('Hubo un problema al imprimir:' + error.message);
+            //console.log(param)
+            //const urlPrint = `${param.urlPrinter}?rdlcProps=${param.rdlcProps}&dataSources=${encodeURIComponent(param.dataSources)}&rdlcParams=${param.rdlcParams}`
+            // console.log(urlPrint)
+            await fetch(param.urlPrinter, {
+                method: "POST", // *GET, POST, PUT, DELETE, etc.
+                //mode: "no-cors", // no-cors, *cors, same-origin
+                cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: "same-origin", // include, *same-origin, omit
+                headers: {
+                    "Content-Type": "application/json",
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                //redirect: "follow", // manual, *follow, error
+                //referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+                body: JSON.stringify(param), // body data type must match "Content-Type" header
             })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code == "1") {
+                        SnackbarUtility.success(data.message)
+                    } else {
+                        SnackbarUtility.warning(data.message)
+                    }
+                }).catch(function (error) {
+                    console.log(error)
+                    SnackbarUtility.error('Hubo un problema al imprimir:' + error.message);
+                })
         }
 
         // console.log(params)

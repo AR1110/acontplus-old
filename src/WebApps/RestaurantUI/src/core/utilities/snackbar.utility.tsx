@@ -8,7 +8,7 @@ export const SnackbarUtilitiesConfigurator: React.FC = () => {
 
 export const SnackbarUtility = {
   toast(msg: string, variant: VariantType = "default") {
-    useSnackbarRef.enqueueSnackbar(msg, { variant, autoHideDuration: 1000 });
+    useSnackbarRef.enqueueSnackbar(msg, { variant, autoHideDuration: 1000, preventDuplicate: true });
   },
   success(msg: string) {
     this.toast(msg, "success");
