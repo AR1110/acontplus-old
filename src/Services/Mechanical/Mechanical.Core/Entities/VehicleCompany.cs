@@ -13,6 +13,6 @@ namespace Mechanical.Core.Entities
         public int CustomerId { get; set; }
 
         [MaxLength(300)]
-        public string? Observation { get; set; }
+        public string Observation { get; set; }
     }
 }

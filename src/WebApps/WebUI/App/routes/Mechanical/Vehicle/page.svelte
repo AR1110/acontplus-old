@@ -2,6 +2,8 @@
   import Breadcrumbs from "$core/components/Breadcrumbs.svelte";
   import Add from "$routes/Mechanical/Vehicle/components/add.svelte";
   import List from "$routes/Mechanical/Vehicle/components/list.svelte";
+  import { onMount } from "svelte";
+  import { vehicleStore } from "../Store/vehicle.store";
 
   let isNew = false;
 
@@ -17,8 +19,12 @@
   };
 
   const reloadList = () => {};
+
+  onMount(() => {
+    vehicleStore.get();
+  });
 </script>
 
 <Breadcrumbs title={"Vehículos"} action={"Nuevo"} openNew={() => openNew()} />
-  <List {reloadList} />
-  <Add openNew={isNew} modalClosed={() => closeModal()} />
+<List />
+<Add openNew={isNew} modalClosed={() => closeModal()} />

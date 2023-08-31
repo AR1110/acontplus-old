@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { showLoader, hideLoader } from "$core/utils/loading-spinner";
   import toast from "$core/utils/toast";
   import Swal from "sweetalert2";
   import Search from "$core/components/Search.svelte";
@@ -7,35 +7,25 @@
   import type { Customer } from "$core/interfaces/customer/customer";
   import { VehicleService } from "$core/services/Mechanical/vehicle-service";
   import Add from "./add.svelte";
+  import { vehicleStore } from "$routes/Mechanical/Store/vehicle.store";
+  import { onMount } from "svelte";
 
-  //Test event 
-  // import { setContext } from "svelte"
-  // import { writable } from "svelte/store"
-  //Test event 
-
-  export let reloadList;
-
+  let vehicles = [];
   let vehicle = {} as Vehicle;
   let customer = {} as Customer;
   let isNew = false;
   let searchTerm = "";
   let filteredVehicles = [];
-  let vehicles = [];
 
-  onMount(async () => {
-    await getVehicles();
-    
+  //Get
+  const unsubscribe = vehicleStore.subscribe((values) => {
+    vehicles = values;
   });
 
-  // List Vehicles
-  const getVehicles = () => {
-    VehicleService.get(JSON.stringify({ tipo: 1 })).then((response) => {
-      if (response) {
-        vehicles = response["vehicles"];
-      }
-    });
-  };
-  
+  onMount(() => {
+    return () => unsubscribe();
+  });
+
   //GetId for Edit
   const editItem = (item) => {
     VehicleService.get(JSON.stringify({ tipo: 3, id: item.id })).then(
@@ -51,11 +41,14 @@
 
   //Status Vehicle
   const putState = (id, state) => {
+    showLoader();
     VehicleService.putState(id, state).then((response) => {
-      if (response.status == 200) {
-        toast({ type: "success", message: response.data });
+      hideLoader();
+      if (response.code == 1) {
+        toast({ type: "success", message: response.message });
+        vehicleStore.get();
       } else {
-        toast({ type: "error", message: response.data });
+        toast({ type: "warning", message: response.message });
       }
     });
   };
@@ -73,13 +66,15 @@
       cancelButtonText: "Cerrar",
     }).then((result) => {
       if (result.isConfirmed) {
+        showLoader();
         VehicleService.remove(id).then((response) => {
+          hideLoader();
           if (response.code == 1) {
             toast({ type: "success", message: response.message });
+            vehicleStore.get();
           } else {
             toast({ type: "warning", message: response.message });
           }
-          reloadList();
         });
       }
     });
@@ -87,14 +82,13 @@
 
   const searchVehicle = () => {
     return (filteredVehicles = vehicles.filter((vehicle) => {
-      let vehicleLicence = vehicle.name.toLowerCase();
+      let vehicleLicence = vehicle.vehicleLicence.toLowerCase();
       return vehicleLicence.includes(searchTerm.toLowerCase());
     }));
   };
 
   const closeModal = () => {
     isNew = false;
-    reloadList();
   };
 </script>
 
@@ -167,7 +161,7 @@
                     <input
                       type="checkbox"
                       bind:checked={item.enabled}
-                      on:click={() => putState(item.id, item.enabled)}
+                      on:change={() => putState(item.id, item.enabled)}
                       class="custom-control-input"
                       id="switch{item.id}"
                     />
