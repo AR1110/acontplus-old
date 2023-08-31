@@ -12,6 +12,7 @@ import { ProductService } from '@/core/services';
 import { useAuthStore, useLoaderStore } from '@/stores';
 import { SnackbarUtility } from '@/core/utilities'; 
 import Swal from 'sweetalert2';
+import { v4 as uuidv4 } from 'uuid';
 
 type ItemCardProps = {
     item: ItemReadDto
@@ -78,7 +79,7 @@ export default function ItemCard({ item }: ItemCardProps) {
             const taxId = dataForm.taxes.find(tax => tax.code === taxRateData?.taxCode)?.taxId ?? 0
             const taxPercentId = taxRateData?.taxRateId ?? 0
             const taxValue = measureData.rates[0]?.priceWithVat ?? 0
-            const uuid = crypto.randomUUID();
+            
 
             console.log(measureData)
             if (!product.takesInventory) {
@@ -114,6 +115,7 @@ export default function ItemCard({ item }: ItemCardProps) {
             
             console.log(product)
             function addItem() {
+                const uuid = uuidv4();
                 addItemToCart({
                     orderId: 0,
                     id: 0,

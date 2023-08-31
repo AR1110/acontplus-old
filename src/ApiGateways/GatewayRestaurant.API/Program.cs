@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using Lib.Common;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
@@ -35,10 +35,10 @@ app.UseRouting();
 
 app.UseCors(builder =>
 {
-    builder.WithOrigins(origins)
+    builder.AllowAnyOrigin()
     .SetIsOriginAllowedToAllowWildcardSubdomains()
     .AllowAnyHeader()
-    .AllowCredentials()
+    //.AllowCredentials()
     .AllowAnyMethod()
     .WithMethods("GET", "PUT", "POST", "DELETE", "OPTIONS")
     .WithExposedHeaders("Content-Disposition")
