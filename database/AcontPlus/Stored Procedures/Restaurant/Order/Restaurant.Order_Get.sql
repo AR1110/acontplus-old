@@ -37,7 +37,9 @@ BEGIN
         BEGIN
             SET @tableNames = 'order,orderItems'
             SELECT * FROM Restaurant.[Order] o WITH(NOLOCK) WHERE o.Id = @id 
-            SELECT * FROM Restaurant.[OrderItem] i WITH(NOLOCK) WHERE i.OrderId = @id 
+            
+            SELECT * FROM Restaurant.[OrderItem] i WITH(NOLOCK)
+            WHERE i.OrderId = @id AND ISNULL(Enabled, 0) = 1
         END
 END
 GO

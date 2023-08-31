@@ -41,7 +41,7 @@ BEGIN
     ,@estadoPagoId INT
     ,@ambiente INT
     ,@autoSriAuth BIT
-    ,@establecimientoId INT
+   
     
     SELECT @uuid                = uuid
         ,@itemsJson             = items
@@ -114,7 +114,7 @@ BEGIN
             )
 
             INSERT INTO @tblItems(uuid, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total)
-            SELECT uuid, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total 
+            SELECT uuid, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total
             FROM OPENJSON(@itemsJson)
                 WITH (
                         uuid UNIQUEIDENTIFIER '$.uuid',
@@ -127,7 +127,8 @@ BEGIN
                         cost NUMERIC(18,5) '$.cost',
                         price NUMERIC(18,5) '$.price',
                         discount NUMERIC(18,5) '$.discount',
-                        total NUMERIC(18,5) '$.total'
+                        total NUMERIC(18,5) '$.total',
+                        feeId INT         '$.feeId'
                       )
             IF (SELECT COUNT(*) FROM @tblItems) = 0
                 BEGIN
@@ -232,8 +233,8 @@ BEGIN
                     VALUES(@establecimientoId, @puntoEmisionId, @tableId, @sequence, @serie, @customerCompanyId, @tax, @discount, @total, 1, @userId)
 	                SET @orderId = (SELECT SCOPE_IDENTITY())
                     
-                    INSERT INTO Restaurant.OrderItem(OrderId, Uuid, ItemId, TaxId, TaxPercentId, TaxValue, Quantity, Cost, Price, Discount, Total, [Enabled], UserId)
-                    SELECT @orderId, uuid, itemId, taxId, taxPercentId, taxValue, quantity, cost, price, discount, total, 1, @userId FROM @tblItems
+                    INSERT INTO Restaurant.OrderItem(OrderId, Uuid, ItemId, TaxId, TaxPercentId, TaxValue, Quantity, Cost, Price, Discount, Total, [Enabled], UserId, FeeId)
+                    SELECT @orderId, uuid, itemId, taxId, taxPercentId, taxValue, quantity, cost, price, discount, total, 1, @userId, feeId FROM @tblItems
                     
                     DECLARE @totalCook INT = 0
                     SET @totalCook = (SELECT COUNT(*) FROM Restaurant.Item i INNER JOIN @tblItems ii ON i.Id = ii.ItemId WHERE i.Cooking = 1)

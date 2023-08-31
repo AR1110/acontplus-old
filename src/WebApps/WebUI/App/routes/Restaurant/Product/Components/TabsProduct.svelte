@@ -5,12 +5,12 @@
   import Ingredient from "../Ingredient/page.svelte";
   import Tabs from "$core/components/Tabs.svelte";
   let items = [
-    {
-      icon: "fa-solid fa-plate-wheat",
-      label: "Menus",
-      value: 1,
-      component: Menus,
-    },
+    // {
+    //   icon: "fa-solid fa-plate-wheat",
+    //   label: "Menus",
+    //   value: 1,
+    //   component: Menus,
+    // },
     {
       label: "Productos",
       value: 2,

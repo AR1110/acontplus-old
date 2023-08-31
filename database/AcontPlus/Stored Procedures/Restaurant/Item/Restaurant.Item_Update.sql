@@ -86,11 +86,11 @@ BEGIN
    
     SELECT @productId = productId FROM OPENJSON(@itemJson) WITH(productId INT '$.productId')
 
-    IF EXISTS(SELECT TOP 1 1 FROM Restaurant.Item WHERE ProductId = @productId AND Id != @id)
-        BEGIN
-            SELECT Common.ufnSpResponse('0', 'Este ítem ya se encuentra registrado', NULL)
-            RETURN
-        END
+    --IF EXISTS(SELECT TOP 1 1 FROM Restaurant.Item WHERE ProductId = @productId AND Id != @id)
+    --    BEGIN
+    --        SELECT Common.ufnSpResponse('0', 'Este ítem ya se encuentra registrado', NULL)
+    --        RETURN
+    --    END
             
     SET @userId = (SELECT idUsuario FROM V_usuario WHERE idUsuarioRol = @userRoleId) 
     
