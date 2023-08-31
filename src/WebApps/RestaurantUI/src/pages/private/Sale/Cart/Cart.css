@@ -1,0 +1,18 @@
+.buttonCart {
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    align-self: flex-start;
+    float: right;
+    margin-right: none;    
+    text-transform: capitalize !important;
+    line-height: 1 !important;
+}
+  
+  @media (max-width: 600px) {
+    .buttonCart {
+      height: 80px;
+    }
+  }

@@ -1,10 +1,16 @@
 
 export interface RawTableData {
-    id: string
+    id: number
+    capacity: number
+    numberTable: number
     description: string
+    floorId: number
 }
 
 export interface TableReadDto {
-    tableId: string
+    tableId: number
+    capacity: number
+    numberTable: number
     description: string
+    floorId: number
 }
