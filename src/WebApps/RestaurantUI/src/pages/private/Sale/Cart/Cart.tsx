@@ -125,42 +125,60 @@ const Cart = () => {
         // }
         const data = {
             ...summaryResult,
+            updateOrder: (order.orderId > 0) && codDoc === DOC_TYPE.OR,
+            saveDoc: (codDoc ===DOC_TYPE.FV) || (codDoc=== DOC_TYPE.NE),
             codDoc,
-            quickSale: ['FV', 'NE'].includes(codDoc) ? true : false,
+            quickSale: (codDoc ===DOC_TYPE.FV) || (codDoc=== DOC_TYPE.NE),
             items: itemsResult,
             taxes: taxesResult,
             payments: {}
         }
-        showLoader(true);
-        OrdenService.post(data).then(response => {
-            showLoader(false)
-            if (response.code === '0') {
-                SnackbarUtility.warning(response.message)
-            }
-            if (response.code === "1") {
-                const queryParams: QueryParams = JSON.parse(response.payload)[0];
-                SnackbarUtility.success(response.message);
-               
-                //Order 
-                if (codDoc ===DOC_TYPE.OR) {
-                    resetForm();
-                    return
+        if(order.orderId > 0){
+            showLoader(true);
+            OrdenService.put(order.orderId, data).then(response=>{
+                if (response.code === '0') {
+                    SnackbarUtility.warning(response.message)
                 }
-
-                if (queryParams.payAutomatic) {
-                    setQueryParams(queryParams);
-                    payment.openDialogCustom();
-                    return
+                if (response.code === "1") {
+                    SnackbarUtility.success(response.message); 
+                    const queryParams: QueryParams = JSON.parse(response.payload)[0];
+                    console.log(queryParams)
                 }
-
-
-                if (queryParams.printerAutomatic) {
-                    SharedService.getPrinter(1)
-                } else {
-                    resetForm();
+            }).finally(()=>showLoader(false))
+        }else{
+            showLoader(true);
+            OrdenService.post(data).then(response => {
+                showLoader(false)
+                if (response.code === '0') {
+                    SnackbarUtility.warning(response.message)
                 }
-            }
-        }).finally(() => showLoader(false)) 
+                if (response.code === "1") {
+                    SnackbarUtility.success(response.message);
+                    const queryParams: QueryParams = JSON.parse(response.payload)[0];
+                   
+                    //Order 
+                    if (codDoc ===DOC_TYPE.OR) {
+                        resetForm();
+                        return
+                    }
+    
+                    if (queryParams.payAutomatic) {
+                        setQueryParams(queryParams);
+                        payment.openDialogCustom();
+                        return
+                    }
+    
+    
+                    if (queryParams.printerAutomatic) {
+                        SharedService.getPrinter(1)
+                    } else {
+                        resetForm();
+                    }
+                }
+            }).finally(() => showLoader(false)) 
+        }
+
+
     } 
 
     return (

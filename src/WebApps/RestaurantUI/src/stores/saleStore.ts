@@ -13,8 +13,7 @@ import { ChangeEvent } from "react";
 import { create } from "zustand";
 import { produce } from 'immer';
 
-type State = {
-
+type State = { 
     itemSearch: ItemSearch
     collectionItems: Array<ItemReadDto>
     totalItems: number;
@@ -37,6 +36,7 @@ type State = {
 
 type Actions = {
     setDataEdit(obj: object): void
+    setChangeValueOrderItem<K extends keyof ItemRead>(itemIndex: number, property: K, newValue: ItemRead[K]): void
     setItemSearch(itemSearch: ItemSearch): void
     setSummary(order: Order): void
     getItemQty(productId: number): number
@@ -86,6 +86,26 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         )
         console.log(obj)
     },
+    setChangeValueOrderItem(itemIndex, prop, newValue){
+        const {items} = get(); 
+        
+        const newArray = items.map((elem, index) => {
+            if(index==itemIndex) {
+                return {
+                    ...elem,
+                    [prop]: newValue
+                }                
+            }
+            return elem;
+        });
+         
+        set(
+            produce((state: State)=>{
+                state.items = newArray;                
+
+            })
+        )
+    },
     setItemSearch: (itemSearch) => {
         set({
             itemSearch
@@ -113,9 +133,11 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         return qty;
     },
     setDataForm(dataForm) {
-        set({
-            dataForm
-        })
+        set(
+            produce((state:State)=>{
+                state.dataForm = dataForm;                
+            })
+        )
     },
     setCollectionItems: (collectionItems) => {
         set({
@@ -126,19 +148,26 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         const { items, setTotalItems, caculateTotals } = get();
 
         if (items.some(itemCompare => itemCompare.productId === item.productId)) {
-            for (const itemToModify of items) {
-                if (itemToModify.productId === item.productId) {
-                    itemToModify.quantity = itemToModify.quantity + 1;
-                    itemToModify.total = itemToModify.quantity * itemToModify.price;
-                    break
+
+            const newArray = items.map((itemToModify) => {
+                if(itemToModify.productId === item.productId) {
+                    const sumQty = itemToModify.quantity + 1;
+                    const sumTotal = sumQty * itemToModify.price;
+                  
+                    return {
+                        ...itemToModify,
+                        quantity: sumQty,
+                        total: sumTotal
+                    }                
                 }
-
-            }
-            set(state => ({
-                ...state,
-                items: [...items],
-            }))
-
+                return itemToModify;
+            });
+            
+            set(
+                produce((state:State)=>{
+                    state.items = newArray;
+                })
+            ) 
         } else {
             set(state => ({
                 ...state,

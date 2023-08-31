@@ -30,10 +30,7 @@ export const OrdenService = {
     async put(id: number, data: object) {
         const resultAxios = await Http({
             method: 'put',
-            url: `${PATHS.PRIVATE}${URL}`,
-            params: {
-                id
-            },
+            url: `${PATHS.PRIVATE}${URL}/${id}`,           
             data: { data }
         })
 

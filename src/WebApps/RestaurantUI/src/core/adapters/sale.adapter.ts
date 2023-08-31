@@ -1,7 +1,9 @@
-import { ItemRead, ItemPostDto, Summary, SummaryPostDto } from "../models";
+import { ItemRead, ItemPostDto, Order, SummaryPostDto } from "../models";
 
 function itemToApi(items: ItemRead[]): Array<ItemPostDto> {
+    console.log(items)
     return items.map(item => ({
+        orderItemId: item.id,
         uuid: item.uuid,
         itemId: item.itemId,
         feeId: item.feeId,
@@ -12,31 +14,34 @@ function itemToApi(items: ItemRead[]): Array<ItemPostDto> {
         cost: item.cost,
         price: item.price,
         discount: item.discount,
-        total: item.total
+        total: item.total,
+        obs: item.obs
     }))
 }
 
-function summaryToApi(summary: Summary): SummaryPostDto {
+function summaryToApi(order: Order): SummaryPostDto {
     return {
-        establecimientoId: summary.establecimientoId,
-        puntoEmisionId: summary.puntoEmisionId,
-        bodegaId: summary.bodegaId ,      
-        tableId: summary.tableId,
-        customerCompanyId: summary.customerCompanyId,
-        subtotalSinImpuestos: summary.subTotalSinImpuestos,
-        tax: summary.tax,
-        taxPercent: summary.taxPercent,
-        discount: summary.discount,
-        total: summary.total,
+        orderId: order.orderId,
+        establecimientoId: order.establecimientoId,
+        puntoEmisionId: order.puntoEmisionId,
+        bodegaId: order.bodegaId ,      
+        tableId: order.tableId,
+        customerCompanyId: order.customerCompanyId,
+        subtotalSinImpuestos: order.subTotalSinImpuestos,
+        tax: order.tax,
+        taxPercent: order.taxPercent,
+        discount: order.discount,
+        total: order.total,
         items: [],
         taxes: [],
         payments: {},
-        tip: summary.tip,
-        obs: summary.obs,
-        codDoc: summary.codDoc,  
-        quickSale: summary.quickSale ,
-        fechaEmision: summary.creationDate, 
-        uuid: crypto.randomUUID()       
+        tip: order.tip,
+        obs: order.obs,
+        codDoc: order.codDoc,  
+        quickSale: order.quickSale ,
+        fechaEmision: order.createdAt, 
+        uuid: order.orderId > 0 ? order.uuid : crypto.randomUUID(),
+           
     }
 }
 
