@@ -12,7 +12,6 @@ async function get(params) {
 
 async function post(data: any) {
     return await client.post(url, data).then((responseAxios) => {
-        console.log(responseAxios);
         if (responseAxios.status == 200) return { code: responseAxios.data.code, message: responseAxios.data.message };
         else return { code: 0, message: responseAxios.status }
     }, (err) => {
@@ -30,9 +29,13 @@ async function put(id, data) {
 }
 
 async function remove(id) {
-    return await client.delete(url + id).then((responseAxios) => {
-        if (responseAxios.status == 200) return { code: responseAxios.data.code, message: responseAxios.data.message };
-        else return { code: 0, message: responseAxios.status }
+    return await client.delete(url + id).then((response) => {
+        if (response.status == 200)
+            return {
+                code: response.data = true ? "1" : "0",
+                message: response.data = true ? "Eliminado Correctamente" : "No se pudo Eliminar"
+            };
+        else return { code: 0, message: response.data }
     }, (err) => {
         return { code: 0, message: err.status }
     })
@@ -40,12 +43,15 @@ async function remove(id) {
 
 async function putState(id, state) {
     return await client.put(url + "PutState/" + id + "/" + state).then((response) => {
-        let { status, data } = response;
-        return { status, data };
+        if (response.status == 200)
+            return {
+                code: response.data = true ? "1" : "0",
+                message: response.data = true ? "Actualizado Correctamente" : "No se pudo Actualizar"
+            };
+        else return { code: 0, message: response.data }
     }, (err) => {
-        let { status, data } = err.response;
-        return { status, data };
-    });
+        return { code: 0, message: err.status }
+    })
 }
 export const VehicleService = {
     get,

@@ -104,7 +104,7 @@ BEGIN
             --=========================== VALIDATION OF INFORMATION ===================================================================== --
             IF EXISTS (SELECT 1 FROM Mechanical.v_Vehicle WHERE LicensePlate = @LicensePlate AND CompanyId = @CompanyId )
                 BEGIN
-                    SELECT dbo.ufn_spresponse('0', 'Ya se encuentra registrado', NULL)
+                    SELECT [Common].[ufnSpResponse]('0', 'Ya se encuentra registrado', NULL)
                     RETURN
                 END 
             
@@ -157,9 +157,9 @@ BEGIN
 		    COMMIT TRAN 
 
 		    IF (@Id > 0) 
-                SELECT dbo.ufn_spresponse('1', 'Éxitos al guardar', NULL)
+                SELECT [Common].[ufnSpResponse]('1', 'Éxitos al guardar', NULL)
             ELSE 
-                SELECT dbo.ufn_spresponse('0', 'No se pudo guardar el Vehículo', NULL)
+                SELECT [Common].[ufnSpResponse]('0', 'No se pudo guardar el Vehículo', NULL)
 
 	END TRY 
 
@@ -175,7 +175,7 @@ BEGIN
 		VALUES
         (NEWID(), 'Mechanical/Post', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @userId)
 	         
-        SELECT dbo.ufn_spresponse('0', 'Error al guardar el Vehículo', NULL)
+        SELECT [Common].[ufnSpResponse]('0', 'Error al guardar el Vehículo', NULL)
 
     END CATCH 
 END

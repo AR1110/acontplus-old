@@ -99,11 +99,11 @@ BEGIN
              WHERE Id = @id
 
         COMMIT TRAN 
-        SELECT dbo.ufn_spresponse('1', 'Actualizado exitosamente', NULL)
+        SELECT [Common].[ufnSpResponse]('1', 'Actualizado exitosamente', NULL)
     END TRY 
 
     BEGIN CATCH 
-        SELECT dbo.ufn_spresponse('0', 'Error al Actualizar el Vehículo', NULL)
+        SELECT [Common].[ufnSpResponse]('0', 'Error al Actualizar el Vehículo', NULL)
         
         IF (@@TRANCOUNT > 0)
             BEGIN 

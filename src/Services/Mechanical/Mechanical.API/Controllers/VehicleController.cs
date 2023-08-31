@@ -2,9 +2,7 @@
 using Lib.Common.Api;
 using Lib.Common.DbUtils;
 using Mechanical.Core.Interfaces;
-using Mechanical.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Services.Common;
 using Services.Common.Logs;
 
@@ -15,12 +13,10 @@ namespace Mechanical.API.Controllers
     public class VehicleController : BaseApiController
     {
         private readonly IVehicleService _vehicleService;
-        private readonly MechanicalContext _context;
         private readonly LogWriter _log;
 
-        public VehicleController(MechanicalContext context, IVehicleService vehicleService, LogWriter log)
+        public VehicleController( IVehicleService vehicleService, LogWriter log)
         {
-            _context = context;
             _vehicleService = vehicleService;
             _log = log;
         }
@@ -96,18 +92,14 @@ namespace Mechanical.API.Controllers
         {
             try
             {
-                var parameters = new Dictionary<string, object> {
-                    { "userRoleId", User.GetUserRoleId() },
-                    { "id", id  }
-                };
-                var response = await _vehicleService.DeleteAsync(parameters);
-                if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo Eliminar"); }
+                bool response = await _vehicleService.DeleteAsync(id);
+                if (!response) { return BadRequest("No se pudo Eliminar"); }
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error on Delete: \n" + ex.ToString());
-                return BadRequest("Error On Delete");
+                _log.LogActivity("Error on PutState: \n" + ex.ToString());
+                return BadRequest("Error on Delete");
             }
         }
 
@@ -116,13 +108,9 @@ namespace Mechanical.API.Controllers
         {
             try
             {
-                var vehicle = await _context.VehicleCompanys.FindAsync(id);
-                if (vehicle == null) return NotFound();
-
-                vehicle.Enabled = state;
-                _context.Update(vehicle);
-                await _context.SaveChangesAsync();
-                return Ok("Habilitado exitosamente");
+                bool response = await _vehicleService.UpdateStateAsync(id, state);
+                if(!response) { return BadRequest("No se pudo Actualizar"); }
+                return Ok(response);
             }
             catch (Exception ex)
             {

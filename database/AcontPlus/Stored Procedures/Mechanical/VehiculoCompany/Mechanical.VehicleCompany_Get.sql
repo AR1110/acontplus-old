@@ -58,6 +58,8 @@ BEGIN
             WITH (NOLOCK) 
             WHERE CompanyId = @CompanyId AND Deleted IS NULL
             ORDER BY Id DESC
+            
+            RETURN
 		END
 
     -- GET DATAFORM -- 
@@ -65,6 +67,7 @@ BEGIN
 		BEGIN
 			SET @tableNames = 'vehicleTypes'
 			SELECT Id as vehicleTypeId, [Description] FROM Mechanical.VehicleType WITH (NOLOCK) WHERE Deleted IS NULL AND [Enabled] = 1
+            RETURN 
 		END 
 
     -- GET DATAFORM UPDATE O GET ID -- 
@@ -94,6 +97,7 @@ BEGIN
                   ,[Enabled]
             FROM Mechanical.v_Vehicle WITH (NOLOCK) 
             WHERE Id = @Id
+            RETURN 
         END 
 END
 GO
