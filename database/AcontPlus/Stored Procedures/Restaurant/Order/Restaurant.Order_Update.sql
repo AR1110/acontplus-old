@@ -44,8 +44,12 @@ BEGIN
     ,@updateOrder BIT
     ,@response NVARCHAR(MAX)
     ,@payload NVARCHAR(MAX)
+    ,@itemsJson NVARCHAR(MAX)
+    ,@taxesJson NVARCHAR(MAX)
 
      SELECT @uuid               = uuid
+        ,@itemsJson             = items
+        ,@taxesJson             = taxes
         ,@paymentsJson          = payments
         ,@establecimientoId     = establecimientoId
         ,@puntoEmisionId        = puntoEmisionId
@@ -66,7 +70,9 @@ BEGIN
         ,@updateOrder           = updateOrder
     FROM OPENJSON(@json)
     WITH(
-        uuid UNIQUEIDENTIFIER '$.uuid',            
+        uuid UNIQUEIDENTIFIER '$.uuid',  
+        items NVARCHAR(MAX) '$.items' AS JSON,
+        taxes NVARCHAR(MAX) '$.taxes' AS JSON,
         payments NVARCHAR(MAX) '$.payments' AS JSON,
         establecimientoId INT '$.establecimientoId',
         puntoEmisionId INT '$.puntoEmisionId',
@@ -96,35 +102,124 @@ BEGIN
             RETURN
         END
 
+        IF (ISJSON(@itemsJson) = 1)
+        BEGIN
+            DECLARE @tblItems AS TABLE(
+                orderItemId INT NOT NULL,
+                uuid UNIQUEIDENTIFIER NOT NULL,
+                itemId INT NOT NULL,
+                taxId INT NOT NULL,
+                taxPercentId INT NOT NULL,
+                feeId INT NOT NULL,
+                taxValue NUMERIC (18,5) NOT NULL,
+                quantity NUMERIC (18,5) NOT NULL,
+                cost NUMERIC(18,5) NOT NULL,
+                price NUMERIC(18,5) NOT NULL,
+                discount NUMERIC(18,5),
+                total NUMERIC(18,5) NOT NULL,
+                obs VARCHAR(500)
+            )
+
+            INSERT INTO @tblItems(orderItemId,uuid, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total)
+            SELECT orderItemId,uuid, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total 
+            FROM OPENJSON(@itemsJson)
+                WITH (
+                        orderItemId INT '$.orderItemId',
+                        uuid UNIQUEIDENTIFIER '$.uuid',
+                        itemId INT '$.itemId',
+                        taxId INT '$.taxId',
+                        taxPercentId INT '$.taxPercentId',
+                        feeId INT '$.feeId',
+                        taxValue NUMERIC (18,5)'$.taxValue',
+                        quantity NUMERIC (18,5) '$.quantity',
+                        cost NUMERIC(18,5) '$.cost',
+                        price NUMERIC(18,5) '$.price',
+                        discount NUMERIC(18,5) '$.discount',
+                        total NUMERIC(18,5) '$.total'
+                      )
+            IF (SELECT COUNT(*) FROM @tblItems) = 0
+                BEGIN
+                    SELECT Common.ufnSpResponse('0', 'No se pudo recuperar el detalle', NULL)
+                    RETURN
+                END
+        END
+    ELSE
+        BEGIN
+            SELECT Common.ufnSpResponse('0', 'El detalle no es valido', NULL)
+            RETURN
+        END
+
+    IF @saveDoc IS NULL OR @saveDoc = ''
+        BEGIN
+            SET @saveDoc = 0
+        END
+
     BEGIN TRY
         BEGIN TRAN
             IF @updateOrder = 1
                 BEGIN 
                     UPDATE Restaurant.[Order]
-                    SET EstablecimientoId   = @establecimientoId
-                        ,PuntoEmisionId     = @puntoEmisionId
-                        ,TableId            = @tableId
-                        ,[Sequence]         = @sequence                      
+                    SET TableId             = @tableId
                         ,CustomerCompanyId  = @customerCompanyId
                         ,Tax                = @Tax
                         ,Discount           = @Discount
                         ,Total              = @Total
+                        ,Obs                = @obs
                         ,[Enabled]          = 1
                     WHERE Id = @id
-                END
+                                        ------ INSERT -----
+                    INSERT INTO Restaurant.OrderItem(OrderId, Uuid, ItemId, TaxId, TaxPercentId, TaxValue, Quantity, Cost, Price, Discount, Total, [Enabled], UserId, FeeId)
+                    SELECT @id, uuid, itemId, taxId, taxPercentId, taxValue, quantity, cost, price, discount, total, 1, @userId, feeId
+                    FROM @tblItems ti
+                    WHERE ti.itemId NOT IN(SELECT rr.ItemId FROM Restaurant.OrderItem rr WHERE rr.OrderId = @id)
+                    
+                    ---- UPDATE ----
+                    SELECT *
+                    INTO #SelectNotExist
+                    FROM Restaurant.OrderItem ro 
+                    WHERE ro.OrderId = @id AND ro.ItemId NOT IN(SELECT itemId FROM @tblItems)
+
+                    UPDATE u
+                    SET u.Enabled = 0
+                        ,u.Deleted = 1
+                    FROM Restaurant.OrderItem u
+                    INNER JOIN #SelectNotExist t1 ON t1.OrderId = u.OrderId 
+                    WHERE u.ItemId = t1.ItemId
+                    
+                    DECLARE @totalCook INT = 0
+                    SET @totalCook = (SELECT COUNT(*) FROM Restaurant.Item i INNER JOIN @tblItems ii ON i.Id = ii.ItemId WHERE i.Cooking = 1)
+
+                    IF (@totalCook > 0)
+                        INSERT INTO Restaurant.[OrderKitchen] (OrderId, [Enabled], Completed, UserId)
+                        VALUES(@id, 1, 0, @userId)
+                        
+                    UPDATE cf SET cf.ultimaSecuencia = vcf.secuencial + 1 
+                    FROM ConfiguracionDocumento cf WITH (ROWLOCK)
+                        JOIN (
+                                SELECT cd.idConfiguracionDocumento, cd.secuencial
+			                        FROM Config.v_ConfigDocumento cd
+				                        INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab 
+                                                                    AND cd.idPuntoEmision = @puntoEmisionId
+			                        WHERE pa.idUsuarioRol = @userRoleId
+			                        AND cd.codDoc = 'OR'
+                        ) AS vcf ON cf.idConfiguracionDocumento = vcf.idConfiguracionDocumento
+                                               
+                    ---- SET DATA -----
+                     SET @payload = (SELECT orderId = @id FOR JSON PATH)
+                 END
 
             IF @saveDoc = 1
-                EXEC Restaurant.Order_Document_Insert @userRoleId, @id, @json, @response
-                SET @payload = @response 
-                
+                BEGIN 
+                    EXEC Restaurant.Order_Document_Insert @userRoleId, @id, @json, @response
+                    SET @payload = @response 
+                END
         COMMIT TRAN
         SELECT Common.ufnSpResponse('1', 'Exitos al actualizar', @payload)
     END TRY
     BEGIN CATCH
         SELECT Common.ufnSpResponse('0', 'Error al guardar el orden', NULL)
         
-        IF (@@TRANCOUNT > 0)
-            ROLLBACK TRAN
+        IF (@@TRANCOUNT > 0) ROLLBACK TRAN
 
         INSERT INTO ErroresSistema
         (token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, errorDate, idUsuario)
