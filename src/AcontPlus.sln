@@ -138,7 +138,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mechanical.Application", "S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mechanical.Core", "Services\Mechanical\Mechanical.Core\Mechanical.Core.csproj", "{F4E8BA40-4FB6-4018-A6AF-5A3FAE4EE97C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compras.API", "Services\Compras\Compras.API\Compras.API.csproj", "{2F056CA8-FC6E-40B2-B284-4F240AD85EB9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compras.API", "Services\Compras\Compras.API\Compras.API.csproj", "{2F056CA8-FC6E-40B2-B284-4F240AD85EB9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

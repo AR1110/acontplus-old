@@ -260,6 +260,30 @@ namespace FactElect.Application
                     xtr.WriteEndElement(); //end air
                 }
 
+                if (dr.Field<string>("tipoComprobante") == "04")
+                {
+                    xtr.WriteStartElement("docModificado");
+                    xtr.WriteString(dr["docModificado"].ToString());
+                    xtr.WriteEndElement();
+
+                    xtr.WriteStartElement("estabModificado");
+                    xtr.WriteString(dr["estabModificado"].ToString());
+                    xtr.WriteEndElement();
+
+                    xtr.WriteStartElement("ptoEmiModificado");
+                    xtr.WriteString(dr["ptoEmiModificado"].ToString());
+                    xtr.WriteEndElement();
+
+
+                    xtr.WriteStartElement("secModificado");
+                    xtr.WriteString(dr["secModificado"].ToString());
+                    xtr.WriteEndElement();
+
+                    xtr.WriteStartElement("autModificado");
+                    xtr.WriteString(dr["autModificado"].ToString());
+                    xtr.WriteEndElement();
+                }
+
 
                 if (!string.IsNullOrEmpty(dr["estabRetencion1"].ToString()))
                 {
