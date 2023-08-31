@@ -1,5 +1,7 @@
 ﻿using FactElect.Core;
 using Lib.Common;
+using Lib.Common.Enums;
+using Lib.Common.Utils;
 
 namespace FactElect.Application
 {
@@ -7,13 +9,15 @@ namespace FactElect.Application
     {
         public static string CreateHtml(ComprobanteElectronico data)
         {
+            SriDocument dt = ((SriDocument)Convert.ToInt32(data.codDoc));
+            string documentName = EnumExtensions.DisplayName(dt);
             string doc = @"
                     <div class=""row"">
                         <div class=""col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6"">
                             <div class=""card border border-dark rounded"">
                                 <div class=""card-body"">
 <div class=""text-center"">
-                                    <img src=" + $"data:image/png;base64,{Convert.ToBase64String(File.ReadAllBytes("C:\\AcontPlus\\Images\\Logos\\NoLogo.png"))}" + @" alt=""NO LOGO"" align=""center"" height=""100"">
+                                    <img src=" + $"data:image/png;base64,{Convert.ToBase64String(File.ReadAllBytes("C:\\AcontPlus\\Images\\Logos\\NoLogo.png"))}" + @" alt=""NO LOGO"" class=""img-fluid"" align=""center"" width=""100"">
 </div>
                                     <h6>" + data.infoTributaria.razonSocial + @"</h6>
                                     
@@ -28,8 +32,9 @@ namespace FactElect.Application
                         <div class=""col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6"">
                             <div class=""card border border-dark rounded"">
                                 <div class=""card-body"">
-                                    <h5><label>RUC: </label> " + data.infoTributaria.ruc + @"</h5>
-                                    <h4>COMPROBANTE DE RETENCIÓN</h4>
+                                    <h5><label>RUC: </label> "
+                                        + data.infoTributaria.ruc + @"</h5>
+                                    <h4>" + documentName + @"</h4>
                                     <h5>
                                         <label>No.</label>
                                         " + data.infoTributaria.estab + @"-" + data.infoTributaria.ptoEmi + @"-" + data.infoTributaria.secuencial + @"
@@ -52,7 +57,7 @@ namespace FactElect.Application
                                     </h5>
                                     <label>CLAVE DE ACCESSO</label><br />
 <div class=""text-center"">
-                                    <img id=""barcodeImg"" src=" + $"data:image/png;base64,{Convert.ToBase64String(BarcodeGen.Create(data.infoTributaria.claveAcceso), 0, BarcodeGen.Create(data.infoTributaria.claveAcceso).Length)}" + @" alt="""" align=""center"" height=""60"" width=""500"">
+                                    <img id=""barcodeImg"" src=" + $"data:image/png;base64,{Convert.ToBase64String(BarcodeGen.Create(data.infoTributaria.claveAcceso), 0, BarcodeGen.Create(data.infoTributaria.claveAcceso).Length)}" + @" alt="""" align=""center"" class=""img-fluid"" height=""60"" width=""500"">
                                     <br><small> " + data.infoTributaria.claveAcceso + @"</small></div>
                                 </div>
 
