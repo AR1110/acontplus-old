@@ -1,4 +1,5 @@
 
+
 export interface RawCustomerData  {    
     readonly idCliente: number,
     nombreFiscal: string,
@@ -24,4 +25,39 @@ export interface CustomerReadDto {
     taxName: string
     tradeName: string;
     identificationNumber: string;
+}
+
+export interface CustomerCreateDto {
+    idTipoIdentificacion: number
+    codigoSri: string
+}
+
+
+
+
+//Data Form 
+export interface TipoContribuyente {
+    idSubContribuyente: number
+    descripcion: string
+    codigo: string
+}
+
+export interface TipoIdentificacion {
+    codigoSri: string 
+    idTipoIdentificacion: string
+    descripcion: string
+}
+export interface TiempoCredito {
+    idTiempoCredito: number,
+    descripcion: string,
+    // diasCredito: 0,
+    // numeroCuota: 1,
+    // entrada: false,
+    // tipo: true
+}
+
+export interface CustomerDataForm {
+    tipoIdentificacion: Array<TipoIdentificacion>
+    tipoContribuyentes: Array<TipoContribuyente>
+    tiempoCreditos: Array<TiempoCredito>
 }
