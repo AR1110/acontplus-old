@@ -12,20 +12,16 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Establecimiento, PrivateRoutes, PublicRoutes } from '@/core/models';
-import { useAuthStore } from '@/stores/authStore';
-import { Badge } from '@mui/material';
-import { ModeToggleButton, NotificationsIcon } from '@/core/components';
-import { Brightness4 } from '@mui/icons-material';
-import { useEffect } from 'react';
-import { getEstabs, getUserData } from '@/core/services';
+import { PrivateRoutes, PublicRoutes } from '@/core/models';
+import { useAuthStore } from '@/stores/authStore'; 
+import { ModeToggleButton } from '@/core/components';
+ 
 
 const pages = ['Pedidos'];
 const settings = ['Cerrar sesión'];
 
 function MainLayout() {
-    const navigate = useNavigate();
-    const setDataEstab = useAuthStore(state => state.setDataEstab);
+    const navigate = useNavigate(); 
     const dataEstab = useAuthStore(state => state.dataEstab);
     const closeSession = useAuthStore(state => state.logOut);
     
@@ -59,9 +55,7 @@ function MainLayout() {
         navigate(`/${PublicRoutes.LOGIN}`, { replace: true });
     };
 
-    useEffect(()=>{
-        setDataEstab(getEstabs(), getEstabs()[0]!) 
-    }, [])
+    
 
 
     return (

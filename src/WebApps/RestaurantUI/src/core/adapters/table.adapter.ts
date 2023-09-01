@@ -3,7 +3,10 @@ import { RawTableData, TableReadDto } from "../models";
 function tableReadAdapter(tables: RawTableData[]): Array<TableReadDto> {      
     return tables.map((table) => ({
         tableId: table.id,
-        description: table.description,        
+        capacity: table.capacity,
+        numberTable: table.numberTable,
+        description: table.description,
+        floorId: table.floorId
     })
     )
 }

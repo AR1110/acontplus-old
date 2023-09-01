@@ -1,49 +1,45 @@
-import { Box, Button, ButtonGroup, ClickAwayListener, Divider, Grid, Grow, List, ListItem, ListItemText, MenuItem, MenuList, Paper, Popper, Typography } from '@mui/material'
+import { Box, Button, Divider, Grid, List, ListItem, ListItemText, Paper, TextField, Typography } from '@mui/material'
 import CartItem from '../CartItem/CartItem'
-import { useAuthStore, useCheckoutStore, useLoaderStore, useSaleStore } from '@/stores';
-import CustomerSearch from '../components/CustomerSearch';
-import TableSelect from '../components/TableSelect';
-import { useRef, useState } from 'react';
+import { useCheckoutStore, useLoaderStore, useSaleStore } from '@/stores';
 import Swal from 'sweetalert2';
 import { SnackbarUtility } from '@/core/utilities';
 import { itemToApi, summaryToApi } from '@/core/adapters';
 import { OrdenService, SharedService } from '@/core/services';
 import { QueryParams } from '@/core/models';
-import { AddShoppingCartIcon, ArrowDropDownIcon, RestartAltIcon, SaveIcon } from '@/core/components';
+import { AddShoppingCartIcon, CleaningServicesIcon, FileCopyRoundedIcon, SaveIcon } from '@/core/components';
 import { DOC_TYPE } from '@/core/constants';
-
+import './Cart.css'
+import TableDialog from '../Table/TableDialog';
+import { useState } from 'react';
+import Customer from '../Customer/Customer';
 const styleListItem = {
-    paddingTop: '2px',
-    paddingBottom: '2px'
+    paddingTop: '1px',
+    paddingBottom: '1px'
 }
 
 const Cart = () => {
     const cartItems = useSaleStore(state => state.items);
-    const { order, dataForm } = useSaleStore(state => ({
+    const { order } = useSaleStore(state => ({
         order: state.order,
         items: state.items,
-        dataForm: state.dataForm
     }));
 
     //store checkout 
-    const { setVoucher, setQueryParams } = useCheckoutStore(state => ({
-        setVoucher: state.setVoucher,
-        setQueryParams: state.setQueryParams
-    }))
+    const setQueryParams = useCheckoutStore(state => state.setQueryParams)
 
     const resetForm = useSaleStore(state => state.resetForm);
     const payment = useSaleStore(state => state.payment);
-    const dataEstab = useAuthStore(state => state.dataEstab);
 
     const { showLoader } = useLoaderStore();
-    //Options Save
-    const [open, setOpen] = useState(false);
-    const anchorRef = useRef<HTMLDivElement>(null);
+
+    //Modal Tables 
+    const [openTableDialog, setOpenTableDialog] = useState(false);
+
 
     const onClickResetFrom = async () => {
         if (cartItems.length === 0) return;
         const { isConfirmed } = await Swal.fire({
-            title: 'Reiniciar',
+            title: 'Limpiar',
             html: '<small>¿Está seguro de que desea restablecer el producto ?</small>',
             icon: 'warning',
             showCancelButton: true,
@@ -57,27 +53,6 @@ const Cart = () => {
             resetForm();
         }
     }
-
-
-
-    //Cart Footer
-    const handleClose = (event: Event) => {
-        if (
-            anchorRef.current &&
-            anchorRef.current.contains(event.target as HTMLElement)
-        ) {
-            return;
-        }
-
-        setOpen(false);
-    };
-
-    const handleToggle = () => {
-        console.log('toggle')
-        setOpen((prevOpen) => !prevOpen);
-    };
-
-
     const askToSave = async function (codDoc: string) {
 
 
@@ -126,26 +101,26 @@ const Cart = () => {
         const data = {
             ...summaryResult,
             updateOrder: (order.orderId > 0) && codDoc === DOC_TYPE.OR,
-            saveDoc: (codDoc ===DOC_TYPE.FV) || (codDoc=== DOC_TYPE.NE),
+            saveDoc: (codDoc === DOC_TYPE.FV) || (codDoc === DOC_TYPE.NE),
             codDoc,
-            quickSale: (codDoc ===DOC_TYPE.FV) || (codDoc=== DOC_TYPE.NE),
+            quickSale: (codDoc === DOC_TYPE.FV) || (codDoc === DOC_TYPE.NE),
             items: itemsResult,
             taxes: taxesResult,
             payments: {}
         }
-        if(order.orderId > 0){
+        if (order.orderId > 0) {
             showLoader(true);
-            OrdenService.put(order.orderId, data).then(response=>{
+            OrdenService.put(order.orderId, data).then(response => {
                 if (response.code === '0') {
                     SnackbarUtility.warning(response.message)
                 }
                 if (response.code === "1") {
-                    SnackbarUtility.success(response.message); 
+                    SnackbarUtility.success(response.message);
                     const queryParams: QueryParams = JSON.parse(response.payload)[0];
                     console.log(queryParams)
                 }
-            }).finally(()=>showLoader(false))
-        }else{
+            }).finally(() => showLoader(false))
+        } else {
             showLoader(true);
             OrdenService.post(data).then(response => {
                 showLoader(false)
@@ -154,37 +129,38 @@ const Cart = () => {
                 }
                 if (response.code === "1") {
                     SnackbarUtility.success(response.message);
-                    const queryParams: QueryParams = JSON.parse(response.payload)[0];
-                   
+                    console.log(response)
                     //Order 
-                    if (codDoc ===DOC_TYPE.OR) {
+                    if (codDoc === DOC_TYPE.OR) {
                         resetForm();
                         return
                     }
-    
+                    const queryParams: QueryParams = JSON.parse(response.payload)[0];
+
                     if (queryParams.payAutomatic) {
                         setQueryParams(queryParams);
                         payment.openDialogCustom();
                         return
                     }
-    
-    
+
+
                     if (queryParams.printerAutomatic) {
                         SharedService.getPrinter(1)
                     } else {
                         resetForm();
                     }
                 }
-            }).finally(() => showLoader(false)) 
+            }).finally(() => showLoader(false))
         }
 
 
-    } 
+    }
+
 
     return (
         <Paper elevation={0} sx={{
             borderRadius: '12px',
-            p: 1,
+            p: 2,
             display: 'flex',
             flexDirection: 'column',
             flexGrow: 1,
@@ -195,16 +171,26 @@ const Cart = () => {
                 direction="row"
                 justifyContent="space-between"
                 alignItems="center">
-                <Grid item xs={12} sm={12} md={6} lg={6}>
-                    <CustomerSearch />
+                <Grid item  >
+                    <Customer />
+                    {/* <Button variant="outlined" size="medium" onClick={() => {
+                        setOpenTableDialog(true)
+                    }}>
+                        Seleccionar Cliente
+                    </Button> */}
                 </Grid>
-                <Grid item xs={12} sm={12} md={6} lg={5}>
-                    <TableSelect />
+                <Grid item  >
+                    <Button variant="outlined" onClick={() => {
+                        setOpenTableDialog(true)
+                    }}>
+                        Seleccionar Mesa
+                    </Button>
+                    <TableDialog open={openTableDialog} onClose={setOpenTableDialog} />
                 </Grid>
             </Grid>
 
             {
-                cartItems.length === 0 ? (<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                cartItems.length === 0 ? (<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 10 }}>
 
                     <AddShoppingCartIcon sx={{
                         height: "5rem!important",
@@ -225,109 +211,96 @@ const Cart = () => {
                 )
             }
 
+            <Divider sx={{m:1}}/>
+            <Grid container direction="row"
+                justifyContent="space-between"
+                alignItems="center" >
 
-            {/* Totals */}
-            <List>
-                <Divider />
-                <ListItem sx={styleListItem}>
-                    <ListItemText>
-                        <Typography variant="subtitle2" gutterBottom>
-                            SubTotal
-                        </Typography>
-                    </ListItemText>
-                    <Typography variant="subtitle2">${order.subTotalSinImpuestos.toFixed(2)}</Typography>
-
-                </ListItem>
-                <ListItem sx={styleListItem}>
-                    <ListItemText>
-                        <Typography variant="subtitle2" gutterBottom>
-                            IVA (12%)
-                        </Typography>
-                    </ListItemText>
-                    <Typography variant="subtitle2">${order.tax.toFixed(2)}</Typography> 
-                </ListItem>
-                <Divider />
-                <ListItem>
-                    <ListItemText>
-                        <Typography variant="h6" gutterBottom>
-                            Total
-                        </Typography>
-                    </ListItemText>
-                  
-                    <Typography color="error" variant="h6" gutterBottom>${order.total.toFixed(2)}</Typography> 
-                </ListItem>
-            </List>
-            {/**End totals */}
-            <Box sx={{ flexGrow: 1, p: 2 }}>
-                <Grid container spacing={2} columns={16}>
-                    <Grid item xs={16} md={6} lg={6}>
-                        <Button color="error" variant="contained" size="large" fullWidth startIcon={<RestartAltIcon />} onClick={onClickResetFrom} sx={{
-                            height: 50
-                        }}>
-                            Limpiar
-                        </Button>
-                    </Grid>
-                    <Grid item xs={16} md={10} lg={10}>
-                        {/* <Button color="success" disabled={items.length===0} variant="contained" size="large" onClick={()=>askToSave()} fullWidth endIcon={<ArrowForwardIosIcon />}>
-                            Ir a pago
-                        </Button> */}
-                        <ButtonGroup variant="contained" color='success' ref={anchorRef} aria-label="split button" fullWidth size='large' sx={{
-                            height: 50,
-                        }}>
-                            <Button startIcon={<SaveIcon />} onClick={() => askToSave(DOC_TYPE.OR)}>
-
-                                {
-                                    order.orderId > 0 ? 'Actualizar' : 'Guardar'
-                                }
-
-                            </Button>
-                            <Button
-                                size="small"
-                                aria-controls={open ? 'split-button-menu' : undefined}
-                                aria-expanded={open ? 'true' : undefined}
-                                aria-label="select merge strategy"
-                                aria-haspopup="menu"
-                                onClick={handleToggle}
-                            >
-                                <ArrowDropDownIcon />
-                            </Button>
-                        </ButtonGroup>
-                        <Popper
-                            sx={{
-                                zIndex: 1,
-                            }}
-                            open={open}
-                            anchorEl={anchorRef.current}
-                            role={undefined}
-                            transition
-                            disablePortal
-                        >
-                            {({ TransitionProps, placement }) => (
-                                <Grow
-                                    {...TransitionProps}
-                                    style={{
-                                        transformOrigin:
-                                            placement === 'bottom' ? 'center top' : 'center bottom',
-                                    }}
-                                >
-                                    <Paper>
-                                        <ClickAwayListener onClickAway={handleClose}>
-                                            <MenuList id="split-button-menu" autoFocusItem>
-                                                <MenuItem onClick={() => askToSave(DOC_TYPE.FV)}>Factura</MenuItem>
-                                                <MenuItem onClick={() => askToSave(DOC_TYPE.NE)}>Nota Entrega</MenuItem>
-
-                                            </MenuList>
-                                        </ClickAwayListener>
-                                    </Paper>
-                                </Grow>
-                            )}
-                        </Popper>
-                    </Grid>
+                <Grid item   >
+                    <TextField
+                        id="observacion"
+                        label="Observación"
+                        multiline
+                        rows={2}
+                        defaultValue="Default Value"
+                    />
                 </Grid>
-            </Box>
+                <Grid item   >
+                    <Typography variant="subtitle1" color="text.primary">
+                        SubTotal: ${order.subTotalSinImpuestos.toFixed(2)}
+                    </Typography>
+                    <Typography variant="subtitle1" color="text.primary">
+                        IVA (12%): ${order.tax.toFixed(2)}
+                    </Typography>
+                    <Typography variant="h6" color="error">
+                        Total: ${order.total.toFixed(2)}
+                    </Typography>
+                </Grid>
+            </Grid>
+            <Divider sx={{m:1}}/>
 
+
+
+            <Grid container spacing={1}   >
+
+                <Grid item xs={6} md={3}>
+                    <Button
+                        color="error"
+                        className='buttonCart'
+                        variant="contained"
+                        size="large"
+                        fullWidth
+                        startIcon={<CleaningServicesIcon />}
+                        onClick={onClickResetFrom}>
+                        Limpiar
+                        <Typography variant="caption" display="block" gutterBottom>
+                            Alt + C
+                        </Typography>
+                    </Button>
+                </Grid>
+                <Grid item xs={6} md={3}>
+                    <Button
+                        color="success"
+                        className='buttonCart'
+                        variant="contained"
+                        size="large"
+                        fullWidth
+                        startIcon={<SaveIcon />}
+                        onClick={() => askToSave(DOC_TYPE.OR)}>
+                        Guardar
+                    </Button>
+                </Grid>
+
+                <Grid item xs={6} md={3}>
+                    <Button
+                        color="primary"
+                        className='buttonCart'
+                        variant="contained"
+                        size="large"
+                        fullWidth
+                        startIcon={<FileCopyRoundedIcon />}
+                        onClick={() => askToSave(DOC_TYPE.FV)}>
+                        Factura
+                    </Button>
+                </Grid>
+                <Grid item xs={6} md={3}>
+                    <Button
+                        color="warning"
+                        className='buttonCart'
+                        variant="contained"
+                        size="large"
+                        fullWidth
+                        startIcon={<FileCopyRoundedIcon />}
+                        onClick={() => askToSave(DOC_TYPE.NE)}>
+
+                        Nota Entrega
+                    </Button>
+                </Grid>
+            </Grid>
         </Paper>
     )
 }
 
 export default Cart
+
+

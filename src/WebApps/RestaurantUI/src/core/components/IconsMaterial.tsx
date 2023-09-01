@@ -37,6 +37,9 @@ import SaveAltSharpIcon from '@mui/icons-material/SaveAltSharp';
 import ShareSharpIcon from '@mui/icons-material/ShareSharp';
 import DoDisturbOnTwoToneIcon from '@mui/icons-material/DoDisturbOnTwoTone';
 import CommentIcon from '@mui/icons-material/Comment';
+import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
+import FileCopyRoundedIcon from '@mui/icons-material/FileCopyRounded';
+import PersonAddAltTwoToneIcon from '@mui/icons-material/PersonAddAltTwoTone';
 export {
     RemoveCircleOutlineIcon,
     SaveIcon,
@@ -74,6 +77,9 @@ export {
     SaveAltSharpIcon,
     ShareSharpIcon,
     DoDisturbOnTwoToneIcon,
-    CommentIcon 
+    CommentIcon,
+    CleaningServicesIcon,
+    FileCopyRoundedIcon,
+    PersonAddAltTwoToneIcon
 
 }
