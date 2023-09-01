@@ -1,0 +1,17 @@
+use [Acontplus]
+go 
+
+USE AcontPlus
+GO
+IF OBJECT_ID(N'Common.Country', N'U') IS NOT NULL
+DROP TABLE Common.Country 
+GO
+CREATE TABLE Common.Country (
+	 Id INT PRIMARY KEY IDENTITY(1,1) NOT NULL
+	,Code VARCHAR(25) NOT NULL
+	,[Description] VARCHAR(500) NOT NULL
+	,CreateAt DATETIME2 NOT NULL DEFAULT GETDATE()
+	,[Enabled] BIT DEFAULT 1 NOT NULL
+	,[Deleted] BIT NULL
+)
+

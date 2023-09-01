@@ -8,26 +8,24 @@
   import { VehicleService } from "$core/services/Mechanical/vehicle-service";
   import { CustomerService } from "$core/services/Customer/customer-service";
   import AdvancedSearch from "$core/components/AdvancedSearch.svelte";
-
-
-  //Test event 
-  // type RealoadContext = ()=>void; 
-  // import { getContext } from "svelte"
-  // const reload = getContext<RealoadContext>("reload")
- 
+  import { vehicleStore } from "$routes/Mechanical/Store/vehicle.store";
 
   export let openNew;
   export let modalClosed;
   export let vehicle: Vehicle = {
     id: 0,
+    countryId: 0,
     vehicleId: 0,
     vehicleTypeId: 0,
     customerId: 0,
     licensePlate: "",
     brand: "",
     model: "",
-    year: null,
+    year: 0,
     color: "",
+    engine: "",
+    chassis: "",
+    cylindraje: "",
     enabled: true,
   };
 
@@ -49,7 +47,6 @@
   let isCustomerSelected = false;
 
   let paramValidation = [undefined, null, "", 0];
-  let editStatus = false;
   let VehicleTypes = [];
 
   onMount(() => {
@@ -115,6 +112,7 @@
         toast({ type: "success", message: response.message });
         vehicle = {} as Vehicle;
         customer = {} as Customer;
+        vehicleStore.get();
         onModalClose();
       } else {
         toast({ type: "warning", message: response.message });
@@ -123,10 +121,7 @@
   };
 
   const onUpdate = () => {
-    
-  
     if (!onValidate()) return;
-
     showLoader();
     VehicleService.put(vehicle.id, { data: { vehicle, customer } }).then(
       (response) => {
@@ -135,8 +130,8 @@
           toast({ type: "success", message: response.message });
           vehicle = {} as Vehicle;
           customer = {} as Customer;
+          vehicleStore.get();
           onModalClose();
-          // if(reload) reload();
         } else {
           toast({ type: "warning", message: response.message });
         }

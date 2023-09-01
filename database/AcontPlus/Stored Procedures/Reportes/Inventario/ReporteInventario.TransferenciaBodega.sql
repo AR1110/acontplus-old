@@ -37,6 +37,6 @@ BEGIN
 	FROM TransferenciaBodegaDetalle tbd WITH(NOLOCK)
 	INNER JOIN Articulo ar WITH(NOLOCK) ON ar.idArticulo = tbd.idArticulo
 	INNER JOIN Medida m WITH(NOLOCK) ON m.idMedida = tbd.idMedida
-	WHERE tbd.idTransferenciaBodega = @id AND tbd.estado = 1
+	WHERE tbd.idTransferenciaBodega = @id 
 
 END 
