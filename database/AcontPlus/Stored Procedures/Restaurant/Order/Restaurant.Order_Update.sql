@@ -35,7 +35,6 @@ BEGIN
     ,@itemsJson NVARCHAR(MAX)
     ,@taxesJson NVARCHAR(MAX)
     ,@bodegaId INT
-    ,@payload NVARCHAR(MAX)
 
      SELECT @uuid               = uuid
         ,@itemsJson             = items
