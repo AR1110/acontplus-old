@@ -3,10 +3,37 @@ import Swal from "sweetalert2"
 import { PATHS } from "../constants"
 import { ApiResponse } from "../models"
 import { Http, SnackbarUtility } from "../utilities"
+import FileSaver from "file-saver"
 
 
 
 class Shared {
+
+    async downloadReport(id: number) {
+        const resultAxios = await Http({
+            method: 'post',
+            url: `${PATHS.PRIVATE}Order/Report/${id}`,
+            responseType: 'blob'
+        })
+        const ieEDGE = navigator.userAgent.match(/Edge/g);
+        const ie = navigator.userAgent.match(/.NET/g); // IE 11+
+        const oldIE = navigator.userAgent.match(/MSIE/g);
+        const blob = new window.Blob([resultAxios.data], {
+            type: resultAxios.headers["content-type"],
+        });
+        let fileName = resultAxios.headers["content-disposition"]
+            .split(";")[1]
+            .split("=")[1]
+            .replace('"', "");
+        fileName = fileName.replace('"', "");
+        if (ie || oldIE || ieEDGE) {
+            FileSaver.saveAs(blob, fileName);
+        } else {
+            const fileURL = URL.createObjectURL(blob);
+            window.open(fileURL, fileName);
+        }
+    }
+
     async askToPrint(orderId: number) {
         const {
             isConfirmed
