@@ -64,6 +64,31 @@ namespace Restaurant.API.Controllers
             }
         }
 
+        [HttpGet("ConvertToDoc")]
+        public async Task<IActionResult> ConvertToDoc(string json)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, object>{
+                    { "userRoleId", User.GetUserRoleId()},
+                    { "json", json}
+                };
+
+                var prints = await _orderService.PrintAsync(parameters);
+                if (prints == null | string.IsNullOrEmpty(prints))
+                {
+                    _log.LogActivity("No se encontró datos");
+                    return NoContent();
+                }
+                return Ok(prints);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity($"Error on ConvertToDoc {ex.Message}");
+                return BadRequest("Error on ConvertToDoc " + ex.Message);
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ApiRequest data)
         {

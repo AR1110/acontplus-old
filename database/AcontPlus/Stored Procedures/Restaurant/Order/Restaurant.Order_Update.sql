@@ -34,6 +34,8 @@ BEGIN
     ,@payload NVARCHAR(MAX)
     ,@itemsJson NVARCHAR(MAX)
     ,@taxesJson NVARCHAR(MAX)
+    ,@bodegaId INT
+    ,@payload NVARCHAR(MAX)
 
      SELECT @uuid               = uuid
         ,@itemsJson             = items
@@ -48,6 +50,7 @@ BEGIN
         ,@obs                   = obs
         ,@saveDoc               = saveDoc
         ,@updateOrder           = updateOrder
+        ,@bodegaId              = bodegaId
     FROM OPENJSON(@json)
     WITH(
         uuid UNIQUEIDENTIFIER '$.uuid',  
@@ -62,7 +65,8 @@ BEGIN
         total NUMERIC(18,5) '$.total',
         obs VARCHAR(500) '$.obs',
         saveDoc BIT '$.saveDoc',
-        updateOrder BIT '$.updateOrder'
+        updateOrder BIT '$.updateOrder',
+        bodegaId INT '$.bodegaId'
     )
 
     IF NOT EXISTS (SELECT 1 FROM Config.v_ConfigDocumento cd 
@@ -142,7 +146,7 @@ BEGIN
                     
                     ------ INSERT IF NOT EXISTS -----
                     INSERT INTO Restaurant.OrderItem(OrderId, Uuid, ItemId, TaxId, TaxPercentId, TaxValue, Quantity, Cost
-                                                    , Price, Discount, Total, [Enabled], UserId, FeeId, Obs)
+                                                    , Price, Discount, Total, [Enabled], UserId, FeeId, Obs, BodegaId)
                     
                     SELECT @id
                         , uuid
@@ -159,6 +163,7 @@ BEGIN
                         , @userId
                         , feeId
                         , obs
+                        , @bodegaId
                     FROM @tblItems ti
                     WHERE ti.itemId NOT IN(SELECT rr.ItemId FROM Restaurant.OrderItem rr WHERE rr.OrderId = @id)
                     
@@ -197,6 +202,7 @@ BEGIN
                                 ,u.Total        = t1.total
                                 ,u.Obs          = t1.obs
                                 ,u.UpdatedAt    = dbo.ufnGetDateEcuador()
+                                ,u.BodegaId     = @bodegaId
                             FROM Restaurant.OrderItem u
                             INNER JOIN #selectExist si ON si.OrderId = u.OrderId
                             INNER JOIN @tblItems t1 ON t1.itemId = si.ItemId
@@ -211,8 +217,7 @@ BEGIN
 
             IF @saveDoc = 1
                 BEGIN 
-                    EXEC Restaurant.Order_Document_Insert @userRoleId, @id, @json, @response
-                    SET @payload = @response 
+                    EXEC Restaurant.Order_Document_Insert @userRoleId, @id, @json, @payload
                 END
         COMMIT TRAN
         SELECT Common.ufnSpResponse('1', 'Exitos al actualizar', @payload)

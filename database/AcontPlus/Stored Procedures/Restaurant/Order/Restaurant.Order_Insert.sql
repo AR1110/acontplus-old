@@ -31,6 +31,8 @@ BEGIN
     ,@obs VARCHAR(500)    
     ,@quickSale BIT
     ,@userId INT
+    ,@bodegaId INT
+    ,@payload NVARCHAR(MAX)
        
     SELECT @uuid                = uuid
         ,@itemsJson             = items
@@ -44,6 +46,7 @@ BEGIN
         ,@total                 = total
         ,@obs                   = obs       
         ,@quickSale             = quickSale
+        ,@bodegaId              = bodegaId
     FROM OPENJSON(@json)
         WITH(
             uuid UNIQUEIDENTIFIER '$.uuid',
@@ -57,7 +60,8 @@ BEGIN
             tip NUMERIC(18,5) '$.tip',
             total NUMERIC(18,5) '$.total',
             obs VARCHAR(500) '$.obs',
-            quickSale BIT '$.quickSale'
+            quickSale BIT '$.quickSale',
+            bodegaId INT '$.bodegaId'
         )
 
     IF NOT EXISTS (SELECT TOP 1 1 FROM Config.v_ConfigDocumento cd
@@ -155,7 +159,7 @@ BEGIN
 	                SET @orderId = (SELECT SCOPE_IDENTITY())
                     
                     INSERT INTO Restaurant.OrderItem(OrderId, Uuid, ItemId, TaxId, TaxPercentId, TaxValue, Quantity, Cost
-                                                    , Price, Discount, Total, [Enabled], UserId, FeeId, Obs)
+                                                    , Price, Discount, Total, [Enabled], UserId, FeeId, Obs, BodegaId)
                     SELECT @orderId
                             , uuid
                             , itemId
@@ -171,6 +175,7 @@ BEGIN
                             , @userId
                             , feeId
                             , obs
+                            , ISNULL(@bodegaId, 0)
                      FROM @tblItems
                     
                     DECLARE @totalCook INT = 0
@@ -206,7 +211,7 @@ BEGIN
             ----------------VENTA RAPIDA------------
             IF @quickSale = 1
                 BEGIN
-                    DECLARE @payload NVARCHAR(MAX)
+                    
 
                     EXEC Restaurant.Order_Document_Insert @userRoleId, @orderId, @json, @payload
                 END
