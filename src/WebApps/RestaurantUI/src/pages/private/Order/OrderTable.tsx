@@ -36,10 +36,11 @@ import { useNavigate } from "react-router-dom";
 import { itemToApi, summaryToApi } from "@/core/adapters";
 
 type OrderTableProps = {
-  orders: Array<OrderReadDto>;
+  orders: Array<OrderReadDto>,
+  getOrders(): void
 };
 
-export default function OrderTable({ orders }: OrderTableProps) {
+export default function OrderTable({ orders, getOrders }: OrderTableProps) {
   const navigate = useNavigate();
   const [page, setPage] = React.useState(0);
   const [open, setOpen] = React.useState(false);
@@ -152,10 +153,11 @@ export default function OrderTable({ orders }: OrderTableProps) {
           SnackbarUtility.warning(response.message);
         }
         if (response.code === "1") {
+          getOrders();
+          handleClose();
           SnackbarUtility.success(response.message);
-          console.log(response);
-          //const queryParams: QueryParams = JSON.parse(response.payload)[0];
-          //console.log(queryParams);
+          const queryParams: QueryParams = JSON.parse(response.payload)[0];
+          console.log(queryParams);
         }
       })
       .finally(() => showLoader(false));
