@@ -36,7 +36,7 @@ const CartItem = ({ index, item }: CartItemProps) => {
                 </IconButton>
             }>
                 <ListItemAvatar>
-                    <Avatar alt={item.description} src={item.s3ObjectUrl} sx={{ width: 56, height: 56 }}>P</Avatar>
+                    <Avatar alt={item.description} src={item.s3ObjectUrl} sx={{ width: 50, height: 50 }}>P</Avatar>
                 </ListItemAvatar>
                 <ListItemText sx={{
                     pl: 1
@@ -71,7 +71,7 @@ const CartItem = ({ index, item }: CartItemProps) => {
                             </Box>   */}
                             <Grid container spacing={2}>
                                 <Grid item xs={12} sm={8} md={8} >
-                                    <ButtonGroup aria-label="small button group" color='inherit'>
+                                    <ButtonGroup aria-label="small button group" size='small' color='inherit'>
                                         <Button onClick={handleExpandClick} >
                                             <CommentIcon />
                                         </Button>

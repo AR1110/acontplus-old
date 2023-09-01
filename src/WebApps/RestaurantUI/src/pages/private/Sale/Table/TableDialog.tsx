@@ -1,10 +1,11 @@
- 
+
 import DialogTitle from '@mui/material/DialogTitle';
-import Dialog from '@mui/material/Dialog'; 
+import Dialog from '@mui/material/Dialog';
 import { useSaleStore } from '@/stores';
-import { Box, DialogContent, Grid, Paper, Tab, Tabs, styled } from '@mui/material';
+import { Box, Button, DialogActions, DialogContent, Grid, IconButton, Paper, Tab, Tabs, Typography, styled } from '@mui/material';
 import { TableReadDto } from '@/core/models';
-import { SyntheticEvent, useEffect, useState } from 'react'; 
+import { SyntheticEvent, useEffect, useState } from 'react';
+import { CloseIcon } from '@/core/components';
 
 export interface SimpleDialogProps {
     open: boolean;
@@ -53,7 +54,7 @@ const TableDialog = (props: SimpleDialogProps) => {
 
     const handleChange = (_: SyntheticEvent, newValue: number) => {
         const tables = tempTables.filter(room => room.floorId === tempFloors[newValue]?.id)
-        setTables(tables)        
+        setTables(tables)
         setValue(newValue);
     };
 
@@ -76,10 +77,25 @@ const TableDialog = (props: SimpleDialogProps) => {
 
     return (
         <Dialog onClose={handleClose} open={open} fullWidth={true}>
-            <DialogTitle>Mesas</DialogTitle>
+            <DialogTitle>
+                Mesas
+            </DialogTitle>
+            {/* 
+            <IconButton
+                aria-label="close"
+                onClick={handleClose}
+                sx={{
+                    position: 'absolute',
+                    right: 8,
+                    top: 8,
+
+                }}
+            > 
+                <CloseIcon />
+            </IconButton> */}
             <DialogContent dividers>
                 <Box
-                    sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', maxHeight: 400 }}
+                    sx={{ flexGrow: 1,   display: 'flex', maxHeight: 400 }}
                 >
                     <Tabs
                         orientation="vertical"
@@ -100,7 +116,7 @@ const TableDialog = (props: SimpleDialogProps) => {
                     <Box sx={{ flexGrow: 1, pl: 2 }}>
                         <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 4, sm: 8, md: 12 }}>
                             {tables.map((table, index) => (
-                                <Grid item xs={2} sm={4} md={4} key={index}>
+                                <Grid item xs={4} sm={4} md={4} key={index}>
                                     <Item onClick={() => handleButtonClick(table.tableId, index)} style={{
                                         backgroundColor: `${selectedButton === index ? '#1976d2' : ''}`,
                                         color: `${selectedButton === index ? 'white' : ''}`,
@@ -111,6 +127,11 @@ const TableDialog = (props: SimpleDialogProps) => {
                     </Box>
                 </Box>
             </DialogContent>
+            <DialogActions>
+                <Button onClick={handleClose} size="large" variant='contained'>
+                    Cerrar
+                </Button>
+            </DialogActions>
         </Dialog>
     );
 }

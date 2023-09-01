@@ -1,6 +1,6 @@
-import {Button, Divider, Grid,List, ListItem, ListItemText, Paper, Typography } from '@mui/material'
+import { Box, Button, Divider, Grid, List, ListItem, ListItemText, Paper, TextField, Typography } from '@mui/material'
 import CartItem from '../CartItem/CartItem'
-import {useCheckoutStore, useLoaderStore, useSaleStore } from '@/stores'; 
+import { useCheckoutStore, useLoaderStore, useSaleStore } from '@/stores';
 import Swal from 'sweetalert2';
 import { SnackbarUtility } from '@/core/utilities';
 import { itemToApi, summaryToApi } from '@/core/adapters';
@@ -11,29 +11,30 @@ import { DOC_TYPE } from '@/core/constants';
 import './Cart.css'
 import TableDialog from '../Table/TableDialog';
 import { useState } from 'react';
+import Customer from '../Customer/Customer';
 const styleListItem = {
-    paddingTop: '2px',
-    paddingBottom: '2px'
+    paddingTop: '1px',
+    paddingBottom: '1px'
 }
 
 const Cart = () => {
     const cartItems = useSaleStore(state => state.items);
     const { order } = useSaleStore(state => ({
         order: state.order,
-        items: state.items, 
+        items: state.items,
     }));
 
     //store checkout 
     const setQueryParams = useCheckoutStore(state => state.setQueryParams)
 
     const resetForm = useSaleStore(state => state.resetForm);
-    const payment = useSaleStore(state => state.payment); 
+    const payment = useSaleStore(state => state.payment);
 
-    const { showLoader } = useLoaderStore(); 
+    const { showLoader } = useLoaderStore();
 
     //Modal Tables 
     const [openTableDialog, setOpenTableDialog] = useState(false);
-    
+
 
     const onClickResetFrom = async () => {
         if (cartItems.length === 0) return;
@@ -51,7 +52,7 @@ const Cart = () => {
         if (isConfirmed) {
             resetForm();
         }
-    } 
+    }
     const askToSave = async function (codDoc: string) {
 
 
@@ -154,12 +155,12 @@ const Cart = () => {
 
 
     }
- 
+
 
     return (
         <Paper elevation={0} sx={{
             borderRadius: '12px',
-            p: 1,
+            p: 2,
             display: 'flex',
             flexDirection: 'column',
             flexGrow: 1,
@@ -171,20 +172,25 @@ const Cart = () => {
                 justifyContent="space-between"
                 alignItems="center">
                 <Grid item  >
-                    {/* <CustomerSearch /> */}
+                    <Customer />
+                    {/* <Button variant="outlined" size="medium" onClick={() => {
+                        setOpenTableDialog(true)
+                    }}>
+                        Seleccionar Cliente
+                    </Button> */}
                 </Grid>
                 <Grid item  >
-                    <Button variant="outlined" size="medium" onClick={()=>{
+                    <Button variant="outlined" onClick={() => {
                         setOpenTableDialog(true)
                     }}>
                         Seleccionar Mesa
                     </Button>
-                    <TableDialog open={openTableDialog} onClose={setOpenTableDialog}/>
+                    <TableDialog open={openTableDialog} onClose={setOpenTableDialog} />
                 </Grid>
             </Grid>
 
             {
-                cartItems.length === 0 ? (<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                cartItems.length === 0 ? (<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 10 }}>
 
                     <AddShoppingCartIcon sx={{
                         height: "5rem!important",
@@ -205,94 +211,92 @@ const Cart = () => {
                 )
             }
 
+            <Divider sx={{m:1}}/>
+            <Grid container direction="row"
+                justifyContent="space-between"
+                alignItems="center" >
 
-            {/* Totals */}
-            <List>
-                <Divider />
-                <ListItem sx={styleListItem}>
-                    <ListItemText>
-                        <Typography variant="subtitle2" gutterBottom>
-                            SubTotal
-                        </Typography>
-                    </ListItemText>
-                    <Typography variant="subtitle2">${order.subTotalSinImpuestos.toFixed(2)}</Typography>
+                <Grid item   >
+                    <TextField
+                        id="observacion"
+                        label="Observación"
+                        multiline
+                        rows={2}
+                        defaultValue="Default Value"
+                    />
+                </Grid>
+                <Grid item   >
+                    <Typography variant="subtitle1" color="text.primary">
+                        SubTotal: ${order.subTotalSinImpuestos.toFixed(2)}
+                    </Typography>
+                    <Typography variant="subtitle1" color="text.primary">
+                        IVA (12%): ${order.tax.toFixed(2)}
+                    </Typography>
+                    <Typography variant="h6" color="error">
+                        Total: ${order.total.toFixed(2)}
+                    </Typography>
+                </Grid>
+            </Grid>
+            <Divider sx={{m:1}}/>
 
-                </ListItem>
-                <ListItem sx={styleListItem}>
-                    <ListItemText>
-                        <Typography variant="subtitle2" gutterBottom>
-                            IVA (12%)
-                        </Typography>
-                    </ListItemText>
-                    <Typography variant="subtitle2">${order.tax.toFixed(2)}</Typography>
-                </ListItem>
-                <Divider />
-                <ListItem>
-                    <ListItemText>
-                        <Typography variant="h6" gutterBottom>
-                            Total
-                        </Typography>
-                    </ListItemText>
-
-                    <Typography color="error" variant="h6" gutterBottom>${order.total.toFixed(2)}</Typography>
-                </ListItem>
-            </List>
-            {/**End totals */}
 
 
             <Grid container spacing={1}   >
 
                 <Grid item xs={6} md={3}>
-                <Button 
-                    color="error" 
-                    className='buttonCart' 
-                    variant="contained" 
-                    size="large" 
-                    fullWidth 
-                    startIcon={<CleaningServicesIcon />} 
-                    onClick={onClickResetFrom}>
+                    <Button
+                        color="error"
+                        className='buttonCart'
+                        variant="contained"
+                        size="large"
+                        fullWidth
+                        startIcon={<CleaningServicesIcon />}
+                        onClick={onClickResetFrom}>
                         Limpiar
+                        <Typography variant="caption" display="block" gutterBottom>
+                            Alt + C
+                        </Typography>
                     </Button>
                 </Grid>
                 <Grid item xs={6} md={3}>
-                <Button 
-                    color="success" 
-                    className='buttonCart' 
-                    variant="contained" 
-                    size="large" 
-                    fullWidth 
-                    startIcon={<SaveIcon />} 
-                    onClick={()=>askToSave(DOC_TYPE.OR)}>
+                    <Button
+                        color="success"
+                        className='buttonCart'
+                        variant="contained"
+                        size="large"
+                        fullWidth
+                        startIcon={<SaveIcon />}
+                        onClick={() => askToSave(DOC_TYPE.OR)}>
                         Guardar
                     </Button>
                 </Grid>
 
                 <Grid item xs={6} md={3}>
-                <Button 
-                    color="primary" 
-                    className='buttonCart' 
-                    variant="contained" 
-                    size="large" 
-                    fullWidth 
-                    startIcon={<FileCopyRoundedIcon />} 
-                    onClick={()=>askToSave(DOC_TYPE.FV)}>
+                    <Button
+                        color="primary"
+                        className='buttonCart'
+                        variant="contained"
+                        size="large"
+                        fullWidth
+                        startIcon={<FileCopyRoundedIcon />}
+                        onClick={() => askToSave(DOC_TYPE.FV)}>
                         Factura
                     </Button>
                 </Grid>
                 <Grid item xs={6} md={3}>
-                    <Button 
-                    color="warning" 
-                    className='buttonCart' 
-                    variant="contained" 
-                    size="large" 
-                    fullWidth 
-                    startIcon={<FileCopyRoundedIcon />} 
-                    onClick={()=>askToSave(DOC_TYPE.NE)}>
+                    <Button
+                        color="warning"
+                        className='buttonCart'
+                        variant="contained"
+                        size="large"
+                        fullWidth
+                        startIcon={<FileCopyRoundedIcon />}
+                        onClick={() => askToSave(DOC_TYPE.NE)}>
 
                         Nota Entrega
                     </Button>
-                </Grid> 
-            </Grid> 
+                </Grid>
+            </Grid>
         </Paper>
     )
 }

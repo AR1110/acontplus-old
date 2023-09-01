@@ -13,6 +13,7 @@ import ItemList from "./Item/ItemList";
 import Category from "./Category/Category";
 import Checkout from "./Checkout/Checkout";
 import Cart from "./Cart/Cart";
+import KeyCombinationDetector from "./KeyCombinationDetector/KeyCombinationDetector";
 
 
 
@@ -121,7 +122,7 @@ export default function Sale() {
             {/* end Items carito movil */}
 
             <CustomBottomNavigation />
-
+            {/* <KeyCombinationDetector /> */}
         </ErrorBoundary>
     );
 }

@@ -39,6 +39,7 @@ import DoDisturbOnTwoToneIcon from '@mui/icons-material/DoDisturbOnTwoTone';
 import CommentIcon from '@mui/icons-material/Comment';
 import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
 import FileCopyRoundedIcon from '@mui/icons-material/FileCopyRounded';
+import PersonAddAltTwoToneIcon from '@mui/icons-material/PersonAddAltTwoTone';
 export {
     RemoveCircleOutlineIcon,
     SaveIcon,
@@ -78,6 +79,7 @@ export {
     DoDisturbOnTwoToneIcon,
     CommentIcon,
     CleaningServicesIcon,
-    FileCopyRoundedIcon
+    FileCopyRoundedIcon,
+    PersonAddAltTwoToneIcon
 
 }
