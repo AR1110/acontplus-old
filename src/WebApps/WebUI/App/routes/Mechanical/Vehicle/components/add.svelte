@@ -21,7 +21,7 @@
     licensePlate: "",
     brand: "",
     model: "",
-    year: 0,
+    year: null,
     color: "",
     engine: "",
     chassis: "",
@@ -47,7 +47,8 @@
   let isCustomerSelected = false;
 
   let paramValidation = [undefined, null, "", 0];
-  let VehicleTypes = [];
+  let vehicleTypes = [];
+  let countrys = [];
 
   onMount(() => {
     getDataForm();
@@ -56,7 +57,8 @@
   const getDataForm = () => {
     VehicleService.get(JSON.stringify({ tipo: 2 })).then((response) => {
       if (response) {
-        VehicleTypes = response["vehicleTypes"];
+        vehicleTypes = response["vehicleTypes"];
+        countrys = response["countrys"];
       }
     });
   };
@@ -155,6 +157,11 @@
         return;
       }
 
+      if (paramValidation.includes(vehicle.countryId)) {
+        toast({ type: "warning", message: "Selecccion el país" });
+        return;
+      }
+
       if (paramValidation.includes(vehicle.licensePlate)) {
         toast({ type: "warning", message: "Ingrese la Placa" });
         return;
@@ -166,7 +173,26 @@
       }
 
       if (paramValidation.includes(vehicle.year)) {
-        toast({ type: "warning", message: "Ingrese un año de fabrcación" });
+        toast({ type: "warning", message: "Ingrese un año de fabricación" });
+        return;
+      }
+
+      if (paramValidation.includes(vehicle.color)) {
+        toast({ type: "warning", message: "Ingrese el color" });
+        return;
+      }
+
+      if (paramValidation.includes(vehicle.engine)) {
+        toast({ type: "warning", message: "Ingrese el Motor" });
+        return;
+      }
+
+      if (paramValidation.includes(vehicle.chassis)) {
+        toast({ type: "warning", message: "Ingrese el Chasis" });
+        return;
+      }
+      if (paramValidation.includes(vehicle.cylindraje)) {
+        toast({ type: "warning", message: "Ingrese el cilindraje" });
         return;
       }
       return isValid;
@@ -191,7 +217,7 @@
     size={"modal-xl"}
     scroll={"scrollable"}
   >
-    <form
+    <form style="text-transform:uppercase"
       on:submit|preventDefault={vehicle.id > 0 ? onUpdate : onSave}
       autocomplete="off"
     >
@@ -273,6 +299,25 @@
                 <div class="row">
                   <div class="col-xl-3 col-lg-3 col-md-3 col-sm-2 col-6">
                     <div class="form-group">
+                      <label for="country"
+                        >País <span class="text-danger"> *</span></label
+                      >
+                      <select
+                        name="country"
+                        id="country"
+                        class="form-control border-select"
+                        bind:value={vehicle.countryId}
+                      >
+                        {#each countrys as item}
+                          <option value={item.countryId}>
+                            {item.description}
+                          </option>
+                        {/each}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-2 col-6">
+                    <div class="form-group">
                       <label for=""
                         >Tipo de Vehículo <span class="text-danger">
                           *</span
@@ -284,7 +329,7 @@
                         class="form-control border-select"
                         bind:value={vehicle.vehicleTypeId}
                       >
-                        {#each VehicleTypes as item}
+                        {#each vehicleTypes as item}
                           <option value={item.vehicleTypeId}>
                             {item.description}
                           </option>
@@ -349,6 +394,43 @@
                         type="text"
                         class="form-control"
                         bind:value={vehicle.color}
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+                    <div class="form-group">
+                      <label for=""
+                        >Motor <span class="text-danger"> *</span></label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        bind:value={vehicle.engine}
+                      />
+                    </div>
+                  </div>
+                  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+                    <div class="form-group">
+                      <label for=""
+                        >Chasis <span class="text-danger"> *</span></label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        bind:value={vehicle.chassis}
+                      />
+                    </div>
+                  </div>
+                  <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+                    <div class="form-group">
+                      <label for=""
+                        >Cilindraje <span class="text-danger"> *</span></label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        bind:value={vehicle.cylindraje}
                       />
                     </div>
                   </div>

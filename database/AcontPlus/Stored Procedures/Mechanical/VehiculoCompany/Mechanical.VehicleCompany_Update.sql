@@ -30,18 +30,19 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
     DECLARE @VehicleTypeId INT 
+	       ,@CountryId INT 
 	       ,@VehicleId INT 
            ,@LicensePlate VARCHAR(10)
 	       ,@Brand VARCHAR(150) 
 	       ,@Model VARCHAR(150)
 	       ,@Year INT 
-	       ,@Color VARCHAR(150) 
+	       ,@Color VARCHAR(150)
+           ,@Engine VARCHAR(150)
+           ,@Chassis VARCHAR(150)
+           ,@Cylindraje VARCHAR(150)
 	       ,@CustomerId INT 
-	       ,@Observation VARCHAR(300)
-           ,@enabled BIT
 
     DECLARE @userId INT
-           ,@compraId INT
 
     DECLARE @jsonCustomer VARCHAR(MAX)
            ,@jsonVehicle AS VARCHAR(MAX)
@@ -53,49 +54,52 @@ BEGIN
 
 
           SELECT @VehicleTypeId = [VehicleTypeId]
+                ,@CountryId     = [CountryId]
                 ,@VehicleId     = [VehicleId]
                 ,@LicensePlate  = [LicensePlate]
                 ,@Brand         = [Brand]
                 ,@Model         = [Model]
                 ,@Year          = [Year]
                 ,@Color         = [Color]
+                ,@Engine        = [Engine]
+                ,@Chassis       = [Chassis]
+                ,@Cylindraje    = [Cylindraje]
                 ,@CustomerId    = [CustomerId]
-                ,@Observation   = [CompanyId]
-                ,@userId        = [UserId]
-                ,@compraId      = [Observation]
-                ,@enabled       = [Enabled]
 			FROM OPENJSON(@jsonVehicle) WITH
 			(
 				[VehicleTypeId]        INT '$.vehicleTypeId'
 			   ,[VehicleId]            INT '$.vehicleId'
+               ,[CountryId]            INT '$.countryId'
 			   ,[LicensePlate] VARCHAR(10) '$.licensePlate'
 			   ,[Brand]       VARCHAR(150) '$.brand'
 			   ,[Model]       VARCHAR(150) '$.model'
 			   ,[Year]                 INT '$.year' 
 			   ,[Color]       VARCHAR(150) '$.color' 
-			   ,[CustomerId]           INT '$.customerId' 
-			   ,[CompanyId]            INT '$.companyId' 
-			   ,[UserId]               INT '$.userId'
-			   ,[Observation] VARCHAR(300) '$.observation'
-               ,[Enabled]              BIT '$.enabled'   
+               ,[Engine]      VARCHAR(150) '$.engine' 
+			   ,[Chassis]     VARCHAR(150) '$.chassis' 
+			   ,[Cylindraje]  VARCHAR(150) '$.cylindraje' 
+			   ,[CustomerId]           INT '$.customerId'
 			) as dt
 
         BEGIN TRAN 
             
             UPDATE [Mechanical].[Vehicle]
                SET [VehicleTypeId] = @VehicleTypeId
-                  ,[LicensePlate] = @LicensePlate
-                  ,[Brand] = @Brand
-                  ,[Model] = @Model
-                  ,[Year] = @Year
-                  ,[Color] = @Color
-                  ,[UpdatedAt] = GETDATE()
+                  ,[CountryId]     = @CountryId
+                  ,[LicensePlate]  = @LicensePlate
+                  ,[Brand]         = @Brand
+                  ,[Model]         = @Model
+                  ,[Year]          = @Year
+                  ,[Color]         = @Color
+                  ,[Engine]        = @Engine
+                  ,[Chassis]       = @Chassis
+                  ,[Cylindraje]    = @Cylindraje
+                  ,[UpdatedAt]     = GETDATE()
             WHERE Id = @VehicleId
 
             UPDATE [Mechanical].[VehicleCompany]
                  SET [CustomerId] = @CustomerId
                     ,[UpdatedAt]  = GETDATE()
-                    ,[Enabled]    = @enabled
              WHERE Id = @id
 
         COMMIT TRAN 
