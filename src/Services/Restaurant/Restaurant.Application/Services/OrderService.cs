@@ -23,8 +23,21 @@ namespace Restaurant.Application.Services
             {
                 return Converters.DataSetToJSON(ds);
             }
+        }
+        public async Task<object> ConvertToDocAsync(Dictionary<string, object> parameters)
+        {
+            var ds = await _repository.GetDataSetAsync("Restaurant.Order_Convert_Doc_Get", parameters);
+            if (ds.Tables.Count == 0)
+            {
+                return null;
+            }
+            else
+            {
+                return Converters.DataSetToJSON(ds);
+            }
 
         }
+
         public async Task<string> AddAsync(ApiRequest data)
         {
             var parameters = new Dictionary<string, object>{

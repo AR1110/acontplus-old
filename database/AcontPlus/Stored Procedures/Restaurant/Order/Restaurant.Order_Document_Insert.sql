@@ -14,7 +14,7 @@ CREATE OR ALTER PROCEDURE Restaurant.Order_Document_Insert
 @userRoleId INT
 ,@orderId   INT
 ,@json      NVARCHAR(MAX)
-,@response  NVARCHAR(MAX) OUTPUT
+,@payload   NVARCHAR(MAX) OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -229,7 +229,7 @@ BEGIN
 
     --- FACTURA DE VENTA
     IF @codDoc = 'FV'
-        BEGIN 
+        BEGIN
             DECLARE @claveAcceso VARCHAR(49)
             
             SET @claveAcceso = (SELECT dbo.ufnGeneraClaveAcceso(dbo.AFTDeleteCero(@estab), '01', @ambiente, 1, dbo.AFTConvertDate(@fechaEmision), @ruc, @estab + @ptoEmi, Helper.F_Auto_Sequential(@nroDocumento)))
@@ -383,8 +383,7 @@ BEGIN
                                             , @userId
 
     --------------------PAYLOADS------------------
-    DECLARE @payload NVARCHAR(MAX)
-    ,@payAutomatic BIT
+    DECLARE @payAutomatic BIT
     ,@printerAutomatic BIT
     ,@idCuentaPorCobrar INT                           
     ,@codEstab VARCHAR(15)
@@ -414,6 +413,6 @@ BEGIN
                         ,orderId            = @orderId
                    FOR JSON PATH)
    
-    SET @response = @payload    
+    SET @payload = @payload
 END
 
