@@ -36,11 +36,15 @@ BEGIN
 
 	DECLARE @tbVehicle AS TABLE (
 	    [VehicleTypeId] INT NOT NULL
-	   ,[LicensePlate] VARCHAR(10) NOT NULL
+	   ,[CountryId] INT NOT NULL
+       ,[LicensePlate] VARCHAR(10) NOT NULL
 	   ,[Brand] VARCHAR(150) NOT NULL
 	   ,[Model] VARCHAR(150) NOT NULL
 	   ,[Year] INT NOT NULL
 	   ,[Color] VARCHAR(150) NOT NULL
+       ,[Engine] VARCHAR(150) NOT NULL
+       ,[Chassis] VARCHAR(150) NOT NULL
+       ,[Cylindraje] VARCHAR(150) NOT NULL
 	   ,[CustomerId] INT NOT NULL
 	   ,[Observation] VARCHAR(300) NULL
 	   ,[Enabled] BIT DEFAULT 1 
@@ -66,16 +70,20 @@ BEGIN
 
 
 			INSERT INTO @tbVehicle
-				  ([VehicleTypeId],[LicensePlate],[Brand],[Model],[Year],[Color],[CustomerId],[Observation])
-			SELECT [VehicleTypeId],[LicensePlate],[Brand],[Model],[Year],[Color],[CustomerId],[Observation]
+				  ([VehicleTypeId],CountryId,[LicensePlate],[Brand],[Model],[Year],[Color],Engine,Chassis,Cylindraje,[CustomerId],[Observation])
+			SELECT [VehicleTypeId],CountryId,[LicensePlate],[Brand],[Model],[Year],[Color],Engine,Chassis,Cylindraje,[CustomerId],[Observation]
 			FROM OPENJSON(@jsonVehicle) WITH
 			(
 				[VehicleTypeId]        INT '$.vehicleTypeId'
+			   ,[CountryId]            INT '$.countryId'
 			   ,[LicensePlate] VARCHAR(10) '$.licensePlate'
 			   ,[Brand]       VARCHAR(150) '$.brand'
 			   ,[Model]       VARCHAR(150) '$.model'
 			   ,[Year]                 INT '$.year' 
 			   ,[Color]       VARCHAR(150) '$.color' 
+			   ,[Engine]      VARCHAR(150) '$.engine' 
+			   ,[Chassis]     VARCHAR(150) '$.chassis' 
+			   ,[Cylindraje]  VARCHAR(150) '$.cylindraje' 
 			   ,[CustomerId]           INT '$.customerId' 
 			   ,[Observation] VARCHAR(300) '$.observation'
 			) as dt
@@ -102,7 +110,7 @@ BEGIN
             SELECT @IDCard = IDCard FROM @tbCustomer 
 
             --=========================== VALIDATION OF INFORMATION ===================================================================== --
-            IF EXISTS (SELECT 1 FROM Mechanical.v_Vehicle WHERE LicensePlate = @LicensePlate AND CompanyId = @CompanyId )
+            IF EXISTS (SELECT 1 FROM Mechanical.v_Vehicle WHERE LicensePlate = @LicensePlate AND CompanyId = @CompanyId AND [Deleted] IS NULL)
                 BEGIN
                     SELECT [Common].[ufnSpResponse]('0', 'Ya se encuentra registrado', NULL)
                     RETURN
@@ -119,8 +127,8 @@ BEGIN
 			    ELSE 
 				    BEGIN
 					    INSERT INTO [Mechanical].[Vehicle]
-							    ([VehicleTypeId],[LicensePlate],[Brand],[Model],[Year],[Color],[CreatedAt],[Enabled])
-					      SELECT [VehicleTypeId],[LicensePlate],[Brand],[Model],[Year],[Color],[CreatedAt],[Enabled] FROM @tbVehicle
+							    (CountryId,[VehicleTypeId],[LicensePlate],[Brand],[Model],[Year],[Color],Engine,Chassis,Cylindraje,[CreatedAt],[Enabled])
+					      SELECT CountryId,[VehicleTypeId],[LicensePlate],[Brand],[Model],[Year],[Color],Engine,Chassis,Cylindraje,[CreatedAt],[Enabled] FROM @tbVehicle
 
 					     SELECT @VehicleId = SCOPE_IDENTITY()
 				    END

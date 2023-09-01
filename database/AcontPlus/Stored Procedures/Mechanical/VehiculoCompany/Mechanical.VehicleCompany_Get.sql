@@ -65,8 +65,10 @@ BEGIN
     -- GET DATAFORM -- 
 	IF @tipo = 2
 		BEGIN
-			SET @tableNames = 'vehicleTypes'
+			SET @tableNames = 'vehicleTypes,countrys'
 			SELECT Id as vehicleTypeId, [Description] FROM Mechanical.VehicleType WITH (NOLOCK) WHERE Deleted IS NULL AND [Enabled] = 1
+
+            SELECT Id as countryId, [Description] FROM Common.Country WITH (NOLOCK) WHERE Deleted IS NULL AND [Enabled] = 1 
             RETURN 
 		END 
 
@@ -86,6 +88,7 @@ BEGIN
             WHERE idCliente = @CustomerId
 
             SELECT Id
+                  ,CountryId
                   ,VehicleTypeId
                   ,vehicleId 
                   ,CustomerId
@@ -94,6 +97,9 @@ BEGIN
                   ,Model
                   ,[Year]
                   ,Color
+                  ,Engine
+                  ,Chassis
+                  ,Cylindraje
                   ,[Enabled]
             FROM Mechanical.v_Vehicle WITH (NOLOCK) 
             WHERE Id = @Id
