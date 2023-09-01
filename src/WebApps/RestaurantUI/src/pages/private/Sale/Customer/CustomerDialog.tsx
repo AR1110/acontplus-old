@@ -1,5 +1,6 @@
 import { CustomerCreateDto, TiempoCredito, TipoContribuyente, TipoIdentificacion } from '@/core/models'
-import { CustomerService } from '@/core/services'
+import { CustomerService, SharedService } from '@/core/services'
+import { SnackbarUtility } from '@/core/utilities'
 import { useLoaderStore } from '@/stores'
 import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, IconButton, InputAdornment, MenuItem, Switch, Tab, Tabs, TextField } from '@mui/material'
 
@@ -43,7 +44,8 @@ const CustomerDialog = ({ open, handleClose }: CustomDialogProp) => {
     const [tiposIdentificacion, setTiposIdentificacion] = useState<Array<TipoIdentificacion>>([])
     const [tipoContribuyentes, setTipoContribuyentes] = useState<Array<TipoContribuyente>>([])
     const [tiempoCreditos, setTiempoCreditos] = useState<Array<TiempoCredito>>([])
-
+    const [isSearchSRI, setIsSearchSRI] = useState(true);
+    //Tabs
     const [value, setValue] = useState(1);
 
     const handleChange = (event: SyntheticEvent, newValue: number) => {
@@ -66,29 +68,37 @@ const CustomerDialog = ({ open, handleClose }: CustomDialogProp) => {
     });
 
 
+    const initialValues: CustomerCreateDto = {
+        idCliente: 0,
+        idTipoIdentificacion: 0,
+        idTiempoCredito: 0,
+        idSubContribuyente: 0,
+        numeroIdentificacion: '',
+        nombreFiscal: '',
+        nombreComercial: '',
+        codigoSri: '04'
+    }
 
     const formik = useFormik({
-        initialValues: {
-            idTipoIdentificacion: 0,
-            idTiempoCredito: 0,
-            idSubContribuyente: 0,
-            numeroIdentificacion: undefined,
-            nombreFiscal: undefined,
-            nombreComercial: undefined,
-            codigoSri: "04",
-            direccion: undefined,
-            emails: undefined,
-            telefonos: undefined
-        },
+        initialValues,
         validationSchema: validationSchema,
         onSubmit: (values) => {
-            CustomerService.post(values).then(response=>{
+            showLoader(true)
+            CustomerService.post(values).then(response => {
                 console.log(response)
-            })
+                if(response.code==="0"){
+                    SnackbarUtility.warning(response.message)
+                }
+                if(response.code==="1"){
+                    SnackbarUtility.success(response.message);
+                    console.log(response.payload)
+                    handleClose(false);
+                }
+            }).finally(()=>showLoader(false))
         },
-    }); 
+    });
 
-   
+
 
     useEffect(() => {
         showLoader(true)
@@ -101,20 +111,20 @@ const CustomerDialog = ({ open, handleClose }: CustomDialogProp) => {
             if (response.tipoIdentificacion.length > 0) {
                 // formik.setValues() 
                 formik.setFieldValue(
-                    "idTipoIdentificacion", 
+                    "idTipoIdentificacion",
                     response.tipoIdentificacion.find(obj => obj.codigoSri === "04")?.idTipoIdentificacion
-                ) 
+                )
             }
-            if(response.tipoContribuyentes.length>0){                
+            if (response.tipoContribuyentes.length > 0) {
                 formik.setFieldValue(
-                    "idSubContribuyente", 
+                    "idSubContribuyente",
                     response.tipoContribuyentes.find(obj => obj.codigo === "06")?.idSubContribuyente
                 )
             }
 
-            if(response.tiempoCreditos.length>0){                
+            if (response.tiempoCreditos.length > 0) {
                 formik.setFieldValue(
-                    "idTiempoCredito", 
+                    "idTiempoCredito",
                     response.tiempoCreditos[0]?.idTiempoCredito
                 )
             }
@@ -130,16 +140,84 @@ const CustomerDialog = ({ open, handleClose }: CustomDialogProp) => {
         return regex.test(valor);
     }
 
-    const customerSearchSRI = (NI: string)=>{
-        if(isNumber(NI)){
-            console.log('si es numero')
+    const validateIDNumber = (numeroIdentificacion: string) => {
+        numeroIdentificacion = numeroIdentificacion.trim();
+        if (![10, 13].includes(numeroIdentificacion.length)) return;
+        if (!isNumber(numeroIdentificacion)) return;
+        if (numeroIdentificacion.length === 13 && numeroIdentificacion.slice(-3) !== "001") return;
+        return true;
+    }
+
+    const executeSearchCustomerSRI = (numeroIdentificacion: string) => {
+        //Si es RUC 
+        if (
+            numeroIdentificacion.length === 13 &&
+            tiposIdentificacion.find(
+                obj => obj.idTipoIdentificacion === formik.values.idTipoIdentificacion
+            )?.codigoSri === "04") {
+            //Buscar SRI 
+            showLoader(true);
+            SharedService.checkClientSRIByRUC(numeroIdentificacion).then(response => {
+                const { numeroRuc, razonSocial, direccion, telefono, email, error } = response;
+                if (!numeroRuc) {
+                    SnackbarUtility.warning(error!)
+                    return
+                }
+
+                formik.setValues({
+                    ...formik.values,
+                    numeroIdentificacion,
+                    idCliente: 0,
+                    nombreComercial: razonSocial,
+                    nombreFiscal: razonSocial,
+                    direccion,
+                    emails: email,
+                    telefonos: telefono
+                })
+            }).finally(() => showLoader(false))
         }
-        formik.setFieldValue("numeroIdentificacion", NI)
+
+        //Si es Cedula 
+        if (
+            numeroIdentificacion.length === 10 &&
+            tiposIdentificacion.find(
+                obj => obj.idTipoIdentificacion === formik.values.idTipoIdentificacion
+            )?.codigoSri === "05"
+        ) {
+            //Buscar SRI 
+            showLoader(true);
+            SharedService.checkClientSRIByCedula(numeroIdentificacion).then(response => {
+                console.log()
+            }).finally(() => showLoader(false))
+        }
+    }
+
+
+    const customerSearchSRI = async (numeroIdentificacion: string) => {
+        if (tiposIdentificacion.find(
+            obj => obj.idTipoIdentificacion === formik.values.idTipoIdentificacion
+        )?.codigoSri === ("04" || "05")) {
+
+            if (validateIDNumber(numeroIdentificacion)) {
+                const isCustomerRegistered = await CustomerService.isCustomerRegistered({
+                    textSearch: numeroIdentificacion
+                })
+ 
+
+                if (!isCustomerRegistered && isSearchSRI) {
+                    executeSearchCustomerSRI(numeroIdentificacion);
+                }
+
+            }
+
+        }
+
+        formik.setFieldValue("numeroIdentificacion", numeroIdentificacion)
     }
 
     return (
         <Dialog open={open} onClose={() => handleClose(true)} fullWidth>
-            <form onSubmit={formik.handleSubmit}>
+            <form onSubmit={formik.handleSubmit} autoComplete='off'>
                 <DialogTitle>Nuevo Cliente</DialogTitle>
                 <DialogContent dividers>
                     <Tabs
@@ -190,7 +268,7 @@ const CustomerDialog = ({ open, handleClose }: CustomDialogProp) => {
                                     id="numeroIdentificacion"
                                     name="numeroIdentificacion"
                                     value={formik.values.numeroIdentificacion}
-                                    onChange={(e)=>{   
+                                    onChange={(e) => {
                                         customerSearchSRI(e.target.value)
                                     }}
                                     onBlur={formik.handleBlur}
@@ -199,7 +277,9 @@ const CustomerDialog = ({ open, handleClose }: CustomDialogProp) => {
                                     InputProps={{
                                         endAdornment:
                                             <FormControlLabel label="SRI" control={
-                                                <Switch defaultChecked size="small" aria-label='SRI' />
+                                                <Switch defaultChecked size="small" onChange={() => {
+                                                    setIsSearchSRI(() => !isSearchSRI)
+                                                }} aria-label='SRI' />
                                             } />
 
                                     }}
@@ -214,7 +294,7 @@ const CustomerDialog = ({ open, handleClose }: CustomDialogProp) => {
                                     id="nombreFiscal"
                                     name="nombreFiscal"
                                     value={formik.values.nombreFiscal}
-                                    onChange={(e)=>{
+                                    onChange={(e) => {
                                         formik.handleChange(e);
                                         formik.setFieldValue("nombreComercial", e.target.value)
                                     }}
@@ -223,7 +303,7 @@ const CustomerDialog = ({ open, handleClose }: CustomDialogProp) => {
                                     helperText={formik.touched.nombreFiscal && formik.errors.nombreFiscal}
                                 />
                             </Grid>
-                            
+
                             <Grid item xs={12} sm={12} md={12}>
                                 <TextField fullWidth
                                     label="Dirección"
@@ -264,7 +344,7 @@ const CustomerDialog = ({ open, handleClose }: CustomDialogProp) => {
                                         name="idSubContribuyente"
                                         select
                                         value={formik.values.idSubContribuyente > 0 ? formik.values.idSubContribuyente : ''}
-                                        onChange={formik.handleChange}                                       
+                                        onChange={formik.handleChange}
                                     >
                                         {
                                             tipoContribuyentes.map((item, index) => (
@@ -286,7 +366,7 @@ const CustomerDialog = ({ open, handleClose }: CustomDialogProp) => {
                                         name="idTiempoCredito"
                                         select
                                         value={formik.values.idTiempoCredito > 0 ? formik.values.idTiempoCredito : ''}
-                                        onChange={formik.handleChange}                                                                                
+                                        onChange={formik.handleChange}
                                     >
                                         {
                                             tiempoCreditos.map((item, index) => (

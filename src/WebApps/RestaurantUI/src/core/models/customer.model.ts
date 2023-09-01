@@ -1,5 +1,25 @@
 
 
+
+export interface CustomerRucSRI  {
+    numeroRuc: string,
+    razonSocial: string
+    nombreComercial: string
+    direccion?: string
+    email?: string
+    telefono?: string
+    error?: string
+}
+
+export interface CustomerCedulaSRI  {
+    identificacion: string
+    nombreCompleto: string
+    direccion?: string
+    email?: string
+    telefono?: string
+    error?: string
+}
+
 export interface RawCustomerData  {    
     readonly idCliente: number,
     nombreFiscal: string,
@@ -27,10 +47,23 @@ export interface CustomerReadDto {
     identificationNumber: string;
 }
 
+type CodigoIdentificacionSRI = "04"| "05" | '06' ;
+
 export interface CustomerCreateDto {
+    idCliente: number
     idTipoIdentificacion: number
-    codigoSri: string
+    idTiempoCredito: number
+    idSubContribuyente: number
+    numeroIdentificacion: string
+    nombreFiscal: string
+    nombreComercial: string
+    codigoSri: CodigoIdentificacionSRI
+    direccion?: string,
+    emails?: string,
+    telefonos?: string
 }
+
+
 
 
 
@@ -42,9 +75,14 @@ export interface TipoContribuyente {
     codigo: string
 }
 
+/**
+ * 04 RUC
+ * 05 CEDULA
+ * 06 PASAPORTE
+ */
 export interface TipoIdentificacion {
-    codigoSri: string 
-    idTipoIdentificacion: string
+    codigoSri:  CodigoIdentificacionSRI
+    idTipoIdentificacion: number
     descripcion: string
 }
 export interface TiempoCredito {

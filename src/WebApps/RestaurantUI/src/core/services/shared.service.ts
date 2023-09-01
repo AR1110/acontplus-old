@@ -1,13 +1,36 @@
 
 import Swal from "sweetalert2"
 import { PATHS } from "../constants"
-import { ApiResponse } from "../models"
+import { ApiResponse, CustomerCedulaSRI, CustomerRucSRI } from "../models"
 import { Http, SnackbarUtility } from "../utilities"
 import FileSaver from "file-saver"
 
 
 
 class Shared {
+    
+    
+    async checkClientSRIByRUC(identificacion: string): Promise<CustomerRucSRI> {
+        const resultAxios = await Http({
+            method: 'get',
+            url: `${PATHS.CUSTOMER}Consultas/GetRucSRI`,
+            params: {
+                Ruc: identificacion
+            }
+        }) 
+        return resultAxios.data;
+    }
+
+    async checkClientSRIByCedula(identificacion: string):Promise<CustomerCedulaSRI> {
+        const resultAxios = await Http({
+            method: 'get',
+            url: `${PATHS.CUSTOMER}Consultas/GetCedulaSri`,
+            params: {
+                Ruc: identificacion
+            }
+        })
+        return resultAxios.data;
+    }
 
     async downloadReport(id: number) {
         const resultAxios = await Http({
