@@ -261,7 +261,9 @@ export default function Customer() {
                 </ClickAwayListener>
             </StyledPopper>
 
-           <CustomerDialog open={openDialog} handleClose={toggleOpenDialog}/>
+           {
+             openDialog && <CustomerDialog open={openDialog} handleClose={toggleOpenDialog}/> 
+           }
         </React.Fragment>
     );
 }
