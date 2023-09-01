@@ -9,6 +9,7 @@ import {
  } from "../adapters"
 
 import { PATHS } from "../constants"
+import { Floor, Room } from "../models";
 import { Http } from "../utilities"
  
 const URL = 'Configuration'; 
@@ -29,9 +30,12 @@ export const SaleService = {
             tarifaImpuesto, 
             bodega_Asign,
             ptoEmi_Asig, 
+            room,
+            floor
         } = resultAxios.data; 
         const categories = categoryReadAdapter(subCategorias || []); 
-      
+        const rooms: Array<Room> = room;
+        const floors: Array<Floor> = floor;
         return{
             categories: [{
                 idSubFamilia: 0,
@@ -43,7 +47,9 @@ export const SaleService = {
             taxes: taxAdapter(impuesto),
             taxRates: taxRateAdapter(tarifaImpuesto), 
             warehouses: warehouseAdapter(bodega_Asign || []),
-            emissionPoints: emissionPointAdapter(ptoEmi_Asig || []),        
+            emissionPoints: emissionPointAdapter(ptoEmi_Asig || []),  
+            rooms,
+            floors
         }
     }
 }

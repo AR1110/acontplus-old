@@ -46,7 +46,7 @@ export const itemSearchInitialState: ItemSearch = {
     checkSubFamilia: false,
     idSubFamilia: 0, 
     pageIndex: 1, 
-    pageSize: 6,
+    pageSize: 25,
     checkBySearch: true
 }
 

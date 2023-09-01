@@ -51,7 +51,8 @@ export const useAuthStore = create<AuthState>((set) => (
                   
                     setToken(userData.jwtToken)
                     setUserData(userData);
-                    setEstabs(JSON.parse(dataLogin.establecimientos)) 
+                    setEstabs(JSON.parse(dataLogin.establecimientos));
+                     
                     set(state => ({
                         ...state,
                         successLogin: true
