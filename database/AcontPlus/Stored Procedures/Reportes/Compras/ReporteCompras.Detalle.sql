@@ -8,7 +8,7 @@ END
 GO
 
 
--- exec ReporteCompras.Detalle '{"isReportImport":true,"codEstab":"ESTAB-000000092","id":7992,"codigo":"RCD","codDoc":"01","format":"excel"}'
+-- exec ReporteCompras.Detalle '{"isReportImport":false,"codEstab":"ESTAB-000000092","id":18739,"codigo":"RCD","codDoc":"01","format":"excel"}'
 CREATE PROCEDURE ReporteCompras.Detalle @json VARCHAR(MAX)
 AS
 BEGIN 
@@ -19,18 +19,19 @@ BEGIN
 	DECLARE @id INT
 	DECLARE @codDoc VARCHAR(10)
 
-	DECLARE @isReportImport BIT 
+	DECLARE @isReportImport BIT
+    declare @imagen VARBINARY(64)
 
 	--Config. Decimales 
-	DECLARE @jsonConfig AS VARCHAR(MAX)
-	DECLARE @nroPrecio INT
-	DECLARE @nroCantidad INT
-	DECLARE @nroIva INT
-	DECLARE @nroDescuentoDetalle INT
-	DECLARE @nroTotalDetalle INT
-	DECLARE @nroTotalSubTotal INT
-	DECLARE @nroDescuento INT
-	DECLARE @nroIce INT
+	--DECLARE @jsonConfig AS VARCHAR(MAX)
+	--DECLARE @nroPrecio INT
+	--DECLARE @nroCantidad INT
+	--DECLARE @nroIva INT
+	--DECLARE @nroDescuentoDetalle INT
+	--DECLARE @nroTotalDetalle INT
+	--DECLARE @nroTotalSubTotal INT
+	--DECLARE @nroDescuento INT
+	--DECLARE @nroIce INT
 
 	--Data Report 
 	DECLARE @detailDs VARCHAR(MAX)
@@ -69,27 +70,27 @@ BEGIN
 			SELECT @idEntidad = idEntidad FROM Compra.Documento_Ingreso WITH(NOLOCK) WHERE idDocumentoIngreso = @id		
 		END 
 
-	SELECT TOP 1 @jsonConfig = jsonConfig FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CD'
+	--SELECT TOP 1 @jsonConfig = jsonConfig FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CD'
 
-	SELECT @nroPrecio           = ISNULL(nroPrecio, 2)
-	      ,@nroCantidad         = ISNULL(nroCantidad, 2)
-	      ,@nroIva              = ISNULL(nroIva, 2)
-	      ,@nroDescuentoDetalle = ISNULL(nroDescuentoDetalle, 2)
-	      ,@nroTotalDetalle     = ISNULL(nroTotalDetalle, 2)
-	      ,@nroTotalSubTotal    = ISNULL(nroTotalSubTotal, 2)
-	      ,@nroDescuento        = ISNULL(nroDescuento, 2)
-	      ,@nroIce              = ISNULL(nroIce, 2)
-	FROM OPENJSON(@jsonConfig)
-	WITH (codTransaccion VARCHAR(5) '$.codTransaccion'
-		 ,nroPrecio             INT '$.nroPrecio'
-		 ,nroCantidad           INT '$.nroCantidad'
-		 ,nroIva                INT '$.nroIva'
-		 ,nroDescuentoDetalle   INT '$.nroDescuentoDetalle'
-		 ,nroTotalDetalle       INT '$.nroTotalDetalle'
-		 ,nroTotalSubTotal      INT '$.nroTotalSubTotal'
-		 ,nroDescuento          INT '$.nroDescuento'
-		 ,nroIce                INT '$.nroIce') as dt
-	WHERE dt.codTransaccion = 'C'
+	--SELECT @nroPrecio           = ISNULL(nroPrecio, 2)
+	--      ,@nroCantidad         = ISNULL(nroCantidad, 2)
+	--      ,@nroIva              = ISNULL(nroIva, 2)
+	--      ,@nroDescuentoDetalle = ISNULL(nroDescuentoDetalle, 2)
+	--      ,@nroTotalDetalle     = ISNULL(nroTotalDetalle, 2)
+	--      ,@nroTotalSubTotal    = ISNULL(nroTotalSubTotal, 2)
+	--      ,@nroDescuento        = ISNULL(nroDescuento, 2)
+	--      ,@nroIce              = ISNULL(nroIce, 2)
+	--FROM OPENJSON(@jsonConfig)
+	--WITH (codTransaccion VARCHAR(5) '$.codTransaccion'
+	--	 ,nroPrecio             INT '$.nroPrecio'
+	--	 ,nroCantidad           INT '$.nroCantidad'
+	--	 ,nroIva                INT '$.nroIva'
+	--	 ,nroDescuentoDetalle   INT '$.nroDescuentoDetalle'
+	--	 ,nroTotalDetalle       INT '$.nroTotalDetalle'
+	--	 ,nroTotalSubTotal      INT '$.nroTotalSubTotal'
+	--	 ,nroDescuento          INT '$.nroDescuento'
+	--	 ,nroIce                INT '$.nroIce') as dt
+	--WHERE dt.codTransaccion = 'C'
 	
 	--PRINT @isReportImport
 	IF @codDoc = '01' 
@@ -99,12 +100,12 @@ BEGIN
 								,idArticulo     = dd.idArticulo
 								,codigo         = ar.codigo
 								,descripcion    = ar.descripcion
-								,cantidad       = Herramientas.Round_Out(dd.cantidad,@nroCantidad) 
+								,cantidad       = CAST(dd.cantidad AS NUMERIC(18,2)) 
 								,medida         = me.descripcion
 								,tipoIva        = ti.descripcion
-								,precioUnitario = Herramientas.Round_Out(dd.precioUnitario,@nroPrecio) 
-								,valorDescuento = Herramientas.Round_Out(dd.descuento,@nroDescuentoDetalle)
-								,total          = Herramientas.Round_Out(dd.costoNeto,@nroTotalDetalle)		
+								,precioUnitario =  CAST(dd.precioUnitario AS NUMERIC(18, 2)) 
+								,valorDescuento = CAST(dd.descuento AS NUMERIC(18,2))
+								,total          = CAST(dd.costoNeto AS NUMERIC(18,2))		
 								,precioVenta    = pv.precioVenta
 								,precioConIva   = pv.precioConIva
 								,tarifa         = ta.descripcion
@@ -129,12 +130,12 @@ BEGIN
 								,idArticulo     = fd.idArticulo
 								,codigo         = ar.codigo
 								,descripcion    = fd.descripcion
-								,cantidad       = Herramientas.Round_Out(fd.cantidad,@nroCantidad) 
+								,cantidad       = cast(fd.cantidad as numeric(18,2)) 
 								,medida         = me.descripcion
 								,tipoIva        = ti.descripcion
-								,precioUnitario = Herramientas.Round_Out(fd.precioCosto,@nroPrecio) 
-								,valorDescuento = Herramientas.Round_Out(fd.valorDescuento,@nroDescuentoDetalle)
-								,total          = Herramientas.Round_Out(fd.total,@nroTotalDetalle)		
+								,precioUnitario = cast(fd.precioCosto as numeric(18,2)) 
+								,valorDescuento = cast(fd.valorDescuento as numeric(18,2))
+								,total          = cast(fd.total as numeric(18,2))		
 								,precioVenta    = ap.precioVenta
 								,precioConIva   = ap.precioConIva
 								,tarifa         = ta.descripcion
@@ -158,12 +159,12 @@ BEGIN
 							,idArticulo     = ibd.idArticulo
 							,codigo         = a.codigo
 							,descripcion    = ibd.descripcion
-							,cantidad       = Herramientas.Round_Out(ibd.cantidad,@nroCantidad) 
+							,cantidad       = cast(ibd.cantidad as numeric(18,2))
 							,medida         = m.descripcion
 							,tipoIva        = ti.descripcion
-							,precioUnitario = Herramientas.Round_Out(ibd.precioCosto,@nroPrecio) 
-							,valorDescuento = Herramientas.Round_Out(ibd.valorDescuento,@nroDescuentoDetalle)
-							,total          = Herramientas.Round_Out(ibd.total,@nroTotalDetalle)		
+							,precioUnitario = cast(ibd.precioCosto as numeric(18,2)) 
+							,valorDescuento = cast(ibd.valorDescuento as numeric(18,2))
+							,total          = cast(ibd.total as numeric (18,2))		
 							,precioVenta    = ap.precioVenta
 							,precioConIva   = ap.precioConIva
 							,tarifa         = t.descripcion
@@ -187,12 +188,12 @@ BEGIN
 							,idArticulo     = lcd.idArticulo
 							,codigo         = a.codigo
 							,descripcion    = lcd.descripcion
-							,cantidad       = Herramientas.Round_Out(lcd.cantidad,@nroCantidad) 
+							,cantidad       = cast(lcd.cantidad as numeric(18,2)) 
 							,medida         = m.descripcion
 							,tipoIva        = ti.descripcion
-							,precioUnitario = Herramientas.Round_Out(lcd.precioCosto,@nroPrecio) 
-							,valorDescuento = Herramientas.Round_Out(lcd.valorDescuento,@nroDescuentoDetalle)
-							,total          = Herramientas.Round_Out(lcd.total,@nroTotalDetalle)		
+							,precioUnitario = cast(lcd.precioCosto as numeric(18,2)) 
+							,valorDescuento = cast(lcd.valorDescuento as numeric(18,2))
+							,total          = cast(lcd.total as numeric(18,2))		
 							,precioVenta    = ap.precioVenta
 							,precioConIva   = ap.precioConIva
 							,tarifa         = t.descripcion
@@ -216,12 +217,12 @@ BEGIN
 							,idArticulo     = did.idArticulo
 							,codigo         = a.codigo
 							,descripcion    = did.descripcion
-							,cantidad       = Herramientas.Round_Out(did.cantidad,@nroCantidad) 
+							,cantidad       = CAST(did.cantidad AS NUMERIC(18,2)) 
 							,medida         = m.descripcion
 							,tipoIva        = ti.descripcion
-							,precioUnitario = Herramientas.Round_Out(did.precioUnitario,@nroPrecio) 
-							,valorDescuento = Herramientas.Round_Out( CAST(cantidad * descuento AS numeric(18,5)), @nroDescuentoDetalle)
-							,total          = Herramientas.Round_Out(did.precioTotalSinImpuesto,@nroTotalDetalle)		
+							,precioUnitario = cast(did.precioUnitario as numeric(18,2)) 
+							,valorDescuento =  CAST(cantidad * descuento AS numeric(18,5))
+							,total          = cast(did.precioTotalSinImpuesto as numeric(18,2))		
 							,precioVenta    = ap.precioVenta
 							,precioConIva   = ap.precioConIva
 							,tarifa         = t.descripcion
@@ -238,8 +239,15 @@ BEGIN
 		END 
 	
 	SET @dataSources = (SELECT detailDs = ISNULL(@detailDs, '[]') FOR JSON PATH)	
-
-	SELECT rdlcParams  = @rdlcParams,
-	       dataSources = @dataSources
+   
+   SELECT  imagen = @imagen
+	       ,mimeType = ''
+	       ,claveAcceso = ''
+		   ,rdlcParams = @rdlcParams
+		   ,dataSources = @dataSources
+		   ,'' as 'subject'
+		   ,'' as 'cc'  
+		   ,'' as 'invoiceName'
+		   ,dataMail = ''
 		 
 END 

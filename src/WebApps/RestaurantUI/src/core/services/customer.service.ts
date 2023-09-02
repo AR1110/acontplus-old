@@ -1,39 +1,61 @@
 import { PATHS } from "@/core/constants"
 import { Http } from "@/core/utilities"
-import { ApiResponse, CustomerCreateDto } from "@/core/models"
+import { ApiResponse, CustomerCreateDto, RawCustomerData } from "@/core/models"
 import { customerReadAdapter, dataFormReadAdapter } from "../adapters"
 import Swal from "sweetalert2"
 
 const URL = 'Cliente/'
 const CustomerService = {
-    async getDataForm(){
+    async getDataForm() {
         const resultAxios = await Http({
             method: 'get',
             url: `${PATHS.SALE}${URL}Get`,
             params: {
-                json: JSON.stringify({tipo: 2})
+                json: JSON.stringify({ tipo: 2 })
             }
-        }) 
+        })
         const response: ApiResponse = resultAxios.data;
-        const mainDataRepository = JSON.parse(response.payload)   
-        
-        const obj =  {
+        const mainDataRepository = JSON.parse(response.payload)
+
+        const obj = {
             tipoIdentificacion: mainDataRepository[0],
             tipoContribuyentes: mainDataRepository[1],
-            tiempoCreditos: mainDataRepository[2], 
-        }  
-        const dataForm =  dataFormReadAdapter(obj);
+            tiempoCreditos: mainDataRepository[2],
+        }
+        const dataForm = dataFormReadAdapter(obj);
         return dataForm;
-         
+
     },
-    async post(data: CustomerCreateDto){
+    async getId(id: number) {
+        const resultAxios = await Http({
+            method: 'get',
+            url: `${PATHS.SALE}${URL}FindById/` + id
+        })
+        const response: ApiResponse = resultAxios.data;
+        const mainDataRepository = JSON.parse(response.payload)[0];
+        console.log(JSON.parse(response.payload))
+        console.log(mainDataRepository)
+        const resultData = customerReadAdapter(mainDataRepository);
+        return resultData;
+
+    },
+    async post(data: CustomerCreateDto) {
         const resultAxios = await Http({
             method: 'post',
             url: `${PATHS.SALE}${URL}Insert`,
             data
+        })
+        const response: ApiResponse = resultAxios.data;
+
+        return response;
+    },
+    async put(id: number, data: CustomerCreateDto) {
+        const resultAxios = await Http({
+            method: 'post',
+            url: `${PATHS.SALE}${URL}Update/${id}`,            
+            data
         }) 
         const response: ApiResponse = resultAxios.data;
-        
         return response;
     },
     search: async (textSearch: string) => {
@@ -41,31 +63,31 @@ const CustomerService = {
             method: 'get',
             url: `${PATHS.SALE}${URL}Search`,
             params: {
-                json: JSON.stringify({textSearch})
+                json: JSON.stringify({ textSearch })
             }
-        }) 
+        })
         const response: ApiResponse = resultAxios.data;
-        return customerReadAdapter(JSON.parse(response.payload) || [])        
+        return customerReadAdapter(JSON.parse(response.payload) as [] || [])
     },
 
-   
-    
+
+
     /**
      * 
      * @param query {tipo: 3, textSearch: '}
      * @returns devuelve true si el cliente esta registrado y sino false 
      */
-    async isCustomerRegistered(query: object): Promise<boolean>{
+    async isCustomerRegistered(query: object): Promise<boolean> {
         let isRegistered = false;
         const resultAxios = await Http({
             method: 'get',
             url: `${PATHS.SALE}${URL}Get`,
             params: {
-                json: JSON.stringify(Object.assign({tipo: 3}, query))
+                json: JSON.stringify(Object.assign({ tipo: 3 }, query))
             }
-        }) 
+        })
         const response: ApiResponse = resultAxios.data;
-        if(response.code==="1"){
+        if (response.code === "1") {
             isRegistered = true;
             const clienteRepository = JSON.parse(response.payload)[0][0];
             await Swal.fire({
@@ -82,15 +104,14 @@ const CustomerService = {
                     `,
                 icon: 'info',
                 focusConfirm: true,
-                allowEscapeKey: true                
-            }) 
+                allowEscapeKey: true
+            })
         }
 
         return isRegistered;
-
     }
 
-    
+
 }
 
 export {

@@ -58,6 +58,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
             establecimientoId: order.establecimientoId,
             puntoEmisionId: order.puntoEmisionId,
             customerCompanyId: order.customerCompanyId,
+            customerName: "",
             bodegaId: 0,
             tableId: order.tableId,
             subTotalSinImpuestos: 0,
