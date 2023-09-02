@@ -211,9 +211,7 @@ BEGIN
             ----------------VENTA RAPIDA------------
             IF @quickSale = 1
                 BEGIN
-                    
-
-                    EXEC Restaurant.Order_Document_Insert @userRoleId, @orderId, @json, @payload
+                    EXEC Restaurant.Order_Document_Insert @userRoleId, @orderId, @json, @payload OUTPUT
                 END
             ----------------END VENTA RAPIDA--------
 		COMMIT TRAN

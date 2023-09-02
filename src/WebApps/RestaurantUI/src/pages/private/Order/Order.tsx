@@ -68,7 +68,7 @@ export default function Order() {
                 </Toolbar>
             </AppBar>
 
-            <OrderTable orders={orders} />
+            <OrderTable orders={orders} getOrders={getOrders} />
 
             {/* <Typography sx={{ my: 5, mx: 2 }} color="text.secondary" align="center">
       No users for this project yet
