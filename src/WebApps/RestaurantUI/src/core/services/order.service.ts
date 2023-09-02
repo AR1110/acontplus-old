@@ -12,10 +12,10 @@ export const OrdenService = {
                 json: JSON.stringify(obj)
             }
         })
-
-        const response = resultAxios.data; 
+        const response = resultAxios.data;
         return response;
     },
+
     async post(data: object) {
         const resultAxios = await Http({
             method: 'post',
@@ -30,7 +30,7 @@ export const OrdenService = {
     async put(id: number, data: object) {
         const resultAxios = await Http({
             method: 'put',
-            url: `${PATHS.PRIVATE}${URL}/${id}`,           
+            url: `${PATHS.PRIVATE}${URL}/${id}`,
             data: { data }
         })
 

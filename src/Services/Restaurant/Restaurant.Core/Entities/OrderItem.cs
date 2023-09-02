@@ -28,5 +28,6 @@ namespace Restaurant.Core.Entities
         [MaxLength(500)]
         public string Obs { get; set; }
         public int FeeId { get; set; }
+        public int? BodegaId { get; set; }
     }
 }
