@@ -400,7 +400,7 @@ BEGIN
     FROM Contabilidad.CuentaPorCobrar WITH (NOLOCK)
     WHERE codDoc = @codDoc 
     AND idDocumento = @documentoId
-
+    
     SET @payload = (SELECT idDocumento      = @documentoId
                         ,idTipoDocumento    = @idTipoDocumento
                         ,codEstab           = @codEstab
@@ -412,7 +412,8 @@ BEGIN
                         ,printerAutomatic   = @printerAutomatic
                         ,orderId            = @orderId
                    FOR JSON PATH)
-   
-    SET @payload = @payload
+                   
+    SET @payload = (SELECT @payload)
+
 END
 
