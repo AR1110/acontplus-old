@@ -1,30 +1,24 @@
-FROM mcr.microsoft.com/dotnet/aspnet:6.0-focal AS base
+#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
+EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0-focal AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-
-# It's important to keep lines from here down to "COPY . ." identical in all Dockerfiles
-# to take advantage of Docker's build cache, to speed up local container builds
-COPY "AcontPlus.sln" "AcontPlus.sln"
-
-COPY "Services/Identity/Identity.API/Identity.API.csproj" "Services/Identity/Identity.API/Identity.API.csproj"
-
-COPY "docker-compose.dcproj" "docker-compose.dcproj"
-
-COPY "Directory.Packages.props" "Directory.Packages.props"
-COPY "NuGet.config" "NuGet.config"
-
-RUN dotnet restore "AcontPlus.sln"
-
+COPY ["Directory.Packages.props", "."]
+COPY ["NuGet.config", "."]
+COPY ["Services/Identity/Identity.API/Identity.API.csproj", "Services/Identity/Identity.API/"]
+RUN dotnet restore "Services/Identity/Identity.API/Identity.API.csproj"
 COPY . .
-WORKDIR /src/Services/Identity/Identity.API
-RUN dotnet publish --no-restore -c Release -o /app
+WORKDIR "/src/Services/Identity/Identity.API"
+RUN dotnet build "Identity.API.csproj" -c Release -o /app/build
 
 FROM build AS publish
+RUN dotnet publish "Identity.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app .
+COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Identity.API.dll"]

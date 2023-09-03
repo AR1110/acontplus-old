@@ -103,6 +103,10 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
     SharedService.askToPrint(orderId);
   };
 
+  const handleReport = (orderId: number) => {
+    SharedService.downloadReport(orderId);
+  };
+
   const handleEdit = (orderId: number) => {
     showLoader(true);
     OrdenService.get({
@@ -235,7 +239,7 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
                       <Tooltip describeChild title="Descargar PDF">
                         <IconButton
                           aria-label="Impresión"
-                          onClick={() => handleUpdateState(order.orderId)}
+                          onClick={() => handleReport(order.orderId)}
                         >
                           <SaveAltSharpIcon />
                         </IconButton>

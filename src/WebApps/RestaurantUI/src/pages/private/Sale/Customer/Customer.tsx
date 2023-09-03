@@ -4,17 +4,18 @@ import Popper from '@mui/material/Popper';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import Autocomplete, {
     AutocompleteCloseReason,
-    autocompleteClasses    
+    autocompleteClasses
 } from '@mui/material/Autocomplete';
 import ButtonBase from '@mui/material/ButtonBase';
 import InputBase from '@mui/material/InputBase';
 import Box from '@mui/material/Box';
-import { PersonAddAltTwoToneIcon } from '@/core/components';
+import { EditIcon, PersonAddAltTwoToneIcon } from '@/core/components';
 import { useState } from 'react';
 import { CustomerReadDto } from '@/core/models';
 import { CustomerService } from '@/core/services';
 import { useSaleStore } from '@/stores';
 import CustomerDialog from './CustomerDialog';
+import { Button, ButtonGroup, IconButton } from '@mui/material';
 
 interface PopperComponentProps {
     anchorEl?: any;
@@ -91,7 +92,7 @@ const StyledInput = styled(InputBase)(({ theme }) => ({
     },
 }));
 
-const Button = styled(ButtonBase)(({ theme }) => ({
+const CustomButton = styled(ButtonBase)(({ theme }) => ({
     fontSize: 13,
     width: '100%',
     textAlign: 'left',
@@ -113,14 +114,14 @@ const Button = styled(ButtonBase)(({ theme }) => ({
 export default function Customer() {
     const theme = useTheme();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [customerName, setCustomerName] = useState<any>("");
+    // const [customerName, setCustomerName] = useState<any>("");
     //   const [pendingValue, setPendingValue] = React.useState>([]);
     const setOrder = useSaleStore(state => state.setSummary)
     const order = useSaleStore(state => state.order)
     const [customers, setCustomers] = useState<Array<CustomerReadDto>>([]);
 
     //Modals 
-    const [openDialog, toggleOpenDialog] = useState(false);
+    const [openCustomerDialog, setOpenCustomerDialog] = useState(false);
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         // setPendingValue(value);
@@ -128,7 +129,6 @@ export default function Customer() {
     };
 
     const handleClose = () => {
-        console.log('dkwhkjch wkjhfjkerf')
         // setValue(pendingValue);
         if (anchorEl) {
             anchorEl.focus();
@@ -150,17 +150,40 @@ export default function Customer() {
         // console.log(event)
     }
 
-    const handleInputChange = (_: any, value: string) => {        
+    const handleInputChange = (_: any, value: string) => {
         customerSearch(value)
     };
 
+    const customerDialogClose = (data?: CustomerReadDto) => {
+        console.log(data)
+        if (data) {
+            setOrder({
+                ...order,
+                customerName: data.tradeName,
+                customerCompanyId: data.customerCompanyId ?? 0
+            })
+            handleClose()
+            console.log(data)
+        }
+        setOpenCustomerDialog(false)
+    }
+
     return (
         <React.Fragment>
-            <Box sx={{ width: 221, fontSize: 13 }}>
-                <Button disableRipple aria-describedby={id} onClick={handleClick}>
-                    <span>{order.customerCompanyId > 0 ? customerName : 'Seleccionar cliente'} </span>
-                    <PersonAddAltTwoToneIcon />
-                </Button>
+            <Box sx={{ maxWidth: 300, fontSize: 13, display: "flex" }}>
+                <CustomButton disableRipple aria-describedby={id} onClick={handleClick}>
+                    <span>{order.customerCompanyId > 0 ? order.customerName : 'Seleccionar cliente'} </span>
+                </CustomButton>
+                <ButtonGroup size='small' variant="contained" aria-label="outlined button group">
+                    <Button onClick={() => setOpenCustomerDialog(true)}>
+                        <PersonAddAltTwoToneIcon />
+                    </Button>
+                    {
+                        order.customerCompanyId > 0 && <Button onClick={() => setOpenCustomerDialog(true)}>
+                            <EditIcon />
+                        </Button>
+                    }
+                </ButtonGroup>
             </Box>
             <StyledPopper id={id} open={open} anchorEl={anchorEl} placement="bottom-start">
                 <ClickAwayListener onClickAway={handleClose}>
@@ -185,21 +208,21 @@ export default function Customer() {
                                 }
                             }}
                             onChange={(event, newValue, reason) => {
-                                console.log('dkjhw cliekme')
                                 if (event.type === 'keydown' && (event as React.KeyboardEvent).key === 'Backspace' && reason === 'removeOption') {
                                     return;
-                                } 
+                                }
                                 console.log(newValue)
-                                if(!(newValue?.identificationNumber)){
+                                if (!(newValue?.identificationNumber)) {
                                     handleClose()
-                                    toggleOpenDialog(true);
+                                    setOpenCustomerDialog(true);
                                     return
                                 }
 
-                                setCustomerName(newValue?.tradeName)
+                                // setCustomerName(newValue?.tradeName)
                                 setOrder({
                                     ...order,
-                                    customerCompanyId: newValue?.customerId ?? 0
+                                    customerName: newValue.tradeName,
+                                    customerCompanyId: newValue?.customerCompanyId ?? 0
                                 })
                                 handleClose()
                             }}
@@ -219,10 +242,11 @@ export default function Customer() {
                                 return option.tradeName;
                             }}
                             filterOptions={(options, params) => {
-                                if (params.inputValue !== '' && params.inputValue.length > 2) {
+
+                                if (params.inputValue.length > 2 && options.length === 0) {
                                     customers.push({
-                                        customerId: 0,
-                                        taxName: "",
+                                        customerCompanyId: 0,
+                                        fiscalName: "",
                                         identificationNumber: "",
                                         tradeName: `Add "${params.inputValue}"`,
                                     });
@@ -230,8 +254,8 @@ export default function Customer() {
 
                                 return customers;
                             }}
-                            renderOption={(props, option) => ( 
-                                <li {...props}> 
+                            renderOption={(props, option) => (
+                                <li {...props}>
                                     <Box
                                         sx={{
                                             flexGrow: 1,
@@ -244,7 +268,7 @@ export default function Customer() {
                                         {option.identificationNumber}
                                         <br />
                                         <span>{option.tradeName}</span>
-                                    </Box> 
+                                    </Box>
                                 </li>
                             )}
                             options={customers}
@@ -261,7 +285,9 @@ export default function Customer() {
                 </ClickAwayListener>
             </StyledPopper>
 
-           <CustomerDialog open={openDialog} handleClose={toggleOpenDialog}/>
+            {
+                openCustomerDialog && <CustomerDialog open={openCustomerDialog} handleClose={customerDialogClose} id={order.customerCompanyId} />
+            }
         </React.Fragment>
     );
 }
