@@ -314,7 +314,7 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cerrar</Button>
+          <Button style={{color: 'black'}} variant="outlined" onClick={handleClose}>Cerrar</Button>
         </DialogActions>
       </Dialog>
     </React.Fragment>
