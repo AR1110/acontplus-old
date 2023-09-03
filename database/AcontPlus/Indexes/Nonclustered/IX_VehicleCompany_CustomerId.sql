@@ -1,3 +1,6 @@
+USE [Acontplus]
+go 
+
 IF EXISTS (SELECT name
 FROM sys.indexes
 WHERE name = N'IX_VehicleCompany_CustomerId')   
