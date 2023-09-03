@@ -1,4 +1,4 @@
-﻿namespace Config.Core.Interfaces
+﻿namespace ApiConfig.Interfaces
 {
     public interface IEstablecimientoAsignacionService
     {

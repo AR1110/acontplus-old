@@ -3,6 +3,7 @@ using Lib.Common.Api;
 using Vet.Core.Entities;
 using Vet.Core.Interfaces;
 using Vet.Infrastructure.Data;
+using Common.Infrastructure.Repository;
 
 namespace Vet.Application.Services
 {
@@ -19,7 +20,7 @@ namespace Vet.Application.Services
         {
             //var sqlParam = new SqlParameter("@json", Converters.SerializeDictionary(parameters.Data));
             //var result = _context.MedicalHistories.FromSqlRaw($"Pet.MedicalHistory_Get {sqlParam}");
-            var dt = await _generic.GetDataTableAsync("Pet.MedicalHistory_Get", parameters);
+            var dt = await _generic.GetDataTableAsync("VetContext", "Pet.MedicalHistory_Get", parameters);
 
             if (DataValidation.DataTableIsNull(dt))
             {
@@ -37,7 +38,7 @@ namespace Vet.Application.Services
             {
                 {"id", id}
             };
-            var ds = await _generic.GetDataSetAsync("Pet.MedicalHistory_GetById", parameters);
+            var ds = await _generic.GetDataSetAsync("VetContext", "Pet.MedicalHistory_GetById", parameters);
 
             if (DataValidation.DataTableIsNull(ds.Tables[0]))
             {

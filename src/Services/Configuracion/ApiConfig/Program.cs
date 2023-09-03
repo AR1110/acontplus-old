@@ -1,4 +1,6 @@
 ﻿using ApiConfig.Extensions;
+using Autofac.Extensions.DependencyInjection;
+using Autofac;
 using Lib.Common;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
@@ -31,6 +33,9 @@ namespace ApiConfig
             builder.Services.AddSwaggerDocumentation();
 
             builder.Services.AddSingleton<LogWriter>();
+
+            builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+            builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
             var app = builder.Build();
 

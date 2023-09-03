@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using System.Text;
-using System.Text.Unicode;
 using Lib.Common;
 using Lib.Common.Api;
 using Lib.Common.DbUtils;
@@ -8,6 +7,7 @@ using Lib.Common.Dtos;
 using Microsoft.Reporting.NETCore;
 using Restaurant.Core.Interfaces;
 using Services.Lib.Common;
+using Common.Infrastructure.Repository;
 
 namespace Restaurant.Application.Services
 {
@@ -20,7 +20,7 @@ namespace Restaurant.Application.Services
         }
         public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
-            var ds = await _repository.GetDataSetAsync("Restaurant.Order_Get", parameters);
+            var ds = await _repository.GetDataSetAsync("RestaurantContext","Restaurant.Order_Get", parameters);
             if (ds.Tables.Count == 0)
             {
                 return null;
@@ -37,7 +37,7 @@ namespace Restaurant.Application.Services
                 { "userRoleId", data.UserRoleId },
                 { "json", SqlStringParam.Sanitize(Converters.SerializeDictionary(data.Data)) }
             };
-            return await _repository.SPExecuteAsync("Restaurant.Order_Insert", parameters);
+            return await _repository.SPExecuteAsync("RestaurantContext","Restaurant.Order_Insert", parameters);
         }
         public async Task<string> PutAsync(int id, ApiRequest data)
         {
@@ -46,15 +46,15 @@ namespace Restaurant.Application.Services
                 { "id", id },
                 { "json", SqlStringParam.Sanitize(Converters.SerializeDictionary(data.Data)) }
             };
-            return await _repository.SPExecuteAsync("Restaurant.Order_Update", parameters);
+            return await _repository.SPExecuteAsync("RestaurantContext","Restaurant.Order_Update", parameters);
         }
         public async Task<string> PrintAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("Restaurant.Order_Print", parameters);
+            return await _repository.SPExecuteAsync("RestaurantContext","Restaurant.Order_Print", parameters);
         }
         public async Task<ReportResponseDto> GetReportAsync(Dictionary<string, object> parameters)
         {
-            var ds = await _repository.GetDataSetAsync("Restaurant.Order_Report", parameters);
+            var ds = await _repository.GetDataSetAsync("RestaurantContext","Restaurant.Order_Report", parameters);
 
             if (!ds.Tables.Contains("RdlcProps") | !ds.Tables.Contains("RdlcDataSources"))
             {

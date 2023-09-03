@@ -1,9 +1,10 @@
+﻿using Common.Infrastructure.Data;
 using Inventario.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventario.Infrastructure.Data
 {
-    public class InventarioContext : DbContext
+    public class InventarioContext : BaseContext
     {
         public InventarioContext(DbContextOptions<InventarioContext> options) : base(options)
         {

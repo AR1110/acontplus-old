@@ -1,4 +1,8 @@
-﻿using Lib.Common;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Common.Infrastructure.Data;
+using Common.Infrastructure.Repository;
+using Lib.Common;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 using Restaurant.API.Extensions;
@@ -35,6 +39,10 @@ internal class Program
         builder.Services.AddSwaggerDocumentation();
 
         builder.Services.AddSingleton<LogWriter>();
+
+        builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+        builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
+
 
         var app = builder.Build();
 
@@ -82,5 +90,5 @@ internal class Program
 
 
         await app.RunAsync();
-    }
+    } 
 }

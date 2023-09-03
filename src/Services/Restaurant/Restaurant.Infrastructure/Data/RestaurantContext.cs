@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Common.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -7,7 +8,7 @@ using Restaurant.Core.Entities;
 
 namespace Restaurant.Infrastructure.Data
 {
-    public class RestaurantContext : DbContext
+    public class RestaurantContext : BaseContext
     {
         public RestaurantContext(DbContextOptions<RestaurantContext> options) : base(options)
         {

@@ -1,89 +1,92 @@
-﻿using System.Data;
-using System.Data.Common;
-using Inventario.Core.Interfaces;
-using Inventario.Infrastructure.Data;
-using Lib.Common.DbUtils;
+﻿using System.Data.Common;
+using System.Data;
 using Microsoft.Data.SqlClient;
+using Common.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Inventario.Infrastructure.Repositories
+namespace Common.Infrastructure.Repository
 {
     public class ADORepository : IADORepository
     {
-        private readonly InventarioContext _context;
-        public ADORepository(InventarioContext context)
+        DbContextFactory _contexts;
+        public ADORepository(DbContextFactory contexts)
         {
-            _context = context;
+            _contexts = contexts;
         }
-        public async Task<DataTable> GetDataTableAsync(string spName, Dictionary<string, object> parameters)
+
+        public async Task<DataTable> GetDataTableAsync(string contextName, string spName, Dictionary<string, object> parameters)
         {
             DataTable dt = null;
-            using (var command = _context.Database.GetDbConnection().CreateCommand())
+            var _context = _contexts.GetContext(contextName);
+            using (var cmd = _context.Database.GetDbConnection().CreateCommand())
             {
-                bool wasOpen = command.Connection.State == ConnectionState.Open;
+                bool wasOpen = cmd.Connection.State == ConnectionState.Open;
                 try
                 {
-                    command.CommandText = spName;
+                    cmd.CommandText = spName;
                     if (parameters.Count > 0)
                     {
                         foreach (var parameter in parameters)
                         {
                             if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
                             {
-                                AddSqlParameter(command, parameter.Key, parameter.Value);
+                                AddSqlParameter(cmd, parameter.Key, parameter.Value);
                             }
                         }
                     }
 
-                    command.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandType = CommandType.StoredProcedure;
                     if (!wasOpen) await _context.Database.OpenConnectionAsync();
                     using (SqlDataAdapter adapter = new SqlDataAdapter())
                     {
-                        adapter.SelectCommand = (SqlCommand)command;
+                        adapter.SelectCommand = (SqlCommand)cmd;
                         dt = new DataTable();
                         adapter.Fill(dt);
                     }
                 }
                 finally
                 {
-                    if (!wasOpen) command.Connection.Close();
+                    if (!wasOpen) cmd.Connection.Close();
                 }
+
             }
             return dt;
         }
-        public async Task<DataSet> GetDataSetAsync(string spName, Dictionary<string, object> parameters)
+
+        public async Task<DataSet> GetDataSetAsync(string contextName, string spName, Dictionary<string, object> parameters)
         {
             DataSet ds = null;
-            using (var command = _context.Database.GetDbConnection().CreateCommand())
+            var _context = _contexts.GetContext(contextName);
+            using (var cmd = _context.Database.GetDbConnection().CreateCommand())
             {
-                bool wasOpen = command.Connection.State == ConnectionState.Open;
+                bool wasOpen = cmd.Connection.State == ConnectionState.Open;
                 try
                 {
-                    command.CommandText = spName;
+                    cmd.CommandText = spName;
                     if (parameters.Count > 0)
                     {
                         foreach (var parameter in parameters)
                         {
                             if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
                             {
-                                AddSqlParameter(command, parameter.Key, parameter.Value);
+                                AddSqlParameter(cmd, parameter.Key, parameter.Value);
                             }
                         }
                     }
 
                     string outParam = "@tableNames";
-                    AddSqlParameterOut(command, outParam, SqlDbType.VarChar, 500);
+                    AddSqlParameterOut(cmd, outParam, SqlDbType.VarChar, 500);
 
-                    command.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandType = CommandType.StoredProcedure;
                     if (!wasOpen) await _context.Database.OpenConnectionAsync();
                     using (SqlDataAdapter adapter = new SqlDataAdapter())
                     {
-                        adapter.SelectCommand = (SqlCommand)command;
+                        adapter.SelectCommand = (SqlCommand)cmd;
                         ds = new DataSet();
                         adapter.Fill(ds);
                     }
 
-                    string[] tableNames = GetParameter(command, outParam).ToString().Split(',');
+                    string[] tableNames = GetParameter(cmd, outParam).ToString().Split(',');
 
                     for (int i = 0; i < tableNames.Length; i++)
                     {
@@ -92,41 +95,43 @@ namespace Inventario.Infrastructure.Repositories
                 }
                 finally
                 {
-                    if (!wasOpen) command.Connection.Close();
+                    if (!wasOpen) cmd.Connection.Close();
                 }
             }
             return ds;
         }
-        public async Task<string> SPExecuteAsync(string spName, Dictionary<string, object> parameters)
+
+        public async Task<string> SPExecuteAsync(string contextName, string spName, Dictionary<string, object> parameters)
         {
             string response = string.Empty;
-            using (var command = _context.Database.GetDbConnection().CreateCommand())
+            var _context = _contexts.GetContext(contextName);
+            using (var cmd = _context.Database.GetDbConnection().CreateCommand())
             {
-                bool wasOpen = command.Connection.State == ConnectionState.Open;
+                bool wasOpen = cmd.Connection.State == ConnectionState.Open;
                 try
                 {
-                    command.CommandText = spName;
+                    cmd.CommandText = spName;
                     if (parameters.Count > 0)
                     {
                         foreach (var parameter in parameters)
                         {
                             if (!string.IsNullOrEmpty(parameter.Key) && parameter.Value != null)
                             {
-                                AddSqlParameter(command, parameter.Key, parameter.Value);
+                                AddSqlParameter(cmd, parameter.Key, parameter.Value);
                             }
                         }
                     }
-                    command.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandType = CommandType.StoredProcedure;
                     if (!wasOpen) await _context.Database.OpenConnectionAsync();
-                    var reader = command.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
-                        response = reader["response"].ToString();
+                        response = reader.GetString(0);
                     }
                 }
                 finally
                 {
-                    if (!wasOpen) command.Connection.Close();
+                    if (!wasOpen) cmd.Connection.Close();
                 }
             }
             return response;

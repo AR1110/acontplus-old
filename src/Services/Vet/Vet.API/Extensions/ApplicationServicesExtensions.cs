@@ -4,7 +4,6 @@ using Vet.Application.Reports;
 using Vet.Application.Services;
 using Vet.Core.Interfaces;
 using Vet.Infrastructure.Data;
-using Vet.Infrastructure.Repositories;
 
 namespace Vet.API.Extensions
 {
@@ -23,7 +22,7 @@ namespace Vet.API.Extensions
             services.AddScoped<IMedicalHistoryReport, MedicalHistoryReport>();
             services.AddScoped<IMedicalHistory, MedicalHistoryService>();
             services.AddScoped<IPetService, PetService>();
-            services.AddScoped<IADORepository, ADORepository>();
+            
             return services;
         }
     }

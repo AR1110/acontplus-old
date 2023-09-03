@@ -1,9 +1,10 @@
-using Lib.Common;
+ï»¿using Lib.Common;
 using Lib.Common.Api;
 using Microsoft.EntityFrameworkCore;
 using Vet.Core.Entities;
 using Vet.Core.Interfaces;
 using Vet.Infrastructure.Data;
+using Common.Infrastructure.Repository;
 
 namespace Vet.Application.Services
 {
@@ -20,10 +21,10 @@ namespace Vet.Application.Services
         }
         public async Task<APIResponse> GetAsync(Dictionary<string, object> parameters)
         {
-            var dt = await _repository.GetDataTableAsync("Pet.Pet_Get", parameters);
+            var dt = await _repository.GetDataTableAsync("VetContext", "Pet.Pet_Get", parameters);
             if (DataValidation.DataTableIsNull(dt))
             {
-                _response.Create(code: "0", "La transacción no devolvio respuesta");
+                _response.Create(code: "0", "La transacciÃ³n no devolvio respuesta");
             }
             else
             {
@@ -56,10 +57,10 @@ namespace Vet.Application.Services
 
         public async Task<APIResponse> SearchAsync(Dictionary<string, object> parameters)
         {
-            var dt = await _repository.GetDataTableAsync("Pet.Pet_Get", parameters);
+            var dt = await _repository.GetDataTableAsync("VetContext", "Pet.Pet_Get", parameters);
             if (DataValidation.DataTableIsNull(dt))
             {
-                _response.Create(code: "0", "La transacción no devolvio respuesta");
+                _response.Create(code: "0", "La transacciÃ³n no devolvio respuesta");
             }
             else
             {

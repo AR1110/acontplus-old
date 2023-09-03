@@ -1,8 +1,9 @@
+﻿using Common.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Config.Infrastructure.Data
+namespace ApiConfig.Data
 {
-    public class ConfigContext : DbContext
+    public class ConfigContext : BaseContext
     {
         public ConfigContext(DbContextOptions<ConfigContext> options) : base(options)
         {

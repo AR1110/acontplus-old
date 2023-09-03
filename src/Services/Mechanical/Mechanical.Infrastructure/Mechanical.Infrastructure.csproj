@@ -26,6 +26,7 @@
   </ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
 		<ProjectReference Include="..\..\Common\Lib.Common\Lib.Common.csproj" />
 		<ProjectReference Include="..\Mechanical.Core\Mechanical.Core.csproj" />
 	</ItemGroup>

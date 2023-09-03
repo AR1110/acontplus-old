@@ -3,6 +3,7 @@ using Lib.Common;
 using Lib.Common.Api;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
+using Common.Infrastructure.Repository;
 
 namespace Restaurant.Application.Services
 {
@@ -20,7 +21,7 @@ namespace Restaurant.Application.Services
 
         public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
-            DataSet ds = await _repository.GetDataSetAsync("Restaurant.ProductionArea_Get", parameters);
+            DataSet ds = await _repository.GetDataSetAsync("RestaurantContext","Restaurant.ProductionArea_Get", parameters);
 
             if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
             {
@@ -42,7 +43,7 @@ namespace Restaurant.Application.Services
                 {"userRoleId", request.UserRoleId},
                 {"json", Converters.SerializeDictionary(request.Data)}
             };
-            return await _repository.SPExecuteAsync("Restaurant.ProductionArea_Insert", parameters);
+            return await _repository.SPExecuteAsync("RestaurantContext","Restaurant.ProductionArea_Insert", parameters);
         }
 
         public async Task<string> UpdateAsync(int id, ApiRequest request)
@@ -52,7 +53,7 @@ namespace Restaurant.Application.Services
                 {"id", id},
                 {"json", Converters.SerializeDictionary(request.Data)}
             };
-            return await _repository.SPExecuteAsync("Restaurant.ProductionArea_Update", request.Data);
+            return await _repository.SPExecuteAsync("RestaurantContext","Restaurant.ProductionArea_Update", request.Data);
         }
 
         public async Task<string> DeleteAsync(int id, ApiRequest request)
@@ -61,7 +62,7 @@ namespace Restaurant.Application.Services
                 {"userRoleId", request.UserRoleId},
                 {"id", id}
             };
-            return await _repository.SPExecuteAsync("Restaurant.ProductionArea_Update_Cancel", request.Data);
+            return await _repository.SPExecuteAsync("RestaurantContext","Restaurant.ProductionArea_Update_Cancel", request.Data);
         }
     }
 }

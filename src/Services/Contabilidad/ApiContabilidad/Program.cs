@@ -1,4 +1,6 @@
 ﻿using ApiContabilidad.Extensions;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Lib.Common;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
@@ -26,6 +28,9 @@ builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 builder.Services.AddSwaggerDocumentation();
 
 builder.Services.AddSingleton<LogWriter>();
+
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
 var app = builder.Build();
 

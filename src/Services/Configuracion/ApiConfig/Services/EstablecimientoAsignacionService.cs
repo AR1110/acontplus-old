@@ -1,7 +1,8 @@
-﻿using Config.Core.Interfaces;
-using Lib.Common;
+﻿using Lib.Common;
+using Common.Infrastructure.Repository;
+using ApiConfig.Interfaces;
 
-namespace Config.Application.Services
+namespace ApiConfig.Services
 {
     public class EstablecimientoAsignacionService : IEstablecimientoAsignacionService
     {
@@ -13,7 +14,7 @@ namespace Config.Application.Services
         public async Task<string> GetAsync(Dictionary<string, object> parameters)
         {
 
-            var dt = await _repository.GetDataTableAsync("Config.Estab_Asig_Get", parameters);
+            var dt = await _repository.GetDataTableAsync("ConfigContext", "Config.Estab_Asig_Get", parameters);
             if (!DataValidation.DataTableIsNull(dt))
             {
                 return Converters.DataTableToJSON(dt);
