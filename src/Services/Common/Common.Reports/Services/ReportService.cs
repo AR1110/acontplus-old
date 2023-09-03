@@ -1,27 +1,32 @@
 ﻿using System.Data;
+using System.Text;
+using Common.Reports.Interfaces;
 using Domain.Dtos;
 using Lib.Common;
+using Lib.Common.Dtos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Reporting.NETCore;
 using Newtonsoft.Json;
+using Reports.Application;
+using Services.Lib.Common;
 
-namespace Reports.Application
+namespace Common.Reports.Services
 {
-    public sealed class ReportService
+    public class ReportService: IReportService
     {
         private readonly IConfiguration _configuration;
         public ReportService(IConfiguration configuration)
         {
             _configuration = configuration;
         }
-        public byte[] ByteReport(DataSet dsParams, DataSet ds, bool fromService = false)
+        public byte[] GetReport(DataSet dsParams, DataSet ds, bool fromService = false)
         {
-            using (LocalReport lr = new LocalReport())
+            using (var lr = new LocalReport())
             {
                 if (dsParams.Tables[0].Rows.Count == 0)
                     return null;
 
-                string mainPath = Directory.GetCurrentDirectory() + "\\Reports\\";
+                var mainPath = Directory.GetCurrentDirectory() + "\\Reports\\";
 
                 if (ds.Tables[0].Rows.Count > 0)
                 {
@@ -63,19 +68,6 @@ namespace Reports.Application
                 if (Convert.ToBoolean(dsParams.Tables[0].Rows[0]["hasParams"]))
                 {
                     //Recorremos los parametros del reporte como logos, textos, etc
-                    //ReportParameter[] p = new ReportParameter[dsParams.Tables[2].Rows.Count];
-                    //foreach (DataRow row in dsParams.Tables[2].Rows)
-                    //{
-                    //    if (Convert.ToBoolean(row["isByte"]))
-                    //    {
-                    //        p[Convert.ToInt32(row["position"])] = new ReportParameter(row["paramName"].ToString(), FileExtensions.GetBase64FromByte((byte[])row["paramByte"]));
-                    //    }
-                    //    else
-                    //    {
-                    //        p[Convert.ToInt32(row["position"])] = new ReportParameter(row["paramName"].ToString(), row["paramValue"].ToString());
-                    //    }
-                    //}
-                    //lr.SetParameters(p);
                     if (dsParams.Tables[2].Rows.Count > 0)
                     {
                         foreach (DataRow item in dsParams.Tables[2].Rows)
@@ -95,11 +87,11 @@ namespace Reports.Application
                 return lr.Render(dsParams.Tables[0].Rows[0]["format"].ToString(), null, out _, out _, out _, out _, out _);
             }
         }
-        public byte[] ByteReportDynamic(dynamic data, ref string mimeType, ref string fileName)
+        public byte[] GetDynamicReport(dynamic data, ref string mimeType, ref string fileName)
         {
             ApiReportParamsDto parameters = RdlcHelpers.ConverToModelReportParams(data);
             string format = "", mimeTypeImg = "";
-            using (LocalReport lr = new LocalReport())
+            using (var lr = new LocalReport())
             {
                 foreach (var item in parameters.rdlcParams)
                 {
@@ -121,7 +113,7 @@ namespace Reports.Application
                         //        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(_configuration.GetSection("dirReports").Value + item.Value.ToString()));
                         //        break;
                         //}
-                        string path = Directory.GetCurrentDirectory() + "\\Reports\\" + item.Value.ToString();
+                        var path = Directory.GetCurrentDirectory() + "\\Reports\\" + item.Value.ToString();
                         lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(path));
                     }
                     if (item.Key == "format")
@@ -141,7 +133,7 @@ namespace Reports.Application
                 {
                     foreach (var item in parameters.dataSources)
                     {
-                        lr.DataSources.Add(new ReportDataSource(item.Key, JsonToDataTable(JsonConvert.SerializeObject(item.Value))));
+                        lr.DataSources.Add(new ReportDataSource(item.Key, Converters.JsonToDataTable(JsonConvert.SerializeObject(item.Value))));
                     }
                 }
 
@@ -150,14 +142,10 @@ namespace Reports.Application
                 {
                     if (item.Key == "imagen")
                     {
-                        byte[] array = Convert.FromBase64String(item.Value);
-                        lr.SetParameters(new ReportParameter("logo", FileExtensions.GetBase64FromByte((byte[])array)));
+                        var array = Convert.FromBase64String(item.Value);
+                        lr.SetParameters(new ReportParameter("logo", FileExtensions.GetBase64FromByte(array)));
                         lr.SetParameters(new ReportParameter("mimeType", mimeTypeImg));
                     }
-                    //if (item.Key == "mimeType")
-                    //{                        
-                    //    lr.SetParameters(new ReportParameter(item.Key, item.Value));
-                    //}
                     if (item.Key == "claveAcceso")
                     {
                         lr.SetParameters(new ReportParameter("barcode", Convert.ToBase64String(BarcodeGen.Create(item.Value), 0, BarcodeGen.Create(item.Value).Length)));
@@ -167,10 +155,47 @@ namespace Reports.Application
                 return lr.Render(format, null, out mimeType, out _, out _, out _, out _);
             }
         }
-        public static DataTable JsonToDataTable(string json)
+        public ReportResponseDto GetReportNew(DataSet ds)
         {
-            DataTable dt = (DataTable)JsonConvert.DeserializeObject(json, (typeof(DataTable)));
-            return dt;
+            if (!ds.Tables.Contains("RdlcProps") | !ds.Tables.Contains("RdlcDataSources"))
+            {
+                return null;
+            }
+
+            if (ds.Tables["RdlcProps"].Rows.Count == 0 | ds.Tables["RdlcDataSources"].Rows.Count == 0)
+            {
+                return null;
+            }
+
+            using (LocalReport lr = new LocalReport())
+            {
+                var rdlcProps = DataTableMapper.BindData<RdlcPropsDto>(ds.Tables["RdlcProps"]);
+                string path = Path.Combine(Directory.GetCurrentDirectory(), rdlcProps.ReportPath);
+                lr.ReportPath = path;
+
+                foreach (DataRow item in ds.Tables["RdlcDataSources"].Rows)
+                {
+                    lr.DataSources.Add(new ReportDataSource(item.Field<string>("dsName"), ds.Tables[item.Field<string>("dsName")]));
+                }
+
+                if (ds.Tables.Contains("RdlcParams") && ds.Tables["RdlcParams"].Rows.Count > 0)
+                {
+                    foreach (DataRow item in ds.Tables["RdlcParams"].Rows)
+                    {
+                        if (Convert.ToBoolean(item.Field<bool>("isBinary")))
+                        {
+                            lr.SetParameters(new[] { new ReportParameter(item.Field<string>("paramName"), FileExtensions.GetBase64FromByte(item.Field<byte[]>("paramValue"))) });
+                        }
+                        else
+                        {
+                            var paramValue = Encoding.UTF8.GetString(item.Field<byte[]>("paramValue"));
+                            lr.SetParameters(new[] { new ReportParameter(item.Field<string>("paramName"), paramValue) });
+                        }
+                    }
+                }
+                byte[] fileReport = lr.Render(rdlcProps.ReportFormat, null, out _, out _, out _, out _, out _);
+                return new ReportResponseDto { FileContents = fileReport, ContentType = rdlcProps.ContentType, FileDownloadName = rdlcProps.ReportName };
+            }
         }
     }
 }

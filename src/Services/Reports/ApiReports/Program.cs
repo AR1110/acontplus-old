@@ -1,4 +1,6 @@
-﻿using Lib.Common;
+﻿using Common.Reports.Interfaces;
+using Common.Reports.Services;
+using Lib.Common;
 using Reports.Application;
 using Services.Common;
 using Services.Common.Logs;
@@ -22,7 +24,7 @@ builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 
 //});
 
-builder.Services.AddSingleton<ReportService>();
+builder.Services.AddScoped<IReportService, ReportService>();
 
 builder.Services.AddSwaggerDocumentation();
 

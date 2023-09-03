@@ -1,20 +1,22 @@
 ﻿using Lib.Common;
 using Lib.Common.Api;
-using Vet.Core.Entities;
 using Vet.Core.Interfaces;
-using Vet.Infrastructure.Data;
 using Common.Infrastructure.Repository;
+using Lib.Common.Dtos;
+using Common.Reports.Interfaces;
 
 namespace Vet.Application.Services
 {
     public class MedicalHistoryService : IMedicalHistory
     {
         private readonly IADORepository _generic;
+        private readonly IReportService _report;
         private readonly APIResponse _response;
-        public MedicalHistoryService(IADORepository genericRepository)
+        public MedicalHistoryService(IADORepository genericRepository, IReportService report)
         {
             _response = new APIResponse();
             _generic = genericRepository;
+            _report = report;
         }
         public async Task<APIResponse> GetAsync(Dictionary<string, object> parameters)
         {
@@ -62,5 +64,11 @@ namespace Vet.Application.Services
         //{
         //    return _response;
         //}
+
+        public async Task<ReportResponseDto> GetReportAsync(Dictionary<string, object> parameters)
+        {
+            var ds = await _generic.GetDataSetAsync("VetContext", "Pet.MedicalHistory_Report", parameters);
+            return _report.GetReportNew(ds);
+        }
     }
 }

@@ -255,9 +255,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\Common\Common.Reports\Common.Reports.csproj" />
 	  <ProjectReference Include="..\..\Common\DataAccess\DataAccess.csproj" />
 	  <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
-	  <ProjectReference Include="..\Reports.Application\Reports.Application.csproj" />
 	</ItemGroup>
 
 </Project>

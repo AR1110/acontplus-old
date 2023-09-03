@@ -1,4 +1,6 @@
-﻿using Lib.Common;
+﻿using Common.Reports.Interfaces;
+using Common.Reports.Services;
+using Lib.Common;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.API.Helpers;
 using Restaurant.Application;
@@ -16,6 +18,7 @@ namespace Restaurant.API.Extensions
             options.UseSqlServer(Encryption.DecryptString(configuration.GetSection("KeyEncryption").Value, configuration.GetConnectionString("DefaultConnection"))));
 
             //
+            services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IRecipe, RecipeService>();
             services.AddScoped<IAppTableService, AppTableService>();
             services.AddScoped<IMenuService, MenuService>();

@@ -11,14 +11,11 @@ namespace Vet.API.Controllers
     public class MedicalHistoriesController : BaseApiController
     {
         private readonly VetContext _context;
-        private readonly IMedicalHistoryReport _medicalHistoryReport;
         private IMedicalHistory _medicalHistory;
         public MedicalHistoriesController(VetContext context,
-            IMedicalHistoryReport medicalHistoryReport,
             IMedicalHistory medicalHistory)
         {
             _context = context;
-            _medicalHistoryReport = medicalHistoryReport;
             _medicalHistory = medicalHistory;
         }
 
@@ -89,9 +86,9 @@ namespace Vet.API.Controllers
             //    return NotFound();
             //}
 
-            var data = await _medicalHistoryReport.GetAsync(id);
-
-            return File(data, "application/pdf", "test.pdf");
+            var data = await _medicalHistory.GetReportAsync(new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } });
+            if (data == null) { return BadRequest("No se pudo obtener el reporte"); };
+            return File(data.FileContents, data.ContentType, data.FileDownloadName);
         }
 
         // PUT: api/MedicalHistories/5
