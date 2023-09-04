@@ -364,6 +364,45 @@ BEGIN
                     CLOSE cursor_inventory
                     DEALLOCATE cursor_inventory  
                 END
+            IF EXISTS (SELECT 1 FROM Restaurant.Recipe r WITH (NOLOCK)
+                                    INNER JOIN @tblItems i On r.ItemId = i.itemId 
+                                    INNER JOIN Restaurant.Ingredient ing WITH (NOLOCK) ON r.IngredientId = ing.Id
+                                    INNER JOIN Inventario.v_Articulo a On ing.ProductId = a.idArticulo
+                                    WHERE a.llevaInventario = 1
+                                    )
+                BEGIN
+                    DECLARE cursor_inventory_ingredient CURSOR LOCAL FOR
+                    SELECT a.idArticulo
+                        , @bodegaId
+                        , a.idMedida
+                        , i.feeId
+                        , r.quantity * i.quantity
+                        , i.price
+                        , a.precioCosto
+                        , i.total
+                    FROM @tblItems i
+                        INNER JOIN Restaurant.Recipe r ON i.itemId = r.ItemId
+                        INNER JOIN Restaurant.Ingredient ing WITH (NOLOCK) ON r.IngredientId = ing.Id
+                        INNER JOIN Inventario.v_Articulo a On ing.ProductId = a.idArticulo 
+                    WHERE a.llevaInventario = 1
+
+                    OPEN cursor_inventory_ingredient
+                        FETCH NEXT FROM cursor_inventory_ingredient INTO @idArticulo
+                                                            , @idBodega
+                                                            , @idMedida
+                                                            , @idTarifa
+                                                            , @cantidad
+                                                            , @precioUnitario
+                                                            , @precioCosto
+                                                            , @precioTotalSinImpuesto
+                        WHILE @@FETCH_STATUS = 0
+                            BEGIN
+                                EXEC Inventario.Transaccion_Insert 'S', @codDocTran, @fechaEmision, @documentoId,  @idArticulo, @idBodega ,@idMedida,@idTarifa,@cantidad,@precioUnitario,@precioCosto,@precioTotalSinImpuesto, @userId
+                                FETCH NEXT FROM cursor_inventory_ingredient INTO @idArticulo,@idBodega,@idMedida, @idTarifa,@cantidad,@precioUnitario,@precioCosto,@precioTotalSinImpuesto
+                            END
+                    CLOSE cursor_inventory_ingredient
+                    DEALLOCATE cursor_inventory_ingredient
+                END
         END
 
     SET @serieDocument = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @nroDocumento, DEFAULT))

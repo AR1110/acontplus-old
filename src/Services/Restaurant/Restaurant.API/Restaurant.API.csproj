@@ -4,7 +4,8 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<Nullable>disable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-	</PropertyGroup>
+    <SatelliteResourceLanguages>en-Us;es-Es</SatelliteResourceLanguages>
+  </PropertyGroup>
 
 	<ItemGroup>
 	  <None Remove="Reports\Order.rdl" />
