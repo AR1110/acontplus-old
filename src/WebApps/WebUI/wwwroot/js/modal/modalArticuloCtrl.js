@@ -440,7 +440,7 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
 
             const { subFamilias } = await this.articuloSvc.getDataForm({});
             this.subFamilias = subFamilias;
-            const {idSubFamilia, codigo} = this.subFamilias.at(this.subFamilias.length - 1)  
+            const { idSubFamilia, codigo } = this.subFamilias.at(this.subFamilias.length - 1)
             this.data.idSubFamilia = idSubFamilia;
             this.setCodigo(codigo);
         } catch (error) {
@@ -695,9 +695,21 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
 
         this.data.idTipoIva = this.tipoIva.idTipoIva;
 
+        this.jsonPvp = []
+        for (const ap of this.gridOptions.data) {
+            this.jsonPvp.push({
+                idArticuloPvP: ap.idArticuloPvP,
+                idTarifa: ap.idTarifa,
+                precioVenta: ap.precioVenta,
+                precioConIva: ap.precioConIva,
+                porcentajeUtilidad: ap.porcentajeUtilidad,
+                precioPredeterminado: ap.precioPredeterminado
+            })
+        }
+
         const senData = {
             jsonArticulo: JSON.stringify(this.data),
-            jsonPvp: JSON.stringify(this.gridOptions.data),
+            jsonPvp: JSON.stringify(this.jsonPvp),
             idBodega: this.data.idBodega,
             ubicacion: this.data.ubicacion,
         };
