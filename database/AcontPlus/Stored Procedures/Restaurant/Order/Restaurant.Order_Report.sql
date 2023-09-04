@@ -52,9 +52,13 @@ BEGIN
     WHERE o.Id = @id
 
 	--OrderItems
-	SELECT oi.*, i.productName
+	SELECT oi.*
+        ,i.productName
+        ,oi.TaxValue iva
     FROM Restaurant.[OrderItem] oi WITH (NOLOCK) 
         INNER JOIN Restaurant.v_Item i ON oi.ItemId = i.Id
+        INNER JOIN Sri.Impuesto t WITH(NOLOCK) ON oi.TaxId = t.idImpuesto
+        INNER JOIN Sri.TarifaImpuesto ti WITH(NOLOCK) ON t.codigo = ti.codImpuesto AND ti.codigo = '2'
     WHERE oi.OrderId = @id
 
 		--RdlcParams
