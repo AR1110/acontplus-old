@@ -3,6 +3,7 @@ using Lib.Common;
 using Lib.Common.Api;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
+using Common.Infrastructure.Repository;
 
 namespace Restaurant.Application.Services
 {
@@ -20,7 +21,7 @@ namespace Restaurant.Application.Services
 
         public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
-            DataSet ds = await _repository.GetDataSetAsync("Restaurant.Configuration_Get", parameters);
+            DataSet ds = await _repository.GetDataSetAsync("RestaurantContext","Restaurant.Configuration_Get", parameters);
 
             if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
             {

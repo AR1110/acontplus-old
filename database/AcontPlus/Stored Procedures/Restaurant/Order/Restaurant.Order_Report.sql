@@ -19,11 +19,9 @@ BEGIN
 
 	DECLARE @dataSources AS TABLE (dsName VARCHAR(50))
     DECLARE @tblParams AS TABLE (
-    
-    paramName VARCHAR(100),
-    isBinary BIT,
-    --paramByte VARBINARY(MAX),
-    paramValue VARBINARY(MAX))
+                            paramName VARCHAR(100),
+                            isBinary BIT,
+                            paramValue VARBINARY(MAX))
 
     DECLARE @logoImg VARBINARY(MAX)
     ,@mimeType VARCHAR(20)

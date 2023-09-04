@@ -46,6 +46,20 @@ BEGIN
 		 ,nroIce INT
 	)
 
+    DECLARE  @enableSsl INT 
+    DECLARE @from  VARCHAR(100)
+    DECLARE @host  VARCHAR(100) 
+    DECLARE @password VARCHAR(50)
+    DECLARE @port INT 
+
+
+    SELECT TOP 1
+           @enableSsl = [enableSsl]
+          ,@from      = [from]
+          ,@host      = [host]
+          ,@password  = [password]
+          ,@port      = [port]
+  FROM [Config].[Email_Config] WITH (NOLOCK)
 
 
 	BEGIN TRY
@@ -188,16 +202,17 @@ BEGIN
 
 				END
 
+
 			SET @emailData = (SELECT body = @body, 
-			                         cc = '',									    
-							         EnableSsl = '1', 
-									 'from' = 'envio.comprobantes@acontplus.com.ec',
-									 'host'= 'smtp.gmail.com', 
-									 'logo'= 'logoAcontPlus.jpg', 
-									 'password'= 'xmhlwbiibinctuvn', 
-									 'port'= '587', 
-									 'subject'= @subject, 
-									 'template'= @template FOR JSON PATH
+			                         cc = 'cc'									  
+							         ,EnableSsl =@enableSsl
+									 ,'from' = @from
+									 ,'host'= @host
+									 ,'logo'= 'logoAcontPlus.jpg'
+									 ,'password'= @password
+									 ,'port'= @port
+									 ,'subject'= @subject 
+									 ,'template'= @template FOR JSON PATH
 							   )				
          
 			--return

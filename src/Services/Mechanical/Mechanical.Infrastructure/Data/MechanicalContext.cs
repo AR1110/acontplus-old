@@ -1,9 +1,10 @@
-﻿using Mechanical.Core.Entities;
+﻿using Common.Infrastructure.Data;
+using Mechanical.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mechanical.Infrastructure.Data
 {
-    public class MechanicalContext : DbContext
+    public class MechanicalContext : BaseContext
     {
         public MechanicalContext(DbContextOptions<MechanicalContext> options) : base(options)
         {

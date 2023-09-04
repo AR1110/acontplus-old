@@ -1,4 +1,5 @@
-import { CustomerCreateDto, TiempoCredito, TipoContribuyente, TipoIdentificacion } from '@/core/models'
+import { SRI_IDENTIFITION_CODE } from '@/core/constants'
+import { CustomerCreateDto, CustomerReadDto, TiempoCredito, TipoContribuyente, TipoIdentificacion } from '@/core/models'
 import { CustomerService, SharedService } from '@/core/services'
 import { SnackbarUtility } from '@/core/utilities'
 import { useLoaderStore } from '@/stores'
@@ -6,11 +7,12 @@ import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitl
 
 
 import { useFormik } from 'formik'
-import React, { FormEvent, SyntheticEvent, useEffect, useState } from 'react'
+import React, { SyntheticEvent, useEffect, useState } from 'react'
 import * as yup from 'yup';
 type CustomDialogProp = {
+    id?: number
     open: boolean
-    handleClose(open: boolean): void
+    handleClose(data?: CustomerReadDto): void
 }
 
 interface TabPanelProps {
@@ -39,7 +41,7 @@ function TabPanel(props: TabPanelProps) {
     );
 }
 
-const CustomerDialog = ({ open, handleClose }: CustomDialogProp) => {
+const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
     const { showLoader } = useLoaderStore();
     const [tiposIdentificacion, setTiposIdentificacion] = useState<Array<TipoIdentificacion>>([])
     const [tipoContribuyentes, setTipoContribuyentes] = useState<Array<TipoContribuyente>>([])
@@ -48,7 +50,7 @@ const CustomerDialog = ({ open, handleClose }: CustomDialogProp) => {
     //Tabs
     const [value, setValue] = useState(1);
 
-    const handleChange = (event: SyntheticEvent, newValue: number) => {
+    const handleChange = (_: SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
 
@@ -58,7 +60,24 @@ const CustomerDialog = ({ open, handleClose }: CustomDialogProp) => {
             .required("Seleccione el Tipo Identificación"),
         numeroIdentificacion: yup
             .string()
-            .required("Ingrese Número de Identificación"),
+            .required("Ingrese Número de Identificación")
+            .test("numeroIdentificacionValido", "Número de Identificación no válido", async (numeroIdentificacion, Schema) => {
+                const dataIdentification = tiposIdentificacion.find(
+                    obj => obj.idTipoIdentificacion === Schema.parent.idTipoIdentificacion
+                )
+
+                if (dataIdentification?.codigoSri === SRI_IDENTIFITION_CODE.RUC) {
+                    if (numeroIdentificacion.length !== 13) return false;
+                    if (numeroIdentificacion.slice(numeroIdentificacion.length - 3) !== '001') return false;
+                }
+
+                if (dataIdentification?.codigoSri === SRI_IDENTIFITION_CODE.LICENSE) {
+                    if (numeroIdentificacion.length !== 10) return false;
+                }
+                console.log(dataIdentification)
+
+                return true; // No se aplica validación si idTipoIdentificacion es 10
+            }),
         nombreFiscal: yup
             .string()
             .required("Ingrese el Nombre Fiscal"),
@@ -76,7 +95,20 @@ const CustomerDialog = ({ open, handleClose }: CustomDialogProp) => {
         numeroIdentificacion: '',
         nombreFiscal: '',
         nombreComercial: '',
-        codigoSri: '04'
+        codigoSri: SRI_IDENTIFITION_CODE.RUC
+    }
+
+    const successResponse = async (response: any)=>{
+        console.log(response)
+        if (response.code === "0") {
+            SnackbarUtility.warning(response.message)
+        }
+        if (response.code === "1") {
+            SnackbarUtility.success(response.message);
+            const customerCompanyId = id > 0 ? id : response.payload;
+            const customerData = await CustomerService.getId(customerCompanyId);
+            handleClose(customerData);
+        }
     }
 
     const formik = useFormik({
@@ -84,52 +116,86 @@ const CustomerDialog = ({ open, handleClose }: CustomDialogProp) => {
         validationSchema: validationSchema,
         onSubmit: (values) => {
             showLoader(true)
-            CustomerService.post(values).then(response => {
-                console.log(response)
-                if(response.code==="0"){
-                    SnackbarUtility.warning(response.message)
-                }
-                if(response.code==="1"){
-                    SnackbarUtility.success(response.message);
-                    console.log(response.payload)
-                    handleClose(false);
-                }
-            }).finally(()=>showLoader(false))
+             
+
+            if(id> 0){
+                CustomerService.put(values.idCliente, {
+                    ...values,
+                    correo: "",
+                    telefono: "",
+                    placa: ""
+                })
+                .then(successResponse)
+                .finally(()=>showLoader(false))
+            }
+            if(!(id>0)){
+                CustomerService.post(values)
+                .then(successResponse)
+                .finally(() => showLoader(false))
+            }
         },
     });
 
-
-
-    useEffect(() => {
+    const onLoad = async () => {
         showLoader(true)
-        CustomerService.getDataForm().then(response => {
+        await CustomerService.getDataForm().then(response => {
             setTiposIdentificacion(() => response.tipoIdentificacion)
             setTipoContribuyentes(response.tipoContribuyentes)
             setTiempoCreditos(response.tiempoCreditos);
 
-            console.log(response.tipoContribuyentes)
-            if (response.tipoIdentificacion.length > 0) {
-                // formik.setValues() 
-                formik.setFieldValue(
-                    "idTipoIdentificacion",
-                    response.tipoIdentificacion.find(obj => obj.codigoSri === "04")?.idTipoIdentificacion
-                )
-            }
-            if (response.tipoContribuyentes.length > 0) {
-                formik.setFieldValue(
-                    "idSubContribuyente",
-                    response.tipoContribuyentes.find(obj => obj.codigo === "06")?.idSubContribuyente
-                )
-            }
+            if (!(id > 0)) {
 
-            if (response.tiempoCreditos.length > 0) {
-                formik.setFieldValue(
-                    "idTiempoCredito",
-                    response.tiempoCreditos[0]?.idTiempoCredito
-                )
-            }
 
-        }).finally(() => showLoader(false))
+
+                if (response.tipoIdentificacion.length > 0) {
+                    // formik.setValues() 
+                    formik.setFieldValue(
+                        "idTipoIdentificacion",
+                        response.tipoIdentificacion.find(obj => obj.codigoSri === "04")?.idTipoIdentificacion
+                    )
+                }
+                if (response.tipoContribuyentes.length > 0) {
+                    formik.setFieldValue(
+                        "idSubContribuyente",
+                        response.tipoContribuyentes.find(obj => obj.codigo === "06")?.idSubContribuyente
+                    )
+                }
+
+                if (response.tiempoCreditos.length > 0) {
+                    formik.setFieldValue(
+                        "idTiempoCredito",
+                        response.tiempoCreditos[0]?.idTiempoCredito
+                    )
+                }
+
+            }
+        }).finally(() => showLoader(false));
+
+
+        if(id > 0){
+            CustomerService.getId(id).then(response=>{
+                console.log(response)
+                formik.setValues(state=>{
+                    return {
+                        ...state,
+                        idCliente: response.customerCompanyId,
+                        numeroIdentificacion: response.identificationNumber,
+                        nombreFiscal: response.fiscalName,
+                        nombreComercial: response.tradeName,
+                        idTipoIdentificacion: response.idTipoIdentificacion!,
+                        idTiempoCredito: response.idTiempoCredito!,
+                        idSubContribuyente: response.idSubContribuyente!,
+                    }
+                })
+            })
+        }
+
+    }
+
+
+
+    useEffect(() => {
+        onLoad();
     }, [])
 
     function isNumber(valor: string): boolean {
@@ -141,10 +207,15 @@ const CustomerDialog = ({ open, handleClose }: CustomDialogProp) => {
     }
 
     const validateIDNumber = (numeroIdentificacion: string) => {
+
         numeroIdentificacion = numeroIdentificacion.trim();
+
         if (![10, 13].includes(numeroIdentificacion.length)) return;
+
         if (!isNumber(numeroIdentificacion)) return;
+
         if (numeroIdentificacion.length === 13 && numeroIdentificacion.slice(-3) !== "001") return;
+
         return true;
     }
 
@@ -154,7 +225,7 @@ const CustomerDialog = ({ open, handleClose }: CustomDialogProp) => {
             numeroIdentificacion.length === 13 &&
             tiposIdentificacion.find(
                 obj => obj.idTipoIdentificacion === formik.values.idTipoIdentificacion
-            )?.codigoSri === "04") {
+            )?.codigoSri === SRI_IDENTIFITION_CODE.RUC) {
             //Buscar SRI 
             showLoader(true);
             SharedService.checkClientSRIByRUC(numeroIdentificacion).then(response => {
@@ -182,27 +253,47 @@ const CustomerDialog = ({ open, handleClose }: CustomDialogProp) => {
             numeroIdentificacion.length === 10 &&
             tiposIdentificacion.find(
                 obj => obj.idTipoIdentificacion === formik.values.idTipoIdentificacion
-            )?.codigoSri === "05"
+            )?.codigoSri === SRI_IDENTIFITION_CODE.LICENSE
         ) {
             //Buscar SRI 
             showLoader(true);
             SharedService.checkClientSRIByCedula(numeroIdentificacion).then(response => {
-                console.log()
+                console.log(response)
+                const { direccion, email, error, nombreCompleto, telefono } = response;
+                if (response.nombreCompleto) {
+                    SnackbarUtility.warning(error!);
+                    return
+                }
+                formik.setValues({
+                    ...formik.values,
+                    numeroIdentificacion,
+                    idCliente: 0,
+                    nombreComercial: nombreCompleto,
+                    nombreFiscal: nombreCompleto,
+                    direccion,
+                    emails: email,
+                    telefonos: telefono
+                })
+
             }).finally(() => showLoader(false))
         }
     }
 
 
     const customerSearchSRI = async (numeroIdentificacion: string) => {
-        if (tiposIdentificacion.find(
+        const dataIdentification = tiposIdentificacion.find(
             obj => obj.idTipoIdentificacion === formik.values.idTipoIdentificacion
-        )?.codigoSri === ("04" || "05")) {
+        )
 
+        if (
+            (dataIdentification?.codigoSri === SRI_IDENTIFITION_CODE.RUC) ||
+            (dataIdentification?.codigoSri === SRI_IDENTIFITION_CODE.LICENSE)
+        ) {
+            //Validacion de Numero y si es cedula o RUC
             if (validateIDNumber(numeroIdentificacion)) {
                 const isCustomerRegistered = await CustomerService.isCustomerRegistered({
                     textSearch: numeroIdentificacion
                 })
- 
 
                 if (!isCustomerRegistered && isSearchSRI) {
                     executeSearchCustomerSRI(numeroIdentificacion);
@@ -216,7 +307,7 @@ const CustomerDialog = ({ open, handleClose }: CustomDialogProp) => {
     }
 
     return (
-        <Dialog open={open} onClose={() => handleClose(true)} fullWidth>
+        <Dialog open={open} onClose={() => handleClose()} fullWidth>
             <form onSubmit={formik.handleSubmit} autoComplete='off'>
                 <DialogTitle>Nuevo Cliente</DialogTitle>
                 <DialogContent dividers>
@@ -390,7 +481,7 @@ const CustomerDialog = ({ open, handleClose }: CustomDialogProp) => {
                 </DialogContent>
                 <DialogActions>
                     <Button type="submit" variant='contained' size='large' color='success'>Guardar</Button>
-                    <Button variant='outlined' color='inherit' size='large' onClick={() => handleClose(false)}>Cerrar</Button>
+                    <Button variant='outlined' color='inherit' size='large' onClick={() => handleClose()}>Cerrar</Button>
                 </DialogActions>
             </form>
         </Dialog>

@@ -10,11 +10,37 @@ GO
 -- Create date: 2023-07-02
 -- Description:	sp for get report 
 -- =============================================
-CREATE OR ALTER PROCEDURE Pet.MedicalHistory_Report @id INT
+CREATE OR ALTER PROCEDURE Pet.MedicalHistory_Report @userRoleId INT
+	,@id INT
+	,@tableNames VARCHAR(500) OUTPUT
 AS
 BEGIN 
 	SET NOCOUNT ON;
-	SELECT CASE 
+
+    DECLARE @dataSources AS TABLE (dsName VARCHAR(50))
+    DECLARE @tblParams AS TABLE (
+                            paramName VARCHAR(100),
+                            isBinary BIT,
+                            paramValue VARBINARY(MAX))
+
+    DECLARE @logoImg VARBINARY(MAX)
+    ,@mimeType VARCHAR(20)
+
+	INSERT INTO @dataSources(dsName)
+	VALUES	('mainDataSet'),
+			('behaviorTests'),
+            ('healthChecks')
+
+	SET @tableNames = 'RdlcProps,RdlcDataSources,mainDataSet,behaviorTests,healthChecks,RdlcParams'
+
+	--RdlcProps
+	SELECT 'Reports\MedicalHistory.rdl' ReportPath, 'pdf' ReportFormat, 'application/pdf' ContentType, 'Historial Clinico.pdf' ReportName
+
+	--RdlcDataSources
+	SELECT * FROM @dataSources
+
+	--Main DS
+		SELECT CASE 
 				WHEN [p].[Age] < 1 THEN CONVERT(VARCHAR, [p].[Age]) + ' meses' 
 				WHEN [p].[Age] = 1 THEN CONVERT(VARCHAR, [p].[Age]) + ' año'
 				WHEN [p].[Age] > 1 THEN CONVERT(VARCHAR, [p].[Age]) + ' años'
@@ -40,6 +66,8 @@ BEGIN
 		LEFT JOIN Customer.Customer c WITH(NOLOCK) ON p.CustomerId = c.Id 
 	WHERE mh.Id = @id
 
+	--Diseases
+	
     SELECT [d].[Name] disease
 		,[ds].[Name] diseaseStatus
 		,ds.[Order]
@@ -49,6 +77,7 @@ BEGIN
 		CROSS JOIN Pet.DiseaseStatus ds
 	WHERE hc.MedicalHistoryId = @id
 
+    --Behavior
 
     SELECT [bs].[Name] behaviorStatus
 		,[b].[Name] behavior
@@ -57,15 +86,21 @@ BEGIN
 	FROM Pet.BehaviorTest bt  
 		INNER JOIN Pet.Behavior b WITH(NOLOCK) ON bt.BehaviorId = b.Id
 		CROSS JOIN Pet.BehaviorStatus bs
-
 	WHERE bt.MedicalHistoryId = @id
 
+		--RdlcParams
 	DECLARE @petId INT 
 	SET @petId = (SELECT PetId FROM Pet.MedicalHistory WHERE id = @id)
-	SELECT TOP 1 imagen
-		,mimeType
+	SELECT TOP 1 @logoImg = imagen
+			,@mimeType = mimeType
 	FROM AcontPlus.Config.Estab_Logo
 	WHERE ruc = (SELECT TOP 1 e.ruc FROM Pet.Pet p INNER JOIN Entidad e ON p.CompanyId = e.idEntidad WHERE id = @petId)
 	ORDER BY idEstab_Logo DESC
+
+    INSERT INTO @tblParams(paramName, isBinary, paramValue)
+    VALUES('logo', 1, @logoImg),
+        ('mimeType', 0, CONVERT(VARBINARY, @mimeType))
+
+    SELECT * FROM @tblParams
 END
 GO

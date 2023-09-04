@@ -1,3 +1,4 @@
+import { SRI_IDENTIFITION_CODE } from "../constants"
 
 
 
@@ -35,19 +36,26 @@ export interface RawCustomerData  {
     tipoIdentificacion?: string,
     rucEmpresa: string
     companyId: number,
-    customerId: number
+    customerId: number,
+    idSubContribuyente: number
+    idTipoIdentificacion: number
     
 }
 
 
 export interface CustomerReadDto {
-    readonly customerId: number;
-    taxName: string
-    tradeName: string;
-    identificationNumber: string;
+    readonly customerCompanyId: number;
+    fiscalName: string
+    tradeName: string
+    identificationNumber: string
+    //Editar
+    idTipoIdentificacion?: number
+    idTiempoCredito?: number
+    idSubContribuyente?: number
+
 }
 
-type CodigoIdentificacionSRI = "04"| "05" | '06' ;
+type CodigoIdentificacionSRI = SRI_IDENTIFITION_CODE.RUC | SRI_IDENTIFITION_CODE.LICENSE | SRI_IDENTIFITION_CODE.PASSPORT;
 
 export interface CustomerCreateDto {
     idCliente: number
@@ -61,11 +69,10 @@ export interface CustomerCreateDto {
     direccion?: string,
     emails?: string,
     telefonos?: string
+    correo?: string
+    telefono?: string
+    placa?: string
 }
-
-
-
-
 
 
 //Data Form 

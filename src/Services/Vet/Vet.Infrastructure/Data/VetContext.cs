@@ -1,10 +1,11 @@
-using System.Reflection;
+﻿using System.Reflection;
+using Common.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Vet.Core.Entities;
 
 namespace Vet.Infrastructure.Data
 {
-    public class VetContext : DbContext
+    public class VetContext : BaseContext
     {
         public VetContext(DbContextOptions<VetContext> options) : base(options)
         {

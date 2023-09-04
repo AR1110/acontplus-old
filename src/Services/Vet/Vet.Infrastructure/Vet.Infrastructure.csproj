@@ -35,6 +35,7 @@
 		<PackageReference Include="System.Data.SqlClient" />
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\..\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
 		<ProjectReference Include="..\Vet.Core\Vet.Core.csproj" />
 	</ItemGroup>
 	<ItemGroup>

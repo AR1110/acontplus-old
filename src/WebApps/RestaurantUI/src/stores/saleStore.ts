@@ -8,7 +8,7 @@ import {
     dataFormInitialState,
     orderInitialState
 } from "@/core/models";
-import { SnackbarUtility, addSound, clearSound } from "@/core/utilities";
+import { RoundNumber, SnackbarUtility, addSound, clearSound } from "@/core/utilities";
 import { ChangeEvent } from "react";
 import { create } from "zustand";
 import { produce } from 'immer';
@@ -45,7 +45,12 @@ type Actions = {
     addItemToCart(item: ItemRead): void
     removeItemFromCart(productId: number): void
     setTotalItems(): void,
-    setItemChangeQty(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, cartItem: ItemRead): void
+    setAddQuantity(index: number, value: number):void
+    setRemoveQuantity(index: number, value: number):void
+    setItemChangeQty(
+        event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, 
+        cartItem: ItemRead, 
+        ): void
     caculateTotals(): void
     resetForm(): void
 }
@@ -58,6 +63,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
             establecimientoId: order.establecimientoId,
             puntoEmisionId: order.puntoEmisionId,
             customerCompanyId: order.customerCompanyId,
+            customerName: "",
             bodegaId: 0,
             tableId: order.tableId,
             subTotalSinImpuestos: 0,
@@ -68,7 +74,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
             total: order.total,
             netTotal: 0,
             tip: 0,
-            obs: "",
+            obs: order.obs,
             codDoc: order.codDoc,
             quickSale: false,
             createdAt: new Date(order.createdAt)
@@ -192,7 +198,55 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         totalItems: state.items.reduce((total, item) => total + item.quantity, 0)
     })),
 
-    async setItemChangeQty(event, item) {
+    setAddQuantity(index: number, value: number){
+        console.log(index, value)
+        const { items, setTotalItems, caculateTotals } = get();
+        const newArray = items.map((orderItem, orderItemIndex) => {
+            const total = value * orderItem.price;
+            if (index === orderItemIndex) {              
+              return { 
+                ...orderItem, 
+                quantity: value,
+                total: RoundNumber(total, 2)            
+            };
+            } else { 
+              return orderItem;
+            }
+        })
+        set(
+            produce((state:State)=>{
+                state.items = newArray;
+            })
+        )
+        setTotalItems();
+        caculateTotals();
+        addSound();
+    },
+    setRemoveQuantity(index: number, value: number){ 
+        console.log(index, value)
+        const { items, setTotalItems, caculateTotals } = get();
+        const newArray = items.map((orderItem, orderItemIndex) => {
+            const total = value * orderItem.price;
+            if (index === orderItemIndex) {              
+              return { 
+                ...orderItem, 
+                quantity: value,
+                total: RoundNumber(total, 2)            
+            };
+            } else { 
+              return orderItem;
+            }
+        })
+        set(
+            produce((state:State)=>{
+                state.items = newArray;
+            })
+        )
+        setTotalItems();
+        caculateTotals();
+        addSound();
+    },
+    async setItemChangeQty(event, item) { 
         const { items, setTotalItems, caculateTotals, dataForm } = get();
 
         let qty = Number(event.target.value)
@@ -272,6 +326,9 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
     async resetForm() {
         set(
             produce((state: State)=>{ 
+                state.order.obs = "",
+                state.order.customerName = "",
+                state.order.customerCompanyId = 0,
                 state.order.orderId = 0;
                 state.totalItems = 0;
                 state.items = []                
@@ -310,6 +367,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                     state.payment.isOpen = false
                 })
             )
+            get().resetForm();
         },
     },
     navigation: {

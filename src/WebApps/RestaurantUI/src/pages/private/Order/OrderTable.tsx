@@ -34,6 +34,7 @@ import { useLoaderStore, useSaleStore } from "@/stores";
 import { OrderReadDto, PrivateRoutes, QueryParams } from "@/core/models";
 import { useNavigate } from "react-router-dom";
 import { itemToApi, summaryToApi } from "@/core/adapters";
+import OrderWhatsApp from "./Components/OrderWhatsApp";
 
 type OrderTableProps = {
   orders: Array<OrderReadDto>,
@@ -44,6 +45,7 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
   const navigate = useNavigate();
   const [page, setPage] = React.useState(0);
   const [open, setOpen] = React.useState(false);
+  const [openTableDialog, setOpenTableDialog] = useState(false);
   const [fullWidth] = React.useState(true);
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -248,7 +250,7 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
                       <Tooltip describeChild title="Compartir por WhatsApp">
                         <IconButton
                           aria-label="Impresión"
-                          onClick={() => handleUpdateState(order.orderId)}
+                          onClick={() => setOpenTableDialog(true)}
                         >
                           <ShareSharpIcon />
                         </IconButton>
@@ -314,9 +316,11 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cerrar</Button>
+          <Button style={{color: 'black'}} variant="outlined" onClick={handleClose}>Cerrar</Button>
         </DialogActions>
       </Dialog>
+
+      <OrderWhatsApp open={openTableDialog} onClose={setOpenTableDialog}></OrderWhatsApp>
     </React.Fragment>
   );
 }

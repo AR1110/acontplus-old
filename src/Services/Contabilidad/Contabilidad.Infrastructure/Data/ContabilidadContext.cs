@@ -1,9 +1,15 @@
+﻿using System.Reflection;
+using Common.Infrastructure.Data;
 using Contabilidad.Core.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+
 
 namespace Contabilidad.Infrastructure.Data
 {
-    public class ContabilidadContext : DbContext
+    public class ContabilidadContext : BaseContext
     {
         public ContabilidadContext(DbContextOptions<ContabilidadContext> options) : base(options)
         {

@@ -21,7 +21,8 @@ type CartItemProps = {
 
 const CartItem = ({ index, item }: CartItemProps) => {
     const removeItemFromCart = useSaleStore(state => state.removeItemFromCart)
-    const setItemChangeQty = useSaleStore(state => state.setItemChangeQty)
+    const setAddQuantity = useSaleStore(state => state.setAddQuantity)
+    const setRemoveQuantity = useSaleStore(state => state.setRemoveQuantity)
     const setChangeValueOrderItem = useSaleStore(state => state.setChangeValueOrderItem)
 
     const [expanded, setExpanded] = useState(false);
@@ -75,9 +76,19 @@ const CartItem = ({ index, item }: CartItemProps) => {
                                         <Button onClick={handleExpandClick} >
                                             <CommentIcon />
                                         </Button>
-                                        <Button><AddIcon color='error' /></Button>
+                                        <Button disabled={item.quantity===1} onClick={()=>{
+                                            const quantity = item.quantity  - 1;
+                                            setRemoveQuantity(index, quantity)
+                                        }}>
+                                        <RemoveIcon   />
+                                        </Button>
                                         <Button>{item.quantity}</Button>
-                                        <Button ><RemoveIcon color='success' /></Button>
+                                        <Button onClick={()=>{
+                                            const quantity = item.quantity  + 1;
+                                            setRemoveQuantity(index, quantity)
+                                        }}>
+                                            <AddIcon  />
+                                        </Button>
                                     </ButtonGroup>
                                 </Grid>
                                 <Grid item xs={12} sm={4} md={4} >

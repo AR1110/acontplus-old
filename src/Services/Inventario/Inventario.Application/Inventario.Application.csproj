@@ -9,7 +9,6 @@
   <ItemGroup>
     <PackageReference Include="AWSSDK.Core" />
     <PackageReference Include="AWSSDK.S3" />
-    <PackageReference Include="ReportViewerCore.NETCore" />
   </ItemGroup>
 
   <ItemGroup>

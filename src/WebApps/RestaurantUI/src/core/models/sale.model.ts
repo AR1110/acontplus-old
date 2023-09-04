@@ -7,6 +7,7 @@ export interface Order {
     establecimientoId: number
     puntoEmisionId : number
     customerCompanyId : number
+    customerName: string
     bodegaId: number
     tableId: number
     subTotalSinImpuestos: number
@@ -149,6 +150,7 @@ export const orderInitialState: Order = {
     establecimientoId: 0,
     puntoEmisionId: 0,
     customerCompanyId: 0,
+    customerName: "",
     bodegaId: 0,
     tableId: 0,
     subTotalSinImpuestos: 0,

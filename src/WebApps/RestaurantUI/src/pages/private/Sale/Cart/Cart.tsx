@@ -12,10 +12,7 @@ import './Cart.css'
 import TableDialog from '../Table/TableDialog';
 import { useState } from 'react';
 import Customer from '../Customer/Customer';
-const styleListItem = {
-    paddingTop: '1px',
-    paddingBottom: '1px'
-}
+ 
 
 const Cart = () => {
     const cartItems = useSaleStore(state => state.items);
@@ -23,6 +20,7 @@ const Cart = () => {
         order: state.order,
         items: state.items,
     }));
+    const setOrder = useSaleStore(state=>state.setSummary)
 
     //store checkout 
     const setQueryParams = useCheckoutStore(state => state.setQueryParams)
@@ -34,7 +32,17 @@ const Cart = () => {
 
     //Modal Tables 
     const [openTableDialog, setOpenTableDialog] = useState(false);
+    const typeActions: { [key: string]: string } = {
+        [DOC_TYPE.FV] : `
+        Esta seguro de guardar el pedido como Factura? </br> 
+        <small>Ya no será posible modificar la venta para hacer cambios, tendrás que cancelar esta y crear una nueva.!</small>`,
+        [DOC_TYPE.NE] : `
+        Esta seguro de guardar el pedido como Nota de Entrega? </br> 
+        <small>Ya no será posible modificar la venta para hacer cambios, tendrás que cancelar esta y crear una nueva.!</small>`,
+        [DOC_TYPE.OR] : `Esta seguro de guardar el pedido? </br>
+        <small>El stock de los productos <strong>no se descontará</strong> hasta que se transforme a "Factura" o "Nota de Entrega".`
 
+    }
 
     const onClickResetFrom = async () => {
         if (cartItems.length === 0) return;
@@ -77,13 +85,13 @@ const Cart = () => {
             return
         }
         const { isConfirmed } = await Swal.fire({
-            title: 'Guardar el Orden?',
-            text: "Ya no será posible modificar la venta - para hacer cambios, tendrás que cancelar esta y crear una nueva.!",
+            title: `${order.orderId > 0 ? 'Actualizar': 'Guardar'} Pedido`,
+            html: typeActions[codDoc],
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Si, guardar!',
+            confirmButtonText: `${order.orderId > 0 ? 'Actualizar': 'Guardar'}`,
             cancelButtonText: 'No, cancelar!'
         })
 
@@ -211,7 +219,7 @@ const Cart = () => {
                 )
             }
 
-            <Divider sx={{m:1}}/>
+            <Divider sx={{ m: 1 }} />
             <Grid container direction="row"
                 justifyContent="space-between"
                 alignItems="center" >
@@ -220,9 +228,15 @@ const Cart = () => {
                     <TextField
                         id="observacion"
                         label="Observación"
+                        value={order.obs}
+                        onChange={(e)=>{
+                            setOrder({
+                                ...order,
+                                obs: e.target.value
+                            })
+                        }}
                         multiline
-                        rows={2}
-                        defaultValue="Default Value"
+                        rows={2} 
                     />
                 </Grid>
                 <Grid item   >
@@ -237,65 +251,103 @@ const Cart = () => {
                     </Typography>
                 </Grid>
             </Grid>
-            <Divider sx={{m:1}}/>
+            <Divider sx={{ m: 1 }} />
 
 
 
-            <Grid container spacing={1}   >
+            <Grid container spacing={1} justifyContent="stretch"   >
+                {
+                    order.orderId > 0 && (
+                        <>
+                            <Grid item xs={6} md={6}>
+                                <Button
+                                    color="error"
+                                    className='buttonCart'
+                                    variant="contained"
+                                    size="large"
+                                    fullWidth
+                                    startIcon={<CleaningServicesIcon />}
+                                    onClick={onClickResetFrom}>
+                                    Limpiar
+                                    <Typography variant="caption" display="block" gutterBottom>
+                                        Alt + C
+                                    </Typography>
+                                </Button>
+                            </Grid>
+                            <Grid item xs={6} md={6}>
+                                <Button
+                                    color="success"
+                                    className='buttonCart'
+                                    variant="contained"
+                                    size="large"
+                                    fullWidth
+                                    startIcon={<SaveIcon />}
+                                    onClick={() => askToSave(DOC_TYPE.OR)}>
+                                    Actualizar
+                                </Button>
+                            </Grid>
+                        </>
+                    )
+                }
 
-                <Grid item xs={6} md={3}>
-                    <Button
-                        color="error"
-                        className='buttonCart'
-                        variant="contained"
-                        size="large"
-                        fullWidth
-                        startIcon={<CleaningServicesIcon />}
-                        onClick={onClickResetFrom}>
-                        Limpiar
-                        <Typography variant="caption" display="block" gutterBottom>
-                            Alt + C
-                        </Typography>
-                    </Button>
-                </Grid>
-                <Grid item xs={6} md={3}>
-                    <Button
-                        color="success"
-                        className='buttonCart'
-                        variant="contained"
-                        size="large"
-                        fullWidth
-                        startIcon={<SaveIcon />}
-                        onClick={() => askToSave(DOC_TYPE.OR)}>
-                        Guardar
-                    </Button>
-                </Grid>
+                {
+                    !(order.orderId > 0) && (
+                        <>
+                            <Grid item xs={6} md={3}>
+                                <Button
+                                    color="error"
+                                    className='buttonCart'
+                                    variant="contained"
+                                    size="large"
+                                    fullWidth
+                                    startIcon={<CleaningServicesIcon />}
+                                    onClick={onClickResetFrom}>
+                                    Limpiar
+                                    <Typography variant="caption" display="block" gutterBottom>
+                                        Alt + C
+                                    </Typography>
+                                </Button>
+                            </Grid>
+                            <Grid item xs={6} md={3}>
+                                <Button
+                                    color="success"
+                                    className='buttonCart'
+                                    variant="contained"
+                                    size="large"
+                                    fullWidth
+                                    startIcon={<SaveIcon />}
+                                    onClick={() => askToSave(DOC_TYPE.OR)}>
+                                    Guardar
+                                </Button>
+                            </Grid>
+                            <Grid item xs={6} md={3}>
+                                <Button
+                                    color="primary"
+                                    className='buttonCart'
+                                    variant="contained"
+                                    size="large"
+                                    fullWidth
+                                    startIcon={<FileCopyRoundedIcon />}
+                                    onClick={() => askToSave(DOC_TYPE.FV)}>
+                                    Factura
+                                </Button>
+                            </Grid>
+                            <Grid item xs={6} md={3}>
+                                <Button
+                                    color="warning"
+                                    className='buttonCart'
+                                    variant="contained"
+                                    size="large"
+                                    fullWidth
+                                    startIcon={<FileCopyRoundedIcon />}
+                                    onClick={() => askToSave(DOC_TYPE.NE)}>
 
-                <Grid item xs={6} md={3}>
-                    <Button
-                        color="primary"
-                        className='buttonCart'
-                        variant="contained"
-                        size="large"
-                        fullWidth
-                        startIcon={<FileCopyRoundedIcon />}
-                        onClick={() => askToSave(DOC_TYPE.FV)}>
-                        Factura
-                    </Button>
-                </Grid>
-                <Grid item xs={6} md={3}>
-                    <Button
-                        color="warning"
-                        className='buttonCart'
-                        variant="contained"
-                        size="large"
-                        fullWidth
-                        startIcon={<FileCopyRoundedIcon />}
-                        onClick={() => askToSave(DOC_TYPE.NE)}>
-
-                        Nota Entrega
-                    </Button>
-                </Grid>
+                                    Nota Entrega
+                                </Button>
+                            </Grid>
+                        </>
+                    )
+                }
             </Grid>
         </Paper>
     )

@@ -7,7 +7,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
 	</ItemGroup>
 	<ItemGroup>
 		<Content Include="..\..\..\SharedSettings\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json">
@@ -22,12 +24,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
 		<ProjectReference Include="..\..\Common\DataAccess\DataAccess.csproj" />
 		<ProjectReference Include="..\..\Common\Lib.Common\Lib.Common.csproj" />
 		<ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
-		<ProjectReference Include="..\Config.Application\Config.Application.csproj" />
-		<ProjectReference Include="..\Config.Core\Config.Core.csproj" />
-		<ProjectReference Include="..\Config.Infrastructure\Config.Infrastructure.csproj" />
 	</ItemGroup>
 
 </Project>

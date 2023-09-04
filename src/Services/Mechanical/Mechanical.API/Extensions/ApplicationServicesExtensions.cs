@@ -4,7 +4,6 @@ using Mechanical.API.Helpers;
 using Mechanical.Application.Services;
 using Mechanical.Core.Interfaces;
 using Mechanical.Infrastructure.Data;
-using Mechanical.Infrastructure.Repositories;
 
 namespace Mechanical.API.Extensions
 {
@@ -15,7 +14,7 @@ namespace Mechanical.API.Extensions
             services.AddDbContextPool<MechanicalContext>(options =>
             options.UseSqlServer(Encryption.DecryptString(configuration.GetSection("KeyEncryption").Value, configuration.GetConnectionString("DefaultConnection"))));
 
-            services.AddScoped<IADORepository, ADORepository>();
+            
             services.AddScoped<IVehicleService, VehicleService>();
             services.AddScoped<ISupportService, SupportService>();
 
