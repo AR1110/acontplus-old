@@ -1,12 +1,12 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import Modal from "$core/components/Modal.svelte";
   import toast from "$core/utils/toast";
-  import { onMount } from "svelte";
   import { showLoader, hideLoader } from "$core/utils/loading-spinner";
   import type { Vehicle } from "$core/interfaces/mechanical/vehicle";
   import type { Customer } from "$core/interfaces/customer/customer";
-  import { VehicleService } from "$core/services/Mechanical/vehicle-service";
-  import { CustomerService } from "$core/services/Customer/customer-service";
+  import { VehicleService } from "$core/services/mechanical/vehicle-service";
+  import { CustomerService } from "$core/services/customer/customer-service";
   import AdvancedSearch from "$core/components/AdvancedSearch.svelte";
   import { vehicleStore } from "$routes/Mechanical/Store/vehicle.store";
 
@@ -215,9 +215,9 @@
     title={vehicle.id > 0 ? "Actualizar" : "Registrar"}
     onClosed={() => onModalClose()}
     size={"modal-xl"}
-    scroll={"scrollable"}
   >
-    <form style="text-transform:uppercase"
+    <form
+      style="text-transform:uppercase"
       on:submit|preventDefault={vehicle.id > 0 ? onUpdate : onSave}
       autocomplete="off"
     >

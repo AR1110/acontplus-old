@@ -12,6 +12,9 @@ namespace Mechanical.Infrastructure.Data
         public DbSet<VehicleType> VehicleTypes { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<VehicleCompany> VehicleCompanys { get; set; }
+        public DbSet<SupportType> SupportTypes { get; set; }
+        public DbSet<Support> Supports { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -35,6 +38,13 @@ namespace Mechanical.Infrastructure.Data
            .HasDatabaseName("UXC_Mechanical_LicensePlate")
            .IsUnique();
 
+            modelBuilder.Entity<SupportType>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<SupportType>().HasIndex(x => x.Code)
+           .HasDatabaseName("UXC_SupportType_Code")
+           .IsUnique();
+
+            modelBuilder.Entity<Support>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+           
             modelBuilder.Entity<VehicleCompany>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
         }
 
