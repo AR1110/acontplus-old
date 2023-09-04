@@ -1,5 +1,5 @@
-﻿using Customer.API.Services;
-using Customer.Infrastructure.Data;
+﻿using Customer.API.Data;
+using Customer.API.Services;
 using Lib.Common;
 using Microsoft.EntityFrameworkCore;
 

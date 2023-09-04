@@ -1,8 +1,8 @@
 ﻿using System.Data;
 using System.Net;
+using Customer.API.Data;
 using Customer.API.Dtos;
 using Customer.API.Services;
-using Customer.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;

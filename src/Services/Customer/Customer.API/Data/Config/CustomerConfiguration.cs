@@ -1,8 +1,8 @@
-﻿using Customer.Core.Entities;
+﻿using Customer.API.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Customer.Infrastructure.Data.Config
+namespace Customer.API.Data.Config
 {
     public class CustomerConfiguration : IEntityTypeConfiguration<AppCustomer>
     {

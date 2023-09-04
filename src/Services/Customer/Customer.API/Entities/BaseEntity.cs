@@ -1,4 +1,4 @@
-namespace Customer.Core.Entities
+﻿namespace Customer.API.Entities
 {
     public class BaseEntity
     {
