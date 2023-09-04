@@ -1,16 +1,17 @@
 import * as React from 'react';
-import { Dayjs } from 'dayjs';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo'; 
+import { Dayjs } from 'dayjs'; 
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 type DateRangeFilterProps = {
     label: string
+    value: Dayjs
+    onChange(value: Dayjs | null):void   
 }
-export default function DateRangeFilter({label}: DateRangeFilterProps) {
-  const [value, setValue] = React.useState<Dayjs | null>(null);
-  console.log(value)
+export default function DateRangeFilter({label, value, onChange}: DateRangeFilterProps) {
+//   const [value, setValue] = React.useState<Dayjs | null>(null);
+   
   return (  
-        <DatePicker label={label} value={value} onChange={(newValue) => setValue(newValue)} />
+        <DatePicker label={label} value={value} onChange={(newValue) => onChange(newValue)} />
     
   );
 }

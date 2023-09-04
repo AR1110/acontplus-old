@@ -9,14 +9,15 @@ import { useLoaderStore, useOrderStore } from "@/stores";
 import { orderReadAdapter } from "@/core/adapters";
 import DateRangeFilter from "./Components/DateRangeFilter";
 import { CustomerSearchFilter } from "./Components";
+import dayjs from 'dayjs';
 
 
 export default function Order() {
     const navigate = useNavigate(); 
-    const orders = useOrderStore(state => state.orders); 
     // const setOrders = useOrderStore(state => state.setOrders); 
     const getOrders = useOrderStore(state => state.getOrders); 
     const orderFilter = useOrderStore(state => state.orderFilter); 
+    const setOrderFilter = useOrderStore(state => state.setOrderFilter); 
 
     const handleNewOrder = () => {
         navigate(`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.SALE}`, { replace: true })
@@ -32,7 +33,21 @@ export default function Order() {
 
     useEffect(() => {
         getOrders();
-    }, [orderFilter])
+    }, [])
+
+    const onchangeDateStart = (date:any)=>{ 
+        setOrderFilter({
+            ...orderFilter,
+            startDate: date.format()
+        })
+    }
+
+    const onchangeDateEnd = (date:any)=>{
+        setOrderFilter({
+            ...orderFilter,
+            endDate: date.format()
+        })
+    }
 
     return (
         <Paper sx={{ maxWidth: "auto", margin: 'auto', overflow: 'hidden' }}>
@@ -47,10 +62,16 @@ export default function Order() {
                         <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
                             <Grid container spacing={3}>
                                 <Grid item xs={12} md={4}>
-                                    <DateRangeFilter label="Fecha Inicio" />
+                                    <DateRangeFilter 
+                                    label="Fecha Inicio" 
+                                    value={dayjs(orderFilter.startDate)} 
+                                    onChange={onchangeDateStart} />
                                 </Grid>
                                 <Grid item xs={12} md={4}>
-                                    <DateRangeFilter label="Fecha Fin" />
+                                <DateRangeFilter 
+                                    label="Fecha Inicio" 
+                                    value={dayjs(orderFilter.endDate)} 
+                                    onChange={onchangeDateEnd} />
                                 </Grid>
                                 <Grid item xs={12} md={4}>
                                     <CustomerSearchFilter/>

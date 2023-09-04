@@ -14,6 +14,7 @@ type State = {
 type Actions = {
     setOrders(orders: Array<OrderReadDto>): void
     getOrders():void
+    setOrderFilter(orderFilter:OrderFilter):void
 }
 
  
@@ -40,5 +41,12 @@ export const useOrderStore = create<State & Actions>((set, get)=>({
             )
         }).finally(() => showLoader(false))
     },
+    setOrderFilter(orderFilter){
+        set(
+            produce((state:State)=>{
+                state.orderFilter = orderFilter;
+            })
+        )
+    }
 
 }))
