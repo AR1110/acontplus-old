@@ -51,7 +51,7 @@ BEGIN
     DECLARE @host  VARCHAR(100) 
     DECLARE @password VARCHAR(50)
     DECLARE @port INT 
-
+    DECLARE @cc VARCHAR(100)
 
     SELECT TOP 1
            @enableSsl = [enableSsl]
@@ -89,7 +89,7 @@ BEGIN
 
  
 
-		
+		SELECT top 1 @cc = email from Entidad where idEntidad = @idEntidad
 		SELECT TOP 1 @jsonConfig = jsonConfig FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig='CD'
 		
 		INSERT INTO @tlDecimal(idEntidad,nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce)
@@ -203,8 +203,8 @@ BEGIN
 				END
 
 
-			SET @emailData = (SELECT body = @body, 
-			                         cc = 'cc'									  
+			SET @emailData = (SELECT body = @body 
+			                        ,ISNULL(@cc,'') as 'cc' 						  
 							         ,EnableSsl =@enableSsl
 									 ,'from' = @from
 									 ,'host'= @host
