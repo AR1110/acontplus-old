@@ -178,6 +178,10 @@
           <DataField>porcentajeIva</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="contribuyenteRimpe">
+          <DataField>contribuyenteRimpe</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>ComprobantesElectronicosVentas</rd:DataSetName>
@@ -251,26 +255,6 @@
         <rd:DataSetName>ComprobantesElectronicosVentas</rd:DataSetName>
         <rd:SchemaPath>C:\Users\AleXx\Source\Workspaces\ApiReports\ApiReports\DataSets\ComprobantesElectronicosVentas.xsd</rd:SchemaPath>
         <rd:TableName>DTInfoAdicional</rd:TableName>
-        <rd:TableAdapterFillMethod />
-        <rd:TableAdapterGetDataMethod />
-        <rd:TableAdapterName />
-      </rd:DataSetInfo>
-    </DataSet>
-    <DataSet Name="NormativaDs">
-      <Query>
-        <DataSourceName>ComprobantesElectronicos</DataSourceName>
-        <CommandText>/* Local Query */</CommandText>
-      </Query>
-      <Fields>
-        <Field Name="descripcion">
-          <DataField>descripcion</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-      <rd:DataSetInfo>
-        <rd:DataSetName>ComprobantesElectronicos</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\AleXx\Source\Workspaces\AcontPlusDev\src\ApiReports\DataSets\ComprobantesElectronicos.xsd</rd:SchemaPath>
-        <rd:TableName>DTNormativaSri</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
         <rd:TableAdapterName />
@@ -2289,7 +2273,7 @@
             <KeepTogether>true</KeepTogether>
             <Top>14.29093cm</Top>
             <Left>0.26141cm</Left>
-            <Height>7.07458cm</Height>
+            <Height>4.19705cm</Height>
             <Width>11.30154cm</Width>
             <ZIndex>11</ZIndex>
             <Style>
@@ -3443,80 +3427,6 @@
               </Border>
             </Style>
           </Rectangle>
-          <Tablix Name="Tablix4">
-            <TablixBody>
-              <TablixColumns>
-                <TablixColumn>
-                  <Width>9.01418cm</Width>
-                </TablixColumn>
-              </TablixColumns>
-              <TablixRows>
-                <TablixRow>
-                  <Height>0.6cm</Height>
-                  <TablixCells>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="descripcion1">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Fields!descripcion.Value</Value>
-                                  <Style>
-                                    <FontSize>7pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>descripcion1</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                  </TablixCells>
-                </TablixRow>
-              </TablixRows>
-            </TablixBody>
-            <TablixColumnHierarchy>
-              <TablixMembers>
-                <TablixMember />
-              </TablixMembers>
-            </TablixColumnHierarchy>
-            <TablixRowHierarchy>
-              <TablixMembers>
-                <TablixMember>
-                  <Group Name="Details2" />
-                  <TablixMembers>
-                    <TablixMember />
-                  </TablixMembers>
-                </TablixMember>
-              </TablixMembers>
-            </TablixRowHierarchy>
-            <DataSetName>NormativaDs</DataSetName>
-            <Top>8.12334cm</Top>
-            <Left>0.26141cm</Left>
-            <Height>0.6cm</Height>
-            <Width>9.01418cm</Width>
-            <ZIndex>14</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-            </Style>
-          </Tablix>
           <Image Name="logo">
             <Source>Database</Source>
             <Value>=Parameters!logo.Value</Value>
@@ -3526,7 +3436,7 @@
             <Left>0.26142cm</Left>
             <Height>2.89437cm</Height>
             <Width>9.01417cm</Width>
-            <ZIndex>15</ZIndex>
+            <ZIndex>14</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -3561,7 +3471,7 @@
             <Left>0.26142cm</Left>
             <Height>0.6cm</Height>
             <Width>9.01417cm</Width>
-            <ZIndex>16</ZIndex>
+            <ZIndex>15</ZIndex>
             <Style>
               <Border />
               <VerticalAlign>Middle</VerticalAlign>
@@ -3594,6 +3504,40 @@
             <Left>0.26142cm</Left>
             <Height>0.67055cm</Height>
             <Width>9.01417cm</Width>
+            <ZIndex>16</ZIndex>
+            <Style>
+              <Border />
+              <VerticalAlign>Middle</VerticalAlign>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox120">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!contribuyenteRimpe.Value, "NotaCreditoClienteDs")</Value>
+                    <Style>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox119</rd:DefaultName>
+            <Top>8.08807cm</Top>
+            <Left>0.26141cm</Left>
+            <Height>0.6cm</Height>
+            <Width>9.01418cm</Width>
             <ZIndex>17</ZIndex>
             <Style>
               <Border />
@@ -3605,7 +3549,7 @@
             </Style>
           </Textbox>
         </ReportItems>
-        <Height>8.81109in</Height>
+        <Height>7.67567in</Height>
         <Style>
           <Border>
             <Style>None</Style>
