@@ -72,10 +72,14 @@ BEGIN
 	                        ,Uuid				= o.Uuid
                             ,DocumentoId		= ISNULL(od.DocumentoId,0)
                             ,codDoc				= ISNULL(td.codigo,'''')
+                            ,nombreFiscal	    = CASE WHEN o.CustomerCompanyId = 0 THEN ''CONSUMIDOR FINAL'' ELSE c.nombreFiscal END
+	                        ,nombreUsuario      = u.nombreUsuario
                             ,totalRecords       = COUNT(*) OVER()
                         FROM Restaurant.[Order] o WITH(NOLOCK)
                         LEFT JOIN Restaurant.OrderDocument od WITH(NOLOCK) ON o.Id = od.OrderId
                         LEFT JOIN TipoDocumento td WITH(NOLOCK) ON od.TipoDocumentoId = td.idTipoDocumento
+                        LEFT JOIN Cliente c ON c.idCliente = o.CustomerCompanyId
+                        LEFT JOIN Usuario u ON u.idUsuario = o.UserId
                         WHERE CAST(o.CreatedAt AS DATE) BETWEEN ISNULL(@startDate, @today) AND ISNULL(@endDate, @today) '
 
             IF @customerCompanyId IS NOT NULL
