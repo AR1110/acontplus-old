@@ -87,11 +87,8 @@ BEGIN
                     SET @sql = @sql + ' AND o.CustomerCompanyId = @customerCompanyId '
                 END
 
-            PRINT @sql 
-
             SET @sql = @sql + ' ORDER BY o.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
-                     
-            
+                                 
             SET @tableNames = 'orders'
             EXEC sp_executesql @sql
                                 ,@params
