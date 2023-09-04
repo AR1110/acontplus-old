@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Customer.Core.Entities
+namespace Customer.API.Entities
 {
     [Table("Customer", Schema = "Customer")]
     public class AppCustomer : BaseEntity

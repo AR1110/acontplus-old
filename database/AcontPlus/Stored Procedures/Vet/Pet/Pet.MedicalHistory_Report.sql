@@ -20,7 +20,7 @@ BEGIN
     DECLARE @dataSources AS TABLE (dsName VARCHAR(50))
     DECLARE @tblParams AS TABLE (
                             paramName VARCHAR(100),
-                            isBinary BIT,
+                            isBase64 BIT,
                             paramValue VARBINARY(MAX))
 
     DECLARE @logoImg VARBINARY(MAX)
@@ -34,7 +34,7 @@ BEGIN
 	SET @tableNames = 'RdlcProps,RdlcDataSources,mainDataSet,behaviorTests,healthChecks,RdlcParams'
 
 	--RdlcProps
-	SELECT 'Reports\MedicalHistory.rdl' ReportPath, 'pdf' ReportFormat, 'application/pdf' ContentType, 'Historial Clinico.pdf' ReportName
+	SELECT 'Reports\MedicalHistory.rdl' ReportPath, 'PDF' ReportFormat, 'Historial Clinico' ReportName
 
 	--RdlcDataSources
 	SELECT * FROM @dataSources
@@ -97,7 +97,7 @@ BEGIN
 	WHERE ruc = (SELECT TOP 1 e.ruc FROM Pet.Pet p INNER JOIN Entidad e ON p.CompanyId = e.idEntidad WHERE id = @petId)
 	ORDER BY idEstab_Logo DESC
 
-    INSERT INTO @tblParams(paramName, isBinary, paramValue)
+    INSERT INTO @tblParams(paramName, isBase64, paramValue)
     VALUES('logo', 1, @logoImg),
         ('mimeType', 0, CONVERT(VARBINARY, @mimeType))
 

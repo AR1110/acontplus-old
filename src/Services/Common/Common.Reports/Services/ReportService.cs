@@ -1,9 +1,12 @@
 ﻿using System.Data;
 using System.Text;
+using Common.Reports.Enums;
 using Common.Reports.Interfaces;
 using Domain.Dtos;
 using Lib.Common;
 using Lib.Common.Dtos;
+using Lib.Common.Enums;
+using Lib.Common.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Reporting.NETCore;
 using Newtonsoft.Json;
@@ -12,7 +15,7 @@ using Services.Lib.Common;
 
 namespace Common.Reports.Services
 {
-    public class ReportService: IReportService
+    public class ReportService : IReportService
     {
         private readonly IConfiguration _configuration;
         public ReportService(IConfiguration configuration)
@@ -182,7 +185,7 @@ namespace Common.Reports.Services
                 {
                     foreach (DataRow item in ds.Tables["RdlcParams"].Rows)
                     {
-                        if (Convert.ToBoolean(item.Field<bool>("isBinary")))
+                        if (Convert.ToBoolean(item.Field<bool>("isBase64")))
                         {
                             lr.SetParameters(new[] { new ReportParameter(item.Field<string>("paramName"), FileExtensions.GetBase64FromByte(item.Field<byte[]>("paramValue"))) });
                         }
@@ -194,7 +197,9 @@ namespace Common.Reports.Services
                     }
                 }
                 byte[] fileReport = lr.Render(rdlcProps.ReportFormat, null, out _, out _, out _, out _, out _);
-                return new ReportResponseDto { FileContents = fileReport, ContentType = rdlcProps.ContentType, FileDownloadName = rdlcProps.ReportName };
+                Enum.TryParse(rdlcProps.ReportFormat, out FileFormats.FileContentType fc);
+                Enum.TryParse(rdlcProps.ReportFormat, out FileFormats.FileExtension fe);
+                return new ReportResponseDto { FileContents = fileReport, ContentType = EnumExtensions.DisplayName(fc), FileDownloadName = rdlcProps.ReportName + EnumExtensions.DisplayName(fe) };
             }
         }
     }

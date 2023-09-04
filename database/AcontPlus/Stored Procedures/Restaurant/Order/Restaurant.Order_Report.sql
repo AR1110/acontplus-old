@@ -20,7 +20,7 @@ BEGIN
 	DECLARE @dataSources AS TABLE (dsName VARCHAR(50))
     DECLARE @tblParams AS TABLE (
                             paramName VARCHAR(100),
-                            isBinary BIT,
+                            isBase64 BIT,
                             paramValue VARBINARY(MAX))
 
     DECLARE @logoImg VARBINARY(MAX)
@@ -33,16 +33,29 @@ BEGIN
 	SET @tableNames = 'RdlcProps,RdlcDataSources,Order,OrderItems,RdlcParams'
 
 	--RdlcProps
-	SELECT 'Reports\Order.rdl' ReportPath, 'pdf' ReportFormat, 'application/pdf' ContentType, 'Orden de Pedido.pdf' ReportName
+	SELECT 'Reports\Order.rdl' ReportPath, 'PDF' ReportFormat, 'Orden de Pedido' ReportName
 
 	--RdlcDataSources
 	SELECT * FROM @dataSources
 
-	--OrderHeader
-	SELECT * FROM Restaurant.[Order] WITH (NOLOCK) WHERE Id = @id
+	--Order
+	SELECT o.*
+        ,e.nombreComercial tradeName
+        ,ISNULL(t.[Description], '') tableName
+        ,ISNULL(c.nombreFiscal, 'Consumidor Final') customer
+        ,u.nombreUsuario username
+    FROM Restaurant.[Order] o WITH (NOLOCK)
+            LEFT JOIN Cliente c WITH(NOLOCK) ON o.CustomerCompanyId = c.idCliente
+            LEFT JOIN v_usuario u ON o.UserId = u.idUsuario
+            INNER JOIN Sri.Establecimiento e WITH(NOLOCK) ON o.EstablecimientoId = e.idEstablecimiento
+            LEFT JOIN Restaurant.[Table] t WITH(NOLOCK) ON o.TableId = t.Id
+    WHERE o.Id = @id
 
 	--OrderItems
-	SELECT * FROM Restaurant.[OrderItem] WITH (NOLOCK) WHERE OrderId = @id
+	SELECT oi.*, i.productName
+    FROM Restaurant.[OrderItem] oi WITH (NOLOCK) 
+        INNER JOIN Restaurant.v_Item i ON oi.ItemId = i.Id
+    WHERE oi.OrderId = @id
 
 		--RdlcParams
 	SELECT TOP 1 @logoImg = imagen
@@ -53,7 +66,7 @@ BEGIN
 										WHERE o.Id = @id)
                                         ORDER BY idEstab_Logo DESC
 
-    INSERT INTO @tblParams(paramName, isBinary, paramValue)
+    INSERT INTO @tblParams(paramName, isBase64, paramValue)
     VALUES('logo', 1, @logoImg),
         ('mimeType', 0, CONVERT(VARBINARY, @mimeType))
 
