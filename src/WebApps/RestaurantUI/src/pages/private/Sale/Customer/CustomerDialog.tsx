@@ -50,7 +50,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
     //Tabs
     const [value, setValue] = useState(1);
 
-    const handleChange = (event: SyntheticEvent, newValue: number) => {
+    const handleChange = (_: SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
 
