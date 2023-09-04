@@ -18,6 +18,8 @@ import {
   Grid,
   IconButton,
   Tooltip,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 
 import {
@@ -48,14 +50,15 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
   const [page, setPage] = React.useState(0);
   const [open, setOpen] = React.useState(false);
   const [openTableDialog, setOpenTableDialog] = useState(false);
-  const [fullWidth] = React.useState(true);
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const showLoader = useLoaderStore((state) => state.showLoader);
   const setDataEdit = useSaleStore((state) => state.setDataEdit);
   const setOrderId = React.useRef(0);
-
   const customerId = React.useRef(0);
+
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
@@ -291,7 +294,12 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
       {/* { End list  - TABLE } */}
 
       {/* { Start Modal -  Select Modal. } */}
-      <Dialog open={open} onClose={handleClose} fullWidth={fullWidth}>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        fullScreen={fullScreen}
+        aria-labelledby="responsive-dialog-title"
+      >
         <DialogTitle id="alert-dialog-title">
           {"Convertir el Documento"}
         </DialogTitle>
@@ -299,7 +307,7 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
           <Grid
             container
             rowSpacing={2}
-            columnSpacing={{ xs: 12, sm: 6, md: 6 }}
+            columnSpacing={{ xs: 6, sm: 6, md: 6 }}
           >
             <Grid item xl={12} md={12} xs={12}>
               <OrderSearch setCustomerValue={setCustomerValue} />
@@ -336,6 +344,7 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
           <Button
             style={{ color: "black" }}
             variant="outlined"
+            size="large"
             onClick={handleClose}
           >
             Cerrar
