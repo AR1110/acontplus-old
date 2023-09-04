@@ -54,8 +54,7 @@ export default function Sale() {
             const emissionPointData = response.emissionPoints.filter(
                 emissionPoint => emissionPoint.codEstab_Asig === dataEstab.codEstab_Asig
             ).find(emissionPoint => (emissionPoint.predeterminado));
-
-            console.log(response)
+ 
             setDataForm(response)
             setSummary({
                 ...order,
