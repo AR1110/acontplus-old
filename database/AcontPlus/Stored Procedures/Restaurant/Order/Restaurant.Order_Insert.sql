@@ -152,9 +152,9 @@ BEGIN
                     SET @serie = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @sequence, DEFAULT)) 
                     
                     INSERT INTO Restaurant.[Order](EstablecimientoId, puntoEmisionId, TableId, [Sequence], Serie, CustomerCompanyId
-                                                    , Tax, Discount, Total, [Enabled], UserId)
+                                                    , Tax, Discount, Total, [Enabled], UserId, obs)
                     VALUES(@establecimientoId, @puntoEmisionId, @tableId, @sequence, @serie, @customerCompanyId
-                           , @tax, @discount, @total, 1, @userId)
+                           , @tax, @discount, @total, 1, @userId, ISNULL(@obs, NULL))
 
 	                SET @orderId = (SELECT SCOPE_IDENTITY())
                     
