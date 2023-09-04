@@ -5,29 +5,34 @@ import { useNavigate } from "react-router-dom";
 import OrderTable from "./OrderTable";
 import { useEffect, useState } from "react";
 import { OrdenService } from "@/core/services";
-import { useLoaderStore } from "@/stores";
+import { useLoaderStore, useOrderStore } from "@/stores";
 import { orderReadAdapter } from "@/core/adapters";
+import DateRangeFilter from "./Components/DateRangeFilter";
+import { CustomerSearchFilter } from "./Components";
 
 
 export default function Order() {
-    const navigate = useNavigate();
-    const showLoader = useLoaderStore(state => state.showLoader);
-    const [orders, setOrders] = useState<Array<OrderReadDto>>([])
+    const navigate = useNavigate(); 
+    const orders = useOrderStore(state => state.orders); 
+    // const setOrders = useOrderStore(state => state.setOrders); 
+    const getOrders = useOrderStore(state => state.getOrders); 
+    const orderFilter = useOrderStore(state => state.orderFilter); 
 
     const handleNewOrder = () => {
         navigate(`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.SALE}`, { replace: true })
     }
 
-    const getOrders = async () => {
-        showLoader(true)
-        await OrdenService.get({ pageIndex: 1, pageSize: 2, tipo: 1 }).then(response => {
-            setOrders(orderReadAdapter(response.orders))
-        }).finally(() => showLoader(false))
-    }
+    // const getOrders = async () => {
+    //     showLoader(true)
+    //     await OrdenService.get({ pageIndex: 1, pageSize: 2, tipo: 1 }).then(response => {
+    //         console.log(response.orders)
+    //         setOrders(orderReadAdapter(response.orders))
+    //     }).finally(() => showLoader(false))
+    // }
 
     useEffect(() => {
         getOrders();
-    }, [])
+    }, [orderFilter])
 
     return (
         <Paper sx={{ maxWidth: "auto", margin: 'auto', overflow: 'hidden' }}>
@@ -35,25 +40,56 @@ export default function Order() {
                 position="static"
                 color="default"
                 elevation={0}
-                sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
+            // sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
             >
-                <Toolbar>
-                    <Grid container spacing={2} alignItems="center">
-                        <Grid item>
-                            <SearchIcon color="inherit" sx={{ display: 'block' }} />
+                <Toolbar sx={{mt:1}}>
+                    <Grid container spacing={3}>
+                        <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
+                            <Grid container spacing={3}>
+                                <Grid item xs={12} md={4}>
+                                    <DateRangeFilter label="Fecha Inicio" />
+                                </Grid>
+                                <Grid item xs={12} md={4}>
+                                    <DateRangeFilter label="Fecha Fin" />
+                                </Grid>
+                                <Grid item xs={12} md={4}>
+                                    <CustomerSearchFilter/>
+                                </Grid>
+                            </Grid>
+
                         </Grid>
-                        <Grid item xs>
-                            {/* <TextField
-                                fullWidth
-                                placeholder="Search by email address, phone number, or user UID"
-                                InputProps={{
-                                    disableUnderline: true,
-                                    sx: { fontSize: 'default' },
-                                }}
-                                variant="standard"
-                            /> */}
+                        <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                            <Grid
+                                container
+                                direction="row"
+                                justifyContent="flex-end"
+                                alignItems="center"
+                            >
+
+                                <Button variant="contained" sx={{ mr: 1 }} onClick={handleNewOrder}>
+                                    Nuevo
+                                </Button>
+                                <Tooltip title="Reload">
+                                    <IconButton onClick={getOrders}>
+                                        <RefreshIcon color="inherit" sx={{ display: 'block' }} />
+                                    </IconButton>
+                                </Tooltip>
+
+                            </Grid>
                         </Grid>
-                        <Grid item>
+                    </Grid>
+                    {/* <Grid container spacing={2} alignItems="center">
+
+                        <Grid item xs={4}>
+                            <DateRangeFilter label="Fecha Inicio"/> 
+                        </Grid>
+                        <Grid item xs={4}>
+                            <DateRangeFilter label="Fecha Fin"/> 
+                        </Grid>
+                        <Grid item xs={4}>
+                            <DateRangeFilter label="Fecha Fin"/> 
+                        </Grid>
+                        <Grid item xs={4}>
                             <Button variant="contained" sx={{ mr: 1 }} onClick={handleNewOrder}>
                                 Nuevo
                             </Button>
@@ -63,11 +99,11 @@ export default function Order() {
                                 </IconButton>
                             </Tooltip>
                         </Grid>
-                    </Grid>
+                    </Grid> */}
                 </Toolbar>
             </AppBar>
 
-            <OrderTable orders={orders} getOrders={getOrders} />
+            <OrderTable/>
 
             {/* <Typography sx={{ my: 5, mx: 2 }} color="text.secondary" align="center">
       No users for this project yet

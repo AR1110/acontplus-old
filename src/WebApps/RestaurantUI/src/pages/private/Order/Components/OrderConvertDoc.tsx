@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { OrdenService } from "@/core/services";
 import { useRef, useState } from "react";
-import { useLoaderStore } from "@/stores";
+import { useLoaderStore, useOrderStore } from "@/stores";
 import { itemToApi, summaryToApi } from "@/core/adapters";
 import { SnackbarUtility } from "@/core/utilities";
 import { CustomerReadDto, QueryParams } from "@/core/models";
@@ -18,17 +18,16 @@ import OrderSearch from "./OrderSearch";
 import CustomerDialog from "../../Sale/Customer/CustomerDialog";
 
 export interface OrderDialogWhatsApp {
-  open: boolean;
-  getOrders(): void;
+  open: boolean; 
   handleClose(): void;
 }
 
 const OrderConvertDoc = ({
-  open,
-  getOrders,
+  open, 
   handleClose,
 }: OrderDialogWhatsApp) => {
   const theme = useTheme();
+  const getOrders = useOrderStore(state=>state.getOrders);
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
   const showLoader = useLoaderStore((state) => state.showLoader);
   const [openCustomerDialog, setCustomerDialog] = useState(false);

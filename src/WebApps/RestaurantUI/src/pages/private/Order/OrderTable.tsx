@@ -22,19 +22,16 @@ import {
 import Swal from "sweetalert2";
 import { OrdenService, SharedService } from "@/core/services";
 import { SnackbarUtility } from "@/core/utilities";
-import { useLoaderStore, useSaleStore } from "@/stores";
+import { useLoaderStore, useOrderStore, useSaleStore } from "@/stores";
 import { OrderReadDto, PrivateRoutes } from "@/core/models";
 import { useNavigate } from "react-router-dom";
 import OrderWhatsApp from "./Components/OrderWhatsApp";
 import OrderConvertDoc from "./Components/OrderConvertDoc";
-
-type OrderTableProps = {
-  orders: Array<OrderReadDto>;
-  getOrders(): void;
-};
-
-export default function OrderTable({ orders, getOrders }: OrderTableProps) {
+ 
+export default function OrderTable() {
   const navigate = useNavigate();
+  const orders = useOrderStore(state=>state.orders)
+
   const [page, setPage] = React.useState(0);
 
   const [open, setOpen] = React.useState(false);
@@ -229,8 +226,7 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
       </Box>
 
       <OrderConvertDoc
-        open={open}
-        getOrders={getOrders}
+        open={open} 
         handleClose={handleClose}
       ></OrderConvertDoc>
 
