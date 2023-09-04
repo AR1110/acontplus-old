@@ -408,7 +408,11 @@ BEGIN
     SET @serieDocument = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @nroDocumento, DEFAULT))
 
         --------------------END DOCUMENTOS---------------------
-    EXEC Contabilidad.CuentaPorCobrar_Insert @codDoc
+    DECLARE @codDocCuentaCobrar VARCHAR(2)
+
+    SET @codDocCuentaCobrar = (SELECT IIF(@codDoc = 'FV', '01', 'NE'))
+   
+    EXEC Contabilidad.CuentaPorCobrar_Insert @codDocCuentaCobrar
                                             , @documentoId
                                             , @puntoEmisionId
                                             , 1
