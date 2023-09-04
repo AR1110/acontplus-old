@@ -24,7 +24,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Common\Lib.Common\Lib.Common.csproj" />
 		<ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
-		<ProjectReference Include="..\Customer.Infrastructure\Customer.Infrastructure.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Content Include="..\..\..\SharedSettings\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json">
