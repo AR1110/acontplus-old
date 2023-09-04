@@ -8,6 +8,7 @@ import Subcategoria from "./lib/Contabilidad/Subcategoria/index.svelte"
 import Infrastructure from "$restaurant/Infrastructure/page.svelte"
 import Product from "$restaurant/Product/page.svelte"
 import Vehicle from "$mechanical/Vehicle/page.svelte"
+import Support from "$mechanical/Support/page.svelte"
 
 let target = document.querySelector("#pet")
 if (target) {
@@ -58,6 +59,11 @@ if (target) {
 target = document.querySelector("#mechanical-vehicle")
 if (target) {
     new Vehicle({ target })
+}
+
+target = document.querySelector("#mechanical-support")
+if (target) {
+    new Support({ target })
 }
 
 

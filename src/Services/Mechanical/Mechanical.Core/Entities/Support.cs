@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mechanical.Core.Entities
 {
@@ -16,17 +11,17 @@ namespace Mechanical.Core.Entities
         [Required]
         public DateTime Date { get; set; }
         public int Sequence { get; set; }
+        public SupportType SupportType { get; set; }
+        public int SupportTypeId { get; set; }
         public VehicleCompany VehicleCompany { get; set; }
         public int VehicleCompanyId { get; set; }
         public int CustomerId { get; set; }
-        [Column(TypeName = "numeric(18,5), not null")]
-        public decimal TotalWithoutTaxes { get; set; }
-
-        [Column(TypeName = "numeric(18,5), not null")]
-        public decimal Total { get; set;}
-        [Required]
-        [MaxLength(50)]
+      
+        [MaxLength(500)]
+        public string Obs { get; set; }
         public int CompanyId { get; set; }
         public int UserId { get; set; }
+        public int UserAssignedId { get; set; }
+        public int status { get; set; } = 0;
     }
 }

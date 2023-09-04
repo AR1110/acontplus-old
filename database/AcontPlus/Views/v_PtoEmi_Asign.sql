@@ -7,10 +7,10 @@ CREATE VIEW v_PtoEmi_Asign AS (
 	SELECT pa.idPtoEmi_Asig
 	,pa.codEstab_Asig
 	,pa.idPuntoEmision
+    ,pa.estado estadoPtoEmi
 	,pt.ptoEmi
 	,pt.ambiente
 	,pa.predeterminado defaultPtoEmi
-	,pa.estado estadoPtoEmi
 	,ea.idEstab_Asig
 	,ea.codEstab
 	,ea.idUsuarioRol
@@ -20,6 +20,7 @@ CREATE VIEW v_PtoEmi_Asign AS (
 	,e.nombreComercial
 	,e.estab
 	,e.estado estadoEstab
+    ,e.idEstablecimiento
 	FROM Config.PtoEmi_Asig       pa WITH (NOLOCK)
 	INNER JOIN Config.Estab_Asig  ea WITH (NOLOCK) ON pa.codEstab_Asig  = ea.codEstab_Asig
 	INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON ea.codEstab       = e.codEstab

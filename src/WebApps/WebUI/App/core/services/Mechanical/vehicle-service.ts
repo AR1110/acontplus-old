@@ -10,7 +10,7 @@ async function get(params) {
     })
 }
 
-async function post(data: any) {
+async function post(data) {
     return await client.post(url, data).then((responseAxios) => {
         if (responseAxios.status == 200) return { code: responseAxios.data.code, message: responseAxios.data.message };
         else return { code: 0, message: responseAxios.status }
