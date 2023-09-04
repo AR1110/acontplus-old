@@ -129,7 +129,7 @@ export default function OrderSearch({ setCustomerValue }: SearchReturnProps) {
       id="combo-box-demo"
       options={customer}
       onInputChange={onSearch}
-      onChange={(e, customer) => setCustomerValue(customer?.customerCompanyId)}
+      onChange={(_, customer) => setCustomerValue(customer?.customerCompanyId)}
       getOptionLabel={(option) => option.fiscalName}
       renderInput={(params) => <TextField {...params} label="Clientes" />}
     />
