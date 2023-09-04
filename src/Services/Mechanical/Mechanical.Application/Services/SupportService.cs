@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using Common.Infrastructure.Repository;
 using Lib.Common;
 using Mechanical.Core.Interfaces;
 
@@ -14,7 +15,7 @@ namespace Mechanical.Application.Services
         }
         public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
-            DataSet ds = await _repository.GetDataSetAsync("Mechanical.Support_Get", parameters);
+            DataSet ds = await _repository.GetDataSetAsync("MechanicalContext", "Mechanical.Support_Get", parameters);
 
             if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
             {
