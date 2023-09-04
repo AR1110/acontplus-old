@@ -39,7 +39,7 @@ export interface RawCustomerData  {
     customerId: number,
     idSubContribuyente: number
     idTipoIdentificacion: number
-    
+    telefono: string
 }
 
 
@@ -52,7 +52,9 @@ export interface CustomerReadDto {
     idTipoIdentificacion?: number
     idTiempoCredito?: number
     idSubContribuyente?: number
-
+    correo: string
+    telefono: string
+    direccion: string
 }
 
 type CodigoIdentificacionSRI = SRI_IDENTIFITION_CODE.RUC | SRI_IDENTIFITION_CODE.LICENSE | SRI_IDENTIFITION_CODE.PASSPORT;
@@ -66,9 +68,9 @@ export interface CustomerCreateDto {
     nombreFiscal: string
     nombreComercial: string
     codigoSri: CodigoIdentificacionSRI
-    direccion?: string,
-    emails?: string,
-    telefonos?: string
+    direccion?: string
+    emails: string[]
+    telefonos: string[]
     correo?: string
     telefono?: string
     placa?: string
