@@ -1,5 +1,8 @@
-﻿@{
+﻿@page
+@model WebUI.Pages.DocumentoLote.IndexModel
+@{
     ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <div ng-controller="documentoLoteCtrl">
     <div class="row">
@@ -13,10 +16,12 @@
                             <div class="form-group">
                                 <label for="">Documento:</label>
                                 <select id="codDoc" class="form-control" ng-model="data.codDoc"
-                                    ng-change="get(data.codDoc)">
+                                        ng-change="get(data.codDoc)">
                                     <option value="">Seleccione</option>
                                     <option ng-repeat="item in tipoDocumentos" value="{{item.codigoSri}}"
-                                        ng-selected="item.codigoSri == data.codDoc">{{item.descripcion}}</option>
+                                            ng-selected="item.codigoSri == data.codDoc">
+                                        {{item.descripcion}}
+                                    </option>
                                 </select>
                             </div>
                         </div>
@@ -24,8 +29,9 @@
                     <hr>
                     <div class="row" ng-show="data.codDoc">
                         <div class="col-sm-4">
-                            <button type="button" class="btn btn-success" ng-click="askToPost()"> <i
-                                    class="ti-plus"></i> Generar Lotes</button>
+                            <button type="button" class="btn btn-success" ng-click="askToPost()">
+                                <i class="ti-plus"></i> Generar Lotes
+                            </button>
                         </div>
                     </div>
                     <hr>
@@ -52,14 +58,18 @@
                                     <td class="text-center">{{item.totalAutorizados}}</td>
                                     <td class="text-center">
                                         <button type="button" class="btn btn-info btn-sm" ng-click="getDetails(item)"
-                                            title="Ver Documentos"><i class="fa fa-folder-open"></i></button>
+                                                title="Ver Documentos">
+                                            <i class="fa fa-folder-open"></i>
+                                        </button>
                                         <button type="button" class="btn btn-success btn-sm"
-                                            ng-click="askToAuthorize(item)" title="Enviar al sri"
-                                            ng-disabled="item.numeroComprobantesLote > 0"><i
-                                                class="fa fa-unlock"></i></button>
+                                                ng-click="askToAuthorize(item)" title="Enviar al sri"
+                                                ng-disabled="item.numeroComprobantesLote > 0">
+                                            <i class="fa fa-unlock"></i>
+                                        </button>
                                         <button type="button" class="btn btn-danger btn-sm" ng-click="askToDelete(item)"
-                                            ng-disabled="item.numeroComprobantesLote > 0" title="Eliminar"><i
-                                                class="fa fa-trash"></i></button>
+                                                ng-disabled="item.numeroComprobantesLote > 0" title="Eliminar">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -107,11 +117,15 @@
                                     <td class="text-center">{{item.estado}}</td>
                                     <td class="text-center">
                                         <button type="button" class="btn btn-danger btn-sm btn-rounded"
-                                            ng-click="askToDeleteDoc(item)" ng-disabled="item.estado === 'Autorizado'"
-                                            title="Eliminar del Lote"><i class="fa fa-trash"></i></button>
+                                                ng-click="askToDeleteDoc(item)" ng-disabled="item.estado === 'Autorizado'"
+                                                title="Eliminar del Lote">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
                                         <button type="button" class="btn btn-info btn-sm btn-rounded"
-                                            ng-click="getLogs(item)" ng-show="item.estado != 'Autorizado'"
-                                            title="Ver Logs"><i class="fa fa-info"></i></button>
+                                                ng-click="getLogs(item)" ng-show="item.estado != 'Autorizado'"
+                                                title="Ver Logs">
+                                            <i class="fa fa-info"></i>
+                                        </button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -126,5 +140,5 @@
     </div>
 </div>
 @section Scripts {
-<script src="~/js/controllers/documentoLoteCtrl.min.js" asp-append-version="true"></script>
+    <script src="~/js/controllers/documentoLoteCtrl.min.js" asp-append-version="true"></script>
 }

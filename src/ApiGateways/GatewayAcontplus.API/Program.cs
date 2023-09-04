@@ -7,36 +7,13 @@ using Services.Common;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-string _MyCors = "MyCors";
 
 builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
 ConfigHelper.AddJsonFiles(builder.Configuration);
 
-//string[] origins = builder.Configuration.GetSection("SafeOrigins").Value.Split('|');
+string[] origins = builder.Configuration.GetSection("SafeOrigins").Value.Split(',');
 
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: _MyCors, builder =>
-    {
-        //for when you're running on localhost
-        //builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
-        //.AllowAnyHeader().AllowAnyMethod();
-
-
-        //builder.WithOrigins("url from where you're trying to do the requests")
-
-        builder.AllowAnyOrigin()
-   //.SetIsOriginAllowedToAllowWildcardSubdomains()
-   .AllowAnyHeader()
-   //.AllowCredentials()
-   .AllowAnyMethod()
-   .WithMethods("GET", "PUT", "POST", "DELETE", "OPTIONS")
-   .WithExposedHeaders("Content-Disposition")
-   .SetPreflightMaxAge(TimeSpan.FromSeconds(3600));
-
-    });
-});
+builder.Services.AddCors();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -53,19 +30,17 @@ app.UseRouting();
 
 app.UseHttpsRedirection();
 
-//app.UseCors(builder =>
-//{
-//    builder.WithOrigins(origins)
-//    .SetIsOriginAllowedToAllowWildcardSubdomains()
-//    .AllowAnyHeader()
-//    .AllowCredentials()
-//    .AllowAnyMethod()
-//    .WithMethods("GET", "PUT", "POST", "DELETE", "OPTIONS")
-//    .WithExposedHeaders("Content-Disposition")
-//    .SetPreflightMaxAge(TimeSpan.FromSeconds(3600));
-//});
-
-app.UseCors(_MyCors);
+app.UseCors(builder =>
+{
+    builder.WithOrigins(origins)
+    .SetIsOriginAllowed(isOriginAllowed: _ => true)
+    .SetIsOriginAllowedToAllowWildcardSubdomains()
+    .AllowCredentials()
+    .AllowAnyHeader()
+    .WithMethods("GET", "PUT", "POST", "DELETE", "OPTIONS")
+    .WithExposedHeaders("Content-Disposition")
+    .SetPreflightMaxAge(TimeSpan.FromSeconds(3600));
+});
 
 app.UseAuthentication();
 

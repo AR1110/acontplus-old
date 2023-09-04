@@ -10,7 +10,7 @@ builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
 ConfigHelper.AddJsonFiles(builder.Configuration);
 
 // Add services to the container.
-string[] origins = builder.Configuration.GetSection("SafeOrigins").Value.Split('|');
+string[] origins = builder.Configuration.GetSection("SafeOrigins").Value.Split(',');
 
 builder.Services.AddControllers();
 builder.Services.AddCors();
