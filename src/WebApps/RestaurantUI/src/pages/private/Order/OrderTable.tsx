@@ -19,6 +19,7 @@ import {
   IconButton,
   Tooltip,
 } from "@mui/material";
+
 import {
   DeleteIcon,
   EditIcon,
@@ -35,10 +36,11 @@ import { OrderReadDto, PrivateRoutes, QueryParams } from "@/core/models";
 import { useNavigate } from "react-router-dom";
 import { itemToApi, summaryToApi } from "@/core/adapters";
 import OrderWhatsApp from "./Components/OrderWhatsApp";
+import OrderSearch from "./Components/OrderSearch";
 
 type OrderTableProps = {
-  orders: Array<OrderReadDto>,
-  getOrders(): void
+  orders: Array<OrderReadDto>;
+  getOrders(): void;
 };
 
 export default function OrderTable({ orders, getOrders }: OrderTableProps) {
@@ -51,8 +53,9 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const showLoader = useLoaderStore((state) => state.showLoader);
   const setDataEdit = useSaleStore((state) => state.setDataEdit);
-
   const setOrderId = React.useRef(0);
+
+  const customerId = React.useRef(0);
 
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
@@ -133,9 +136,12 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
       .then(async (response) => {
         const summaryResult = summaryToApi(response.order[0]);
         const itemsResult = itemToApi(response.orderItems);
+        console.log("Holaaaaa 11111");
+        console.log(customerId.current);
 
         summaryResult["orderId"] = response.order[0].id;
-        summaryResult["bodegaId"] = response.orderItems[0].bodegaId
+        summaryResult["bodegaId"] = response.orderItems[0].bodegaId;
+        summaryResult["customerCompanyId"] = customerId.current || 0;
 
         const data = {
           ...summaryResult,
@@ -167,6 +173,10 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
         }
       })
       .finally(() => showLoader(false));
+  };
+
+  const setCustomerValue = (customerCompanyId: number) => {
+    customerId.current = customerCompanyId;
   };
 
   return (
@@ -278,10 +288,12 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
           />
         </Paper>
       </Box>
+      {/* { End list  - TABLE } */}
 
+      {/* { Start Modal -  Select Modal. } */}
       <Dialog open={open} onClose={handleClose} fullWidth={fullWidth}>
         <DialogTitle id="alert-dialog-title">
-          {"Seleccione el documento"}
+          {"Convertir el Documento"}
         </DialogTitle>
         <DialogContent>
           <Grid
@@ -289,7 +301,12 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
             rowSpacing={2}
             columnSpacing={{ xs: 12, sm: 6, md: 6 }}
           >
-            <Grid item xl={6} xs={6} md={6}>
+            <Grid item xl={12} md={12} xs={12}>
+              <OrderSearch setCustomerValue={setCustomerValue} />
+            </Grid>
+
+            {/* { Button } */}
+            <Grid item xl={6} xs={12} md={6}>
               <Button
                 style={{ height: 75 }}
                 fullWidth
@@ -301,7 +318,7 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
                 FACTURA DE VENTA
               </Button>
             </Grid>
-            <Grid item xl={6} xs={6} md={6}>
+            <Grid item xl={6} xs={12} md={6}>
               <Button
                 style={{ height: 75 }}
                 fullWidth
@@ -316,11 +333,21 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button style={{color: 'black'}} variant="outlined" onClick={handleClose}>Cerrar</Button>
+          <Button
+            style={{ color: "black" }}
+            variant="outlined"
+            onClick={handleClose}
+          >
+            Cerrar
+          </Button>
         </DialogActions>
       </Dialog>
 
-      <OrderWhatsApp open={openTableDialog} onClose={setOpenTableDialog}></OrderWhatsApp>
+      {/* { End list  - TABLE } */}
+      <OrderWhatsApp
+        open={openTableDialog}
+        onClose={setOpenTableDialog}
+      ></OrderWhatsApp>
     </React.Fragment>
   );
 }
