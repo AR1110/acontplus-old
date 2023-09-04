@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using Common.Reports.Interfaces;
 using DataAccess;
 using Domain.Dtos;
 using Domain.Models;
@@ -16,9 +17,9 @@ namespace ApiReports.Controllers
     public class ReporteController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly ReportService _report;
+        private readonly IReportService _report;
         private readonly LogWriter _log;
-        public ReporteController(IConfiguration configuration, ReportService report, LogWriter log)
+        public ReporteController(IConfiguration configuration, IReportService report, LogWriter log)
         {
             _configuration = configuration;
             _report = report;
@@ -59,7 +60,7 @@ namespace ApiReports.Controllers
                 DataSet ds = _db.GetDataSet();
 
 
-                byte[] bytes = _report.ByteReport(dsParams, ds);
+                byte[] bytes = _report.GetReport(dsParams, ds);
                 if (bytes == null || bytes.Length == 0)
                 {
                     ReportError.ReportNotFound(_response);
@@ -142,7 +143,7 @@ namespace ApiReports.Controllers
                 //var _dataReport = ConverToModelReportParams(data);
                 if (_dt.code == "1")
                 {
-                    byte[] bytes = _report.ByteReportDynamic(_dt.payload, ref mimeType, ref fileName);
+                    byte[] bytes = _report.GetDynamicReport(_dt.payload, ref mimeType, ref fileName);
                     if (bytes == null || bytes.Length == 0)
                     {
                         ReportError.ReportNotFound(_response);

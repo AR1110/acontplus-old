@@ -16,6 +16,7 @@
 		<ProjectReference Include="..\Restaurant.Infrastructure\Restaurant.Infrastructure.csproj" />
 	</ItemGroup>
 	<ItemGroup>
+		<PackageReference Include="Autofac.Extensions.DependencyInjection" />
 		<PackageReference Include="AutoMapper" />
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design">

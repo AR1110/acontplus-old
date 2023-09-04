@@ -1,4 +1,6 @@
-﻿using Lib.Common;
+﻿using Autofac.Extensions.DependencyInjection;
+using Autofac;
+using Lib.Common;
 using Mechanical.API.Extensions;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
@@ -32,6 +34,9 @@ internal class Program
         builder.Services.AddSwaggerDocumentation();
 
         builder.Services.AddSingleton<LogWriter>();
+
+        builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+        builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
         var app = builder.Build();
 

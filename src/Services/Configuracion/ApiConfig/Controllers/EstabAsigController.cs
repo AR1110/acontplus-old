@@ -1,4 +1,4 @@
-﻿using Config.Core.Interfaces;
+﻿using ApiConfig.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 using Services.Common.Logs;
