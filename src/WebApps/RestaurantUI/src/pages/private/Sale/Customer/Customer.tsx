@@ -249,6 +249,9 @@ export default function Customer() {
                                         fiscalName: "",
                                         identificationNumber: "",
                                         tradeName: `Add "${params.inputValue}"`,
+                                        correo: "",
+                                        direccion: "",
+                                        telefono: ""
                                     });
                                 }
 
