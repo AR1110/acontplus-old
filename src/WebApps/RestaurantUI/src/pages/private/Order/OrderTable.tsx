@@ -8,19 +8,8 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { useState } from "react";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Grid,
-  IconButton,
-  Tooltip,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
+import { useRef, useState } from "react";
+import { IconButton, Tooltip } from "@mui/material";
 
 import {
   DeleteIcon,
@@ -33,32 +22,26 @@ import {
 import Swal from "sweetalert2";
 import { OrdenService, SharedService } from "@/core/services";
 import { SnackbarUtility } from "@/core/utilities";
-import { useLoaderStore, useSaleStore } from "@/stores";
-import { OrderReadDto, PrivateRoutes, QueryParams } from "@/core/models";
+import { useLoaderStore, useOrderStore, useSaleStore } from "@/stores";
+import { OrderReadDto, PrivateRoutes } from "@/core/models";
 import { useNavigate } from "react-router-dom";
-import { itemToApi, summaryToApi } from "@/core/adapters";
 import OrderWhatsApp from "./Components/OrderWhatsApp";
-import OrderSearch from "./Components/OrderSearch";
-
-type OrderTableProps = {
-  orders: Array<OrderReadDto>;
-  getOrders(): void;
-};
-
-export default function OrderTable({ orders, getOrders }: OrderTableProps) {
+import OrderConvertDoc from "./Components/OrderConvertDoc";
+ 
+export default function OrderTable() {
   const navigate = useNavigate();
+  const orders = useOrderStore(state=>state.orders)
+
   const [page, setPage] = React.useState(0);
+
   const [open, setOpen] = React.useState(false);
   const [openTableDialog, setOpenTableDialog] = useState(false);
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const showLoader = useLoaderStore((state) => state.showLoader);
   const setDataEdit = useSaleStore((state) => state.setDataEdit);
-  const setOrderId = React.useRef(0);
-  const customerId = React.useRef(0);
 
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const setOrderId = useRef(0);
 
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
@@ -99,7 +82,6 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
 
   const handleClickOpen = (id: number) => {
     setOrderId.current = id;
-    console.log(setOrderId);
     setOpen(true);
   };
 
@@ -131,55 +113,6 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
         });
       })
       .finally(() => showLoader(false));
-  };
-
-  const handleGetDetail = (codDoc: string) => {
-    showLoader(true);
-    OrdenService.get({ id: setOrderId.current, tipo: 2 })
-      .then(async (response) => {
-        const summaryResult = summaryToApi(response.order[0]);
-        const itemsResult = itemToApi(response.orderItems);
-        console.log("Holaaaaa 11111");
-        console.log(customerId.current);
-
-        summaryResult["orderId"] = response.order[0].id;
-        summaryResult["bodegaId"] = response.orderItems[0].bodegaId;
-        summaryResult["customerCompanyId"] = customerId.current || 0;
-
-        const data = {
-          ...summaryResult,
-          updateOrder: false,
-          saveDoc: true,
-          codDoc,
-          quickSale: true,
-          items: itemsResult,
-          taxes: {},
-          payments: {},
-        };
-        await onConvertToDoc(setOrderId.current, data);
-      })
-      .finally(() => showLoader(false));
-  };
-
-  const onConvertToDoc = (orderId: number, data: object) => {
-    OrdenService.put(orderId, data)
-      .then((response) => {
-        if (response.code === "0") {
-          SnackbarUtility.warning(response.message);
-        }
-        if (response.code === "1") {
-          getOrders();
-          handleClose();
-          SnackbarUtility.success(response.message);
-          const queryParams: QueryParams = JSON.parse(response.payload)[0];
-          console.log(queryParams);
-        }
-      })
-      .finally(() => showLoader(false));
-  };
-
-  const setCustomerValue = (customerCompanyId: number) => {
-    customerId.current = customerCompanyId;
   };
 
   return (
@@ -291,66 +224,11 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
           />
         </Paper>
       </Box>
-      {/* { End list  - TABLE } */}
 
-      {/* { Start Modal -  Select Modal. } */}
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        fullScreen={fullScreen}
-        aria-labelledby="responsive-dialog-title"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"Convertir el Documento"}
-        </DialogTitle>
-        <DialogContent>
-          <Grid
-            container
-            rowSpacing={2}
-            columnSpacing={{ xs: 6, sm: 6, md: 6 }}
-          >
-            <Grid item xl={12} md={12} xs={12}>
-              <OrderSearch setCustomerValue={setCustomerValue} />
-            </Grid>
-
-            {/* { Button } */}
-            <Grid item xl={6} xs={12} md={6}>
-              <Button
-                style={{ height: 75 }}
-                fullWidth
-                size="large"
-                variant="contained"
-                color="primary"
-                onClick={() => handleGetDetail("FV")}
-              >
-                FACTURA DE VENTA
-              </Button>
-            </Grid>
-            <Grid item xl={6} xs={12} md={6}>
-              <Button
-                style={{ height: 75 }}
-                fullWidth
-                size="large"
-                variant="contained"
-                color="success"
-                onClick={() => handleGetDetail("NE")}
-              >
-                NOTA DE ENTREGA
-              </Button>
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            style={{ color: "black" }}
-            variant="outlined"
-            size="large"
-            onClick={handleClose}
-          >
-            Cerrar
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <OrderConvertDoc
+        open={open} 
+        handleClose={handleClose}
+      ></OrderConvertDoc>
 
       {/* { End list  - TABLE } */}
       <OrderWhatsApp

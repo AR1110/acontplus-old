@@ -64,16 +64,16 @@ BEGIN
 	                        ,Tip				= o.Tip
 	                        ,Total				= o.Total
 	                        ,Obs				= o.Obs
-	                        ,CreatedAt			= o.CreatedAt
-	                        ,UpdatedAt			= o.UpdatedAt
+	                        ,CreatedAt			= CONVERT(VARCHAR,FORMAT(o.CreatedAt, ''dd-MM-yyyy HH:mm''))
+	                        ,UpdatedAt			= CONVERT(VARCHAR,FORMAT(o.UpdatedAt, ''dd-MM-yyyy HH:mm''))
 	                        ,[Enabled]			= o.[Enabled]
 	                        ,Deleted			= o.Deleted
 	                        ,UserId				= o.UserId
 	                        ,Uuid				= o.Uuid
                             ,DocumentoId		= ISNULL(od.DocumentoId,0)
                             ,codDoc				= ISNULL(td.codigo,'''')
-                            ,nombreFiscal	    = CASE WHEN o.CustomerCompanyId = 0 THEN ''CONSUMIDOR FINAL'' ELSE c.nombreFiscal END
-	                        ,nombreUsuario      = u.nombreUsuario
+                            ,nameFiscal 	    = CASE WHEN o.CustomerCompanyId = 0 THEN ''CONSUMIDOR FINAL'' ELSE c.nombreFiscal END
+	                        ,userName           = u.nombreUsuario
                             ,totalRecords       = COUNT(*) OVER()
                         FROM Restaurant.[Order] o WITH(NOLOCK)
                         LEFT JOIN Restaurant.OrderDocument od WITH(NOLOCK) ON o.Id = od.OrderId

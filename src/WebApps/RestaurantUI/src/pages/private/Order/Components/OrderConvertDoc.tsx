@@ -1,0 +1,173 @@
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Grid,
+  Button,
+  DialogActions,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
+import { OrdenService } from "@/core/services";
+import { useRef, useState } from "react";
+import { useLoaderStore, useOrderStore } from "@/stores";
+import { itemToApi, summaryToApi } from "@/core/adapters";
+import { SnackbarUtility } from "@/core/utilities";
+import { CustomerReadDto, QueryParams } from "@/core/models";
+import OrderSearch from "./OrderSearch";
+import CustomerDialog from "../../Sale/Customer/CustomerDialog";
+
+export interface OrderDialogWhatsApp {
+  open: boolean; 
+  handleClose(): void;
+}
+
+const OrderConvertDoc = ({
+  open, 
+  handleClose,
+}: OrderDialogWhatsApp) => {
+  const theme = useTheme();
+  const getOrders = useOrderStore(state=>state.getOrders);
+  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const showLoader = useLoaderStore((state) => state.showLoader);
+  const [openCustomerDialog, setCustomerDialog] = useState(false);
+
+  const setOrderId = useRef(0);
+  const customerId = useRef(0);
+
+  const handleGetDetail = (codDoc: string) => {
+    showLoader(true);
+    OrdenService.get({ id: setOrderId.current, tipo: 2 })
+      .then(async (response) => {
+        const summaryResult = summaryToApi(response.order[0]);
+        const itemsResult = itemToApi(response.orderItems);
+
+        summaryResult["orderId"] = response.order[0].id;
+        summaryResult["bodegaId"] = response.orderItems[0].bodegaId;
+        summaryResult["customerCompanyId"] = customerId.current || 0;
+
+        const data = {
+          ...summaryResult,
+          updateOrder: false,
+          saveDoc: true,
+          codDoc,
+          quickSale: true,
+          items: itemsResult,
+          taxes: {},
+          payments: {},
+        };
+        await onConvertToDoc(setOrderId.current, data);
+      })
+      .finally(() => showLoader(false));
+  };
+
+  const onConvertToDoc = (orderId: number, data: object) => {
+    OrdenService.put(orderId, data)
+      .then((response) => {
+        if (response.code === "0") {
+          SnackbarUtility.warning(response.message);
+        }
+        if (response.code === "1") {
+          getOrders();
+          handleClose();
+          SnackbarUtility.success(response.message);
+          const queryParams: QueryParams = JSON.parse(response.payload)[0];
+          console.log(queryParams);
+        }
+      })
+      .finally(() => showLoader(false));
+  };
+
+  const setCustomerValue = (customerCompanyId: number) => {
+    customerId.current = customerCompanyId;
+  };
+
+  const openDialogCustomerAdd = () => {
+    setCustomerDialog(true);
+  };
+
+  const handleCloseCustomerDialog = (data?: CustomerReadDto) => {
+    setCustomerDialog(false);
+    if (data) {
+      customerId.current = data.customerCompanyId ?? 0;
+    }
+  };
+
+  return (
+    <>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        fullScreen={fullScreen}
+        aria-labelledby="responsive-dialog-title"
+      >
+        <DialogTitle>Documento</DialogTitle>
+        <DialogContent>
+          <Grid
+            container
+            rowSpacing={2}
+            columnSpacing={{ xs: 6, sm: 6, md: 6 }}
+          >
+            <Grid style={{ marginTop: 15 }} item xl={10} md={10} xs={10}>
+              <OrderSearch setCustomerValue={setCustomerValue} />
+            </Grid>
+            <Grid style={{ marginTop: 15 }} item xl={2} md={2} xs={2}>
+              <Button
+                onClick={openDialogCustomerAdd}
+                style={{ height: 58 }}
+                size="large"
+                variant="outlined"
+              >
+                +
+              </Button>
+            </Grid>
+
+            {/* { Button } */}
+            <Grid item xl={6} xs={12} md={6}>
+              <Button
+                style={{ height: 75 }}
+                fullWidth
+                size="large"
+                variant="contained"
+                color="primary"
+                onClick={() => handleGetDetail("FV")}
+              >
+                FACTURA DE VENTA
+              </Button>
+            </Grid>
+            <Grid item xl={6} xs={12} md={6}>
+              <Button
+                style={{ height: 75 }}
+                fullWidth
+                size="large"
+                variant="contained"
+                color="success"
+                onClick={() => handleGetDetail("NE")}
+              >
+                NOTA DE ENTREGA
+              </Button>
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            color="inherit"
+            variant="outlined"
+            size="large"
+            onClick={handleClose}
+          >
+            Cerrar
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {openCustomerDialog && (
+        <CustomerDialog
+          open={openCustomerDialog}
+          handleClose={handleCloseCustomerDialog}
+        />
+      )}
+    </>
+  );
+};
+
+export default OrderConvertDoc;

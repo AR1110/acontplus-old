@@ -32,3 +32,23 @@ export interface OrderReadDto {
   codDoc?: string;
   createdAt: string;
 }
+
+
+
+export interface OrderFilter {
+  tipo: number
+  pageIndex: number
+  pageSize: number
+  startDate: Date
+  endDate: Date
+  customerCompanyId: number
+}
+
+export const orderFilter: OrderFilter = {
+  tipo: 1,
+  pageIndex: 1,
+  pageSize: 25,
+  startDate: new Date(),
+  endDate: new Date(),
+  customerCompanyId: 0
+}

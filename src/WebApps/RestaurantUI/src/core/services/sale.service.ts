@@ -36,6 +36,8 @@ export const SaleService = {
         const categories = categoryReadAdapter(subCategorias || []); 
         const rooms: Array<Room> = room;
         const floors: Array<Floor> = floor;
+        console.log(impuesto)
+        console.log(tarifaImpuesto)
         return{
             categories: [{
                 idSubFamilia: 0,

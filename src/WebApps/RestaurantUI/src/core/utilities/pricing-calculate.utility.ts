@@ -1,4 +1,22 @@
 export const PricingCalculateUtility = {
+
+
+    /**
+     * 
+     * @param price 
+     * @param percentage 
+     * @returns taxValue number
+     */
+    calculateTaxValue(price: number, percentage: number){
+        try {
+            const tax = price * percentage / 100;  
+            return tax;
+        } catch (error) {
+            console.log('pricingUtils -> CALCULO PRECIO CON IVA', error);
+            return -1;
+        }
+    },
+
     /**
      * 
      * @param salePrice 
