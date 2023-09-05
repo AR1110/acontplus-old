@@ -20,6 +20,8 @@ export interface RawOrderData {
   uuid?: string;
   documentoId: number;
   codDoc?: string;
+  nameFiscal: string
+  userName: string
 }
 
 export interface OrderReadDto {
@@ -27,6 +29,8 @@ export interface OrderReadDto {
   documentoId: number;
   establecimientoId: number;
   puntoEmisionId: number;
+  nameFiscal: string
+  userName: string
   serie: string;
   total: number;
   codDoc?: string;

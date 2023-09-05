@@ -149,7 +149,7 @@ export default function OrderTable() {
                     <TableCell>
                       {!(order.documentoId > 0) && (
                         <Tooltip describeChild title="Transformar a NE O FV">
-                          <IconButton
+                          <IconButton color="info"
                             aria-label="delete"
                             onClick={() => handleClickOpen(order.orderId)}
                           >
@@ -159,6 +159,7 @@ export default function OrderTable() {
                       )}
                       <IconButton
                         aria-label="delete"
+                        color="error"
                         onClick={() => handleUpdateState(order.orderId)}
                       >
                         <DeleteIcon />
@@ -166,7 +167,7 @@ export default function OrderTable() {
 
                       {!(order.documentoId > 0) && (
                         <Tooltip describeChild title="Editar">
-                          <IconButton
+                          <IconButton color="primary"
                             aria-label="Editar"
                             onClick={() => handleEdit(order.orderId)}
                           >
@@ -176,7 +177,7 @@ export default function OrderTable() {
                       )}
 
                       <Tooltip describeChild title="Impresión">
-                        <IconButton
+                        <IconButton color="warning"
                           aria-label="Impresión"
                           onClick={() => handleAskToPrint(order.orderId)}
                         >
@@ -185,7 +186,7 @@ export default function OrderTable() {
                       </Tooltip>
 
                       <Tooltip describeChild title="Descargar PDF">
-                        <IconButton
+                        <IconButton color="secondary"
                           aria-label="Impresión"
                           onClick={() => handleReport(order.orderId)}
                         >
@@ -194,7 +195,7 @@ export default function OrderTable() {
                       </Tooltip>
 
                       <Tooltip describeChild title="Compartir por WhatsApp">
-                        <IconButton
+                        <IconButton color="success"
                           aria-label="Impresión"
                           onClick={() => setOpenTableDialog(true)}
                         >
@@ -204,10 +205,10 @@ export default function OrderTable() {
                     </TableCell>
                     <TableCell align="center">{order.serie}</TableCell>
                     <TableCell align="center">{order.createdAt}</TableCell>
-                    <TableCell align="center">...</TableCell>
+                    <TableCell align="center">{order.nameFiscal}</TableCell>
                     <TableCell align="right">{order.total}</TableCell>
                     <TableCell align="center">-</TableCell>
-                    <TableCell align="center">-</TableCell>
+                    <TableCell align="center">{order.userName}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
