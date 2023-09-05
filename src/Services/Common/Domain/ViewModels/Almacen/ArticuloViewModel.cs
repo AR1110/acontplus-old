@@ -52,13 +52,4 @@ namespace Domain.ViewModels.Almacen
 
     }
 
-    public class ArticuloMedidasFraccionado
-    {
-        public ArticuloViewModel articulo { get; set; }
-        public List<MedidaViewModel> medidas { get; set; }
-        public List<Etiqueta> etiqueta { get; set; }
-        public List<ManejoArticuloViewModel> adicional { get; set; }
-    }
-
-
 }

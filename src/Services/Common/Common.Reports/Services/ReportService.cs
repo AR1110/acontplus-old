@@ -2,10 +2,8 @@
 using System.Text;
 using Common.Reports.Enums;
 using Common.Reports.Interfaces;
-using Domain.Dtos;
 using Lib.Common;
 using Lib.Common.Dtos;
-using Lib.Common.Enums;
 using Lib.Common.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Reporting.NETCore;
@@ -201,6 +199,12 @@ namespace Common.Reports.Services
                 Enum.TryParse(rdlcProps.ReportFormat, out FileFormats.FileExtension fe);
                 return new ReportResponseDto { FileContents = fileReport, ContentType = EnumExtensions.DisplayName(fc), FileDownloadName = rdlcProps.ReportName + EnumExtensions.DisplayName(fe) };
             }
+        }
+        public async Task<ReportResponseDto> GetErrorAsync()
+        {
+            string errorFilePath = Path.Combine(Directory.GetCurrentDirectory(), "\\Reports\\", "NotFound.pdf");
+            byte[] bytes = await File.ReadAllBytesAsync(errorFilePath);
+            return new ReportResponseDto { FileContents = bytes, ContentType = "application/pdf", FileDownloadName = "Not Found.pdf" };
         }
     }
 }

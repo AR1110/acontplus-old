@@ -1,6 +1,6 @@
-﻿namespace Domain.Enums
+﻿namespace Lib.Common.Enums
 {
-    public static class CalendarEnum
+    public static class Calendar
     {
         public enum Months
         {
