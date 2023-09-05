@@ -4,6 +4,7 @@ import { produce } from "immer";
 import { create } from "zustand";
 import { useLoaderStore } from ".";
 import { OrdenService } from "@/core/services";
+import { orderReadAdapter } from "@/core/adapters";
 
 
 type State = {
@@ -36,7 +37,7 @@ export const useOrderStore = create<State & Actions>((set, get)=>({
             console.log(response)          
             set(
                 produce((state:State)=>{
-                    state.orders = response.orders;
+                    state.orders = orderReadAdapter(response.orders)
                 })
             )
         }).finally(() => showLoader(false))
