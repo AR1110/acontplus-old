@@ -2,13 +2,14 @@ import * as React from "react";
 import { CustomerReadDto } from "@/core/models";
 import { CustomerService } from "@/core/services";
 import { Autocomplete, TextField } from "@mui/material";
+import { useState } from "react";
 
 type SearchReturnProps = {
   setCustomerValue(customerId?: number): void;
 };
 
 export default function OrderSearch({ setCustomerValue }: SearchReturnProps) {
-  const [customer, setCustomers] = React.useState<CustomerReadDto[]>([]);
+  const [customer, setCustomers] = useState<CustomerReadDto[]>([]);
 
   const onSearch = (_: any, value: string) => {
     customerSearch(value);

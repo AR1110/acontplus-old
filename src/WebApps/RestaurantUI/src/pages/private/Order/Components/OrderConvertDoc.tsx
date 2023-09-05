@@ -7,6 +7,8 @@ import {
   DialogActions,
   useTheme,
   useMediaQuery,
+  Alert,
+  AlertTitle,
 } from "@mui/material";
 import { OrdenService } from "@/core/services";
 import { useRef, useState } from "react";
@@ -31,6 +33,7 @@ const OrderConvertDoc = ({
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
   const showLoader = useLoaderStore((state) => state.showLoader);
   const [openCustomerDialog, setCustomerDialog] = useState(false);
+  const [customers, setCustomers] = useState<CustomerReadDto>();
 
   const setOrderId = useRef(0);
   const customerId = useRef(0);
@@ -89,6 +92,7 @@ const OrderConvertDoc = ({
   const handleCloseCustomerDialog = (data?: CustomerReadDto) => {
     setCustomerDialog(false);
     if (data) {
+      setCustomers(data);
       customerId.current = data.customerCompanyId ?? 0;
     }
   };
@@ -106,7 +110,7 @@ const OrderConvertDoc = ({
           <Grid
             container
             rowSpacing={2}
-            columnSpacing={{ xs: 6, sm: 6, md: 6 }}
+            columnSpacing={{ xs: 1, sm: 1, md: 1 }}
           >
             <Grid style={{ marginTop: 15 }} item xl={10} md={10} xs={10}>
               <OrderSearch setCustomerValue={setCustomerValue} />
@@ -114,12 +118,20 @@ const OrderConvertDoc = ({
             <Grid style={{ marginTop: 15 }} item xl={2} md={2} xs={2}>
               <Button
                 onClick={openDialogCustomerAdd}
-                style={{ height: 58 }}
-                size="large"
                 variant="outlined"
+                size="large"
               >
-                +
+                Nuevo
               </Button>
+            </Grid>
+
+            <Grid style={{ marginTop: 15 }} item xl={12} md={12} xs={12}>
+              {
+                <Alert severity="success">
+                  <AlertTitle>Success</AlertTitle>
+                  This is a success alert — <strong>check it out!</strong>
+                </Alert>
+              }
             </Grid>
 
             {/* { Button } */}
