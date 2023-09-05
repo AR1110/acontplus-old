@@ -22,19 +22,16 @@ import {
 import Swal from "sweetalert2";
 import { OrdenService, SharedService } from "@/core/services";
 import { SnackbarUtility } from "@/core/utilities";
-import { useLoaderStore, useSaleStore } from "@/stores";
+import { useLoaderStore, useOrderStore, useSaleStore } from "@/stores";
 import { OrderReadDto, PrivateRoutes } from "@/core/models";
 import { useNavigate } from "react-router-dom";
 import OrderWhatsApp from "./Components/OrderWhatsApp";
 import OrderConvertDoc from "./Components/OrderConvertDoc";
-
-type OrderTableProps = {
-  orders: Array<OrderReadDto>;
-  getOrders(): void;
-};
-
-export default function OrderTable({ orders, getOrders }: OrderTableProps) {
+ 
+export default function OrderTable() {
   const navigate = useNavigate();
+  const orders = useOrderStore(state=>state.orders)
+
   const [page, setPage] = React.useState(0);
 
   const [open, setOpen] = React.useState(false);
@@ -152,7 +149,7 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
                     <TableCell>
                       {!(order.documentoId > 0) && (
                         <Tooltip describeChild title="Transformar a NE O FV">
-                          <IconButton
+                          <IconButton color="info"
                             aria-label="delete"
                             onClick={() => handleClickOpen(order.orderId)}
                           >
@@ -162,6 +159,7 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
                       )}
                       <IconButton
                         aria-label="delete"
+                        color="error"
                         onClick={() => handleUpdateState(order.orderId)}
                       >
                         <DeleteIcon />
@@ -169,7 +167,7 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
 
                       {!(order.documentoId > 0) && (
                         <Tooltip describeChild title="Editar">
-                          <IconButton
+                          <IconButton color="primary"
                             aria-label="Editar"
                             onClick={() => handleEdit(order.orderId)}
                           >
@@ -179,7 +177,7 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
                       )}
 
                       <Tooltip describeChild title="Impresión">
-                        <IconButton
+                        <IconButton color="warning"
                           aria-label="Impresión"
                           onClick={() => handleAskToPrint(order.orderId)}
                         >
@@ -188,7 +186,7 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
                       </Tooltip>
 
                       <Tooltip describeChild title="Descargar PDF">
-                        <IconButton
+                        <IconButton color="secondary"
                           aria-label="Impresión"
                           onClick={() => handleReport(order.orderId)}
                         >
@@ -197,7 +195,7 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
                       </Tooltip>
 
                       <Tooltip describeChild title="Compartir por WhatsApp">
-                        <IconButton
+                        <IconButton color="success"
                           aria-label="Impresión"
                           onClick={() => setOpenTableDialog(true)}
                         >
@@ -207,10 +205,10 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
                     </TableCell>
                     <TableCell align="center">{order.serie}</TableCell>
                     <TableCell align="center">{order.createdAt}</TableCell>
-                    <TableCell align="center">...</TableCell>
+                    <TableCell align="center">{order.nameFiscal}</TableCell>
                     <TableCell align="right">{order.total}</TableCell>
                     <TableCell align="center">-</TableCell>
-                    <TableCell align="center">-</TableCell>
+                    <TableCell align="center">{order.userName}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -229,8 +227,7 @@ export default function OrderTable({ orders, getOrders }: OrderTableProps) {
       </Box>
 
       <OrderConvertDoc
-        open={open}
-        getOrders={getOrders}
+        open={open} 
         handleClose={handleClose}
       ></OrderConvertDoc>
 

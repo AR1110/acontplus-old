@@ -1,10 +1,10 @@
 ﻿using System.Data;
 using System.Text;
 using DataAccess;
-using Domain.Enums;
 using Domain.Models;
 using FactElect.Application;
 using Lib.Common;
+using Lib.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -29,8 +29,8 @@ namespace ApiFactElect.Controllers.Sri
             try
             {
                 List<Year> years = new List<Year>();
-                var months = Enum.GetValues(typeof(CalendarEnum.Months))
-                       .Cast<CalendarEnum.Months>()
+                var months = Enum.GetValues(typeof(Calendar.Months))
+                       .Cast<Calendar.Months>()
                        .Select(t => new Month
                        {
                            month = ((short)t),

@@ -39,7 +39,7 @@ const CustomerService = {
         return resultData;
 
     },
-    async post(data: CustomerCreateDto) {
+    async post(data: object) {
         const resultAxios = await Http({
             method: 'post',
             url: `${PATHS.SALE}${URL}Insert`,
@@ -49,9 +49,9 @@ const CustomerService = {
 
         return response;
     },
-    async put(id: number, data: CustomerCreateDto) {
+    async put(id: number, data: object) {
         const resultAxios = await Http({
-            method: 'post',
+            method: 'put',
             url: `${PATHS.SALE}${URL}Update/${id}`,            
             data
         }) 

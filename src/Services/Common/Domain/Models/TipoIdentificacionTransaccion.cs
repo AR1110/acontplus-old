@@ -13,12 +13,4 @@
         public string transanccion { get; set; }
         public string codigoTransanccion { get; set; }
     }
-    public class TipoIdentificacionTransaccionOperaciones
-    {
-        public TipoIdentificacionTransaccion tipoIdentificacionTransaccion { get; set; }
-        public TipoIdentificacion tipoIdentificacion { get; set; }
-        public TipoTransaccion TipoTransaccion { get; set; }
-    }
-
-
 }

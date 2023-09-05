@@ -32,8 +32,6 @@ internal class Program
                            x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
                        });
 
-        builder.Services.AddCors();
-
         builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 
         builder.Services.AddSwaggerDocumentation();
@@ -52,14 +50,6 @@ internal class Program
         app.UseSwaggerDocumentation();
 
         app.UseRouting();
-
-        app.UseCors(options =>
-        {
-            options.AllowAnyHeader();
-            options.AllowAnyMethod();
-            options.AllowCredentials();
-            options.WithOrigins("https://localhost:7111");
-        });
 
         app.UseHttpsRedirection();
 

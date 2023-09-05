@@ -1,3 +1,6 @@
+import dayjs, { Dayjs } from "dayjs"; 
+import { formatDateTimeZone } from "../utilities";
+
 export interface RawOrderData {
   id: number;
   establecimientoId: number;
@@ -20,6 +23,8 @@ export interface RawOrderData {
   uuid?: string;
   documentoId: number;
   codDoc?: string;
+  nameFiscal: string
+  userName: string
 }
 
 export interface OrderReadDto {
@@ -27,8 +32,30 @@ export interface OrderReadDto {
   documentoId: number;
   establecimientoId: number;
   puntoEmisionId: number;
+  nameFiscal: string
+  userName: string
   serie: string;
   total: number;
   codDoc?: string;
   createdAt: string;
+}
+
+
+
+export interface OrderFilter {
+  tipo: number
+  pageIndex: number
+  pageSize: number
+  startDate: any
+  endDate: any
+  customerCompanyId: number
+}
+ 
+export const orderFilter: OrderFilter = {
+  tipo: 1,
+  pageIndex: 1,
+  pageSize: 25,
+  startDate: formatDateTimeZone(dayjs()),
+  endDate: formatDateTimeZone(dayjs()),
+  customerCompanyId: 0
 }

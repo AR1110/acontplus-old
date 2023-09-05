@@ -46,11 +46,11 @@ import { useMobileDetect } from "@/hooks";
           value="ORDER"
           icon={<RestoreIcon />}
         />
-        <BottomNavigationAction
+        {/* <BottomNavigationAction
           label="Favorites"
           value="favorites"
           icon={<FavoriteIcon />}
-        />
+        /> */}
         <BottomNavigationAction
           label="Items"
           value="ITEMS"

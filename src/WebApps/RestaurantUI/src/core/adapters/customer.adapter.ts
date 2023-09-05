@@ -13,7 +13,10 @@ function customerReadAdapter(customers: any): any {
             customerCompanyId: customer.idCliente,
             identificationNumber: customer.numeroIdentificacion,
             fiscalName: customer.nombreFiscal,
-            tradeName: customer.nombreComercial
+            tradeName: customer.nombreComercial,
+            correo: customer.correo,
+            telefono: customer.telefono,
+            direccion: customer.direccion
         }));
         return customersMapper;
 
@@ -29,7 +32,10 @@ function customerReadAdapter(customers: any): any {
 
             idSubContribuyente: customer.idSubContribuyente,
             idTiempoCredito: customer.idTiempoCredito,
-            idTipoIdentificacion: customer.idTipoIdentificacion
+            idTipoIdentificacion: customer.idTipoIdentificacion,
+            direccion: customer.direccion,
+            correo: customer.correo,
+            telefono: customer.telefono,            
         };
         return obj;
     }

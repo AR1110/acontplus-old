@@ -3,10 +3,11 @@ import { CustomerCreateDto, CustomerReadDto, TiempoCredito, TipoContribuyente, T
 import { CustomerService, SharedService } from '@/core/services'
 import { SnackbarUtility } from '@/core/utilities'
 import { useLoaderStore } from '@/stores'
-import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, IconButton, InputAdornment, MenuItem, Switch, Tab, Tabs, TextField } from '@mui/material'
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, IconButton, InputAdornment, MenuItem, Switch, Tab, Tabs, TextField } from '@mui/material'
 
 
 import { useFormik } from 'formik'
+import { MuiChipsInput, MuiChipsInputChip } from 'mui-chips-input'
 import React, { SyntheticEvent, useEffect, useState } from 'react'
 import * as yup from 'yup';
 type CustomDialogProp = {
@@ -47,12 +48,16 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
     const [tipoContribuyentes, setTipoContribuyentes] = useState<Array<TipoContribuyente>>([])
     const [tiempoCreditos, setTiempoCreditos] = useState<Array<TiempoCredito>>([])
     const [isSearchSRI, setIsSearchSRI] = useState(true);
+
     //Tabs
     const [value, setValue] = useState(1);
-
+    const texFieldSize = "small"
     const handleChange = (_: SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
+    //Email - cellphones 
+    // const [emails, setEmails] = useState<string[]>([]);
+    // const [phones, setPhones] = useState<string[]>([]);
 
     const validationSchema = yup.object({
         idTipoIdentificacion: yup
@@ -95,10 +100,14 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
         numeroIdentificacion: '',
         nombreFiscal: '',
         nombreComercial: '',
-        codigoSri: SRI_IDENTIFITION_CODE.RUC
+        codigoSri: SRI_IDENTIFITION_CODE.RUC,
+        correo: "",
+        telefono: "",
+        emails: [],
+        telefonos: []
     }
 
-    const successResponse = async (response: any)=>{
+    const successResponse = async (response: any) => {
         console.log(response)
         if (response.code === "0") {
             SnackbarUtility.warning(response.message)
@@ -116,22 +125,30 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
         validationSchema: validationSchema,
         onSubmit: (values) => {
             showLoader(true)
-             
+            const data = {
+                idCliente: values.idCliente,
+                idTipoIdentificacion: values.idTipoIdentificacion,
+                numeroIdentificacion: values.numeroIdentificacion,
+                nombreFiscal: values.nombreFiscal,
+                nombreComercial: values.nombreComercial,
+                direccion: values.direccion,
+                telefono: values.telefonos.length > 0 ? values.telefonos.join(';') : "",
+                correo: values.emails.length > 0 ? values.emails.join(';') : "",
+                idSubContribuyente: values.idSubContribuyente,
+                idTiempoCredito: values.idTiempoCredito,
+                placa:"",
+                estado: true
+            } 
 
-            if(id> 0){
-                CustomerService.put(values.idCliente, {
-                    ...values,
-                    correo: "",
-                    telefono: "",
-                    placa: ""
-                })
-                .then(successResponse)
-                .finally(()=>showLoader(false))
+            if (id > 0) {
+                CustomerService.put(values.idCliente, data)
+                    .then(successResponse)
+                    .finally(() => showLoader(false))
             }
-            if(!(id>0)){
-                CustomerService.post(values)
-                .then(successResponse)
-                .finally(() => showLoader(false))
+            if (!(id > 0)) {
+                CustomerService.post(data)
+                    .then(successResponse)
+                    .finally(() => showLoader(false))
             }
         },
     });
@@ -172,12 +189,13 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
         }).finally(() => showLoader(false));
 
 
-        if(id > 0){
-            CustomerService.getId(id).then(response=>{
+        if (id > 0) {
+            CustomerService.getId(id).then(response => {
                 console.log(response)
-                formik.setValues(state=>{
+                formik.setValues(state => {
                     return {
                         ...state,
+                        direccion: response.direccion,
                         idCliente: response.customerCompanyId,
                         numeroIdentificacion: response.identificationNumber,
                         nombreFiscal: response.fiscalName,
@@ -185,6 +203,8 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                         idTipoIdentificacion: response.idTipoIdentificacion!,
                         idTiempoCredito: response.idTiempoCredito!,
                         idSubContribuyente: response.idSubContribuyente!,
+                        emails: response.correo ? response.correo.split(';') : [],
+                        telefonos: response.telefono ? response.telefono.split(';') : [],
                     }
                 })
             })
@@ -242,8 +262,8 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                     nombreComercial: razonSocial,
                     nombreFiscal: razonSocial,
                     direccion,
-                    emails: email,
-                    telefonos: telefono
+                    correo: email,
+                    telefono: telefono
                 })
             }).finally(() => showLoader(false))
         }
@@ -271,8 +291,8 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                     nombreComercial: nombreCompleto,
                     nombreFiscal: nombreCompleto,
                     direccion,
-                    emails: email,
-                    telefonos: telefono
+                    correo: email,
+                    telefono: telefono
                 })
 
             }).finally(() => showLoader(false))
@@ -306,6 +326,13 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
         formik.setFieldValue("numeroIdentificacion", numeroIdentificacion)
     }
 
+    const handleEmailChange = (newValue: MuiChipsInputChip[]) => { 
+        formik.setFieldValue("emails", newValue)
+    }
+    const handlePhoneChange = (newValue: MuiChipsInputChip[]) => {
+        formik.setFieldValue("telefonos", newValue)
+    }
+
     return (
         <Dialog open={open} onClose={() => handleClose()} fullWidth>
             <form onSubmit={formik.handleSubmit} autoComplete='off'>
@@ -326,11 +353,12 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
 
                     <TabPanel value={value} index={1}>
                         <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-                            <Grid item xs={2} sm={6} md={4}>
+                            <Grid item xs={12} sm={6} md={4}>
                                 {
                                     tiposIdentificacion.length > 0 && <TextField fullWidth
                                         id="idTipoIdentificacion"
                                         name="idTipoIdentificacion"
+                                        size={texFieldSize}
                                         select
                                         value={formik.values.idTipoIdentificacion > 0 ? formik.values.idTipoIdentificacion : ''}
                                         onChange={formik.handleChange}
@@ -350,8 +378,9 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                                     </TextField>
                                 }
                             </Grid>
-                            <Grid item xs={2} sm={6} md={8}>
+                            <Grid item xs={12} sm={6} md={8}>
                                 <TextField
+                                    size={texFieldSize}
                                     fullWidth
                                     required
                                     autoFocus
@@ -379,6 +408,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                             </Grid>
                             <Grid item xs={12} sm={12} md={12}>
                                 <TextField
+                                    size={texFieldSize}
                                     fullWidth
                                     required
                                     label="Nombre Fiscal"
@@ -396,15 +426,41 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                             </Grid>
 
                             <Grid item xs={12} sm={12} md={12}>
-                                <TextField fullWidth
-                                    label="Dirección"
-                                    multiline
-                                    rows={2}
+                                <TextField
+                                    fullWidth
+                                    size={texFieldSize}
+                                    //label="Dirección"   
                                     id="direccion"
                                     name="direccion"
+                                    variant="outlined" 
                                     value={formik.values.direccion}
                                     onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    
                                 />
+                            </Grid>
+
+                            <Grid item xs={12} sm={12} md={12} lg={12}>
+                                <MuiChipsInput
+                                    fullWidth
+                                    size="small"
+                                    label="Correo"
+                                    variant="outlined"
+                                    helperText={formik.values.emails.length> 0 ? "Haga doble clic para editar un chip" : ""}
+                                    value={formik.values.emails}
+                                    onChange={handleEmailChange}
+                                    />
+                            </Grid>
+                            <Grid item xs={12} sm={12} md={12} lg={12}>
+                                <MuiChipsInput 
+                                    fullWidth
+                                    size="small"
+                                    label="Teléfono"
+                                    variant="outlined"
+                                    helperText={formik.values.telefonos.length > 0 ? "Haga doble clic para editar un chip" : ""}
+                                    value={formik.values.telefonos}
+                                    onChange={handlePhoneChange}
+                                    />
                             </Grid>
 
 
@@ -415,6 +471,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                         <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
                             <Grid item xs={12} sm={12} md={12}>
                                 <TextField
+                                    size={texFieldSize}
                                     fullWidth
                                     required
                                     label="Nombre Fiscal"
@@ -428,9 +485,11 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                                 />
                             </Grid>
 
-                            <Grid item xs={2} sm={6} md={6}>
+                            <Grid item xs={12} sm={6} md={6}>
                                 {
-                                    tipoContribuyentes.length > 0 && <TextField fullWidth
+                                    tipoContribuyentes.length > 0 && <TextField
+                                        size={texFieldSize}
+                                        fullWidth
                                         id="idSubContribuyente"
                                         name="idSubContribuyente"
                                         select
@@ -450,9 +509,11 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                                 }
                             </Grid>
 
-                            <Grid item xs={2} sm={6} md={6}>
+                            <Grid item xs={12} sm={6} md={6}>
                                 {
-                                    tiempoCreditos.length > 0 && <TextField fullWidth
+                                    tiempoCreditos.length > 0 && <TextField
+                                        size={texFieldSize}
+                                        fullWidth
                                         id="idTiempoCredito"
                                         name="idTiempoCredito"
                                         select
@@ -480,7 +541,9 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
 
                 </DialogContent>
                 <DialogActions>
-                    <Button type="submit" variant='contained' size='large' color='success'>Guardar</Button>
+                    <Button type="submit" variant='contained' size='large' color='success'>
+                        {id> 0? 'Actualizar': 'Guardar'}
+                    </Button>
                     <Button variant='outlined' color='inherit' size='large' onClick={() => handleClose()}>Cerrar</Button>
                 </DialogActions>
             </form>

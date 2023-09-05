@@ -1,9 +1,9 @@
 ﻿using DataAccess.FE;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers.FE
+namespace ApiFactElect.Controllers
 {
-    public class DocumentoLoteDetalleController : Controller
+    public class DocumentoLoteDetalleController : BaseApiController
     {
         private readonly IConfiguration _configuration;
 
@@ -15,12 +15,12 @@ namespace WebUI.Controllers.FE
         }
         public async Task<IActionResult> Get(int idDocumentoLote)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             return Ok(await _dld.GetAsync(idRol, idDocumentoLote));
         }
         public async Task<IActionResult> Delete(long id)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             return Ok(await _dld.DeleteAsync(idRol, id));
         }
     }

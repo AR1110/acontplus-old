@@ -1,9 +1,9 @@
 ﻿using DataAccess.FE;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers.FE
+namespace ApiFactElect.Controllers
 {
-    public class DocumentoLoteController : Controller
+    public class DocumentoLoteController : BaseApiController
     {
         private readonly IConfiguration _configuration;
         //private readonly string _urlApi = "";
@@ -16,19 +16,14 @@ namespace WebUI.Controllers.FE
             _dl = new DocumentoLoteDao(_configuration);
             //_config = config;
         }
-
-        public IActionResult Index()
-        {
-            return View();
-        }
         public async Task<IActionResult> Get(string json)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             return Ok(await _dl.GetAsync(idRol, json));
         }
         public async Task<IActionResult> Post(string codDoc)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             return Ok(await _dl.InsertAsync(idRol, codDoc));
         }
         //public async Task<IActionResult> Authorize(int idDocumentoLote)
@@ -53,7 +48,7 @@ namespace WebUI.Controllers.FE
         //}
         public async Task<IActionResult> Delete(int idDocumentoLote)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             return Ok(await _dl.DeleteAsync(idRol, idDocumentoLote));
         }
     }

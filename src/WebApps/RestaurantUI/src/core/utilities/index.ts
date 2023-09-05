@@ -1,5 +1,6 @@
 export * from './ErrorBoundary';
 export { default as CheckoutUtility } from './checkout.utility';
+export { default as formatDateTimeZone } from './formatDateTimeZone';
 export * from './get-validation-error';
 export * from './http';
 export * from './load-abort-axios.utility';

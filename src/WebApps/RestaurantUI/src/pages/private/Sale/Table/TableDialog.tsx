@@ -2,10 +2,9 @@
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import { useSaleStore } from '@/stores';
-import { Box, Button, DialogActions, DialogContent, Grid, IconButton, Paper, Tab, Tabs, Typography, styled } from '@mui/material';
+import { Box, Button, DialogActions, DialogContent, Grid, Paper, Tab, Tabs, styled } from '@mui/material';
 import { TableReadDto } from '@/core/models';
 import { SyntheticEvent, useEffect, useState } from 'react';
-import { CloseIcon } from '@/core/components';
 
 export interface SimpleDialogProps {
     open: boolean;
@@ -67,10 +66,15 @@ const TableDialog = (props: SimpleDialogProps) => {
 
     const [selectedButton, setSelectedButton] = useState(null);
 
-    const handleButtonClick = (tableId: number, index: any) => {
+    const handleButtonClick = (table: TableReadDto, index: any) => {
+
         setOrder({
             ...order,
-            tableId
+            tableId: table.tableId,
+            table: {
+                description: table.description,
+                numberTable: table.numberTable
+            }
         })
         setSelectedButton(index);
     };
@@ -117,9 +121,9 @@ const TableDialog = (props: SimpleDialogProps) => {
                         <Grid container spacing={{ xs: 2, md: 2 }} columns={{ xs: 4, sm: 8, md: 12 }}>
                             {tables.map((table, index) => (
                                 <Grid item xs={4} sm={4} md={4} key={index}>
-                                    <Item onClick={() => handleButtonClick(table.tableId, index)} style={{
-                                        backgroundColor: `${selectedButton === index ? '#1976d2' : ''}`,
-                                        color: `${selectedButton === index ? 'white' : ''}`,
+                                    <Item onClick={() => handleButtonClick(table, index)} style={{
+                                        backgroundColor: `${selectedButton === index ? '#1976d2' : '#818181'}`,
+                                        color: `${selectedButton === index ? 'white' : 'white'}`,
                                     }}>{table.numberTable}</Item>
                                 </Grid>
                             ))}

@@ -10,7 +10,7 @@ import { ItemReadDto, Measure, WarehouseAsign } from '@/core/models';
 import { useSaleStore } from '@/stores/saleStore';
 import { ProductService } from '@/core/services';
 import { useAuthStore, useLoaderStore } from '@/stores';
-import { SnackbarUtility } from '@/core/utilities'; 
+import { PricingCalculateUtility, SnackbarUtility } from '@/core/utilities'; 
 import Swal from 'sweetalert2';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -75,13 +75,13 @@ export default function ItemCard({ item }: ItemCardProps) {
             const { product, measures } = response;
             const measureData = measures.find(measure => measure.measureId === product.measureId) as Measure;
          
-            const taxRateData = dataForm.taxRates.find(item=>item.taxRateCode===product.taxRateCode);
-            const taxId = dataForm.taxes.find(tax => tax.code === taxRateData?.taxCode)?.taxId ?? 0
-            const taxPercentId = taxRateData?.taxRateId ?? 0
-            const taxValue = measureData.rates[0]?.priceWithVat ?? 0
-            
+            const taxRateData = dataForm.taxRates.find(item=>item.taxRateCode===product.taxRateCode); // Tarifa Impuesto 
+            const taxData = dataForm.taxes.find(tax => tax.code === taxRateData?.taxCode); // Impuesto IVA-ICE 
+            const taxId = taxData?.taxId ?? 0
 
-            console.log(measureData)
+            const taxPercentId = taxRateData?.taxRateId ?? 0 ;
+
+            console.log(taxRateData)
             if (!product.takesInventory) {
                 addItem();
                 return
@@ -116,6 +116,9 @@ export default function ItemCard({ item }: ItemCardProps) {
             console.log(product)
             function addItem() {
                 const uuid = uuidv4();
+                const price =  measureData.rates[0]?.salePrice ?? 0 // Precio Venta
+                const taxValue = PricingCalculateUtility.calculateTaxValue(price, taxRateData?.percentage??0)
+                
                 addItemToCart({
                     orderId: 0,
                     id: 0,
@@ -126,21 +129,21 @@ export default function ItemCard({ item }: ItemCardProps) {
                     feeId: measureData.rates[0]?.rateId ?? 0,
                     taxId: taxId,
                     taxPercentId: taxPercentId,
-                    taxValue:taxValue,
+                    taxValue: PricingCalculateUtility.calculateTaxValue(price, taxRateData?.percentage??0),
                     description: product.description,
                     quantity: 1,
                     cost: product.costPrice, //Precio Costo
-                    price: measureData.rates[0]?.salePrice ?? 0, //Precio Unitario - Precio Venta
+                    price: price?? 0, //Precio Unitario - Precio Venta
                     discount: 0,
                     discountTotal: 0,
-                    total: measureData.rates[0]?.salePrice ?? 0,
+                    total: price ?? 0,
                     s3ObjectUrl: product.s3ObjectUrl ? product.s3ObjectUrl : brand_img,
                     takesInventory: product.takesInventory,
                     taxes: [{
                         uuid: uuid,
                         taxId: taxId,
                         taxPercentId: taxPercentId,
-                        taxBase:  measureData.rates[0]?.salePrice ?? 0,
+                        taxBase: price ?? 0,
                         taxValue: taxValue,                        
                     }],
                     uuid: uuid,

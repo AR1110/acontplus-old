@@ -1,4 +1,4 @@
-import { CategoryReadDto, DecimalSale, Floor, PaymentSubType, PaymentType, Room, TableReadDto, Tax, TaxRate, WarehouseAsign } from ".";
+import { CategoryReadDto, DecimalSale, Floor, Room, TableReadDto, Tax, TaxRate, WarehouseAsign } from ".";
 import { DOC_TYPE } from "../constants";
 import { EmissionPointAsign } from "./emission-point.model";
 
@@ -26,6 +26,7 @@ export interface Order {
     saveDoc?: boolean
     updateOrder?: boolean
     uuid?: string
+    table?: any
 }
 
 //Impuesto Articulos 
@@ -166,5 +167,6 @@ export const orderInitialState: Order = {
     quickSale: true,
     createdAt: new Date(), 
     saveDoc: false,
-    updateOrder: false
+    updateOrder: false,
+    table: {}
 }

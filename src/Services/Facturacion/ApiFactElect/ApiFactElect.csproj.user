@@ -6,5 +6,7 @@
   <PropertyGroup>
     <ActiveDebugProfile>ApiFactElect</ActiveDebugProfile>
     <NameOfLastUsedPublishProfile>C:\Users\Ivan\source\repos\AcontPlus\src\Services\Facturacion\ApiFactElect\Properties\PublishProfiles\FolderProfile1.pubxml</NameOfLastUsedPublishProfile>
+    <Controller_SelectedScaffolderID>ApiControllerEmptyScaffolder</Controller_SelectedScaffolderID>
+    <Controller_SelectedScaffolderCategoryPath>root/Common/Api</Controller_SelectedScaffolderCategoryPath>
   </PropertyGroup>
 </Project>
