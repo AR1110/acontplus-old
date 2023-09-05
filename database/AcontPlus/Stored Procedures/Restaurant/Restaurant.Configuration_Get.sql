@@ -30,7 +30,8 @@ BEGIN
 	INNER JOIN Restaurant.v_Room rr ON rr.id = rt.roomId
 	INNER JOIN Restaurant.v_Floor rf ON rf.id = rr.floorId
 	WHERE rf.codEstab = @codEstab
-	   
+	ORDER BY rt.numberTable ASC
+
     SELECT
 		idSubFamilia    = sf.idSubFamilia
 		,idFamilia      = ISNULL(sf.idFamilia,0)
@@ -42,9 +43,11 @@ BEGIN
 		,nombreFamilia  = ISNULL(f.descripcion, 'Ninguna')
         ,s3ObjectUrl    = ISNULL(sf.s3ObjectUrl, '')
 	FROM SubFamilia  sf
-	LEFT JOIN Familia f ON f.idFamilia = sf.idFamilia
+	INNER JOIN Familia f ON f.idFamilia = sf.idFamilia
 	WHERE sf.idEntidad = @idEntidad
-	AND sf.applicationId IS NOT NULL
+	--AND sf.applicationId IS NOT NULL
+    AND f.siglas = 'RES'
+    AND sf.estado = 1
     ORDER BY sf.idSubFamilia DESC  
     
 	SELECT * FROM Sri.Impuesto WITH (NOLOCK) 
