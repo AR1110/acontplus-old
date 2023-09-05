@@ -11,7 +11,7 @@ import { DOC_TYPE } from '@/core/constants';
 import './Cart.css'
 import TableDialog from '../Table/TableDialog';
 import { useState } from 'react';
-import Customer from '../Customer/Customer';
+import Customer from '../Customer/Customer'; 
 
 
 const Cart = () => {
@@ -168,7 +168,7 @@ const Cart = () => {
     return (
         <Paper elevation={0} sx={{
             borderRadius: '12px',
-            p: 2,
+            p: 1,
             display: 'flex',
             flexDirection: 'column',
             flexGrow: 1,
@@ -203,6 +203,7 @@ const Cart = () => {
                 </Grid>
             </Grid>
 
+            {/* <CartTest/> */}
             {
                 cartItems.length === 0 ? (<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 10 }}>
 
@@ -215,10 +216,9 @@ const Cart = () => {
                     <Typography color="text.secondary" variant="caption"></Typography>
                 </div>) : (
 
-                    <List sx={{ width: '100%', maxHeight: 300, overflowY: 'auto', pb: 5, bgcolor: 'background.paper' }}>
+                    <List sx={{ width: '100%', maxHeight: 300, overflowY: 'auto', bgcolor: 'background.paper' }}>
                         {cartItems.map((item, index) => (
                             <CartItem item={item} index={index} key={index} />
-
                         ))}
                     </List>
 
@@ -230,7 +230,7 @@ const Cart = () => {
                 justifyContent="space-between"
                 alignItems="center" >
 
-                <Grid item   >
+                <Grid item  >
                     <TextField
                         id="observacion"
                         label="Observación"
@@ -245,7 +245,7 @@ const Cart = () => {
                         rows={2}
                     />
                 </Grid>
-                <Grid item   >
+                <Grid item >
                     <Typography variant="subtitle1" color="text.primary">
                         SubTotal: ${order.subTotalSinImpuestos.toFixed(2)}
                     </Typography>
