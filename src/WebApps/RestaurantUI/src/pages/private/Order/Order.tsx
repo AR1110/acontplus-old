@@ -69,7 +69,7 @@ export default function Order() {
                                 </Grid>
                                 <Grid item xs={12} md={4}>
                                 <DateRangeFilter 
-                                    label="Fecha Inicio" 
+                                    label="Fecha Fin" 
                                     value={dayjs(orderFilter.endDate)} 
                                     onChange={onchangeDateEnd} />
                                 </Grid>
