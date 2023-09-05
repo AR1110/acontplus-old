@@ -13,7 +13,7 @@ import { ChangeEvent } from "react";
 import { create } from "zustand";
 import { produce } from 'immer';
 
-type State = { 
+type State = {
     itemSearch: ItemSearch
     collectionItems: Array<ItemReadDto>
     totalItems: number;
@@ -45,12 +45,12 @@ type Actions = {
     addItemToCart(item: ItemRead): void
     removeItemFromCart(productId: number): void
     setTotalItems(): void,
-    setAddQuantity(index: number, value: number):void
-    setRemoveQuantity(index: number, value: number):void
+    setAddQuantity(index: number, value: number): void
+    setRemoveQuantity(index: number, value: number): void
     setItemChangeQty(
-        event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, 
-        cartItem: ItemRead, 
-        ): void
+        event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+        cartItem: ItemRead,
+    ): void
     caculateTotals(): void
     resetForm(): void
 }
@@ -92,22 +92,22 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         )
         console.log(obj)
     },
-    setChangeValueOrderItem(itemIndex, prop, newValue){
-        const {items} = get(); 
-        
+    setChangeValueOrderItem(itemIndex, prop, newValue) {
+        const { items } = get();
+
         const newArray = items.map((elem, index) => {
-            if(index==itemIndex) {
+            if (index == itemIndex) {
                 return {
                     ...elem,
                     [prop]: newValue
-                }                
+                }
             }
             return elem;
         });
-         
+
         set(
-            produce((state: State)=>{
-                state.items = newArray;                
+            produce((state: State) => {
+                state.items = newArray;
 
             })
         )
@@ -140,8 +140,8 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
     },
     setDataForm(dataForm) {
         set(
-            produce((state:State)=>{
-                state.dataForm = dataForm;                
+            produce((state: State) => {
+                state.dataForm = dataForm;
             })
         )
     },
@@ -156,24 +156,24 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         if (items.some(itemCompare => itemCompare.productId === item.productId)) {
 
             const newArray = items.map((itemToModify) => {
-                if(itemToModify.productId === item.productId) {
+                if (itemToModify.productId === item.productId) {
                     const sumQty = itemToModify.quantity + 1;
                     const sumTotal = sumQty * itemToModify.price;
-                  
+
                     return {
                         ...itemToModify,
                         quantity: sumQty,
                         total: sumTotal
-                    }                
+                    }
                 }
                 return itemToModify;
             });
-            
+
             set(
-                produce((state:State)=>{
+                produce((state: State) => {
                     state.items = newArray;
                 })
-            ) 
+            )
         } else {
             set(state => ({
                 ...state,
@@ -198,23 +198,23 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         totalItems: state.items.reduce((total, item) => total + item.quantity, 0)
     })),
 
-    setAddQuantity(index: number, value: number){
+    setAddQuantity(index: number, value: number) {
         console.log(index, value)
         const { items, setTotalItems, caculateTotals } = get();
         const newArray = items.map((orderItem, orderItemIndex) => {
             const total = value * orderItem.price;
-            if (index === orderItemIndex) {              
-              return { 
-                ...orderItem, 
-                quantity: value,
-                total: RoundNumber(total, 2)            
-            };
-            } else { 
-              return orderItem;
+            if (index === orderItemIndex) {
+                return {
+                    ...orderItem,
+                    quantity: value,
+                    total: RoundNumber(total, 2)
+                };
+            } else {
+                return orderItem;
             }
         })
         set(
-            produce((state:State)=>{
+            produce((state: State) => {
                 state.items = newArray;
             })
         )
@@ -222,23 +222,23 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         caculateTotals();
         addSound();
     },
-    setRemoveQuantity(index: number, value: number){ 
+    setRemoveQuantity(index: number, value: number) {
         console.log(index, value)
         const { items, setTotalItems, caculateTotals } = get();
         const newArray = items.map((orderItem, orderItemIndex) => {
             const total = value * orderItem.price;
-            if (index === orderItemIndex) {              
-              return { 
-                ...orderItem, 
-                quantity: value,
-                total: RoundNumber(total, 2)            
-            };
-            } else { 
-              return orderItem;
+            if (index === orderItemIndex) {
+                return {
+                    ...orderItem,
+                    quantity: value,
+                    total: RoundNumber(total, 2)
+                };
+            } else {
+                return orderItem;
             }
         })
         set(
-            produce((state:State)=>{
+            produce((state: State) => {
                 state.items = newArray;
             })
         )
@@ -246,7 +246,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         caculateTotals();
         addSound();
     },
-    async setItemChangeQty(event, item) { 
+    async setItemChangeQty(event, item) {
         const { items, setTotalItems, caculateTotals, dataForm } = get();
 
         let qty = Number(event.target.value)
@@ -325,13 +325,14 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
     },
     async resetForm() {
         set(
-            produce((state: State)=>{ 
+            produce((state: State) => {
                 state.order.obs = "",
-                state.order.customerName = "",
-                state.order.customerCompanyId = 0,
-                state.order.orderId = 0;
+                    state.order.customerName = "",
+                    state.order.customerCompanyId = 0,
+                    state.order.orderId = 0;
                 state.totalItems = 0;
-                state.items = []                
+                state.items = [];
+                state.order.table = {}
             })
         )
         clearSound();
@@ -339,18 +340,62 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
 
     },
     caculateTotals() {
-        const { items } = get();
-        let total = 0;
-        for (const item of items) {
-            total += item.total;
-        }
 
-        set(
-            produce((state: State) => {
-                state.order.total = total;
-                state.order.netTotal = total;
-            })
-        )
+         // Obtener los datos necesarios del estado (state)
+         const { items, dataForm } = get();
+         const decimal = dataForm.decimal;
+
+         console.log(dataForm)
+         // Inicializar variables para los totales
+         let subTotalSinImpuestos = 0; // Subtotal sin impuestos
+         let totalNetoIva = 0; // Total neto con IVA
+         let tax = 0; // Monto del IVA (12%)
+         let totalPlusVAT = 0; // Total con IVA
+         let importeTotal = 0; // Importe total con descuento 
+ 
+         // Iterar a través de los ítems del pedido  
+         for (const item of items) {
+             // Calcular el precio del ítem teniendo en cuenta el descuento
+             const itemPrice = item.price - item.discount;
+ 
+             // Calcular el total del ítem
+             const itemTotal = itemPrice * item.quantity;
+ 
+             // Agregar el total del ítem al subtotal sin impuestos
+             subTotalSinImpuestos += itemTotal;
+ 
+             // Verificar si el ítem tiene un impuesto correspondiente en dataForm
+             const matchingTaxRate = dataForm.taxRates.find(
+                 (taxRate) => taxRate.taxRateId === item.taxPercentId
+             );
+ 
+             // Si hay un impuesto correspondiente, agregar el total del ítem al total neto con IVA
+             if (matchingTaxRate?.taxRateCode==="2") {
+                 totalNetoIva += itemTotal;
+             }
+         }
+ 
+         // Calcular el monto del impuesto (IVA 12%)
+         tax = (totalNetoIva * 12) / 100;
+ 
+         // Calcular el total con IVA
+         totalPlusVAT = subTotalSinImpuestos + tax;
+ 
+         // Calcular el importe total con descuento  
+         importeTotal = totalPlusVAT; 
+ 
+         // Actualizar el estado (state) con los totales calculados y redondeados
+         set(
+             produce((state: State) => {
+                 state.order.netTotal = importeTotal;
+                 state.order.subTotalSinImpuestos = RoundNumber(
+                     subTotalSinImpuestos,
+                     decimal.nroTotalSubTotal
+                 );
+                 state.order.tax = RoundNumber(tax, decimal.nroIva);
+                 state.order.total = RoundNumber(importeTotal, decimal.importeTotal);
+             })
+         );
     },
     payment: {
         isOpen: false,

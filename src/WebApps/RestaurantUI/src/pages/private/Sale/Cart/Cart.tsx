@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Grid, List, ListItem, ListItemText, Paper, TextField, Typography } from '@mui/material'
+import { Box, Button, Divider, Grid, List, Paper, TextField, Typography } from '@mui/material'
 import CartItem from '../CartItem/CartItem'
 import { useCheckoutStore, useLoaderStore, useSaleStore } from '@/stores';
 import Swal from 'sweetalert2';
@@ -12,7 +12,7 @@ import './Cart.css'
 import TableDialog from '../Table/TableDialog';
 import { useState } from 'react';
 import Customer from '../Customer/Customer';
- 
+
 
 const Cart = () => {
     const cartItems = useSaleStore(state => state.items);
@@ -20,7 +20,7 @@ const Cart = () => {
         order: state.order,
         items: state.items,
     }));
-    const setOrder = useSaleStore(state=>state.setSummary)
+    const setOrder = useSaleStore(state => state.setSummary)
 
     //store checkout 
     const setQueryParams = useCheckoutStore(state => state.setQueryParams)
@@ -33,13 +33,13 @@ const Cart = () => {
     //Modal Tables 
     const [openTableDialog, setOpenTableDialog] = useState(false);
     const typeActions: { [key: string]: string } = {
-        [DOC_TYPE.FV] : `
+        [DOC_TYPE.FV]: `
         Esta seguro de guardar el pedido como Factura? </br> 
         <small>Ya no será posible modificar la venta para hacer cambios, tendrás que cancelar esta y crear una nueva.!</small>`,
-        [DOC_TYPE.NE] : `
+        [DOC_TYPE.NE]: `
         Esta seguro de guardar el pedido como Nota de Entrega? </br> 
         <small>Ya no será posible modificar la venta para hacer cambios, tendrás que cancelar esta y crear una nueva.!</small>`,
-        [DOC_TYPE.OR] : `Esta seguro de guardar el pedido? </br>
+        [DOC_TYPE.OR]: `Esta seguro de guardar el pedido? </br>
         <small>El stock de los productos <strong>no se descontará</strong> hasta que se transforme a "Factura" o "Nota de Entrega".`
 
     }
@@ -85,13 +85,13 @@ const Cart = () => {
             return
         }
         const { isConfirmed } = await Swal.fire({
-            title: `${order.orderId > 0 ? 'Actualizar': 'Guardar'} Pedido`,
+            title: `${order.orderId > 0 ? 'Actualizar' : 'Guardar'} Pedido`,
             html: typeActions[codDoc],
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: `${order.orderId > 0 ? 'Actualizar': 'Guardar'}`,
+            confirmButtonText: `${order.orderId > 0 ? 'Actualizar' : 'Guardar'}`,
             cancelButtonText: 'No, cancelar!'
         })
 
@@ -191,7 +191,13 @@ const Cart = () => {
                     <Button variant="outlined" onClick={() => {
                         setOpenTableDialog(true)
                     }}>
-                        Seleccionar Mesa
+                        {
+                            order.tableId > 0 ? (
+                                (
+                                    order.table?.description && order.table?.description
+                                ) ? `${order.table?.description} - ${order.table?.numberTable}` : 'Seleccionar Mesa'
+                            ) : 'Seleccionar Mesa'
+                        }
                     </Button>
                     <TableDialog open={openTableDialog} onClose={setOpenTableDialog} />
                 </Grid>
@@ -229,14 +235,14 @@ const Cart = () => {
                         id="observacion"
                         label="Observación"
                         value={order.obs}
-                        onChange={(e)=>{
+                        onChange={(e) => {
                             setOrder({
                                 ...order,
                                 obs: e.target.value
                             })
                         }}
                         multiline
-                        rows={2} 
+                        rows={2}
                     />
                 </Grid>
                 <Grid item   >
