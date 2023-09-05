@@ -40,6 +40,8 @@ import CommentIcon from '@mui/icons-material/Comment';
 import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
 import FileCopyRoundedIcon from '@mui/icons-material/FileCopyRounded';
 import PersonAddAltTwoToneIcon from '@mui/icons-material/PersonAddAltTwoTone';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 export {
     RemoveCircleOutlineIcon,
     SaveIcon,
@@ -80,6 +82,7 @@ export {
     CommentIcon,
     CleaningServicesIcon,
     FileCopyRoundedIcon,
-    PersonAddAltTwoToneIcon
-
+    PersonAddAltTwoToneIcon,
+    ArrowBackIcon,
+    ExpandMoreIcon
 }
