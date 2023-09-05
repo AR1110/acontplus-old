@@ -1,4 +1,4 @@
-﻿using Domain.Dtos;
+﻿using Lib.Common.Dtos;
 using Newtonsoft.Json;
 
 namespace Reports.Application

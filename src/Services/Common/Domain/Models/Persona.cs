@@ -24,7 +24,6 @@
         public TipoEntidad tipoEntidad { get; set; }
         public Ciudad ciudad { get; set; }
         public SubContribuyente subContribuyente { get; set; }
-        public InformacionFinancieraPersona informacionFinancieraPersona { get; set; }
         public TiempoCredito tiempoCredito { get; set; }
         public TipoPersona tipoPersona { get; set; }
         public ConfiguracionPersona configuracionPersona { get; set; }
