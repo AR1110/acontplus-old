@@ -81,9 +81,14 @@ BEGIN
 
             SELECT TOP 1 @CustomerId = CustomerId FROM Mechanical.v_Vehicle WITH (NOLOCK) WHERE Id = @Id
 
-            SELECT numeroIdentificacion as idCard
-                  ,nombreFiscal as businessName
-                  ,correo as email
+            SELECT idCliente as id 
+                  ,IDType
+                  ,IDCard
+                  ,BusinessName
+                  ,TradeName
+                  ,Email
+                  ,Telephone
+                  ,Address
             FROM v_Cliente WITH (NOLOCK)
             WHERE idCliente = @CustomerId
 

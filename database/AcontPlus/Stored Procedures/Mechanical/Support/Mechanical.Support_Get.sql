@@ -66,7 +66,7 @@ BEGIN
     -- GET DATAFORM -- 
 	IF @tipo = 2
 		BEGIN
-			SET @tableNames = 'establishments,emissionPoints,vehicleTypes,countrys,supportTypes'
+			SET @tableNames = 'establishments,emissionPoints,vehicleTypes,countrys,supportTypes,idTypes'
 			
             SELECT idEstablecimiento as establecimientoId
                   ,nombreComercial
@@ -83,6 +83,13 @@ BEGIN
             SELECT Id as countryId, [Description] FROM Common.Country WITH (NOLOCK) WHERE Deleted IS NULL AND [Enabled] = 1 
 
             SELECT Id as supportTypeId ,[Description] FROM Mechanical.SupportType WITH (NOLOCK) WHERE Deleted IS NULL AND [Enabled] = 1
+
+            SELECT codigoSri as idType
+                  ,descripcion as [description] 
+                  ,idTipoIdentificacion as tipoIdentificacionId
+            FROM dbo.TipoIdentificacion WITH (NOLOCK) 
+            WHERE estado = 1
+              AND codigoSri IN ('05','04','06')
 
             RETURN 
 		END 

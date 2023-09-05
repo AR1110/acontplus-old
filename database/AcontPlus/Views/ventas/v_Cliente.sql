@@ -42,9 +42,12 @@ SELECT c.[idCliente]
     ,IIF(cs.IDCard IS NULL,c.numeroIdentificacion,cs.IDCard) as IDCard
     ,IIF(cs.BusinessName IS NULL, c.nombreComercial,cs.BusinessName) as BusinessName
     ,IIF(cs.TradeName IS NULL, c.nombreFiscal,cs.TradeName) as TradeName
-FROM dbo.Cliente c WITH(NOLOCK)
-    INNER JOIN dbo.Entidad e WITH(NOLOCK) ON c.idEntidad = e.idEntidad
-    INNER JOIN dbo.TipoIdentificacion ti WITH(NOLOCK) ON c.idTipoIdentificacion = ti.idTipoIdentificacion 
-    LEFT JOIN Administrador.Empresa emp WITH (NOLOCK) ON c.idEmpresa = emp.idEmpresa
-    LEFT JOIN Customer.Customer   cs WITH (NOLOCK) ON cs.Id = c.CustomerId
+    ,c.correo as Email
+    ,c.telefono as Telephone
+    ,c.direccion as Address
+FROM dbo.Cliente                       c WITH(NOLOCK)
+    INNER JOIN dbo.Entidad             e WITH(NOLOCK)  ON c.idEntidad            = e.idEntidad
+    INNER JOIN dbo.TipoIdentificacion ti WITH(NOLOCK)  ON c.idTipoIdentificacion = ti.idTipoIdentificacion 
+    LEFT JOIN Administrador.Empresa  emp WITH (NOLOCK) ON c.idEmpresa            = emp.idEmpresa
+    LEFT JOIN Customer.Customer       cs WITH (NOLOCK) ON cs.Id                  = c.CustomerId
 )

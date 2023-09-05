@@ -1,4 +1,4 @@
-import {client} from "$core/api/axiosClient";
+import { client } from "$core/api/axiosClient";
 let url = "Venta/Cliente/Search/";
 
 async function search(params) {
@@ -12,6 +12,32 @@ async function search(params) {
     })
 }
 
+async function getCedula(idCard) {
+    return await client.get("Consultas/GetCedulaSri?Ruc=" + idCard).then(
+        (response) => {
+            if (response.status != 200) return null;
+            return response.data;
+        },
+        (err) => {
+            return null;
+        }
+    );
+}
+
+async function getRuc(idCard) {
+    return await client.get("Consultas/GetRucSRI?Ruc=" + idCard).then(
+        (response) => {
+            if (response.status != 200) return null;
+            return response.data;
+        },
+        (err) => {
+            return null;
+        }
+    );
+}
+
 export const CustomerService = {
-    search
+    search,
+    getCedula,
+    getRuc
 }
