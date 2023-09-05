@@ -33,6 +33,7 @@ BEGIN
     DECLARE @CompanyId INT
     DECLARE @Id INT
     DECLARE @CustomerId INT
+    DECLARE @textSearch VARCHAR(100)
 
     SELECT TOP 1 @CompanyId = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
@@ -65,7 +66,7 @@ BEGIN
     -- GET DATAFORM -- 
 	IF @tipo = 2
 		BEGIN
-			SET @tableNames = 'establishments,emissionPoints'
+			SET @tableNames = 'establishments,emissionPoints,vehicleTypes,countrys,supportTypes'
 			
             SELECT idEstablecimiento as establecimientoId
                   ,nombreComercial
@@ -74,8 +75,14 @@ BEGIN
             SELECT ap.idEstablecimiento as establecimientoId
                   ,ap.idPuntoEmision as puntoEmisionId
                   ,ap.ptoEmi + '-' + ap.estab as ptoEmi
-                  ,(SELECT (REPLICATE('0',(9-LEN(COUNT(*)+1)))+CONVERT(NVARCHAR(10),COUNT(*)+1)) FROM Mechanical.Support ms WHERE ms.PuntoEmisionId = ap.idPuntoEmision) as secuence
+                  ,(SELECT (REPLICATE('0',(9-LEN(COUNT(*)+1)))+CONVERT(NVARCHAR(10),COUNT(*)+1)) FROM Mechanical.Support ms WHERE ms.PuntoEmisionId = ap.idPuntoEmision) as sequence
             FROM v_PtoEmi_Asign ap WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultPtoEmi DESC
+
+            SELECT Id as vehicleTypeId, [Description] FROM Mechanical.VehicleType WITH (NOLOCK) WHERE Deleted IS NULL AND [Enabled] = 1
+
+            SELECT Id as countryId, [Description] FROM Common.Country WITH (NOLOCK) WHERE Deleted IS NULL AND [Enabled] = 1 
+
+            SELECT Id as supportTypeId ,[Description] FROM Mechanical.SupportType WITH (NOLOCK) WHERE Deleted IS NULL AND [Enabled] = 1
 
             RETURN 
 		END 
@@ -113,5 +120,27 @@ BEGIN
     --        WHERE Id = @Id
     --        RETURN 
     --    END 
+
+    -- GET SEARCH 
+    IF @tipo = 4
+        BEGIN
+            SELECT @textSearch =  REPLACE(textSearch,SPACE(1),'%') FROM OPENJSON(@json) WITH (textSearch VARCHAR(100) '$.textSearch')
+
+            SET @tableNames = 'dataSeach'
+
+            SELECT TOP 20 
+                   Id
+                  ,LicensePlate
+                  ,Brand
+                  ,TradeName
+            FROM Mechanical.v_Vehicle WITH (NOLOCK) 
+            WHERE CompanyId = @CompanyId
+              AND (LicensePlate LIKE '%' + @textSearch + '%' 
+               OR  IDCard       LIKE '%' + @textSearch + '%'
+                  )   
+
+            RETURN 
+
+        END
 END
 GO
