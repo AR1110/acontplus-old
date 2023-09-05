@@ -117,7 +117,7 @@ export default function Sale() {
             {/* start Items carito movil */}
             <FullScreenDialog icon={<SwipeLeftIcon />} dialogTitle="Carito" isOpen={navigation.isOpen} handleClose={navigation.closeDialogCustom}>
                 <Cart />
-            </FullScreenDialog>
+            </FullScreenDialog> 
             {/* end Items carito movil */}
 
             <CustomBottomNavigation />

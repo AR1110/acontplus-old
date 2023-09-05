@@ -427,7 +427,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         closeDialogCustom() {
             set(
                 produce((state: State) => {
-                    state.payment.isOpen = false
+                    state.navigation.isOpen = false
                 })
             )
         },
