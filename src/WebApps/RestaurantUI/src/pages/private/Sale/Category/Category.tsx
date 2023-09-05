@@ -14,7 +14,7 @@ export default function Category() {
   const [value, setValue] = useState(0);
 
   const handleChange = (_: React.SyntheticEvent, index: number) => {
-    const dataCategory = categories.find((i, indexCategory)=>indexCategory===index);
+    const dataCategory = categories.find((_, indexCategory)=>indexCategory===index);
     
      
     setItemSearch({

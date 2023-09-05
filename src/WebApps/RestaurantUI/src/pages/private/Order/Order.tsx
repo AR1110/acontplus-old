@@ -13,11 +13,11 @@ import dayjs from 'dayjs';
 
 
 export default function Order() {
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
     // const setOrders = useOrderStore(state => state.setOrders); 
-    const getOrders = useOrderStore(state => state.getOrders); 
-    const orderFilter = useOrderStore(state => state.orderFilter); 
-    const setOrderFilter = useOrderStore(state => state.setOrderFilter); 
+    const getOrders = useOrderStore(state => state.getOrders);
+    const orderFilter = useOrderStore(state => state.orderFilter);
+    const setOrderFilter = useOrderStore(state => state.setOrderFilter);
 
     const handleNewOrder = () => {
         navigate(`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.SALE}`, { replace: true })
@@ -35,18 +35,20 @@ export default function Order() {
         getOrders();
     }, [])
 
-    const onchangeDateStart = (date:any)=>{ 
+    const onchangeDateStart = (date: any) => {
         setOrderFilter({
             ...orderFilter,
             startDate: date.format()
         })
+        getOrders()
     }
 
-    const onchangeDateEnd = (date:any)=>{
+    const onchangeDateEnd = (date: any) => {
         setOrderFilter({
             ...orderFilter,
             endDate: date.format()
         })
+        getOrders()
     }
 
     return (
@@ -57,24 +59,24 @@ export default function Order() {
                 elevation={0}
             // sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
             >
-                <Toolbar sx={{mt:1}}>
+                <Toolbar sx={{ mt: 1 }}>
                     <Grid container spacing={3}>
                         <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
                             <Grid container spacing={3}>
                                 <Grid item xs={12} md={4}>
-                                    <DateRangeFilter 
-                                    label="Fecha Inicio" 
-                                    value={dayjs(orderFilter.startDate)} 
-                                    onChange={onchangeDateStart} />
+                                    <DateRangeFilter
+                                        label="Fecha Inicio"
+                                        value={dayjs(orderFilter.startDate)}
+                                        onChange={onchangeDateStart} />
                                 </Grid>
                                 <Grid item xs={12} md={4}>
-                                <DateRangeFilter 
-                                    label="Fecha Fin" 
-                                    value={dayjs(orderFilter.endDate)} 
-                                    onChange={onchangeDateEnd} />
+                                    <DateRangeFilter
+                                        label="Fecha Fin"
+                                        value={dayjs(orderFilter.endDate)}
+                                        onChange={onchangeDateEnd} />
                                 </Grid>
                                 <Grid item xs={12} md={4}>
-                                    <CustomerSearchFilter/>
+                                    <CustomerSearchFilter />
                                 </Grid>
                             </Grid>
 
@@ -124,7 +126,7 @@ export default function Order() {
                 </Toolbar>
             </AppBar>
 
-            <OrderTable/>
+            <OrderTable />
 
             {/* <Typography sx={{ my: 5, mx: 2 }} color="text.secondary" align="center">
       No users for this project yet
