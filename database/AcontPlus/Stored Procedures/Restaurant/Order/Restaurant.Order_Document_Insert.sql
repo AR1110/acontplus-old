@@ -36,7 +36,6 @@ BEGIN
     ,@userId                INT
     ,@codDoc                VARCHAR(2)
     ,@fechaEmision          DATETIME2
-    ,@subtotalSinImpuestos  NUMERIC(18,5)
     ,@tax                   NUMERIC(18,5)
     ,@taxPercent            NUMERIC(4,2)
     ,@discount              NUMERIC(18,5)
@@ -48,6 +47,22 @@ BEGIN
     ,@estadoPagoId          INT
     ,@sequence              INT    
     ,@tableId               INT
+    ,@subtotalSinImpuestos  NUMERIC(18,5)
+    ,@subTotalIva DECIMAL(18,5)
+    ,@subTotalNetoIva DECIMAL(18,5)
+    ,@subTotalIvaCero DECIMAL(18,5)
+    ,@subTotalNetoIvaCero DECIMAL(18,5)
+    ,@subTotalNoObjetoIva DECIMAL(18,5)
+    ,@subTotalNetoNoObjetoIva DECIMAL(18,5)
+    ,@subTotalExentoIva DECIMAL(18,5)
+    ,@subTotalNetoExentoIva DECIMAL(18,5)
+    ,@totalDescuento DECIMAL(18,5)
+    ,@porcentajeDescuento DECIMAL(18,5)
+    ,@totalIce DECIMAL(18,5)
+    ,@propina DECIMAL(18,5)
+    ,@iva DECIMAL(18,5)
+    ,@recargo DECIMAL(18,5)
+    ,@transporte DECIMAL(18,5)
 
     DECLARE @tblItems AS TABLE(
         uuid            UNIQUEIDENTIFIER NOT NULL,
@@ -168,15 +183,21 @@ BEGIN
         BEGIN 
             SET @taxPercent = 0
         END       
-
+    
+    SET @subtotalIva = (SELECT SUM(oi.price) FROM @tblItems oi
+                                                INNER JOIN Sri.Impuesto i WITH (NOLOCK) ON oi.taxId = i.idImpuesto 
+                                                INNER JOIN Sri.TarifaImpuesto t WITH (NOLOCK) ON oi.taxPercentId = t.idTarifaImpuesto
+                                                WHERE t.codigo = '2')
     ---- NOTA DE ENTREGA ----
     IF @codDoc = 'NE'
         BEGIN
             INSERT INTO NotaEntrega 
-            (idCliente, idPuntoEmision, idTiempoCredito, nroDocumento, subTotalSinImpuestos, propina, iva, total, tarifa
-            , observacion, fechaRegistro, idUsuario, idEntidad, fechaEmision, fechaVencimiento, idEstadoPago)
+            (idCliente, idPuntoEmision, idTiempoCredito, nroDocumento, subTotalSinImpuestos, subTotalIva
+            ,propina, iva, total, tarifa
+            ,observacion, fechaRegistro, idUsuario, idEntidad, fechaEmision, fechaVencimiento, idEstadoPago)
             
-            VALUES(@customerCompanyId, @puntoEmisionId, @tiempoCreditoId, @nroDocumento, @subtotalSinImpuestos, @tip, @tax, @total, @taxPercent
+            VALUES(@customerCompanyId, @puntoEmisionId, @tiempoCreditoId, @nroDocumento, @subtotalSinImpuestos, @subTotalIva
+            , @tip, @tax, @total, @taxPercent
             , @obs, dbo.ufnGetDateEcuador(), @userId, @companyId,  @fechaEmision, @fechaEmision, @estadoPagoId)
             
             SET @documentoId = (SELECT SCOPE_IDENTITY())
@@ -195,7 +216,7 @@ BEGIN
                         , i.price
                         , i.feeId
                         , i.taxValue
-                        , i.total + i.taxValue
+                        , i.taxValue + i.price
                         , i.discount
                         , 0
                         , i.total
@@ -231,18 +252,18 @@ BEGIN
     IF @codDoc = 'FV'
         BEGIN
             DECLARE @claveAcceso VARCHAR(49)
-            
+           
             SET @claveAcceso = (SELECT dbo.ufnGeneraClaveAcceso(dbo.AFTDeleteCero(@estab), '01', @ambiente, 1, dbo.AFTConvertDate(@fechaEmision), @ruc, @estab + @ptoEmi, Helper.F_Auto_Sequential(@nroDocumento)))
 
-            INSERT INTO Factura (idCliente ,idPuntoEmision ,idEstadoPago ,idTipoDocumento ,idTiempoCredito ,ambiente ,porcentaje
-                ,idEntidad ,idUsuario ,claveAcceso,nroFactura,fechaEmision,fechaVencimiento,subTotalSinImpuestos,subTotalIva
-                ,subTotalNetoIva,subTotalIvaCero,subTotalNetoIvaCero,subTotalNoObjetoIva,subTotalNetoNoObjetoIva
-                ,subTotalExentoIva,subTotalNetoExentoIva,totalDescuento,porcentajeDescuento,totalIce,irbpnr,propina
-                ,iva,recargo,transporte,total,observacion,fechaRegistro)
+            INSERT INTO Factura (idCliente, idPuntoEmision, idEstadoPago, idTipoDocumento, idTiempoCredito, ambiente, porcentaje
+                ,idEntidad, idUsuario, claveAcceso, nroFactura, fechaEmision, fechaVencimiento, subTotalSinImpuestos, subTotalIva
+                ,subTotalNetoIva, subTotalIvaCero, subTotalNetoIvaCero, subTotalNoObjetoIva, subTotalNetoNoObjetoIva
+                ,subTotalExentoIva, subTotalNetoExentoIva, totalDescuento, porcentajeDescuento, totalIce, propina
+                ,iva, recargo, transporte, total, observacion, fechaRegistro)
         
             VALUES(@customerCompanyId, @puntoEmisionId, @estadoPagoId, @idTipoDocumento ,@tiempoCreditoId ,@ambiente, @taxPercent
-                ,@companyId, @userId, @claveAcceso, @sequence, @fechaEmision, @fechaEmision, 0, 0
-                ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+                ,@companyId, @userId, @claveAcceso, @sequence, @fechaEmision, @fechaEmision, @subtotalSinImpuestos, @subtotalIva
+                ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
                 ,@tax ,0 ,0 ,@total ,@obs, dbo.ufnGetdateEcuador())
                                      
             SET @documentoId = (SELECT SCOPE_IDENTITY()) 
