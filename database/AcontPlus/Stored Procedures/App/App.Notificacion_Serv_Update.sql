@@ -13,12 +13,16 @@ IF OBJECT_ID('App.Notificacion_Serv_Update') IS NOT NULL
 GO 
 CREATE PROCEDURE App.Notificacion_Serv_Update @id INT
 ,@estado VARCHAR(5)
-,@msgError VARCHAR(1000)
+,@msgError VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
+    IF (LEN(LTRIM(RTRIM(@msgError))) = 0)
+		BEGIN
+			SET @msgError = NULL
+		END
 	BEGIN TRY
 		BEGIN TRAN
 			IF (@estado = 'ERROR' OR @estado = 'NE' OR @estado = 'EE')

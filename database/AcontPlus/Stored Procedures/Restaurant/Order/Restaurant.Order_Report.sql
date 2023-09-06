@@ -41,7 +41,7 @@ BEGIN
 	--Order
 	SELECT o.*
         ,e.nombreComercial tradeName
-        ,ISNULL(t.[Description], '') tableName
+        ,ISNULL(t.[Description], '') + ' - ' + CONVERT(VARCHAR, t.NumberTable) tableName
         ,ISNULL(c.nombreFiscal, 'Consumidor Final') customer
         ,u.nombreUsuario username
     FROM Restaurant.[Order] o WITH (NOLOCK)
