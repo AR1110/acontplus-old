@@ -15,17 +15,17 @@ import { useRef, useState } from "react";
 import { useLoaderStore, useOrderStore } from "@/stores";
 import { itemToApi, summaryToApi } from "@/core/adapters";
 import { SnackbarUtility } from "@/core/utilities";
-import { CustomerReadDto, QueryParams } from "@/core/models";
+import { CustomerReadDto } from "@/core/models";
 import OrderSearch from "./OrderSearch";
 import CustomerDialog from "../../Sale/Customer/CustomerDialog";
 
 export interface OrderDialogWhatsApp {
-  open: boolean; 
+  open: boolean;
   handleClose(): void;
 }
 
 const OrderConvertDoc = ({
-  open, 
+  open,
   handleClose,
 }: OrderDialogWhatsApp) => {
   const theme = useTheme();
@@ -37,6 +37,7 @@ const OrderConvertDoc = ({
 
   const setOrderId = useRef(0);
   const customerId = useRef(0);
+  const customerName = useRef("");
 
   const handleGetDetail = (codDoc: string) => {
     showLoader(true);
@@ -74,8 +75,7 @@ const OrderConvertDoc = ({
           getOrders();
           handleClose();
           SnackbarUtility.success(response.message);
-          const queryParams: QueryParams = JSON.parse(response.payload)[0];
-          console.log(queryParams);
+          customerName.current = "";
         }
       })
       .finally(() => showLoader(false));
@@ -94,6 +94,7 @@ const OrderConvertDoc = ({
     if (data) {
       setCustomers(data);
       customerId.current = data.customerCompanyId ?? 0;
+      customerName.current = data.fiscalName ?? '';
     }
   };
 
@@ -109,17 +110,18 @@ const OrderConvertDoc = ({
         <DialogContent>
           <Grid
             container
-            rowSpacing={2}
+            rowSpacing={1}
             columnSpacing={{ xs: 1, sm: 1, md: 1 }}
           >
-            <Grid style={{ marginTop: 15 }} item xl={10} md={10} xs={10}>
+            <Grid style={{ marginTop: 15 }} item xl={10} md={10} xs={12}>
               <OrderSearch setCustomerValue={setCustomerValue} />
             </Grid>
-            <Grid style={{ marginTop: 15 }} item xl={2} md={2} xs={2}>
+            <Grid style={{ marginTop: 15 }} item xl={2} md={2} xs={12}>
               <Button
                 onClick={openDialogCustomerAdd}
                 variant="outlined"
                 size="large"
+                style={{ height: 55 }}
               >
                 Nuevo
               </Button>
@@ -127,9 +129,10 @@ const OrderConvertDoc = ({
 
             <Grid style={{ marginTop: 15 }} item xl={12} md={12} xs={12}>
               {
+              customerName.current.length > 0 &&
                 <Alert severity="success">
-                  <AlertTitle>Success</AlertTitle>
-                  This is a success alert — <strong>check it out!</strong>
+                  <AlertTitle>Cliente</AlertTitle>
+                  {customerName.current}
                 </Alert>
               }
             </Grid>

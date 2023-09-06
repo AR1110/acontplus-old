@@ -4,6 +4,7 @@
 	const events = getEventsAction(current_component);
 	export let value;
 	export let placeholder;
+	export let disabled = false;
 </script>
 
 <input
@@ -12,4 +13,5 @@
 	{placeholder}
 	use:events
 	{value}
+	{disabled}
 />

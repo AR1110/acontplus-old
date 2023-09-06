@@ -38,7 +38,7 @@ export default function OrderSearch({ setCustomerValue }: SearchReturnProps) {
           setCustomerValue(customer?.customerCompanyId)
         }
         getOptionLabel={(option) => option.fiscalName}
-        renderInput={(params) => <TextField {...params} label="Buscar" />}
+        renderInput={(params) => <TextField {...params} label="Buscar cliente" />}
       />
     </React.Fragment>
   );

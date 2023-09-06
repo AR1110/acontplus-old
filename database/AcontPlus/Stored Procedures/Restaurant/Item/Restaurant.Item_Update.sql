@@ -4,7 +4,7 @@ GO
 --- Author: Ignacio Manchu.
 --- Description: Update 
 --- Date: 2023-08-17
---- Restaurant.Item_Update 139, 1, '{"itemJson": {"id": 1,"summary": "TEST","cooking": true, "recipe": "TEST DE LOS DATOS", "instructions": "DATOS", "content": "DATOS", "createdAt": "2023-08-21T17:15:03.1933333","updatedAt": null, "enabled": true, "deleted": false, "userId": 115, "productId": 1, "descripcion": "MAITO DE PESCADO", "s3ObjectUrl": "https://acontplus.s3.us-east-2.amazonaws.com/0703885640001/articulos/5db50980-91b2-4cf1-ad0d-f1b74ac8e60a.jpg", "stockMinimo": 0, "stock": 0, "codigo": "PLA1", "codigoAuxiliar": "AUX-PLA1", "tipoIva": "12%", "tipoArticulo": "Ninguna", "style": "badge badge-danger", "productionAreaId": 1, "descripcionProductionArea": null, "totalRecords": 1 },"productionAreaJson": { "productionAreaId": 1 },"recipeJson": [{"id": 0,"unit": 3,"weight": 5,"netWeight": 5,"createdAt": "","updatedAt": "","enabled": true,"deleted": false,"userId": 0, "ingredientId": 3,"summary": "PESCADO","instructions": "","quantity": 5,"itemId": 1}]}'
+--- Restaurant.Item_Update 139, 17, '{"itemJson": {"id": 17,"summary": "","cooking": true,"recipe": "* 100 GRAMOS DE CARNE\n* 1 PAN DE HAMBURGUESA\n* 1/2 ONZA DE LECHUGA\n* 1/2 ONZA DE TOCINO",   "instructions": "","content": "","createdAt": "2023-09-05T08:56:34.6466667","updatedAt": null,"enabled": true,"deleted": false,"userId": 115,"productId": 77491,"descripcion": "HAMBURGUESA DOBLE CARNE","s3ObjectUrl": "https://acontplus.s3.us-east-2.amazonaws.com/0703885640001/articulos/7b54a4cb-799b-49d2-9621-d1694f5bc15a.PNG","stockMinimo": 0,"stock": 18,"codigo": "COMR1","codigoAuxiliar": "AUX-COMR1","tipoIva": "12%","tipoArticulo": "Ninguna","style": "","productionAreaId": 1,"descripcionProductionArea": "COCINA","pvp": "{\"idArticuloPvP\":367360,\"idTarifa\":528,\"precioVenta\":4.46429,\"precioConIva\":5.00000,\"porcentajeUtilidad\":123.21429,\"precioPredeterminado\":true,\"tarifa\":\"PVP1\",\"porcentajeIva\":12.00000}","totalRecords": 9},"productionAreaJson": {"productionAreaId": 1},"recipeJson": [{"id": 10,"itemId": 17,"quantity": 1,"unit": 0,"instructions": "MANCHU","weight": 0,"netWeight": 0,"enabled": true,"ingredientId": 5,"summary": "TOCINO X LIBRA"},{"id": 11,"itemId": 17,"quantity": 1,"unit": 0,"instructions": "TUMINK","weight": 0,"netWeight": 0,"enabled": true,"ingredientId": 6,"summary": "PAN DE HAMBURGUESA"}, ]}'
 IF OBJECT_ID('Restaurant.Item_Update') IS NOT NULL
 	DROP PROC Restaurant.Item_Update
 GO
@@ -40,8 +40,8 @@ BEGIN
          ,ingredientId  INT            
          ,instructions  VARCHAR(MAX) 
          ,quantity      FLOAT
-         ,enabled       BIT
-         ,deleted       BIT
+         ,enabled       BIT  
+         ,extentId      INT
     )
 
     IF ISJSON(@json) = 0
@@ -59,6 +59,7 @@ BEGIN
             , recipeJson NVARCHAR(MAX) '$.recipeJson' AS JSON
     )
 
+
     INSERT INTO #RecipeTemp
     SELECT ISNULL(id, 0)
             , ISNULL(itemId, 0)
@@ -69,7 +70,7 @@ BEGIN
             , ISNULL(instructions, NULL)
             , ISNULL(quantity, 0)
             , enabled
-            , deleted
+            , ISNULL(extentId, 0)
     FROM OPENJSON(@recipeJson)
     WITH(
       id            INT             '$.id'
@@ -81,16 +82,16 @@ BEGIN
       ,instructions VARCHAR(MAX)    '$.instructions'
       ,quantity     FLOAT           '$.quantity'
       ,enabled      BIT             '$.enabled'
-      ,deleted      BIT             '$.deleted'
+      ,extentId     INT             '$.extentId'
     )
-   
+    
     SELECT @productId = productId FROM OPENJSON(@itemJson) WITH(productId INT '$.productId')
 
-    --IF EXISTS(SELECT TOP 1 1 FROM Restaurant.Item WHERE ProductId = @productId AND Id != @id)
-    --    BEGIN
-    --        SELECT Common.ufnSpResponse('0', 'Este ítem ya se encuentra registrado', NULL)
-    --        RETURN
-    --    END
+    IF EXISTS(SELECT TOP 1 1 FROM Restaurant.Item WHERE ProductId = @productId AND Id != @id)
+        BEGIN
+            SELECT Common.ufnSpResponse('0', 'Este ítem ya se encuentra registrado', NULL)
+            RETURN
+        END
             
     SET @userId = (SELECT idUsuario FROM V_usuario WHERE idUsuarioRol = @userRoleId) 
     
@@ -125,32 +126,75 @@ BEGIN
                 ,content         = @content
                 ,enabled         = @enabled
             WHERE Id = @id
-
-            ---- Insert Recipe ----
+            
+            ---- INSERT RECIPE IF NOT EXISTS ----
             INSERT INTO Restaurant.Recipe
-            (ItemId, Unit, Weight, NetWeight, CreatedAt, UpdatedAt, Enabled, Deleted, UserId, IngredientId, Instructions, Quantity)
-            
-            SELECT rt.itemId, rt.unit, rt.weight, rt.netWeigth, @date,NULL,rt.enabled,NULL, @userId, rt.ingredientId, rt.instructions, rt.quantity
+            (ItemId, Unit, Weight, NetWeight, CreatedAt, UpdatedAt, Enabled, Deleted, UserId, IngredientId, Instructions, Quantity, ExtentId)
+
+            SELECT rt.itemId
+                    , rt.unit
+                    , rt.weight
+                    , rt.netWeigth
+                    , @date
+                    , NULL
+                    , rt.enabled
+                    , NULL
+                    , @userId
+                    , rt.ingredientId
+                    , rt.instructions
+                    , rt.quantity
+                    , rt.extentId
             FROM #RecipeTemp rt
-            WHERE rt.ingredientId NOT IN(SELECT rr.IngredientId 
-                                         FROM Restaurant.Recipe rr 
-                                         WHERE rr.ItemId = (SELECT TOP 1 itemId FROM #RecipeTemp))                     
-            
-            --- Update Recipe -  si existe un registro de ingredient => Actualiza ----
+            WHERE rt.ingredientId NOT IN(SELECT rr.IngredientId FROM Restaurant.Recipe rr WHERE rr.ItemId = @itemId)
+          
+            ---- UPDATE RECIPE ----
+            UPDATE rr
+            SET rr.Unit          = rt.unit
+                ,rr.Weight       = rt.weight
+                ,rr.NetWeight    = rt.netWeigth
+                ,rr.Enabled      = rt.enabled                
+                ,rr.IngredientId = rt.ingredientId
+                ,rr.Instructions = rt.instructions
+                ,rr.Quantity     = rt.quantity
+                ,rr.UpdatedAt    = @date
+                ,rr.ExtentId     = rt.extentId
+            FROM Restaurant.Recipe rr            
+            INNER JOIN #RecipeTemp rt ON rt.itemId = rr.ItemId
+            WHERE rr.IngredientId = rt.ingredientId
+            AND rr.Id = rt.id
+
+
             UPDATE rr
             SET rr.Unit          = rt.unit
                 ,rr.Weight       = rt.weight
                 ,rr.NetWeight    = rt.netWeigth
                 ,rr.Enabled      = rt.enabled
-                ,rr.Deleted      = rt.deleted
+                ,rr.Deleted      = 0
                 ,rr.IngredientId = rt.ingredientId
                 ,rr.Instructions = rt.instructions
                 ,rr.Quantity     = rt.quantity
                 ,rr.UpdatedAt    = @date
+                ,rr.ExtentId     = rt.extentId
+            FROM Restaurant.Recipe rr            
+            INNER JOIN #RecipeTemp rt ON rt.itemId = rr.ItemId
+            WHERE rr.IngredientId = rt.ingredientId
+            AND rr.Deleted = 1
+                    
+            -------- SELECT NOT EXISTS ------
+            SELECT rr.Id, rr.ItemId, rr.IngredientId
+            INTO #NotExists
             FROM Restaurant.Recipe rr
-            INNER JOIN #RecipeTemp rt ON rt.itemId = rr.ItemId AND rt.id = rt.id
-            WHERE rr.IngredientId = rt.ingredientId AND rt.itemId = rt.itemId
-            
+            WHERE rr.ItemId = @itemId AND rr.IngredientId NOT IN (SELECT ingredientId FROM #RecipeTemp)
+                      
+            IF EXISTS(SELECT TOP 1 1 FROM #NotExists)
+                BEGIN
+                    UPDATE rr
+                    SET rr.Deleted     =  1
+                        ,rr.UpdatedAt   = dbo.ufnGetDateEcuador()
+                    FROM Restaurant.Recipe rr
+                    INNER JOIN #NotExists ne ON ne.Id = rr.Id
+                    WHERE rr.ItemId = ne.ItemId AND rr.IngredientId = ne.IngredientId
+                END
 		COMMIT TRAN
         SELECT Common.ufnSpResponse('1', 'Actualizado exitosamente', NULL)
 

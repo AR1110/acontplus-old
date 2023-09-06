@@ -1339,7 +1339,7 @@
       ],
       "DownstreamPathTemplate": "/api{everything}",
       "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/Mechanical{everything}"
     }
   ]

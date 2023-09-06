@@ -8,24 +8,169 @@
   import Grid from "$core/components/Grid.svelte";
   import { showLoader } from "$core/utils/loading-spinner";
   import { useItemStore } from "$routes/Restaurant/store/itemStore.js";
+  import Search from "./search.svelte";
 
   //export let modalClosed;
   let data;
   let recipe = [];
   let productionAreas = [];
   let validatorParam = [undefined, null, "", 0];
-
-  let ingredientes = [];
+  let medidas = [];
 
   const unSuscribe = useItemStore.subscribe((values) => {
-    (ingredientes = values.ingredientes),
-      (productionAreas = values.productionAreas),
+    (productionAreas = values.productionAreas),
       (data = values.dataUpdate),
-      (recipe = values.recipes);
+      (recipe = values.recipes),
+      (medidas = values.medidas);
   });
+
+  //https://jsfiddle.net/biruktes/hn8gascw/24/
+  let customNativeSelect = function (cell, onRendered, success, cancel) {
+    console.log(cell.getElement().dataset);
+    var cellRealValue = cell.getElement().dataset.extentId;
+    cellRealValue =
+      typeof cellRealValue === "undefined" ? "none" : cellRealValue;
+
+    //Create and append select list
+    var selectList = document.createElement("select");
+
+    selectList.style.width = "100%";
+    selectList.style.boxSizing = "border-box";
+
+    onRendered(function () {
+      selectList.focus();
+      selectList.style.height = "100%";
+    });
+
+    function onChange() {
+      if (selectList.selectedOptions[0].value != cellRealValue) {
+        success(selectList.selectedOptions[0].value);
+
+        // Store value to cell dataset
+        cell.getElement().dataset.descripcion =
+          selectList.selectedOptions[0].text;
+        cell.getElement().dataset.extentId =
+          selectList.selectedOptions[0].value;
+      } else {
+        cancel();
+      }
+    }
+
+    //submit new value on blur or change
+    selectList.addEventListener("blur", onChange);
+
+    //submit new value on enter
+    selectList.addEventListener("keydown", function (e) {
+      if (e.keyCode == 13) {
+        onChange();
+      }
+
+      if (e.keyCode == 27) {
+        cancel();
+      }
+    });
+
+    //Create and append the options
+    for (var i = 0; i < medidas.length; i++) {
+      var option = document.createElement("option");
+
+      option.value = medidas[i].idMedida.toString();
+      option.text = medidas[i].descripcion;
+
+      if (medidas[i].idMedida === cellRealValue) {
+        option.selected = true;
+      }
+      selectList.appendChild(option);
+    }
+    return selectList;
+  };
+
+  let columns = [
+    {
+      title: "Ingrediente",
+      field: "summary",
+      widthGrow: 1,
+      with: 250,
+    },
+    {
+      title: "Medida",
+      field: "extentId",
+      with: 150,
+      editor: customNativeSelect,
+      formatter: function (cell) {
+        var value = cell.getValue();
+        for (var i = 0; i < medidas.length; i++) {
+          if (medidas[i].idMedida == value) {
+            value = medidas[i].descripcion;
+            break;
+          }
+        }
+        return value;
+      },
+    },
+    {
+      title: "Unit",
+      field: "unit",
+      widthGrow: 1,
+      editor: true,
+      with: 90,
+      validator: ["integer"],
+    },
+    {
+      title: "Peso",
+      field: "weight",
+      editor: true,
+      with: 50,
+      validator: ["numeric"],
+    },
+    {
+      title: "Peso neto",
+      field: "netWeight",
+      with: 50,
+      editor: true,
+      validator: ["required", "numeric"],
+    },
+    {
+      title: "Instrucciones",
+      field: "instructions",
+      widthGrow: 3,
+      editor: true,
+    },
+    {
+      title: "Cantidad",
+      field: "quantity",
+      with: 90,
+      editor: true,
+      validator: ["required", "numeric"],
+    },
+    {
+      title: "Estado",
+      field: "enabled",
+      widthGrow: 1,
+      widthShrink: 0,
+      widthFixed: true,
+      hozAlign: "center",
+      formatter: "tickCross",
+      sorter: "boolean",
+      editor: true,
+    },
+    {
+      title: "Acciones",
+      widthGrow: 1,
+      hozAlign: "center",
+      formatter: "buttonCross",
+      width: 100,
+      align: "center",
+      cellClick: function (e, cell) {
+        removeFromList(cell.getData().id);
+        cell.getRow().delete();
+      },
+    },
+  ];
 
   const onUpdate = () => {
     if (!onValidation(data)) return;
+    if (!validateextentId(recipe)) return;
 
     showLoader();
     let newObject = {
@@ -33,9 +178,14 @@
       productionAreaJson: { productionAreaId: data.productionAreaId },
       recipeJson: recipe,
     };
+
     itemService.put(data.id, { data: newObject }).then((response) => {
       hideLoader();
       if (response.status === 200) {
+        if (response.data.code == "0") {
+          return toast({ type: "warning", message: response.data.message });
+        }
+
         onModalClose();
         useItemStore.get();
         toast({ type: "success", message: response.data.message });
@@ -64,20 +214,21 @@
       itemId: itemId,
     };
     recipe.push(newObject);
+    toast({ type: "success", message: "Agregado" });
   };
 
-  const changeProductionArea = (e) => {
-    let id = parseInt(e.target.value);
-    let filter = ingredientes.find((x) => x.id == id);
-
-    // Verify exists ingredient in array
-    let exists = recipe.find((x) => x.ingredientId == filter.id);
+  const setOnChange = (ingredient: Ingredient) => {
+    let exists = recipe.find((x) => x.ingredientId == ingredient.id);
     if (exists) {
-      toast({ type: "warning", message: "El ingrediente ya existe" });
-      return;
+      return toast({ type: "warning", message: "El ingrediente ya existe" });
     }
+    onPushRecipe(ingredient, data.id);
+  };
 
-    onPushRecipe(filter, data.id);
+  const removeFromList = (id: number) => {
+    let newArray = recipe.filter((x) => x.id !== id);
+    recipe = [];
+    recipe.push(...newArray);
   };
 
   const onModalClose = () => {
@@ -105,58 +256,29 @@
     }
   };
 
-  let columns = [
-    {
-      title: "Ingrediente",
-      field: "summary",
-      widthGrow: 1,
-    },
-    {
-      title: "Unit",
-      field: "unit",
-      widthGrow: 1,
-      editor: true,
-      validator: ["integer"],
-    },
-    {
-      title: "Peso",
-      field: "weight",
-      widthGrow: 3,
-      editor: true,
-      validator: ["numeric"],
-    },
-    {
-      title: "Peso neto",
-      field: "netWeight",
-      widthGrow: 3,
-      editor: true,
-      validator: ["required", "numeric"],
-    },
-    {
-      title: "Instrucciones",
-      field: "instructions",
-      widthGrow: 3,
-      editor: true,
-    },
-    {
-      title: "Cantidad",
-      field: "quantity",
-      widthGrow: 3,
-      editor: true,
-      validator: ["required", "numeric"],
-    },
-    {
-      title: "Estado",
-      field: "enabled",
-      widthGrow: 1,
-      widthShrink: 0,
-      widthFixed: true,
-      hozAlign: "center",
-      formatter: "tickCross",
-      sorter: "boolean",
-      editor: true,
-    },
-  ];
+  // Validate extentId from Recipe, validate if is empty or null and convert to number if is string
+  const validateextentId = (recipe: any) => {
+    let isValid = true;
+    console.log(recipe);
+    try {
+      recipe.forEach((element: any) => {
+        console.log(element);
+        if (validatorParam.includes(element.extentId)) {
+          toast({
+            type: "warning",
+            message: "Debe seleccionar las medidas de los ingredientes",
+          });
+          isValid = false;
+        } else {
+          element.extentId = Number(element.extentId);
+        }
+      });
+      return isValid;
+    } catch (error) {
+      toast({ type: "error", message: error });
+      return false;
+    }
+  };
 </script>
 
 {#if $useItemStore.isOpen}
@@ -241,21 +363,15 @@
           <div class="col-6">
             <div class="form-group">
               <label for="ingredients">Ingredientes</label>
-              <select
-                on:change={() => changeProductionArea(event)}
-                class="form-control form-control-lg"
-                id="ingredients"
-              >
-                {#each ingredientes as ingrediente}
-                  <option value={ingrediente.id}>
-                    {ingrediente.summary}
-                  </option>
-                {/each}
-              </select>
             </div>
+          </div>
+          <div class="col-6">
+            <Search {setOnChange} />
           </div>
         </div>
 
+        <hr />
+        <!-- {JSON.stringify(columns)} -->
         <Grid dataArray={recipe} {columns} />
 
         <div class="modal-footer">

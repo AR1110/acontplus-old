@@ -13,7 +13,7 @@
     // },
     {
       label: "Productos",
-      value: 2,
+      value: 1,
       component: Items,
     },
     // {
@@ -23,7 +23,7 @@
     // },
     {
       label: "Ingredientes",
-      value: 4,
+      value: 2,
       component: Ingredient,
     },
   ];

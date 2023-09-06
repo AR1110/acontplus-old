@@ -10,7 +10,6 @@ GO
 -- Create date: 2023-08-30
 -- Description:	sp for update order restaurant
 -- Restaurant.Order_Update 139, 116, '{"establecimientoId": 454, "puntoEmisionId": 124,"bodegaId": 128,"tableId": 1,"customerCompanyId": 0,"tax": 0, "discount": 0,"total": 6.06,"items": [{"orderItemId": 216,"uuid": "7c10730b-8c02-4145-a287-10b9bf3914b8","itemId": 12,"feeId": 528,"taxId": 1,"taxPercentId": 2,"taxValue": 1.68,"quantity": 1,"cost": 1,"price": 1.5,"discount": 0,"total": 1.5,"obs": null},{"orderItemId": 217,"uuid": "57cfa302-b8c7-4ccd-99b1-d71638fa83a1","itemId": 11,"feeId": 528,"taxId": 1,"taxPercentId": 2,"taxValue": 5.1072,"quantity": 1,"cost": 4,"price": 4.56,"discount": 0,"total": 4.56,"obs": null}],"taxes": {},"payments": {},"tip": null,"obs": null,"codDoc": "NE","quickSale": true,"fechaEmision": "2023-08-31T14:22:34.5266667","uuid": "5f1b38f2-61f4-41ae-97a8-b7efd6388009","updateOrder": false, "saveDoc": true}'
-
 -- =============================================
 CREATE OR ALTER PROCEDURE Restaurant.Order_Update 
 @userRoleId INT

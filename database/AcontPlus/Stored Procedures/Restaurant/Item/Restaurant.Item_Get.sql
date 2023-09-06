@@ -55,12 +55,12 @@ BEGIN
 	SET @params = N'@idEntidad INT, @idSubFamilia INT, @pageIndex INT, @pageSize INT, @textSearch VARCHAR(20)'
 
 	SET @sql = N'       
-                        SELECT Id					= ri.Id
-				        ,summary			= ISNULL(ri.Summary, ''_'')
+                        SELECT Id			= ri.Id
+				        ,summary			= ISNULL(ri.Summary, '''')
 				        ,cooking			= ri.Cooking
 				        ,recipe				= ri.Recipe
-				        ,instructions		= ISNULL(ri.Instructions, ''_'')
-                        ,content            = ISNULL(ri.content, ''_'')
+				        ,instructions		= ISNULL(ri.Instructions, '''')
+                        ,content            = ISNULL(ri.content, '''')
 				        ,createdAt			= ri.CreatedAt
 				        ,updatedAt			= ri.UpdatedAt
 				        ,enabled			= ri.Enabled
@@ -110,12 +110,12 @@ BEGIN
                 BEGIN
                     SET @sql = @sql + ' AND a.descripcion LIKE ''%''+@textSearch+''%'' 
                                         OR ri.Summary LIKE ''%''+@textSearch+''%'' 
-                                        OR ri.Instructions LIKE ''%''+@textSearch+''%'' '
+                                        OR ri.Content LIKE ''%''+@textSearch+''%'' '
                 END
                 
 	        SET @sql = @sql + ' ORDER BY ri.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
 		           
-	        SET @tableNames = 'items'
+	        SET @tableNames = 'items,medidas'
 	        EXEC sp_executesql @sql 
                                 , @params
                                 , @idEntidad
@@ -123,12 +123,15 @@ BEGIN
                                 , @pageIndex
                                 , @pageSize                               
                                 , @textSearch
+
+            --- Obtengo las medidas ---
+            SELECT TOP 20 * FROM Medida ---- WHERE idEntidad = @idEntidad
         END
 
     IF @tipo = 2
         BEGIN
             SET @tableNames = 'ingredientType'
-            SELECT * FROM Restaurant.IngredientType
-        END	
+            SELECT * FROM Restaurant.IngredientType            
+        END	 
 END
 GO
