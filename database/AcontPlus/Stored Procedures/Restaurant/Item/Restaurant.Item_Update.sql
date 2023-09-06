@@ -152,7 +152,7 @@ BEGIN
             SET rr.Unit          = rt.unit
                 ,rr.Weight       = rt.weight
                 ,rr.NetWeight    = rt.netWeigth
-                ,rr.Enabled      = rt.enabled
+                ,rr.Enabled      = rt.enabled                
                 ,rr.IngredientId = rt.ingredientId
                 ,rr.Instructions = rt.instructions
                 ,rr.Quantity     = rt.quantity
@@ -163,22 +163,38 @@ BEGIN
             WHERE rr.IngredientId = rt.ingredientId
             AND rr.Id = rt.id
 
+
+            UPDATE rr
+            SET rr.Unit          = rt.unit
+                ,rr.Weight       = rt.weight
+                ,rr.NetWeight    = rt.netWeigth
+                ,rr.Enabled      = rt.enabled
+                ,rr.Deleted      = 0
+                ,rr.IngredientId = rt.ingredientId
+                ,rr.Instructions = rt.instructions
+                ,rr.Quantity     = rt.quantity
+                ,rr.UpdatedAt    = @date
+                ,rr.ExtentId     = rt.extentId
+            FROM Restaurant.Recipe rr            
+            INNER JOIN #RecipeTemp rt ON rt.itemId = rr.ItemId
+            WHERE rr.IngredientId = rt.ingredientId
+            AND rr.Deleted = 1
+                    
             -------- SELECT NOT EXISTS ------
-            --SELECT rr.Id, rr.ItemId, rr.IngredientId
-            --INTO #NotExists
-            --FROM Restaurant.Recipe rr
-            --WHERE rr.ItemId = @itemId AND rr.IngredientId NOT IN (SELECT ingredientId FROM #RecipeTemp)
+            SELECT rr.Id, rr.ItemId, rr.IngredientId
+            INTO #NotExists
+            FROM Restaurant.Recipe rr
+            WHERE rr.ItemId = @itemId AND rr.IngredientId NOT IN (SELECT ingredientId FROM #RecipeTemp)
                       
-            --IF EXISTS(SELECT TOP 1 1 FROM #NotExists)
-            --    BEGIN
-            --        UPDATE rr
-            --        SET rr.Enabled      = 0
-            --            ,rr.Deleted     =  1
-            --            ,rr.UpdatedAt   = dbo.ufnGetDateEcuador()
-            --        FROM Restaurant.Recipe rr
-            --        INNER JOIN #NotExists ne ON ne.Id = rr.Id
-            --        WHERE rr.ItemId = ne.ItemId AND rr.IngredientId = ne.IngredientId
-            --    END
+            IF EXISTS(SELECT TOP 1 1 FROM #NotExists)
+                BEGIN
+                    UPDATE rr
+                    SET rr.Deleted     =  1
+                        ,rr.UpdatedAt   = dbo.ufnGetDateEcuador()
+                    FROM Restaurant.Recipe rr
+                    INNER JOIN #NotExists ne ON ne.Id = rr.Id
+                    WHERE rr.ItemId = ne.ItemId AND rr.IngredientId = ne.IngredientId
+                END
 		COMMIT TRAN
         SELECT Common.ufnSpResponse('1', 'Actualizado exitosamente', NULL)
 

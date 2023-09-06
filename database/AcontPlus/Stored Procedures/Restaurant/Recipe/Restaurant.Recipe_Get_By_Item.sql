@@ -30,5 +30,6 @@ SET LANGUAGE SPANISH;
             ,ISNULL(rr.ExtentId, 0) ExtentId
     FROM Restaurant.Recipe rr
     INNER JOIN Restaurant.Ingredient ri ON ri.Id = rr.IngredientId
-    WHERE rr.ItemId = @id
+    WHERE rr.ItemId = @id AND ISNULL(rr.Deleted, 0) != 1
+
 END

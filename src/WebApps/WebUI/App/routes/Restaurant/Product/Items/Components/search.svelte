@@ -3,7 +3,6 @@
   import ItemsList from "./items-list.svelte";
 
   export let setOnChange;
-
   let filteredCountries = [];
   let ingredientes = [];
   let timer;
@@ -48,7 +47,6 @@
 
   const submitValue = () => {
     if (inputValue) {
-      console.log(`${inputValue} is submitted!`);
       setTimeout(clearInput, 1000);
     } else {
       alert("You didn't type anything.");

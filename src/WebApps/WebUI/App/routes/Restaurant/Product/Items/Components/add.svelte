@@ -26,7 +26,6 @@
 
   //https://jsfiddle.net/biruktes/hn8gascw/24/
   let customNativeSelect = function (cell, onRendered, success, cancel) {
-
     console.log(cell.getElement().dataset);
     var cellRealValue = cell.getElement().dataset.extentId;
     cellRealValue =
@@ -48,8 +47,10 @@
         success(selectList.selectedOptions[0].value);
 
         // Store value to cell dataset
-        cell.getElement().dataset.descripcion = selectList.selectedOptions[0].text;
-        cell.getElement().dataset.extentId = selectList.selectedOptions[0].value;
+        cell.getElement().dataset.descripcion =
+          selectList.selectedOptions[0].text;
+        cell.getElement().dataset.extentId =
+          selectList.selectedOptions[0].value;
       } else {
         cancel();
       }
@@ -181,6 +182,10 @@
     itemService.put(data.id, { data: newObject }).then((response) => {
       hideLoader();
       if (response.status === 200) {
+        if (response.data.code == "0") {
+          return toast({ type: "warning", message: response.data.message });
+        }
+
         onModalClose();
         useItemStore.get();
         toast({ type: "success", message: response.data.message });
