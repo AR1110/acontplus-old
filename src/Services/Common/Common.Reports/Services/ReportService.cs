@@ -202,7 +202,7 @@ namespace Common.Reports.Services
         }
         public async Task<ReportResponseDto> GetErrorAsync()
         {
-            string errorFilePath = Path.Combine(Directory.GetCurrentDirectory(), "\\Reports\\", "NotFound.pdf");
+            string errorFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "NotFound.pdf");
             byte[] bytes = await File.ReadAllBytesAsync(errorFilePath);
             return new ReportResponseDto { FileContents = bytes, ContentType = "application/pdf", FileDownloadName = "Not Found.pdf" };
         }
