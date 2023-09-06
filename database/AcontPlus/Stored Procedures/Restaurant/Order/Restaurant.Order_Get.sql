@@ -7,51 +7,29 @@ GO
 -- Create date: 2023-08-14
 -- Description:	sp for get order restaurant
 -- =============================================
--- Restaurant.Order_Get 139, '{"tipo": 1, "pageIndex": 1, "pageSize": 10, "startDate": "2023-09-01", "endDate": "2023-09-02", "customerCompanyId": 63914}', ''
+-- Restaurant.Order_Get 139, '{"tipo":1,"pageIndex":1,"pageSize":25,"startDate":"2023-09-05T17:18:46.886Z","endDate":"2023-09-05T17:18:46.886Z","customerCompanyId":0}', ''
 -- Restaurant.Order_Get 139, '{"tipo": 2, "id": 136}', ''
 CREATE OR ALTER PROCEDURE Restaurant.Order_Get @userRoleId INT
 ,@json NVARCHAR(MAX)
 ,@tableNames VARCHAR(500) OUT
 AS
 BEGIN
-	SET NOCOUNT ON;
-
+	SET NOCOUNT ON; 
+    SET LANGUAGE SPANISH;
     DECLARE @tipo INT
     ,@id          INT
     ,@customerCompanyId INT
     ,@pageIndex   INT
     ,@pageSize    INT
-    ,@startDate DATE
-    ,@endDate    DATE
-    ,@today       DATE
+    ,@startDate   DATETIME2
+    ,@endDate     DATETIME2
     ,@sql         NVARCHAR(MAX)
-    ,@params      NVARCHAR(MAX)
+    ,@params      NVARCHAR(MAX) = N'@pageIndex INT, @pageSize INT, @startDate DATETIME2, @endDate DATETIME2, @customerCompanyId INT '
 
 
-    SET @today = CAST((SELECT dbo.ufnGetDateEcuador()) AS DATE)
+    --SET @today = CAST((SELECT dbo.ufnGetDateEcuador()) AS DATETIME2)
 
-    SELECT @tipo                 = tipo
-            , @id                = id
-            , @customerCompanyId = customerCompanyId
-            , @pageIndex         = pageIndex
-            , @pageSize          = pageSize
-            , @startDate         = startDate
-            , @endDate           = endDate
-    FROM OPENJSON(@json) 
-    WITH ( tipo      INT         '$.tipo',
-           id        INT         '$.id',
-           customerCompanyId INT '$.customerCompanyId',
-           startDate DATE  '$.startDate',
-           endDate DATE     '$.endDate',
-           pageIndex INT         '$.pageIndex',
-           pageSize  INT         '$.pageSize'
-    )
-
-    IF (@tipo = 1)
-        BEGIN
-            SET @params = N'@pageIndex INT,@pageSize INT,@startDate DATE,@endDate DATE,@today DATE,@customerCompanyId INT'
-
-            SET @sql = N'   SELECT Id		    = o.Id	
+      SET @sql = N'SELECT Id		    = o.Id	
 	                        ,EstablecimientoId	= o.EstablecimientoId
 	                        ,PuntoEmisionId		= o.PuntoEmisionId
 	                        ,AppTableId			= ISNULL(o.AppTableId, 0)
@@ -80,9 +58,31 @@ BEGIN
                         LEFT JOIN TipoDocumento td WITH(NOLOCK) ON od.TipoDocumentoId = td.idTipoDocumento
                         LEFT JOIN Cliente c ON c.idCliente = o.CustomerCompanyId
                         LEFT JOIN Usuario u ON u.idUsuario = o.UserId
-                        WHERE CAST(o.CreatedAt AS DATE) BETWEEN ISNULL(@startDate, @today) AND ISNULL(@endDate, @today) '
+                        WHERE CAST(o.CreatedAt AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE) '
 
-            IF @customerCompanyId IS NOT NULL
+            
+            SELECT @tipo                 = tipo
+                    , @id                = id
+                    , @customerCompanyId = customerCompanyId
+                    , @pageIndex         = pageIndex
+                    , @pageSize          = pageSize
+                    , @startDate         = startDate
+                    , @endDate           = endDate
+            FROM OPENJSON(@json) 
+            WITH ( tipo      INT         '$.tipo',
+                   id        INT         '$.id',
+                   customerCompanyId INT '$.customerCompanyId',
+                   startDate DATETIME2  '$.startDate',
+                   endDate DATETIME2     '$.endDate',
+                   pageIndex INT         '$.pageIndex',
+                   pageSize  INT         '$.pageSize'
+            )
+        IF (@tipo = 1)
+        BEGIN 
+            print @startDate
+                        print @endDate
+
+            IF (@customerCompanyId > 0)
                 BEGIN
                     SET @sql = @sql + ' AND o.CustomerCompanyId = @customerCompanyId '
                 END
@@ -90,13 +90,13 @@ BEGIN
             SET @sql = @sql + ' ORDER BY o.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
                                  
             SET @tableNames = 'orders'
+
             EXEC sp_executesql @sql
                                 ,@params
                                 ,@pageIndex
                                 ,@pageSize
                                 ,@startDate
                                 ,@endDate
-                                ,@today
                                 ,@customerCompanyId
         END
     IF (@tipo = 2)

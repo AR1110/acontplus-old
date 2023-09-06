@@ -10,8 +10,9 @@ import { ReactElement, ReactNode, forwardRef } from 'react';
 import { DialogContent, Stack } from '@mui/material';
 
 interface FullScreenDialogProps {
+    color?: 'default' | 'inherit' | 'primary' | 'secondary' | 'transparent' 
     icon?: JSX.Element;
-    dialogTitle: string
+    dialogTitle?: string
     isOpen: boolean
     handleClose(): void
     children: ReactNode
@@ -29,7 +30,7 @@ const Transition = forwardRef(function Transition(
 
 
 
-export default function FullScreenDialog({ icon, dialogTitle, isOpen, handleClose, children, actions }: FullScreenDialogProps) {
+export default function FullScreenDialog({color="primary", icon, dialogTitle, isOpen, handleClose, children, actions }: FullScreenDialogProps) {
     return (
         <Dialog
             fullScreen
@@ -37,7 +38,7 @@ export default function FullScreenDialog({ icon, dialogTitle, isOpen, handleClos
             onClose={handleClose}
             TransitionComponent={Transition}
         >
-            <AppBar sx={{ position: 'relative' }}>
+            <AppBar sx={{ position: 'relative' }} color={color}>
                 <Toolbar>
                     <IconButton
                         edge="start"

@@ -5,6 +5,7 @@ import { useSaleStore } from '@/stores';
 import { Box, Button, DialogActions, DialogContent, Grid, Paper, Tab, Tabs, styled } from '@mui/material';
 import { TableReadDto } from '@/core/models';
 import { SyntheticEvent, useEffect, useState } from 'react';
+import TableBarIcon from '@mui/icons-material/TableBar';
 
 export interface SimpleDialogProps {
     open: boolean;
@@ -99,7 +100,7 @@ const TableDialog = (props: SimpleDialogProps) => {
             </IconButton> */}
             <DialogContent dividers>
                 <Box
-                    sx={{ flexGrow: 1,   display: 'flex', maxHeight: 400 }}
+                    sx={{ flexGrow: 1, display: 'flex', maxHeight: 400 }}
                 >
                     <Tabs
                         orientation="vertical"
@@ -124,7 +125,7 @@ const TableDialog = (props: SimpleDialogProps) => {
                                     <Item onClick={() => handleButtonClick(table, index)} style={{
                                         backgroundColor: `${selectedButton === index ? '#1976d2' : '#818181'}`,
                                         color: `${selectedButton === index ? 'white' : 'white'}`,
-                                    }}>{table.numberTable}</Item>
+                                    }}>{table.numberTable} <TableBarIcon /></Item>
                                 </Grid>
                             ))}
                         </Grid>

@@ -2,11 +2,14 @@
   import { onMount } from "svelte";
   import Modal from "$core/components/Modal.svelte";
   import AdvancedSearch from "$core/components/AdvancedSearch.svelte";
+  import { showLoader, hideLoader } from "$core/utils/loading-spinner";
+  import toast from "$core/utils/toast";
   import type { Support } from "$core/interfaces/mechanical/support";
   import type { Vehicle } from "$core/interfaces/mechanical/vehicle";
   import type { Customer } from "$core/interfaces/customer/customer";
   import { SupportService } from "$core/services/mechanical/support-service";
   import { VehicleService } from "$core/services/mechanical/vehicle-service";
+  import { CustomerService } from "$core/services/customer/customer-service";
 
   export let openNew;
   export let modalClosed;
@@ -55,13 +58,20 @@
   let vehicleTypes = [];
   let countrys = [];
   let supportTypes = [];
+  let idTypes = [];
+  let customers = [];
   let emissionPointData = {};
   let establecimientoId = 0;
   let sequence = "";
   let value = "";
+  let valueCustomer = "";
+  let isCustomerSelected = false;
+  let idCard = "";
+  let cardTypeId = 0;
   let placeholder = "Buscar Cliente o Vehículo";
   let disabled = true;
   let hidden = true;
+  let hiddenSearch = true;
   let disguise = false;
   let cancel = false;
   let icon = "";
@@ -79,6 +89,7 @@
         vehicleTypes = response["vehicleTypes"];
         countrys = response["countrys"];
         supportTypes = response["supportTypes"];
+        idTypes = response["idTypes"];
         establecimientoId = establishments[0].establecimientoId;
         getDataEstablishments(establecimientoId);
       }
@@ -107,9 +118,9 @@
   const onInput = async (e) => {
     value = e.target.value;
     dataSearch = [];
+    let data = {};
     if (value.length < 3) return;
-
-    let data = {
+    data = {
       tipo: 4,
       textSearch: value,
     };
@@ -127,6 +138,47 @@
       dataSearch = [];
       value = "";
     }
+  };
+
+  // SEARCH THE  CUSTOMER
+  const onInputCustomer = async (e) => {
+    valueCustomer = e.target.value;
+    dataSearch = [];
+    let data = {};
+    if (valueCustomer.length < 3) return;
+    data = {
+      textSearch: valueCustomer,
+    };
+    CustomerService.search(JSON.stringify(data)).then((response) => {
+      if (response) {
+        customers = response;
+      }
+    });
+  };
+
+  const onFocusCustomer = () => {};
+
+  const onBlurCustomer = (e) => {
+    if (!valueCustomer) {
+      customers = [];
+      valueCustomer = "";
+    }
+  };
+
+  // CAPTURE DATA THE CUSTOMER
+  const selectClient = (e) => {
+    isCustomerSelected = true;
+    vehicle.customerId = e.idCliente;
+    customer.idType = e.codigoSri;
+    customer.idCard = e.numeroIdentificacion;
+    cardTypeId = e.idTipoIdentificacion;
+    customer.businessName = e.nombreComercial;
+    customer.tradeName = e.nombreFiscal;
+    customer.email = e.correo;
+    customer.telephone = e.telefono;
+    customer.address = e.direccion;
+    valueCustomer = "";
+    customers = [];
   };
 
   // GET DATA THE SEARCH FOR IF
@@ -154,16 +206,20 @@
       hidden = false;
       disguise = false;
       cancel = true;
+      valueCustomer = "";
     }
 
     //Option New
     if (tipo == 1) {
       disabled = false;
       vehicle = {} as Vehicle;
+      customer = {} as Customer;
       value = "";
       hidden = false;
       disguise = false;
       cancel = true;
+      hiddenSearch = false;
+      valueCustomer = "";
     }
 
     //Option more or less
@@ -182,11 +238,59 @@
         getDataSearch(vehicle.id);
         hidden = true;
         cancel = false;
+        hiddenSearch = true;
+        value = "";
+        valueCustomer = "";
       } else {
         vehicle = {} as Vehicle;
+        customer = {} as Customer;
         hidden = true;
         cancel = false;
+        hiddenSearch = true;
+        value = "";
+        valueCustomer = "";
       }
+    }
+  };
+
+  // NEW CUSTOMER GET WITH API SRI
+  const getApiSri = () => {
+    showLoader();
+    if (customer.idType == "04" && idCard.length == 13) {
+      CustomerService.getRuc(idCard).then((response) => {
+        hideLoader();
+        if (response) {
+          if (!response.razonSocial) {
+            toast({ type: "warning", message: response.error });
+            return;
+          } else {
+            customer.idCard = response.numeroRuc;
+            customer.businessName = response.razonSocial;
+            customer.tradeName = response.nombreComercial;
+            customer.email = response.email;
+            customer.address = response.direccion;
+            customer.telephone = response.telefono;
+          }
+        }
+      });
+    }
+    if (customer.idType == "05") {
+      CustomerService.getCedula(idCard).then((response) => {
+        hideLoader();
+        if (response) {
+          if (!response.nombreCompleto) {
+            toast({ type: "warning", message: response.error });
+            return;
+          } else {
+            customer.idCard = response.identificacion;
+            customer.businessName = response.nombreCompleto;
+            customer.tradeName = response.nombreCompleto;
+            customer.email = response.email;
+            customer.address = response.direccion;
+            customer.telephone = response.telefono;
+          }
+        }
+      });
     }
   };
 
@@ -197,6 +301,12 @@
     cancel = false;
     disguise = false;
     disabled = true;
+    hiddenSearch = true;
+    establecimientoId = 0;
+    sequence = "";
+    value = "";
+    valueCustomer = "";
+    emissionPointsSelected = [];
     countrys = [];
     vehicleTypes = [];
     support = {} as Support;
@@ -287,7 +397,7 @@
           </div>
         </div>
         <hr />
-        
+
         <div class="row">
           <div class="col">
             <label for="serch">Datos del Vehículo</label>
@@ -354,7 +464,7 @@
             {/if}
           </div>
         </div>
-        <br>
+        <br />
         <div class="row">
           <div class="col">
             <div class="form-group">
@@ -504,9 +614,66 @@
 
         <div class="row">
           <div class="col">
-            <label for="serch">Datos del Cliente / Conductor</label>
+            <label for="serch">Datos del Cliente</label>
           </div>
         </div>
+        <div class="row">
+          <div class="col">
+            <input
+              type="text"
+              class="form-control"
+              on:change={() => getApiSri()}
+              placeholder="Buscar Cliente"
+              {disabled}
+              bind:value={idCard}
+            />
+          </div>
+
+          <div class="col" hidden={hiddenSearch}>
+            <AdvancedSearch
+              on:input={onInputCustomer}
+              on:focus={onFocusCustomer}
+              on:blur={onBlurCustomer}
+              value={valueCustomer}
+              placeholder="Buscar Cliente"
+            />
+            {#if customers.length > 0}
+              <div class="floating-results list-group">
+                {#each customers as item}
+                  <a
+                    href={null}
+                    class="list-group-item"
+                    on:click={() => selectClient(item)}
+                    ><i class="ti-user" /> - {item.numeroIdentificacion}
+                    - {item.nombreFiscal}</a
+                  >
+                {/each}
+              </div>{/if}
+          </div>
+
+          <div class="col">
+            <select
+              name="country"
+              id="country"
+              bind:value={customer.idType}
+              on:click={() => getApiSri()}
+              class="form-control border-select"
+            >
+              {#each idTypes as item}
+                <option value={item.idType}>
+                  {item.description}
+                </option>
+              {/each}
+            </select>
+          </div>
+
+          <div class="col">
+            <button type="button" class="btn btn-info">
+              <i class="ti-user" /> Nuevo</button
+            >
+          </div>
+        </div>
+        <br />
         <div class="row">
           <div class="col-md">
             <div class="form-group">
@@ -514,8 +681,8 @@
               <input
                 type="text"
                 class="form-control"
-                disabled
-                value={customer.idCard}
+                {disabled}
+                bind:value={customer.idCard}
               />
             </div>
           </div>
@@ -525,8 +692,8 @@
               <input
                 type="text"
                 class="form-control"
-                disabled
-                value={customer.businessName}
+                {disabled}
+                bind:value={customer.businessName}
               />
             </div>
           </div>
@@ -536,8 +703,44 @@
               <input
                 type="text"
                 class="form-control"
-                disabled
-                value={customer.email}
+                {disabled}
+                bind:value={customer.email}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="row" {hidden}>
+          <div class="col-md">
+            <div class="form-group">
+              <label for="">Nombre Comercial</label>
+              <input
+                type="text"
+                class="form-control"
+                {disabled}
+                bind:value={customer.tradeName}
+              />
+            </div>
+          </div>
+          <div class="col-md">
+            <div class="form-group">
+              <label for="">Dirección</label>
+              <input
+                type="text"
+                class="form-control"
+                {disabled}
+                bind:value={customer.address}
+              />
+            </div>
+          </div>
+          <div class="col-md">
+            <div class="form-group">
+              <label for="">Teléfono</label>
+              <input
+                type="text"
+                class="form-control"
+                {disabled}
+                bind:value={customer.telephone}
               />
             </div>
           </div>

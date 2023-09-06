@@ -1,33 +1,35 @@
 
 import { ErrorBoundary } from "@/core/utilities";
-import { Grid} from "@mui/material";
+import { Grid } from "@mui/material";
 import { useAsync, useFetchAndLoad, useMobileDetect } from "@/hooks";
-import { ItemService, SaleService, getEstabs } from "@/core/services"; 
+import { ItemService, SaleService, getEstabs } from "@/core/services";
 import CustomBottomNavigation from "./components/CustomBottomNavigation";
 import { useSaleStore, useAuthStore } from "@/stores";
 import { useEffect } from "react";
-import { itemReadAdapter} from "@/core/adapters";
+import { itemReadAdapter } from "@/core/adapters";
 import FullScreenDialog from "@/core/components/FullScreenDialog";
-import { CloseIcon, SwipeLeftIcon } from "@/core/components"; 
+import { ArrowBackIcon, CloseIcon } from "@/core/components";
 import ItemList from "./Item/ItemList";
 import Category from "./Category/Category";
 import Checkout from "./Checkout/Checkout";
 import Cart from "./Cart/Cart";
-import KeyCombinationDetector from "./KeyCombinationDetector/KeyCombinationDetector";
+import CartMobile from "./Mobile/CartMobile";
+import Customer from "./Customer/Customer";
+import InputSearchItem from "./InputSearchItem/InputSearchItem";
 
 
 
 export default function Sale() {
     const { isMobile } = useMobileDetect();
 
-    const setDataForm = useSaleStore(state => state.setDataForm) 
+    const setDataForm = useSaleStore(state => state.setDataForm)
     const { order, setSummary } = useSaleStore(state => ({
         order: state.order,
         setSummary: state.setSummary,
-    })) 
+    }))
 
-    
-    const setDataEstab = useAuthStore(state => state.setDataEstab);  
+
+    const setDataEstab = useAuthStore(state => state.setDataEstab);
     const { itemSearch, setCollectionItems } = useSaleStore(state => ({
         itemSearch: state.itemSearch,
         setCollectionItems: state.setCollectionItems
@@ -37,13 +39,13 @@ export default function Sale() {
     const payment = useSaleStore(state => state.payment);
 
     //Even Navigation 
-    const navigation = useSaleStore(state => state.navigation); 
+    const navigation = useSaleStore(state => state.navigation);
 
     useEffect(() => {
-        const establecimientos = getEstabs(); 
-        const dataEstab = establecimientos[0]!;       
+        const establecimientos = getEstabs();
+        const dataEstab = establecimientos[0]!;
         setDataEstab(establecimientos, dataEstab);
-         
+
         SaleService.getDataForForm(JSON.stringify({
             codEstab: dataEstab?.codEstab
         })).then(response => {
@@ -54,7 +56,7 @@ export default function Sale() {
             const emissionPointData = response.emissionPoints.filter(
                 emissionPoint => emissionPoint.codEstab_Asig === dataEstab.codEstab_Asig
             ).find(emissionPoint => (emissionPoint.predeterminado));
- 
+
             setDataForm(response)
             setSummary({
                 ...order,
@@ -81,12 +83,15 @@ export default function Sale() {
     //se ejecuta cada vez que cambian la categoria
     useAsync(getItemsApi, itemAdapter, () => {
         console.log('init')
-    }, [itemSearch]); 
+    }, [itemSearch]);
 
     return (
-        <ErrorBoundary fallBackComponent={<>Error!</>}>             
+        <ErrorBoundary fallBackComponent={<>Error!</>}>
             <Grid container spacing={2}>
                 <Grid item xs={12} md={7}>
+                    <Grid item xs={12} md={12} lg={12}>
+                        <InputSearchItem />
+                    </Grid>
                     <Grid item xs={12} md={12}>
                         <Category />
                     </Grid>
@@ -115,9 +120,21 @@ export default function Sale() {
             {/* end dialog payment */}
 
             {/* start Items carito movil */}
-            <FullScreenDialog icon={<SwipeLeftIcon />} dialogTitle="Carito" isOpen={navigation.isOpen} handleClose={navigation.closeDialogCustom}>
-                <Cart />
-            </FullScreenDialog> 
+            <FullScreenDialog
+                color="inherit"
+                icon={<ArrowBackIcon />}
+                isOpen={navigation.isOpen}
+                actions={
+                    (
+                        <>
+                            <Customer />
+                        </>
+                    )
+                }
+                handleClose={navigation.closeDialogCustom}>
+                <CartMobile />
+                {/* <Cart /> */}
+            </FullScreenDialog>
             {/* end Items carito movil */}
 
             <CustomBottomNavigation />

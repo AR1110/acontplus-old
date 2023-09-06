@@ -15,6 +15,7 @@ import { produce } from 'immer';
 
 type State = {
     itemSearch: ItemSearch
+    tempOrderItems:  Array<ItemReadDto>
     collectionItems: Array<ItemReadDto>
     totalItems: number;
     items: Array<ItemRead>
@@ -39,6 +40,7 @@ type Actions = {
     setChangeValueOrderItem<K extends keyof ItemRead>(itemIndex: number, property: K, newValue: ItemRead[K]): void
     setItemSearch(itemSearch: ItemSearch): void
     setSummary(order: Order): void
+    filterOderItems(textSearch: string):void
     getItemQty(productId: number): number
     setDataForm(dataForm: DataFormSale): void
     setCollectionItems(products: Array<ItemReadDto>): void
@@ -117,6 +119,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
             itemSearch
         })
     },
+    tempOrderItems: [],
     collectionItems: [],
     totalItems: 0,
     items: [],
@@ -129,6 +132,33 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         )
     },
     dataForm: dataFormInitialState,
+
+    filterOderItems(textSearch){
+        const {tempOrderItems} = get();
+        // const tempOrderItems = structuredClone(tempOrderItems);
+        if(!textSearch) {
+            set(
+                produce((state:State)=>{
+                    state.collectionItems = tempOrderItems;
+                })
+            )
+            return 
+        } 
+         
+        const filteredItems = tempOrderItems.filter((item) => {
+            return (
+              item.code.toLowerCase().includes(textSearch.toLowerCase()) ||
+              item.description.toLowerCase().includes(textSearch.toLowerCase())
+            );
+        }); 
+        set(
+            produce((state:State)=>{
+                state.collectionItems = filteredItems;
+            })
+        )
+
+    },
+
     getItemQty: (productId: number) => {
         const { items } = get();
         const dataCartItem = items.find(cartItem => cartItem.productId === productId);
@@ -146,9 +176,15 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         )
     },
     setCollectionItems: (collectionItems) => {
-        set({
-            collectionItems
-        })
+        set(
+            produce((state:State)=>{
+                state.collectionItems = collectionItems;
+                state.tempOrderItems = structuredClone(collectionItems)
+            })
+        )
+        // set({
+        //     collectionItems
+        // })
     },
     addItemToCart: (item) => {
         const { items, setTotalItems, caculateTotals } = get();
@@ -223,7 +259,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         addSound();
     },
     setRemoveQuantity(index: number, value: number) {
-        console.log(index, value)
+       
         const { items, setTotalItems, caculateTotals } = get();
         const newArray = items.map((orderItem, orderItemIndex) => {
             const total = value * orderItem.price;

@@ -309,6 +309,7 @@ BEGIN
 			   ,codigoPorcentaje
 			   ,tarifa
 			   ,baseImponible
+               ,idArticulo
 			)
 			SELECT 
 			    @uniqueId
@@ -327,6 +328,7 @@ BEGIN
 			   ,ti.codigoPorcentaje
 			   ,ti.porcentaje
 			   ,dt.precioTotalSinImpuesto
+               ,ar.idArticulo
 			FROM @tbDetalle dt
 			LEFT JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = dt.idArticulo
 			LEFT JOIN dbo.TipoIva  ti WITH (NOLOCK) ON ti.idTipoIva  = dt.idTipoIva
