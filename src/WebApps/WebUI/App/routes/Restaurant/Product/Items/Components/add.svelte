@@ -8,6 +8,7 @@
   import Grid from "$core/components/Grid.svelte";
   import { showLoader } from "$core/utils/loading-spinner";
   import { useItemStore } from "$routes/Restaurant/store/itemStore.js";
+  import Search from "./search.svelte";
 
   //export let modalClosed;
   let data;
@@ -15,11 +16,8 @@
   let productionAreas = [];
   let validatorParam = [undefined, null, "", 0];
 
-  let ingredientes = [];
-
   const unSuscribe = useItemStore.subscribe((values) => {
-    (ingredientes = values.ingredientes),
-      (productionAreas = values.productionAreas),
+    (productionAreas = values.productionAreas),
       (data = values.dataUpdate),
       (recipe = values.recipes);
   });
@@ -33,6 +31,9 @@
       productionAreaJson: { productionAreaId: data.productionAreaId },
       recipeJson: recipe,
     };
+
+    console.log(newObject);
+
     itemService.put(data.id, { data: newObject }).then((response) => {
       hideLoader();
       if (response.status === 200) {
@@ -64,20 +65,21 @@
       itemId: itemId,
     };
     recipe.push(newObject);
+    toast({ type: "success", message: "Agregado" });
   };
 
-  const changeProductionArea = (e) => {
-    let id = parseInt(e.target.value);
-    let filter = ingredientes.find((x) => x.id == id);
-
-    // Verify exists ingredient in array
-    let exists = recipe.find((x) => x.ingredientId == filter.id);
+  const setOnChange = (data: Ingredient) => {
+    let exists = recipe.find((x) => x.ingredientId == data.id);
     if (exists) {
-      toast({ type: "warning", message: "El ingrediente ya existe" });
-      return;
+      return toast({ type: "warning", message: "El ingrediente ya existe" });
     }
+    onPushRecipe(data, data.id);
+  };
 
-    onPushRecipe(filter, data.id);
+  const removeFromList = (id: number) => {
+    let newArray = recipe.filter((x) => x.id !== id);
+    recipe = [];
+    recipe.push(...newArray);
   };
 
   const onModalClose = () => {
@@ -155,6 +157,18 @@
       formatter: "tickCross",
       sorter: "boolean",
       editor: true,
+    },
+    {
+      title: "Acciones",
+      widthGrow: 1,
+      hozAlign: "center",
+      formatter: "buttonCross",
+      width: 40,
+      align: "center",
+      cellClick: function (e, cell) {
+        removeFromList(cell.getData().id);
+        cell.getRow().delete();
+      },
     },
   ];
 </script>
@@ -241,20 +255,14 @@
           <div class="col-6">
             <div class="form-group">
               <label for="ingredients">Ingredientes</label>
-              <select
-                on:change={() => changeProductionArea(event)}
-                class="form-control form-control-lg"
-                id="ingredients"
-              >
-                {#each ingredientes as ingrediente}
-                  <option value={ingrediente.id}>
-                    {ingrediente.summary}
-                  </option>
-                {/each}
-              </select>
             </div>
           </div>
+          <div class="col-6">
+            <Search {setOnChange} />
+          </div>
         </div>
+
+        <hr />
 
         <Grid dataArray={recipe} {columns} />
 

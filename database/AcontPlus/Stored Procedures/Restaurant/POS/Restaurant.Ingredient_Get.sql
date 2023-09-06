@@ -4,7 +4,7 @@ GO
 --Author: Ivan Paz - Ignacio Manchu.
 --Date: 2023-08-04
 --Description: SP FOR GET INGREDIENTS
--- Restaurant.Ingredient_Get 139, '{"pageIndex": 1,"pageSize": 10}', ''
+-- Restaurant.Ingredient_Get 139, '{"pageIndex": 1,"pageSize": 10, "textSearch": "T"}', ''
 CREATE OR ALTER PROCEDURE Restaurant.Ingredient_Get
     @userRoleId INT,
     @json VARCHAR(MAX),
@@ -17,17 +17,20 @@ BEGIN
             ,@sql      NVARCHAR(MAX)
             ,@pageIndex INT
             ,@pageSize  INT
+            ,@textSearch VARCHAR(100)
                         
-    SET @params = N'@idEntidad INT, @pageIndex INT, @pageSize INT'
+    SET @params = N'@idEntidad INT, @pageIndex INT, @pageSize INT, @textSearch VARCHAR(100)'
 
     SELECT TOP 1  @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
     SELECT @pageIndex = pageIndex
             ,@pageSize = pageSize
+            ,@textSearch = textSearch
     FROM OPENJSON(@json)
     WITH(
         pageIndex    INT '$.pageIndex'
-        ,pageSize    INT '$.pageSize'        
+        ,pageSize    INT '$.pageSize'
+        ,textSearch    VARCHAR(100) '$.textSearch'
     )
     
     SET @sql = N'SELECT id                  = ri.Id
@@ -44,6 +47,13 @@ BEGIN
                 INNER JOIN Inventario.v_Articulo va ON va.idArticulo = ri.ProductId
                 WHERE va.idEntidad = @idEntidad '
 
+    IF @textSearch IS NOT NULL OR @textSearch != ''
+        BEGIN
+            SET @sql = @sql +  ' AND va.descripcion LIKE ''%''+@textSearch+''%'' 
+                                 OR ri.Summary LIKE ''%''+@textSearch+''%'' 
+                                 OR ri.Content LIKE ''%''+@textSearch+''%'' '
+        END
+
     SET @sql = @sql + ' ORDER BY ri.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
 
     SET @tableNames = 'ingredients'
@@ -52,5 +62,6 @@ BEGIN
                         , @idEntidad
                         , @pageIndex
                         , @pageSize
+                        , @textSearch
     
 END
