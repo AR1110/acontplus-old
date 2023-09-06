@@ -115,7 +115,7 @@ BEGIN
                 
 	        SET @sql = @sql + ' ORDER BY ri.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
 		           
-	        SET @tableNames = 'items'
+	        SET @tableNames = 'items,medidas'
 	        EXEC sp_executesql @sql 
                                 , @params
                                 , @idEntidad
@@ -123,12 +123,15 @@ BEGIN
                                 , @pageIndex
                                 , @pageSize                               
                                 , @textSearch
+
+            --- Obtengo las medidas ---
+            SELECT TOP 20 * FROM Medida ---- WHERE idEntidad = @idEntidad
         END
 
     IF @tipo = 2
         BEGIN
             SET @tableNames = 'ingredientType'
-            SELECT * FROM Restaurant.IngredientType
-        END	
+            SELECT * FROM Restaurant.IngredientType            
+        END	 
 END
 GO

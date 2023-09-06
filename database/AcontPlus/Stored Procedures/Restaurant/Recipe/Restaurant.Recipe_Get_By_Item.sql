@@ -17,16 +17,17 @@ SET NOCOUNT ON;
 SET LANGUAGE SPANISH;
 
     SET @tableNames = 'recipe'
-    SELECT id               = rr.Id
-            , itemId        = rr.ItemId
-            , quantity      = rr.Quantity
-            , unit          = rr.Unit
-            , instructions  = rr.Instructions
-            , weight        = rr.Weight
-            , netWeight     = rr.NetWeight
-            , enabled       = rr.Enabled
-            , ingredientId  = rr.IngredientId
-            , summary       = ri.summary
+    SELECT rr.Id
+            ,rr.ItemId
+            ,rr.Quantity
+            ,rr.Unit
+            ,rr.Instructions
+            ,rr.Weight
+            ,rr.NetWeight
+            ,rr.Enabled
+            ,rr.IngredientId
+            ,ri.summary
+            ,ISNULL(rr.ExtentId, 0) ExtentId
     FROM Restaurant.Recipe rr
     INNER JOIN Restaurant.Ingredient ri ON ri.Id = rr.IngredientId
     WHERE rr.ItemId = @id

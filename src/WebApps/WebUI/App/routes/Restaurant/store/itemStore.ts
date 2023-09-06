@@ -18,7 +18,8 @@ type State = {
     productionAreas: [];
     recipes: any;
     dataUpdate: Item;
-    setIngredient: Ingredient
+    setIngredient: Ingredient;
+    medidas: any
 };
 const initiatlState: State = {
     items: [],
@@ -61,7 +62,8 @@ const initiatlState: State = {
         unit: 0,
         content: "",
         ingredientTypeId: 0,
-    }
+    },
+    medidas: [],
 };
 const initiatlModalState: StateModal = {
     isOpen: false,
@@ -90,10 +92,11 @@ const createItemStore = () => {
         itemService
             .get(JSON.stringify(query))
             .then((response) => {
-                if (response) {
+                if (response) {                   
                     update((state) => ({
                         ...state,
                         items: response["items"],
+                        medidas: response["medidas"]
                     }));
                 }
             })
@@ -165,7 +168,7 @@ const createItemStore = () => {
                 hideLoader();
             });
     };
-    
+
     return {
         set,
         subscribe,
@@ -173,7 +176,7 @@ const createItemStore = () => {
         get,
         getIngredient,
         getProductionArea,
-        getRecipe,      
+        getRecipe,
     };
 };
 
