@@ -27,7 +27,7 @@ BEGIN
 	DECLARE @fechaEmision AS DATETIME
 	
 	SELECT TOP 1 @fechaEmision =  fechaRegistro, @cantidadActual =  cantidadEntrada 
-	FROM v_InventarioTransaccion WITH (NOLOCK)
+	FROM Inventario.v_Articulo_Transaccion WITH (NOLOCK)
 	WHERE codTransaccion = 'A' AND idArticulo = @idArticulo AND idBodega = @idBodega AND estado = 1
 	ORDER BY fechaRegistro DESC
 
@@ -35,7 +35,7 @@ BEGIN
 	IF @fechaEmision IS NOT NULL
 		BEGIN
 			SELECT @cantidadActual = @cantidadActual + ISNULL(sum(cantidadEntrada - cantidadSalida),0)
-			FROM v_InventarioTransaccion WITH (NOLOCK)
+			FROM Inventario.v_Articulo_Transaccion WITH (NOLOCK)
 			WHERE idBodega = @idbodega 
 			  AND idArticulo = @idarticulo
 			  AND estado = 1 
@@ -46,7 +46,7 @@ BEGIN
 	ELSE   
 		BEGIN	
 			SELECT @cantidadActual = ISNULL(sum(cantidadEntrada - cantidadSalida),0)
-			FROM v_InventarioTransaccion WITH (NOLOCK)
+			FROM Inventario.v_Articulo_Transaccion WITH (NOLOCK)
 			WHERE idBodega = @idbodega 
 			  AND idArticulo = @idarticulo 
 			  AND estado = 1 
