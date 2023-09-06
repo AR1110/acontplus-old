@@ -1,12 +1,10 @@
 import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
-import RestoreIcon from "@mui/icons-material/Restore";
-import FavoriteIcon from "@mui/icons-material/Favorite";
+import RestoreIcon from "@mui/icons-material/Restore"; 
 import { Badge, Paper } from "@mui/material";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { useSaleStore } from "@/stores/saleStore";
-import { SyntheticEvent, useState } from "react";
-import ItemDialog from "./ItemDialog";
+import { SyntheticEvent, useState } from "react"; 
 import { useNavigate } from "react-router-dom";
 import { PrivateRoutes } from "@/core/models";
 import { useMobileDetect } from "@/hooks";
@@ -46,11 +44,11 @@ import { useMobileDetect } from "@/hooks";
           value="ORDER"
           icon={<RestoreIcon />}
         />
-        <BottomNavigationAction
+        {/* <BottomNavigationAction
           label="Favorites"
           value="favorites"
           icon={<FavoriteIcon />}
-        />
+        /> */}
         <BottomNavigationAction
           label="Items"
           value="ITEMS"

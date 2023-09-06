@@ -31,14 +31,13 @@ BEGIN
 	DECLARE @idArticulo INT
 	DECLARE @idEntidad INT 
 	DECLARE @idUsuario INT 
-	DECLARE @idSubFamilia INT 
-	DECLARE @sequential INT
+	DECLARE @idSubFamilia INT
 	DECLARE @llevaInventario BIT 
 	DECLARE @ruc VARCHAR(13)
 	DECLARE @codigo VARCHAR(50)
 	DECLARE @codigoBarra VARCHAR(50)
 	DECLARE @codigoAuxiliar VARCHAR(50)
-	DECLARE @code VARCHAR(15)
+	DECLARE @code UNIQUEIDENTIFIER
 	DECLARE @payload VARCHAR(MAX)
 	DECLARE @inventory VARCHAR(5)
 
@@ -205,9 +204,8 @@ BEGIN
 							 ,precioPredeterminado         BIT '$.precioPredeterminado') as dt 
 
 		--============================================== Capturar Variables ===============================================================
-		SELECT @sequential = COUNT(*)+1 FROM dbo.Articulo 
 
-		SET @code = ('A'+Helper.F_Auto_Sequential(@sequential))
+		SET @code = (SELECT NEWID())
 
 		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
@@ -330,7 +328,7 @@ BEGIN
 			INNER JOIN Familia f ON f.idFamilia = sf.idFamilia
 			WHERE sf.idEntidad = @idEntidad AND sf.idSubFamilia = @idSubFamilia
 
-			IF(@siglaFamilia = 'RES' AND @siglaSubFamilia != 'ING')
+			IF(@siglaFamilia = 'RES')
 				BEGIN
 					INSERT INTO Restaurant.Item
 					(ProductId, ProductionAreaId, Summary, Cooking, Recipe, Instructions, Content, CreatedAt, UpdatedAt
@@ -338,7 +336,7 @@ BEGIN
 					VALUES(@idArticulo, NULL, NULL, 1, NULL, NULL, NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario)
 				END
 
-			IF(@siglaFamilia = 'RES' AND @siglaSubFamilia = 'ING')
+			IF(@siglaFamilia = 'ING')
 				BEGIN
 					INSERT INTO Restaurant.Ingredient
 					(ProductId, Summary, Quantity, Unit, Content, CreatedAt, UpdatedAt, Enabled, Deleted, UserId, IngredientTypeId)

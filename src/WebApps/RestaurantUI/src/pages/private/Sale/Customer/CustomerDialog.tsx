@@ -353,7 +353,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
 
                     <TabPanel value={value} index={1}>
                         <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-                            <Grid item xs={2} sm={6} md={4}>
+                            <Grid item xs={12} sm={6} md={4}>
                                 {
                                     tiposIdentificacion.length > 0 && <TextField fullWidth
                                         id="idTipoIdentificacion"
@@ -378,7 +378,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                                     </TextField>
                                 }
                             </Grid>
-                            <Grid item xs={2} sm={6} md={8}>
+                            <Grid item xs={12} sm={6} md={8}>
                                 <TextField
                                     size={texFieldSize}
                                     fullWidth
@@ -485,7 +485,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                                 />
                             </Grid>
 
-                            <Grid item xs={2} sm={6} md={6}>
+                            <Grid item xs={12} sm={6} md={6}>
                                 {
                                     tipoContribuyentes.length > 0 && <TextField
                                         size={texFieldSize}
@@ -509,7 +509,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                                 }
                             </Grid>
 
-                            <Grid item xs={2} sm={6} md={6}>
+                            <Grid item xs={12} sm={6} md={6}>
                                 {
                                     tiempoCreditos.length > 0 && <TextField
                                         size={texFieldSize}

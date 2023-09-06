@@ -20,13 +20,12 @@ BEGIN
 	DECLARE @idEntidad INT 
 	DECLARE @idUsuario INT 
 	DECLARE @idSubFamilia INT 
-	DECLARE @sequential INT
 	DECLARE @llevaInventario BIT 
 	DECLARE @ruc VARCHAR(13)
 	DECLARE @codigo VARCHAR(50)
 	DECLARE @codigoBarra VARCHAR(50)
 	DECLARE @codigoAuxiliar VARCHAR(50)
-	DECLARE @code VARCHAR(15)
+	DECLARE @code UNIQUEIDENTIFIER
 	DECLARE @payload VARCHAR(MAX)
 		   ,@fechaCreacion DATETIME = (SELECT dbo.ufnGetDateEcuador())
 
@@ -171,9 +170,8 @@ BEGIN
 				,precioPredeterminado         BIT '$.precioPredeterminado') as dt 
 
 		--============================================== Capturar Variables ===============================================================
-		SELECT @sequential = COUNT(*)+1 FROM dbo.Articulo 
 
-		SET @code = ('A'+Helper.F_Auto_Sequential(@sequential))
+		SET @code = (SELECT NEWID())
 
 		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 

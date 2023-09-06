@@ -27,10 +27,10 @@ import { OrderReadDto, PrivateRoutes } from "@/core/models";
 import { useNavigate } from "react-router-dom";
 import OrderWhatsApp from "./Components/OrderWhatsApp";
 import OrderConvertDoc from "./Components/OrderConvertDoc";
- 
+
 export default function OrderTable() {
   const navigate = useNavigate();
-  const orders = useOrderStore(state=>state.orders)
+  const orders = useOrderStore(state => state.orders)
 
   const [page, setPage] = React.useState(0);
 
@@ -94,7 +94,10 @@ export default function OrderTable() {
   };
 
   const handleReport = (orderId: number) => {
-    SharedService.downloadReport(orderId);
+    showLoader(true)
+    SharedService.downloadReport(orderId).then().finally(
+      () => showLoader(false)
+    );
   };
 
   const handleEdit = (orderId: number) => {
@@ -227,7 +230,7 @@ export default function OrderTable() {
       </Box>
 
       <OrderConvertDoc
-        open={open} 
+        open={open}
         handleClose={handleClose}
       ></OrderConvertDoc>
 

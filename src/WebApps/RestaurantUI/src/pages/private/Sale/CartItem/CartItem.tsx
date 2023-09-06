@@ -1,111 +1,139 @@
-import * as React from 'react';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import Divider from '@mui/material/Divider';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Avatar from '@mui/material/Avatar';
-import Typography from '@mui/material/Typography';
-import { Box, Button, ButtonGroup, Collapse, Grid, IconButton, TextField } from '@mui/material';
-import { AddIcon, CommentIcon, DoDisturbOnTwoToneIcon, RemoveIcon } from '@/core/components';
-import { useSaleStore } from '@/stores';
+ 
+import { styled } from '@mui/material/styles';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography'; 
 import { ItemRead } from '@/core/models';
+import { Avatar, Collapse, IconButton, IconButtonProps, TextField } from '@mui/material';
+import { red } from '@mui/material/colors';
+import { AddIcon, DeleteIcon, ExpandMoreIcon, RemoveCircleOutlineIcon } from '@/core/components';
+import { useSaleStore } from '@/stores';
 import { useState } from 'react';
 
+const Img = styled('div')({
+    margin: 'auto',
+    display: 'block',
+    maxWidth: '100%',
+    maxHeight: '100%',
+});
 
 type CartItemProps = {
     index: number
     item: ItemRead
 }
 
+interface ExpandMoreProps extends IconButtonProps {
+    expand: boolean;
+}
 
-const CartItem = ({ index, item }: CartItemProps) => {
-    const removeItemFromCart = useSaleStore(state => state.removeItemFromCart)
-    const setAddQuantity = useSaleStore(state => state.setAddQuantity)
+const ExpandMore = styled((props: ExpandMoreProps) => {
+    const { expand, ...other } = props;
+    return <IconButton {...other} />;
+})(({ theme, expand }) => ({
+    transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
+        duration: theme.transitions.duration.shortest,
+    }),
+}));
+
+export default function CartItem({ index, item }: CartItemProps) {
+    const removeItemFromCart = useSaleStore(state => state.removeItemFromCart) 
     const setRemoveQuantity = useSaleStore(state => state.setRemoveQuantity)
     const setChangeValueOrderItem = useSaleStore(state => state.setChangeValueOrderItem)
-
     const [expanded, setExpanded] = useState(false);
+
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
-    return (
-        <>
-            <ListItem alignItems="flex-start" secondaryAction={
-                <IconButton aria-label="Quitar" onClick={() => removeItemFromCart(index)}>
-                    <DoDisturbOnTwoToneIcon />
-                </IconButton>
-            }>
-                <ListItemAvatar>
-                    <Avatar alt={item.description} src={item.s3ObjectUrl} sx={{ width: 50, height: 50 }}>P</Avatar>
-                </ListItemAvatar>
-                <ListItemText sx={{
-                    pl: 1
-                }}
-                    primary={item.description}
-                    secondary={
-                        <Box>
-                            {/* <Typography
-                                sx={{ display: 'inline' }}
-                                component="span"
-                                variant="body2"
-                                color="text.primary"
-                            > 
-                            </Typography> */}
-                            {item.code}
-                            {/* <Box
-                                sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'left',
-                                    '& > *': {
-                                        m: 1,
-                                    },
-                                }}
-                            >
-                                <ButtonGroup aria-label="small button group">
-                                    <Button color="error"  ><AddIcon /></Button>
-                                    <Button>{item.quantity}</Button>
-                                    <Button color="primary"><RemoveIcon /></Button>
-                                </ButtonGroup>
 
-                            </Box>   */}
-                            <Grid container spacing={2}>
-                                <Grid item xs={12} sm={8} md={8} >
-                                    <ButtonGroup aria-label="small button group" size='small' color='inherit'>
-                                        <Button onClick={handleExpandClick} >
-                                            <CommentIcon />
-                                        </Button>
-                                        <Button disabled={item.quantity===1} onClick={()=>{
-                                            const quantity = item.quantity  - 1;
-                                            setRemoveQuantity(index, quantity)
-                                        }}>
-                                        <RemoveIcon   />
-                                        </Button>
-                                        <Button>{item.quantity}</Button>
-                                        <Button onClick={()=>{
-                                            const quantity = item.quantity  + 1;
-                                            setRemoveQuantity(index, quantity)
-                                        }}>
-                                            <AddIcon  />
-                                        </Button>
-                                    </ButtonGroup>
-                                </Grid>
-                                <Grid item xs={12} sm={4} md={4} >
-                                    <Typography variant="body2" color="text.primary">
-                                        Precio: ${item.price.toFixed(2)}
-                                    </Typography>
-                                    <Typography variant="body2" color="text.primary">
-                                        Total: ${item.total}
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                        </Box>
-                    }
-                />
-            </ListItem>
+
+
+    return (
+        <Paper
+            sx={{
+                p: 2,
+                margin: 'auto',
+                maxWidth: 500,
+                flexGrow: 1,
+                backgroundColor: (theme) =>
+                    theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+            }}
+        >
+            <Grid container spacing={1}>
+                <Grid item>
+                    <Img>
+                        <Avatar src={item.s3ObjectUrl}
+                            sx={{ width: 56, height: 56, bgcolor: red[500] }}
+                            aria-label="recipe" variant='rounded'>
+                            R
+                        </Avatar>
+                    </Img>
+                </Grid>
+                <Grid item xs={12} sm container>
+                    <Grid item xs container direction="column" spacing={1}>
+                        <Grid item xs>
+                            <Typography variant="body2" gutterBottom>
+                                {item.description}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                {item.code}
+                            </Typography>
+                        </Grid>
+                    </Grid>
+                    <Grid item>
+                        <Typography variant="body2" color="text.primary">
+                            <b>Precio:</b> ${item.price.toFixed(2)}
+                        </Typography>
+                        <Typography variant="body2" color="text.primary">
+                            <b>Cant.:</b> ${item.quantity.toFixed(2)}
+                        </Typography>
+                        <Typography variant="body2" color="text.primary">
+                            <b>Total:</b> ${item.total}
+                        </Typography>
+                    </Grid>
+                </Grid>
+            </Grid>
+
+            <Grid
+                container
+                direction="row"
+                justifyContent="space-between"
+                alignItems="flex-start"
+            >
+                <Grid item xs container direction="row" alignItems="center" spacing={1}>
+                    <IconButton aria-label="Disminuir Cantidad" disabled={item.quantity === 1} onClick={() => {
+                        const quantity = item.quantity - 1;
+                        setRemoveQuantity(index, quantity)
+                    }}>
+                        <RemoveCircleOutlineIcon />
+                    </IconButton>
+                    <Typography variant="h6" color="text.primary">
+                        {item.quantity}
+                    </Typography>
+                    <IconButton aria-label="Aumentar Cantidad" onClick={() => {
+                        const quantity = item.quantity + 1;
+                        setRemoveQuantity(index, quantity)
+                    }}>
+                        <AddIcon />
+                    </IconButton>
+                </Grid>
+                <Grid item>
+                    <IconButton color='error' aria-label="Quitar Item" onClick={() => removeItemFromCart(index)}>
+                        <DeleteIcon />
+                    </IconButton>
+                    <ExpandMore
+                        expand={expanded}
+                        onClick={handleExpandClick}
+                        aria-expanded={expanded}
+                        aria-label="show more"
+                    >
+                        <ExpandMoreIcon />
+                    </ExpandMore>
+                </Grid>
+            </Grid>
             <Collapse in={expanded} timeout="auto" unmountOnExit>
-                <Box sx={{ pl: 10, mb: 1 }}>
+                <form autoComplete='off'>
                     <TextField
                         label="Comentario"
                         id="obs"
@@ -116,11 +144,8 @@ const CartItem = ({ index, item }: CartItemProps) => {
                         }}
                         value={item.obs}
                     />
-                </Box>
+                </form>
             </Collapse>
-            <Divider variant="inset" component="li" />
-        </>
+        </Paper>
     );
 }
-
-export default CartItem;

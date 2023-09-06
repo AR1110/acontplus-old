@@ -14,15 +14,14 @@ export default function Category() {
   const [value, setValue] = useState(0);
 
   const handleChange = (_: React.SyntheticEvent, index: number) => {
-    if (index === 0) {
-      setItemSearch(itemSearchInitialState)
-    } else {
-      setItemSearch({
-        ...itemSearchInitialState,
-        checkSubFamilia: true,
-        idSubFamilia: categories[index - 1]?.idSubFamilia ?? 0
-      })
-    }
+    const dataCategory = categories.find((_, indexCategory)=>indexCategory===index);
+    
+     
+    setItemSearch({
+      ...itemSearchInitialState,
+      checkSubFamilia: dataCategory && dataCategory.idSubFamilia > 0 ? true: false,
+      idSubFamilia: dataCategory?.idSubFamilia ?? 0
+    }) 
     setValue(index);
   };
 
