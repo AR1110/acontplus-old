@@ -34,30 +34,21 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	SET DEADLOCK_PRIORITY LOW;
+    DECLARE @precioCostoActual AS NUMERIC(18,5)
+	DECLARE @precioCosto AS NUMERIC(18,5)
+	DECLARE @precioTransaccion AS NUMERIC(18,5)
+	DECLARE @porcentajeUtilidad AS NUMERIC(18,5)
+	DECLARE @porcetanje NUMERIC(18,5)
 
 	IF @codMetodoValoracion = 'UEPS'
 		BEGIN
-			DECLARE @precioCostoActual AS NUMERIC(18,5)
-			DECLARE @precioCosto AS NUMERIC(18,5)
-			DECLARE @precioTransaccion AS NUMERIC(18,5)
-			DECLARE @porcentajeUtilidad AS NUMERIC(18,5)
-			DECLARE @porcetanje NUMERIC(18,5)
-
-
-			DECLARE @table AS TABLE (
-			 	 fecha DATETIME NOT NULL
-				,precioCosto NUMERIC(18,5) NOT NULL
-			)
-			INSERT INTO @table (fecha,precioCosto)
-			SELECT TOP 1 fechaRegistro = MAX(fechaRegistro),precioUnitario FROM v_InventarioTransaccion 
+			
+			SELECT TOP 1 @precioCostoActual = precioUnitario FROM Inventario.v_Articulo_Transaccion
 			WHERE idArticulo = @idArticulo 
 			  AND codTransaccion = 'E'
 			  AND estado = 1 
-			GROUP BY precioUnitario 
-			ORDER BY MAX(fechaRegistro) DESC
+			ORDER BY fechaRegistro DESC
 
-
-			SELECT @precioCostoActual = precioCosto FROM @table
 
 			SELECT TOP 1 @precioCosto = precioCosto FROM dbo.Articulo WITH (NOLOCK) WHERE idArticulo = @idArticulo
 
@@ -81,8 +72,6 @@ BEGIN
 						END
 					 UPDATE Inventario.Transaccion SET precioCosto = @precioTransaccion WHERE idTransaccion = @idTransaccion
 				END 
-			
-
 		END 
 END
 GO
