@@ -204,7 +204,7 @@ BEGIN
 
 
 			SET @emailData = (SELECT body = @body 
-			                        ,ISNULL(@cc,'') as 'cc' 						  
+			                        ,cc = '' 						  
 							         ,EnableSsl =@enableSsl
 									 ,'from' = @from
 									 ,'host'= @host

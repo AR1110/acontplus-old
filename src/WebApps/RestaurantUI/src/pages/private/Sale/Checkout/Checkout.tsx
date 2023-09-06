@@ -116,8 +116,7 @@ export default function Checkout() {
             if (response.code === "1") {
                 const mainData = JSON.parse(response.payload);
                 const voucherQuotaRepository = mainData[5];
-                const voucherRepository = mainData[6][0];
-                console.log(JSON.parse(response.payload))
+                const voucherRepository = mainData[6][0]; 
                 paymentTypes.current = paymentTypeAdapter(mainData[0] ?? []);
                 paymentSubTypes.current = paymentSubTypeAdapter(mainData[1] ?? []);
                 setVoucher({

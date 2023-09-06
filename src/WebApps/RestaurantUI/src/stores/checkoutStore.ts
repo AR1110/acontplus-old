@@ -1,4 +1,4 @@
-import { Checkout, QueryParams, Voucher, checkoutInitialState, queryParamsInitialState } from "@/core/models"
+import { Checkout, CheckoutDataForm, QueryParams, Voucher, checkoutInitialState, queryParamsInitialState } from "@/core/models"
 import { create } from "zustand"
 import { produce } from 'immer';
 import { RoundNumber } from "@/core/utilities";
@@ -9,6 +9,7 @@ type State = {
 }
 
 type Actions = {
+    setCheckoutDataForm(data: CheckoutDataForm):void
     setQueryParams(data: QueryParams): void
     setVoucher(data: Voucher): void
     setChangeReturn(): void
@@ -17,6 +18,14 @@ type Actions = {
 
 export const useCheckoutStore = create<State & Actions>((set, get) => ({
     queryParams: queryParamsInitialState,
+    checkout: checkoutInitialState,
+    setCheckoutDataForm(data){
+        set(
+            produce((state: State)=>{
+                state.checkout.dataForm = data;
+            })
+        )
+    },
     setQueryParams(queryParams){
         set(
             produce((state: State)=>{
@@ -24,7 +33,6 @@ export const useCheckoutStore = create<State & Actions>((set, get) => ({
             })
         )
     },
-    checkout: checkoutInitialState,
     setVoucher(voucher) { 
         set(
             produce((state: State) => {

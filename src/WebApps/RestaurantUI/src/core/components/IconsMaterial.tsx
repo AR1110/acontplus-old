@@ -42,6 +42,8 @@ import FileCopyRoundedIcon from '@mui/icons-material/FileCopyRounded';
 import PersonAddAltTwoToneIcon from '@mui/icons-material/PersonAddAltTwoTone';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import CalculateIcon from '@mui/icons-material/Calculate';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 export {
     RemoveCircleOutlineIcon,
     SaveIcon,
@@ -84,5 +86,7 @@ export {
     FileCopyRoundedIcon,
     PersonAddAltTwoToneIcon,
     ArrowBackIcon,
-    ExpandMoreIcon
+    ExpandMoreIcon,
+    CalculateIcon,
+    KeyboardArrowDownIcon
 }

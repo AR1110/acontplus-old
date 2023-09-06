@@ -1,10 +1,8 @@
-import { Box, Grid } from '@mui/material';
+import { Box, Grid, useTheme } from '@mui/material';
 import { BackspaceIcon } from '..';
 import CalculatorButton from './CalculatorButton';
 import { addSound, clearSound } from '@/core/utilities';
-
-
-
+ 
 const grids = [7, 8, 9, 4, 5, 6, 1, 2, 3, ".", 0]
 
 interface CalculatorProps {
@@ -14,6 +12,7 @@ interface CalculatorProps {
 }
 
 export default function Calculator({ clearButton, onClickButton, onClickOptionValue }: CalculatorProps) {
+    const theme = useTheme();
     const onClickCalculatorButton = (value: number | string) => {
         addSound();
         onClickButton(value)
@@ -23,7 +22,7 @@ export default function Calculator({ clearButton, onClickButton, onClickOptionVa
         clearButton();
         clearSound();
     }
-    const onClickOption = (value: number)=>{
+    const onClickOption = (value: number) => {
         onClickOptionValue(value)
         addSound();
     }
@@ -39,8 +38,6 @@ export default function Calculator({ clearButton, onClickButton, onClickOptionVa
                 <Grid item xs={4} sm={4} md={4} >
                     <CalculatorButton onClick={() => onClickOption(20)}>$20</CalculatorButton>
                 </Grid>
-
-
                 {
                     grids.map((value, index) => (
                         <Grid item xs={4} sm={4} md={4} key={index}>
