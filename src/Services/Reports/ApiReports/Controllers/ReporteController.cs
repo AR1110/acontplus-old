@@ -1,7 +1,6 @@
 ﻿using System.Data;
 using Common.Reports.Interfaces;
 using DataAccess;
-using Domain.Dtos;
 using Lib.Common.DbUtils;
 using Lib.Common.Dtos;
 using Microsoft.AspNetCore.Mvc;
