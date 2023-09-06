@@ -1,6 +1,6 @@
 
 import { ErrorBoundary } from "@/core/utilities";
-import { Grid } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import { useAsync, useFetchAndLoad, useMobileDetect } from "@/hooks";
 import { ItemService, SaleService, getEstabs } from "@/core/services";
 import CustomBottomNavigation from "./components/CustomBottomNavigation";
@@ -8,10 +8,9 @@ import { useSaleStore, useAuthStore } from "@/stores";
 import { useEffect } from "react";
 import { itemReadAdapter } from "@/core/adapters";
 import FullScreenDialog from "@/core/components/FullScreenDialog";
-import { ArrowBackIcon, CloseIcon } from "@/core/components";
+import { ArrowBackIcon, Checkout, CloseIcon } from "@/core/components";
 import ItemList from "./Item/ItemList";
-import Category from "./Category/Category";
-import Checkout from "./Checkout/Checkout";
+import Category from "./Category/Category"; 
 import Cart from "./Cart/Cart";
 import CartMobile from "./Mobile/CartMobile";
 import Customer from "./Customer/Customer";
@@ -109,14 +108,19 @@ export default function Sale() {
             </Grid>
 
             {/* start dialog payment */}
-            <FullScreenDialog
+            <Checkout/>
+            {/* <FullScreenDialog
+                color="inherit"
                 icon={<CloseIcon />}
                 dialogTitle="Cobro"
                 isOpen={payment.isOpen}
                 handleClose={payment.closeDialogCustom}
+                actions={
+                    <Button variant="contained">Cerrar</Button>
+                }
             >
                 <Checkout />
-            </FullScreenDialog>
+            </FullScreenDialog> */}
             {/* end dialog payment */}
 
             {/* start Items carito movil */}

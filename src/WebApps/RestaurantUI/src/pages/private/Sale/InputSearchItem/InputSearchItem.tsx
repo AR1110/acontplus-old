@@ -17,6 +17,7 @@ const InputSearchItem = () => {
         {/* <MenuIcon /> */}
       </IconButton>
       <InputBase
+        type="text"
         onChange={(e)=>filterOderItems(e.target.value)}       
         sx={{ ml: 1, flex: 1}}
         placeholder="Buscar Item"

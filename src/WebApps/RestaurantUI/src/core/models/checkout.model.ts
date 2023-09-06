@@ -1,3 +1,4 @@
+import { Bank, City, PaymentSubType, PaymentType, VoucherQuota } from "."
 
 export interface Voucher {
     customerCompanyId: number,
@@ -36,7 +37,25 @@ export interface Payment {
     isControlBox: number
 }
 
+export interface CheckoutDataForm {
+    paymentTypes: Array<PaymentType>
+    paymentSubTypes: Array<PaymentSubType>
+    voucherQuotas: Array<VoucherQuota>
+    banks:Array<Bank>
+    cities: Array<City> 
+    comprobante: object
+}
+
+export const checkoutDataFormInitialState: CheckoutDataForm = {
+    paymentTypes: [],
+    paymentSubTypes: [],
+    voucherQuotas: [],
+    banks: [],
+    cities: [],
+    comprobante: {}
+}
 export interface Checkout {
+    dataForm: CheckoutDataForm
     voucher: Voucher
     payments: Payment
 }
@@ -60,6 +79,7 @@ export interface PaymentHistory{
     mora : number
 }
 export const checkoutInitialState: Checkout = {
+    dataForm: checkoutDataFormInitialState,
     voucher: {
         customerCompanyId: 0,
         customerIdentification: "",

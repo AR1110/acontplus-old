@@ -11,6 +11,10 @@ const CalculatorButton = styled(Paper)(({ theme }) => ({
     '&:hover': {
         backgroundColor: theme.palette.mode === 'dark' ? '#35414A' : '#f5f5f5',
     },
+    '@media (max-width: 768px)': {
+        fontSize: '1rem', // Cambiar el tamaño de fuente para pantallas más pequeñas
+        textAlign: "center"
+      },
 }));
 
 export default CalculatorButton
