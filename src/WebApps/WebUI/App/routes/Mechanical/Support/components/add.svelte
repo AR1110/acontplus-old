@@ -17,6 +17,7 @@
     id: 0,
     puntoEmisionId: 0,
     vehicleCompanyId: 0,
+    userAssignedId : 0,
     customerId: 0,
     supportTypeId: 0,
     date: new Date().toISOString().slice(0, 10),
@@ -60,18 +61,20 @@
   let supportTypes = [];
   let idTypes = [];
   let customers = [];
+  let data = {};
   let emissionPointData = {};
   let establecimientoId = 0;
   let sequence = "";
   let value = "";
   let valueCustomer = "";
   let isCustomerSelected = false;
-  let idCard = "";
   let cardTypeId = 0;
   let placeholder = "Buscar Cliente o Vehículo";
+  let placeholderCustomer = "Buscar Cliente";
   let disabled = true;
+  let disabledCustomer = true;
   let hidden = true;
-  let hiddenSearch = true;
+  let hiddenCustomer = true;
   let disguise = false;
   let cancel = false;
   let icon = "";
@@ -91,6 +94,7 @@
         supportTypes = response["supportTypes"];
         idTypes = response["idTypes"];
         establecimientoId = establishments[0].establecimientoId;
+        customer.idType = "04";
         getDataEstablishments(establecimientoId);
       }
     });
@@ -141,10 +145,31 @@
   };
 
   // SEARCH THE  CUSTOMER
+
   const onInputCustomer = async (e) => {
     valueCustomer = e.target.value;
-    dataSearch = [];
+    customers = [];
     let data = {};
+    if (!disabledCustomer) {
+      if (customer.idType == "04") {
+        if (valueCustomer.length == 13) {
+          getRucSri(valueCustomer);
+          valueCustomer = "";
+          disabledCustomer = true;
+          placeholderCustomer = "Buscar Cliente"
+        }
+      }
+      if (customer.idType == "05") {
+        if (valueCustomer.length == 10) {
+          getCedulaSri(valueCustomer);
+          valueCustomer = "";
+          disabledCustomer = true;
+          placeholderCustomer = "Buscar Cliente"
+        }
+      }
+      return;
+    }
+
     if (valueCustomer.length < 3) return;
     data = {
       textSearch: valueCustomer,
@@ -204,6 +229,7 @@
       disabled = false;
       value = "";
       hidden = false;
+      hiddenCustomer = true;
       disguise = false;
       cancel = true;
       valueCustomer = "";
@@ -216,9 +242,9 @@
       customer = {} as Customer;
       value = "";
       hidden = false;
+      hiddenCustomer = false;
       disguise = false;
       cancel = true;
-      hiddenSearch = false;
       valueCustomer = "";
     }
 
@@ -237,61 +263,76 @@
       if (vehicle.id > 0) {
         getDataSearch(vehicle.id);
         hidden = true;
+        hiddenCustomer = true;
         cancel = false;
-        hiddenSearch = true;
         value = "";
         valueCustomer = "";
+        disabled = true;
+        disabledCustomer = true;
       } else {
         vehicle = {} as Vehicle;
         customer = {} as Customer;
         hidden = true;
+        hiddenCustomer = true;
         cancel = false;
-        hiddenSearch = true;
         value = "";
         valueCustomer = "";
+        disabled = true;
+        disabledCustomer = true;
       }
+    }
+
+    // New Customer
+    if (tipo == 5) {
+      disabledCustomer = false;
+      vehicle = {} as Vehicle;
+      customer = {} as Customer;
+      customers = [];
+      valueCustomer = "";
+      customer.idType = "04";
+      placeholderCustomer = "Consultar Sri"
     }
   };
 
   // NEW CUSTOMER GET WITH API SRI
-  const getApiSri = () => {
+  const getRucSri = (idCard) => {
     showLoader();
-    if (customer.idType == "04" && idCard.length == 13) {
-      CustomerService.getRuc(idCard).then((response) => {
-        hideLoader();
-        if (response) {
-          if (!response.razonSocial) {
-            toast({ type: "warning", message: response.error });
-            return;
-          } else {
-            customer.idCard = response.numeroRuc;
-            customer.businessName = response.razonSocial;
-            customer.tradeName = response.nombreComercial;
-            customer.email = response.email;
-            customer.address = response.direccion;
-            customer.telephone = response.telefono;
-          }
+    CustomerService.getRuc(idCard).then((response) => {
+      hideLoader();
+      if (response) {
+        if (!response.razonSocial) {
+          toast({ type: "warning", message: response.error });
+          return;
+        } else {
+          customer.idCard = response.numeroRuc;
+          customer.businessName = response.razonSocial;
+          customer.tradeName = response.nombreComercial;
+          customer.email = response.email;
+          customer.address = response.direccion;
+          customer.telephone = response.telefono;
         }
-      });
-    }
-    if (customer.idType == "05") {
-      CustomerService.getCedula(idCard).then((response) => {
-        hideLoader();
-        if (response) {
-          if (!response.nombreCompleto) {
-            toast({ type: "warning", message: response.error });
-            return;
-          } else {
-            customer.idCard = response.identificacion;
-            customer.businessName = response.nombreCompleto;
-            customer.tradeName = response.nombreCompleto;
-            customer.email = response.email;
-            customer.address = response.direccion;
-            customer.telephone = response.telefono;
-          }
+      }
+    });
+  };
+
+  const getCedulaSri = (idCard) => {
+    showLoader();
+    CustomerService.getCedula(idCard).then((response) => {
+      hideLoader();
+      if (response) {
+        if (!response.nombreCompleto) {
+          toast({ type: "warning", message: response.error });
+          return;
+        } else {
+          customer.idCard = response.identificacion;
+          customer.businessName = response.nombreCompleto;
+          customer.tradeName = response.nombreCompleto;
+          customer.email = response.email;
+          customer.address = response.direccion;
+          customer.telephone = response.telefono;
         }
-      });
-    }
+      }
+    });
   };
 
   // CLOSE MODAL
@@ -301,7 +342,6 @@
     cancel = false;
     disguise = false;
     disabled = true;
-    hiddenSearch = true;
     establecimientoId = 0;
     sequence = "";
     value = "";
@@ -618,24 +658,13 @@
           </div>
         </div>
         <div class="row">
-          <div class="col">
-            <input
-              type="text"
-              class="form-control"
-              on:change={() => getApiSri()}
-              placeholder="Buscar Cliente"
-              {disabled}
-              bind:value={idCard}
-            />
-          </div>
-
-          <div class="col" hidden={hiddenSearch}>
+          <div class="col" hidden={hiddenCustomer}>
             <AdvancedSearch
               on:input={onInputCustomer}
               on:focus={onFocusCustomer}
               on:blur={onBlurCustomer}
               value={valueCustomer}
-              placeholder="Buscar Cliente"
+              placeholder={placeholderCustomer}
             />
             {#if customers.length > 0}
               <div class="floating-results list-group">
@@ -651,13 +680,13 @@
               </div>{/if}
           </div>
 
-          <div class="col">
+          <div class="col" hidden={hiddenCustomer}>
             <select
               name="country"
               id="country"
               bind:value={customer.idType}
-              on:click={() => getApiSri()}
               class="form-control border-select"
+              disabled={disabledCustomer}
             >
               {#each idTypes as item}
                 <option value={item.idType}>
@@ -667,8 +696,12 @@
             </select>
           </div>
 
-          <div class="col">
-            <button type="button" class="btn btn-info">
+          <div class="col" hidden={hiddenCustomer}>
+            <button
+              type="button"
+              class="btn btn-info"
+              on:click={() => disabledData(5)}
+            >
               <i class="ti-user" /> Nuevo</button
             >
           </div>

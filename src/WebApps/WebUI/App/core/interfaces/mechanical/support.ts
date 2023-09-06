@@ -7,4 +7,5 @@ export interface Support {
     date: string;
     sequence: number;
     obs : string;
+    userAssignedId : number;
 }
