@@ -23,7 +23,8 @@ type Actions = {
     handleChangeSetReceivedAmount(value: number | string): void
     onChangeReceivedAmount(event: React.ChangeEvent<HTMLInputElement>): void
     getValuePayment(): number
-    save(closeDialog:()=>void): void
+    isValidData(): boolean
+    save(closeDialog: () => void): void
 }
 
 type StateCalculator = {
@@ -52,8 +53,8 @@ export const useCheckoutStore = create<State & StateCalculator & Actions & Actio
 
                 state.checkout.dataForm = data;
                 state.checkout.payments.paymentTypeId = paymentData?.paymentTypeId ?? 0;
-                state.checkout.payments.paymentSubtypeId = paymentSubTypeData?.paymentSubtypeId?? 0;
-                
+                state.checkout.payments.paymentSubtypeId = paymentSubTypeData?.paymentSubtypeId ?? 0;
+
                 state.checkout.payments.paymentTypeCode = paymentData?.code
                 state.checkout.payments.paymentTypeDescription = paymentData?.description;
                 state.checkout.voucher = data.comprobante
@@ -198,6 +199,10 @@ export const useCheckoutStore = create<State & StateCalculator & Actions & Actio
         }
         return valuePayment;
     },
+    isValidData() {
+        console.log('test')
+        return true;
+    },
     async save(closeDialog) {
         const { getValuePayment, queryParams } = get();
         const { voucher, dataForm, payments } = get().checkout;
@@ -243,12 +248,13 @@ export const useCheckoutStore = create<State & StateCalculator & Actions & Actio
                 nombreFiscal: voucher.customerName
             }
 
-            //  let infoCobro =  [{
-            //      nro: $scope.cobro.nro,
-            //      lote:$scope.cobro.lote,
-            //      aprobacion: $scope.cobro.aprobacion,
-            //      referencia: $scope.cobro.referencia
-            //  }]        
+            const infoCobro = [{
+                nro: payments.nro,
+                lote: payments.lote,
+                aprobacion: payments.aprobacion,
+                referencia: payments.referencia,
+                idCiudad: payments.cityId
+            }]
             const dataPaymentSubType = paymentSubTypes.find(item => item.paymentSubtypeId === payments.paymentSubtypeId)
 
             const cobros = [{
@@ -260,7 +266,7 @@ export const useCheckoutStore = create<State & StateCalculator & Actions & Actio
                 valor: voucher.receivedAmount,
                 posfechado: payments.posfechado,
                 secuencial: 0,
-                infoCobro: null,
+                infoCobro: payments.paymentTypeCode === PaymentTypeCode.EFE ? undefined : JSON.stringify(infoCobro),
                 abono: getValuePayment(),
                 controlCaja: dataPaymentSubType?.isControlBox
             }]
@@ -289,20 +295,20 @@ export const useCheckoutStore = create<State & StateCalculator & Actions & Actio
                 data: {
                     data
                 }
-            }).then(resultAxios => {               
+            }).then(resultAxios => {
                 const response: ApiResponse = resultAxios.data;
-                if(response.code==="1"){
+                if (response.code === "1") {
                     SnackbarUtility.success(response.message);
 
-                    if(queryParams.printerAutomatic){
-                        SharedService.getPrinter(queryParams.orderId)  
+                    if (queryParams.printerAutomatic) {
+                        SharedService.getPrinter(queryParams.orderId)
                     }
-                     
-                    closeDialog();                    
-                }else{
+
+                    closeDialog();
+                } else {
                     SnackbarUtility.warning(response.message)
-                } 
-            }).finally(()=> showLoader(false)) 
+                }
+            }).finally(() => showLoader(false))
 
 
         } catch (error) {
