@@ -8,7 +8,7 @@ import {
 } from "../adapters"
 import { cityAdapter } from "../adapters/account-receivable.adapter"
 import { PATHS } from "../constants"
-import { ApiResponse, VoucherQuota } from "../models"
+import { ApiResponse } from "../models"
 import { Http, SnackbarUtility } from "../utilities"
 
 const URL = 'CuentaPorCobrar'

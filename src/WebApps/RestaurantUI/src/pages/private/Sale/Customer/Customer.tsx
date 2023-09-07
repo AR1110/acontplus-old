@@ -15,7 +15,7 @@ import { CustomerReadDto } from '@/core/models';
 import { CustomerService } from '@/core/services';
 import { useSaleStore } from '@/stores';
 import CustomerDialog from './CustomerDialog';
-import { Button, ButtonGroup, IconButton } from '@mui/material';
+import { Button, ButtonGroup } from '@mui/material';
 
 interface PopperComponentProps {
     anchorEl?: any;

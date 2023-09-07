@@ -1,6 +1,6 @@
 
 import { ErrorBoundary } from "@/core/utilities";
-import { Button, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import { useAsync, useFetchAndLoad, useMobileDetect } from "@/hooks";
 import { ItemService, SaleService, getEstabs } from "@/core/services";
 import CustomBottomNavigation from "./components/CustomBottomNavigation";
@@ -8,7 +8,7 @@ import { useSaleStore, useAuthStore } from "@/stores";
 import { useEffect } from "react";
 import { itemReadAdapter } from "@/core/adapters";
 import FullScreenDialog from "@/core/components/FullScreenDialog";
-import { ArrowBackIcon, Checkout, CloseIcon } from "@/core/components";
+import { ArrowBackIcon, Checkout } from "@/core/components";
 import ItemList from "./Item/ItemList";
 import Category from "./Category/Category"; 
 import Cart from "./Cart/Cart";
@@ -35,7 +35,7 @@ export default function Sale() {
     }));
 
     //Event Payment 
-    const payment = useSaleStore(state => state.payment);
+    // const payment = useSaleStore(state => state.payment);
 
     //Even Navigation 
     const navigation = useSaleStore(state => state.navigation);

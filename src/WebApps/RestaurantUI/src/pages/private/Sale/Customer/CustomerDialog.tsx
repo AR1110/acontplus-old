@@ -3,7 +3,7 @@ import { CustomerCreateDto, CustomerReadDto, TiempoCredito, TipoContribuyente, T
 import { CustomerService, SharedService } from '@/core/services'
 import { SnackbarUtility } from '@/core/utilities'
 import { useLoaderStore } from '@/stores'
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, IconButton, InputAdornment, MenuItem, Switch, Tab, Tabs, TextField } from '@mui/material'
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, MenuItem, Switch, Tab, Tabs, TextField } from '@mui/material'
 
 
 import { useFormik } from 'formik'

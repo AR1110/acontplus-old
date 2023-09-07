@@ -23,7 +23,7 @@ import Swal from "sweetalert2";
 import { OrdenService, SharedService } from "@/core/services";
 import { SnackbarUtility } from "@/core/utilities";
 import { useLoaderStore, useOrderStore, useSaleStore } from "@/stores";
-import { OrderReadDto, PrivateRoutes } from "@/core/models";
+import { PrivateRoutes } from "@/core/models";
 import { useNavigate } from "react-router-dom";
 import OrderWhatsApp from "./Components/OrderWhatsApp";
 import OrderConvertDoc from "./Components/OrderConvertDoc";

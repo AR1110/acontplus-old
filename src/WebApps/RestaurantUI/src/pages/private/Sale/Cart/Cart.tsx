@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Grid, List, Paper, TextField, Typography } from '@mui/material'
+import { Button, Divider, Grid, List, Paper, TextField, Typography } from '@mui/material'
 import CartItem from '../CartItem/CartItem'
 import { useCheckoutStore, useLoaderStore, useSaleStore } from '@/stores';
 import Swal from 'sweetalert2';

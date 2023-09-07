@@ -1,5 +1,4 @@
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Card, CardActions, CardContent, CardHeader, Divider, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, OutlinedInput, Switch, TextField, Typography } from '@mui/material'
-import React, { useEffect } from 'react'
 import { ExpandMoreIcon, PaymentsIcon, SaveIcon } from '../..'
 import { useCheckoutStore } from '@/stores';
 import { PaymentTypeCode } from '@/core/constants';
@@ -9,15 +8,12 @@ const PaymentMethod = () => {
     const dataForm = useCheckoutStore(state => state.checkout.dataForm);
     const payments = useCheckoutStore(state => state.checkout.payments);
     const setPayment = useCheckoutStore(state => state.setPayment);
-
+    const onChangeReceivedAmount = useCheckoutStore(state=>state.onChangeReceivedAmount)
+    const save = useCheckoutStore(state=>state.save)
     const paymentTypes = dataForm.paymentTypes;
     const paymentSubTypes = dataForm.paymentSubTypes.filter(item => item.paymentTypeId === payments.paymentTypeId)
 
-    console.log(paymentSubTypes, payments.paymentTypeId)
 
-    const saveCheckout = () => {
-        console.log('kjdh')
-    }
     return (
         <Box sx={{ flexGrow: 1 }}>
             <Card variant="outlined">
@@ -56,6 +52,12 @@ const PaymentMethod = () => {
                                             paymentTypeId: paymentData?.paymentTypeId ?? 0,
                                             paymentTypeCode: paymentData?.code,
                                             paymentTypeDescription: paymentData?.description,
+                                            nro: "",
+                                            referencia: "",
+                                            aprobacion: "",
+                                            lote: "",
+                                            cityId:0,
+                                            idBanco:0
 
 
                                         })
@@ -82,7 +84,7 @@ const PaymentMethod = () => {
                                     id="cashValue"
                                     name='cashValue'
                                     value={voucher.receivedAmount}
-                                    // onChange={onChangeReceivedAmount}
+                                    onChange={onChangeReceivedAmount}
 
                                     startAdornment={<PaymentsIcon />}
                                     label="Cash Value"
@@ -129,7 +131,7 @@ const PaymentMethod = () => {
                                     <>
                                         <Box sx={{ flexGrow: 1 }}>
                                             <Grid container spacing={3}>
-                                                <Grid item xs={4}>
+                                                <Grid item xs={12} sm={4}>
                                                     {paymentSubTypes.length > 0 && <TextField fullWidth
                                                         id="paymentType"
                                                         name="paymentType"
@@ -158,7 +160,7 @@ const PaymentMethod = () => {
                                                     </TextField>
                                                     }
                                                 </Grid>
-                                                <Grid item xs={4}>
+                                                <Grid item xs={12} sm={4}>
                                                     <TextField
                                                         fullWidth
                                                         required
@@ -175,7 +177,7 @@ const PaymentMethod = () => {
                                                         }}
                                                     />
                                                 </Grid>
-                                                <Grid item xs={4}>
+                                                <Grid item xs={12} sm={4}>
                                                     <TextField
                                                         fullWidth
                                                         required
@@ -195,7 +197,7 @@ const PaymentMethod = () => {
 
 
                                                 {/* second grid */}
-                                                <Grid item xs={4}>
+                                                <Grid item xs={12} sm={4}>
                                                     {dataForm.cities.length > 0 && <TextField fullWidth
                                                         id="city"
                                                         name="city"
@@ -222,7 +224,7 @@ const PaymentMethod = () => {
                                                     </TextField>
                                                     }
                                                 </Grid>
-                                                <Grid item xs={4}>
+                                                <Grid item xs={12} sm={4}>
                                                     <TextField
                                                         fullWidth
                                                         required
@@ -239,7 +241,7 @@ const PaymentMethod = () => {
                                                         }}
                                                     />
                                                 </Grid>
-                                                <Grid item xs={4}>
+                                                <Grid item xs={12} sm={4}>
                                                     <TextField
                                                         fullWidth
                                                         required
@@ -296,7 +298,7 @@ const PaymentMethod = () => {
                                                     </TextField>
                                                     }
                                                 </Grid>
-                                                <Grid item xs={6}>
+                                                <Grid item xs={12} sm={6}>
                                                     {dataForm.banks.length > 0 && <TextField fullWidth
                                                         id="bank"
                                                         name="bank"
@@ -321,7 +323,7 @@ const PaymentMethod = () => {
                                                     </TextField>
                                                     }
                                                 </Grid>
-                                                <Grid item xs={6}>
+                                                <Grid item xs={12} sm={6}>
                                                     <TextField
                                                         fullWidth
                                                         required
@@ -349,7 +351,7 @@ const PaymentMethod = () => {
                                     <>
                                         <Box sx={{ flexGrow: 1 }}>
                                             <Grid container spacing={3}>
-                                                <Grid item xs={6}>
+                                                <Grid item xs={12} sm={6}>
                                                     {paymentSubTypes.length > 0 && <TextField fullWidth
                                                         id="paymentType"
                                                         name="paymentType"
@@ -378,7 +380,7 @@ const PaymentMethod = () => {
                                                     </TextField>
                                                     }
                                                 </Grid>
-                                                <Grid item xs={6}>
+                                                <Grid item xs={12} sm={6}>
                                                     {dataForm.banks.length > 0 && <TextField fullWidth
                                                         id="bank"
                                                         name="bank"
@@ -404,7 +406,7 @@ const PaymentMethod = () => {
                                                     }
                                                 </Grid>
 
-                                                <Grid item xs={6}>
+                                                <Grid item xs={12} sm={6}>
                                                     {dataForm.cities.length > 0 && <TextField fullWidth
                                                         id="city"
                                                         name="city"
@@ -432,7 +434,7 @@ const PaymentMethod = () => {
                                                     }
                                                 </Grid>
 
-                                                <Grid item xs={6}>
+                                                <Grid item xs={12} sm={6}>
                                                     <TextField
                                                         fullWidth
                                                         required
@@ -450,7 +452,7 @@ const PaymentMethod = () => {
                                                     />
                                                 </Grid>
 
-                                                <Grid item xs={6}>
+                                                <Grid item xs={12} sm={6}>
                                                     <TextField
                                                         fullWidth
                                                         required
@@ -468,7 +470,7 @@ const PaymentMethod = () => {
                                                     />
                                                 </Grid>
 
-                                                <Grid item xs={6}>
+                                                <Grid item xs={12} sm={6}>
                                                     <FormControlLabel label="Posfechado" control={
                                                         <Switch aria-label='Posfechado' />
                                                     } />
@@ -495,7 +497,7 @@ const PaymentMethod = () => {
                                 fontSize: 40
                             }} />} size='large' fullWidth sx={{
                                 height: 80
-                            }} onClick={saveCheckout}>
+                            }} onClick={save}>
                                 Guardar
                             </Button>
                         </Grid>

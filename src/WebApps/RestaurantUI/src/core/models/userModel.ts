@@ -1,7 +1,4 @@
-import { Establecimiento } from ".";
-
  
-
 export interface UserData {
   idRol: number;
   userName: string;
