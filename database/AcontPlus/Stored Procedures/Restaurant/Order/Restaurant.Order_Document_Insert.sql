@@ -510,7 +510,7 @@ BEGIN
                 
     SELECT TOP 1 @idCuentaPorCobrar = idCuentaPorCobrar
     FROM Contabilidad.CuentaPorCobrar WITH (NOLOCK)
-    WHERE codDoc = @codDoc 
+    WHERE codDoc = @codDocCuentaCobrar
     AND idDocumento = @documentoId
     
     SET @payload = (SELECT idDocumento      = @documentoId
@@ -518,7 +518,7 @@ BEGIN
                         ,codEstab           = @codEstab
                         ,tiempoCredito      = @tiempoCreditoId
                         ,idCliente          = @customerCompanyId
-                        ,codDoc             = @codDoc
+                        ,codDoc             = @codDocCuentaCobrar
                         ,idCuentaPorCobrar  = @idCuentaPorCobrar
                         ,payAutomatic       = @payAutomatic
                         ,printerAutomatic   = @printerAutomatic

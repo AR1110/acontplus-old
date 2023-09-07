@@ -1,7 +1,6 @@
 ﻿using System.Data;
 using Common.Reports.Interfaces;
 using DataAccess;
-using Domain.Dtos;
 using Lib.Common.DbUtils;
 using Lib.Common.Dtos;
 using Microsoft.AspNetCore.Mvc;
@@ -35,14 +34,16 @@ namespace ApiReports.Controllers
             {
                 DataSet dsParams = null;
                 DataSet ds = null;
+                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+
                 using (DbAccess _db = new DbAccess(_configuration))
                 {
                     await _db.SPExecute("Reporte.Report_Get");
                     _db.AddDynamicParam("json", data.reportParams);
                     dsParams = _db.GetDataSet();
-
-                    int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-
+                }
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
                     await _db.SPExecute(dsParams.Tables[0].Rows[0]["storedProcedure"].ToString());
                     if (!data.hasService)
                     {

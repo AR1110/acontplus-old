@@ -11,5 +11,14 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 
-	SELECT TOP (@cantidad) * FROM App.Notificacion WITH(NOLOCK) WHERE estado='NE'
+	SELECT TOP (@cantidad) [idNotificacion]
+    ,[params]
+    ,[emailData]
+    ,[receptor] as 'to'
+    ,[fechaRegistro]
+    ,[estado]
+    ,[fechaEnvio]
+    ,[msgError]
+    ,[idUsuario]
+    FROM App.Notificacion WITH(NOLOCK) WHERE estado='NE'
 END 

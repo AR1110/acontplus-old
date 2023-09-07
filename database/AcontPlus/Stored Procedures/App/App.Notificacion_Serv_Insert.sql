@@ -136,7 +136,7 @@ BEGIN
 								INNER JOIN dbo.Entidad            e ON e.idEntidad       = pr.idEntidad
 								INNER JOIN @tlDecimal            cd ON cd.idEntidad      = pr.idEntidad
 								WHERE pr.idProforma = @id
-								FOR JSON PATH
+								FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
 							 )
 								 
 			END 
@@ -166,7 +166,7 @@ BEGIN
 									INNER JOIN dbo.Entidad            e ON e.idEntidad       = ne.idEntidad
 									INNER JOIN @tlDecimal            cd ON cd.idEntidad      = ne.idEntidad
 									WHERE ne.idNotaEntrega = @id
-									FOR JSON PATH
+									FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
 								 )
 				END 
 
@@ -197,26 +197,28 @@ BEGIN
 					 FROM dbo.ComprobanteIngreso ci WITH(NOLOCK)
 					 INNER JOIN Sri.Establecimiento estab WITH (NOLOCK) ON estab.codEstab = ci.codEstab
 					 WHERE ci.idComprobanteIngreso = @id
-					 FOR JSON PATH
+					 FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
 					 )
 
 				END
 
 
-			SET @emailData = (SELECT body = @body 
-			                        ,cc = '' 						  
+			SET @emailData = (SELECT body = @body
+			                        ,ISNULL(@cc,'') as 'cc' 						  
 							         ,EnableSsl =@enableSsl
 									 ,'from' = @from
+                                     ,'username' = @from
 									 ,'host'= @host
 									 ,'logo'= 'logoAcontPlus.jpg'
 									 ,'password'= @password
 									 ,'port'= @port
 									 ,'subject'= @subject 
-									 ,'template'= @template FOR JSON PATH
-							   )				
+									 ,'template'= @template FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
+							   )
          
 			--return
-			INSERT INTO App.Notificacion(params, emailData, receptor, estado, idUsuario) VALUES('[' + @params + ']', @emailData, REPLACE(@receptor,';',','), 'NE', @idUsuario)
+			INSERT INTO App.Notificacion(params, emailData, receptor, estado, idUsuario)
+            VALUES(@params, @emailData, REPLACE(@receptor,';',','), 'NE', @idUsuario)
 			SELECT '1'code, 'Reenviado el Correo Correctamente' as 'message', 'Reenvío por Correo' as titleSms		
 		
 		COMMIT TRAN 

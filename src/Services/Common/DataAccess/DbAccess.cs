@@ -37,11 +37,10 @@ namespace DataAccess
                     _command.CommandType = CommandType.StoredProcedure;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Close();
-                //
-                //_log.LogError("Error in SPExecute: " + ex.ToString());
+                throw;
             }
         }
         public void AddParameter(string paramName, SqlDbType paramType, object paramValue, bool isNull = false)
@@ -58,11 +57,10 @@ namespace DataAccess
                     _command.Parameters.Add(sqlParam);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Close();
-                //
-                //_log.LogError("Error in AddParameter: " + ex.ToString());
+                throw;
             }
         }
         public void AddDynamicParam(string paramName, object paramValue)
@@ -78,11 +76,10 @@ namespace DataAccess
                     _command.Parameters.Add(sqlParam);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Close();
-                //
-                //_log.LogError("Error in AddDynamicParam: " + ex.ToString());
+                throw;
             }
         }
         public void AddOutputParam(string paramName, object paramValue)
@@ -114,10 +111,9 @@ namespace DataAccess
             {
                 _command.ExecuteReader();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                //
-                //_log.LogError("Error in ExecuteReader: " + ex.ToString());
+                throw;
             }
             finally
             {
@@ -147,22 +143,14 @@ namespace DataAccess
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                //
-
-                //_log.LogError("Error in GetDataSet: " + ex.ToString());
                 if (ds.Tables.Count > 0)
                 {
                     ds = new DataSet();
                 }
-                DtError(ref dtResp, ex.Message);
-                ds.Tables.Add(dtResp);
-            }
-            finally
-            {
-                _command.Dispose();
-                _connection.Close();
+                Close();
+                throw;
             }
             return ds;
         }
@@ -183,17 +171,10 @@ namespace DataAccess
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                //
-
-                //_log.LogError("Error in GetDataTable: " + ex.ToString());
-                DtError(ref dt, ex.ToString());
-            }
-            finally
-            {
-                _command.Dispose();
-                _connection.Close();
+                Close();
+                throw;
             }
             return dt;
         }
@@ -230,7 +211,6 @@ namespace DataAccess
                     if (DataValidation.DataTableIsNull(dt))
                     {
                         _response.Create(code: "0", "La transacción no devolvio respuesta");
-                        //DtWarning(ref dt);
                     }
                     else
                     {
@@ -283,10 +263,9 @@ namespace DataAccess
                     _connection.Close();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                //
-                //_log.LogError("Error in Close: " + ex.ToString());
+                throw;
             }
         }
         public void DtColumns(ref DataTable dt)
@@ -307,11 +286,6 @@ namespace DataAccess
         {
             DtColumns(ref dt);
             DtRows(ref dt, "La transacción no devolvio respuesta", "");
-        }
-        public void DtError(ref DataTable dt, string message)
-        {
-            DtColumns(ref dt);
-            DtRows(ref dt, "Error al ejecutar la transacción", message);
         }
 
         public void Dispose()
