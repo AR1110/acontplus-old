@@ -387,22 +387,44 @@ BEGIN
                 IF(@siglaFamilia = 'RES' AND @siglaSubFamilia != 'ING')
                     BEGIN
                         IF NOT EXISTS(SELECT TOP 1 1 FROM Restaurant.Item WHERE ProductId = @id)
-                        BEGIN 
-                            INSERT INTO Restaurant.Item
-					        (ProductId, ProductionAreaId, Summary, Cooking, Recipe, Instructions, Content, CreatedAt, UpdatedAt
-					        ,Enabled, Deleted, UserId)
-					        VALUES(@id, NULL, NULL, 1, NULL, NULL, NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario)
-                        END
+                            BEGIN 
+                                INSERT INTO Restaurant.Item
+					            (ProductId, ProductionAreaId, Summary, Cooking, Recipe, Instructions, Content, CreatedAt, UpdatedAt
+					            ,Enabled, Deleted, UserId)
+					            VALUES(@id, NULL, NULL, 1, NULL, NULL, NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario)
+                            END
+                        ELSE
+                            BEGIN
+                                UPDATE Restaurant.Item SET Summary = (SELECT  descripcion FROM @tbArticle) WHERE ProductId = @id
+                            END
                     END
 
-                IF(@siglaFamilia = 'RES' AND @siglaSubFamilia = 'ING')
+                IF(@siglaFamilia = 'ING')
                     BEGIN 
                         IF NOT EXISTS(SELECT TOP 1 1 FROM Restaurant.Ingredient WHERE ProductId = @id)
-                        BEGIN 
-                            INSERT INTO Restaurant.Ingredient
-					        (ProductId, Summary, Quantity, Unit, Content, CreatedAt, UpdatedAt, Enabled, Deleted, UserId, IngredientTypeId)
-					        VALUES(@id, (SELECT  descripcion FROM @tbArticle), NULL, NULL, NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario, NULL)
-                        END
+                            BEGIN 
+                                INSERT INTO Restaurant.Ingredient
+					            (ProductId, Summary, Quantity, Unit, Content, CreatedAt, UpdatedAt, Enabled, Deleted, UserId, IngredientTypeId)
+					            VALUES(@id, (SELECT  descripcion FROM @tbArticle), NULL, NULL, NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario, NULL)
+                            END
+                         ELSE
+                            BEGIN
+                                UPDATE Restaurant.Ingredient SET Summary = (SELECT  descripcion FROM @tbArticle) WHERE ProductId = @id
+                            END
+                    END
+
+                IF(@siglaFamilia = 'RES' AND @siglaSubFamilia IN ('MENU', 'COMBO'))
+                    BEGIN 
+                        IF NOT EXISTS(SELECT TOP 1 1 FROM Restaurant.Menu WHERE ProductId = @id)
+                            BEGIN 
+                               INSERT INTO Restaurant.Menu
+					            (ProductId, Title, Summary, Content, CreatedAt, UpdatedAt, [Enabled], Deleted, UserId)
+					            VALUES(@id, (SELECT  descripcion FROM @tbArticle), (SELECT  descripcion FROM @tbArticle), NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario)
+                            END
+                         ELSE
+                            BEGIN
+                                UPDATE Restaurant.Menu SET Title = (SELECT  descripcion FROM @tbArticle) WHERE ProductId = @id
+                            END
                     END
 
 

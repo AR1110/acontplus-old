@@ -332,15 +332,22 @@ BEGIN
 				BEGIN
 					INSERT INTO Restaurant.Item
 					(ProductId, ProductionAreaId, Summary, Cooking, Recipe, Instructions, Content, CreatedAt, UpdatedAt
-					,Enabled, Deleted, UserId)
+					,[Enabled], Deleted, UserId)
 					VALUES(@idArticulo, NULL, NULL, 1, NULL, NULL, NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario)
 				END
 
 			IF(@siglaFamilia = 'ING')
 				BEGIN
 					INSERT INTO Restaurant.Ingredient
-					(ProductId, Summary, Quantity, Unit, Content, CreatedAt, UpdatedAt, Enabled, Deleted, UserId, IngredientTypeId)
+					(ProductId, Summary, Quantity, Unit, Content, CreatedAt, UpdatedAt, [Enabled], Deleted, UserId, IngredientTypeId)
 					VALUES(@idArticulo, (SELECT  descripcion FROM @tbArticle), NULL, NULL, NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario, NULL)
+				END
+
+            IF(@siglaFamilia = 'RES' AND @siglaSubFamilia IN ('MENU', 'COMBO'))
+				BEGIN
+					INSERT INTO Restaurant.Menu
+					(ProductId, Summary, Content, CreatedAt, UpdatedAt, [Enabled], Deleted, UserId)
+					VALUES(@idArticulo, (SELECT  descripcion FROM @tbArticle), NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario)
 				END
 		COMMIT TRAN 
 		SELECT '1'code,'Registrado Correctamente' as 'message', @payload as payload
