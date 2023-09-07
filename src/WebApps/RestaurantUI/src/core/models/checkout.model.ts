@@ -43,6 +43,7 @@ export interface Payment {
     lote?:string
     cityId?: number
     idBanco?: number
+    posfechado?: boolean
 }
 
 export const paymentInitialState: Payment = {
@@ -54,7 +55,14 @@ export const paymentInitialState: Payment = {
     sequential: 0,
     isControlBox: 0,
     paymentTypeCode: "",
-    paymentTypeDescription: "",    
+    paymentTypeDescription: "",   
+    nro:"",
+    referencia:"",
+    aprobacion:"",
+    lote:"",
+    cityId:0,
+    idBanco:0,
+    posfechado:false
 }
 
 export interface CheckoutDataForm {
@@ -63,7 +71,7 @@ export interface CheckoutDataForm {
     voucherQuotas: Array<VoucherQuota>
     banks:Array<Bank>
     cities: Array<City> 
-    comprobante: object
+    comprobante: any
 }
 
 export const checkoutDataFormInitialState: CheckoutDataForm = {

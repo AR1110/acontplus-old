@@ -1,8 +1,8 @@
- 
+
 import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography'; 
+import Typography from '@mui/material/Typography';
 import { ItemRead } from '@/core/models';
 import { Avatar, Collapse, IconButton, IconButtonProps, TextField } from '@mui/material';
 import { red } from '@mui/material/colors';
@@ -27,7 +27,7 @@ interface ExpandMoreProps extends IconButtonProps {
 }
 
 const ExpandMore = styled((props: ExpandMoreProps) => {
-    const { ...other } = props;
+    const { expand, ...other } = props;
     return <IconButton {...other} />;
 })(({ theme, expand }) => ({
     transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
@@ -38,7 +38,7 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 }));
 
 export default function CartItem({ index, item }: CartItemProps) {
-    const removeItemFromCart = useSaleStore(state => state.removeItemFromCart) 
+    const removeItemFromCart = useSaleStore(state => state.removeItemFromCart)
     const setRemoveQuantity = useSaleStore(state => state.setRemoveQuantity)
     const setChangeValueOrderItem = useSaleStore(state => state.setChangeValueOrderItem)
     const [expanded, setExpanded] = useState(false);
@@ -131,20 +131,21 @@ export default function CartItem({ index, item }: CartItemProps) {
                         <ExpandMoreIcon />
                     </ExpandMore>
                 </Grid>
+
             </Grid>
             <Collapse in={expanded} timeout="auto" unmountOnExit>
-                <form autoComplete='off'>
-                    <TextField
-                        label="Comentario"
-                        id="obs"
-                        size="small"
-                        fullWidth
-                        onBlur={(e) => {
-                            setChangeValueOrderItem(index, "obs", e.target.value)
-                        }}
-                        value={item.obs}
-                    />
-                </form>
+
+                <TextField
+                    label="Comentario"
+                    id="obs"
+                    size="small"
+                    fullWidth
+                    onBlur={(e) => {
+                        setChangeValueOrderItem(index, "obs", e.target.value)
+                    }}
+                    value={item.obs}
+                />
+
             </Collapse>
         </Paper>
     );

@@ -8,7 +8,12 @@ import PaymentMethod from './PaymentMethod/PaymentMethod'
 import { useCheckoutStore, useLoaderStore } from '@/stores'
 import { AccountReceivableService } from '@/core/services'
 
-const Checkout = () => {
+type CheckoutProps = {
+    open: boolean,
+    closeDialog(): void
+}
+
+const Checkout = ({ open, closeDialog }: CheckoutProps) => {
     const { isMobile } = useMobileDetect();
     const { showLoader } = useLoaderStore();
     const [openCheckoutInfoMobile, setOpenCheckoutInfoMobile] = useState(false);
@@ -17,6 +22,7 @@ const Checkout = () => {
     const queryParams = useCheckoutStore(state => state.queryParams)
     const setCheckoutDataForm = useCheckoutStore(state => state.setCheckoutDataForm)
 
+    console.log(queryParams)
     const initiload = async () => {
         showLoader(true);
         await AccountReceivableService.get({
@@ -25,6 +31,7 @@ const Checkout = () => {
             idCuentaPorCobrar: queryParams.idCuentaPorCobrar,
             credito: queryParams.tiempoCredito
         }).then(response => {
+            console.log(response)
             setCheckoutDataForm(response);
         }).finally(() => showLoader(false))
     }
@@ -40,10 +47,8 @@ const Checkout = () => {
                 color="inherit"
                 icon={<CloseIcon />}
                 dialogTitle="Cobro"
-                isOpen={true}
-                handleClose={() => {
-                    console.log('click me')
-                }}
+                isOpen={open}
+                handleClose={closeDialog}
                 actions={
                     <>
                         {
@@ -79,7 +84,7 @@ const Checkout = () => {
                         {
                             !(isMobile) && <CheckoutInfo />
                         }
-                        <PaymentMethod />
+                        <PaymentMethod closeDialog={closeDialog} />
                     </Grid>
                 </Grid>
             </FullScreenDialog>

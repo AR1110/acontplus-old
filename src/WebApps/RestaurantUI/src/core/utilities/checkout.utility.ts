@@ -22,7 +22,7 @@ class CheckoutUtility  {
     }
 
     applyReceivedAmountToQuota(voucherQuotas: Array<VoucherQuota>): Array<VoucherQuota> {
-        const tempVoucherQuotas = voucherQuotas.slice(0);
+        const tempVoucherQuotas = JSON.parse(JSON.stringify(voucherQuotas));
 
         for (const group of tempVoucherQuotas) {
             this.voucher = group;

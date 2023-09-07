@@ -1,98 +1,97 @@
- 
-import { Checkout, CheckoutDataForm, Payment, QueryParams, Voucher, checkoutInitialState, queryParamsInitialState } from "@/core/models"
+
+import { ApiResponse, Checkout, CheckoutDataForm, Payment, QueryParams, Voucher, checkoutInitialState, queryParamsInitialState } from "@/core/models"
 import { create } from "zustand"
 import { produce } from 'immer';
-import { CheckoutUtility, RoundNumber, SnackbarUtility } from "@/core/utilities";
-import { PaymentTypeCode } from "@/core/constants";
+import { CheckoutUtility, Http, RoundNumber, SnackbarUtility } from "@/core/utilities";
+import { PATHS, PaymentTypeCode } from "@/core/constants";
 import Swal from "sweetalert2";
 import { useLoaderStore } from ".";
+import { SharedService } from "@/core/services";
 
 type State = {
     queryParams: QueryParams
-    checkout: Checkout 
+    checkout: Checkout
 }
 
 type Actions = {
-    setCheckoutDataForm(data: CheckoutDataForm):void
+    setCheckoutDataForm(data: CheckoutDataForm): void
     setQueryParams(data: QueryParams): void
     setVoucher(data: Voucher): void
-    setPayment(data: Payment):void
+    setPayment(data: Payment): void
     setChangeReturn(): void
     setReceivedAmount(value: string): void //Actualizar el abono  
-    handleChangeSetReceivedAmount(value: number | string):void
-    onChangeReceivedAmount(event: React.ChangeEvent<HTMLInputElement>):void
-    getValuePayment():number
-    save():void   
+    handleChangeSetReceivedAmount(value: number | string): void
+    onChangeReceivedAmount(event: React.ChangeEvent<HTMLInputElement>): void
+    getValuePayment(): number
+    save(closeDialog:()=>void): void
 }
 
 type StateCalculator = {
-    isOptionReceivedAmount:boolean
+    isOptionReceivedAmount: boolean
     isReplaceReceivedAmount: boolean
 }
 
 type ActionCalculator = {
-    handleClickOptionReceivedAmount(value: number):void
-    setIsOptionReceivedAmount(value:boolean):void
-    setIsReplaceReceivedAmount(value:boolean): void
-    checkoutClearButton():void
+    handleClickOptionReceivedAmount(value: number): void
+    setIsOptionReceivedAmount(value: boolean): void
+    setIsReplaceReceivedAmount(value: boolean): void
+    checkoutClearButton(): void
 }
 
 export const useCheckoutStore = create<State & StateCalculator & Actions & ActionCalculator>((set, get) => ({
+    isOpenDialog: false,
     queryParams: queryParamsInitialState,
     checkout: checkoutInitialState,
     isOptionReceivedAmount: false,
     isReplaceReceivedAmount: false,
-    setCheckoutDataForm(data){
+    setCheckoutDataForm(data) {
         set(
-            produce((state: State)=>{
-                const paymentData = data.paymentTypes.find(item=>item.code===PaymentTypeCode.EFE)
-                state.checkout.dataForm = data;                
-                state.checkout.payments.paymentTypeId = paymentData?.paymentTypeId ?? 0;
-                state.checkout.payments.paymentTypeCode = paymentData?.code  
-                state.checkout.payments.paymentTypeDescription = paymentData?.description  
+            produce((state: State) => {
+                const paymentData = data.paymentTypes.find(item => item.code === PaymentTypeCode.EFE);
+                const paymentSubTypeData = data.paymentSubTypes.filter(item => item.paymentTypeId === paymentData?.paymentTypeId)[0];
 
+                state.checkout.dataForm = data;
+                state.checkout.payments.paymentTypeId = paymentData?.paymentTypeId ?? 0;
+                state.checkout.payments.paymentSubtypeId = paymentSubTypeData?.paymentSubtypeId?? 0;
+                
+                state.checkout.payments.paymentTypeCode = paymentData?.code
+                state.checkout.payments.paymentTypeDescription = paymentData?.description;
+                state.checkout.voucher = data.comprobante
             })
         )
     },
-    setQueryParams(queryParams){
+    setQueryParams(queryParams) {
         set(
-            produce((state: State)=>{
+            produce((state: State) => {
                 state.queryParams = queryParams;
             })
         )
     },
-    setVoucher(voucher) { 
+    setVoucher(voucher) {
         set(
             produce((state: State) => {
                 state.checkout.voucher = voucher;
-                console.log(voucher)
-                // state.checkout.voucher.payingAmount = data.payingAmount;
-                // state.checkout.voucher.receivedAmount = data.receivedAmount;
-                // state.checkout.voucher.changeReturn = 0;
-                // state.checkout.voucher.creationDate = data.creationDate;
-                
             })
         )
     },
-    setPayment(payments) { 
+    setPayment(payments) {
         set(
             produce((state: State) => {
                 state.checkout.payments = payments;
-                console.log(payments) 
-                
+
             })
         )
     },
     setChangeReturn() {
-        const {payingAmount, receivedAmount} = get().checkout.voucher;
+        const { payingAmount, receivedAmount } = get().checkout.voucher;
         let changeReturn = 0;
         const receivedAmountValue = parseFloat(receivedAmount)
         if (receivedAmountValue > payingAmount) {
-            changeReturn = receivedAmountValue - payingAmount;            
+            changeReturn = receivedAmountValue - payingAmount;
         }
 
         set(
-            produce((state: State)=>{
+            produce((state: State) => {
                 state.checkout.voucher.changeReturn = RoundNumber(changeReturn, 2)
             })
         )
@@ -104,11 +103,11 @@ export const useCheckoutStore = create<State & StateCalculator & Actions & Actio
             })
         )
     },
-    handleChangeSetReceivedAmount(value){
-        const {voucher} = get().checkout;
-        const {setReceivedAmount, setChangeReturn} = get();
-        const {isOptionReceivedAmount, setIsOptionReceivedAmount} = get();
-        const {isReplaceReceivedAmount, setIsReplaceReceivedAmount} = get();
+    handleChangeSetReceivedAmount(value) {
+        const { voucher } = get().checkout;
+        const { setReceivedAmount, setChangeReturn } = get();
+        const { isOptionReceivedAmount, setIsOptionReceivedAmount } = get();
+        const { isReplaceReceivedAmount, setIsReplaceReceivedAmount } = get();
 
         const numeroStr = voucher.receivedAmount.toString();
         const valueCalculator = value.toString();
@@ -138,29 +137,29 @@ export const useCheckoutStore = create<State & StateCalculator & Actions & Actio
         setReceivedAmount(numeroStr + valueCalculator)
         setChangeReturn()
     },
-    setIsOptionReceivedAmount(value){
+    setIsOptionReceivedAmount(value) {
         set({
             isOptionReceivedAmount: value
         })
     },
-    setIsReplaceReceivedAmount(value){
+    setIsReplaceReceivedAmount(value) {
         set({
             isReplaceReceivedAmount: value
         })
     },
-    handleClickOptionReceivedAmount(value){
-        const {setReceivedAmount, setIsOptionReceivedAmount, setChangeReturn} = get();
+    handleClickOptionReceivedAmount(value) {
+        const { setReceivedAmount, setIsOptionReceivedAmount, setChangeReturn } = get();
         setReceivedAmount(value.toString());
         setIsOptionReceivedAmount(true)
         setChangeReturn()
     },
-    checkoutClearButton(){
-        const {voucher} = get().checkout;
-        const {setReceivedAmount, setChangeReturn} = get(); 
+    checkoutClearButton() {
+        const { voucher } = get().checkout;
+        const { setReceivedAmount, setChangeReturn } = get();
 
         const numeroStr = voucher.receivedAmount.toString();
         let receivedAmount = "0";
-        
+
         if (voucher.receivedAmount === "0") {
             setReceivedAmount(receivedAmount);
             setChangeReturn()
@@ -173,9 +172,9 @@ export const useCheckoutStore = create<State & StateCalculator & Actions & Actio
         setReceivedAmount(receivedAmount)
         setChangeReturn()
     },
-    onChangeReceivedAmount(event){
-        const {voucher} = get().checkout;
-        const {setReceivedAmount, setChangeReturn} = get(); 
+    onChangeReceivedAmount(event) {
+        const { voucher } = get().checkout;
+        const { setReceivedAmount, setChangeReturn } = get();
         const inputValue = event.target.value.replace(/[^0-9.]/g, '');
         const numeroStr = voucher.receivedAmount.toString();
         if (!inputValue) {
@@ -188,10 +187,10 @@ export const useCheckoutStore = create<State & StateCalculator & Actions & Actio
         setReceivedAmount(inputValue)
         setChangeReturn()
     },
-    getValuePayment(){
+    getValuePayment() {
         let valuePayment = 0;
         const NUM_MAX_ROUND = 5;
-        const {voucher} = get().checkout;
+        const { voucher } = get().checkout;
         if (Number(voucher.receivedAmount) >= voucher.totalBalance) {
             valuePayment = RoundNumber(voucher.totalBalance, NUM_MAX_ROUND);
         } else {
@@ -199,11 +198,11 @@ export const useCheckoutStore = create<State & StateCalculator & Actions & Actio
         }
         return valuePayment;
     },
-    async save() {
-        const {getValuePayment} = get();
-        const {voucher, dataForm, payments} = get().checkout;
-        const {paymentTypes, paymentSubTypes, voucherQuotas} = dataForm; 
-        const showLoader =  useLoaderStore.getState().showLoader;
+    async save(closeDialog) {
+        const { getValuePayment, queryParams } = get();
+        const { voucher, dataForm, payments } = get().checkout;
+        const { paymentTypes, paymentSubTypes, voucherQuotas } = dataForm;
+        const showLoader = useLoaderStore.getState().showLoader;
         try {
             if (!(Number(voucher.payingAmount) > 0)) {
                 SnackbarUtility.warning('El valor total del comprobante es 0; por lo tanto, no es posible realizar el cobro.')
@@ -250,16 +249,16 @@ export const useCheckoutStore = create<State & StateCalculator & Actions & Actio
             //      aprobacion: $scope.cobro.aprobacion,
             //      referencia: $scope.cobro.referencia
             //  }]        
-            const dataPaymentSubType = paymentSubTypes.find(item=>item.paymentSubtypeId===payments.paymentSubtypeId)
+            const dataPaymentSubType = paymentSubTypes.find(item => item.paymentSubtypeId === payments.paymentSubtypeId)
 
             const cobros = [{
                 idEntidadFinanciera: payments.paymentTypeId,
                 idSubEntidadFinanciera: payments.paymentSubtypeId,
-                idBanco: 0,
+                idBanco: payments.idBanco,
                 idCuentaBancaria: 0,
                 fechaEmision: new Date(),
                 valor: voucher.receivedAmount,
-                posfechado: false,
+                posfechado: payments.posfechado,
                 secuencial: 0,
                 infoCobro: null,
                 abono: getValuePayment(),
@@ -284,26 +283,26 @@ export const useCheckoutStore = create<State & StateCalculator & Actions & Actio
             }
 
             showLoader(true)
-            // await Http({
-            //     method: 'post',
-            //     url: `${PATHS.ACCOUNTING}ComprobanteIngreso/Insert`,
-            //     data: {
-            //         data
-            //     }
-            // }).then(resultAxios => {               
-            //     const response: ApiResponse = resultAxios.data;
-            //     if(response.code==="1"){
-            //         SnackbarUtility.success(response.message);
-                    
-            //         if(queryParams.printerAutomatic){
-            //             SharedService.getPrinter(queryParams.orderId)  
-            //         }
-            //         resetForm();
-            //         payment.closeDialogCustom();                       
-            //     }else{
-            //         SnackbarUtility.warning(response.message)
-            //     } 
-            // }).finally(()=> showLoader(false)) 
+            await Http({
+                method: 'post',
+                url: `${PATHS.ACCOUNTING}ComprobanteIngreso/Insert`,
+                data: {
+                    data
+                }
+            }).then(resultAxios => {               
+                const response: ApiResponse = resultAxios.data;
+                if(response.code==="1"){
+                    SnackbarUtility.success(response.message);
+
+                    if(queryParams.printerAutomatic){
+                        SharedService.getPrinter(queryParams.orderId)  
+                    }
+                     
+                    closeDialog();                    
+                }else{
+                    SnackbarUtility.warning(response.message)
+                } 
+            }).finally(()=> showLoader(false)) 
 
 
         } catch (error) {

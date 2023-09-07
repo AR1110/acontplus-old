@@ -2,7 +2,6 @@ export { default as BackdropLoader } from './BackdropLoader';
 export { default as Calculator } from './Calculator/Calculator';
 export { default as CalculatorButton } from './Calculator/CalculatorButton';
 export { default as Checkout } from './Checkout/Checkout';
-export { default as CheckoutAside } from './Checkout/CheckoutAside/CheckoutAside';
 export { default as CheckoutCalculator } from './Checkout/CheckoutCalculator/CheckoutCalculator';
 export * from './DialogCustom';
 export { default as FullScreenDialog } from './FullScreenDialog';
