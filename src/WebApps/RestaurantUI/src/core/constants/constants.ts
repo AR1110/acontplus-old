@@ -24,3 +24,12 @@ export const enum DOC_TYPE {
     NE = 'NE' ,
     OR ='OR'   
 }
+
+export const enum PaymentTypeCode {
+    TAR = "TAR",
+    EFE = "EFE",
+    TRA ="TRA",
+    CHE ="CHE",
+    DOC ="DOC" 
+}
+ 

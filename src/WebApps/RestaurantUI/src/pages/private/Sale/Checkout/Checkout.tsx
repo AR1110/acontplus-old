@@ -113,36 +113,36 @@ export default function Checkout() {
             idCuentaPorCobrar: queryParams.idCuentaPorCobrar,
             credito: queryParams.tiempoCredito
         }).then(response => {
-            if (response.code === "1") {
-                const mainData = JSON.parse(response.payload);
-                const voucherQuotaRepository = mainData[5];
-                const voucherRepository = mainData[6][0]; 
-                paymentTypes.current = paymentTypeAdapter(mainData[0] ?? []);
-                paymentSubTypes.current = paymentSubTypeAdapter(mainData[1] ?? []);
-                setVoucher({
-                    customerCompanyId: voucherRepository.idCliente,
-                    customerIdentification: voucherRepository.numeroIdentificacion,
-                    customerName: voucherRepository.nombreFiscal,
-                    payingAmount: voucherRepository.importeTotal,
-                    receivedAmount: voucherRepository.importeTotal,
-                    changeReturn: 0,
-                    totalBalance: voucherRepository.saldo,
-                    codEstab: voucherRepository.codEstab,
-                    creationDate: voucherRepository.fechaEmision,
-                    nroDoc: voucherRepository.serieComprobante
-                })
-                voucherQuotas.current = voucherQuotaRepository.map((voucherItem: any) => ({
-                    ...voucherItem,
-                    cuotas: JSON.parse(voucherItem.cuotas),
-                }))
-            } else {
-                SnackbarUtility.warning(response.message)
-            }
+            // if (response.code === "1") {
+            //     const mainData = JSON.parse(response.payload);
+            //     const voucherQuotaRepository = mainData[5];
+            //     const voucherRepository = mainData[6][0]; 
+            //     paymentTypes.current = paymentTypeAdapter(mainData[0] ?? []);
+            //     paymentSubTypes.current = paymentSubTypeAdapter(mainData[1] ?? []);
+            //     setVoucher({
+            //         customerCompanyId: voucherRepository.idCliente,
+            //         customerIdentification: voucherRepository.numeroIdentificacion,
+            //         customerName: voucherRepository.nombreFiscal,
+            //         payingAmount: voucherRepository.importeTotal,
+            //         receivedAmount: voucherRepository.importeTotal,
+            //         changeReturn: 0,
+            //         totalBalance: voucherRepository.saldo,
+            //         codEstab: voucherRepository.codEstab,
+            //         creationDate: voucherRepository.fechaEmision,
+            //         nroDoc: voucherRepository.serieComprobante
+            //     })
+            //     voucherQuotas.current = voucherQuotaRepository.map((voucherItem: any) => ({
+            //         ...voucherItem,
+            //         cuotas: JSON.parse(voucherItem.cuotas),
+            //     }))
+            // } else {
+            //     SnackbarUtility.warning(response.message)
+            // }
         }).finally(() => showLoader(false))
     }
 
     useEffect(() => {
-        initiload();
+        // initiload();
     }, [])
 
     const getValuePayment = () => {

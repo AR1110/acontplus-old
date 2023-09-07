@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { CalculateIcon, CheckoutCalculator, CloseIcon, FullScreenDialog, KeyboardArrowDownIcon } from '..'
-import { ErrorBoundary, SnackbarUtility } from '@/core/utilities'
+import { ErrorBoundary } from '@/core/utilities'
 import { Box, Button, Grid, IconButton, Modal, Stack, Typography } from '@mui/material'
 import CheckoutInfo from './CheckoutInfo/CheckoutInfo'
 import { useMobileDetect } from '@/hooks'
@@ -10,41 +10,22 @@ import { AccountReceivableService } from '@/core/services'
 
 const Checkout = () => {
     const { isMobile } = useMobileDetect();
-    const {showLoader} = useLoaderStore();
+    const { showLoader } = useLoaderStore();
     const [openCheckoutInfoMobile, setOpenCheckoutInfoMobile] = useState(false);
     const [openCalculatorMobile, setOpenCalculatorMobile] = useState(false);
 
-    const queryParams  = useCheckoutStore(state => state.queryParams)
-    const setCheckoutDataForm  = useCheckoutStore(state => state.setCheckoutDataForm)
+    const queryParams = useCheckoutStore(state => state.queryParams)
+    const setCheckoutDataForm = useCheckoutStore(state => state.setCheckoutDataForm)
 
-    const initiload = async()=>{
+    const initiload = async () => {
         showLoader(true);
         await AccountReceivableService.get({
             tipo: 3,
             codEstab: queryParams.codEstab,
             idCuentaPorCobrar: queryParams.idCuentaPorCobrar,
             credito: queryParams.tiempoCredito
-        }).then(response => { 
-            setCheckoutDataForm(response)
-                // paymentTypes.current = paymentTypeAdapter(mainData[0] ?? []);
-                // paymentSubTypes.current = paymentSubTypeAdapter(mainData[1] ?? []);
-                // setVoucher({
-                //     customerCompanyId: voucherRepository.idCliente,
-                //     customerIdentification: voucherRepository.numeroIdentificacion,
-                //     customerName: voucherRepository.nombreFiscal,
-                //     payingAmount: voucherRepository.importeTotal,
-                //     receivedAmount: voucherRepository.importeTotal,
-                //     changeReturn: 0,
-                //     totalBalance: voucherRepository.saldo,
-                //     codEstab: voucherRepository.codEstab,
-                //     creationDate: voucherRepository.fechaEmision,
-                //     nroDoc: voucherRepository.serieComprobante
-                // })
-                // voucherQuotas.current = voucherQuotaRepository.map((voucherItem: any) => ({
-                //     ...voucherItem,
-                //     cuotas: JSON.parse(voucherItem.cuotas),
-                // }))
-            
+        }).then(response => {
+            setCheckoutDataForm(response);
         }).finally(() => showLoader(false))
     }
 
@@ -98,7 +79,7 @@ const Checkout = () => {
                         {
                             !(isMobile) && <CheckoutInfo />
                         }
-                        <PaymentMethod/>
+                        <PaymentMethod />
                     </Grid>
                 </Grid>
             </FullScreenDialog>
@@ -115,6 +96,8 @@ const Checkout = () => {
                 <CheckoutInfo />
             </FullScreenDialog>
 
+
+            {/* Mobile  calculadora */}
             <Modal
                 open={openCalculatorMobile}
                 onClose={() => setOpenCalculatorMobile(false)}
