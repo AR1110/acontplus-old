@@ -12,7 +12,7 @@ const CheckoutInfo = () => {
             <Box sx={{ p: 2 }}>
                 <Grid container alignItems="center">                    
                     <Grid item xs>
-                        <Typography gutterBottom variant="body2" component="div">
+                        <Typography gutterBottom variant="subtitle2" component="div">
                             Nro. Documento:
                         </Typography>
                     </Grid>
@@ -24,7 +24,7 @@ const CheckoutInfo = () => {
                 </Grid>
                 <Grid container alignItems="center">                    
                     <Grid item xs>
-                        <Typography gutterBottom variant="body2" component="div">
+                        <Typography gutterBottom variant="subtitle2" component="div">
                             Cliente:
                         </Typography>
                     </Grid>
@@ -36,7 +36,7 @@ const CheckoutInfo = () => {
                 </Grid>
                 <Grid container alignItems="center">                    
                     <Grid item xs>
-                        <Typography gutterBottom variant="body2" component="div">
+                        <Typography gutterBottom variant="subtitle2" component="div">
                             Numero Identificación:
                         </Typography>
                     </Grid>

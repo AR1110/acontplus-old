@@ -35,6 +35,34 @@ export interface Payment {
     payingAmount: number
     sequential: number
     isControlBox: number
+    paymentTypeCode?: string
+    paymentTypeDescription?: string
+    nro?:string
+    referencia?:string
+    aprobacion?:string
+    lote?:string
+    cityId?: number
+    idBanco?: number
+    posfechado?: boolean
+}
+
+export const paymentInitialState: Payment = {
+    paymentTypeId: 0,
+    paymentSubtypeId: 0,
+    creationDate: "",
+    receivedAmount: 0,
+    payingAmount: 0,
+    sequential: 0,
+    isControlBox: 0,
+    paymentTypeCode: "",
+    paymentTypeDescription: "",   
+    nro:"",
+    referencia:"",
+    aprobacion:"",
+    lote:"",
+    cityId:0,
+    idBanco:0,
+    posfechado:false
 }
 
 export interface CheckoutDataForm {
@@ -43,7 +71,7 @@ export interface CheckoutDataForm {
     voucherQuotas: Array<VoucherQuota>
     banks:Array<Bank>
     cities: Array<City> 
-    comprobante: object
+    comprobante: any
 }
 
 export const checkoutDataFormInitialState: CheckoutDataForm = {
@@ -92,13 +120,5 @@ export const checkoutInitialState: Checkout = {
         creationDate: "",
         nroDoc: ""
     },
-    payments: {
-        paymentTypeId: 0,
-        paymentSubtypeId: 0,
-        creationDate: "",
-        receivedAmount: 0,
-        payingAmount: 0,
-        sequential: 0,
-        isControlBox: 0
-    }
+    payments: paymentInitialState
 }

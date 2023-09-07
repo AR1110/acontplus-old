@@ -5,16 +5,16 @@ import { useAsync, useFetchAndLoad, useMobileDetect } from "@/hooks";
 import { ItemService, SaleService, getEstabs } from "@/core/services";
 import CustomBottomNavigation from "./components/CustomBottomNavigation";
 import { useSaleStore, useAuthStore } from "@/stores";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { itemReadAdapter } from "@/core/adapters";
 import FullScreenDialog from "@/core/components/FullScreenDialog";
-import { ArrowBackIcon, Checkout, CloseIcon } from "@/core/components";
+import { ArrowBackIcon, Checkout } from "@/core/components";
 import ItemList from "./Item/ItemList";
-import Category from "./Category/Category"; 
+import Category from "./Category/Category";
 import Cart from "./Cart/Cart";
 import CartMobile from "./Mobile/CartMobile";
-import Customer from "./Customer/Customer";
-import InputSearchItem from "./InputSearchItem/InputSearchItem";
+import InputSearchItem from "./InputSearchItem/InputSearchItem"; 
+import TableDialog from "./Table/TableDialog";
 
 
 
@@ -40,6 +40,9 @@ export default function Sale() {
     //Even Navigation 
     const navigation = useSaleStore(state => state.navigation);
 
+    //Modal Tables 
+    const [openTableDialog, setOpenTableDialog] = useState(false);
+    
     useEffect(() => {
         const establecimientos = getEstabs();
         const dataEstab = establecimientos[0]!;
@@ -108,7 +111,9 @@ export default function Sale() {
             </Grid>
 
             {/* start dialog payment */}
-            <Checkout/>
+            {
+                payment.isOpen && <Checkout open={payment.isOpen} closeDialog={payment.closeDialogCustom} />
+            }
             {/* <FullScreenDialog
                 color="inherit"
                 icon={<CloseIcon />}
@@ -131,7 +136,18 @@ export default function Sale() {
                 actions={
                     (
                         <>
-                            <Customer />
+                            <Button variant="outlined" onClick={() => {
+                                setOpenTableDialog(true)
+                            }}>
+                                {
+                                    order.tableId > 0 ? (
+                                        (
+                                            order.table?.description && order.table?.description
+                                        ) ? `${order.table?.description} - ${order.table?.numberTable}` : 'Seleccionar Mesa'
+                                    ) : 'Seleccionar Mesa'
+                                }
+                            </Button>
+                            <TableDialog open={openTableDialog} onClose={setOpenTableDialog} />
                         </>
                     )
                 }

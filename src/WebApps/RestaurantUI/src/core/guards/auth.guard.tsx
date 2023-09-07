@@ -1,7 +1,7 @@
 // import { AppStore } from "@/redux/store";
 // import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
-import { PrivateRoutes, PublicRoutes } from "../models";
+import { PublicRoutes } from "../models";
 import { getToken } from "../services";
 
 interface Props {

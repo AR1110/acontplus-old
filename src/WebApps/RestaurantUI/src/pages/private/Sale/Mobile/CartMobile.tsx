@@ -1,11 +1,10 @@
 
 import CartMobileAction from './CartMobileActions'
-import { Box, Button, List, ListItem, TextField, Typography, useTheme } from '@mui/material';
+import { Box, List, ListItem, TextField, Typography, useTheme } from '@mui/material';
 import { AddShoppingCartIcon } from '@/core/components';
-import { useSaleStore } from '@/stores';
-import { useState } from 'react';
-import TableDialog from '../Table/TableDialog';
+import { useSaleStore } from '@/stores'; 
 import CartItem from '../CartItem/CartItem';
+import CustomerSearch from '../Customer/CustomerSearch';
 
 const CartMobile = () => {
     const theme = useTheme();
@@ -13,8 +12,7 @@ const CartMobile = () => {
     const order = useSaleStore(state => state.order);
     const setOrder = useSaleStore(state => state.setSummary)
 
-    //Modal Tables 
-    const [openTableDialog, setOpenTableDialog] = useState(false);
+    
 
     if (orderItems.length === 0) {
         return (<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 10 }}>
@@ -32,19 +30,8 @@ const CartMobile = () => {
     return (
         <>
             <div style={{ minHeight: '100vh', position: 'relative', overflowY: 'auto', maxHeight: '100vh' }}>
-
-                <Button variant="outlined" onClick={() => {
-                    setOpenTableDialog(true)
-                }}>
-                    {
-                        order.tableId > 0 ? (
-                            (
-                                order.table?.description && order.table?.description
-                            ) ? `${order.table?.description} - ${order.table?.numberTable}` : 'Seleccionar Mesa'
-                        ) : 'Seleccionar Mesa'
-                    }
-                </Button>
-                <TableDialog open={openTableDialog} onClose={setOpenTableDialog} />
+                <CustomerSearch/>
+                
 
                 <List>
                     {

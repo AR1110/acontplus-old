@@ -21,18 +21,8 @@ function DialogCustom({children, maxWidth, ...other}: DialogProps) {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down("md")); 
 
-    const [open, setOpen] = useState(false); 
- 
-
-    const handleClickOpen = () => {
-        console.log('open Modal')
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
-
+    const [open, setOpen] = useState(false);  
+    console.log(setOpen)
     const handleExit = () => {
         console.log('close Modal');
         // dialogCloseSubject$.setSubject = false;

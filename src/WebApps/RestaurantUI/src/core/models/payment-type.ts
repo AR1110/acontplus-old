@@ -1,9 +1,17 @@
+import { PaymentTypeCode } from "../constants"
+
+type PaymentCode =
+    PaymentTypeCode.EFE |
+    PaymentTypeCode.TRA |
+    PaymentTypeCode.TAR |
+    PaymentTypeCode.CHE |
+    PaymentTypeCode.DOC
 
 //Start Api
 export interface RawPaymentType {
     idEntidadFinanciera: number,
-    descripcion: string,    
-    codigo: string
+    descripcion: string,
+    codigo: PaymentCode
 }
 
 
@@ -11,7 +19,7 @@ export interface RawPaymentSubType {
     idEntidadFinanciera: number,
     idSubEntidadFinanciera: number,
     descripcion: string,
-    codigo: string 
+    codigo: string
     controlCaja: boolean
 }
 
@@ -21,14 +29,14 @@ export interface RawPaymentSubType {
 export interface PaymentType {
     paymentTypeId: number
     description: string
-    code: string
+    code: PaymentCode
 }
 
 export interface PaymentSubType {
     paymentTypeId: number,
     paymentSubtypeId: number,
     description: string,
-    code: string 
+    code: string
     isControlBox: boolean
 }
 

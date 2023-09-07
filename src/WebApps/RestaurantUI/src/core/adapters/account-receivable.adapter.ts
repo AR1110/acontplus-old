@@ -9,6 +9,7 @@ function paymentTypeAdapter(paymentTypes: RawPaymentType[]): Array<PaymentType> 
 }
 
 function paymentSubTypeAdapter(paymentSubTypes: RawPaymentSubType[]): Array<PaymentSubType> { 
+    console.log(paymentSubTypes)
     return paymentSubTypes.map(paymentSubType=>({
         paymentSubtypeId: paymentSubType.idSubEntidadFinanciera,
         paymentTypeId: paymentSubType.idEntidadFinanciera,
