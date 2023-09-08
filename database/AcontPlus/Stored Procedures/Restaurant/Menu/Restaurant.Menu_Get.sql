@@ -23,7 +23,10 @@ CREATE OR ALTER PROCEDURE Restaurant.Menu_Get @userRoleId INT,
 AS
 BEGIN
 	SET NOCOUNT ON;
-	SELECT *
-	FROM Restaurant.Menu
+	SELECT m.*
+        ,a.s3ObjectUrl
+	FROM Restaurant.Menu m WITH (NOLOCK)
+        INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
+    
 END
 GO

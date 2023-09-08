@@ -16,13 +16,6 @@
     };
 </script>
 
-<div class="row">
-    <div class="col-6">
-        <button class="btn btn-outline-info" on:click={openNew}
-            ><i class="ti-plus" /> Agregar</button
-        >
-    </div>
-</div>
 <Add openNew={isnew} modalClosed={() => closeModal()} />
 <br />
 <List />

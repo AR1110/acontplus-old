@@ -36,7 +36,7 @@
                         <h5 class="card-title">{item.title}</h5>
                     </div>
                     <div class="card-body">
-                       
+                        <img class="card-img-top img-responsive" src={item.s3ObjectUrl} alt="Card image cap">
                     </div>
                     <div class="card-footer bg-transparent">
                         <button type="button" class="btn btn-outline-primary"

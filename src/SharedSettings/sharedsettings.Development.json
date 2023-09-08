@@ -5,8 +5,8 @@
     "Exp": 30
   },
   "ConnectionStrings": {
-    //AWS Dev
-    //"DefaultConnection": "Lv5U39vA40I/cLivr1EniMlIW8l3nrk4VSLC0L0dabbd1/B3h3weE73KeTkh8kgAeIHjjRGGZtPXe7zFJhy1EHemlLAEOgDdbFEf+19pbNKL/bNjZtLmJ0U/FTeYCLgMadUbY5NJdeRlccl3wO8MqMSM+0eR8GTw+fUbuWpm/sg2MhCnjAuEiCpwO7cTuAzfkJw+i1fZ8gpjw8ilAf9JiG0WOUgU9VjCuLA0cdwgtWjPyRlw7MpLY3kAFmlDbNLblLWdkD74c5yZqXqzQ9lo0Y7BF1obKRJjNtrWim8TqNNBh7MLijIPVbFXG8b4YVyM"
+    //Local
+    //"DefaultConnection": "/8Xc98JLU4+4fA0YsGHXmaGZxA4S6TJFQFZdu8R52HWulPtagiCwl6QqPz1GTQEJOQ7Jwqe2aQG46hAK5lA4xWsn0XEMBPoM4x5qOGk8VbPraOQMwYbKkgQvNGXnLmBX2NX61l6WvU7GsgOPMBH9VjyIKxJ1Mi+xEHNINc1vMPAXCAro6rjW4Q4EOFurHIrn7kfZ8WXu9k2PQYzDMY6uf02EF+cxtnHBGxwW4Uq2F1s="
 
     //AWS Staging
     "DefaultConnection": "l6AxmcaYHUwoE0lFQRUCfyoqXGTrD6Zh/FNQ0gId07UzdfNtYGsj1KoBCsAuJNQKCOu5fTHRU2LnMQ4NjlJBSs4P3Djc5o+NFH58cUkyLZgeYQuf/hS9SffuVSGdjko3ndE0rgbg1XamJH1RU71dGy4fh2iD1V47Cf3FjpzwudqDPSDCTx8fdo0pZqBKq1ftnyMERVTYVPLMpsWPoecny+Bq7X4rfe5q8ePcP0Sf4cxvBZBexgsanlaKoHK0/iol"
