@@ -115,7 +115,7 @@ BEGIN
                 
 	        SET @sql = @sql + ' ORDER BY ri.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
 		           
-	        SET @tableNames = 'items,medidas'
+	        SET @tableNames = 'items'
 	        EXEC sp_executesql @sql 
                                 , @params
                                 , @idEntidad
@@ -123,9 +123,6 @@ BEGIN
                                 , @pageIndex
                                 , @pageSize                               
                                 , @textSearch
-
-            --- Obtengo las medidas ---
-            SELECT * FROM Medida WHERE idEntidad = @idEntidad
         END
 
     IF @tipo = 2
