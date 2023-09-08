@@ -81,7 +81,8 @@ export default function ItemCard({ item }: ItemCardProps) {
 
             const taxPercentId = taxRateData?.taxRateId ?? 0 ;
 
-            console.log(taxRateData)
+           
+            
             if (!product.takesInventory) {
                 addItem();
                 return
@@ -113,7 +114,8 @@ export default function ItemCard({ item }: ItemCardProps) {
                 }
             })
             
-            console.log(product)
+            
+            
             function addItem() {
                 const uuid = uuidv4();
                 const price =  measureData.rates[0]?.salePrice ?? 0 // Precio Venta

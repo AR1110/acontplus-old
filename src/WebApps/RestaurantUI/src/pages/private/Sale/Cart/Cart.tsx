@@ -136,8 +136,7 @@ const Cart = () => {
                     SnackbarUtility.warning(response.message)
                 }
                 if (response.code === "1") {
-                    SnackbarUtility.success(response.message);
-                    console.log(response)
+                    SnackbarUtility.success(response.message); 
                     //Order 
                     if (codDoc === DOC_TYPE.OR) {
                         resetForm();
@@ -201,8 +200,8 @@ const Cart = () => {
                         {
                             order.tableId > 0 ? (
                                 (
-                                    order.table?.description && order.table?.description
-                                ) ? `${order.table?.description} - ${order.table?.numberTable}` : 'Seleccionar Mesa'
+                                    order.table?.tableName && order.table?.tableName
+                                ) ? `${order.table?.tableName} - ${order.table?.numberTable}` : 'Seleccionar Mesa'
                             ) : 'Mesa'
                         }
                     </Button>

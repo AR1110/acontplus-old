@@ -59,13 +59,14 @@ type Actions = {
 export const useSaleStore = create<State & Actions>((set, get) => ({
     itemSearch: itemSearchInitialState,
     setDataEdit(obj: any) {
+
         const { order, orderItems } = obj;
         const orderAdapt = {
             orderId: order.id,
             establecimientoId: order.establecimientoId,
             puntoEmisionId: order.puntoEmisionId,
             customerCompanyId: order.customerCompanyId,
-            customerName: "",
+            customerName: order.customerName,
             bodegaId: 0,
             tableId: order.tableId,
             subTotalSinImpuestos: 0,
@@ -79,20 +80,28 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
             obs: order.obs,
             codDoc: order.codDoc,
             quickSale: false,
-            createdAt: new Date(order.createdAt)
+            createdAt: new Date(order.createdAt),
+            table: {
+                tableName: order.tableName,
+                numberTable: order.numberTable
+            }
         }
         set(
             produce((state: State) => {
                 state.order = orderAdapt;
                 state.items = orderItems.map((orderItem: any) => {
-                    console.log(orderItem)
-                    return orderItem;
+
+                    return {
+                        ...orderItem,
+                        code: orderItem.codigo,
+                        description: orderItem.descripcion
+                    }
 
                 })
 
             })
         )
-        console.log(obj)
+
     },
     setChangeValueOrderItem(itemIndex, prop, newValue) {
         const { items } = get();
@@ -170,8 +179,19 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
     },
     setDataForm(dataForm) {
         set(
-            produce((state: State) => {
+            produce((state: State) => { 
                 state.dataForm = dataForm;
+                state.dataForm.categories = [{
+                    idSubFamilia: 0,
+                    description: 'Todos',
+                    s3ObjectUrl: ''
+                }, ...dataForm.categories];
+                //customer default
+                if(!(state.order.orderId > 0) && dataForm.customer.customerCompanyId>0){
+                console.log(dataForm.customer)
+                    state.order.customerCompanyId = dataForm.customer.customerCompanyId;
+                    state.order.customerName = dataForm.customer.fiscalName;
+                } 
             })
         )
     },
@@ -235,7 +255,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
     })),
 
     setAddQuantity(index: number, value: number) {
-        console.log(index, value)
+
         const { items, setTotalItems, caculateTotals } = get();
         const newArray = items.map((orderItem, orderItemIndex) => {
             const total = value * orderItem.price;
@@ -363,10 +383,10 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         set(
             produce((state: State) => {
                 state.order.tableId = 0,
-                state.order.obs = "",
-                state.order.customerName = "",
-                state.order.customerCompanyId = 0,
-                state.order.orderId = 0;
+                    state.order.obs = "",
+                    state.order.customerName = "",
+                    state.order.customerCompanyId = 0,
+                    state.order.orderId = 0;
                 state.totalItems = 0;
                 state.items = [];
                 state.order.table = {}
@@ -382,7 +402,6 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         const { items, dataForm } = get();
         const decimal = dataForm.decimal;
 
-        console.log(dataForm)
         // Inicializar variables para los totales
         let subTotalSinImpuestos = 0; // Subtotal sin impuestos
         let totalNetoIva = 0; // Total neto con IVA
