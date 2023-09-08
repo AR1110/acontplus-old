@@ -102,10 +102,18 @@ BEGIN
     IF (@tipo = 2)
         BEGIN
             SET @tableNames = 'order,orderItems'
-            SELECT o.* FROM Restaurant.[Order] o 
-            WITH(NOLOCK) WHERE o.Id = @id 
             
-            SELECT i.*, va.descripcion, va.codigo
+            SELECT 
+                customerName = CASE WHEN o.CustomerCompanyId = 0 THEN 'CONSUMIDOR FINAL' ELSE c.nombreFiscal END
+                ,tableName = t.[Description]
+                ,numberTable = numberTable
+                ,o.*
+             FROM Restaurant.[Order] o WITH(NOLOCK)
+             LEFT JOIN Cliente c WITH(NOLOCK) ON c.idCliente = o.CustomerCompanyId
+             LEFT JOIN Restaurant.[Table] t WITH(NOLOCK) ON t.iD = o.TableId
+             WHERE o.Id = @id 
+            
+            SELECT i.*, va.descripcion, va.codigo, va.s3ObjectUrl
             FROM Restaurant.[OrderItem] i WITH(NOLOCK)
             INNER JOIN Restaurant.Item it ON it.Id = i.ItemId
             INNER JOIN Inventario.v_Articulo va ON va.idArticulo = it.ProductId

@@ -73,7 +73,7 @@ const TableDialog = (props: SimpleDialogProps) => {
             ...order,
             tableId: table.tableId,
             table: {
-                description: table.description,
+                tableName: table.description,
                 numberTable: table.numberTable
             }
         })

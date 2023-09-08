@@ -1,4 +1,4 @@
-import { CategoryReadDto, DecimalSale, Floor, Room, TableReadDto, Tax, TaxRate, WarehouseAsign } from ".";
+import { CategoryReadDto, CustomerReadDto, DecimalSale, Floor, Room, TableReadDto, Tax, TaxRate, WarehouseAsign } from ".";
 import { DOC_TYPE } from "../constants";
 import { EmissionPointAsign } from "./emission-point.model";
 
@@ -121,6 +121,7 @@ export interface DataFormSale {
     emissionPoints: Array<EmissionPointAsign> 
     rooms: Array<Room>
     floors: Array<Floor>
+    customer: CustomerReadDto
 } 
 
 
@@ -143,7 +144,16 @@ export const dataFormInitialState: DataFormSale = {
     warehouses: [],
     emissionPoints: [], 
     rooms: [],
-    floors: []
+    floors: [],
+    customer: {
+        customerCompanyId: 0,
+        fiscalName: "",
+        tradeName: "",
+        identificationNumber: "",
+        correo: "",
+        telefono: "",
+        direccion: ""
+    }
 }
 
 export const orderInitialState: Order = {

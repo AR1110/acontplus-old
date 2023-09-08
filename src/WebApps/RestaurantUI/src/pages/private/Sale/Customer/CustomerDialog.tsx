@@ -79,7 +79,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                 if (dataIdentification?.codigoSri === SRI_IDENTIFITION_CODE.LICENSE) {
                     if (numeroIdentificacion.length !== 10) return false;
                 }
-                console.log(dataIdentification)
+                
 
                 return true; // No se aplica validación si idTipoIdentificacion es 10
             }),
@@ -108,7 +108,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
     }
 
     const successResponse = async (response: any) => {
-        console.log(response)
+        
         if (response.code === "0") {
             SnackbarUtility.warning(response.message)
         }
@@ -190,8 +190,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
 
 
         if (id > 0) {
-            CustomerService.getId(id).then(response => {
-                console.log(response)
+            CustomerService.getId(id).then(response => { 
                 formik.setValues(state => {
                     return {
                         ...state,
@@ -278,7 +277,8 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
             //Buscar SRI 
             showLoader(true);
             SharedService.checkClientSRIByCedula(numeroIdentificacion).then(response => {
-                console.log(response)
+               
+                
                 const { direccion, email, error, nombreCompleto, telefono } = response;
                 if (response.nombreCompleto) {
                     SnackbarUtility.warning(error!);

@@ -23,7 +23,7 @@ type Actions = {
     handleChangeSetReceivedAmount(value: number | string): void
     onChangeReceivedAmount(event: React.ChangeEvent<HTMLInputElement>): void
     getValuePayment(): number
-    isValidData(): boolean
+    isValidData(): boolean | undefined
     save(closeDialog: () => void): void
 }
 
@@ -200,31 +200,99 @@ export const useCheckoutStore = create<State & StateCalculator & Actions & Actio
         return valuePayment;
     },
     isValidData() {
-        console.log('test')
+        const { payments } = get().checkout;
+        if (!(payments.paymentSubtypeId > 0)) {
+            SnackbarUtility.warning('Seleccione la SubEntidad Financiera')
+        }
+
+        // if(!cobro.fechaEmision){
+        //     this.tS.toastr('warning', 'Ingrese la fecha de emisión')
+        //     return
+        // }
+        // if(!this.isDateValid(cobro.fechaEmision)){
+        //     this.tS.toastr('warning', 'Ingrese una fecha válida')
+        //     return
+        // }
+
+        if (!(payments.receivedAmount > 0)) {
+            SnackbarUtility.warning('Ingrese el valor de abono')
+            return
+        }
+
+        // =================== TARJETA DE CREDITO / DEBITO  =================================== //
+        if (payments.paymentTypeCode === PaymentTypeCode.TAR) {
+            if (!payments.nro) {
+                SnackbarUtility.warning('Ingrese el Número')
+                return
+            }
+
+            if (!(payments.cityId && payments.cityId > 0)) {
+                SnackbarUtility.warning('Ingrese la Ciudad')
+                return
+            }
+            if (!payments.referencia) {
+                SnackbarUtility.warning('Ingrese la referencia')
+                return
+            }
+            if (!payments.aprobacion) {
+                SnackbarUtility.warning('Ingrese la Aprobación')
+                return
+            }
+            if (!payments.lote) {
+                SnackbarUtility.warning('Ingrese el Lote')
+                return
+            }
+        }
+
+        // =================== TRANSFERENCIAS  =================================== //
+
+        if (payments.paymentTypeCode === PaymentTypeCode.TRA) {
+            if (!(payments.idBanco && payments.idBanco > 0)) {
+                SnackbarUtility.warning('Seleccione el Banco')
+                return
+            }
+            if (!payments.nro) {
+                SnackbarUtility.warning('Ingrese el Número')
+                return
+            }
+        }
+
+        // =================== CHEQUES  =================================== //
+
+        if (payments.paymentTypeCode === PaymentTypeCode.CHE) {
+            if (!(payments.idBanco && payments.idBanco > 0)) {
+                SnackbarUtility.warning('Seleccione el Banco')
+                return
+            }
+            if (!payments.nro) {
+                SnackbarUtility.warning('Ingrese el Número')
+                return
+            }
+
+            if (!(payments.cityId && payments.cityId > 0)) {
+                SnackbarUtility.warning('Ingrese la Ciudad')
+                return
+            }
+            if (!payments.referencia) {
+                SnackbarUtility.warning('Ingrese a quien va dirigido el Cheque')
+                return
+            }
+        }
+
         return true;
     },
     async save(closeDialog) {
-        const { getValuePayment, queryParams } = get();
+        const { getValuePayment, queryParams, isValidData } = get();
         const { voucher, dataForm, payments } = get().checkout;
-        const { paymentTypes, paymentSubTypes, voucherQuotas } = dataForm;
+        const { paymentSubTypes, voucherQuotas } = dataForm;
         const showLoader = useLoaderStore.getState().showLoader;
         try {
             if (!(Number(voucher.payingAmount) > 0)) {
                 SnackbarUtility.warning('El valor total del comprobante es 0; por lo tanto, no es posible realizar el cobro.')
                 return
             }
-            if (!(Number(voucher.receivedAmount) > 0)) {
-                SnackbarUtility.warning('Ingrese el valor de abono')
-                return
-            }
-            if (paymentTypes.length === 0) {
-                SnackbarUtility.warning('No tiene registrado Entidad Financiera')
-                return
-            }
-            if (paymentSubTypes.length === 0) {
-                SnackbarUtility.warning('No tiene registrado SubEntidad Financiera')
-                return
-            }
+            if(!isValidData())  throw "Form Invalid";
+
             const { isConfirmed } = await Swal.fire({
                 // title: 'Guardar Cobro?',
                 text: "Esta seguro de guardar el cobro?",
@@ -268,7 +336,7 @@ export const useCheckoutStore = create<State & StateCalculator & Actions & Actio
                 secuencial: 0,
                 infoCobro: payments.paymentTypeCode === PaymentTypeCode.EFE ? undefined : JSON.stringify(infoCobro),
                 abono: getValuePayment(),
-                controlCaja: dataPaymentSubType?.isControlBox
+                controlCaja: dataPaymentSubType?.isControlBox 
             }]
 
             checkoutUtility.setReceivedAmount(Number(voucher.receivedAmount))

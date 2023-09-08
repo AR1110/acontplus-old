@@ -59,7 +59,6 @@ export default function Sale() {
                 emissionPoint => emissionPoint.codEstab_Asig === dataEstab.codEstab_Asig
             ).find(emissionPoint => (emissionPoint.predeterminado));
 
-            setDataForm(response)
             setSummary({
                 ...order,
                 establecimientoId: dataEstab.idEstablecimiento,
@@ -67,6 +66,7 @@ export default function Sale() {
                 bodegaId: warehouseData?.idBodega ?? 0
             }
             )
+            setDataForm(response)
         })
     }, [])
 
@@ -78,7 +78,7 @@ export default function Sale() {
     const itemAdapter = (response: any) => {
         setCollectionItems([])
         const items = itemReadAdapter(response.items || []);
-        console.log(items)
+        
         setCollectionItems(items)
     }
 
@@ -142,8 +142,8 @@ export default function Sale() {
                                 {
                                     order.tableId > 0 ? (
                                         (
-                                            order.table?.description && order.table?.description
-                                        ) ? `${order.table?.description} - ${order.table?.numberTable}` : 'Seleccionar Mesa'
+                                            order.table?.tableName && order.table?.tableName
+                                        ) ? `${order.table?.tableName} - ${order.table?.numberTable}` : 'Seleccionar Mesa'
                                     ) : 'Seleccionar Mesa'
                                 }
                             </Button>

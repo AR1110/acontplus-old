@@ -34,7 +34,7 @@ export const useOrderStore = create<State & Actions>((set, get)=>({
         const showLoader =  useLoaderStore.getState().showLoader;
         showLoader(true)
         OrdenService.get(get().orderFilter).then(response => {  
-            console.log(response)          
+                    
             set(
                 produce((state:State)=>{
                     state.orders = orderReadAdapter(response.orders)
