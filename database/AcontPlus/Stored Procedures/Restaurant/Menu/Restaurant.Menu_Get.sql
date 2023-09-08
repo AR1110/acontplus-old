@@ -1,13 +1,5 @@
--- ================================================
--- Template generated from Template Explorer using:
--- Create Procedure (New Menu).SQL
---
--- Use the Specify Values for Template Parameters 
--- command (Ctrl-Shift-M) to fill in the parameter 
--- values below.
---
--- This block of comments will not be included in
--- the definition of the procedure.
+USE Acontplus
+GO
 -- ================================================
 SET ANSI_NULLS ON
 GO
@@ -18,11 +10,14 @@ GO
 -- Create date: 2023-08-10
 -- Description: sp for get restaurant menus
 -- =============================================
-CREATE OR ALTER PROCEDURE Restaurant.Menu_Get @userRoleId INT,
-											  @json NVARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Restaurant.Menu_Get @userRoleId INT
+    ,@json NVARCHAR(MAX)
+    ,@tableNames VARCHAR(500) OUT
 AS
 BEGIN
 	SET NOCOUNT ON;
+    
+    SET @tableNames = 'menus'
 	SELECT m.*
         ,a.s3ObjectUrl
 	FROM Restaurant.Menu m WITH (NOLOCK)
