@@ -44,15 +44,16 @@ type Actions = {
     getItemQty(productId: number): number
     setDataForm(dataForm: DataFormSale): void
     setCollectionItems(products: Array<ItemReadDto>): void
-    addItemToCart(item: ItemRead): void
-    removeItemFromCart(productId: number): void
-    setTotalItems(): void,
-    setAddQuantity(index: number, value: number): void
-    setRemoveQuantity(index: number, value: number): void
+    addItemToCart(item: ItemRead): void //Añadir Item 
+    removeItemFromCart(productId: number): void //Eliminar item 
+    setTotalItems(): void, //Calcular totales
+    setAddQuantity(index: number, value: number): void //Añadir cantidad
+    setRemoveQuantity(index: number, value: number): void //Restar cantidad
     setItemChangeQty(
         event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
         cartItem: ItemRead,
-    ): void
+    ): void //Modificar cantidad del item 
+    onChangePVP(id:number, index:number):void
     caculateTotals(): void
     resetForm(): void
 }
@@ -183,12 +184,13 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                 state.dataForm = dataForm;
                 state.dataForm.categories = [{
                     idSubFamilia: 0,
+                    code: "",
                     description: 'Todos',
                     s3ObjectUrl: ''
                 }, ...dataForm.categories];
                 //customer default
                 if(!(state.order.orderId > 0) && dataForm.customer.customerCompanyId>0){
-                console.log(dataForm.customer)
+                    
                     state.order.customerCompanyId = dataForm.customer.customerCompanyId;
                     state.order.customerName = dataForm.customer.fiscalName;
                 } 
@@ -395,6 +397,32 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         clearSound();
         get().caculateTotals();
 
+    },
+    onChangePVP(id, index){
+         
+        const { items, setTotalItems, caculateTotals } = get();
+        const newArray = items.map((orderItem, orderItemIndex) => {         
+            if (index === orderItemIndex) {
+                const dataPVP = orderItem.pvps.find(pvp=>pvp.feeId === id);
+                const total = orderItem.quantity * (dataPVP?.salePrice ?? 0);
+                return {
+                    ...orderItem, 
+                    feeId: dataPVP?.feeId ?? 0, 
+                    price: dataPVP?.salePrice ?? 0,
+                    priceWithVat: dataPVP?.priceWithVat ?? 0,                  
+                    total: RoundNumber(total, 2)
+                };
+            } else {
+                return orderItem;
+            }
+        })
+        set(
+            produce((state: State) => {
+                state.items = newArray;
+            })
+        )
+        setTotalItems();
+        caculateTotals();
     },
     caculateTotals() {
 

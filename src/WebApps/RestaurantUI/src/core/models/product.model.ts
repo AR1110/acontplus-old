@@ -1,3 +1,5 @@
+import { ProductPVPReadDto } from "."
+
  
 //Product
 export interface RawProductSaleData {
@@ -33,16 +35,7 @@ export interface ProductSaleReadDto {
     s3ObjectKey: string
     s3ObjectUrl: string 
 }
-
-//Tarifa Api
-export interface RawRateData {
-    idTarifa: number,
-    precioVenta: number,
-    precioConIva: number,
-    tarifa: string, 
-    precioPredeterminado: boolean
-}
-
+ 
 //Medida Api
 export interface RawMeasure {
     idMedida: number
@@ -50,18 +43,11 @@ export interface RawMeasure {
     tarifas: string
  }
 
- //Tarifa para el adapter
- export interface Rate {
-    rateId: number
-    salePrice: number
-    priceWithVat: number
-    description: string,
-    default: boolean
- }
+ 
 
  //Medida para el adapter
  export interface Measure{
     measureId: number
     description: string,
-    rates: Array<Rate>
+    pvps: Array<ProductPVPReadDto>
  }
