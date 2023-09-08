@@ -1,32 +1,33 @@
 <script lang="ts">
   import { hideLoader } from "./../../../../../core/utils/loading-spinner.js";
   import { itemService } from "$core/services/restaurant/item-service";
-  import type { Item } from "$core/interfaces/restaurant/item";
-  import type { Ingredient } from "$core/interfaces/restaurant/ingredient";
-  import Modal from "$core/components/Modal.svelte";
-  import toast from "$core/utils/toast";
-  import Grid from "$core/components/Grid.svelte";
   import { showLoader } from "$core/utils/loading-spinner";
   import { useItemStore } from "$routes/Restaurant/store/itemStore.js";
+  import GridForItem from "$core/components/GridForItem.svelte";
+  import Modal from "$core/components/Modal.svelte";
   import Search from "./search.svelte";
+  import toast from "$core/utils/toast";
+  import type { Ingredient } from "$core/interfaces/restaurant/ingredient";
+  import type { Item } from "$core/interfaces/restaurant/item";
+  import type { Recipe } from "$core/interfaces/restaurant/recipe.js";
 
   //export let modalClosed;
   let data;
-  let recipe = [];
+  let recipes = [] as Recipe[];
   let productionAreas = [];
   let validatorParam = [undefined, null, "", 0];
   let medidas = [];
+  $: tempRecipes = recipes;
 
   const unSuscribe = useItemStore.subscribe((values) => {
     (productionAreas = values.productionAreas),
       (data = values.dataUpdate),
-      (recipe = values.recipes),
+      (recipes = values.recipes),
       (medidas = values.medidas);
   });
 
   //https://jsfiddle.net/biruktes/hn8gascw/24/
   let customNativeSelect = function (cell, onRendered, success, cancel) {
-    console.log(cell.getElement().dataset);
     var cellRealValue = cell.getElement().dataset.extentId;
     cellRealValue =
       typeof cellRealValue === "undefined" ? "none" : cellRealValue;
@@ -109,26 +110,11 @@
       },
     },
     {
-      title: "Unit",
-      field: "unit",
-      widthGrow: 1,
-      editor: true,
-      with: 90,
-      validator: ["integer"],
-    },
-    {
       title: "Peso",
       field: "weight",
       editor: true,
       with: 50,
       validator: ["numeric"],
-    },
-    {
-      title: "Peso neto",
-      field: "netWeight",
-      with: 50,
-      editor: true,
-      validator: ["required", "numeric"],
     },
     {
       title: "Instrucciones",
@@ -142,17 +128,6 @@
       with: 90,
       editor: true,
       validator: ["required", "numeric"],
-    },
-    {
-      title: "Estado",
-      field: "enabled",
-      widthGrow: 1,
-      widthShrink: 0,
-      widthFixed: true,
-      hozAlign: "center",
-      formatter: "tickCross",
-      sorter: "boolean",
-      editor: true,
     },
     {
       title: "Acciones",
@@ -170,13 +145,13 @@
 
   const onUpdate = () => {
     if (!onValidation(data)) return;
-    if (!validateextentId(recipe)) return;
+    if (!validateExtentId(recipes)) return;
 
     showLoader();
     let newObject = {
       itemJson: data,
       productionAreaJson: { productionAreaId: data.productionAreaId },
-      recipeJson: recipe,
+      recipeJson: recipes,
     };
 
     itemService.put(data.id, { data: newObject }).then((response) => {
@@ -196,39 +171,42 @@
     });
   };
 
-  const onPushRecipe = (data: Ingredient, itemId: number) => {
-    let newObject = {
-      id: 0,
-      unit: 0,
-      weight: 0,
-      netWeight: 0,
-      createdAt: "",
-      updatedAt: "",
-      enabled: true,
-      deleted: false,
-      userId: 0,
-      ingredientId: data.id,
-      summary: data.summary,
-      instructions: "",
-      quantity: 0,
-      itemId: itemId,
-    };
-    recipe.push(newObject);
-    toast({ type: "success", message: "Agregado" });
-  };
-
   const setOnChange = (ingredient: Ingredient) => {
-    let exists = recipe.find((x) => x.ingredientId == ingredient.id);
+    let exists = recipes.find((x) => x.ingredientId == ingredient.id);
     if (exists) {
       return toast({ type: "warning", message: "El ingrediente ya existe" });
     }
     onPushRecipe(ingredient, data.id);
   };
 
+  const onPushRecipe = (data: Ingredient, itemId: number) => {
+    let newObject = {
+      id: 0,
+      unit: 0,
+      weight: 0,
+      netWeight: 0,
+      userId: 0,
+      ingredientId: data.id,
+      summary: data.summary,
+      instructions: "",
+      quantity: 0,
+      itemId: itemId,
+      extentId: 0,
+    };
+
+    useItemStore.update((state) => ({
+      ...state,
+      recipes: [...state.recipes, newObject],
+    }));
+    toast({ type: "success", message: "Agregado" });
+  };
+
   const removeFromList = (id: number) => {
-    let newArray = recipe.filter((x) => x.id !== id);
-    recipe = [];
-    recipe.push(...newArray);
+    let newArray = recipes.filter((x) => x.id !== id);
+    useItemStore.update((state) => ({
+      ...state,
+      recipes: newArray,
+    }));
   };
 
   const onModalClose = () => {
@@ -236,7 +214,7 @@
       ...state,
       isOpen: false,
     }));
-    recipe = [];
+    recipes = [];
   };
 
   const onValidation = (item: Item) => {
@@ -257,10 +235,14 @@
   };
 
   // Validate extentId from Recipe, validate if is empty or null and convert to number if is string
-  const validateextentId = (recipe: any) => {
+  const validateExtentId = (recipe: any) => {
     let isValid = true;
-    console.log(recipe);
     try {
+      if (recipe.length === 0) {
+        toast({type: "warning", message: "Debe seleccionar al menos un ingrediente" });
+        isValid = false;
+      }
+
       recipe.forEach((element: any) => {
         console.log(element);
         if (validatorParam.includes(element.extentId)) {
@@ -285,7 +267,9 @@
   <Modal
     open={$useItemStore.isOpen}
     iconTitle={data.id > 0 ? "ti-sync" : "ti-plus"}
-    title={data.id > 0 ? "Actualizar" : "Registrar"}
+    title={data.id > 0
+      ? ` Actualizar ${$useItemStore.description.toUpperCase()}`
+      : "Registrar"}
     onClosed={() => onModalClose()}
     fullScreen={true}
     size={"modal-dialog-scrollable"}
@@ -371,8 +355,8 @@
         </div>
 
         <hr />
-        <!-- {JSON.stringify(columns)} -->
-        <Grid dataArray={recipe} {columns} />
+
+        <GridForItem arrayData={recipes} {columns} />
 
         <div class="modal-footer">
           <button type="submit" class="btn btn-success">

@@ -125,7 +125,7 @@ BEGIN
                                 , @textSearch
 
             --- Obtengo las medidas ---
-            SELECT TOP 20 * FROM Medida ---- WHERE idEntidad = @idEntidad
+            SELECT * FROM Medida WHERE idEntidad = @idEntidad
         END
 
     IF @tipo = 2

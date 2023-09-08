@@ -114,6 +114,7 @@ BEGIN
     )
 
     SET @itemId = (SELECT TOP 1 itemId FROM #RecipeTemp)
+       
         
 	BEGIN TRY               
 		BEGIN TRAN
@@ -133,11 +134,11 @@ BEGIN
 
             SELECT rt.itemId
                     , rt.unit
-                    , rt.weight
-                    , rt.netWeigth
+                    , rt.[weight]
+                    , rt.[weight]
                     , @date
                     , NULL
-                    , rt.enabled
+                    , ISNULL(rt.[enabled], 1)
                     , NULL
                     , @userId
                     , rt.ingredientId
@@ -150,9 +151,9 @@ BEGIN
             ---- UPDATE RECIPE ----
             UPDATE rr
             SET rr.Unit          = rt.unit
-                ,rr.Weight       = rt.weight
-                ,rr.NetWeight    = rt.netWeigth
-                ,rr.Enabled      = rt.enabled                
+                ,rr.Weight       = rt.[weight]
+                ,rr.NetWeight    = rt.[weight]
+                ,rr.Enabled      = ISNULL(rt.[enabled], 1)
                 ,rr.IngredientId = rt.ingredientId
                 ,rr.Instructions = rt.instructions
                 ,rr.Quantity     = rt.quantity
@@ -168,7 +169,7 @@ BEGIN
             SET rr.Unit          = rt.unit
                 ,rr.Weight       = rt.weight
                 ,rr.NetWeight    = rt.netWeigth
-                ,rr.Enabled      = rt.enabled
+                ,rr.Enabled      = ISNULL(rt.[enabled], 1)
                 ,rr.Deleted      = 0
                 ,rr.IngredientId = rt.ingredientId
                 ,rr.Instructions = rt.instructions
