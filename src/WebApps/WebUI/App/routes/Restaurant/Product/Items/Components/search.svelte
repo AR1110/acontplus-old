@@ -1,5 +1,5 @@
 <script>
-  import { useItemStore } from "$routes/Restaurant/store/itemStore";
+  import { IngredientService } from "$core/services/restaurant/ingredient-service";
   import ItemsList from "./items-list.svelte";
 
   export let setOnChange;
@@ -7,16 +7,24 @@
   let ingredientes = [];
   let timer;
 
-  const unSuscribe = useItemStore.subscribe((values) => {
-    ingredientes = values.ingredientes;
-  });
-
-  const filterCountries = () => {
+  const searchIngredients = () => {
     clearTimeout(timer);
     timer = setTimeout(() => {
       ingredientes = [];
       if (inputValue) {
-        useItemStore.getIngredient({ textSearch: inputValue });
+        let query = { pageIndex: 1, pageSize: 10, textSearch: inputValue };
+
+        IngredientService.get(JSON.stringify(query))
+          .then((res) => {
+            if (res) {
+              ingredientes = res["ingredients"];
+            } else {
+              toast.error("No se encontraron ingredientes");
+            }
+          })
+          .catch((err) => {
+            toast.error("ups, algo salio mal");
+          });
       }
     }, 750);
   };
@@ -88,7 +96,7 @@
       placeholder="Buscar ingredientes"
       bind:this={searchInput}
       bind:value={inputValue}
-      on:input={filterCountries}
+      on:input={searchIngredients}
     />
   </div>
 
