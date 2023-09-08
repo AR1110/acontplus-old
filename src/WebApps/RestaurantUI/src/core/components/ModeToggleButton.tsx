@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, IconButton } from '@mui/material';
+import { IconButton } from '@mui/material';
  
 import { Brightness4, Brightness7 } from '@mui/icons-material';
 import { useDarkMode } from '@/context/DarkModeContext';

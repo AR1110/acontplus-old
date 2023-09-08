@@ -17,11 +17,15 @@ BEGIN
 	SET NOCOUNT ON;
 	DECLARE @idEntidad INT
 	DECLARE @codEstab VARCHAR(20)
+    DECLARE @customerCompanyId INT 
     
 	SELECT TOP 1  @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 	SELECT @codEstab = codEstab FROM OPENJSON(@json) WITH(codEstab VARCHAR(20)  '$.codEstab')
 
-	SET @tableNames = 'ConfigDecimal,Table,SubCategorias,Impuesto,TarifaImpuesto,PtoEmi_Asig,Bodega_Asign,Floor,Room'
+    --cliente por defecto agregado en configuracion general
+    SELECT TOP 1 @customerCompanyId = ISNULL(JSON_VALUE(jsonConfig, '$.idCliente'), 0) FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND  codConfig = 'CV'
+
+	SET @tableNames = 'ConfigDecimal,Table,SubCategorias,Impuesto,TarifaImpuesto,PtoEmi_Asig,Bodega_Asign,Floor,Room,Customer'
 	
     SELECT * FROM v_ConfigDecimal WHERE idEntidad = @idEntidad AND codTrasaccion = 'V'
     
@@ -64,6 +68,16 @@ BEGIN
     SELECT Id, Capacity, Code, [Description]  FROM Restaurant.[Floor] WHERE CodEstab = @codEstab
 
     SELECT id, code, [description], capacity, floorId FROM Restaurant.v_room
+
+    --CUSTOMER DEFAULT 11121    
+	SELECT 
+		cl.idCliente
+	   ,cl.numeroIdentificacion
+	   ,cl.nombreComercial
+	   ,cl.nombreFiscal
+	   ,cl.direccion
+	   ,cl.correo
+	FROM dbo.Cliente cl WITH (NOLOCK) WHERE cl.idCliente = @customerCompanyId
 
     --SELECT idEntidadFinanciera,descripcion,detalle,codigo FROM dbo.EntidadFinanciera WITH (NOLOCK) WHERE estado = 1
 

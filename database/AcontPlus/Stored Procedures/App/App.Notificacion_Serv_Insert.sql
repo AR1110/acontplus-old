@@ -179,7 +179,7 @@ BEGIN
 									    telefono     = ISNULL(e.telefono, ''),
 										razonSocial  = e.razonSocial
 									FROM dbo.Entidad e WHERE idEntidad = @idEntidad
-									FOR JSON PATH
+									FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
 								)
 				END 
 			

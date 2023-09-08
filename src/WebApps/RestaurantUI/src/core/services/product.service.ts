@@ -1,5 +1,5 @@
 import { PATHS } from '@/core/constants';
-import { Http, loadAbort } from '@/core/utilities';
+import { Http } from '@/core/utilities';
 import { ApiResponse, Measure, ProductSaleReadDto } from '../models';
 import { productSaleRateReadAdapter, productSaleReadAdapter } from '../adapters';
 

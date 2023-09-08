@@ -1,12 +1,10 @@
-import { RefreshIcon, SearchIcon } from "@/core/components";
-import { PrivateRoutes, OrderReadDto } from "@/core/models";
-import { AppBar, Button, Grid, IconButton, Paper, TextField, Toolbar, Tooltip, Typography } from "@mui/material";
+import { RefreshIcon} from "@/core/components";
+import { PrivateRoutes} from "@/core/models";
+import { AppBar, Button, Grid, IconButton, Paper, Toolbar, Tooltip } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import OrderTable from "./OrderTable";
-import { useEffect, useState } from "react";
-import { OrdenService } from "@/core/services";
-import { useLoaderStore, useOrderStore } from "@/stores";
-import { orderReadAdapter } from "@/core/adapters";
+import { useEffect } from "react";
+import { useOrderStore } from "@/stores";
 import DateRangeFilter from "./Components/DateRangeFilter";
 import { CustomerSearchFilter } from "./Components";
 import dayjs from 'dayjs';

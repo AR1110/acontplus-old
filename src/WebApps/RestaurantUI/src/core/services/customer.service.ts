@@ -1,6 +1,6 @@
 import { PATHS } from "@/core/constants"
 import { Http } from "@/core/utilities"
-import { ApiResponse, CustomerCreateDto, RawCustomerData } from "@/core/models"
+import { ApiResponse} from "@/core/models"
 import { customerReadAdapter, dataFormReadAdapter } from "../adapters"
 import Swal from "sweetalert2"
 

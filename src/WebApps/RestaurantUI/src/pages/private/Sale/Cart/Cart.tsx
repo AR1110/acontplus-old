@@ -10,8 +10,8 @@ import { AddShoppingCartIcon, CleaningServicesIcon, FileCopyRoundedIcon, SaveIco
 import { DOC_TYPE } from '@/core/constants';
 import './Cart.css'
 import TableDialog from '../Table/TableDialog';
-import { useState } from 'react';
-import Customer from '../Customer/Customer'; 
+import { useState } from 'react'; 
+import CustomerSearch from '../Customer/CustomerSearch';
 
 
 const Cart = () => {
@@ -136,8 +136,7 @@ const Cart = () => {
                     SnackbarUtility.warning(response.message)
                 }
                 if (response.code === "1") {
-                    SnackbarUtility.success(response.message);
-                    console.log(response)
+                    SnackbarUtility.success(response.message); 
                     //Order 
                     if (codDoc === DOC_TYPE.OR) {
                         resetForm();
@@ -153,7 +152,7 @@ const Cart = () => {
 
 
                     if (queryParams.printerAutomatic) {
-                        SharedService.getPrinter(1)
+                        SharedService.getPrinter(queryParams.idDocumento)
                     } else {
                         resetForm();
                     }
@@ -175,35 +174,40 @@ const Cart = () => {
             maxHeight: 550,
             bgcolor: 'background.paper'
         }} >
-            <Grid container
-                direction="row"
-                justifyContent="space-between"
-                alignItems="center">
-                <Grid item  >
-                    <Customer />
-                    {/* <Button variant="outlined" size="medium" onClick={() => {
-                        setOpenTableDialog(true)
-                    }}>
-                        Seleccionar Cliente
-                    </Button> */}
-                </Grid>
-                <Grid item  >
+            <Box display="grid" gridTemplateColumns="repeat(12, 1fr)" gap={2}>
+                <Box gridColumn="span 8">
+                    {/* <Stack
+                        direction={{ xs: 'column', sm: 'row' }}
+                        spacing={{ xs: 1, sm: 2, md: 4 }}
+
+                    >
+                        <Box> */}
+                        <CustomerSearch/>
+                        {/* </Box>
+                        <Box>
+                            <ButtonGroup variant="outlined" aria-label="outlined button group">
+                                <Button>One</Button>
+                                <Button>Two</Button>
+                            </ButtonGroup>
+                        </Box>
+
+                    </Stack> */}
+                </Box>
+                <Box gridColumn="span 4" textAlign="end">
                     <Button variant="outlined" onClick={() => {
                         setOpenTableDialog(true)
                     }}>
                         {
                             order.tableId > 0 ? (
                                 (
-                                    order.table?.description && order.table?.description
-                                ) ? `${order.table?.description} - ${order.table?.numberTable}` : 'Seleccionar Mesa'
-                            ) : 'Seleccionar Mesa'
+                                    order.table?.tableName && order.table?.tableName
+                                ) ? `${order.table?.tableName} - ${order.table?.numberTable}` : 'Seleccionar Mesa'
+                            ) : 'Mesa'
                         }
                     </Button>
                     <TableDialog open={openTableDialog} onClose={setOpenTableDialog} />
-                </Grid>
-            </Grid>
-
-            {/* <CartTest/> */}
+                </Box> 
+            </Box> 
             {
                 cartItems.length === 0 ? (<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 10 }}>
 

@@ -15,7 +15,7 @@ import { produce } from 'immer';
 
 type State = {
     itemSearch: ItemSearch
-    tempOrderItems:  Array<ItemReadDto>
+    tempOrderItems: Array<ItemReadDto>
     collectionItems: Array<ItemReadDto>
     totalItems: number;
     items: Array<ItemRead>
@@ -40,7 +40,7 @@ type Actions = {
     setChangeValueOrderItem<K extends keyof ItemRead>(itemIndex: number, property: K, newValue: ItemRead[K]): void
     setItemSearch(itemSearch: ItemSearch): void
     setSummary(order: Order): void
-    filterOderItems(textSearch: string):void
+    filterOderItems(textSearch: string): void
     getItemQty(productId: number): number
     setDataForm(dataForm: DataFormSale): void
     setCollectionItems(products: Array<ItemReadDto>): void
@@ -59,13 +59,14 @@ type Actions = {
 export const useSaleStore = create<State & Actions>((set, get) => ({
     itemSearch: itemSearchInitialState,
     setDataEdit(obj: any) {
+
         const { order, orderItems } = obj;
         const orderAdapt = {
             orderId: order.id,
             establecimientoId: order.establecimientoId,
             puntoEmisionId: order.puntoEmisionId,
             customerCompanyId: order.customerCompanyId,
-            customerName: "",
+            customerName: order.customerName,
             bodegaId: 0,
             tableId: order.tableId,
             subTotalSinImpuestos: 0,
@@ -79,20 +80,28 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
             obs: order.obs,
             codDoc: order.codDoc,
             quickSale: false,
-            createdAt: new Date(order.createdAt)
+            createdAt: new Date(order.createdAt),
+            table: {
+                tableName: order.tableName,
+                numberTable: order.numberTable
+            }
         }
         set(
             produce((state: State) => {
                 state.order = orderAdapt;
                 state.items = orderItems.map((orderItem: any) => {
-                    console.log(orderItem)
-                    return orderItem;
+
+                    return {
+                        ...orderItem,
+                        code: orderItem.codigo,
+                        description: orderItem.descripcion
+                    }
 
                 })
 
             })
         )
-        console.log(obj)
+
     },
     setChangeValueOrderItem(itemIndex, prop, newValue) {
         const { items } = get();
@@ -133,26 +142,26 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
     },
     dataForm: dataFormInitialState,
 
-    filterOderItems(textSearch){
-        const {tempOrderItems} = get();
+    filterOderItems(textSearch) {
+        const { tempOrderItems } = get();
         // const tempOrderItems = structuredClone(tempOrderItems);
-        if(!textSearch) {
+        if (!textSearch) {
             set(
-                produce((state:State)=>{
+                produce((state: State) => {
                     state.collectionItems = tempOrderItems;
                 })
             )
-            return 
-        } 
-         
+            return
+        }
+
         const filteredItems = tempOrderItems.filter((item) => {
             return (
-              item.code.toLowerCase().includes(textSearch.toLowerCase()) ||
-              item.description.toLowerCase().includes(textSearch.toLowerCase())
+                item.code.toLowerCase().includes(textSearch.toLowerCase()) ||
+                item.description.toLowerCase().includes(textSearch.toLowerCase())
             );
-        }); 
+        });
         set(
-            produce((state:State)=>{
+            produce((state: State) => {
                 state.collectionItems = filteredItems;
             })
         )
@@ -170,14 +179,25 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
     },
     setDataForm(dataForm) {
         set(
-            produce((state: State) => {
+            produce((state: State) => { 
                 state.dataForm = dataForm;
+                state.dataForm.categories = [{
+                    idSubFamilia: 0,
+                    description: 'Todos',
+                    s3ObjectUrl: ''
+                }, ...dataForm.categories];
+                //customer default
+                if(!(state.order.orderId > 0) && dataForm.customer.customerCompanyId>0){
+                console.log(dataForm.customer)
+                    state.order.customerCompanyId = dataForm.customer.customerCompanyId;
+                    state.order.customerName = dataForm.customer.fiscalName;
+                } 
             })
         )
     },
     setCollectionItems: (collectionItems) => {
         set(
-            produce((state:State)=>{
+            produce((state: State) => {
                 state.collectionItems = collectionItems;
                 state.tempOrderItems = structuredClone(collectionItems)
             })
@@ -235,7 +255,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
     })),
 
     setAddQuantity(index: number, value: number) {
-        console.log(index, value)
+
         const { items, setTotalItems, caculateTotals } = get();
         const newArray = items.map((orderItem, orderItemIndex) => {
             const total = value * orderItem.price;
@@ -259,7 +279,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         addSound();
     },
     setRemoveQuantity(index: number, value: number) {
-       
+
         const { items, setTotalItems, caculateTotals } = get();
         const newArray = items.map((orderItem, orderItemIndex) => {
             const total = value * orderItem.price;
@@ -362,7 +382,8 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
     async resetForm() {
         set(
             produce((state: State) => {
-                state.order.obs = "",
+                state.order.tableId = 0,
+                    state.order.obs = "",
                     state.order.customerName = "",
                     state.order.customerCompanyId = 0,
                     state.order.orderId = 0;
@@ -377,61 +398,60 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
     },
     caculateTotals() {
 
-         // Obtener los datos necesarios del estado (state)
-         const { items, dataForm } = get();
-         const decimal = dataForm.decimal;
+        // Obtener los datos necesarios del estado (state)
+        const { items, dataForm } = get();
+        const decimal = dataForm.decimal;
 
-         console.log(dataForm)
-         // Inicializar variables para los totales
-         let subTotalSinImpuestos = 0; // Subtotal sin impuestos
-         let totalNetoIva = 0; // Total neto con IVA
-         let tax = 0; // Monto del IVA (12%)
-         let totalPlusVAT = 0; // Total con IVA
-         let importeTotal = 0; // Importe total con descuento 
- 
-         // Iterar a través de los ítems del pedido  
-         for (const item of items) {
-             // Calcular el precio del ítem teniendo en cuenta el descuento
-             const itemPrice = item.price - item.discount;
- 
-             // Calcular el total del ítem
-             const itemTotal = itemPrice * item.quantity;
- 
-             // Agregar el total del ítem al subtotal sin impuestos
-             subTotalSinImpuestos += itemTotal;
- 
-             // Verificar si el ítem tiene un impuesto correspondiente en dataForm
-             const matchingTaxRate = dataForm.taxRates.find(
-                 (taxRate) => taxRate.taxRateId === item.taxPercentId
-             );
- 
-             // Si hay un impuesto correspondiente, agregar el total del ítem al total neto con IVA
-             if (matchingTaxRate?.taxRateCode==="2") {
-                 totalNetoIva += itemTotal;
-             }
-         }
- 
-         // Calcular el monto del impuesto (IVA 12%)
-         tax = (totalNetoIva * 12) / 100;
- 
-         // Calcular el total con IVA
-         totalPlusVAT = subTotalSinImpuestos + tax;
- 
-         // Calcular el importe total con descuento  
-         importeTotal = totalPlusVAT; 
- 
-         // Actualizar el estado (state) con los totales calculados y redondeados
-         set(
-             produce((state: State) => {
-                 state.order.netTotal = importeTotal;
-                 state.order.subTotalSinImpuestos = RoundNumber(
-                     subTotalSinImpuestos,
-                     decimal.nroTotalSubTotal
-                 );
-                 state.order.tax = RoundNumber(tax, decimal.nroIva);
-                 state.order.total = RoundNumber(importeTotal, decimal.importeTotal);
-             })
-         );
+        // Inicializar variables para los totales
+        let subTotalSinImpuestos = 0; // Subtotal sin impuestos
+        let totalNetoIva = 0; // Total neto con IVA
+        let tax = 0; // Monto del IVA (12%)
+        let totalPlusVAT = 0; // Total con IVA
+        let importeTotal = 0; // Importe total con descuento 
+
+        // Iterar a través de los ítems del pedido  
+        for (const item of items) {
+            // Calcular el precio del ítem teniendo en cuenta el descuento
+            const itemPrice = item.price - item.discount;
+
+            // Calcular el total del ítem
+            const itemTotal = itemPrice * item.quantity;
+
+            // Agregar el total del ítem al subtotal sin impuestos
+            subTotalSinImpuestos += itemTotal;
+
+            // Verificar si el ítem tiene un impuesto correspondiente en dataForm
+            const matchingTaxRate = dataForm.taxRates.find(
+                (taxRate) => taxRate.taxRateId === item.taxPercentId
+            );
+
+            // Si hay un impuesto correspondiente, agregar el total del ítem al total neto con IVA
+            if (matchingTaxRate?.taxRateCode === "2") {
+                totalNetoIva += itemTotal;
+            }
+        }
+
+        // Calcular el monto del impuesto (IVA 12%)
+        tax = (totalNetoIva * 12) / 100;
+
+        // Calcular el total con IVA
+        totalPlusVAT = subTotalSinImpuestos + tax;
+
+        // Calcular el importe total con descuento  
+        importeTotal = totalPlusVAT;
+
+        // Actualizar el estado (state) con los totales calculados y redondeados
+        set(
+            produce((state: State) => {
+                state.order.netTotal = importeTotal;
+                state.order.subTotalSinImpuestos = RoundNumber(
+                    subTotalSinImpuestos,
+                    decimal.nroTotalSubTotal
+                );
+                state.order.tax = RoundNumber(tax, decimal.nroIva);
+                state.order.total = RoundNumber(importeTotal, decimal.importeTotal);
+            })
+        );
     },
     payment: {
         isOpen: false,

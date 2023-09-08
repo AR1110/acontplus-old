@@ -1,21 +1,20 @@
 
 import { ErrorBoundary } from "@/core/utilities";
-import { Grid } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import { useAsync, useFetchAndLoad, useMobileDetect } from "@/hooks";
 import { ItemService, SaleService, getEstabs } from "@/core/services";
 import CustomBottomNavigation from "./components/CustomBottomNavigation";
 import { useSaleStore, useAuthStore } from "@/stores";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { itemReadAdapter } from "@/core/adapters";
 import FullScreenDialog from "@/core/components/FullScreenDialog";
-import { ArrowBackIcon, CloseIcon } from "@/core/components";
+import { ArrowBackIcon, Checkout } from "@/core/components";
 import ItemList from "./Item/ItemList";
 import Category from "./Category/Category";
-import Checkout from "./Checkout/Checkout";
 import Cart from "./Cart/Cart";
 import CartMobile from "./Mobile/CartMobile";
-import Customer from "./Customer/Customer";
-import InputSearchItem from "./InputSearchItem/InputSearchItem";
+import InputSearchItem from "./InputSearchItem/InputSearchItem"; 
+import TableDialog from "./Table/TableDialog";
 
 
 
@@ -41,6 +40,9 @@ export default function Sale() {
     //Even Navigation 
     const navigation = useSaleStore(state => state.navigation);
 
+    //Modal Tables 
+    const [openTableDialog, setOpenTableDialog] = useState(false);
+    
     useEffect(() => {
         const establecimientos = getEstabs();
         const dataEstab = establecimientos[0]!;
@@ -57,7 +59,6 @@ export default function Sale() {
                 emissionPoint => emissionPoint.codEstab_Asig === dataEstab.codEstab_Asig
             ).find(emissionPoint => (emissionPoint.predeterminado));
 
-            setDataForm(response)
             setSummary({
                 ...order,
                 establecimientoId: dataEstab.idEstablecimiento,
@@ -65,6 +66,7 @@ export default function Sale() {
                 bodegaId: warehouseData?.idBodega ?? 0
             }
             )
+            setDataForm(response)
         })
     }, [])
 
@@ -76,7 +78,7 @@ export default function Sale() {
     const itemAdapter = (response: any) => {
         setCollectionItems([])
         const items = itemReadAdapter(response.items || []);
-        console.log(items)
+        
         setCollectionItems(items)
     }
 
@@ -109,14 +111,21 @@ export default function Sale() {
             </Grid>
 
             {/* start dialog payment */}
-            <FullScreenDialog
+            {
+                payment.isOpen && <Checkout open={payment.isOpen} closeDialog={payment.closeDialogCustom} />
+            }
+            {/* <FullScreenDialog
+                color="inherit"
                 icon={<CloseIcon />}
                 dialogTitle="Cobro"
                 isOpen={payment.isOpen}
                 handleClose={payment.closeDialogCustom}
+                actions={
+                    <Button variant="contained">Cerrar</Button>
+                }
             >
                 <Checkout />
-            </FullScreenDialog>
+            </FullScreenDialog> */}
             {/* end dialog payment */}
 
             {/* start Items carito movil */}
@@ -127,7 +136,18 @@ export default function Sale() {
                 actions={
                     (
                         <>
-                            <Customer />
+                            <Button variant="outlined" onClick={() => {
+                                setOpenTableDialog(true)
+                            }}>
+                                {
+                                    order.tableId > 0 ? (
+                                        (
+                                            order.table?.tableName && order.table?.tableName
+                                        ) ? `${order.table?.tableName} - ${order.table?.numberTable}` : 'Seleccionar Mesa'
+                                    ) : 'Seleccionar Mesa'
+                                }
+                            </Button>
+                            <TableDialog open={openTableDialog} onClose={setOpenTableDialog} />
                         </>
                     )
                 }
