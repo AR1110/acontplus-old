@@ -6,11 +6,11 @@ import Typography from '@mui/material/Typography';
 import { Badge, CardActionArea, Grid, Tooltip } from '@mui/material';
 import brand_img from '/assets/images/brand_logo.png';
 
-import { ItemReadDto, Measure, WarehouseAsign } from '@/core/models';
+import { ItemReadDto, Measure, ProductPVPReadDto, WarehouseAsign } from '@/core/models';
 import { useSaleStore } from '@/stores/saleStore';
-import { ProductService } from '@/core/services';
+import { MenuItemService, ProductService } from '@/core/services';
 import { useAuthStore, useLoaderStore } from '@/stores';
-import { PricingCalculateUtility, SnackbarUtility } from '@/core/utilities'; 
+import { PricingCalculateUtility, RoundNumber, SnackbarUtility } from '@/core/utilities';
 import Swal from 'sweetalert2';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -18,51 +18,30 @@ type ItemCardProps = {
     item: ItemReadDto
 }
 
-// const customCard = {
-//   display: 'flex',
-//   flexDirection: 'column',
-//   height: '100%',
-//   borderRadius: "16px",
-//   borderColor: '#6571ff !important',
-//   border: '1px solid',
-// }
-// const cardContent = {
-//   flexGrow: 1,
-//   display: 'flex',
-//   flexDirection: 'column',
-//   justifyContent: 'space-between',
-//   paddingLeft: "0.5rem!important",
-//   paddingRight: "0.5rem!important",
-//   paddingTop: "0.5rem!important",
-//   paddingBottom: "0.25rem!important"
-// }
-
-// const flexRow = {
-//   display: 'flex',
-//   justifyContent: 'space-between',
-//   alignItems: 'center',
-// }
 
 export default function ItemCard({ item }: ItemCardProps) {
-    const { addItemToCart, getItemQty } = useSaleStore(state => ({ 
-        addItemToCart: state.addItemToCart, 
-        getItemQty: state.getItemQty 
+    const { addItemToCart, getItemQty } = useSaleStore(state => ({
+        addItemToCart: state.addItemToCart,
+        getItemQty: state.getItemQty
     }))
     const { items, dataForm } = useSaleStore(state => ({
         items: state.items,
         dataForm: state.dataForm,
     }))
+
     const dataEstab = useAuthStore(state => state.dataEstab)
+    const itemSearch = useSaleStore(state => state.itemSearch)
     // const [warehouses, setWarehouses] = useState<Array<WarehouseAsign>>([]) 
 
-    const {showLoader}  = useLoaderStore();
+    const { showLoader } = useLoaderStore();
 
 
     const handleSelectItem = (item: ItemReadDto) => {
-      
+        console.log(item)
+        const decimal = dataForm.decimal;
         const warehouses: Array<WarehouseAsign> = dataForm.warehouses.filter(warehouse => warehouse.codEstab_Asig === dataEstab.codEstab_Asig);
 
-        let dataWarehouse = {} as WarehouseAsign
+        let dataWarehouse = {} as WarehouseAsign;
         if (warehouses.length > 0) {
             dataWarehouse = warehouses.find(warehouse => (warehouse.defaultBodega)) as WarehouseAsign
         } else {
@@ -71,18 +50,27 @@ export default function ItemCard({ item }: ItemCardProps) {
         }
 
         showLoader(true)
+        if(itemSearch.code==="COMBOS"){
+            console.log('test')
+            MenuItemService.get(item.itemId).then(response=>{
+                console.log(response)
+            }).finally(()=>showLoader(false))
+            return 
+        }
+
+
         ProductService.findForSale(item.productId, dataWarehouse.idBodega).then(response => {
             const { product, measures } = response;
             const measureData = measures.find(measure => measure.measureId === product.measureId) as Measure;
-         
-            const taxRateData = dataForm.taxRates.find(item=>item.taxRateCode===product.taxRateCode); // Tarifa Impuesto 
+
+            const taxRateData = dataForm.taxRates.find(item => item.taxRateCode === product.taxRateCode); // Tarifa Impuesto 
             const taxData = dataForm.taxes.find(tax => tax.code === taxRateData?.taxCode); // Impuesto IVA-ICE 
             const taxId = taxData?.taxId ?? 0
 
-            const taxPercentId = taxRateData?.taxRateId ?? 0 ;
+            const taxPercentId = taxRateData?.taxRateId ?? 0;
 
-           
-            
+
+
             if (!product.takesInventory) {
                 addItem();
                 return
@@ -90,7 +78,7 @@ export default function ItemCard({ item }: ItemCardProps) {
 
             ProductService.checkNotificationStock({
                 idArticulo: product.productId,
-                cantidad: getItemQty(item.productId) ,
+                cantidad: getItemQty(item.productId),
                 idBodega: dataWarehouse.idBodega
             }).then(async response => {
                 const { code, message, titleSms } = response;
@@ -113,14 +101,14 @@ export default function ItemCard({ item }: ItemCardProps) {
                     }
                 }
             })
-            
-            
-            
+
+
+
             function addItem() {
                 const uuid = uuidv4();
-                const price =  measureData.rates[0]?.salePrice ?? 0 // Precio Venta
-                const taxValue = PricingCalculateUtility.calculateTaxValue(price, taxRateData?.percentage??0)
-                
+                const { salePrice, priceWithVat, feeId } = measureData.pvps[0] as ProductPVPReadDto
+                const taxValue = PricingCalculateUtility.calculateTaxValue(salePrice, taxRateData?.percentage ?? 0)
+
                 addItemToCart({
                     orderId: 0,
                     id: 0,
@@ -128,32 +116,34 @@ export default function ItemCard({ item }: ItemCardProps) {
                     productId: product.productId,
                     code: product.productCode,
                     itemId: item.itemId,
-                    feeId: measureData.rates[0]?.rateId ?? 0,
+                    feeId: feeId ?? 0,
                     taxId: taxId,
                     taxPercentId: taxPercentId,
-                    taxValue: PricingCalculateUtility.calculateTaxValue(price, taxRateData?.percentage??0),
+                    taxValue: PricingCalculateUtility.calculateTaxValue(salePrice, taxRateData?.percentage ?? 0),
                     description: product.description,
                     quantity: 1,
                     cost: product.costPrice, //Precio Costo
-                    price: price?? 0, //Precio Unitario - Precio Venta
+                    price: RoundNumber(salePrice ?? 0, decimal.nroPrecio), //Precio Unitario - Precio Venta
+                    priceWithVat: RoundNumber(priceWithVat, decimal.nroPrecio),
                     discount: 0,
                     discountTotal: 0,
-                    total: price ?? 0,
+                    total: salePrice ?? 0,
                     s3ObjectUrl: product.s3ObjectUrl ? product.s3ObjectUrl : brand_img,
                     takesInventory: product.takesInventory,
                     taxes: [{
                         uuid: uuid,
                         taxId: taxId,
                         taxPercentId: taxPercentId,
-                        taxBase: price ?? 0,
-                        taxValue: taxValue,                        
+                        taxBase: salePrice ?? 0,
+                        taxValue: taxValue,
                     }],
+                    pvps: measureData.pvps,
                     uuid: uuid,
-                    obs: undefined
+                    obs: ""
                 })
             }
 
-        }).finally(()=>showLoader(false))
+        }).finally(() => showLoader(false))
 
     }
 

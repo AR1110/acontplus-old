@@ -76,11 +76,13 @@ export default function Sale() {
     const getItemsApi = async () => await callEndpoint(ItemService.getAll(itemSearch));
 
     const itemAdapter = (response: any) => {
+        console.log(response)
         setCollectionItems([])
         const items = itemReadAdapter(response.items || []);
         
         setCollectionItems(items)
     }
+ 
 
     //se ejecuta cada vez que cambian la categoria
     useAsync(getItemsApi, itemAdapter, () => {

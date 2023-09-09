@@ -23,6 +23,7 @@ export const ProductService = {
         });
 
         const response: ApiResponse = resultAxios.data;
+        console.log(response)        
         let product = {} as ProductSaleReadDto
         let measures: Array<Measure> = []
         

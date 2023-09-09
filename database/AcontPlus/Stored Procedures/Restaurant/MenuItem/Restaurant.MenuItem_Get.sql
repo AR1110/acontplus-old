@@ -12,6 +12,7 @@ GO
 -- =============================================
 CREATE OR ALTER PROCEDURE Restaurant.MenuItem_Get @userRoleId INT
 	,@json VARCHAR(MAX)
+    ,@tableNames varchar(max) OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -19,6 +20,7 @@ BEGIN
 
 	SELECT @menuId = menuId FROM OPENJSON (@json) WITH (menuId INT '$.menuId')
 
+    SET @tableNames = 'menus'
 	SELECT mi.*
         , i.productName [description] 
     FROM Restaurant.MenuItem mi WITH (NOLOCK)

@@ -1,7 +1,6 @@
-import { Measure, ProductSaleReadDto, RawMeasure, RawProductSaleData, RawRateData } from "../models";
+import { Measure, ProductSaleReadDto, RawMeasure, RawProductPVPData, RawProductSaleData } from "../models";
 
-function productSaleReadAdapter(product: RawProductSaleData): ProductSaleReadDto {
-    console.log(product)
+function productSaleReadAdapter(product: RawProductSaleData): ProductSaleReadDto { 
     return ({
         productId: product.idArticulo,
         measureId: product.idMedida,
@@ -21,16 +20,16 @@ function productSaleReadAdapter(product: RawProductSaleData): ProductSaleReadDto
 function productSaleRateReadAdapter(measures: RawMeasure[]): Array<Measure> {
 
     return measures.map(item => {
-        const rates: RawRateData[] = JSON.parse(item.tarifas);
+        const productPVPs: RawProductPVPData[] = JSON.parse(item.tarifas);
         return {
             measureId: item.idMedida,
             description: item.medida,
-            rates: rates.map(rate => ({
-                rateId: rate.idTarifa,
-                salePrice: rate.precioVenta,
-                priceWithVat: rate.precioConIva,
-                description: rate.tarifa,
-                default:  rate.precioPredeterminado
+            pvps: productPVPs.map(pvp => ({
+                feeId: pvp.idTarifa,
+                salePrice: pvp.precioVenta,
+                priceWithVat: pvp.precioConIva,
+                description: pvp.tarifa,
+                default:  pvp.precioPredeterminado
             }))
         }
     })

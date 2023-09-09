@@ -21,7 +21,11 @@ namespace Restaurant.API.Controllers
         {
             try
             {
-                var ds = await _repository.GetDataSetAsync("RestaurantContext", "Restaurant.MenuItem_Get", new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) } });
+                var parameters = new Dictionary<string, object> {
+                    {"userRoleId", User.GetUserRoleId() },
+                    {"json", SqlStringParam.Sanitize(json) }
+                };
+                var ds = await _repository.GetDataSetAsync("RestaurantContext", "Restaurant.MenuItem_Get", parameters);
                 if (ds.Tables[0].Rows.Count == 0)
                 {
                     return BadRequest("Not found");
