@@ -27,6 +27,7 @@ import { PrivateRoutes } from "@/core/models";
 import { useNavigate } from "react-router-dom";
 import OrderWhatsApp from "./Components/OrderWhatsApp";
 import OrderConvertDoc from "./Components/OrderConvertDoc";
+import { orderReadForUpdateAdapter } from "@/core/adapters";
 
 export default function OrderTable() {
   const navigate = useNavigate();
@@ -106,11 +107,9 @@ export default function OrderTable() {
       id: orderId,
       tipo: 2,
     })
-      .then((response) => {
-        setDataEdit({
-          order: response.order[0],
-          orderItems: response.orderItems,
-        });
+      .then( async (response) => {
+        const data = await  orderReadForUpdateAdapter(response); 
+        setDataEdit(data);
         navigate(`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.SALE}`, {
           replace: true,
         });

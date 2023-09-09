@@ -8,11 +8,10 @@ import {
     dataFormInitialState,
     orderInitialState
 } from "@/core/models";
-import { RoundNumber, SnackbarUtility, addSound, clearSound } from "@/core/utilities";
-import { ChangeEvent } from "react";
+import { RoundNumber, SnackbarUtility, addSound, clearSound } from "@/core/utilities"; 
 import { create } from "zustand";
 import { produce } from 'immer';
-import { ProductService } from "@/core/services";
+import { productService } from "@/core/services";
 import Swal from "sweetalert2";
 import { useLoaderStore } from ".";
 
@@ -58,46 +57,11 @@ type Actions = {
 export const useSaleStore = create<State & Actions>((set, get) => ({
     itemSearch: itemSearchInitialState,
     setDataEdit(obj: any) {
-
         const { order, orderItems } = obj;
-        const orderAdapt = {
-            orderId: order.id,
-            establecimientoId: order.establecimientoId,
-            puntoEmisionId: order.puntoEmisionId,
-            customerCompanyId: order.customerCompanyId,
-            customerName: order.customerName,
-            bodegaId: 0,
-            tableId: order.tableId,
-            subTotalSinImpuestos: 0,
-            tax: order.tax,
-            taxPercent: order.taxPercent,
-            taxAmount: 0,
-            discount: order.discount,
-            total: order.total,
-            netTotal: 0,
-            tip: 0,
-            obs: order.obs,
-            codDoc: order.codDoc,
-            quickSale: false,
-            createdAt: new Date(order.createdAt),
-            table: {
-                tableName: order.tableName,
-                numberTable: order.numberTable
-            }
-        }
         set(
             produce((state: State) => {
-                state.order = orderAdapt;
-                state.items = orderItems.map((orderItem: any) => {
-
-                    return {
-                        ...orderItem,
-                        code: orderItem.codigo,
-                        description: orderItem.descripcion
-                    }
-
-                })
-
+                state.order = order;
+                state.items = orderItems
             })
         )
 
@@ -257,9 +221,9 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         
         const dataOrderItem = items.find((_, indexToCompare)=>indexToCompare===index);
         console.log(dataOrderItem)
-        if(dataOrderItem?.takesInventory){
+        if(dataOrderItem?.carryInventory){
             showLoader(true);
-            ProductService.checkNotificationStock({
+            productService.checkNotificationStock({
                 idArticulo: dataOrderItem.productId,
                 cantidad: getItemQty(dataOrderItem.productId),
                 idBodega: order.bodegaId
