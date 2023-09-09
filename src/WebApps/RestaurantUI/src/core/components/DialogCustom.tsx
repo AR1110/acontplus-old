@@ -47,6 +47,5 @@ function DialogCustom({children, maxWidth, ...other}: DialogProps) {
   );
 }
 
-export {
-    DialogCustom
-}
+export default DialogCustom
+

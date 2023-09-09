@@ -18,7 +18,7 @@ import {
   PrintIcon,
   SaveAltSharpIcon,
   ShareSharpIcon,
-} from "@/core/components";
+} from "@/core/components/IconsMaterial";
 import Swal from "sweetalert2";
 import { OrdenService, SharedService } from "@/core/services";
 import { SnackbarUtility } from "@/core/utilities";

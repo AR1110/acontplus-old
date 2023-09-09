@@ -1,6 +1,7 @@
 
 import { useCheckoutStore } from '@/stores'
-import { Calculator } from '../..'
+import Calculator from '../../Calculator/Calculator'
+ 
 
 const CheckoutCalculator = () => {
     const handleChangeSetReceivedAmount = useCheckoutStore(state=>state.handleChangeSetReceivedAmount)

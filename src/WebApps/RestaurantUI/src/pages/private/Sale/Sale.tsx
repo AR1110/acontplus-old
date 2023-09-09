@@ -7,14 +7,15 @@ import CustomBottomNavigation from "./components/CustomBottomNavigation";
 import { useSaleStore, useAuthStore } from "@/stores";
 import { useEffect, useState } from "react";
 import { itemReadAdapter } from "@/core/adapters";
-import FullScreenDialog from "@/core/components/FullScreenDialog";
-import { ArrowBackIcon, Checkout } from "@/core/components";
+import FullScreenDialog from "@/core/components/FullScreenDialog"; 
 import ItemList from "./Item/ItemList";
 import Category from "./Category/Category";
 import Cart from "./Cart/Cart";
 import CartMobile from "./Mobile/CartMobile";
 import InputSearchItem from "./InputSearchItem/InputSearchItem"; 
 import TableDialog from "./Table/TableDialog";
+import Checkout from "@/core/components/Checkout/Checkout";
+import { ArrowBackIcon } from "@/core/components/IconsMaterial";
 
 
 

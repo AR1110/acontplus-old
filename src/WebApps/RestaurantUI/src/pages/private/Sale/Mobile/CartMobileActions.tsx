@@ -4,7 +4,7 @@ import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
 import FileCopyIcon from '@mui/icons-material/FileCopyOutlined';
 import SaveIcon from '@mui/icons-material/Save';
-import { RemoveIcon } from '@/core/components';
+import { RemoveIcon } from '@/core/components/IconsMaterial';
 import { useCheckoutStore, useLoaderStore, useSaleStore } from '@/stores';
 import { DOC_TYPE } from '@/core/constants';
 import { SnackbarUtility } from '@/core/utilities';

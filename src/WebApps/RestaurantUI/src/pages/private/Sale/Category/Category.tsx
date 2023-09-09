@@ -1,7 +1,7 @@
 
 import Tabs, { tabsClasses } from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import { CategoryIcon } from '@/core/components';
+import { CategoryIcon } from '@/core/components/IconsMaterial';
 import { useState } from 'react';
 import { Avatar, Paper } from '@mui/material';
 import { useSaleStore } from '@/stores/saleStore';

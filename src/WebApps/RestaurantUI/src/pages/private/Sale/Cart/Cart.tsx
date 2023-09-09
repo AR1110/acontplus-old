@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Grid, List, Paper, TextField, Typography } from '@mui/material'
+import { Box, Button, Divider, Grid, Paper, TextField, Typography } from '@mui/material'
 import CartItem from '../CartItem/CartItem'
 import { useCheckoutStore, useLoaderStore, useSaleStore } from '@/stores';
 import Swal from 'sweetalert2';
@@ -6,11 +6,11 @@ import { SnackbarUtility } from '@/core/utilities';
 import { itemToApi, summaryToApi } from '@/core/adapters';
 import { OrdenService, SharedService } from '@/core/services';
 import { QueryParams } from '@/core/models';
-import { AddShoppingCartIcon, CleaningServicesIcon, FileCopyRoundedIcon, KeyboardWrapper, SaveIcon } from '@/core/components';
+import { AddShoppingCartIcon, CleaningServicesIcon, FileCopyRoundedIcon, SaveIcon } from '@/core/components/IconsMaterial';
 import { DOC_TYPE } from '@/core/constants';
 import './Cart.css'
 import TableDialog from '../Table/TableDialog';
-import { ChangeEvent, useRef, useState } from 'react';
+import {useRef, useState } from 'react';
 import CustomerSearch from '../Customer/CustomerSearch';
 
 
@@ -34,11 +34,11 @@ const Cart = () => {
     const [input, setInput] = useState("");
     const keyboard = useRef(null);
 
-    const onChangeInput = (event: ChangeEvent<HTMLInputElement>): void => {
-        const input = event.target.value;
-        setInput(input);
-        keyboard.current.setInput(input);
-    };
+    // const onChangeInput = (event: ChangeEvent<HTMLInputElement>): void => {
+    //     const input = event.target.value;
+    //     setInput(input);
+    //     keyboard.current.setInput(input);
+    // };
 
 
     //Modal Tables
@@ -249,16 +249,16 @@ const Cart = () => {
                     <TextField
                         id="observacion"
                         label="Observación"
-                        //value={order.obs}
-                        // onChange={(e) => {
-                        //     setOrder({
-                        //         ...order,
-                        //         obs: e.target.value
-                        //     })
-                        // }}
-                        value={input}
-                        placeholder={"Tap on the virtual keyboard to start"}
-                        onChange={e => onChangeInput(e)}
+                        value={order.obs}
+                        onChange={(e) => {
+                            setOrder({
+                                ...order,
+                                obs: e.target.value
+                            })
+                        }}
+                        // value={input}
+                        // placeholder={"Tap on the virtual keyboard to start"}
+                        // onChange={e => onChangeInput(e)}
                         multiline
                         rows={2}
                     />
@@ -373,7 +373,7 @@ const Cart = () => {
                     )
                 }
             </Grid>
-            <KeyboardWrapper keyboardRef={keyboard} onChange={setInput} />
+            {/* <KeyboardWrapper keyboardRef={keyboard} onChange={setInput} /> */}
         </Paper>
     )
 }
