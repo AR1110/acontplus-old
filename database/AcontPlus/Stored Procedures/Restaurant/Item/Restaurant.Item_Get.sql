@@ -115,7 +115,7 @@ BEGIN
                 
 	        SET @sql = @sql + ' ORDER BY ri.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
 		           
-	        SET @tableNames = 'items,medidas'
+	        SET @tableNames = 'items'
 	        EXEC sp_executesql @sql 
                                 , @params
                                 , @idEntidad
@@ -123,10 +123,39 @@ BEGIN
                                 , @pageIndex
                                 , @pageSize                               
                                 , @textSearch
-
-            --- Obtengo las medidas ---
-            SELECT TOP 20 * FROM Medida ---- WHERE idEntidad = @idEntidad
         END
+
+    IF (@tipo = 3)
+         BEGIN
+            SET @tableNames = 'items'
+            SELECT m.*
+                ,s3ObjectUrl		= a.s3ObjectUrl
+				        ,stockMinimo		= a.stockMinimo
+				        ,stock				= a.stock
+				        ,codigo				= a.codigo
+				        ,codigoAuxiliar		= a.codigoAuxiliar
+				        ,tipoIva			= CAST(CAST(a.porcentaje AS DECIMAL(15,0)) AS VARCHAR)+'%'
+				        ,tipoArticulo		= ISNULL(a.tipoArticulo,'Ninguna')
+				        ,style				= a.colorRow 
+                        ,pvp				= (SELECT	idArticuloPvP = ap.idArticuloPvP
+										                ,idTarifa = ap.idTarifa
+										                ,precioVenta = ap.precioVenta
+										                ,precioConIva = ap.precioConIva
+										                ,porcentajeUtilidad = ap.porcentajeUtilidad
+										                ,precioPredeterminado = ta.predeterminada
+										                ,tarifa = ta.descripcion
+										                ,porcentajeIva = ti.porcentaje
+								                FROM ArticuloPvP ap
+								                INNER JOIN Tarifa ta ON ta.idTarifa = ap.idTarifa								
+								                LEFT JOIN TipoIva ti ON ti.idTipoIva = a.idTipoIva
+								                WHERE ap.idArticulo = a.idArticulo AND ta.predeterminada = 1
+								                FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
+               ,totalRecords       = COUNT(*) over()
+            FROM Restaurant.Menu m WITH(NOLOCK)
+                INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
+            WHERE a.idSubFamilia = @idSubFamilia 
+            ORDER BY m.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY
+         END
 
     IF @tipo = 2
         BEGIN

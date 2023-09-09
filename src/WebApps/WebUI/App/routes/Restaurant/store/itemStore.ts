@@ -8,6 +8,7 @@ import { RecipeService } from "../../../core/services/restaurant/recipe-service"
 import type { Ingredient } from "../../../core/interfaces/restaurant/ingredient";
 
 type StateModal = {
+    description: string;
     isOpen: boolean;
     openModal(): void;
     closeModal(): void;
@@ -66,6 +67,7 @@ const initiatlState: State = {
     medidas: [],
 };
 const initiatlModalState: StateModal = {
+    description: "",
     isOpen: false,
     openModal: () => { },
     closeModal: () => { },
@@ -92,7 +94,7 @@ const createItemStore = () => {
         itemService
             .get(JSON.stringify(query))
             .then((response) => {
-                if (response) {                   
+                if (response) {
                     update((state) => ({
                         ...state,
                         items: response["items"],
@@ -128,6 +130,7 @@ const createItemStore = () => {
     };
 
     const getRecipe = (item: any) => {
+        console.log(item);
         RecipeService.getByItem(item.id)
             .then((response) => {
                 hideLoader();
@@ -137,6 +140,7 @@ const createItemStore = () => {
                         recipes: response["recipe"],
                         isOpen: true,
                         dataUpdate: item,
+                        description: item.descripcion,
                     }));
                 } else {
                     update((state) => ({
