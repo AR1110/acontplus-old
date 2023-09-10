@@ -10,30 +10,37 @@
   import type { Ingredient } from "$core/interfaces/restaurant/ingredient";
   import type { Item } from "$core/interfaces/restaurant/item";
   import type { Recipe } from "$core/interfaces/restaurant/recipe.js";
+  import { IngredientService } from "$core/services/restaurant/ingredient-service.js";
 
-  //export let modalClosed;
   let data;
   let recipes = [] as Recipe[];
   let productionAreas = [];
   let validatorParam = [undefined, null, "", 0];
-  let medidas = [];
-  $: tempRecipes = recipes;
 
-  const unSuscribe = useItemStore.subscribe((values) => {
+  let medidas = [];
+  let extents = [];
+
+  useItemStore.subscribe((values) => {
     (productionAreas = values.productionAreas),
       (data = values.dataUpdate),
-      (recipes = values.recipes),
-      (medidas = values.medidas);
+      (recipes = values.recipes);
   });
 
   //https://jsfiddle.net/biruktes/hn8gascw/24/
   let customNativeSelect = function (cell, onRendered, success, cancel) {
-    var cellRealValue = cell.getElement().dataset.extentId;
+    let medidasByCell = cell.getRow().getData();
+
+    // Validate if medidasByCell.extents is empty.
+    if (medidasByCell.extents == undefined) medidas = [];
+    if (medidasByCell.extents != undefined)
+      medidas = JSON.parse(medidasByCell.extents);
+
+    let cellRealValue = cell.getElement().dataset.extentId;
     cellRealValue =
       typeof cellRealValue === "undefined" ? "none" : cellRealValue;
 
     //Create and append select list
-    var selectList = document.createElement("select");
+    let selectList = document.createElement("select");
 
     selectList.style.width = "100%";
     selectList.style.boxSizing = "border-box";
@@ -65,15 +72,14 @@
       if (e.keyCode == 13) {
         onChange();
       }
-
       if (e.keyCode == 27) {
         cancel();
       }
     });
 
     //Create and append the options
-    for (var i = 0; i < medidas.length; i++) {
-      var option = document.createElement("option");
+    for (let i = 0; i < medidas.length; i++) {
+      let option = document.createElement("option");
 
       option.value = medidas[i].idMedida.toString();
       option.text = medidas[i].descripcion;
@@ -99,8 +105,14 @@
       with: 150,
       editor: customNativeSelect,
       formatter: function (cell) {
-        var value = cell.getValue();
-        for (var i = 0; i < medidas.length; i++) {
+        let getData = cell.getRow().getData();
+        let value = cell.getValue();
+
+        if (getData.extents == undefined) medidas = [];
+        if (getData.extents != undefined) medidas = JSON.parse(getData.extents);
+
+        for (let i = 0; i < medidas.length; i++) {
+          console.log(medidas[i]);
           if (medidas[i].idMedida == value) {
             value = medidas[i].descripcion;
             break;
@@ -128,6 +140,33 @@
       with: 90,
       editor: true,
       validator: ["required", "numeric"],
+    },
+    {
+      title: "Precio costo",
+      field: "costPrice",
+      with: 90,
+      editor: true,
+      formatter: function (cell) {
+        alert("Cell");
+        let value = 0;
+        let quantity = 0;
+        let extents = [];
+
+        let getData = cell.getRow().getData();
+        let extentId = getData.extentId;
+
+        quantity = getData.quantity;
+        if (getData.extents == undefined) extents = [];
+        if (getData.extents != undefined) extents = JSON.parse(getData.extents);
+
+        for (let i = 0; i < extents.length; i++) {
+          if (extents[i].idMedida == extentId) {
+            value = extents[i].precioCosto * quantity;
+            break;
+          }
+        }
+        return value.toFixed(2);
+      },
     },
     {
       title: "Acciones",
@@ -182,23 +221,46 @@
   const onPushRecipe = (data: Ingredient, itemId: number) => {
     let newObject = {
       id: 0,
+      itemId: itemId,
+      extentId: 0,
+      productId: data.productId,
+      ingredientId: data.id,
       unit: 0,
       weight: 0,
       netWeight: 0,
-      userId: 0,
-      ingredientId: data.id,
       summary: data.summary,
       instructions: "",
       quantity: 0,
-      itemId: itemId,
-      extentId: 0,
     };
-
     useItemStore.update((state) => ({
       ...state,
       recipes: [...state.recipes, newObject],
     }));
+    getExtendId(data.productId);
     toast({ type: "success", message: "Agregado" });
+  };
+
+  const getExtendId = (productId: number) => {
+    let query = { tipo: 3, productId: productId };
+
+    showLoader();
+    IngredientService.get(JSON.stringify(query))
+      .then((resp) => {
+        if (resp) {
+          extents = resp["extents"];
+
+          recipes.forEach((e: any) => {
+            if (e.productId === productId) {
+              e.extentId = extents[0].idMedida;
+              e.extents = JSON.stringify(extents);
+            }
+          });
+          useItemStore.update((state) => ({ ...state, recipes: recipes }));
+        }
+      })
+      .finally(() => {
+        hideLoader();
+      });
   };
 
   const removeFromList = (id: number) => {
@@ -209,6 +271,7 @@
     }));
   };
 
+  // MODALS EVENTS
   const onModalClose = () => {
     useItemStore.update((state) => ({
       ...state,
@@ -217,6 +280,7 @@
     recipes = [];
   };
 
+  // VALIDATIONS
   const onValidation = (item: Item) => {
     let isValid = true;
     try {
@@ -234,12 +298,14 @@
     }
   };
 
-  // Validate extentId from Recipe, validate if is empty or null and convert to number if is string
   const validateExtentId = (recipe: any) => {
     let isValid = true;
     try {
       if (recipe.length === 0) {
-        toast({type: "warning", message: "Debe seleccionar al menos un ingrediente" });
+        toast({
+          type: "warning",
+          message: "Debe seleccionar al menos un ingrediente",
+        });
         isValid = false;
       }
 

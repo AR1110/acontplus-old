@@ -9,6 +9,6 @@ namespace Restaurant.Core.Interfaces
         public Task<Recipe> CreateAsync(Recipe recipe);
         public Recipe UpdateAsync(Recipe recipe);
         public void RemoveAsync(Recipe recipe);
-        Task<object> GetByItem(int id);
+        Task<object> GetByItem(Dictionary<string, object> parameters);
     }
 }

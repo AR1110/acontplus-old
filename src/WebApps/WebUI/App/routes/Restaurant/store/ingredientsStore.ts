@@ -46,8 +46,7 @@ const createIngredientStore = () => {
   const get = (params?: object) => {
     showLoader();
 
-    let json = {pageIndex: 1, pageSize: 10}
-
+    let json = {pageIndex: 1, pageSize: 10, tipo: 1}
     let query = Object.assign(json, params ? params : json);
 
     update((state) => {
@@ -91,6 +90,7 @@ const createIngredientStore = () => {
       dataUpdate: data,
     }))
   }
+
   return {set, subscribe, update, get, getIngredientType, getUpdate}
 };
 

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Restaurant.Core.Common;
 using Restaurant.Core.Entities;
 using Restaurant.Core.Interfaces;
+using Services.Common;
 using Services.Common.Logs;
 
 namespace Restaurant.API.Controllers
@@ -55,7 +56,12 @@ namespace Restaurant.API.Controllers
         {
             try
             {
-                var result = await _recipe.GetByItem(id);
+                var parameters = new Dictionary<string, object> {
+                    {"userRoleId", User.GetUserRoleId()},
+                    { "id", id }
+                };
+
+                var result = await _recipe.GetByItem(parameters);
                 return Ok(result);
             }
             catch (Exception ex)

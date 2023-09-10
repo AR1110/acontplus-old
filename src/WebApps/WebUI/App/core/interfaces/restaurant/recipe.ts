@@ -10,4 +10,8 @@ export interface Recipe {
     quantity: number;
     itemId: number;
     extendId?: number;
+
+    //Todo: Optional for filter
+    productId?: number;
+    extents?: [];
 }

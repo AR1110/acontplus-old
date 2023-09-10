@@ -48,12 +48,8 @@ namespace Restaurant.Application
         }
 
         // Get
-        public async Task<object> GetByItem(int id)
+        public async Task<object> GetByItem(Dictionary<string, object> parameters)
         {
-            var parameters = new Dictionary<string, object>{
-                {"id", id},
-            };
-
             var ds = await _repository.GetDataSetAsync("RestaurantContext","Restaurant.Recipe_Get_By_Item", parameters);
 
             if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
@@ -65,5 +61,12 @@ namespace Restaurant.Application
                 return Converters.DataSetToJSON(ds);
             }
         }
+
+        public Task<Recipe> GetByIdAsync(Dictionary<string, object> parameters)
+        {
+            throw new NotImplementedException();
+        }
+
+       
     }
 }
