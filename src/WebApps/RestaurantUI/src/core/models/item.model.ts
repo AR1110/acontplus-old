@@ -18,6 +18,7 @@ export interface RawItemData {
 
 export interface ItemReadDto {
     itemId: number //idItem 
+    menuId: number // para listar combos 
     userId: number
     productId: number
     description: string
@@ -39,6 +40,7 @@ export interface ItemSearch {
     pageIndex: number,
     pageSize: number
     checkBySearch: boolean
+    code: string
 }
 
 export const itemSearchInitialState: ItemSearch = {
@@ -47,6 +49,7 @@ export const itemSearchInitialState: ItemSearch = {
     idSubFamilia: 0, 
     pageIndex: 1, 
     pageSize: 25,
-    checkBySearch: true
+    checkBySearch: true,
+    code: "",
 }
 

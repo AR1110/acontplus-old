@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Grid, List, Paper, TextField, Typography } from '@mui/material'
+import { Box, Button, Divider, Grid, Paper, TextField, Typography } from '@mui/material'
 import CartItem from '../CartItem/CartItem'
 import { useCheckoutStore, useLoaderStore, useSaleStore } from '@/stores';
 import Swal from 'sweetalert2';
@@ -6,11 +6,11 @@ import { SnackbarUtility } from '@/core/utilities';
 import { itemToApi, summaryToApi } from '@/core/adapters';
 import { OrdenService, SharedService } from '@/core/services';
 import { QueryParams } from '@/core/models';
-import { AddShoppingCartIcon, CleaningServicesIcon, FileCopyRoundedIcon, SaveIcon } from '@/core/components';
+import { AddShoppingCartIcon, CleaningServicesIcon, FileCopyRoundedIcon, SaveIcon } from '@/core/components/IconsMaterial';
 import { DOC_TYPE } from '@/core/constants';
 import './Cart.css'
 import TableDialog from '../Table/TableDialog';
-import { useState } from 'react'; 
+import {useRef, useState } from 'react';
 import CustomerSearch from '../Customer/CustomerSearch';
 
 
@@ -22,7 +22,7 @@ const Cart = () => {
     }));
     const setOrder = useSaleStore(state => state.setSummary)
 
-    //store checkout 
+    //store checkout
     const setQueryParams = useCheckoutStore(state => state.setQueryParams)
 
     const resetForm = useSaleStore(state => state.resetForm);
@@ -30,14 +30,25 @@ const Cart = () => {
 
     const { showLoader } = useLoaderStore();
 
-    //Modal Tables 
+    //Test keyboard 
+    const [input, setInput] = useState("");
+    const keyboard = useRef(null);
+
+    // const onChangeInput = (event: ChangeEvent<HTMLInputElement>): void => {
+    //     const input = event.target.value;
+    //     setInput(input);
+    //     keyboard.current.setInput(input);
+    // };
+
+
+    //Modal Tables
     const [openTableDialog, setOpenTableDialog] = useState(false);
     const typeActions: { [key: string]: string } = {
         [DOC_TYPE.FV]: `
-        Esta seguro de guardar el pedido como Factura? </br> 
+        Esta seguro de guardar el pedido como Factura? </br>
         <small>Ya no será posible modificar la venta para hacer cambios, tendrás que cancelar esta y crear una nueva.!</small>`,
         [DOC_TYPE.NE]: `
-        Esta seguro de guardar el pedido como Nota de Entrega? </br> 
+        Esta seguro de guardar el pedido como Nota de Entrega? </br>
         <small>Ya no será posible modificar la venta para hacer cambios, tendrás que cancelar esta y crear una nueva.!</small>`,
         [DOC_TYPE.OR]: `Esta seguro de guardar el pedido? </br>
         <small>El stock de los productos <strong>no se descontará</strong> hasta que se transforme a "Factura" o "Nota de Entrega".`
@@ -54,7 +65,7 @@ const Cart = () => {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Si, restablecer',
-            // confirmButtonColor: '#3085d6',            
+            // confirmButtonColor: '#3085d6',
             cancelButtonText: 'No, cancelar'
         })
         if (isConfirmed) {
@@ -136,8 +147,8 @@ const Cart = () => {
                     SnackbarUtility.warning(response.message)
                 }
                 if (response.code === "1") {
-                    SnackbarUtility.success(response.message); 
-                    //Order 
+                    SnackbarUtility.success(response.message);
+                    //Order
                     if (codDoc === DOC_TYPE.OR) {
                         resetForm();
                         return
@@ -182,8 +193,8 @@ const Cart = () => {
 
                     >
                         <Box> */}
-                        <CustomerSearch/>
-                        {/* </Box>
+                    <CustomerSearch />
+                    {/* </Box>
                         <Box>
                             <ButtonGroup variant="outlined" aria-label="outlined button group">
                                 <Button>One</Button>
@@ -206,8 +217,8 @@ const Cart = () => {
                         }
                     </Button>
                     <TableDialog open={openTableDialog} onClose={setOpenTableDialog} />
-                </Box> 
-            </Box> 
+                </Box>
+            </Box>
             {
                 cartItems.length === 0 ? (<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 10 }}>
 
@@ -220,11 +231,11 @@ const Cart = () => {
                     <Typography color="text.secondary" variant="caption"></Typography>
                 </div>) : (
 
-                    <List sx={{ width: '100%', maxHeight: 300, overflowY: 'auto', bgcolor: 'background.paper' }}>
+                    <Box sx={{ width: '100%', maxHeight: 300, overflowY: 'auto', bgcolor: 'background.paper' }}>
                         {cartItems.map((item, index) => (
                             <CartItem item={item} index={index} key={index} />
                         ))}
-                    </List>
+                    </Box>
 
                 )
             }
@@ -245,6 +256,9 @@ const Cart = () => {
                                 obs: e.target.value
                             })
                         }}
+                        // value={input}
+                        // placeholder={"Tap on the virtual keyboard to start"}
+                        // onChange={e => onChangeInput(e)}
                         multiline
                         rows={2}
                     />
@@ -359,6 +373,7 @@ const Cart = () => {
                     )
                 }
             </Grid>
+            {/* <KeyboardWrapper keyboardRef={keyboard} onChange={setInput} /> */}
         </Paper>
     )
 }

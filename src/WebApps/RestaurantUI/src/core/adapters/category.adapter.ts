@@ -4,6 +4,7 @@ function categoryReadAdapter(categories: RawCategoryData[]): Array<CategoryReadD
     return categories.map((category) => ({
         idSubFamilia: category.idSubFamilia,
         description: category.descripcion,
+        code: category.descripcion,
         s3ObjectUrl: category.s3ObjectUrl
     })
     )

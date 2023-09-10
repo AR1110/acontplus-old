@@ -2,8 +2,7 @@ import { CustomerDataForm, CustomerReadDto, RawCustomerData } from "../models";
 
 function customerReadAdapter(customers: RawCustomerData): CustomerReadDto;
 function customerReadAdapter(customers: RawCustomerData[]): CustomerReadDto[];
-function customerReadAdapter(customers: any): any {
-    console.log(typeof customers)
+function customerReadAdapter(customers: any): any { 
     if (!Array.isArray(customers) && customers !== null && typeof customers !== 'object') {
         throw new Error('La entrada debe ser un objeto o un array no nulo.');
     }

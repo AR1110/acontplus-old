@@ -4,9 +4,9 @@ import { ApiResponse, Measure, ProductSaleReadDto } from '../models';
 import { productSaleRateReadAdapter, productSaleReadAdapter } from '../adapters';
 
 const URL = 'Articulo/'
-export const ProductService = {
+export const productService = {
 
-    async findForSale(productId: number, warehouseId: number){
+    async findForSale(productId: number, warehouseId?: number){
         
         const json = JSON.stringify(Object.assign({
             idArticulo: productId,
@@ -23,6 +23,7 @@ export const ProductService = {
         });
 
         const response: ApiResponse = resultAxios.data;
+         
         let product = {} as ProductSaleReadDto
         let measures: Array<Measure> = []
         
@@ -31,8 +32,7 @@ export const ProductService = {
         }
 
         if(response.code==='1'){
-            const repositoryData = JSON.parse(response.payload);
-            console.log(repositoryData) 
+            const repositoryData = JSON.parse(response.payload); 
             const productReposData = repositoryData[0][0];
             const measureReposData = repositoryData[1];
             product = productSaleReadAdapter(productReposData),

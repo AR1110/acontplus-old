@@ -1,4 +1,4 @@
-import { RefreshIcon} from "@/core/components";
+import { RefreshIcon} from "@/core/components/IconsMaterial";
 import { PrivateRoutes} from "@/core/models";
 import { AppBar, Button, Grid, IconButton, Paper, Toolbar, Tooltip } from "@mui/material";
 import { useNavigate } from "react-router-dom";

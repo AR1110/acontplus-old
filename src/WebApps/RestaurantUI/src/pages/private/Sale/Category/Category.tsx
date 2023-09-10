@@ -1,7 +1,7 @@
 
 import Tabs, { tabsClasses } from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import { CategoryIcon } from '@/core/components';
+import { CategoryIcon } from '@/core/components/IconsMaterial';
 import { useState } from 'react';
 import { Avatar, Paper } from '@mui/material';
 import { useSaleStore } from '@/stores/saleStore';
@@ -15,12 +15,14 @@ export default function Category() {
 
   const handleChange = (_: React.SyntheticEvent, index: number) => {
     const dataCategory = categories.find((_, indexCategory)=>indexCategory===index);
-    
-     
+    const tipo = dataCategory?.code ==="COMBOS" ? 3 : 1;
+    const code = dataCategory?.code ==="COMBOS" ? dataCategory.code : ""
     setItemSearch({
       ...itemSearchInitialState,
       checkSubFamilia: dataCategory && dataCategory.idSubFamilia > 0 ? true: false,
-      idSubFamilia: dataCategory?.idSubFamilia ?? 0
+      idSubFamilia: dataCategory?.idSubFamilia ?? 0,
+      code,
+      tipo
     }) 
     setValue(index);
   };

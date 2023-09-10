@@ -36,6 +36,4 @@ import notFound_img from '/assets/images/background/error404.jpg';
   );
 }
 
-export {
-  NotFound
-}
+export default NotFound

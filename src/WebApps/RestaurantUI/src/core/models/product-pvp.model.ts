@@ -1,15 +1,15 @@
-export interface RawProductPVPData {
-    idArticuloPvP: number
-    idTarifa: number
-    precioVenta: number
-    precioConIva: number
-    porcentajeUtilidad: number
+export interface RawProductPVPData { 
+    idTarifa: number,
+    precioVenta: number,
+    precioConIva: number,
+    tarifa: string, 
     precioPredeterminado: boolean
-    tarifa: string
-    porcentajeIva: number
 } 
 
 export interface ProductPVPReadDto {
+    feeId: number
     salePrice: number
     priceWithVat: number
+    description: string,
+    default: boolean
 }

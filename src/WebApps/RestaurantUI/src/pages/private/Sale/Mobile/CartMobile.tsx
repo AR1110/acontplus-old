@@ -1,8 +1,8 @@
 
 import CartMobileAction from './CartMobileActions'
-import { Box, List, ListItem, TextField, Typography, useTheme } from '@mui/material';
-import { AddShoppingCartIcon } from '@/core/components';
-import { useSaleStore } from '@/stores'; 
+import { Box, TextField, Typography, useTheme } from '@mui/material';
+import { AddShoppingCartIcon } from '@/core/components/IconsMaterial';
+import { useSaleStore } from '@/stores';
 import CartItem from '../CartItem/CartItem';
 import CustomerSearch from '../Customer/CustomerSearch';
 
@@ -12,7 +12,7 @@ const CartMobile = () => {
     const order = useSaleStore(state => state.order);
     const setOrder = useSaleStore(state => state.setSummary)
 
-    
+
 
     if (orderItems.length === 0) {
         return (<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 10 }}>
@@ -30,19 +30,18 @@ const CartMobile = () => {
     return (
         <>
             <div style={{ minHeight: '100vh', position: 'relative', overflowY: 'auto', maxHeight: '100vh' }}>
-                <CustomerSearch/>
-                
+                <CustomerSearch />
 
-                <List>
-                    {
-                        orderItems.map((orderItem, index) => (
-                            <ListItem key={index} children={
-                                <CartItem item={orderItem} index={index} key={index} />
-                            } />
 
-                        ))
-                    }
-                </List>
+
+                {
+                    orderItems.map((orderItem, index) => (
+
+                        <CartItem item={orderItem} index={index} key={index} />
+
+
+                    ))
+                }
             </div>
 
             <CartMobileAction />
@@ -54,7 +53,7 @@ const CartMobile = () => {
                     bottom: '0',
                     left: '0',
                     right: '0',
-                    backgroundColor: theme.palette.mode === 'dark'? '#1A2027' : 'white',
+                    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : 'white',
                     padding: '10px',
                     display: 'flex',
                     flexDirection: 'column',

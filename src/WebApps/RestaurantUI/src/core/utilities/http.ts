@@ -1,8 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios"; 
-import { getToken, AuthService } from "@/core/services";
+import { getToken } from "@/core/services";
 import { SnackbarUtility } from ".";
 
-console.log(AuthService.decodeToken())
 const instance = axios.create({
   baseURL: import.meta.env.DEV ? "https://localhost:7112/gateway/" : "http://18.224.78.45:83/gateway/",
 });

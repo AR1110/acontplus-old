@@ -1,4 +1,4 @@
-import { CategoryReadDto, CustomerReadDto, DecimalSale, Floor, Room, TableReadDto, Tax, TaxRate, WarehouseAsign } from ".";
+import { CategoryReadDto, CustomerReadDto, DecimalSale, Floor, ProductPVPReadDto, Room, TableReadDto, Tax, TaxRate, WarehouseAsign } from ".";
 import { DOC_TYPE } from "../constants";
 import { EmissionPointAsign } from "./emission-point.model";
 
@@ -53,16 +53,19 @@ export interface ItemBase {
     quantity: number
     cost: number
     price: number
+    priceWithVat: number
     discount: number
     discountTotal: number
     total: number
+    bodegaId: number
 }
 
 export interface ItemRead extends ItemBase {
     uuid: string
     s3ObjectUrl: string;    
-    takesInventory: boolean
+    carryInventory: boolean
     taxes: Array<ItemTaxes>
+    pvps: Array<ProductPVPReadDto>
     obs?: string
 }
 

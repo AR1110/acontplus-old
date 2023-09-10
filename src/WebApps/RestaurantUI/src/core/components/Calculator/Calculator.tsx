@@ -1,7 +1,7 @@
-import { Box, Grid, useTheme } from '@mui/material';
-import { BackspaceIcon } from '..';
+import { Box, Grid, useTheme } from '@mui/material'; 
 import CalculatorButton from './CalculatorButton';
 import { addSound, clearSound } from '@/core/utilities';
+import { BackspaceIcon } from '../IconsMaterial';
  
 const grids = [7, 8, 9, 4, 5, 6, 1, 2, 3, ".", 0]
 

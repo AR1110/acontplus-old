@@ -6,6 +6,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { useSaleStore } from '@/stores';
 
 const InputSearchItem = () => {
+  console.log('input seraxcglewjrl lfehjklrhle')
   const filterOderItems = useSaleStore(state=>state.filterOderItems);
 
   return (
