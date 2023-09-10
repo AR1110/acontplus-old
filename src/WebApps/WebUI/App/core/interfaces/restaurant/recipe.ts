@@ -14,4 +14,5 @@ export interface Recipe {
     //Todo: Optional for filter
     productId?: number;
     extents?: [];
+    precioCosto?: number;
 }

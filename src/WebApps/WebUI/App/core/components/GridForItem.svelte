@@ -21,7 +21,7 @@
     });
   }
 
-  onMount(loadTabulator) 
+  onMount(loadTabulator)
 </script>
 
 <div bind:this={tableComponent} />

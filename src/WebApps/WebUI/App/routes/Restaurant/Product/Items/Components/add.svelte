@@ -92,6 +92,24 @@
     return selectList;
   };
 
+  let updatePrecio = (cell) => {
+    let getData = cell.getRow().getData();
+    let quantity = getData.quantity;
+    let extentId = getData.extentId;
+    let extents = getData.extents;
+    let precioCosto = getData.precioCosto || 0;
+
+    if (extents == undefined) extents = [];
+    if (extents != undefined) extents = JSON.parse(getData.extents);
+
+    for (let i = 0; i < extents.length; i++) {
+      if (extents[i].idMedida == extentId) {
+        precioCosto = extents[i].precioCosto * quantity;
+      }
+    }
+    cell.getRow().update({ costPrice: precioCosto.toFixed(2) });
+  };
+
   let columns = [
     {
       title: "Ingrediente",
@@ -112,7 +130,6 @@
         if (getData.extents != undefined) medidas = JSON.parse(getData.extents);
 
         for (let i = 0; i < medidas.length; i++) {
-          console.log(medidas[i]);
           if (medidas[i].idMedida == value) {
             value = medidas[i].descripcion;
             break;
@@ -139,6 +156,7 @@
       field: "quantity",
       with: 90,
       editor: true,
+      cellEdited: updatePrecio,
       validator: ["required", "numeric"],
     },
     {
@@ -147,7 +165,6 @@
       with: 90,
       editor: true,
       formatter: function (cell) {
-        alert("Cell");
         let value = 0;
         let quantity = 0;
         let extents = [];
@@ -165,7 +182,15 @@
             break;
           }
         }
+        getData.costPrice = value;
         return value.toFixed(2);
+      },
+      bottomCalc: function (data) {
+        let total = 0;
+        data.forEach((element) => {
+          total += element;
+        });
+        return total.toFixed(2);
       },
     },
     {
@@ -310,7 +335,6 @@
       }
 
       recipe.forEach((element: any) => {
-        console.log(element);
         if (validatorParam.includes(element.extentId)) {
           toast({
             type: "warning",
