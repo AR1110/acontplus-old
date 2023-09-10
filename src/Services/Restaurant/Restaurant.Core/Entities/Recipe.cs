@@ -17,5 +17,7 @@ namespace Restaurant.Core.Entities
         [Column(TypeName = "numeric(18,5), null")]
         public decimal NetWeight { get; set; }
         public int ExtentId { get; set; }
+        [Column(TypeName = "numeric(18,5), null")]
+        public decimal? CostPrice { get; set; }
     }
 }

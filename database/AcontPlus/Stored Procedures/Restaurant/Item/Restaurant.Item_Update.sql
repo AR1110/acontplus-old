@@ -42,6 +42,7 @@ BEGIN
          ,quantity      FLOAT
          ,enabled       BIT  
          ,extentId      INT
+         ,costPrice     NUMERIC(18,5)
     )
 
     IF ISJSON(@json) = 0
@@ -71,6 +72,7 @@ BEGIN
             , ISNULL(quantity, 0)
             , enabled
             , ISNULL(extentId, 0)
+            , ISNULL(costPrice, 0)
     FROM OPENJSON(@recipeJson)
     WITH(
       id            INT             '$.id'
@@ -83,6 +85,7 @@ BEGIN
       ,quantity     FLOAT           '$.quantity'
       ,enabled      BIT             '$.enabled'
       ,extentId     INT             '$.extentId'
+      ,costPrice    NUMERIC(18,5)   '$.costPrice'
     )
     
     SELECT @productId = productId FROM OPENJSON(@itemJson) WITH(productId INT '$.productId')
@@ -114,7 +117,6 @@ BEGIN
     )
 
     SET @itemId = (SELECT TOP 1 itemId FROM #RecipeTemp)
-       
         
 	BEGIN TRY               
 		BEGIN TRAN
@@ -130,7 +132,7 @@ BEGIN
             
             ---- INSERT RECIPE IF NOT EXISTS ----
             INSERT INTO Restaurant.Recipe
-            (ItemId, Unit, Weight, NetWeight, CreatedAt, UpdatedAt, Enabled, Deleted, UserId, IngredientId, Instructions, Quantity, ExtentId)
+            (ItemId, Unit, Weight, NetWeight, CreatedAt, UpdatedAt, Enabled, Deleted, UserId, IngredientId, Instructions, Quantity, ExtentId, CostPrice)
 
             SELECT rt.itemId
                     , rt.unit
@@ -145,6 +147,7 @@ BEGIN
                     , rt.instructions
                     , rt.quantity
                     , rt.extentId
+                    , rt.costPrice
             FROM #RecipeTemp rt
             WHERE rt.ingredientId NOT IN(SELECT rr.IngredientId FROM Restaurant.Recipe rr WHERE rr.ItemId = @itemId)
           
@@ -159,6 +162,7 @@ BEGIN
                 ,rr.Quantity     = rt.quantity
                 ,rr.UpdatedAt    = @date
                 ,rr.ExtentId     = rt.extentId
+                ,rr.CostPrice    = rt.costPrice
             FROM Restaurant.Recipe rr            
             INNER JOIN #RecipeTemp rt ON rt.itemId = rr.ItemId
             WHERE rr.IngredientId = rt.ingredientId
@@ -176,6 +180,7 @@ BEGIN
                 ,rr.Quantity     = rt.quantity
                 ,rr.UpdatedAt    = @date
                 ,rr.ExtentId     = rt.extentId
+                ,rr.CostPrice    = rt.costPrice
             FROM Restaurant.Recipe rr            
             INNER JOIN #RecipeTemp rt ON rt.itemId = rr.ItemId
             WHERE rr.IngredientId = rt.ingredientId
@@ -198,7 +203,6 @@ BEGIN
                 END
 		COMMIT TRAN
         SELECT Common.ufnSpResponse('1', 'Actualizado exitosamente', NULL)
-
 	END TRY
 	BEGIN CATCH
 		SELECT Common.ufnSpResponse('0', 'Error al actualizar el ingrediente', NULL)
@@ -209,4 +213,4 @@ BEGIN
         (token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, errorDate, idUsuario)
         VALUES(NEWID(), 'Item/Put', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @userId)
 	END CATCH
-END
+END 
