@@ -19,11 +19,13 @@
           .then((res) => {
             if (res) {
               ingredientes = res["ingredients"];
-            } else {
-              toast({
-                type: "warning",
-                message: "No se encontraron ingredientes",
-              });
+
+              if (ingredientes.length === 0) {
+                toast({
+                  type: "warning",
+                  message: "No se encontraron ingredientes",
+                });
+              }
             }
           })
           .catch((err) => {
@@ -62,7 +64,7 @@
     if (inputValue) {
       setTimeout(clearInput, 1000);
     } else {
-      alert("You didn't type anything.");
+      console.log("You didn't type anything.");
     }
   };
 
