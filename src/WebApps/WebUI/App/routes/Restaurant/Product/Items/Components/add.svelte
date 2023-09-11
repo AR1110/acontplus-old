@@ -89,6 +89,7 @@
       }
       selectList.appendChild(option);
     }
+
     return selectList;
   };
 
@@ -121,6 +122,7 @@
       title: "Medida",
       field: "extentId",
       with: 150,
+      onUpdate: updatePrecio,
       editor: customNativeSelect,
       formatter: function (cell) {
         let getData = cell.getRow().getData();
@@ -132,6 +134,9 @@
         for (let i = 0; i < medidas.length; i++) {
           if (medidas[i].idMedida == value) {
             value = medidas[i].descripcion;
+            setTimeout(() => {
+              updatePrecio(cell);
+            }, 100);
             break;
           }
         }
@@ -434,12 +439,12 @@
         </div>
         <hr />
         <div class="row">
-          <div class="col-6">
+          <div class="col-12 col-xl-6 col-lg-6 col-md-12 col-sm-12">
             <div class="form-group">
               <label for="ingredients">Ingredientes</label>
             </div>
           </div>
-          <div class="col-6">
+          <div class="col-12 col-xl-6 col-lg-6 col-md-12 col-sm-12">
             <Search {setOnChange} />
           </div>
         </div>

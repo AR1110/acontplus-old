@@ -10,6 +10,7 @@
 
   const unSuscribe = useItemStore.subscribe((values) => {
     items = values.items;
+    console.log(values);
   });
 
   let page;
