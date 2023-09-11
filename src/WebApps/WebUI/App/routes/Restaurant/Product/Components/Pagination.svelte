@@ -15,7 +15,14 @@
     previous: "Anterior",
   };
 
+  let pageCount = 0;
+
+
   $: pageCount = Math.floor(count / pageSize);
+
+  if (pageCount === undefined || pageCount === null) {
+    pageCount = 0;
+  }
 
   function onChange(event, page) {
     const detail = {
