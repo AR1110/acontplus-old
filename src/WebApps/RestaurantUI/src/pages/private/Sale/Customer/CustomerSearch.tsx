@@ -1,8 +1,8 @@
 import * as React from 'react';
 import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
+import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import { EditIcon, PersonAddAltTwoToneIcon, InfoIcon } from '@/core/components/IconsMaterial';
-import { IconButton, Stack, Tooltip } from '@mui/material';
+import { Box, IconButton, Stack, Tooltip, Typography } from '@mui/material';
 import { useRef, useState } from 'react';
 import { CustomerReadDto } from '@/core/models';
 import { customerService } from '@/core/services';
@@ -10,6 +10,8 @@ import { useSaleStore } from '@/stores';
 import CustomerDialog from './CustomerDialog';
 import HtmlTooltip from '@/core/components/HtmlTooltip';
 import { CustomerInfo } from './CustomerInfo';
+
+const filter = createFilterOptions<CustomerReadDto>();
 
 const CustomerSearch = () => {
     const [customers, setCustomers] = useState<Array<CustomerReadDto>>([]);
@@ -20,13 +22,17 @@ const CustomerSearch = () => {
     const [openCustomerDialog, setOpenCustomerDialog] = useState(false);
 
     const customerSearch = (textSearch: string) => {
-        if (textSearch.length < 2) return
         setCustomers([])
+        if (textSearch.length < 2) return
         customerService.search(textSearch).then(response => {
+            console.log(response)
             setCustomers(response)
-        }).finally(() => {
-            console.log('finally')
+        }).catch(() => {
+            setCustomers([])
         })
+            .finally(() => {
+                console.log('finally')
+            })
     }
     const handleInputChange = (_: any, value: string) => {
         customerSearch(value)
@@ -47,14 +53,9 @@ const CustomerSearch = () => {
     return (
         <>
             <Autocomplete
-                freeSolo
-                size='small'
                 value={order.customerName}
                 onInputChange={handleInputChange}
-                options={customers.map((option) => option.fiscalName)}
-                id="customerSearch"
-                blurOnSelect
-                onChange={(_, newValue,) => {
+                onChange={(_, newValue) => { 
                     const customerData = customers.find(
                         customer => customer.fiscalName === newValue
                     );
@@ -63,10 +64,24 @@ const CustomerSearch = () => {
 
                     setOrder({
                         ...order,
-                        customerName: newValue ?? "",
+                        customerName: customerData?.fiscalName ?? "",
                         customerCompanyId: customerData?.customerCompanyId ?? 0,
-                    })
+                    })  
                 }}
+               
+                selectOnFocus
+                clearOnBlur
+                handleHomeEndKeys
+                id="customerSearch"
+                options={customers}
+                getOptionLabel={(option) => {  
+                    if (typeof option === 'string') {
+                        return option;
+                    }  
+                    return ` ${option.identificationNumber} - ${option.fiscalName}`
+                }}
+                renderOption={(props, option) => <li {...props}>{option.identificationNumber} - {option.fiscalName}</li>}               
+                freeSolo
                 renderInput={(params) => (
                     <TextField
                         {...params}
@@ -78,8 +93,8 @@ const CustomerSearch = () => {
                             type: "text",
                             endAdornment: (
                                 <Stack direction="row"
-                                justifyContent="center"
-                                alignItems="flex-end">
+                                    justifyContent="center"
+                                    alignItems="flex-end">
                                     {/* {params.InputProps.endAdornment} */}
                                     <Tooltip title="Nuevo Cliente">
                                         <IconButton onClick={() => {
@@ -100,7 +115,7 @@ const CustomerSearch = () => {
                                                 </IconButton>
                                             </Tooltip>
                                                 <HtmlTooltip placement="bottom-start" title={
-                                                    <CustomerInfo id={order.customerCompanyId}/>
+                                                    <CustomerInfo id={order.customerCompanyId} />
                                                 }>
                                                     <IconButton onClick={() => {
                                                         customerCompanyId.current = order.customerCompanyId;

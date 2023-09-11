@@ -1,4 +1,5 @@
 export * from './ErrorBoundary';
+export * from './axios-fetch.utility';
 export { default as CheckoutUtility } from './checkout.utility';
 export { default as formatDateTimeZone } from './formatDateTimeZone';
 export * from './get-validation-error';

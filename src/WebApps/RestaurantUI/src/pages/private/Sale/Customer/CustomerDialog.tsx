@@ -301,6 +301,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
 
 
     const customerSearchSRI = async (numeroIdentificacion: string) => {
+        formik.setFieldValue("numeroIdentificacion", numeroIdentificacion)
         const dataIdentification = tiposIdentificacion.find(
             obj => obj.idTipoIdentificacion === formik.values.idTipoIdentificacion
         )
@@ -320,10 +321,9 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                 }
 
             }
-
         }
 
-        formik.setFieldValue("numeroIdentificacion", numeroIdentificacion)
+        
     }
 
     const handleEmailChange = (newValue: MuiChipsInputChip[]) => { 
@@ -429,11 +429,11 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                                 <TextField
                                     fullWidth
                                     size={texFieldSize}
-                                    //label="Dirección"   
+                                    label="Dirección"   
                                     id="direccion"
                                     name="direccion"
                                     variant="outlined" 
-                                    value={formik.values.direccion}
+                                    value={formik.values.direccion??""}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                     
@@ -446,7 +446,8 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                                     size="small"
                                     label="Correo"
                                     variant="outlined"
-                                    helperText={formik.values.emails.length> 0 ? "Haga doble clic para editar un chip" : ""}
+                                    placeholder='Ingrese el correo y presione Enter para agregar'
+                                    helperText={formik.values.emails.length> 0 ? "Haga doble clic para editar un correo" : ""}
                                     value={formik.values.emails}
                                     onChange={handleEmailChange}
                                     />
@@ -457,7 +458,8 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                                     size="small"
                                     label="Teléfono"
                                     variant="outlined"
-                                    helperText={formik.values.telefonos.length > 0 ? "Haga doble clic para editar un chip" : ""}
+                                    placeholder='Ingrese el # teléfono y presione Enter para agregar'
+                                    helperText={formik.values.telefonos.length > 0 ? "Haga doble clic para editar un teléfono" : ""}
                                     value={formik.values.telefonos}
                                     onChange={handlePhoneChange}
                                     />
@@ -492,6 +494,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                                         fullWidth
                                         id="idSubContribuyente"
                                         name="idSubContribuyente"
+                                        label="Tipo Contribuyente"
                                         select
                                         value={formik.values.idSubContribuyente > 0 ? formik.values.idSubContribuyente : ''}
                                         onChange={formik.handleChange}
@@ -517,6 +520,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                                         id="idTiempoCredito"
                                         name="idTiempoCredito"
                                         select
+                                        label="Tiempo Crédito"
                                         value={formik.values.idTiempoCredito > 0 ? formik.values.idTiempoCredito : ''}
                                         onChange={formik.handleChange}
                                     >
