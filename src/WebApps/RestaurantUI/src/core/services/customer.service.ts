@@ -5,7 +5,7 @@ import { customerReadAdapter, dataFormReadAdapter } from "../adapters"
 import Swal from "sweetalert2"
 
 const URL = 'Cliente/'
-const CustomerService = {
+const customerService = {
     async getDataForm() {
         const resultAxios = await Http({
             method: 'get',
@@ -115,5 +115,5 @@ const CustomerService = {
 }
 
 export {
-    CustomerService
+    customerService
 }

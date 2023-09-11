@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Grid, Paper, TextField, Typography } from '@mui/material'
+import { Box, Button, Divider, Grid, Paper, Stack, TextField, Typography } from '@mui/material'
 import CartItem from '../CartItem/CartItem'
 import { useCheckoutStore, useLoaderStore, useSaleStore } from '@/stores';
 import Swal from 'sweetalert2';
@@ -10,7 +10,7 @@ import { AddShoppingCartIcon, CleaningServicesIcon, FileCopyRoundedIcon, SaveIco
 import { DOC_TYPE } from '@/core/constants';
 import './Cart.css'
 import TableDialog from '../Table/TableDialog';
-import {useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import CustomerSearch from '../Customer/CustomerSearch';
 
 
@@ -186,38 +186,9 @@ const Cart = () => {
             bgcolor: 'background.paper'
         }} >
             <Box display="grid" gridTemplateColumns="repeat(12, 1fr)" gap={2}>
-                <Box gridColumn="span 8">
-                    {/* <Stack
-                        direction={{ xs: 'column', sm: 'row' }}
-                        spacing={{ xs: 1, sm: 2, md: 4 }}
-
-                    >
-                        <Box> */}
-                    <CustomerSearch />
-                    {/* </Box>
-                        <Box>
-                            <ButtonGroup variant="outlined" aria-label="outlined button group">
-                                <Button>One</Button>
-                                <Button>Two</Button>
-                            </ButtonGroup>
-                        </Box>
-
-                    </Stack> */}
-                </Box>
-                <Box gridColumn="span 4" textAlign="end">
-                    <Button variant="outlined" onClick={() => {
-                        setOpenTableDialog(true)
-                    }}>
-                        {
-                            order.tableId > 0 ? (
-                                (
-                                    order.table?.tableName && order.table?.tableName
-                                ) ? `${order.table?.tableName} - ${order.table?.numberTable}` : 'Seleccionar Mesa'
-                            ) : 'Mesa'
-                        }
-                    </Button>
-                    <TableDialog open={openTableDialog} onClose={setOpenTableDialog} />
-                </Box>
+                <Box gridColumn="span 12"> 
+                    <CustomerSearch /> 
+                </Box> 
             </Box>
             {
                 cartItems.length === 0 ? (<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 10 }}>
@@ -241,7 +212,55 @@ const Cart = () => {
             }
 
             <Divider sx={{ m: 1 }} />
-            <Grid container direction="row"
+
+            <Grid item xs={12} sm container>
+                <Grid item xs container direction="column" spacing={1}>
+                    <Grid item xs>
+                        <Button size='small' variant="outlined" onClick={() => {
+                            setOpenTableDialog(true)
+                        }}>
+                            {
+                                order.tableId > 0 ? (
+                                    (
+                                        order.table?.tableName && order.table?.tableName
+                                    ) ? `${order.table?.tableName} - ${order.table?.numberTable}` : 'Seleccionar Mesa'
+                                ) : 'Mesa'
+                            }
+                        </Button>
+                        <TableDialog open={openTableDialog} onClose={setOpenTableDialog} />
+                    </Grid>
+                    <Grid item>
+                        <TextField
+                            id="observacion"
+                            label="Observación"
+                            value={order.obs}
+                            onChange={(e) => {
+                                setOrder({
+                                    ...order,
+                                    obs: e.target.value
+                                })
+                            }}
+                            multiline
+                        />
+                    </Grid>
+                </Grid>
+                <Grid item>
+                    <Stack direction="column"
+                        justifyContent="center"
+                        alignItems="flex-end">
+                        <Typography variant="body2" color="text.primary">
+                            SubTotal: ${order.subTotalSinImpuestos}
+                        </Typography>
+                        <Typography variant="body2" color="text.primary">
+                            IVA (12%): ${order.tax}
+                        </Typography>
+                        <Typography variant="h6" color="error">
+                            Total: ${order.total}
+                        </Typography>
+                    </Stack>
+                </Grid>
+            </Grid>
+            {/* <Grid container direction="row"
                 justifyContent="space-between"
                 alignItems="center" >
 
@@ -256,25 +275,21 @@ const Cart = () => {
                                 obs: e.target.value
                             })
                         }}
-                        // value={input}
-                        // placeholder={"Tap on the virtual keyboard to start"}
-                        // onChange={e => onChangeInput(e)}
                         multiline
-                        rows={2}
                     />
                 </Grid>
                 <Grid item >
-                    <Typography variant="subtitle1" color="text.primary">
+                    <Typography variant="body1" color="text.primary">
                         SubTotal: ${order.subTotalSinImpuestos.toFixed(2)}
                     </Typography>
-                    <Typography variant="subtitle1" color="text.primary">
+                    <Typography variant="body1" color="text.primary">
                         IVA (12%): ${order.tax.toFixed(2)}
                     </Typography>
                     <Typography variant="h6" color="error">
                         Total: ${order.total.toFixed(2)}
                     </Typography>
                 </Grid>
-            </Grid>
+            </Grid> */}
             <Divider sx={{ m: 1 }} />
 
 

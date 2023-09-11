@@ -1,6 +1,6 @@
 import * as React from "react";
 import { CustomerReadDto } from "@/core/models";
-import { CustomerService } from "@/core/services";
+import { customerService } from "@/core/services";
 import { Autocomplete, TextField } from "@mui/material";
 import { useState } from "react";
 
@@ -18,7 +18,7 @@ export default function OrderSearch({ setCustomerValue }: SearchReturnProps) {
   const customerSearch = (textSearch: string) => {
     if (textSearch.length < 2) return;
     setCustomers([]);
-    CustomerService.search(textSearch)
+    customerService.search(textSearch)
       .then((response) => {
         setCustomers(response);
       })

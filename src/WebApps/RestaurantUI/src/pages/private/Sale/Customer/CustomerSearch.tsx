@@ -1,13 +1,15 @@
 import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import { EditIcon, PersonAddAltTwoToneIcon } from '@/core/components/IconsMaterial';
-import { IconButton } from '@mui/material';
+import { EditIcon, PersonAddAltTwoToneIcon, InfoIcon } from '@/core/components/IconsMaterial';
+import { IconButton, Stack, Tooltip } from '@mui/material';
 import { useRef, useState } from 'react';
 import { CustomerReadDto } from '@/core/models';
-import { CustomerService } from '@/core/services';
+import { customerService } from '@/core/services';
 import { useSaleStore } from '@/stores';
 import CustomerDialog from './CustomerDialog';
+import HtmlTooltip from '@/core/components/HtmlTooltip';
+import { CustomerInfo } from './CustomerInfo';
 
 const CustomerSearch = () => {
     const [customers, setCustomers] = useState<Array<CustomerReadDto>>([]);
@@ -20,7 +22,7 @@ const CustomerSearch = () => {
     const customerSearch = (textSearch: string) => {
         if (textSearch.length < 2) return
         setCustomers([])
-        CustomerService.search(textSearch).then(response => {
+        customerService.search(textSearch).then(response => {
             setCustomers(response)
         }).finally(() => {
             console.log('finally')
@@ -31,7 +33,7 @@ const CustomerSearch = () => {
     };
 
     const customerDialogClose = (data?: CustomerReadDto) => {
-         
+
         if (data) {
             setOrder({
                 ...order,
@@ -43,13 +45,15 @@ const CustomerSearch = () => {
     }
 
     return (
-        <> 
+        <>
             <Autocomplete
                 freeSolo
+                size='small'
                 value={order.customerName}
                 onInputChange={handleInputChange}
                 options={customers.map((option) => option.fiscalName)}
                 id="customerSearch"
+                blurOnSelect
                 onChange={(_, newValue,) => {
                     const customerData = customers.find(
                         customer => customer.fiscalName === newValue
@@ -73,27 +77,43 @@ const CustomerSearch = () => {
                             ...params.InputProps,
                             type: "text",
                             endAdornment: (
-                                <>
-                                    {params.InputProps.endAdornment}
-                                    <IconButton onClick={() => {
-                                        customerCompanyId.current = 0;
-                                        setOpenCustomerDialog(true);
-                                    }}>
-                                        <PersonAddAltTwoToneIcon />
-                                    </IconButton>
+                                <Stack direction="row"
+                                justifyContent="center"
+                                alignItems="flex-end">
+                                    {/* {params.InputProps.endAdornment} */}
+                                    <Tooltip title="Nuevo Cliente">
+                                        <IconButton onClick={() => {
+                                            customerCompanyId.current = 0;
+                                            setOpenCustomerDialog(true);
+                                        }}>
+                                            <PersonAddAltTwoToneIcon color='success' sx={{ fontSize: 30 }} />
+                                        </IconButton>
+                                    </Tooltip>
                                     {
                                         order.customerCompanyId > 0 && (
-                                            <>
+                                            <> <Tooltip title="Editar Cliente">
                                                 <IconButton onClick={() => {
                                                     customerCompanyId.current = order.customerCompanyId;
                                                     setOpenCustomerDialog(true)
-                                                }}> <EditIcon />
+                                                }}>
+                                                    <EditIcon color='warning' sx={{ fontSize: 30 }} />
                                                 </IconButton>
+                                            </Tooltip>
+                                                <HtmlTooltip placement="bottom-start" title={
+                                                    <CustomerInfo id={order.customerCompanyId}/>
+                                                }>
+                                                    <IconButton onClick={() => {
+                                                        customerCompanyId.current = order.customerCompanyId;
+                                                        setOpenCustomerDialog(true)
+                                                    }}>
+                                                        <InfoIcon color='info' sx={{ fontSize: 30 }} />
+                                                    </IconButton>
+                                                </HtmlTooltip>
                                             </>
                                         )
                                     }
 
-                                </>
+                                </Stack>
                             ),
                         }}
                     />

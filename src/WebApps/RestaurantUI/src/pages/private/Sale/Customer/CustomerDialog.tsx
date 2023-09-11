@@ -1,6 +1,6 @@
 import { SRI_IDENTIFITION_CODE } from '@/core/constants'
 import { CustomerCreateDto, CustomerReadDto, TiempoCredito, TipoContribuyente, TipoIdentificacion } from '@/core/models'
-import { CustomerService, SharedService } from '@/core/services'
+import { customerService, SharedService } from '@/core/services'
 import { SnackbarUtility } from '@/core/utilities'
 import { useLoaderStore } from '@/stores'
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, MenuItem, Switch, Tab, Tabs, TextField } from '@mui/material'
@@ -115,7 +115,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
         if (response.code === "1") {
             SnackbarUtility.success(response.message);
             const customerCompanyId = id > 0 ? id : response.payload;
-            const customerData = await CustomerService.getId(customerCompanyId);
+            const customerData = await customerService.getId(customerCompanyId);
             handleClose(customerData);
         }
     }
@@ -141,12 +141,12 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
             } 
 
             if (id > 0) {
-                CustomerService.put(values.idCliente, data)
+                customerService.put(values.idCliente, data)
                     .then(successResponse)
                     .finally(() => showLoader(false))
             }
             if (!(id > 0)) {
-                CustomerService.post(data)
+                customerService.post(data)
                     .then(successResponse)
                     .finally(() => showLoader(false))
             }
@@ -155,7 +155,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
 
     const onLoad = async () => {
         showLoader(true)
-        await CustomerService.getDataForm().then(response => {
+        await customerService.getDataForm().then(response => {
             setTiposIdentificacion(() => response.tipoIdentificacion)
             setTipoContribuyentes(response.tipoContribuyentes)
             setTiempoCreditos(response.tiempoCreditos);
@@ -190,7 +190,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
 
 
         if (id > 0) {
-            CustomerService.getId(id).then(response => { 
+            customerService.getId(id).then(response => { 
                 formik.setValues(state => {
                     return {
                         ...state,
@@ -311,7 +311,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
         ) {
             //Validacion de Numero y si es cedula o RUC
             if (validateIDNumber(numeroIdentificacion)) {
-                const isCustomerRegistered = await CustomerService.isCustomerRegistered({
+                const isCustomerRegistered = await customerService.isCustomerRegistered({
                     textSearch: numeroIdentificacion
                 })
 

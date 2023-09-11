@@ -3,7 +3,7 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useState } from 'react';
 import { CustomerReadDto } from '@/core/models';
-import { CustomerService } from '@/core/services';
+import { customerService } from '@/core/services';
 import { Box, Typography } from '@mui/material';
 import { useOrderStore } from '@/stores';
 
@@ -14,7 +14,7 @@ const CustomerSearchFilter = () => {
 
     const onInputChange = (newValue: string) => {
         if (newValue.length > 0) {
-            CustomerService.search(newValue).then(response => {
+            customerService.search(newValue).then(response => {
                 setCustomers(response)
             })
         }
