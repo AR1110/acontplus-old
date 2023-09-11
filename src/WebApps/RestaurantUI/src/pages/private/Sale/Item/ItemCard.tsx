@@ -6,11 +6,11 @@ import Typography from '@mui/material/Typography';
 import { Badge, CardActionArea, Grid, Tooltip } from '@mui/material';
 import brand_img from '/assets/images/brand_logo.png';
 
-import { ItemReadDto, Measure, ProductPVPReadDto, WarehouseAsign } from '@/core/models';
+import { ItemReadDto, Measure, ProductPVPReadDto } from '@/core/models';
 import { useSaleStore } from '@/stores/saleStore';
-import { MenuItemService, ProductService } from '@/core/services';
+import { MenuItemService, productService } from '@/core/services';
 import { useAuthStore, useLoaderStore } from '@/stores';
-import { PricingCalculateUtility, RoundNumber, SnackbarUtility } from '@/core/utilities';
+import { PricingCalculateUtility, RoundNumber } from '@/core/utilities';
 import Swal from 'sweetalert2';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -31,6 +31,7 @@ export default function ItemCard({ item }: ItemCardProps) {
 
     const dataEstab = useAuthStore(state => state.dataEstab)
     const itemSearch = useSaleStore(state => state.itemSearch)
+    const order = useSaleStore(state => state.order)
     // const [warehouses, setWarehouses] = useState<Array<WarehouseAsign>>([]) 
 
     const { showLoader } = useLoaderStore();
@@ -39,15 +40,15 @@ export default function ItemCard({ item }: ItemCardProps) {
     const handleSelectItem = (item: ItemReadDto) => {
         console.log(item)
         const decimal = dataForm.decimal;
-        const warehouses: Array<WarehouseAsign> = dataForm.warehouses.filter(warehouse => warehouse.codEstab_Asig === dataEstab.codEstab_Asig);
+        // const warehouses: Array<WarehouseAsign> = dataForm.warehouses.filter(warehouse => warehouse.codEstab_Asig === dataEstab.codEstab_Asig);
 
-        let dataWarehouse = {} as WarehouseAsign;
-        if (warehouses.length > 0) {
-            dataWarehouse = warehouses.find(warehouse => (warehouse.defaultBodega)) as WarehouseAsign
-        } else {
-            SnackbarUtility.warning('No tienes bodegas asignadas')
-            return
-        }
+        // let dataWarehouse = {} as WarehouseAsign;
+        // if (warehouses.length > 0) {
+        //     dataWarehouse = warehouses.find(warehouse => (warehouse.defaultBodega)) as WarehouseAsign
+        // } else {
+        //     SnackbarUtility.warning('No tienes bodegas asignadas')
+        //     return
+        // }
 
         showLoader(true)
         if(itemSearch.code==="COMBOS"){
@@ -59,7 +60,7 @@ export default function ItemCard({ item }: ItemCardProps) {
         }
 
 
-        ProductService.findForSale(item.productId, dataWarehouse.idBodega).then(response => {
+        productService.findForSale(item.productId, order.bodegaId).then(response => {
             const { product, measures } = response;
             const measureData = measures.find(measure => measure.measureId === product.measureId) as Measure;
 
@@ -76,10 +77,10 @@ export default function ItemCard({ item }: ItemCardProps) {
                 return
             }
 
-            ProductService.checkNotificationStock({
+            productService.checkNotificationStock({
                 idArticulo: product.productId,
                 cantidad: getItemQty(item.productId),
-                idBodega: dataWarehouse.idBodega
+                idBodega: order.bodegaId
             }).then(async response => {
                 const { code, message, titleSms } = response;
                 if (code === "1") {
@@ -129,7 +130,8 @@ export default function ItemCard({ item }: ItemCardProps) {
                     discountTotal: 0,
                     total: salePrice ?? 0,
                     s3ObjectUrl: product.s3ObjectUrl ? product.s3ObjectUrl : brand_img,
-                    takesInventory: product.takesInventory,
+                    carryInventory: product.takesInventory,
+                    bodegaId: order.bodegaId,
                     taxes: [{
                         uuid: uuid,
                         taxId: taxId,

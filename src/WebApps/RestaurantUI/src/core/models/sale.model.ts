@@ -57,12 +57,13 @@ export interface ItemBase {
     discount: number
     discountTotal: number
     total: number
+    bodegaId: number
 }
 
 export interface ItemRead extends ItemBase {
     uuid: string
     s3ObjectUrl: string;    
-    takesInventory: boolean
+    carryInventory: boolean
     taxes: Array<ItemTaxes>
     pvps: Array<ProductPVPReadDto>
     obs?: string

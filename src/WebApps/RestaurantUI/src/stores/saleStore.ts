@@ -8,10 +8,12 @@ import {
     dataFormInitialState,
     orderInitialState
 } from "@/core/models";
-import { RoundNumber, SnackbarUtility, addSound, clearSound } from "@/core/utilities";
-import { ChangeEvent } from "react";
+import { RoundNumber, SnackbarUtility, addSound, clearSound } from "@/core/utilities"; 
 import { create } from "zustand";
 import { produce } from 'immer';
+import { productService } from "@/core/services";
+import Swal from "sweetalert2";
+import { useLoaderStore } from ".";
 
 type State = {
     itemSearch: ItemSearch
@@ -46,13 +48,8 @@ type Actions = {
     setCollectionItems(products: Array<ItemReadDto>): void
     addItemToCart(item: ItemRead): void //Añadir Item 
     removeItemFromCart(productId: number): void //Eliminar item 
-    setTotalItems(): void, //Calcular totales
-    setAddQuantity(index: number, value: number): void //Añadir cantidad
-    setRemoveQuantity(index: number, value: number): void //Restar cantidad
-    setItemChangeQty(
-        event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-        cartItem: ItemRead,
-    ): void //Modificar cantidad del item 
+    setTotalItems(): void, //Calcular totales   
+    setItemChangeQty(index:number, qty:number): void //Modificar cantidad del item  
     onChangePVP(id:number, index:number):void
     caculateTotals(): void
     resetForm(): void
@@ -60,46 +57,11 @@ type Actions = {
 export const useSaleStore = create<State & Actions>((set, get) => ({
     itemSearch: itemSearchInitialState,
     setDataEdit(obj: any) {
-
         const { order, orderItems } = obj;
-        const orderAdapt = {
-            orderId: order.id,
-            establecimientoId: order.establecimientoId,
-            puntoEmisionId: order.puntoEmisionId,
-            customerCompanyId: order.customerCompanyId,
-            customerName: order.customerName,
-            bodegaId: 0,
-            tableId: order.tableId,
-            subTotalSinImpuestos: 0,
-            tax: order.tax,
-            taxPercent: order.taxPercent,
-            taxAmount: 0,
-            discount: order.discount,
-            total: order.total,
-            netTotal: 0,
-            tip: 0,
-            obs: order.obs,
-            codDoc: order.codDoc,
-            quickSale: false,
-            createdAt: new Date(order.createdAt),
-            table: {
-                tableName: order.tableName,
-                numberTable: order.numberTable
-            }
-        }
         set(
             produce((state: State) => {
-                state.order = orderAdapt;
-                state.items = orderItems.map((orderItem: any) => {
-
-                    return {
-                        ...orderItem,
-                        code: orderItem.codigo,
-                        description: orderItem.descripcion
-                    }
-
-                })
-
+                state.order = order;
+                state.items = orderItems
             })
         )
 
@@ -203,10 +165,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                 state.collectionItems = collectionItems;
                 state.tempOrderItems = structuredClone(collectionItems)
             })
-        )
-        // set({
-        //     collectionItems
-        // })
+        ) 
     },
     addItemToCart: (item) => {
         const { items, setTotalItems, caculateTotals } = get();
@@ -254,133 +213,71 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
     },
     setTotalItems: () => set(state => ({
         totalItems: state.items.reduce((total, item) => total + item.quantity, 0)
-    })),
-
-    setAddQuantity(index: number, value: number) {
-
-        const { items, setTotalItems, caculateTotals } = get();
-        const newArray = items.map((orderItem, orderItemIndex) => {
-            const total = value * orderItem.price;
-            if (index === orderItemIndex) {
-                return {
-                    ...orderItem,
-                    quantity: value,
-                    total: RoundNumber(total, 2)
-                };
-            } else {
-                return orderItem;
-            }
-        })
-        set(
-            produce((state: State) => {
-                state.items = newArray;
-            })
-        )
-        setTotalItems();
-        caculateTotals();
-        addSound();
-    },
-    setRemoveQuantity(index: number, value: number) {
-
-        const { items, setTotalItems, caculateTotals } = get();
-        const newArray = items.map((orderItem, orderItemIndex) => {
-            const total = value * orderItem.price;
-            if (index === orderItemIndex) {
-                return {
-                    ...orderItem,
-                    quantity: value,
-                    total: RoundNumber(total, 2)
-                };
-            } else {
-                return orderItem;
-            }
-        })
-        set(
-            produce((state: State) => {
-                state.items = newArray;
-            })
-        )
-        setTotalItems();
-        caculateTotals();
-        addSound();
-    },
-    async setItemChangeQty(event, item) {
-        const { items, setTotalItems, caculateTotals, dataForm } = get();
-
-        let qty = Number(event.target.value)
-
-        if (qty < 1) {
-            qty = 1;
-        }
-
-        if (!item.takesInventory) {
-            setItem();
-            return
-        }
-
-        //Si el articulo lleva inventario 
-        if (item.takesInventory) {
-
-            // let warehouses: Array<WarehouseAsign> = dataForm.warehouses.filter(
-            //     warehouse => warehouse.codEstab_Asig === dataEstab.codEstab_Asig
-            // );
-
-            // let dataWarehouse = {} as WarehouseAsign
-            // if (warehouses.length > 0) {
-            //     dataWarehouse = warehouses.find(warehouse => (warehouse.defaultBodega)) as WarehouseAsign
-            // } else {
-            //     SnackbarUtility.warning('No tienes bodegas asignadas')
-            //     return
-            // }
-
-
-            // await ProductService.checkNotificationStock({
-            //     idArticulo: item.productId,
-            //     cantidad: qty ,
-            //     idBodega: dataWarehouse.idBodega
-            // }).then(async response => {
-            //     const { code, message, titleSms } = response;
-            //     if (code === "1") {
-            //         setItem();
-            //         return
-            //     }
-
-            //     let { isConfirmed } = await Swal.fire({
-            //         title: `<small>${titleSms}</small>`,
-            //         icon: 'warning',
-            //         html: `<small>${message}</small>`,
-            //         allowOutsideClick: false,
-            //         allowEscapeKey: false,
-            //     })
-
-            //     if (isConfirmed) {
-            //         if (code === "2") {
-            //             setItem();
-            //         }
-            //     }
-            // })
-
-        }
-
-        function setItem() {
-
-            for (const itemToModify of items) {
-                if (itemToModify.productId === item.productId) {
-                    itemToModify.quantity = qty;
-                    itemToModify.total = itemToModify.quantity * itemToModify.price;
-                    break
+    })), 
+    async setItemChangeQty(index, qty) {
+        const { order, items, dataForm, setTotalItems, caculateTotals, getItemQty } = get();
+        const showLoader =  useLoaderStore.getState().showLoader;
+        const decimal = dataForm.decimal;
+        
+        const dataOrderItem = items.find((_, indexToCompare)=>indexToCompare===index);
+        console.log(dataOrderItem)
+        if(dataOrderItem?.carryInventory){
+            showLoader(true);
+            productService.checkNotificationStock({
+                idArticulo: dataOrderItem.productId,
+                cantidad: getItemQty(dataOrderItem.productId),
+                idBodega: order.bodegaId
+            }).then(async response => {
+                const { code, message, titleSms } = response;
+                if (code === "1") {
+                    setQty();
+                    return
                 }
-            }
-            set(state => ({
-                ...state,
-                items: [...items],
-            }))
+
+                const { isConfirmed } = await Swal.fire({
+                    title: `<small>${titleSms}</small>`,
+                    icon: 'warning',
+                    html: `<small>${message}</small>`,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                })
+
+                if (isConfirmed) {
+                    if (code === "2") {
+                        setQty();
+                    }
+                }
+            }).finally(()=>showLoader(false))
+        }
+        else{
+            setQty();
+        }
+
+        function setQty(){
+            const newArray = items.map((orderItem, orderItemIndex) => {
+                const total = qty * orderItem.price;
+                if (index === orderItemIndex) {
+                    return {
+                        ...orderItem,
+                        quantity: qty,
+                        total: RoundNumber(total, decimal.nroTotalDetalle)
+                    };
+                } else {
+                    return orderItem;
+                }
+            })
+            set(
+                produce((state: State) => {
+                    state.items = newArray;
+                })
+            )
             setTotalItems();
             caculateTotals();
             addSound();
         }
 
-    },
+        
+    }, 
     async resetForm() {
         set(
             produce((state: State) => {
@@ -397,7 +294,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         clearSound();
         get().caculateTotals();
 
-    },
+    }, 
     onChangePVP(id, index){
          
         const { items, setTotalItems, caculateTotals } = get();

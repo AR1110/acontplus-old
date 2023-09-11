@@ -44,7 +44,6 @@
   onMount(() => {
     useItemStore.get({ pageSize: pageSize });
     useItemStore.getProductionArea();
-    // useItemStore.getIngredient();
     return () => unSuscribe();
   });
 </script>

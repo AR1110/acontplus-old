@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
-import { CalculateIcon, CheckoutCalculator, CloseIcon, FullScreenDialog, KeyboardArrowDownIcon } from '..'
 import { ErrorBoundary } from '@/core/utilities'
-import { Box, Button, Grid, IconButton, Modal, Stack, Typography } from '@mui/material'
-import CheckoutInfo from './CheckoutInfo/CheckoutInfo'
-import { useMobileDetect } from '@/hooks'
-import PaymentMethod from './PaymentMethod/PaymentMethod'
+import { Box, Button, Grid, IconButton, Modal, Stack, Typography } from '@mui/material' 
+import { useMobileDetect } from '@/hooks' 
 import { useCheckoutStore, useLoaderStore } from '@/stores'
-import { AccountReceivableService } from '@/core/services'
+import { AccountReceivableService } from '@/core/services' 
+import { CheckoutCalculator } from './CheckoutCalculator'
+import { CheckoutInfo } from './CheckoutInfo'
+import { PaymentMethod } from './PaymentMethod'
+import FullScreenDialog from '../FullScreenDialog'
+import { CalculateIcon, CloseIcon, KeyboardArrowDownIcon } from '../IconsMaterial'
+ 
 
 type CheckoutProps = {
     open: boolean,
@@ -20,7 +23,8 @@ const Checkout = ({ open, closeDialog }: CheckoutProps) => {
     const [openCalculatorMobile, setOpenCalculatorMobile] = useState(false);
 
     const queryParams = useCheckoutStore(state => state.queryParams)
-    const setCheckoutDataForm = useCheckoutStore(state => state.setCheckoutDataForm)
+    const setCheckoutDataForm = useCheckoutStore(state => state.setCheckoutDataForm);
+    const voucher = useCheckoutStore(state => state.checkout.voucher);
 
     console.log(queryParams)
     const initiload = async () => {
@@ -61,7 +65,7 @@ const Checkout = ({ open, closeDialog }: CheckoutProps) => {
                                         setOpenCheckoutInfoMobile(true)
                                     }}>
                                         <Typography variant="body1" display="block" gutterBottom>
-                                            $10.00
+                                            ${voucher.payingAmount}
                                         </Typography>
                                         <KeyboardArrowDownIcon />
 

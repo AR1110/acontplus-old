@@ -1,5 +1,5 @@
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Card, CardActions, CardContent, Divider, FormControl, FormControlLabel, Grid, InputAdornment, InputLabel, MenuItem, OutlinedInput, Switch, TextField, Typography } from '@mui/material'
-import { ExpandMoreIcon, PaymentsIcon, SaveIcon } from '../..'
+import { ExpandMoreIcon, PaymentsIcon, SaveIcon } from '../../IconsMaterial'
 import { useCheckoutStore } from '@/stores';
 import { PaymentTypeCode } from '@/core/constants';
 import City from './City';

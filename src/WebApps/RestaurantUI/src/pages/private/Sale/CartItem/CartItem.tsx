@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { ItemRead } from '@/core/models';
 import { Accordion, AccordionDetails, AccordionSummary, Avatar, IconButton, MenuItem, Stack, TextField } from '@mui/material';
-import { AddIcon, DeleteIcon, RemoveCircleOutlineIcon } from '@/core/components';
+import { AddIcon, DeleteIcon, RemoveCircleOutlineIcon } from '@/core/components/IconsMaterial';
 import { useSaleStore } from '@/stores';
 
 
@@ -15,7 +15,7 @@ type CartItemProps = {
 
 export default function CartItem({ index, item }: CartItemProps) {
     const removeItemFromCart = useSaleStore(state => state.removeItemFromCart)
-    const setRemoveQuantity = useSaleStore(state => state.setRemoveQuantity)
+    const setItemChangeQty = useSaleStore(state => state.setItemChangeQty)
     const setChangeValueOrderItem = useSaleStore(state => state.setChangeValueOrderItem);
     const onChangePVP = useSaleStore(state=>state.onChangePVP)
 
@@ -68,7 +68,7 @@ export default function CartItem({ index, item }: CartItemProps) {
                                     <IconButton aria-label="Disminuir Cantidad" disabled={item.quantity === 1} onClick={(event) => {
                                         event.stopPropagation();
                                         const quantity = item.quantity - 1;
-                                        setRemoveQuantity(index, quantity)
+                                        setItemChangeQty(index, quantity)
                                     }}>
                                         <RemoveCircleOutlineIcon />
                                     </IconButton>
@@ -78,7 +78,7 @@ export default function CartItem({ index, item }: CartItemProps) {
                                     <IconButton aria-label="Aumentar Cantidad" onClick={(event) => {
                                         event.stopPropagation();
                                         const quantity = item.quantity + 1;
-                                        setRemoveQuantity(index, quantity)
+                                        setItemChangeQty(index, quantity)
                                     }}>
                                         <AddIcon />
                                     </IconButton>

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import { EditIcon, PersonAddAltTwoToneIcon } from '@/core/components';
+import { EditIcon, PersonAddAltTwoToneIcon } from '@/core/components/IconsMaterial';
 import { IconButton } from '@mui/material';
 import { useRef, useState } from 'react';
 import { CustomerReadDto } from '@/core/models';

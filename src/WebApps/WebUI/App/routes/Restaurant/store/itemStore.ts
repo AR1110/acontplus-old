@@ -20,7 +20,6 @@ type State = {
     recipes: any;
     dataUpdate: Item;
     setIngredient: Ingredient;
-    medidas: any
 };
 const initiatlState: State = {
     items: [],
@@ -64,7 +63,6 @@ const initiatlState: State = {
         content: "",
         ingredientTypeId: 0,
     },
-    medidas: [],
 };
 const initiatlModalState: StateModal = {
     description: "",
@@ -98,7 +96,23 @@ const createItemStore = () => {
                     update((state) => ({
                         ...state,
                         items: response["items"],
-                        medidas: response["medidas"]
+                    }));
+                }
+            })
+            .finally(() => {
+                hideLoader();
+            });
+    };
+
+    const getProductionArea = () => {
+        showLoader();
+        productionAreaService
+            .get()
+            .then((response) => {
+                if (response) {
+                    update((state) => ({
+                        ...state,
+                        productionAreas: response,
                     }));
                 }
             })
@@ -111,7 +125,9 @@ const createItemStore = () => {
         let json = { pageIndex: 1, pageSize: 10 };
         let query = Object.assign(json, params ? params : json);
 
-        update((state) => { return { ...state, ingredientes: [] }; });
+        update((state) => {
+            return { ...state, ingredientes: [] };
+        });
 
         IngredientService.get(JSON.stringify(query))
             .then((response) => {
@@ -130,7 +146,6 @@ const createItemStore = () => {
     };
 
     const getRecipe = (item: any) => {
-        console.log(item);
         RecipeService.getByItem(item.id)
             .then((response) => {
                 hideLoader();
@@ -156,22 +171,6 @@ const createItemStore = () => {
             });
     };
 
-    const getProductionArea = () => {
-        showLoader();
-        productionAreaService
-            .get()
-            .then((response) => {
-                if (response) {
-                    update((state) => ({
-                        ...state,
-                        productionAreas: response,
-                    }));
-                }
-            })
-            .finally(() => {
-                hideLoader();
-            });
-    };
 
     return {
         set,

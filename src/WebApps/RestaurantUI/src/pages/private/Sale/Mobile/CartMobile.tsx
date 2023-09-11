@@ -1,7 +1,7 @@
 
 import CartMobileAction from './CartMobileActions'
-import { Box, List, ListItem, TextField, Typography, useTheme } from '@mui/material';
-import { AddShoppingCartIcon } from '@/core/components';
+import { Box, TextField, Typography, useTheme } from '@mui/material';
+import { AddShoppingCartIcon } from '@/core/components/IconsMaterial';
 import { useSaleStore } from '@/stores';
 import CartItem from '../CartItem/CartItem';
 import CustomerSearch from '../Customer/CustomerSearch';

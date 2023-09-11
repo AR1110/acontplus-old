@@ -1,6 +1,7 @@
 <script>
   import { IngredientService } from "$core/services/restaurant/ingredient-service";
   import ItemsList from "./items-list.svelte";
+  import toast from "$core/utils/toast";
 
   export let setOnChange;
   let filteredCountries = [];
@@ -12,18 +13,22 @@
     timer = setTimeout(() => {
       ingredientes = [];
       if (inputValue) {
-        let query = { pageIndex: 1, pageSize: 10, textSearch: inputValue };
+        let query = { textSearch: inputValue, tipo: 2 };
 
         IngredientService.get(JSON.stringify(query))
           .then((res) => {
             if (res) {
               ingredientes = res["ingredients"];
             } else {
-              toast.error("No se encontraron ingredientes");
+              toast({
+                type: "warning",
+                message: "No se encontraron ingredientes",
+              });
             }
           })
           .catch((err) => {
-            toast.error("ups, algo salio mal");
+            console.log(err);
+            toast({ type: "warning", message: "Ups, algo salió mal" });
           });
       }
     }, 750);
@@ -78,7 +83,6 @@
         ? (hiLiteIndex = filteredCountries.length - 1)
         : (hiLiteIndex -= 1);
     } else if (e.key === "Enter") {
-      alert("Here");
       setInputVal(filteredCountries[hiLiteIndex]);
     } else {
       return;
@@ -143,5 +147,6 @@
     width: 297px;
     border: 1px solid #ddd;
     background-color: #ddd;
+    z-index: 99;
   }
 </style>

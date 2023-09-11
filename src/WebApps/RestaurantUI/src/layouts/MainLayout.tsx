@@ -14,7 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { PrivateRoutes, PublicRoutes } from '@/core/models';
 import { useAuthStore } from '@/stores/authStore'; 
-import { ModeToggleButton } from '@/core/components';
+import ModeToggleButton from '@/core/components/ModeToggleButton';
  
 
 const pages = ['Pedidos'];
