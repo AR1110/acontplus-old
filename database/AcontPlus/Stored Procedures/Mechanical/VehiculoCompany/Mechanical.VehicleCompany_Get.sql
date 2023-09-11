@@ -81,7 +81,7 @@ BEGIN
 
             SELECT TOP 1 @CustomerId = CustomerId FROM Mechanical.v_Vehicle WITH (NOLOCK) WHERE Id = @Id
 
-            SELECT idCliente as id 
+            SELECT idCliente as Id 
                   ,IDType
                   ,IDCard
                   ,BusinessName

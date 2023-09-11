@@ -35,7 +35,6 @@ namespace Mechanical.Application.Services
                 return Converters.DataSetToJSON(ds);
             }
         }
-
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {
             return await _repository.SPExecuteAsync("MechanicalContext", "Mechanical.Support_Insert", parameters);
