@@ -11,7 +11,6 @@ const cretaeVehicle = () => {
             obj = Object.assign(obj, json ? json : obj)
             VehicleService.get(JSON.stringify(obj)).then((response) => {
                 if (response) {
-                    console.log('response')
                     update(state => state = response.vehicles)
                 }
             });

@@ -30,38 +30,42 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	DECLARE @tipo INT
-    DECLARE @CompanyId INT
-    DECLARE @Id INT
-    DECLARE @CustomerId INT
-    DECLARE @textSearch VARCHAR(100)
+           ,@CompanyId INT
+           ,@Id INT
+           ,@CustomerId INT
+           ,@VehicleCompranyId INT
+           ,@textSearch VARCHAR(100)
+           ,@pageSize INT
+	       ,@pageIndex INT 
 
     SELECT TOP 1 @CompanyId = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
 	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
 
     -- GET LIST -- 
-	--IF @tipo = 1
-	--	BEGIN
-	--		SET @tableNames = 'vehicles'
-	--		SELECT Id
- --                 ,VehicleType
- --                 ,LicensePlate
- --                 ,TradeName
- --                 ,IDCard 
- --                 ,CASE Code WHEN 'CM' THEN 'fa fa-truck' 
- --                            WHEN 'AB' THEN 'fa fa-bus'
- --                            WHEN 'TR' THEN 'fa fa-bus'
- --                            WHEN 'MC' THEN 'fa fa-motorcycle'
- --                            WHEN 'AT' THEN 'fa fa-car'
- --                  END as icon
- --                 ,[Enabled]
- --           FROM Mechanical.v_Vehicle 
- --           WITH (NOLOCK) 
- --           WHERE CompanyId = @CompanyId AND Deleted IS NULL
- --           ORDER BY Id DESC
+	IF @tipo = 1
+		BEGIN
+			
+            SELECT @pageIndex = pageIndex, @pageSize = pageSize  FROM OPENJSON(@json) WITH (pageIndex INT '$.pageIndex', pageSize INT '$.pageSize')
+
+            SET @tableNames = 'supports'
+			
+            SELECT Id
+                  ,[Common].[ufnGetSerieDocument](estab,ptoEmi,[Sequence],0) as [Sequence]
+                  ,FORMAT([Date], 'dd/MM/yyyy HH:mm') as [Date]
+                  ,idCard
+                  ,TradeName
+                  ,LicensePlate
+                  ,CASE [Status] WHEN 0 THEN 'PENDIENTE' 
+                                 WHEN 1 THEN 'REVISIÓN'
+                   END as [Status]
+                  ,COUNT(*) OVER() AS [TotalRecords]
+            FROM Mechanical.v_Support WITH (NOLOCK)
+            WHERE CompanyId = @CompanyId
+            ORDER BY Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY
             
- --           RETURN
-	--	END
+            RETURN
+		END
 
     -- GET DATAFORM -- 
 	IF @tipo = 2
@@ -74,7 +78,7 @@ BEGIN
 
             SELECT ap.idEstablecimiento as establecimientoId
                   ,ap.idPuntoEmision as puntoEmisionId
-                  ,ap.ptoEmi + '-' + ap.estab as ptoEmi
+                  ,ap.estab + '-' + ap.ptoEmi as ptoEmi
                   ,(SELECT (REPLICATE('0',(9-LEN(COUNT(*)+1)))+CONVERT(NVARCHAR(10),COUNT(*)+1)) FROM Mechanical.Support ms WHERE ms.PuntoEmisionId = ap.idPuntoEmision) as sequence
             FROM v_PtoEmi_Asign ap WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultPtoEmi DESC
 
@@ -95,40 +99,54 @@ BEGIN
 		END 
 
     ---- GET DATAFORM UPDATE O GET ID -- 
-    --IF @tipo = 3
-    --    BEGIN
-    --        SET @tableNames = 'customer,vehicle'
+    IF @tipo = 3
+        BEGIN
+            SET @tableNames = 'support,vehicle,customer'
 
-    --        SELECT @Id = Id FROM OPENJSON(@json) WITH (Id INT '$.id')
+            SELECT @Id = Id FROM OPENJSON(@json) WITH (Id INT '$.id')
 
-    --        SELECT TOP 1 @CustomerId = CustomerId FROM Mechanical.v_Vehicle WITH (NOLOCK) WHERE Id = @Id
+            SELECT TOP 1 @CustomerId = CustomerId, @VehicleCompranyId = VehicleCompanyId FROM Mechanical.v_Support WITH (NOLOCK) WHERE Id = @Id
 
-    --        SELECT numeroIdentificacion as idCard
-    --              ,nombreFiscal as businessName
-    --              ,correo as email
-    --        FROM v_Cliente WITH (NOLOCK)
-    --        WHERE idCliente = @CustomerId
+            SELECT Id
+                  ,EstablecimientoId
+                  ,PuntoEmisionId
+                  ,VehicleCompanyId
+                  ,CustomerId
+                  ,FORMAT([Date], 'yyyy-MM-dd') as [Date]
+                  ,[Common].[ufnGetSerieDocument](estab,ptoEmi,[Sequence],0) as [Sequence]
+            FROM Mechanical.v_Support WITH (NOLOCK)
+            WHERE Id = @Id
 
-    --        SELECT Id
-    --              ,CountryId
-    --              ,VehicleTypeId
-    --              ,vehicleId 
-    --              ,CustomerId
-    --              ,LicensePlate
-    --              ,Brand
-    --              ,Model
-    --              ,[Year]
-    --              ,Color
-    --              ,Engine
-    --              ,Chassis
-    --              ,Cylindraje
-    --              ,[Enabled]
-    --        FROM Mechanical.v_Vehicle WITH (NOLOCK) 
-    --        WHERE Id = @Id
-    --        RETURN 
-    --    END 
+            SELECT Id
+                  ,CountryId
+                  ,VehicleTypeId
+                  ,VehicleId 
+                  ,CustomerId
+                  ,LicensePlate
+                  ,Brand
+                  ,Model
+                  ,[Year]
+                  ,Color
+                  ,Engine
+                  ,Chassis
+                  ,Cylindraje
+            FROM Mechanical.v_Vehicle WITH (NOLOCK) 
+            WHERE Id = @VehicleCompranyId
 
-    -- GET SEARCH 
+            SELECT IDType
+                  ,IDCard
+                  ,BusinessName
+                  ,TradeName
+                  ,Email
+                  ,Telephone
+                  ,[Address]
+            FROM v_Cliente WITH (NOLOCK)
+            WHERE idCliente = @CustomerId
+
+            RETURN 
+        END 
+
+    -- GET SEARCH THE VEHICLE OR CUSTOMER 
     IF @tipo = 4
         BEGIN
             SELECT @textSearch =  REPLACE(textSearch,SPACE(1),'%') FROM OPENJSON(@json) WITH (textSearch VARCHAR(100) '$.textSearch')
