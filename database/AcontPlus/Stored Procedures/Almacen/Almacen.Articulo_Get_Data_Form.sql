@@ -10,6 +10,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 --exec  [Almacen].[GestionGeneral_Get] 38,'[]'
+-- Almacen.Articulo_Get_Data_Form 38, ''
 -- =============================================
 IF OBJECT_ID(N'Almacen.Articulo_Get_Data_Form', N'P') IS NOT NULL
 DROP PROCEDURE Almacen.Articulo_Get_Data_Form 
@@ -35,7 +36,10 @@ BEGIN
 	INNER JOIN Familia f    WITH (NOLOCK) ON sf.idFamilia = f.idFamilia 
 	WHERE sf.idEntidad = @idEntidad AND sf.estado = 1
 
-	SELECT idFamilia, descripcion      FROM dbo.Familia WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
+	SELECT idFamilia, descripcion      
+    FROM dbo.Familia WITH (NOLOCK) 
+    WHERE ActividadEconomicaId IN (SELECT ea.ActividadEconomicaId FROM v_Estab_Asign ea WITH (NOLOCK) WHERE ea.idUsuarioRol = @idRol)    
+    AND estado = 1
 	
 	SELECT idMedida,codigo,descripcion FROM dbo.Medida  WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
 
