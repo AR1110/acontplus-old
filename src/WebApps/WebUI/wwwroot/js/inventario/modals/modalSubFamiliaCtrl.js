@@ -2,25 +2,23 @@ export {
     ModalSubFamiliaCtrl
 }
 
-ModalSubFamiliaCtrl.$inject = ['$scope', '$uibModalInstance', 'familiaService', 'subFamiliaService', 'toastService', 'params']
+ModalSubFamiliaCtrl.$inject = ['$scope', '$uibModalInstance', 'articuloService', 'subFamiliaService', 'toastService', 'params']
 
-function ModalSubFamiliaCtrl($scope, $uibModalInstance, familiaSvc, subFamiliaSvc, tS, params) {
+function ModalSubFamiliaCtrl($scope, $uibModalInstance, articuloSvc, subFamiliaSvc, tS, params) {
 
     $scope.data = {};
     $scope.data.montoObjetivo = 0;
     $scope.selectedFile = null
 
-    $scope.getFamilias = function () {
+    $scope.getFamilias = async function () {
         try {
-            familiaSvc.listForSelect({}).then(response => {
-                $scope.familias = response;
-            }).catch(error => {
-                console.log(error);
-            })
+            let {familias} = await articuloSvc.getDataForm({})
+            $scope.familias = familias; 
         } catch (error) {
             console.log(error);
         }
     }
+
 
     $scope.getFamilias();
 

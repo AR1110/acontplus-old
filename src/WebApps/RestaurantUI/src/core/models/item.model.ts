@@ -35,7 +35,7 @@ export interface ItemReadDto {
 
 export interface ItemSearch {
     tipo: number
-    checkSubFamilia: boolean
+    checkSubFamilia: boolean 
     idSubFamilia: number
     pageIndex: number,
     pageSize: number
@@ -44,7 +44,7 @@ export interface ItemSearch {
 }
 
 export const itemSearchInitialState: ItemSearch = {
-    tipo: 1,
+    tipo: 1, 
     checkSubFamilia: false,
     idSubFamilia: 0, 
     pageIndex: 1, 

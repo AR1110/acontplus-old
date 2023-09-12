@@ -186,9 +186,9 @@ const Cart = () => {
             bgcolor: 'background.paper'
         }} >
             <Box display="grid" gridTemplateColumns="repeat(12, 1fr)" gap={2}>
-                <Box gridColumn="span 12"> 
-                    <CustomerSearch /> 
-                </Box> 
+                <Box gridColumn="span 12">
+                    <CustomerSearch />
+                </Box>
             </Box>
             {
                 cartItems.length === 0 ? (<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 10 }}>
