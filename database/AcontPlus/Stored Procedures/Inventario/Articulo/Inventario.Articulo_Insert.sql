@@ -43,7 +43,6 @@ BEGIN
 
 	---- Add ----
 	DECLARE @siglaFamilia VARCHAR(5)
-	DECLARE @siglaSubFamilia VARCHAR(5)
 	   
 
 	SELECT @jsonArticulo = jsonArticulo
@@ -322,11 +321,10 @@ BEGIN
 							 )
 
 			----- INSERT INTO  -------
-			SELECT @siglaFamilia		= f.siglas
-					, @siglaSubFamilia	= sf.siglas 
+			SELECT @siglaFamilia = f.siglas
 			FROM SubFamilia sf
 			INNER JOIN Familia f ON f.idFamilia = sf.idFamilia
-			WHERE sf.idEntidad = @idEntidad AND sf.idSubFamilia = @idSubFamilia
+			WHERE sf.idSubFamilia = @idSubFamilia
 
 			IF(@siglaFamilia = 'RES')
 				BEGIN
@@ -343,7 +341,7 @@ BEGIN
 					VALUES(@idArticulo, (SELECT  descripcion FROM @tbArticle), NULL, NULL, NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario, NULL)
 				END
 
-            IF(@siglaFamilia = 'RES' AND @siglaSubFamilia IN ('MENU', 'COMBO'))
+            IF(@siglaFamilia = 'COM')
 				BEGIN
 					INSERT INTO Restaurant.Menu
 					(ProductId, Summary, Content, CreatedAt, UpdatedAt, [Enabled], Deleted, UserId)
