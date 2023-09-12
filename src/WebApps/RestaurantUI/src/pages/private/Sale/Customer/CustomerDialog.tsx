@@ -1,6 +1,6 @@
 import { SRI_IDENTIFITION_CODE } from '@/core/constants'
 import { CustomerCreateDto, CustomerReadDto, TiempoCredito, TipoContribuyente, TipoIdentificacion } from '@/core/models'
-import { CustomerService, SharedService } from '@/core/services'
+import { customerService, SharedService } from '@/core/services'
 import { SnackbarUtility } from '@/core/utilities'
 import { useLoaderStore } from '@/stores'
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, MenuItem, Switch, Tab, Tabs, TextField } from '@mui/material'
@@ -115,7 +115,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
         if (response.code === "1") {
             SnackbarUtility.success(response.message);
             const customerCompanyId = id > 0 ? id : response.payload;
-            const customerData = await CustomerService.getId(customerCompanyId);
+            const customerData = await customerService.getId(customerCompanyId);
             handleClose(customerData);
         }
     }
@@ -141,12 +141,12 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
             } 
 
             if (id > 0) {
-                CustomerService.put(values.idCliente, data)
+                customerService.put(values.idCliente, data)
                     .then(successResponse)
                     .finally(() => showLoader(false))
             }
             if (!(id > 0)) {
-                CustomerService.post(data)
+                customerService.post(data)
                     .then(successResponse)
                     .finally(() => showLoader(false))
             }
@@ -155,7 +155,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
 
     const onLoad = async () => {
         showLoader(true)
-        await CustomerService.getDataForm().then(response => {
+        await customerService.getDataForm().then(response => {
             setTiposIdentificacion(() => response.tipoIdentificacion)
             setTipoContribuyentes(response.tipoContribuyentes)
             setTiempoCreditos(response.tiempoCreditos);
@@ -190,7 +190,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
 
 
         if (id > 0) {
-            CustomerService.getId(id).then(response => { 
+            customerService.getId(id).then(response => { 
                 formik.setValues(state => {
                     return {
                         ...state,
@@ -301,6 +301,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
 
 
     const customerSearchSRI = async (numeroIdentificacion: string) => {
+        formik.setFieldValue("numeroIdentificacion", numeroIdentificacion)
         const dataIdentification = tiposIdentificacion.find(
             obj => obj.idTipoIdentificacion === formik.values.idTipoIdentificacion
         )
@@ -311,7 +312,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
         ) {
             //Validacion de Numero y si es cedula o RUC
             if (validateIDNumber(numeroIdentificacion)) {
-                const isCustomerRegistered = await CustomerService.isCustomerRegistered({
+                const isCustomerRegistered = await customerService.isCustomerRegistered({
                     textSearch: numeroIdentificacion
                 })
 
@@ -320,10 +321,9 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                 }
 
             }
-
         }
 
-        formik.setFieldValue("numeroIdentificacion", numeroIdentificacion)
+        
     }
 
     const handleEmailChange = (newValue: MuiChipsInputChip[]) => { 
@@ -429,11 +429,11 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                                 <TextField
                                     fullWidth
                                     size={texFieldSize}
-                                    //label="Dirección"   
+                                    label="Dirección"   
                                     id="direccion"
                                     name="direccion"
                                     variant="outlined" 
-                                    value={formik.values.direccion}
+                                    value={formik.values.direccion??""}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                     
@@ -446,7 +446,8 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                                     size="small"
                                     label="Correo"
                                     variant="outlined"
-                                    helperText={formik.values.emails.length> 0 ? "Haga doble clic para editar un chip" : ""}
+                                    placeholder='Ingrese el correo y presione Enter para agregar'
+                                    helperText={formik.values.emails.length> 0 ? "Haga doble clic para editar un correo" : ""}
                                     value={formik.values.emails}
                                     onChange={handleEmailChange}
                                     />
@@ -457,7 +458,8 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                                     size="small"
                                     label="Teléfono"
                                     variant="outlined"
-                                    helperText={formik.values.telefonos.length > 0 ? "Haga doble clic para editar un chip" : ""}
+                                    placeholder='Ingrese el # teléfono y presione Enter para agregar'
+                                    helperText={formik.values.telefonos.length > 0 ? "Haga doble clic para editar un teléfono" : ""}
                                     value={formik.values.telefonos}
                                     onChange={handlePhoneChange}
                                     />
@@ -492,6 +494,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                                         fullWidth
                                         id="idSubContribuyente"
                                         name="idSubContribuyente"
+                                        label="Tipo Contribuyente"
                                         select
                                         value={formik.values.idSubContribuyente > 0 ? formik.values.idSubContribuyente : ''}
                                         onChange={formik.handleChange}
@@ -517,6 +520,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                                         id="idTiempoCredito"
                                         name="idTiempoCredito"
                                         select
+                                        label="Tiempo Crédito"
                                         value={formik.values.idTiempoCredito > 0 ? formik.values.idTiempoCredito : ''}
                                         onChange={formik.handleChange}
                                     >

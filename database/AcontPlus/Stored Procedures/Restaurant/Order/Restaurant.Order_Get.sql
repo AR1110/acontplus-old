@@ -113,7 +113,7 @@ BEGIN
              LEFT JOIN Restaurant.[Table] t WITH(NOLOCK) ON t.iD = o.TableId
              WHERE o.Id = @id 
             
-            SELECT i.*, va.descripcion, va.codigo, va.s3ObjectUrl
+            SELECT i.*, va.idArticulo, va.descripcion, va.codigo, va.s3ObjectUrl, va.llevaInventario
             FROM Restaurant.[OrderItem] i WITH(NOLOCK)
             INNER JOIN Restaurant.Item it ON it.Id = i.ItemId
             INNER JOIN Inventario.v_Articulo va ON va.idArticulo = it.ProductId

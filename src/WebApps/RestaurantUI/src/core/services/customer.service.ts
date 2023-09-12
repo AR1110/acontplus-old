@@ -1,11 +1,11 @@
 import { PATHS } from "@/core/constants"
-import { Http } from "@/core/utilities"
+import { Http, searchFetch } from "@/core/utilities"
 import { ApiResponse} from "@/core/models"
 import { customerReadAdapter, dataFormReadAdapter } from "../adapters"
 import Swal from "sweetalert2"
 
 const URL = 'Cliente/'
-const CustomerService = {
+const customerService = {
     async getDataForm() {
         const resultAxios = await Http({
             method: 'get',
@@ -59,15 +59,28 @@ const CustomerService = {
         return response;
     },
     search: async (textSearch: string) => {
-        const resultAxios = await Http({
-            method: 'get',
-            url: `${PATHS.SALE}${URL}Search`,
-            params: {
-                json: JSON.stringify({ textSearch })
-            }
-        })
-        const response: ApiResponse = resultAxios.data;
-        return customerReadAdapter(JSON.parse(response.payload) as [] || [])
+        try {
+            const resultAxios = await searchFetch(
+                `${PATHS.SALE}${URL}Search`,
+                {
+                    json: JSON.stringify({ textSearch })
+                }
+            )
+             
+            // const resultAxios = await Http({
+            //     method: 'get',
+            //     url: `${PATHS.SALE}${URL}Search`,
+            //     params: {
+            //         json: JSON.stringify({ textSearch })
+            //     }
+            // })
+            const response: ApiResponse = resultAxios?.data;     
+            const dataApi = response?.payload ? JSON.parse(response.payload) as [] : []      
+            return customerReadAdapter(dataApi)
+        } catch (error) {
+            console.log(error)
+            throw error;
+        }
     },
 
 
@@ -115,5 +128,5 @@ const CustomerService = {
 }
 
 export {
-    CustomerService
+    customerService
 }

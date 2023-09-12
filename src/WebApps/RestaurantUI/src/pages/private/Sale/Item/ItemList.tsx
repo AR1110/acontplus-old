@@ -14,9 +14,10 @@ export default function ItemList({ loading }: ItemListProps) {
 
     return (
         
-        <Box sx={{ pt: 2 }}>
+        <Box sx={{ pt: 2}}>
             <Grid container spacing={{ xs: 1, md: 1 }} columns={{ xs: 12, sm: 12, md: 12 }} sx={{
                 pr: 1,
+                pb:1,
                 height: "440px", // Ajusta la altura según tus necesidades
                 overflow: 'auto', // Agrega el scroll si el contenido excede la altura
 
