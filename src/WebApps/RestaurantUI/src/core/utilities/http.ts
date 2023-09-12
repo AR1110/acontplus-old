@@ -54,7 +54,7 @@ instance.interceptors.response.use(
 
     console.log(error.code)    
     // SnackbarUtilities.error(getValidationError(error.code)!);
-    SnackbarUtility.error(error.message);
+    // SnackbarUtility.error(error.message);
     return Promise.reject(error);
   }
 );

@@ -47,53 +47,49 @@ async function orderReadForUpdateAdapter(obj: any) {
             numberTable: order.numberTable
         }
     }
- 
-    const orderItemsMapper: Array<ItemRead> = await Promise.all(
-        orderItems.map(async (orderItem: any, indexOrderItem: number) => {
 
-            try {
-                const response = await productService.findForSale(orderItem.idArticulo);
-                const pvps: Array<ProductPVPReadDto> = response.measures[0]?.pvps ?? [];
-    
-                return {
-                    index: indexOrderItem,
-                    productId: orderItem.idArticulo,
-                    id: orderItem.id,
-                    uuid: orderItem.uuid,
-                    orderId: orderItem.orderId,
-                    itemId: orderItem.itemId,
-                    taxId: orderItem.taxId,
-                    taxPercentId: orderItem.taxPercentId,
-                    taxValue: orderItem.taxValue,
-                    quantity: orderItem.quantity,
-                    cost: orderItem.cost,
-                    price: orderItem.price,
-                    discount: orderItem.discount,
-                    total: orderItem.total,
-                    obs: orderItem.obs ?? "",
-                    feeId: orderItem.feeId,
-                    bodegaId: orderItem.bodegaId,
-                    description: orderItem.descripcion,
-                    code: orderItem.codigo,
-                    s3ObjectUrl: orderItem.s3ObjectUrl,
-                    takesInventory: orderItem.llevaInventario,
-                    priceWithVat: 0,
-                    discountTotal: 0,
-                    taxes: [],
-                    pvps: pvps,
-                };
-                return {
-                    index: indexOrderItem,
-                    productId: orderItem.idArticulo,
-                    // Otras propiedades aquí...
-                    pvps: pvps,
-                };
-            } catch (error) {
-                console.error(`Error al obtener datos del producto para orderItem ${indexOrderItem}: ${error}`);
-                // Puedes manejar el error de alguna manera apropiada aquí.
-            }           
-        })
-    ); 
+    const results = orderItems.map(async (orderItem: any, indexOrderItem: number) => {
+        let response:any = {}
+        let pvps: Array<ProductPVPReadDto> = [];
+
+        try {
+            response = await productService.findForSale(orderItem.idArticulo);
+            pvps = response.measures[0]?.pvps ?? [];
+
+           
+        } catch (error) {
+            console.error(`Error al obtener datos del producto para orderItem ${indexOrderItem}: ${error}`);            
+        }  
+        return {
+            index: indexOrderItem,
+            productId: orderItem.idArticulo,
+            id: orderItem.id,
+            uuid: orderItem.uuid,
+            orderId: orderItem.orderId,
+            itemId: orderItem.itemId,
+            taxId: orderItem.taxId,
+            taxPercentId: orderItem.taxPercentId,
+            taxValue: orderItem.taxValue,
+            quantity: orderItem.quantity,
+            cost: orderItem.cost,
+            price: orderItem.price,
+            discount: orderItem.discount,
+            total: orderItem.total,
+            obs: orderItem.obs ?? "",
+            feeId: orderItem.feeId,
+            bodegaId: orderItem.bodegaId,
+            description: orderItem.descripcion,
+            code: orderItem.codigo,
+            s3ObjectUrl: orderItem.s3ObjectUrl,
+            takesInventory: orderItem.llevaInventario,
+            priceWithVat: 0,
+            discountTotal: 0,
+            taxes: [],
+            pvps: pvps,
+        };         
+    })
+ 
+    const orderItemsMapper: Array<ItemRead> = await Promise.all(results); 
      
     return {
         order: orderMapper,

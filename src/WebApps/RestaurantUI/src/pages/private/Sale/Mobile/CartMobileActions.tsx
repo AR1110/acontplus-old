@@ -17,7 +17,7 @@ const actions = [
     { icon: <FileCopyIcon color='warning' />, codDoc: "NE", name: 'Nota Entrega' },
     { icon: <FileCopyIcon color='primary' />, codDoc: "FV", name: 'Factura' },
     { icon: <SaveIcon color='success' />, codDoc: "OR", name: 'Guardar' },
-    { icon: <RemoveIcon color='success' />, codDoc: "D", name: 'Guardar' },
+    { icon: <RemoveIcon color='error' />, codDoc: "D", name: 'Limpiar' },
 ];
 
 export default function CartMobileAction() {
