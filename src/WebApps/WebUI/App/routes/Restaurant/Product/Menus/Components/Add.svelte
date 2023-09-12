@@ -10,6 +10,7 @@
   let value = "";
   let placeholder = "Buscar producto";
   let itemSearch = [];
+  let productsAdded = [];
   let timeout;
 
   useMenuStore.subscribe((values) => {
@@ -17,11 +18,10 @@
     itemSearch = values.items;
   });
 
-  let productsAdded = [];
   let productColumns = [
     {
       title: "Producto",
-      field: "productId",
+      field: "descripcion",
       editable: "never",
       with: 300,
       resizable: true,
@@ -77,7 +77,6 @@
 
     if (itemExists) return toast({ type: "success", message: "Agregado" });
 
-
     let newMenu = {
       id: 0,
       itemId: item.id,
@@ -87,9 +86,9 @@
       menuId: data.id,
     };
 
-    productsAdded = [...productsAdded, newMenu];
+    productsAdded.push(newMenu);
 
-    console.log(productsAdded);
+    //productsAdded = [...productsAdded, newMenu];
   };
 
   const onModalClose = () => {
