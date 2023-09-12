@@ -30,6 +30,7 @@ BEGIN
             ,@enabled BIT
             ,@userId INT
             ,@itemId INT
+            ,@precioCostoSumTotal NUMERIC(18,5)
 
     CREATE TABLE #RecipeTemp(
          id             INT
@@ -168,7 +169,7 @@ BEGIN
             WHERE rr.IngredientId = rt.ingredientId
             AND rr.Id = rt.id
 
-
+            --- UPDATE DELETED ----
             UPDATE rr
             SET rr.Unit          = rt.unit
                 ,rr.Weight       = rt.weight
@@ -201,6 +202,16 @@ BEGIN
                     INNER JOIN #NotExists ne ON ne.Id = rr.Id
                     WHERE rr.ItemId = ne.ItemId AND rr.IngredientId = ne.IngredientId
                 END
+
+            ---- UPDATE IN Articulo ------
+            SET @precioCostoSumTotal = (SELECT ISNULL(SUM(rr.CostPrice), 0) 
+                                        FROM Restaurant.Recipe rr
+                                        INNER JOIN Restaurant.Item ri ON ri.Id = rr.ItemId
+                                        WHERE ri.ProductId = @productId
+                                        AND ISNULL(rr.Deleted, 0) != 1)
+                                        
+            UPDATE dbo.Articulo SET precioCosto = @precioCostoSumTotal WHERE idArticulo = @productId
+
 		COMMIT TRAN
         SELECT Common.ufnSpResponse('1', 'Actualizado exitosamente', NULL)
 	END TRY
