@@ -10,48 +10,11 @@
   import { SupportService } from "$core/services/mechanical/support-service";
   import { VehicleService } from "$core/services/mechanical/vehicle-service";
   import { CustomerService } from "$core/services/customer/customer-service";
+  import { supportStore } from "$routes/Mechanical/Store/support.store";
 
-  export let openNew;
-  export let modalClosed;
-  export let support: Support = {
-    id: 0,
-    puntoEmisionId: 0,
-    vehicleCompanyId: 0,
-    userAssignedId : 0,
-    customerId: 0,
-    supportTypeId: 0,
-    date: new Date().toISOString().slice(0, 10),
-    sequence: 0,
-    obs: "",
-  };
-
-  export let vehicle: Vehicle = {
-    id: 0,
-    countryId: 0,
-    vehicleId: 0,
-    vehicleTypeId: 0,
-    customerId: 0,
-    licensePlate: "",
-    brand: "",
-    model: "",
-    year: 0,
-    color: "",
-    engine: "",
-    chassis: "",
-    cylindraje: "",
-    enabled: false,
-  };
-
-  export let customer: Customer = {
-    id: 0,
-    idType: "",
-    idCard: "",
-    businessName: "",
-    tradeName: "",
-    email: "",
-    telephone: "",
-    address: "",
-  };
+  let support;
+  let vehicle;
+  let customer;
   let dataSearch = [];
   let establishments = [];
   let emissionPoints = [];
@@ -61,14 +24,13 @@
   let supportTypes = [];
   let idTypes = [];
   let customers = [];
-  let data = {};
   let emissionPointData = {};
+  let paramValidation = [undefined, null, "", 0];
   let establecimientoId = 0;
   let sequence = "";
   let value = "";
   let valueCustomer = "";
   let isCustomerSelected = false;
-  let cardTypeId = 0;
   let placeholder = "Buscar Cliente o Vehículo";
   let placeholderCustomer = "Buscar Cliente";
   let disabled = true;
@@ -83,22 +45,38 @@
     getDataForm();
   });
 
+  supportStore.subscribe((values) => {
+    (support = values.support),
+      (vehicle = values.vehicle),
+      (customer = values.customer);
+    getDataForm();
+  });
+
   // GET FOR DATA
-  const getDataForm = () => {
+  function getDataForm() {
     SupportService.get(JSON.stringify({ tipo: 2 })).then((response) => {
       if (response) {
-        establishments = response["establishments"];
         emissionPoints = response["emissionPoints"];
         vehicleTypes = response["vehicleTypes"];
         countrys = response["countrys"];
         supportTypes = response["supportTypes"];
         idTypes = response["idTypes"];
-        establecimientoId = establishments[0].establecimientoId;
         customer.idType = "04";
-        getDataEstablishments(establecimientoId);
+        if (support.id > 0) {
+          establecimientoId = support.establecimientoId;
+          sequence = support.sequence;
+          emissionPointsSelected = emissionPoints.filter(
+            (item) => item.establecimientoId === establecimientoId
+          );
+          disabledData(0);
+        } else {
+          establishments = response["establishments"];
+          establecimientoId = establishments[0].establecimientoId;
+          getDataEstablishments(establecimientoId);
+        }
       }
     });
-  };
+  }
 
   // CHANGE OF establishments CAPTUREP DATA
   const getDataEstablishments = (e) => {
@@ -156,7 +134,7 @@
           getRucSri(valueCustomer);
           valueCustomer = "";
           disabledCustomer = true;
-          placeholderCustomer = "Buscar Cliente"
+          placeholderCustomer = "Buscar Cliente";
         }
       }
       if (customer.idType == "05") {
@@ -164,7 +142,7 @@
           getCedulaSri(valueCustomer);
           valueCustomer = "";
           disabledCustomer = true;
-          placeholderCustomer = "Buscar Cliente"
+          placeholderCustomer = "Buscar Cliente";
         }
       }
       return;
@@ -196,7 +174,6 @@
     vehicle.customerId = e.idCliente;
     customer.idType = e.codigoSri;
     customer.idCard = e.numeroIdentificacion;
-    cardTypeId = e.idTipoIdentificacion;
     customer.businessName = e.nombreComercial;
     customer.tradeName = e.nombreFiscal;
     customer.email = e.correo;
@@ -212,6 +189,8 @@
       if (response) {
         vehicle = response["vehicle"][0];
         customer = response["customer"][0];
+        support.vehicleCompanyId = response["vehicle"][0].id;
+        support.customerId = response["customer"][0].id;
         value = "";
         dataSearch = [];
         disabled = true;
@@ -285,12 +264,11 @@
     // New Customer
     if (tipo == 5) {
       disabledCustomer = false;
-      vehicle = {} as Vehicle;
       customer = {} as Customer;
       customers = [];
       valueCustomer = "";
       customer.idType = "04";
-      placeholderCustomer = "Consultar Sri"
+      placeholderCustomer = "Consultar Sri";
     }
   };
 
@@ -335,9 +313,145 @@
     });
   };
 
+  // Save
+  const onSave = () => {
+    if (!onValidate()) return;
+    showLoader();
+    SupportService.post({
+      data: { vehicle, customer, support },
+    }).then((response) => {
+      hideLoader();
+      if (response.code == 1) {
+        toast({ type: "success", message: response.message });
+        support = {} as Support;
+        vehicle = {} as Vehicle;
+        customer = {} as Customer;
+        onModalClose();
+        supportStore.get();
+      } else {
+        toast({ type: "warning", message: response.message });
+      }
+    });
+  };
+
+  // edit
+  const onUpdate = () => {
+    if (!onValidate()) return;
+    showLoader();
+    SupportService.put(support.id, {
+      data: { vehicle, customer, support },
+    }).then((response) => {
+      hideLoader();
+      if (response.code == 1) {
+        toast({ type: "success", message: response.message });
+        support = {} as Support;
+        vehicle = {} as Vehicle;
+        customer = {} as Customer;
+        onModalClose();
+        supportStore.get();
+      } else {
+        toast({ type: "warning", message: response.message });
+      }
+    });
+  };
+
+  const onValidate = () => {
+    let isValid = true;
+    try {
+      // datos de la ficha
+      if (paramValidation.includes(establecimientoId)) {
+        toast({ type: "warning", message: "Seleccione el Establecimiento" });
+        return;
+      }
+
+      if (paramValidation.includes(support.puntoEmisionId)) {
+        toast({ type: "warning", message: "Seleccione el Punto de Emision" });
+        return;
+      }
+
+      if (paramValidation.includes(support.date)) {
+        toast({ type: "warning", message: "Seleccione la fecha " });
+        return;
+      }
+
+      // datos del vehiculo
+      if (paramValidation.includes(vehicle.vehicleTypeId)) {
+        toast({ type: "warning", message: "Seleccione el tipo de Vehículo" });
+        return;
+      }
+
+      if (paramValidation.includes(vehicle.countryId)) {
+        toast({ type: "warning", message: "Selecccion el país" });
+        return;
+      }
+
+      if (paramValidation.includes(vehicle.licensePlate)) {
+        toast({ type: "warning", message: "Ingrese la Placa" });
+        return;
+      }
+
+      if (paramValidation.includes(vehicle.brand)) {
+        toast({ type: "warning", message: "Ingrese una marca" });
+        return;
+      }
+
+      if (paramValidation.includes(vehicle.year)) {
+        toast({ type: "warning", message: "Ingrese un año de fabricación" });
+        return;
+      }
+
+      if (paramValidation.includes(vehicle.color)) {
+        toast({ type: "warning", message: "Ingrese el color" });
+        return;
+      }
+
+      if (paramValidation.includes(vehicle.engine)) {
+        toast({ type: "warning", message: "Ingrese el Motor" });
+        return;
+      }
+
+      if (paramValidation.includes(vehicle.chassis)) {
+        toast({ type: "warning", message: "Ingrese el Chasis" });
+        return;
+      }
+      if (paramValidation.includes(vehicle.cylindraje)) {
+        toast({ type: "warning", message: "Ingrese el cilindraje" });
+        return;
+      }
+
+      // datos del cliente
+      if (paramValidation.includes(customer.idType)) {
+        toast({
+          type: "warning",
+          message: "Ingrese el Tipo de Identificación",
+        });
+        return;
+      }
+
+      if (paramValidation.includes(customer.idCard)) {
+        toast({ type: "warning", message: "Ingrese la Identificación" });
+        return;
+      }
+
+      if (paramValidation.includes(customer.businessName)) {
+        toast({ type: "warning", message: "Ingrese el nobre comercial" });
+        return;
+      }
+
+      if (paramValidation.includes(customer.tradeName)) {
+        toast({ type: "warning", message: "Ingrese el nombre fiscal" });
+        return;
+      }
+
+      return isValid;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  };
+
   // CLOSE MODAL
   const onModalClose = () => {
-    openNew = false;
     hidden = true;
     cancel = false;
     disguise = false;
@@ -346,19 +460,19 @@
     sequence = "";
     value = "";
     valueCustomer = "";
-    emissionPointsSelected = [];
-    countrys = [];
-    vehicleTypes = [];
-    support = {} as Support;
-    vehicle = {} as Vehicle;
-    customer = {} as Customer;
-    modalClosed();
+    supportStore.update((state) => ({
+      ...state,
+      isOpen: false,
+      support: {} as Support,
+      vehicle: {} as Vehicle,
+      customer: {} as Customer,
+    }));
   };
 </script>
 
-{#if openNew}
+{#if $supportStore.isOpen}
   <Modal
-    open={openNew}
+    open={$supportStore.isOpen}
     iconTitle={support.id > 0 ? "ti-sync" : "ti-plus"}
     title={support.id > 0 ? "Actualizar" : "Registrar"}
     onClosed={() => onModalClose()}
@@ -366,7 +480,11 @@
     size={"modal-dialog-scrollable"}
   >
     <div class="modal-body">
-      <form autocomplete="off">
+      <form
+        style="text-transform:uppercase"
+        on:submit|preventDefault={support.id > 0 ? onUpdate : onSave}
+        autocomplete="off"
+      >
         <div class="row">
           <div class="col">
             <label for="serch">Datos de la ficha</label>
@@ -381,6 +499,7 @@
               <select
                 name="country"
                 id="country"
+                disabled={support.id > 0}
                 bind:value={establecimientoId}
                 on:change={() => getDataEstablishments(establecimientoId)}
                 class="form-control border-select"
@@ -402,6 +521,7 @@
                 name="country"
                 id="country"
                 class="form-control border-select"
+                disabled={support.id > 0}
                 bind:value={support.puntoEmisionId}
                 on:change={() => getDataEmissionPoints(support.puntoEmisionId)}
               >

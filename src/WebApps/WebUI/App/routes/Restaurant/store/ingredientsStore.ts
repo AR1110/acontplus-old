@@ -18,22 +18,22 @@ type State = {
 
 const initialModalState: StateModal = {
   isOpen: false,
-  openModal: () => {},
-  closeModal: () => {},
+  openModal: () => { },
+  closeModal: () => { },
 };
 
 const initialState: State = {
   ingredients: [],
   ingredientType: [],
   dataUpdate: {
-  id: 0,
-   productId: 0,
-   productDescription: "",
-   summary: "",
-   quantity: 0,
-   unit: 0,
-   content: "",
-   ingredientTypeId: 0,
+    id: 0,
+    productId: 0,
+    productDescription: "",
+    summary: "",
+    quantity: 0,
+    unit: 0,
+    content: "",
+    ingredientTypeId: 0,
   }
 };
 
@@ -46,18 +46,18 @@ const createIngredientStore = () => {
   const get = (params?: object) => {
     showLoader();
 
-    let json = {pageIndex: 1, pageSize: 10, tipo: 1}
+    let json = { pageIndex: 1, pageSize: 10, tipo: 1 }
     let query = Object.assign(json, params ? params : json);
 
     update((state) => {
-      return{
+      return {
         ...state,
         ingredients: []
       }
     });
 
-    IngredientService.get(JSON.stringify( query )).then((response) => {
-      if(response) {
+    IngredientService.get(JSON.stringify(query)).then((response) => {
+      if (response) {
         update((state) => ({
           ...state,
           ingredients: response["ingredients"]
@@ -70,7 +70,7 @@ const createIngredientStore = () => {
 
   const getIngredientType = () => {
     showLoader();
-    itemService.get(JSON.stringify({tipo: 2})).then((response) => {
+    itemService.get(JSON.stringify({ tipo: 2 })).then((response) => {
       if (response) {
         debugger
         update((state) => ({
@@ -91,7 +91,7 @@ const createIngredientStore = () => {
     }))
   }
 
-  return {set, subscribe, update, get, getIngredientType, getUpdate}
+  return { set, subscribe, update, get, getIngredientType, getUpdate }
 };
 
 export const useIngredientStore = createIngredientStore();

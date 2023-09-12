@@ -44,7 +44,7 @@ SELECT c.[idCliente]
     ,IIF(cs.TradeName IS NULL, c.nombreFiscal,cs.TradeName) as TradeName
     ,c.correo as Email
     ,c.telefono as Telephone
-    ,c.direccion as Address
+    ,c.direccion as [Address]
 FROM dbo.Cliente                       c WITH(NOLOCK)
     INNER JOIN dbo.Entidad             e WITH(NOLOCK)  ON c.idEntidad            = e.idEntidad
     INNER JOIN dbo.TipoIdentificacion ti WITH(NOLOCK)  ON c.idTipoIdentificacion = ti.idTipoIdentificacion 
