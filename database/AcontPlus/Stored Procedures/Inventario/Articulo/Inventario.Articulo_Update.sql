@@ -48,7 +48,6 @@ BEGIN
     
     --- Agregado por Ignacio ----
     DECLARE @siglaFamilia VARCHAR(5)
-	DECLARE @siglaSubFamilia VARCHAR(5)
 
 
 	SELECT @jsonArticulo = jsonArticulo
@@ -377,14 +376,12 @@ BEGIN
 			    UPDATE dbo.SubFamilia SET ultimoSecuencial = @ultimoSecuencial WHERE idSubFamilia = @idSubFamilia
 
                 ----- GET CODE SubFamilia and Familia - by Ignacio -----
-                SELECT @siglaFamilia	= f.siglas
-					, @siglaSubFamilia	= sf.siglas
+                SELECT @siglaFamilia = f.siglas
 			    FROM SubFamilia sf
 			    INNER JOIN Familia f ON f.idFamilia = sf.idFamilia
-			    WHERE sf.idEntidad = @idEntidad 
-                AND sf.idSubFamilia = @idSubFamilia
+			    WHERE sf.idSubFamilia = @idSubFamilia
 
-                IF(@siglaFamilia = 'RES' AND @siglaSubFamilia != 'ING')
+                IF(@siglaFamilia = 'RES' AND @siglaFamilia != 'ING')
                     BEGIN
                         IF NOT EXISTS(SELECT TOP 1 1 FROM Restaurant.Item WHERE ProductId = @id)
                             BEGIN 
@@ -413,7 +410,7 @@ BEGIN
                             END
                     END
 
-                IF(@siglaFamilia = 'RES' AND @siglaSubFamilia IN ('MENU', 'COMBO'))
+                IF(@siglaFamilia = 'COM')
                     BEGIN 
                         IF NOT EXISTS(SELECT TOP 1 1 FROM Restaurant.Menu WHERE ProductId = @id)
                             BEGIN 
