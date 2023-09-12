@@ -195,8 +195,9 @@
         data.forEach((element) => {
           total += element;
         });
-        return total.toFixed(2);
+        return total;
       },
+      calcBottom: "sum",
     },
     {
       title: "Acciones",

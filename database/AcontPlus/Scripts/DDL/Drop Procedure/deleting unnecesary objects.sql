@@ -431,3 +431,7 @@ GO
 
 DROP PROCEDURE IF EXISTS FactElect.Config_Comprob_Elect_Update
 GO
+
+--- DANIS MANCHU - FECHA: 8/12/2023
+DROP PROCEDURE IF EXISTS [Almacen].[Familia_For_Select]
+GO

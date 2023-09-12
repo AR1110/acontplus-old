@@ -1,17 +1,16 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { MenuService } from "$core/services/restaurant/menu-service";
+  import { useMenuStore } from "$routes/Restaurant/store/menuStore";
+  import Add from "./Add.svelte";
+
   let menus = [];
-  onMount(() => {
-    MenuService.get(JSON.stringify({ tipo: 1 })).then((response) => {
-      if (response) {
-        menus = response["menus"];
-      }
-    });
+
+  useMenuStore.subscribe((values) => {
+    menus = values.menus;
   });
-  const openModalItems = () => {
-    console.log('openModal')
-  };
+  onMount(() => {
+    useMenuStore.get();
+  });
 </script>
 
 {#if menus.length > 0}
@@ -23,6 +22,7 @@
             <h5 class="card-title">{item.title}</h5>
           </div>
           <div class="card-body">
+            <!-- svelte-ignore a11y-img-redundant-alt -->
             <img
               class="card-img-top img-responsive"
               src={item.s3ObjectUrl}
@@ -33,7 +33,8 @@
             <button
               type="button"
               class="btn btn-outline-primary"
-              on:click={openModalItems}><i class="ti-plus" /> Administrar</button
+              on:click={() => useMenuStore.openingModal(item)}
+              ><i class="ti-plus" /> Administrar</button
             >
           </div>
         </div>
@@ -43,3 +44,5 @@
 {:else}
   <h5>No se encontraron registros</h5>
 {/if}
+
+<Add />

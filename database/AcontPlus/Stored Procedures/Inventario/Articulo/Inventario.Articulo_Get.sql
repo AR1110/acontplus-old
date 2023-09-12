@@ -11,6 +11,7 @@ GO
 -- Description:	SP Para leer los datos e la tabla articulo
 -- =============================================
 --Almacen.Articulo_Get 28, '{"tipo":10,"idArticulo":5}'
+-- Inventario.Articulo_Get 28, '{"tipo":5,"idArticulo":5}'
 IF OBJECT_ID(N'Inventario.Articulo_Get', N'P') IS NOT NULL
 DROP PROCEDURE Inventario.Articulo_Get
 GO
@@ -384,7 +385,10 @@ BEGIN
 			 LEFT JOIN Familia f    WITH (NOLOCK) ON sf.idFamilia = f.idFamilia 
 			WHERE sf.idEntidad = @idEntidad AND sf.estado = 1
 
-			SELECT idFamilia, descripcion      FROM dbo.Familia WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
+			SELECT idFamilia, descripcion      
+            FROM dbo.Familia WITH (NOLOCK) 
+            WHERE ActividadEconomicaId IN (SELECT ea.ActividadEconomicaId FROM v_Estab_Asign ea WITH (NOLOCK) WHERE ea.idUsuarioRol = @idRol)    
+            AND estado = 1
 	
 			SELECT idMedida,codigo,descripcion FROM dbo.Medida  WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
 
@@ -393,6 +397,8 @@ BEGIN
 			SELECT idMarca,codigo,descripcion  FROM dbo.Marca   WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
 
 			RETURN 
+
+            
 		END 
 
 	-- LISTA PARA VERIFICAR LOS DATOS DE LA VENTA ----- 
@@ -527,9 +533,13 @@ BEGIN
 
 			SELECT nroPrecio FROM v_ConfigDecimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'CD'
 
-			SELECT idFamilia, descripcion FROM dbo.Familia WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
+			SELECT idFamilia
+                    , descripcion 
+            FROM dbo.Familia WITH (NOLOCK) 
+            WHERE ActividadEconomicaId IN (SELECT ea.ActividadEconomicaId FROM v_Estab_Asign ea WITH (NOLOCK) WHERE ea.idUsuarioRol = @idRol)
+            AND estado = 1
 			
-			SELECT 
+			SELECT
 				 idFamilia    = f.idFamilia
 				,idSubFamilia = sf.idSubFamilia
 				,familia      = f.descripcion
