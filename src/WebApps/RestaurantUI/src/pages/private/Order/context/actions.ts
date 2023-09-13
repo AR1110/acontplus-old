@@ -1,0 +1,2 @@
+export const GET_ORDER_BEGIN = 'GET_ORDER_BEGIN'
+export const GET_ORDER_SUCCESS = 'GET_ORDER_SUCCESS'

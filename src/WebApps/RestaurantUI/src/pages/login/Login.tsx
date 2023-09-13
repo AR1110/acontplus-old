@@ -1,9 +1,7 @@
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-// import FormControlLabel from '@mui/material/FormControlLabel';
-// import Checkbox from '@mui/material/Checkbox';
+import TextField from '@mui/material/TextField'; 
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
@@ -16,12 +14,13 @@ import { useNavigate } from 'react-router-dom';
 import { PrivateRoutes } from "@/core/models";
 import { useAuthStore } from '@/stores/authStore';
 import { useEffect } from 'react';
+import background from '/assets/images/background/background.jpeg';
 
 function Copyright(props: any) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="#">
+      <Link color="inherit" href="https://acontplus.com.ec/">
         AcontPlus
       </Link>{' '}
       {new Date().getFullYear()}
@@ -74,7 +73,7 @@ export default function LoginPage() {
         sm={4}
         md={8}
         sx={{
-          backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
+          backgroundImage: `url(${background})`,
           backgroundRepeat: 'no-repeat',
           backgroundColor: (t) =>
             t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],

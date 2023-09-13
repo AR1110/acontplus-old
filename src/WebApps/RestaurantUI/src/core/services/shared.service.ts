@@ -80,6 +80,7 @@ class Shared {
         })
 
         const response: ApiResponse = resultAxios.data;
+        console.log(response)
         if (response.code === "0") {
             SnackbarUtility.warning(response.message)
         }

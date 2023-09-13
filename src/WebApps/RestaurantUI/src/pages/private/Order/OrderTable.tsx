@@ -8,7 +8,7 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { useRef, useState } from "react";
+import { lazy, useRef, useState } from "react";
 import { IconButton, Tooltip } from "@mui/material";
 
 import {
@@ -31,8 +31,8 @@ import OrderWhatsApp from "./Components/OrderWhatsApp";
 import OrderConvertDoc from "./Components/OrderConvertDoc";
 import { orderReadForUpdateAdapter } from "@/core/adapters";
 import FullScreenDialog from "@/core/components/FullScreenDialog";
-import SplitAccount from "./Components/SplitAccount/SplitAccount";
-
+import { SpliAccountProvider } from "./context";
+const SplitAccount = lazy(()=>import("./SplitAccount/SplitAccount"))
 export default function OrderTable() {
     const navigate = useNavigate();
     const orders = useOrderStore(state => state.orders)
@@ -265,18 +265,14 @@ export default function OrderTable() {
 
             {/* Dividir Cuenta  */}
             <FullScreenDialog
-                color="inherit"
+                color="primary"
                 icon={<ArrowBackIcon />}
                 isOpen={openDialodDivide}
-                actions={
-                    (
-                        <>
-                            Dividir Cuenta  
-                        </>
-                    )
-                }
+                actions={<>Dividir Cuenta</>}
                 handleClose={closeDialogDivide}>  
-                <SplitAccount/>
+                 <SpliAccountProvider>
+                    <SplitAccount/>
+                 </SpliAccountProvider>
             </FullScreenDialog>
 
         </React.Fragment>

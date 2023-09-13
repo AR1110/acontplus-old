@@ -9,7 +9,14 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import { CardActions, Stack } from '@mui/material';
+import { CardActions, CardContent, Stack, Typography } from '@mui/material';
+import OrderItemTable from './OrderItemTable/OrderItemTable';
+import { useEffect } from 'react';
+import { useAsync, useFetchAndLoad } from '@/hooks';
+import { OrdenService } from '@/core/services';
+import { orderReadForUpdateAdapter } from '@/core/adapters';
+import LeftOrderItem from './LeftOrderItem/LeftOrderItem';
+import RightOrderItem from './RightOrderItem/RightOrderItem';
 
 function not(a: readonly number[], b: readonly number[]) {
     return a.filter((value) => b.indexOf(value) === -1);
@@ -67,70 +74,34 @@ const SplitAccount = () => {
         setChecked(not(checked, rightChecked));
     };
 
-    const customList = (title: React.ReactNode, items: readonly number[]) => (
-        <Card sx={{
-            width: {
-                lg: 500, // Ancho para pantallas grandes
-                md: 500, // Ancho para pantallas medianas
-                xs: '100%', // Ancho completo para pantallas pequeñas
-            },
-            height: 400,
-            maxWidth: '100%',
-            display: 'flex',
-            flexDirection: 'column'
-        }}>
-            <CardHeader
-                title={title}
-                subheader={`${numberOfChecked(items)}/${items.length} selected`}
-            />
-            <Divider />
-            <List
-                sx={{
-                    flex: '1', // Para hacer que la lista ocupe el espacio restante
-                    bgcolor: 'background.paper',
-                    overflow: 'auto',
-                }}
-                dense
-                component="div"
-                role="list"
-            >
-                {items.map((value: number) => {
-                    const labelId = `transfer-list-all-item-${value}-label`;
+    //Get
+    const { loading, callEndpoint } = useFetchAndLoad();
+    const getItemsApi = async () => await callEndpoint(OrdenService.getId(3));
 
-                    return (
-                        <ListItem
-                            key={value}
-                            role="listitem"
-                            button
-                            onClick={handleToggle(value)}
-                        >
-                            <ListItemIcon>
-                                <Checkbox
-                                    checked={checked.indexOf(value) !== -1}
-                                    tabIndex={-1}
-                                    disableRipple
-                                    inputProps={{
-                                        'aria-labelledby': labelId,
-                                    }}
-                                />
-                            </ListItemIcon>
-                            <ListItemText id={labelId} primary={`List item ${value + 1}`} />
-                        </ListItem>
-                    );
-                })}
-            </List>
-            <CardActions>
-                Test
-            </CardActions>
-        </Card>
-    );
+    const itemAdapter = async (response: any) => {         
+        const data = await orderReadForUpdateAdapter(response);
+        console.log(data)
+        // setCollectionItems([])
+        // const items = itemReadAdapter(response.items || []);
+        
+        // setCollectionItems(items)
+    }
+ 
+
+    //se ejecuta cada vez que cambian la categoria
+    useAsync(getItemsApi, itemAdapter, () => {
+        console.log('init')
+    }, []);
+     
 
     return (
         <Grid container spacing={2} justifyContent="center" alignItems="center">
-            <Grid item xs={12} sm={5} md={5} lg={5}>{customList('Orden', left)}</Grid>
+            <Grid item xs={12} sm={5} md={5} lg={5}>
+               <LeftOrderItem/>
+            </Grid>
             <Grid item>
                 <Stack spacing={1} justifyItems="center" justifyContent="flex-start">
-                    <Button 
+                    <Button
                         variant="outlined"
                         size="small"
                         onClick={handleCheckedRight}
@@ -148,9 +119,11 @@ const SplitAccount = () => {
                     >
                         &lt;
                     </Button>
-                </Stack>  
+                </Stack>
             </Grid>
-            <Grid item xs={12} sm={5} md={5} lg={5}>{customList('Documento', right)}</Grid>
+            <Grid item xs={12} sm={5} md={5} lg={5}>
+                <RightOrderItem/>
+            </Grid>
         </Grid>
     );
 }
