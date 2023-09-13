@@ -1,0 +1,11 @@
+import { readonly } from "svelte/store";
+
+export interface MenuItem {
+  readonly id?: number;
+  menuId?: number;
+  itemId?: number;
+
+  // for display in the table
+  readonly productId?: number;
+  descripcion?: string;
+}

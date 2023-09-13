@@ -12,7 +12,7 @@ GO
 -- Create date: 2023-08-14 
 -- Description:	Get Item
 -- =============================================
--- Restaurant.Item_Get 139, '{"idSubFamilia":0,"pageIndex":1,"pageSize":10,"tipo":1, "textSearch": "tilapia"}', ''
+-- Restaurant.Item_Get 139, '{"idSubFamilia":0,"pageIndex":1,"pageSize":10,"tipo":1}', ''
 -- Restaurant.Item_Get 139, '{"tipo":2}', ''
 IF OBJECT_ID(N'Restaurant.Item_Get', N'P') IS NOT NULL
 	DROP PROCEDURE Restaurant.Item_Get
@@ -91,8 +91,8 @@ BEGIN
 								                LEFT JOIN TipoIva ti ON ti.idTipoIva = a.idTipoIva
 								                WHERE ap.idArticulo = a.idArticulo AND ta.predeterminada = 1
 								                FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
-                        ,totalRecords       = COUNT(*) over() 
-                        
+                        ,codTipoArticulo    = ISNULL(a.codTipoArticulo, '''')
+                        ,totalRecords       = COUNT(*) over()                        
 				FROM Restaurant.Item ri
 				INNER JOIN Inventario.v_Articulo a ON a.idArticulo = ri.ProductId
 				LEFT JOIN Restaurant.ProductionArea pa ON pa.Id = ri.ProductionAreaId

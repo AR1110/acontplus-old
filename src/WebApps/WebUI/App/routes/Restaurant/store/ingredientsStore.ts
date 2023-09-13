@@ -56,6 +56,8 @@ const createIngredientStore = () => {
       }
     });
 
+    console.log(query);
+
     IngredientService.get(JSON.stringify(query)).then((response) => {
       if (response) {
         update((state) => ({
