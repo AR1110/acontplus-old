@@ -58,6 +58,8 @@ BEGIN
                   ,LicensePlate
                   ,CASE [Status] WHEN 0 THEN 'PENDIENTE' 
                                  WHEN 1 THEN 'REVISIÓN'
+                                 WHEN 3 THEN 'PROCESADO'
+                                 WHEN 5 THEN 'ANULADO'
                    END as [Status]
                   ,COUNT(*) OVER() AS [TotalRecords]
             FROM Mechanical.v_Support WITH (NOLOCK)
@@ -101,19 +103,17 @@ BEGIN
     ---- GET DATAFORM UPDATE O GET ID -- 
     IF @tipo = 3
         BEGIN
-            SET @tableNames = 'support,vehicle,customer'
+            SET @tableNames = 'support,vehicle,customer,paramaters'
 
             SELECT @Id = Id FROM OPENJSON(@json) WITH (Id INT '$.id')
 
             SELECT TOP 1 @CustomerId = CustomerId, @VehicleCompranyId = VehicleCompanyId FROM Mechanical.v_Support WITH (NOLOCK) WHERE Id = @Id
 
             SELECT Id
-                  ,EstablecimientoId
                   ,PuntoEmisionId
                   ,VehicleCompanyId
                   ,CustomerId
                   ,FORMAT([Date], 'yyyy-MM-dd') as [Date]
-                  ,[Common].[ufnGetSerieDocument](estab,ptoEmi,[Sequence],0) as [Sequence]
             FROM Mechanical.v_Support WITH (NOLOCK)
             WHERE Id = @Id
 
@@ -142,6 +142,11 @@ BEGIN
                   ,[Address]
             FROM v_Cliente WITH (NOLOCK)
             WHERE idCliente = @CustomerId
+
+             SELECT EstablecimientoId
+                   ,[Common].[ufnGetSerieDocument](estab,ptoEmi,[Sequence],0) as [Sequence]
+            FROM Mechanical.v_Support WITH (NOLOCK)
+            WHERE Id = @Id
 
             RETURN 
         END 

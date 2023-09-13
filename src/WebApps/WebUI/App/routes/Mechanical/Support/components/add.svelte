@@ -15,6 +15,7 @@
   let support;
   let vehicle;
   let customer;
+  let parameter = { establecimientoId: 0, sequence: "" };
   let dataSearch = [];
   let establishments = [];
   let emissionPoints = [];
@@ -26,8 +27,6 @@
   let customers = [];
   let emissionPointData = {};
   let paramValidation = [undefined, null, "", 0];
-  let establecimientoId = 0;
-  let sequence = "";
   let value = "";
   let valueCustomer = "";
   let isCustomerSelected = false;
@@ -48,7 +47,8 @@
   supportStore.subscribe((values) => {
     (support = values.support),
       (vehicle = values.vehicle),
-      (customer = values.customer);
+      (customer = values.customer),
+      (parameter = values.parameter);
     getDataForm();
   });
 
@@ -63,16 +63,15 @@
         idTypes = response["idTypes"];
         customer.idType = "04";
         if (support.id > 0) {
-          establecimientoId = support.establecimientoId;
-          sequence = support.sequence;
+          parameter = parameter;
           emissionPointsSelected = emissionPoints.filter(
-            (item) => item.establecimientoId === establecimientoId
+            (item) => item.establecimientoId === parameter.establecimientoId
           );
           disabledData(0);
         } else {
           establishments = response["establishments"];
-          establecimientoId = establishments[0].establecimientoId;
-          getDataEstablishments(establecimientoId);
+          parameter.establecimientoId = establishments[0].establecimientoId;
+          getDataEstablishments(parameter.establecimientoId);
         }
       }
     });
@@ -92,7 +91,7 @@
     emissionPointData = emissionPointsSelected.filter(
       (item) => item.puntoEmisionId === e
     );
-    sequence =
+    parameter.sequence =
       emissionPointData[0].ptoEmi + "-" + emissionPointData[0].sequence;
   };
 
@@ -359,7 +358,7 @@
     let isValid = true;
     try {
       // datos de la ficha
-      if (paramValidation.includes(establecimientoId)) {
+      if (paramValidation.includes(parameter.establecimientoId)) {
         toast({ type: "warning", message: "Seleccione el Establecimiento" });
         return;
       }
@@ -456,16 +455,48 @@
     cancel = false;
     disguise = false;
     disabled = true;
-    establecimientoId = 0;
-    sequence = "";
     value = "";
     valueCustomer = "";
     supportStore.update((state) => ({
       ...state,
       isOpen: false,
-      support: {} as Support,
-      vehicle: {} as Vehicle,
-      customer: {} as Customer,
+      support: {
+        id: 0,
+        puntoEmisionId: 0,
+        vehicleCompanyId: 0,
+        userAssignedId: 0,
+        customerId: 0,
+        supportTypeId: 0,
+        date: new Date().toISOString().slice(0, 10),
+        sequence: 0,
+        obs: "",
+      },
+      vehicle: {
+        id: 0,
+        countryId: 0,
+        vehicleId: 0,
+        vehicleTypeId: 0,
+        customerId: 0,
+        licensePlate: "",
+        brand: "",
+        model: "",
+        year: 0,
+        color: "",
+        engine: "",
+        chassis: "",
+        cylindraje: "",
+        enabled: false,
+      },
+      customer: {
+        id: 0,
+        idType: "",
+        idCard: "",
+        businessName: "",
+        tradeName: "",
+        email: "",
+        telephone: "",
+        address: "",
+      },
     }));
   };
 </script>
@@ -500,8 +531,9 @@
                 name="country"
                 id="country"
                 disabled={support.id > 0}
-                bind:value={establecimientoId}
-                on:change={() => getDataEstablishments(establecimientoId)}
+                bind:value={parameter.establecimientoId}
+                on:change={() =>
+                  getDataEstablishments(parameter.establecimientoId)}
                 class="form-control border-select"
               >
                 {#each establishments as item}
@@ -551,7 +583,7 @@
                 type="text"
                 class="form-control"
                 disabled
-                bind:value={sequence}
+                bind:value={parameter.sequence}
               />
             </div>
           </div>
