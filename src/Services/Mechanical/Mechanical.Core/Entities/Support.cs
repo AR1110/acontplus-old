@@ -22,6 +22,6 @@ namespace Mechanical.Core.Entities
         public int CompanyId { get; set; }
         public int UserId { get; set; }
         public int UserAssignedId { get; set; }
-        public int status { get; set; } = 0;
+        public int Status { get; set; } = 0;
     }
 }

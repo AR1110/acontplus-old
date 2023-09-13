@@ -13,6 +13,7 @@ type StateModal = {
 
 type State = {
     supports: any;
+    parameter: any;
     support: Support;
     vehicle: Vehicle;
     customer: Customer;
@@ -27,6 +28,7 @@ const initialModalState: StateModal = {
 
 const initialState: State = {
     supports: [],
+    parameter: { establecimientoId: 0, sequence: "" },
     support: {
         id: 0,
         puntoEmisionId: 0,
@@ -98,7 +100,7 @@ const cretaeSupport = () => {
 
 
     const getOpenModal = (id?: number) => {
-       
+
 
         if (id > 0) {
             showLoader();
@@ -110,13 +112,14 @@ const cretaeSupport = () => {
                         isOpen: true,
                         support: response["support"][0],
                         vehicle: response["vehicle"][0],
-                        customer: response["customer"][0]
+                        customer: response["customer"][0],
+                        parameter: response["paramaters"]["0"],
                     }));
                 }
             }).finally(() => {
                 hideLoader();
             });
-        }else{
+        } else {
             update((state) => ({
                 ...state,
                 isOpen: true

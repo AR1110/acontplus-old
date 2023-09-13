@@ -45,11 +45,13 @@ namespace Mechanical.Application.Services
         }
         public async Task<bool> DeleteAsync(int id)
         {
-            var vehicle = await _context.VehicleCompanys.FindAsync(id);
-            if (vehicle == null) return false;
-            vehicle.Enabled = false;
-            vehicle.Deleted = true;
-            _context.Update(vehicle);
+            var support = await _context.Supports.FindAsync(id);
+            if (support == null) return false;
+            support.Enabled = false;
+            support.Deleted = true;
+            support.UpdatedAt = 
+            support.Status = 5; 
+            _context.Update(support);
             await _context.SaveChangesAsync();
             return true;
         }

@@ -29,6 +29,7 @@ BEGIN
 	DECLARE @pageIndex INT
 	,@pageSize INT	
 	,@idSubFamilia INT
+	,@idFamilia INT
 	,@checkSubFamilia BIT
 	,@sql NVARCHAR(MAX)
 	,@idEntidad INT
@@ -37,14 +38,16 @@ BEGIN
     ,@textSearch VARCHAR(20)
     			
 	SELECT @idSubFamilia  = idSubFamilia
-			,@pageIndex		= pageIndex
-			,@pageSize		= pageSize
-            ,@tipo          = tipo            
-            ,@textSearch    = textSearch
+		  ,@idSubFamilia  = idFamilia
+		  ,@pageIndex	  = pageIndex
+		  ,@pageSize	  = pageSize
+          ,@tipo          = tipo            
+          ,@textSearch    = textSearch
 	FROM OPENJSON(@json) 
 	WITH(
-        tipo                INT         '$.tipo'
+         tipo               INT         '$.tipo'
 		,idSubFamilia	    INT         '$.idSubFamilia'
+		,idFamilia	        INT         '$.idSubFamilia'
 		,pageIndex		    INT         '$.pageIndex'
 		,pageSize		    INT         '$.pageSize'       
         ,textSearch         VARCHAR(20) '$.textSearch'
@@ -153,7 +156,7 @@ BEGIN
                ,totalRecords       = COUNT(*) over()
             FROM Restaurant.Menu m WITH(NOLOCK)
                 INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
-            WHERE a.idSubFamilia = @idSubFamilia 
+            WHERE a.idEntidad = @idEntidad AND a.siglaFamilia = 'COM'
             ORDER BY m.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY
          END
 
