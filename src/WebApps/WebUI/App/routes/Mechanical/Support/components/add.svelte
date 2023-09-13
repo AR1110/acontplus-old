@@ -322,9 +322,6 @@
       hideLoader();
       if (response.code == 1) {
         toast({ type: "success", message: response.message });
-        support = {} as Support;
-        vehicle = {} as Vehicle;
-        customer = {} as Customer;
         onModalClose();
         supportStore.get();
       } else {
@@ -343,9 +340,6 @@
       hideLoader();
       if (response.code == 1) {
         toast({ type: "success", message: response.message });
-        support = {} as Support;
-        vehicle = {} as Vehicle;
-        customer = {} as Customer;
         onModalClose();
         supportStore.get();
       } else {
