@@ -49,7 +49,6 @@ namespace Mechanical.Application.Services
             if (support == null) return false;
             support.Enabled = false;
             support.Deleted = true;
-            support.UpdatedAt = 
             support.Status = 5; 
             _context.Update(support);
             await _context.SaveChangesAsync();
