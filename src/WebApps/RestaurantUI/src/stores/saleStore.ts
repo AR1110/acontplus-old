@@ -8,7 +8,7 @@ import {
     dataFormInitialState,
     orderInitialState
 } from "@/core/models";
-import { RoundNumber, SnackbarUtility, addSound, clearSound } from "@/core/utilities"; 
+import { RoundNumber, SnackbarUtility, addSound, clearSound } from "@/core/utilities";
 import { create } from "zustand";
 import { produce } from 'immer';
 import { productService } from "@/core/services";
@@ -49,8 +49,8 @@ type Actions = {
     addItemToCart(item: ItemRead): void //Añadir Item 
     removeItemFromCart(productId: number): void //Eliminar item 
     setTotalItems(): void, //Calcular totales   
-    setItemChangeQty(index:number, qty:number): void //Modificar cantidad del item  
-    onChangePVP(id:number, index:number):void
+    setItemChangeQty(index: number, qty: number): void //Modificar cantidad del item  
+    onChangePVP(id: number, index: number): void
     caculateTotals(): void
     resetForm(): void
 }
@@ -142,20 +142,25 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
     },
     setDataForm(dataForm) {
         set(
-            produce((state: State) => { 
+            produce((state: State) => {
                 state.dataForm = dataForm;
                 state.dataForm.categories = [{
                     idSubFamilia: 0,
                     code: "",
                     description: 'Todos',
                     s3ObjectUrl: ''
+                },{
+                    idSubFamilia: 0,
+                    code: "COM",
+                    description: 'COMBOS',
+                    s3ObjectUrl: ''
                 }, ...dataForm.categories];
                 //customer default
-                if(!(state.order.orderId > 0) && dataForm.customer.customerCompanyId>0){
-                    
+                if (!(state.order.orderId > 0) && dataForm.customer.customerCompanyId > 0) {
+
                     state.order.customerCompanyId = dataForm.customer.customerCompanyId;
                     state.order.customerName = dataForm.customer.fiscalName;
-                } 
+                }
             })
         )
     },
@@ -165,7 +170,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                 state.collectionItems = collectionItems;
                 state.tempOrderItems = structuredClone(collectionItems)
             })
-        ) 
+        )
     },
     addItemToCart: (item) => {
         const { items, setTotalItems, caculateTotals } = get();
@@ -213,15 +218,15 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
     },
     setTotalItems: () => set(state => ({
         totalItems: state.items.reduce((total, item) => total + item.quantity, 0)
-    })), 
+    })),
     async setItemChangeQty(index, qty) {
         const { order, items, dataForm, setTotalItems, caculateTotals, getItemQty } = get();
-        const showLoader =  useLoaderStore.getState().showLoader;
+        const showLoader = useLoaderStore.getState().showLoader;
         const decimal = dataForm.decimal;
-        
-        const dataOrderItem = items.find((_, indexToCompare)=>indexToCompare===index);
+
+        const dataOrderItem = items.find((_, indexToCompare) => indexToCompare === index);
         console.log(dataOrderItem)
-        if(dataOrderItem?.carryInventory){
+        if (dataOrderItem?.carryInventory) {
             showLoader(true);
             productService.checkNotificationStock({
                 idArticulo: dataOrderItem.productId,
@@ -247,13 +252,13 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                         setQty();
                     }
                 }
-            }).finally(()=>showLoader(false))
+            }).finally(() => showLoader(false))
         }
-        else{
+        else {
             setQty();
         }
 
-        function setQty(){
+        function setQty() {
             const newArray = items.map((orderItem, orderItemIndex) => {
                 const total = qty * orderItem.price;
                 if (index === orderItemIndex) {
@@ -276,8 +281,8 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
             addSound();
         }
 
-        
-    }, 
+
+    },
     async resetForm() {
         set(
             produce((state: State) => {
@@ -294,19 +299,19 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         clearSound();
         get().caculateTotals();
 
-    }, 
-    onChangePVP(id, index){
-         
+    },
+    onChangePVP(id, index) {
+
         const { items, setTotalItems, caculateTotals } = get();
-        const newArray = items.map((orderItem, orderItemIndex) => {         
+        const newArray = items.map((orderItem, orderItemIndex) => {
             if (index === orderItemIndex) {
-                const dataPVP = orderItem.pvps.find(pvp=>pvp.feeId === id);
+                const dataPVP = orderItem.pvps.find(pvp => pvp.feeId === id);
                 const total = orderItem.quantity * (dataPVP?.salePrice ?? 0);
                 return {
-                    ...orderItem, 
-                    feeId: dataPVP?.feeId ?? 0, 
+                    ...orderItem,
+                    feeId: dataPVP?.feeId ?? 0,
                     price: dataPVP?.salePrice ?? 0,
-                    priceWithVat: dataPVP?.priceWithVat ?? 0,                  
+                    priceWithVat: dataPVP?.priceWithVat ?? 0,
                     total: RoundNumber(total, 2)
                 };
             } else {

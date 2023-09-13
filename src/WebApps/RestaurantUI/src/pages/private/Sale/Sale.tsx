@@ -77,7 +77,7 @@ export default function Sale() {
     const getItemsApi = async () => await callEndpoint(ItemService.getAll(itemSearch));
 
     const itemAdapter = (response: any) => {
-        console.log(response)
+        console.log(response.items)
         setCollectionItems([])
         const items = itemReadAdapter(response.items || []);
         
