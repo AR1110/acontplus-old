@@ -8,7 +8,7 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { useRef, useState } from "react";
+import { lazy, useRef, useState } from "react";
 import { IconButton, Tooltip } from "@mui/material";
 
 import {
@@ -22,7 +22,7 @@ import {
     ShareSharpIcon,
 } from "@/core/components/IconsMaterial";
 import Swal from "sweetalert2";
-import { OrdenService, SharedService } from "@/core/services";
+import { orderService, SharedService } from "@/core/services";
 import { SnackbarUtility } from "@/core/utilities";
 import { useLoaderStore, useOrderStore, useSaleStore } from "@/stores";
 import { PrivateRoutes } from "@/core/models";
@@ -31,8 +31,8 @@ import OrderWhatsApp from "./Components/OrderWhatsApp";
 import OrderConvertDoc from "./Components/OrderConvertDoc";
 import { orderReadForUpdateAdapter } from "@/core/adapters";
 import FullScreenDialog from "@/core/components/FullScreenDialog";
-import SplitAccount from "./Components/SplitAccount/SplitAccount";
-
+import { SpliAccountProvider } from "./context";
+const SplitAccount = lazy(()=>import("./SplitAccount/SplitAccount"))
 export default function OrderTable() {
     const navigate = useNavigate();
     const orders = useOrderStore(state => state.orders)
@@ -75,7 +75,7 @@ export default function OrderTable() {
         if (!isConfirmed) return;
 
         showLoader(true);
-        OrdenService.updateState(id)
+        orderService.updateState(id)
             .then((response) => {
                 if (response.code === "1") {
                     SnackbarUtility.success(response.message);
@@ -108,7 +108,7 @@ export default function OrderTable() {
 
     const handleEdit = (orderId: number) => {
         showLoader(true);
-        OrdenService.get({
+        orderService.get({
             id: orderId,
             tipo: 2,
         })
@@ -123,7 +123,8 @@ export default function OrderTable() {
     };
 
 
-    const dividerCuenta = ()=>{
+    const dividerCuenta = (id:number)=>{
+        setOrderId.current = id;
         setOpenDialodDivide(true)
     }
     const closeDialogDivide = ()=>{
@@ -223,7 +224,7 @@ export default function OrderTable() {
                                             <Tooltip describeChild title="Dividir la cuenta">
                                                 <IconButton size="large" color="inherit" 
                                                     aria-label="Impresión"
-                                                    onClick={() => dividerCuenta()}
+                                                    onClick={() => dividerCuenta(order.orderId)}
                                                 >
                                                     <AccountTreeIcon />
                                                 </IconButton>
@@ -265,18 +266,14 @@ export default function OrderTable() {
 
             {/* Dividir Cuenta  */}
             <FullScreenDialog
-                color="inherit"
+                color="primary"
                 icon={<ArrowBackIcon />}
                 isOpen={openDialodDivide}
-                actions={
-                    (
-                        <>
-                            Dividir Cuenta  
-                        </>
-                    )
-                }
+                actions={<>Dividir Cuenta</>}
                 handleClose={closeDialogDivide}>  
-                <SplitAccount/>
+                 <SpliAccountProvider>
+                    <SplitAccount id={setOrderId.current}/>
+                 </SpliAccountProvider>
             </FullScreenDialog>
 
         </React.Fragment>

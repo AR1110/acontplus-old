@@ -70,8 +70,8 @@ const CustomerSearch = () => {
                 }}
                
                 selectOnFocus
-                clearOnBlur
-                handleHomeEndKeys
+                // clearOnBlur
+                // handleHomeEndKeys
                 id="customerSearch"
                 options={customers}
                 getOptionLabel={(option) => {  

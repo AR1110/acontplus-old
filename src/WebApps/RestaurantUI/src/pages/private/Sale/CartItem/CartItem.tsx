@@ -17,7 +17,7 @@ export default function CartItem({ index, item }: CartItemProps) {
     const removeItemFromCart = useSaleStore(state => state.removeItemFromCart)
     const setItemChangeQty = useSaleStore(state => state.setItemChangeQty)
     const setChangeValueOrderItem = useSaleStore(state => state.setChangeValueOrderItem);
-    const onChangePVP = useSaleStore(state=>state.onChangePVP)
+    const onChangePVP = useSaleStore(state => state.onChangePVP)
 
     return (
         <>
@@ -49,7 +49,9 @@ export default function CartItem({ index, item }: CartItemProps) {
 
                             </Grid>
                             <Grid item width={95}>
-                                <Stack>
+                                <Stack direction="column"
+                                    justifyContent="center"
+                                    alignItems="flex-end">
                                     <Typography variant="caption" color="text.primary">
                                         <b>P. U.:</b> ${item.price}
                                     </Typography>
@@ -90,8 +92,8 @@ export default function CartItem({ index, item }: CartItemProps) {
                                     alignItems="center"
                                 >
                                     <IconButton color='error' aria-label="Quitar Item" onClick={(event) => {
-                                         event.stopPropagation();
-                                         removeItemFromCart(index)
+                                        event.stopPropagation();
+                                        removeItemFromCart(index)
                                     }}>
                                         <DeleteIcon />
                                     </IconButton>
@@ -127,7 +129,7 @@ export default function CartItem({ index, item }: CartItemProps) {
                                         value={item.feeId}
                                         label="Tarifa"
                                         select
-                                        onChange={(e)=>onChangePVP(Number(e.target.value), index)}
+                                        onChange={(e) => onChangePVP(Number(e.target.value), index)}
                                     >
                                         {
                                             item.pvps.map((pvp, index) => (

@@ -15,12 +15,13 @@ export default function Category() {
 
   const handleChange = (_: React.SyntheticEvent, index: number) => {
     const dataCategory = categories.find((_, indexCategory)=>indexCategory===index);
-    const tipo = dataCategory?.code ==="COMBOS" ? 3 : 1;
-    const code = dataCategory?.code ==="COMBOS" ? dataCategory.code : ""
+    const tipo = dataCategory?.code ==="COM" ? 3 : 1;
+    const code = dataCategory?.code ==="COM" ? dataCategory.code : "" 
+
     setItemSearch({
       ...itemSearchInitialState,
       checkSubFamilia: dataCategory && dataCategory.idSubFamilia > 0 ? true: false,
-      idSubFamilia: dataCategory?.idSubFamilia ?? 0,
+      idSubFamilia: dataCategory?.idSubFamilia ?? 0, 
       code,
       tipo
     }) 
