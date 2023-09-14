@@ -4,7 +4,7 @@ import { useCheckoutStore, useLoaderStore, useSaleStore } from '@/stores';
 import Swal from 'sweetalert2';
 import { SnackbarUtility } from '@/core/utilities';
 import { itemToApi, summaryToApi } from '@/core/adapters';
-import { OrdenService, SharedService } from '@/core/services';
+import { orderService, SharedService } from '@/core/services';
 import { QueryParams } from '@/core/models';
 import { AddShoppingCartIcon, CleaningServicesIcon, FileCopyRoundedIcon, SaveIcon } from '@/core/components/IconsMaterial';
 import { DOC_TYPE } from '@/core/constants';
@@ -118,7 +118,7 @@ const Cart = () => {
         }
         if (order.orderId > 0) {
             showLoader(true);
-            OrdenService.put(order.orderId, data).then(response => {
+            orderService.put(order.orderId, data).then(response => {
                 if (response.code === '0') {
                     SnackbarUtility.warning(response.message)
                 }
@@ -130,7 +130,7 @@ const Cart = () => {
             }).finally(() => showLoader(false))
         } else {
             showLoader(true);
-            OrdenService.post(data).then(response => {
+            orderService.post(data).then(response => {
                 showLoader(false)
                 if (response.code === '0') {
                     SnackbarUtility.warning(response.message)

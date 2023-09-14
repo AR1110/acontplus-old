@@ -1,13 +1,16 @@
 import { Card, CardActions, CardContent, CardHeader, Stack, Typography } from '@mui/material'
-import OrderItemTable from '../OrderItemTable/OrderItemTable'
+import { useSplitAccountContext } from '../../context'
+import LeftOrderItemTable from './LeftOrderItemTable';
 
 const LeftOrderItem = () => {
+    const {order, leftOrderItems} = useSplitAccountContext();
+ 
     return (
         <>
             <Card>
                 <CardHeader/>
                 <CardContent>
-                    <OrderItemTable />
+                    <LeftOrderItemTable />
                 </CardContent>
                 <CardActions>
 

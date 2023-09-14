@@ -3,7 +3,7 @@ import { OrderFilter, OrderReadDto, orderFilter } from "@/core/models";
 import { produce } from "immer";
 import { create } from "zustand";
 import { useLoaderStore } from ".";
-import { OrdenService } from "@/core/services";
+import { orderService } from "@/core/services";
 import { orderReadAdapter } from "@/core/adapters";
 
 
@@ -33,7 +33,7 @@ export const useOrderStore = create<State & Actions>((set, get)=>({
     getOrders() {
         const showLoader =  useLoaderStore.getState().showLoader;
         showLoader(true)
-        OrdenService.get(get().orderFilter).then(response => {  
+        orderService.get(get().orderFilter).then(response => {  
                     
             set(
                 produce((state:State)=>{

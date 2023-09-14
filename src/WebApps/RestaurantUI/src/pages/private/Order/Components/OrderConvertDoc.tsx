@@ -10,7 +10,7 @@ import {
   Alert,
   AlertTitle,
 } from "@mui/material";
-import { OrdenService } from "@/core/services";
+import { orderService } from "@/core/services";
 import { useRef, useState } from "react";
 import { useLoaderStore, useOrderStore } from "@/stores";
 import { itemToApi, summaryToApi } from "@/core/adapters";
@@ -41,7 +41,7 @@ const OrderConvertDoc = ({
 
   const handleGetDetail = (codDoc: string) => {
     showLoader(true);
-    OrdenService.get({ id: setOrderId.current, tipo: 2 })
+    orderService.get({ id: setOrderId.current, tipo: 2 })
       .then(async (response) => {
         const summaryResult = summaryToApi(response.order[0]);
         const itemsResult = itemToApi(response.orderItems);
@@ -66,7 +66,7 @@ const OrderConvertDoc = ({
   };
 
   const onConvertToDoc = (orderId: number, data: object) => {
-    OrdenService.put(orderId, data)
+    orderService.put(orderId, data)
       .then((response) => {
         if (response.code === "0") {
           SnackbarUtility.warning(response.message);

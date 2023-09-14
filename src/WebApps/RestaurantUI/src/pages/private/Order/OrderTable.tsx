@@ -22,7 +22,7 @@ import {
     ShareSharpIcon,
 } from "@/core/components/IconsMaterial";
 import Swal from "sweetalert2";
-import { OrdenService, SharedService } from "@/core/services";
+import { orderService, SharedService } from "@/core/services";
 import { SnackbarUtility } from "@/core/utilities";
 import { useLoaderStore, useOrderStore, useSaleStore } from "@/stores";
 import { PrivateRoutes } from "@/core/models";
@@ -75,7 +75,7 @@ export default function OrderTable() {
         if (!isConfirmed) return;
 
         showLoader(true);
-        OrdenService.updateState(id)
+        orderService.updateState(id)
             .then((response) => {
                 if (response.code === "1") {
                     SnackbarUtility.success(response.message);
@@ -108,7 +108,7 @@ export default function OrderTable() {
 
     const handleEdit = (orderId: number) => {
         showLoader(true);
-        OrdenService.get({
+        orderService.get({
             id: orderId,
             tipo: 2,
         })
@@ -123,7 +123,8 @@ export default function OrderTable() {
     };
 
 
-    const dividerCuenta = ()=>{
+    const dividerCuenta = (id:number)=>{
+        setOrderId.current = id;
         setOpenDialodDivide(true)
     }
     const closeDialogDivide = ()=>{
@@ -223,7 +224,7 @@ export default function OrderTable() {
                                             <Tooltip describeChild title="Dividir la cuenta">
                                                 <IconButton size="large" color="inherit" 
                                                     aria-label="Impresión"
-                                                    onClick={() => dividerCuenta()}
+                                                    onClick={() => dividerCuenta(order.orderId)}
                                                 >
                                                     <AccountTreeIcon />
                                                 </IconButton>
@@ -271,7 +272,7 @@ export default function OrderTable() {
                 actions={<>Dividir Cuenta</>}
                 handleClose={closeDialogDivide}>  
                  <SpliAccountProvider>
-                    <SplitAccount/>
+                    <SplitAccount id={setOrderId.current}/>
                  </SpliAccountProvider>
             </FullScreenDialog>
 
