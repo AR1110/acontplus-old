@@ -1,37 +1,46 @@
-import { Card, CardActions, CardContent, CardHeader, Stack, Typography } from '@mui/material'
-import OrderItemTable from '../OrderItemTable/OrderItemTable'
+import { Button, Card, CardActions, CardContent, Grid, TextField, Typography } from '@mui/material'
+import RightOrderItemTable from './RightOrderItemTable'
+import { useSplitAccountContext } from '../../context';
+import { SaveIcon } from '@/core/components/IconsMaterial';
+
 const RightOrderItem = () => {
-  return (
-    <>
+    const { rightOrder } = useSplitAccountContext();
+    return (
+        <>
             <Card>
-                <CardHeader/>
                 <CardContent>
-                    <OrderItemTable />
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} sm container>
+                            <Grid item xs container direction="column" spacing={2}>
+                                <Grid item xs>
+                                    <Typography variant="h6" component="div">
+                                        Cuenta Individual
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                            <Grid item>
+                                <Typography variant="h5">
+                                    Total: ${rightOrder.total}
+                                </Typography>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                    <Grid container spacing={2} sx={{ mb: 1 }}>
+                        <Grid item md={12} lg={12}>
+
+
+                        </Grid>
+                    </Grid>
+                    <RightOrderItemTable />
                 </CardContent>
                 <CardActions>
-
-                    <Stack
-                        direction="column"
-                        justifyContent="center"
-                        alignItems="flex-end"
-                        spacing={2}
-                    >
-
-                        {/* <Typography variant="body2" color="text.primary">
-                        SubTotal: ${order.subTotalSinImpuestos}
-                    </Typography>
-                    <Typography variant="body2" color="text.primary">
-                        IVA (12%): ${order.tax}
-                    </Typography> */}
-                        <Typography variant="h6" color="error">
-                            Total: $0
-                        </Typography>
-                    </Stack>
-
+                    <Button fullWidth variant="contained" startIcon={<SaveIcon />}>
+                        Guardar
+                    </Button>
                 </CardActions>
             </Card>
         </>
-  )
+    )
 }
 
 export default RightOrderItem
