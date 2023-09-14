@@ -26,7 +26,7 @@ const Checkout = ({ open, closeDialog }: CheckoutProps) => {
     const setCheckoutDataForm = useCheckoutStore(state => state.setCheckoutDataForm);
     const voucher = useCheckoutStore(state => state.checkout.voucher);
 
-    console.log(queryParams)
+   
     const initiload = async () => {
         showLoader(true);
         await AccountReceivableService.get({

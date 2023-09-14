@@ -61,7 +61,7 @@ async function orderReadForUpdateAdapter(obj: any) {
             console.error(`Error al obtener datos del producto para orderItem ${indexOrderItem}: ${error}`);            
         }  
         return {
-            index: indexOrderItem,
+            index: indexOrderItem + 1,
             productId: orderItem.idArticulo,
             id: orderItem.id,
             uuid: orderItem.uuid,
