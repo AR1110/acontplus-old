@@ -16,6 +16,7 @@
   let vehicle;
   let customer;
   let parameter = { establecimientoId: 0, sequence: "" };
+  let users = [];
   let dataSearch = [];
   let establishments = [];
   let emissionPoints = [];
@@ -61,6 +62,7 @@
         countrys = response["countrys"];
         supportTypes = response["supportTypes"];
         idTypes = response["idTypes"];
+        users = response["users"];
         customer.idType = "04";
         if (support.id > 0) {
           parameter = parameter;
@@ -367,6 +369,11 @@
         return;
       }
 
+      if (paramValidation.includes(support.userAssignedId)) {
+        toast({ type: "warning", message: "Seleccione un Técnico Encargado " });
+        return;
+      }
+
       // datos del vehiculo
       if (paramValidation.includes(vehicle.vehicleTypeId)) {
         toast({ type: "warning", message: "Seleccione el tipo de Vehículo" });
@@ -445,12 +452,7 @@
 
   // CLOSE MODAL
   const onModalClose = () => {
-    hidden = true;
-    cancel = false;
-    disguise = false;
-    disabled = true;
-    value = "";
-    valueCustomer = "";
+    disabledData(4);
     supportStore.update((state) => ({
       ...state,
       isOpen: false,
@@ -581,6 +583,32 @@
               />
             </div>
           </div>
+        </div>
+        <hr />
+
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label for="country"
+                >Técnico Encargado <span class="text-danger"> *</span></label
+              >
+              <select
+                name="country"
+                id="country"
+                bind:value={support.userAssignedId}
+                class="form-control border-select"
+              >
+                {#each users as item}
+                  <option value={item.userAssignedId}>
+                    {item.userName}
+                  </option>
+                {/each}
+              </select>
+            </div>
+          </div>
+          <div class="col" />
+          <div class="col" />
+          <div class="col" />
         </div>
         <hr />
 

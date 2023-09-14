@@ -3,7 +3,6 @@ using Common.Infrastructure.Repository;
 using Lib.Common;
 using Mechanical.Core.Interfaces;
 using Mechanical.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace Mechanical.Application.Services
 {
@@ -49,6 +48,7 @@ namespace Mechanical.Application.Services
             if (support == null) return false;
             support.Enabled = false;
             support.Deleted = true;
+            support.UpdatedAt = DateTime.Now;
             support.Status = 5; 
             _context.Update(support);
             await _context.SaveChangesAsync();
