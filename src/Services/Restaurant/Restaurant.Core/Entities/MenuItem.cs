@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Restaurant.Core.Entities
 {
@@ -9,5 +9,11 @@ namespace Restaurant.Core.Entities
         public int MenuId { get; set; }
         public Item Item { get; set; }
         public int ItemId { get; set; }
+        [Column(TypeName = "numeric(18,5)")]
+        public decimal? Quantity { get; set; }
+        [Column(TypeName = "numeric(18,5)")]
+        public decimal? PercentageDiscount { get; set; }
+        [Column(TypeName = "numeric(18,5)")]
+        public decimal? Total { get; set; }
     }
 }

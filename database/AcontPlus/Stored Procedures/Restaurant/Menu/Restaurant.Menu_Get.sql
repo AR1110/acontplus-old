@@ -17,11 +17,13 @@ AS
 BEGIN
 	SET NOCOUNT ON;
     
-    SET @tableNames = 'menus'
+    SET @tableNames = 'menus,menuTypes'
 	SELECT m.*
         ,a.s3ObjectUrl
 	FROM Restaurant.Menu m WITH (NOLOCK)
-        INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
+    INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
+      
+    SELECT * FROM Restaurant.MenuType
     
 END
 GO

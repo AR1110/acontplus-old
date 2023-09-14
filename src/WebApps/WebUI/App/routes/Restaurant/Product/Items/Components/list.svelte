@@ -10,10 +10,9 @@
 
   const unSuscribe = useItemStore.subscribe((values) => {
     items = values.items;
-    console.log(values);
   });
 
-  let page;
+  let page = 0;
   let pageSize = recordsQuantity[0];
 
   function onPageChange(event) {
