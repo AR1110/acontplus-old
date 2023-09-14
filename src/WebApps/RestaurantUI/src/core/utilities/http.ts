@@ -52,7 +52,7 @@ instance.interceptors.response.use(
     //   // redirect();
     // }
 
-    console.log(error.code)    
+    console.log(error)    
     // SnackbarUtilities.error(getValidationError(error.code)!);
     // SnackbarUtility.error(error.message);
     return Promise.reject(error);

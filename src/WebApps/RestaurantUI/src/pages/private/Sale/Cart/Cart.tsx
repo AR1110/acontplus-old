@@ -1,20 +1,20 @@
-import { Box, Button, Divider, Grid, Paper, Stack, TextField, Typography } from '@mui/material'
+import { Box, Button, Divider, Grid, Paper, Stack, TextField, Typography} from '@mui/material'
 import CartItem from '../CartItem/CartItem'
 import { useCheckoutStore, useLoaderStore, useSaleStore } from '@/stores';
 import Swal from 'sweetalert2';
 import { SnackbarUtility } from '@/core/utilities';
 import { itemToApi, summaryToApi } from '@/core/adapters';
-import { OrdenService, SharedService } from '@/core/services';
+import { orderService, SharedService } from '@/core/services';
 import { QueryParams } from '@/core/models';
 import { AddShoppingCartIcon, CleaningServicesIcon, FileCopyRoundedIcon, SaveIcon } from '@/core/components/IconsMaterial';
 import { DOC_TYPE } from '@/core/constants';
 import './Cart.css'
 import TableDialog from '../Table/TableDialog';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import CustomerSearch from '../Customer/CustomerSearch';
 
-
 const Cart = () => {
+
     const cartItems = useSaleStore(state => state.items);
     const { order } = useSaleStore(state => ({
         order: state.order,
@@ -29,17 +29,6 @@ const Cart = () => {
     const payment = useSaleStore(state => state.payment);
 
     const { showLoader } = useLoaderStore();
-
-    //Test keyboard 
-    const [input, setInput] = useState("");
-    const keyboard = useRef(null);
-
-    // const onChangeInput = (event: ChangeEvent<HTMLInputElement>): void => {
-    //     const input = event.target.value;
-    //     setInput(input);
-    //     keyboard.current.setInput(input);
-    // };
-
 
     //Modal Tables
     const [openTableDialog, setOpenTableDialog] = useState(false);
@@ -129,7 +118,7 @@ const Cart = () => {
         }
         if (order.orderId > 0) {
             showLoader(true);
-            OrdenService.put(order.orderId, data).then(response => {
+            orderService.put(order.orderId, data).then(response => {
                 if (response.code === '0') {
                     SnackbarUtility.warning(response.message)
                 }
@@ -141,7 +130,7 @@ const Cart = () => {
             }).finally(() => showLoader(false))
         } else {
             showLoader(true);
-            OrdenService.post(data).then(response => {
+            orderService.post(data).then(response => {
                 showLoader(false)
                 if (response.code === '0') {
                     SnackbarUtility.warning(response.message)
@@ -149,7 +138,8 @@ const Cart = () => {
                 if (response.code === "1") {
                     SnackbarUtility.success(response.message);
                     //Order
-                    if (codDoc === DOC_TYPE.OR) {
+                    if (codDoc === DOC_TYPE.OR) { 
+                        SharedService.getPrinter(JSON.parse(response.payload))
                         resetForm();
                         return
                     }
@@ -170,10 +160,7 @@ const Cart = () => {
                 }
             }).finally(() => showLoader(false))
         }
-
-
     }
-
 
     return (
         <Paper elevation={0} sx={{
@@ -387,8 +374,7 @@ const Cart = () => {
                         </>
                     )
                 }
-            </Grid>
-            {/* <KeyboardWrapper keyboardRef={keyboard} onChange={setInput} /> */}
+            </Grid> 
         </Paper>
     )
 }

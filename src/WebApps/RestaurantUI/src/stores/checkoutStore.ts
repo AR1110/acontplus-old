@@ -212,12 +212,12 @@ export const useCheckoutStore = create<State & StateCalculator & Actions & Actio
         // if(!this.isDateValid(cobro.fechaEmision)){
         //     this.tS.toastr('warning', 'Ingrese una fecha válida')
         //     return
-        // }
+        // } 
 
-        if (!(payments.receivedAmount > 0)) {
-            SnackbarUtility.warning('Ingrese el valor de abono')
-            return
-        }
+        // if (!(voucher.receivedAmount > 0)) {
+        //     SnackbarUtility.warning('Ingrese el valor de abono')
+        //     return
+        // }
 
         // =================== TARJETA DE CREDITO / DEBITO  =================================== //
         if (payments.paymentTypeCode === PaymentTypeCode.TAR) {
@@ -287,6 +287,14 @@ export const useCheckoutStore = create<State & StateCalculator & Actions & Actio
         const { paymentSubTypes, voucherQuotas } = dataForm;
         const showLoader = useLoaderStore.getState().showLoader;
         try {
+            if (!(Number(voucher.payingAmount) > 0)) {
+                SnackbarUtility.warning('El valor total del comprobante es 0; por lo tanto, no es posible realizar el cobro.')
+                return
+            }
+            if (!(Number(voucher.receivedAmount) > 0)) {
+                SnackbarUtility.warning('Ingrese el valor de abono')
+                return
+            }
             if (!(Number(voucher.payingAmount) > 0)) {
                 SnackbarUtility.warning('El valor total del comprobante es 0; por lo tanto, no es posible realizar el cobro.')
                 return

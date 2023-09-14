@@ -1,9 +1,9 @@
 import { PATHS } from "../constants"
 import { ApiResponse } from "../models"
-import { Http } from "../utilities"
+import { Http, loadAbort } from "../utilities"
 
 const URL = 'Order'
-export const OrdenService = {
+const orderService = {
     async get(obj: object) {
         const resultAxios = await Http({
             method: 'get',
@@ -14,6 +14,26 @@ export const OrdenService = {
         })
         const response = resultAxios.data;
         return response;
+    },
+
+    getId(id: number) {
+        const controller = loadAbort(); //Cancelar peticion 
+        const json = JSON.stringify({
+            tipo: 2,
+            id
+        })
+
+        return {
+            call: Http({
+                method: 'get',
+                url: `${PATHS.PRIVATE}${URL}`,
+                params: {
+                    json
+                },
+                signal: controller.signal
+            }),
+            controller
+        }
     },
 
     async post(data: object) {
@@ -34,7 +54,7 @@ export const OrdenService = {
             data: { data }
         })
 
-        const response: ApiResponse = resultAxios.data; 
+        const response: ApiResponse = resultAxios.data;
         return response;
     },
 
@@ -51,4 +71,8 @@ export const OrdenService = {
         return response;
     },
 
+}
+
+export {
+    orderService
 }
