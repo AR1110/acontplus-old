@@ -24,8 +24,7 @@ GO
 IF OBJECT_ID(N'ApiPrinter.Impresion_Get', N'P') IS NOT NULL
 DROP PROCEDURE ApiPrinter.Impresion_Get
 GO
-CREATE PROCEDURE ApiPrinter.Impresion_Get @idUsuarioRol INT
-,@json VARCHAR(MAX)
+CREATE PROCEDURE ApiPrinter.Impresion_Get @idUsuarioRol INT,@json VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -34,143 +33,49 @@ BEGIN
 
 	------DATA JSON PARAMETER-------------
 	DECLARE @idDocument INT
-	DECLARE @idTipoDocumento INT
-	DECLARE @codEstab VARCHAR(50)
-	DECLARE @nroIdentificacion VARCHAR(15)
-	DECLARE @codDoc VARCHAR(5)
+	       ,@codEstab VARCHAR(50)
+	       ,@codDoc VARCHAR(5)
 	------------END---------------------
 
 	--------PARAMETER MANAGEMENT----------
-	DECLARE @idUsuario INT
-	DECLARE @SP VARCHAR(MAX)
-    DECLARE @idImpresora INT
-	DECLARE @ruc VARCHAR(15)
 	DECLARE @rdlcProps VARCHAR(MAX)
-	DECLARE @rdlcParams VARCHAR(MAX)
-	DECLARE @dataSources VARCHAR(MAX)
-    DECLARE @estab VARCHAR(5)
-	DECLARE @invoice VARCHAR(15) = 'Factura'
-	DECLARE @note VARCHAR(15) = 'NotaEntrega'
-	
-	DECLARE @identificacion VARCHAR(15)
+	       ,@rdlcParams VARCHAR(MAX)
+	       ,@dataSources VARCHAR(MAX)
 	------------END-----------------------
 	
 	-----DATA PRINTER SERVICE------
-	DECLARE @printerName VARCHAR(100)
-	DECLARE @computerName VARCHAR(100)
-    DECLARE @printer VARCHAR(150)
-    DECLARE @isThermal BIT
-    DECLARE @format VARCHAR(200)
 	DECLARE @urlPrinter VARCHAR(200)
-    DECLARE @deviceInfo VARCHAR(max)
-    DECLARE @copyPrint INT
+           ,@totalThermalPrinters INT
+	       ,@totalInyectionPrinters INT
+	       ,@hasParams BIT = 0
 	-------------END----------------
 
- 
-		SELECT @codEstab          = codEstab 
-			  ,@idDocument        = idDocument
-			  ,@codDoc            = codDoc
-			  ,@nroIdentificacion = nroIdentificacion
-			  ,@idTipoDocumento   = idTipoDocumento
-		FROM OPENJSON(@json) 
-		WITH (idDocument        INT          '$.idDocument'
-		     ,idTipoDocumento   INT			 '$.idTipoDocumento'
-			 ,codEstab          VARCHAR(50)  '$.codEstab'
-			 ,codDoc            VARCHAR(5)   '$.codDoc'
-			 ,nroIdentificacion VARCHAR(15)  '$.nroIdentificacion')
-
-		SELECT @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
-
-		SELECT @identificacion = nroIdentificacion FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @idUsuario
-
-		SELECT  @ruc = ruc, @estab = estab FROM Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab
-
+	SELECT @codEstab  = codEstab , @idDocument = idDocument, @codDoc= codDoc 
+    FROM OPENJSON(@json) WITH (idDocument INT  '$.idDocument' ,codEstab VARCHAR(50) '$.codEstab',codDoc VARCHAR(5) '$.codDoc')
 
 		
-		IF NOT EXISTS (SELECT 1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab)
-			BEGIN
-				SELECT '0' code,'No tienes ninguna impresora configurada'  as 'message'
-				RETURN 
-			END
+	IF NOT EXISTS (SELECT 1 FROM ApiPrinter.Impresora WITH (NOLOCK) WHERE codEstab = @codEstab)
+		BEGIN
+			SELECT '0' code,'No tienes ninguna impresora configurada'  as 'message'
+			RETURN 
+		END
 
+	SELECT TOP 1 @urlPrinter = ipMaquina
+	FROM ApiPrinter.Config_Document     cd WITH (NOLOCK)
+	INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
+	INNER JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora
+	WHERE cd.codDoc  = @codDoc
+	  AND i.codEstab = @codEstab 
+	  AND cd.estado  = 1
+	
 
-		IF EXISTS (SELECT  1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab  AND predeterminada = 1 AND nroIdentificacion = @nroIdentificacion)
-			BEGIN
-				IF @identificacion != @nroIdentificacion
-					BEGIN
-						SELECT '0' code,'Tu configuracion esta por usuario no puedes imprimir facturas de otro vendedor' as 'message'
-						RETURN
-					END 
-
-				IF EXISTS (SELECT 1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab  AND predeterminada = 1 AND nroIdentificacion = @nroIdentificacion AND codDoc = @codDoc)
-					BEGIN
-						SELECT TOP 1 
-							@idImpresora = idImpresora 
-						FROM ApiPrinter.Impresora WITH (NOLOCK)
-						WHERE codEstab          = @codEstab 
-						  AND predeterminada    = 1 
-						  AND nroIdentificacion = @nroIdentificacion 
-						  AND codDoc            = @codDoc
-
-					END 
-
-			    IF EXISTS (SELECT 1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab  AND predeterminada = 1 AND nroIdentificacion = @nroIdentificacion AND codDoc = 'A')
-					BEGIN
-						SELECT TOP 1 @idImpresora = idImpresora 
-						FROM ApiPrinter.Impresora WITH (NOLOCK)
-						WHERE codEstab          = @codEstab 
-						  AND predeterminada    = 1 
-						  AND nroIdentificacion = @nroIdentificacion 
-						  AND codDoc            = 'A'
-					END 
-			END 
-
-		IF NOT EXISTS (SELECT  1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab  AND predeterminada = 1 AND nroIdentificacion = @nroIdentificacion)
-			BEGIN
-				IF EXISTS (SELECT 1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab  AND predeterminada = 1 AND codDoc = @codDoc)
-					BEGIN
-						SELECT TOP 1 @idImpresora = idImpresora 
-						FROM ApiPrinter.Impresora WITH (NOLOCK)
-						WHERE codEstab          = @codEstab 
-						  AND predeterminada    = 1 
-						  AND codDoc            = @codDoc
-
-					END 
-
-			    IF EXISTS (SELECT 1 FROM ApiPrinter.Impresora WHERE codEstab = @codEstab  AND predeterminada = 1 AND codDoc = 'A')
-					BEGIN
-						SELECT TOP 1 @idImpresora = idImpresora 
-						FROM ApiPrinter.Impresora WITH (NOLOCK)
-						WHERE codEstab          = @codEstab 
-						  AND predeterminada    = 1 
-						  AND codDoc            = 'A'
-					END 
-			END 
-
-		--IF @idImpresora IS NULL	
-		--	BEGIN
-		--		SELECT '0'code,'No tienes configurado una impresora' as 'message'
-		--		RETURN 
-		--	END
-		SELECT TOP 1 @urlPrinter = ipMaquina
-		FROM ApiPrinter.Config_Document cd WITH (NOLOCK)
-		INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
-		INNER JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora
-		WHERE  cd.codDoc = @codDoc
-		AND i.codEstab = @codEstab 
-		AND cd.estado = 1  
-		
-	DECLARE @totalThermalPrinters INT
-	,@totalInyectionPrinters INT
-	,@hasParams BIT = 0
-
-	SELECT @totalThermalPrinters = (SELECT COUNT(*) FROM v_Impresora ii  WHERE  ii.idImpresora = i.idImpresora AND ii.codImpresora = 'TE')  
-	,@totalInyectionPrinters = (SELECT COUNT(*) FROM v_Impresora ii  WHERE  ii.idImpresora = i.idImpresora AND ii.codImpresora = 'AT')  
+	SELECT @totalThermalPrinters   = (SELECT COUNT(*) FROM v_Impresora ii WITH (NOLOCK) WHERE  ii.idImpresora = i.idImpresora AND ii.codImpresora = 'TE')  
+	      ,@totalInyectionPrinters = (SELECT COUNT(*) FROM v_Impresora ii WITH (NOLOCK) WHERE  ii.idImpresora = i.idImpresora AND ii.codImpresora = 'AT')  
 	FROM ApiPrinter.Config_Document cd WITH (NOLOCK)
-	INNER JOIN v_Impresora  i WITH (NOLOCK) ON i.idImpresora = cd.idImpresora
-	 WHERE  cd.codDoc = @codDoc
-	AND i.codEstab = @codEstab 
-	AND cd.estado = 1 
+	INNER JOIN v_Impresora           i WITH (NOLOCK) ON i.idImpresora = cd.idImpresora
+	 WHERE cd.codDoc  = @codDoc
+	   AND i.codEstab = @codEstab 
+	   AND cd.estado  = 1 
 
 	IF (@totalThermalPrinters = 0 AND @totalInyectionPrinters > 0)
 		BEGIN 
@@ -197,60 +102,40 @@ BEGIN
 					SET @rdlcParams = 'undefined'
 				END
 		END
-	--IF (@totalThermalPrinters > 0 AND @totalAnothers = 0)
-	--	BEGIN
-	--		SET @rdlcParams = 'undefined' 
-	--	END
-
-		SET @rdlcProps = (
-							SELECT
-								i.nombreImpresora printerName
-								,i.nombreEquipo computerName
-								,ti.descripcion
-								,ti.isThermal
-								,ti.formato
-								,ti.deviceInfo
-								,cd.copyPrint
-								,i.ipMaquina
-								,rdlcName = CASE @codDoc WHEN 'FV' THEN @invoice+ti.descripcion+'.rdl' 
-		                                                 WHEN 'NE' THEN @note+ti.descripcion+'.rdl'
-														 WHEN 'PR' THEN 'Proforma' + ti.descripcion +'.rdl'
-														 WHEN 'IC' THEN 'IngresoEgreso' + ti.descripcion +'.rdl'
-														 WHEN 'EC' THEN 'IngresoEgreso' + ti.descripcion +'.rdl'
-														 WHEN 'A' THEN 'Anticipo' + ti.descripcion +'.rdl'
-														 END
-								--,hasParams = CAST(CASE WHEN ti.codigo = 'AT' THEN 1 ELSE 0 END AS BIT)
-								,hasParams = @hasParams
-								,codDoc = CASE @codDoc WHEN 'IC' THEN 'MC'
-													   WHEN 'EC' THEN 'MC'
-													   WHEN 'A' THEN 'A'
-													   ELSE ''
-											END 
- 								FROM ApiPrinter.Config_Document cd WITH (NOLOCK)
-								INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
-								INNER JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora
-								WHERE  cd.codDoc = @codDoc
-								AND i.codEstab = @codEstab 
-								AND cd.estado = 1 FOR JSON PATH
-							 )
-
 	
-		SELECT  @dataSources = dataSources FROM ApiPrinter.Document_Data(@idDocument,@idTipoDocumento,@codDoc)
+	SET @rdlcProps = (
+					    SELECT i.nombreImpresora printerName
+						      ,i.nombreEquipo computerName
+						      ,ti.descripcion
+						      ,ti.isThermal
+						      ,ti.formato
+						      ,ti.deviceInfo
+						      ,cd.copyPrint
+						      ,i.ipMaquina
+						      ,rdlcName = CASE @codDoc WHEN 'FV' THEN 'Factura'       + ti.descripcion + '.rdl' 
+		                                               WHEN 'NE' THEN 'NotaEntrega'   + ti.descripcion + '.rdl'
+													   WHEN 'PR' THEN 'Proforma'      + ti.descripcion + '.rdl'
+													   WHEN 'IC' THEN 'IngresoEgreso' + ti.descripcion + '.rdl'
+													   WHEN 'EC' THEN 'IngresoEgreso' + ti.descripcion + '.rdl'
+													   WHEN 'A'  THEN 'Anticipo'      + ti.descripcion + '.rdl'
+									      END
+						     ,hasParams = @hasParams
+						     ,codDoc = CASE @codDoc WHEN 'IC' THEN 'MC'
+												    WHEN 'EC' THEN 'MC'
+												    WHEN 'A'  THEN 'A'
+												    ELSE ''
+									   END 
+ 						FROM ApiPrinter.Config_Document     cd WITH (NOLOCK)
+						INNER JOIN ApiPrinter.Impresora      i WITH (NOLOCK) ON i.idImpresora      = cd.idImpresora
+						INNER JOIN ApiPrinter.TipoImpresora ti WITH (NOLOCK) ON ti.idTipoImpresora = i.idTipoImpresora
+						WHERE cd.codDoc    = @codDoc
+						    AND i.codEstab = @codEstab 
+						    AND cd.estado  = 1 FOR JSON PATH
+					 )
+	
+	SELECT  @dataSources = dataSources FROM ApiPrinter.Document_Data(@idDocument,@codDoc)
 
-		--SET @rdlcProps = (SELECT rdlcName = CASE @codDoc WHEN 'FV' THEN @invoice+@printer+'.rdl' 
-		--                                                 WHEN 'NE' THEN @note+@printer+'.rdl'
-		--												 WHEN 'PR' THEN 'Proforma' + @printer +'.rdl'
-		--												 END
-		--						,computerName = @computerName 
-		--						,printerName = @printerName	 
-		--						,isThermal =@isThermal
-		--						,'format' = @format
-		--						,deviceInfo = @deviceInfo
-		--				  FOR JSON PATH
-		--				  ) 
-
-
-		SELECT '1' code, payload = (SELECT 'http://' + @urlPrinter urlPrinter,  @rdlcProps rdlcProps, @dataSources dataSources, @rdlcParams rdlcParams 
-		FOR JSON PATH)
+	SELECT '1' code, payload = (SELECT 'http://' + @urlPrinter urlPrinter,  @rdlcProps rdlcProps, @dataSources dataSources, @rdlcParams rdlcParams 
+	FOR JSON PATH)
 END
 GO

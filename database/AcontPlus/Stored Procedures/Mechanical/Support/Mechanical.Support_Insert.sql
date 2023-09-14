@@ -95,12 +95,11 @@ BEGIN
                 customer    NVARCHAR(MAX) '$.customer'as json
                ,vehicle     NVARCHAR(MAX) '$.vehicle' as json
                ,jsonSupport NVARCHAR(MAX) '$.support' as json
-               ,cardTypeId            INT '$.cardTypeId'
             )
-
+           
             INSERT INTO @tbSupport
                   (puntoEmisionId,vehicleCompanyId,CustomerId,supportTypeId,userAssignedId,[date])
-            SELECT puntoEmisionId,vehicleCompanyId,CustomerId,ISNULL(supportTypeId,0),ISNULL(userAssignedId,0),[date]
+            SELECT puntoEmisionId,vehicleCompanyId,CustomerId,supportTypeId,userAssignedId,[date]
             FROM OPENJSON(@jsonSupport) WITH 
             (
                 puntoEmisionId   INT '$.puntoEmisionId'

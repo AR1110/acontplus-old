@@ -15,6 +15,8 @@
   let support;
   let vehicle;
   let customer;
+  let parameter = { establecimientoId: 0, sequence: "" };
+  let users = [];
   let dataSearch = [];
   let establishments = [];
   let emissionPoints = [];
@@ -26,8 +28,6 @@
   let customers = [];
   let emissionPointData = {};
   let paramValidation = [undefined, null, "", 0];
-  let establecimientoId = 0;
-  let sequence = "";
   let value = "";
   let valueCustomer = "";
   let isCustomerSelected = false;
@@ -48,7 +48,8 @@
   supportStore.subscribe((values) => {
     (support = values.support),
       (vehicle = values.vehicle),
-      (customer = values.customer);
+      (customer = values.customer),
+      (parameter = values.parameter);
     getDataForm();
   });
 
@@ -61,18 +62,18 @@
         countrys = response["countrys"];
         supportTypes = response["supportTypes"];
         idTypes = response["idTypes"];
+        users = response["users"];
         customer.idType = "04";
         if (support.id > 0) {
-          establecimientoId = support.establecimientoId;
-          sequence = support.sequence;
+          parameter = parameter;
           emissionPointsSelected = emissionPoints.filter(
-            (item) => item.establecimientoId === establecimientoId
+            (item) => item.establecimientoId === parameter.establecimientoId
           );
           disabledData(0);
         } else {
           establishments = response["establishments"];
-          establecimientoId = establishments[0].establecimientoId;
-          getDataEstablishments(establecimientoId);
+          parameter.establecimientoId = establishments[0].establecimientoId;
+          getDataEstablishments(parameter.establecimientoId);
         }
       }
     });
@@ -92,7 +93,7 @@
     emissionPointData = emissionPointsSelected.filter(
       (item) => item.puntoEmisionId === e
     );
-    sequence =
+    parameter.sequence =
       emissionPointData[0].ptoEmi + "-" + emissionPointData[0].sequence;
   };
 
@@ -323,9 +324,6 @@
       hideLoader();
       if (response.code == 1) {
         toast({ type: "success", message: response.message });
-        support = {} as Support;
-        vehicle = {} as Vehicle;
-        customer = {} as Customer;
         onModalClose();
         supportStore.get();
       } else {
@@ -344,9 +342,6 @@
       hideLoader();
       if (response.code == 1) {
         toast({ type: "success", message: response.message });
-        support = {} as Support;
-        vehicle = {} as Vehicle;
-        customer = {} as Customer;
         onModalClose();
         supportStore.get();
       } else {
@@ -359,7 +354,7 @@
     let isValid = true;
     try {
       // datos de la ficha
-      if (paramValidation.includes(establecimientoId)) {
+      if (paramValidation.includes(parameter.establecimientoId)) {
         toast({ type: "warning", message: "Seleccione el Establecimiento" });
         return;
       }
@@ -371,6 +366,11 @@
 
       if (paramValidation.includes(support.date)) {
         toast({ type: "warning", message: "Seleccione la fecha " });
+        return;
+      }
+
+      if (paramValidation.includes(support.userAssignedId)) {
+        toast({ type: "warning", message: "Seleccione un Técnico Encargado " });
         return;
       }
 
@@ -452,20 +452,47 @@
 
   // CLOSE MODAL
   const onModalClose = () => {
-    hidden = true;
-    cancel = false;
-    disguise = false;
-    disabled = true;
-    establecimientoId = 0;
-    sequence = "";
-    value = "";
-    valueCustomer = "";
+    disabledData(4);
     supportStore.update((state) => ({
       ...state,
       isOpen: false,
-      support: {} as Support,
-      vehicle: {} as Vehicle,
-      customer: {} as Customer,
+      support: {
+        id: 0,
+        puntoEmisionId: 0,
+        vehicleCompanyId: 0,
+        userAssignedId: 0,
+        customerId: 0,
+        supportTypeId: 0,
+        date: new Date().toISOString().slice(0, 10),
+        sequence: 0,
+        obs: "",
+      },
+      vehicle: {
+        id: 0,
+        countryId: 0,
+        vehicleId: 0,
+        vehicleTypeId: 0,
+        customerId: 0,
+        licensePlate: "",
+        brand: "",
+        model: "",
+        year: 0,
+        color: "",
+        engine: "",
+        chassis: "",
+        cylindraje: "",
+        enabled: false,
+      },
+      customer: {
+        id: 0,
+        idType: "",
+        idCard: "",
+        businessName: "",
+        tradeName: "",
+        email: "",
+        telephone: "",
+        address: "",
+      },
     }));
   };
 </script>
@@ -500,8 +527,9 @@
                 name="country"
                 id="country"
                 disabled={support.id > 0}
-                bind:value={establecimientoId}
-                on:change={() => getDataEstablishments(establecimientoId)}
+                bind:value={parameter.establecimientoId}
+                on:change={() =>
+                  getDataEstablishments(parameter.establecimientoId)}
                 class="form-control border-select"
               >
                 {#each establishments as item}
@@ -551,10 +579,36 @@
                 type="text"
                 class="form-control"
                 disabled
-                bind:value={sequence}
+                bind:value={parameter.sequence}
               />
             </div>
           </div>
+        </div>
+        <hr />
+
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label for="country"
+                >Técnico Encargado <span class="text-danger"> *</span></label
+              >
+              <select
+                name="country"
+                id="country"
+                bind:value={support.userAssignedId}
+                class="form-control border-select"
+              >
+                {#each users as item}
+                  <option value={item.userAssignedId}>
+                    {item.userName}
+                  </option>
+                {/each}
+              </select>
+            </div>
+          </div>
+          <div class="col" />
+          <div class="col" />
+          <div class="col" />
         </div>
         <hr />
 
