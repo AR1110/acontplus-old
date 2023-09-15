@@ -64,7 +64,9 @@ BEGIN
 
     DECLARE @tblItems AS TABLE(
         uuid            UNIQUEIDENTIFIER NOT NULL,
-        itemId          INT NOT NULL,
+        itemTypeId INT NULL,
+        menuId INT NULL,
+        itemId INT NULL,
         taxId           INT NOT NULL,
         taxPercentId    INT NOT NULL,
         feeId           INT NOT NULL,
@@ -118,8 +120,10 @@ BEGIN
     )
 
     --- Insert Items ---
-    INSERT INTO @tblItems(uuid, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total)
+    INSERT INTO @tblItems(uuid, itemTypeId, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total)
     SELECT Uuid
+        ,itemTypeId
+        ,menuId
         , ItemId
         , TaxId
         , TaxPercentId
@@ -226,10 +230,20 @@ BEGIN
                     ,idTarifa, idTipoIva, iva, precioConIva, valorDescuento, porcentajeDescuento, total, nota, fechaRegistro, uuid)
 
                     SELECT @documentoId
-                        ,a.idArticulo
+                        ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 m.ProductId FROM Restaurant.Menu m WHERE m.id = i.MenuId) ELSE
+                            (SELECT TOP 1 ii.ProductId FROM Restaurant.Item ii WHERE ii.id = i.ItemId)
+                        END 
                         ,@bodegaId
-                        ,a.idMedida
-                        ,a.descripcion
+                        ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 a.idMedida FROM Restaurant.Menu m
+                            INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
+                        WHERE m.id = i.MenuId) ELSE
+                            (SELECT TOP 1 a.idMedida FROM Restaurant.Item ii  INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo WHERE ii.id = i.ItemId)
+                        END 
+                        ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 a.descripcion FROM Restaurant.Menu m
+                            INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
+                        WHERE m.id = i.MenuId) ELSE
+                            (SELECT TOP 1 a.descripcion FROM Restaurant.Item ii  INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo WHERE ii.id = i.ItemId)
+                        END 
                         ,i.quantity
                         ,i.price
                         ,i.feeId
@@ -243,8 +257,9 @@ BEGIN
                         ,dbo.ufnGetDateEcuador()
                         ,i.uuid
                     FROM @tblItems i
-                    INNER JOIN Restaurant.v_Item ri ON i.itemId = ri.Id
-                    INNER JOIN Inventario.v_Articulo a ON ri.ProductId = a.idArticulo
+                        INNER JOIN Restaurant.ItemType it ON i.itemTypeId = it.Id
+                    --INNER JOIN Restaurant.v_Item ri ON i.itemId = ri.Id
+                    --INNER JOIN Inventario.v_Articulo a ON ri.ProductId = a.idArticulo
                     INNER JOIN Sri.TarifaImpuesto sti ON i.taxPercentId = sti.idTarifaImpuesto
 
                     INSERT INTO Ventas.NotaEntregaImpuesto(TaxId, TaxPercentId, [Percent], TaxBase, TaxValue, Uuid, UserId)                    
@@ -294,10 +309,17 @@ BEGIN
                                        ,idTipoIva, porcentajeIva, iva, uuid)
 
             SELECT @documentoId
-                ,a.idArticulo
+                 ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 m.ProductId FROM Restaurant.Menu m WHERE m.id = i.MenuId) ELSE
+                            (SELECT TOP 1 ii.ProductId FROM Restaurant.Item ii WHERE ii.id = i.ItemId)
+                        END 
                 ,i.feeId
                 ,@bodegaId
-                ,a.idMedida
+                 ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 a.idMedida FROM Restaurant.Menu m
+                            INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
+                        WHERE m.id = i.MenuId) ELSE
+                            (SELECT TOP 1 a.idMedida FROM Restaurant.Item ii  INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo WHERE ii.id = i.ItemId)
+                        END 
+        
                 ,0
                 ,i.quantity
                 ,i.cost
@@ -307,15 +329,28 @@ BEGIN
                 ,0
                 ,i.total
                 ,i.obs
-                ,a.descripcion
-                ,a.precioCosto
+                                 ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 a.descripcion FROM Restaurant.Menu m
+                            INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
+                        WHERE m.id = i.MenuId) ELSE
+                            (SELECT TOP 1 a.descripcion FROM Restaurant.Item ii  INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo WHERE ii.id = i.ItemId)
+                        END
+                                 ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 a.precioCosto FROM Restaurant.Menu m
+                            INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
+                        WHERE m.id = i.MenuId) ELSE
+                            (SELECT TOP 1 a.precioCosto FROM Restaurant.Item ii  INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo WHERE ii.id = i.ItemId)
+                        END
                 ,(SELECT TOP 1 idTipoIva FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS varchar(1)) = sti.codigo) 
                 ,0
-                ,(a.porcentaje/100) * total
+                ,(CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 a.porcentaje FROM Restaurant.Menu m
+                            INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
+                        WHERE m.id = i.MenuId) ELSE
+                            (SELECT TOP 1 a.porcentaje FROM Restaurant.Item ii  INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo WHERE ii.id = i.ItemId)
+                        END/100) * total
                 ,i.uuid
             FROM @tblItems i
-            INNER JOIN Restaurant.v_Item ri ON i.itemId = ri.Id
-            INNER JOIN Inventario.v_Articulo a ON ri.ProductId = a.idArticulo
+                 INNER JOIN Restaurant.ItemType it ON i.itemTypeId = it.Id
+            --INNER JOIN Restaurant.v_Item ri ON i.itemId = ri.Id
+            --INNER JOIN Inventario.v_Articulo a ON ri.ProductId = a.idArticulo
             INNER JOIN Sri.TarifaImpuesto sti ON i.taxPercentId = sti.idTarifaImpuesto
 
             INSERT INTO Ventas.FacturaImpuesto(TaxId, TaxPercentId, [Percent], TaxBase, TaxValue, Uuid, UserId)                    
