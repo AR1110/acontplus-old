@@ -13,11 +13,13 @@
   });
 
   let page = 0;
+  let pageCurrent = 0;
   let pageSize = recordsQuantity[0];
 
   function onPageChange(event) {
     page = event.detail.page;
-    useItemStore.get({ pageIndex: page + 1 });
+    pageCurrent = page + 1;
+    useItemStore.get({ pageIndex: pageCurrent });
   }
 
   const onChange = (e) => {
@@ -141,4 +143,4 @@
   <p class="text-center text-italic">No hay items registrados</p>
 {/if}
 
-<Add />
+<Add pageIndexCurrent={pageCurrent} />
