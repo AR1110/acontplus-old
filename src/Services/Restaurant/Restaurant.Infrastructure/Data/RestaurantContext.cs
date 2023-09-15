@@ -65,18 +65,29 @@ namespace Restaurant.Infrastructure.Data
             builder.ApplyUtcDateTimeConverter();
 
             builder.Entity<ItemType>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<ItemType>().HasIndex(x => x.Code).HasDatabaseName("UI_ItemType").IsUnique();
+
             builder.Entity<Item>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Recipe>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+
             builder.Entity<IngredientType>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<IngredientType>().HasIndex(x => x.Code).HasDatabaseName("UI_IngredientType").IsUnique();
+
             builder.Entity<Ingredient>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+
             builder.Entity<ProductionArea>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<ProductionArea>().HasIndex(x => x.Code).HasDatabaseName("UI_ProductionArea").IsUnique();
+
             builder.Entity<Floor>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Room>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<AppTable>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
 
             builder.Entity<MenuType>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<MenuType>().HasIndex(x => x.Code).HasDatabaseName("UI_MenuType").IsUnique();
+
             builder.Entity<Menu>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Menu>().HasMany(x => x.MenuItems).WithOne(m => m.Menu).HasForeignKey(m => m.MenuId);
+
             builder.Entity<MenuItem>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
 
             builder.Entity<Order>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");

@@ -78,7 +78,9 @@ BEGIN
         BEGIN
             DECLARE @tblItems AS TABLE(
                 uuid UNIQUEIDENTIFIER NOT NULL,
-                itemId INT NOT NULL,
+                itemTypeCode VARCHAR(5) NULL,
+                menuId INT NULL,
+                itemId INT NULL,
                 taxId INT NOT NULL,
                 taxPercentId INT NOT NULL,
                 feeId INT NOT NULL,
@@ -88,14 +90,16 @@ BEGIN
                 price NUMERIC(18,5) NOT NULL,
                 discount NUMERIC(18,5),
                 total NUMERIC(18,5) NOT NULL,
-                obs VARCHAR(500)
+                obs VARCHAR(500) NULL
             )
 
-            INSERT INTO @tblItems(uuid, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs)
-            SELECT uuid, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs
+            INSERT INTO @tblItems(uuid, itemTypeCode, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs)
+            SELECT uuid, itemTypeCode, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs
             FROM OPENJSON(@itemsJson)
                 WITH (
                         uuid UNIQUEIDENTIFIER '$.uuid',
+                        itemTypeCode VARCHAR(5) '$.itemTypeCode',
+                        menuId INT '$.menuId',
                         itemId INT '$.itemId',
                         taxId INT '$.taxId',
                         taxPercentId INT '$.taxPercentId',
@@ -162,24 +166,28 @@ BEGIN
                     PRINT @orderId 
                     
                     INSERT INTO Restaurant.OrderItem(OrderId, Uuid, ItemId, TaxId, TaxPercentId, TaxValue, Quantity, Cost
-                                                    , Price, Discount, Total, [Enabled], UserId, FeeId, Obs, BodegaId)
+                                                    , Price, Discount, Total, [Enabled], UserId, FeeId, Obs, BodegaId, ItemTypeId, MenuId)
                     SELECT @orderId
-                            , uuid
-                            , itemId
-                            , taxId
-                            , taxPercentId
-                            , taxValue
-                            , quantity
-                            , cost
-                            , price
-                            , discount
-                            , total
-                            , 1
-                            , @userId
-                            , feeId
-                            , obs
-                            , ISNULL(@bodegaId, 0)
-                     FROM @tblItems
+                            ,uuid
+                            ,itemId
+                            ,taxId
+                            ,taxPercentId
+                            ,taxValue
+                            ,quantity
+                            ,cost
+                            ,price
+                            ,discount
+                            ,total
+                            ,1
+                            ,@userId
+                            ,feeId
+                            ,obs
+                            ,ISNULL(@bodegaId, 0)
+                            ,it.Id
+                            ,i.menuId
+                     FROM @tblItems i
+                        INNER JOIN Restaurant.ItemType it 
+                            ON i.itemTypeCode = it.Code
                     
                     DECLARE @totalCook INT = 0
 
