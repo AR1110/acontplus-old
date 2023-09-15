@@ -124,7 +124,6 @@
   };
 
   // SEARCH THE  CUSTOMER
-
   const onInputCustomer = async (e) => {
     valueCustomer = e.target.value;
     customers = [];

@@ -100,13 +100,10 @@ const cretaeSupport = () => {
 
 
     const getOpenModal = (id?: number) => {
-
-
         if (id > 0) {
             showLoader();
             SupportService.get(JSON.stringify({ tipo: 3, id })).then((response) => {
                 if (response) {
-                    console.log(response["support"][0]);
                     update((state) => ({
                         ...state,
                         isOpen: true,
