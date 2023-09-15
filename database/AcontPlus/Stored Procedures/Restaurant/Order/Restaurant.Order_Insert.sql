@@ -169,7 +169,7 @@ BEGIN
                                                     , Price, Discount, Total, [Enabled], UserId, FeeId, Obs, BodegaId, ItemTypeId, MenuId)
                     SELECT @orderId
                             ,uuid
-                            ,itemId
+                            ,IIF(itemId = 0, NULL, itemId)
                             ,taxId
                             ,taxPercentId
                             ,taxValue
@@ -184,7 +184,7 @@ BEGIN
                             ,obs
                             ,ISNULL(@bodegaId, 0)
                             ,it.Id
-                            ,i.menuId
+                            ,IIF(i.menuId = 0, NULL, i.menuId)
                      FROM @tblItems i
                         INNER JOIN Restaurant.ItemType it 
                             ON i.itemTypeCode = it.Code
@@ -205,7 +205,7 @@ BEGIN
                     UPDATE cf 
                     SET cf.ultimaSecuencia = vcf.secuencial + 1 
                     FROM ConfiguracionDocumento cf WITH (ROWLOCK)
-                    JOIN (  SELECT cd.idConfiguracionDocumento
+                    JOIN (SELECT cd.idConfiguracionDocumento
                                     , cd.secuencial
 			                FROM Config.v_ConfigDocumento cd
 				            INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab AND cd.idPuntoEmision = @puntoEmisionId
