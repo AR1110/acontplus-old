@@ -96,7 +96,8 @@ BEGIN
 								                            WHERE ap.idArticulo = a.idArticulo AND ta.predeterminada = 1
 								                            FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
                         ,codTipoArticulo                = ISNULL(a.codTipoArticulo, '''')
-                        ,totalRecords                   = COUNT(*) over()                        
+                        ,totalRecords                   = COUNT(*) over()
+                        ,itemTypeCode                   = ''ITEM''
 				FROM Restaurant.Item ri
 				INNER JOIN Inventario.v_Articulo a ON a.idArticulo = ri.ProductId
 				LEFT JOIN Restaurant.ProductionArea pa ON pa.Id = ri.ProductionAreaId
@@ -155,6 +156,7 @@ BEGIN
 								                WHERE ap.idArticulo = a.idArticulo AND ta.predeterminada = 1
 								                FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
                ,totalRecords       = COUNT(*) over()
+               ,itemTypeCode = 'MENU'
             FROM Restaurant.Menu m WITH(NOLOCK)
                 INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
             WHERE a.idEntidad = @idEntidad AND a.siglaFamilia = 'COM'

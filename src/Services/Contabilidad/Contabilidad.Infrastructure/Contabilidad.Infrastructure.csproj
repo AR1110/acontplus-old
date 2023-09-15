@@ -31,8 +31,4 @@
     <ProjectReference Include="..\Contabilidad.Core\Contabilidad.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Repositories\" />
-  </ItemGroup>
-
 </Project>

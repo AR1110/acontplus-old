@@ -212,6 +212,10 @@ namespace Restaurant.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("UI_IngredientType");
+
                     b.ToTable("IngredientType", "Restaurant");
                 });
 
@@ -246,9 +250,6 @@ namespace Restaurant.Infrastructure.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(max)");
 
-                    b.Property<int?>("ItemTypeId")
-                        .HasColumnType("int");
-
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
@@ -271,8 +272,6 @@ namespace Restaurant.Infrastructure.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ItemTypeId");
 
                     b.HasIndex("ProductionAreaId");
 
@@ -317,6 +316,10 @@ namespace Restaurant.Infrastructure.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("UI_ItemType");
 
                     b.ToTable("ItemType", "Restaurant");
                 });
@@ -467,6 +470,10 @@ namespace Restaurant.Infrastructure.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("UI_MenuType");
 
                     b.ToTable("MenuType", "Restaurant");
                 });
@@ -759,6 +766,10 @@ namespace Restaurant.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("UI_ProductionArea");
+
                     b.ToTable("ProductionArea", "Restaurant");
                 });
 
@@ -896,15 +907,9 @@ namespace Restaurant.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Restaurant.Core.Entities.Item", b =>
                 {
-                    b.HasOne("Restaurant.Core.Entities.ItemType", "ItemType")
-                        .WithMany()
-                        .HasForeignKey("ItemTypeId");
-
                     b.HasOne("Restaurant.Core.Entities.ProductionArea", "ProductionArea")
                         .WithMany()
                         .HasForeignKey("ProductionAreaId");
-
-                    b.Navigation("ItemType");
 
                     b.Navigation("ProductionArea");
                 });
