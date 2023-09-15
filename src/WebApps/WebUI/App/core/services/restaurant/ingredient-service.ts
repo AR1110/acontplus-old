@@ -28,7 +28,6 @@ async function put(id: any, data: any) {
     })
 }
 
-
 export const IngredientService = {
     get,
     post,

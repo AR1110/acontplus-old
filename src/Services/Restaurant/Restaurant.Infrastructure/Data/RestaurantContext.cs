@@ -14,6 +14,7 @@ namespace Restaurant.Infrastructure.Data
         {
 
         }
+        public DbSet<ItemType> ItemTypes { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<IngredientType> IngredientTypes { get; set; }
@@ -63,6 +64,7 @@ namespace Restaurant.Infrastructure.Data
 
             builder.ApplyUtcDateTimeConverter();
 
+            builder.Entity<ItemType>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Item>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Recipe>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<IngredientType>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");

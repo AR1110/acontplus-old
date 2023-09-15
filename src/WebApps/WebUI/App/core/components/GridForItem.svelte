@@ -12,7 +12,6 @@
   $: table && tempData && table.setData(tempData);
 
   function loadTabulator(){
-    console.log('load inifinite grid')
     table = new Tabulator(tableComponent, {
       layout: "fitColumns",
       data: tempData,

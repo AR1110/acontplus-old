@@ -3,6 +3,7 @@ import { writable } from "svelte/store";
 import { hideLoader, showLoader } from "$core/utils/loading-spinner";
 import { MenuService } from "$core/services/restaurant/menu-service";
 import { itemService } from "$core/services/restaurant/item-service";
+import { MenuItemService } from "$core/services/restaurant/menu-item-service";
 
 type StateModal = {
   isOpen: boolean;
@@ -14,6 +15,8 @@ type State = {
   menus: any;
   dataUpdate: Menu;
   items: any;
+  menuTypes: any;
+  menuItems: any;
 };
 
 const initialState: State = {
@@ -27,6 +30,8 @@ const initialState: State = {
     content: "",
   },
   items: [],
+  menuTypes: [],
+  menuItems: [],
 };
 
 const initialModalState: StateModal = {
@@ -43,13 +48,14 @@ const menuStore = () => {
 
   const get = () => {
     showLoader();
-    update((state) => ({ ...state, menus: [] }));
+    update((state) => ({ ...state, menus: [], menuTypes: [] }));
 
     MenuService.get(JSON.stringify({ tipo: 1 }))
       .then((response) => {
         update((state) => ({
           ...state,
           menus: response["menus"],
+          menuTypes: response["menuTypes"],
         }));
       })
       .finally(() => {
@@ -57,7 +63,16 @@ const menuStore = () => {
       });
   };
 
-  const getItems = () => {};
+  const getItems = (id: number) => {
+    MenuItemService.getById(id).then((response) => {
+      if (response) {
+        update((state) => ({
+          ...state,
+          menuItems: response["menuItems"],
+        }));
+      }
+    });
+  };
 
   const searchItem = (params?: object) => {
     let json = { pageIndex: 1, pageSize: 10, tipo: 1, ...params };
@@ -77,6 +92,7 @@ const menuStore = () => {
   };
 
   const openingModal = (menu?: Menu) => {
+    getItems(menu.id);
     update((state) => ({
       ...state,
       isOpen: true,

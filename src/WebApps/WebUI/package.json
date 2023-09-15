@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "@rollup/plugin-typescript": "^11.1.2",
+    "moment": "^2.29.4",
     "svelte-french-toast": "^1.2.0",
     "svelte-input-mask": "^1.1.0",
     "svelte-search": "^2.0.1",
