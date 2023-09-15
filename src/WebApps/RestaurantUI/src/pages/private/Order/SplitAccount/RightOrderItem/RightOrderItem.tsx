@@ -34,7 +34,7 @@ const RightOrderItem = () => {
                     <RightOrderItemTable />
                 </CardContent>
                 <CardActions>
-                    <Button fullWidth variant="contained" startIcon={<SaveIcon />}>
+                    <Button fullWidth variant="contained" color='success' size='large' startIcon={<SaveIcon />}>
                         Guardar
                     </Button>
                 </CardActions>

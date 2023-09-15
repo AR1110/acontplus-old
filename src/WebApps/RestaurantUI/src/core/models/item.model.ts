@@ -31,6 +31,7 @@ export interface ItemReadDto {
     itemType: string            
     totalRecords: number
     pvps: ProductPVPReadDto
+    taxRateCode?:string
 }
 
 export interface ItemSearch {
