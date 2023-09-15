@@ -40,6 +40,7 @@ RETURNS
 	 ,claveAcceso VARCHAR(50) NOT NULL
 	 ,numeroAutorizacion VARCHAR(50) NOT NULL
 	 ,idUsuario INT 	
+     ,codDocSustento VARCHAR(10) NULL
 	 ,docSustento VARCHAR(40)  NULL
 	 ,numDocSustento VARCHAR(50) NULL
 	 ,fechaEmisionDocSustento VARCHAR(50) NULL
@@ -193,7 +194,8 @@ BEGIN
 							,dr.claveAcceso
 							,dr.numeroAutorizacion
 							,dr.idUsuario	
-
+                            
+                            ,ds.codDocSustento
 							,ds.descripcion -- docSustento
 							,r.numDocSustento  
 							,r.fechaEmisionDocSustento

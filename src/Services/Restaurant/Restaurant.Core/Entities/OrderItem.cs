@@ -9,8 +9,12 @@ namespace Restaurant.Core.Entities
         public Guid Uuid { get; set; }
         public Order Order { get; set; }
         public int OrderId { get; set; }
+        public ItemType ItemType { get; set; }
+        public int? ItemTypeId { get; set; }
         public Item Item { get; set; }
-        public int ItemId { get; set; }
+        public int? ItemId { get; set; }
+        public Menu Menu { get; set; }
+        public int? MenuId { get; set; }
         public int? TaxId { get; set; }
         public int? TaxPercentId { get; set; }
         [Column(TypeName = "numeric(18,5), not null")]
