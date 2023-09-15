@@ -5,6 +5,7 @@ using Mechanical.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 using Services.Common.Logs;
+using Mechanical.Application.Services;
 
 namespace Mechanical.API.Controllers
 {
@@ -47,8 +48,6 @@ namespace Mechanical.API.Controllers
         public async Task<IActionResult> Post([FromBody] ApiRequest data)
         {
             try
-
-            // Es esto el controlller? si po que no lees ajaa vechiclecontroller
             {
                 var parameters = new Dictionary<string, object> {
                     { "userRoleId", User.GetUserRoleId() },
@@ -69,8 +68,6 @@ namespace Mechanical.API.Controllers
         public async Task<IActionResult> Put(int id,[FromBody] ApiRequest data)
         {
             try
-
-            // Es esto el controlller? si po que no lees ajaa vechiclecontroller
             {
                 var parameters = new Dictionary<string, object> {
                     { "userRoleId", User.GetUserRoleId() },
@@ -85,6 +82,22 @@ namespace Mechanical.API.Controllers
             {
                 _log.LogActivity("Error on Post: \n" + ex.ToString());
                 return BadRequest("Error On Save");
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                bool response = await _supportService.DeleteAsync(id);
+                if (!response) { return BadRequest("No se pudo Eliminar"); }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error on Delete: \n" + ex.ToString());
+                return BadRequest("Error on Delete");
             }
         }
     }

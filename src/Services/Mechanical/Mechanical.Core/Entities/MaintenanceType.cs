@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Mechanical.Core.Entities
 {
     [Table("SupportType", Schema = "Mechanical")]
-    public class SupportType : BaseEntity
+    public class MaintenanceType : BaseEntity
     {
         [Required]
         [MaxLength(8)]

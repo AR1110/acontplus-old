@@ -35,6 +35,7 @@ BEGIN
            ,@VehicleCompanyId INT
            ,@IDCard VARCHAR(15)
            ,@CustomerId INT
+           ,@UserAssignedId INT
            
 
     DECLARE @jsonCustomer VARCHAR(MAX)
@@ -142,7 +143,7 @@ BEGIN
 			
             SELECT @LicensePlate = LicensePlate FROM @tbVehicle
 
-            SELECT @CustomerId = CustomerId, @VehicleCompanyId = VehicleCompanyId, @Date = [Date] FROM @tbSupport 
+            SELECT @CustomerId = CustomerId, @VehicleCompanyId = VehicleCompanyId, @Date = [Date], @UserAssignedId = UserAssignedId FROM @tbSupport 
 			
             SELECT @IDCard = tc.IDCard, @cardTypeId = (SELECT TOP 1 idTipoIdentificacion FROM TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = tc.IDType ) FROM @tbCustomer tc
 
@@ -222,7 +223,7 @@ BEGIN
                    SET [Date]             = GETDATE()
                       ,[VehicleCompanyId] = @VehicleCompanyId
                       ,[CustomerId]       = @CustomerId
-                      ,[UserAssignedId]   = 1
+                      ,[UserAssignedId]   = @UserAssignedId
                       ,[UpdatedAt]        = GETDATE()
                  WHERE Id = @Id
 
