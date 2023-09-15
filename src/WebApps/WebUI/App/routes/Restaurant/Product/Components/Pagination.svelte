@@ -1,22 +1,20 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-
   const dispatch = createEventDispatcher();
 
-  export let buttons = [-2, -1, 0, 1, 2];
   export let count;
   export let page = 0;
   export let pageSize;
 
-  export let labels = {
+  let labels = {
     first: "Primero",
     last: "Último",
     next: "Siguiente",
     previous: "Anterior",
   };
 
+  let buttons = [-2, -1, 0, 1, 2];
   let pageCount = 0;
-
 
   $: pageCount = Math.floor(count / pageSize);
 

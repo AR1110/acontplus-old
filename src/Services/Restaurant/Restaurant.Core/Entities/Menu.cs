@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Restaurant.Core.Entities
@@ -15,6 +15,8 @@ namespace Restaurant.Core.Entities
         public MenuType MenuType { get; set; }
         public int? MenuTypeId { get; set; }
         public string Content { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
         public List<MenuItem> MenuItems { get; set; }
     }
 }

@@ -9,6 +9,8 @@ namespace Restaurant.Core.Entities
         public int ProductId { get; set; }
         public ProductionArea ProductionArea { get; set; }
         public int? ProductionAreaId { get; set; }
+        public ItemType ItemType { get; set; }
+        public int? ItemTypeId { get; set; }
         [MaxLength(500)]
         public string Summary { get; set; }
         public bool Cooking { get; set; }

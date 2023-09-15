@@ -1,46 +1,104 @@
 <script lang="ts">
-  import Modal from "$core/components/Modal.svelte";
-  import Grid from "$core/components/Grid.svelte";
-  import type { Menu } from "$core/interfaces/restaurant/menu";
+  import { hideLoader, showLoader } from "$core/utils/loading-spinner";
+  import { MenuService } from "$core/services/restaurant/menu-service";
   import { useMenuStore } from "$routes/Restaurant/store/menuStore";
   import AdvancedSearch from "$core/components/AdvancedSearch.svelte";
+  import GridForItem from "$core/components/GridForItem.svelte";
+  import Modal from "$core/components/Modal.svelte";
   import toast from "$core/utils/toast";
+  import type { Menu } from "$core/interfaces/restaurant/menu";
+  import moment from "moment";
 
   let data = {} as Menu;
   let value = "";
   let placeholder = "Buscar producto";
   let itemSearch = [];
   let productsAdded = [];
+  let menuTypes = [];
   let timeout;
+
+  // Moment local date
+  let thisMoment = moment();
+  let endOfMonth = moment(thisMoment).endOf("month");
+  let startOfMonth = moment(thisMoment).startOf("month");
+
+  let dateRangePicker = {
+    date: { startDate: startOfMonth, endDate: endOfMonth },
+    picker: null,
+    pickerClasses: "extra-class-names",
+    options: {
+      pickerClasses: "custom-display", //angular-daterangepicker extra
+      buttonClasses: "btn",
+      applyButtonClasses: "btn-success",
+      cancelButtonClasses: "btn-danger",
+      locale: {
+        applyLabel: "Aplicar",
+        cancelLabel: "Cancelar",
+        customRangeLabel: "Rango Personalizado",
+        separator: " - ",
+        format: "YYYY-MM-DD",
+      },
+      ranges: {
+        "Ultimos 15 Días": [moment().subtract(14, "days"), moment()],
+        "Ultimos 30 Días": [moment().subtract(29, "days"), moment()],
+      },
+      eventHandlers: {
+        "apply.daterangepicker": function (event, picker) {},
+      },
+    },
+  };
 
   useMenuStore.subscribe((values) => {
     data = values.dataUpdate;
     itemSearch = values.items;
+    menuTypes = values.menuTypes;
+    productsAdded = values.menuItems;
   });
 
   let productColumns = [
     {
-      title: "Producto",
-      field: "descripcion",
       editable: "never",
+      field: "descripcion",
+      resizable: true,
+      title: "Producto",
       with: 300,
-      resizable: true,
     },
     {
-      title: "Precio costo",
-      field: "costPrice",
       editor: "input",
-      with: 200,
+      field: "quantity",
       resizable: true,
+      title: "Cantidad",
+      with: 100,
     },
     {
-      title: "Opción",
-      hozAlign: "center",
-      formatter: "buttonCross",
-      width: 100,
-      cellClick: (e, cell) => {
-        console.log(e, cell);
+      editor: "input",
+      field: "percentageDiscount",
+      resizable: true,
+      title: "Descuento",
+      with: 100,
+    },
+    {
+      calcBottom: "sum",
+      editable: false,
+      editor: "input",
+      field: "total",
+      resizable: true,
+      title: "Total",
+      with: 200,
+      bottomCalc: function (data) {
+        let total = 0;
+        data.forEach((element) => {
+          total += element;
+        });
+        return total;
       },
+    },
+    {
+      cellClick: (e, cell) => {},
+      formatter: "buttonCross",
+      hozAlign: "center",
+      title: "Opción",
+      width: 100,
     },
   ];
 
@@ -73,32 +131,79 @@
     const item = itemSearch.find((x) => x.id === id);
 
     // Verify in the list if the item exists
-    const itemExists = productsAdded.find((x) => x.productId === item.productId);
+    const itemExists = productsAdded.find(
+      (x) => x.productId === item.productId
+    );
+    if (itemExists)
+      return toast({
+        type: "warning",
+        message: "Ya existe agregado para el combo",
+      });
 
-    if (itemExists) return toast({ type: "success", message: "Agregado" });
-
-    let newMenu = {
+    let newMenuItem = {
       id: 0,
       itemId: item.id,
       productId: item.productId,
       costPrice: item.costPrice,
       descripcion: item.descripcion,
       menuId: data.id,
+      quantity: 0,
+      percentageDiscount: 0,
+      total: 0,
     };
 
-    productsAdded.push(newMenu);
-
-    //productsAdded = [...productsAdded, newMenu];
+    useMenuStore.update((state) => ({
+      ...state,
+      menuItems: [...state.menuItems, newMenuItem],
+    }));
   };
 
   const onModalClose = () => {
+    productsAdded = [];
     useMenuStore.update((state) => ({
       ...state,
       isOpen: false,
     }));
   };
 
-  const onSave = () => {};
+  const onUpdate = () => {
+    if (!onValidate()) return;
+
+    let forSave = { ...data, menuItems: productsAdded };
+
+    showLoader();
+    MenuService.put(data.id, { data: forSave })
+      .then((response) => {
+        if (response.status === 200) {
+          if (response.data.code === "1") {
+            toast({ type: "success", message: response.data.message });
+            onModalClose();
+          } else {
+            toast({ type: "warning", message: response.data.message });
+          }
+        }
+      })
+      .finally(() => {
+        hideLoader();
+      });
+  };
+
+  const onValidate = () => {
+    let isValid = true;
+    try {
+      if (productsAdded.length <= 0) {
+        toast({
+          type: "warning",
+          message: "Debe agregar productos para crear el combo",
+        });
+        isValid = false;
+      }
+      return isValid;
+    } catch (error) {
+      toast({ type: "error", message: "Verifica los campos requeridosa" });
+      isValid = false;
+    }
+  };
 </script>
 
 {#if $useMenuStore.isOpen}
@@ -109,13 +214,34 @@
     size={"modal-lg"}
     onClosed={() => onModalClose()}
   >
-    <form on:submit|preventDefault={onSave}>
+    <form on:submit|preventDefault={onUpdate}>
       <div class="modal-body">
         <div class="row">
-          <div class="col-12">
+          <div class="col-6">
+            <div class="form-group input-group-lg">
+              <label for="menu-type">Tipo Menu</label>
+              <select
+                bind:value={data.menuTypeId}
+                class="form-control"
+                id="menu-type"
+              >
+                <option disabled>SELECCIONE</option>
+                {#each menuTypes as items}
+                  <option value={items.id}>
+                    {items.name}
+                  </option>
+                {/each}
+              </select>
+            </div>
+          </div>
+          <div class="col-6">
             <div class="form-group">
               <label for="">Descripción</label>
-              <input type="text" class="form-control" bind:value={data.title} />
+              <input
+                type="text"
+                class="form-control input-group-lg"
+                bind:value={data.title}
+              />
             </div>
           </div>
         </div>
@@ -128,8 +254,32 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-8 col-md-12 col-sm-12">
+          <div class="col-12">
             <div class="form-group">
+              <label for="">Contenido</label>
+              <textarea class="form-control" bind:value={data.content} />
+            </div>
+          </div>
+        </div>
+
+        {#if data.menuTypeId === 3}
+          <div class="row">
+            <div class="col-12">
+              <label for="dateRange">Rango de Fechas </label>
+              <input
+                class="form-control input-group-lg date-picker"
+                type="text"
+                bind:value={dateRangePicker.date}
+                placeholder="Seleccione la fecha"
+              />
+            </div>
+          </div>
+        {/if}
+
+        <div class="row mt-3">
+          <div class="col-8 col-md-12 col-sm-12">
+            <label for="search">Buscar producto </label>
+            <div class="form-group input-group-lg">
               <AdvancedSearch
                 on:input={onInput}
                 on:focus={onFocus}
@@ -154,8 +304,7 @@
         </div>
         <div class="row">
           <div class="col-12">
-            {JSON.stringify(productsAdded)}
-            <Grid dataArray={productsAdded} columns={productColumns} />
+            <GridForItem arrayData={productsAdded} columns={productColumns} />
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 
-export interface Item {   
+export interface Item {
     readonly id: number;
     summary: string;
     cooking: boolean;
@@ -24,4 +24,5 @@ export interface Item {
     readonly productionAreaId: number;
     descriptionProductionArea: string;
     totalRecords: number;
+    costPrice?: number;
 }

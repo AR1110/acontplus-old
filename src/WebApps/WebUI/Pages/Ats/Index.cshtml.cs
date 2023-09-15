@@ -1,6 +1,7 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebUI.Areas.Ats.Pages
+namespace WebUI.Pages.Ats
 {
     public class IndexModel : PageModel
     {

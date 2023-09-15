@@ -2,8 +2,11 @@
   import { onMount } from "svelte";
   import { hideLoader, showLoader } from "$core/utils/loading-spinner";
   import { supportStore } from "$routes/Mechanical/Store/support.store";
+  import { SupportService } from "$core/services/mechanical/support-service";
+  import toast from "$core/utils/toast";
+  import Swal from "sweetalert2";
   import Pagination from "$core/components/Pagination.svelte";
-    import Add from "./add.svelte";
+  import Add from "./add.svelte";
 
   let supports = [];
   let recordsQuantity = [10, 25, 50, 100];
@@ -30,6 +33,32 @@
     supportStore.get({ pageSize: pageSize });
   };
 
+  //Remove or Delete
+  const remove = (id) => {
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "¡No podrás revertir esto!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, Anular",
+      cancelButtonText: "Cerrar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        showLoader();
+        SupportService.remove(id).then((response) => {
+          hideLoader();
+          if (response.code == 1) {
+            toast({ type: "success", message: response.message });
+            supportStore.get();
+          } else {
+            toast({ type: "warning", message: response.message });
+          }
+        });
+      }
+    });
+  };
 </script>
 
 {#if supports.length > 0}
@@ -62,24 +91,32 @@
             <th scope="col">Identificación</th>
             <th scope="col">Cliente / Conductor</th>
             <th scope="col">Placa</th>
+            <th scope="col">Encargado</th>
             <th scope="col">Estado</th>
             <th scope="col">Acción</th>
           </tr>
         </thead>
         <tbody>
           {#each supports as item}
-            <tr>
+            <tr class={item.colorRow}>
               <td>{item.sequence}</td>
               <td>{item.date}</td>
               <td>{item.idCard}</td>
               <td>{item.tradeName}</td>
               <td>{item.licensePlate}</td>
+              <td>{item.userAssigned}</td>
               <td>{item.status}</td>
               <td>
-                <button class="btn btn-outline-danger btn-sm" >
-                  <i class="ti-trash" />
+                <button
+                  class="btn btn-outline-danger btn-sm"
+                  on:click={() => remove(item.id)}
+                >
+                  <i class="ti-na" />
                 </button>
-                <button class="btn btn-outline-warning btn-sm" on:click={() => supportStore.getOpenModal(item.id)}>
+                <button
+                  class="btn btn-outline-warning btn-sm"
+                  on:click={() => supportStore.getOpenModal(item.id)}
+                >
                   <i class="ti-pencil" />
                 </button>
               </td>
@@ -99,4 +136,4 @@
     </div>
   </div>
 </div>
-<Add/>
+<Add />

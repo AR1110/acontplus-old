@@ -61,6 +61,8 @@ BEGIN
                                  WHEN 3 THEN 'PROCESADO'
                                  WHEN 5 THEN 'ANULADO'
                    END as [Status]
+                  ,CASE [Status] WHEN 5 THEN 'table-danger' ELSE '' END as ColorRow 
+                  ,UserAssigned
                   ,COUNT(*) OVER() AS [TotalRecords]
             FROM Mechanical.v_Support WITH (NOLOCK)
             WHERE CompanyId = @CompanyId
@@ -72,7 +74,7 @@ BEGIN
     -- GET DATAFORM -- 
 	IF @tipo = 2
 		BEGIN
-			SET @tableNames = 'establishments,emissionPoints,vehicleTypes,countrys,supportTypes,idTypes'
+			SET @tableNames = 'establishments,emissionPoints,vehicleTypes,countrys,supportTypes,idTypes,users'
 			
             SELECT idEstablecimiento as establecimientoId
                   ,nombreComercial
@@ -97,6 +99,8 @@ BEGIN
             WHERE estado = 1
               AND codigoSri IN ('05','04','06')
 
+            SELECT idUsuario as UserAssignedId, nombreUsuario as UserName FROM v_usuario WITH (NOLOCK) WHERE idEntidad = @CompanyId
+
             RETURN 
 		END 
 
@@ -113,6 +117,7 @@ BEGIN
                   ,PuntoEmisionId
                   ,VehicleCompanyId
                   ,CustomerId
+                  ,UserAssignedId
                   ,FORMAT([Date], 'yyyy-MM-dd') as [Date]
             FROM Mechanical.v_Support WITH (NOLOCK)
             WHERE Id = @Id

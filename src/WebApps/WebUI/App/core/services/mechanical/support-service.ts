@@ -28,8 +28,22 @@ async function put(id, data) {
     })
 }
 
+async function remove(id) {
+    return await client.delete(url + id).then((response) => {
+        if (response.status == 200)
+            return {
+                code: response.data = true ? "1" : "0",
+                message: response.data = true ? "Eliminado Correctamente" : "No se pudo Eliminar"
+            };
+        else return { code: 0, message: response.data }
+    }, (err) => {
+        return { code: 0, message: err.status }
+    })
+}
+
 export const SupportService = {
     get,
     post,
-    put
+    put,
+    remove
 }
