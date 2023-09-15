@@ -8,12 +8,15 @@ namespace Restaurant.Core.Entities
         public Menu Menu { get; set; }
         public int MenuId { get; set; }
         public Item Item { get; set; }
+        public int FeeId { get; set; }
         public int ItemId { get; set; }
         [Column(TypeName = "numeric(18,5)")]
         public decimal? Quantity { get; set; }
         [Column(TypeName = "numeric(18,5)")]
-        public decimal? PercentageDiscount { get; set; }
+        public decimal? DiscountPercent { get; set; }
         [Column(TypeName = "numeric(18,5)")]
-        public decimal? Total { get; set; }
+        public decimal? DiscountValue { get; set; }
+        [Column(TypeName = "numeric(18,5)")]
+        public decimal? Subtotal { get; set; }
     }
 }

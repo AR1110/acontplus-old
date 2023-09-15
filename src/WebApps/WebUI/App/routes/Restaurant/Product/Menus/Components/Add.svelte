@@ -55,53 +55,195 @@
     productsAdded = values.menuItems;
   });
 
+  // Todo: GRID COLUMNS
+  let selectFee = (cell, onRendered, success, cancel) => {
+    let fees = [];
+    let rows = cell.getRow().getData();
+
+    if (rows.fees === undefined) fees = [];
+    if (rows.fees != undefined) fees = JSON.parse(rows.fees);
+
+    let selectList = document.createElement("select");
+    selectList.style.width = "100%";
+    selectList.style.boxSizing = "border-box";
+
+    onRendered(function () {
+      selectList.focus();
+      selectList.style.height = "100%";
+    });
+
+    function onChange() {
+      if (selectList.selectedOptions[0].value != rows) {
+        success(selectList.selectedOptions[0].value);
+
+        cell.getElement().dataset.tarifa = selectList.selectedOptions[0].text;
+        cell.getElement().dataset.feeId = selectList.selectedOptions[0].value;
+      } else {
+        cancel();
+      }
+    }
+
+    selectList.addEventListener("blur", onChange);
+
+    selectList.addEventListener("keydown", function (e) {
+      if (e.keyCode == 13) {
+        onChange();
+      }
+      if (e.keyCode == 27) {
+        cancel();
+      }
+    });
+
+    for (let i = 0; i < fees.length; i++) {
+      let option = document.createElement("option");
+
+      option.value = fees[i].idTarifa.toString();
+      option.text = fees[i].tarifa;
+
+      if (fees[i].idMedida === rows) {
+        option.selected = true;
+      }
+      selectList.appendChild(option);
+    }
+
+    return selectList;
+  };
+
+  let formatterFee = (cell) => {
+    let fees = [];
+    let row = cell.getRow().getData();
+    let value = cell.getValue();
+
+    if (row.fees != undefined) fees = JSON.parse(row.fees);
+
+    for (let i = 0; i < fees.length; i++) {
+      if (fees[i].idTarifa == value) {
+        console.log(fees[i].tarifa);
+        value = fees[i].tarifa;
+        cell.getRow().update({
+          priceIVA: fees[i].precioConIva,
+          price: fees[i].precioVenta,
+        });
+        break;
+      }
+    }
+    return value;
+  };
+
+  let calculateTotal = (cell) => {
+    let row = cell.getRow().getData();
+    let porcentaje = 0;
+    let descuento = 0;
+    let totalDiscount = 0;
+
+    porcentaje = row.discountPercent / 100;
+    descuento = row.price * porcentaje;
+    totalDiscount = (row.price - descuento) * row.quantity;
+
+    cell.getRow().update({ discountValue: descuento, subtotal: totalDiscount });
+  };
+
+
   let productColumns = [
     {
       editable: "never",
       field: "descripcion",
-      resizable: true,
       title: "Producto",
       with: 300,
     },
     {
-      editor: "input",
-      field: "quantity",
-      resizable: true,
-      title: "Cantidad",
+      editable: "never",
+      field: "codigo",
+      hozAlign: "center",
+      title: "Código",
       with: 100,
     },
     {
-      editor: "input",
-      field: "percentageDiscount",
-      resizable: true,
-      title: "Descuento",
+      editable: "never",
+      field: "medida",
+      hozAlign: "center",
+      title: "Medida",
       with: 100,
+    },
+    {
+      editor: selectFee,
+      formatter: formatterFee,
+      field: "feeId",
+      hozAlign: "center",
+      title: "Tarifa",
+      with: 100,
+    },
+    {
+      editable: "never",
+      field: "priceIVA",
+      hozAlign: "center",
+      title: "Precio IVA",
+      with: 100,
+    },
+    {
+      field: "price",
+      hozAlign: "center",
+      title: "Precio Venta",
+      with: 200,
+    },
+    {
+      editor: "input",
+      field: "quantity",
+      hozAlign: "center",
+      title: "Cantidad",
+      cellEdited: calculateTotal,
+      with: 200,
+    },
+    {
+      editor: "input",
+      field: "discountPercent",
+      title: "Desc. %",
+      hozAlign: "center",
+      with: 200,
+      cellEdited: calculateTotal,
+    },
+    {
+      editable: "never",
+      field: "discountValue",
+      title: "Valor Descuento",
+      hozAlign: "center",
+      with: 200,
+      calcBottom: "sum",
+      bottomCalc: function (data) {
+        let discountValue = 0;
+        data.forEach((element) => {
+          discountValue += element;
+        });
+        return discountValue;
+      },
     },
     {
       calcBottom: "sum",
       editable: false,
       editor: "input",
-      field: "total",
-      resizable: true,
-      title: "Total",
-      with: 200,
+      field: "subtotal",
+      hozAlign: "center",
+      title: "Subtotal",
+      with: 100,
       bottomCalc: function (data) {
-        let total = 0;
+        let subtotal = 0;
         data.forEach((element) => {
-          total += element;
+          subtotal += element;
         });
-        return total;
+        return subtotal;
       },
     },
     {
       cellClick: (e, cell) => {},
       formatter: "buttonCross",
       hozAlign: "center",
+      resizable: false,
       title: "Opción",
       width: 100,
     },
   ];
 
+  // Todo: SEARCH ITEM
   const onInput = async (e) => {
     value = e.target.value;
     itemSearch = [];
@@ -127,6 +269,7 @@
     }
   };
 
+  // Todo: GET ITEM SEARCH
   const getItemSearch = (id, data) => {
     const item = itemSearch.find((x) => x.id === id);
 
@@ -147,9 +290,12 @@
       costPrice: item.costPrice,
       descripcion: item.descripcion,
       menuId: data.id,
+      feeId: 0,
       quantity: 0,
-      percentageDiscount: 0,
-      total: 0,
+      discountPercent: 0,
+      discountValue: 0,
+      subtotal: 0,
+      fees: item.fees,
     };
 
     useMenuStore.update((state) => ({
@@ -211,7 +357,7 @@
     open={$useMenuStore.isOpen}
     iconTitle={"ti-plus"}
     title={`Menu - ${data.id > 0 ? data.title : ""}`}
-    size={"modal-lg"}
+    fullScreen={true}
     onClosed={() => onModalClose()}
   >
     <form on:submit|preventDefault={onUpdate}>
