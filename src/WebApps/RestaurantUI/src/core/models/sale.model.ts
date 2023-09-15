@@ -67,6 +67,7 @@ export interface ItemRead extends ItemBase {
     taxes: Array<ItemTaxes>
     pvps: Array<ProductPVPReadDto>
     obs?: string
+    taxRateCode?: string
 }
 
 

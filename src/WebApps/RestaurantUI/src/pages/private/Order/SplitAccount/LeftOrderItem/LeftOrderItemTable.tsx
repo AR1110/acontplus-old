@@ -1,7 +1,7 @@
 
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowModel } from '@mui/x-data-grid';
 import CustomNoRowsOverlay from '@/core/components/CustomNoRowsOverlay/CustomNoRowsOverlay';
-import { useSplitAccountContext } from '../../context';
+import { useSplitAccountContext } from '../../context';  
 
 const columns: GridColDef[] = [
     { field: 'index', headerName: 'N°', width: 70 },
@@ -10,7 +10,8 @@ const columns: GridColDef[] = [
         field: 'quantity',
         headerName: 'Cant.',
         type: 'number',
-        width: 50,
+        width: 50, 
+        editable: true,
     },
     {
         field: 'price',
@@ -27,22 +28,35 @@ const columns: GridColDef[] = [
 ];
  
 
-const LeftOrderItemTable = () => {
-    const { leftOrderItems } = useSplitAccountContext();
-    console.log(leftOrderItems)
+const LeftOrderItemTable = () => { 
+    const { leftOrderItems, setCheckedOrderItem} = useSplitAccountContext(); 
+  
+    const processRowUpdate = (newRow: GridRowModel) => {
+        console.log(newRow)           
+    }
+
     return (
         <div style={{ height: 400, width: '100%' }}>
             <DataGrid
                 rows={leftOrderItems}
                 columns={columns}
+                disableColumnSelector
+                disableRowSelectionOnClick
                 initialState={{
                     pagination: {
                         paginationModel: { page: 0, pageSize: 5 },
                     },
                 }}
                 slots={{ noRowsOverlay: CustomNoRowsOverlay }}
-                pageSizeOptions={[5, 10]}
+                pageSizeOptions={[5, 10]} 
                 checkboxSelection
+                rowSelection
+                onRowSelectionModelChange ={(ids)=>{
+                    const selectedIDs = new Set(ids); 
+                    const selectedRows = leftOrderItems.filter((row) => selectedIDs.has(row.id));
+                    setCheckedOrderItem(selectedRows)
+                }} 
+                 
             />
         </div>
     );

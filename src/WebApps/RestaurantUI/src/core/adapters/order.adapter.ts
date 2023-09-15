@@ -86,6 +86,7 @@ async function orderReadForUpdateAdapter(obj: any) {
             discountTotal: 0,
             taxes: [],
             pvps: pvps,
+            taxRateCode: orderItem.taxRateCode
         };         
     })
  
