@@ -20,6 +20,8 @@
   let medidas = [];
   let extents = [];
 
+  export let pageIndexCurrent;
+
   useItemStore.subscribe((values) => {
     (productionAreas = values.productionAreas),
       (data = values.dataUpdate),
@@ -232,7 +234,11 @@
         }
 
         onModalClose();
-        useItemStore.get();
+
+        if(pageIndexCurrent === 0) {
+            pageIndexCurrent = 1;
+        }
+        useItemStore.get({ pageIndex: pageIndexCurrent });
         toast({ type: "success", message: response.data.message });
         data = {} as Item;
       } else {
