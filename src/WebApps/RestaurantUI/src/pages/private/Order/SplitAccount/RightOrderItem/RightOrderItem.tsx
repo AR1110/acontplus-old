@@ -1,10 +1,17 @@
-import { Button, Card, CardActions, CardContent, Grid, TextField, Typography } from '@mui/material'
+import { Box, Button, Card, CardActions, CardContent, Grid, Tab, Tabs, Typography } from '@mui/material'
 import RightOrderItemTable from './RightOrderItemTable'
 import { useSplitAccountContext } from '../../context';
 import { SaveIcon } from '@/core/components/IconsMaterial';
+import { useState } from 'react';
 
 const RightOrderItem = () => {
     const { rightOrder } = useSplitAccountContext();
+    const [value, setValue] = useState(0);
+
+    const handleChange = (_: React.SyntheticEvent, newValue: number) => {
+        setValue(newValue);
+    };
+
     return (
         <>
             <Card>
@@ -25,13 +32,33 @@ const RightOrderItem = () => {
                             </Grid>
                         </Grid>
                     </Grid>
-                    <Grid container spacing={2} sx={{ mb: 1 }}>
-                        <Grid item md={12} lg={12}>
 
+                    <Tabs
+                        value={value}
+                        onChange={handleChange}
+                        aria-label="icon position tabs example"
+                    >
+                        <Tab iconPosition="start" label="start" />
+                        <Tab iconPosition="start" label="start" />
+                    </Tabs>
 
-                        </Grid>
-                    </Grid>
-                    <RightOrderItemTable />
+                    {
+                        value === 0 && (
+
+                            <Box sx={{ mt: 1 }}>
+                                <RightOrderItemTable />
+                            </Box>
+                        )
+                    }
+                    {
+                        value === 1 && (
+                            <Box sx={{ p: 3 }}>
+                                Hola
+                            </Box>
+                            
+                        )
+                    }
+
                 </CardContent>
                 <CardActions>
                     <Button fullWidth variant="contained" color='success' size='large' startIcon={<SaveIcon />}>
