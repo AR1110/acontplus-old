@@ -48,8 +48,6 @@ namespace Mechanical.API.Controllers
         public async Task<IActionResult> Post([FromBody] ApiRequest data)
         {
             try
-
-            // Es esto el controlller? si po que no lees ajaa vechiclecontroller
             {
                 var parameters = new Dictionary<string, object> {
                     { "userRoleId", User.GetUserRoleId() },
@@ -70,8 +68,6 @@ namespace Mechanical.API.Controllers
         public async Task<IActionResult> Put(int id,[FromBody] ApiRequest data)
         {
             try
-
-            // Es esto el controlller? si po que no lees ajaa vechiclecontroller
             {
                 var parameters = new Dictionary<string, object> {
                     { "userRoleId", User.GetUserRoleId() },
