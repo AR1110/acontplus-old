@@ -61,6 +61,7 @@ BEGIN
     ,@iva DECIMAL(18,5)
     ,@recargo DECIMAL(18,5)
     ,@transporte DECIMAL(18,5)
+    ,@itemsToPay NVARCHAR(MAX)
 
     DECLARE @tblItems AS TABLE(
         uuid            UNIQUEIDENTIFIER NOT NULL,
@@ -76,7 +77,8 @@ BEGIN
         price           NUMERIC(18,5) NOT NULL,
         discount        NUMERIC(18,5),
         total           NUMERIC(18,5) NOT NULL,
-        obs             VARCHAR(500)
+        obs             VARCHAR(500),
+        bodegaId INT    
     )
 
     DECLARE @tblTaxes AS TABLE (
@@ -100,7 +102,8 @@ BEGIN
         ,@total                 = total
         ,@obs                   = obs
         ,@codDoc                = codDoc       
-        ,@tableId               = tableId           
+        ,@tableId               = tableId    
+        ,@itemsToPay            = itemsToPay
     FROM OPENJSON(@json)
     WITH(establecimientoId      INT '$.establecimientoId',
         puntoEmisionId          INT '$.puntoEmisionId',
@@ -116,35 +119,93 @@ BEGIN
         total                   NUMERIC(18,5) '$.total',
         obs                     VARCHAR(500) '$.obs',
         codDoc                  VARCHAR(2) '$.codDoc',       
-        tableId                 INT '$.tableId'
+        tableId                 INT '$.tableId',
+        itemsToPay              NVARCHAR(MAX) '$.itemsToPay' AS JSON
     )
 
-    --- Insert Items ---
-    INSERT INTO @tblItems(uuid, itemTypeId, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total)
-    SELECT Uuid
-        ,itemTypeId
-        ,menuId
-        , ItemId
-        , TaxId
-        , TaxPercentId
-        , FeeId
-        , TaxValue
-        , Quantity
-        , Cost
-        , Price
-        , Discount
-        , Total
-    FROM Restaurant.OrderItem WHERE OrderId = @orderId
+    IF (ISJSON(@itemsToPay) = 1 AND LEN(RTRIM(LTRIM(@itemsToPay))) > 0)
+        BEGIN
+             --- Insert Items ---
+            INSERT INTO @tblItems(uuid, bodegaId, itemTypeId, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total)
+            SELECT oi.Uuid
+                ,oi.bodegaId
+                ,itemTypeId
+                ,menuId
+                ,ItemId
+                ,TaxId
+                ,TaxPercentId
+                ,FeeId
+                ,TaxValue
+                ,ij.quantity
+                ,Cost
+                ,ij.price
+                ,ij.discount
+                ,ij.total
+            FROM Restaurant.OrderItem oi WITH(NOLOCK)
+                JOIN (SELECT uuid, quantity, price, discount, total FROM OPENJSON(@itemsToPay)
+                                    WITH (
+                                            uuid UNIQUEIDENTIFIER '$.uuid',
+                                            quantity NUMERIC(18,2) '$.quantity',
+                                            price NUMERIC(18,5) '$.price',
+                                            discount NUMERIC(18,5) '$.discount',
+                                            total NUMERIC(18,5) '$.total'
+                                          )
+                      ) AS ij ON ij.uuid = oi.uuid
 
 
-    --- Insert Taxes---
-    INSERT INTO @tblTaxes(uuid, taxId, taxPercentId, taxBase, taxValue)
-    SELECT Uuid
-        , TaxId
-        , TaxPercentId
-        , Price
-        , TaxValue
-    FROM Restaurant.OrderItem WHERE OrderId = @orderId
+            --- Insert Taxes---
+            INSERT INTO @tblTaxes(uuid, taxId, taxPercentId, taxBase, taxValue)
+            SELECT oi.Uuid
+                , TaxId
+                , TaxPercentId
+                , Price
+                , TaxValue
+            FROM Restaurant.OrderItem oi WITH(NOLOCK)
+            JOIN (SELECT uuid FROM OPENJSON(@itemsToPay)
+                                    WITH (
+                                            uuid UNIQUEIDENTIFIER '$.uuid'
+                                          )
+                      ) AS ij ON ij.uuid = oi.uuid
+
+            UPDATE oi SET oi.Paid = 1
+            FROM Restaurant.OrderItem oi WITH(ROWLOCK)
+            JOIN (SELECT uuid FROM OPENJSON(@itemsToPay)
+                                    WITH (
+                                            uuid UNIQUEIDENTIFIER '$.uuid'
+                                          )
+                      ) AS ij ON ij.uuid = oi.uuid
+        END
+    ELSE
+        BEGIN
+            --- Insert Items ---
+            INSERT INTO @tblItems(uuid, bodegaId, itemTypeId, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total)
+            SELECT Uuid
+                ,@bodegaId
+                ,itemTypeId
+                ,menuId
+                ,ItemId
+                ,TaxId
+                ,TaxPercentId
+                ,FeeId
+                ,TaxValue
+                ,Quantity
+                ,Cost
+                ,Price
+                ,Discount
+                ,Total
+            FROM Restaurant.OrderItem
+            WHERE OrderId = @orderId
+
+
+            --- Insert Taxes---
+            INSERT INTO @tblTaxes(uuid, taxId, taxPercentId, taxBase, taxValue)
+            SELECT Uuid
+                , TaxId
+                , TaxPercentId
+                , Price
+                , TaxValue
+            FROM Restaurant.OrderItem WHERE OrderId = @orderId
+        END
     
     --- Select ---
     SELECT @companyId = idEntidad
@@ -233,7 +294,7 @@ BEGIN
                         ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 m.ProductId FROM Restaurant.Menu m WHERE m.id = i.MenuId) ELSE
                             (SELECT TOP 1 ii.ProductId FROM Restaurant.Item ii WHERE ii.id = i.ItemId)
                         END 
-                        ,@bodegaId
+                        ,bodegaId
                         ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 a.idMedida FROM Restaurant.Menu m
                             INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
                         WHERE m.id = i.MenuId) ELSE
@@ -313,7 +374,7 @@ BEGIN
                             (SELECT TOP 1 ii.ProductId FROM Restaurant.Item ii WHERE ii.id = i.ItemId)
                         END 
                 ,i.feeId
-                ,@bodegaId
+                ,bodegaId
                  ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 a.idMedida FROM Restaurant.Menu m
                             INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
                         WHERE m.id = i.MenuId) ELSE
@@ -443,7 +504,7 @@ BEGIN
 
             --INSERT ITEMS
             INSERT INTO @tblInventory(idArticulo, idBodega, idMedida, idTarifa, cantidad, precioUnitario, precioCosto, precioTotalSinImpuesto)
-            SELECT a.idArticulo, @bodegaId, a.idMedida, i.feeId, i.quantity, i.price, a.precioCosto, i.total
+            SELECT a.idArticulo, bodegaId, a.idMedida, i.feeId, i.quantity, i.price, a.precioCosto, i.total
             FROM @tblItems i
                 INNER JOIN Restaurant.v_Item ri ON i.itemId = ri.Id
                 INNER JOIN Articulo a WITH (NOLOCK) ON ri.idArticulo = a.idArticulo 
@@ -451,7 +512,7 @@ BEGIN
 
             --INSERT Menu
             INSERT INTO @tblInventory(idArticulo, idBodega, idMedida, idTarifa, cantidad, precioUnitario, precioCosto, precioTotalSinImpuesto)
-            SELECT a.idArticulo, @bodegaId, a.idMedida, i.feeId, i.quantity, i.price, a.precioCosto, i.total
+            SELECT a.idArticulo, bodegaId, a.idMedida, i.feeId, i.quantity, i.price, a.precioCosto, i.total
             FROM @tblItems i
                 INNER JOIN Restaurant.Menu m ON i.menuId = m.Id
                 INNER JOIN Articulo a WITH (NOLOCK) ON m.ProductId = a.idArticulo 
@@ -459,7 +520,7 @@ BEGIN
             
             --INSERT MENU ITEMS
             INSERT INTO @tblInventory(idArticulo, idBodega, idMedida, idTarifa, cantidad, precioUnitario, precioCosto, precioTotalSinImpuesto)
-            SELECT a.idArticulo, @bodegaId, a.idMedida, i.feeId, i.quantity, i.price, a.precioCosto, i.total
+            SELECT a.idArticulo, bodegaId, a.idMedida, i.feeId, i.quantity, i.price, a.precioCosto, i.total
             FROM @tblItems i
                 INNER JOIN Restaurant.Menu m ON i.menuId = m.Id
                 INNER JOIN Restaurant.MenuItem mi ON m.Id = mi.MenuId
@@ -469,7 +530,7 @@ BEGIN
 
             --INSERT INGREDIENTS ITMES
             INSERT INTO @tblInventory(idArticulo, idBodega, idMedida, idTarifa, cantidad, precioUnitario, precioCosto, precioTotalSinImpuesto)
-            SELECT a.idArticulo, @bodegaId, a.idMedida, i.feeId, r.quantity * i.quantity, i.price, a.precioCosto, i.total
+            SELECT a.idArticulo, bodegaId, a.idMedida, i.feeId, r.quantity * i.quantity, i.price, a.precioCosto, i.total
             FROM @tblItems i
                 INNER JOIN Restaurant.Recipe r ON i.itemId = r.ItemId
                 INNER JOIN Restaurant.Ingredient ing WITH (NOLOCK) ON r.IngredientId = ing.Id
@@ -478,7 +539,7 @@ BEGIN
 
              --INSERT MENU ITEMS INGREDIENTS
             INSERT INTO @tblInventory(idArticulo, idBodega, idMedida, idTarifa, cantidad, precioUnitario, precioCosto, precioTotalSinImpuesto)
-            SELECT a.idArticulo, @bodegaId, a.idMedida, i.feeId, i.quantity, i.price, a.precioCosto, i.total
+            SELECT a.idArticulo, bodegaId, a.idMedida, i.feeId, i.quantity, i.price, a.precioCosto, i.total
             FROM @tblItems i
                 INNER JOIN Restaurant.Menu m ON i.menuId = m.Id
                 INNER JOIN Restaurant.MenuItem mi ON m.Id = mi.MenuId

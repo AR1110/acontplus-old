@@ -33,5 +33,6 @@ namespace Restaurant.Core.Entities
         public string Obs { get; set; }
         public int FeeId { get; set; }
         public int? BodegaId { get; set; }
+        public bool? Paid { get; set; }
     }
 }
