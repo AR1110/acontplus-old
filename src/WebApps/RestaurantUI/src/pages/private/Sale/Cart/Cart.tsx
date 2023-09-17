@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Grid, Paper, Stack, TextField, Typography} from '@mui/material'
+import { Box, Button, Divider, Grid, Paper, Stack, TextField, Typography } from '@mui/material'
 import CartItem from '../CartItem/CartItem'
 import { useCheckoutStore, useLoaderStore, useSaleStore } from '@/stores';
 import Swal from 'sweetalert2';
@@ -138,7 +138,7 @@ const Cart = () => {
                 if (response.code === "1") {
                     SnackbarUtility.success(response.message);
                     //Order
-                    if (codDoc === DOC_TYPE.OR) { 
+                    if (codDoc === DOC_TYPE.OR) {
                         SharedService.getPrinter(JSON.parse(response.payload))
                         resetForm();
                         return
@@ -374,7 +374,7 @@ const Cart = () => {
                         </>
                     )
                 }
-            </Grid> 
+            </Grid>
         </Paper>
     )
 }

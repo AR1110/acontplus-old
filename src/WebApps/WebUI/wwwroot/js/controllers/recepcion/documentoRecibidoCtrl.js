@@ -11,7 +11,6 @@
             'toastService',
             'modalService',
             'nombreModal',
-            'articuloService',
             'uuid2',
             '$timeout',
             '$q',
@@ -26,7 +25,6 @@
             tS,
             modalService,
             nameModalConst,
-            articleSvc,
             uuid2,
             $timeout,
             $q,
@@ -1243,11 +1241,13 @@
                         busqueda: item
                     }
                     //Api Inventario
-                    articleSvc.search(data).then(response => {
-                        return response;
-                    }).catch(error => {
-                        console.log(error);
-                    })
+                    return mS.getData('get', 'Articulo/Search?json=' + JSON.stringify(data), null, true).then(
+                        response => {
+                            return JSON.parse(response.data)
+                        }
+                        , error => {
+                            console.log(error)
+                        })
                 } catch (error) {
                     console.log(error)
                 }
@@ -1260,25 +1260,23 @@
             $scope.selectArticleSearch = (item, itemDetail) => {
                 try {
                     //Inventario 
-                    showLoader();
-                    articleSvc.getId(item.idArticulo).then(
+                    mS.getData('get', 'Articulo/GetId?id=' + item.idArticulo, null, true).then(
                         response => {
-                            hideLoader(); 
-                            $scope.articleFinded = { descripcion: '' }
-                            const results = JSON.parse(response.payload)
-                            const objArticle = results[0][0]
-                            // $scope.customDetail.idArticulo = item.idArticulo
-                            // $scope.customDetail.codigoPrincipal = objArticle.codigo
-                            // $scope.customDetail.codigoAuxiliar = objArticle.codigoAuxiliar
-                            // $scope.customDetail.descripcion = objArticle.descripcion
-                            itemDetail.idArticulo = item.idArticulo
-                            itemDetail.codigoPrincipal = objArticle.codigo
-                            itemDetail.codigoAuxiliar = objArticle.codigoAuxiliar
-                            itemDetail.descripcion = objArticle.descripcion;
-                            itemDetail.datosAdicionales = objArticle.datosAdicionales;
-                            
+                            if (response.id == "1") {
+                                $scope.articleFinded = { descripcion: '' }
+                                const results = JSON.parse(response.payload)
+                                const objArticle = results[0][0]
+                                // $scope.customDetail.idArticulo = item.idArticulo
+                                // $scope.customDetail.codigoPrincipal = objArticle.codigo
+                                // $scope.customDetail.codigoAuxiliar = objArticle.codigoAuxiliar
+                                // $scope.customDetail.descripcion = objArticle.descripcion
+                                itemDetail.idArticulo = item.idArticulo
+                                itemDetail.codigoPrincipal = objArticle.codigo
+                                itemDetail.codigoAuxiliar = objArticle.codigoAuxiliar
+                                itemDetail.descripcion = objArticle.descripcion;
+                                itemDetail.datosAdicionales = objArticle.datosAdicionales;
+                            }
                         }).catch((error) => {
-                            hideLoader();
                             console.log(error)
                         })
                 } catch (error) {
@@ -1417,8 +1415,10 @@
                         jsonAdicional: item.adicionales
                     }
                 })
+                
+                console.log(datosAdicionales)
 
-                mS.getData('post', 'DatoAdicionalArticulo/Insert/' + $scope.selected[0].idDocumento + '/' + JSON.stringify(datosAdicionales), null, true).then(response => {
+                mS.getData('post', `DatoAdicionalArticulo/Insert?id=${$scope.selected[0].idDocumento}&?json=${encodeURIComponent(JSON.stringify(datosAdicionales))}`, null, true).then(response => {
                     if (response.code === '0') {
                         tS.toastr('warning', response.message);
                     }

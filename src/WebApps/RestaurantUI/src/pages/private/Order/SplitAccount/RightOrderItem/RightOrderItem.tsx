@@ -1,22 +1,46 @@
-import { Box, Button, Card, CardActions, CardContent, Grid, Tab, Tabs, Typography } from '@mui/material'
+import { Accordion, AccordionDetails, AccordionProps, AccordionSummary, AccordionSummaryProps, Button, Card, CardActions, CardContent, Grid, Stack, TextField, Typography, styled } from '@mui/material'
 import RightOrderItemTable from './RightOrderItemTable'
 import { useSplitAccountContext } from '../../context';
-import { SaveIcon } from '@/core/components/IconsMaterial';
-import { useState } from 'react';
+import { ArrowForwardIosIcon, FileCopyRoundedIcon, SaveIcon } from '@/core/components/IconsMaterial';
+
+const StyledAccordion = styled((props: AccordionProps) => (
+    <Accordion disableGutters elevation={0} square {...props} />
+))(({ theme }) => ({
+    border: `1px solid ${theme.palette.divider}`,
+    '&:before': {
+        display: 'none',
+    },
+}));
+
+const StyledAccordionSummary = styled((props: AccordionSummaryProps) => (
+    <AccordionSummary
+        expandIcon={<ArrowForwardIosIcon sx={{ fontSize: '0.9rem' }} />}
+        {...props}
+    />
+))(({ theme }) => ({
+    flexDirection: 'row-reverse',
+    '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
+        transform: 'rotate(90deg)',
+    },
+    '& .MuiAccordionSummary-content': {
+        marginLeft: theme.spacing(1),
+    },
+}));
+
+const StyledAccordionDetails = styled(AccordionDetails)(({ theme }) => ({
+    padding: theme.spacing(2),
+    borderTop: '1px solid rgba(0, 0, 0, .125)',
+}));
 
 const RightOrderItem = () => {
     const { rightOrder } = useSplitAccountContext();
-    const [value, setValue] = useState(0);
 
-    const handleChange = (_: React.SyntheticEvent, newValue: number) => {
-        setValue(newValue);
-    };
 
     return (
         <>
             <Card>
                 <CardContent>
-                    <Grid container spacing={2}>
+                    <Grid container spacing={1}>
                         <Grid item xs={12} sm container>
                             <Grid item xs container direction="column" spacing={2}>
                                 <Grid item xs>
@@ -26,44 +50,54 @@ const RightOrderItem = () => {
                                 </Grid>
                             </Grid>
                             <Grid item>
-                                <Typography variant="h5">
+                                <Typography variant="h6">
                                     Total: ${rightOrder.total}
                                 </Typography>
                             </Grid>
                         </Grid>
                     </Grid>
-
-                    <Tabs
-                        value={value}
-                        onChange={handleChange}
-                        aria-label="icon position tabs example"
-                    >
-                        <Tab iconPosition="start" label="start" />
-                        <Tab iconPosition="start" label="start" />
-                    </Tabs>
-
-                    {
-                        value === 0 && (
-
-                            <Box sx={{ mt: 1 }}>
-                                <RightOrderItemTable />
-                            </Box>
-                        )
-                    }
-                    {
-                        value === 1 && (
-                            <Box sx={{ p: 3 }}>
-                                Hola
-                            </Box>
-                            
-                        )
-                    }
-
+                    <StyledAccordion sx={{ mb: 1 }}>
+                        <StyledAccordionSummary aria-controls="panel-information" id="panel-information">
+                            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                Datos
+                            </Typography>
+                        </StyledAccordionSummary>
+                        <StyledAccordionDetails>
+                            <TextField
+                                id="observacion"
+                                label="Observación"
+                                fullWidth
+                                multiline
+                            />
+                        </StyledAccordionDetails>
+                    </StyledAccordion>
+                    <RightOrderItemTable />
                 </CardContent>
                 <CardActions>
-                    <Button fullWidth variant="contained" color='success' size='large' startIcon={<SaveIcon />}>
-                        Guardar
-                    </Button>
+                    <Grid container spacing={2}>
+                        <Grid item xs={6}>
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                color='success'
+                                size='large'
+                                startIcon={<FileCopyRoundedIcon />}
+                            >
+                                Factura
+                            </Button>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                color='warning'
+                                size='large'
+                                startIcon={<FileCopyRoundedIcon />}
+                            >
+                                Nota Entrega
+                            </Button>
+                        </Grid>
+                    </Grid>
                 </CardActions>
             </Card>
         </>

@@ -9,28 +9,29 @@ const LeftOrderItem = () => {
         <>
             <Card>
                 <CardContent>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} sm container>
-                            <Grid item xs container direction="column" spacing={2}>
-                                <Grid item xs>
-                                    <Typography variant="h6" component="div">
-                                        Cuenta General
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                        <b>Cliente:</b> {leftOrder.customerName}
-                                    </Typography>
-                                    <Typography sx={{ mb: 1.5 }} variant="body2" color="text.secondary">
-                                        <b>Observación:</b> {leftOrder.obs ||= 'Ninguna'}
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                            <Grid item>
-                                <Typography variant="h5" color="text.primary">
-                                    Total: ${leftOrder.total}
-                                </Typography>
-                            </Grid>
+                    <Grid container alignItems="center">
+                        <Grid item xs={12} sm={6} md={6}  >
+                            <Typography variant="h6" component="div">
+                                Cuenta General
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={12} sm={6} md={6}  >
+                            <Typography variant="h6" color="text.primary" align='right'>
+                                Total: ${leftOrder.total}
+                            </Typography>
                         </Grid>
                     </Grid>
+                    <Divider sx={{ my: 1 }} />
+                    <Grid container alignItems="center">
+                        <Grid item xs>
+                            <Typography variant="body2" color="text.secondary">
+                                <b>Cliente:</b> {leftOrder.customerName}
+                            </Typography>
+                            <Typography sx={{ mb: 1.5 }} variant="body2" color="text.secondary">
+                                <b>Observación:</b> {leftOrder.obs ||= 'Ninguna'}
+                            </Typography> 
+                        </Grid>                         
+                    </Grid> 
 
                     <LeftOrderItemTable />
 
