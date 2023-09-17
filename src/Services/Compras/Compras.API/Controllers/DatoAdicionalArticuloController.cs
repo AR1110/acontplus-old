@@ -43,7 +43,7 @@ namespace Compras.API.Controllers
             return Ok(_response);
         }
 
-        [HttpPost("Insert")]
+        [HttpPost("Insert/{id}")]
         public async Task<IActionResult> Insert(int id, string json)
         {
             GenericResponse _response = new GenericResponse();
