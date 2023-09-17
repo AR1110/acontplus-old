@@ -11,8 +11,6 @@ namespace Mechanical.Core.Entities
         [Required]
         public DateTime Date { get; set; }
         public int Sequence { get; set; }
-        public SupportType SupportType { get; set; }
-        public int SupportTypeId { get; set; }
         public VehicleCompany VehicleCompany { get; set; }
         public int VehicleCompanyId { get; set; }
         public int CustomerId { get; set; }
