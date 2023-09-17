@@ -207,6 +207,12 @@ BEGIN
             FROM Restaurant.OrderItem WHERE OrderId = @orderId
         END
     
+    IF NOT EXISTS(SELECT 1 FROM @tblItems)
+        BEGIN
+            SELECT '0' code, 'No se pudieron recuperar los detalles' as 'message'
+            RETURN
+        END
+
     --- Select ---
     SELECT @companyId = idEntidad
         , @ruc = rucEmpresa
