@@ -1,5 +1,5 @@
 import { CategoryReadDto, CustomerReadDto, DecimalSale, Floor, ProductPVPReadDto, Room, TableReadDto, Tax, TaxRate, WarehouseAsign } from ".";
-import { DOC_TYPE } from "../constants";
+import { DOC_TYPE, ITEM_TYPE_CODE } from "../constants";
 import { EmissionPointAsign } from "./emission-point.model";
 
 export interface Order {
@@ -68,6 +68,8 @@ export interface ItemRead extends ItemBase {
     pvps: Array<ProductPVPReadDto>
     obs?: string
     taxRateCode?: string
+    itemTypeCode: ITEM_TYPE_CODE.ITEM | ITEM_TYPE_CODE.MENU
+    menuId?: number
 }
 
 
@@ -85,6 +87,8 @@ export interface ItemPostDto {
     price: number
     discount: number
     total: number
+    itemTypeCode: ITEM_TYPE_CODE.ITEM | ITEM_TYPE_CODE.MENU
+    menuId?: number
 }
 export interface SummaryPostDto {
     orderId: number

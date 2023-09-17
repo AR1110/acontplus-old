@@ -34,8 +34,7 @@ const Checkout = ({ open, closeDialog }: CheckoutProps) => {
             codEstab: queryParams.codEstab,
             idCuentaPorCobrar: queryParams.idCuentaPorCobrar,
             credito: queryParams.tiempoCredito
-        }).then(response => {
-            console.log(response)
+        }).then(response => { 
             setCheckoutDataForm(response);
         }).finally(() => showLoader(false))
     }
