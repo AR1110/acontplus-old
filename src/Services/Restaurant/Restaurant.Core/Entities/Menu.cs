@@ -15,6 +15,7 @@ namespace Restaurant.Core.Entities
         public MenuType MenuType { get; set; }
         public int? MenuTypeId { get; set; }
         public string Content { get; set; }
+        public string PromotionDays { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public List<MenuItem> MenuItems { get; set; }

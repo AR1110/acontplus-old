@@ -344,8 +344,8 @@ BEGIN
             IF(@siglaFamilia = 'COM')
 				BEGIN
 					INSERT INTO Restaurant.Menu
-					(ProductId, Summary, Content, CreatedAt, UpdatedAt, [Enabled], Deleted, UserId)
-					VALUES(@idArticulo, (SELECT  descripcion FROM @tbArticle), NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario)
+					(ProductId, Title,Summary, Content, CreatedAt, UpdatedAt, [Enabled], Deleted, UserId)
+					VALUES(@idArticulo,(SELECT descripcion FROM @tbArticle),(SELECT descripcion FROM @tbArticle), NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario)
 				END
 		COMMIT TRAN 
 		SELECT '1'code,'Registrado Correctamente' as 'message', @payload as payload

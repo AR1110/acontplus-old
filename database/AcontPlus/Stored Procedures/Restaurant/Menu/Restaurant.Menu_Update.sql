@@ -25,30 +25,42 @@ BEGIN
             ,@summary       VARCHAR(MAX)
             ,@content       VARCHAR(MAX)
             ,@menuItem      NVARCHAR(MAX)
+            ,@startDate     DATETIME2
+            ,@endDate       DATETIME2
             ,@response      VARCHAR(300)
+            ,@promotionDays NVARCHAR(MAX)
                
-   SELECT @title        = title
-          ,@menuTypeId  = menuTypeId
-          ,@summary     = summary
-          ,@content     = content
-          ,@menuItem    = menuItem
+   SELECT @title            = title
+          ,@menuTypeId      = menuTypeId
+          ,@summary         = summary
+          ,@content         = content          
+          ,@startDate       = startDate
+          ,@endDate         = endDate
+          ,@promotionDays   = promotionDays
+          ,@menuItem        = menuItem
    FROM OPENJSON(@json)
    WITH(
-    title       VARCHAR(500)    '$.title'
-    ,menuTypeId INT             '$.menuTypeId'
-    ,summary    VARCHAR(500)    '$.summary'
-    ,content    VARCHAR(MAX)    '$.content'
-    ,menuItem   NVARCHAR(MAX)   '$.menuItems' AS JSON
+    title           VARCHAR(500)    '$.title'
+    ,menuTypeId     INT             '$.menuTypeId'
+    ,summary        VARCHAR(500)    '$.summary'
+    ,content        VARCHAR(MAX)    '$.content'
+    ,startDate      DATETIME2       '$.startDate'
+    ,endDate        DATETIME2       '$.endDate'
+    ,promotionDays  NVARCHAR(MAX)   '$.promotionDays'
+    ,menuItem       NVARCHAR(MAX)   '$.menuItems' AS JSON
    )
       
    BEGIN TRY
         BEGIN TRAN
             ---- UPDATE Menu ----
             UPDATE Restaurant.Menu
-            SET Title       = @title
-                ,MenuTypeId = @menuTypeId
-                ,Summary    = @summary
-                ,Content    = @content
+            SET Title           = @title
+                ,MenuTypeId     = @menuTypeId
+                ,Summary        = @summary
+                ,Content        = @content
+                ,PromotionDays  = @promotionDays
+                ,StartDate      = @startDate
+                ,EndDate        = @endDate
             WHERE Id = @id
                       
             --- Execute for insert Menu_Item ---           
