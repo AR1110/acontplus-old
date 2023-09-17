@@ -14,6 +14,7 @@ import {
 import { orderReadForUpdateAdapter } from "@/core/adapters";
 import { ItemRead, Order } from "@/core/models";
 import { RoundNumber } from "@/core/utilities";
+import { TAX_RATE_CODE } from "@/core/constants";
 
 
 // Define el estado inicial del contexto
@@ -173,7 +174,7 @@ export const SpliAccountProvider = ({ children }: Props) => {
             let totalPlusVAT = 0; // Total con IVA
             let importeTotal = 0; // Importe total con descuento 
 
-            const {subTotalSinImpuestos, totalNetoIva} = orderItems.reduce((total, orderItem)=>{
+            const { subTotalSinImpuestos, totalNetoIva } = orderItems.reduce((total, orderItem) => {
                 // Calcular el precio del ítem teniendo en cuenta el descuento
                 const itemPrice = orderItem.price - orderItem.discount;
 
@@ -182,14 +183,19 @@ export const SpliAccountProvider = ({ children }: Props) => {
 
                 // Agregar el total del ítem al subtotal sin impuestos
                 total.subTotalSinImpuestos += itemTotal;
-                console.log(total)
+               
+                // Si hay un impuesto correspondiente, agregar el total del ítem al total neto con IVA
+                if (orderItem.taxRateCode === TAX_RATE_CODE.TWELVE_PERCENT) {
+                    total.totalNetoIva += itemTotal;
+                }
+
                 return total;
             }, {
                 subTotalSinImpuestos: 0,
-                totalNetoIva: 0                                
+                totalNetoIva: 0
             })
 
-             
+
 
             // Calcular el monto del impuesto (IVA 12%)
             tax = (totalNetoIva * 12) / 100;

@@ -32,9 +32,7 @@ const customerService = {
             url: `${PATHS.SALE}${URL}FindById/` + id
         })
         const response: ApiResponse = resultAxios.data;
-        const mainDataRepository = JSON.parse(response.payload)[0];
-        console.log(JSON.parse(response.payload))
-        console.log(mainDataRepository)
+        const mainDataRepository = JSON.parse(response.payload)[0]; 
         const resultData = customerReadAdapter(mainDataRepository);
         return resultData;
 
@@ -65,15 +63,7 @@ const customerService = {
                 {
                     json: JSON.stringify({ textSearch })
                 }
-            )
-             
-            // const resultAxios = await Http({
-            //     method: 'get',
-            //     url: `${PATHS.SALE}${URL}Search`,
-            //     params: {
-            //         json: JSON.stringify({ textSearch })
-            //     }
-            // })
+            ) 
             const response: ApiResponse = resultAxios?.data;     
             const dataApi = response?.payload ? JSON.parse(response.payload) as [] : []      
             return customerReadAdapter(dataApi)

@@ -1,4 +1,5 @@
 import { ProductPVPReadDto } from "."
+import { ITEM_TYPE_CODE } from "../constants"
 
 export interface RawItemData {
     id: number //idItem 
@@ -14,9 +15,11 @@ export interface RawItemData {
     tipoArticulo: string            
     totalRecords: number    
     pvp: string
+    itemTypeCode: ITEM_TYPE_CODE.MENU | ITEM_TYPE_CODE.ITEM
 }
 
 export interface ItemReadDto {
+    index: number,
     itemId: number //idItem 
     menuId: number // para listar combos 
     userId: number
@@ -31,6 +34,8 @@ export interface ItemReadDto {
     itemType: string            
     totalRecords: number
     pvps: ProductPVPReadDto
+    taxRateCode?:string
+    itemTypeCode: ITEM_TYPE_CODE.MENU | ITEM_TYPE_CODE.ITEM
 }
 
 export interface ItemSearch {
@@ -40,7 +45,7 @@ export interface ItemSearch {
     pageIndex: number,
     pageSize: number
     checkBySearch: boolean
-    code: string
+    code: "COM" | ""
 }
 
 export const itemSearchInitialState: ItemSearch = {

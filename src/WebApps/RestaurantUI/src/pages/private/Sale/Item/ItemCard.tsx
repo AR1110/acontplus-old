@@ -4,15 +4,16 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { Badge, CardActionArea, Grid, Tooltip } from '@mui/material';
-import brand_img from '/assets/images/brand_logo.png';
+import brand_img from '/assets/images/imgProductDefault.png';
 
 import { ItemReadDto, Measure, ProductPVPReadDto } from '@/core/models';
 import { useSaleStore } from '@/stores/saleStore';
 import { MenuItemService, productService } from '@/core/services';
-import { useAuthStore, useLoaderStore } from '@/stores';
+import { useLoaderStore } from '@/stores';
 import { PricingCalculateUtility, RoundNumber } from '@/core/utilities';
 import Swal from 'sweetalert2';
 import { v4 as uuidv4 } from 'uuid';
+import { ITEM_TYPE_CODE } from '@/core/constants';
 
 type ItemCardProps = {
     item: ItemReadDto
@@ -28,8 +29,6 @@ export default function ItemCard({ item }: ItemCardProps) {
         items: state.items,
         dataForm: state.dataForm,
     }))
-
-    const dataEstab = useAuthStore(state => state.dataEstab)
     const itemSearch = useSaleStore(state => state.itemSearch)
     const order = useSaleStore(state => state.order)
     // const [warehouses, setWarehouses] = useState<Array<WarehouseAsign>>([]) 
@@ -51,13 +50,13 @@ export default function ItemCard({ item }: ItemCardProps) {
         // }
 
         showLoader(true)
-        if(itemSearch.code==="COMBOS"){
-            console.log('test')
-            MenuItemService.get(item.itemId).then(response=>{
-                console.log(response)
-            }).finally(()=>showLoader(false))
-            return 
-        }
+        // if (itemSearch.code === "COM") {
+        //     console.log('test')
+        //     MenuItemService.get(item.itemId).then(response => {
+        //         console.log(response)
+        //     }).finally(() => showLoader(false))
+        //     return
+        // }
 
 
         productService.findForSale(item.productId, order.bodegaId).then(response => {
@@ -113,10 +112,11 @@ export default function ItemCard({ item }: ItemCardProps) {
                 addItemToCart({
                     orderId: 0,
                     id: 0,
-                    index: 0,
+                    index: item.index,
                     productId: product.productId,
                     code: product.productCode,
                     itemId: item.itemId,
+                    menuId: item.menuId,
                     feeId: feeId ?? 0,
                     taxId: taxId,
                     taxPercentId: taxPercentId,
@@ -141,7 +141,8 @@ export default function ItemCard({ item }: ItemCardProps) {
                     }],
                     pvps: measureData.pvps,
                     uuid: uuid,
-                    obs: ""
+                    obs: "",
+                    itemTypeCode: item.itemTypeCode
                 })
             }
 
@@ -155,17 +156,18 @@ export default function ItemCard({ item }: ItemCardProps) {
                 display: 'flex',
                 flexDirection: 'column',
                 height: '190px',
+                //maxHeight: "200px",
                 borderRadius: "16px",
-                borderColor: items.some(cartItem => cartItem.itemId === item.itemId) ? '#6571ff !important' : '',
+                borderColor: items.some(cartItem => cartItem.index === item.index) ? '#6571ff !important' : '',
 
-                border: items.some(cartItem => cartItem.itemId === item.itemId) ? '1px solid' : '',
+                border: items.some(cartItem => cartItem.index === item.index) ? '1px solid' : '',
             }
         }>
             <CardActionArea onClick={() => handleSelectItem(item)}>
                 <Tooltip title="Stock">
                     <Badge
-                        badgeContent={item.stock}
-                        color='success'
+                        badgeContent={item.stock.toString()}
+                        color={item.stock > 0 ? 'success' : 'error'}
                         overlap="circular"
                         anchorOrigin={{
                             vertical: 'top',
@@ -181,29 +183,26 @@ export default function ItemCard({ item }: ItemCardProps) {
                     image={item.s3ObjectUrl ? item.s3ObjectUrl : brand_img}
                     alt="green iguana"
                 />
-                {/* <CardContent>
-          <Typography variant="subtitle2" gutterBottom component="div">
-            {item.description}
-          </Typography>          
-        </CardContent> */}
-                <CardContent  >
+                <CardContent>
 
                     <Grid container alignItems="center">
                         <Grid item xs>
-                            <Typography gutterBottom variant="subtitle2" component="div">
+                            <Typography gutterBottom color="text.secondary" variant="caption" component="div">
                                 {item.code}
                             </Typography>
 
                         </Grid>
                         <Grid item>
-                            <Typography gutterBottom variant="body2" component="div">
-                                <Badge color="primary" badgeContent={`$${item.pvps.priceWithVat}`} />
+                            <Typography gutterBottom variant="caption" component="div">
+                                ${item.pvps.priceWithVat}
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Typography variant="caption" component="div" noWrap>
+                                {item.description}
                             </Typography>
                         </Grid>
                     </Grid>
-                    <Typography color="text.secondary" variant="caption">
-                        {item.description}
-                    </Typography>
                 </CardContent>
 
             </CardActionArea>
