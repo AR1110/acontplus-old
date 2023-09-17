@@ -98,6 +98,7 @@ BEGIN
                         ,codTipoArticulo                = ISNULL(a.codTipoArticulo, '''')
                         ,totalRecords                   = COUNT(*) over()
                         ,itemTypeCode                   = ''ITEM''
+                        ,a.idMedida
 				FROM Restaurant.Item ri
 				INNER JOIN Inventario.v_Articulo a ON a.idArticulo = ri.ProductId
 				LEFT JOIN Restaurant.ProductionArea pa ON pa.Id = ri.ProductionAreaId
