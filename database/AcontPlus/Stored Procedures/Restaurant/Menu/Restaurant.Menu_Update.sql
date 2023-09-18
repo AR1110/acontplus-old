@@ -19,7 +19,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
     SET LANGUAGE SPANISH;
-    
+        
     DECLARE @title          VARCHAR(500)
             ,@menuTypeId    INT
             ,@summary       VARCHAR(MAX)
@@ -49,7 +49,7 @@ BEGIN
     ,promotionDays  NVARCHAR(MAX)   '$.promotionDays'
     ,menuItem       NVARCHAR(MAX)   '$.menuItems' AS JSON
    )
-      
+            
    BEGIN TRY
         BEGIN TRAN
             ---- UPDATE Menu ----
@@ -65,6 +65,9 @@ BEGIN
                       
             --- Execute for insert Menu_Item ---           
             EXEC Restaurant.MenuItem_Insert @userRoleId, @id, @menuItem, @response OUTPUT
+
+
+
             
         COMMIT TRAN
         SELECT Common.ufnSpResponse('1', 'Éxitos al actualizar', NULL)
