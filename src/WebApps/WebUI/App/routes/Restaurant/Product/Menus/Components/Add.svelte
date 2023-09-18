@@ -19,6 +19,7 @@
   let days = [];
   let daysChecked = [];
   let timeout;
+  let codeMenuType = "";
 
   // Moment local date
   let validation = [undefined, null, 0, ""];
@@ -29,7 +30,10 @@
     productsAdded = values.menuItems;
     days = values.days;
 
-    if (productsAdded.length > 0) verifyUpdateCell(productsAdded);
+    if (productsAdded.length > 0) {
+      verifyUpdateCell(productsAdded);
+      getCodeMenuType(data.menuTypeId);
+    }
   });
 
   let verifyUpdateCell = (productsAdded) => {
@@ -43,6 +47,13 @@
 
     checkDays(days);
   };
+
+  let getCodeMenuType = (id) => {
+    let menuType = menuTypes.find((x) => x.id == id);
+    codeMenuType = menuType.code;
+  };
+
+  $: codeMenuType = codeMenuType;
 
   // Todo: GRID COLUMNS
   let selectFee = (cell, onRendered, success, cancel) => {
@@ -484,6 +495,7 @@
                   bind:value={data.menuTypeId}
                   class="form-control"
                   id="menu-type"
+                  on:change={() => getCodeMenuType(data.menuTypeId)}
                 >
                   <option disabled>SELECCIONE</option>
                   {#each menuTypes as items}
@@ -522,7 +534,7 @@
             </div>
           </div>
           <hr />
-          {#if data.menuTypeId === 3}
+          {#if codeMenuType === "PROM"}
             <div class="row">
               <div class="col-12">
                 <div class="row">
