@@ -14,7 +14,6 @@ type State = {
   menus: any;
   dataUpdate: Menu;
   menuTypes: any;
-  menuItems: any;
   days: any;
 };
 
@@ -29,7 +28,6 @@ const initialState: State = {
     content: "",
   },
   menuTypes: [],
-  menuItems: [],
   days: [],
 };
 
@@ -63,19 +61,9 @@ const menuStore = () => {
       });
   };
 
-  const getItems = (id: number) => {
-    MenuItemService.getById(id, { id: id, tipo: 1 }).then((response) => {
-      if (response) {
-        update((state) => ({
-          ...state,
-          menuItems: response["menuItems"],
-        }));
-      }
-    });
-  };
+  
 
   const openingModal = (menu?: Menu) => {
-    getItems(menu.id);
     update((state) => ({
       ...state,
       isOpen: true,
@@ -83,7 +71,7 @@ const menuStore = () => {
     }));
   };
 
-  return { set, subscribe, update, get, getItems, openingModal };
+  return { set, subscribe, update, get, openingModal };
 };
 
 export const useMenuStore = menuStore();

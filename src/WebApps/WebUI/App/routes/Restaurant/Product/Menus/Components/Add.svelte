@@ -20,21 +20,28 @@
   let daysChecked = [];
   let timeout;
   let codeMenuType = "";
-
-  // Moment local date
   let validation = [undefined, null, 0, ""];
 
   useMenuStore.subscribe((values) => {
     data = values.dataUpdate;
     menuTypes = values.menuTypes;
-    productsAdded = values.menuItems;
     days = values.days;
 
-    if (productsAdded.length > 0) {
-      verifyUpdateCell(productsAdded);
+    if (data.id > 0) {
+      getItems(data.id);
       getCodeMenuType(data.menuTypeId);
     }
   });
+
+  const getItems = (id: number) => {
+    MenuItemService.getById(id, { id: id, tipo: 1 }).then((response) => {
+      if (response) {
+        productsAdded = response["menuItems"];
+
+        verifyUpdateCell(productsAdded);
+      }
+    });
+  };
 
   let verifyUpdateCell = (productsAdded) => {
     for (let i = 0; i < productsAdded.length; i++) {
@@ -44,7 +51,6 @@
       productsAdded[i].priceIVA = fee.precioConIva;
       productsAdded[i].price = fee.precioVenta;
     }
-
     checkDays(days);
   };
 
@@ -52,8 +58,6 @@
     let menuType = menuTypes.find((x) => x.id == id);
     codeMenuType = menuType.code;
   };
-
-  $: codeMenuType = codeMenuType;
 
   // Todo: GRID COLUMNS
   let selectFee = (cell, onRendered, success, cancel) => {
@@ -99,13 +103,11 @@
 
       option.value = fees[i].idTarifa.toString();
       option.text = fees[i].tarifa;
-
       if (fees[i].idMedida === rows) {
         option.selected = true;
       }
       selectList.appendChild(option);
     }
-
     return selectList;
   };
 
@@ -298,7 +300,6 @@
 
     // Apply debounce in search
     if (timeout) clearTimeout(timeout);
-
     timeout = setTimeout(() => {
       let json = { pageIndex: 1, pageSize: 10, tipo: 1, textSearch: value };
 
@@ -384,19 +385,24 @@
   };
 
   // Todo: MODAL
-
   const onModalClose = () => {
-    productsAdded = [];
     useMenuStore.update((state) => ({
       ...state,
       isOpen: false,
     }));
+    daysChecked = [];
+    productsAdded = [];
   };
 
   const onUpdate = () => {
     if (!onValidate()) return;
 
+    let summary = productsAdded.map((item) => item.descripcion).join(", ");
+    data.summary = summary;
+
+    data.promotionDays = "";
     data.promotionDays = JSON.stringify(daysChecked);
+
     let forSave = {
       ...data,
       menuItems: productsAdded,
@@ -439,26 +445,7 @@
   let checkDays = (days) => {
     if (data.promotionDays.length > 0) {
       let daysPromotion = JSON.parse(data.promotionDays);
-      for (let i = 0; i < days.length; i++) {
-        let day = daysPromotion.find((x) => x.idDia == days[i].idDia);
-        if (days[i].idDia == day.idDia && day.checked) {
-          daysChecked.push({
-            idDia: day.idDia,
-            descripcion: day.descripcion,
-            horaInicio: day.horaInicio,
-            horaFin: day.horaFin,
-            checked: true,
-          });
-        } else {
-          daysChecked.push({
-            idDia: days[i].idDia,
-            descripcion: days[i].descripcion,
-            horaInicio: "00:00",
-            horaFin: "00:00",
-            checked: false,
-          });
-        }
-      }
+      return (daysChecked = daysPromotion);
     }
 
     if (data.promotionDays.length <= 0) {
@@ -471,6 +458,7 @@
           checked: false,
         });
       });
+      daysChecked = daysChecked;
     }
   };
 </script>
@@ -533,55 +521,50 @@
               </div>
             </div>
           </div>
-          <hr />
+
           {#if codeMenuType === "PROM"}
-            <div class="row">
-              <div class="col-12">
-                <div class="row">
-                  <div class="col-6">
-                    <div class="form-group">
-                      <label for="">Fecha Inicio</label>
-                      <input
-                        type="date"
-                        class="form-control"
-                        bind:value={data.startDate}
-                        max={data.endDate}
-                      />
-                    </div>
-                  </div>
-                  <div class="col-6">
-                    <div class="form-group">
-                      <label for="">Fecha Fin</label>
-                      <input
-                        type="date"
-                        class="form-control"
-                        min={data.startDate}
-                        bind:value={data.endDate}
-                      />
-                    </div>
-                  </div>
+            <div class="row mt-3">
+              <div class="col-6">
+                <div class="form-group">
+                  <label for="">Fecha Inicio</label>
+                  <input
+                    type="date"
+                    class="form-control"
+                    bind:value={data.startDate}
+                    max={data.endDate}
+                  />
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-group">
+                  <label for="">Fecha Fin</label>
+                  <input
+                    type="date"
+                    class="form-control"
+                    min={data.startDate}
+                    bind:value={data.endDate}
+                  />
                 </div>
               </div>
             </div>
 
+            <div class="form-group">
+              <label for="">Días y horas de promoción</label>
+            </div>
             <div class="row">
               {#each daysChecked as item}
                 <div class="col-4">
-                  <div class="form-group form-check">
+                  <div class="checkbox icheck-primary">
                     <input
                       type="checkbox"
-                      class="form-check-input"
-                      id="exampleCheck1"
                       bind:checked={item.checked}
+                      id="primary_{item.idDia}"
                     />
-                    <label class="form-check-label" for="exampleCheck1"
-                      >{item.descripcion}</label
-                    >
+                    <label for="primary_{item.idDia}">{item.descripcion}</label>
                   </div>
                 </div>
                 <div class="col-4">
                   <div class="form-group">
-                    <label for="">Hora inicio</label>
                     <input
                       type="time"
                       disabled={!item.checked}
@@ -592,7 +575,6 @@
                 </div>
                 <div class="col-4">
                   <div class="form-group">
-                    <label for="">Hora Fin</label>
                     <input
                       type="time"
                       disabled={!item.checked}
@@ -604,7 +586,6 @@
               {/each}
             </div>
           {/if}
-          <hr />
           <div class="row mt-3">
             <div class="col-8 col-md-12 col-sm-12">
               <label for="search">Buscar producto </label>
@@ -632,7 +613,7 @@
               </div>
             </div>
           </div>
-          <div class="row">
+          <div class="row mt-2">
             <div class="col-12">
               <GridForItem arrayData={productsAdded} columns={productColumns} />
             </div>
