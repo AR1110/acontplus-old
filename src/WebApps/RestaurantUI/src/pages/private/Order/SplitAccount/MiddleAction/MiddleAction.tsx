@@ -51,7 +51,7 @@ const MiddleAction = () => {
         //     }
         // })
         cloneLeftCheckedItems = cloneLeftCheckedItems.filter((item) => item !== null);
-      //  setRightOrderItem(rightOrderItems.concat(leftChecked));
+        //  setRightOrderItem(rightOrderItems.concat(leftChecked));
         setRightOrderItem(closeRightItems);
         setLeftOrderItem(not(leftOrderItems, leftChecked));
         setCheckedOrderItem([]);

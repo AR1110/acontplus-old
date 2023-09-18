@@ -82,7 +82,9 @@ const initialActions: SplitAccountAction = {
     setLeftOrderItem: () => [],
     caculateTotals: () => [],
     setRightOrderData: () => [],
-    setFilteredItems: () => []
+    setFilteredItems: () => [],
+    mergeArraysByField: () => [],
+    mergeArraysByFieldLeft:()=>[]
 }
 
 
@@ -153,20 +155,20 @@ export const SpliAccountProvider = ({ children }: Props) => {
     }
 
     const not = (a: Array<ItemRead>, b: Array<ItemRead>) => {
-        
+
         const results = a.map(value => {
-            const dataOrderItemB = b.find(orderItemB => orderItemB.id===value.id && orderItemB.quantity !== value.quantity)
+            const dataOrderItemB = b.find(orderItemB => orderItemB.id === value.id && orderItemB.quantity !== value.quantity)
             console.log(dataOrderItemB)
             if (dataOrderItemB) {
-               
+
                 const qty = value.quantity - dataOrderItemB.quantity;
                 const total = qty * value.price;
                 value.quantity = qty;
-                value.total = total; 
+                value.total = total;
                 return value;
-            } 
+            }
             return value;
-        }).filter((value) => b.findIndex(orderItem=>orderItem.id===value.id) === -1)
+        }).filter((value) => b.findIndex(orderItem => orderItem.id === value.id) === -1)
         console.log(results)
         return results
         // const results = a.filter((value) => b.indexOf(value) === -1);
@@ -252,6 +254,63 @@ export const SpliAccountProvider = ({ children }: Props) => {
     }
 
 
+    //Funciona para fusionar items seleccionados(cuenta general) con items (cuenta individual)
+    function mergeArraysByField<T extends { id: number; quantity: number; price: number, total: number }>(array1: T[], array2: T[], field: keyof T): T[] {
+        // Realiza una copia superficial de array1 para evitar mutar el array original
+        const mergedArray: T[] = [];
+
+        for (const item1 of array1) {
+            const dataOrderItem = array2.find((item) => item[field] === item1[field]);
+
+            if (dataOrderItem) {
+                // Si existe en array2, suma la cantidad y calcula el nuevo precio
+                const qty = dataOrderItem["quantity"] + item1.quantity
+                const total = qty + item1.price
+                dataOrderItem.quantity = qty;
+                dataOrderItem.total = total;
+            } else {
+                // Si no existe en array2, agrega el elemento de array1 en array2
+                mergedArray.push(item1);
+            }
+
+        }
+
+        for (const item2 of array2) {
+            const existsInMergedArray = mergedArray.some((item) => item[field] === item2[field]);
+            if (!existsInMergedArray) {
+                mergedArray.push(item2);
+            }
+        }
+        return mergedArray;
+    }
+
+
+    function mergeArraysByFieldLeft<T extends { id: number; quantity: number; price: number, total: number }>(
+        array1: T[],
+        array2: T[],
+        field: keyof T
+    ): T[] {
+        const newArray2 = [...array2]; // Crear una copia de array2
+
+        for (const item1 of array1) {
+            const dataOrderItem = newArray2.find((item) => item[field] === item1[field]);
+
+            if (dataOrderItem) {
+                // Si la cantidad es diferente, resta la cantidad de array1 a newArray2
+                if (item1.quantity !== dataOrderItem.quantity) {
+                    dataOrderItem.quantity -= item1.quantity;
+                } else {
+                    // Si la cantidad es igual, elimina el elemento de newArray2
+                    const item2Index = newArray2.findIndex((item) => item[field] === item1[field]);
+                    if (item2Index !== -1) {
+                        newArray2.splice(item2Index, 1);
+                    }
+                }
+            }
+        }
+
+        return newArray2;
+    }
 
 
     // Proporciona el estado y las funciones del contexto a los componentes hijos
@@ -266,7 +325,9 @@ export const SpliAccountProvider = ({ children }: Props) => {
             setLeftOrderItem,
             caculateTotals,
             setRightOrderData,
-            setFilteredItems
+            setFilteredItems,
+            mergeArraysByField,
+            mergeArraysByFieldLeft
         }}>
             {children}
         </SplitAccountContext.Provider>

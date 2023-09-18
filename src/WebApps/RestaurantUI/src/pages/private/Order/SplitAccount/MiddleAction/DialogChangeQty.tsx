@@ -74,6 +74,7 @@ const DialogChangeQty = ({ open, setOpen }: DialogChangeQtyProps) => {
     const { rightOrderItems, setRightOrderItem } = useSplitAccountContext();
 
     const leftChecked = intersection(checkedOrderItems, leftOrderItems);
+    const { mergeArraysByField, mergeArraysByFieldLeft } = useSplitAccountContext();
 
     const processRowUpdate = (newRow: GridRowModel) => {
         const total = newRow["quantity"] * newRow["price"];
@@ -84,70 +85,6 @@ const DialogChangeQty = ({ open, setOpen }: DialogChangeQtyProps) => {
         setFilteredItems(mergeFilteredItems);
         return newRow;
     }
-
-
-    function mergeArraysByField<T extends { id: number; quantity: number; price: number, total: number }>(array1: T[], array2: T[], field: keyof T): T[] {
-        // Realiza una copia superficial de array1 para evitar mutar el array original
-        const mergedArray: T[] = [];
-
-        for (const item1 of array1) {
-            const dataOrderItem = array2.find((item) => item[field] === item1[field]);
-
-            if (dataOrderItem) {
-                // Si existe en array2, suma la cantidad y calcula el nuevo precio
-                const qty = dataOrderItem["quantity"] + item1.quantity
-                const total = qty + item1.price
-                dataOrderItem.quantity = qty;
-                dataOrderItem.total = total;
-            } else {
-                // Si no existe en array2, agrega el elemento de array1 en array2
-                mergedArray.push(item1);
-            }
-
-        }
-
-        for (const item2 of array2) {
-            const existsInMergedArray = mergedArray.some((item) => item[field] === item2[field]);
-            if (!existsInMergedArray) {
-                mergedArray.push(item2);
-            }
-        }
-        console.log(mergedArray)
-        return mergedArray;
-    }
-
-    function mergeArraysByFieldLeft<T extends { id: number; quantity: number; price: number, total: number }>(
-        array1: T[],
-        array2: T[],
-        field: keyof T
-    ): T[] {
-        const newArray2 = [...array2]; // Crear una copia de array2
-
-        for (const item1 of array1) {
-            const dataOrderItem = newArray2.find((item) => item[field] === item1[field]);
-
-            if (dataOrderItem) {
-                // Si la cantidad es diferente, resta la cantidad de array1 a newArray2
-                if (item1.quantity !== dataOrderItem.quantity) {
-                    dataOrderItem.quantity -= item1.quantity;
-                } else {
-                    // Si la cantidad es igual, elimina el elemento de newArray2
-                    const item2Index = newArray2.findIndex((item) => item[field] === item1[field]);
-                    if (item2Index !== -1) {
-                        newArray2.splice(item2Index, 1);
-                    }
-                }
-            }
-        }
-
-        return newArray2;
-    }
-
-
-
-
-
-
 
     const close = () => {
         const mergeRightOrderItems = mergeArraysByField(filteredItems, rightOrderItems, 'id');
