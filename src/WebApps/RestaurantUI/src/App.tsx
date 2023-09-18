@@ -28,7 +28,8 @@ export default function App() {
       <Suspense fallback={<>Cargando</>}>
         <SnackbarProvider>
           <SnackbarUtilitiesConfigurator />
-          <BrowserRouter>
+          <BrowserRouter basename="/Restaurant/">
+           
             <RoutesWithNotFound>
               <Route path="/" element={<Navigate to={PrivateRoutes.PRIVATE}></Navigate>}></Route>
               <Route path={PublicRoutes.LOGIN} element={<Login />}></Route>
