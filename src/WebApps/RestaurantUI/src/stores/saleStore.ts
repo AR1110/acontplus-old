@@ -225,7 +225,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         const decimal = dataForm.decimal;
 
         const dataOrderItem = items.find((_, indexToCompare) => indexToCompare === index);
-        console.log(dataOrderItem)
+     
         if (dataOrderItem?.carryInventory) {
             showLoader(true);
             productService.checkNotificationStock({

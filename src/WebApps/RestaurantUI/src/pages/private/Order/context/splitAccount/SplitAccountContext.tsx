@@ -7,7 +7,9 @@ import {
     GET_ORDER_ERROR,
     GET_ORDER_SUCCESS,
     SET_CHECKED_ORDER_ITEMS,
+    SET_FILTER_ORDER_ITEMS,
     SET_LEFT_ORDER_ITEMS,
+    SET_RIGHT_ORDER_DATA,
     SET_RIGHT_ORDER_ITEMS
 } from "..";
 
@@ -66,7 +68,8 @@ const initialState: SplitAccountState = {
     },
     leftOrderItems: [],
     rightOrderItems: [],
-    checkedOrderItems: []
+    checkedOrderItems: [],
+    filteredItems: []
 }
 
 // Define las acciones iniciales del contexto
@@ -78,6 +81,8 @@ const initialActions: SplitAccountAction = {
     setRightOrderItem: () => [],
     setLeftOrderItem: () => [],
     caculateTotals: () => [],
+    setRightOrderData: () => [],
+    setFilteredItems: () => []
 }
 
 
@@ -117,6 +122,7 @@ export const SpliAccountProvider = ({ children }: Props) => {
             const response = resultAxios.data;
             const orderData = await orderReadForUpdateAdapter(response)
 
+            console.log(orderData)
             // Actualiza el estado con los datos del pedido
             dispatch({ type: GET_ORDER_SUCCESS, payload: orderData })
 
@@ -147,8 +153,24 @@ export const SpliAccountProvider = ({ children }: Props) => {
     }
 
     const not = (a: Array<ItemRead>, b: Array<ItemRead>) => {
-        const results = a.filter((value) => b.indexOf(value) === -1);
-        return results;
+        
+        const results = a.map(value => {
+            const dataOrderItemB = b.find(orderItemB => orderItemB.id===value.id && orderItemB.quantity !== value.quantity)
+            console.log(dataOrderItemB)
+            if (dataOrderItemB) {
+               
+                const qty = value.quantity - dataOrderItemB.quantity;
+                const total = qty * value.price;
+                value.quantity = qty;
+                value.total = total; 
+                return value;
+            } 
+            return value;
+        }).filter((value) => b.findIndex(orderItem=>orderItem.id===value.id) === -1)
+        console.log(results)
+        return results
+        // const results = a.filter((value) => b.indexOf(value) === -1);
+        // return results;
     }
 
     const setCheckedOrderItem = (checkedOrderItems: Array<ItemRead>) => {
@@ -183,7 +205,7 @@ export const SpliAccountProvider = ({ children }: Props) => {
 
                 // Agregar el total del ítem al subtotal sin impuestos
                 total.subTotalSinImpuestos += itemTotal;
-               
+
                 // Si hay un impuesto correspondiente, agregar el total del ítem al total neto con IVA
                 if (orderItem.taxRateCode === TAX_RATE_CODE.TWELVE_PERCENT) {
                     total.totalNetoIva += itemTotal;
@@ -215,6 +237,20 @@ export const SpliAccountProvider = ({ children }: Props) => {
         }
     }
 
+    const setRightOrderData = (payload: Order) => {
+        dispatch({
+            type: SET_RIGHT_ORDER_DATA,
+            payload
+        })
+    }
+
+    const setFilteredItems = (payload: Array<ItemRead>) => {
+        dispatch({
+            type: SET_FILTER_ORDER_ITEMS,
+            payload
+        })
+    }
+
 
 
 
@@ -228,7 +264,9 @@ export const SpliAccountProvider = ({ children }: Props) => {
             setCheckedOrderItem,
             setRightOrderItem,
             setLeftOrderItem,
-            caculateTotals
+            caculateTotals,
+            setRightOrderData,
+            setFilteredItems
         }}>
             {children}
         </SplitAccountContext.Provider>

@@ -99,13 +99,7 @@ const Cart = () => {
 
         const summaryResult = summaryToApi(order);
         const itemsResult = itemToApi(cartItems);
-        const taxesResult = cartItems.flatMap(item => item.taxes);
-        // const payments = {
-        //     formaPagoId: dataForm.paymentTypes.find(pay=>pay.code==="EFE")?.paymentTypeId,
-        //     total: checkout.voucher.payingAmount,
-        //     abono: checkout.voucher.receivedAmount,
-        //     cambio: checkout.voucher.changeReturn
-        // }
+        const taxesResult = cartItems.flatMap(item => item.taxes); 
         const data = {
             ...summaryResult,
             updateOrder: (order.orderId > 0) && codDoc === DOC_TYPE.OR,

@@ -15,6 +15,7 @@ export interface SplitAccountState {
     leftOrderItems: LeftOrderItem[],
     rightOrderItems:RighttOrderItem[],
     checkedOrderItems: RighttOrderItem[],
+    filteredItems: RighttOrderItem[],
 }
 
 export interface SplitAccountAction {
@@ -25,4 +26,6 @@ export interface SplitAccountAction {
     setRightOrderItem(payload: Array<ItemRead>):void
     setLeftOrderItem(payload: Array<ItemRead>):void
     caculateTotals(order:Order, orderItems:Array<ItemRead>):void
+    setRightOrderData(order:Order):void
+    setFilteredItems(payload: Array<ItemRead>):void
 }
