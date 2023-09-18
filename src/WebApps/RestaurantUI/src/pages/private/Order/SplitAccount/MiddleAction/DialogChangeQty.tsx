@@ -1,0 +1,146 @@
+import React, { forwardRef, useCallback } from 'react'
+import { Button, Dialog, DialogActions, DialogContent, Grid, Slide } from '@mui/material';
+import { DataGrid, GridColDef, GridPreProcessEditCellProps, GridRowModel } from '@mui/x-data-grid';
+import { TransitionProps } from '@mui/material/transitions';
+import { useSplitAccountContext } from '../../context';
+import Swal from 'sweetalert2';
+import { SnackbarUtility } from '@/core/utilities';
+const columns: GridColDef[] = [
+    { field: 'index', headerName: 'N°', width: 70 },
+    { field: 'description', headerName: 'Descripción', width: 200 },
+    {
+        field: 'quantityTemp',
+        headerName: 'Cant.',
+        type: 'number',
+        width: 100,
+        editable: false,
+    },
+    {
+        field: 'quantity',
+        headerName: 'Cant.',
+        type: 'number',
+        width: 100,
+        editable: true,
+        preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
+
+            let hasError = false;
+
+            if (!params.props.value || params.props.value < 1) {
+                hasError = true;
+                SnackbarUtility.warning('Ingrese correctamente')
+            }
+            if (params.props.value > params.row.quantityTemp) {
+                hasError = true;
+                SnackbarUtility.warning('No puede ser mayor a la cantidad original')
+            }
+            return { ...params.props, error: hasError };
+        },
+    },
+    {
+        field: 'price',
+        headerName: 'P. Venta',
+        type: 'number',
+        width: 100,
+    },
+    {
+        field: 'total',
+        headerName: 'Total',
+        type: 'number',
+        width: 100,
+    },
+];
+
+
+
+const Transition = forwardRef(function Transition(
+    props: TransitionProps & {
+        children: React.ReactElement<any, any>;
+    },
+    ref: React.Ref<unknown>,
+) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
+
+type DialogChangeQtyProps = {
+    open: boolean,
+    setOpen(): void
+}
+const DialogChangeQty = ({ open, setOpen }: DialogChangeQtyProps) => {
+    const { filteredItems, setFilteredItems } = useSplitAccountContext();
+
+    const { intersection } = useSplitAccountContext();
+    const { checkedOrderItems, setCheckedOrderItem } = useSplitAccountContext();
+    const { leftOrderItems, setLeftOrderItem } = useSplitAccountContext();
+    const { rightOrderItems, setRightOrderItem } = useSplitAccountContext();
+
+    const leftChecked = intersection(checkedOrderItems, leftOrderItems);
+    const { mergeArraysByField, mergeArraysByFieldLeft } = useSplitAccountContext();
+
+    const processRowUpdate = (newRow: GridRowModel) => {
+        const total = newRow["quantity"] * newRow["price"];
+        newRow["total"] = total;
+        const mergeFilteredItems = leftChecked.map((orderItem) =>
+            orderItem.id === newRow["id"] ? newRow as any : orderItem
+        );
+        setFilteredItems(mergeFilteredItems);
+        return newRow;
+    }
+
+    const close = () => {
+        const mergeRightOrderItems = mergeArraysByField(filteredItems, rightOrderItems, 'id');
+        const mergeLeftOrderItems = mergeArraysByFieldLeft(filteredItems, leftOrderItems, 'id');
+
+        setRightOrderItem(mergeRightOrderItems);
+        setLeftOrderItem(mergeLeftOrderItems);
+        setCheckedOrderItem([]);
+        setFilteredItems([])
+        setOpen();
+    }
+
+    return (
+        <Dialog
+            fullWidth={true}
+            maxWidth="md"
+            TransitionComponent={Transition}
+            keepMounted
+            open={open}
+        >
+            <DialogContent dividers>
+                <div style={{ height: 400, width: '100%' }}>
+                    <DataGrid
+                        rows={filteredItems}
+                        columns={columns}
+                        // disableColumnSelector
+                        // disableRowSelectionOnClick
+                        initialState={{
+                            pagination: {
+                                paginationModel: { page: 0, pageSize: 5 },
+                            },
+                        }}
+
+                        pageSizeOptions={[5, 10]}
+                        isCellEditable={(params) => params.row.quantityTemp > 1}
+                        processRowUpdate={processRowUpdate}
+
+                    />
+                </div>
+            </DialogContent>
+            <DialogActions>
+                <Grid container spacing={1}>
+                    <Grid item xs={12}>
+                        <Button variant='contained' size='large' fullWidth onClick={setOpen}>
+                            Continuar
+                        </Button>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Button variant='outlined' size='large' fullWidth onClick={() => close()}>
+                            Cerrar
+                        </Button>
+                    </Grid>
+                </Grid>
+            </DialogActions>
+        </Dialog>
+    )
+}
+
+export default DialogChangeQty

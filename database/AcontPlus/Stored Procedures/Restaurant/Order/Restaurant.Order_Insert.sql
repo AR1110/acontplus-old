@@ -113,7 +113,8 @@ BEGIN
                         feeId INT         '$.feeId',
                         obs NVARCHAR(500) '$.obs'
                       )
-            IF (SELECT COUNT(*) FROM @tblItems) = 0
+
+            IF NOT EXISTS(SELECT 1 FROM @tblItems)
                 BEGIN
                     SELECT Common.ufnSpResponse('0', 'No se pudo recuperar el detalle', NULL)
                     RETURN
@@ -157,13 +158,11 @@ BEGIN
                     SET @serie = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @sequence, DEFAULT)) 
                     
                     INSERT INTO Restaurant.[Order](EstablecimientoId, puntoEmisionId, TableId, [Sequence], Serie, CustomerCompanyId
-                                                    , Tax, Discount, Total, [Enabled], UserId, obs, CreatedAt)
+                                                    , Tax, Discount, Total, [Enabled], UserId, obs, CreatedAt, Uuid)
                     VALUES(@establecimientoId, @puntoEmisionId, @tableId, @sequence, @serie, @customerCompanyId
-                           , @tax, @discount, @total, 1, @userId, ISNULL(@obs, NULL), dbo.ufnGetDateEcuador())
+                           , @tax, @discount, @total, 1, @userId, ISNULL(@obs, NULL), dbo.ufnGetDateEcuador(), @uuid)
 
 	                SET @orderId = (SELECT SCOPE_IDENTITY())
-
-                    PRINT @orderId 
                     
                     INSERT INTO Restaurant.OrderItem(OrderId, Uuid, ItemId, TaxId, TaxPercentId, TaxValue, Quantity, Cost
                                                     , Price, Discount, Total, [Enabled], UserId, FeeId, Obs, BodegaId, ItemTypeId, MenuId)
@@ -183,11 +182,18 @@ BEGIN
                             ,feeId
                             ,obs
                             ,ISNULL(@bodegaId, 0)
-                            ,it.Id
+                            ,(SELECT TOP 1 it.Id FROM Restaurant.ItemType it WHERE i.itemTypeCode = it.Code)
                             ,IIF(i.menuId = 0, NULL, i.menuId)
                      FROM @tblItems i
-                        INNER JOIN Restaurant.ItemType it 
-                            ON i.itemTypeCode = it.Code
+
+                    print @orderId
+
+                    IF NOT EXISTS (SELECT 1 FROM Restaurant.OrderItem WHERE OrderId = @orderId)
+                        BEGIN
+                            ROLLBACK TRAN
+                            SELECT Common.ufnSpResponse('0', 'Error al guardar items', (SELECT * FROM @tblItems for json path))	
+                            RETURN
+                        END
                     
                     DECLARE @totalCook INT = 0
 

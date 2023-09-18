@@ -1418,7 +1418,7 @@
                 
                 console.log(datosAdicionales)
 
-                mS.getData('post', `DatoAdicionalArticulo/Insert?id=${$scope.selected[0].idDocumento}&?json=${encodeURIComponent(JSON.stringify(datosAdicionales))}`, null, true).then(response => {
+                mS.getData('post', `DatoAdicionalArticulo/Insert/${$scope.selected[0].idDocumento}/?json=${encodeURIComponent(JSON.stringify(datosAdicionales))}`, null, true).then(response => {
                     if (response.code === '0') {
                         tS.toastr('warning', response.message);
                     }
