@@ -151,6 +151,10 @@
         porcentaje = row.discountPercent / 100;
         descuento = row.price * porcentaje;
 
+        if (!validation.includes(descuento)) {
+          descuento = parseFloat(descuento.toFixed(2));
+        }
+
         cell.getRow().update({
           discountPercent: row.discountPercent,
           discountValue: descuento,
@@ -165,6 +169,9 @@
       }
     }
     totalDiscount = (row.price - row.discountValue) * row.quantity;
+    if (!validation.includes(totalDiscount)) {
+      totalDiscount = parseFloat(totalDiscount.toFixed(2));
+    }
     cell.getRow().update({ subtotal: totalDiscount });
   };
 
@@ -448,7 +455,6 @@
       return (daysChecked = daysPromotion);
     }
 
-  
     if (data.promotionDays.length <= 0) {
       days.forEach((e) => {
         daysChecked.push({
