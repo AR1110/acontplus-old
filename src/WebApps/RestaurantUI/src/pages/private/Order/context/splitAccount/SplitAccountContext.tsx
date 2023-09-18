@@ -6,9 +6,10 @@ import {
     GET_ORDER_BEGIN,
     GET_ORDER_ERROR,
     GET_ORDER_SUCCESS,
-    SET_CHECKED_ORDER_ITEMS,
-    SET_FILTER_ORDER_ITEMS,
+    SET_CHANGE_ORDER_ITEMS, 
+    SET_LEFT_CHECKED_ORDER_ITEMS,
     SET_LEFT_ORDER_ITEMS,
+    SET_RIGHT_CHECKED_ORDER_ITEMS,
     SET_RIGHT_ORDER_DATA,
     SET_RIGHT_ORDER_ITEMS
 } from "..";
@@ -67,24 +68,25 @@ const initialState: SplitAccountState = {
         createdAt: new Date()
     },
     leftOrderItems: [],
-    rightOrderItems: [],
-    checkedOrderItems: [],
-    filteredItems: []
+    rightOrderItems: [], 
+    changeOrderItems: [],
+    leftCheckedOrderItems: [],
+    rightCheckedOrderItems: []
 }
 
 // Define las acciones iniciales del contexto
 const initialActions: SplitAccountAction = {
     fetchOrderData: (id: number) => id,
     intersection: () => [],
-    not: () => [],
-    setCheckedOrderItem: () => [],
+    not: () => [], 
     setRightOrderItem: () => [],
-    setLeftOrderItem: () => [],
-    caculateTotals: () => [],
+    setLeftOrderItem: () => [], 
     setRightOrderData: () => [],
-    setFilteredItems: () => [],
+    setChangeOrderItems: () => [],
     mergeArraysByField: () => [],
-    mergeArraysByFieldLeft:()=>[]
+    mergeArraysByFieldLeft: () => [],
+    setLeftCheckedOrderItems: () => [],
+    setRightCheckedOrderItems: () => []
 }
 
 
@@ -151,33 +153,16 @@ export const SpliAccountProvider = ({ children }: Props) => {
 
     // Función para calcular la intersección entre dos arreglos
     const intersection = (checkedOrderItems: Array<ItemRead>, leftOrderItems: Array<ItemRead>) => {
-        return checkedOrderItems.filter((value) => leftOrderItems.indexOf(value) !== -1);
+        return checkedOrderItems.filter((value) => {
+            return leftOrderItems.some((item) => item.id === value.id);
+        });
+        // return checkedOrderItems.filter((value) => leftOrderItems.indexOf(value) !== -1);
     }
 
     const not = (a: Array<ItemRead>, b: Array<ItemRead>) => {
-
-        const results = a.map(value => {
-            const dataOrderItemB = b.find(orderItemB => orderItemB.id === value.id && orderItemB.quantity !== value.quantity)
-            console.log(dataOrderItemB)
-            if (dataOrderItemB) {
-
-                const qty = value.quantity - dataOrderItemB.quantity;
-                const total = qty * value.price;
-                value.quantity = qty;
-                value.total = total;
-                return value;
-            }
-            return value;
-        }).filter((value) => b.findIndex(orderItem => orderItem.id === value.id) === -1)
-        console.log(results)
-        return results
-        // const results = a.filter((value) => b.indexOf(value) === -1);
-        // return results;
-    }
-
-    const setCheckedOrderItem = (checkedOrderItems: Array<ItemRead>) => {
-        dispatch({ type: SET_CHECKED_ORDER_ITEMS, payload: checkedOrderItems })
-    }
+        const results = a.filter((value) => b.indexOf(value) === -1);
+        return results;
+    } 
 
     const setRightOrderItem = (payload: Array<ItemRead>) => {
         dispatch({ type: SET_RIGHT_ORDER_ITEMS, payload })
@@ -246,9 +231,23 @@ export const SpliAccountProvider = ({ children }: Props) => {
         })
     }
 
-    const setFilteredItems = (payload: Array<ItemRead>) => {
+    const setChangeOrderItems = (payload: Array<ItemRead>) => {
         dispatch({
-            type: SET_FILTER_ORDER_ITEMS,
+            type: SET_CHANGE_ORDER_ITEMS,
+            payload
+        })
+    }
+
+
+    const setLeftCheckedOrderItems = (payload: Array<ItemRead>) => {
+        dispatch({
+            type: SET_LEFT_CHECKED_ORDER_ITEMS,
+            payload
+        })
+    }
+    const setRightCheckedOrderItems = (payload: Array<ItemRead>) => {
+        dispatch({
+            type: SET_RIGHT_CHECKED_ORDER_ITEMS,
             payload
         })
     }
@@ -258,9 +257,10 @@ export const SpliAccountProvider = ({ children }: Props) => {
     function mergeArraysByField<T extends { id: number; quantity: number; price: number, total: number }>(array1: T[], array2: T[], field: keyof T): T[] {
         // Realiza una copia superficial de array1 para evitar mutar el array original
         const mergedArray: T[] = [];
+        const closeArray2 = structuredClone(array2);
 
         for (const item1 of array1) {
-            const dataOrderItem = array2.find((item) => item[field] === item1[field]);
+            const dataOrderItem = closeArray2.find((item) => item[field] === item1[field]);
 
             if (dataOrderItem) {
                 // Si existe en array2, suma la cantidad y calcula el nuevo precio
@@ -275,12 +275,13 @@ export const SpliAccountProvider = ({ children }: Props) => {
 
         }
 
-        for (const item2 of array2) {
+        for (const item2 of closeArray2) {
             const existsInMergedArray = mergedArray.some((item) => item[field] === item2[field]);
             if (!existsInMergedArray) {
                 mergedArray.push(item2);
             }
         }
+        console.log(array2)
         return mergedArray;
     }
 
@@ -319,15 +320,15 @@ export const SpliAccountProvider = ({ children }: Props) => {
             ...state,
             fetchOrderData,
             intersection,
-            not,
-            setCheckedOrderItem,
+            not, 
             setRightOrderItem,
-            setLeftOrderItem,
-            caculateTotals,
+            setLeftOrderItem, 
             setRightOrderData,
-            setFilteredItems,
+            setChangeOrderItems,
             mergeArraysByField,
-            mergeArraysByFieldLeft
+            mergeArraysByFieldLeft,
+            setLeftCheckedOrderItems,
+            setRightCheckedOrderItems
         }}>
             {children}
         </SplitAccountContext.Provider>

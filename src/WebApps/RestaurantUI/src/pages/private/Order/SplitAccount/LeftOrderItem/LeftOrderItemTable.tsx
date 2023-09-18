@@ -30,41 +30,8 @@ const columns: GridColDef[] = [
 
 
 const LeftOrderItemTable = () => {
-    const { leftOrderItems, setCheckedOrderItem } = useSplitAccountContext();
-    // const [promiseArguments, setPromiseArguments] = useState<any>(null);
-
-    // const processRowUpdate = useCallback((newRow: GridRowModel, oldRow: GridRowModel) =>
-    //     new Promise<GridRowModel>((resolve, reject) => {
-    //         console.log(newRow, oldRow)
-    //         const mutation = computeMutation(newRow, oldRow)
-
-    //         if (mutation) {
-    //             // Save the arguments to resolve or reject the promise later
-    //             // setPromiseArguments({ resolve, reject, newRow, oldRow });
-    //             Swal.fire({
-    //                 title: '¿Estás seguro?',
-    //                 text: `Al presionar 'Sí' cambiará ${mutation}.`,
-    //                 icon: 'warning',
-    //                 showCancelButton: true,
-    //                 confirmButtonColor: '#3085d6',
-    //                 cancelButtonColor: '#d33',
-    //                 confirmButtonText: 'Sí!'
-    //             }).then((result) => {
-    //                 if (result.isConfirmed) {
-    //                     Swal.fire(
-    //                         'Deleted!',
-    //                         'Your file has been deleted.',
-    //                         'success'
-    //                     )
-    //                 }
-    //             })
-    //         } else {
-    //             resolve(oldRow); // Nothing was changed
-    //         }
-    //     }),
-    //     [],
-    // );
-
+    const { leftOrderItems, setLeftCheckedOrderItems, setRightCheckedOrderItems} = useSplitAccountContext();
+    
     return (
         <div style={{ height: 400, width: '100%' }}>
             <DataGrid
@@ -86,7 +53,8 @@ const LeftOrderItemTable = () => {
                     const selectedIDs = new Set(ids);
                     const selectedRows = leftOrderItems.filter((row) => selectedIDs.has(row.id));
                     console.log(selectedRows)
-                    setCheckedOrderItem(selectedRows)
+                    setRightCheckedOrderItems([])
+                    setLeftCheckedOrderItems(selectedRows)
                 }}
             // isCellEditable={(params) => params.row.quantity > 1}
             //processRowUpdate={processRowUpdate}

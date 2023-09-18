@@ -3,9 +3,10 @@ import {
     GET_ORDER_BEGIN,
     GET_ORDER_ERROR,
     GET_ORDER_SUCCESS,
-    SET_CHECKED_ORDER_ITEMS,
-    SET_FILTER_ORDER_ITEMS,
+    SET_CHANGE_ORDER_ITEMS, 
+    SET_LEFT_CHECKED_ORDER_ITEMS, 
     SET_LEFT_ORDER_ITEMS,
+    SET_RIGHT_CHECKED_ORDER_ITEMS,
     SET_RIGHT_ORDER_DATA,
     SET_RIGHT_ORDER_ITEMS
 } from "..";
@@ -18,8 +19,7 @@ export const splitAccountReducer = (state: SplitAccountState, action: any): Spli
             return { ...state, orderLoading: true }
         }
         case GET_ORDER_SUCCESS: {
-            const { order, orderItems } = action.payload;
-            console.log(order)
+            const { order, orderItems } = action.payload; 
             return {
                 ...state,
                 orderLoading: false,
@@ -28,14 +28,7 @@ export const splitAccountReducer = (state: SplitAccountState, action: any): Spli
             }
         }
         case GET_ORDER_ERROR:
-            return { ...state, orderError: true, orderLoading: false }
-
-        case SET_CHECKED_ORDER_ITEMS: {
-            return {
-                ...state,
-                checkedOrderItems: action.payload
-            }
-        }
+            return { ...state, orderError: true, orderLoading: false } 
 
         case SET_LEFT_ORDER_ITEMS: {
             return {
@@ -63,10 +56,26 @@ export const splitAccountReducer = (state: SplitAccountState, action: any): Spli
             }
         }
 
-        case SET_FILTER_ORDER_ITEMS: {
+        case SET_LEFT_CHECKED_ORDER_ITEMS: {
             return {
                 ...state,
-                filteredItems: action.payload.map((orderItem: any, index: number) => ({
+                leftCheckedOrderItems: action.payload
+            }
+        }
+
+        case SET_RIGHT_CHECKED_ORDER_ITEMS: {
+            return {
+                ...state,
+                rightCheckedOrderItems: action.payload
+            }
+        }
+
+
+        //Se aplica cuando editamos las cantidades
+        case SET_CHANGE_ORDER_ITEMS: {
+            return {
+                ...state,
+                changeOrderItems: action.payload.map((orderItem: any, index: number) => ({
                     ...orderItem,
                     quantityTemp: state.leftOrderItems.find(leftOrderItem => leftOrderItem.id === orderItem.id)?.quantity,
                     index: index + 1

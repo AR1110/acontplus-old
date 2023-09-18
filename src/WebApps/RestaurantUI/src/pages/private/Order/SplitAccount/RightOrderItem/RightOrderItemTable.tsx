@@ -27,8 +27,8 @@ const columns: GridColDef[] = [
 ];
  
 
-const RightOrderItemTable = () => { 
-    const { rightOrderItems, setCheckedOrderItem} = useSplitAccountContext(); 
+const RightOrderItemTable = () => {  
+    const { rightOrderItems, setRightCheckedOrderItems, setLeftCheckedOrderItems} = useSplitAccountContext(); 
 
     return (
         <div style={{ height: 400, width: '100%' }}>
@@ -49,7 +49,8 @@ const RightOrderItemTable = () => {
                 onRowSelectionModelChange ={(ids)=>{
                     const selectedIDs = new Set(ids); 
                     const selectedRows = rightOrderItems.filter((row) => selectedIDs.has(row.id));
-                    setCheckedOrderItem(selectedRows)
+                    setLeftCheckedOrderItems([])
+                    setRightCheckedOrderItems(selectedRows)
                 }}
                 
                  

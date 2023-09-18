@@ -1,25 +1,24 @@
-import React, { forwardRef, useCallback } from 'react'
+import React, { forwardRef } from 'react'
 import { Button, Dialog, DialogActions, DialogContent, Grid, Slide } from '@mui/material';
 import { DataGrid, GridColDef, GridPreProcessEditCellProps, GridRowModel } from '@mui/x-data-grid';
 import { TransitionProps } from '@mui/material/transitions';
-import { useSplitAccountContext } from '../../context';
-import Swal from 'sweetalert2';
+import { useSplitAccountContext } from '../../context'; 
 import { SnackbarUtility } from '@/core/utilities';
 const columns: GridColDef[] = [
     { field: 'index', headerName: 'N°', width: 70 },
-    { field: 'description', headerName: 'Descripción', width: 200 },
+    { field: 'description', headerName: 'Descripción', width: 250 },
     {
         field: 'quantityTemp',
-        headerName: 'Cant.',
+        headerName: 'Cant. Real',
         type: 'number',
-        width: 100,
+        width: 130,
         editable: false,
     },
     {
         field: 'quantity',
         headerName: 'Cant.',
         type: 'number',
-        width: 100,
+        width: 130,
         editable: true,
         preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
 
@@ -40,13 +39,13 @@ const columns: GridColDef[] = [
         field: 'price',
         headerName: 'P. Venta',
         type: 'number',
-        width: 100,
+        width: 110,
     },
     {
         field: 'total',
         headerName: 'Total',
         type: 'number',
-        width: 100,
+        width: 110,
     },
 ];
 
@@ -66,36 +65,41 @@ type DialogChangeQtyProps = {
     setOpen(): void
 }
 const DialogChangeQty = ({ open, setOpen }: DialogChangeQtyProps) => {
-    const { filteredItems, setFilteredItems } = useSplitAccountContext();
+    const { changeOrderItems, setChangeOrderItems } = useSplitAccountContext();
 
     const { intersection } = useSplitAccountContext();
-    const { checkedOrderItems, setCheckedOrderItem } = useSplitAccountContext();
+    const { leftCheckedOrderItems, setLeftCheckedOrderItems } = useSplitAccountContext();
     const { leftOrderItems, setLeftOrderItem } = useSplitAccountContext();
     const { rightOrderItems, setRightOrderItem } = useSplitAccountContext();
 
-    const leftChecked = intersection(checkedOrderItems, leftOrderItems);
+    const leftChecked = intersection(leftCheckedOrderItems, leftOrderItems);
     const { mergeArraysByField, mergeArraysByFieldLeft } = useSplitAccountContext();
+ 
 
     const processRowUpdate = (newRow: GridRowModel) => {
         const total = newRow["quantity"] * newRow["price"];
         newRow["total"] = total;
-        const mergeFilteredItems = leftChecked.map((orderItem) =>
-            orderItem.id === newRow["id"] ? newRow as any : orderItem
-        );
-        setFilteredItems(mergeFilteredItems);
+        const mergeFilteredItems = leftChecked.map((orderItem) => { 
+            return orderItem.id === newRow["id"] ? newRow as any : orderItem
+        });
+        
+        //Actualizamos cantidades modificadas 
+        setChangeOrderItems(mergeFilteredItems);
         return newRow;
     }
+ 
 
-    const close = () => {
-        const mergeRightOrderItems = mergeArraysByField(filteredItems, rightOrderItems, 'id');
-        const mergeLeftOrderItems = mergeArraysByFieldLeft(filteredItems, leftOrderItems, 'id');
-
+    const next = () => {
+        const mergeRightOrderItems = mergeArraysByField(changeOrderItems, rightOrderItems, 'id');
+        const mergeLeftOrderItems = mergeArraysByFieldLeft(changeOrderItems, leftOrderItems, 'id');
+        
         setRightOrderItem(mergeRightOrderItems);
         setLeftOrderItem(mergeLeftOrderItems);
-        setCheckedOrderItem([]);
-        setFilteredItems([])
+        setLeftCheckedOrderItems([]);
+        setChangeOrderItems([])
         setOpen();
     }
+
 
     return (
         <Dialog
@@ -108,7 +112,7 @@ const DialogChangeQty = ({ open, setOpen }: DialogChangeQtyProps) => {
             <DialogContent dividers>
                 <div style={{ height: 400, width: '100%' }}>
                     <DataGrid
-                        rows={filteredItems}
+                        rows={changeOrderItems}
                         columns={columns}
                         // disableColumnSelector
                         // disableRowSelectionOnClick
@@ -127,13 +131,17 @@ const DialogChangeQty = ({ open, setOpen }: DialogChangeQtyProps) => {
             </DialogContent>
             <DialogActions>
                 <Grid container spacing={1}>
-                    <Grid item xs={12}>
-                        <Button variant='contained' size='large' fullWidth onClick={setOpen}>
+                    <Grid item xs={6}>
+                        <Button variant='contained' sx={{
+                            height: 60
+                        }} size='large' fullWidth onClick={next}>
                             Continuar
                         </Button>
                     </Grid>
-                    <Grid item xs={12}>
-                        <Button variant='outlined' size='large' fullWidth onClick={() => close()}>
+                    <Grid item xs={6}>
+                        <Button variant='outlined'  sx={{
+                            height: 60
+                        }} size='large' fullWidth onClick={() => setOpen()}>
                             Cerrar
                         </Button>
                     </Grid>
