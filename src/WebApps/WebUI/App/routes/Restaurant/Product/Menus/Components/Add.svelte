@@ -448,6 +448,7 @@
       return (daysChecked = daysPromotion);
     }
 
+  
     if (data.promotionDays.length <= 0) {
       days.forEach((e) => {
         daysChecked.push({
