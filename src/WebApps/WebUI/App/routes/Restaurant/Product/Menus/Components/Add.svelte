@@ -7,7 +7,8 @@
   import Modal from "$core/components/Modal.svelte";
   import toast from "$core/utils/toast";
   import type { Menu } from "$core/interfaces/restaurant/menu";
-  import moment from "moment";
+  import { MenuItemService } from "$core/services/restaurant/menu-item-service";
+  import { itemService } from "$core/services/restaurant/item-service";
 
   let data = {} as Menu;
   let value = "";
@@ -15,45 +16,44 @@
   let itemSearch = [];
   let productsAdded = [];
   let menuTypes = [];
+  let days = [];
+  let daysChecked = [];
   let timeout;
+  let codeMenuType = "";
 
   // Moment local date
-  let thisMoment = moment();
-  let endOfMonth = moment(thisMoment).endOf("month");
-  let startOfMonth = moment(thisMoment).startOf("month");
-
-  let dateRangePicker = {
-    date: { startDate: startOfMonth, endDate: endOfMonth },
-    picker: null,
-    pickerClasses: "extra-class-names",
-    options: {
-      pickerClasses: "custom-display", //angular-daterangepicker extra
-      buttonClasses: "btn",
-      applyButtonClasses: "btn-success",
-      cancelButtonClasses: "btn-danger",
-      locale: {
-        applyLabel: "Aplicar",
-        cancelLabel: "Cancelar",
-        customRangeLabel: "Rango Personalizado",
-        separator: " - ",
-        format: "YYYY-MM-DD",
-      },
-      ranges: {
-        "Ultimos 15 Días": [moment().subtract(14, "days"), moment()],
-        "Ultimos 30 Días": [moment().subtract(29, "days"), moment()],
-      },
-      eventHandlers: {
-        "apply.daterangepicker": function (event, picker) {},
-      },
-    },
-  };
+  let validation = [undefined, null, 0, ""];
 
   useMenuStore.subscribe((values) => {
     data = values.dataUpdate;
-    itemSearch = values.items;
     menuTypes = values.menuTypes;
     productsAdded = values.menuItems;
+    days = values.days;
+
+    if (productsAdded.length > 0) {
+      verifyUpdateCell(productsAdded);
+      getCodeMenuType(data.menuTypeId);
+    }
   });
+
+  let verifyUpdateCell = (productsAdded) => {
+    for (let i = 0; i < productsAdded.length; i++) {
+      let fee = JSON.parse(productsAdded[i].fees).find(
+        (x) => x.idTarifa == productsAdded[i].feeId
+      );
+      productsAdded[i].priceIVA = fee.precioConIva;
+      productsAdded[i].price = fee.precioVenta;
+    }
+
+    checkDays(days);
+  };
+
+  let getCodeMenuType = (id) => {
+    let menuType = menuTypes.find((x) => x.id == id);
+    codeMenuType = menuType.code;
+  };
+
+  $: codeMenuType = codeMenuType;
 
   // Todo: GRID COLUMNS
   let selectFee = (cell, onRendered, success, cancel) => {
@@ -114,20 +114,8 @@
     let row = cell.getRow().getData();
     let value = cell.getValue();
 
-    if (row.fees != undefined) fees = JSON.parse(row.fees);
-
-    for (let i = 0; i < fees.length; i++) {
-      if (fees[i].idTarifa == value) {
-        console.log(fees[i].tarifa);
-        value = fees[i].tarifa;
-        cell.getRow().update({
-          priceIVA: fees[i].precioConIva,
-          price: fees[i].precioVenta,
-        });
-        break;
-      }
-    }
-    return value;
+    fees = JSON.parse(row.fees);
+    return fees.find((x) => x.idTarifa == value).tarifa;
   };
 
   let calculateTotal = (cell) => {
@@ -136,13 +124,52 @@
     let descuento = 0;
     let totalDiscount = 0;
 
-    porcentaje = row.discountPercent / 100;
-    descuento = row.price * porcentaje;
-    totalDiscount = (row.price - descuento) * row.quantity;
+    let column = cell.getColumn()._column.field;
 
-    cell.getRow().update({ discountValue: descuento, subtotal: totalDiscount });
+    if (column === "feeId") {
+      let fee = JSON.parse(row.fees).find((x) => x.idTarifa == row.feeId);
+
+      cell.getRow().update({
+        priceIVA: fee.precioConIva,
+        price: fee.precioVenta,
+      });
+    }
+
+    if (column === "quantity") {
+      if (row.quantity >= 0) {
+        cell.getRow().update({ quantity: row.quantity });
+      } else {
+        let oldValue = cell.getOldValue();
+        cell.getRow().update({ quantity: oldValue });
+      }
+    }
+
+    if (column === "discountPercent") {
+      if (row.discountPercent >= 0 && row.discountPercent <= 100) {
+        porcentaje = row.discountPercent / 100;
+        descuento = row.price * porcentaje;
+
+        cell.getRow().update({
+          discountPercent: row.discountPercent,
+          discountValue: descuento,
+        });
+      } else {
+        let oldValue = cell.getOldValue();
+        cell.getRow().update({ discountPercent: oldValue });
+        return toast({
+          type: "warning",
+          message: "El descuento no puede ser mayor al 100%",
+        });
+      }
+    }
+    totalDiscount = (row.price - row.discountValue) * row.quantity;
+    cell.getRow().update({ subtotal: totalDiscount });
   };
 
+  const removeFromList = (id: number) => {
+    let newArray = productsAdded.filter((x) => x.id !== id);
+    productsAdded = newArray;
+  };
 
   let productColumns = [
     {
@@ -168,9 +195,11 @@
     {
       editor: selectFee,
       formatter: formatterFee,
+      cellEdited: calculateTotal,
       field: "feeId",
       hozAlign: "center",
       title: "Tarifa",
+      typeNumber: true,
       with: 100,
     },
     {
@@ -191,6 +220,7 @@
       field: "quantity",
       hozAlign: "center",
       title: "Cantidad",
+      sorter: "number",
       cellEdited: calculateTotal,
       with: 200,
     },
@@ -198,6 +228,7 @@
       editor: "input",
       field: "discountPercent",
       title: "Desc. %",
+      sorter: "number",
       hozAlign: "center",
       with: 200,
       cellEdited: calculateTotal,
@@ -214,6 +245,12 @@
         data.forEach((element) => {
           discountValue += element;
         });
+
+        if (!validation.includes(discountValue)) {
+          discountValue = parseFloat(discountValue.toFixed(2));
+        } else {
+          discountValue = 0;
+        }
         return discountValue;
       },
     },
@@ -230,11 +267,20 @@
         data.forEach((element) => {
           subtotal += element;
         });
+
+        if (!validation.includes(subtotal)) {
+          subtotal = parseFloat(subtotal.toFixed(2));
+        } else {
+          subtotal = 0;
+        }
         return subtotal;
       },
     },
     {
-      cellClick: (e, cell) => {},
+      cellClick: (e, cell) => {
+        removeFromList(cell.getData().id);
+        cell.getRow().delete();
+      },
       formatter: "buttonCross",
       hozAlign: "center",
       resizable: false,
@@ -254,11 +300,15 @@
     if (timeout) clearTimeout(timeout);
 
     timeout = setTimeout(() => {
-      useMenuStore.searchItem({ textSearch: value });
+      let json = { pageIndex: 1, pageSize: 10, tipo: 1, textSearch: value };
+
+      itemService.get(JSON.stringify(json)).then((response) => {
+        if (response) {
+          itemSearch = response["items"];
+        }
+      });
     }, 300);
   };
-
-  $itemSearch: itemSearch;
 
   const onFocus = () => {};
 
@@ -289,20 +339,51 @@
       productId: item.productId,
       costPrice: item.costPrice,
       descripcion: item.descripcion,
+      codigo: item.codigo,
+      medida: item.medida,
       menuId: data.id,
       feeId: 0,
       quantity: 0,
       discountPercent: 0,
       discountValue: 0,
       subtotal: 0,
-      fees: item.fees,
     };
 
-    useMenuStore.update((state) => ({
-      ...state,
-      menuItems: [...state.menuItems, newMenuItem],
-    }));
+    getTarifaById(newMenuItem.productId, newMenuItem);
   };
+
+  const getTarifaById = (productId, newMenuItem) => {
+    MenuItemService.getById(0, { productId: productId, tipo: 2 }).then(
+      (response) => {
+        if (response) {
+          let newFees = response["tarifas"];
+
+          newFees.forEach((e) => {
+            if (e.precioPredeterminado) {
+              newMenuItem.feeId = e.idTarifa;
+              newMenuItem.priceIVA = e.precioConIva;
+              newMenuItem.price = e.precioVenta;
+            }
+          });
+
+          productsAdded.forEach((e) => {
+            if (validation.includes(e.price)) {
+              e.price = 0;
+            }
+
+            if (validation.includes(e.priceIVA)) {
+              e.priceIVA = 0;
+            }
+          });
+
+          newMenuItem.fees = JSON.stringify(newFees);
+          productsAdded = [...productsAdded, newMenuItem];
+        }
+      }
+    );
+  };
+
+  // Todo: MODAL
 
   const onModalClose = () => {
     productsAdded = [];
@@ -315,8 +396,11 @@
   const onUpdate = () => {
     if (!onValidate()) return;
 
-    let forSave = { ...data, menuItems: productsAdded };
-
+    data.promotionDays = JSON.stringify(daysChecked);
+    let forSave = {
+      ...data,
+      menuItems: productsAdded,
+    };
     showLoader();
     MenuService.put(data.id, { data: forSave })
       .then((response) => {
@@ -350,6 +434,45 @@
       isValid = false;
     }
   };
+
+  // Todo: DAYS CHECKBOX
+  let checkDays = (days) => {
+    if (data.promotionDays.length > 0) {
+      let daysPromotion = JSON.parse(data.promotionDays);
+      for (let i = 0; i < days.length; i++) {
+        let day = daysPromotion.find((x) => x.idDia == days[i].idDia);
+        if (days[i].idDia == day.idDia && day.checked) {
+          daysChecked.push({
+            idDia: day.idDia,
+            descripcion: day.descripcion,
+            horaInicio: day.horaInicio,
+            horaFin: day.horaFin,
+            checked: true,
+          });
+        } else {
+          daysChecked.push({
+            idDia: days[i].idDia,
+            descripcion: days[i].descripcion,
+            horaInicio: "00:00",
+            horaFin: "00:00",
+            checked: false,
+          });
+        }
+      }
+    }
+
+    if (data.promotionDays.length <= 0) {
+      days.forEach((e) => {
+        daysChecked.push({
+          idDia: e.idDia,
+          descripcion: e.descripcion,
+          horaInicio: "00:00",
+          horaFin: "00:00",
+          checked: false,
+        });
+      });
+    }
+  };
 </script>
 
 {#if $useMenuStore.isOpen}
@@ -358,113 +481,175 @@
     iconTitle={"ti-plus"}
     title={`Menu - ${data.id > 0 ? data.title : ""}`}
     fullScreen={true}
+    size={"modal-dialog-scrollable"}
     onClosed={() => onModalClose()}
   >
-    <form on:submit|preventDefault={onUpdate}>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-6">
-            <div class="form-group input-group-lg">
-              <label for="menu-type">Tipo Menu</label>
-              <select
-                bind:value={data.menuTypeId}
-                class="form-control"
-                id="menu-type"
-              >
-                <option disabled>SELECCIONE</option>
-                {#each menuTypes as items}
-                  <option value={items.id}>
-                    {items.name}
-                  </option>
-                {/each}
-              </select>
+    <div class="modal-body">
+      <form on:submit|preventDefault={onUpdate}>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-6">
+              <div class="form-group input-group-lg">
+                <label for="menu-type">Tipo Menu</label>
+                <select
+                  bind:value={data.menuTypeId}
+                  class="form-control"
+                  id="menu-type"
+                  on:change={() => getCodeMenuType(data.menuTypeId)}
+                >
+                  <option disabled>SELECCIONE</option>
+                  {#each menuTypes as items}
+                    <option value={items.id}>
+                      {items.name}
+                    </option>
+                  {/each}
+                </select>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label for="">Descripción</label>
+                <input
+                  type="text"
+                  class="form-control input-group-lg"
+                  bind:value={data.title}
+                />
+              </div>
             </div>
           </div>
-          <div class="col-6">
-            <div class="form-group">
-              <label for="">Descripción</label>
-              <input
-                type="text"
-                class="form-control input-group-lg"
-                bind:value={data.title}
-              />
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12">
-            <div class="form-group">
-              <label for="">Resumen</label>
-              <textarea class="form-control" bind:value={data.summary} />
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12">
-            <div class="form-group">
-              <label for="">Contenido</label>
-              <textarea class="form-control" bind:value={data.content} />
-            </div>
-          </div>
-        </div>
-
-        {#if data.menuTypeId === 3}
           <div class="row">
             <div class="col-12">
-              <label for="dateRange">Rango de Fechas </label>
-              <input
-                class="form-control input-group-lg date-picker"
-                type="text"
-                bind:value={dateRangePicker.date}
-                placeholder="Seleccione la fecha"
-              />
+              <div class="form-group">
+                <label for="">Resumen</label>
+                <textarea class="form-control" bind:value={data.summary} />
+              </div>
             </div>
           </div>
-        {/if}
-
-        <div class="row mt-3">
-          <div class="col-8 col-md-12 col-sm-12">
-            <label for="search">Buscar producto </label>
-            <div class="form-group input-group-lg">
-              <AdvancedSearch
-                on:input={onInput}
-                on:focus={onFocus}
-                on:blur={onBlur}
-                {value}
-                {placeholder}
-              />
-              {#if itemSearch.length > 0}
-                <div class="floating-results list-group">
-                  {#each itemSearch as item}
-                    <a
-                      href={null}
-                      class="list-group-item"
-                      on:click={() => getItemSearch(item.id, data)}
-                      ><i class="fa-solid fa-bowl-food" /> {item.descripcion}</a
-                    >
-                  {/each}
+          <div class="row">
+            <div class="col-12">
+              <div class="form-group">
+                <label for="">Contenido</label>
+                <textarea class="form-control" bind:value={data.content} />
+              </div>
+            </div>
+          </div>
+          <hr />
+          {#if codeMenuType === "PROM"}
+            <div class="row">
+              <div class="col-12">
+                <div class="row">
+                  <div class="col-6">
+                    <div class="form-group">
+                      <label for="">Fecha Inicio</label>
+                      <input
+                        type="date"
+                        class="form-control"
+                        bind:value={data.startDate}
+                        max={data.endDate}
+                      />
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="form-group">
+                      <label for="">Fecha Fin</label>
+                      <input
+                        type="date"
+                        class="form-control"
+                        min={data.startDate}
+                        bind:value={data.endDate}
+                      />
+                    </div>
+                  </div>
                 </div>
-              {/if}
+              </div>
+            </div>
+
+            <div class="row">
+              {#each daysChecked as item}
+                <div class="col-4">
+                  <div class="form-group form-check">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      id="exampleCheck1"
+                      bind:checked={item.checked}
+                    />
+                    <label class="form-check-label" for="exampleCheck1"
+                      >{item.descripcion}</label
+                    >
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="form-group">
+                    <label for="">Hora inicio</label>
+                    <input
+                      type="time"
+                      disabled={!item.checked}
+                      bind:value={item.horaInicio}
+                      class="form-control"
+                    />
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="form-group">
+                    <label for="">Hora Fin</label>
+                    <input
+                      type="time"
+                      disabled={!item.checked}
+                      bind:value={item.horaFin}
+                      class="form-control"
+                    />
+                  </div>
+                </div>
+              {/each}
+            </div>
+          {/if}
+          <hr />
+          <div class="row mt-3">
+            <div class="col-8 col-md-12 col-sm-12">
+              <label for="search">Buscar producto </label>
+              <div class="form-group input-group-lg">
+                <AdvancedSearch
+                  on:input={onInput}
+                  on:focus={onFocus}
+                  on:blur={onBlur}
+                  {value}
+                  {placeholder}
+                />
+                {#if itemSearch.length > 0}
+                  <div class="floating-results list-group">
+                    {#each itemSearch as item}
+                      <a
+                        href={null}
+                        class="list-group-item"
+                        on:click={() => getItemSearch(item.id, data)}
+                        ><i class="fa-solid fa-bowl-food" />
+                        {item.descripcion}</a
+                      >
+                    {/each}
+                  </div>
+                {/if}
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <GridForItem arrayData={productsAdded} columns={productColumns} />
             </div>
           </div>
         </div>
-        <div class="row">
-          <div class="col-12">
-            <GridForItem arrayData={productsAdded} columns={productColumns} />
-          </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">
+            <i class="ti-save" /> Guardar
+          </button>
+          <button
+            type="button"
+            class="btn btn-dark"
+            on:click={() => onModalClose()}>&times; Cerrar</button
+          >
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="submit" class="btn btn-success">
-          <i class="ti-save" /> Guardar
-        </button>
-        <button
-          type="button"
-          class="btn btn-dark"
-          on:click={() => onModalClose()}>&times; Cerrar</button
-        >
-      </div>
-    </form>
+      </form>
+    </div>
   </Modal>
 {/if}
 

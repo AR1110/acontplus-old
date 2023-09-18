@@ -38,13 +38,14 @@ namespace Restaurant.API.Controllers
         }
 
         [HttpGet("GetById/{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(int id, string json)
         {
             try
             {
                 var parameters = new Dictionary<string, object> {
                     {"userRoleId", User.GetUserRoleId() },
-                    {"id", id }
+                    {"id", id },
+                    {"json", json}
                 };
                 var response = await _menuItem.GetIdAsync(parameters);
                 if (response == null) { return NoContent(); }

@@ -75,6 +75,7 @@ BEGIN
 				        ,stockMinimo		            = a.stockMinimo
 				        ,stock				            = a.stock
 				        ,codigo				            = a.codigo
+                        ,medida                         = a.medida
 				        ,codigoAuxiliar		            = a.codigoAuxiliar
 				        ,tipoIva			            = CAST(CAST(a.porcentaje AS DECIMAL(15,0)) AS VARCHAR)+''%''
 				        ,tipoArticulo		            = ISNULL(a.tipoArticulo,''Ninguna'')
@@ -98,7 +99,7 @@ BEGIN
                         ,codTipoArticulo                = ISNULL(a.codTipoArticulo, '''')
                         ,totalRecords                   = COUNT(*) over()
                         ,itemTypeCode                   = ''ITEM''
-                        ,a.idMedida
+                        ,a.idMedida                        
 				FROM Restaurant.Item ri
 				INNER JOIN Inventario.v_Articulo a ON a.idArticulo = ri.ProductId
 				LEFT JOIN Restaurant.ProductionArea pa ON pa.Id = ri.ProductionAreaId
