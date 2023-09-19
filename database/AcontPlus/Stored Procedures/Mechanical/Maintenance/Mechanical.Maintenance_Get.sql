@@ -20,42 +20,28 @@ BEGIN
 	SET LANGUAGE SPANISH;
     
     DECLARE @tipo INT 
-           ,@UserAssignedId INT 
            ,@SupportId INT
 
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
 
-    -- GET PARA TRAER LA BANDEJA DE SOPORTES DEL USUARIO
-    IF @tipo = 2
-        BEGIN
-            
-            SELECT TOP 1  @UserAssignedId = idUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
-
-            SET @tableNames = 'trays'
-
-            SELECT Id as SupportId
-                  ,FORMAT([Date], 'dd/MM/yyyy HH:mm') as [Date]
-                  ,[Common].[ufnGetSerieDocument](estab,ptoEmi,[Sequence],0) as [Sequence] 
-                  ,TradeName
-                  ,LicensePlate
-                  ,Obs
-            FROM Mechanical.v_Support 
-            WHERE [Status] = 0
-              AND UserAssignedId = @UserAssignedId
-            ORDER BY Id DESC
-        END 
 
     -- GET DATA FORM FOR INSPECTION 
     IF @tipo = 3
         BEGIN   
             SELECT @SupportId = SupportId FROM OPENJSON(@json) WITH (SupportId INT '$.supportId')
 
-            SET @tableNames = 'support'
+            SET @tableNames = 'support,vehicleParts'
 
             SELECT [Common].[ufnGetSerieDocument](estab,ptoEmi,[Sequence],0) as [Sequence] 
                   ,Brand
                   ,VehicleType
-            FROM Mechanical.v_Support 
+                  ,[Model]
+                  ,Color
+                  ,Engine
+            FROM Mechanical.v_Support WITH (NOLOCK)
             WHERE Id = @SupportId
+
+            SELECT Id,Part,CodePart,CodeTypePart FROM Mechanical.v_VehiclePart WITH (NOLOCK) WHERE Deleted IS NULL AND [Enabled] = 1
+
         END 
 END
