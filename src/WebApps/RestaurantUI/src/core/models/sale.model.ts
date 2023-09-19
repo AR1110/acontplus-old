@@ -27,6 +27,7 @@ export interface Order {
     updateOrder?: boolean
     uuid?: string
     table?: any
+    
 }
 
 //Impuesto Articulos 

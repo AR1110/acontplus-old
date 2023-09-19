@@ -1,10 +1,10 @@
-import { Card, CardContent, Divider, Grid, Typography } from '@mui/material'
+import { Card, CardContent, Divider, Grid, Stack, Typography } from '@mui/material'
 import { useSplitAccountContext } from '../../context'
 import LeftOrderItemTable from './LeftOrderItemTable';
 
 const LeftOrderItem = () => {
-    const { leftOrder } = useSplitAccountContext();
-
+    const { leftOrder, leftCheckedOrderItems, calculateOrderItemTotal } = useSplitAccountContext();
+    const objTempTotal = calculateOrderItemTotal(leftCheckedOrderItems)
     return (
         <>
             <Card>
@@ -29,9 +29,25 @@ const LeftOrderItem = () => {
                             </Typography>
                             <Typography sx={{ mb: 1.5 }} variant="body2" color="text.secondary">
                                 <b>Observación:</b> {leftOrder.obs ||= 'Ninguna'}
-                            </Typography> 
-                        </Grid>                         
-                    </Grid> 
+                            </Typography>
+                        </Grid>
+                        <Grid item xs>
+                            {
+                                leftCheckedOrderItems.length > 0 && (
+                                    <Stack direction="column"
+                                    justifyContent="center"
+                                    alignItems="flex-end">
+                                        <Typography variant="body2" color="text.secondary">
+                                            <b>Cant:</b> {objTempTotal.quantity}
+                                        </Typography> 
+                                        <Typography variant="body2" color="text.secondary">
+                                            <b>Total:</b> {objTempTotal.total}
+                                        </Typography>
+                                    </Stack>
+                                )
+                            }
+                        </Grid>
+                    </Grid>
 
                     <LeftOrderItemTable />
 
