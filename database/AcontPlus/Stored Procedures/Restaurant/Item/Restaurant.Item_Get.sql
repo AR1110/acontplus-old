@@ -147,6 +147,7 @@ BEGIN
 				,tipoIva			= CAST(CAST(a.porcentaje AS DECIMAL(15,0)) AS VARCHAR)+'%'
 				,tipoArticulo		= ISNULL(a.tipoArticulo,'Ninguna')
                 ,summary            = m.Summary
+                ,descripcion		= a.descripcion
 				,style				= a.colorRow
                 ,pvp				= (SELECT idArticuloPvP = ap.idArticuloPvP
 										       ,idTarifa = ap.idTarifa
