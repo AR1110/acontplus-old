@@ -14,6 +14,7 @@ GO
 -- =============================================
 -- Restaurant.Item_Get 139, '{"idSubFamilia":0,"pageIndex":1,"pageSize":10,"tipo":1}', ''
 -- Restaurant.Item_Get 139, '{"tipo":2}', ''
+-- Restaurant.Item_Get 139, '{"tipo":4}', ''
 IF OBJECT_ID(N'Restaurant.Item_Get', N'P') IS NOT NULL
 	DROP PROCEDURE Restaurant.Item_Get
 GO
@@ -137,26 +138,27 @@ BEGIN
             SET @tableNames = 'items'
             SELECT m.*
                 ,s3ObjectUrl		= a.s3ObjectUrl
-				        ,stockMinimo		= a.stockMinimo
-				        ,stock				= a.stock
-				        ,codigo				= a.codigo
-				        ,codigoAuxiliar		= a.codigoAuxiliar
-				        ,tipoIva			= CAST(CAST(a.porcentaje AS DECIMAL(15,0)) AS VARCHAR)+'%'
-				        ,tipoArticulo		= ISNULL(a.tipoArticulo,'Ninguna')
-				        ,style				= a.colorRow 
-                        ,pvp				= (SELECT	idArticuloPvP = ap.idArticuloPvP
-										                ,idTarifa = ap.idTarifa
-										                ,precioVenta = ap.precioVenta
-										                ,precioConIva = ap.precioConIva
-										                ,porcentajeUtilidad = ap.porcentajeUtilidad
-										                ,precioPredeterminado = ta.predeterminada
-										                ,tarifa = ta.descripcion
-										                ,porcentajeIva = ti.porcentaje
-								                FROM ArticuloPvP ap
-								                INNER JOIN Tarifa ta ON ta.idTarifa = ap.idTarifa								
-								                LEFT JOIN TipoIva ti ON ti.idTipoIva = a.idTipoIva
-								                WHERE ap.idArticulo = a.idArticulo AND ta.predeterminada = 1
-								                FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
+				,stockMinimo		= a.stockMinimo
+				,stock				= a.stock
+				,codigo				= a.codigo
+				,codigoAuxiliar		= a.codigoAuxiliar
+				,tipoIva			= CAST(CAST(a.porcentaje AS DECIMAL(15,0)) AS VARCHAR)+'%'
+				,tipoArticulo		= ISNULL(a.tipoArticulo,'Ninguna')
+                ,summary            = m.Summary
+				,style				= a.colorRow
+                ,pvp				= (SELECT idArticuloPvP = ap.idArticuloPvP
+										       ,idTarifa = ap.idTarifa
+										       ,precioVenta = ap.precioVenta
+										       ,precioConIva = ap.precioConIva
+										       ,porcentajeUtilidad = ap.porcentajeUtilidad
+										       ,precioPredeterminado = ta.predeterminada
+										       ,tarifa = ta.descripcion
+										       ,porcentajeIva = ti.porcentaje
+								        FROM ArticuloPvP ap
+								        INNER JOIN Tarifa ta ON ta.idTarifa = ap.idTarifa								
+								        LEFT JOIN TipoIva ti ON ti.idTipoIva = a.idTipoIva
+								        WHERE ap.idArticulo = a.idArticulo AND ta.predeterminada = 1
+								        FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
                ,totalRecords       = COUNT(*) over()
                ,itemTypeCode = 'MENU'
             FROM Restaurant.Menu m WITH(NOLOCK)
@@ -164,6 +166,42 @@ BEGIN
             WHERE a.idEntidad = @idEntidad AND a.siglaFamilia = 'COM'
             ORDER BY m.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY
          END
+
+    IF @tipo = 4
+        BEGIN
+            SET @tableNames = 'promocion'
+             SELECT m.*
+                ,s3ObjectUrl		= a.s3ObjectUrl
+				,stockMinimo		= a.stockMinimo
+				,stock				= a.stock
+				,codigo				= a.codigo
+				,codigoAuxiliar		= a.codigoAuxiliar
+				,tipoIva			= CAST(CAST(a.porcentaje AS DECIMAL(15,0)) AS VARCHAR)+'%'
+				,tipoArticulo		= ISNULL(a.tipoArticulo,'Ninguna')
+				,style				= a.colorRow
+                ,summary            = m.Summary
+                ,pvp				= (SELECT idArticuloPvP = ap.idArticuloPvP
+										       ,idTarifa = ap.idTarifa
+										       ,precioVenta = ap.precioVenta
+										       ,precioConIva = ap.precioConIva
+										       ,porcentajeUtilidad = ap.porcentajeUtilidad
+										       ,precioPredeterminado = ta.predeterminada
+										       ,tarifa = ta.descripcion
+										       ,porcentajeIva = ti.porcentaje
+								        FROM ArticuloPvP ap
+								        INNER JOIN Tarifa ta ON ta.idTarifa = ap.idTarifa								
+								        LEFT JOIN TipoIva ti ON ti.idTipoIva = a.idTipoIva
+								        WHERE ap.idArticulo = a.idArticulo AND ta.predeterminada = 1
+								        FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
+               ,totalRecords       = COUNT(*) over()
+               ,itemTypeCode = 'MENU'
+            FROM Restaurant.Menu m WITH(NOLOCK)
+            INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
+            INNER JOIN Restaurant.MenuType rmt ON rmt.Id = m.MenuTypeId
+            WHERE a.idEntidad = @idEntidad AND a.siglaFamilia = 'COM' AND rmt.Code = 'PROM'
+            AND m.StartDate >= m.StartDate AND m.EndDate <= m.EndDate
+            ORDER BY m.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY
+        END
 
     IF @tipo = 2
         BEGIN

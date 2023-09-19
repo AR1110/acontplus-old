@@ -26,6 +26,8 @@
     (productionAreas = values.productionAreas),
       (data = values.dataUpdate),
       (recipes = values.recipes);
+
+      console.log(recipes);
   });
 
   //https://jsfiddle.net/biruktes/hn8gascw/24/
@@ -166,8 +168,15 @@
       cellEdited: updatePrecio,
       validator: ["required", "numeric"],
     },
+
     {
       title: "Precio costo",
+      field: "precioCosto",
+      with: 90,
+      editor: false,
+    },
+    {
+      title: "Total",
       field: "costPrice",
       with: 90,
       editor: true,
@@ -235,8 +244,8 @@
 
         onModalClose();
 
-        if(pageIndexCurrent === 0) {
-            pageIndexCurrent = 1;
+        if (pageIndexCurrent === 0) {
+          pageIndexCurrent = 1;
         }
         useItemStore.get({ pageIndex: pageIndexCurrent });
         toast({ type: "success", message: response.data.message });

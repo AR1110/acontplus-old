@@ -28,7 +28,7 @@
     days = values.days;
 
     if (data.id > 0) {
-        codeMenuType = "";
+      codeMenuType = "";
       getItems(data.id);
       getCodeMenuType(data.menuTypeId);
     }
@@ -182,8 +182,9 @@
     cell.getRow().update({ subtotal: totalDiscount });
   };
 
-  const removeFromList = (id: number) => {
-    let newArray = productsAdded.filter((x) => x.id !== id);
+  const removeFromList = (itemId: number) => {   
+    let newArray = productsAdded.filter((x) => x.itemId !== itemId);
+    console.log(newArray);
     productsAdded = newArray;
   };
 
@@ -294,7 +295,7 @@
     },
     {
       cellClick: (e, cell) => {
-        removeFromList(cell.getData().id);
+        removeFromList(cell.getData().itemId);
         cell.getRow().delete();
       },
       formatter: "buttonCross",
@@ -311,8 +312,7 @@
     itemSearch = [];
 
     if (value.length > 3) return;
-
-    console.log("Search ");
+    if (validation.includes(value)) return;
 
     // Apply debounce in search
     if (timeout) clearTimeout(timeout);
@@ -367,6 +367,9 @@
     };
 
     getTarifaById(newMenuItem.productId, newMenuItem);
+
+    itemSearch = [];
+    value = "";
   };
 
   const getTarifaById = (productId, newMenuItem) => {
@@ -604,7 +607,8 @@
             </div>
           {/if}
           <div class="row mt-3">
-            <div class="col-8 col-md-12 col-sm-12">
+            <div class="col-6 col-md-6 col-sm-6" />
+            <div class="col-6 col-md-6 col-sm-6">
               <label for="search">Buscar producto </label>
               <div class="form-group input-group-lg">
                 <AdvancedSearch
