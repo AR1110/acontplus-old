@@ -28,6 +28,7 @@
     days = values.days;
 
     if (data.id > 0) {
+        codeMenuType = "";
       getItems(data.id);
       getCodeMenuType(data.menuTypeId);
     }
@@ -36,6 +37,7 @@
   const getItems = (id: number) => {
     MenuItemService.getById(id, { id: id, tipo: 1 }).then((response) => {
       if (response) {
+        console.log(response["menuItems"]);
         productsAdded = response["menuItems"];
 
         verifyUpdateCell(productsAdded);
@@ -44,19 +46,24 @@
   };
 
   let verifyUpdateCell = (productsAdded) => {
-    for (let i = 0; i < productsAdded.length; i++) {
-      let fee = JSON.parse(productsAdded[i].fees).find(
-        (x) => x.idTarifa == productsAdded[i].feeId
-      );
-      productsAdded[i].priceIVA = fee.precioConIva;
-      productsAdded[i].price = fee.precioVenta;
+    if (productsAdded.length > 0) {
+      for (let i = 0; i < productsAdded.length; i++) {
+        let fee = JSON.parse(productsAdded[i].fees).find(
+          (x) => x.idTarifa == productsAdded[i].feeId
+        );
+        productsAdded[i].priceIVA = fee.precioConIva;
+        productsAdded[i].price = fee.precioVenta;
+      }
     }
+
     checkDays(days);
   };
 
   let getCodeMenuType = (id) => {
-    let menuType = menuTypes.find((x) => x.id == id);
-    codeMenuType = menuType.code;
+    if (!validation.includes(id)) {
+      let menuType = menuTypes.find((x) => x.id == id);
+      codeMenuType = menuType.code;
+    }
   };
 
   // Todo: GRID COLUMNS
@@ -305,6 +312,8 @@
 
     if (value.length > 3) return;
 
+    console.log("Search ");
+
     // Apply debounce in search
     if (timeout) clearTimeout(timeout);
     timeout = setTimeout(() => {
@@ -393,12 +402,13 @@
 
   // Todo: MODAL
   const onModalClose = () => {
+    daysChecked = [];
+    productsAdded = [];
+    codeMenuType = "";
     useMenuStore.update((state) => ({
       ...state,
       isOpen: false,
     }));
-    daysChecked = [];
-    productsAdded = [];
   };
 
   const onUpdate = () => {
@@ -456,16 +466,16 @@
     }
 
     if (data.promotionDays.length <= 0) {
-      days.forEach((e) => {
-        daysChecked.push({
+      daysChecked = days.map((e) => {
+        return {
           idDia: e.idDia,
           descripcion: e.descripcion,
           horaInicio: "00:00",
           horaFin: "00:00",
           checked: false,
-        });
+        };
       });
-      daysChecked = daysChecked;
+      return (daysChecked = daysChecked);
     }
   };
 </script>
