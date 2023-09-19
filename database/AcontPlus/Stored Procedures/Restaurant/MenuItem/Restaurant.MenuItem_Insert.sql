@@ -19,8 +19,13 @@ AS
 BEGIN
 	SET NOCOUNT ON;
     SET LANGUAGE SPANISH;
-    DECLARE @date    DATETIME = (SELECT dbo.ufnGetDateEcuador())
-            ,@userId INT
+    DECLARE @date           DATETIME = (SELECT dbo.ufnGetDateEcuador())
+            ,@userId        INT
+            ,@productId     INT
+            ,@totalPrecio   NUMERIC(18,5)
+            ,@idTipoIva     INT
+            ,@porcentaje    NUMERIC(18,5)
+            ,@precioCosto   NUMERIC(18,5)
     
     CREATE TABLE #MenuItem(
         id                  INT
@@ -106,6 +111,27 @@ BEGIN
             INNER JOIN #MenuItemNoExits mi ON mi.MenuId = mri.MenuId
             WHERE mri.Id = mi.Id
         END
+
+        ---- UPDATE -----
+        SELECT @productId       = ProductId
+               ,@totalPrecio    = SUM(mi.Subtotal) 
+               FROM Restaurant.MenuItem mi
+        INNER JOIN Restaurant.Menu m on m.Id = mi.MenuId       
+        WHERE m.Id = @id
+        AND ISNULL(mi.Deleted, 0) != 1
+        GROUP BY m.ProductId
+          
+        SELECT @porcentaje      = ti.porcentaje
+                , @precioCosto  = precioCosto 
+        FROM Inventario.v_Articulo ti WHERE idArticulo = @productId
+               
+        UPDATE ap 
+        SET ap.PrecioVenta          = @totalPrecio
+            ,ap.precioConIva        = (@totalPrecio * (@porcentaje / 100)) + @totalPrecio
+            ,ap.porcentajeUtilidad  = (@precioCosto * (@porcentaje / 100)) + @precioCosto
+        FROM ArticuloPvP ap 
+        WHERE ap.idArticulo = @productId 
+        AND ap.precioPredeterminado = 1
 END
 GO
 
