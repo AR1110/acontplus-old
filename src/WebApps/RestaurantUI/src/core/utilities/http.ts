@@ -3,7 +3,7 @@ import { getToken } from "@/core/services";
 import { SnackbarUtility } from ".";
 
 const instance = axios.create({
-  baseURL: import.meta.env.DEV ? "https://localhost:7112/gateway/" : "http://18.224.78.45:83/gateway/",
+  baseURL: import.meta.env.DEV ? "https://localhost:7112/gateway/" : "https://acontplus.xyz/restaurantgateway/",
 });
 
 //   console.log("init Axios interceptor");
