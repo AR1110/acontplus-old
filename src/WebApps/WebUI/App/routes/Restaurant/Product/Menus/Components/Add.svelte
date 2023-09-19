@@ -152,7 +152,7 @@
     if (column === "discountPercent") {
       if (row.discountPercent >= 0 && row.discountPercent <= 100) {
         porcentaje = row.discountPercent / 100;
-        descuento = row.price * porcentaje;
+        descuento = row.priceIVA * porcentaje;
 
         if (!validation.includes(descuento)) {
           descuento = parseFloat(descuento.toFixed(2));
@@ -171,7 +171,7 @@
         });
       }
     }
-    totalDiscount = (row.price - row.discountValue) * row.quantity;
+    totalDiscount = (row.priceIVA - row.discountValue) * row.quantity;
     if (!validation.includes(totalDiscount)) {
       totalDiscount = parseFloat(totalDiscount.toFixed(2));
     }
@@ -221,12 +221,12 @@
       title: "Precio IVA",
       with: 100,
     },
-    {
-      field: "price",
-      hozAlign: "center",
-      title: "Precio Venta",
-      with: 200,
-    },
+    // {
+    //   field: "price",
+    //   hozAlign: "center",
+    //   title: "Precio Venta",
+    //   with: 200,
+    // },
     {
       editor: "input",
       field: "quantity",
@@ -480,6 +480,9 @@
   };
 
   useMenuStore.subscribe((values) => {
+    // Clear
+    codeMenuType = "";
+
     data = values.dataUpdate;
     menuTypes = values.menuTypes;
     days = values.days;
@@ -502,7 +505,8 @@
     onClosed={() => onModalClose()}
   >
     <div class="modal-body">
-      <form on:submit|preventDefault={onUpdate}>
+      <!-- on:submit|preventDefault={onUpdate} -->
+      <form autocomplete="off">
         <div class="modal-body">
           <div class="row">
             <div class="col-6">
@@ -650,8 +654,9 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-success">
-            <i class="ti-save" /> Guardar
+          <button type="submit" on:click={onUpdate}
+          class="btn btn-success">
+            <i class="ti-save"  /> Guardar
           </button>
           <button
             type="button"

@@ -12,7 +12,7 @@ GO
 -- Create date: 2023-08-14 
 -- Description:	Get Item
 -- =============================================
--- Restaurant.Item_Get 139, '{"idSubFamilia":0,"pageIndex":1,"pageSize":10,"tipo":1}', ''
+-- Restaurant.Item_Get 139, '{"idSubFamilia":0,"pageIndex":1,"pageSize":100,"tipo":1}', ''
 -- Restaurant.Item_Get 139, '{"tipo":2}', ''
 -- Restaurant.Item_Get 139, '{"tipo":4}', ''
 IF OBJECT_ID(N'Restaurant.Item_Get', N'P') IS NOT NULL
@@ -120,6 +120,8 @@ BEGIN
                                         OR ri.Summary LIKE ''%''+@textSearch+''%'' 
                                         OR ri.Content LIKE ''%''+@textSearch+''%'' '
                 END
+
+            PRINT @sql
                 
 	        SET @sql = @sql + ' ORDER BY ri.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
 		           
