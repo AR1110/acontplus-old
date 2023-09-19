@@ -1,17 +1,17 @@
-import { 
-    Accordion, 
-    AccordionDetails, 
-    AccordionProps, 
+import {
+    Accordion,
+    AccordionDetails,
+    AccordionProps,
     AccordionSummary,
-    AccordionSummaryProps, 
-    Button, 
-    Card, 
-    CardActions, 
-    CardContent, 
-    Grid,  
-    TextField, 
-    Typography, 
-    styled 
+    AccordionSummaryProps,
+    Button,
+    Card,
+    CardActions,
+    CardContent,
+    Grid,
+    TextField,
+    Typography,
+    styled
 } from '@mui/material'
 import RightOrderItemTable from './RightOrderItemTable'
 import { useSplitAccountContext } from '../../context';
@@ -122,11 +122,6 @@ const RightOrderItem = () => {
                 }
                 if (response.code === "1") {
                     SnackbarUtility.success(response.message);
-                    //Order
-                    if (codDoc === DOC_TYPE.OR) {
-                        SharedService.getPrinter(JSON.parse(response.payload))                       
-                        return
-                    }
                     const queryParams: QueryParams = JSON.parse(response.payload)[0];
                     console.log(queryParams)
                     // if (queryParams.payAutomatic) {

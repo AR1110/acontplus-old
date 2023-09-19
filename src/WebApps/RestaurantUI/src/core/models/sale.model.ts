@@ -88,7 +88,8 @@ export interface ItemPostDto {
     discount: number
     total: number
     itemTypeCode: ITEM_TYPE_CODE.ITEM | ITEM_TYPE_CODE.MENU
-    menuId?: number
+    menuId?: number,
+    bodegaId: number
 }
 export interface SummaryPostDto {
     orderId: number

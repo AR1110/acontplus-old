@@ -28,7 +28,7 @@ export default function App() {
       <Suspense fallback={<>Cargando</>}>
         <SnackbarProvider>
           <SnackbarUtilitiesConfigurator />
-          <BrowserRouter basename="/Restaurant/">
+          <BrowserRouter >
            
             <RoutesWithNotFound>
               <Route path="/" element={<Navigate to={PrivateRoutes.PRIVATE}></Navigate>}></Route>

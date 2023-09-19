@@ -1,6 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios"; 
-import { getToken } from "@/core/services";
-import { SnackbarUtility } from ".";
+import { getToken } from "@/core/services"; 
 
 const instance = axios.create({
   baseURL: import.meta.env.DEV ? "https://localhost:7112/gateway/" : "https://acontplus.xyz/restaurantgateway/",

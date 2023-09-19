@@ -10,7 +10,7 @@ GO
 -- Create date: 2023-08-14
 -- Description:	sp for insert order restaurant
 -- =============================================
---Restaurant.Order_Insert 139, '{"data":{"orderId":0,"establecimientoId":454,"puntoEmisionId":124,"bodegaId":128,"tableId":3,"customerCompanyId":0,"subtotalSinImpuestos":2.5,"tax":0.3,"taxPercent":0,"discount":0,"total":2.8,"items":[{"orderItemId":0,"uuid":"af774dae-f690-4d55-bc01-a461c743cb8e","itemId":3,"feeId":528,"taxId":1,"taxPercentId":2,"taxValue":0.3,"quantity":1,"cost":12.4,"price":2.5,"discount":0,"total":2.5,"obs":""}],"taxes":[{"uuid":"af774dae-f690-4d55-bc01-a461c743cb8e","taxId":1,"taxPercentId":2,"taxBase":2.5,"taxValue":0.3}],"payments":{},"tip":0,"obs":"","codDoc":"OR","quickSale":false,"fechaEmision":"2023-09-13T15:06:24.843Z","uuid":"ceef1bb9-89db-4f98-af7a-fb19c75cd4f6","updateOrder":false,"saveDoc":false}}'
+--Restaurant.Order_Insert 139, '{"orderId":0,"establecimientoId":454,"puntoEmisionId":124,"bodegaId":0,"tableId":3,"customerCompanyId":63914,"subtotalSinImpuestos":10,"tax":1.2,"taxPercent":0,"discount":0,"total":11.2,"items":[{"orderItemId":457,"uuid":"f378ddc7-79b9-4a89-82d0-59a0e2eb2114","itemId":3,"feeId":528,"taxId":1,"taxPercentId":2,"taxValue":0.3,"quantity":4,"cost":12.4,"price":2.5,"discount":0,"total":10,"obs":"","bodegaId": 128}],"taxes":[],"payments":{},"tip":0,"obs":"UNA MAGNIFICA PRUEBA","codDoc":"FV","quickSale":true,"fechaEmision":"2023-09-19T03:32:24.575Z","uuid":"cb237cd1-86c4-423a-8a11-2a5cf87c9568","updateOrder":false,"saveDoc":true,"itemsToPay":[{"orderItemId":457,"uuid":"f378ddc7-79b9-4a89-82d0-59a0e2eb2114","itemId":3,"feeId":528,"taxId":1,"taxPercentId":2,"taxValue":0.3,"quantity":4,"cost":12.4,"price":2.5,"discount":0,"total":10,"obs":""}]}'
 CREATE OR ALTER PROCEDURE Restaurant.Order_Insert @userRoleId INT
 ,@json NVARCHAR(MAX)
 AS
@@ -90,11 +90,12 @@ BEGIN
                 price NUMERIC(18,5) NOT NULL,
                 discount NUMERIC(18,5),
                 total NUMERIC(18,5) NOT NULL,
-                obs VARCHAR(500) NULL
+                obs VARCHAR(500) NULL,
+                bodegaId int not null
             )
 
-            INSERT INTO @tblItems(uuid, itemTypeCode, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs)
-            SELECT uuid, itemTypeCode, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs
+            INSERT INTO @tblItems(uuid, itemTypeCode, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs, bodegaId)
+            SELECT uuid, itemTypeCode, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs, bodegaId
             FROM OPENJSON(@itemsJson)
                 WITH (
                         uuid UNIQUEIDENTIFIER '$.uuid',
@@ -111,7 +112,8 @@ BEGIN
                         discount NUMERIC(18,5) '$.discount',
                         total NUMERIC(18,5) '$.total',
                         feeId INT         '$.feeId',
-                        obs NVARCHAR(500) '$.obs'
+                        obs NVARCHAR(500) '$.obs',
+                        bodegaId int '$.bodegaId'
                       )
 
             IF NOT EXISTS(SELECT 1 FROM @tblItems)
@@ -181,7 +183,7 @@ BEGIN
                             ,@userId
                             ,feeId
                             ,obs
-                            ,ISNULL(@bodegaId, 0)
+                            ,i.bodegaId
                             ,(SELECT TOP 1 it.Id FROM Restaurant.ItemType it WHERE i.itemTypeCode = it.Code)
                             ,IIF(i.menuId = 0, NULL, i.menuId)
                      FROM @tblItems i
