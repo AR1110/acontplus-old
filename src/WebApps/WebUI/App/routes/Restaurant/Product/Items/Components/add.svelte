@@ -26,8 +26,6 @@
     (productionAreas = values.productionAreas),
       (data = values.dataUpdate),
       (recipes = values.recipes);
-
-      console.log(recipes);
   });
 
   //https://jsfiddle.net/biruktes/hn8gascw/24/
