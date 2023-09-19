@@ -56,6 +56,7 @@ const StyledAccordionDetails = styled(AccordionDetails)(({ theme }) => ({
 
 const RightOrderItem = () => {
     const { leftOrder, rightOrder, setRightOrderData, rightOrderItems } = useSplitAccountContext();
+    const { fetchOrderData } = useSplitAccountContext();
     const { showLoader } = useLoaderStore();
 
     const typeActions: { [key: string]: string } = {
@@ -122,6 +123,7 @@ const RightOrderItem = () => {
                 }
                 if (response.code === "1") {
                     SnackbarUtility.success(response.message);
+                    fetchOrderData(leftOrder.orderId)
                     const queryParams: QueryParams = JSON.parse(response.payload)[0];
                     console.log(queryParams)
                     // if (queryParams.payAutomatic) {
