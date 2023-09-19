@@ -120,7 +120,7 @@
       title: "Ingrediente",
       field: "summary",
       widthGrow: 1,
-      with: 250,
+      with: 300,
     },
     {
       title: "Medida",
@@ -152,18 +152,21 @@
       field: "weight",
       editor: true,
       with: 50,
+      widthGrow: 1,
       validator: ["numeric"],
     },
     {
       title: "Instrucciones",
       field: "instructions",
       widthGrow: 3,
+      with: 200,
       editor: true,
     },
     {
       title: "Cantidad",
       field: "quantity",
-      with: 90,
+      with: 50,
+      widthGrow: 1,
       editor: true,
       cellEdited: updatePrecio,
       validator: ["required", "numeric"],
@@ -172,7 +175,8 @@
     {
       title: "Precio costo",
       field: "precioCosto",
-      with: 90,
+      with: 75,
+      widthGrow: 1,
       editor: false,
     },
     {

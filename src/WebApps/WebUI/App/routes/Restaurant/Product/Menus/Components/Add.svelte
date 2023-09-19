@@ -22,30 +22,23 @@
   let codeMenuType = "";
   let validation = [undefined, null, 0, ""];
 
-  useMenuStore.subscribe((values) => {
-    data = values.dataUpdate;
-    menuTypes = values.menuTypes;
-    days = values.days;
-
-    if (data.id > 0) {
-      codeMenuType = "";
-      getItems(data.id);
-      getCodeMenuType(data.menuTypeId);
-    }
-  });
-
   const getItems = (id: number) => {
-    MenuItemService.getById(id, { id: id, tipo: 1 }).then((response) => {
-      if (response) {
-        console.log(response["menuItems"]);
-        productsAdded = response["menuItems"];
+    showLoader();
+    MenuItemService.getById(id, { id: id, tipo: 1 })
+      .then((response) => {
+        if (response) {
+          productsAdded = response["menuItems"];
 
-        verifyUpdateCell(productsAdded);
-      }
-    });
+          verifyUpdateCell(productsAdded);
+        }
+      })
+      .finally(() => {
+        hideLoader();
+      });
   };
 
   let verifyUpdateCell = (productsAdded) => {
+    showLoader();
     if (productsAdded.length > 0) {
       for (let i = 0; i < productsAdded.length; i++) {
         let fee = JSON.parse(productsAdded[i].fees).find(
@@ -55,14 +48,17 @@
         productsAdded[i].price = fee.precioVenta;
       }
     }
+    hideLoader();
 
     checkDays(days);
   };
 
   let getCodeMenuType = (id) => {
-    if (!validation.includes(id)) {
-      let menuType = menuTypes.find((x) => x.id == id);
-      codeMenuType = menuType.code;
+    if (menuTypes.length > 0) {
+      if (!validation.includes(id)) {
+        let menuType = menuTypes.find((x) => x.id == id);
+        codeMenuType = menuType.code;
+      }
     }
   };
 
@@ -182,9 +178,8 @@
     cell.getRow().update({ subtotal: totalDiscount });
   };
 
-  const removeFromList = (itemId: number) => {   
+  const removeFromList = (itemId: number) => {
     let newArray = productsAdded.filter((x) => x.itemId !== itemId);
-    console.log(newArray);
     productsAdded = newArray;
   };
 
@@ -463,6 +458,7 @@
 
   // Todo: DAYS CHECKBOX
   let checkDays = (days) => {
+    showLoader();
     if (data.promotionDays.length > 0) {
       let daysPromotion = JSON.parse(data.promotionDays);
       return (daysChecked = daysPromotion);
@@ -480,7 +476,20 @@
       });
       return (daysChecked = daysChecked);
     }
+    hideLoader();
   };
+
+  useMenuStore.subscribe((values) => {
+    data = values.dataUpdate;
+    menuTypes = values.menuTypes;
+    days = values.days;
+
+    // Verify and call methods
+    if (data.id > 0) {
+      getItems(data.id);
+      getCodeMenuType(data.menuTypeId);
+    }
+  });
 </script>
 
 {#if $useMenuStore.isOpen}

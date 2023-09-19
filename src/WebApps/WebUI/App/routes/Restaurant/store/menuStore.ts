@@ -2,7 +2,6 @@ import type { Menu } from "$core/interfaces/restaurant/menu";
 import { writable } from "svelte/store";
 import { hideLoader, showLoader } from "$core/utils/loading-spinner";
 import { MenuService } from "$core/services/restaurant/menu-service";
-import { MenuItemService } from "$core/services/restaurant/menu-item-service";
 
 type StateModal = {
   isOpen: boolean;
@@ -60,8 +59,6 @@ const menuStore = () => {
         hideLoader();
       });
   };
-
-  
 
   const openingModal = (menu?: Menu) => {
     update((state) => ({

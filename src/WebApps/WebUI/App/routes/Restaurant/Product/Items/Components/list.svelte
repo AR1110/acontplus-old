@@ -115,7 +115,12 @@
             </th>
             <th>{index + 1}</th>
             <td>
-              <img src={item.s3ObjectUrl} width="70" class="rounded" alt="" />
+              <img
+                src={item.s3ObjectUrl || "https://i.stack.imgur.com/GNhxO.png"}
+                width="70"
+                class="rounded"
+                alt=""
+              />
               {item.descripcion}
             </td>
             <td>{item.summary}</td>
