@@ -30,6 +30,8 @@ namespace Restaurant.Infrastructure.Data
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<OrderKitchen> OrderKitchens { get; set; }
         public DbSet<OrderDocument> OrderDocuments { get; set; }
+        public DbSet<Promotion> promotions { get; set; }
+        public DbSet<PromotionMenu> promotionMenus { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -98,6 +100,10 @@ namespace Restaurant.Infrastructure.Data
             builder.Entity<OrderKitchen>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             
             builder.Entity<OrderDocument>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+
+            builder.Entity<Promotion>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+
+            builder.Entity<PromotionMenu>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
 
         }
         public override int SaveChanges()

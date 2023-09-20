@@ -14,7 +14,7 @@ GO
 -- =============================================
 -- Restaurant.Item_Get 139, '{"idSubFamilia":0,"pageIndex":1,"pageSize":100,"tipo":1}', ''
 -- Restaurant.Item_Get 139, '{"tipo":2}', ''
--- Restaurant.Item_Get 139, '{"tipo":4}', ''
+-- Restaurant.Item_Get 139, '{"tipo":4, "pageIndex":1,"pageSize":10 }', ''
 IF OBJECT_ID(N'Restaurant.Item_Get', N'P') IS NOT NULL
 	DROP PROCEDURE Restaurant.Item_Get
 GO
@@ -37,6 +37,9 @@ BEGIN
 	,@params NVARCHAR(MAX)
     ,@tipo INT    
     ,@textSearch VARCHAR(20)
+    ,@dateNow DATETIME = (SELECT dbo.ufnGetDateEcuador())
+    ,@day VARCHAR(12)
+    ,@hour VARCHAR(5)
     			
 	SELECT @idSubFamilia  = idSubFamilia
 		  ,@idSubFamilia  = idFamilia
@@ -55,6 +58,12 @@ BEGIN
 	)
 
 	SELECT TOP 1  @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+
+    SET @day    = (SELECT DATENAME(weekday, GETDATE()))
+    SET @hour   = (SELECT FORMAT(GETDATE(), 'HH:mm'))
+
+    PRINT @day
+    PRINT @hour
 
 	SET @params = N'@idEntidad INT, @idSubFamilia INT, @pageIndex INT, @pageSize INT, @textSearch VARCHAR(20)'
 
@@ -173,8 +182,8 @@ BEGIN
     IF @tipo = 4
         BEGIN
             SET @tableNames = 'promocion'
-             SELECT m.*
-                ,s3ObjectUrl		= a.s3ObjectUrl
+             SELECT 
+                s3ObjectUrl		= a.s3ObjectUrl
 				,stockMinimo		= a.stockMinimo
 				,stock				= a.stock
 				,codigo				= a.codigo
@@ -196,16 +205,15 @@ BEGIN
 								        LEFT JOIN TipoIva ti ON ti.idTipoIva = a.idTipoIva
 								        WHERE ap.idArticulo = a.idArticulo AND ta.predeterminada = 1
 								        FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
-               ,totalRecords       = COUNT(*) over()
-               ,itemTypeCode = 'MENU'
+               ,descripcion         = a.descripcion
+               ,itemTypeCode        = 'MENU'
+               ,totalRecords        = COUNT(*) over()               
             FROM Restaurant.Menu m WITH(NOLOCK)
             INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
             INNER JOIN Restaurant.MenuType rmt ON rmt.Id = m.MenuTypeId
-            WHERE a.idEntidad = @idEntidad AND a.siglaFamilia = 'COM' AND rmt.Code = 'PROM'
-            AND m.StartDate >= m.StartDate AND m.EndDate <= m.EndDate
+            WHERE a.idEntidad = @idEntidad AND rmt.Code = 'PROM'
             ORDER BY m.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY
         END
-
     IF @tipo = 2
         BEGIN
             SET @tableNames = 'ingredientType'
