@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mechanical.Core.Entities
 {
@@ -8,7 +7,6 @@ namespace Mechanical.Core.Entities
     {
         public Support support { get; set; }
         public int SupportId { get; set; }
-
         public DateTime Date { get; set; }
         public DateTime DateEnd { get; set; }
         public int Mileage { get; set; }

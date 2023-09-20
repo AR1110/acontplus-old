@@ -13,8 +13,9 @@ namespace Mechanical.Infrastructure.Data
         public DbSet<VehicleType> VehicleTypes { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<VehicleCompany> VehicleCompanys { get; set; }
-        public DbSet<MaintenanceType> SupportTypes { get; set; }
         public DbSet<Support> Supports { get; set; }
+        public DbSet<VehiclePartType> vehiclePartTypes { get; set; }
+        public DbSet<VehiclePart> vehicleParts { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -39,14 +40,19 @@ namespace Mechanical.Infrastructure.Data
            .HasDatabaseName("UXC_Mechanical_LicensePlate")
            .IsUnique();
 
-            modelBuilder.Entity<MaintenanceType>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-            modelBuilder.Entity<MaintenanceType>().HasIndex(x => x.Code)
-           .HasDatabaseName("UXC_SupportType_Code")
-           .IsUnique();
-
             modelBuilder.Entity<Support>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-           
+
             modelBuilder.Entity<VehicleCompany>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+
+            modelBuilder.Entity<VehiclePartType>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<VehiclePartType>().HasIndex(x => x.Code)
+            .HasDatabaseName("UXC_VehiclePartType_Code")
+            .IsUnique();
+
+            modelBuilder.Entity<VehiclePart>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<VehiclePart>().HasIndex(x => x.Code)
+            .HasDatabaseName("UXC_VehiclePart_Code")
+            .IsUnique();
         }
 
         public override int SaveChanges()
