@@ -48,10 +48,10 @@ BEGIN
     DECLARE @tbSupport AS TABLE (
         PuntoEmisionId INT NOT NULL
        ,[Date] DATETIME2 NOT NULL
-       ,SupportTypeId INT NOT NULL
        ,VehicleCompanyId INT NOT NULL
        ,CustomerId INT NOT NULL
        ,UserAssignedId INT NOT NULL
+       ,Obs VARCHAR(300) NOT NULL
        ,[Status] INT DEFAULT 0 NOT NULL
        ,CreatedAt DATETIME2 DEFAULT GETDATE()
        ,[Enabled] BIT DEFAULT 1 NOT NULL
@@ -68,7 +68,6 @@ BEGIN
        ,[Engine] VARCHAR(150) NOT NULL
        ,[Chassis] VARCHAR(150) NOT NULL
        ,[Cylindraje] VARCHAR(150) NOT NULL
-	   ,[Observation] VARCHAR(300) NULL
 	   ,[Enabled] BIT DEFAULT 1 
 	   ,[CreatedAt] DATETIME2 DEFAULT GETDATE() NOT NULL
 	)
@@ -98,8 +97,8 @@ BEGIN
             )
            
             INSERT INTO @tbSupport
-                  (puntoEmisionId,vehicleCompanyId,CustomerId,supportTypeId,userAssignedId,[date])
-            SELECT puntoEmisionId,vehicleCompanyId,CustomerId,supportTypeId,userAssignedId,[date]
+                  (puntoEmisionId,vehicleCompanyId,CustomerId,userAssignedId,Obs,[date])
+            SELECT puntoEmisionId,vehicleCompanyId,CustomerId,userAssignedId,Obs,[date]
             FROM OPENJSON(@jsonSupport) WITH 
             (
                 puntoEmisionId   INT '$.puntoEmisionId'
@@ -107,12 +106,13 @@ BEGIN
                ,customerId       INT '$.customerId'
                ,supportTypeId    INT '$.supportTypeId'
                ,userAssignedId   INT '$.userAssignedId'
+               ,Obs     VARCHAR(300) '$.obs'
                ,[date]     DATETIME2 '$.date'
             )
 
 			INSERT INTO @tbVehicle
-				  ([VehicleTypeId],CountryId,[LicensePlate],[Brand],[Model],[Year],[Color],Engine,Chassis,Cylindraje,[Observation])
-			SELECT [VehicleTypeId],CountryId,[LicensePlate],[Brand],[Model],[Year],[Color],Engine,Chassis,Cylindraje,[Observation]
+				  ([VehicleTypeId],CountryId,[LicensePlate],[Brand],[Model],[Year],[Color],Engine,Chassis,Cylindraje)
+			SELECT [VehicleTypeId],CountryId,[LicensePlate],[Brand],[Model],[Year],[Color],Engine,Chassis,Cylindraje
 			FROM OPENJSON(@jsonVehicle) WITH
 			(
 				[VehicleTypeId]        INT '$.vehicleTypeId'
@@ -125,7 +125,6 @@ BEGIN
 			   ,[Engine]      VARCHAR(150) '$.engine' 
 			   ,[Chassis]     VARCHAR(150) '$.chassis' 
 			   ,[Cylindraje]  VARCHAR(150) '$.cylindraje' 
-			   ,[Observation] VARCHAR(300) '$.observation'
 			) as dt
 
             INSERT INTO @tbCustomer 
@@ -223,16 +222,16 @@ BEGIN
 				            END
 
                         INSERT INTO [Mechanical].[VehicleCompany]
-					           (VehicleId,CompanyId,UserId,CustomerId,Observation,CreatedAt,Enabled)
-			            SELECT @VehicleId,@CompanyId,@userId,@CustomerId,[Observation],[CreatedAt],[Enabled] FROM @tbVehicle
+					           (VehicleId ,CompanyId ,UserId ,CustomerId,CreatedAt,[Enabled])
+			            SELECT @VehicleId,@CompanyId,@userId,@CustomerId,CreatedAt,[Enabled] FROM @tbVehicle
 
                         SELECT @VehicleCompanyId = SCOPE_IDENTITY()
                     END 
                 
                 -- CUSTOMER RECORD -- 
                 INSERT INTO [Mechanical].[Support]
-                      (PuntoEmisionId,[Date],[Sequence],SupportTypeId,VehicleCompanyId ,CustomerId ,CompanyId ,UserId ,UserAssignedId,CreatedAt,[Enabled],[Status])
-                SELECT PuntoEmisionId,[Date] ,@Sequence,3,@VehicleCompanyId,@CustomerId,@CompanyId,@UserId,UserAssignedId,CreatedAt,[Enabled],[Status] FROM @tbSupport
+                      (PuntoEmisionId,[Date],[Sequence],VehicleCompanyId ,CustomerId ,CompanyId ,UserId,UserAssignedId,Obs,CreatedAt,[Enabled],[Status])
+                SELECT PuntoEmisionId,[Date],@Sequence,@VehicleCompanyId,@CustomerId,@CompanyId,@UserId,UserAssignedId,Obs,CreatedAt,[Enabled],[Status] FROM @tbSupport
 
 			    SELECT @Id = SCOPE_IDENTITY()
 

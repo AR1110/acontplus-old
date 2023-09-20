@@ -4,7 +4,6 @@
   import AdvancedSearch from "$core/components/AdvancedSearch.svelte";
   import { showLoader, hideLoader } from "$core/utils/loading-spinner";
   import toast from "$core/utils/toast";
-  import type { Support } from "$core/interfaces/mechanical/support";
   import type { Vehicle } from "$core/interfaces/mechanical/vehicle";
   import type { Customer } from "$core/interfaces/customer/customer";
   import { SupportService } from "$core/services/mechanical/support-service";
@@ -23,7 +22,6 @@
   let emissionPointsSelected = [];
   let vehicleTypes = [];
   let countrys = [];
-  let supportTypes = [];
   let idTypes = [];
   let customers = [];
   let emissionPointData = {};
@@ -60,7 +58,6 @@
         emissionPoints = response["emissionPoints"];
         vehicleTypes = response["vehicleTypes"];
         countrys = response["countrys"];
-        supportTypes = response["supportTypes"];
         idTypes = response["idTypes"];
         users = response["users"];
         customer.idType = "04";
@@ -373,6 +370,11 @@
         return;
       }
 
+      if (paramValidation.includes(support.obs)) {
+        toast({ type: "warning", message: "Detalle el soporte a realizar " });
+        return;
+      }
+
       // datos del vehiculo
       if (paramValidation.includes(vehicle.vehicleTypeId)) {
         toast({ type: "warning", message: "Seleccione el tipo de Vehículo" });
@@ -583,10 +585,10 @@
             </div>
           </div>
         </div>
-        <hr />
+        <br>
 
         <div class="row">
-          <div class="col">
+          <div class="col-12 col-sm-6 col-md-4 col-lg-4">
             <div class="form-group">
               <label for="country"
                 >Técnico Encargado <span class="text-danger"> *</span></label
@@ -605,9 +607,17 @@
               </select>
             </div>
           </div>
-          <div class="col" />
-          <div class="col" />
-          <div class="col" />
+
+          <div class="col-12 col-sm-6 col-md-8 col-lg-8">
+            <label for="country"
+              >Soporte a realizar <span class="text-danger"> *</span></label
+            >
+            <input
+              type="text"
+              class="form-control"
+              bind:value={support.obs}
+            />
+          </div>
         </div>
         <hr />
 
