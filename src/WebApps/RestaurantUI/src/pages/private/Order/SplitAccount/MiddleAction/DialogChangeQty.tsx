@@ -1,8 +1,8 @@
 import React, { forwardRef } from 'react'
-import { Button, Dialog, DialogActions, DialogContent, Grid, Slide } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, Grid, Slide, Stack, Typography } from '@mui/material';
 import { DataGrid, GridColDef, GridPreProcessEditCellProps, GridRowModel } from '@mui/x-data-grid';
 import { TransitionProps } from '@mui/material/transitions';
-import { useSplitAccountContext } from '../../context'; 
+import { useSplitAccountContext } from '../../context';
 import { SnackbarUtility } from '@/core/utilities';
 const columns: GridColDef[] = [
     { field: 'index', headerName: 'N°', width: 70 },
@@ -35,9 +35,15 @@ const columns: GridColDef[] = [
             return { ...params.props, error: hasError };
         },
     },
+    // {
+    //     field: 'price',
+    //     headerName: 'P. Venta',
+    //     type: 'number',
+    //     width: 110,
+    // },
     {
-        field: 'price',
-        headerName: 'P. Venta',
+        field: 'priceWithVat',
+        headerName: 'P. IVA',
         type: 'number',
         width: 110,
     },
@@ -65,7 +71,7 @@ type DialogChangeQtyProps = {
     setOpen(): void
 }
 const DialogChangeQty = ({ open, setOpen }: DialogChangeQtyProps) => {
-    const { changeOrderItems, setChangeOrderItems } = useSplitAccountContext();
+    const { changeOrderItems, setChangeOrderItems, calculateOrderItemTotal } = useSplitAccountContext();
 
     const { intersection } = useSplitAccountContext();
     const { leftCheckedOrderItems, setLeftCheckedOrderItems } = useSplitAccountContext();
@@ -74,25 +80,27 @@ const DialogChangeQty = ({ open, setOpen }: DialogChangeQtyProps) => {
 
     const leftChecked = intersection(leftCheckedOrderItems, leftOrderItems);
     const { mergeArraysByField, mergeArraysByFieldLeft } = useSplitAccountContext();
- 
+
+    //Totals order items changes QTY
+    const objTempTotal = calculateOrderItemTotal(changeOrderItems)
 
     const processRowUpdate = (newRow: GridRowModel) => {
         const total = newRow["quantity"] * newRow["price"];
         newRow["total"] = total;
-        const mergeFilteredItems = leftChecked.map((orderItem) => { 
+        const mergeFilteredItems = leftChecked.map((orderItem) => {
             return orderItem.id === newRow["id"] ? newRow as any : orderItem
         });
-        
+
         //Actualizamos cantidades modificadas 
         setChangeOrderItems(mergeFilteredItems);
         return newRow;
     }
- 
+
 
     const next = () => {
         const mergeRightOrderItems = mergeArraysByField(changeOrderItems, rightOrderItems, 'id');
         const mergeLeftOrderItems = mergeArraysByFieldLeft(changeOrderItems, leftOrderItems, 'id');
-        
+
         setRightOrderItem(mergeRightOrderItems);
         setLeftOrderItem(mergeLeftOrderItems);
         setLeftCheckedOrderItems([]);
@@ -110,6 +118,23 @@ const DialogChangeQty = ({ open, setOpen }: DialogChangeQtyProps) => {
             open={open}
         >
             <DialogContent dividers>
+                <Grid container alignItems="center">
+                    <Grid item xs>
+                    </Grid>
+                    <Grid item xs>
+                        <Stack direction="column"
+                            justifyContent="center"
+                            alignItems="flex-end">
+                            <Typography variant="h6">
+                                <b>Cant:</b> {objTempTotal.quantity}
+                            </Typography>
+                            <Typography variant="h6">
+                                <b>Total:</b> {objTempTotal.total}
+                            </Typography>
+                        </Stack>
+
+                    </Grid>
+                </Grid>
                 <div style={{ height: 400, width: '100%' }}>
                     <DataGrid
                         rows={changeOrderItems}
@@ -139,7 +164,7 @@ const DialogChangeQty = ({ open, setOpen }: DialogChangeQtyProps) => {
                         </Button>
                     </Grid>
                     <Grid item xs={6}>
-                        <Button variant='outlined'  sx={{
+                        <Button variant='outlined' sx={{
                             height: 60
                         }} size='large' fullWidth onClick={() => setOpen()}>
                             Cerrar
