@@ -59,9 +59,11 @@ DECLARE @idEntidad INT
             ,rr.IngredientId
             ,ri.summary
             ,ISNULL(rr.ExtentId, 0) ExtentId 
+            ,v.precioCosto
             ,extents = (SELECT * FROM #Measures mr WHERE mr.idArticulo = ri.ProductId FOR JSON PATH)
     FROM Restaurant.Recipe rr
     INNER JOIN Restaurant.Ingredient ri ON ri.Id = rr.IngredientId
+    INNER JOIN Inventario.v_Articulo v ON v.idArticulo = ri.ProductId
     WHERE rr.ItemId = @id AND ISNULL(rr.Deleted, 0) != 1
-
 END
+

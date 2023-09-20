@@ -326,7 +326,7 @@ BEGIN
 			INNER JOIN Familia f ON f.idFamilia = sf.idFamilia
 			WHERE sf.idSubFamilia = @idSubFamilia
 
-			IF(@siglaFamilia = 'RES')
+			IF(@siglaFamilia IN ('RES', 'POR'))
 				BEGIN
 					INSERT INTO Restaurant.Item
 					(ProductId, ProductionAreaId, Summary, Cooking, Recipe, Instructions, Content, CreatedAt, UpdatedAt

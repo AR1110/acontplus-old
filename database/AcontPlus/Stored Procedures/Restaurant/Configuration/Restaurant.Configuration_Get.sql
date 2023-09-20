@@ -50,7 +50,7 @@ BEGIN
 	INNER JOIN Familia f ON f.idFamilia = sf.idFamilia
 	WHERE sf.idEntidad = @idEntidad
 	--AND sf.applicationId IS NOT NULL
-    AND f.siglas = 'RES'
+    AND f.siglas IN( 'RES', 'POR')
     AND sf.estado = 1
     ORDER BY sf.idSubFamilia DESC  
     
