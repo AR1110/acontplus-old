@@ -31,12 +31,12 @@ namespace Mechanical.API.Controllers
                     { "userRoleId", User.GetUserRoleId()},
                     { "json", json}
                 };
-                var supports = await _inspectionService.GetAsync(parameters);
-                if (supports == null | string.IsNullOrEmpty((string)supports))
+                var inspections = await _inspectionService.GetAsync(parameters);
+                if (inspections == null | string.IsNullOrEmpty((string)inspections))
                 {
                     return NoContent();
                 }
-                return Ok(supports);
+                return Ok(inspections);
             }
             catch (Exception ex)
             {

@@ -7,5 +7,8 @@ go
 --INSERT INTO Mechanical.VehiclePartType (Description,Code,CreatedAt,[Enabled]) VALUES ('Sistema Eléctrico','SE',GETDATE(),1)
 --INSERT INTO Mechanical.VehiclePartType (Description,Code,CreatedAt,[Enabled]) VALUES ('Sistema de Dirección','SD',GETDATE(),1)
 --INSERT INTO Mechanical.VehiclePartType (Description,Code,CreatedAt,[Enabled]) VALUES ('Sistema de Suspensión','SS',GETDATE(),1)
+--INSERT INTO Mechanical.VehiclePartType (Description,Code,CreatedAt,[Enabled]) VALUES ('Sistema de Luces','SL',GETDATE(),1)
+--INSERT INTO Mechanical.VehiclePartType (Description,Code,CreatedAt,[Enabled]) VALUES ('Cabina','CB',GETDATE(),1)
+--INSERT INTO Mechanical.VehiclePartType (Description,Code,CreatedAt,[Enabled]) VALUES ('Rodamiento','RD',GETDATE(),1)
 
 select * from Mechanical.VehiclePartType
