@@ -112,7 +112,10 @@ const DialogChangeQty = ({ open, setOpen }: DialogChangeQtyProps) => {
     //Totals order items changes QTY
     const objTempTotal = calculateOrderItemTotal(changeOrderItems)
 
-    const processRowUpdate = (newRow: GridRowModel) => {
+    const processRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
+        if(newRow["quantity"]===oldRow["quantity"]){
+            return oldRow;
+        }
         const total = newRow["quantity"] * newRow["price"];
         newRow["total"] = total;
         const mergeFilteredItems = changeOrderItems.map((orderItem) => {
@@ -122,11 +125,7 @@ const DialogChangeQty = ({ open, setOpen }: DialogChangeQtyProps) => {
         //Actualizamos cantidades modificadas 
         setChangeOrderItems(mergeFilteredItems);
         return newRow;
-    }
-
-
-
-
+    } 
 
     const handleCellClick = (params: GridCellParams, event: React.MouseEvent) => {
 

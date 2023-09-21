@@ -1,44 +1,53 @@
 import React, { forwardRef, useState } from 'react'
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Slide, Stack, Typography, styled } from '@mui/material';
+import {
+    Box,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Grid,
+    Slide,
+    TextField,
+    Typography,
+    styled
+} from '@mui/material';
 import {
     DataGrid,
     GridCellModes,
     GridCellModesModel,
     GridCellParams,
     GridColDef,
-    GridPreProcessEditCellProps,
     GridRowModel,
     GridValueGetterParams
 } from '@mui/x-data-grid';
 import { TransitionProps } from '@mui/material/transitions';
 import { useSplitOrderContext } from '../../context';
 import { SaveIcon } from '@/core/components/IconsMaterial';
+import CustomerSearch from '@/core/components/Customer/CustomerSearch';
+import ProductSearch from '@/core/components/Product/ProductSearch';
+import { v4 as uuidv4 } from 'uuid';
+import { ITEM_TYPE_CODE } from '@/core/constants';
+import { productService } from '@/core/services';
+import { Measure, ProductPVPReadDto } from '@/core/models';
+import { SnackbarUtility } from '@/core/utilities';
+import Swal from 'sweetalert2';
+
 const columns: GridColDef[] = [
     { field: 'index', headerName: 'N°', width: 70 },
-    { field: 'description', headerName: 'Descripción', width: 250 }, 
+    { field: 'code', headerName: 'Código', width: 120 },
+    {
+        field: 'description',
+        headerName: 'Descripción',
+        width: 290,
+        editable: true
+    },
     {
         field: 'quantity',
         headerName: 'Cant.',
         type: 'number',
-        width: 130,
-        editable: true,
-        preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
-            let hasError = false;
-            if (!params.props.value || params.props.value < 1) {
-                hasError = true;
-            }
-            if (params.props.value > params.row.quantityTemp) {
-                hasError = true;
-            }
-            return { ...params.props, error: hasError };
-        },
+        width: 100,
     },
-    // {
-    //     field: 'price',
-    //     headerName: 'P. Venta',
-    //     type: 'number',
-    //     width: 110,
-    // },
     {
         field: 'priceWithVat',
         headerName: 'P. IVA',
@@ -78,7 +87,7 @@ const Transition = forwardRef(function Transition(
     },
     ref: React.Ref<unknown>,
 ) {
-    return <Slide direction="up" ref={ref} {...props} />;
+    return <Slide direction="down" ref={ref} {...props} />;
 });
 
 
@@ -90,37 +99,96 @@ type DialogCustomOrderItemProps = {
 
 const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) => {
     const {
+        dataForm,
+        leftOrder,
+        leftCheckedOrderItems,
         changeOrderItems,
         setChangeOrderItems,
-        setLeftCheckedOrderItems,
-        calculateOrderItemTotal
+        calculateOrderItemTotal,
+        setRightOrderData,
+        rightOrder
     } = useSplitOrderContext();
-
-    const { leftOrderItems, setLeftOrderItem } = useSplitOrderContext();
-    const { rightOrderItems, setRightOrderItem } = useSplitOrderContext();
-
-    const { mergeArraysByField, mergeArraysByFieldLeft } = useSplitOrderContext();
     const [cellModesModel, setCellModesModel] = useState<GridCellModesModel>({});
 
 
     //Totals order items changes QTY
     const objTempTotal = calculateOrderItemTotal(changeOrderItems)
 
-    const processRowUpdate = (newRow: GridRowModel) => {
-        const total = newRow["quantity"] * newRow["price"];
-        newRow["total"] = total;
-        const mergeFilteredItems = changeOrderItems.map((orderItem) => {
-            return orderItem.id === newRow["id"] ? newRow as any : orderItem
-        });
 
-        //Actualizamos cantidades modificadas 
-        setChangeOrderItems(mergeFilteredItems);
-        return newRow;
+
+    const joinOrderItemTotal = () => {
+        return leftCheckedOrderItems.reduce((total, orderItem) => {
+            total.taxValue += orderItem.taxValue
+            total.quantity += orderItem.quantity;
+            total.price += orderItem.price;
+            total.priceWithVat += orderItem.priceWithVat;
+            total.discount = orderItem.discount
+            total.total = orderItem.total;
+            total.bodegaId = orderItem.bodegaId;
+            return total;
+        }, {
+            taxValue: 0,
+            quantity: 0,
+            price: 0,
+            priceWithVat: 0,
+            discount: 0,
+            total: 0,
+            bodegaId: 0,
+        })
     }
 
+    const onChangeProductSearch = (productId: number) => {
+        productService.findForSale(productId).then(response => {
+            const { product, measures } = response;
+            const measureData = measures.find(measure => measure.measureId === product.measureId) as Measure;  //Medida         
+            const taxRateData = dataForm.taxRates.find(item => item.taxRateCode === product.taxRateCode); // Tarifa Impuesto 
+            const taxData = dataForm.taxes.find(tax => tax.code === taxRateData?.taxCode); // Impuesto IVA-ICE 
+            const taxId = taxData?.taxId ?? 0 //id Impuesto 
 
+            const taxPercentId = taxRateData?.taxRateId ?? 0; //Id TipoIva
 
+            const { taxValue, price, discount, total, bodegaId, priceWithVat } = joinOrderItemTotal();
+            const { feeId } = measureData.pvps[0] as ProductPVPReadDto
 
+            const obj = {
+                index: 0,
+                productId,
+                id: 0,
+                uuid: uuidv4(),
+                orderId: leftOrder.orderId,
+                itemId: 0,
+                taxId,
+                taxPercentId,
+                taxValue,
+                quantity: 1,
+                cost: product.costPrice, //Precio Costo
+                price,
+                discount,
+                total,
+                obs: "",
+                feeId,
+                bodegaId,
+                description: product.description,
+                code: product.productCode,
+                s3ObjectUrl: "",
+                carryInventory: false,
+                priceWithVat,
+                discountTotal: 0,
+                taxes: [{
+                    uuid: uuidv4(),
+                    taxId: taxId,
+                    taxPercentId: taxPercentId,
+                    taxBase: price,
+                    taxValue: taxValue,
+                }],
+                pvps: [],
+                itemTypeCode: ITEM_TYPE_CODE.ITEM,
+                envioSri: true
+            }
+            setChangeOrderItems([obj]);
+        })
+
+    }
 
     const handleCellClick = (params: GridCellParams, event: React.MouseEvent) => {
 
@@ -133,7 +201,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
             return;
         }
 
-        if (params.field === "quantity") {
+        if (params.field === "description") {
 
             setCellModesModel((prevModel) => {
                 return {
@@ -166,16 +234,55 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
         setCellModesModel(newModel);
     }
 
-    //Agrega en la tabla cuenta dividual
-    const next = () => {
-        const mergeRightOrderItems = mergeArraysByField(changeOrderItems, rightOrderItems, 'id');
-        const mergeLeftOrderItems = mergeArraysByFieldLeft(changeOrderItems, leftOrderItems, 'id');
+    const processRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
+        if (newRow["description"] === oldRow["description"]) {
+            return oldRow;
+        }
+        newRow["description"] = newRow["description"].toUpperCase()
+        const mergeFilteredItems = changeOrderItems.map((orderItem) => {
+            console.log(orderItem.id, newRow["id"])
+            return orderItem.id === newRow["id"] ? newRow as any : orderItem
+        });
+        //Actualizamos cantidades modificadas 
+        setChangeOrderItems(mergeFilteredItems);
 
-        setRightOrderItem(mergeRightOrderItems);
-        setLeftOrderItem(mergeLeftOrderItems);
-        setLeftCheckedOrderItems([]);
-        setChangeOrderItems([])
-        setOpen();
+        return newRow;
+    }
+
+
+    const saveAsInvoice = async () => {
+        try {
+            if (!(rightOrder.customerCompanyId > 0)) {
+                SnackbarUtility.warning('Seleccione el cliente');
+                return
+            }
+
+            if (changeOrderItems.length === 0) {
+                SnackbarUtility.warning('El detalle no puede ser vacio');
+                return
+            }
+            if(changeOrderItems.some(or=>!(or.envioSri))){
+                SnackbarUtility.warning('No has ingresado detalle personalizado');
+                return
+            }
+
+            const { isConfirmed } = await Swal.fire({
+                title: `Guardar`,
+                html: `Esta seguro de guardar como Factura? </br>
+                <small>Ya no será posible modificar la venta para hacer cambios, tendrás que cancelar esta y crear una nueva.!</small>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'No, cancelar!'
+            })
+
+            if (!isConfirmed) return
+            console.log('invoice')
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     return (
@@ -189,36 +296,72 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
             <DialogTitle>
                 {"Detalle Personalizado"}
             </DialogTitle>
+            <Typography variant="h6" sx={{
+                position: 'absolute',
+                right: 8,
+                top: 15,
+                mr: 3
+            }}>
+                <b>Total:</b> {objTempTotal.total}
+            </Typography>
             <DialogContent dividers>
+                <Grid container spacing={1}>
+                    <Grid item xs={12}>
+                        <CustomerSearch customerCompanyId={rightOrder.customerCompanyId} customerName='' onChangeCustomer={(data) => {
+                            if (data) {
+                                setRightOrderData({
+                                    ...rightOrder,
+                                    customerCompanyId: data.customerCompanyId,
+                                    customerName: data.customerName
+                                })
+                            }
+                        }} />
+                    </Grid>
+                    <Grid item xs={12} marginBottom={1}>
+                        <ProductSearch onChangeProductSearch={onChangeProductSearch} />
+                    </Grid>
+                </Grid>
                 <StyledBox>
                     <DataGrid
-
                         rows={changeOrderItems}
                         columns={columns}
-                        // disableColumnSelector
-                        // disableRowSelectionOnClick
                         initialState={{
                             pagination: {
                                 paginationModel: { page: 0, pageSize: 5 },
                             },
                         }}
+
+                        isCellEditable={(params) => (params.row.envioSri)}
                         cellModesModel={cellModesModel}
                         onCellModesModelChange={handleCellModesModelChange}
                         onCellClick={handleCellClick}
-
-                        pageSizeOptions={[5, 10]}
-                        isCellEditable={(params) => params.row.quantityTemp > 1}
                         processRowUpdate={processRowUpdate}
 
+                        pageSizeOptions={[5, 10]}
                     />
                 </StyledBox>
+                <Box marginBottom={1} marginTop={1}>
+                    <TextField
+                        id="obs"
+                        label="Observación"
+                        name='obs'
+                        onChange={(e) => {
+                            setRightOrderData({
+                                ...rightOrder,
+                                obs: e.target.value
+                            })
+                        }}
+                        fullWidth
+                        multiline
+                    />
+                </Box>
             </DialogContent>
             <DialogActions>
                 <Grid container spacing={1}>
                     <Grid item xs={6}>
                         <Button color='success' variant='contained' sx={{
                             height: 60
-                        }} size='large' fullWidth onClick={next}>
+                        }} size='large' fullWidth onClick={saveAsInvoice} >
                             <SaveIcon />
                             Factura
                         </Button>
@@ -226,7 +369,15 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                     <Grid item xs={6}>
                         <Button color='inherit' variant='outlined' sx={{
                             height: 60
-                        }} size='large' fullWidth onClick={() => setOpen()}>
+                        }} size='large' fullWidth onClick={() => {
+                            setRightOrderData({
+                                ...rightOrder,
+                                customerCompanyId: 0,
+                                customerName: "",
+                                obs: ""
+                            })
+                            setOpen()
+                        }}>
                             Cerrar
                         </Button>
                     </Grid>

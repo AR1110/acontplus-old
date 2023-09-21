@@ -5,6 +5,7 @@ import LeftOrderItem from './LeftOrderItem/LeftOrderItem';
 import RightOrderItem from './RightOrderItem/RightOrderItem';
 import { useSplitOrderContext } from '../context';
 import MiddleAction from './MiddleAction/MiddleAction';
+import { getEstabs } from '@/core/services';
 
 
 type Props = {
@@ -14,7 +15,7 @@ const SplitOrder = ({ id }: Props) => {
     const { fetchOrderData } = useSplitOrderContext();
 
     useEffect(() => {
-        fetchOrderData(id)
+        fetchOrderData(id); 
     }, [])
     return (
         <Grid container spacing={2} justifyContent="center" alignItems="center" columns={16}>

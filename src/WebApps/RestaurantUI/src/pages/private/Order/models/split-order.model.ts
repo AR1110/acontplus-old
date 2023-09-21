@@ -1,6 +1,6 @@
 
 
-import { ItemRead, Order } from "@/core/models"
+import { DataFormSale, ItemRead, Order } from "@/core/models"
 
 // }
 export type LeftOrderItem = ItemRead
@@ -10,6 +10,7 @@ type ChangeOrderItem = ItemRead
 export interface SplitOrderState {
     orderLoading: boolean
     orderError: boolean
+    dataForm: DataFormSale
     leftOrder: Order
     rightOrder: Order
     leftOrderItemsLength: number
@@ -53,5 +54,5 @@ export interface SplitOrderAction {
         total: number
         taxRateCode?: string
         priceWithVat:number
-    }>(arr: T[]): ReturnTypeTotal
+    }>(arr: T[]): ReturnTypeTotal 
 }

@@ -4,6 +4,7 @@ import {
     GET_ORDER_ERROR,
     GET_ORDER_SUCCESS,
     SET_CHANGE_ORDER_ITEMS, 
+    SET_DATA_FORM, 
     SET_LEFT_CHECKED_ORDER_ITEMS, 
     SET_LEFT_ORDER_ITEMS,
     SET_RIGHT_CHECKED_ORDER_ITEMS,
@@ -31,6 +32,11 @@ export const splitOrderReducer = (state: SplitOrderState, action: any): SplitOrd
         case GET_ORDER_ERROR:
             return { ...state, orderError: true, orderLoading: false } 
 
+        case SET_DATA_FORM: 
+            return { 
+                ...state, 
+                dataForm: action.payload
+            } 
         case SET_LEFT_ORDER_ITEMS: {
             return {
                 ...state,

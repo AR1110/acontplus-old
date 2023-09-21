@@ -40,7 +40,7 @@ const columns: GridColDef[] = [
 
 const LeftOrderItemTable = () => {
     const {orderLoading, leftOrderItems, setLeftCheckedOrderItems, setRightCheckedOrderItems } = useSplitOrderContext();
-    console.log(leftOrderItems)
+     
     return (
         <div style={{ height: 400, width: '100%' }}> 
             <DataGrid

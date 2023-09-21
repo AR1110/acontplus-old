@@ -181,7 +181,7 @@ export default function OrderTable() {
                                             {index + 1}
                                         </TableCell>
                                         <TableCell>
-                                            {!(order.documentoId > 0) && (
+                                            {/* {!(order.documentoId > 0) && (
                                                 <Tooltip describeChild title="Transformar a NE O FV">
                                                     <IconButton color="info"
                                                         aria-label="delete"
@@ -190,7 +190,7 @@ export default function OrderTable() {
                                                         <MoveUpIcon />
                                                     </IconButton>
                                                 </Tooltip>
-                                            )}
+                                            )} */}
                                             <IconButton
                                                 aria-label="delete"
                                                 color="error"

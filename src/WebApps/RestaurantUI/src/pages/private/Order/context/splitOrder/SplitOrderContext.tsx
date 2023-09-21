@@ -1,12 +1,13 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
 import { splitOrderReducer } from ".";
 import { SplitOrderAction, SplitOrderState } from "../../models";
-import { orderService } from "@/core/services";
+import { SaleService, getEstabs, orderService } from "@/core/services";
 import {
     GET_ORDER_BEGIN,
     GET_ORDER_ERROR,
     GET_ORDER_SUCCESS,
     SET_CHANGE_ORDER_ITEMS,
+    SET_DATA_FORM,
     SET_LEFT_CHECKED_ORDER_ITEMS,
     SET_LEFT_ORDER_ITEMS,
     SET_RIGHT_CHECKED_ORDER_ITEMS,
@@ -15,7 +16,7 @@ import {
 } from "..";
 
 import { orderReadForUpdateAdapter } from "@/core/adapters";
-import { ItemRead, Order } from "@/core/models";
+import { ItemRead, Order, dataFormInitialState } from "@/core/models";
 import { RoundNumber } from "@/core/utilities";
 import { TAX_RATE_CODE } from "@/core/constants";
 
@@ -24,7 +25,7 @@ import { TAX_RATE_CODE } from "@/core/constants";
 const initialState: SplitOrderState = {
     orderLoading: false,
     orderError: false,
-
+    dataForm: dataFormInitialState,
     leftOrder: {
         orderId: 0,
         establecimientoId: 0,
@@ -78,6 +79,7 @@ const initialActions: SplitOrderAction = {
     fetchOrderData: (id: number) => id,
     intersection: () => [],
     not: () => [],
+
     setRightOrderItem: () => [],
     setLeftOrderItem: () => [],
     setRightOrderData: () => [],
@@ -89,7 +91,7 @@ const initialActions: SplitOrderAction = {
     calculateOrderItemTotal: () => {
         return {
             quantity: 0, subTotalSinImpuestos: 0, tax: 0, total: 0
-        }
+        };
     }
 };
 
@@ -114,6 +116,17 @@ export const SplitOrderProvider = ({ children }: Props) => {
 
     let controller: AbortController;
 
+    const getDataForForm = (establecimientoId: number) => {
+        const establecimientos = getEstabs();
+        const dataEstab = establecimientos.find(estab => estab.idEstablecimiento === establecimientoId)
+
+        SaleService.getDataForForm(JSON.stringify({
+            codEstab: dataEstab?.codEstab
+        })).then(response => { 
+            dispatch({ type: SET_DATA_FORM, payload: response })
+        })
+    }
+
     // Función para cargar datos de pedido
     const fetchOrderData = async (id: number) => {
         try {
@@ -129,7 +142,7 @@ export const SplitOrderProvider = ({ children }: Props) => {
             const response = resultAxios.data;
             const orderData = await orderReadForUpdateAdapter(response)
 
-            console.log(orderData)
+            await getDataForForm(orderData.order.establecimientoId)
             // Actualiza el estado con los datos del pedido
             dispatch({ type: GET_ORDER_SUCCESS, payload: orderData })
 
@@ -183,20 +196,20 @@ export const SplitOrderProvider = ({ children }: Props) => {
         discount: number
         total: number
         taxRateCode?: string
-        priceWithVat:number
+        priceWithVat: number
     }>(payload: T[]) {
         let tax = 0; // Monto del IVA (12%)
-       // let totalPlusVAT = 0; // Total con IVA
-       // let importeTotal = 0; // Importe total con descuento 
+        // let totalPlusVAT = 0; // Total con IVA
+        // let importeTotal = 0; // Importe total con descuento 
 
-        const {quantity, subTotalSinImpuestos, totalNetoIva, importeTotal} = payload.reduce((total, orderItem) => {
+        const { quantity, subTotalSinImpuestos, totalNetoIva, importeTotal } = payload.reduce((total, orderItem) => {
             // Calcular el precio del ítem teniendo en cuenta el descuento
             const itemPrice = orderItem.price - orderItem.discount;
 
             // Calcular el total del ítem
             const itemTotal = itemPrice * orderItem.quantity;
 
-            total.quantity +=orderItem.quantity;
+            total.quantity += orderItem.quantity;
             // Agregar el total del ítem al subtotal sin impuestos
             total.subTotalSinImpuestos += itemTotal;
 
@@ -204,7 +217,7 @@ export const SplitOrderProvider = ({ children }: Props) => {
             if (orderItem.taxRateCode === TAX_RATE_CODE.TWELVE_PERCENT) {
                 total.totalNetoIva += itemTotal;
             }
-            console.log(orderItem.priceWithVat * orderItem.quantity)
+
             total.importeTotal += Number((orderItem.priceWithVat * orderItem.quantity).toFixed(2))
             return total;
         }, {
@@ -218,10 +231,10 @@ export const SplitOrderProvider = ({ children }: Props) => {
         tax = (totalNetoIva * 12) / 100;
 
         // Calcular el total con IVA
-      //  totalPlusVAT = subTotalSinImpuestos + tax;
+        //  totalPlusVAT = subTotalSinImpuestos + tax;
 
         // Calcular el importe total con descuento  
-       // importeTotal = totalPlusVAT;
+        // importeTotal = totalPlusVAT;
 
         return {
             quantity,
@@ -350,7 +363,7 @@ export const SplitOrderProvider = ({ children }: Props) => {
             mergeArraysByFieldLeft,
             setLeftCheckedOrderItems,
             setRightCheckedOrderItems,
-            calculateOrderItemTotal
+            calculateOrderItemTotal,            
         }}>
             {children}
         </SplitOrderContext.Provider>

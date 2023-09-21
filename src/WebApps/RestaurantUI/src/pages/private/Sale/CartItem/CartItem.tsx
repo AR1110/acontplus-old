@@ -30,7 +30,7 @@ export default function CartItem({ index, item }: CartItemProps) {
                     <Grid container spacing={2}>
                         <Grid item>
                             <Avatar
-                                alt="Remy Sharp"
+                                alt="Product"
                                 src={item.s3ObjectUrl}
                                 sx={{ width: 56, height: 56 }}
                             />

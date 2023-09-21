@@ -72,7 +72,7 @@ export default function ItemCard({ item }: ItemCardProps) {
 
 
 
-            if (!product.takesInventory) {
+            if (!product.carryInventory) {
                 addItem();
                 return
             }
@@ -131,7 +131,7 @@ export default function ItemCard({ item }: ItemCardProps) {
                     discountTotal: 0,
                     total: salePrice ?? 0,
                     s3ObjectUrl: product.s3ObjectUrl ? product.s3ObjectUrl : brand_img,
-                    carryInventory: product.takesInventory,
+                    carryInventory: product.carryInventory,
                     bodegaId: order.bodegaId,
                     taxes: [{
                         uuid: uuid,
@@ -143,7 +143,8 @@ export default function ItemCard({ item }: ItemCardProps) {
                     pvps: measureData.pvps,
                     uuid: uuid,
                     obs: "",
-                    itemTypeCode: item.itemTypeCode
+                    itemTypeCode: item.itemTypeCode,
+                    envioSri: false
                 })
             }
 

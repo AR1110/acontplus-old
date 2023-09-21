@@ -5,13 +5,22 @@ import { useState } from 'react';
 import DialogCustomOrderItem from '../DialogCustomOrderItem/DialogCustomOrderItem';
 
 const LeftOrderItem = () => {
-    const { leftOrderItemsLength, leftOrder, leftCheckedOrderItems, calculateOrderItemTotal } = useSplitOrderContext();
+    const { 
+        leftOrderItemsLength, 
+        leftOrder, 
+        leftCheckedOrderItems, 
+        calculateOrderItemTotal,
+        setChangeOrderItems 
+    } = useSplitOrderContext();
+    
     const objTempTotal = calculateOrderItemTotal(leftCheckedOrderItems);
     const [openDialogCustom, setOpenDialogCustom] = useState(false);
 
-    const handleClickOpenDialogCustom = ()=>{
+    const handleClickOpenDialogCustom = ()=>{    
+        setChangeOrderItems(leftCheckedOrderItems)            
         setOpenDialogCustom(true)
     }
+
 
     return (
         <>

@@ -18,7 +18,7 @@ type CustomerSearchProps = {
 const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: CustomerSearchProps) => {
     const [customers, setCustomers] = useState<Array<CustomerReadDto>>([]); 
     const refCustomerCompanyId = useRef(customerCompanyId)
-    console.log(customerCompanyId)
+  
     //Modals 
     const [openCustomerDialog, setOpenCustomerDialog] = useState(false);
 
@@ -46,6 +46,7 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
                 customerCompanyId: customerData?.customerCompanyId ?? 0,
             })  
         }
+        refCustomerCompanyId.current = customerCompanyId > 0 ? customerCompanyId : 0
         setOpenCustomerDialog(false) 
     }
 
@@ -59,8 +60,7 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
                     console.log(customerData)
                     //Gestionar el agregar o actualizar clinte
                     refCustomerCompanyId.current = customerData?.customerCompanyId ?? 0;
-
-                    console.log(customerData?.customerCompanyId ?? 0)
+ 
                     onChangeCustomer({
                         customerName: customerData?.fiscalName ?? "",
                         customerCompanyId: customerData?.customerCompanyId ?? 0,
