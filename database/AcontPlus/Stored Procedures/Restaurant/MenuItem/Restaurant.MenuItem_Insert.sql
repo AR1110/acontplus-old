@@ -19,16 +19,23 @@ AS
 BEGIN
 	SET NOCOUNT ON;
     SET LANGUAGE SPANISH;
-    DECLARE @date    DATETIME = (SELECT dbo.ufnGetDateEcuador())
-            ,@userId INT
+    DECLARE @date           DATETIME = (SELECT dbo.ufnGetDateEcuador())
+            ,@userId        INT
+            ,@productId     INT
+            ,@totalPrecio   NUMERIC(18,5)
+            ,@idTipoIva     INT
+            ,@porcentaje    NUMERIC(18,5)
+            ,@precioCosto   NUMERIC(18,5)
     
     CREATE TABLE #MenuItem(
         id                  INT
         ,menuId             INT
         ,itemId             INT
+        ,feeId              INT
         ,quantity           NUMERIC(18,5)
-        ,percentajeDiscount NUMERIC(18,5)
-        ,total              NUMERIC(18,5)
+        ,discountPercent    NUMERIC(18,5)
+        ,discountValue      NUMERIC(18,5)
+        ,subTotal           NUMERIC(18,5)
     )
 
     IF ISJSON(@menuItem) = 0
@@ -37,31 +44,35 @@ BEGIN
             RETURN
         END
 
-    INSERT INTO #MenuItem(id, menuId, itemId, quantity, percentajeDiscount, total)
+    INSERT INTO #MenuItem(id, menuId, itemId, feeId, quantity, discountPercent,discountValue, subTotal)
     SELECT *
     FROM OPENJSON(@menuItem)
     WITH(
         id                  INT             '$.id'
         ,menuId             INT             '$.menuId'
         ,itemId             INT             '$.itemId'
+        ,feeId              INT             '$.feeId'
         ,quantity           NUMERIC(18,5)   '$.quantity'
-        ,percentajeDiscount NUMERIC(18,5)   '$.percentageDiscount'
-        ,total              NUMERIC(18,5)   '$.total'
+        ,discountPercent    NUMERIC(18,5)   '$.discountPercent'
+        ,discountValue      NUMERIC(18,5)   '$.discountValue'
+        ,subTotal           NUMERIC(18,5)   '$.subtotal'
     )
 
     SET @userId = (SELECT idUsuario FROM V_usuario WHERE idUsuarioRol = @userRoleId)
 
-    INSERT INTO Restaurant.MenuItem(MenuId, ItemId, CreatedAt, UpdatedAt, [Enabled], Deleted, UserId, Quantity, PercentageDiscount, Total)
+    INSERT INTO Restaurant.MenuItem(MenuId,ItemId,FeeId,Quantity,DiscountPercent,DiscountValue,SubTotal,CreatedAt,UpdatedAt,[Enabled],Deleted,UserId)
     SELECT @id
             , mi.itemId
+            , mi.feeId
+            , mi.quantity
+            , mi.discountPercent
+            , mi.discountValue
+            , mi.subTotal
             , @date
             , NULL
             , 1 AS [Enabled] 
             , NULL
-            ,@userId
-            ,mi.quantity
-            ,mi.percentajeDiscount
-            ,mi.total
+            ,@userId            
     FROM #MenuItem mi
     WHERE mi.itemId NOT IN (SELECT ISNULL(rmi.ItemId, 0) FROM Restaurant.MenuItem rmi WHERE rmi.MenuId = @id)
 
@@ -79,10 +90,12 @@ BEGIN
         BEGIN
             UPDATE mri
             SET mri.ItemId              = mi.ItemId
+                ,mri.FeeId              = mi.feeId
                 ,mri.UpdatedAt          = @date
                 ,mri.Quantity           = mi.quantity
-                ,mri.PercentageDiscount = mi.percentajeDiscount
-                ,mri.Total              = mi.total
+                ,mri.DiscountPercent    = mi.discountPercent
+                ,mri.DiscountValue      = mi.discountValue
+                ,mri.SubTotal           = mi.subTotal
             FROM Restaurant.MenuItem mri
             INNER JOIN #MenuItemExits mie ON mie.MenuId = mri.MenuId
             INNER JOIN #MenuItem mi ON mi.itemId = mie.ItemId 
@@ -98,6 +111,27 @@ BEGIN
             INNER JOIN #MenuItemNoExits mi ON mi.MenuId = mri.MenuId
             WHERE mri.Id = mi.Id
         END
+
+        ---- UPDATE -----
+        SELECT @productId       = ProductId
+               ,@totalPrecio    = SUM(mi.Subtotal) 
+               FROM Restaurant.MenuItem mi
+        INNER JOIN Restaurant.Menu m on m.Id = mi.MenuId       
+        WHERE m.Id = @id
+        AND ISNULL(mi.Deleted, 0) != 1
+        GROUP BY m.ProductId
+          
+        SELECT @porcentaje      = ti.porcentaje
+                , @precioCosto  = precioCosto 
+        FROM Inventario.v_Articulo ti WHERE idArticulo = @productId
+               
+        UPDATE ap 
+        SET ap.PrecioVenta          = @totalPrecio
+            ,ap.precioConIva        = (@totalPrecio * (@porcentaje / 100)) + @totalPrecio
+            ,ap.porcentajeUtilidad  = (@precioCosto * (@porcentaje / 100)) + @precioCosto
+        FROM ArticuloPvP ap 
+        WHERE ap.idArticulo = @productId 
+        AND ap.precioPredeterminado = 1
 END
 GO
 

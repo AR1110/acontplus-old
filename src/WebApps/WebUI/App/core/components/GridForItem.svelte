@@ -13,6 +13,10 @@
 
   function loadTabulator(){
     table = new Tabulator(tableComponent, {
+      autoResize:false,
+      columnDefaults:{
+        maxWidth:300,
+      },
       layout: "fitColumns",
       data: tempData,
       reactiveData: true,

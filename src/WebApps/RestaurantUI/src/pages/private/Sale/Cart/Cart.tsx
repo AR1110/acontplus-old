@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Grid, Paper, Stack, TextField, Typography} from '@mui/material'
+import { Box, Button, Divider, Grid, Paper, Stack, TextField, Typography } from '@mui/material'
 import CartItem from '../CartItem/CartItem'
 import { useCheckoutStore, useLoaderStore, useSaleStore } from '@/stores';
 import Swal from 'sweetalert2';
@@ -99,13 +99,7 @@ const Cart = () => {
 
         const summaryResult = summaryToApi(order);
         const itemsResult = itemToApi(cartItems);
-        const taxesResult = cartItems.flatMap(item => item.taxes);
-        // const payments = {
-        //     formaPagoId: dataForm.paymentTypes.find(pay=>pay.code==="EFE")?.paymentTypeId,
-        //     total: checkout.voucher.payingAmount,
-        //     abono: checkout.voucher.receivedAmount,
-        //     cambio: checkout.voucher.changeReturn
-        // }
+        const taxesResult = cartItems.flatMap(item => item.taxes); 
         const data = {
             ...summaryResult,
             updateOrder: (order.orderId > 0) && codDoc === DOC_TYPE.OR,
@@ -138,7 +132,7 @@ const Cart = () => {
                 if (response.code === "1") {
                     SnackbarUtility.success(response.message);
                     //Order
-                    if (codDoc === DOC_TYPE.OR) { 
+                    if (codDoc === DOC_TYPE.OR) {
                         SharedService.getPrinter(JSON.parse(response.payload))
                         resetForm();
                         return
@@ -374,7 +368,7 @@ const Cart = () => {
                         </>
                     )
                 }
-            </Grid> 
+            </Grid>
         </Paper>
     )
 }

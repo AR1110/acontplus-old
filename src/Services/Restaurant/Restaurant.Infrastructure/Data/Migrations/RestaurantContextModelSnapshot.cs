@@ -212,6 +212,10 @@ namespace Restaurant.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("UI_IngredientType");
+
                     b.ToTable("IngredientType", "Restaurant");
                 });
 
@@ -246,9 +250,6 @@ namespace Restaurant.Infrastructure.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(max)");
 
-                    b.Property<int?>("ItemTypeId")
-                        .HasColumnType("int");
-
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
@@ -271,8 +272,6 @@ namespace Restaurant.Infrastructure.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ItemTypeId");
 
                     b.HasIndex("ProductionAreaId");
 
@@ -318,6 +317,10 @@ namespace Restaurant.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("UI_ItemType");
+
                     b.ToTable("ItemType", "Restaurant");
                 });
 
@@ -352,6 +355,10 @@ namespace Restaurant.Infrastructure.Data.Migrations
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
+
+                    b.Property<string>("PromotionDays")
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
 
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
@@ -396,8 +403,17 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
 
+                    b.Property<decimal?>("DiscountPercent")
+                        .HasColumnType("numeric(18,5), null");
+
+                    b.Property<decimal?>("DiscountValue")
+                        .HasColumnType("numeric(18,5), null");
+
                     b.Property<bool>("Enabled")
                         .HasColumnType("bit");
+
+                    b.Property<int>("FeeId")
+                        .HasColumnType("int");
 
                     b.Property<int>("ItemId")
                         .HasColumnType("int");
@@ -405,14 +421,11 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<int>("MenuId")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("PercentageDiscount")
-                        .HasColumnType("numeric(18,5)");
-
                     b.Property<decimal?>("Quantity")
-                        .HasColumnType("numeric(18,5)");
+                        .HasColumnType("numeric(18,5), null");
 
-                    b.Property<decimal?>("Total")
-                        .HasColumnType("numeric(18,5)");
+                    b.Property<decimal?>("Subtotal")
+                        .HasColumnType("numeric(18,5), null");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -467,6 +480,10 @@ namespace Restaurant.Infrastructure.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("UI_MenuType");
 
                     b.ToTable("MenuType", "Restaurant");
                 });
@@ -636,6 +653,9 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
+                    b.Property<bool?>("Paid")
+                        .HasColumnType("bit");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric(18,5), not null");
 
@@ -759,7 +779,102 @@ namespace Restaurant.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("UI_ProductionArea");
+
                     b.ToTable("ProductionArea", "Restaurant");
+                });
+
+            modelBuilder.Entity("Restaurant.Core.Entities.Promotion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CodEstab")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Promotion", "Restaurant");
+                });
+
+            modelBuilder.Entity("Restaurant.Core.Entities.PromotionMenu", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<int>("DayCode")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MenuId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PromotionId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MenuId");
+
+                    b.HasIndex("PromotionId");
+
+                    b.ToTable("PromotionMenu", "Restaurant");
                 });
 
             modelBuilder.Entity("Restaurant.Core.Entities.Recipe", b =>
@@ -896,15 +1011,9 @@ namespace Restaurant.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Restaurant.Core.Entities.Item", b =>
                 {
-                    b.HasOne("Restaurant.Core.Entities.ItemType", "ItemType")
-                        .WithMany()
-                        .HasForeignKey("ItemTypeId");
-
                     b.HasOne("Restaurant.Core.Entities.ProductionArea", "ProductionArea")
                         .WithMany()
                         .HasForeignKey("ProductionAreaId");
-
-                    b.Navigation("ItemType");
 
                     b.Navigation("ProductionArea");
                 });
@@ -995,6 +1104,25 @@ namespace Restaurant.Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("Restaurant.Core.Entities.PromotionMenu", b =>
+                {
+                    b.HasOne("Restaurant.Core.Entities.Menu", "Menu")
+                        .WithMany()
+                        .HasForeignKey("MenuId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Restaurant.Core.Entities.Promotion", "Promotion")
+                        .WithMany()
+                        .HasForeignKey("PromotionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Menu");
+
+                    b.Navigation("Promotion");
                 });
 
             modelBuilder.Entity("Restaurant.Core.Entities.Recipe", b =>

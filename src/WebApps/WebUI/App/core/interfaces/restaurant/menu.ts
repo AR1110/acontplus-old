@@ -8,4 +8,5 @@ export interface Menu {
   content?: string;
   startDate?: string;
   endDate?: string;
+  promotionDays?: string;
 }

@@ -41,3 +41,8 @@ export enum TAX_RATE_CODE {
     TAX_EXEMPT = "7",
     DIFFERENTIATED_TAX = "8",
 }
+
+export enum ITEM_TYPE_CODE {
+    MENU = "MENU",
+    ITEM = "ITEM"
+}

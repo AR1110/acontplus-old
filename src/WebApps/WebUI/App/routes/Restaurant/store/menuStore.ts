@@ -2,8 +2,6 @@ import type { Menu } from "$core/interfaces/restaurant/menu";
 import { writable } from "svelte/store";
 import { hideLoader, showLoader } from "$core/utils/loading-spinner";
 import { MenuService } from "$core/services/restaurant/menu-service";
-import { itemService } from "$core/services/restaurant/item-service";
-import { MenuItemService } from "$core/services/restaurant/menu-item-service";
 
 type StateModal = {
   isOpen: boolean;
@@ -14,9 +12,8 @@ type StateModal = {
 type State = {
   menus: any;
   dataUpdate: Menu;
-  items: any;
   menuTypes: any;
-  menuItems: any;
+  days: any;
 };
 
 const initialState: State = {
@@ -29,9 +26,8 @@ const initialState: State = {
     typeId: 0,
     content: "",
   },
-  items: [],
   menuTypes: [],
-  menuItems: [],
+  days: [],
 };
 
 const initialModalState: StateModal = {
@@ -56,6 +52,7 @@ const menuStore = () => {
           ...state,
           menus: response["menus"],
           menuTypes: response["menuTypes"],
+          days: response["promotionDays"],
         }));
       })
       .finally(() => {
@@ -63,36 +60,7 @@ const menuStore = () => {
       });
   };
 
-  const getItems = (id: number) => {
-    MenuItemService.getById(id).then((response) => {
-      if (response) {
-        update((state) => ({
-          ...state,
-          menuItems: response["menuItems"],
-        }));
-      }
-    });
-  };
-
-  const searchItem = (params?: object) => {
-    let json = { pageIndex: 1, pageSize: 10, tipo: 1, ...params };
-
-    update((state) => {
-      return { ...state, items: [] };
-    });
-
-    itemService.get(JSON.stringify(json)).then((response) => {
-      if (response) {
-        update((state) => ({
-          ...state,
-          items: response["items"],
-        }));
-      }
-    });
-  };
-
   const openingModal = (menu?: Menu) => {
-    getItems(menu.id);
     update((state) => ({
       ...state,
       isOpen: true,
@@ -100,7 +68,7 @@ const menuStore = () => {
     }));
   };
 
-  return { set, subscribe, update, get, getItems, searchItem, openingModal };
+  return { set, subscribe, update, get, openingModal };
 };
 
 export const useMenuStore = menuStore();

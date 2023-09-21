@@ -82,7 +82,7 @@ async function orderReadForUpdateAdapter(obj: any) {
             code: orderItem.codigo,
             s3ObjectUrl: orderItem.s3ObjectUrl,
             takesInventory: orderItem.llevaInventario,
-            priceWithVat: 0,
+            priceWithVat: orderItem.priceWithVat,
             discountTotal: 0,
             taxes: [],
             pvps: pvps,

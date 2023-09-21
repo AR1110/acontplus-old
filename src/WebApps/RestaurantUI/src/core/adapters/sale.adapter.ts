@@ -16,7 +16,10 @@ function itemToApi(items: ItemRead[]): Array<ItemPostDto> {
         price: item.price,
         discount: item.discount,
         total: item.total,
-        obs: item.obs
+        obs: item.obs,
+        itemTypeCode: item.itemTypeCode,
+        menuId: item.menuId,
+        bodegaId: item.bodegaId
     }))
 }
 

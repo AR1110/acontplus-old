@@ -10,7 +10,7 @@ GO
 -- Create date: 2023-08-14
 -- Description:	sp for insert order restaurant
 -- =============================================
---Restaurant.Order_Insert 139, '{"data":{"orderId":0,"establecimientoId":454,"puntoEmisionId":124,"bodegaId":128,"tableId":3,"customerCompanyId":0,"subtotalSinImpuestos":2.5,"tax":0.3,"taxPercent":0,"discount":0,"total":2.8,"items":[{"orderItemId":0,"uuid":"af774dae-f690-4d55-bc01-a461c743cb8e","itemId":3,"feeId":528,"taxId":1,"taxPercentId":2,"taxValue":0.3,"quantity":1,"cost":12.4,"price":2.5,"discount":0,"total":2.5,"obs":""}],"taxes":[{"uuid":"af774dae-f690-4d55-bc01-a461c743cb8e","taxId":1,"taxPercentId":2,"taxBase":2.5,"taxValue":0.3}],"payments":{},"tip":0,"obs":"","codDoc":"OR","quickSale":false,"fechaEmision":"2023-09-13T15:06:24.843Z","uuid":"ceef1bb9-89db-4f98-af7a-fb19c75cd4f6","updateOrder":false,"saveDoc":false}}'
+--Restaurant.Order_Insert 139, '{"orderId":0,"establecimientoId":454,"puntoEmisionId":124,"bodegaId":0,"tableId":3,"customerCompanyId":63914,"subtotalSinImpuestos":10,"tax":1.2,"taxPercent":0,"discount":0,"total":11.2,"items":[{"orderItemId":457,"uuid":"f378ddc7-79b9-4a89-82d0-59a0e2eb2114","itemId":3,"feeId":528,"taxId":1,"taxPercentId":2,"taxValue":0.3,"quantity":4,"cost":12.4,"price":2.5,"discount":0,"total":10,"obs":"","bodegaId": 128}],"taxes":[],"payments":{},"tip":0,"obs":"UNA MAGNIFICA PRUEBA","codDoc":"FV","quickSale":true,"fechaEmision":"2023-09-19T03:32:24.575Z","uuid":"cb237cd1-86c4-423a-8a11-2a5cf87c9568","updateOrder":false,"saveDoc":true,"itemsToPay":[{"orderItemId":457,"uuid":"f378ddc7-79b9-4a89-82d0-59a0e2eb2114","itemId":3,"feeId":528,"taxId":1,"taxPercentId":2,"taxValue":0.3,"quantity":4,"cost":12.4,"price":2.5,"discount":0,"total":10,"obs":""}]}'
 CREATE OR ALTER PROCEDURE Restaurant.Order_Insert @userRoleId INT
 ,@json NVARCHAR(MAX)
 AS
@@ -78,7 +78,9 @@ BEGIN
         BEGIN
             DECLARE @tblItems AS TABLE(
                 uuid UNIQUEIDENTIFIER NOT NULL,
-                itemId INT NOT NULL,
+                itemTypeCode VARCHAR(5) NULL,
+                menuId INT NULL,
+                itemId INT NULL,
                 taxId INT NOT NULL,
                 taxPercentId INT NOT NULL,
                 feeId INT NOT NULL,
@@ -88,14 +90,17 @@ BEGIN
                 price NUMERIC(18,5) NOT NULL,
                 discount NUMERIC(18,5),
                 total NUMERIC(18,5) NOT NULL,
-                obs VARCHAR(500)
+                obs VARCHAR(500) NULL,
+                bodegaId int not null
             )
 
-            INSERT INTO @tblItems(uuid, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs)
-            SELECT uuid, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs
+            INSERT INTO @tblItems(uuid, itemTypeCode, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs, bodegaId)
+            SELECT uuid, itemTypeCode, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs, bodegaId
             FROM OPENJSON(@itemsJson)
                 WITH (
                         uuid UNIQUEIDENTIFIER '$.uuid',
+                        itemTypeCode VARCHAR(5) '$.itemTypeCode',
+                        menuId INT '$.menuId',
                         itemId INT '$.itemId',
                         taxId INT '$.taxId',
                         taxPercentId INT '$.taxPercentId',
@@ -107,9 +112,11 @@ BEGIN
                         discount NUMERIC(18,5) '$.discount',
                         total NUMERIC(18,5) '$.total',
                         feeId INT         '$.feeId',
-                        obs NVARCHAR(500) '$.obs'
+                        obs NVARCHAR(500) '$.obs',
+                        bodegaId int '$.bodegaId'
                       )
-            IF (SELECT COUNT(*) FROM @tblItems) = 0
+
+            IF NOT EXISTS(SELECT 1 FROM @tblItems)
                 BEGIN
                     SELECT Common.ufnSpResponse('0', 'No se pudo recuperar el detalle', NULL)
                     RETURN
@@ -153,33 +160,42 @@ BEGIN
                     SET @serie = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @sequence, DEFAULT)) 
                     
                     INSERT INTO Restaurant.[Order](EstablecimientoId, puntoEmisionId, TableId, [Sequence], Serie, CustomerCompanyId
-                                                    , Tax, Discount, Total, [Enabled], UserId, obs, CreatedAt)
+                                                    , Tax, Discount, Total, [Enabled], UserId, obs, CreatedAt, Uuid)
                     VALUES(@establecimientoId, @puntoEmisionId, @tableId, @sequence, @serie, @customerCompanyId
-                           , @tax, @discount, @total, 1, @userId, ISNULL(@obs, NULL), dbo.ufnGetDateEcuador())
+                           , @tax, @discount, @total, 1, @userId, ISNULL(@obs, NULL), dbo.ufnGetDateEcuador(), @uuid)
 
 	                SET @orderId = (SELECT SCOPE_IDENTITY())
-
-                    PRINT @orderId 
                     
                     INSERT INTO Restaurant.OrderItem(OrderId, Uuid, ItemId, TaxId, TaxPercentId, TaxValue, Quantity, Cost
-                                                    , Price, Discount, Total, [Enabled], UserId, FeeId, Obs, BodegaId)
+                                                    , Price, Discount, Total, [Enabled], UserId, FeeId, Obs, BodegaId, ItemTypeId, MenuId)
                     SELECT @orderId
-                            , uuid
-                            , itemId
-                            , taxId
-                            , taxPercentId
-                            , taxValue
-                            , quantity
-                            , cost
-                            , price
-                            , discount
-                            , total
-                            , 1
-                            , @userId
-                            , feeId
-                            , obs
-                            , ISNULL(@bodegaId, 0)
-                     FROM @tblItems
+                            ,uuid
+                            ,IIF(itemId = 0, NULL, itemId)
+                            ,taxId
+                            ,taxPercentId
+                            ,taxValue
+                            ,quantity
+                            ,cost
+                            ,price
+                            ,discount
+                            ,total
+                            ,1
+                            ,@userId
+                            ,feeId
+                            ,obs
+                            ,i.bodegaId
+                            ,(SELECT TOP 1 it.Id FROM Restaurant.ItemType it WHERE i.itemTypeCode = it.Code)
+                            ,IIF(i.menuId = 0, NULL, i.menuId)
+                     FROM @tblItems i
+
+                    print @orderId
+
+                    IF NOT EXISTS (SELECT 1 FROM Restaurant.OrderItem WHERE OrderId = @orderId)
+                        BEGIN
+                            ROLLBACK TRAN
+                            SELECT Common.ufnSpResponse('0', 'Error al guardar items', (SELECT * FROM @tblItems for json path))	
+                            RETURN
+                        END
                     
                     DECLARE @totalCook INT = 0
 
@@ -197,7 +213,7 @@ BEGIN
                     UPDATE cf 
                     SET cf.ultimaSecuencia = vcf.secuencial + 1 
                     FROM ConfiguracionDocumento cf WITH (ROWLOCK)
-                    JOIN (  SELECT cd.idConfiguracionDocumento
+                    JOIN (SELECT cd.idConfiguracionDocumento
                                     , cd.secuencial
 			                FROM Config.v_ConfigDocumento cd
 				            INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab AND cd.idPuntoEmision = @puntoEmisionId

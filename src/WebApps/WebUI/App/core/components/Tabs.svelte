@@ -5,6 +5,9 @@
   const handleKeyDowm = (tabValue) => (activeTabValue = tabValue);
 </script>
 
+
+<!-- href="#{item.value}" -->
+
 <ul class="nav nav-tabs" id="myTab" role="tablist">
   {#each items as item}
     <li class="nav-item">
@@ -12,7 +15,7 @@
         class="nav-link {activeTabValue === item.value ? 'active' : ''}"
         id="{item.value}-tab"
         data-toggle="tab"
-        href="#{item.value}"
+        href="{item.value}"
         role="tab"
         aria-controls={item.value}
         aria-expanded="true"

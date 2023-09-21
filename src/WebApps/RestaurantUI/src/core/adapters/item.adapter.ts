@@ -12,11 +12,11 @@ function pvpReadAdapter(pvp: RawProductPVPData): ProductPVPReadDto {
 }
 
 function itemReadAdapter(items: RawItemData[]): Array<ItemReadDto> {     
-
-    
-    return items.map((item) => ({
-        itemId: item.id, //idItem
-        menuId: item.id, //MenuId para combos 
+ 
+    return items.map((item, index) => ({
+        index,
+        itemId:  item.itemTypeCode==='ITEM' ? item.id : 0, //idItem
+        menuId: item.itemTypeCode ==='MENU' ? item.id : 0, //MenuId para combos 
         userId: item.userId,
         productId: item.productId,
         description: item.descripcion,
@@ -28,7 +28,8 @@ function itemReadAdapter(items: RawItemData[]): Array<ItemReadDto> {
         vatRate: item.tipoIva,
         itemType: item.tipoArticulo,           
         totalRecords: item.totalRecords,
-        pvps: pvpReadAdapter(JSON.parse(item.pvp)) 
+        pvps: pvpReadAdapter(JSON.parse(item.pvp)),
+        itemTypeCode: item.itemTypeCode
     })
     )
 }

@@ -54,19 +54,17 @@ const CustomerSearch = () => {
         <>
             <Autocomplete
                 value={order.customerName}
-                onInputChange={handleInputChange}
-                onChange={(_, newValue) => { 
-                    const customerData = customers.find(
-                        customer => customer.fiscalName === newValue
-                    );
+                onInputChange={handleInputChange} 
+                onChange={(_e, _v, _r, details) => {
+                    const customerData = details?.option;
                     //Gestionar el agregar o actualizar clinte
                     customerCompanyId.current = customerData?.customerCompanyId ?? 0;
-
+ 
                     setOrder({
                         ...order,
                         customerName: customerData?.fiscalName ?? "",
                         customerCompanyId: customerData?.customerCompanyId ?? 0,
-                    })  
+                    })   
                 }}
                
                 selectOnFocus

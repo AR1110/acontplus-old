@@ -1,7 +1,6 @@
 <script lang="ts">
   import Items from "../Items/page.svelte";
   import Menus from "../Menus/page.svelte";
-  //import Recipe from "../Recipe/page.svelte";
   import Ingredient from "../Ingredient/page.svelte";
   import Tabs from "$core/components/Tabs.svelte";
   let items = [
@@ -16,11 +15,6 @@
       value: 2,
       component: Items,
     },
-    // {
-    //   label: "Receta",
-    //   value: 3,
-    //   component: Recipe,
-    // },
     {
       label: "Ingredientes",
       value: 3,

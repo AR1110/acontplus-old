@@ -61,10 +61,13 @@ BEGIN
     ,@iva DECIMAL(18,5)
     ,@recargo DECIMAL(18,5)
     ,@transporte DECIMAL(18,5)
+    ,@itemsToPay NVARCHAR(MAX)
 
     DECLARE @tblItems AS TABLE(
         uuid            UNIQUEIDENTIFIER NOT NULL,
-        itemId          INT NOT NULL,
+        itemTypeId INT NULL,
+        menuId INT NULL,
+        itemId INT NULL,
         taxId           INT NOT NULL,
         taxPercentId    INT NOT NULL,
         feeId           INT NOT NULL,
@@ -74,7 +77,8 @@ BEGIN
         price           NUMERIC(18,5) NOT NULL,
         discount        NUMERIC(18,5),
         total           NUMERIC(18,5) NOT NULL,
-        obs             VARCHAR(500)
+        obs             VARCHAR(500),
+        bodegaId INT    
     )
 
     DECLARE @tblTaxes AS TABLE (
@@ -98,7 +102,8 @@ BEGIN
         ,@total                 = total
         ,@obs                   = obs
         ,@codDoc                = codDoc       
-        ,@tableId               = tableId           
+        ,@tableId               = tableId    
+        ,@itemsToPay            = itemsToPay
     FROM OPENJSON(@json)
     WITH(establecimientoId      INT '$.establecimientoId',
         puntoEmisionId          INT '$.puntoEmisionId',
@@ -114,34 +119,100 @@ BEGIN
         total                   NUMERIC(18,5) '$.total',
         obs                     VARCHAR(500) '$.obs',
         codDoc                  VARCHAR(2) '$.codDoc',       
-        tableId                 INT '$.tableId'
+        tableId                 INT '$.tableId',
+        itemsToPay              NVARCHAR(MAX) '$.itemsToPay' AS JSON
     )
 
-    --- Insert Items ---
-    INSERT INTO @tblItems(uuid, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total)
-    SELECT Uuid
-        , ItemId
-        , TaxId
-        , TaxPercentId
-        , FeeId
-        , TaxValue
-        , Quantity
-        , Cost
-        , Price
-        , Discount
-        , Total
-    FROM Restaurant.OrderItem WHERE OrderId = @orderId
+    IF (ISJSON(@itemsToPay) = 1 AND LEN(RTRIM(LTRIM(@itemsToPay))) > 0)
+        BEGIN
+             --- Insert Items ---
+            INSERT INTO @tblItems(uuid, bodegaId, itemTypeId, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total)
+            SELECT oi.Uuid
+                ,oi.bodegaId
+                ,itemTypeId
+                ,menuId
+                ,ItemId
+                ,TaxId
+                ,TaxPercentId
+                ,FeeId
+                ,TaxValue
+                ,ij.quantity
+                ,Cost
+                ,ij.price
+                ,ij.discount
+                ,ij.total
+            FROM Restaurant.OrderItem oi WITH(NOLOCK)
+                JOIN (SELECT uuid, quantity, price, discount, total FROM OPENJSON(@itemsToPay)
+                                    WITH (
+                                            uuid UNIQUEIDENTIFIER '$.uuid',
+                                            quantity NUMERIC(18,2) '$.quantity',
+                                            price NUMERIC(18,5) '$.price',
+                                            discount NUMERIC(18,5) '$.discount',
+                                            total NUMERIC(18,5) '$.total'
+                                          )
+                      ) AS ij ON ij.uuid = oi.uuid
 
 
-    --- Insert Taxes---
-    INSERT INTO @tblTaxes(uuid, taxId, taxPercentId, taxBase, taxValue)
-    SELECT Uuid
-        , TaxId
-        , TaxPercentId
-        , Price
-        , TaxValue
-    FROM Restaurant.OrderItem WHERE OrderId = @orderId
+            --- Insert Taxes---
+            INSERT INTO @tblTaxes(uuid, taxId, taxPercentId, taxBase, taxValue)
+            SELECT oi.Uuid
+                , TaxId
+                , TaxPercentId
+                , Price
+                , TaxValue
+            FROM Restaurant.OrderItem oi WITH(NOLOCK)
+            JOIN (SELECT uuid FROM OPENJSON(@itemsToPay)
+                                    WITH (
+                                            uuid UNIQUEIDENTIFIER '$.uuid'
+                                          )
+                      ) AS ij ON ij.uuid = oi.uuid
+
+            UPDATE oi SET oi.Paid = 1
+            FROM Restaurant.OrderItem oi WITH(ROWLOCK)
+            JOIN (SELECT uuid FROM OPENJSON(@itemsToPay)
+                                    WITH (
+                                            uuid UNIQUEIDENTIFIER '$.uuid'
+                                          )
+                      ) AS ij ON ij.uuid = oi.uuid
+        END
+    ELSE
+        BEGIN
+            --- Insert Items ---
+            INSERT INTO @tblItems(uuid, bodegaId, itemTypeId, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total)
+            SELECT Uuid
+                ,@bodegaId
+                ,itemTypeId
+                ,menuId
+                ,ItemId
+                ,TaxId
+                ,TaxPercentId
+                ,FeeId
+                ,TaxValue
+                ,Quantity
+                ,Cost
+                ,Price
+                ,Discount
+                ,Total
+            FROM Restaurant.OrderItem
+            WHERE OrderId = @orderId
+
+
+            --- Insert Taxes---
+            INSERT INTO @tblTaxes(uuid, taxId, taxPercentId, taxBase, taxValue)
+            SELECT Uuid
+                , TaxId
+                , TaxPercentId
+                , Price
+                , TaxValue
+            FROM Restaurant.OrderItem WHERE OrderId = @orderId
+        END
     
+    IF NOT EXISTS(SELECT 1 FROM @tblItems)
+        BEGIN
+            SELECT '0' code, 'No se pudieron recuperar los detalles' as 'message'
+            RETURN
+        END
+
     --- Select ---
     SELECT @companyId = idEntidad
         , @ruc = rucEmpresa
@@ -226,10 +297,20 @@ BEGIN
                     ,idTarifa, idTipoIva, iva, precioConIva, valorDescuento, porcentajeDescuento, total, nota, fechaRegistro, uuid)
 
                     SELECT @documentoId
-                        ,a.idArticulo
-                        ,@bodegaId
-                        ,a.idMedida
-                        ,a.descripcion
+                        ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 m.ProductId FROM Restaurant.Menu m WHERE m.id = i.MenuId) ELSE
+                            (SELECT TOP 1 ii.ProductId FROM Restaurant.Item ii WHERE ii.id = i.ItemId)
+                        END 
+                        ,bodegaId
+                        ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 a.idMedida FROM Restaurant.Menu m
+                            INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
+                        WHERE m.id = i.MenuId) ELSE
+                            (SELECT TOP 1 a.idMedida FROM Restaurant.Item ii  INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo WHERE ii.id = i.ItemId)
+                        END 
+                        ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 a.descripcion FROM Restaurant.Menu m
+                            INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
+                        WHERE m.id = i.MenuId) ELSE
+                            (SELECT TOP 1 a.descripcion FROM Restaurant.Item ii  INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo WHERE ii.id = i.ItemId)
+                        END 
                         ,i.quantity
                         ,i.price
                         ,i.feeId
@@ -243,8 +324,9 @@ BEGIN
                         ,dbo.ufnGetDateEcuador()
                         ,i.uuid
                     FROM @tblItems i
-                    INNER JOIN Restaurant.v_Item ri ON i.itemId = ri.Id
-                    INNER JOIN Inventario.v_Articulo a ON ri.ProductId = a.idArticulo
+                        INNER JOIN Restaurant.ItemType it ON i.itemTypeId = it.Id
+                    --INNER JOIN Restaurant.v_Item ri ON i.itemId = ri.Id
+                    --INNER JOIN Inventario.v_Articulo a ON ri.ProductId = a.idArticulo
                     INNER JOIN Sri.TarifaImpuesto sti ON i.taxPercentId = sti.idTarifaImpuesto
 
                     INSERT INTO Ventas.NotaEntregaImpuesto(TaxId, TaxPercentId, [Percent], TaxBase, TaxValue, Uuid, UserId)                    
@@ -294,10 +376,17 @@ BEGIN
                                        ,idTipoIva, porcentajeIva, iva, uuid)
 
             SELECT @documentoId
-                ,a.idArticulo
+                 ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 m.ProductId FROM Restaurant.Menu m WHERE m.id = i.MenuId) ELSE
+                            (SELECT TOP 1 ii.ProductId FROM Restaurant.Item ii WHERE ii.id = i.ItemId)
+                        END 
                 ,i.feeId
-                ,@bodegaId
-                ,a.idMedida
+                ,bodegaId
+                 ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 a.idMedida FROM Restaurant.Menu m
+                            INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
+                        WHERE m.id = i.MenuId) ELSE
+                            (SELECT TOP 1 a.idMedida FROM Restaurant.Item ii  INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo WHERE ii.id = i.ItemId)
+                        END 
+        
                 ,0
                 ,i.quantity
                 ,i.cost
@@ -307,15 +396,28 @@ BEGIN
                 ,0
                 ,i.total
                 ,i.obs
-                ,a.descripcion
-                ,a.precioCosto
+                                 ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 a.descripcion FROM Restaurant.Menu m
+                            INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
+                        WHERE m.id = i.MenuId) ELSE
+                            (SELECT TOP 1 a.descripcion FROM Restaurant.Item ii  INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo WHERE ii.id = i.ItemId)
+                        END
+                                 ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 a.precioCosto FROM Restaurant.Menu m
+                            INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
+                        WHERE m.id = i.MenuId) ELSE
+                            (SELECT TOP 1 a.precioCosto FROM Restaurant.Item ii  INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo WHERE ii.id = i.ItemId)
+                        END
                 ,(SELECT TOP 1 idTipoIva FROM TipoIva ti WHERE CAST(ti.codigoPorcentaje AS varchar(1)) = sti.codigo) 
                 ,0
-                ,(a.porcentaje/100) * total
+                ,(CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 a.porcentaje FROM Restaurant.Menu m
+                            INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
+                        WHERE m.id = i.MenuId) ELSE
+                            (SELECT TOP 1 a.porcentaje FROM Restaurant.Item ii  INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo WHERE ii.id = i.ItemId)
+                        END/100) * total
                 ,i.uuid
             FROM @tblItems i
-            INNER JOIN Restaurant.v_Item ri ON i.itemId = ri.Id
-            INNER JOIN Inventario.v_Articulo a ON ri.ProductId = a.idArticulo
+                 INNER JOIN Restaurant.ItemType it ON i.itemTypeId = it.Id
+            --INNER JOIN Restaurant.v_Item ri ON i.itemId = ri.Id
+            --INNER JOIN Inventario.v_Articulo a ON ri.ProductId = a.idArticulo
             INNER JOIN Sri.TarifaImpuesto sti ON i.taxPercentId = sti.idTarifaImpuesto
 
             INSERT INTO Ventas.FacturaImpuesto(TaxId, TaxPercentId, [Percent], TaxBase, TaxValue, Uuid, UserId)                    
@@ -395,26 +497,77 @@ BEGIN
             ,@precioTotalSinImpuesto    NUMERIC(18,5)
             ,@codDocTran                VARCHAR(2)
 
+            DECLARE @tblInventory AS TABLE (
+                idArticulo         INT
+                ,idBodega                  INT
+                ,idMedida                  INT
+                ,idTarifa                  INT
+                ,cantidad                  NUMERIC(18,2)
+                ,precioUnitario            NUMERIC(18,5)
+                ,precioCosto               NUMERIC(18,5) 
+                ,precioTotalSinImpuesto    NUMERIC(18,5)
+            )
+
+            --INSERT ITEMS
+            INSERT INTO @tblInventory(idArticulo, idBodega, idMedida, idTarifa, cantidad, precioUnitario, precioCosto, precioTotalSinImpuesto)
+            SELECT a.idArticulo, bodegaId, a.idMedida, i.feeId, i.quantity, i.price, a.precioCosto, i.total
+            FROM @tblItems i
+                INNER JOIN Restaurant.v_Item ri ON i.itemId = ri.Id
+                INNER JOIN Articulo a WITH (NOLOCK) ON ri.idArticulo = a.idArticulo 
+            WHERE a.llevaInventario = 1
+
+            --INSERT Menu
+            INSERT INTO @tblInventory(idArticulo, idBodega, idMedida, idTarifa, cantidad, precioUnitario, precioCosto, precioTotalSinImpuesto)
+            SELECT a.idArticulo, bodegaId, a.idMedida, i.feeId, i.quantity, i.price, a.precioCosto, i.total
+            FROM @tblItems i
+                INNER JOIN Restaurant.Menu m ON i.menuId = m.Id
+                INNER JOIN Articulo a WITH (NOLOCK) ON m.ProductId = a.idArticulo 
+            WHERE a.llevaInventario = 1
+            
+            --INSERT MENU ITEMS
+            INSERT INTO @tblInventory(idArticulo, idBodega, idMedida, idTarifa, cantidad, precioUnitario, precioCosto, precioTotalSinImpuesto)
+            SELECT a.idArticulo, bodegaId, a.idMedida, i.feeId, i.quantity, i.price, a.precioCosto, i.total
+            FROM @tblItems i
+                INNER JOIN Restaurant.Menu m ON i.menuId = m.Id
+                INNER JOIN Restaurant.MenuItem mi ON m.Id = mi.MenuId
+                INNER JOIN Restaurant.Item ii ON mi.itemId = ii.Id
+                INNER JOIN Articulo a WITH (NOLOCK) ON ii.ProductId = a.idArticulo 
+            WHERE a.llevaInventario = 1
+
+            --INSERT INGREDIENTS ITMES
+            INSERT INTO @tblInventory(idArticulo, idBodega, idMedida, idTarifa, cantidad, precioUnitario, precioCosto, precioTotalSinImpuesto)
+            SELECT a.idArticulo, bodegaId, a.idMedida, i.feeId, r.quantity * i.quantity, i.price, a.precioCosto, i.total
+            FROM @tblItems i
+                INNER JOIN Restaurant.Recipe r ON i.itemId = r.ItemId
+                INNER JOIN Restaurant.Ingredient ing WITH (NOLOCK) ON r.IngredientId = ing.Id
+                INNER JOIN Inventario.v_Articulo a On ing.ProductId = a.idArticulo 
+            WHERE a.llevaInventario = 1
+
+             --INSERT MENU ITEMS INGREDIENTS
+            INSERT INTO @tblInventory(idArticulo, idBodega, idMedida, idTarifa, cantidad, precioUnitario, precioCosto, precioTotalSinImpuesto)
+            SELECT a.idArticulo, bodegaId, a.idMedida, i.feeId, i.quantity, i.price, a.precioCosto, i.total
+            FROM @tblItems i
+                INNER JOIN Restaurant.Menu m ON i.menuId = m.Id
+                INNER JOIN Restaurant.MenuItem mi ON m.Id = mi.MenuId
+                INNER JOIN Restaurant.Item ii ON mi.itemId = ii.Id
+                 INNER JOIN Restaurant.Recipe r ON ii.Id = r.ItemId
+                INNER JOIN Restaurant.Ingredient ing WITH (NOLOCK) ON r.IngredientId = ing.Id
+                INNER JOIN Articulo a WITH (NOLOCK) ON ing.ProductId = a.idArticulo 
+            WHERE a.llevaInventario = 1
+
             SET @codDocTran = (SELECT IIF(@codDoc = 'FV', 'FE', 'NE'))
 
-            IF EXISTS (SELECT TOP 1 1 FROM @tblItems i
-                                      INNER JOIN Restaurant.v_Item ri ON i.itemId = ri.Id
-                                      INNER JOIN Articulo a WITH (NOLOCK) ON ri.idArticulo = a.idArticulo 
-                                      WHERE a.llevaInventario = 1)
-                BEGIN 
+            --IF EXISTS (SELECT TOP 1 1 FROM @tblItems i
+            --                          INNER JOIN Restaurant.v_Item ri ON i.itemId = ri.Id
+            --                          INNER JOIN Articulo a WITH (NOLOCK) ON ri.idArticulo = a.idArticulo 
+            --                          WHERE a.llevaInventario = 1)
+            --    BEGIN 
+
+            IF EXISTS (SELECT 1 FROM @tblInventory)
+                BEGIN
                     DECLARE cursor_inventory CURSOR LOCAL FOR
-                    SELECT a.idArticulo
-                        , @bodegaId
-                        , a.idMedida
-                        , i.feeId
-                        , i.quantity
-                        , i.price
-                        , a.precioCosto
-                        , i.total
-                    FROM @tblItems i
-                    INNER JOIN Restaurant.v_Item ri ON i.itemId = ri.Id
-                    INNER JOIN Articulo a WITH (NOLOCK) ON ri.idArticulo = a.idArticulo 
-                    WHERE a.llevaInventario = 1
+                   
+                    SELECT idArticulo, idBodega, idMedida, idTarifa, cantidad, precioUnitario, precioCosto, precioTotalSinImpuesto FROM @tblInventory
 
                     OPEN cursor_inventory
                         FETCH NEXT FROM cursor_inventory INTO @idArticulo
@@ -433,45 +586,46 @@ BEGIN
                     CLOSE cursor_inventory
                     DEALLOCATE cursor_inventory  
                 END
-            IF EXISTS (SELECT 1 FROM Restaurant.Recipe r WITH (NOLOCK)
-                                    INNER JOIN @tblItems i On r.ItemId = i.itemId 
-                                    INNER JOIN Restaurant.Ingredient ing WITH (NOLOCK) ON r.IngredientId = ing.Id
-                                    INNER JOIN Inventario.v_Articulo a On ing.ProductId = a.idArticulo
-                                    WHERE a.llevaInventario = 1
-                                    )
-                BEGIN
-                    DECLARE cursor_inventory_ingredient CURSOR LOCAL FOR
-                    SELECT a.idArticulo
-                        , @bodegaId
-                        , a.idMedida
-                        , i.feeId
-                        , r.quantity * i.quantity
-                        , i.price
-                        , a.precioCosto
-                        , i.total
-                    FROM @tblItems i
-                        INNER JOIN Restaurant.Recipe r ON i.itemId = r.ItemId
-                        INNER JOIN Restaurant.Ingredient ing WITH (NOLOCK) ON r.IngredientId = ing.Id
-                        INNER JOIN Inventario.v_Articulo a On ing.ProductId = a.idArticulo 
-                    WHERE a.llevaInventario = 1
+                --END
+            --IF EXISTS (SELECT 1 FROM Restaurant.Recipe r WITH (NOLOCK)
+            --                        INNER JOIN @tblItems i On r.ItemId = i.itemId 
+            --                        INNER JOIN Restaurant.Ingredient ing WITH (NOLOCK) ON r.IngredientId = ing.Id
+            --                        INNER JOIN Inventario.v_Articulo a On ing.ProductId = a.idArticulo
+            --                        WHERE a.llevaInventario = 1
+            --                        )
+            --    BEGIN
+            --        DECLARE cursor_inventory_ingredient CURSOR LOCAL FOR
+            --        SELECT a.idArticulo
+            --            , @bodegaId
+            --            , a.idMedida
+            --            , i.feeId
+            --            , r.quantity * i.quantity
+            --            , i.price
+            --            , a.precioCosto
+            --            , i.total
+            --        FROM @tblItems i
+            --            INNER JOIN Restaurant.Recipe r ON i.itemId = r.ItemId
+            --            INNER JOIN Restaurant.Ingredient ing WITH (NOLOCK) ON r.IngredientId = ing.Id
+            --            INNER JOIN Inventario.v_Articulo a On ing.ProductId = a.idArticulo 
+            --        WHERE a.llevaInventario = 1
 
-                    OPEN cursor_inventory_ingredient
-                        FETCH NEXT FROM cursor_inventory_ingredient INTO @idArticulo
-                                                            , @idBodega
-                                                            , @idMedida
-                                                            , @idTarifa
-                                                            , @cantidad
-                                                            , @precioUnitario
-                                                            , @precioCosto
-                                                            , @precioTotalSinImpuesto
-                        WHILE @@FETCH_STATUS = 0
-                            BEGIN
-                                EXEC Inventario.Transaccion_Insert 'S', @codDocTran, @fechaEmision, @documentoId,  @idArticulo, @idBodega ,@idMedida,@idTarifa,@cantidad,@precioUnitario,@precioCosto,@precioTotalSinImpuesto, @userId
-                                FETCH NEXT FROM cursor_inventory_ingredient INTO @idArticulo,@idBodega,@idMedida, @idTarifa,@cantidad,@precioUnitario,@precioCosto,@precioTotalSinImpuesto
-                            END
-                    CLOSE cursor_inventory_ingredient
-                    DEALLOCATE cursor_inventory_ingredient
-                END
+            --        OPEN cursor_inventory_ingredient
+            --            FETCH NEXT FROM cursor_inventory_ingredient INTO @idArticulo
+            --                                                , @idBodega
+            --                                                , @idMedida
+            --                                                , @idTarifa
+            --                                                , @cantidad
+            --                                                , @precioUnitario
+            --                                                , @precioCosto
+            --                                                , @precioTotalSinImpuesto
+            --            WHILE @@FETCH_STATUS = 0
+            --                BEGIN
+            --                    EXEC Inventario.Transaccion_Insert 'S', @codDocTran, @fechaEmision, @documentoId,  @idArticulo, @idBodega ,@idMedida,@idTarifa,@cantidad,@precioUnitario,@precioCosto,@precioTotalSinImpuesto, @userId
+            --                    FETCH NEXT FROM cursor_inventory_ingredient INTO @idArticulo,@idBodega,@idMedida, @idTarifa,@cantidad,@precioUnitario,@precioCosto,@precioTotalSinImpuesto
+            --                END
+            --        CLOSE cursor_inventory_ingredient
+            --        DEALLOCATE cursor_inventory_ingredient
+            --    END
         END
 
     SET @serieDocument = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @nroDocumento, DEFAULT))

@@ -381,7 +381,7 @@ BEGIN
 			    INNER JOIN Familia f ON f.idFamilia = sf.idFamilia
 			    WHERE sf.idSubFamilia = @idSubFamilia
 
-                IF(@siglaFamilia = 'RES' AND @siglaFamilia != 'ING')
+                IF(@siglaFamilia IN('RES', 'POR') AND @siglaFamilia != 'ING')
                     BEGIN
                         IF NOT EXISTS(SELECT TOP 1 1 FROM Restaurant.Item WHERE ProductId = @id)
                             BEGIN 

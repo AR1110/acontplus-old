@@ -18,6 +18,7 @@ function ModalSubFamiliaCtrl($scope, $uibModalInstance, articuloSvc, subFamiliaS
             console.log(error);
         }
     }
+    
 
 
     $scope.getFamilias();

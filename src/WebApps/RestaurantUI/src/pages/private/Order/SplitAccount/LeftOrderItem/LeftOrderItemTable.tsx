@@ -1,7 +1,8 @@
 
-import { DataGrid, GridColDef, GridRowModel } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import CustomNoRowsOverlay from '@/core/components/CustomNoRowsOverlay/CustomNoRowsOverlay';
-import { useSplitAccountContext } from '../../context';  
+import { useSplitAccountContext } from '../../context';
+import { Alert, AlertTitle } from '@mui/material';
 
 const columns: GridColDef[] = [
     { field: 'index', headerName: 'N°', width: 70 },
@@ -10,31 +11,36 @@ const columns: GridColDef[] = [
         field: 'quantity',
         headerName: 'Cant.',
         type: 'number',
-        width: 50, 
-        editable: true,
+        width: 50,
+        editable: false,
     },
+    // {
+    //     field: 'price',
+    //     headerName: 'P. Venta',
+    //     type: 'number',
+    //     width: 100,
+    // },
     {
-        field: 'price',
-        headerName: 'P. Venta',
+        field: 'priceWithVat',
+        headerName: 'P. IVA',
         type: 'number',
         width: 100,
+        valueGetter: (params: GridValueGetterParams) => (params.row.priceWithVat).toFixed(2)
     },
     {
-        field: 'total',
+        field: 'totalIVA',
         headerName: 'Total',
         type: 'number',
         width: 100,
+        valueGetter: (params: GridValueGetterParams) => (params.row.quantity * params.row.priceWithVat).toFixed(2)
     },
 ];
- 
 
-const LeftOrderItemTable = () => { 
-    const { leftOrderItems, setCheckedOrderItem} = useSplitAccountContext(); 
-  
-    const processRowUpdate = (newRow: GridRowModel) => {
-        console.log(newRow)           
-    }
 
+
+const LeftOrderItemTable = () => {
+    const { leftOrderItems, setLeftCheckedOrderItems, setRightCheckedOrderItems } = useSplitAccountContext();
+    console.log(leftOrderItems)
     return (
         <div style={{ height: 400, width: '100%' }}>
             <DataGrid
@@ -48,15 +54,20 @@ const LeftOrderItemTable = () => {
                     },
                 }}
                 slots={{ noRowsOverlay: CustomNoRowsOverlay }}
-                pageSizeOptions={[5, 10]} 
+                pageSizeOptions={[5, 10]}
                 checkboxSelection
                 rowSelection
-                onRowSelectionModelChange ={(ids)=>{
-                    const selectedIDs = new Set(ids); 
+                loading={leftOrderItems.length === 0}
+                onRowSelectionModelChange={(ids) => {
+                    const selectedIDs = new Set(ids);
                     const selectedRows = leftOrderItems.filter((row) => selectedIDs.has(row.id));
-                    setCheckedOrderItem(selectedRows)
-                }} 
-                 
+                    console.log(selectedRows)
+                    setRightCheckedOrderItems([])
+                    setLeftCheckedOrderItems(selectedRows)
+                }}
+
+            // isCellEditable={(params) => params.row.quantity > 1}
+            //processRowUpdate={processRowUpdate}
             />
         </div>
     );

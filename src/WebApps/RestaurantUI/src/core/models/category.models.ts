@@ -1,12 +1,12 @@
 export interface RawCategoryData {
     idSubFamilia: number
     descripcion: string,
-    codigo: string
+    codigo: "COM" | ""
     s3ObjectUrl?: string
 }
 export interface CategoryReadDto {
     idSubFamilia: number
     description: string,
-    code: string
+    code: "COM" | ""
     s3ObjectUrl?: string
 }

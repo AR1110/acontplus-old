@@ -3,6 +3,12 @@ import react from "@vitejs/plugin-react";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  server: {
+    https: {
+      key: './/public/ssl/server.key',
+      cert:'./public/ssl/server.crt'
+    }
+  },
   resolve: {
     alias: {
       "@": "/src", 

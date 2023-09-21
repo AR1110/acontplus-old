@@ -43,8 +43,8 @@ namespace Compras.API.Controllers
             return Ok(_response);
         }
 
-        [HttpPost("Insert/{idDocumento}/{json}")]
-        public async Task<IActionResult> Insert(int idDocumento, string json)
+        [HttpPost("Insert/{id}")]
+        public async Task<IActionResult> Insert(int id, string json)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
@@ -52,7 +52,7 @@ namespace Compras.API.Controllers
             {
                 await _db.SPExecute("Recepcion.Dato_Adicional_Articulo_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("idDocumento", idDocumento);
+                _db.AddDynamicParam("idDocumento", id);
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDefault();
             }
@@ -69,7 +69,7 @@ namespace Compras.API.Controllers
             return Ok(_response);
         }
 
-        [HttpPost("Delete/{idInfoAdicional}")]
+        [HttpDelete("Delete/{idInfoAdicional}")]
         public async Task<IActionResult> Delete(int idInfoAdicional)
         {
             GenericResponse _response = new GenericResponse();

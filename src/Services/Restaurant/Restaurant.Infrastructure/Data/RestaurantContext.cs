@@ -30,6 +30,8 @@ namespace Restaurant.Infrastructure.Data
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<OrderKitchen> OrderKitchens { get; set; }
         public DbSet<OrderDocument> OrderDocuments { get; set; }
+        public DbSet<Promotion> promotions { get; set; }
+        public DbSet<PromotionMenu> promotionMenus { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -65,18 +67,29 @@ namespace Restaurant.Infrastructure.Data
             builder.ApplyUtcDateTimeConverter();
 
             builder.Entity<ItemType>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<ItemType>().HasIndex(x => x.Code).HasDatabaseName("UI_ItemType").IsUnique();
+
             builder.Entity<Item>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Recipe>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+
             builder.Entity<IngredientType>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<IngredientType>().HasIndex(x => x.Code).HasDatabaseName("UI_IngredientType").IsUnique();
+
             builder.Entity<Ingredient>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+
             builder.Entity<ProductionArea>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<ProductionArea>().HasIndex(x => x.Code).HasDatabaseName("UI_ProductionArea").IsUnique();
+
             builder.Entity<Floor>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Room>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<AppTable>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
 
             builder.Entity<MenuType>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<MenuType>().HasIndex(x => x.Code).HasDatabaseName("UI_MenuType").IsUnique();
+
             builder.Entity<Menu>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Menu>().HasMany(x => x.MenuItems).WithOne(m => m.Menu).HasForeignKey(m => m.MenuId);
+
             builder.Entity<MenuItem>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
 
             builder.Entity<Order>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
@@ -87,6 +100,10 @@ namespace Restaurant.Infrastructure.Data
             builder.Entity<OrderKitchen>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             
             builder.Entity<OrderDocument>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+
+            builder.Entity<Promotion>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+
+            builder.Entity<PromotionMenu>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
 
         }
         public override int SaveChanges()
