@@ -47,7 +47,7 @@ const promotionStore = () => {
     showLoader();
     update((state) => ({ ...state, promotions: [], days: [] }));
 
-    let json = { pageIndex: 1, pageSize: 9 };
+    let json = { pageIndex: 1, pageSize: 9, tipo: 1 };
     PromotionService.get(JSON.stringify(json)).then((response) => {
       if (response) {
         update((state) => ({

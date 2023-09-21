@@ -9,7 +9,7 @@ GO
 -- Author:		Ivan Paz
 -- Create date: 2023-08-10
 -- Description: sp for get restaurant menus
--- Restaurant.Promotion_Get 139, '', ''
+-- Restaurant.Promotion_Get 139, '{"tipo": 1}', ''
 -- =============================================
 CREATE OR ALTER PROCEDURE Restaurant.Promotion_Get
 @userRoleId INT
@@ -18,8 +18,13 @@ CREATE OR ALTER PROCEDURE Restaurant.Promotion_Get
 AS
 BEGIN
 	SET NOCOUNT ON;
-    
-    SET @tableNames = 'promotions,days'
+    DECLARE @tipo INT 
+
+    SELECT @tipo = tipo FROM OPENJSON(@json) WITH(tipo INT '$.tipo')
+
+    IF @tipo = 1
+        BEGIN
+            SET @tableNames = 'promotions,days'
 	SELECT p.Id
            ,p.CodEstab
            ,p.Description
@@ -29,5 +34,8 @@ BEGIN
 	FROM Restaurant.Promotion p WITH (NOLOCK)
 
     SELECT * FROM Dia
+        END
+    
+    
 END
 GO
