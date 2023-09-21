@@ -1,7 +1,7 @@
 
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import CustomNoRowsOverlay from '@/core/components/CustomNoRowsOverlay/CustomNoRowsOverlay';
-import { useSplitAccountContext } from '../../context'; 
+import { useSplitOrderContext } from '../../context'; 
 
 const columns: GridColDef[] = [
     { field: 'index', headerName: 'N°', width: 70},
@@ -28,7 +28,7 @@ const columns: GridColDef[] = [
  
 
 const RightOrderItemTable = () => {  
-    const { rightOrderItems, setRightCheckedOrderItems, setLeftCheckedOrderItems} = useSplitAccountContext(); 
+    const { rightOrderItems, setRightCheckedOrderItems, setLeftCheckedOrderItems} = useSplitOrderContext(); 
 
     return (
         <div style={{ height: 400, width: '100%' }}>

@@ -1,10 +1,18 @@
-import { Card, CardContent, Divider, Grid, Stack, Typography } from '@mui/material'
-import { useSplitAccountContext } from '../../context'
+import { Button, Card, CardContent, Divider, Grid, Stack, Typography } from '@mui/material'
+import { useSplitOrderContext } from '../../context'
 import LeftOrderItemTable from './LeftOrderItemTable';
+import { useState } from 'react';
+import DialogCustomOrderItem from '../DialogCustomOrderItem/DialogCustomOrderItem';
 
 const LeftOrderItem = () => {
-    const { leftOrder, leftCheckedOrderItems, calculateOrderItemTotal } = useSplitAccountContext();
-    const objTempTotal = calculateOrderItemTotal(leftCheckedOrderItems)
+    const { leftOrderItemsLength, leftOrder, leftCheckedOrderItems, calculateOrderItemTotal } = useSplitOrderContext();
+    const objTempTotal = calculateOrderItemTotal(leftCheckedOrderItems);
+    const [openDialogCustom, setOpenDialogCustom] = useState(false);
+
+    const handleClickOpenDialogCustom = ()=>{
+        setOpenDialogCustom(true)
+    }
+
     return (
         <>
             <Card>
@@ -35,12 +43,12 @@ const LeftOrderItem = () => {
                             {
                                 leftCheckedOrderItems.length > 0 && (
                                     <Stack direction="column"
-                                    justifyContent="center"
-                                    alignItems="flex-end">
-                                        <Typography variant="body2" color="text.secondary">
+                                        justifyContent="center"
+                                        alignItems="flex-end">
+                                        <Typography variant="body2">
                                             <b>Cant:</b> {objTempTotal.quantity}
-                                        </Typography> 
-                                        <Typography variant="body2" color="text.secondary">
+                                        </Typography>
+                                        <Typography variant="body2">
                                             <b>Total:</b> {objTempTotal.total}
                                         </Typography>
                                     </Stack>
@@ -49,10 +57,26 @@ const LeftOrderItem = () => {
                         </Grid>
                     </Grid>
 
+                    {
+                        leftCheckedOrderItems.length > 0 && leftOrderItemsLength === leftCheckedOrderItems.length && (
+                            <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
+                                <Button size="large" fullWidth variant='contained' onClick={handleClickOpenDialogCustom}>
+                                    Detalle Personalizado
+                                </Button>
+                            </Stack>
+                        )
+                    }
+
+
                     <LeftOrderItemTable />
 
                 </CardContent>
-            </Card>
+            </Card> 
+            {
+                openDialogCustom && <DialogCustomOrderItem open={openDialogCustom} setOpen={()=>{
+                    setOpenDialogCustom(false)
+                }}/>
+            }
         </>
     )
 }

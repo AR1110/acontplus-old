@@ -6,7 +6,8 @@ import {
     itemSearchInitialState,
     DataFormSale,
     dataFormInitialState,
-    orderInitialState
+    orderInitialState,
+    CATEGORY_CODE
 } from "@/core/models";
 import { RoundNumber, SnackbarUtility, addSound, clearSound } from "@/core/utilities";
 import { create } from "zustand";
@@ -14,6 +15,8 @@ import { produce } from 'immer';
 import { productService } from "@/core/services";
 import Swal from "sweetalert2";
 import { useLoaderStore } from ".";
+ 
+ 
 
 type State = {
     itemSearch: ItemSearch
@@ -149,11 +152,18 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                     code: "",
                     description: 'Todos',
                     s3ObjectUrl: ''
-                },{
+                },
+                {
                     idSubFamilia: 0,
-                    code: "COM",
+                    code: CATEGORY_CODE.PROM,
+                    description: 'PROMOCIÓN',
+                    s3ObjectUrl: '/assets/promocion.jpg'
+                },
+                {
+                    idSubFamilia: 0,
+                    code: CATEGORY_CODE.COM,
                     description: 'COMBOS',
-                    s3ObjectUrl: ''
+                    s3ObjectUrl: `/assets/combo.jpg`
                 }, ...dataForm.categories];
                 //customer default
                 if (!(state.order.orderId > 0) && dataForm.customer.customerCompanyId > 0) {

@@ -14,7 +14,7 @@ import {
     styled
 } from '@mui/material'
 import RightOrderItemTable from './RightOrderItemTable'
-import { useSplitAccountContext } from '../../context';
+import { useSplitOrderContext } from '../../context';
 import { ArrowForwardIosIcon, FileCopyRoundedIcon } from '@/core/components/IconsMaterial';
 import { SnackbarUtility } from '@/core/utilities';
 import { DOC_TYPE } from '@/core/constants';
@@ -55,8 +55,8 @@ const StyledAccordionDetails = styled(AccordionDetails)(({ theme }) => ({
 }));
 
 const RightOrderItem = () => {
-    const { leftOrder, rightOrder, setRightOrderData, rightOrderItems } = useSplitAccountContext();
-    const { fetchOrderData } = useSplitAccountContext();
+    const { leftOrder, rightOrder, setRightOrderData, rightOrderItems } = useSplitOrderContext();
+    const { fetchOrderData } = useSplitOrderContext();
     const { showLoader } = useLoaderStore();
 
     const typeActions: { [key: string]: string } = {

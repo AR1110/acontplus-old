@@ -1,21 +1,21 @@
 
 import { Button, Grid } from '@mui/material'
-import { useSplitAccountContext } from '../../context';
+import { useSplitOrderContext } from '../../context';
 import { useState } from 'react';
 import DialogChangeQty from './DialogChangeQty';
 
 
 
 const MiddleAction = () => {
-    const { intersection, not, mergeArraysByFieldLeft, setLeftCheckedOrderItems} = useSplitAccountContext();
-    const {leftCheckedOrderItems, rightCheckedOrderItems} =  useSplitAccountContext(); 
+    const { intersection, not, mergeArraysByFieldLeft, setLeftCheckedOrderItems} = useSplitOrderContext();
+    const {leftCheckedOrderItems, rightCheckedOrderItems} =  useSplitOrderContext(); 
 
-    const { leftOrderItems, setLeftOrderItem } = useSplitAccountContext(); 
-    const { rightOrderItems, setRightOrderItem } = useSplitAccountContext();
+    const { leftOrderItems, setLeftOrderItem } = useSplitOrderContext(); 
+    const { rightOrderItems, setRightOrderItem } = useSplitOrderContext();
     
-    const { setChangeOrderItems } = useSplitAccountContext(); //Setted checked order items when left order have qty greater than 1
+    const { setChangeOrderItems } = useSplitOrderContext(); //Setted checked order items when left order have qty greater than 1
     
-    const {mergeArraysByField} = useSplitAccountContext();
+    const {mergeArraysByField} = useSplitOrderContext();
 
     const leftChecked = intersection(leftCheckedOrderItems, leftOrderItems);
     const rightChecked = intersection(rightCheckedOrderItems, rightOrderItems);

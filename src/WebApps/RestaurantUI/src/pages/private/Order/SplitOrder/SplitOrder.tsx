@@ -3,15 +3,15 @@ import { useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import LeftOrderItem from './LeftOrderItem/LeftOrderItem';
 import RightOrderItem from './RightOrderItem/RightOrderItem';
-import { useSplitAccountContext } from '../context';
+import { useSplitOrderContext } from '../context';
 import MiddleAction from './MiddleAction/MiddleAction';
 
 
 type Props = {
     id: number
 }
-const SplitAccount = ({ id }: Props) => {
-    const { fetchOrderData } = useSplitAccountContext();
+const SplitOrder = ({ id }: Props) => {
+    const { fetchOrderData } = useSplitOrderContext();
 
     useEffect(() => {
         fetchOrderData(id)
@@ -31,4 +31,4 @@ const SplitAccount = ({ id }: Props) => {
     );
 }
 
-export default SplitAccount;
+export default SplitOrder;

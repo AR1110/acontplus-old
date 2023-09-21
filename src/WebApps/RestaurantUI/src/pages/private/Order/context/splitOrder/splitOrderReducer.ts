@@ -11,9 +11,9 @@ import {
     SET_RIGHT_ORDER_ITEMS
 } from "..";
 
-import { SplitAccountState } from "../../models";
+import { SplitOrderState } from "../../models";
 
-export const splitAccountReducer = (state: SplitAccountState, action: any): SplitAccountState => {
+export const splitOrderReducer = (state: SplitOrderState, action: any): SplitOrderState => {
     switch (action.type) {
         case GET_ORDER_BEGIN: {
             return { ...state, orderLoading: true }
@@ -24,7 +24,8 @@ export const splitAccountReducer = (state: SplitAccountState, action: any): Spli
                 ...state,
                 orderLoading: false,
                 leftOrder: order,
-                leftOrderItems: orderItems
+                leftOrderItems: orderItems,
+                leftOrderItemsLength : orderItems.length
             }
         }
         case GET_ORDER_ERROR:

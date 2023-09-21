@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
-import { splitAccountReducer } from ".";
-import { SplitAccountAction, SplitAccountState } from "../../models";
+import { splitOrderReducer } from ".";
+import { SplitOrderAction, SplitOrderState } from "../../models";
 import { orderService } from "@/core/services";
 import {
     GET_ORDER_BEGIN,
@@ -21,7 +21,7 @@ import { TAX_RATE_CODE } from "@/core/constants";
 
 
 // Define el estado inicial del contexto
-const initialState: SplitAccountState = {
+const initialState: SplitOrderState = {
     orderLoading: false,
     orderError: false,
 
@@ -67,13 +67,14 @@ const initialState: SplitAccountState = {
         quickSale: false,
         createdAt: new Date()
     },
+    leftOrderItemsLength: 0,
     leftOrderItems: [],
     rightOrderItems: [],
     changeOrderItems: [],
     leftCheckedOrderItems: [],
     rightCheckedOrderItems: []
 }
-const initialActions: SplitAccountAction = {
+const initialActions: SplitOrderAction = {
     fetchOrderData: (id: number) => id,
     intersection: () => [],
     not: () => [],
@@ -92,8 +93,8 @@ const initialActions: SplitAccountAction = {
     }
 };
 
-// Crea un contexto llamado SplitAccountContext
-export const SplitAccountContext = createContext<SplitAccountState & SplitAccountAction>(
+// Crea un contexto llamado SplitOrderContext
+export const SplitOrderContext = createContext<SplitOrderState & SplitOrderAction>(
     {
         ...initialState,
         ...initialActions
@@ -106,10 +107,10 @@ export const SplitAccountContext = createContext<SplitAccountState & SplitAccoun
 interface Props {
     children: JSX.Element | JSX.Element[]
 }
-export const SpliAccountProvider = ({ children }: Props) => {
+export const SplitOrderProvider = ({ children }: Props) => {
 
     // Utiliza useReducer para gestionar el estado
-    const [state, dispatch] = useReducer(splitAccountReducer, initialState);
+    const [state, dispatch] = useReducer(splitOrderReducer, initialState);
 
     let controller: AbortController;
 
@@ -203,6 +204,7 @@ export const SpliAccountProvider = ({ children }: Props) => {
             if (orderItem.taxRateCode === TAX_RATE_CODE.TWELVE_PERCENT) {
                 total.totalNetoIva += itemTotal;
             }
+            console.log(orderItem.priceWithVat * orderItem.quantity)
             total.importeTotal += Number((orderItem.priceWithVat * orderItem.quantity).toFixed(2))
             return total;
         }, {
@@ -335,7 +337,7 @@ export const SpliAccountProvider = ({ children }: Props) => {
 
     // Proporciona el estado y las funciones del contexto a los componentes hijos
     return (
-        <SplitAccountContext.Provider value={{
+        <SplitOrderContext.Provider value={{
             ...state,
             fetchOrderData,
             intersection,
@@ -351,12 +353,12 @@ export const SpliAccountProvider = ({ children }: Props) => {
             calculateOrderItemTotal
         }}>
             {children}
-        </SplitAccountContext.Provider>
+        </SplitOrderContext.Provider>
     )
 }
 
 // Exporta un hook personalizado para acceder al contexto
 // eslint-disable-next-line react-refresh/only-export-components
-export const useSplitAccountContext = () => {
-    return useContext(SplitAccountContext)
+export const useSplitOrderContext = () => {
+    return useContext(SplitOrderContext)
 }
