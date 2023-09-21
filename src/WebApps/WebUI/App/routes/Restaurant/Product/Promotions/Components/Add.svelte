@@ -11,7 +11,7 @@
   import { hideLoader, showLoader } from "$core/utils/loading-spinner";
   import { PromotionService } from "$core/services/restaurant/promotion-service";
   import { PromotionMenuService } from "$core/services/restaurant/promotion-menu-service";
-
+  import { remove } from "toastr";
 
   // Variables.
   let dataUpdate: Promotion = {
@@ -102,45 +102,53 @@
   };
 
   // Todo: Grid tables configuration.
+  const onRemove = (id) => {
+    promotionMenus = promotionMenus.filter((e) => e.menuId !== id);
+    promotionMenus = [...promotionMenus];
+  };
+
   let productColumns = [
+    {
+      align: "center",
+      field: "id",
+      title: "Id",
+    },
     {
       editable: "never",
       field: "title",
       title: "Menu",
-      with: 300,
-    },
-    {
-      field: "quantity",
-      hozAlign: "center",
-      title: "Cantidad",
-      with: 100,
+      with: 500,
     },
     {
       cellClick: (e, cell) => {
+        onRemove(cell.getData().menuId);
         cell.getRow().delete();
       },
       formatter: "buttonCross",
       hozAlign: "center",
       title: "Opción",
-      width: 300,
+      width: 100,
     },
   ];
 
   // Todo: Save and Update promotion.
   const getPromotionMenu = (id) => {
     showLoader();
-    PromotionMenuService.get(id).then((response) => {
-      if (response) {
-        promotionMenus = response["promotionMenus"];
-      }
-    }).finally(() => {
-      hideLoader();
-    })
+    PromotionMenuService.get(id)
+      .then((response) => {
+        if (response) {
+          promotionMenus = response["promotionMenus"];
+        }
+      })
+      .finally(() => {
+        hideLoader();
+      });
   };
 
   const onPost = () => {
-    dataUpdate.promotionDays = JSON.stringify(daysSelected);
+    if (!onValidation()) return;
 
+    dataUpdate.promotionDays = JSON.stringify(daysSelected);
     let newObject = {
       ...dataUpdate,
       promotionMenus: promotionMenus,
@@ -165,9 +173,10 @@
   };
 
   const onPut = () => {
-    dataUpdate.promotionDays = JSON.stringify(daysSelected);
-    showLoader();
+    if (!onValidation()) return;
 
+    showLoader();
+    dataUpdate.promotionDays = JSON.stringify(daysSelected);
     let newObject = {
       ...dataUpdate,
       promotionMenus: promotionMenus,
@@ -188,6 +197,29 @@
       .finally(() => {
         hideLoader();
       });
+  };
+
+  const onValidation = () => {
+    let isValid = true;
+
+    try {
+      if (validation.includes(dataUpdate.codEstab)) {
+        isValid = false;
+        toast({ type: "warning", message: "Seleccione un establecimiento" });
+      }
+
+      if (validation.includes(dataUpdate.description)) {
+        isValid = false;
+        toast({ type: "warning", message: "Ingrese una descripción" });
+      }
+      return isValid;
+    } catch (error) {
+      isValid = false;
+      toast({
+        type: "warning",
+        message: "Debe llenar los campos obligatorios",
+      });
+    }
   };
 
   // Todo: Modal close function

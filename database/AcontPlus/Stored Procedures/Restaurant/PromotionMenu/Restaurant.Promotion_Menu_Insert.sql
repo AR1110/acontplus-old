@@ -10,6 +10,7 @@ GO
 -- Create date: 2023-13-10
 -- Description: sp for update restaurant menus
 -- =============================================
+--- Restaurant.Promotion_Menu_Insert 139, 4, '[{"id":1,"promotionId":4,"menuId":2,"title":"COMBO POLLO AHUMADO"},{"id":3,"promotionId":4,"menuId":5,"title":"TEST COMBO"},{"id":5,"promotionId":4,"menuId":8,"title":"TEST 06"}]', ''
 CREATE OR ALTER PROCEDURE Restaurant.Promotion_Menu_Insert
 @userRoleId     INT
 ,@promotionId   INT
@@ -34,7 +35,7 @@ BEGIN
     WITH(
         id      INT '$.id'
         ,menuId INT '$.menuId'
-    )
+    )  
 
     SET @userId = (SELECT idUsuario FROM V_usuario WHERE idUsuarioRol = @userRoleId)
 
@@ -47,27 +48,12 @@ BEGIN
             ,@userId
     FROM #PromotionMenu mi
     WHERE mi.MenuId NOT IN (SELECT ISNULL(rmi.MenuId, 0) FROM Restaurant.PromotionMenu rmi WHERE rmi.PromotionId = @promotionId)
-
-    --- VERIFY EXISTS ---
-    SELECT rmi.* INTO #PromotionMenuExists
-    FROM Restaurant.PromotionMenu rmi
-    WHERE rmi.PromotionId = @promotionId AND rmi.MenuId IN (SELECT mi.menuId FROM #PromotionMenu mi)
-
+        
     --- VERIFY NOT EXISTS ---
     SELECT rmi.* INTO #PromotionMenuNoExits
     FROM Restaurant.PromotionMenu rmi
     WHERE rmi.PromotionId = @promotionId AND rmi.MenuId NOT IN (SELECT mi.menuId FROM #PromotionMenu mi)
-
-    IF EXISTS(SELECT TOP 1 1 FROM #PromotionMenuExists)
-        BEGIN
-            UPDATE mri
-            SET mri.MenuId  = mi.menuId                
-            FROM Restaurant.PromotionMenu mri
-            INNER JOIN #PromotionMenuExists mie ON mie.MenuId = mri.MenuId
-            INNER JOIN #PromotionMenu mi ON mi.menuId = mie.MenuId
-            WHERE mri.Id = mi.Id
-        END
-
+               
     IF EXISTS(SELECT TOP 1 1 FROM #PromotionMenuNoExits)
         BEGIN
             UPDATE mri
@@ -75,8 +61,17 @@ BEGIN
                 ,mri.Deleted   = 1
             FROM Restaurant.PromotionMenu mri
             INNER JOIN #PromotionMenuNoExits mi ON mi.MenuId = mri.MenuId
-            WHERE mri.Id = mi.Id
+            WHERE mi.Id = mri.Id
         END
+        
+    ---- UPDATE DELETED ----
+    UPDATE rpm
+    SET rpm.Deleted = 0
+        ,rpm.UpdatedAt = @date
+    FROM Restaurant.PromotionMenu rpm
+    INNER JOIN #PromotionMenu rt ON rt.menuId = rpm.MenuId
+    WHERE rpm.PromotionId = @promotionId
+    AND rpm.Deleted = 1
 
     SET @response  = (SELECT 1)
 END

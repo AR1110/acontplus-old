@@ -16,7 +16,7 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
     DECLARE @userId         INT
-    DECLARE @codEstab       VARCHAR(10)
+    DECLARE @codEstab       VARCHAR(50)
     DECLARE @description    VARCHAR(100)
     DECLARE @startDate      DATETIME2
     DECLARE @endDate        DATETIME2
@@ -36,7 +36,7 @@ BEGIN
             ,@promotionDays     = promotionDays
             ,@promotionMenus    = promotionMenus
     FROM OPENJSON(@json)
-    WITH(codEstab      VARCHAR(10)      '$.codEstab'
+    WITH(codEstab      VARCHAR(50)      '$.codEstab'
         ,description   VARCHAR(100)     '$.description'
         ,startDate     DATETIME2        '$.startDate'
         ,endDate       DATETIME2        '$.endDate'

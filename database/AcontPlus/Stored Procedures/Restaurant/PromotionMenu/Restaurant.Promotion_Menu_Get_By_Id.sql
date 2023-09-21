@@ -27,6 +27,7 @@ BEGIN
            ,m.Title           
 	FROM Restaurant.PromotionMenu pm WITH (NOLOCK)
     INNER JOIN Restaurant.Menu m ON m.Id = pm.MenuId
-    WHERE pm.PromotionId = @id    
+    WHERE pm.PromotionId = @id
+    AND ISNULL(pm.Deleted, 0) != 1
 END
 GO
