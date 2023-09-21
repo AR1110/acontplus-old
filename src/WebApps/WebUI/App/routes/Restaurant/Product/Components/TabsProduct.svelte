@@ -3,6 +3,7 @@
   import Menus from "../Menus/page.svelte";
   import Ingredient from "../Ingredient/page.svelte";
   import Tabs from "$core/components/Tabs.svelte";
+  import Promotion from "../Promotions/page.svelte";
   let items = [
     {
       icon: "fa-solid fa-plate-wheat",
@@ -11,13 +12,18 @@
       component: Menus,
     },
     {
-      label: "Productos",
+      label: "Promociones",
       value: 2,
+      component: Promotion,
+    },
+    {
+      label: "Productos",
+      value: 3,
       component: Items,
     },
     {
       label: "Ingredientes",
-      value: 3,
+      value: 4,
       component: Ingredient,
     },
   ];

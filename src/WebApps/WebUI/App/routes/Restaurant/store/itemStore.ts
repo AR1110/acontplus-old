@@ -81,7 +81,6 @@ const createItemStore = () => {
         showLoader();
         let json = { pageIndex: 1, pageSize: 9, tipo: 1 };
 
-        console.log(params);
 
         let query = Object.assign(json, params ? params : json);
         update((state) => {

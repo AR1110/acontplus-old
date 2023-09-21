@@ -820,6 +820,10 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("PromotionDays")
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
@@ -846,9 +850,6 @@ namespace Restaurant.Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<int>("DayCode")
-                        .HasColumnType("int");
 
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
