@@ -15,20 +15,39 @@ namespace Mechanical.Core.Entities
         public int SupportId { get; set; }
         public DateTime Date { get; set; }
         public int Mileage { get; set; }
+        
+        [Required]
+        [MaxLength(150)]
+        public string FuelLevel { get; set; }
+        
         [Required]
         public string Engine { get; set; }
+        
+        [Required]
+        public string Cabin { get; set; }
+        
+        [Required]
+        public string Bearing { get; set; }
+        
         [Required]
         public string Transmission { get; set; }
+       
+        [Required]
+        public string Lighting { get; set; }
+        
         [Required]
         public string Brake { get; set; }
+       
         [Required]
         public string Steering { get; set; }
+        
         [Required]
         public string Suspension { get; set; }
-        [Required]
+        
         [MaxLength(300)]
         public string Obs { get; set; }
         public int CompanyId { get; set; }
         public int UserId { get; set; }
+        public int Status { get; set; } = 0;
     }
 }
