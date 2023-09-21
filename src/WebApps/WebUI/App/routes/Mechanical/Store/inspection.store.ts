@@ -30,10 +30,13 @@ const initialState: State = {
         id: 0,
         supportId: 0,
         date: new Date().toISOString().slice(0, 10),
-        mileage: '',
+        mileage: 0,
         fuelLevel: '',
         engine: '',
+        cabin: '',
+        bearing: '',
         transmission: '',
+        lighting: '',
         brake: '',
         steering: '',
         suspension: '',
@@ -48,20 +51,37 @@ const createInspection = () => {
         ...initialModalState,
     });
 
-    const getOpenModal = (id?: number) => {
-        showLoader();
-        InspectionService.get(JSON.stringify({ tipo: 3, supportId: id })).then((response) => {
-            if (response) {
-                update((state) => ({
-                    ...state,
-                    isOpen: true,
-                    support: response["support"][0],
-                    vehicleParts: response["vehicleParts"],
-                }));
-            }
-        }).finally(() => {
-            hideLoader();
-        });
+    const getOpenModal = (id?: number, supportId?: number) => {
+        if (id > 0) {
+            showLoader();
+            InspectionService.get(JSON.stringify({ tipo: 2, id })).then((response) => {
+                if (response) {
+                    update((state) => ({
+                        ...state,
+                        isOpen: true,
+                        inspection: response["inspection"][0],
+                        support: response["support"][0],
+                    }));
+                }
+            }).finally(() => {
+                hideLoader();
+            });
+        }
+        else {
+            showLoader();
+            InspectionService.get(JSON.stringify({ tipo: 3, supportId: supportId })).then((response) => {
+                if (response) {
+                    update((state) => ({
+                        ...state,
+                        isOpen: true,
+                        support: response["support"][0],
+                        vehicleParts: response["vehicleParts"],
+                    }));
+                }
+            }).finally(() => {
+                hideLoader();
+            });
+        }
     }
 
 

@@ -16,7 +16,7 @@ namespace Mechanical.Infrastructure.Data
         public DbSet<Support> Supports { get; set; }
         public DbSet<VehiclePartType> vehiclePartTypes { get; set; }
         public DbSet<VehiclePart> vehicleParts { get; set; }
-
+        public DbSet<Inspection> inspections { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -53,6 +53,8 @@ namespace Mechanical.Infrastructure.Data
             modelBuilder.Entity<VehiclePart>().HasIndex(x => x.Code)
             .HasDatabaseName("UXC_VehiclePart_Code")
             .IsUnique();
+
+            modelBuilder.Entity<Inspection>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
         }
 
         public override int SaveChanges()

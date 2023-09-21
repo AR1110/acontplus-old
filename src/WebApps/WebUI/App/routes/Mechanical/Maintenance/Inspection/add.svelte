@@ -1,5 +1,7 @@
 <script lang="ts">
   import { InspectionStore } from "$routes/Mechanical/Store/inspection.store";
+  import { InspectionService } from "$core/services/mechanical/inspection-service";
+  import { showLoader, hideLoader } from "$core/utils/loading-spinner";
   import Modal from "$core/components/Modal.svelte";
   import toast from "$core/utils/toast";
 
@@ -7,59 +9,120 @@
   let inspection;
   let vehicleParts;
   let engines;
-  let transmissionSystem;
-  let brakeSystem;
+  let cabin;
+  let transmission;
+  let brake;
   let data;
-  let steeringSystem;
-  let suspensionSystem;
+  let steering;
+  let suspension;
+  let lighting;
+  let bearing;
+  let paramValidation = [undefined, null, "", 0];
 
   InspectionStore.subscribe((values) => {
     inspection = values.inspection;
     support = values.support;
-    vehicleParts = values.vehicleParts;
-    // Motor
-    engines = vehicleParts.filter((item) => item.codeTypePart === "MT");
-    // Sistema de Transmisión
-    transmissionSystem = vehicleParts.filter(
-      (item) => item.codeTypePart === "ST"
-    );
-    // Sistema de Frenos
-    brakeSystem = vehicleParts.filter((item) => item.codeTypePart === "SF");
-    // Sistema de Dirección
-    steeringSystem = vehicleParts.filter((item) => item.codeTypePart === "SD");
-    // Sistema de Suspensión
-    suspensionSystem = vehicleParts.filter(
-      (item) => item.codeTypePart === "SS"
-    );
+    if (inspection.id > 0) {
+      // Motor
+      engines = JSON.parse(inspection.engine);
+      //cabina
+      cabin = JSON.parse(inspection.cabin);
+      // Sistema de Transmisión
+      transmission = JSON.parse(inspection.transmission);
+      // Rodamiento
+      bearing = JSON.parse(inspection.bearing);
+      // Sistema de Frenos
+      brake = JSON.parse(inspection.brake);
+      // Sistema de Dirección
+      steering = JSON.parse(inspection.steering);
+      // Sistema de Suspensión
+      suspension = JSON.parse(inspection.suspension);
+      // Sistema de luces
+      lighting = JSON.parse(inspection.lighting);
+
+      console.log(brake);
+    } else {
+      vehicleParts = values.vehicleParts;
+      // Motor
+      engines = vehicleParts.filter((item) => item.codeTypePart === "MT");
+
+      //cabina
+      cabin = vehicleParts.filter((item) => item.codeTypePart === "CB");
+
+      // Sistema de Transmisión
+      transmission = vehicleParts.filter((item) => item.codeTypePart === "ST");
+
+      // Rodamiento
+      bearing = vehicleParts.filter((item) => item.codeTypePart === "RD");
+
+      // Sistema de Frenos
+      brake = vehicleParts.filter((item) => item.codeTypePart === "SF");
+
+      // Sistema de Dirección
+      steering = vehicleParts.filter((item) => item.codeTypePart === "SD");
+
+      // Sistema de Suspensión
+      suspension = vehicleParts.filter((item) => item.codeTypePart === "SS");
+
+      // Sistema de luces
+      lighting = vehicleParts.filter((item) => item.codeTypePart === "SL");
+    }
   });
 
+  // Save
   const onSave = () => {
     data = {
       engine: engines.map((item) => ({
+        id: item.id,
         part: item.part,
         status: item.status,
         obs: item.obs,
       })),
 
-      transmission: transmissionSystem.map((item) => ({
+      cabin: cabin.map((item) => ({
+        id: item.id,
         part: item.part,
         status: item.status,
         obs: item.obs,
       })),
 
-      brake: brakeSystem.map((item) => ({
+      bearing: bearing.map((item) => ({
+        id: item.id,
         part: item.part,
         status: item.status,
         obs: item.obs,
       })),
 
-      steering: steeringSystem.map((item) => ({
+      transmission: transmission.map((item) => ({
+        id: item.id,
         part: item.part,
         status: item.status,
         obs: item.obs,
       })),
 
-      suspension: suspensionSystem.map((item) => ({
+      lighting: lighting.map((item) => ({
+        id: item.id,
+        part: item.part,
+        status: item.status,
+        obs: item.obs,
+      })),
+
+      brake: brake.map((item) => ({
+        id: item.id,
+        part: item.part,
+        status: item.status,
+        obs: item.obs,
+      })),
+
+      steering: steering.map((item) => ({
+        id: item.id,
+        part: item.part,
+        status: item.status,
+        obs: item.obs,
+      })),
+
+      suspension: suspension.map((item) => ({
+        id: item.id,
         part: item.part,
         status: item.status,
         obs: item.obs,
@@ -68,15 +131,117 @@
 
     if (!onValidate()) return;
 
-    inspection.engine = data.engine;
-    inspection.transmission = data.transmission;
-    inspection.brake = data.brake;
-    inspection.steering = data.steering;
-    inspection.suspension = data.suspension;
+    inspection.engine = JSON.stringify(data.engine);
+    inspection.cabin = JSON.stringify(data.cabin);
+    inspection.bearing = JSON.stringify(data.bearing);
+    inspection.transmission = JSON.stringify(data.transmission);
+    inspection.lighting = JSON.stringify(data.lighting);
+    inspection.brake = JSON.stringify(data.brake);
+    inspection.steering = JSON.stringify(data.steering);
+    inspection.suspension = JSON.stringify(data.suspension);
     inspection.supportId = support.supportId;
-    console.log(inspection);
+
+    showLoader();
+    InspectionService.post({
+      data: { inspection },
+    }).then((response) => {
+      hideLoader();
+      if (response.code == 1) {
+        toast({ type: "success", message: response.message });
+        onModalClose();
+      } else {
+        toast({ type: "warning", message: response.message });
+      }
+    });
   };
 
+  // Edit
+  const onUpdate = () => {
+    data = {
+      engine: engines.map((item) => ({
+        id: item.id,
+        part: item.part,
+        status: item.status,
+        obs: item.obs,
+      })),
+
+      cabin: cabin.map((item) => ({
+        id: item.id,
+        part: item.part,
+        status: item.status,
+        obs: item.obs,
+      })),
+
+      bearing: bearing.map((item) => ({
+        id: item.id,
+        part: item.part,
+        status: item.status,
+        obs: item.obs,
+      })),
+
+      transmission: transmission.map((item) => ({
+        id: item.id,
+        part: item.part,
+        status: item.status,
+        obs: item.obs,
+      })),
+
+      lighting: lighting.map((item) => ({
+        id: item.id,
+        part: item.part,
+        status: item.status,
+        obs: item.obs,
+      })),
+
+      brake: brake.map((item) => ({
+        id: item.id,
+        part: item.part,
+        status: item.status,
+        obs: item.obs,
+      })),
+
+      steering: steering.map((item) => ({
+        id: item.id,
+        part: item.part,
+        status: item.status,
+        obs: item.obs,
+      })),
+
+      suspension: suspension.map((item) => ({
+        id: item.id,
+        part: item.part,
+        status: item.status,
+        obs: item.obs,
+      })),
+    };
+
+    if (!onValidate()) return;
+
+    inspection.engine = JSON.stringify(data.engine);
+    inspection.cabin = JSON.stringify(data.cabin);
+    inspection.bearing = JSON.stringify(data.bearing);
+    inspection.transmission = JSON.stringify(data.transmission);
+    inspection.lighting = JSON.stringify(data.lighting);
+    inspection.brake = JSON.stringify(data.brake);
+    inspection.steering = JSON.stringify(data.steering);
+    inspection.suspension = JSON.stringify(data.suspension);
+    inspection.supportId = support.supportId;
+
+    showLoader();
+    InspectionService.put(inspection.id, {
+      data: { inspection },
+    }).then((response) => {
+      hideLoader();
+      if (response.code == 1) {
+        toast({ type: "success", message: response.message });
+        onModalClose();
+      } else {
+        toast({ type: "warning", message: response.message });
+      }
+    });
+  };
+
+  // Validate Data
   const onValidate = () => {
     let isValid = true;
     let valid = false;
@@ -85,11 +250,29 @@
         const arr = data[index];
         if (
           arr.some(
-            (tempItem) => tempItem.status == true || tempItem.status == false
+            (tempItem) =>
+              tempItem.status == 1 ||
+              tempItem.status == 2 ||
+              tempItem.status == 3
           )
         ) {
           valid = true;
         }
+      }
+
+      if (paramValidation.includes(inspection.date)) {
+        toast({ type: "warning", message: "Ingreso la Fecha" });
+        return;
+      }
+
+      if (paramValidation.includes(inspection.mileage)) {
+        toast({ type: "warning", message: "Ingreso el kimoletraje" });
+        return;
+      }
+
+      if (paramValidation.includes(inspection.fuelLevel)) {
+        toast({ type: "warning", message: "Ingreso el nivel de Combustible" });
+        return;
       }
 
       if (!valid) {
@@ -106,11 +289,13 @@
       return false;
     }
   };
+
   // CLOSE MODAL
   const onModalClose = () => {
     InspectionStore.update((state) => ({
       ...state,
       isOpen: false,
+      vehicleParts: [],
     }));
   };
 </script>
@@ -118,8 +303,8 @@
 {#if $InspectionStore.isOpen}
   <Modal
     open={$InspectionStore.isOpen}
-    iconTitle={"ti-plus"}
-    title={"Registrar"}
+    iconTitle={inspection.id > 0 ? "ti-sync" : "ti-plus"}
+    title={inspection.id > 0 ? "Actualizar" : "Registrar"}
     onClosed={() => onModalClose()}
     fullScreen={true}
     size={"modal-dialog-scrollable"}
@@ -127,7 +312,7 @@
     <div class="modal-body">
       <form
         style="text-transform:uppercase"
-        on:submit|preventDefault={onSave}
+        on:submit|preventDefault={inspection.id > 0 ? onUpdate : onSave}
         autocomplete="off"
       >
         <div class="row">
@@ -205,7 +390,9 @@
         <div class="row">
           <div class="col">
             <div class="form-group">
-              <label for="country">fecha </label>
+              <label for="country"
+                >fecha <span class="text-danger"> *</span>
+              </label>
               <input
                 type="date"
                 class="form-control"
@@ -215,9 +402,11 @@
           </div>
           <div class="col">
             <div class="form-group">
-              <label for="country">Kilometraje </label>
+              <label for="country"
+                >Kilometraje <span class="text-danger"> *</span>
+              </label>
               <input
-                type="text"
+                type="number"
                 class="form-control"
                 bind:value={inspection.mileage}
               />
@@ -225,7 +414,9 @@
           </div>
           <div class="col">
             <div class="form-group">
-              <label for="country">Nivel de Combustible </label>
+              <label for="country"
+                >Nivel de Combustible <span class="text-danger"> *</span>
+              </label>
               <input
                 type="text"
                 class="form-control"
@@ -234,8 +425,9 @@
             </div>
           </div>
         </div>
-
+        <hr />
         <div id="accordion">
+          <!-- Motor -->
           <div class="card">
             <div class="card-header" id="heading1">
               <h5 class="mb-0">
@@ -265,6 +457,7 @@
                       <tr>
                         <th>item</th>
                         <th class="text-center">Bueno</th>
+                        <th class="text-center">Regular</th>
                         <th class="text-center">Malo</th>
                         <th class="text-center">Observación</th>
                       </tr>
@@ -280,7 +473,7 @@
                                 type="radio"
                                 id="inlineCheckbox1{item.id}"
                                 name="inlineCheckbox{item.id}"
-                                value={true}
+                                value={1}
                                 bind:group={item.status}
                               />
                               <label
@@ -296,12 +489,28 @@
                                 type="radio"
                                 id="inlineCheckbox2{item.id}"
                                 name="inlineCheckbox{item.id}"
-                                value={false}
+                                value={2}
                                 bind:group={item.status}
                               />
                               <label
                                 class="form-check-label"
                                 for="inlineCheckbox2{item.id}"
+                              />
+                            </div>
+                          </td>
+                          <td width="5%" class="text-center"
+                            ><div class="checkbox icheck-primary">
+                              <input
+                                class="form-check-input"
+                                type="radio"
+                                id="inlineCheckbox3{item.id}"
+                                name="inlineCheckbox{item.id}"
+                                value={3}
+                                bind:group={item.status}
+                              />
+                              <label
+                                class="form-check-label"
+                                for="inlineCheckbox3{item.id}"
                               />
                             </div>
                           </td>
@@ -323,6 +532,7 @@
             </div>
           </div>
 
+          <!-- Cabina -->
           <div class="card">
             <div class="card-header" id="heading2">
               <h5 class="mb-0">
@@ -334,7 +544,7 @@
                   aria-controls="collapse2"
                   type="button"
                 >
-                  SISTEMA DE TRANSMISIÓN
+                  CABINA
                 </button>
               </h5>
             </div>
@@ -342,7 +552,7 @@
             <div
               id="collapse2"
               class="collapse"
-              aria-labelledby="heading"
+              aria-labelledby="heading2"
               data-parent="#accordion"
             >
               <div class="card-body">
@@ -352,12 +562,13 @@
                       <tr>
                         <th>item</th>
                         <th class="text-center">Bueno</th>
+                        <th class="text-center">Regular</th>
                         <th class="text-center">Malo</th>
                         <th class="text-center">Observación</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {#each transmissionSystem as item}
+                      {#each cabin as item}
                         <tr>
                           <td width="35%">{item.part}</td>
                           <td width="5%" class="text-center"
@@ -367,7 +578,7 @@
                                 type="radio"
                                 id="inlineCheckbox1{item.id}"
                                 name="inlineCheckbox{item.id}"
-                                value={true}
+                                value={1}
                                 bind:group={item.status}
                               />
                               <label
@@ -383,12 +594,28 @@
                                 type="radio"
                                 id="inlineCheckbox2{item.id}"
                                 name="inlineCheckbox{item.id}"
-                                value={false}
+                                value={2}
                                 bind:group={item.status}
                               />
                               <label
                                 class="form-check-label"
                                 for="inlineCheckbox2{item.id}"
+                              />
+                            </div>
+                          </td>
+                          <td width="5%" class="text-center"
+                            ><div class="checkbox icheck-primary">
+                              <input
+                                class="form-check-input"
+                                type="radio"
+                                id="inlineCheckbox3{item.id}"
+                                name="inlineCheckbox{item.id}"
+                                value={3}
+                                bind:group={item.status}
+                              />
+                              <label
+                                class="form-check-label"
+                                for="inlineCheckbox3{item.id}"
                               />
                             </div>
                           </td>
@@ -410,6 +637,7 @@
             </div>
           </div>
 
+          <!-- Rodamiento -->
           <div class="card">
             <div class="card-header" id="heading3">
               <h5 class="mb-0">
@@ -421,7 +649,7 @@
                   aria-controls="collapse3"
                   type="button"
                 >
-                  SISTEMA DE FRENOS
+                  RODAMIENTO
                 </button>
               </h5>
             </div>
@@ -439,12 +667,13 @@
                       <tr>
                         <th>item</th>
                         <th class="text-center">Bueno</th>
+                        <th class="text-center">Regular</th>
                         <th class="text-center">Malo</th>
                         <th class="text-center">Observación</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {#each brakeSystem as item}
+                      {#each bearing as item}
                         <tr>
                           <td width="35%">{item.part}</td>
                           <td width="5%" class="text-center"
@@ -454,7 +683,7 @@
                                 type="radio"
                                 id="inlineCheckbox1{item.id}"
                                 name="inlineCheckbox{item.id}"
-                                value={true}
+                                value={1}
                                 bind:group={item.status}
                               />
                               <label
@@ -470,12 +699,28 @@
                                 type="radio"
                                 id="inlineCheckbox2{item.id}"
                                 name="inlineCheckbox{item.id}"
-                                value={false}
+                                value={2}
                                 bind:group={item.status}
                               />
                               <label
                                 class="form-check-label"
                                 for="inlineCheckbox2{item.id}"
+                              />
+                            </div>
+                          </td>
+                          <td width="5%" class="text-center"
+                            ><div class="checkbox icheck-primary">
+                              <input
+                                class="form-check-input"
+                                type="radio"
+                                id="inlineCheckbox3{item.id}"
+                                name="inlineCheckbox{item.id}"
+                                value={3}
+                                bind:group={item.status}
+                              />
+                              <label
+                                class="form-check-label"
+                                for="inlineCheckbox3{item.id}"
                               />
                             </div>
                           </td>
@@ -497,6 +742,7 @@
             </div>
           </div>
 
+          <!-- Sistema de Transmision -->
           <div class="card">
             <div class="card-header" id="heading4">
               <h5 class="mb-0">
@@ -508,7 +754,7 @@
                   aria-controls="collapse4"
                   type="button"
                 >
-                  SISTEMA DE DIRECCIÓN
+                  SISTEMA DE TRANSMISIÓN
                 </button>
               </h5>
             </div>
@@ -516,7 +762,7 @@
             <div
               id="collapse4"
               class="collapse"
-              aria-labelledby="heading4"
+              aria-labelledby="heading"
               data-parent="#accordion"
             >
               <div class="card-body">
@@ -526,12 +772,13 @@
                       <tr>
                         <th>item</th>
                         <th class="text-center">Bueno</th>
+                        <th class="text-center">Regular</th>
                         <th class="text-center">Malo</th>
                         <th class="text-center">Observación</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {#each steeringSystem as item}
+                      {#each transmission as item}
                         <tr>
                           <td width="35%">{item.part}</td>
                           <td width="5%" class="text-center"
@@ -541,7 +788,7 @@
                                 type="radio"
                                 id="inlineCheckbox1{item.id}"
                                 name="inlineCheckbox{item.id}"
-                                value={true}
+                                value={1}
                                 bind:group={item.status}
                               />
                               <label
@@ -557,12 +804,28 @@
                                 type="radio"
                                 id="inlineCheckbox2{item.id}"
                                 name="inlineCheckbox{item.id}"
-                                value={false}
+                                value={2}
                                 bind:group={item.status}
                               />
                               <label
                                 class="form-check-label"
                                 for="inlineCheckbox2{item.id}"
+                              />
+                            </div>
+                          </td>
+                          <td width="5%" class="text-center"
+                            ><div class="checkbox icheck-primary">
+                              <input
+                                class="form-check-input"
+                                type="radio"
+                                id="inlineCheckbox3{item.id}"
+                                name="inlineCheckbox{item.id}"
+                                value={3}
+                                bind:group={item.status}
+                              />
+                              <label
+                                class="form-check-label"
+                                for="inlineCheckbox3{item.id}"
                               />
                             </div>
                           </td>
@@ -584,6 +847,7 @@
             </div>
           </div>
 
+          <!-- Sistema de Luces -->
           <div class="card">
             <div class="card-header" id="heading5">
               <h5 class="mb-0">
@@ -595,7 +859,7 @@
                   aria-controls="collapse5"
                   type="button"
                 >
-                  SISTEMA DE SUSPENSIÓN
+                  SISTEMA DE LUCES
                 </button>
               </h5>
             </div>
@@ -613,12 +877,13 @@
                       <tr>
                         <th>item</th>
                         <th class="text-center">Bueno</th>
+                        <th class="text-center">Regular</th>
                         <th class="text-center">Malo</th>
                         <th class="text-center">Observación</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {#each suspensionSystem as item}
+                      {#each lighting as item}
                         <tr>
                           <td width="35%">{item.part}</td>
                           <td width="5%" class="text-center"
@@ -628,7 +893,7 @@
                                 type="radio"
                                 id="inlineCheckbox1{item.id}"
                                 name="inlineCheckbox{item.id}"
-                                value={true}
+                                value={1}
                                 bind:group={item.status}
                               />
                               <label
@@ -644,12 +909,28 @@
                                 type="radio"
                                 id="inlineCheckbox2{item.id}"
                                 name="inlineCheckbox{item.id}"
-                                value={false}
+                                value={2}
                                 bind:group={item.status}
                               />
                               <label
                                 class="form-check-label"
                                 for="inlineCheckbox2{item.id}"
+                              />
+                            </div>
+                          </td>
+                          <td width="5%" class="text-center"
+                            ><div class="checkbox icheck-primary">
+                              <input
+                                class="form-check-input"
+                                type="radio"
+                                id="inlineCheckbox3{item.id}"
+                                name="inlineCheckbox{item.id}"
+                                value={3}
+                                bind:group={item.status}
+                              />
+                              <label
+                                class="form-check-label"
+                                for="inlineCheckbox3{item.id}"
                               />
                             </div>
                           </td>
@@ -668,6 +949,335 @@
                   </table>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <!-- Sistema de Frenos -->
+          <div class="card">
+            <div class="card-header" id="heading6">
+              <h5 class="mb-0">
+                <button
+                  class="btn btn-info"
+                  data-toggle="collapse"
+                  data-target="#collapse6"
+                  aria-expanded="false"
+                  aria-controls="collapse6"
+                  type="button"
+                >
+                  SISTEMA DE FRENOS
+                </button>
+              </h5>
+            </div>
+
+            <div
+              id="collapse6"
+              class="collapse"
+              aria-labelledby="heading6"
+              data-parent="#accordion"
+            >
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>item</th>
+                        <th class="text-center">Bueno</th>
+                        <th class="text-center">Regular</th>
+                        <th class="text-center">Malo</th>
+                        <th class="text-center">Observación</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {#each brake as item}
+                        <tr>
+                          <td width="35%">{item.part}</td>
+                          <td width="5%" class="text-center"
+                            ><div class="checkbox icheck-primary">
+                              <input
+                                class="form-check-input"
+                                type="radio"
+                                id="inlineCheckbox1{item.id}"
+                                name="inlineCheckbox{item.id}"
+                                value={1}
+                                bind:group={item.status}
+                              />
+                              <label
+                                class="form-check-label"
+                                for="inlineCheckbox1{item.id}"
+                              />
+                            </div>
+                          </td>
+                          <td width="5%" class="text-center"
+                            ><div class="checkbox icheck-primary">
+                              <input
+                                class="form-check-input"
+                                type="radio"
+                                id="inlineCheckbox2{item.id}"
+                                name="inlineCheckbox{item.id}"
+                                value={2}
+                                bind:group={item.status}
+                              />
+                              <label
+                                class="form-check-label"
+                                for="inlineCheckbox2{item.id}"
+                              />
+                            </div>
+                          </td>
+                          <td width="5%" class="text-center"
+                            ><div class="checkbox icheck-primary">
+                              <input
+                                class="form-check-input"
+                                type="radio"
+                                id="inlineCheckbox3{item.id}"
+                                name="inlineCheckbox{item.id}"
+                                value={3}
+                                bind:group={item.status}
+                              />
+                              <label
+                                class="form-check-label"
+                                for="inlineCheckbox3{item.id}"
+                              />
+                            </div>
+                          </td>
+                          <td width="50%" class="text-center"
+                            ><div class="col-12 col-sm-12 col-md-12 col-lg-12">
+                              <input
+                                type="text"
+                                class="form-control"
+                                bind:value={item.obs}
+                              />
+                            </div></td
+                          >
+                        </tr>
+                      {/each}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sistema de Direccion -->
+          <div class="card">
+            <div class="card-header" id="heading7">
+              <h5 class="mb-0">
+                <button
+                  class="btn btn-info"
+                  data-toggle="collapse"
+                  data-target="#collapse7"
+                  aria-expanded="false"
+                  aria-controls="collapse7"
+                  type="button"
+                >
+                  SISTEMA DE DIRECCIÓN
+                </button>
+              </h5>
+            </div>
+
+            <div
+              id="collapse7"
+              class="collapse"
+              aria-labelledby="heading7"
+              data-parent="#accordion"
+            >
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>item</th>
+                        <th class="text-center">Bueno</th>
+                        <th class="text-center">Regular</th>
+                        <th class="text-center">Malo</th>
+                        <th class="text-center">Observación</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {#each steering as item}
+                        <tr>
+                          <td width="35%">{item.part}</td>
+                          <td width="5%" class="text-center"
+                            ><div class="checkbox icheck-primary">
+                              <input
+                                class="form-check-input"
+                                type="radio"
+                                id="inlineCheckbox1{item.id}"
+                                name="inlineCheckbox{item.id}"
+                                value={1}
+                                bind:group={item.status}
+                              />
+                              <label
+                                class="form-check-label"
+                                for="inlineCheckbox1{item.id}"
+                              />
+                            </div>
+                          </td>
+                          <td width="5%" class="text-center"
+                            ><div class="checkbox icheck-primary">
+                              <input
+                                class="form-check-input"
+                                type="radio"
+                                id="inlineCheckbox2{item.id}"
+                                name="inlineCheckbox{item.id}"
+                                value={2}
+                                bind:group={item.status}
+                              />
+                              <label
+                                class="form-check-label"
+                                for="inlineCheckbox2{item.id}"
+                              />
+                            </div>
+                          </td>
+                          <td width="5%" class="text-center"
+                            ><div class="checkbox icheck-primary">
+                              <input
+                                class="form-check-input"
+                                type="radio"
+                                id="inlineCheckbox3{item.id}"
+                                name="inlineCheckbox{item.id}"
+                                value={3}
+                                bind:group={item.status}
+                              />
+                              <label
+                                class="form-check-label"
+                                for="inlineCheckbox3{item.id}"
+                              />
+                            </div>
+                          </td>
+                          <td width="50%" class="text-center"
+                            ><div class="col-12 col-sm-12 col-md-12 col-lg-12">
+                              <input
+                                type="text"
+                                class="form-control"
+                                bind:value={item.obs}
+                              />
+                            </div></td
+                          >
+                        </tr>
+                      {/each}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sistema de Suspension -->
+          <div class="card">
+            <div class="card-header" id="heading8">
+              <h5 class="mb-0">
+                <button
+                  class="btn btn-info"
+                  data-toggle="collapse"
+                  data-target="#collapse8"
+                  aria-expanded="false"
+                  aria-controls="collapse8"
+                  type="button"
+                >
+                  SISTEMA DE SUSPENSIÓN
+                </button>
+              </h5>
+            </div>
+
+            <div
+              id="collapse8"
+              class="collapse"
+              aria-labelledby="heading8"
+              data-parent="#accordion"
+            >
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>item</th>
+                        <th class="text-center">Bueno</th>
+                        <th class="text-center">Regular</th>
+                        <th class="text-center">Malo</th>
+                        <th class="text-center">Observación</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {#each suspension as item}
+                        <tr>
+                          <td width="35%">{item.part}</td>
+                          <td width="5%" class="text-center"
+                            ><div class="checkbox icheck-primary">
+                              <input
+                                class="form-check-input"
+                                type="radio"
+                                id="inlineCheckbox1{item.id}"
+                                name="inlineCheckbox{item.id}"
+                                value={1}
+                                bind:group={item.status}
+                              />
+                              <label
+                                class="form-check-label"
+                                for="inlineCheckbox1{item.id}"
+                              />
+                            </div>
+                          </td>
+                          <td width="5%" class="text-center"
+                            ><div class="checkbox icheck-primary">
+                              <input
+                                class="form-check-input"
+                                type="radio"
+                                id="inlineCheckbox2{item.id}"
+                                name="inlineCheckbox{item.id}"
+                                value={2}
+                                bind:group={item.status}
+                              />
+                              <label
+                                class="form-check-label"
+                                for="inlineCheckbox2{item.id}"
+                              />
+                            </div>
+                          </td>
+                          <td width="5%" class="text-center"
+                            ><div class="checkbox icheck-primary">
+                              <input
+                                class="form-check-input"
+                                type="radio"
+                                id="inlineCheckbox3{item.id}"
+                                name="inlineCheckbox{item.id}"
+                                value={3}
+                                bind:group={item.status}
+                              />
+                              <label
+                                class="form-check-label"
+                                for="inlineCheckbox3{item.id}"
+                              />
+                            </div>
+                          </td>
+                          <td width="50%" class="text-center"
+                            ><div class="col-12 col-sm-12 col-md-12 col-lg-12">
+                              <input
+                                type="text"
+                                class="form-control"
+                                bind:value={item.obs}
+                              />
+                            </div></td
+                          >
+                        </tr>
+                      {/each}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr />
+
+        <div class="row">
+          <div class="col">
+            <div class="form-group">
+              <label for="country">Obs </label>
+              <input
+                type="text"
+                class="form-control"
+                bind:value={inspection.obs}
+              />
             </div>
           </div>
         </div>

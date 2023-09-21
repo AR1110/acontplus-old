@@ -48,7 +48,7 @@
               <td
                 ><button
                   class="btn btn-outline-danger btn-sm"
-                  on:click={() => InspectionStore.getOpenModal(item.id)}
+                  on:click={() => InspectionStore.getOpenModal(0, item.id)}
                 >
                   <i class="ti-ticket" />
                 </button></td
