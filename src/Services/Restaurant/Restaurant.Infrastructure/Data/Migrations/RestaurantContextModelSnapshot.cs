@@ -347,21 +347,11 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<bool>("Enabled")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int?>("MenuTypeId")
                         .HasColumnType("int");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
-
-                    b.Property<string>("PromotionDays")
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(max)");
-
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Summary")
                         .HasMaxLength(500)

@@ -13,7 +13,6 @@ type State = {
   menus: any;
   dataUpdate: Menu;
   menuTypes: any;
-  days: any;
 };
 
 const initialState: State = {
@@ -27,7 +26,6 @@ const initialState: State = {
     content: "",
   },
   menuTypes: [],
-  days: [],
 };
 
 const initialModalState: StateModal = {
@@ -52,7 +50,6 @@ const menuStore = () => {
           ...state,
           menus: response["menus"],
           menuTypes: response["menuTypes"],
-          days: response["promotionDays"],
         }));
       })
       .finally(() => {
