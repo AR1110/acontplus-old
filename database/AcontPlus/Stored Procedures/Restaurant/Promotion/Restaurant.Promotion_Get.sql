@@ -23,8 +23,8 @@ BEGIN
 
     DECLARE @tipo       INT 
     DECLARE @dateNow    DATETIME = (SELECT dbo.ufnGetDateEcuador())
-    DECLARE @dia        VARCHAR(15)
-    DECLARE @hora       VARCHAR(5)    
+    DECLARE @day        VARCHAR(15)
+    DECLARE @hour       VARCHAR(5)    
 
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH(tipo INT '$.tipo')
 
@@ -44,21 +44,15 @@ BEGIN
         
     IF @tipo = 2
         BEGIN
-            SET @dia        = (SELECT DATENAME(weekday, GETDATE()))
-            SET @hora       = (SELECT FORMAT(GETDATE(), 'HH:mm'))
+            SET @day        = (SELECT DATENAME(weekday, GETDATE()))
+            SET @hour       = (SELECT FORMAT(GETDATE(), 'HH:mm'))
             SET @dateNow    = CONVERT(date, @dateNow)
-
-                     
+                                 
             SELECT rp.Id
                 ,rp.[Description]
             FROM Restaurant.Promotion rp
             WHERE NOT (CAST(rp.StartDate AS DATE) > @dateNow OR CAST(rp.EndDate AS DATE) < @dateNow
-            AND (SELECT [day] FROM dbo.ufnGetDayHourPromotion(rp.PromotionDays)) != (LOWER(@dia)))
-            ---AND (SELECT [day] FROM dbo.ufnGetDayHourPromotion(rp.PromotionDays)) IN (LOWER(@dia))
-            --AND (SELECT startHour FROM dbo.ufnGetDayHourPromotion(rp.PromotionDays)) >= @hora
-            --AND (SELECT endHour FROM dbo.ufnGetDayHourPromotion(rp.PromotionDays)) <= @hora
+            OR @day NOT IN (SELECT [day] FROM dbo.ufnGetDayHourPromotion(rp.PromotionDays)))         
         END
 END
 GO
-
----select * from Restaurant.Promotion

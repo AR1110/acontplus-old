@@ -30,8 +30,8 @@ namespace Restaurant.Infrastructure.Data
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<OrderKitchen> OrderKitchens { get; set; }
         public DbSet<OrderDocument> OrderDocuments { get; set; }
-        public DbSet<Promotion> promotions { get; set; }
-        public DbSet<PromotionMenu> promotionMenus { get; set; }
+        public DbSet<Promotion> Promotions { get; set; }
+        public DbSet<PromotionMenu> PromotionMenus { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
