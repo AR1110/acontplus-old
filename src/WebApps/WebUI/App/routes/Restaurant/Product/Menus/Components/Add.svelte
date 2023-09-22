@@ -16,10 +16,7 @@
   let itemSearch = [];
   let productsAdded = [];
   let menuTypes = [];
-  let days = [];
-  let daysChecked = [];
   let timeout;
-  let codeMenuType = "";
   let validation = [undefined, null, 0, ""];
 
   const getItems = (id: number) => {
@@ -28,7 +25,6 @@
       .then((response) => {
         if (response) {
           productsAdded = response["menuItems"];
-
           verifyUpdateCell(productsAdded);
         }
       })
@@ -49,17 +45,6 @@
       }
     }
     hideLoader();
-
-    checkDays(days);
-  };
-
-  let getCodeMenuType = (id) => {
-    if (menuTypes.length > 0) {
-      if (!validation.includes(id)) {
-        let menuType = menuTypes.find((x) => x.id == id);
-        codeMenuType = menuType.code;
-      }
-    }
   };
 
   // Todo: GRID COLUMNS
@@ -400,9 +385,7 @@
 
   // Todo: MODAL
   const onModalClose = () => {
-    daysChecked = [];
     productsAdded = [];
-    codeMenuType = "";
     useMenuStore.update((state) => ({
       ...state,
       isOpen: false,
@@ -414,9 +397,6 @@
 
     let summary = productsAdded.map((item) => item.descripcion).join(", ");
     data.summary = summary;
-
-    data.promotionDays = "";
-    data.promotionDays = JSON.stringify(daysChecked);
 
     let forSave = {
       ...data,
@@ -456,41 +436,13 @@
     }
   };
 
-  // Todo: DAYS CHECKBOX
-  let checkDays = (days) => {
-    showLoader();
-    if (data.promotionDays.length > 0) {
-      let daysPromotion = JSON.parse(data.promotionDays);
-      return (daysChecked = daysPromotion);
-    }
-
-    if (data.promotionDays.length <= 0) {
-      daysChecked = days.map((e) => {
-        return {
-          idDia: e.idDia,
-          descripcion: e.descripcion,
-          horaInicio: "00:00",
-          horaFin: "00:00",
-          checked: false,
-        };
-      });
-      return (daysChecked = daysChecked);
-    }
-    hideLoader();
-  };
-
   useMenuStore.subscribe((values) => {
-    // Clear
-    codeMenuType = "";
-
     data = values.dataUpdate;
     menuTypes = values.menuTypes;
-    days = values.days;
 
     // Verify and call methods
     if (data.id > 0) {
       getItems(data.id);
-      getCodeMenuType(data.menuTypeId);
     }
   });
 </script>
@@ -505,166 +457,97 @@
     onClosed={() => onModalClose()}
   >
     <div class="modal-body">
-      <!-- on:submit|preventDefault={onUpdate} -->
-      <form autocomplete="off">
-        <div class="modal-body">
-          <div class="row">
-            <div class="col-6">
-              <div class="form-group input-group-lg">
-                <label for="menu-type">Tipo Menu</label>
-                <select
-                  bind:value={data.menuTypeId}
-                  class="form-control"
-                  id="menu-type"
-                  on:change={() => getCodeMenuType(data.menuTypeId)}
-                >
-                  <option disabled>SELECCIONE</option>
-                  {#each menuTypes as items}
-                    <option value={items.id}>
-                      {items.name}
-                    </option>
-                  {/each}
-                </select>
-              </div>
-            </div>
-            <div class="col-6">
-              <div class="form-group">
-                <label for="">Descripción</label>
-                <input
-                  type="text"
-                  class="form-control input-group-lg"
-                  bind:value={data.title}
-                />
-              </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-6">
+            <div class="form-group input-group-lg">
+              <label for="menu-type">Tipo Menu</label>
+              <select
+                bind:value={data.menuTypeId}
+                class="form-control"
+                id="menu-type"
+              >
+                <option disabled>SELECCIONE</option>
+                {#each menuTypes as items}
+                  <option value={items.id}>
+                    {items.name}
+                  </option>
+                {/each}
+              </select>
             </div>
           </div>
-          <div class="row">
-            <div class="col-12">
-              <div class="form-group">
-                <label for="">Resumen</label>
-                <textarea class="form-control" bind:value={data.summary} />
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <div class="form-group">
-                <label for="">Contenido</label>
-                <textarea class="form-control" bind:value={data.content} />
-              </div>
-            </div>
-          </div>
-
-          {#if codeMenuType === "PROM"}
-            <div class="row mt-3">
-              <div class="col-6">
-                <div class="form-group">
-                  <label for="">Fecha Inicio</label>
-                  <input
-                    type="date"
-                    class="form-control"
-                    bind:value={data.startDate}
-                    max={data.endDate}
-                  />
-                </div>
-              </div>
-              <div class="col-6">
-                <div class="form-group">
-                  <label for="">Fecha Fin</label>
-                  <input
-                    type="date"
-                    class="form-control"
-                    min={data.startDate}
-                    bind:value={data.endDate}
-                  />
-                </div>
-              </div>
-            </div>
-
+          <div class="col-6">
             <div class="form-group">
-              <label for="">Días y horas de promoción</label>
-            </div>
-            <div class="row">
-              {#each daysChecked as item}
-                <div class="col-4">
-                  <div class="checkbox icheck-primary">
-                    <input
-                      type="checkbox"
-                      bind:checked={item.checked}
-                      id="primary_{item.idDia}"
-                    />
-                    <label for="primary_{item.idDia}">{item.descripcion}</label>
-                  </div>
-                </div>
-                <div class="col-4">
-                  <div class="form-group">
-                    <input
-                      type="time"
-                      disabled={!item.checked}
-                      bind:value={item.horaInicio}
-                      class="form-control"
-                    />
-                  </div>
-                </div>
-                <div class="col-4">
-                  <div class="form-group">
-                    <input
-                      type="time"
-                      disabled={!item.checked}
-                      bind:value={item.horaFin}
-                      class="form-control"
-                    />
-                  </div>
-                </div>
-              {/each}
-            </div>
-          {/if}
-          <div class="row mt-3">
-            <div class="col-6 col-md-6 col-sm-6" />
-            <div class="col-6 col-md-6 col-sm-6">
-              <label for="search">Buscar producto </label>
-              <div class="form-group input-group-lg">
-                <AdvancedSearch
-                  on:input={onInput}
-                  on:focus={onFocus}
-                  on:blur={onBlur}
-                  {value}
-                  {placeholder}
-                />
-                {#if itemSearch.length > 0}
-                  <div class="floating-results list-group">
-                    {#each itemSearch as item}
-                      <a
-                        href={null}
-                        class="list-group-item"
-                        on:click={() => getItemSearch(item.id, data)}
-                        ><i class="fa-solid fa-bowl-food" />
-                        {item.descripcion}</a
-                      >
-                    {/each}
-                  </div>
-                {/if}
-              </div>
-            </div>
-          </div>
-          <div class="row mt-2">
-            <div class="col-12">
-              <GridForItem arrayData={productsAdded} columns={productColumns} />
+              <label for="">Descripción</label>
+              <input
+                type="text"
+                class="form-control input-group-lg"
+                bind:value={data.title}
+              />
             </div>
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="submit" on:click={onUpdate}
-          class="btn btn-success">
-            <i class="ti-save"  /> Guardar
-          </button>
-          <button
-            type="button"
-            class="btn btn-dark"
-            on:click={() => onModalClose()}>&times; Cerrar</button
-          >
+        <div class="row">
+          <div class="col-12">
+            <div class="form-group">
+              <label for="">Resumen</label>
+              <textarea class="form-control" bind:value={data.summary} />
+            </div>
+          </div>
         </div>
-      </form>
+        <div class="row">
+          <div class="col-12">
+            <div class="form-group">
+              <label for="">Contenido</label>
+              <textarea class="form-control" bind:value={data.content} />
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-3">
+          <div class="col-6 col-md-6 col-sm-6" />
+          <div class="col-6 col-md-6 col-sm-6">
+            <label for="search">Buscar producto </label>
+            <div class="form-group input-group-lg">
+              <AdvancedSearch
+                on:input={onInput}
+                on:focus={onFocus}
+                on:blur={onBlur}
+                {value}
+                {placeholder}
+              />
+              {#if itemSearch.length > 0}
+                <div class="floating-results list-group">
+                  {#each itemSearch as item}
+                    <a
+                      href={null}
+                      class="list-group-item"
+                      on:click={() => getItemSearch(item.id, data)}
+                      ><i class="fa-solid fa-bowl-food" />
+                      {item.descripcion}</a
+                    >
+                  {/each}
+                </div>
+              {/if}
+            </div>
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-12">
+            <GridForItem arrayData={productsAdded} columns={productColumns} />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" on:click={onUpdate} class="btn btn-success">
+          <i class="ti-save" /> Guardar
+        </button>
+        <button
+          type="button"
+          class="btn btn-dark"
+          on:click={() => onModalClose()}>&times; Cerrar</button
+        >
+      </div>
     </div>
   </Modal>
 {/if}

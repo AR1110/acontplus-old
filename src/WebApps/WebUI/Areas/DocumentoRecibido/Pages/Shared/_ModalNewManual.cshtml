@@ -45,10 +45,12 @@
                             <div class="form-group">
                                 <label>Seleccione una opción para importar:</label>
                                 <md-radio-group ng-model="mainform.option">
-                                    <md-radio-button ng-value="true" ng-style="{'display':'inline'}">Clave
-                                        Acceso</md-radio-button>
+                                    <md-radio-button ng-value="true" ng-style="{'display':'inline'}">
+                                        Clave
+                                        Acceso
+                                    </md-radio-button>
                                     <md-radio-button ng-value="false"
-                                        ng-style="{'display':'inline'}">Xml</md-radio-button>
+                                                     ng-style="{'display':'inline'}">Xml</md-radio-button>
                                 </md-radio-group>
                             </div>
                         </div>
@@ -58,9 +60,13 @@
                             <div class="form-group">
                                 <label for="claveAcceso">Clave Acceso:</label>
                                 <input type="text" class="form-control" valid-number onclick="this.select()" min="49"
-                                    maxlength="49" ng-model="mainform.claveAcceso">
-                                <span class="text-info small" ng-if="mainform.claveAcceso.length > 0">{{49 -
-                                    mainform.claveAcceso.length}} digitos faltantes</span>
+                                       maxlength="49" ng-model="mainform.claveAcceso">
+                                <span class="text-warning small" ng-if="mainform.claveAcceso.length > 0">
+                                    <b>
+                                        {{49 -
+                                        mainform.claveAcceso.length}}
+                                    </b> digitos faltantes
+                                </span>
                             </div>
                             <div class="form-group" ng-if="mainform.claveAcceso.length == 49">
                                 <button type="button" class="btn btn-info btn-sm" ng-click="addClaveAcceso()">
@@ -72,22 +78,27 @@
                     <div class="row" ng-show="!mainform.option">
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                             <div ngf-drop ngf-select ng-model="files" class="drop-box" ngf-drag-over-class="'dragover'"
-                                ngf-multiple="true" ngf-allow-dir="true" accept="text/xml" ngf-pattern="'text/xml'">
+                                 ngf-multiple="true" ngf-allow-dir="true" accept="text/xml" ngf-pattern="'text/xml'">
                                 Arrastre aqui los XML de los comprobantes electronicós descargados
                             </div>
                         </div>
                         <div class="col-12">
-                            <div ngf-no-file-drop>La funcion de arrastrar, no esta disponible en este navegador
+                            <div ngf-no-file-drop>
+                                La funcion de arrastrar, no esta disponible en este navegador
                             </div>
                             <table class="table table-bordered" ng-if="files.length > 0">
                                 <caption>Archivos subidos:</caption>
                                 <tbody>
                                     <tr ng-repeat="f in files" style="font:smaller">
-                                        <td>{{f.name}} {{f.$error}}
-                                            {{f.$errorParam}}</td>
+                                        <td>
+                                            {{f.name}} {{f.$error}}
+                                            {{f.$errorParam}}
+                                        </td>
                                         <td>
                                             <button type="button" class="btn btn-danger btn-sm"
-                                                ng-click="removeFile($index)"><i class="ti-trash"></i></button>
+                                                    ng-click="removeFile($index)">
+                                                <i class="ti-trash"></i>
+                                            </button>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -109,7 +120,7 @@
                                     <td>{{item.claveAcceso}}</td>
                                     <td>
                                         <button type="button" class="btn btn-danger btn-sm"
-                                            ng-click="removeClaveAcceso($index)">
+                                                ng-click="removeClaveAcceso($index)">
                                             <i class="ti-trash"></i>
                                         </button>
                                     </td>
@@ -119,7 +130,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-success btn-sm" ng-show="mainform.option">
+                    <button type="submit" class="btn btn-success btn-sm" ng-show="mainform.option && compToImport.length > 0">
                         <i class="ti-save"></i>
                         Guardar
                     </button>

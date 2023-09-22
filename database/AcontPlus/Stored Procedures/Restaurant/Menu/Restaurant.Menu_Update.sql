@@ -57,18 +57,12 @@ BEGIN
             SET Title           = @title
                 ,MenuTypeId     = @menuTypeId
                 ,Summary        = @summary
-                ,Content        = @content
-                ,PromotionDays  = @promotionDays
-                ,StartDate      = @startDate
-                ,EndDate        = @endDate
+                ,Content        = @content                
             WHERE Id = @id
                       
             --- Execute for insert Menu_Item ---           
             EXEC Restaurant.MenuItem_Insert @userRoleId, @id, @menuItem, @response OUTPUT
-
-
-
-            
+                                             
         COMMIT TRAN
         SELECT Common.ufnSpResponse('1', 'Éxitos al actualizar', NULL)
    END TRY

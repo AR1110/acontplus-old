@@ -51,9 +51,7 @@ export default function Order() {
 
     return (
         //-->OrderProvider 1
-        //-->SplitAccountProvider 2
-
-
+        //-->SplitAccountProvider 2 
         <Paper sx={{ maxWidth: "auto", margin: 'auto', overflow: 'hidden' }}>
             <AppBar
                 position="static"

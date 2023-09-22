@@ -5,6 +5,7 @@ import { ItemRead } from '@/core/models';
 import { Accordion, AccordionDetails, AccordionSummary, Avatar, IconButton, MenuItem, Stack, TextField } from '@mui/material';
 import { AddIcon, DeleteIcon, RemoveCircleOutlineIcon } from '@/core/components/IconsMaterial';
 import { useSaleStore } from '@/stores';
+import { RoundNumber } from '@/core/utilities';
 
 
 type CartItemProps = {
@@ -29,7 +30,7 @@ export default function CartItem({ index, item }: CartItemProps) {
                     <Grid container spacing={2}>
                         <Grid item>
                             <Avatar
-                                alt="Remy Sharp"
+                                alt="Product"
                                 src={item.s3ObjectUrl}
                                 sx={{ width: 56, height: 56 }}
                             />
@@ -53,13 +54,13 @@ export default function CartItem({ index, item }: CartItemProps) {
                                     justifyContent="center"
                                     alignItems="flex-end">
                                     <Typography variant="caption" color="text.primary">
-                                        <b>P. U.:</b> ${item.price}
+                                        <b>P. U.:</b> ${RoundNumber(item.price, 2)}
                                     </Typography>
                                     <Typography variant="caption" color="text.primary">
-                                        <b>P. IVA.:</b> ${item.priceWithVat}
+                                        <b>P. IVA.:</b> ${RoundNumber(item.priceWithVat,2)}
                                     </Typography>
                                     <Typography variant="caption" color="text.primary">
-                                        <b>Total:</b> ${item.total}
+                                        <b>Total:</b> ${RoundNumber(item.total, 2)}
                                     </Typography>
                                 </Stack>
                             </Grid>

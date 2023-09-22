@@ -7,10 +7,12 @@ import { customerService } from '@/core/services';
 import { Box, Typography } from '@mui/material';
 import { useOrderStore } from '@/stores';
 
+ 
 const CustomerSearchFilter = () => {
     const [customers, setCustomers] = useState<Array<CustomerReadDto>>([]);
     const setOrderFilter = useOrderStore(state=>state.setOrderFilter)
     const orderFilter = useOrderStore(state=>state.orderFilter)
+    const getOrders = useOrderStore(state=>state.getOrders)
 
     const onInputChange = (newValue: string) => {
         if (newValue.length > 0) {
@@ -32,7 +34,7 @@ const CustomerSearchFilter = () => {
                     ...orderFilter,
                     customerCompanyId: customer?.customerCompanyId ?? 0
                 })
-                 
+                getOrders()
             }}
             isOptionEqualToValue={(option, value)=>option.customerCompanyId===value.customerCompanyId}
             renderOption={(props, option) => (

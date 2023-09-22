@@ -16,6 +16,7 @@ import InputSearchItem from "./InputSearchItem/InputSearchItem";
 import TableDialog from "./Table/TableDialog";
 import Checkout from "@/core/components/Checkout/Checkout";
 import { ArrowBackIcon } from "@/core/components/IconsMaterial";
+import { CATEGORY_CODE } from "@/core/models";
 
 
 
@@ -78,7 +79,12 @@ export default function Sale() {
 
     const itemAdapter = (response: any) => { 
         setCollectionItems([])
-        const items = itemReadAdapter(response.items || []);
+        let items = []; 
+        if(itemSearch.code===CATEGORY_CODE.PROM){
+            items = itemReadAdapter(response.promocion || []);
+        }else{
+            items = itemReadAdapter(response.items || []);
+        }
         
         setCollectionItems(items)
     }

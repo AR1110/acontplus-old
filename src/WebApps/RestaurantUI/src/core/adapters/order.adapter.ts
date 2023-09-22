@@ -12,7 +12,8 @@ function orderReadAdapter(orders: RawOrderData[]): Array<OrderReadDto> {
         serie: order.serie,
         total: order.total,
         codDoc: order.codDoc,
-        createdAt: order.createdAt
+        createdAt: order.createdAt,
+        totalRecords: order.totalRecords
     })
     )
 }
@@ -38,7 +39,7 @@ async function orderReadForUpdateAdapter(obj: any) {
         total: order.total,
         netTotal: 0,
         tip: 0,
-        obs: order.obs??"",
+        obs: order.obs ?? "",
         codDoc: order.codDoc,
         quickSale: false,
         createdAt: new Date(order.createdAt),
@@ -49,17 +50,17 @@ async function orderReadForUpdateAdapter(obj: any) {
     }
 
     const results = orderItems.map(async (orderItem: any, indexOrderItem: number) => {
-        let response:any = {}
+        let response: any = {}
         let pvps: Array<ProductPVPReadDto> = [];
 
         try {
             response = await productService.findForSale(orderItem.idArticulo);
             pvps = response.measures[0]?.pvps ?? [];
 
-           
+
         } catch (error) {
-            console.error(`Error al obtener datos del producto para orderItem ${indexOrderItem}: ${error}`);            
-        }  
+            console.error(`Error al obtener datos del producto para orderItem ${indexOrderItem}: ${error}`);
+        }
         return {
             index: indexOrderItem + 1,
             productId: orderItem.idArticulo,
@@ -81,17 +82,18 @@ async function orderReadForUpdateAdapter(obj: any) {
             description: orderItem.descripcion,
             code: orderItem.codigo,
             s3ObjectUrl: orderItem.s3ObjectUrl,
-            takesInventory: orderItem.llevaInventario,
+            carryInventory: orderItem.llevaInventario,
             priceWithVat: orderItem.priceWithVat,
             discountTotal: 0,
             taxes: [],
             pvps: pvps,
-            taxRateCode: orderItem.taxRateCode
-        };         
+            taxRateCode: orderItem.taxRateCode,
+            envioSri: orderItem.envioSri
+        };
     })
- 
-    const orderItemsMapper: Array<ItemRead> = await Promise.all(results); 
-     
+
+    const orderItemsMapper: Array<ItemRead> = await Promise.all(results);
+
     return {
         order: orderMapper,
         orderItems: orderItemsMapper

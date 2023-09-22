@@ -9,30 +9,41 @@ GO
 -- Author:		Ivan Paz
 -- Create date: 2023-08-10
 -- Description: sp for get restaurant menus
--- Restaurant.Menu_Get 139, '', ''
+-- Restaurant.Menu_Get 139, '{"textSearch": "plato"}', ''
 -- =============================================
 CREATE OR ALTER PROCEDURE Restaurant.Menu_Get @userRoleId INT
     ,@json NVARCHAR(MAX)
-    ,@tableNames VARCHAR(500) OUT
+    ,@tableNames VARCHAR(500) OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
-    
-    SET @tableNames = 'menus,menuTypes,promotionDays'
-	SELECT m.Id
-        ,m.ProductId
-        ,m.Title
-        ,m.Summary
-        ,m.MenuTypeId
-        ,m.Content
-        ,FORMAT(m.StartDate, 'yyyy-MM-dd')  AS StartDate
-        ,FORMAT(m.EndDate, 'yyyy-MM-dd')    AS EndDate
-        ,ISNULL(m.promotionDays, '')        AS PromotionDays
-        ,a.s3ObjectUrl        
-	FROM Restaurant.Menu m WITH (NOLOCK)
-    INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
-      
+    DECLARE @sql NVARCHAR(MAX)
+            ,@params NVARCHAR(500)
+            ,@textSearch VARCHAR(20)
+            
+    SET @params = N'@textSearch VARCHAR(20)'
+    SELECT @textSearch = textSearch FROM OPENJSON(@json) WITH(textSearch VARCHAR(20) '$.textSearch')
+        
+    SET @sql = N' SELECT m.Id
+                ,m.ProductId
+                ,m.Title
+                ,m.Summary
+                ,m.MenuTypeId
+                ,m.Content                
+                ,a.s3ObjectUrl
+	        FROM Restaurant.Menu m WITH (NOLOCK)
+            INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo '
+   
+     IF @textSearch IS NOT NULL
+        BEGIN
+            SET @sql = @sql + ' WHERE m.Title LIKE ''%''+@textSearch+''%'' 
+                                OR m.Summary LIKE ''%''+@textSearch+''%'' 
+                                OR m.Content LIKE ''%''+@textSearch+''%'' '
+        END
+              
+    SET @tableNames = 'menus,menuTypes'
+
+    EXEC sp_executesql @sql, @params, @textSearch
     SELECT * FROM Restaurant.MenuType
-    SELECT * FROM Dia    
 END
 GO

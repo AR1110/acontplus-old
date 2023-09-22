@@ -62,6 +62,7 @@ BEGIN
     ,@recargo DECIMAL(18,5)
     ,@transporte DECIMAL(18,5)
     ,@itemsToPay NVARCHAR(MAX)
+    ,@customDetail NVARCHAR(MAX)
 
     DECLARE @tblItems AS TABLE(
         uuid            UNIQUEIDENTIFIER NOT NULL,
@@ -78,7 +79,9 @@ BEGIN
         discount        NUMERIC(18,5),
         total           NUMERIC(18,5) NOT NULL,
         obs             VARCHAR(500),
-        bodegaId INT    
+        bodegaId INT    ,
+        envioSri BIT NULL DEFAULT 0,
+        idArticulo INT NULL DEFAULT 0
     )
 
     DECLARE @tblTaxes AS TABLE (
@@ -104,6 +107,7 @@ BEGIN
         ,@codDoc                = codDoc       
         ,@tableId               = tableId    
         ,@itemsToPay            = itemsToPay
+        ,@customDetail          = customDetail
     FROM OPENJSON(@json)
     WITH(establecimientoId      INT '$.establecimientoId',
         puntoEmisionId          INT '$.puntoEmisionId',
@@ -120,7 +124,8 @@ BEGIN
         obs                     VARCHAR(500) '$.obs',
         codDoc                  VARCHAR(2) '$.codDoc',       
         tableId                 INT '$.tableId',
-        itemsToPay              NVARCHAR(MAX) '$.itemsToPay' AS JSON
+        itemsToPay              NVARCHAR(MAX) '$.itemsToPay' AS JSON,
+        customDetail            NVARCHAR(MAX) '$.customDetail' AS JSON
     )
 
     IF (ISJSON(@itemsToPay) = 1 AND LEN(RTRIM(LTRIM(@itemsToPay))) > 0)
@@ -204,7 +209,42 @@ BEGIN
                 , TaxPercentId
                 , Price
                 , TaxValue
-            FROM Restaurant.OrderItem WHERE OrderId = @orderId
+            FROM Restaurant.OrderItem 
+            WHERE OrderId = @orderId
+
+            IF (ISJSON(@customDetail) = 1 AND LEN(RTRIM(LTRIM(@customDetail))) > 0)
+                BEGIN
+                    INSERT INTO @tblItems(uuid, bodegaId, itemTypeId, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, envioSri)
+
+                    SELECT Uuid
+                    ,(SELECT TOP 1 BodegaId FROM Restaurant.OrderItem WHERE OrderId  = @orderId)
+                    ,(SELECT ItemTypeId FROM Restaurant.OrderItem WHERE OrderId  = @orderId)
+                    ,(SELECT MenuId FROM Restaurant.OrderItem WHERE OrderId  = @orderId)
+                    ,(SELECT ItemId FROM Restaurant.OrderItem WHERE OrderId  = @orderId)
+                    ,TaxId
+                    ,TaxPercentId
+                    ,FeeId
+                    ,TaxValue
+                    ,(SELECT SUM(Quantity) FROM Restaurant.OrderItem WHERE OrderId  = @orderId)
+                    ,Cost
+                    ,Price
+                    ,(SELECT SUM(Discount) FROM Restaurant.OrderItem WHERE OrderId  = @orderId)
+                    ,(SELECT SUM(Total) FROM Restaurant.OrderItem WHERE OrderId  = @orderId)
+                    ,1
+                    ,idarticulo
+                FROM OPENJSON (@customDetail)
+                    WITH(
+                            uuid UNIQUEIDENTIFIER '$.uuid'
+
+
+
+
+
+
+                        )
+
+                END
+
         END
     
     IF NOT EXISTS(SELECT 1 FROM @tblItems)
@@ -373,12 +413,13 @@ BEGIN
                         
             INSERT INTO FacturaDetalle(idFactura, idArticulo, idTarifa, idBodega, idMedida, ice, cantidad, precioVenta, precioSinSubsidio
                                        ,precioConIva, valorDescuento, porcentajeDescuento, total, nota, descripcion, precioCosto
-                                       ,idTipoIva, porcentajeIva, iva, uuid)
+                                       ,idTipoIva, porcentajeIva, iva, uuid, envioSri)
 
             SELECT @documentoId
-                 ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 m.ProductId FROM Restaurant.Menu m WHERE m.id = i.MenuId) ELSE
+                 ,CASE WHEN i.idArticulo = 0 THEN 
+                        CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 m.ProductId FROM Restaurant.Menu m WHERE m.id = i.MenuId) ELSE
                             (SELECT TOP 1 ii.ProductId FROM Restaurant.Item ii WHERE ii.id = i.ItemId)
-                        END 
+                        END ELSE i.idArticulo END
                 ,i.feeId
                 ,bodegaId
                  ,CASE WHEN it.code = 'MENU' THEN (SELECT TOP 1 a.idMedida FROM Restaurant.Menu m
@@ -414,6 +455,7 @@ BEGIN
                             (SELECT TOP 1 a.porcentaje FROM Restaurant.Item ii  INNER JOIN Inventario.v_Articulo a ON ii.ProductId = a.idArticulo WHERE ii.id = i.ItemId)
                         END/100) * total
                 ,i.uuid
+                ,i.envioSri
             FROM @tblItems i
                  INNER JOIN Restaurant.ItemType it ON i.itemTypeId = it.Id
             --INNER JOIN Restaurant.v_Item ri ON i.itemId = ri.Id
