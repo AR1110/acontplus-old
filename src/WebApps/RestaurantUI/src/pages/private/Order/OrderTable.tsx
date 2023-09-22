@@ -32,7 +32,7 @@ import OrderConvertDoc from "./Components/OrderConvertDoc";
 import { orderReadForUpdateAdapter } from "@/core/adapters";
 import FullScreenDialog from "@/core/components/FullScreenDialog";
 import { SplitOrderProvider } from "./context";
-const SplitOrder = lazy(()=>import("./SplitOrder/SplitOrder"));
+const SplitOrder = lazy(() => import("./SplitOrder/SplitOrder"));
 
 export default function OrderTable() {
     const navigate = useNavigate();
@@ -54,12 +54,12 @@ export default function OrderTable() {
     const setOrderId = useRef(0);
 
     const handleChangePage = (_: unknown, newPage: number) => {
-     
+
         setOrderFilter({
             ...orderFilter,
             pageIndex: newPage + 1
         })
-        setPage(newPage);       
+        setPage(newPage);
         getOrders()
     };
 
@@ -69,7 +69,7 @@ export default function OrderTable() {
             ...orderFilter,
             pageSize
         })
-        setRowsPerPage(pageSize); 
+        setRowsPerPage(pageSize);
         setPage(0)
         getOrders()
     };
@@ -137,11 +137,11 @@ export default function OrderTable() {
     };
 
 
-    const dividerCuenta = (id:number)=>{
+    const dividerCuenta = (id: number) => {
         setOrderId.current = id;
         setOpenDialodDivide(true)
     }
-    const closeDialogDivide = ()=>{
+    const closeDialogDivide = () => {
         setOpenDialodDivide(false)
     }
 
@@ -236,14 +236,17 @@ export default function OrderTable() {
                                                     <ShareSharpIcon />
                                                 </IconButton>
                                             </Tooltip>
-                                            <Tooltip describeChild title="Dividir la cuenta">
-                                                <IconButton size="large" color="inherit" 
-                                                    aria-label="Impresión"
-                                                    onClick={() => dividerCuenta(order.orderId)}
-                                                >
-                                                    <AccountTreeIcon />
-                                                </IconButton>
-                                            </Tooltip>
+
+                                            {!(order.documentoId > 0) && (
+                                                <Tooltip describeChild title="Dividir la cuenta">
+                                                    <IconButton size="large" color="inherit"
+                                                        aria-label="Impresión"
+                                                        onClick={() => dividerCuenta(order.orderId)}
+                                                    >
+                                                        <AccountTreeIcon />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            )} 
                                         </TableCell>
                                         <TableCell align="center">{order.serie}</TableCell>
                                         <TableCell align="center">{order.createdAt}</TableCell>
@@ -259,7 +262,7 @@ export default function OrderTable() {
                     <TablePagination
                         rowsPerPageOptions={[10, 25, 50, 100]}
                         component="div"
-                        count={orders[0]?.totalRecords??0}
+                        count={orders[0]?.totalRecords ?? 0}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}
@@ -276,8 +279,8 @@ export default function OrderTable() {
             {/* { End list  - TABLE } */}
             <OrderWhatsApp
                 open={openTableDialog}
-                onClose={setOpenTableDialog}/
-            > 
+                onClose={setOpenTableDialog} /
+            >
 
             {/* Dividir Cuenta  */}
             <FullScreenDialog
@@ -285,10 +288,10 @@ export default function OrderTable() {
                 icon={<ArrowBackIcon />}
                 isOpen={openDialodDivide}
                 actions={<>Dividir Cuenta</>}
-                handleClose={closeDialogDivide}>  
-                 <SplitOrderProvider>
-                    <SplitOrder id={setOrderId.current}/>
-                 </SplitOrderProvider>
+                handleClose={closeDialogDivide}>
+                <SplitOrderProvider>
+                    <SplitOrder id={setOrderId.current} />
+                </SplitOrderProvider>
             </FullScreenDialog>
 
         </React.Fragment>

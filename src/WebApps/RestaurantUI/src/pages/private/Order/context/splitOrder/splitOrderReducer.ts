@@ -1,18 +1,20 @@
 
+import { SplitOrderState } from "@/core/models";
 import {
     GET_ORDER_BEGIN,
     GET_ORDER_ERROR,
     GET_ORDER_SUCCESS,
-    SET_CHANGE_ORDER_ITEMS, 
-    SET_DATA_FORM, 
-    SET_LEFT_CHECKED_ORDER_ITEMS, 
+    SET_CHANGE_ORDER_ITEMS,
+    SET_DATA_FORM,
+    SET_LEFT_CHECKED_ORDER_ITEMS,
     SET_LEFT_ORDER_ITEMS,
+    SET_RESET_DATA,
     SET_RIGHT_CHECKED_ORDER_ITEMS,
     SET_RIGHT_ORDER_DATA,
     SET_RIGHT_ORDER_ITEMS
 } from "..";
 
-import { SplitOrderState } from "../../models";
+ 
 
 export const splitOrderReducer = (state: SplitOrderState, action: any): SplitOrderState => {
     switch (action.type) {
@@ -20,23 +22,23 @@ export const splitOrderReducer = (state: SplitOrderState, action: any): SplitOrd
             return { ...state, orderLoading: true }
         }
         case GET_ORDER_SUCCESS: {
-            const { order, orderItems } = action.payload; 
+            const { order, orderItems } = action.payload;
             return {
                 ...state,
                 orderLoading: false,
                 leftOrder: order,
                 leftOrderItems: orderItems,
-                leftOrderItemsLength : orderItems.length
+                leftOrderItemsLength: orderItems.length
             }
         }
         case GET_ORDER_ERROR:
-            return { ...state, orderError: true, orderLoading: false } 
+            return { ...state, orderError: true, orderLoading: false }
 
-        case SET_DATA_FORM: 
-            return { 
-                ...state, 
+        case SET_DATA_FORM:
+            return {
+                ...state,
                 dataForm: action.payload
-            } 
+            }
         case SET_LEFT_ORDER_ITEMS: {
             return {
                 ...state,
@@ -89,6 +91,19 @@ export const splitOrderReducer = (state: SplitOrderState, action: any): SplitOrd
                 }))
             }
         }
+
+        case SET_RESET_DATA:
+            return {
+                ...state,
+                leftOrder: action.leftOrder,
+                rightOrder: action.rightOrder,
+                leftOrderItemsLength: 0,
+                leftOrderItems: [],
+                rightOrderItems: [],
+                changeOrderItems: [],
+                leftCheckedOrderItems: [],
+                rightCheckedOrderItems: []
+            }
 
         default:
             return state;

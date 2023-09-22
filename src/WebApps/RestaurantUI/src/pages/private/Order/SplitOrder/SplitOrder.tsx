@@ -5,7 +5,6 @@ import LeftOrderItem from './LeftOrderItem/LeftOrderItem';
 import RightOrderItem from './RightOrderItem/RightOrderItem';
 import { useSplitOrderContext } from '../context';
 import MiddleAction from './MiddleAction/MiddleAction';
-import { getEstabs } from '@/core/services';
 
 
 type Props = {

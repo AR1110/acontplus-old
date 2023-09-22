@@ -7,15 +7,15 @@ import CustomBottomNavigation from "./components/CustomBottomNavigation";
 import { useSaleStore, useAuthStore } from "@/stores";
 import { useEffect, useState } from "react";
 import { itemReadAdapter } from "@/core/adapters";
-import FullScreenDialog from "@/core/components/FullScreenDialog";  
+import FullScreenDialog from "@/core/components/FullScreenDialog";
 import Category from "./Category/Category";
 import Cart from "./Cart/Cart";
 import CartMobile from "./Mobile/CartMobile";
-import InputSearchItem from "./InputSearchItem/InputSearchItem"; 
+import InputSearchItem from "./InputSearchItem/InputSearchItem";
 import TableDialog from "./Table/TableDialog";
 import Checkout from "@/core/components/Checkout/Checkout";
 import { ArrowBackIcon } from "@/core/components/IconsMaterial";
-import { CATEGORY_CODE } from "@/core/models"; 
+import { CATEGORY_CODE } from "@/core/models";
 import ItemContent from "./Item/ItemContent";
 
 
@@ -44,7 +44,7 @@ export default function Sale() {
 
     //Modal Tables 
     const [openTableDialog, setOpenTableDialog] = useState(false);
-    
+
     useEffect(() => {
         const establecimientos = getEstabs();
         const dataEstab = establecimientos[0]!;
@@ -77,18 +77,18 @@ export default function Sale() {
     const { loading, callEndpoint } = useFetchAndLoad();
     const getItemsApi = async () => await callEndpoint(ItemService.getAll(itemSearch));
 
-    const itemAdapter = (response: any) => { 
+    const itemAdapter = (response: any) => {
         setCollectionItems([])
-        let items = []; 
-        if(itemSearch.code===CATEGORY_CODE.PROM){
+        let items = [];
+        if (itemSearch.code === CATEGORY_CODE.PROM) {
             items = itemReadAdapter(response.promocion || []);
-        }else{
+        } else {
             items = itemReadAdapter(response.items || []);
         }
-        
+
         setCollectionItems(items)
     }
- 
+
 
     //se ejecuta cada vez que cambian la categoria
     useAsync(getItemsApi, itemAdapter, () => {
@@ -101,13 +101,21 @@ export default function Sale() {
                 <Grid item xs={12} md={7}>
                     <Grid item xs={12} md={12} lg={12}>
                         <InputSearchItem />
+                        {/* <Grid container spacing={1}>
+                            <Grid item xs={12} md={10} lg={10}>
+                                <InputSearchItem />
+                            </Grid>
+                            <Grid item xs={12} md={2} lg={2}>
+                                <Button variant="contained"   size="large" fullWidth>Promoción</Button>
+                            </Grid>
+                        </Grid> */}
                     </Grid>
                     <Grid item xs={12} md={12}>
                         <Category />
                     </Grid>
 
                     <Grid item xs={12} sm={12} md={12} lg={12}>
-                        <ItemContent loading={loading}/>
+                        <ItemContent loading={loading} />
                         {/* <ItemList loading={loading} /> */}
                     </Grid>
                 </Grid>
@@ -122,7 +130,7 @@ export default function Sale() {
             {/* start dialog payment */}
             {
                 payment.isOpen && <Checkout open={payment.isOpen} closeDialog={payment.closeDialogCustom} />
-            } 
+            }
             {/* end dialog payment */}
 
             {/* start Items carito movil */}
