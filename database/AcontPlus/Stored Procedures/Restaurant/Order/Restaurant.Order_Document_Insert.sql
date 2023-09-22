@@ -214,7 +214,7 @@ BEGIN
 
             IF (ISJSON(@customDetail) = 1 AND LEN(RTRIM(LTRIM(@customDetail))) > 0)
                 BEGIN
-                    INSERT INTO @tblItems(uuid, bodegaId, itemTypeId, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, envioSri)
+                    INSERT INTO @tblItems(uuid, bodegaId, itemTypeId, menuId, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, envioSri, idArticulo)
 
                     SELECT Uuid
                     ,(SELECT TOP 1 BodegaId FROM Restaurant.OrderItem WHERE OrderId  = @orderId)
@@ -233,16 +233,7 @@ BEGIN
                     ,1
                     ,idarticulo
                 FROM OPENJSON (@customDetail)
-                    WITH(
-                            uuid UNIQUEIDENTIFIER '$.uuid'
-
-
-
-
-
-
-                        )
-
+                    WITH( uuid UNIQUEIDENTIFIER '$.uuid' )
                 END
 
         END
@@ -364,7 +355,7 @@ BEGIN
                         ,dbo.ufnGetDateEcuador()
                         ,i.uuid
                     FROM @tblItems i
-                        INNER JOIN Restaurant.ItemType it ON i.itemTypeId = it.Id
+                    INNER JOIN Restaurant.ItemType it ON i.itemTypeId = it.Id
                     --INNER JOIN Restaurant.v_Item ri ON i.itemId = ri.Id
                     --INNER JOIN Inventario.v_Articulo a ON ri.ProductId = a.idArticulo
                     INNER JOIN Sri.TarifaImpuesto sti ON i.taxPercentId = sti.idTarifaImpuesto
@@ -457,7 +448,7 @@ BEGIN
                 ,i.uuid
                 ,i.envioSri
             FROM @tblItems i
-                 INNER JOIN Restaurant.ItemType it ON i.itemTypeId = it.Id
+            INNER JOIN Restaurant.ItemType it ON i.itemTypeId = it.Id
             --INNER JOIN Restaurant.v_Item ri ON i.itemId = ri.Id
             --INNER JOIN Inventario.v_Articulo a ON ri.ProductId = a.idArticulo
             INNER JOIN Sri.TarifaImpuesto sti ON i.taxPercentId = sti.idTarifaImpuesto

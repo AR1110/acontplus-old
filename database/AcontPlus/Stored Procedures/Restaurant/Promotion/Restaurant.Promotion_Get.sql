@@ -20,12 +20,9 @@ BEGIN
     SET LANGUAGE SPANISH;
 	SET NOCOUNT ON;
    
-
-    DECLARE @tipo       INT 
-    DECLARE @dateNow    DATETIME = (SELECT dbo.ufnGetDateEcuador())
-    DECLARE @day        VARCHAR(15)
-    DECLARE @hour       VARCHAR(5)    
-
+    DECLARE @tipo           INT 
+    DECLARE @dateNow        DATETIME = (SELECT dbo.ufnGetDateEcuador())
+   
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH(tipo INT '$.tipo')
 
     IF @tipo = 1
@@ -44,15 +41,22 @@ BEGIN
         
     IF @tipo = 2
         BEGIN
-            SET @day        = (SELECT DATENAME(weekday, GETDATE()))
-            SET @hour       = (SELECT FORMAT(GETDATE(), 'HH:mm'))
-            SET @dateNow    = CONVERT(date, @dateNow)
-                                 
+             DECLARE @day            VARCHAR(15)
+                    ,@hour           VARCHAR(5)
+                    ,@dayForParam    VARCHAR(15)
+                                       
+            SET @day            = LOWER(TRIM((SELECT DATENAME(weekday, @dateNow))))
+            SET @hour           = (SELECT FORMAT(@dateNow, 'HH:mm'))
+            SET @dateNow        = CONVERT(DATE, @dateNow)
+                        
+            SET @tableNames = 'promotions_pos'
             SELECT rp.Id
                 ,rp.[Description]
             FROM Restaurant.Promotion rp
-            WHERE NOT (CAST(rp.StartDate AS DATE) > @dateNow OR CAST(rp.EndDate AS DATE) < @dateNow
-            OR @day NOT IN (SELECT [day] FROM dbo.ufnGetDayHourPromotion(rp.PromotionDays)))         
+            WHERE @dateNow BETWEEN rp.StartDate AND rp.EndDate
+            AND @day IN(SELECT [day] FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day))
+            AND @hour BETWEEN(SELECT startHour FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day)) AND (SELECT endHour FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day))            
         END
 END
 GO
+

@@ -10,7 +10,7 @@ GO
 -- Create date: 2023-08-14
 -- Description:	sp for insert order restaurant
 -- =============================================
---Restaurant.Order_Insert 139, '{"orderId":0,"establecimientoId":454,"puntoEmisionId":124,"bodegaId":0,"tableId":3,"customerCompanyId":63914,"subtotalSinImpuestos":10,"tax":1.2,"taxPercent":0,"discount":0,"total":11.2,"items":[{"orderItemId":457,"uuid":"f378ddc7-79b9-4a89-82d0-59a0e2eb2114","itemId":3,"feeId":528,"taxId":1,"taxPercentId":2,"taxValue":0.3,"quantity":4,"cost":12.4,"price":2.5,"discount":0,"total":10,"obs":"","bodegaId": 128}],"taxes":[],"payments":{},"tip":0,"obs":"UNA MAGNIFICA PRUEBA","codDoc":"FV","quickSale":true,"fechaEmision":"2023-09-19T03:32:24.575Z","uuid":"cb237cd1-86c4-423a-8a11-2a5cf87c9568","updateOrder":false,"saveDoc":true,"itemsToPay":[{"orderItemId":457,"uuid":"f378ddc7-79b9-4a89-82d0-59a0e2eb2114","itemId":3,"feeId":528,"taxId":1,"taxPercentId":2,"taxValue":0.3,"quantity":4,"cost":12.4,"price":2.5,"discount":0,"total":10,"obs":""}]}'
+-- Restaurant.Order_Insert 139, '{"orderId":0,"establecimientoId":454,"puntoEmisionId":124,"bodegaId":0,"tableId":3,"customerCompanyId":63929,"subtotalSinImpuestos":9.5,"tax":1.14,"taxPercent":0,"discount":0,"total":10.64,"items":[{"orderItemId":524,"uuid":"295f16fe-3c5c-4ba3-a937-63ac8925d8f2","itemId":1,"feeId":528,"taxId":1,"taxPercentId":2,"taxValue":0.57,"quantity":2,"cost":22.4,"price":4.75,"discount":0,"total":9.5,"obs":"","bodegaId":128}],"taxes":[],"payments":{},"tip":0,"obs":"TEST","codDoc":"FV","quickSale":true,"fechaEmision":"2023-09-22T21:02:08.189Z","uuid":"aefda80b-7e21-4635-bb3d-8db36c9f86d5","updateOrder":false,"saveDoc":true,"itemsToPay":[{"orderItemId":524,"uuid":"295f16fe-3c5c-4ba3-a937-63ac8925d8f2","itemId":1,"feeId":528,"taxId":1,"taxPercentId":2,"taxValue":0.57,"quantity":2,"cost":22.4,"price":4.75,"discount":0,"total":9.5,"obs":"","bodegaId":128}]}'
 CREATE OR ALTER PROCEDURE Restaurant.Order_Insert @userRoleId INT
 ,@json NVARCHAR(MAX)
 AS
@@ -188,8 +188,6 @@ BEGIN
                             ,IIF(i.menuId = 0, NULL, i.menuId)
                      FROM @tblItems i
 
-                    print @orderId
-
                     IF NOT EXISTS (SELECT 1 FROM Restaurant.OrderItem WHERE OrderId = @orderId)
                         BEGIN
                             ROLLBACK TRAN
@@ -230,6 +228,8 @@ BEGIN
                    SET @payload = (SELECT orderId = @orderId)
                 END
             -----------------END ORDER -----------------
+            PRINT @payload
+            
 
             ----------------VENTA RAPIDA------------
             IF @quickSale = 1
@@ -238,7 +238,6 @@ BEGIN
                 END
             ----------------END VENTA RAPIDA--------
 		COMMIT TRAN
-
         IF (@orderId > 0)
             SELECT Common.ufnSpResponse('1', 'Exitos al guardar', @payload)
         ELSE

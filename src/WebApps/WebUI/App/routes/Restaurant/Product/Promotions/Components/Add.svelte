@@ -119,7 +119,6 @@
       formatterParams: {
         height: "50px",
         width: "70px",
-        
       },
     },
     {
@@ -146,7 +145,8 @@
   // Todo: Save and Update promotion.
   const getPromotionMenu = (id) => {
     showLoader();
-    PromotionMenuService.get(id)
+    let params = JSON.stringify({ tipo: 1 });
+    PromotionMenuService.get(id, params)
       .then((response) => {
         if (response) {
           promotionMenus = response["promotionMenus"];
@@ -169,6 +169,7 @@
     showLoader();
     PromotionService.post({ data: newObject })
       .then((response) => {
+        console.log(response);
         if (response.status === 200) {
           if (response.data.code === "1") {
             usePromotionStore.get();
