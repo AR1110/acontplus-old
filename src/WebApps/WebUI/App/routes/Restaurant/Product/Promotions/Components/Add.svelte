@@ -145,7 +145,8 @@
   // Todo: Save and Update promotion.
   const getPromotionMenu = (id) => {
     showLoader();
-    PromotionMenuService.get(id)
+    let params = JSON.stringify({ tipo: 1 });
+    PromotionMenuService.get(id, params)
       .then((response) => {
         if (response) {
           promotionMenus = response["promotionMenus"];

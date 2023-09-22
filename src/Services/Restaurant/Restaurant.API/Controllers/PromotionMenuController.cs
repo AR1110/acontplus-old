@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Lib.Common.DbUtils;
+using Microsoft.AspNetCore.Mvc;
 using Restaurant.Core.Interfaces;
 using Services.Common;
 
@@ -15,13 +16,14 @@ namespace Restaurant.API.Controllers
         }
 
         [HttpGet("GetById/{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get(int id, string json)
         {
             try
             {
                 var parameters = new Dictionary<string, object> {
-                    {"userRoleId", User.GetUserRoleId() },
-                    {"id", id}
+                    { "userRoleId", User.GetUserRoleId() },
+                    { "json", SqlStringParam.Sanitize(json)},
+                    { "id", id}
                 };
                 var response = await _promotionService.GetByIdAsync(parameters);
                 if (response == null) { return NoContent(); }
