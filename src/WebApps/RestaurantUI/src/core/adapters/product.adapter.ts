@@ -1,4 +1,4 @@
-import { Measure, ProductSaleReadDto, RawMeasure, RawProductPVPData, RawProductSaleData } from "../models";
+import { Measure, ProductSaleReadDto, ProductSearchDto, RawMeasure, RawProductPVPData, RawProductSaleData, RawProductSearchData } from "../models";
 
 function productSaleReadAdapter(product: RawProductSaleData): ProductSaleReadDto { 
     return ({
@@ -7,7 +7,7 @@ function productSaleReadAdapter(product: RawProductSaleData): ProductSaleReadDto
         vatRatId: product.idTipoIva,
         taxRateCode: product.codigoPorcentaje,
         description: product.descripcion,
-        takesInventory: product.llevaInventario,
+        carryInventory: product.llevaInventario,
         costPrice: product.precioCosto,
         priceWithoutSubsidy: product.precioSinSubsidio,
         productCode: product.codigoArticulo,
@@ -35,8 +35,22 @@ function productSaleRateReadAdapter(measures: RawMeasure[]): Array<Measure> {
     })
 }
 
+function productSearchAdapter(products:Array<RawProductSearchData>): Array<ProductSearchDto>{
+    return products.map(product=>{
+        return {
+            productId: product.idArticulo,            
+            code: product.codigo,
+            description: product.descripcion,
+            iva: product.iva,
+            pvps: JSON.parse(product.priceSale) || [],
+            s3ObjectUrl: product.s3ObjectUrl,
+            s3ObjectKey: product.s3ObjectKey
+        }
+    })
+}
 
 export {
     productSaleReadAdapter,
-    productSaleRateReadAdapter
+    productSaleRateReadAdapter,
+    productSearchAdapter
 }

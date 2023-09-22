@@ -4,6 +4,7 @@ import {
     GET_ORDER_ERROR,
     GET_ORDER_SUCCESS,
     SET_CHANGE_ORDER_ITEMS, 
+    SET_DATA_FORM, 
     SET_LEFT_CHECKED_ORDER_ITEMS, 
     SET_LEFT_ORDER_ITEMS,
     SET_RIGHT_CHECKED_ORDER_ITEMS,
@@ -11,9 +12,9 @@ import {
     SET_RIGHT_ORDER_ITEMS
 } from "..";
 
-import { SplitAccountState } from "../../models";
+import { SplitOrderState } from "../../models";
 
-export const splitAccountReducer = (state: SplitAccountState, action: any): SplitAccountState => {
+export const splitOrderReducer = (state: SplitOrderState, action: any): SplitOrderState => {
     switch (action.type) {
         case GET_ORDER_BEGIN: {
             return { ...state, orderLoading: true }
@@ -24,12 +25,18 @@ export const splitAccountReducer = (state: SplitAccountState, action: any): Spli
                 ...state,
                 orderLoading: false,
                 leftOrder: order,
-                leftOrderItems: orderItems
+                leftOrderItems: orderItems,
+                leftOrderItemsLength : orderItems.length
             }
         }
         case GET_ORDER_ERROR:
             return { ...state, orderError: true, orderLoading: false } 
 
+        case SET_DATA_FORM: 
+            return { 
+                ...state, 
+                dataForm: action.payload
+            } 
         case SET_LEFT_ORDER_ITEMS: {
             return {
                 ...state,

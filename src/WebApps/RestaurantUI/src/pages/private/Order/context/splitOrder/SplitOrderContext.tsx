@@ -1,12 +1,13 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
-import { splitAccountReducer } from ".";
-import { SplitAccountAction, SplitAccountState } from "../../models";
-import { orderService } from "@/core/services";
+import { splitOrderReducer } from ".";
+import { SplitOrderAction, SplitOrderState } from "../../models";
+import { SaleService, getEstabs, orderService } from "@/core/services";
 import {
     GET_ORDER_BEGIN,
     GET_ORDER_ERROR,
     GET_ORDER_SUCCESS,
     SET_CHANGE_ORDER_ITEMS,
+    SET_DATA_FORM,
     SET_LEFT_CHECKED_ORDER_ITEMS,
     SET_LEFT_ORDER_ITEMS,
     SET_RIGHT_CHECKED_ORDER_ITEMS,
@@ -15,16 +16,16 @@ import {
 } from "..";
 
 import { orderReadForUpdateAdapter } from "@/core/adapters";
-import { ItemRead, Order } from "@/core/models";
+import { ItemRead, Order, dataFormInitialState } from "@/core/models";
 import { RoundNumber } from "@/core/utilities";
 import { TAX_RATE_CODE } from "@/core/constants";
 
 
 // Define el estado inicial del contexto
-const initialState: SplitAccountState = {
+const initialState: SplitOrderState = {
     orderLoading: false,
     orderError: false,
-
+    dataForm: dataFormInitialState,
     leftOrder: {
         orderId: 0,
         establecimientoId: 0,
@@ -67,16 +68,18 @@ const initialState: SplitAccountState = {
         quickSale: false,
         createdAt: new Date()
     },
+    leftOrderItemsLength: 0,
     leftOrderItems: [],
     rightOrderItems: [],
     changeOrderItems: [],
     leftCheckedOrderItems: [],
     rightCheckedOrderItems: []
 }
-const initialActions: SplitAccountAction = {
+const initialActions: SplitOrderAction = {
     fetchOrderData: (id: number) => id,
     intersection: () => [],
     not: () => [],
+
     setRightOrderItem: () => [],
     setLeftOrderItem: () => [],
     setRightOrderData: () => [],
@@ -88,12 +91,12 @@ const initialActions: SplitAccountAction = {
     calculateOrderItemTotal: () => {
         return {
             quantity: 0, subTotalSinImpuestos: 0, tax: 0, total: 0
-        }
+        };
     }
 };
 
-// Crea un contexto llamado SplitAccountContext
-export const SplitAccountContext = createContext<SplitAccountState & SplitAccountAction>(
+// Crea un contexto llamado SplitOrderContext
+export const SplitOrderContext = createContext<SplitOrderState & SplitOrderAction>(
     {
         ...initialState,
         ...initialActions
@@ -106,12 +109,23 @@ export const SplitAccountContext = createContext<SplitAccountState & SplitAccoun
 interface Props {
     children: JSX.Element | JSX.Element[]
 }
-export const SpliAccountProvider = ({ children }: Props) => {
+export const SplitOrderProvider = ({ children }: Props) => {
 
     // Utiliza useReducer para gestionar el estado
-    const [state, dispatch] = useReducer(splitAccountReducer, initialState);
+    const [state, dispatch] = useReducer(splitOrderReducer, initialState);
 
     let controller: AbortController;
+
+    const getDataForForm = (establecimientoId: number) => {
+        const establecimientos = getEstabs();
+        const dataEstab = establecimientos.find(estab => estab.idEstablecimiento === establecimientoId)
+
+        SaleService.getDataForForm(JSON.stringify({
+            codEstab: dataEstab?.codEstab
+        })).then(response => { 
+            dispatch({ type: SET_DATA_FORM, payload: response })
+        })
+    }
 
     // Función para cargar datos de pedido
     const fetchOrderData = async (id: number) => {
@@ -128,7 +142,7 @@ export const SpliAccountProvider = ({ children }: Props) => {
             const response = resultAxios.data;
             const orderData = await orderReadForUpdateAdapter(response)
 
-            console.log(orderData)
+            await getDataForForm(orderData.order.establecimientoId)
             // Actualiza el estado con los datos del pedido
             dispatch({ type: GET_ORDER_SUCCESS, payload: orderData })
 
@@ -182,20 +196,20 @@ export const SpliAccountProvider = ({ children }: Props) => {
         discount: number
         total: number
         taxRateCode?: string
-        priceWithVat:number
+        priceWithVat: number
     }>(payload: T[]) {
         let tax = 0; // Monto del IVA (12%)
-       // let totalPlusVAT = 0; // Total con IVA
-       // let importeTotal = 0; // Importe total con descuento 
+        // let totalPlusVAT = 0; // Total con IVA
+        // let importeTotal = 0; // Importe total con descuento 
 
-        const {quantity, subTotalSinImpuestos, totalNetoIva, importeTotal} = payload.reduce((total, orderItem) => {
+        const { quantity, subTotalSinImpuestos, totalNetoIva, importeTotal } = payload.reduce((total, orderItem) => {
             // Calcular el precio del ítem teniendo en cuenta el descuento
             const itemPrice = orderItem.price - orderItem.discount;
 
             // Calcular el total del ítem
             const itemTotal = itemPrice * orderItem.quantity;
 
-            total.quantity +=orderItem.quantity;
+            total.quantity += orderItem.quantity;
             // Agregar el total del ítem al subtotal sin impuestos
             total.subTotalSinImpuestos += itemTotal;
 
@@ -203,6 +217,7 @@ export const SpliAccountProvider = ({ children }: Props) => {
             if (orderItem.taxRateCode === TAX_RATE_CODE.TWELVE_PERCENT) {
                 total.totalNetoIva += itemTotal;
             }
+
             total.importeTotal += Number((orderItem.priceWithVat * orderItem.quantity).toFixed(2))
             return total;
         }, {
@@ -216,10 +231,10 @@ export const SpliAccountProvider = ({ children }: Props) => {
         tax = (totalNetoIva * 12) / 100;
 
         // Calcular el total con IVA
-      //  totalPlusVAT = subTotalSinImpuestos + tax;
+        //  totalPlusVAT = subTotalSinImpuestos + tax;
 
         // Calcular el importe total con descuento  
-       // importeTotal = totalPlusVAT;
+        // importeTotal = totalPlusVAT;
 
         return {
             quantity,
@@ -335,7 +350,7 @@ export const SpliAccountProvider = ({ children }: Props) => {
 
     // Proporciona el estado y las funciones del contexto a los componentes hijos
     return (
-        <SplitAccountContext.Provider value={{
+        <SplitOrderContext.Provider value={{
             ...state,
             fetchOrderData,
             intersection,
@@ -348,15 +363,15 @@ export const SpliAccountProvider = ({ children }: Props) => {
             mergeArraysByFieldLeft,
             setLeftCheckedOrderItems,
             setRightCheckedOrderItems,
-            calculateOrderItemTotal
+            calculateOrderItemTotal,            
         }}>
             {children}
-        </SplitAccountContext.Provider>
+        </SplitOrderContext.Provider>
     )
 }
 
 // Exporta un hook personalizado para acceder al contexto
 // eslint-disable-next-line react-refresh/only-export-components
-export const useSplitAccountContext = () => {
-    return useContext(SplitAccountContext)
+export const useSplitOrderContext = () => {
+    return useContext(SplitOrderContext)
 }

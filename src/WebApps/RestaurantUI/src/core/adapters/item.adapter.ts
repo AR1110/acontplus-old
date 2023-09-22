@@ -11,8 +11,7 @@ function pvpReadAdapter(pvp: RawProductPVPData): ProductPVPReadDto {
     })
 }
 
-function itemReadAdapter(items: RawItemData[]): Array<ItemReadDto> {     
- 
+function itemReadAdapter(items: RawItemData[]): Array<ItemReadDto> {    
     return items.map((item, index) => ({
         index,
         itemId:  item.itemTypeCode==='ITEM' ? item.id : 0, //idItem
@@ -29,7 +28,8 @@ function itemReadAdapter(items: RawItemData[]): Array<ItemReadDto> {
         itemType: item.tipoArticulo,           
         totalRecords: item.totalRecords,
         pvps: pvpReadAdapter(JSON.parse(item.pvp)),
-        itemTypeCode: item.itemTypeCode
+        itemTypeCode: item.itemTypeCode,
+        summary: item.summary
     })
     )
 }

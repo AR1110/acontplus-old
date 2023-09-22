@@ -121,7 +121,7 @@ BEGIN
                 ,va.s3ObjectUrl
                 ,va.llevaInventario
                 ,taxRateCode = sti.codigo
-                ,priceWithVat = cast(((i.Price * i.TaxValue) + i.Price) as numeric(18,5))
+                ,priceWithVat = cast((i.Price + i.TaxValue) as numeric(18,5))
             FROM Restaurant.[OrderItem] i WITH(NOLOCK)
             INNER JOIN Restaurant.Item it ON it.Id = i.ItemId
             INNER JOIN Inventario.v_Articulo va ON va.idArticulo = it.ProductId

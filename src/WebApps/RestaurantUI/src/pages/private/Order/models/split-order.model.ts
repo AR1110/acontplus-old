@@ -1,17 +1,19 @@
 
 
-import { ItemRead, Order } from "@/core/models"
+import { DataFormSale, ItemRead, Order } from "@/core/models"
 
 // }
 export type LeftOrderItem = ItemRead
 export type RighttOrderItem = ItemRead
 type ChangeOrderItem = ItemRead
 
-export interface SplitAccountState {
+export interface SplitOrderState {
     orderLoading: boolean
     orderError: boolean
+    dataForm: DataFormSale
     leftOrder: Order
     rightOrder: Order
+    leftOrderItemsLength: number
     leftOrderItems: LeftOrderItem[]
     rightOrderItems: RighttOrderItem[]
     changeOrderItems: ChangeOrderItem[]
@@ -25,7 +27,7 @@ type ReturnTypeTotal = {
     tax: number
     total: number
 }
-export interface SplitAccountAction {
+export interface SplitOrderAction {
     fetchOrderData(id: number): void
     intersection(a: Array<ItemRead>, b: Array<ItemRead>): Array<ItemRead>
     not(a: Array<ItemRead>, b: Array<ItemRead>): Array<ItemRead>
@@ -52,5 +54,5 @@ export interface SplitAccountAction {
         total: number
         taxRateCode?: string
         priceWithVat:number
-    }>(arr: T[]): ReturnTypeTotal
+    }>(arr: T[]): ReturnTypeTotal 
 }

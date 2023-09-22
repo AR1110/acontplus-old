@@ -1,19 +1,19 @@
-import { ProductPVPReadDto } from "."
+import { ProductPVPReadDto, ProductPVPSearch } from "."
 
- 
+
 //Product
 export interface RawProductSaleData {
     idArticulo: number,
     idMedida: number,
-    idTipoIva: number,    
-    descripcion: string,    
-    llevaInventario: boolean,        
+    idTipoIva: number,
+    descripcion: string,
+    llevaInventario: boolean,
     precioCosto: number,
-    precioSinSubsidio: number,    
+    precioSinSubsidio: number,
     tarifa: number,
     codigoPorcentaje: string,
     codigoArticulo: string,
-    stock: number    
+    stock: number
     s3ObjectKey: string
     s3ObjectUrl: string
 }
@@ -21,33 +21,64 @@ export interface RawProductSaleData {
 
 
 
+
 export interface ProductSaleReadDto {
     productId: number,
     measureId: number,
-    vatRatId: number, 
-    taxRateCode: string   
-    description: string,    
-    takesInventory: boolean,        
+    vatRatId: number,
+    taxRateCode: string
+    description: string,
+    carryInventory: boolean,
     costPrice: number,
-    priceWithoutSubsidy: number, 
+    priceWithoutSubsidy: number,
     productCode: string,
-    stock: number    
+    stock: number
     s3ObjectKey: string
-    s3ObjectUrl: string 
+    s3ObjectUrl: string
 }
- 
+
+//Product Search
+export interface RawProductSearchData {
+    idArticulo: number
+    codigo: string
+    descripcion: string
+    iva: string,
+    stock: number,
+    stockMinimo: number
+    subFamilia: string
+    marca: string
+    medida: string
+    fraccionado: boolean
+    style: string
+    priceSale: string
+    //warehouses,
+    precioSinSubsidio: 0,
+    s3ObjectUrl: string
+    s3ObjectKey: string
+}
+
+export interface ProductSearchDto  {
+    productId: number
+    code: string
+    description: string
+    iva: string
+    pvps: Array<ProductPVPSearch>
+    s3ObjectUrl: string
+    s3ObjectKey: string
+}
+
 //Medida Api
 export interface RawMeasure {
     idMedida: number
     medida: string
     tarifas: string
- }
+}
 
- 
 
- //Medida para el adapter
- export interface Measure{
+
+//Medida para el adapter
+export interface Measure {
     measureId: number
     description: string,
     pvps: Array<ProductPVPReadDto>
- }
+}

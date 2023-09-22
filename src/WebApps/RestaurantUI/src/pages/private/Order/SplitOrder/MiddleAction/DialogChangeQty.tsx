@@ -1,9 +1,17 @@
-import React, { forwardRef } from 'react'
-import { Button, Dialog, DialogActions, DialogContent, Grid, Slide, Stack, Typography } from '@mui/material';
-import { DataGrid, GridColDef, GridPreProcessEditCellProps, GridRowModel } from '@mui/x-data-grid';
+import React, { forwardRef, useState } from 'react'
+import { Box, Button, Dialog, DialogActions, DialogContent, Grid, Slide, Stack, Typography, styled } from '@mui/material';
+import {
+    DataGrid,
+    GridCellModes,
+    GridCellModesModel,
+    GridCellParams,
+    GridColDef,
+    GridPreProcessEditCellProps,
+    GridRowModel,
+    GridValueGetterParams
+} from '@mui/x-data-grid';
 import { TransitionProps } from '@mui/material/transitions';
-import { useSplitAccountContext } from '../../context';
-import { SnackbarUtility } from '@/core/utilities';
+import { useSplitOrderContext } from '../../context';
 const columns: GridColDef[] = [
     { field: 'index', headerName: 'N°', width: 70 },
     { field: 'description', headerName: 'Descripción', width: 250 },
@@ -21,16 +29,12 @@ const columns: GridColDef[] = [
         width: 130,
         editable: true,
         preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
-
             let hasError = false;
-
             if (!params.props.value || params.props.value < 1) {
                 hasError = true;
-                SnackbarUtility.warning('Ingrese correctamente')
             }
             if (params.props.value > params.row.quantityTemp) {
                 hasError = true;
-                SnackbarUtility.warning('No puede ser mayor a la cantidad original')
             }
             return { ...params.props, error: hasError };
         },
@@ -48,12 +52,29 @@ const columns: GridColDef[] = [
         width: 110,
     },
     {
-        field: 'total',
+        field: 'totalIVA',
         headerName: 'Total',
         type: 'number',
         width: 110,
+        valueGetter: (params: GridValueGetterParams) => (params.row.quantity * params.row.priceWithVat).toFixed(2)
     },
 ];
+
+const StyledBox = styled(Box)(({ theme }) => ({
+    height: 300,
+    width: '100%',
+    '& .MuiDataGrid-cell--editing': {
+        backgroundColor: 'rgb(255,215,115, 0.19)',
+        color: '#1a3e72',
+        '& .MuiInputBase-root': {
+            height: '100%',
+        },
+    },
+    '& .Mui-error': {
+        backgroundColor: `rgb(126,10,15, ${theme.palette.mode === 'dark' ? 0 : 0.1})`,
+        color: theme.palette.error.main,
+    },
+}));
 
 
 
@@ -66,37 +87,91 @@ const Transition = forwardRef(function Transition(
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
+
 type DialogChangeQtyProps = {
     open: boolean,
     setOpen(): void
 }
+
+
 const DialogChangeQty = ({ open, setOpen }: DialogChangeQtyProps) => {
-    const { changeOrderItems, setChangeOrderItems, calculateOrderItemTotal } = useSplitAccountContext();
+    const {
+        changeOrderItems,
+        setChangeOrderItems,
+        setLeftCheckedOrderItems,
+        calculateOrderItemTotal
+    } = useSplitOrderContext();
 
-    const { intersection } = useSplitAccountContext();
-    const { leftCheckedOrderItems, setLeftCheckedOrderItems } = useSplitAccountContext();
-    const { leftOrderItems, setLeftOrderItem } = useSplitAccountContext();
-    const { rightOrderItems, setRightOrderItem } = useSplitAccountContext();
+    const { leftOrderItems, setLeftOrderItem } = useSplitOrderContext();
+    const { rightOrderItems, setRightOrderItem } = useSplitOrderContext();
 
-    const leftChecked = intersection(leftCheckedOrderItems, leftOrderItems);
-    const { mergeArraysByField, mergeArraysByFieldLeft } = useSplitAccountContext();
+    const { mergeArraysByField, mergeArraysByFieldLeft } = useSplitOrderContext();
+    const [cellModesModel, setCellModesModel] = useState<GridCellModesModel>({});
+
 
     //Totals order items changes QTY
     const objTempTotal = calculateOrderItemTotal(changeOrderItems)
 
-    const processRowUpdate = (newRow: GridRowModel) => {
+    const processRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
+        if(newRow["quantity"]===oldRow["quantity"]){
+            return oldRow;
+        }
         const total = newRow["quantity"] * newRow["price"];
         newRow["total"] = total;
-        const mergeFilteredItems = leftChecked.map((orderItem) => {
+        const mergeFilteredItems = changeOrderItems.map((orderItem) => {
             return orderItem.id === newRow["id"] ? newRow as any : orderItem
         });
 
         //Actualizamos cantidades modificadas 
         setChangeOrderItems(mergeFilteredItems);
         return newRow;
+    } 
+
+    const handleCellClick = (params: GridCellParams, event: React.MouseEvent) => {
+
+        if (!params.isEditable) {
+            return;
+        }
+
+        // Ignore portal
+        if (!event.currentTarget.contains(event.target as Element)) {
+            return;
+        }
+
+        if (params.field === "quantity") {
+
+            setCellModesModel((prevModel) => {
+                return {
+                    // Revert the mode of the other cells from other rows
+                    ...Object.keys(prevModel).reduce((acc, id) => ({
+                        ...acc,
+                        [id]: Object.keys(prevModel[params.id] || {}).reduce((acc2, field) => ({
+                            ...acc2,
+                            [field]: { mode: GridCellModes.View },
+                        }),
+                            {},
+                        ),
+                    }),
+                        {},
+                    ),
+                    [params.id]: {
+                        // Revert the mode of other cells in the same row
+                        ...Object.keys(prevModel[params.id] || {}).reduce(
+                            (acc, field) => ({ ...acc, [field]: { mode: GridCellModes.View } }),
+                            {},
+                        ),
+                        [params.field]: { mode: GridCellModes.Edit },
+                    },
+                };
+            });
+        }
     }
 
+    const handleCellModesModelChange = (newModel: GridCellModesModel) => {
+        setCellModesModel(newModel);
+    }
 
+    //Agrega en la tabla cuenta dividual
     const next = () => {
         const mergeRightOrderItems = mergeArraysByField(changeOrderItems, rightOrderItems, 'id');
         const mergeLeftOrderItems = mergeArraysByFieldLeft(changeOrderItems, leftOrderItems, 'id');
@@ -107,7 +182,6 @@ const DialogChangeQty = ({ open, setOpen }: DialogChangeQtyProps) => {
         setChangeOrderItems([])
         setOpen();
     }
-
 
     return (
         <Dialog
@@ -135,8 +209,9 @@ const DialogChangeQty = ({ open, setOpen }: DialogChangeQtyProps) => {
 
                     </Grid>
                 </Grid>
-                <div style={{ height: 400, width: '100%' }}>
+                <StyledBox>
                     <DataGrid
+
                         rows={changeOrderItems}
                         columns={columns}
                         // disableColumnSelector
@@ -146,13 +221,16 @@ const DialogChangeQty = ({ open, setOpen }: DialogChangeQtyProps) => {
                                 paginationModel: { page: 0, pageSize: 5 },
                             },
                         }}
+                        cellModesModel={cellModesModel}
+                        onCellModesModelChange={handleCellModesModelChange}
+                        onCellClick={handleCellClick}
 
                         pageSizeOptions={[5, 10]}
                         isCellEditable={(params) => params.row.quantityTemp > 1}
                         processRowUpdate={processRowUpdate}
 
                     />
-                </div>
+                </StyledBox>
             </DialogContent>
             <DialogActions>
                 <Grid container spacing={1}>

@@ -13,3 +13,9 @@ export interface ProductPVPReadDto {
     description: string,
     default: boolean
 }
+
+
+export interface ProductPVPSearch {
+    tarifa: string
+    precio: number
+}

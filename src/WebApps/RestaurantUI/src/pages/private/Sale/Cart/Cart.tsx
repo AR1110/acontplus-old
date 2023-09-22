@@ -197,7 +197,9 @@ const Cart = () => {
             <Grid item xs={12} sm container>
                 <Grid item xs container direction="column" spacing={1}>
                     <Grid item xs>
-                        <Button size='small' variant="outlined" onClick={() => {
+                        <Button  size='large' sx={{
+                            height: 50
+                        }} variant="outlined" onClick={() => {
                             setOpenTableDialog(true)
                         }}>
                             {

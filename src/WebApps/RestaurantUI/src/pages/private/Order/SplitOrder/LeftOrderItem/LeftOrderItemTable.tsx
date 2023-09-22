@@ -1,7 +1,7 @@
 
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import CustomNoRowsOverlay from '@/core/components/CustomNoRowsOverlay/CustomNoRowsOverlay';
-import { useSplitAccountContext } from '../../context';
+import { useSplitOrderContext } from '../../context';
 import { Alert, AlertTitle } from '@mui/material';
 
 const columns: GridColDef[] = [
@@ -39,10 +39,10 @@ const columns: GridColDef[] = [
 
 
 const LeftOrderItemTable = () => {
-    const { leftOrderItems, setLeftCheckedOrderItems, setRightCheckedOrderItems } = useSplitAccountContext();
-    console.log(leftOrderItems)
+    const {orderLoading, leftOrderItems, setLeftCheckedOrderItems, setRightCheckedOrderItems } = useSplitOrderContext();
+     
     return (
-        <div style={{ height: 400, width: '100%' }}>
+        <div style={{ height: 400, width: '100%' }}> 
             <DataGrid
                 rows={leftOrderItems}
                 columns={columns}
@@ -57,7 +57,7 @@ const LeftOrderItemTable = () => {
                 pageSizeOptions={[5, 10]}
                 checkboxSelection
                 rowSelection
-                loading={leftOrderItems.length === 0}
+                loading={orderLoading}
                 onRowSelectionModelChange={(ids) => {
                     const selectedIDs = new Set(ids);
                     const selectedRows = leftOrderItems.filter((row) => selectedIDs.has(row.id));
