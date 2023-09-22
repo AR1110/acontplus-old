@@ -94,6 +94,7 @@
       promotionId: data.id,
       menuId: menu.id,
       title: menu.title,
+      s3ObjectUrl: menu.s3ObjectUrl || "https://i.stack.imgur.com/GNhxO.png",
     };
 
     promotionMenus = [...promotionMenus, newPromotionMenu];
@@ -109,25 +110,36 @@
 
   let productColumns = [
     {
-      align: "center",
-      field: "id",
-      title: "Id",
+      field: "s3ObjectUrl",
+      title: "Imagen",
+      formatter: "image",
+      hozAlign: "center",
+      resizable: false,
+      headerSort: false,
+      formatterParams: {
+        height: "50px",
+        width: "70px",
+        
+      },
     },
     {
+      rezisable: true,
       editable: "never",
       field: "title",
       title: "Menu",
-      with: 500,
+      with: 300,
+      maxWith: 500,
     },
     {
       cellClick: (e, cell) => {
         onRemove(cell.getData().menuId);
         cell.getRow().delete();
       },
+      rezisable: true,
+      with: 100,
       formatter: "buttonCross",
       hozAlign: "center",
       title: "Opción",
-      width: 100,
     },
   ];
 
