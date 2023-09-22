@@ -53,7 +53,7 @@ const ProductSearch = ({ onChangeProductSearch }: ProductSearchProps) => {
     return () => {
       controller && controller.abort();
     }
-  })
+  }, [])
 
   return (
     <Autocomplete
@@ -86,7 +86,7 @@ const ProductSearch = ({ onChangeProductSearch }: ProductSearchProps) => {
                 </Typography>
               </Box>
               <Typography variant="body2" color="text.secondary">
-                {option.code}
+                {option.code} - {option.iva}
               </Typography>
             </Grid>
           </Grid>

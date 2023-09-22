@@ -16,6 +16,7 @@ export interface RawProductSaleData {
     stock: number
     s3ObjectKey: string
     s3ObjectUrl: string
+    tarifaImpuesto: string
 }
 
 
@@ -35,6 +36,7 @@ export interface ProductSaleReadDto {
     stock: number
     s3ObjectKey: string
     s3ObjectUrl: string
+    tarifaImpuesto: string
 }
 
 //Product Search

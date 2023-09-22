@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
 import { splitOrderReducer } from ".";
-import { SplitOrderAction, SplitOrderState } from "../../models";
+ 
 import { SaleService, getEstabs, orderService } from "@/core/services";
 import {
     GET_ORDER_BEGIN,
@@ -16,7 +16,7 @@ import {
 } from "..";
 
 import { orderReadForUpdateAdapter } from "@/core/adapters";
-import { ItemRead, Order, dataFormInitialState } from "@/core/models";
+import { ItemRead, Order, SplitOrderAction, SplitOrderState, dataFormInitialState } from "@/core/models";
 import { RoundNumber } from "@/core/utilities";
 import { TAX_RATE_CODE } from "@/core/constants";
 
