@@ -13,13 +13,12 @@ const ItemContent = ({ loading }: ItemContentProps) => {
   const itemSearch = useSaleStore(state => state.itemSearch);
 
   const renderContent = () => {
-    console.log(itemSearch)
-    if (itemSearch.code === CATEGORY_CODE.PROM) {
+    if(itemSearch.code === CATEGORY_CODE.PROM){
       return <Promotion />
-    } else {
+    } else{
       return <ItemList loading={loading} />
     }
-  }
+  } 
   return (
     <Box sx={{ pt: 2 }}>
       <Grid container
@@ -38,7 +37,7 @@ const ItemContent = ({ loading }: ItemContentProps) => {
 
         {
           renderContent()
-        }
+        } 
       </Grid>
       <ItemPagination />
     </Box>

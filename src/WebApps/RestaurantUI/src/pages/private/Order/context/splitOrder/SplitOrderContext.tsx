@@ -10,6 +10,7 @@ import {
     SET_DATA_FORM,
     SET_LEFT_CHECKED_ORDER_ITEMS,
     SET_LEFT_ORDER_ITEMS,
+    SET_RESET_DATA,
     SET_RIGHT_CHECKED_ORDER_ITEMS,
     SET_RIGHT_ORDER_DATA,
     SET_RIGHT_ORDER_ITEMS
@@ -20,54 +21,56 @@ import { ItemRead, Order, SplitOrderAction, SplitOrderState, dataFormInitialStat
 import { RoundNumber } from "@/core/utilities";
 import { TAX_RATE_CODE } from "@/core/constants";
 
+const leftOrder = {
+    orderId: 0,
+    establecimientoId: 0,
+    puntoEmisionId: 0,
+    customerCompanyId: 0,
+    customerName: "",
+    bodegaId: 0,
+    tableId: 0,
+    subTotalSinImpuestos: 0,
+    tax: 0,
+    taxPercent: 0,
+    taxAmount: 0,
+    discount: 0,
+    total: 0,
+    netTotal: 0,
+    tip: 0,
+    obs: "",
+    codDoc: "",
+    quickSale: false,
+    createdAt: new Date()
+};
 
+const rightOrder = {
+    orderId: 0,
+    establecimientoId: 0,
+    puntoEmisionId: 0,
+    customerCompanyId: 0,
+    customerName: "",
+    bodegaId: 0,
+    tableId: 0,
+    subTotalSinImpuestos: 0,
+    tax: 0,
+    taxPercent: 0,
+    taxAmount: 0,
+    discount: 0,
+    total: 0,
+    netTotal: 0,
+    tip: 0,
+    obs: "",
+    codDoc: "",
+    quickSale: false,
+    createdAt: new Date()
+};
 // Define el estado inicial del contexto
 const initialState: SplitOrderState = {
     orderLoading: false,
     orderError: false,
     dataForm: dataFormInitialState,
-    leftOrder: {
-        orderId: 0,
-        establecimientoId: 0,
-        puntoEmisionId: 0,
-        customerCompanyId: 0,
-        customerName: "",
-        bodegaId: 0,
-        tableId: 0,
-        subTotalSinImpuestos: 0,
-        tax: 0,
-        taxPercent: 0,
-        taxAmount: 0,
-        discount: 0,
-        total: 0,
-        netTotal: 0,
-        tip: 0,
-        obs: "",
-        codDoc: "",
-        quickSale: false,
-        createdAt: new Date()
-    },
-    rightOrder: {
-        orderId: 0,
-        establecimientoId: 0,
-        puntoEmisionId: 0,
-        customerCompanyId: 0,
-        customerName: "",
-        bodegaId: 0,
-        tableId: 0,
-        subTotalSinImpuestos: 0,
-        tax: 0,
-        taxPercent: 0,
-        taxAmount: 0,
-        discount: 0,
-        total: 0,
-        netTotal: 0,
-        tip: 0,
-        obs: "",
-        codDoc: "",
-        quickSale: false,
-        createdAt: new Date()
-    },
+    leftOrder,
+    rightOrder,
     leftOrderItemsLength: 0,
     leftOrderItems: [],
     rightOrderItems: [],
@@ -160,6 +163,13 @@ export const SplitOrderProvider = ({ children }: Props) => {
     // Utiliza useEffect para realizar una limpieza al desmontar el componente
     useEffect(() => {
         return () => {
+            dispatch({
+                action: SET_RESET_DATA,
+                payload: {
+                    rightOrder,
+                    leftOrder
+                }
+            })
             // Cancela la solicitud de datos de pedido al desmontar
             cancelEndpoint();
         };

@@ -43,8 +43,7 @@ const MiddleAction = () => {
     const handleCheckedLeft = () => {
         const mergeRightOrderItems = mergeArraysByField(rightChecked, leftOrderItems, 'id');
         setLeftOrderItem(mergeRightOrderItems);
-        setRightOrderItem(not(rightOrderItems, rightChecked)); 
-        setRightOrderItem([]);        
+        setRightOrderItem(not(rightOrderItems, rightChecked));      
     };
 
 
