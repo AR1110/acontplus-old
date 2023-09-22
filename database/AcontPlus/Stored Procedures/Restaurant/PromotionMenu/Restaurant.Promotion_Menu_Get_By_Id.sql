@@ -24,10 +24,13 @@ BEGIN
 	SELECT pm.Id
            ,pm.PromotionId
            ,pm.MenuId
-           ,m.Title           
+           ,m.Title
+           ,iv.s3ObjectUrl
 	FROM Restaurant.PromotionMenu pm WITH (NOLOCK)
     INNER JOIN Restaurant.Menu m ON m.Id = pm.MenuId
+    INNER JOIN Inventario.v_Articulo iv ON iv.idArticulo = m.ProductId
     WHERE pm.PromotionId = @id
     AND ISNULL(pm.Deleted, 0) != 1
 END
 GO
+
