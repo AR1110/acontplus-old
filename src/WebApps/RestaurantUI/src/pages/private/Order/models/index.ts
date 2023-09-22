@@ -1,1 +1,1 @@
-export * from './split-account.model';
+export * from './split-order.model';

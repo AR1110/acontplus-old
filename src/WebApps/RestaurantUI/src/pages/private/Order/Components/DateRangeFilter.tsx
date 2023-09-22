@@ -11,7 +11,7 @@ export default function DateRangeFilter({label, value, onChange}: DateRangeFilte
 //   const [value, setValue] = React.useState<Dayjs | null>(null);
    
   return (  
-        <DatePicker label={label} value={value} onChange={(newValue) => onChange(newValue)} />
+        <DatePicker   format="DD/MM/YYYY" label={label} value={value} onChange={(newValue) => onChange(newValue)} />
     
   );
 }

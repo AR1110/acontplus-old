@@ -22,6 +22,12 @@ namespace Restaurant.Infrastructure.Data
                 var itemTypes = JsonSerializer.Deserialize<List<ItemType>>(itemTypesData);
                 context.ItemTypes.AddRange(itemTypes);
             }
+            if (!context.MenuTypes.Any())
+            {
+                var menuTypeData = File.ReadAllText(path + @"/Data/SeedData/MenuType.json");
+                var menuTypes = JsonSerializer.Deserialize<List<ItemType>>(menuTypeData);
+                context.ItemTypes.AddRange(menuTypes);
+            }
             if (context.ChangeTracker.HasChanges()) await context.SaveChangesAsync();
         }
     }

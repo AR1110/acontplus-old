@@ -1,5 +1,5 @@
 import { PATHS } from '@/core/constants';
-import { Http } from '@/core/utilities';
+import { Http, loadAbort } from '@/core/utilities';
 import { ApiResponse, Measure, ProductSaleReadDto } from '../models';
 import { productSaleRateReadAdapter, productSaleReadAdapter } from '../adapters';
 
@@ -60,5 +60,20 @@ export const productService = {
         }
         
         return JSON.parse(response.payload)[0][0];          
+    },
+    search(obj:{ busqueda: string}){
+        const controller = loadAbort(); //Cancelar peticion 
+    
+        return {
+            call: Http({
+                method: 'get',
+                url: `${PATHS.INVENTARIO}${URL}Search`,
+                params: {
+                    json: JSON.stringify(obj)
+                },
+                signal: controller.signal
+            }),
+            controller
+        }
     }
 };

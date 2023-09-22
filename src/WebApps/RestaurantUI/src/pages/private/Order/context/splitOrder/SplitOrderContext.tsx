@@ -1,12 +1,13 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
-import { splitAccountReducer } from ".";
-import { SplitAccountAction, SplitAccountState } from "../../models";
-import { orderService } from "@/core/services";
+import { splitOrderReducer } from ".";
+import { SplitOrderAction, SplitOrderState } from "../../models";
+import { SaleService, getEstabs, orderService } from "@/core/services";
 import {
     GET_ORDER_BEGIN,
     GET_ORDER_ERROR,
     GET_ORDER_SUCCESS,
-    SET_CHANGE_ORDER_ITEMS, 
+    SET_CHANGE_ORDER_ITEMS,
+    SET_DATA_FORM,
     SET_LEFT_CHECKED_ORDER_ITEMS,
     SET_LEFT_ORDER_ITEMS,
     SET_RIGHT_CHECKED_ORDER_ITEMS,
@@ -15,16 +16,16 @@ import {
 } from "..";
 
 import { orderReadForUpdateAdapter } from "@/core/adapters";
-import { ItemRead, Order } from "@/core/models";
+import { ItemRead, Order, dataFormInitialState } from "@/core/models";
 import { RoundNumber } from "@/core/utilities";
 import { TAX_RATE_CODE } from "@/core/constants";
 
 
 // Define el estado inicial del contexto
-const initialState: SplitAccountState = {
+const initialState: SplitOrderState = {
     orderLoading: false,
     orderError: false,
-
+    dataForm: dataFormInitialState,
     leftOrder: {
         orderId: 0,
         establecimientoId: 0,
@@ -67,31 +68,35 @@ const initialState: SplitAccountState = {
         quickSale: false,
         createdAt: new Date()
     },
+    leftOrderItemsLength: 0,
     leftOrderItems: [],
-    rightOrderItems: [], 
+    rightOrderItems: [],
     changeOrderItems: [],
     leftCheckedOrderItems: [],
     rightCheckedOrderItems: []
 }
-
-// Define las acciones iniciales del contexto
-const initialActions: SplitAccountAction = {
+const initialActions: SplitOrderAction = {
     fetchOrderData: (id: number) => id,
     intersection: () => [],
-    not: () => [], 
+    not: () => [],
+
     setRightOrderItem: () => [],
-    setLeftOrderItem: () => [], 
+    setLeftOrderItem: () => [],
     setRightOrderData: () => [],
     setChangeOrderItems: () => [],
     mergeArraysByField: () => [],
     mergeArraysByFieldLeft: () => [],
     setLeftCheckedOrderItems: () => [],
-    setRightCheckedOrderItems: () => []
-}
+    setRightCheckedOrderItems: () => [],
+    calculateOrderItemTotal: () => {
+        return {
+            quantity: 0, subTotalSinImpuestos: 0, tax: 0, total: 0
+        };
+    }
+};
 
-
-// Crea un contexto llamado SplitAccountContext
-export const SplitAccountContext = createContext<SplitAccountState & SplitAccountAction>(
+// Crea un contexto llamado SplitOrderContext
+export const SplitOrderContext = createContext<SplitOrderState & SplitOrderAction>(
     {
         ...initialState,
         ...initialActions
@@ -104,12 +109,23 @@ export const SplitAccountContext = createContext<SplitAccountState & SplitAccoun
 interface Props {
     children: JSX.Element | JSX.Element[]
 }
-export const SpliAccountProvider = ({ children }: Props) => {
+export const SplitOrderProvider = ({ children }: Props) => {
 
     // Utiliza useReducer para gestionar el estado
-    const [state, dispatch] = useReducer(splitAccountReducer, initialState);
+    const [state, dispatch] = useReducer(splitOrderReducer, initialState);
 
     let controller: AbortController;
+
+    const getDataForForm = (establecimientoId: number) => {
+        const establecimientos = getEstabs();
+        const dataEstab = establecimientos.find(estab => estab.idEstablecimiento === establecimientoId)
+
+        SaleService.getDataForForm(JSON.stringify({
+            codEstab: dataEstab?.codEstab
+        })).then(response => { 
+            dispatch({ type: SET_DATA_FORM, payload: response })
+        })
+    }
 
     // Función para cargar datos de pedido
     const fetchOrderData = async (id: number) => {
@@ -126,7 +142,7 @@ export const SpliAccountProvider = ({ children }: Props) => {
             const response = resultAxios.data;
             const orderData = await orderReadForUpdateAdapter(response)
 
-            console.log(orderData)
+            await getDataForForm(orderData.order.establecimientoId)
             // Actualiza el estado con los datos del pedido
             dispatch({ type: GET_ORDER_SUCCESS, payload: orderData })
 
@@ -162,7 +178,7 @@ export const SpliAccountProvider = ({ children }: Props) => {
     const not = (a: Array<ItemRead>, b: Array<ItemRead>) => {
         const results = a.filter((value) => b.indexOf(value) === -1);
         return results;
-    } 
+    }
 
     const setRightOrderItem = (payload: Array<ItemRead>) => {
         dispatch({ type: SET_RIGHT_ORDER_ITEMS, payload })
@@ -174,51 +190,69 @@ export const SpliAccountProvider = ({ children }: Props) => {
         caculateTotals(state.leftOrder, payload)
     }
 
+    function calculateOrderItemTotal<T extends {
+        quantity: number
+        price: number
+        discount: number
+        total: number
+        taxRateCode?: string
+        priceWithVat: number
+    }>(payload: T[]) {
+        let tax = 0; // Monto del IVA (12%)
+        // let totalPlusVAT = 0; // Total con IVA
+        // let importeTotal = 0; // Importe total con descuento 
+
+        const { quantity, subTotalSinImpuestos, totalNetoIva, importeTotal } = payload.reduce((total, orderItem) => {
+            // Calcular el precio del ítem teniendo en cuenta el descuento
+            const itemPrice = orderItem.price - orderItem.discount;
+
+            // Calcular el total del ítem
+            const itemTotal = itemPrice * orderItem.quantity;
+
+            total.quantity += orderItem.quantity;
+            // Agregar el total del ítem al subtotal sin impuestos
+            total.subTotalSinImpuestos += itemTotal;
+
+            // Si hay un impuesto correspondiente, agregar el total del ítem al total neto con IVA
+            if (orderItem.taxRateCode === TAX_RATE_CODE.TWELVE_PERCENT) {
+                total.totalNetoIva += itemTotal;
+            }
+
+            total.importeTotal += Number((orderItem.priceWithVat * orderItem.quantity).toFixed(2))
+            return total;
+        }, {
+            quantity: 0,
+            subTotalSinImpuestos: 0,
+            totalNetoIva: 0,
+            importeTotal: 0
+        })
+
+        // Calcular el monto del impuesto (IVA 12%)
+        tax = (totalNetoIva * 12) / 100;
+
+        // Calcular el total con IVA
+        //  totalPlusVAT = subTotalSinImpuestos + tax;
+
+        // Calcular el importe total con descuento  
+        // importeTotal = totalPlusVAT;
+
+        return {
+            quantity,
+            subTotalSinImpuestos: RoundNumber(subTotalSinImpuestos, 5),
+            tax: RoundNumber(tax, 5),
+            total: RoundNumber(importeTotal, 5)
+        }
+    }
+
     const caculateTotals = (order: Order, orderItems: Array<ItemRead>) => {
         try {
-            // Inicializar variables para los totales
-            // subTotalSinImpuestos = 0; Subtotal sin impuestos
-            // totalNetoIva = 0; Total neto con IVA
-            let tax = 0; // Monto del IVA (12%)
-            let totalPlusVAT = 0; // Total con IVA
-            let importeTotal = 0; // Importe total con descuento 
 
-            const { subTotalSinImpuestos, totalNetoIva } = orderItems.reduce((total, orderItem) => {
-                // Calcular el precio del ítem teniendo en cuenta el descuento
-                const itemPrice = orderItem.price - orderItem.discount;
+            const obj = calculateOrderItemTotal(orderItems);
 
-                // Calcular el total del ítem
-                const itemTotal = itemPrice * orderItem.quantity;
-
-                // Agregar el total del ítem al subtotal sin impuestos
-                total.subTotalSinImpuestos += itemTotal;
-
-                // Si hay un impuesto correspondiente, agregar el total del ítem al total neto con IVA
-                if (orderItem.taxRateCode === TAX_RATE_CODE.TWELVE_PERCENT) {
-                    total.totalNetoIva += itemTotal;
-                }
-
-                return total;
-            }, {
-                subTotalSinImpuestos: 0,
-                totalNetoIva: 0
-            })
-
-
-
-            // Calcular el monto del impuesto (IVA 12%)
-            tax = (totalNetoIva * 12) / 100;
-
-            // Calcular el total con IVA
-            totalPlusVAT = subTotalSinImpuestos + tax;
-
-            // Calcular el importe total con descuento  
-            importeTotal = totalPlusVAT;
-
-            order.netTotal = importeTotal;
-            order.subTotalSinImpuestos = RoundNumber(subTotalSinImpuestos, 5);
-            order.tax = RoundNumber(tax, 5);
-            order.total = RoundNumber(importeTotal, 5);
+            order.netTotal = obj.total;
+            order.subTotalSinImpuestos = obj.subTotalSinImpuestos;
+            order.tax = obj.tax;
+            order.total = obj.total
         } catch (error) {
             console.log(error)
         }
@@ -316,27 +350,28 @@ export const SpliAccountProvider = ({ children }: Props) => {
 
     // Proporciona el estado y las funciones del contexto a los componentes hijos
     return (
-        <SplitAccountContext.Provider value={{
+        <SplitOrderContext.Provider value={{
             ...state,
             fetchOrderData,
             intersection,
-            not, 
+            not,
             setRightOrderItem,
-            setLeftOrderItem, 
+            setLeftOrderItem,
             setRightOrderData,
             setChangeOrderItems,
             mergeArraysByField,
             mergeArraysByFieldLeft,
             setLeftCheckedOrderItems,
-            setRightCheckedOrderItems
+            setRightCheckedOrderItems,
+            calculateOrderItemTotal,            
         }}>
             {children}
-        </SplitAccountContext.Provider>
+        </SplitOrderContext.Provider>
     )
 }
 
 // Exporta un hook personalizado para acceder al contexto
 // eslint-disable-next-line react-refresh/only-export-components
-export const useSplitAccountContext = () => {
-    return useContext(SplitAccountContext)
+export const useSplitOrderContext = () => {
+    return useContext(SplitOrderContext)
 }

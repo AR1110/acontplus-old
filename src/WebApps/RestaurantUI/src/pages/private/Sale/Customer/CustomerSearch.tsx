@@ -24,8 +24,7 @@ const CustomerSearch = () => {
     const customerSearch = (textSearch: string) => {
         setCustomers([])
         if (textSearch.length < 2) return
-        customerService.search(textSearch).then(response => {
-            console.log(response)
+        customerService.search(textSearch).then(response => { 
             setCustomers(response)
         }).catch(() => {
             setCustomers([])
@@ -115,10 +114,7 @@ const CustomerSearch = () => {
                                                 <HtmlTooltip placement="bottom-start" title={
                                                     <CustomerInfo id={order.customerCompanyId} />
                                                 }>
-                                                    <IconButton onClick={() => {
-                                                        customerCompanyId.current = order.customerCompanyId;
-                                                        setOpenCustomerDialog(true)
-                                                    }}>
+                                                    <IconButton>
                                                         <InfoIcon color='info' sx={{ fontSize: 30 }} />
                                                     </IconButton>
                                                 </HtmlTooltip>

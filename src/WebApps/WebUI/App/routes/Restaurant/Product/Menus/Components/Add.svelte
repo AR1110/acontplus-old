@@ -22,41 +22,44 @@
   let codeMenuType = "";
   let validation = [undefined, null, 0, ""];
 
-  useMenuStore.subscribe((values) => {
-    data = values.dataUpdate;
-    menuTypes = values.menuTypes;
-    days = values.days;
-
-    if (data.id > 0) {
-      getItems(data.id);
-      getCodeMenuType(data.menuTypeId);
-    }
-  });
-
   const getItems = (id: number) => {
-    MenuItemService.getById(id, { id: id, tipo: 1 }).then((response) => {
-      if (response) {
-        productsAdded = response["menuItems"];
+    showLoader();
+    MenuItemService.getById(id, { id: id, tipo: 1 })
+      .then((response) => {
+        if (response) {
+          productsAdded = response["menuItems"];
 
-        verifyUpdateCell(productsAdded);
-      }
-    });
+          verifyUpdateCell(productsAdded);
+        }
+      })
+      .finally(() => {
+        hideLoader();
+      });
   };
 
   let verifyUpdateCell = (productsAdded) => {
-    for (let i = 0; i < productsAdded.length; i++) {
-      let fee = JSON.parse(productsAdded[i].fees).find(
-        (x) => x.idTarifa == productsAdded[i].feeId
-      );
-      productsAdded[i].priceIVA = fee.precioConIva;
-      productsAdded[i].price = fee.precioVenta;
+    showLoader();
+    if (productsAdded.length > 0) {
+      for (let i = 0; i < productsAdded.length; i++) {
+        let fee = JSON.parse(productsAdded[i].fees).find(
+          (x) => x.idTarifa == productsAdded[i].feeId
+        );
+        productsAdded[i].priceIVA = fee.precioConIva;
+        productsAdded[i].price = fee.precioVenta;
+      }
     }
+    hideLoader();
+
     checkDays(days);
   };
 
   let getCodeMenuType = (id) => {
-    let menuType = menuTypes.find((x) => x.id == id);
-    codeMenuType = menuType.code;
+    if (menuTypes.length > 0) {
+      if (!validation.includes(id)) {
+        let menuType = menuTypes.find((x) => x.id == id);
+        codeMenuType = menuType.code;
+      }
+    }
   };
 
   // Todo: GRID COLUMNS
@@ -149,7 +152,7 @@
     if (column === "discountPercent") {
       if (row.discountPercent >= 0 && row.discountPercent <= 100) {
         porcentaje = row.discountPercent / 100;
-        descuento = row.price * porcentaje;
+        descuento = row.priceIVA * porcentaje;
 
         if (!validation.includes(descuento)) {
           descuento = parseFloat(descuento.toFixed(2));
@@ -168,15 +171,15 @@
         });
       }
     }
-    totalDiscount = (row.price - row.discountValue) * row.quantity;
+    totalDiscount = (row.priceIVA - row.discountValue) * row.quantity;
     if (!validation.includes(totalDiscount)) {
       totalDiscount = parseFloat(totalDiscount.toFixed(2));
     }
     cell.getRow().update({ subtotal: totalDiscount });
   };
 
-  const removeFromList = (id: number) => {
-    let newArray = productsAdded.filter((x) => x.id !== id);
+  const removeFromList = (itemId: number) => {
+    let newArray = productsAdded.filter((x) => x.itemId !== itemId);
     productsAdded = newArray;
   };
 
@@ -218,12 +221,12 @@
       title: "Precio IVA",
       with: 100,
     },
-    {
-      field: "price",
-      hozAlign: "center",
-      title: "Precio Venta",
-      with: 200,
-    },
+    // {
+    //   field: "price",
+    //   hozAlign: "center",
+    //   title: "Precio Venta",
+    //   with: 200,
+    // },
     {
       editor: "input",
       field: "quantity",
@@ -287,7 +290,7 @@
     },
     {
       cellClick: (e, cell) => {
-        removeFromList(cell.getData().id);
+        removeFromList(cell.getData().itemId);
         cell.getRow().delete();
       },
       formatter: "buttonCross",
@@ -304,6 +307,7 @@
     itemSearch = [];
 
     if (value.length > 3) return;
+    if (validation.includes(value)) return;
 
     // Apply debounce in search
     if (timeout) clearTimeout(timeout);
@@ -358,6 +362,9 @@
     };
 
     getTarifaById(newMenuItem.productId, newMenuItem);
+
+    itemSearch = [];
+    value = "";
   };
 
   const getTarifaById = (productId, newMenuItem) => {
@@ -393,12 +400,13 @@
 
   // Todo: MODAL
   const onModalClose = () => {
+    daysChecked = [];
+    productsAdded = [];
+    codeMenuType = "";
     useMenuStore.update((state) => ({
       ...state,
       isOpen: false,
     }));
-    daysChecked = [];
-    productsAdded = [];
   };
 
   const onUpdate = () => {
@@ -450,24 +458,41 @@
 
   // Todo: DAYS CHECKBOX
   let checkDays = (days) => {
+    showLoader();
     if (data.promotionDays.length > 0) {
       let daysPromotion = JSON.parse(data.promotionDays);
       return (daysChecked = daysPromotion);
     }
 
     if (data.promotionDays.length <= 0) {
-      days.forEach((e) => {
-        daysChecked.push({
+      daysChecked = days.map((e) => {
+        return {
           idDia: e.idDia,
           descripcion: e.descripcion,
           horaInicio: "00:00",
           horaFin: "00:00",
           checked: false,
-        });
+        };
       });
-      daysChecked = daysChecked;
+      return (daysChecked = daysChecked);
     }
+    hideLoader();
   };
+
+  useMenuStore.subscribe((values) => {
+    // Clear
+    codeMenuType = "";
+
+    data = values.dataUpdate;
+    menuTypes = values.menuTypes;
+    days = values.days;
+
+    // Verify and call methods
+    if (data.id > 0) {
+      getItems(data.id);
+      getCodeMenuType(data.menuTypeId);
+    }
+  });
 </script>
 
 {#if $useMenuStore.isOpen}
@@ -480,7 +505,8 @@
     onClosed={() => onModalClose()}
   >
     <div class="modal-body">
-      <form on:submit|preventDefault={onUpdate}>
+      <!-- on:submit|preventDefault={onUpdate} -->
+      <form autocomplete="off">
         <div class="modal-body">
           <div class="row">
             <div class="col-6">
@@ -594,7 +620,8 @@
             </div>
           {/if}
           <div class="row mt-3">
-            <div class="col-8 col-md-12 col-sm-12">
+            <div class="col-6 col-md-6 col-sm-6" />
+            <div class="col-6 col-md-6 col-sm-6">
               <label for="search">Buscar producto </label>
               <div class="form-group input-group-lg">
                 <AdvancedSearch
@@ -627,8 +654,9 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-success">
-            <i class="ti-save" /> Guardar
+          <button type="submit" on:click={onUpdate}
+          class="btn btn-success">
+            <i class="ti-save"  /> Guardar
           </button>
           <button
             type="button"

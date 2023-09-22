@@ -27,6 +27,7 @@ export interface Order {
     updateOrder?: boolean
     uuid?: string
     table?: any
+    
 }
 
 //Impuesto Articulos 
@@ -70,6 +71,7 @@ export interface ItemRead extends ItemBase {
     taxRateCode?: string
     itemTypeCode: ITEM_TYPE_CODE.ITEM | ITEM_TYPE_CODE.MENU
     menuId?: number
+    envioSri: boolean
 }
 
 
@@ -89,6 +91,8 @@ export interface ItemPostDto {
     total: number
     itemTypeCode: ITEM_TYPE_CODE.ITEM | ITEM_TYPE_CODE.MENU
     menuId?: number
+    bodegaId: number
+    envioSri: boolean
 }
 export interface SummaryPostDto {
     orderId: number

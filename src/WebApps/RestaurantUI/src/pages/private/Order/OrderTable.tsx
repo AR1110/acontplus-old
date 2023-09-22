@@ -8,7 +8,7 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { lazy, useRef, useState } from "react";
+import { ChangeEvent, lazy, useRef, useState } from "react";
 import { IconButton, Tooltip } from "@mui/material";
 
 import {
@@ -31,18 +31,22 @@ import OrderWhatsApp from "./Components/OrderWhatsApp";
 import OrderConvertDoc from "./Components/OrderConvertDoc";
 import { orderReadForUpdateAdapter } from "@/core/adapters";
 import FullScreenDialog from "@/core/components/FullScreenDialog";
-import { SpliAccountProvider } from "./context";
-const SplitAccount = lazy(()=>import("./SplitAccount/SplitAccount"))
+import { SplitOrderProvider } from "./context";
+const SplitOrder = lazy(()=>import("./SplitOrder/SplitOrder"));
+
 export default function OrderTable() {
     const navigate = useNavigate();
-    const orders = useOrderStore(state => state.orders)
+    const orders = useOrderStore(state => state.orders);
+    const getOrders = useOrderStore(state => state.getOrders);
+    const orderFilter = useOrderStore(state => state.orderFilter);
+    const setOrderFilter = useOrderStore(state => state.setOrderFilter);
 
     const [page, setPage] = useState(0);
 
     const [open, setOpen] = useState(false);
     const [openTableDialog, setOpenTableDialog] = useState(false);
 
-    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [rowsPerPage, setRowsPerPage] = useState(25);
     const showLoader = useLoaderStore((state) => state.showLoader);
     const setDataEdit = useSaleStore((state) => state.setDataEdit);
     const [openDialodDivide, setOpenDialodDivide] = useState(false);
@@ -50,14 +54,24 @@ export default function OrderTable() {
     const setOrderId = useRef(0);
 
     const handleChangePage = (_: unknown, newPage: number) => {
-        setPage(newPage);
+     
+        setOrderFilter({
+            ...orderFilter,
+            pageIndex: newPage + 1
+        })
+        setPage(newPage);       
+        getOrders()
     };
 
-    const handleChangeRowsPerPage = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
+    const handleChangeRowsPerPage = (event: ChangeEvent<HTMLInputElement>) => {
+        const pageSize = parseInt(event.target.value, 10)
+        setOrderFilter({
+            ...orderFilter,
+            pageSize
+        })
+        setRowsPerPage(pageSize); 
+        setPage(0)
+        getOrders()
     };
 
     const handleUpdateState = async (id: number) => {
@@ -131,6 +145,7 @@ export default function OrderTable() {
         setOpenDialodDivide(false)
     }
 
+    console.log(orders)
 
 
 
@@ -149,7 +164,7 @@ export default function OrderTable() {
                                     <TableCell>N°</TableCell>
                                     <TableCell>Op.</TableCell>
                                     <TableCell align="center">Nro. Doc</TableCell>
-                                    <TableCell align="center">Fecha Emisión</TableCell>
+                                    <TableCell align="center">F. Emisión</TableCell>
                                     <TableCell align="center">Cliente</TableCell>
                                     <TableCell align="right">Total</TableCell>
                                     <TableCell align="center">Estado</TableCell>
@@ -157,7 +172,7 @@ export default function OrderTable() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {orders.slice(0, 50).map((order, index) => (
+                                {orders.map((order, index) => (
                                     <TableRow
                                         key={index}
                                         sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -166,7 +181,7 @@ export default function OrderTable() {
                                             {index + 1}
                                         </TableCell>
                                         <TableCell>
-                                            {!(order.documentoId > 0) && (
+                                            {/* {!(order.documentoId > 0) && (
                                                 <Tooltip describeChild title="Transformar a NE O FV">
                                                     <IconButton color="info"
                                                         aria-label="delete"
@@ -175,7 +190,7 @@ export default function OrderTable() {
                                                         <MoveUpIcon />
                                                     </IconButton>
                                                 </Tooltip>
-                                            )}
+                                            )} */}
                                             <IconButton
                                                 aria-label="delete"
                                                 color="error"
@@ -242,9 +257,9 @@ export default function OrderTable() {
                         </Table>
                     </TableContainer>
                     <TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
+                        rowsPerPageOptions={[10, 25, 50, 100]}
                         component="div"
-                        count={orders.length}
+                        count={orders[0]?.totalRecords??0}
                         rowsPerPage={rowsPerPage}
                         page={page}
                         onPageChange={handleChangePage}
@@ -271,9 +286,9 @@ export default function OrderTable() {
                 isOpen={openDialodDivide}
                 actions={<>Dividir Cuenta</>}
                 handleClose={closeDialogDivide}>  
-                 <SpliAccountProvider>
-                    <SplitAccount id={setOrderId.current}/>
-                 </SpliAccountProvider>
+                 <SplitOrderProvider>
+                    <SplitOrder id={setOrderId.current}/>
+                 </SplitOrderProvider>
             </FullScreenDialog>
 
         </React.Fragment>

@@ -5,7 +5,7 @@ import { CategoryIcon } from '@/core/components/IconsMaterial';
 import { useState } from 'react';
 import { Avatar, Paper } from '@mui/material';
 import { useSaleStore } from '@/stores/saleStore';
-import { itemSearchInitialState } from '@/core/models';
+import { CATEGORY_CODE, itemSearchInitialState } from '@/core/models';
 import { ErrorBoundary } from '@/core/utilities';
 
 export default function Category() {
@@ -14,17 +14,24 @@ export default function Category() {
   const [value, setValue] = useState(0);
 
   const handleChange = (_: React.SyntheticEvent, index: number) => {
-    const dataCategory = categories.find((_, indexCategory)=>indexCategory===index);
-    const tipo = dataCategory?.code ==="COM" ? 3 : 1;
-    const code = dataCategory?.code ==="COM" ? dataCategory.code : "" 
-
+    let tipo = 1;
+    const dataCategory = categories.find((_, indexCategory) => indexCategory === index);
+    // const code = dataCategory?.code === "COM" ? dataCategory.code : ""
+    console.log(dataCategory)
+    if (dataCategory?.code === CATEGORY_CODE.COM) {
+      tipo = 3;
+    }
+    if (dataCategory?.code === CATEGORY_CODE.PROM) {
+      tipo = 4;
+    } 
+    
     setItemSearch({
       ...itemSearchInitialState,
-      checkSubFamilia: dataCategory && dataCategory.idSubFamilia > 0 ? true: false,
+      checkSubFamilia: dataCategory && dataCategory.idSubFamilia > 0 ? true : false,
       idSubFamilia: dataCategory?.idSubFamilia ?? 0, 
-      code,
+      code: dataCategory?.code??"",
       tipo
-    }) 
+    })
     setValue(index);
   };
 
@@ -32,15 +39,15 @@ export default function Category() {
   return (
     <ErrorBoundary fallBackComponent={<>Error al cargar categorias!</>}>
 
-      <Paper   sx={{
-        borderRadius: '12px', 
+      <Paper sx={{
+        borderRadius: '12px',
       }} elevation={0}>
 
         <Tabs
           value={value}
           onChange={handleChange}
           variant="scrollable"
-          scrollButtons          
+          scrollButtons
           aria-label="Tabs Categories"
           sx={{
             [`& .${tabsClasses.scrollButtons}`]: {

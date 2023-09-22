@@ -1,20 +1,20 @@
-import { 
-    Accordion, 
-    AccordionDetails, 
-    AccordionProps, 
+import {
+    Accordion,
+    AccordionDetails,
+    AccordionProps,
     AccordionSummary,
-    AccordionSummaryProps, 
-    Button, 
-    Card, 
-    CardActions, 
-    CardContent, 
-    Grid,  
-    TextField, 
-    Typography, 
-    styled 
+    AccordionSummaryProps,
+    Button,
+    Card,
+    CardActions,
+    CardContent,
+    Grid,
+    TextField,
+    Typography,
+    styled
 } from '@mui/material'
 import RightOrderItemTable from './RightOrderItemTable'
-import { useSplitAccountContext } from '../../context';
+import { useSplitOrderContext } from '../../context';
 import { ArrowForwardIosIcon, FileCopyRoundedIcon } from '@/core/components/IconsMaterial';
 import { SnackbarUtility } from '@/core/utilities';
 import { DOC_TYPE } from '@/core/constants';
@@ -55,7 +55,8 @@ const StyledAccordionDetails = styled(AccordionDetails)(({ theme }) => ({
 }));
 
 const RightOrderItem = () => {
-    const { leftOrder, rightOrder, setRightOrderData, rightOrderItems } = useSplitAccountContext();
+    const { leftOrder, rightOrder, setRightOrderData, rightOrderItems } = useSplitOrderContext();
+    const { fetchOrderData } = useSplitOrderContext();
     const { showLoader } = useLoaderStore();
 
     const typeActions: { [key: string]: string } = {
@@ -122,11 +123,7 @@ const RightOrderItem = () => {
                 }
                 if (response.code === "1") {
                     SnackbarUtility.success(response.message);
-                    //Order
-                    if (codDoc === DOC_TYPE.OR) {
-                        SharedService.getPrinter(JSON.parse(response.payload))                       
-                        return
-                    }
+                    fetchOrderData(leftOrder.orderId)
                     const queryParams: QueryParams = JSON.parse(response.payload)[0];
                     console.log(queryParams)
                     // if (queryParams.payAutomatic) {
@@ -178,7 +175,7 @@ const RightOrderItem = () => {
                         <StyledAccordionDetails>
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
-                                    <CustomerSearch customerCompanyId={0} customerName='' onChangeCustomer={(data) => {
+                                    <CustomerSearch customerCompanyId={rightOrder.customerCompanyId} customerName='' onChangeCustomer={(data) => {                                         
                                         if (data) {
                                             setRightOrderData({
                                                 ...rightOrder,

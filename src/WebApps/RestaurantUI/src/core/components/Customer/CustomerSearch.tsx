@@ -18,7 +18,7 @@ type CustomerSearchProps = {
 const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: CustomerSearchProps) => {
     const [customers, setCustomers] = useState<Array<CustomerReadDto>>([]); 
     const refCustomerCompanyId = useRef(customerCompanyId)
-    
+  
     //Modals 
     const [openCustomerDialog, setOpenCustomerDialog] = useState(false);
 
@@ -35,7 +35,7 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
                 console.log('finally')
             })
     }
-    const handleInputChange = (_: any, value: string) => {
+    const handleInputChange = (_:any, value: string) => {
         customerSearch(value)
     };
 
@@ -46,6 +46,7 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
                 customerCompanyId: customerData?.customerCompanyId ?? 0,
             })  
         }
+        refCustomerCompanyId.current = customerCompanyId > 0 ? customerCompanyId : 0
         setOpenCustomerDialog(false) 
     }
 
@@ -56,6 +57,7 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
                 onInputChange={handleInputChange}
                 onChange={(_e, _v, _r, details) => {
                     const customerData = details?.option;
+                    console.log(customerData)
                     //Gestionar el agregar o actualizar clinte
                     refCustomerCompanyId.current = customerData?.customerCompanyId ?? 0;
  
@@ -101,7 +103,7 @@ const CustomerSearch = ({ customerCompanyId, customerName, onChangeCustomer }: C
                                         </IconButton>
                                     </Tooltip>
                                     {
-                                        refCustomerCompanyId.current > 0 && (
+                                        customerCompanyId > 0 && (
                                             <>
                                                 <Tooltip title="Editar Cliente">
                                                     <IconButton onClick={() => {

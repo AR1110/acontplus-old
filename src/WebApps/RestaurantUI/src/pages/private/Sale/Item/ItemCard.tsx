@@ -8,12 +8,13 @@ import brand_img from '/assets/images/imgProductDefault.png';
 
 import { ItemReadDto, Measure, ProductPVPReadDto } from '@/core/models';
 import { useSaleStore } from '@/stores/saleStore';
-import { MenuItemService, productService } from '@/core/services';
+import { productService } from '@/core/services';
 import { useLoaderStore } from '@/stores';
 import { PricingCalculateUtility, RoundNumber } from '@/core/utilities';
 import Swal from 'sweetalert2';
-import { v4 as uuidv4 } from 'uuid';
-import { ITEM_TYPE_CODE } from '@/core/constants';
+import { v4 as uuidv4 } from 'uuid'; 
+import HtmlTooltip from '@/core/components/HtmlTooltip';
+import { InfoIcon } from '@/core/components/IconsMaterial';
 
 type ItemCardProps = {
     item: ItemReadDto
@@ -71,7 +72,7 @@ export default function ItemCard({ item }: ItemCardProps) {
 
 
 
-            if (!product.takesInventory) {
+            if (!product.carryInventory) {
                 addItem();
                 return
             }
@@ -130,7 +131,7 @@ export default function ItemCard({ item }: ItemCardProps) {
                     discountTotal: 0,
                     total: salePrice ?? 0,
                     s3ObjectUrl: product.s3ObjectUrl ? product.s3ObjectUrl : brand_img,
-                    carryInventory: product.takesInventory,
+                    carryInventory: product.carryInventory,
                     bodegaId: order.bodegaId,
                     taxes: [{
                         uuid: uuid,
@@ -142,7 +143,8 @@ export default function ItemCard({ item }: ItemCardProps) {
                     pvps: measureData.pvps,
                     uuid: uuid,
                     obs: "",
-                    itemTypeCode: item.itemTypeCode
+                    itemTypeCode: item.itemTypeCode,
+                    envioSri: false
                 })
             }
 
@@ -173,16 +175,36 @@ export default function ItemCard({ item }: ItemCardProps) {
                             vertical: 'top',
                             horizontal: 'left',
                         }}
-                        style={{ position: 'absolute', margin: '20px' }}
+                        style={{ position: 'absolute', top: '20px', left: '20px' }}
                     />
-
                 </Tooltip>
+
+
                 <CardMedia
                     component="img"
                     height="120"
                     image={item.s3ObjectUrl ? item.s3ObjectUrl : brand_img}
                     alt="green iguana"
                 />
+
+                {/* Opcion para ver productos terminados */}
+                <HtmlTooltip title={
+                    <>
+                      {item.summary}   
+                    </>
+                }>
+                    <Badge
+                        badgeContent="Contenido" 
+                        color='info'
+                        overlap="circular"
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        style={{ position: 'absolute', top: '20px', right: '20px' }}
+                    /> 
+                </HtmlTooltip>
+
                 <CardContent>
 
                     <Grid container alignItems="center">
@@ -193,8 +215,8 @@ export default function ItemCard({ item }: ItemCardProps) {
 
                         </Grid>
                         <Grid item>
-                            <Typography gutterBottom variant="caption" component="div">
-                                ${item.pvps.priceWithVat}
+                            <Typography gutterBottom variant="body1" component="div">
+                                ${RoundNumber(item.pvps.priceWithVat, 2)}
                             </Typography>
                         </Grid>
                         <Grid item xs={12}>
