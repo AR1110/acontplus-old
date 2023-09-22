@@ -7,8 +7,7 @@ import CustomBottomNavigation from "./components/CustomBottomNavigation";
 import { useSaleStore, useAuthStore } from "@/stores";
 import { useEffect, useState } from "react";
 import { itemReadAdapter } from "@/core/adapters";
-import FullScreenDialog from "@/core/components/FullScreenDialog"; 
-import ItemList from "./Item/ItemList";
+import FullScreenDialog from "@/core/components/FullScreenDialog";  
 import Category from "./Category/Category";
 import Cart from "./Cart/Cart";
 import CartMobile from "./Mobile/CartMobile";
@@ -16,7 +15,8 @@ import InputSearchItem from "./InputSearchItem/InputSearchItem";
 import TableDialog from "./Table/TableDialog";
 import Checkout from "@/core/components/Checkout/Checkout";
 import { ArrowBackIcon } from "@/core/components/IconsMaterial";
-import { CATEGORY_CODE } from "@/core/models";
+import { CATEGORY_CODE } from "@/core/models"; 
+import ItemContent from "./Item/ItemContent";
 
 
 
@@ -107,7 +107,8 @@ export default function Sale() {
                     </Grid>
 
                     <Grid item xs={12} sm={12} md={12} lg={12}>
-                        <ItemList loading={loading} />
+                        <ItemContent loading={loading}/>
+                        {/* <ItemList loading={loading} /> */}
                     </Grid>
                 </Grid>
                 <Grid item xs={12} md={5}>
@@ -121,19 +122,7 @@ export default function Sale() {
             {/* start dialog payment */}
             {
                 payment.isOpen && <Checkout open={payment.isOpen} closeDialog={payment.closeDialogCustom} />
-            }
-            {/* <FullScreenDialog
-                color="inherit"
-                icon={<CloseIcon />}
-                dialogTitle="Cobro"
-                isOpen={payment.isOpen}
-                handleClose={payment.closeDialogCustom}
-                actions={
-                    <Button variant="contained">Cerrar</Button>
-                }
-            >
-                <Checkout />
-            </FullScreenDialog> */}
+            } 
             {/* end dialog payment */}
 
             {/* start Items carito movil */}

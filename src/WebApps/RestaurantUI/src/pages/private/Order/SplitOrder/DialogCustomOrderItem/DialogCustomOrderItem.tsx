@@ -18,6 +18,7 @@ import {
     GridCellModesModel,
     GridCellParams,
     GridColDef,
+    GridColumnVisibilityModel,
     GridRowModel,
     GridValueGetterParams
 } from '@mui/x-data-grid';
@@ -27,11 +28,12 @@ import { SaveIcon } from '@/core/components/IconsMaterial';
 import CustomerSearch from '@/core/components/Customer/CustomerSearch';
 import ProductSearch from '@/core/components/Product/ProductSearch';
 import { v4 as uuidv4 } from 'uuid';
-import { ITEM_TYPE_CODE } from '@/core/constants';
-import { productService } from '@/core/services';
+import { DOC_TYPE, ITEM_TYPE_CODE } from '@/core/constants';
+import { orderService, productService } from '@/core/services';
 import { Measure, ProductPVPReadDto } from '@/core/models';
-import { SnackbarUtility } from '@/core/utilities';
+import { PricingCalculateUtility, SnackbarUtility } from '@/core/utilities';
 import Swal from 'sweetalert2';
+import { itemToApi, summaryToApi } from '@/core/adapters';
 
 const columns: GridColDef[] = [
     { field: 'index', headerName: 'N°', width: 70 },
@@ -41,6 +43,11 @@ const columns: GridColDef[] = [
         headerName: 'Descripción',
         width: 290,
         editable: true
+    },
+    {
+        field: 'tarifaImpuesto',
+        headerName: 'IVA',
+        width: 80, 
     },
     {
         field: 'quantity',
@@ -54,6 +61,24 @@ const columns: GridColDef[] = [
         type: 'number',
         width: 110,
     },
+    // {
+    //     field: 'taxValue',
+    //     headerName: 'Valor IVA',
+    //     type: 'number',
+    //     width: 110,
+    // },
+    // {
+    //     field: 'price',
+    //     headerName: 'P. Unitario',
+    //     type: 'number',
+    //     width: 110,
+    // },
+    // {
+    //     field: 'total',
+    //     headerName: 'Total Venta',
+    //     type: 'number',
+    //     width: 110,
+    // },
     {
         field: 'totalIVA',
         headerName: 'Total',
@@ -101,7 +126,6 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
     const {
         dataForm,
         leftOrder,
-        leftCheckedOrderItems,
         changeOrderItems,
         setChangeOrderItems,
         calculateOrderItemTotal,
@@ -109,33 +133,36 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
         rightOrder
     } = useSplitOrderContext();
     const [cellModesModel, setCellModesModel] = useState<GridCellModesModel>({});
-
+    const [columnVisibilityModel, setColumnVisibilityModel] = useState<GridColumnVisibilityModel>({
+        tarifaImpuesto: false,
+        index: true,
+    });
 
     //Totals order items changes QTY
     const objTempTotal = calculateOrderItemTotal(changeOrderItems)
 
 
 
-    const joinOrderItemTotal = () => {
-        return leftCheckedOrderItems.reduce((total, orderItem) => {
-            total.taxValue += orderItem.taxValue
-            total.quantity += orderItem.quantity;
-            total.price += orderItem.price;
-            total.priceWithVat += orderItem.priceWithVat;
-            total.discount = orderItem.discount
-            total.total = orderItem.total;
-            total.bodegaId = orderItem.bodegaId;
-            return total;
-        }, {
-            taxValue: 0,
-            quantity: 0,
-            price: 0,
-            priceWithVat: 0,
-            discount: 0,
-            total: 0,
-            bodegaId: 0,
-        })
-    }
+    // const joinOrderItemTotal = () => {
+    //     return leftCheckedOrderItems.reduce((total, orderItem) => {
+    //         total.taxValue += orderItem.taxValue
+    //         total.quantity += orderItem.quantity;
+    //         total.price += orderItem.price;
+    //         total.priceWithVat += orderItem.priceWithVat;
+    //         total.discount = orderItem.discount
+    //         total.total = orderItem.total;
+    //         total.bodegaId = orderItem.bodegaId;
+    //         return total;
+    //     }, {
+    //         taxValue: 0,
+    //         quantity: 0,
+    //         price: 0,
+    //         priceWithVat: 0,
+    //         discount: 0,
+    //         total: 0,
+    //         bodegaId: 0,
+    //     })
+    // }
 
     const onChangeProductSearch = (productId: number) => {
         productService.findForSale(productId).then(response => {
@@ -147,9 +174,13 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
 
             const taxPercentId = taxRateData?.taxRateId ?? 0; //Id TipoIva
 
-            const { taxValue, price, discount, total, bodegaId, priceWithVat } = joinOrderItemTotal();
-            const { feeId } = measureData.pvps[0] as ProductPVPReadDto
+            console.log(product)
+            // const { taxValue, price, discount, total, bodegaId, priceWithVat } = joinOrderItemTotal();
+            const { feeId } = measureData.pvps[0] as ProductPVPReadDto;
 
+            const priceWithVat = objTempTotal.total;
+            const price = PricingCalculateUtility.calculatePriceSale(priceWithVat, taxRateData?.percentage ?? 0);
+            const taxValue = priceWithVat - price;
             const obj = {
                 index: 0,
                 productId,
@@ -163,11 +194,11 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 quantity: 1,
                 cost: product.costPrice, //Precio Costo
                 price,
-                discount,
-                total,
+                discount: 0,
+                total: price,
                 obs: "",
                 feeId,
-                bodegaId,
+                bodegaId: 0,
                 description: product.description,
                 code: product.productCode,
                 s3ObjectUrl: "",
@@ -183,38 +214,41 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 }],
                 pvps: [],
                 itemTypeCode: ITEM_TYPE_CODE.ITEM,
-                envioSri: true
+                envioSri: true,
+                tarifaImpuesto: product.tarifaImpuesto
             }
             setChangeOrderItems([obj]);
+            setColumnVisibilityModel({ tarifaImpuesto: true, index: false})
         })
 
     }
 
-    const handleCellClick = (params: GridCellParams, event: React.MouseEvent) => {
 
-        if (!params.isEditable) {
-            return;
-        }
+    const handleCellClick = React.useCallback(
+        (params: GridCellParams, event: React.MouseEvent) => {
+            if (!params.isEditable) {
+                return;
+            }
 
-        // Ignore portal
-        if (!event.currentTarget.contains(event.target as Element)) {
-            return;
-        }
-
-        if (params.field === "description") {
+            // Ignore portal
+            if (!event.currentTarget.contains(event.target as Element)) {
+                return;
+            }
 
             setCellModesModel((prevModel) => {
                 return {
                     // Revert the mode of the other cells from other rows
-                    ...Object.keys(prevModel).reduce((acc, id) => ({
-                        ...acc,
-                        [id]: Object.keys(prevModel[params.id] || {}).reduce((acc2, field) => ({
-                            ...acc2,
-                            [field]: { mode: GridCellModes.View },
+                    ...Object.keys(prevModel).reduce(
+                        (acc, id) => ({
+                            ...acc,
+                            [id]: Object.keys(prevModel[id] || {}).reduce(
+                                (acc2, field) => ({
+                                    ...acc2,
+                                    [field]: { mode: GridCellModes.View },
+                                }),
+                                {},
+                            ),
                         }),
-                            {},
-                        ),
-                    }),
                         {},
                     ),
                     [params.id]: {
@@ -227,12 +261,14 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                     },
                 };
             });
-        }
-    }
+        },
+        [],
+    );
 
-    const handleCellModesModelChange = (newModel: GridCellModesModel) => {
+
+    const handleCellModesModelChange = React.useCallback((newModel: GridCellModesModel) => {
         setCellModesModel(newModel);
-    }
+    }, []);
 
     const processRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
         if (newRow["description"] === oldRow["description"]) {
@@ -240,7 +276,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
         }
         newRow["description"] = newRow["description"].toUpperCase()
         const mergeFilteredItems = changeOrderItems.map((orderItem) => {
-            console.log(orderItem.id, newRow["id"])
+
             return orderItem.id === newRow["id"] ? newRow as any : orderItem
         });
         //Actualizamos cantidades modificadas 
@@ -261,7 +297,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 SnackbarUtility.warning('El detalle no puede ser vacio');
                 return
             }
-            if(changeOrderItems.some(or=>!(or.envioSri))){
+            if (changeOrderItems.some(or => !(or.envioSri))) {
                 SnackbarUtility.warning('No has ingresado detalle personalizado');
                 return
             }
@@ -280,6 +316,51 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
 
             if (!isConfirmed) return
             console.log('invoice')
+            const mergeLeftIntoRightOrder = {
+                ...rightOrder,
+                establecimientoId: leftOrder.establecimientoId,
+                puntoEmisionId: leftOrder.puntoEmisionId,
+                tableId: leftOrder.tableId,
+            }
+
+            const orderResult = summaryToApi(mergeLeftIntoRightOrder);
+            const orderItemsResult = itemToApi(changeOrderItems);
+
+            const data = {
+                ...orderResult,
+                updateOrder: false,
+                saveDoc: true,
+                codDoc: DOC_TYPE.FV,
+                quickSale: true,
+                items: orderItemsResult,
+                itemsToPay: orderItemsResult,
+            }
+
+            // showLoader(true);
+            orderService.post(data).then(response => {
+
+                if (response.code === '0') {
+                    SnackbarUtility.warning(response.message)
+                }
+                if (response.code === "1") {
+                    SnackbarUtility.success(response.message);
+
+
+                    console.log(response)
+                    // if (queryParams.payAutomatic) {
+                    //     setQueryParams(queryParams);
+                    //     payment.openDialogCustom();
+                    //     return
+                    // }
+
+
+                    // if (queryParams.printerAutomatic) {
+                    //     SharedService.getPrinter(queryParams.idDocumento)
+                    // } else {
+                    //     resetForm();
+                    // }
+                }
+            })
         } catch (error) {
             console.log(error)
         }
@@ -323,6 +404,14 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 </Grid>
                 <StyledBox>
                     <DataGrid
+                        sx={{
+                            boxShadow: 2,
+                            border: 2,
+                            borderColor: 'primary.light',
+                            '& .MuiDataGrid-cell:hover': {
+                              color: 'primary.main',
+                            },
+                          }}
                         rows={changeOrderItems}
                         columns={columns}
                         initialState={{
@@ -330,7 +419,10 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                                 paginationModel: { page: 0, pageSize: 5 },
                             },
                         }}
-
+                        columnVisibilityModel={columnVisibilityModel}
+                        onColumnVisibilityModelChange={(newModel) =>
+                            setColumnVisibilityModel(newModel)
+                        }
                         isCellEditable={(params) => (params.row.envioSri)}
                         cellModesModel={cellModesModel}
                         onCellModesModelChange={handleCellModesModelChange}

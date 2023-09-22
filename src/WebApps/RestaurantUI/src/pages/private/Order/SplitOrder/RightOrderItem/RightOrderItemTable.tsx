@@ -1,5 +1,5 @@
 
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import CustomNoRowsOverlay from '@/core/components/CustomNoRowsOverlay/CustomNoRowsOverlay';
 import { useSplitOrderContext } from '../../context'; 
 
@@ -12,17 +12,25 @@ const columns: GridColDef[] = [
         type: 'number',
         width: 50, 
     },
+    // {
+    //     field: 'price',
+    //     headerName: 'P. Venta',
+    //     type: 'number',
+    //     width: 100,
+    // },
     {
-        field: 'price',
-        headerName: 'P. Venta',
+        field: 'priceWithVat',
+        headerName: 'P. IVA',
         type: 'number',
         width: 100,
+        valueGetter: (params: GridValueGetterParams) => (params.row.priceWithVat).toFixed(2)
     },
     {
-        field: 'total',
+        field: 'totalIVA',
         headerName: 'Total',
         type: 'number',
         width: 100,
+        valueGetter: (params: GridValueGetterParams) => (params.row.quantity * params.row.priceWithVat).toFixed(2)
     },
 ];
  

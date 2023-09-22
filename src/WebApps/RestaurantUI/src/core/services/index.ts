@@ -6,6 +6,7 @@ export * from './menu-item.service';
 export * from './order.service';
 export * from './persist-user.service';
 export * from './product.service';
+export * from './promotion.service';
 export * from './sale.service';
 export * from './shared.service';
 export * from './table.service';

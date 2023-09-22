@@ -10,6 +10,7 @@ import { ErrorBoundary } from '@/core/utilities';
 
 export default function Category() {
   const setItemSearch = useSaleStore(state => state.setItemSearch);
+  const setCollectionItems = useSaleStore(state => state.setCollectionItems);
   const categories = useSaleStore(state => state.dataForm.categories)
   const [value, setValue] = useState(0);
 
@@ -17,21 +18,24 @@ export default function Category() {
     let tipo = 1;
     const dataCategory = categories.find((_, indexCategory) => indexCategory === index);
     // const code = dataCategory?.code === "COM" ? dataCategory.code : ""
-    console.log(dataCategory)
-    if (dataCategory?.code === CATEGORY_CODE.COM) {
-      tipo = 3;
-    }
+
+    if (dataCategory?.code === CATEGORY_CODE.COM) tipo = 3;
+
+
     if (dataCategory?.code === CATEGORY_CODE.PROM) {
       tipo = 4;
-    } 
-    
+
+    }
+
+
     setItemSearch({
       ...itemSearchInitialState,
       checkSubFamilia: dataCategory && dataCategory.idSubFamilia > 0 ? true : false,
-      idSubFamilia: dataCategory?.idSubFamilia ?? 0, 
-      code: dataCategory?.code??"",
+      idSubFamilia: dataCategory?.idSubFamilia ?? 0,
+      code: dataCategory?.code ?? "",
       tipo
     })
+    setCollectionItems([])
     setValue(index);
   };
 
@@ -55,7 +59,6 @@ export default function Category() {
             },
           }}
         >
-
           {categories.map((item, index) => (
             <Tab key={index} icon={<Avatar alt={item.description} src={item.s3ObjectUrl}
             > <CategoryIcon /></Avatar>} label={item.description} wrapped />

@@ -13,7 +13,8 @@ function productSaleReadAdapter(product: RawProductSaleData): ProductSaleReadDto
         productCode: product.codigoArticulo,
         stock: product.stock,
         s3ObjectKey: product.s3ObjectKey,
-        s3ObjectUrl: product.s3ObjectUrl
+        s3ObjectUrl: product.s3ObjectUrl,
+        tarifaImpuesto: product.tarifaImpuesto
     })
 }
 

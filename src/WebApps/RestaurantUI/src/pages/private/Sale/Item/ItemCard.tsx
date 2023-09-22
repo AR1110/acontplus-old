@@ -12,9 +12,7 @@ import { productService } from '@/core/services';
 import { useLoaderStore } from '@/stores';
 import { PricingCalculateUtility, RoundNumber } from '@/core/utilities';
 import Swal from 'sweetalert2';
-import { v4 as uuidv4 } from 'uuid'; 
-import HtmlTooltip from '@/core/components/HtmlTooltip';
-import { InfoIcon } from '@/core/components/IconsMaterial';
+import { v4 as uuidv4 } from 'uuid';  
 
 type ItemCardProps = {
     item: ItemReadDto
@@ -185,25 +183,7 @@ export default function ItemCard({ item }: ItemCardProps) {
                     height="120"
                     image={item.s3ObjectUrl ? item.s3ObjectUrl : brand_img}
                     alt="green iguana"
-                />
-
-                {/* Opcion para ver productos terminados */}
-                <HtmlTooltip title={
-                    <>
-                      {item.summary}   
-                    </>
-                }>
-                    <Badge
-                        badgeContent="Contenido" 
-                        color='info'
-                        overlap="circular"
-                        anchorOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right',
-                        }}
-                        style={{ position: 'absolute', top: '20px', right: '20px' }}
-                    /> 
-                </HtmlTooltip>
+                /> 
 
                 <CardContent>
 

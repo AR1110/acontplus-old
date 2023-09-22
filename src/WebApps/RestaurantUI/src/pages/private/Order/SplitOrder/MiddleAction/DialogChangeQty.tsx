@@ -112,10 +112,10 @@ const DialogChangeQty = ({ open, setOpen }: DialogChangeQtyProps) => {
     //Totals order items changes QTY
     const objTempTotal = calculateOrderItemTotal(changeOrderItems)
 
-    const processRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
-        if(newRow["quantity"]===oldRow["quantity"]){
-            return oldRow;
-        }
+    const processRowUpdate = (newRow: GridRowModel) => {
+        // if(newRow["quantity"]===oldRow["quantity"]){
+        //     return oldRow;
+        // }
         const total = newRow["quantity"] * newRow["price"];
         newRow["total"] = total;
         const mergeFilteredItems = changeOrderItems.map((orderItem) => {
@@ -125,33 +125,33 @@ const DialogChangeQty = ({ open, setOpen }: DialogChangeQtyProps) => {
         //Actualizamos cantidades modificadas 
         setChangeOrderItems(mergeFilteredItems);
         return newRow;
-    } 
+    }
 
-    const handleCellClick = (params: GridCellParams, event: React.MouseEvent) => {
+    const handleCellClick = React.useCallback(
+        (params: GridCellParams, event: React.MouseEvent) => {
+            if (!params.isEditable) {
+                return;
+            }
 
-        if (!params.isEditable) {
-            return;
-        }
-
-        // Ignore portal
-        if (!event.currentTarget.contains(event.target as Element)) {
-            return;
-        }
-
-        if (params.field === "quantity") {
+            // Ignore portal
+            if (!event.currentTarget.contains(event.target as Element)) {
+                return;
+            }
 
             setCellModesModel((prevModel) => {
                 return {
                     // Revert the mode of the other cells from other rows
-                    ...Object.keys(prevModel).reduce((acc, id) => ({
-                        ...acc,
-                        [id]: Object.keys(prevModel[params.id] || {}).reduce((acc2, field) => ({
-                            ...acc2,
-                            [field]: { mode: GridCellModes.View },
+                    ...Object.keys(prevModel).reduce(
+                        (acc, id) => ({
+                            ...acc,
+                            [id]: Object.keys(prevModel[id] || {}).reduce(
+                                (acc2, field) => ({
+                                    ...acc2,
+                                    [field]: { mode: GridCellModes.View },
+                                }),
+                                {},
+                            ),
                         }),
-                            {},
-                        ),
-                    }),
                         {},
                     ),
                     [params.id]: {
@@ -164,12 +164,17 @@ const DialogChangeQty = ({ open, setOpen }: DialogChangeQtyProps) => {
                     },
                 };
             });
-        }
-    }
+        },
+        [],
+    );
 
-    const handleCellModesModelChange = (newModel: GridCellModesModel) => {
-        setCellModesModel(newModel);
-    }
+
+    const handleCellModesModelChange = React.useCallback(
+        (newModel: GridCellModesModel) => {
+            setCellModesModel(newModel);
+        },
+        [],
+    );
 
     //Agrega en la tabla cuenta dividual
     const next = () => {
