@@ -1,10 +1,12 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { MaintenanceService } from "$core/services/mechanical/maintenance-service";
-  import { MaintenanceStore } from "$routes/Mechanical/Store/maintenance.store";
+  import { SupportService } from "$core/services/mechanical/support-service";
+  import { InspectionStore } from "$routes/Mechanical/Store/inspection.store";
   import { hideLoader, showLoader } from "$core/utils/loading-spinner";
   import Add from "../Inspection/add.svelte";
+
   let trays = [];
+  let json = { pageIndex: 1, pageSize: 10, tipo: 1, chkUser: true };
 
   onMount(() => {
     get();
@@ -13,9 +15,9 @@
   //Get
   function get() {
     showLoader();
-    MaintenanceService.get(JSON.stringify({ tipo: 2 })).then((response) => {
+    SupportService.get(JSON.stringify(json)).then((response) => {
       if (response) {
-        trays = response["trays"];
+        trays = response["supports"];
       }
       hideLoader();
     });
@@ -32,7 +34,7 @@
             <th scope="col">Fecha</th>
             <th scope="col">Cliente / Conductor</th>
             <th scope="col">Placa</th>
-            <th scope="col">Obs</th>
+            <th scope="col">Detalle</th>
           </tr>
         </thead>
         <tbody>
@@ -46,7 +48,7 @@
               <td
                 ><button
                   class="btn btn-outline-danger btn-sm"
-                  on:click={() => MaintenanceStore.getOpenModal(item.supportId)}
+                  on:click={() => InspectionStore.getOpenModal(0, item.id)}
                 >
                   <i class="ti-ticket" />
                 </button></td

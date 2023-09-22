@@ -3,15 +3,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mechanical.Core.Entities
 {
-    [Table("SupportType", Schema = "Mechanical")]
-    public class MaintenanceType : BaseEntity
+
+    [Table("VehiclePartType", Schema = "Mechanical")]
+    public class VehiclePartType : BaseEntity
     {
         [Required]
-        [MaxLength(8)]
+        [MaxLength(15)]
         public string Code { get; set; }
 
         [Required]
-        [MaxLength(100)]
+        [MaxLength(150)]
         public string Description { get; set; }
     }
 }

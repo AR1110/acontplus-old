@@ -36,7 +36,7 @@ BEGIN
            ,@IDCard VARCHAR(15)
            ,@CustomerId INT
            ,@UserAssignedId INT
-           
+           ,@Obs VARCHAR(300)
 
     DECLARE @jsonCustomer VARCHAR(MAX)
            ,@jsonVehicle  VARCHAR(MAX)
@@ -47,11 +47,10 @@ BEGIN
 
     DECLARE @tbSupport AS TABLE (
         [Date] DATETIME2 NOT NULL
-       ,SupportTypeId INT NOT NULL
        ,VehicleCompanyId INT NOT NULL
        ,CustomerId INT NOT NULL
        ,UserAssignedId INT NOT NULL
-       ,CreatedAt DATETIME2 DEFAULT GETDATE()
+       ,Obs VARCHAR(300) NOT NULL
     )
 
 	DECLARE @tbVehicle AS TABLE (
@@ -92,19 +91,18 @@ BEGIN
                 customer    NVARCHAR(MAX) '$.customer'as json
                ,vehicle     NVARCHAR(MAX) '$.vehicle' as json
                ,jsonSupport NVARCHAR(MAX) '$.support' as json
-               ,cardTypeId            INT '$.cardTypeId'
             )
 
             INSERT INTO @tbSupport
-                  (vehicleCompanyId,CustomerId,supportTypeId,userAssignedId,[date])
-            SELECT vehicleCompanyId,CustomerId,ISNULL(supportTypeId,0),ISNULL(userAssignedId,0),[date]
-            FROM OPENJSON(@jsonSupport) WITH 
+                  (vehicleCompanyId,CustomerId,userAssignedId,Obs,[date])
+            SELECT vehicleCompanyId,CustomerId,userAssignedId,Obs,[date]
+            FROM OPENJSON(@jsonSupport) WITH
             (
                 vehicleCompanyId INT '$.vehicleCompanyId'
                ,customerId       INT '$.customerId'
-               ,supportTypeId    INT '$.supportTypeId'
                ,userAssignedId   INT '$.userAssignedId'
                ,[date]     DATETIME2 '$.date'
+               ,Obs     VARCHAR(300) '$.obs'
             )
 
 			INSERT INTO @tbVehicle
@@ -143,7 +141,7 @@ BEGIN
 			
             SELECT @LicensePlate = LicensePlate FROM @tbVehicle
 
-            SELECT @CustomerId = CustomerId, @VehicleCompanyId = VehicleCompanyId, @Date = [Date], @UserAssignedId = UserAssignedId FROM @tbSupport 
+            SELECT @CustomerId = CustomerId, @VehicleCompanyId = VehicleCompanyId, @Date = [Date], @UserAssignedId = UserAssignedId, @Obs = Obs FROM @tbSupport 
 			
             SELECT @IDCard = tc.IDCard, @cardTypeId = (SELECT TOP 1 idTipoIdentificacion FROM TipoIdentificacion WITH (NOLOCK) WHERE codigoSri = tc.IDType ) FROM @tbCustomer tc
 
@@ -220,10 +218,11 @@ BEGIN
                 
                 -- CUSTOMER RECORD -- 
                 UPDATE [Mechanical].[Support]
-                   SET [Date]             = GETDATE()
+                   SET [Date]             = @Date
                       ,[VehicleCompanyId] = @VehicleCompanyId
                       ,[CustomerId]       = @CustomerId
                       ,[UserAssignedId]   = @UserAssignedId
+                      ,Obs                = @Obs
                       ,[UpdatedAt]        = GETDATE()
                  WHERE Id = @Id
 

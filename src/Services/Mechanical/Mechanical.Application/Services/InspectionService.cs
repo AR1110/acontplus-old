@@ -1,0 +1,44 @@
+﻿using Common.Infrastructure.Repository;
+using Lib.Common;
+using System.Data;
+using Mechanical.Core.Interfaces;
+using Mechanical.Infrastructure.Data;
+
+namespace Mechanical.Application.Services
+{
+    public class InspectionService : IInspectionService
+    {
+        private readonly IADORepository _repository;
+
+
+        public InspectionService( IADORepository repository)
+        {
+            _repository = repository;
+        }
+        public async Task<object> GetAsync(Dictionary<string, object> parameters)
+        {
+            DataSet ds = await _repository.GetDataSetAsync("MechanicalContext", "Mechanical.Inspection_Get", parameters);
+
+            if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+            {
+                if (ds.Tables.Count > 0)
+                {
+                    _ = new DataSet();
+                }
+                return null;
+            }
+            else
+            {
+                return Converters.DataSetToJSON(ds);
+            }
+        }
+        public async Task<string> AddAsync(Dictionary<string, object> parameters)
+        {
+            return await _repository.SPExecuteAsync("MechanicalContext", "Mechanical.Inspection_Insert", parameters);
+        }
+        public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
+        {
+            return await _repository.SPExecuteAsync("MechanicalContext", "Mechanical.Inspection_Update", parameters);
+        }
+    }
+}
