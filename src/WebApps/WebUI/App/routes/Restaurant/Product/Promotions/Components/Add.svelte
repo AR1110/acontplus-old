@@ -119,7 +119,6 @@
       formatterParams: {
         height: "50px",
         width: "70px",
-        
       },
     },
     {
@@ -169,6 +168,7 @@
     showLoader();
     PromotionService.post({ data: newObject })
       .then((response) => {
+        console.log(response);
         if (response.status === 200) {
           if (response.data.code === "1") {
             usePromotionStore.get();

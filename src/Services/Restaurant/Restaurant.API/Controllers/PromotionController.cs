@@ -45,7 +45,7 @@ namespace Restaurant.API.Controllers
                 var response = await _promotionService.PostAsync(data);
                 if (response == null) { return NoContent(); }
 
-                return Ok();
+                return Ok(response);
             }
             catch (Exception ex)
             {

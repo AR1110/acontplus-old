@@ -1,14 +1,14 @@
-CREATE OR ALTER FUNCTION ufnGetDayHourPromotion (@days NVARCHAR(MAX))
+CREATE OR ALTER FUNCTION ufnGetPromotionDay(@days NVARCHAR(MAX), @today VARCHAR(15))
 RETURNS @dayFilter TABLE (
 	[day]		VARCHAR(15),
 	startHour	VARCHAR(5),
 	endHour		VARCHAR(5)
 )
 AS
-BEGIN	
+BEGIN
 	INSERT INTO @dayFilter([day], startHour, endHour)
 	
-    SELECT LOWER(descripcion), horaInicio, horaFin
+    SELECT TRIM(LOWER(descripcion)), horaInicio, horaFin
 	FROM OPENJSON(@days) 
 	WITH(
 		descripcion VARCHAR(15)	'$.descripcion'
@@ -17,6 +17,7 @@ BEGIN
         ,checked    BIT         '$.checked'
 	)
     WHERE checked = 1
+    AND LOWER(TRIM(descripcion)) = @today   
 
 	RETURN;
 END
