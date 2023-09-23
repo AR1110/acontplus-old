@@ -10,6 +10,7 @@ import {
     SET_DATA_FORM,
     SET_LEFT_CHECKED_ORDER_ITEMS,
     SET_LEFT_ORDER_ITEMS,
+    SET_PAYMENT_DATA,
     SET_RESET_DATA,
     SET_RIGHT_CHECKED_ORDER_ITEMS,
     SET_RIGHT_ORDER_DATA,
@@ -66,6 +67,7 @@ const rightOrder = {
 };
 // Define el estado inicial del contexto
 const initialState: SplitOrderState = {
+
     orderLoading: false,
     orderError: false,
     dataForm: dataFormInitialState,
@@ -76,7 +78,11 @@ const initialState: SplitOrderState = {
     rightOrderItems: [],
     changeOrderItems: [],
     leftCheckedOrderItems: [],
-    rightCheckedOrderItems: []
+    rightCheckedOrderItems: [],
+    payment: {
+        payload: {},
+        open: false,        
+    }
 }
 const initialActions: SplitOrderAction = {
     fetchOrderData: (id: number) => id,
@@ -95,7 +101,8 @@ const initialActions: SplitOrderAction = {
         return {
             quantity: 0, subTotalSinImpuestos: 0, tax: 0, total: 0
         };
-    }
+    },
+    setPaymentData: ()=>[]
 };
 
 // Crea un contexto llamado SplitOrderContext
@@ -357,6 +364,21 @@ export const SplitOrderProvider = ({ children }: Props) => {
         return newArray2;
     }
 
+    function setPaymentData<T>(payload:T){
+         
+        dispatch({
+            type: SET_PAYMENT_DATA,
+            payload
+        })
+        dispatch({
+            action: SET_RESET_DATA,
+            payload: {
+                rightOrder,
+                leftOrder
+            }
+        })
+    }
+
 
     // Proporciona el estado y las funciones del contexto a los componentes hijos
     return (
@@ -373,7 +395,8 @@ export const SplitOrderProvider = ({ children }: Props) => {
             mergeArraysByFieldLeft,
             setLeftCheckedOrderItems,
             setRightCheckedOrderItems,
-            calculateOrderItemTotal,            
+            calculateOrderItemTotal,   
+            setPaymentData         
         }}>
             {children}
         </SplitOrderContext.Provider>

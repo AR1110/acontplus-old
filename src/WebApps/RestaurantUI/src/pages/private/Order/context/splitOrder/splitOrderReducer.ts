@@ -8,6 +8,7 @@ import {
     SET_DATA_FORM,
     SET_LEFT_CHECKED_ORDER_ITEMS,
     SET_LEFT_ORDER_ITEMS,
+    SET_PAYMENT_DATA,
     SET_RESET_DATA,
     SET_RIGHT_CHECKED_ORDER_ITEMS,
     SET_RIGHT_ORDER_DATA,
@@ -89,6 +90,13 @@ export const splitOrderReducer = (state: SplitOrderState, action: any): SplitOrd
                     quantityTemp: state.leftOrderItems.find(leftOrderItem => leftOrderItem.id === orderItem.id)?.quantity,
                     index: index + 1
                 }))
+            }
+        }
+
+        case SET_PAYMENT_DATA: {
+            return {
+                ...state,
+                payment: action.payload
             }
         }
 

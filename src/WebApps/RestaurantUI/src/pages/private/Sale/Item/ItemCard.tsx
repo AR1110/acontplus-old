@@ -158,9 +158,9 @@ export default function ItemCard({ item }: ItemCardProps) {
                 height: '190px',
                 //maxHeight: "200px",
                 borderRadius: "16px",
-                borderColor: items.some(cartItem => cartItem.index === item.index) ? '#6571ff !important' : '',
+                borderColor: items.some(cartItem => cartItem.productId === item.productId) ? '#6571ff !important' : '',
 
-                border: items.some(cartItem => cartItem.index === item.index) ? '1px solid' : '',
+                border: items.some(cartItem => cartItem.productId === item.productId) ? '1px solid' : '',
             }
         }>
             <CardActionArea onClick={() => handleSelectItem(item)}>
@@ -185,8 +185,7 @@ export default function ItemCard({ item }: ItemCardProps) {
                     alt="green iguana"
                 /> 
 
-                <CardContent>
-
+                <CardContent> 
                     <Grid container alignItems="center">
                         <Grid item xs>
                             <Typography gutterBottom color="text.secondary" variant="caption" component="div">

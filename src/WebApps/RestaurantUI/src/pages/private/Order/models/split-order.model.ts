@@ -19,6 +19,10 @@ export interface SplitOrderState {
     changeOrderItems: ChangeOrderItem[]
     leftCheckedOrderItems: Array<ItemRead>
     rightCheckedOrderItems: Array<ItemRead>
+    payment: {
+        payload: any,
+        open: boolean
+    }
 }
 
 type ReturnTypeTotal = {
@@ -55,4 +59,5 @@ export interface SplitOrderAction {
         taxRateCode?: string
         priceWithVat:number
     }>(arr: T[]): ReturnTypeTotal 
+    setPaymentData<T>(ar:T):void
 }

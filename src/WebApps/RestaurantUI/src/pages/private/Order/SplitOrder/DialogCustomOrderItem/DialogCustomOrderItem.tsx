@@ -333,7 +333,8 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 codDoc: DOC_TYPE.FV,
                 quickSale: true,
                 items: orderItemsResult,
-                itemsToPay: orderItemsResult,
+               // itemsToPay: orderItemsResult,
+                customDetail: orderItemsResult
             }
 
             // showLoader(true);
