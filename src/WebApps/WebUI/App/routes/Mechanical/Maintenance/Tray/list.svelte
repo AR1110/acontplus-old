@@ -30,27 +30,29 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th scope="col">Secuencia</th>
-            <th scope="col">Fecha</th>
-            <th scope="col">Cliente / Conductor</th>
-            <th scope="col">Placa</th>
-            <th scope="col">Detalle</th>
+            <th class="text-center" scope="col">Secuencia</th>
+            <th class="text-center" scope="col">Fecha</th>
+            <th class="text-center" scope="col">Cliente / Conductor</th>
+            <th class="text-center" scope="col">Placa</th>
+            <th class="text-center" scope="col">Detalle</th>
+            <th class="text-center" scope="col">Acción</th>
           </tr>
         </thead>
         <tbody>
           {#each trays as item}
             <tr>
-              <td>{item.sequence}</td>
-              <td>{item.date}</td>
-              <td>{item.tradeName}</td>
-              <td>{item.licensePlate}</td>
-              <td>{item.obs}</td>
-              <td
+              <td class="text-center">{item.sequence}</td>
+              <td class="text-center">{item.date}</td>
+              <td class="text-center">{item.tradeName}</td>
+              <td class="text-center">{item.licensePlate}</td>
+              <td class="text-center">{item.obs}</td>
+              <td class="text-center"
                 ><button
-                  class="btn btn-outline-danger btn-sm"
+                  title="Registrar Inspección"
+                  class="btn btn-outline-info btn-sm"
                   on:click={() => InspectionStore.getOpenModal(0, item.id)}
                 >
-                  <i class="ti-ticket" />
+                  <i class="fa fa-file-text" />
                 </button></td
               >
             </tr>
