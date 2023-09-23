@@ -1,9 +1,11 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { InspectionStore } from "$routes/Mechanical/Store/inspection.store";
+  import { MaintenanceStore } from "$routes/Mechanical/Store/maintenance.store";
   import { InspectionService } from "$core/services/mechanical/inspection-service";
   import { hideLoader, showLoader } from "$core/utils/loading-spinner";
   import Add from "../Inspection/add.svelte";
+  import AddMaintenance from "../Maintenance/add.svelte";
 
   let inspections = [];
 
@@ -29,30 +31,38 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th scope="col">Cliente / Conductor</th>
-            <th scope="col">Placa</th>
-            <th scope="col">Marca</th>
-            <th scope="col">Tipo</th>
-            <th scope="col">Kilometraje</th>
-            <th scope="col">Combustible</th>
-            <th scope="col">Acción</th>
+            <th class="text-center" scope="col">Cliente / Conductor</th>
+            <th class="text-center" scope="col">Placa</th>
+            <th class="text-center" scope="col">Marca</th>
+            <th class="text-center" scope="col">Tipo</th>
+            <th class="text-center" scope="col">Kilometraje</th>
+            <th class="text-center" scope="col">Combustible</th>
+            <th class="text-center" scope="col">Acción</th>
           </tr>
         </thead>
         <tbody>
           {#each inspections as item}
             <tr>
-              <td>{item.businessName}</td>
-              <td>{item.licensePlate}</td>
-              <td>{item.brand}</td>
-              <td>{item.vehicleType}</td>
-              <td>{item.mileage}</td>
-              <td>{item.fuellevel}</td>
-              <td
+              <td class="text-center">{item.businessName}</td>
+              <td class="text-center">{item.licensePlate}</td>
+              <td class="text-center">{item.brand}</td>
+              <td class="text-center">{item.vehicleType}</td>
+              <td class="text-center">{item.mileage}</td>
+              <td class="text-center">{item.fuellevel}</td>
+              <td class="text-center"
                 ><button
+                  title="Editar"
                   class="btn btn-outline-warning btn-sm"
-                  on:click={() => InspectionStore.getOpenModal(item.id,0)}
+                  on:click={() => InspectionStore.getOpenModal(item.id, 0)}
                 >
                   <i class="ti-pencil" />
+                </button>
+                <button
+                  title="Realizar Mantenimiento"
+                  on:click={() => MaintenanceStore.getOpenModal()}
+                  class="btn btn-outline-info btn-sm"
+                >
+                  <i class="fa fa-wrench" />
                 </button></td
               >
             </tr>
@@ -64,4 +74,4 @@
   </div>
 </div>
 <Add />
-
+<AddMaintenance />

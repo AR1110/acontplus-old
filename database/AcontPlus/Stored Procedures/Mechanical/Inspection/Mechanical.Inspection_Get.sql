@@ -41,6 +41,7 @@ BEGIN
 	              ,VehicleType 
             FROM Mechanical.v_Inspection WITH (NOLOCK)
             WHERE UserId = @UserId
+            ORDER BY Id DESC
         END 
 
     
@@ -55,7 +56,7 @@ BEGIN
             SET @tableNames = 'inspection,support'
 
             SELECT Id
-                  ,[Date]
+                  ,FORMAT([Date], 'yyyy-MM-dd') as [Date]
                   ,Mileage
                   ,FuelLevel
                   ,obs
