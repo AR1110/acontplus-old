@@ -9,7 +9,7 @@ GO
 -- Author:		Ignacio Manchu
 -- Create date: 2023-08-30
 -- Description:	sp for update order restaurant
--- Restaurant.Order_Update 139, 116, '{"establecimientoId": 454, "puntoEmisionId": 124,"bodegaId": 128,"tableId": 1,"customerCompanyId": 0,"tax": 0, "discount": 0,"total": 6.06,"items": [{"orderItemId": 216,"uuid": "7c10730b-8c02-4145-a287-10b9bf3914b8","itemId": 12,"feeId": 528,"taxId": 1,"taxPercentId": 2,"taxValue": 1.68,"quantity": 1,"cost": 1,"price": 1.5,"discount": 0,"total": 1.5,"obs": null},{"orderItemId": 217,"uuid": "57cfa302-b8c7-4ccd-99b1-d71638fa83a1","itemId": 11,"feeId": 528,"taxId": 1,"taxPercentId": 2,"taxValue": 5.1072,"quantity": 1,"cost": 4,"price": 4.56,"discount": 0,"total": 4.56,"obs": null}],"taxes": {},"payments": {},"tip": null,"obs": null,"codDoc": "NE","quickSale": true,"fechaEmision": "2023-08-31T14:22:34.5266667","uuid": "5f1b38f2-61f4-41ae-97a8-b7efd6388009","updateOrder": false, "saveDoc": true}'
+-- Restaurant.Order_Update 139, 351, '{"orderId":0,"establecimientoId":454,"puntoEmisionId":124,"bodegaId":0,"tableId":3,"customerCompanyId":45408,"subtotalSinImpuestos":0,"tax":0,"taxPercent":0,"discount":0,"total":0,"items":[{"orderItemId":0,"uuid":"17d37adc-bcc2-4a65-a399-b3ef0751f232","itemId":0,"feeId":528,"taxId":1,"taxPercentId":2,"description":"ALIMENTACION MES AGOSTO ","productId":25950,"taxValue":2.4214285714285744,"quantity":1,"cost":0.01,"price":20.178571428571427,"discount":0,"total":20.178571428571427,"obs":"","itemTypeCode":"ITEM","bodegaId":128,"envioSri":true}],"taxes":[],"payments":{},"tip":0,"obs":"","codDoc":"FV","quickSale":true,"fechaEmision":"2023-09-24T21:26:33.687Z","uuid":"bd27e50b-df08-4100-b5a7-b85bb212f45d","updateOrder":false,"saveDoc":true,"customDetail":[{"orderItemId":0,"uuid":"17d37adc-bcc2-4a65-a399-b3ef0751f232","itemId":0,"feeId":528,"taxId":1,"taxPercentId":2,"description":"ALIMENTACION MES AGOSTO ","productId":25950,"taxValue":2.4214285714285744,"quantity":1,"cost":0.01,"price":20.178571428571427,"discount":0,"total":20.178571428571427,"obs":"","itemTypeCode":"ITEM","bodegaId":128,"envioSri":true}]}'
 -- =============================================
 CREATE OR ALTER PROCEDURE Restaurant.Order_Update 
 @userRoleId INT
@@ -35,7 +35,8 @@ BEGIN
     ,@payload NVARCHAR(MAX)
     ,@itemsJson NVARCHAR(MAX)
     ,@taxesJson NVARCHAR(MAX)
-    ,@bodegaId INT
+    --,@bodegaId INT
+    ,@code CHAR(1)
 
      SELECT @uuid               = uuid
         ,@itemsJson             = items
@@ -45,30 +46,28 @@ BEGIN
         ,@tableId               = tableId        
         ,@customerCompanyId     = customerCompanyId
         ,@tax                   = tax
-        ,@discount              = discount        
+        ,@discount              = discount
         ,@total                 = total
         ,@obs                   = obs
         ,@saveDoc               = saveDoc
         ,@updateOrder           = updateOrder
-        ,@bodegaId              = bodegaId
     FROM OPENJSON(@json)
     WITH(
-        uuid UNIQUEIDENTIFIER '$.uuid',  
-        items NVARCHAR(MAX) '$.items' AS JSON,
-        taxes NVARCHAR(MAX) '$.taxes' AS JSON,
-        establecimientoId INT '$.establecimientoId',
-        puntoEmisionId INT '$.puntoEmisionId',       
-        tableId INT '$.tableId',        
-        customerCompanyId INT '$.customerCompanyId',       
-        tax NUMERIC(18,5) '$.tax',        
-        discount NUMERIC(18,5) '$.discount',        
-        total NUMERIC(18,5) '$.total',
-        obs VARCHAR(500) '$.obs',
-        saveDoc BIT '$.saveDoc',
-        updateOrder BIT '$.updateOrder',
-        bodegaId INT '$.bodegaId'
+        uuid                UNIQUEIDENTIFIER '$.uuid',  
+        items               NVARCHAR(MAX) '$.items' AS JSON,
+        taxes               NVARCHAR(MAX) '$.taxes' AS JSON,
+        establecimientoId   INT '$.establecimientoId',
+        puntoEmisionId      INT '$.puntoEmisionId',       
+        tableId             INT '$.tableId',        
+        customerCompanyId   INT '$.customerCompanyId',       
+        tax                 NUMERIC(18,5) '$.tax',        
+        discount            NUMERIC(18,5) '$.discount',        
+        total               NUMERIC(18,5) '$.total',
+        obs                 VARCHAR(500) '$.obs',
+        saveDoc             BIT '$.saveDoc',
+        updateOrder         BIT '$.updateOrder'        
     )
-
+    
     IF NOT EXISTS (SELECT 1 FROM Config.v_ConfigDocumento cd 
                    INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab AND cd.idPuntoEmision = @puntoEmisionId
 			       WHERE pa.idUsuarioRol = @userRoleId
@@ -81,39 +80,42 @@ BEGIN
     IF (ISJSON(@itemsJson) = 1)
             BEGIN
                 DECLARE @tblItems AS TABLE(
-                    orderItemId INT NOT NULL,
-                    uuid UNIQUEIDENTIFIER NOT NULL,
-                    itemId INT NOT NULL,
-                    taxId INT NOT NULL,
-                    taxPercentId INT NOT NULL,
-                    feeId INT NOT NULL,
-                    taxValue NUMERIC (18,5) NOT NULL,
-                    quantity NUMERIC (18,5) NOT NULL,
-                    cost NUMERIC(18,5) NOT NULL,
-                    price NUMERIC(18,5) NOT NULL,
-                    discount NUMERIC(18,5),
-                    total NUMERIC(18,5) NOT NULL,
-                    obs VARCHAR(500)
+                    orderItemId     INT NOT NULL,
+                    uuid            UNIQUEIDENTIFIER NOT NULL,
+                    itemId          INT NOT NULL,
+                    taxId           INT NOT NULL,
+                    taxPercentId    INT NOT NULL,
+                    feeId           INT NOT NULL,
+                    taxValue        NUMERIC (18,5) NOT NULL,
+                    quantity        NUMERIC (18,5) NOT NULL,
+                    cost            NUMERIC(18,5) NOT NULL,
+                    price           NUMERIC(18,5) NOT NULL,
+                    discount        NUMERIC(18,5),
+                    total           NUMERIC(18,5) NOT NULL,
+                    obs             VARCHAR(500) NULL,
+                    bodegaId        INT NULL
                 )
 
-                INSERT INTO @tblItems(orderItemId,uuid, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs)
-                SELECT orderItemId,uuid, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs
+                INSERT INTO @tblItems(orderItemId,uuid, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs, bodegaId)
+                SELECT orderItemId,uuid, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs, bodegaId
                 FROM OPENJSON(@itemsJson)
-                    WITH (
-                            orderItemId INT '$.orderItemId',
-                            uuid UNIQUEIDENTIFIER '$.uuid',
-                            itemId INT '$.itemId',
-                            taxId INT '$.taxId',
-                            taxPercentId INT '$.taxPercentId',
-                            feeId INT '$.feeId',
-                            taxValue NUMERIC (18,5)'$.taxValue',
-                            quantity NUMERIC (18,5) '$.quantity',
-                            cost NUMERIC(18,5) '$.cost',
-                            price NUMERIC(18,5) '$.price',
-                            discount NUMERIC(18,5) '$.discount',
-                            total NUMERIC(18,5) '$.total',
-                            obs NVARCHAR(500) '$.obs'
-                          )
+                WITH (
+                        orderItemId     INT '$.orderItemId',
+                        uuid            UNIQUEIDENTIFIER '$.uuid',
+                        itemId          INT '$.itemId',
+                        taxId           INT '$.taxId',
+                        taxPercentId    INT '$.taxPercentId',
+                        feeId           INT '$.feeId',
+                        taxValue        NUMERIC (18,5)'$.taxValue',
+                        quantity        NUMERIC (18,5) '$.quantity',
+                        cost            NUMERIC(18,5) '$.cost',
+                        price           NUMERIC(18,5) '$.price',
+                        discount        NUMERIC(18,5) '$.discount',
+                        total           NUMERIC(18,5) '$.total',
+                        obs             NVARCHAR(500) '$.obs',
+                        bodegaId        INT '$.bodegaId'
+                )
+
                 IF (SELECT COUNT(*) FROM @tblItems) = 0
                     BEGIN
                         SELECT Common.ufnSpResponse('0', 'No se pudo recuperar el detalle', NULL)
@@ -163,7 +165,7 @@ BEGIN
                         , @userId
                         , feeId
                         , obs
-                        , @bodegaId
+                        , bodegaId
                     FROM @tblItems ti
                     WHERE ti.itemId NOT IN(SELECT rr.ItemId FROM Restaurant.OrderItem rr WHERE rr.OrderId = @id)
                     
@@ -202,7 +204,7 @@ BEGIN
                                 ,u.Total        = t1.total
                                 ,u.Obs          = t1.obs
                                 ,u.UpdatedAt    = dbo.ufnGetDateEcuador()
-                                ,u.BodegaId     = @bodegaId
+                                ,u.BodegaId     = t1.bodegaId
                             FROM Restaurant.OrderItem u
                             INNER JOIN #selectExist si ON si.OrderId = u.OrderId
                             INNER JOIN @tblItems t1 ON t1.itemId = si.ItemId
