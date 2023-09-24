@@ -85,6 +85,7 @@ export interface ItemPostDto {
     itemId: number
     taxId: number
     taxPercentId: number
+    productId: number
     taxValue: number
     quantity: number
     cost: number

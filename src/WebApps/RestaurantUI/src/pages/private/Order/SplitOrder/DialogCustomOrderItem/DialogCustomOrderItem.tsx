@@ -47,7 +47,7 @@ const columns: GridColDef[] = [
     {
         field: 'tarifaImpuesto',
         headerName: 'IVA',
-        width: 80, 
+        width: 80,
     },
     {
         field: 'quantity',
@@ -174,7 +174,13 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
 
             const taxPercentId = taxRateData?.taxRateId ?? 0; //Id TipoIva
 
-            console.log(product)
+            if(product.carryInventory){
+                Swal.fire({
+                    title: '',
+                    html: 'Seleccione un articulo de tipo servicio, por favor'
+                })
+                return
+            }
             // const { taxValue, price, discount, total, bodegaId, priceWithVat } = joinOrderItemTotal();
             const { feeId } = measureData.pvps[0] as ProductPVPReadDto;
 
@@ -198,7 +204,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 total: price,
                 obs: "",
                 feeId,
-                bodegaId: 0,
+                bodegaId: changeOrderItems[0]?.bodegaId ?? 0,
                 description: product.description,
                 summary: "",
                 code: product.productCode,
@@ -220,7 +226,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 paid: false
             }
             setChangeOrderItems([obj]);
-            setColumnVisibilityModel({ tarifaImpuesto: true, index: false})
+            setColumnVisibilityModel({ tarifaImpuesto: true, index: false })
         })
 
     }
@@ -335,7 +341,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 codDoc: DOC_TYPE.FV,
                 quickSale: true,
                 items: orderItemsResult,
-               // itemsToPay: orderItemsResult,
+                // itemsToPay: orderItemsResult,
                 customDetail: orderItemsResult
             }
 
@@ -412,9 +418,9 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                             border: 2,
                             borderColor: 'primary.light',
                             '& .MuiDataGrid-cell:hover': {
-                              color: 'primary.main',
+                                color: 'primary.main',
                             },
-                          }}
+                        }}
                         rows={changeOrderItems}
                         columns={columns}
                         initialState={{
