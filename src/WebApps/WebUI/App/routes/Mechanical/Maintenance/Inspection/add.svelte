@@ -39,8 +39,6 @@
       suspension = JSON.parse(inspection.suspension);
       // Sistema de luces
       lighting = JSON.parse(inspection.lighting);
-
-      console.log(brake);
     } else {
       vehicleParts = values.vehicleParts;
       // Motor
@@ -296,6 +294,23 @@
       ...state,
       isOpen: false,
       vehicleParts: [],
+      inspection: {
+        id: 0,
+        supportId: 0,
+        date: new Date().toISOString().slice(0, 10),
+        mileage: 0,
+        fuelLevel: "",
+        engine: "",
+        cabin: "",
+        bearing: "",
+        transmission: "",
+        lighting: "",
+        brake: "",
+        steering: "",
+        suspension: "",
+        obs: "",
+        enabled: true,
+      },
     }));
   };
 </script>
@@ -429,19 +444,23 @@
         <div id="accordion">
           <!-- Motor -->
           <div class="card">
-            <div class="card-header" id="heading1">
-              <h5 class="mb-0">
-                <button
-                  class="btn btn-info"
-                  data-toggle="collapse"
-                  data-target="#collapse1"
-                  aria-expanded="false"
-                  aria-controls="collapse1"
-                  type="button"
-                >
-                  MOTOR
-                </button>
-              </h5>
+            <div class="card-header p-3 mb-2 bg-info" id="heading1">
+              <center>
+                <b>
+                  <h5 class="mb-0">
+                    <button
+                      class="btn btn-info"
+                      data-toggle="collapse"
+                      data-target="#collapse1"
+                      aria-expanded="true"
+                      aria-controls="collapse1"
+                      type="button"
+                    >
+                      <i class="ti-plus" /> MOTOR
+                    </button>
+                  </h5>
+                </b>
+              </center>
             </div>
 
             <div
@@ -453,7 +472,7 @@
               <div class="card-body">
                 <div class="table-responsive">
                   <table class="table table-hover">
-                    <thead>
+                    <thead class="thead-dark">
                       <tr>
                         <th>item</th>
                         <th class="text-center">Bueno</th>
