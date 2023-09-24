@@ -101,10 +101,11 @@ export const splitOrderReducer = (state: SplitOrderState, action: any): SplitOrd
         }
 
         case SET_RESET_DATA:
+            console.log('kjherkfhkvhfe kjhfjerrestet data')
+            console.log(action)
             return {
-                ...state,
-                leftOrder: action.leftOrder,
-                rightOrder: action.rightOrder,
+                ...state, 
+                rightOrder: action.payload.rightOrder,
                 leftOrderItemsLength: 0,
                 leftOrderItems: [],
                 rightOrderItems: [],

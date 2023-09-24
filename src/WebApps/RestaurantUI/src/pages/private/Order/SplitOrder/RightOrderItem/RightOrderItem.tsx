@@ -56,7 +56,7 @@ const StyledAccordionDetails = styled(AccordionDetails)(({ theme }) => ({
 
 const RightOrderItem = () => {
     const { leftOrder, rightOrder, setRightOrderData, rightOrderItems } = useSplitOrderContext();
-    const { fetchOrderData, setPaymentData} = useSplitOrderContext();
+    const { fetchOrderData, setPaymentData, resetData} = useSplitOrderContext();
     const { showLoader} = useLoaderStore();
     //store checkout
     const setQueryParams = useCheckoutStore(state => state.setQueryParams)
@@ -128,6 +128,7 @@ const RightOrderItem = () => {
                     
                     const queryParams: QueryParams = JSON.parse(response.payload)[0];
                    
+                    resetData();
                     setPaymentData({
                         open:true,
                        payload: queryParams

@@ -58,8 +58,7 @@ const PromotionCard = ({ promotion }: PromotionCardProps) => {
     return (
         <Card variant="outlined" sx={{
             display: 'flex',
-            flexDirection: 'column',
-            height: '190px',
+            flexDirection: 'column', 
             //maxHeight: "200px",
             borderRadius: "16px"
         }}>

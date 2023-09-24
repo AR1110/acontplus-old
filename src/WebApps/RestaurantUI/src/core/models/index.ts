@@ -20,7 +20,7 @@ export * from './promotion.model';
 export * from './room.model';
 export * from './routes';
 export * from './sale.model';
-export * from '../../pages/private/Order/models/split-order.model';
+export * from './split-order.model';
 export * from './table.mode';
 export * from './tax-rate.model';
 export * from './tax.model';

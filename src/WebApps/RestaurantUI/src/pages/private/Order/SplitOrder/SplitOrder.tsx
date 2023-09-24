@@ -18,13 +18,14 @@ const SplitOrder = ({ id }: Props) => {
         fetchOrderData(id);
     }, [])
 
-    const closePayment = ()=>{
+    const closePayment = () => {
         fetchOrderData(leftOrder.orderId)
-        setPaymentData({payment: {
+        setPaymentData({
+            payment: {
                 open: false,
                 payload: {}
             }
-        }) 
+        })
     }
     return (
         <>

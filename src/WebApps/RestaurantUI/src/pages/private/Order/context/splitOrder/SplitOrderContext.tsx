@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
 import { splitOrderReducer } from ".";
- 
+
 import { SaleService, getEstabs, orderService } from "@/core/services";
 import {
     GET_ORDER_BEGIN,
@@ -81,7 +81,7 @@ const initialState: SplitOrderState = {
     rightCheckedOrderItems: [],
     payment: {
         payload: {},
-        open: false,        
+        open: false,
     }
 }
 const initialActions: SplitOrderAction = {
@@ -102,7 +102,8 @@ const initialActions: SplitOrderAction = {
             quantity: 0, subTotalSinImpuestos: 0, tax: 0, total: 0
         };
     },
-    setPaymentData: ()=>[]
+    setPaymentData: () => [],
+    resetData: () => []
 };
 
 // Crea un contexto llamado SplitOrderContext
@@ -132,7 +133,7 @@ export const SplitOrderProvider = ({ children }: Props) => {
 
         SaleService.getDataForForm(JSON.stringify({
             codEstab: dataEstab?.codEstab
-        })).then(response => { 
+        })).then(response => {
             dispatch({ type: SET_DATA_FORM, payload: response })
         })
     }
@@ -151,7 +152,7 @@ export const SplitOrderProvider = ({ children }: Props) => {
 
             const response = resultAxios.data;
             const orderData = await orderReadForUpdateAdapter(response)
-
+            console.log(orderData)
             await getDataForForm(orderData.order.establecimientoId)
             // Actualiza el estado con los datos del pedido
             dispatch({ type: GET_ORDER_SUCCESS, payload: orderData })
@@ -364,14 +365,18 @@ export const SplitOrderProvider = ({ children }: Props) => {
         return newArray2;
     }
 
-    function setPaymentData<T>(payload:T){
-         
+    function setPaymentData<T>(payload: T) {
+        console.log('payment settttt hjdgdhje')
         dispatch({
             type: SET_PAYMENT_DATA,
             payload
         })
+
+    }
+
+    function resetData() {
         dispatch({
-            action: SET_RESET_DATA,
+            type: SET_RESET_DATA,
             payload: {
                 rightOrder,
                 leftOrder
@@ -395,8 +400,9 @@ export const SplitOrderProvider = ({ children }: Props) => {
             mergeArraysByFieldLeft,
             setLeftCheckedOrderItems,
             setRightCheckedOrderItems,
-            calculateOrderItemTotal,   
-            setPaymentData         
+            calculateOrderItemTotal,
+            setPaymentData,
+            resetData
         }}>
             {children}
         </SplitOrderContext.Provider>

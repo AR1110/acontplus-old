@@ -29,7 +29,8 @@ function itemReadAdapter(items: RawItemData[]): Array<ItemReadDto> {
         totalRecords: item.totalRecords,
         pvps: pvpReadAdapter(JSON.parse(item.pvp)),
         itemTypeCode: item.itemTypeCode,
-        summary: item.summary
+        summary: item.summary,
+        uuid: ""
     })
     )
 }

@@ -60,4 +60,5 @@ export interface SplitOrderAction {
         priceWithVat:number
     }>(arr: T[]): ReturnTypeTotal 
     setPaymentData<T>(ar:T):void
+    resetData():void
 }

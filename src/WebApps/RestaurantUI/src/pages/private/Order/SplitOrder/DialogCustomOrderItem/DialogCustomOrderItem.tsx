@@ -200,6 +200,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 feeId,
                 bodegaId: 0,
                 description: product.description,
+                summary: "",
                 code: product.productCode,
                 s3ObjectUrl: "",
                 carryInventory: false,
@@ -215,7 +216,8 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 pvps: [],
                 itemTypeCode: ITEM_TYPE_CODE.ITEM,
                 envioSri: true,
-                tarifaImpuesto: product.tarifaImpuesto
+                tarifaImpuesto: product.tarifaImpuesto,
+                paid: false
             }
             setChangeOrderItems([obj]);
             setColumnVisibilityModel({ tarifaImpuesto: true, index: false})

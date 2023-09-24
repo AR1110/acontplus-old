@@ -99,7 +99,7 @@ const Cart = () => {
 
         const summaryResult = summaryToApi(order);
         const itemsResult = itemToApi(cartItems);
-        const taxesResult = cartItems.flatMap(item => item.taxes); 
+        const taxesResult = cartItems.flatMap(item => item.taxes);
         const data = {
             ...summaryResult,
             updateOrder: (order.orderId > 0) && codDoc === DOC_TYPE.OR,
@@ -197,7 +197,7 @@ const Cart = () => {
             <Grid item xs={12} sm container>
                 <Grid item xs container direction="column" spacing={1}>
                     <Grid item xs>
-                        <Button  size='large' sx={{
+                        <Button size='large' sx={{
                             height: 50
                         }} variant="outlined" onClick={() => {
                             setOpenTableDialog(true)
@@ -230,12 +230,12 @@ const Cart = () => {
                 <Grid item>
                     <Stack direction="column"
                         justifyContent="center"
-                        alignItems="flex-end">
+                        alignItems="flex-end" spacing={1}>
                         <Typography variant="body2" color="text.primary">
-                            SubTotal: ${order.subTotalSinImpuestos}
+                            <b>Subtotal: ${order.subTotalSinImpuestos}</b>
                         </Typography>
                         <Typography variant="body2" color="text.primary">
-                            IVA (12%): ${order.tax}
+                            <b>Impuestos: ${order.tax}</b>
                         </Typography>
                         <Typography variant="h6" color="error">
                             Total: ${order.total}
@@ -243,40 +243,7 @@ const Cart = () => {
                     </Stack>
                 </Grid>
             </Grid>
-            {/* <Grid container direction="row"
-                justifyContent="space-between"
-                alignItems="center" >
-
-                <Grid item  >
-                    <TextField
-                        id="observacion"
-                        label="Observación"
-                        value={order.obs}
-                        onChange={(e) => {
-                            setOrder({
-                                ...order,
-                                obs: e.target.value
-                            })
-                        }}
-                        multiline
-                    />
-                </Grid>
-                <Grid item >
-                    <Typography variant="body1" color="text.primary">
-                        SubTotal: ${order.subTotalSinImpuestos.toFixed(2)}
-                    </Typography>
-                    <Typography variant="body1" color="text.primary">
-                        IVA (12%): ${order.tax.toFixed(2)}
-                    </Typography>
-                    <Typography variant="h6" color="error">
-                        Total: ${order.total.toFixed(2)}
-                    </Typography>
-                </Grid>
-            </Grid> */}
             <Divider sx={{ m: 1 }} />
-
-
-
             <Grid container spacing={1} justifyContent="stretch"   >
                 {
                     order.orderId > 0 && (
