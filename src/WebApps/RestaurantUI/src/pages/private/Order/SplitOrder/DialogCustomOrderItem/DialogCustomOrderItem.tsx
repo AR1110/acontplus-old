@@ -137,10 +137,9 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
         tarifaImpuesto: false,
         index: true,
     });
-
     //Totals order items changes QTY
     const objTempTotal = calculateOrderItemTotal(changeOrderItems)
-
+    const [loader, setLoader] = useState(false)
 
 
     // const joinOrderItemTotal = () => {
@@ -345,31 +344,30 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 customDetail: orderItemsResult
             }
 
-            // showLoader(true);
-            orderService.post(data).then(response => {
-
+            setLoader(true)
+            orderService.put(leftOrder.orderId, data).then(response => {
                 if (response.code === '0') {
                     SnackbarUtility.warning(response.message)
                 }
                 if (response.code === "1") {
                     SnackbarUtility.success(response.message);
-
-
                     console.log(response)
-                    // if (queryParams.payAutomatic) {
-                    //     setQueryParams(queryParams);
-                    //     payment.openDialogCustom();
-                    //     return
-                    // }
-
-
-                    // if (queryParams.printerAutomatic) {
-                    //     SharedService.getPrinter(queryParams.idDocumento)
-                    // } else {
-                    //     resetForm();
-                    // }
                 }
-            })
+            }).finally(()=>setLoader(false))
+
+            // showLoader(true);
+            // orderService.post(data).then(response => {
+
+            //     if (response.code === '0') {
+            //         SnackbarUtility.warning(response.message)
+            //     }
+            //     if (response.code === "1") {
+            //         SnackbarUtility.success(response.message);
+
+
+            //         console.log(response) 
+            //     }
+            // })
         } catch (error) {
             console.log(error)
         }
@@ -460,7 +458,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
             <DialogActions>
                 <Grid container spacing={1}>
                     <Grid item xs={6}>
-                        <Button color='success' variant='contained' sx={{
+                        <Button color='success' disabled={loader} variant='contained' sx={{
                             height: 60
                         }} size='large' fullWidth onClick={saveAsInvoice} >
                             <SaveIcon />
@@ -468,7 +466,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                         </Button>
                     </Grid>
                     <Grid item xs={6}>
-                        <Button color='inherit' variant='outlined' sx={{
+                        <Button color='inherit' disabled={loader} variant='outlined' sx={{
                             height: 60
                         }} size='large' fullWidth onClick={() => {
                             setRightOrderData({
