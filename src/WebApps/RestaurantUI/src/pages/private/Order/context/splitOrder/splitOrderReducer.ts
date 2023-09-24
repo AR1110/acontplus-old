@@ -6,6 +6,7 @@ import {
     GET_ORDER_SUCCESS,
     SET_CHANGE_ORDER_ITEMS,
     SET_DATA_FORM,
+    SET_FUNCTION_CLOSE_DIALOG,
     SET_LEFT_CHECKED_ORDER_ITEMS,
     SET_LEFT_ORDER_ITEMS,
     SET_PAYMENT_DATA,
@@ -15,7 +16,7 @@ import {
     SET_RIGHT_ORDER_ITEMS
 } from "..";
 
- 
+
 
 export const splitOrderReducer = (state: SplitOrderState, action: any): SplitOrderState => {
     switch (action.type) {
@@ -101,10 +102,8 @@ export const splitOrderReducer = (state: SplitOrderState, action: any): SplitOrd
         }
 
         case SET_RESET_DATA:
-            console.log('kjherkfhkvhfe kjhfjerrestet data')
-            console.log(action)
             return {
-                ...state, 
+                ...state,
                 rightOrder: action.payload.rightOrder,
                 leftOrderItemsLength: 0,
                 leftOrderItems: [],
@@ -113,6 +112,13 @@ export const splitOrderReducer = (state: SplitOrderState, action: any): SplitOrd
                 leftCheckedOrderItems: [],
                 rightCheckedOrderItems: []
             }
+
+        case SET_FUNCTION_CLOSE_DIALOG: {
+            return {
+                ...state,
+                closeDialogDivide: action.payload
+            }
+        }
 
         default:
             return state;

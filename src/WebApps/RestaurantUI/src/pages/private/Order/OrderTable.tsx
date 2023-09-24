@@ -290,7 +290,7 @@ export default function OrderTable() {
                 actions={<>Dividir Cuenta</>}
                 handleClose={closeDialogDivide}>
                 <SplitOrderProvider>
-                    <SplitOrder id={setOrderId.current} />
+                    <SplitOrder id={setOrderId.current} closeDialogDivide={closeDialogDivide} />
                 </SplitOrderProvider>
             </FullScreenDialog>
 

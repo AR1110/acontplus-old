@@ -22,7 +22,8 @@ export interface SplitOrderState {
     payment: {
         payload: any,
         open: boolean
-    }
+    },
+    closeDialogDivide(): void
 }
 
 type ReturnTypeTotal = {
@@ -57,8 +58,10 @@ export interface SplitOrderAction {
         discount: number
         total: number
         taxRateCode?: string
-        priceWithVat:number
-    }>(arr: T[]): ReturnTypeTotal 
-    setPaymentData<T>(ar:T):void
-    resetData():void
+        priceWithVat: number
+    }>(arr: T[]): ReturnTypeTotal
+    setPaymentData<T>(ar: T): void
+    resetData(): void
+    setCloseDialogDivide(T: () => void): void
+    
 }
