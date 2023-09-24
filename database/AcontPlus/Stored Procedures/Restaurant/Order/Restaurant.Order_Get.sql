@@ -1,3 +1,4 @@
+USE Acontplus
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8,7 +9,7 @@ GO
 -- Description:	sp for get order restaurant
 -- =============================================
 -- Restaurant.Order_Get 139, '{"tipo":1,"pageIndex":1,"pageSize":25,"startDate":"2023-09-05T17:18:46.886Z","endDate":"2023-09-05T17:18:46.886Z","customerCompanyId":0}', ''
--- Restaurant.Order_Get 139, '{"tipo": 2, "id": 136}', ''
+-- Restaurant.Order_Get 139, '{"tipo": 2, "id": 322}', ''
 CREATE OR ALTER PROCEDURE Restaurant.Order_Get @userRoleId INT
 ,@json NVARCHAR(MAX)
 ,@tableNames VARCHAR(500) OUT
@@ -101,6 +102,62 @@ BEGIN
         END
     IF (@tipo = 2)
         BEGIN
+
+        --index: indexOrderItem + 1,
+ 
+ 
+        --    : orderItem.itemId,
+        --    taxId: orderItem.taxId,
+        --    taxPercentId: orderItem.taxPercentId,
+        --    taxValue: orderItem.taxValue,
+        --    quantity: orderItem.quantity,
+        --    cost: orderItem.cost,
+        --    price: orderItem.price,
+        --    discount: orderItem.discount,
+        --    total: orderItem.total,
+        --    obs: orderItem.obs ?? "",
+        --    feeId: orderItem.feeId,
+        --    bodegaId: orderItem.bodegaId,
+        --    description: orderItem.descripcion,
+        --    code: orderItem.codigo,
+        --    s3ObjectUrl: orderItem.s3ObjectUrl,
+        --    carryInventory: orderItem.llevaInventario,
+        --    priceWithVat: orderItem.priceWithVat,
+        --    discountTotal: 0,
+        --    taxes: [],
+        --    pvps: pvps,
+        --    taxRateCode: orderItem.taxRateCode,
+        --    envioSri: orderItem.envioSri 
+
+            DECLARE @tblOrderItems AS TABLE(
+                uuid     UNIQUEIDENTIFIER NOT NULL,
+                id INT NOT NULL UNIQUE,
+                orderId INT NOT NULL,
+                itemTypeId INT NULL,
+                menuId INT NULL,
+                itemId INT NULL,
+                taxId           INT NOT NULL,
+                taxPercentId    INT NOT NULL,
+                feeId           INT NOT NULL,
+                idArticulo      INT NULL DEFAULT 0,
+                codigoArticulo  VARCHAR(150) NOT NULL,
+                descripcion     VARCHAR(300) NOT NULL,
+                s3ObjectUrl     VARCHAR(300) NULL,
+                llevaInventario BIT DEFAULT 0,
+                taxRateCode     VARCHAR(2),
+                summary         VARCHAR(300) NULL,
+                priceWithVat    NUMERIC (18,5) NOT NULL,
+                taxValue        NUMERIC (18,5) NOT NULL,
+                quantity        NUMERIC (18,5) NOT NULL,
+                cost            NUMERIC(18,5) NOT NULL,
+                price           NUMERIC(18,5) NOT NULL,
+                discount        NUMERIC(18,5),
+                total           NUMERIC(18,5) NOT NULL,
+                obs             VARCHAR(500) NULL,
+                bodegaId        INT NOT NULL,                
+                paid            bit NULL
+            )
+
             SET @tableNames = 'order,orderItems'
             
             SELECT 
@@ -113,20 +170,137 @@ BEGIN
              LEFT JOIN Restaurant.[Table] t WITH(NOLOCK) ON t.iD = o.TableId
              WHERE o.Id = @id 
             
+            --ARTICULO- ITEMS 
+            INSERT INTO @tblOrderItems( 
+                uuid, 
+                id,
+                orderId,
+                itemId,
+                taxId,
+                taxPercentId,
+                feeId,  
+                idArticulo,
+                codigoArticulo,
+                descripcion,
+                s3ObjectUrl,
+                llevaInventario,
+                taxRateCode,
+                priceWithVat,
+                taxValue,
+                quantity,
+                cost,
+                price,
+                discount,
+                total,
+                obs,
+                bodegaId, 
+                paid
+            )
             SELECT 
-                i.*
-                ,va.idArticulo
-                ,va.descripcion
-                ,va.codigo
-                ,va.s3ObjectUrl
-                ,va.llevaInventario
-                ,taxRateCode = sti.codigo
-                ,priceWithVat = cast((i.Price + i.TaxValue) as numeric(18,5))
-            FROM Restaurant.[OrderItem] i WITH(NOLOCK)
-            INNER JOIN Restaurant.Item it ON it.Id = i.ItemId
+                o_i.uuid,
+                o_i.Id,
+                o_i.orderId,
+                o_i.itemId,
+                o_i.taxId,
+                o_i.taxPercentId,
+                o_i.feeId,
+                va.idArticulo,
+                va.codigo,
+                va.descripcion,
+                va.s3ObjectUrl,
+                va.llevaInventario,
+                taxRateCode = sti.codigo,
+                priceWithVat = cast((o_i.Price + o_i.TaxValue) as numeric(18,5)),
+                o_i.taxValue,
+                o_i.quantity,
+                o_i.cost,
+                o_i.price,
+                o_i.discount,
+                o_i.total,
+                o_i.obs,
+                o_i.bodegaId, 
+                o_i.Paid
+            FROM Restaurant.[OrderItem] o_i with(nolock)
+            INNER JOIN Restaurant.Item it ON it.Id = o_i.ItemId
             INNER JOIN Inventario.v_Articulo va ON va.idArticulo = it.ProductId
-            INNER JOIN Sri.TarifaImpuesto sti ON i.taxPercentId = sti.idTarifaImpuesto
-            WHERE i.OrderId = @id AND ISNULL(i.[Enabled], 0) = 1
+            INNER JOIN Sri.TarifaImpuesto sti ON o_i.taxPercentId = sti.idTarifaImpuesto
+            WHERE o_i.OrderId = @id AND ISNULL(o_i.[Enabled], 0) = 1
+
+            --MENÚ- ITEMS 
+            INSERT INTO @tblOrderItems(
+                uuid,  
+                id,
+                orderId,
+                itemTypeId,
+                menuId,
+                taxId,
+                taxPercentId,
+                feeId,  
+                idArticulo,
+                codigoArticulo,
+                descripcion,
+                s3ObjectUrl,
+               llevaInventario,
+                taxRateCode,
+                priceWithVat,
+                summary,
+                taxValue,
+                quantity,
+                cost,
+                price,
+                discount,
+                total,
+                obs,
+                bodegaId, 
+                paid
+            )
+            SELECT 
+                o_i.uuid, 
+                o_i.id,
+                o_i.orderId,
+                o_i.ItemTypeId,
+                o_i.MenuId,
+                o_i.taxId,
+                o_i.taxPercentId,
+                o_i.feeId,
+                va.idArticulo,
+                va.codigo,
+                va.descripcion,
+                va.s3ObjectUrl,
+                va.llevaInventario,
+                taxRateCode = sti.codigo,
+                priceWithVat = cast((o_i.Price + o_i.TaxValue) as numeric(18,5)),
+                m.Summary,
+                o_i.taxValue,
+                o_i.quantity,
+                o_i.cost,
+                o_i.price,
+                o_i.discount,
+                o_i.total,
+                o_i.obs,
+                o_i.bodegaId, 
+                o_i.Paid
+            FROM Restaurant.[OrderItem] o_i with(nolock)
+            INNER JOIN Restaurant.Menu m ON o_i.menuId = m.Id 
+            INNER JOIN Inventario.v_Articulo va ON va.idArticulo = m.ProductId
+            INNER JOIN Sri.TarifaImpuesto sti ON o_i.taxPercentId = sti.idTarifaImpuesto
+            WHERE o_i.OrderId = @id AND ISNULL(o_i.[Enabled], 0) = 1
+
+            SELECT * FROM @tblOrderItems
+            --SELECT 
+            --    i.*
+            --    ,va.idArticulo
+            --    ,va.descripcion
+            --    ,va.codigo
+            --    ,va.s3ObjectUrl
+            --    ,va.llevaInventario
+            --    ,taxRateCode = sti.codigo
+            --    ,priceWithVat = cast((i.Price + i.TaxValue) as numeric(18,5))
+            --FROM Restaurant.[OrderItem] i WITH(NOLOCK)
+            --INNER JOIN Restaurant.Item it ON it.Id = i.ItemId
+            --INNER JOIN Inventario.v_Articulo va ON va.idArticulo = it.ProductId
+            --INNER JOIN Sri.TarifaImpuesto sti ON i.taxPercentId = sti.idTarifaImpuesto
+            --WHERE i.OrderId = @id AND ISNULL(i.[Enabled], 0) = 1
         END
 END
 GO

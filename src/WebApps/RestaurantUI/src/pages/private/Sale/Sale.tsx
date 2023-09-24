@@ -1,12 +1,11 @@
 
 import { ErrorBoundary } from "@/core/utilities";
 import { Button, Grid } from "@mui/material";
-import { useAsync, useFetchAndLoad, useMobileDetect } from "@/hooks";
-import { ItemService, SaleService, getEstabs } from "@/core/services";
+import { useMobileDetect } from "@/hooks";
+import { SaleService, getEstabs } from "@/core/services";
 import CustomBottomNavigation from "./components/CustomBottomNavigation";
 import { useSaleStore, useAuthStore } from "@/stores";
-import { useEffect, useState } from "react";
-import { itemReadAdapter } from "@/core/adapters";
+import { useEffect, useState } from "react"; 
 import FullScreenDialog from "@/core/components/FullScreenDialog";
 import Category from "./Category/Category";
 import Cart from "./Cart/Cart";
@@ -14,9 +13,9 @@ import CartMobile from "./Mobile/CartMobile";
 import InputSearchItem from "./InputSearchItem/InputSearchItem";
 import TableDialog from "./Table/TableDialog";
 import Checkout from "@/core/components/Checkout/Checkout";
-import { ArrowBackIcon } from "@/core/components/IconsMaterial";
-import { CATEGORY_CODE } from "@/core/models";
+import { ArrowBackIcon } from "@/core/components/IconsMaterial"; 
 import ItemContent from "./Item/ItemContent";
+import useFetchItems from "./hooks/useFetchItems.hook";
 
 
 
@@ -29,6 +28,7 @@ export default function Sale() {
         setSummary: state.setSummary,
     }))
 
+    const { loading, fetchItem } = useFetchItems()
 
     const setDataEstab = useAuthStore(state => state.setDataEstab);
     const { itemSearch, setCollectionItems } = useSaleStore(state => ({
@@ -72,28 +72,13 @@ export default function Sale() {
         })
     }, [])
 
-
-    //Fetch 
-    const { loading, callEndpoint } = useFetchAndLoad();
-    const getItemsApi = async () => await callEndpoint(ItemService.getAll(itemSearch));
-
-    const itemAdapter = (response: any) => {
+    useEffect(() => {
         setCollectionItems([])
-        let items = [];
-        if (itemSearch.code === CATEGORY_CODE.PROM) {
-            items = itemReadAdapter(response.promocion || []);
-        } else {
-            items = itemReadAdapter(response.items || []);
-        }
+        fetchItem(itemSearch).then(response => {
+            setCollectionItems(response)
+        })
+    }, [])
 
-        setCollectionItems(items)
-    }
-
-
-    //se ejecuta cada vez que cambian la categoria
-    useAsync(getItemsApi, itemAdapter, () => {
-        console.log('init')
-    }, [itemSearch]);
 
     return (
         <ErrorBoundary fallBackComponent={<>Error!</>}>

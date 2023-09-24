@@ -7,36 +7,39 @@ import { Avatar, Paper } from '@mui/material';
 import { useSaleStore } from '@/stores/saleStore';
 import { CATEGORY_CODE, itemSearchInitialState } from '@/core/models';
 import { ErrorBoundary } from '@/core/utilities';
+import useFetchItems from '../hooks/useFetchItems.hook';
 
 export default function Category() {
-  const setItemSearch = useSaleStore(state => state.setItemSearch);
+  const { setItemSearch } = useSaleStore(state => ({
+    itemSearch: state.itemSearch,
+    setItemSearch: state.setItemSearch,
+  }));
   const setCollectionItems = useSaleStore(state => state.setCollectionItems);
+  const { fetchItem } = useFetchItems()
   const categories = useSaleStore(state => state.dataForm.categories)
   const [value, setValue] = useState(0);
 
   const handleChange = (_: React.SyntheticEvent, index: number) => {
     let tipo = 1;
     const dataCategory = categories.find((_, indexCategory) => indexCategory === index);
-    // const code = dataCategory?.code === "COM" ? dataCategory.code : ""
 
     if (dataCategory?.code === CATEGORY_CODE.COM) tipo = 3;
 
-
-    if (dataCategory?.code === CATEGORY_CODE.PROM) {
-      tipo = 4;
-
-    }
-
-
-    setItemSearch({
+    const paramsQuery = {
       ...itemSearchInitialState,
       checkSubFamilia: dataCategory && dataCategory.idSubFamilia > 0 ? true : false,
       idSubFamilia: dataCategory?.idSubFamilia ?? 0,
       code: dataCategory?.code ?? "",
       tipo
-    })
+    }
+    setItemSearch(paramsQuery)
     setCollectionItems([])
     setValue(index);
+    if (dataCategory?.code !== CATEGORY_CODE.PROM) {
+      fetchItem(paramsQuery).then(response => {
+        setCollectionItems(response)
+      })
+    }
   };
 
 

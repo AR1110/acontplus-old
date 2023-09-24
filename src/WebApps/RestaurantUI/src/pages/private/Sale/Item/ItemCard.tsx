@@ -3,7 +3,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import { Badge, CardActionArea, Grid, Tooltip } from '@mui/material';
+import { Badge, Box, CardActionArea, Divider } from '@mui/material';
 import brand_img from '/assets/images/imgProductDefault.png';
 
 import { ItemReadDto, Measure, ProductPVPReadDto } from '@/core/models';
@@ -12,7 +12,8 @@ import { productService } from '@/core/services';
 import { useLoaderStore } from '@/stores';
 import { PricingCalculateUtility, RoundNumber } from '@/core/utilities';
 import Swal from 'sweetalert2';
-import { v4 as uuidv4 } from 'uuid';  
+import { v4 as uuidv4 } from 'uuid';
+import HtmlTooltip from '@/core/components/HtmlTooltip';
 
 type ItemCardProps = {
     item: ItemReadDto
@@ -121,6 +122,7 @@ export default function ItemCard({ item }: ItemCardProps) {
                     taxPercentId: taxPercentId,
                     taxValue: PricingCalculateUtility.calculateTaxValue(salePrice, taxRateData?.percentage ?? 0),
                     description: product.description,
+                    summary: item.summary,
                     quantity: 1,
                     cost: product.costPrice, //Precio Costo
                     price: RoundNumber(salePrice ?? 0, decimal.nroPrecio), //Precio Unitario - Precio Venta
@@ -142,7 +144,8 @@ export default function ItemCard({ item }: ItemCardProps) {
                     uuid: uuid,
                     obs: "",
                     itemTypeCode: item.itemTypeCode,
-                    envioSri: false
+                    envioSri: false,
+                    paid: false
                 })
             }
 
@@ -151,20 +154,31 @@ export default function ItemCard({ item }: ItemCardProps) {
     }
 
     return (
-        <Card sx={
-            {
-                display: 'flex',
-                flexDirection: 'column',
-                height: '190px',
-                //maxHeight: "200px",
-                borderRadius: "16px",
-                borderColor: items.some(cartItem => cartItem.index === item.index) ? '#6571ff !important' : '',
 
-                border: items.some(cartItem => cartItem.index === item.index) ? '1px solid' : '',
-            }
-        }>
-            <CardActionArea onClick={() => handleSelectItem(item)}>
-                <Tooltip title="Stock">
+        <Card sx={{
+            maxWidth: 300,
+            '&:hover': {
+                boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)'
+            },
+            borderRadius: "16px",
+            borderColor: items.some(cartItem => cartItem.productId === item.productId) ? '#6571ff !important' : '',
+
+            border: items.some(cartItem => cartItem.productId === item.productId) ? '1px solid' : '',
+        }}>
+            <HtmlTooltip followCursor title={ 
+                item.summary && item.summary.split(',').map((ss, i) => {
+                    return (
+                        <Box key={i}>
+                            <Typography variant="caption" gutterBottom>
+                                {ss}
+                            </Typography>
+                            <Divider />
+                        </Box>
+                    )
+                }) 
+            }>
+                <CardActionArea onClick={() => handleSelectItem(item)}>
+
                     <Badge
                         badgeContent={item.stock.toString()}
                         color={item.stock > 0 ? 'success' : 'error'}
@@ -175,39 +189,79 @@ export default function ItemCard({ item }: ItemCardProps) {
                         }}
                         style={{ position: 'absolute', top: '20px', left: '20px' }}
                     />
-                </Tooltip>
-
-
-                <CardMedia
-                    component="img"
-                    height="120"
-                    image={item.s3ObjectUrl ? item.s3ObjectUrl : brand_img}
-                    alt="green iguana"
-                /> 
-
-                <CardContent>
-
-                    <Grid container alignItems="center">
-                        <Grid item xs>
-                            <Typography gutterBottom color="text.secondary" variant="caption" component="div">
-                                {item.code}
-                            </Typography>
-
-                        </Grid>
-                        <Grid item>
-                            <Typography gutterBottom variant="body1" component="div">
-                                ${RoundNumber(item.pvps.priceWithVat, 2)}
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Typography variant="caption" component="div" noWrap>
-                                {item.description}
-                            </Typography>
-                        </Grid>
-                    </Grid>
-                </CardContent>
-
-            </CardActionArea>
+                    <CardMedia component="img" height="120" image={item.s3ObjectUrl ? item.s3ObjectUrl : brand_img} />
+                    <CardContent>
+                        <Typography variant="body2" gutterBottom noWrap>
+                            {item.description}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            {item.code}
+                        </Typography>
+                    </CardContent>
+                    <Box sx={{ display: 'flex', color: 'white', justifyContent: 'center', alignItems: 'center', backgroundColor: 'primary.dark', }}>
+                        <Typography variant='h6'>
+                            $ {RoundNumber(item.pvps.priceWithVat, 2)}
+                        </Typography>
+                    </Box>
+                </CardActionArea>
+            </HtmlTooltip>
         </Card>
+        // <Card sx={
+        //     {
+        //         display: 'flex',
+        //         flexDirection: 'column',
+        //         height: '190px',
+        //         //maxHeight: "200px",
+        //         borderRadius: "16px",
+        //         borderColor: items.some(cartItem => cartItem.productId === item.productId) ? '#6571ff !important' : '',
+
+        //         border: items.some(cartItem => cartItem.productId === item.productId) ? '1px solid' : '',
+        //     }
+        // }>
+        //     <CardActionArea onClick={() => handleSelectItem(item)}>
+        //         <Tooltip title="Stock">
+        //             <Badge
+        //                 badgeContent={item.stock.toString()}
+        //                 color={item.stock > 0 ? 'success' : 'error'}
+        //                 overlap="circular"
+        //                 anchorOrigin={{
+        //                     vertical: 'top',
+        //                     horizontal: 'left',
+        //                 }}
+        //                 style={{ position: 'absolute', top: '20px', left: '20px' }}
+        //             />
+        //         </Tooltip>
+
+
+        //         <CardMedia
+        //             component="img"
+        //             height="120"
+        //             image={item.s3ObjectUrl ? item.s3ObjectUrl : brand_img}
+        //             alt="green iguana"
+        //         /> 
+
+        //         <CardContent> 
+        //             <Grid container alignItems="center">
+        //                 <Grid item xs>
+        //                     <Typography gutterBottom color="text.secondary" variant="caption" component="div">
+        //                         {item.code}
+        //                     </Typography>
+
+        //                 </Grid>
+        //                 <Grid item>
+        //                     <Typography gutterBottom variant="body1" component="div">
+        //                         ${RoundNumber(item.pvps.priceWithVat, 2)}
+        //                     </Typography>
+        //                 </Grid>
+        //                 <Grid item xs={12}>
+        //                     <Typography variant="caption" component="div" noWrap>
+        //                         {item.description}
+        //                     </Typography>
+        //                 </Grid>
+        //             </Grid>
+        //         </CardContent>
+
+        //     </CardActionArea>
+        // </Card>
     );
 }

@@ -41,8 +41,10 @@ IF @tipo = 1
 
 IF @tipo = 2
     BEGIN
-        SELECT 
-            s3ObjectUrl		    = a.s3ObjectUrl
+        SET @tableNames = 'promotionMenus'
+        SELECT
+             m.*
+            ,s3ObjectUrl		    = a.s3ObjectUrl
 			,stockMinimo		= a.stockMinimo
 			,stock				= a.stock
 			,codigo				= a.codigo

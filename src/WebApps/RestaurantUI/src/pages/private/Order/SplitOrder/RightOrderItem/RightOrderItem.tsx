@@ -21,7 +21,7 @@ import { DOC_TYPE } from '@/core/constants';
 import CustomerSearch from '@/core/components/Customer/CustomerSearch';
 import Swal from 'sweetalert2';
 import { itemToApi, summaryToApi } from '@/core/adapters';
-import { useLoaderStore } from '@/stores';
+import { useCheckoutStore, useLoaderStore } from '@/stores';
 import { SharedService, orderService } from '@/core/services';
 import { QueryParams } from '@/core/models';
 
@@ -56,8 +56,10 @@ const StyledAccordionDetails = styled(AccordionDetails)(({ theme }) => ({
 
 const RightOrderItem = () => {
     const { leftOrder, rightOrder, setRightOrderData, rightOrderItems } = useSplitOrderContext();
-    const { fetchOrderData } = useSplitOrderContext();
-    const { showLoader } = useLoaderStore();
+    const { fetchOrderData, setPaymentData, resetData} = useSplitOrderContext();
+    const { showLoader} = useLoaderStore();
+    //store checkout
+    const setQueryParams = useCheckoutStore(state => state.setQueryParams)
 
     const typeActions: { [key: string]: string } = {
         [DOC_TYPE.FV]: `
@@ -123,9 +125,15 @@ const RightOrderItem = () => {
                 }
                 if (response.code === "1") {
                     SnackbarUtility.success(response.message);
-                    fetchOrderData(leftOrder.orderId)
+                    
                     const queryParams: QueryParams = JSON.parse(response.payload)[0];
-                    console.log(queryParams)
+                   
+                    resetData();
+                    setPaymentData({
+                        open:true,
+                       payload: queryParams
+                    })
+                    setQueryParams(queryParams);
                     // if (queryParams.payAutomatic) {
                     //     setQueryParams(queryParams);
                     //     payment.openDialogCustom();

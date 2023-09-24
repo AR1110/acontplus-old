@@ -38,6 +38,17 @@ export default function CartItem({ index, item }: CartItemProps) {
                         <Grid item xs={12} sm container>
                             <Grid item xs container direction="column" spacing={0}>
                                 <Grid item xs>
+                                    <Typography gutterBottom variant="subtitle1" component="div">
+                                        {item.description}
+                                    </Typography>
+                                    <Typography variant="caption" gutterBottom>
+                                        {item.summary}
+                                    </Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        {item.code}
+                                    </Typography>
+                                </Grid>
+                                {/* <Grid item xs>
                                     <Stack>
                                         <Typography variant="body2" gutterBottom>
                                             {item.description}
@@ -46,7 +57,7 @@ export default function CartItem({ index, item }: CartItemProps) {
                                             {item.code}
                                         </Typography>
                                     </Stack>
-                                </Grid>
+                                </Grid> */}
 
                             </Grid>
                             <Grid item width={95}>
@@ -57,7 +68,7 @@ export default function CartItem({ index, item }: CartItemProps) {
                                         <b>P. U.:</b> ${RoundNumber(item.price, 2)}
                                     </Typography>
                                     <Typography variant="caption" color="text.primary">
-                                        <b>P. IVA.:</b> ${RoundNumber(item.priceWithVat,2)}
+                                        <b>P. IVA.:</b> ${RoundNumber(item.priceWithVat, 2)}
                                     </Typography>
                                     <Typography variant="caption" color="text.primary">
                                         <b>Total:</b> ${RoundNumber(item.total, 2)}

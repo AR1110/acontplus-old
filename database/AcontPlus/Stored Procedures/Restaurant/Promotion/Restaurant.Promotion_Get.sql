@@ -45,7 +45,7 @@ BEGIN
                     ,@hour           VARCHAR(5)
                     ,@dayForParam    VARCHAR(15)
                                        
-            SET @day            = LOWER(TRIM((SELECT DATENAME(weekday, @dateNow))))
+            SET @day            = IIF(LOWER(TRIM((SELECT DATENAME(weekday, @dateNow))))='sábado', 'Sabado',  LOWER(TRIM((SELECT DATENAME(weekday, @dateNow)))))
             SET @hour           = (SELECT FORMAT(@dateNow, 'HH:mm'))
             SET @dateNow        = CONVERT(DATE, @dateNow)
                         
@@ -53,9 +53,9 @@ BEGIN
             SELECT rp.Id
                 ,rp.[Description]
             FROM Restaurant.Promotion rp
-            WHERE @dateNow BETWEEN rp.StartDate AND rp.EndDate
+            WHERE  CAST(@dateNow as date) BETWEEN CAST(rp.StartDate as date) AND CAST(rp.EndDate as date)
             AND @day IN(SELECT [day] FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day))
-            AND @hour BETWEEN(SELECT startHour FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day)) AND (SELECT endHour FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day))            
+          --  AND @hour BETWEEN(SELECT startHour FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day)) AND (SELECT endHour FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day))            
         END
 END
 GO

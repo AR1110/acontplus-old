@@ -37,7 +37,8 @@ export interface ItemReadDto {
     pvps: ProductPVPReadDto
     taxRateCode?:string
     itemTypeCode: ITEM_TYPE_CODE.MENU | ITEM_TYPE_CODE.ITEM
-    summary:string
+    summary:string,
+    uuid: string
 }
 
 export interface ItemSearch {
