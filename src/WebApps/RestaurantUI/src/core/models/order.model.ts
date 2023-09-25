@@ -26,6 +26,7 @@ export interface RawOrderData {
   nameFiscal: string
   userName: string
   totalRecords: number
+  divided: boolean
 }
 
 export interface OrderReadDto {
@@ -40,6 +41,7 @@ export interface OrderReadDto {
   codDoc?: string;
   createdAt: string;
   totalRecords: number
+  divided: boolean
 }
 
 

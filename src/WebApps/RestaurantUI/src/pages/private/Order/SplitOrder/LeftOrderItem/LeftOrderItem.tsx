@@ -55,7 +55,7 @@ const LeftOrderItem = () => {
                                         justifyContent="center"
                                         alignItems="flex-end">
                                         <Typography variant="body2">
-                                            <b>Cant:</b> {objTempTotal.quantity}
+                                            <b>Cant:</b> {objTempTotal.remainingQuantity}
                                         </Typography>
                                         <Typography variant="body2">
                                             <b>Total:</b> {objTempTotal.total}

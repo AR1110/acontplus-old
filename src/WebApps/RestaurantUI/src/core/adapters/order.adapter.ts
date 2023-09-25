@@ -2,6 +2,7 @@ import { ItemRead, OrderReadDto, ProductPVPReadDto, RawOrderData } from "../mode
 import { productService } from "../services";
 
 function orderReadAdapter(orders: RawOrderData[]): Array<OrderReadDto> {
+    console.log(orders)
     return orders.map(order => ({
         orderId: order.id,
         documentoId: order.documentoId,
@@ -13,7 +14,8 @@ function orderReadAdapter(orders: RawOrderData[]): Array<OrderReadDto> {
         total: order.total,
         codDoc: order.codDoc,
         createdAt: order.createdAt,
-        totalRecords: order.totalRecords
+        totalRecords: order.totalRecords,
+        divided: order.divided
     })
     )
 }

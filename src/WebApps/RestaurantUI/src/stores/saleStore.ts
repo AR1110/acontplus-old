@@ -15,8 +15,8 @@ import { produce } from 'immer';
 import { productService } from "@/core/services";
 import Swal from "sweetalert2";
 import { useAuthStore, useLoaderStore } from ".";
-
-
+ 
+ 
 
 type State = {
     itemSearch: ItemSearch
@@ -235,7 +235,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         const decimal = dataForm.decimal;
 
         const dataOrderItem = items.find((_, indexToCompare) => indexToCompare === index);
-
+     
         if (dataOrderItem?.carryInventory) {
             showLoader(true);
             productService.checkNotificationStock({
@@ -339,11 +339,10 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
     caculateTotals() {
         //Invocamos otro store de autencation en donde se recupera los establecimientos al inicar sesión 
         const dataEstab = useAuthStore.getState().dataEstab;
-        console.log(dataEstab)
+        
         // Obtener los datos necesarios del estado (state)
         const { items, dataForm } = get();
-        const decimal = dataForm.decimal;
-        let establecimientoImpuesto = 12;
+        const {decimal, tarifaImpuestoVigente} = dataForm; 
 
         // Inicializar variables para los totales
         let subTotalSinImpuestos = 0; // Subtotal sin impuestos
@@ -369,16 +368,13 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
             );
 
             // Si hay un impuesto correspondiente, agregar el total del ítem al total neto con IVA
-            if (matchingTaxRate?.taxRateCode === "2") {
+            if (matchingTaxRate?.taxRateCode === tarifaImpuestoVigente.taxRateCode) {
                 totalNetoIva += itemTotal;
             }
         }
 
-        // Calcular el monto del impuesto (IVA 12%)
-        if (dataEstab.actividad === "01") {
-            establecimientoImpuesto = 8;
-        }
-        tax = (totalNetoIva * establecimientoImpuesto) / 100;
+        // Calcular el monto del impuesto (IVA 12%) 
+        tax = (totalNetoIva * tarifaImpuestoVigente.percentage) / 100;
 
         // Calcular el total con IVA
         totalPlusVAT = subTotalSinImpuestos + tax;
@@ -388,8 +384,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
 
         // Actualizar el estado (state) con los totales calculados y redondeados
         set(
-            produce((state: State) => {
-                state.order.netTotal = importeTotal;
+            produce((state: State) => { 
                 state.order.subTotalSinImpuestos = RoundNumber(
                     subTotalSinImpuestos,
                     decimal.nroTotalSubTotal

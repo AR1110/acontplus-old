@@ -10,11 +10,11 @@ import { ReactElement, ReactNode, forwardRef } from 'react';
 import { DialogContent, Stack } from '@mui/material';
 
 interface FullScreenDialogProps {
-    color?: 'default' | 'inherit' | 'primary' | 'secondary' | 'transparent' 
+    color?: 'default' | 'inherit' | 'primary' | 'secondary' | 'transparent'
     icon?: JSX.Element;
     dialogTitle?: string
     isOpen: boolean
-    handleClose(): void
+    handleClose<T>(value?:T): void
     children: ReactNode
     actions?: ReactNode
 }
@@ -30,7 +30,15 @@ const Transition = forwardRef(function Transition(
 
 
 
-export default function FullScreenDialog({color="primary", icon, dialogTitle, isOpen, handleClose, children, actions }: FullScreenDialogProps) {
+export default function FullScreenDialog({
+    color = "primary",
+    icon,
+    dialogTitle,
+    isOpen,
+    handleClose,
+    children,
+    actions
+}: FullScreenDialogProps) {
     return (
         <Dialog
             fullScreen
@@ -57,15 +65,15 @@ export default function FullScreenDialog({color="primary", icon, dialogTitle, is
                 </Toolbar>
             </AppBar>
             <DialogContent sx={{
-                    backgroundColor: (theme) =>
-                        theme.palette.mode === "light"
-                            ? theme.palette.grey[100]
-                            : theme.palette.grey[900],
-                    flexGrow: 1,
-                    height: "100vh",
-                    overflow: "auto",
-                    p: 3
-                }}>
+                backgroundColor: (theme) =>
+                    theme.palette.mode === "light"
+                        ? theme.palette.grey[100]
+                        : theme.palette.grey[900],
+                flexGrow: 1,
+                height: "100vh",
+                overflow: "auto",
+                p: 3
+            }}>
                 {children}
             </DialogContent>
 
