@@ -34,5 +34,7 @@ namespace Restaurant.Core.Entities
         public int FeeId { get; set; }
         public int? BodegaId { get; set; }
         public bool? Paid { get; set; }
+        [Column(TypeName = "numeric(18,5), null")]
+        public decimal? RemainingQuantity { get; set; }
     }
 }
