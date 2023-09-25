@@ -120,22 +120,21 @@ const RightOrderItem = () => {
             }
 
             showLoader(true);
-            orderService.post(data).then(response => {
-                showLoader(false)
+            orderService.put(leftOrder.orderId, data).then(response => { 
                 if (response.code === '0') {
                     SnackbarUtility.warning(response.message)
                 }
                 if (response.code === "1") {
-                    SnackbarUtility.success(response.message);
-                    
+                    SnackbarUtility.success(response.message); 
+                    console.log(response)
                     const queryParams: QueryParams = JSON.parse(response.payload)[0];
-                   
+                    console.log(queryParams)                    
+                    // setPaymentData({
+                    //     open:true,
+                    //     payload: queryParams
+                    // })
+                    // setQueryParams(queryParams);
                     resetData();
-                    setPaymentData({
-                        open:true,
-                       payload: queryParams
-                    })
-                    setQueryParams(queryParams);
                     // if (queryParams.payAutomatic) {
                     //     setQueryParams(queryParams);
                     //     payment.openDialogCustom();
