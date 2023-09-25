@@ -80,6 +80,7 @@ async function orderReadForUpdateAdapter(obj: any) {
             feeId: orderItem.feeId,
             bodegaId: orderItem.bodegaId,
             description: orderItem.descripcion,
+            summary: orderItem.summary,
             code: orderItem.codigoArticulo,
             s3ObjectUrl: orderItem.s3ObjectUrl,
             carryInventory: orderItem.llevaInventario,
@@ -89,7 +90,10 @@ async function orderReadForUpdateAdapter(obj: any) {
             pvps: pvps,
             taxRateCode: orderItem.taxRateCode,
             envioSri: orderItem.envioSri,
-            paid: orderItem.paid ?? false
+            paid: orderItem.paid ?? false,
+            menuId: orderItem.menuId,
+            itemTypeCode: orderItem.itemTypeCode,
+            remainingQuantity: orderItem.remainingQuantity
         };
     })
 
