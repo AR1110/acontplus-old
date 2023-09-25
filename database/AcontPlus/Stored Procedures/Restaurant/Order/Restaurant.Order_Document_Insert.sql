@@ -83,7 +83,8 @@ BEGIN
         bodegaId        INT,
         envioSri        BIT NULL DEFAULT 0,
         idArticulo      INT NULL DEFAULT 0,
-        [description]   VARCHAR(500) NULL    
+        [description]   VARCHAR(500) NULL ,
+        remainingQuantity NUMERIC(18,5)
     )
 
     
@@ -197,10 +198,12 @@ BEGIN
                       ) AS ij ON ij.uuid = oi.uuid
 
             UPDATE oi SET oi.Paid = 1
+                ,oi.RemainingQuantity = (oi.Quantity - ISNULL(ij.quantity,0))
             FROM Restaurant.OrderItem oi WITH(ROWLOCK)
-            JOIN (SELECT uuid FROM OPENJSON(@itemsToPay)
+            JOIN (SELECT uuid, quantity FROM OPENJSON(@itemsToPay)
                                     WITH (
-                                            uuid UNIQUEIDENTIFIER '$.uuid'
+                                            uuid UNIQUEIDENTIFIER '$.uuid',
+                                            quantity    NUMERIC(18,2) '$.quantity'
                                           )
                       ) AS ij ON ij.uuid = oi.uuid
         END
