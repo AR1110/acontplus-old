@@ -18,22 +18,22 @@ export default function App() {
 
   const darkTheme = createTheme({
     palette: {
-      mode: darkMode ? 'dark':'light',
+      mode: darkMode ? 'dark' : 'light',
     },
 
   });
   return (
     <ThemeProvider theme={darkTheme}>
-      <CssBaseline /> 
+      <CssBaseline />
       <Suspense fallback={<>Cargando</>}>
         <SnackbarProvider>
           <SnackbarUtilitiesConfigurator />
           <BrowserRouter basename="/RestaurantUI/">
-           
+
             <RoutesWithNotFound>
               <Route path="/" element={<Navigate to={PrivateRoutes.PRIVATE}></Navigate>}></Route>
               <Route path={PublicRoutes.LOGIN} element={<Login />}></Route>
-              <Route element={<AuthGuard privateValidation />}>
+              <Route element={<AuthGuard />}>
                 <Route
                   path={`${PrivateRoutes.PRIVATE}/*`}
                   element={<Private />}
