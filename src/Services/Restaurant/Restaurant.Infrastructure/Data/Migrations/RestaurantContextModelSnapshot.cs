@@ -629,7 +629,7 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<int?>("ItemId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ItemTypeId")
+                    b.Property<int>("ItemTypeId")
                         .HasColumnType("int");
 
                     b.Property<int?>("MenuId")
@@ -651,6 +651,9 @@ namespace Restaurant.Infrastructure.Data.Migrations
 
                     b.Property<decimal>("Quantity")
                         .HasColumnType("numeric(18,5), not null");
+
+                    b.Property<decimal?>("RemainingQuantity")
+                        .HasColumnType("numeric(18,5), null");
 
                     b.Property<int?>("TaxId")
                         .HasColumnType("int");
@@ -1065,7 +1068,9 @@ namespace Restaurant.Infrastructure.Data.Migrations
 
                     b.HasOne("Restaurant.Core.Entities.ItemType", "ItemType")
                         .WithMany()
-                        .HasForeignKey("ItemTypeId");
+                        .HasForeignKey("ItemTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Restaurant.Core.Entities.Menu", "Menu")
                         .WithMany()
