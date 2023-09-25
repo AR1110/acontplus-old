@@ -503,8 +503,15 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<decimal?>("Discount")
                         .HasColumnType("numeric(18,5), null");
 
+                    b.Property<bool>("Divided")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<int>("EstablecimientoId")
                         .HasColumnType("int");
