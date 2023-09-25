@@ -14,7 +14,7 @@ import { create } from "zustand";
 import { produce } from 'immer';
 import { productService } from "@/core/services";
 import Swal from "sweetalert2";
-import { useLoaderStore } from ".";
+import { useAuthStore, useLoaderStore } from ".";
  
  
 
@@ -337,7 +337,8 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         caculateTotals();
     },
     caculateTotals() {
-
+         
+        
         // Obtener los datos necesarios del estado (state)
         const { items, dataForm } = get();
         const decimal = dataForm.decimal;

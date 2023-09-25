@@ -118,8 +118,8 @@ const Cart = () => {
                 }
                 if (response.code === "1") {
                     SnackbarUtility.success(response.message);
-                    const queryParams: QueryParams = JSON.parse(response.payload)[0];
-                    console.log(queryParams)
+                    // const queryParams: QueryParams = JSON.parse(response.payload)[0];
+                    resetForm(); 
                 }
             }).finally(() => showLoader(false))
         } else {

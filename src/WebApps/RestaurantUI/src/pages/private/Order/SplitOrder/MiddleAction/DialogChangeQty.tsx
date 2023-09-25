@@ -22,8 +22,26 @@ const columns: GridColDef[] = [
         width: 130,
         editable: false,
     },
+    
+    // {
+    //     field: 'quantity',
+    //     headerName: 'Cant.',
+    //     type: 'number',
+    //     width: 130,
+    //     editable: true,
+    //     preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
+    //         let hasError = false;
+    //         if (!params.props.value || params.props.value < 1) {
+    //             hasError = true;
+    //         }
+    //         if (params.props.value > params.row.quantityTemp) {
+    //             hasError = true;
+    //         }
+    //         return { ...params.props, error: hasError };
+    //     },
+    // },
     {
-        field: 'quantity',
+        field: 'remainingQuantity',
         headerName: 'Cant.',
         type: 'number',
         width: 130,
@@ -33,7 +51,7 @@ const columns: GridColDef[] = [
             if (!params.props.value || params.props.value < 1) {
                 hasError = true;
             }
-            if (params.props.value > params.row.quantityTemp) {
+            if (params.props.value > params.row.remainingQuantity) {
                 hasError = true;
             }
             return { ...params.props, error: hasError };
@@ -56,7 +74,7 @@ const columns: GridColDef[] = [
         headerName: 'Total',
         type: 'number',
         width: 110,
-        valueGetter: (params: GridValueGetterParams) => (params.row.quantity * params.row.priceWithVat).toFixed(2)
+        valueGetter: (params: GridValueGetterParams) => (params.row.remainingQuantity * params.row.priceWithVat).toFixed(2)
     },
 ];
 
@@ -116,7 +134,7 @@ const DialogChangeQty = ({ open, setOpen }: DialogChangeQtyProps) => {
         // if(newRow["quantity"]===oldRow["quantity"]){
         //     return oldRow;
         // }
-        const total = newRow["quantity"] * newRow["price"];
+        const total = newRow["remainingQuantity"] * newRow["price"];
         newRow["total"] = total;
         const mergeFilteredItems = changeOrderItems.map((orderItem) => {
             return orderItem.id === newRow["id"] ? newRow as any : orderItem
