@@ -30,10 +30,11 @@ import ProductSearch from '@/core/components/Product/ProductSearch';
 import { v4 as uuidv4 } from 'uuid';
 import { DOC_TYPE, ITEM_TYPE_CODE } from '@/core/constants';
 import { orderService, productService } from '@/core/services';
-import { Measure, ProductPVPReadDto } from '@/core/models';
+import { Measure, ProductPVPReadDto, QueryParams } from '@/core/models';
 import { PricingCalculateUtility, SnackbarUtility } from '@/core/utilities';
 import Swal from 'sweetalert2';
 import { itemToApi, summaryToApi } from '@/core/adapters';
+import { useCheckoutStore } from '@/stores';
 
 const columns: GridColDef[] = [
     { field: 'index', headerName: 'N°', width: 70 },
@@ -61,24 +62,24 @@ const columns: GridColDef[] = [
         type: 'number',
         width: 110,
     },
-    // {
-    //     field: 'taxValue',
-    //     headerName: 'Valor IVA',
-    //     type: 'number',
-    //     width: 110,
-    // },
-    // {
-    //     field: 'price',
-    //     headerName: 'P. Unitario',
-    //     type: 'number',
-    //     width: 110,
-    // },
-    // {
-    //     field: 'total',
-    //     headerName: 'Total Venta',
-    //     type: 'number',
-    //     width: 110,
-    // },
+    {
+        field: 'taxValue',
+        headerName: 'Valor IVA',
+        type: 'number',
+        width: 110,
+    },
+    {
+        field: 'price',
+        headerName: 'P. Unitario',
+        type: 'number',
+        width: 110,
+    },
+    {
+        field: 'total',
+        headerName: 'Total Venta',
+        type: 'number',
+        width: 110,
+    },
     {
         field: 'totalIVA',
         headerName: 'Total',
@@ -130,7 +131,10 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
         setChangeOrderItems,
         calculateOrderItemTotal,
         setRightOrderData,
-        rightOrder
+        rightOrder,
+        setPaymentData,
+        resetData,
+        closeDialogDivide
     } = useSplitOrderContext();
     const [cellModesModel, setCellModesModel] = useState<GridCellModesModel>({});
     const [columnVisibilityModel, setColumnVisibilityModel] = useState<GridColumnVisibilityModel>({
@@ -138,8 +142,11 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
         index: true,
     });
     //Totals order items changes QTY
-    const objTempTotal = calculateOrderItemTotal(changeOrderItems)
-    const [loader, setLoader] = useState(false)
+    const objTempTotal = calculateOrderItemTotal(changeOrderItems);
+    const [loader, setLoader] = useState(false);
+
+    //store checkout
+    const setQueryParams = useCheckoutStore(state => state.setQueryParams)
 
 
     // const joinOrderItemTotal = () => {
@@ -173,7 +180,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
 
             const taxPercentId = taxRateData?.taxRateId ?? 0; //Id TipoIva
 
-            if(product.carryInventory){
+            if (product.carryInventory) {
                 Swal.fire({
                     title: '',
                     html: 'Seleccione un articulo de tipo servicio, por favor'
@@ -335,6 +342,9 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
 
             const data = {
                 ...orderResult,
+                subtotalSinImpuestos: objTempTotal.subTotalSinImpuestos,
+                tax: objTempTotal.tax,
+                total: objTempTotal.total,
                 updateOrder: false,
                 saveDoc: true,
                 codDoc: DOC_TYPE.FV,
@@ -343,6 +353,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 // itemsToPay: orderItemsResult,
                 customDetail: orderItemsResult
             }
+             
 
             setLoader(true)
             orderService.put(leftOrder.orderId, data).then(response => {
@@ -351,9 +362,18 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 }
                 if (response.code === "1") {
                     SnackbarUtility.success(response.message);
-                    console.log(response)
+                    const queryParams: QueryParams = JSON.parse(response.payload)[0];
+
+                    resetData();
+                    setPaymentData({
+                        open: true,
+                        payload: queryParams
+                    })
+                    setQueryParams(queryParams);
+                    setOpen();
+                  //  closeDialogDivide();
                 }
-            }).finally(()=>setLoader(false))
+            }).finally(() => setLoader(false))
 
             // showLoader(true);
             // orderService.post(data).then(response => {

@@ -109,6 +109,8 @@ const RightOrderItem = () => {
 
             const data = {
                 ...orderResult,
+                // subtotalSinImpuestos: objTempTotal.subTotalSinImpuestos,
+                // tax: objTempTotal.tax,
                 updateOrder: false,
                 saveDoc: (codDoc === DOC_TYPE.FV) || (codDoc === DOC_TYPE.NE),
                 codDoc,

@@ -10,12 +10,14 @@ import Checkout from '@/core/components/Checkout/Checkout';
 
 type Props = {
     id: number
+    closeDialogDivide():void
 }
-const SplitOrder = ({ id }: Props) => {
-    const { fetchOrderData, setPaymentData, payment, leftOrder } = useSplitOrderContext();
+const SplitOrder = ({ id, closeDialogDivide }: Props) => {
+    const {setCloseDialogDivide, fetchOrderData, setPaymentData, payment, leftOrder } = useSplitOrderContext();
 
     useEffect(() => {
         fetchOrderData(id);
+        setCloseDialogDivide(closeDialogDivide)
     }, [])
 
     const closePayment = () => {

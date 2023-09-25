@@ -8,6 +8,7 @@ import {
     GET_ORDER_SUCCESS,
     SET_CHANGE_ORDER_ITEMS,
     SET_DATA_FORM,
+    SET_FUNCTION_CLOSE_DIALOG,
     SET_LEFT_CHECKED_ORDER_ITEMS,
     SET_LEFT_ORDER_ITEMS,
     SET_PAYMENT_DATA,
@@ -82,7 +83,8 @@ const initialState: SplitOrderState = {
     payment: {
         payload: {},
         open: false,
-    }
+    },
+    closeDialogDivide: ()=>[]
 }
 const initialActions: SplitOrderAction = {
     fetchOrderData: (id: number) => id,
@@ -103,7 +105,8 @@ const initialActions: SplitOrderAction = {
         };
     },
     setPaymentData: () => [],
-    resetData: () => []
+    resetData: () => [],
+    setCloseDialogDivide:()=>[], 
 };
 
 // Crea un contexto llamado SplitOrderContext
@@ -384,6 +387,14 @@ export const SplitOrderProvider = ({ children }: Props) => {
         })
     }
 
+    const setCloseDialogDivide = (payload:()=>void)=>{
+        dispatch({
+            type: SET_FUNCTION_CLOSE_DIALOG,
+            payload
+        })
+    }
+   
+
 
     // Proporciona el estado y las funciones del contexto a los componentes hijos
     return (
@@ -402,7 +413,8 @@ export const SplitOrderProvider = ({ children }: Props) => {
             setRightCheckedOrderItems,
             calculateOrderItemTotal,
             setPaymentData,
-            resetData
+            resetData,
+            setCloseDialogDivide,  
         }}>
             {children}
         </SplitOrderContext.Provider>
