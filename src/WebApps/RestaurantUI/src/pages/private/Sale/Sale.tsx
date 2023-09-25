@@ -23,9 +23,10 @@ export default function Sale() {
     const { isMobile } = useMobileDetect();
 
     const setDataForm = useSaleStore(state => state.setDataForm)
-    const { order, setSummary } = useSaleStore(state => ({
+    const { order, setSummary, resetForm } = useSaleStore(state => ({
         order: state.order,
         setSummary: state.setSummary,
+        resetForm: state.resetForm
     }))
 
     const { loading, fetchItem } = useFetchItems()
@@ -70,6 +71,10 @@ export default function Sale() {
             )
             setDataForm(response)
         })
+
+        return ()=>{
+            resetForm();
+        }
     }, [])
 
     useEffect(() => {

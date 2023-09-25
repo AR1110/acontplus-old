@@ -3,12 +3,21 @@ import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import CustomNoRowsOverlay from '@/core/components/CustomNoRowsOverlay/CustomNoRowsOverlay';
 import { useSplitOrderContext } from '../../context';
 import { Alert, AlertTitle } from '@mui/material';
-
+ 
+     
+ 
 const columns: GridColDef[] = [
     { field: 'index', headerName: 'N°', width: 70 },
     { field: 'description', headerName: 'Descripción', width: 130 },
+    // {
+    //     field: 'quantity',
+    //     headerName: 'Cant.',
+    //     type: 'number',
+    //     width: 50,
+    //     editable: false,
+    // },
     {
-        field: 'quantity',
+        field: 'remainingQuantity',
         headerName: 'Cant.',
         type: 'number',
         width: 50,

@@ -3,9 +3,15 @@
 import { DataFormSale, ItemRead, Order } from "@/core/models"
 
 // }
-export type LeftOrderItem = ItemRead
-export type RighttOrderItem = ItemRead
-type ChangeOrderItem = ItemRead
+export type LeftOrderItem = ItemRead & {
+    remainingQuantity: number
+}
+export type RighttOrderItem = ItemRead & {
+    remainingQuantity: number
+}
+type ChangeOrderItem = ItemRead & {
+    remainingQuantity: number
+}
 
 export interface SplitOrderState {
     orderLoading: boolean
@@ -63,5 +69,5 @@ export interface SplitOrderAction {
     setPaymentData<T>(ar: T): void
     resetData(): void
     setCloseDialogDivide(T: () => void): void
-    
+
 }
