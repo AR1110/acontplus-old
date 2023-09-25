@@ -93,6 +93,8 @@ namespace Restaurant.Infrastructure.Data
             builder.Entity<MenuItem>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
 
             builder.Entity<Order>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<Order>().Property(x => x.Divided).HasDefaultValue(false);
+            builder.Entity<Order>().Property(x => x.Enabled).HasDefaultValue(true);
             builder.Entity<Order>().HasMany(x => x.OrderItems).WithOne(m => m.Order).HasForeignKey(m => m.OrderId);
 
             builder.Entity<OrderItem>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
