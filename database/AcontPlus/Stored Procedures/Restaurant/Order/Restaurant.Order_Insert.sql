@@ -1,6 +1,5 @@
 USE Acontplus
 GO
-
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10,7 +9,7 @@ GO
 -- Create date: 2023-08-14
 -- Description:	sp for insert order restaurant
 -- =============================================
--- Restaurant.Order_Insert 139, '{"orderId":0,"establecimientoId":454,"puntoEmisionId":124,"bodegaId":0,"tableId":3,"customerCompanyId":63929,"subtotalSinImpuestos":9.5,"tax":1.14,"taxPercent":0,"discount":0,"total":10.64,"items":[{"orderItemId":524,"uuid":"295f16fe-3c5c-4ba3-a937-63ac8925d8f2","itemId":1,"feeId":528,"taxId":1,"taxPercentId":2,"taxValue":0.57,"quantity":2,"cost":22.4,"price":4.75,"discount":0,"total":9.5,"obs":"","bodegaId":128}],"taxes":[],"payments":{},"tip":0,"obs":"TEST","codDoc":"FV","quickSale":true,"fechaEmision":"2023-09-22T21:02:08.189Z","uuid":"aefda80b-7e21-4635-bb3d-8db36c9f86d5","updateOrder":false,"saveDoc":true,"itemsToPay":[{"orderItemId":524,"uuid":"295f16fe-3c5c-4ba3-a937-63ac8925d8f2","itemId":1,"feeId":528,"taxId":1,"taxPercentId":2,"taxValue":0.57,"quantity":2,"cost":22.4,"price":4.75,"discount":0,"total":9.5,"obs":"","bodegaId":128}]}'
+-- Restaurant.Order_Insert 139, '{"orderId":0,"establecimientoId":454,"puntoEmisionId":124,"bodegaId":128,"tableId":3,"customerCompanyId":11752,"subtotalSinImpuestos":8.7,"tax":1.04,"taxPercent":0,"discount":0,"total":9.74,"items":[{"orderItemId":0,"uuid":"92423d48-93a3-4a98-84f9-4131a65b156c","itemId":29,"feeId":528,"taxId":1,"taxPercentId":2,"productId":77508,"taxValue":0.6,"quantity":1,"cost":1.5,"price":5,"discount":0,"total":5,"obs":"","itemTypeCode":"ITEM","menuId":0,"bodegaId":128,"envioSri":false},{"orderItemId":0,"uuid":"0f3755df-249f-46fa-b48a-adf08bcd773c","itemId":28,"feeId":528,"taxId":1,"taxPercentId":2,"productId":77507,"taxValue":0.44400000000000006,"quantity":1,"cost":3,"price":3.7,"discount":0,"total":3.7,"obs":"","itemTypeCode":"ITEM","menuId":0,"bodegaId":128,"envioSri":false}],"taxes":[{"uuid":"92423d48-93a3-4a98-84f9-4131a65b156c","taxId":1,"taxPercentId":2,"taxBase":5,"taxValue":0.6},{"uuid":"0f3755df-249f-46fa-b48a-adf08bcd773c","taxId":1,"taxPercentId":2,"taxBase":3.7,"taxValue":0.44400000000000006}],"payments":{},"tip":0,"obs":"","codDoc":"OR","quickSale":false,"fechaEmision":"2023-09-24T18:02:22.152Z","uuid":"799ec59e-03b3-4c26-9cd9-07191e91df44","updateOrder":false,"saveDoc":false}'
 CREATE OR ALTER PROCEDURE Restaurant.Order_Insert @userRoleId INT
 ,@json NVARCHAR(MAX)
 AS
@@ -78,7 +77,7 @@ BEGIN
         BEGIN
             DECLARE @tblItems AS TABLE(
                 uuid UNIQUEIDENTIFIER NOT NULL,
-                itemTypeCode VARCHAR(5) NULL,
+                itemTypeCode VARCHAR(8) NOT NULL,
                 menuId INT NULL,
                 itemId INT NULL,
                 taxId INT NOT NULL,
@@ -99,7 +98,7 @@ BEGIN
             FROM OPENJSON(@itemsJson)
                 WITH (
                         uuid UNIQUEIDENTIFIER '$.uuid',
-                        itemTypeCode VARCHAR(5) '$.itemTypeCode',
+                        itemTypeCode VARCHAR(8) '$.itemTypeCode',
                         menuId INT '$.menuId',
                         itemId INT '$.itemId',
                         taxId INT '$.taxId',
@@ -151,7 +150,7 @@ BEGIN
             , @userId   = idUsuario 
     FROM v_usuario
     WHERE idUsuarioRol = @userRoleId
-
+    
 	BEGIN TRY
 		BEGIN TRAN
             ----------------ORDER------------------
@@ -184,9 +183,11 @@ BEGIN
                             ,feeId
                             ,obs
                             ,i.bodegaId
-                            ,(SELECT TOP 1 it.Id FROM Restaurant.ItemType it WHERE i.itemTypeCode = it.Code)
+                            ,mt.Id
                             ,IIF(i.menuId = 0, NULL, i.menuId)
-                     FROM @tblItems i
+                    FROM @tblItems i
+                    INNER JOIN Restaurant.ItemType mt ON mt.Code = i.itemTypeCode
+
 
                     IF NOT EXISTS (SELECT 1 FROM Restaurant.OrderItem WHERE OrderId = @orderId)
                         BEGIN
@@ -228,9 +229,7 @@ BEGIN
                    SET @payload = (SELECT orderId = @orderId)
                 END
             -----------------END ORDER -----------------
-            PRINT @payload
             
-
             ----------------VENTA RAPIDA------------
             IF @quickSale = 1
                 BEGIN

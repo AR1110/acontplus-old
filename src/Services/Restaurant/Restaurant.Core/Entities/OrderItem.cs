@@ -10,7 +10,7 @@ namespace Restaurant.Core.Entities
         public Order Order { get; set; }
         public int OrderId { get; set; }
         public ItemType ItemType { get; set; }
-        public int? ItemTypeId { get; set; }
+        public int ItemTypeId { get; set; }
         public Item Item { get; set; }
         public int? ItemId { get; set; }
         public Menu Menu { get; set; }
