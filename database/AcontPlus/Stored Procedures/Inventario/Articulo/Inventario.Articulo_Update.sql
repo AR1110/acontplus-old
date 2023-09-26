@@ -382,7 +382,7 @@ BEGIN
 			    WHERE sf.idSubFamilia = @idSubFamilia
 
                 IF(@siglaFamilia IN('RES', 'POR') AND @siglaFamilia != 'ING')
-                    BEGIN
+                    BEGIN                        
                         IF NOT EXISTS(SELECT TOP 1 1 FROM Restaurant.Item WHERE ProductId = @id)
                             BEGIN 
                                 INSERT INTO Restaurant.Item
@@ -406,7 +406,7 @@ BEGIN
                             END
                          ELSE
                             BEGIN
-                                UPDATE Restaurant.Ingredient SET Summary = (SELECT  descripcion FROM @tbArticle) WHERE ProductId = @id
+                                UPDATE Restaurant.Ingredient SET Summary = (SELECT descripcion FROM @tbArticle) WHERE ProductId = @id
                             END
                     END
 

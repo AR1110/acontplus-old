@@ -423,7 +423,7 @@
                 bind:value={data.recipe}
                 class="form-control"
                 id="recipe"
-                rows="4"
+                rows="6"
               />
             </div>
           </div>
@@ -434,12 +434,12 @@
                 bind:value={data.instructions}
                 class="form-control"
                 id="instructions"
-                rows="4"
+                rows="6"
               />
             </div>
           </div>
         </div>
-        <div class="row">
+        <!-- <div class="row">
           <div class="col-6">
             <div class="form-group">
               <label for="instructions">Contenido</label>
@@ -451,7 +451,7 @@
               />
             </div>
           </div>
-        </div>
+        </div> -->
         <hr />
         <div class="row">
           <div class="col-12 col-xl-6 col-lg-6 col-md-12 col-sm-12">
