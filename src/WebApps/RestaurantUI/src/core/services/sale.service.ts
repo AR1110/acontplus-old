@@ -33,12 +33,14 @@ export const SaleService = {
             ptoEmi_Asig,
             room,
             floor,
-            customer
+            customer,
+            tarifaImpuestoVigente
         } = resultAxios.data;
 
 
         const rooms: Array<Room> = room;
         const floors: Array<Floor> = floor;
+        const tarifaVigente = taxRateAdapter(tarifaImpuestoVigente);
         return {
             categories: categoryReadAdapter(subCategorias || []),
             decimal: decimalSaleReadAdapter(configDecimal[0]),
@@ -49,7 +51,8 @@ export const SaleService = {
             emissionPoints: emissionPointAdapter(ptoEmi_Asig || []),
             rooms,
             floors,
-            customer: customerReadAdapter(customer.length > 0 ? customer[0] : {})
+            customer: customerReadAdapter(customer.length > 0 ? customer[0] : {}),
+            tarifaImpuestoVigente: tarifaVigente[0]! 
         }
     }
 }

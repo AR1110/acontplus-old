@@ -23,7 +23,7 @@ const columns: GridColDef[] = [
         editable: false,
     },
     {
-        field: 'quantity',
+        field: 'remainingQuantity',
         headerName: 'Cant.',
         type: 'number',
         width: 130,
@@ -56,7 +56,7 @@ const columns: GridColDef[] = [
         headerName: 'Total',
         type: 'number',
         width: 110,
-        valueGetter: (params: GridValueGetterParams) => (params.row.quantity * params.row.priceWithVat).toFixed(2)
+        valueGetter: (params: GridValueGetterParams) => (params.row.remainingQuantity * params.row.priceWithVat).toFixed(2)
     },
 ];
 
@@ -116,7 +116,7 @@ const DialogChangeQty = ({ open, setOpen }: DialogChangeQtyProps) => {
         // if(newRow["quantity"]===oldRow["quantity"]){
         //     return oldRow;
         // }
-        const total = newRow["quantity"] * newRow["price"];
+        const total = newRow["remainingQuantity"] * newRow["price"];
         newRow["total"] = total;
         const mergeFilteredItems = changeOrderItems.map((orderItem) => {
             return orderItem.id === newRow["id"] ? newRow as any : orderItem
@@ -205,7 +205,7 @@ const DialogChangeQty = ({ open, setOpen }: DialogChangeQtyProps) => {
                             justifyContent="center"
                             alignItems="flex-end">
                             <Typography variant="h6">
-                                <b>Cant:</b> {objTempTotal.quantity}
+                                <b>Cant:</b> {objTempTotal.remainingQuantity}
                             </Typography>
                             <Typography variant="h6">
                                 <b>Total:</b> {objTempTotal.total}

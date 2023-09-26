@@ -141,10 +141,13 @@ export default function OrderTable() {
         setOrderId.current = id;
         setOpenDialodDivide(true)
     }
-    const closeDialogDivide = () => {
+    function closeDialogDivide<T>(value: T)  {
+        if(typeof value ==='string' && value==='CUSTOM_DETAIL'){
+            getOrders()
+        }
         setOpenDialodDivide(false)
-    } 
-    
+    }
+
     return (
         <React.Fragment>
             <Box sx={{ width: "100%" }}>
@@ -187,24 +190,29 @@ export default function OrderTable() {
                                                     </IconButton>
                                                 </Tooltip>
                                             )} */}
-                                            <IconButton
+                                            {/* <IconButton
                                                 aria-label="delete"
                                                 color="error"
                                                 onClick={() => handleUpdateState(order.orderId)}
                                             >
                                                 <DeleteIcon />
-                                            </IconButton>
-
-                                            {!(order.documentoId > 0) && (
-                                                <Tooltip describeChild title="Editar">
-                                                    <IconButton color="primary"
-                                                        aria-label="Editar"
-                                                        onClick={() => handleEdit(order.orderId)}
-                                                    >
-                                                        <EditIcon />
-                                                    </IconButton>
-                                                </Tooltip>
-                                            )}
+                                            </IconButton> */}
+                                            {
+                                                order.documentoId > 0 ? '' : (<>
+                                                    {
+                                                        !(order.divided) && (
+                                                            <Tooltip describeChild title="Editar">
+                                                                <IconButton color="primary"
+                                                                    aria-label="Editar"
+                                                                    onClick={() => handleEdit(order.orderId)}
+                                                                >
+                                                                    <EditIcon />
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                        )
+                                                    }
+                                                </>)
+                                            }
 
                                             <Tooltip describeChild title="Impresión">
                                                 <IconButton color="warning"
@@ -233,22 +241,25 @@ export default function OrderTable() {
                                                 </IconButton>
                                             </Tooltip>
 
-                                            {!(order.documentoId > 0) && (
-                                                <Tooltip describeChild title="Dividir la cuenta">
-                                                    <IconButton size="large" color="inherit"
-                                                        aria-label="Impresión"
-                                                        onClick={() => dividerCuenta(order.orderId)}
-                                                    >
-                                                        <AccountTreeIcon />
-                                                    </IconButton>
-                                                </Tooltip>
-                                            )} 
+                                            {
+                                                (!(order.documentoId > 0) || (order.divided)) && (
+                                                    <Tooltip describeChild title="Dividir la cuenta">
+                                                        <IconButton size="large" color="inherit"
+                                                            aria-label="Impresión"
+                                                            onClick={() => dividerCuenta(order.orderId)}
+                                                        >
+                                                            <AccountTreeIcon />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                )
+                                            }
+
                                         </TableCell>
-                                        <TableCell align="center">{order.serie}</TableCell>
+                                        <TableCell align="center"> {order.serie}</TableCell>
                                         <TableCell align="center">{order.createdAt}</TableCell>
                                         <TableCell align="center">{order.nameFiscal}</TableCell>
                                         <TableCell align="right">{order.total}</TableCell>
-                                        <TableCell align="center">-</TableCell>
+                                        <TableCell align="center">{order.divided ? 'Dividiendo' : '-'}</TableCell>
                                         <TableCell align="center">{order.userName}</TableCell>
                                     </TableRow>
                                 ))}

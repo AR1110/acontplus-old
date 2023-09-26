@@ -7,27 +7,30 @@ import { useSplitOrderContext } from '../context';
 import MiddleAction from './MiddleAction/MiddleAction';
 import Checkout from '@/core/components/Checkout/Checkout';
 
-
+ 
 type Props = {
     id: number
-    closeDialogDivide():void
+    closeDialogDivide<T>(value?:T): void
 }
 const SplitOrder = ({ id, closeDialogDivide }: Props) => {
-    const {setCloseDialogDivide, fetchOrderData, setPaymentData, payment, leftOrder } = useSplitOrderContext();
+    const { actionType, fetchOrderData, setPaymentData, payment, leftOrder } = useSplitOrderContext();
 
     useEffect(() => {
-        fetchOrderData(id);
-        setCloseDialogDivide(closeDialogDivide)
+        fetchOrderData(id); 
     }, [])
 
     const closePayment = () => {
-        fetchOrderData(leftOrder.orderId)
-        setPaymentData({
-            payment: {
-                open: false,
-                payload: {}
-            }
-        })
+        if (actionType === "CUSTOM_DETAIL") {
+            closeDialogDivide("CUSTOM_DETAIL");
+        } else {
+            fetchOrderData(leftOrder.orderId);
+            setPaymentData({
+                payment: {
+                    open: false,
+                    payload: {}
+                }
+            })
+        }
     }
     return (
         <>

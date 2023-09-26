@@ -13,21 +13,20 @@ import TableDialog from '../Table/TableDialog';
 import { useState } from 'react';
 import CustomerSearch from '../Customer/CustomerSearch';
 
-const Cart = () => {
-
+const Cart = () => { 
     const cartItems = useSaleStore(state => state.items);
-    const { order } = useSaleStore(state => ({
+    const { order, tarifaImpuestoVigente } = useSaleStore(state => ({
         order: state.order,
         items: state.items,
+        tarifaImpuestoVigente: state.dataForm.tarifaImpuestoVigente       
     }));
     const setOrder = useSaleStore(state => state.setSummary)
 
-    //store checkout
-    const setQueryParams = useCheckoutStore(state => state.setQueryParams)
-
     const resetForm = useSaleStore(state => state.resetForm);
     const payment = useSaleStore(state => state.payment);
-
+    
+    //store checkout
+    const setQueryParams = useCheckoutStore(state => state.setQueryParams)
     const { showLoader } = useLoaderStore();
 
     //Modal Tables
@@ -235,7 +234,7 @@ const Cart = () => {
                             <b>Subtotal: ${order.subTotalSinImpuestos}</b>
                         </Typography>
                         <Typography variant="body2" color="text.primary">
-                            <b>Impuestos: ${order.tax}</b>
+                            <b>Impuesto({tarifaImpuestoVigente.description}): ${order.tax}</b>
                         </Typography>
                         <Typography variant="h6" color="error">
                             Total: ${order.total}
