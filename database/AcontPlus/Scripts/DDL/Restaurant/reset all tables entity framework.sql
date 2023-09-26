@@ -3,13 +3,22 @@ go
 drop table __EFMigrationsHistory
 go
 
+drop view Restaurant.v_Recipe
+go
+
+drop view Restaurant.v_Table
+go
+drop view Restaurant.v_Ingredient
+go
+
 drop table Restaurant.[Floor]
 go
 
 drop table Restaurant.Ingredient
 go
 
-
+drop table Restaurant.ItemType
+go
 drop table Restaurant.Item
 go
 
@@ -35,7 +44,15 @@ go
 drop table Restaurant.OrderKitchen
 go
 
+drop table Restaurant.OrderDocument
+go
 
+drop table Restaurant.Promotion
+go
+
+drop table Restaurant.PromotionMenu
+
+go
 
 drop table Restaurant.ProductionArea
 go

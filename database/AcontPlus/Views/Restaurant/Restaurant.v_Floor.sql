@@ -3,7 +3,7 @@ GO
 --- Author: Ignacio 
 --- Date: 2023-08-15
 --- Description: View for list
-CREATE OR ALTER VIEW Restaurant.v_Floor
+CREATE OR ALTER VIEW Restaurant.v_Floor  WITH SCHEMABINDING
 AS
 
 SELECT id				= rf.Id
