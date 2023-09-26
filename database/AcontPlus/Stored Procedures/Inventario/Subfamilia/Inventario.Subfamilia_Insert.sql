@@ -30,14 +30,14 @@ BEGIN
 	DECLARE @idSubFamilia INT 
 	DECLARE @payload VARCHAR(MAX)
 	DECLARE @sequential INT 
-	DECLARE @code VARCHAR(15)
+	--DECLARE @code VARCHAR(15)
 
 	BEGIN TRY 
 		SELECT @sequential = COUNT(*)+1 FROM dbo.SubFamilia WITH (NOLOCK)
 
 		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
-		SET @code = ('F'+Helper.F_Auto_Sequential(@sequential))
+		--SET @code = ('F'+Helper.F_Auto_Sequential(@sequential))
 
 		IF EXISTS( SELECT 1 FROM SubFamilia WITH (NOLOCK) WHERE descripcion = @descripcion AND idEntidad = @idEntidad)
 			BEGIN 
@@ -61,7 +61,7 @@ BEGIN
 						(idFamilia
 						,descripcion,siglas,codigo,montoObjetivo,ultimoSecuencial,idUsuario,idEntidad, s3ObjectKey, s3ObjectUrl)
 				  SELECT CASE WHEN @idFamilia = 0 THEN NULL ELSE @idFamilia END
-						,@descripcion,@siglas,@code,@montoObjetivo,1,@idUsuario,@idEntidad, @s3ObjectKey, @s3ObjectUrl
+						,@descripcion,@siglas,newid(),@montoObjetivo,1,@idUsuario,@idEntidad, @s3ObjectKey, @s3ObjectUrl
 
 				 SET @idSubFamilia = @@IDENTITY
 
