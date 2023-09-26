@@ -7,7 +7,7 @@ const columns: GridColDef[] = [
     { field: 'index', headerName: 'N°', width: 70},
     { field: 'description', headerName: 'Descripción', width: 130 },
     {
-        field: 'quantity',
+        field: 'remainingQuantity',
         headerName: 'Cant.',
         type: 'number',
         width: 50, 
@@ -30,7 +30,7 @@ const columns: GridColDef[] = [
         headerName: 'Total',
         type: 'number',
         width: 100,
-        valueGetter: (params: GridValueGetterParams) => (params.row.quantity * params.row.priceWithVat).toFixed(2)
+        valueGetter: (params: GridValueGetterParams) => (params.row.remainingQuantity * params.row.priceWithVat).toFixed(2)
     },
 ];
  

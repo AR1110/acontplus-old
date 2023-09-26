@@ -2,64 +2,60 @@
 
 import { DataFormSale, ItemRead, Order } from "@/core/models"
 
-// }
-export type LeftOrderItem = ItemRead & {
+
+export type OrderItemDivide = ItemRead & {
     remainingQuantity: number
 }
-export type RighttOrderItem = ItemRead & {
-    remainingQuantity: number
-}
-type ChangeOrderItem = ItemRead & {
-    remainingQuantity: number
-}
+ 
 
 export interface SplitOrderState {
+    actionType: string
     orderLoading: boolean
     orderError: boolean
     dataForm: DataFormSale
     leftOrder: Order
     rightOrder: Order
     leftOrderItemsLength: number
-    leftOrderItems: LeftOrderItem[]
-    rightOrderItems: RighttOrderItem[]
-    changeOrderItems: ChangeOrderItem[]
-    leftCheckedOrderItems: Array<ItemRead>
-    rightCheckedOrderItems: Array<ItemRead>
+    leftOrderItems: OrderItemDivide[]
+    rightOrderItems: OrderItemDivide[]
+    changeOrderItems: OrderItemDivide[]
+    leftCheckedOrderItems: Array<OrderItemDivide>
+    rightCheckedOrderItems: Array<OrderItemDivide>
     payment: {
         payload: any,
         open: boolean
-    },
-    closeDialogDivide(): void
+    }
 }
 
 type ReturnTypeTotal = {
-    quantity: number
+    remainingQuantity: number
     subTotalSinImpuestos: number
     tax: number
     total: number
 }
 export interface SplitOrderAction {
+    setActionType<T>(value:T):void //Verificar si es custom detail o division 
     fetchOrderData(id: number): void
-    intersection(a: Array<ItemRead>, b: Array<ItemRead>): Array<ItemRead>
-    not(a: Array<ItemRead>, b: Array<ItemRead>): Array<ItemRead>
-    setRightOrderItem(payload: Array<ItemRead>): void
-    setLeftOrderItem(payload: Array<ItemRead>): void
+    intersection(a: Array<OrderItemDivide>, b: Array<OrderItemDivide>): Array<OrderItemDivide>
+    not(a: Array<OrderItemDivide>, b: Array<OrderItemDivide>): Array<OrderItemDivide>
+    setRightOrderItem(payload: Array<OrderItemDivide>): void
+    setLeftOrderItem(payload: Array<OrderItemDivide>): void
     setRightOrderData(order: Order): void
-    setChangeOrderItems(payload: Array<ItemRead>): void
-    mergeArraysByField<T extends { id: number; quantity: number; price: number; total: number; }>(
+    setChangeOrderItems(payload: Array<OrderItemDivide>): void
+    mergeArraysByField<T extends { id: number; remainingQuantity: number; price: number; total: number; }>(
         array1: T[],
         array2: T[],
         field: keyof T
     ): T[]
-    mergeArraysByFieldLeft<T extends { id: number; quantity: number; price: number, total: number }>(
+    mergeArraysByFieldLeft<T extends { id: number; remainingQuantity: number; price: number, total: number }>(
         array1: T[],
         array2: T[],
         field: keyof T
     ): T[]
-    setLeftCheckedOrderItems(payload: Array<ItemRead>): void
-    setRightCheckedOrderItems(payload: Array<ItemRead>): void
+    setLeftCheckedOrderItems(payload: Array<OrderItemDivide>): void
+    setRightCheckedOrderItems(payload: Array<OrderItemDivide>): void
     calculateOrderItemTotal<T extends {
-        quantity: number
+        remainingQuantity: number
         price: number
         discount: number
         total: number
@@ -67,7 +63,5 @@ export interface SplitOrderAction {
         priceWithVat: number
     }>(arr: T[]): ReturnTypeTotal
     setPaymentData<T>(ar: T): void
-    resetData(): void
-    setCloseDialogDivide(T: () => void): void
-
+    resetData(): void  
 }

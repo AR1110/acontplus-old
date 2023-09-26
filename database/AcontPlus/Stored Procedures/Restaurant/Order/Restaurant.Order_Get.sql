@@ -52,6 +52,7 @@ BEGIN
                         ,nameFiscal 	    = CASE WHEN o.CustomerCompanyId = 0 THEN ''CONSUMIDOR FINAL'' ELSE c.nombreFiscal END
 	                    ,userName           = u.nombreUsuario
                         ,totalRecords       = COUNT(*) OVER()
+                        ,Divided
                     FROM Restaurant.[Order] o WITH(NOLOCK)
                     LEFT JOIN Restaurant.OrderDocument od WITH(NOLOCK) ON o.Id = od.OrderId
                     LEFT JOIN TipoDocumento td WITH(NOLOCK) ON od.TipoDocumentoId = td.idTipoDocumento

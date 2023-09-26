@@ -51,7 +51,7 @@ const columns: GridColDef[] = [
         width: 80,
     },
     {
-        field: 'quantity',
+        field: 'remainingQuantity',
         headerName: 'Cant.',
         type: 'number',
         width: 100,
@@ -62,30 +62,30 @@ const columns: GridColDef[] = [
         type: 'number',
         width: 110,
     },
-    {
-        field: 'taxValue',
-        headerName: 'Valor IVA',
-        type: 'number',
-        width: 110,
-    },
-    {
-        field: 'price',
-        headerName: 'P. Unitario',
-        type: 'number',
-        width: 110,
-    },
-    {
-        field: 'total',
-        headerName: 'Total Venta',
-        type: 'number',
-        width: 110,
-    },
+    // {
+    //     field: 'taxValue',
+    //     headerName: 'Valor IVA',
+    //     type: 'number',
+    //     width: 110,
+    // },
+    // {
+    //     field: 'price',
+    //     headerName: 'P. Unitario',
+    //     type: 'number',
+    //     width: 110,
+    // },
+    // {
+    //     field: 'total',
+    //     headerName: 'Total Venta',
+    //     type: 'number',
+    //     width: 110,
+    // },
     {
         field: 'totalIVA',
         headerName: 'Total',
         type: 'number',
         width: 110,
-        valueGetter: (params: GridValueGetterParams) => (params.row.quantity * params.row.priceWithVat).toFixed(2)
+        valueGetter: (params: GridValueGetterParams) => (params.row.remainingQuantity * params.row.priceWithVat).toFixed(2)
     },
 ];
 
@@ -125,6 +125,7 @@ type DialogCustomOrderItemProps = {
 
 const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) => {
     const {
+        setActionType,
         dataForm,
         leftOrder,
         changeOrderItems,
@@ -133,8 +134,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
         setRightOrderData,
         rightOrder,
         setPaymentData,
-        resetData,
-        closeDialogDivide
+        resetData, 
     } = useSplitOrderContext();
     const [cellModesModel, setCellModesModel] = useState<GridCellModesModel>({});
     const [columnVisibilityModel, setColumnVisibilityModel] = useState<GridColumnVisibilityModel>({
@@ -146,29 +146,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
     const [loader, setLoader] = useState(false);
 
     //store checkout
-    const setQueryParams = useCheckoutStore(state => state.setQueryParams)
-
-
-    // const joinOrderItemTotal = () => {
-    //     return leftCheckedOrderItems.reduce((total, orderItem) => {
-    //         total.taxValue += orderItem.taxValue
-    //         total.quantity += orderItem.quantity;
-    //         total.price += orderItem.price;
-    //         total.priceWithVat += orderItem.priceWithVat;
-    //         total.discount = orderItem.discount
-    //         total.total = orderItem.total;
-    //         total.bodegaId = orderItem.bodegaId;
-    //         return total;
-    //     }, {
-    //         taxValue: 0,
-    //         quantity: 0,
-    //         price: 0,
-    //         priceWithVat: 0,
-    //         discount: 0,
-    //         total: 0,
-    //         bodegaId: 0,
-    //     })
-    // }
+    const setQueryParams = useCheckoutStore(state => state.setQueryParams) 
 
     const onChangeProductSearch = (productId: number) => {
         productService.findForSale(productId).then(response => {
@@ -182,6 +160,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
 
             if (product.carryInventory) {
                 Swal.fire({
+                    icon: 'warning',
                     title: '',
                     html: 'Seleccione un articulo de tipo servicio, por favor'
                 })
@@ -204,6 +183,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 taxPercentId,
                 taxValue,
                 quantity: 1,
+                remainingQuantity: 1,
                 cost: product.costPrice, //Precio Costo
                 price,
                 discount: 0,
@@ -229,7 +209,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                 itemTypeCode: ITEM_TYPE_CODE.ITEM,
                 envioSri: true,
                 tarifaImpuesto: product.tarifaImpuesto,
-                paid: false
+                paid: false, 
             }
             setChangeOrderItems([obj]);
             setColumnVisibilityModel({ tarifaImpuesto: true, index: false })
@@ -329,7 +309,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
             })
 
             if (!isConfirmed) return
-            console.log('invoice')
+             
             const mergeLeftIntoRightOrder = {
                 ...rightOrder,
                 establecimientoId: leftOrder.establecimientoId,
@@ -370,27 +350,19 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                         payload: queryParams
                     })
                     setQueryParams(queryParams);
+                    setActionType("CUSTOM_DETAIL")
                     setOpen();
                   //  closeDialogDivide();
                 }
             }).finally(() => setLoader(false))
-
-            // showLoader(true);
-            // orderService.post(data).then(response => {
-
-            //     if (response.code === '0') {
-            //         SnackbarUtility.warning(response.message)
-            //     }
-            //     if (response.code === "1") {
-            //         SnackbarUtility.success(response.message);
-
-
-            //         console.log(response) 
-            //     }
-            // })
         } catch (error) {
             console.log(error)
         }
+    }
+
+    const closeModal = ()=>{
+        setActionType("")
+        setOpen();
     }
 
     return (
@@ -495,7 +467,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
                                 customerName: "",
                                 obs: ""
                             })
-                            setOpen()
+                            closeModal()
                         }}>
                             Cerrar
                         </Button>

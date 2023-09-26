@@ -15,8 +15,7 @@ export interface Order {
     taxPercent: number
     taxAmount: number;
     discount: number
-    total: number // With discount on items
-    netTotal: number // Net - (tax + discount on total)
+    total: number // With discount on items 
     tip: number //Propina    
     obs: string
     codDoc: string
@@ -138,6 +137,7 @@ export interface DataFormSale {
     rooms: Array<Room>
     floors: Array<Floor>
     customer: CustomerReadDto
+    tarifaImpuestoVigente: TaxRate
 } 
 
 
@@ -169,6 +169,13 @@ export const dataFormInitialState: DataFormSale = {
         correo: "",
         telefono: "",
         direccion: ""
+    },
+    tarifaImpuestoVigente: {
+        taxRateId: 0,
+        taxCode: "",
+        taxRateCode: "",
+        description: "",
+        percentage: 0
     }
 }
 
@@ -185,8 +192,7 @@ export const orderInitialState: Order = {
     taxPercent: 0,
     taxAmount: 0,
     discount: 0,
-    total: 0,
-    netTotal: 0,
+    total: 0, 
     tip: 0,
     obs: "",
     codDoc: DOC_TYPE.OR, //Type doc default Orden 
