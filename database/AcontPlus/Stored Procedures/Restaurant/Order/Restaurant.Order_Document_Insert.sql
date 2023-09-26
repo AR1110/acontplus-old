@@ -199,16 +199,16 @@ BEGIN
                                             )
                         ) AS ij ON ij.uuid = oi.uuid
 
-            UPDATE oi SET oi.Paid = 1
-                ,oi.RemainingQuantity = (oi.Quantity - ISNULL(ij.quantity,0))
+            UPDATE oi 
+            SET oi.Paid = 1
+            ,oi.RemainingQuantity = (oi.Quantity - ISNULL(ij.quantity,0))                        
             FROM Restaurant.OrderItem oi WITH(ROWLOCK)
             JOIN (SELECT uuid, quantity FROM OPENJSON(@itemsToPay)
-                                    WITH (
-                                            uuid UNIQUEIDENTIFIER '$.uuid',
+                                    WITH ( uuid UNIQUEIDENTIFIER '$.uuid',
                                             quantity    NUMERIC(18,2) '$.quantity'
                                             )
                         ) AS ij ON ij.uuid = oi.uuid
-
+                        
             UPDATE Restaurant.[Order]
             SET Divided = 1
             WHERE Id = @orderId            

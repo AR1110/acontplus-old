@@ -29,21 +29,15 @@
   });
 
   //https://jsfiddle.net/biruktes/hn8gascw/24/
-  let customNativeSelect = function (cell, onRendered, success, cancel) {
-    let medidasByCell = cell.getRow().getData();
+  let selectExtend = function (cell, onRendered, success, cancel) {
+    let medidas = [];
+    let rows = cell.getRow().getData();
 
-    // Validate if medidasByCell.extents is empty.
-    if (medidasByCell.extents == undefined) medidas = [];
-    if (medidasByCell.extents != undefined)
-      medidas = JSON.parse(medidasByCell.extents);
+    if (rows.extents != undefined) {
+      medidas = JSON.parse(rows.extents);
+    }
 
-    let cellRealValue = cell.getElement().dataset.extentId;
-    cellRealValue =
-      typeof cellRealValue === "undefined" ? "none" : cellRealValue;
-
-    //Create and append select list
     let selectList = document.createElement("select");
-
     selectList.style.width = "100%";
     selectList.style.boxSizing = "border-box";
 
@@ -53,7 +47,7 @@
     });
 
     function onChange() {
-      if (selectList.selectedOptions[0].value != cellRealValue) {
+      if (selectList.selectedOptions[0].value != rows) {
         success(selectList.selectedOptions[0].value);
 
         // Store value to cell dataset
@@ -66,10 +60,7 @@
       }
     }
 
-    //submit new value on blur or change
     selectList.addEventListener("blur", onChange);
-
-    //submit new value on enter
     selectList.addEventListener("keydown", function (e) {
       if (e.keyCode == 13) {
         onChange();
@@ -86,31 +77,73 @@
       option.value = medidas[i].idMedida.toString();
       option.text = medidas[i].descripcion;
 
-      if (medidas[i].idMedida === cellRealValue) {
+      if (medidas[i].idMedida === rows) {
         option.selected = true;
       }
       selectList.appendChild(option);
     }
-
     return selectList;
   };
 
-  let updatePrecio = (cell) => {
-    let getData = cell.getRow().getData();
-    let quantity = getData.quantity;
-    let extentId = getData.extentId;
-    let extents = getData.extents;
-    let precioCosto = getData.precioCosto || 0;
+  let formatterMedida = (cell) => {
+    let medidas = [];
+    let row = cell.getRow().getData();
+    let value = cell.getValue();
 
-    if (extents == undefined) extents = [];
-    if (extents != undefined) extents = JSON.parse(getData.extents);
-
-    for (let i = 0; i < extents.length; i++) {
-      if (extents[i].idMedida == extentId) {
-        precioCosto = extents[i].precioCosto * quantity;
-      }
+    if (row.extents != undefined) {
+      medidas = JSON.parse(row.extents);
     }
-    cell.getRow().update({ costPrice: precioCosto.toFixed(2) });
+
+    if (medidas.length == 0) return "";
+    return medidas.find((x) => x.idMedida == value).descripcion;
+  };
+
+  let formatterCostPrice = (cell) => {
+    let medidas = [];
+    let value = 0;
+    let row = cell.getRow().getData();
+
+    if (row.extents != undefined) {
+      medidas = JSON.parse(row.extents);
+    }
+
+    medidas.forEach((e) => {
+      if (e.idMedida == row.extentId) {
+        value = e.precioCosto * row.quantity;
+      }
+    });
+    return value.toFixed(2);
+  };
+
+  let priceUpdate = (cell) => {
+    let column = cell.getColumn()._column.field;
+    let row = cell.getRow().getData();
+    let medidas = [];
+
+    if (row.extents != undefined) {
+      medidas = JSON.parse(row.extents);
+    }
+
+    if (column == "extentId" && medidas.length > 0) {
+      medidas.forEach((e) => {
+        if (e.idMedida == row.extentId) {
+          cell.getRow().update({
+            precioCosto: e.precioCosto,
+            costPrice: (e.precioCosto * row.quantity).toFixed(2),
+          });
+        }
+      });
+    }
+
+    if (column == "quantity" && medidas.length > 0) {
+        medidas.forEach((e) => {
+        if (e.idMedida == row.extentId) {
+          cell.getRow().update({
+            costPrice: (e.precioCosto * row.quantity).toFixed(2),
+          });
+        }
+      });
+    }
   };
 
   let columns = [
@@ -124,26 +157,9 @@
       title: "Medida",
       field: "extentId",
       with: 150,
-      onUpdate: updatePrecio,
-      editor: customNativeSelect,
-      formatter: function (cell) {
-        let getData = cell.getRow().getData();
-        let value = cell.getValue();
-
-        if (getData.extents == undefined) medidas = [];
-        if (getData.extents != undefined) medidas = JSON.parse(getData.extents);
-
-        for (let i = 0; i < medidas.length; i++) {
-          if (medidas[i].idMedida == value) {
-            value = medidas[i].descripcion;
-            setTimeout(() => {
-              updatePrecio(cell);
-            }, 100);
-            break;
-          }
-        }
-        return value;
-      },
+      editor: selectExtend,
+      formatter: formatterMedida,
+      cellEdited: priceUpdate,
     },
     {
       title: "Peso",
@@ -166,10 +182,8 @@
       with: 50,
       widthGrow: 1,
       editor: true,
-      cellEdited: updatePrecio,
-      validator: ["required", "numeric"],
+      cellEdited: priceUpdate,
     },
-
     {
       title: "Precio costo",
       field: "precioCosto",
@@ -182,35 +196,15 @@
       field: "costPrice",
       with: 90,
       editor: true,
-      formatter: function (cell) {
-        let value = 0;
-        let quantity = 0;
-        let extents = [];
-
-        let getData = cell.getRow().getData();
-        let extentId = getData.extentId;
-
-        quantity = getData.quantity;
-        if (getData.extents == undefined) extents = [];
-        if (getData.extents != undefined) extents = JSON.parse(getData.extents);
-
-        for (let i = 0; i < extents.length; i++) {
-          if (extents[i].idMedida == extentId) {
-            value = extents[i].precioCosto * quantity;
-            break;
-          }
-        }
-        getData.costPrice = value;
-        return value.toFixed(2);
-      },
-      bottomCalc: function (data) {
+      formatter: formatterCostPrice,
+      bottomCalc: (values, data, calcParams) => {
         let total = 0;
-        data.forEach((element) => {
-          total += element;
+        console.log(data);
+        data.forEach((e) => {
+          total += Number(e.costPrice);
         });
-        return total;
+        return total.toFixed(2);
       },
-      calcBottom: "sum",
     },
     {
       title: "Acciones",
@@ -279,6 +273,8 @@
       summary: data.summary,
       instructions: "",
       quantity: 0,
+      precioCosto: 0,
+      costPrice: 0,
     };
     useItemStore.update((state) => ({
       ...state,
@@ -296,13 +292,14 @@
       .then((resp) => {
         if (resp) {
           extents = resp["extents"];
-
           recipes.forEach((e: any) => {
             if (e.productId === productId) {
               e.extentId = extents[0].idMedida;
+              e.precioCosto = extents[0].precioCosto;
               e.extents = JSON.stringify(extents);
             }
           });
+
           useItemStore.update((state) => ({ ...state, recipes: recipes }));
         }
       })
