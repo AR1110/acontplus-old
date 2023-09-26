@@ -9,7 +9,7 @@ GO
 -- Author:		Ignacio Manchu
 -- Create date: 2023-08-30
 -- Description:	sp for update order restaurant
--- Restaurant.Order_Update 139, 351, '{"orderId":0,"establecimientoId":454,"puntoEmisionId":124,"bodegaId":0,"tableId":3,"customerCompanyId":45408,"subtotalSinImpuestos":0,"tax":0,"taxPercent":0,"discount":0,"total":0,"items":[{"orderItemId":0,"uuid":"17d37adc-bcc2-4a65-a399-b3ef0751f232","itemId":0,"feeId":528,"taxId":1,"taxPercentId":2,"description":"ALIMENTACION MES AGOSTO ","productId":25950,"taxValue":2.4214285714285744,"quantity":1,"cost":0.01,"price":20.178571428571427,"discount":0,"total":20.178571428571427,"obs":"","itemTypeCode":"ITEM","bodegaId":128,"envioSri":true}],"taxes":[],"payments":{},"tip":0,"obs":"","codDoc":"FV","quickSale":true,"fechaEmision":"2023-09-24T21:26:33.687Z","uuid":"bd27e50b-df08-4100-b5a7-b85bb212f45d","updateOrder":false,"saveDoc":true,"customDetail":[{"orderItemId":0,"uuid":"17d37adc-bcc2-4a65-a399-b3ef0751f232","itemId":0,"feeId":528,"taxId":1,"taxPercentId":2,"description":"ALIMENTACION MES AGOSTO ","productId":25950,"taxValue":2.4214285714285744,"quantity":1,"cost":0.01,"price":20.178571428571427,"discount":0,"total":20.178571428571427,"obs":"","itemTypeCode":"ITEM","bodegaId":128,"envioSri":true}]}'
+-- Restaurant.Order_Update 139, 365, '{"orderId":365,"establecimientoId":454,"puntoEmisionId":124,"bodegaId":128,"tableId":3,"customerCompanyId":11752,"subtotalSinImpuestos":32.84,"tax":3.94,"discount":0,"total":36.78,"items":[{"orderItemId":653,"uuid":"c6f033a6-8f5a-4da4-99af-b052035697ad","itemId":27,"feeId":528,"taxId":1,"taxPercentId":2,"description":"INGREDIENTE 02","productId":77506,"taxValue":0.312,"quantity":2,"cost":2,"price":2.6,"discount":0,"total":5.2,"obs":"","itemTypeCode":"ITEM","menuId":null,"bodegaId":128},{"orderItemId":655,"uuid":"e6fa5207-b60c-4059-b2e2-49288331d617","itemId":18,"feeId":528,"taxId":1,"taxPercentId":2,"description":"REPE LOJANO","productId":77497,"taxValue":0.18,"quantity":2,"cost":1.6,"price":1.5,"discount":0,"total":3,"obs":"","itemTypeCode":"ITEM","menuId":null,"bodegaId":128},{"orderItemId":654,"uuid":"02427f7c-2be0-41f2-9c8a-e27549b37d05","itemId":null,"feeId":528,"taxId":1,"taxPercentId":2,"description":"TEST COMBO","productId":77512,"taxValue":1.4784,"quantity":2, "cost":4,"price":12.32,"discount":0,"total":24.64,"obs":"","itemTypeCode":"MENU","menuId":5,"bodegaId":128}],"taxes":[],"payments":{},"tip":0,"obs":"","codDoc":"OR","quickSale":false,"fechaEmision":"2023-09-25T15:01:06.143Z","updateOrder":true,"saveDoc":false}'
 -- =============================================
 CREATE OR ALTER PROCEDURE Restaurant.Order_Update 
 @userRoleId INT
@@ -35,7 +35,6 @@ BEGIN
     ,@payload NVARCHAR(MAX)
     ,@itemsJson NVARCHAR(MAX)
     ,@taxesJson NVARCHAR(MAX)
-    --,@bodegaId INT
     ,@code CHAR(1)
 
      SELECT @uuid               = uuid
@@ -82,7 +81,8 @@ BEGIN
                 DECLARE @tblItems AS TABLE(
                     orderItemId     INT NOT NULL,
                     uuid            UNIQUEIDENTIFIER NOT NULL,
-                    itemId          INT NOT NULL,
+                    itemId          INT NULL,
+                    menuId          INT NULL,
                     taxId           INT NOT NULL,
                     taxPercentId    INT NOT NULL,
                     feeId           INT NOT NULL,
@@ -93,16 +93,34 @@ BEGIN
                     discount        NUMERIC(18,5),
                     total           NUMERIC(18,5) NOT NULL,
                     obs             VARCHAR(500) NULL,
-                    bodegaId        INT NULL
+                    bodegaId        INT NULL,
+                    itemTypeCode    VARCHAR(8) NOT NULL
                 )
 
-                INSERT INTO @tblItems(orderItemId,uuid, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs, bodegaId)
-                SELECT orderItemId,uuid, itemId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price, discount, total, obs, bodegaId
+               INSERT INTO @tblItems(orderItemId,uuid, itemId, menuId, taxId, taxPercentId, feeId, taxValue, quantity, cost, price
+                                      , discount, total, obs, bodegaId, itemTypeCode)
+               
+               SELECT orderItemId
+                    , uuid
+                    , itemId
+                    , menuId
+                    , taxId
+                    , taxPercentId
+                    , feeId
+                    , taxValue
+                    , quantity
+                    , cost
+                    , price
+                    , discount
+                    , total
+                    , obs
+                    , bodegaId
+                    , itemTypeCode
                 FROM OPENJSON(@itemsJson)
-                WITH (
-                        orderItemId     INT '$.orderItemId',
+                WITH (  orderItemId     INT '$.orderItemId',
                         uuid            UNIQUEIDENTIFIER '$.uuid',
                         itemId          INT '$.itemId',
+                        menuId          INT '$.menuId',
                         taxId           INT '$.taxId',
                         taxPercentId    INT '$.taxPercentId',
                         feeId           INT '$.feeId',
@@ -113,9 +131,10 @@ BEGIN
                         discount        NUMERIC(18,5) '$.discount',
                         total           NUMERIC(18,5) '$.total',
                         obs             NVARCHAR(500) '$.obs',
-                        bodegaId        INT '$.bodegaId'
+                        bodegaId        INT '$.bodegaId',
+                        itemTypeCode    VARCHAR(8) '$.itemTypeCode'
                 )
-
+                
                 IF (SELECT COUNT(*) FROM @tblItems) = 0
                     BEGIN
                         SELECT Common.ufnSpResponse('0', 'No se pudo recuperar el detalle', NULL)
@@ -146,52 +165,46 @@ BEGIN
                         ,Obs                = @obs                        
                     WHERE Id = @id
                     
-                    ------ INSERT IF NOT EXISTS -----
+                    --=========== INSERT IF NOT EXISTS =============--
                     INSERT INTO Restaurant.OrderItem(OrderId, Uuid, ItemId, TaxId, TaxPercentId, TaxValue, Quantity, Cost
                                                     , Price, Discount, Total, [Enabled], UserId, FeeId, Obs, BodegaId)
                     
                     SELECT @id
-                        , uuid
-                        , itemId
-                        , taxId
-                        , taxPercentId
-                        , taxValue
-                        , quantity
-                        , cost
-                        , price
-                        , discount
-                        , total
+                        , ti.uuid
+                        , ti.itemId
+                        , ti.taxId
+                        , ti.taxPercentId
+                        , ti.taxValue
+                        , ti.quantity
+                        , ti.cost
+                        , ti.price
+                        , ti.discount
+                        , ti.total
                         , 1
                         , @userId
-                        , feeId
-                        , obs
-                        , bodegaId
+                        , ti.feeId
+                        , ti.obs
+                        , ti.bodegaId
                     FROM @tblItems ti
-                    WHERE ti.itemId NOT IN(SELECT rr.ItemId FROM Restaurant.OrderItem rr WHERE rr.OrderId = @id)
-                    
-                    ---- SELECT NOT EXITS ----
-                    SELECT ro.OrderId, ro.ItemId
-                    INTO #selectNotExist
-                    FROM Restaurant.OrderItem ro WHERE ro.OrderId = @id  AND ro.ItemId NOT IN(SELECT itemId FROM @tblItems)
-
-                    IF EXISTS(SELECT TOP 1 1 FROM #selectNotExist)
-                        BEGIN
-                             UPDATE u
-                             SET u.[Enabled]   = 0
-                                 ,u.Deleted    = 1
-                                 ,u.UpdatedAt  = dbo.ufnGetDateEcuador()
-                             FROM Restaurant.OrderItem u
-                             INNER JOIN #selectNotExist t1 ON t1.OrderId = u.OrderId 
-                             WHERE u.ItemId = t1.ItemId
-                        END
-                        
-                    ---- SELECT EXISTS ---
-                    SELECT ro.OrderId, ro.ItemId
+                    WHERE ti.itemTypeCode                     
+                    NOT IN(SELECT it.Code 
+                           FROM Restaurant.OrderItem rr
+                           INNER JOIN Restaurant.ItemType it ON it.Id = rr.ItemTypeId 
+                           WHERE rr.OrderId = @id
+                    )
+                           
+                     -- ========= SELECT EXISTS ========= --
+                    SELECT ro.OrderId, ro.ItemId, ro.MenuId, it.Code
                     INTO #selectExist
-                    FROM Restaurant.OrderItem ro WHERE ro.OrderId = @id AND ro.ItemId IN (SELECT itemId FROM @tblItems)
-
+                    FROM Restaurant.OrderItem ro
+                    INNER JOIN Restaurant.ItemType it ON it.Id = ro.ItemTypeId
+                    INNER JOIN @tblItems t1 ON t1.itemTypeCode = it.Code                    
+                    WHERE ro.OrderId = @id
+                    AND it.Code = t1.itemTypeCode
+                    GROUP BY ro.OrderId, ro.ItemId, ro.MenuId, it.Code
+                      
                     IF EXISTS(SELECT TOP 1 1 FROM #selectExist)
-                        BEGIN
+                        BEGIN                           
                             UPDATE u
                             SET u.FeeId         = t1.feeId
                                 ,u.TaxId        = t1.taxId
@@ -207,19 +220,38 @@ BEGIN
                                 ,u.BodegaId     = t1.bodegaId
                             FROM Restaurant.OrderItem u
                             INNER JOIN #selectExist si ON si.OrderId = u.OrderId
-                            INNER JOIN @tblItems t1 ON t1.itemId = si.ItemId
-                            WHERE u.ItemId  = si.ItemId
-                            AND u.Id        = t1.orderItemId
-                            AND u.Uuid      = t1.uuid
+                            INNER JOIN @tblItems t1 ON t1.itemTypeCode = si.Code
+                            WHERE u.Id      = t1.orderItemId
                         END
-                    
+                                            
+                    -- ========= SELECT NOT EXITS ========= --
+                    SELECT ro.OrderId, ro.ItemId, ro.MenuId, it.Code
+                    INTO #selectNotExist
+                    FROM Restaurant.OrderItem ro
+                    INNER JOIN Restaurant.ItemType it ON it.Id = ro.ItemTypeId
+                    WHERE ro.OrderId = @id
+                    AND it.Code NOT IN(SELECT itemTypeCode FROM @tblItems)
+                    GROUP BY ro.OrderId, ro.ItemId, ro.MenuId, it.Code
+
+                    IF EXISTS(SELECT TOP 1 1 FROM #selectNotExist)
+                        BEGIN
+                             UPDATE u
+                             SET u.Deleted    = 1
+                                 ,u.UpdatedAt  = dbo.ufnGetDateEcuador()
+                             FROM Restaurant.OrderItem u
+                             INNER JOIN #selectNotExist si ON si.OrderId = u.OrderId 
+                             INNER JOIN @tblItems t1 ON t1.itemTypeCode = si.Code
+                             WHERE u.Id      = t1.orderItemId
+                             AND u.Uuid      = t1.uuid
+                        END                       
+                   
                     ---- SET DATA -----
                      SET @payload = (SELECT orderId = @id FOR JSON PATH)
                  END
 
             IF @saveDoc = 1
                 BEGIN
-                    EXEC Restaurant.Order_Document_Insert @userRoleId, @id, @json, @payload OUTPUT
+                   EXEC Restaurant.Order_Document_Insert @userRoleId, @id, @json, @payload OUTPUT
                 END
         COMMIT TRAN
         SELECT Common.ufnSpResponse('1', 'Exitos al actualizar', @payload)
