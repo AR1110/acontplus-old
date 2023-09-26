@@ -3,7 +3,7 @@ GO
 --- Author: Ignacio 
 --- Date: 2023-08-15
 --- Description: View for list
-CREATE OR ALTER VIEW Restaurant.v_Room
+CREATE OR ALTER VIEW Restaurant.v_Room  WITH SCHEMABINDING
 AS
 
 SELECT id					= rr.Id

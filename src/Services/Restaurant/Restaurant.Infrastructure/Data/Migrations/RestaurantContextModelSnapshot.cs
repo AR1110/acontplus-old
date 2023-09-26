@@ -47,8 +47,10 @@ namespace Restaurant.Infrastructure.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<int>("NumberTable")
                         .HasColumnType("int");
@@ -106,8 +108,10 @@ namespace Restaurant.Infrastructure.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -140,8 +144,10 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<int?>("IngredientTypeId")
                         .HasColumnType("int");
@@ -195,8 +201,10 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -243,8 +251,10 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Instructions")
                         .IsUnicode(false)
@@ -300,8 +310,10 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -344,8 +356,10 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<int?>("MenuTypeId")
                         .HasColumnType("int");
@@ -399,8 +413,10 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<decimal?>("DiscountValue")
                         .HasColumnType("numeric(18,5), null");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<int>("FeeId")
                         .HasColumnType("int");
@@ -454,7 +470,7 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("Enabled")
+                    b.Property<bool?>("Enabled")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
@@ -508,7 +524,7 @@ namespace Restaurant.Infrastructure.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<bool>("Enabled")
+                    b.Property<bool?>("Enabled")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
@@ -580,8 +596,10 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<int?>("DocumentoId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
@@ -627,8 +645,10 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<decimal>("Discount")
                         .HasColumnType("numeric(18,5), null");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<int>("FeeId")
                         .HasColumnType("int");
@@ -718,8 +738,10 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
@@ -768,8 +790,10 @@ namespace Restaurant.Infrastructure.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -814,8 +838,10 @@ namespace Restaurant.Infrastructure.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
@@ -854,8 +880,10 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<int>("MenuId")
                         .HasColumnType("int");
@@ -897,8 +925,10 @@ namespace Restaurant.Infrastructure.Data.Migrations
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<int>("ExtentId")
                         .HasColumnType("int");
@@ -971,8 +1001,10 @@ namespace Restaurant.Infrastructure.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<int>("FloorId")
                         .HasColumnType("int");
