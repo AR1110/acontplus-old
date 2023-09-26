@@ -38,6 +38,7 @@ const TableDialog = (props: SimpleDialogProps) => {
     const [tables, setTables] = useState<Array<TableReadDto>>([]);
     // const [rooms, setRooms] = React.useState<Array<Room>>([]);
     const [value, setValue] = useState(0);
+    const [selectedButton, setSelectedButton] = useState(null);
 
     const { onClose, open } = props;
 
@@ -63,9 +64,12 @@ const TableDialog = (props: SimpleDialogProps) => {
             const tables = tempTables.filter(room => room.floorId === tempFloors[0]?.id)
             setTables(tables)
         }
+        if(!(order.tableId > 0)){
+            setSelectedButton(null)
+        } 
     }, [open]);
 
-    const [selectedButton, setSelectedButton] = useState(null);
+    
 
     const handleButtonClick = (table: TableReadDto, index: any) => {
 

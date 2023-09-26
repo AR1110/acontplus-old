@@ -29,7 +29,10 @@ export const splitOrderReducer = (state: SplitOrderState, action: any): SplitOrd
                 ...state,
                 orderLoading: false,
                 leftOrder: order,
-                leftOrderItems: orderItems,
+                leftOrderItems: orderItems.map((orderItem: any) => ({
+                    ...orderItem,
+                    quantity: (orderItem.remainingQuantity > 0) ? orderItem.remainingQuantity : orderItem.quantity
+                })),
                 leftOrderItemsLength: orderItems.length
             }
         }

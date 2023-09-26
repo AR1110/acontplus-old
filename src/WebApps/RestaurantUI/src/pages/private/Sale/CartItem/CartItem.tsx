@@ -67,9 +67,9 @@ export default function CartItem({ index, item }: CartItemProps) {
                                     <Typography variant="caption" color="text.primary">
                                         <b>P. U.:</b> ${RoundNumber(item.price, 2)}
                                     </Typography>
-                                    <Typography variant="caption" color="text.primary">
+                                    {/* <Typography variant="caption" color="text.primary">
                                         <b>P. IVA.:</b> ${RoundNumber(item.priceWithVat, 2)}
-                                    </Typography>
+                                    </Typography> */}
                                     <Typography variant="caption" color="text.primary">
                                         <b>Total:</b> ${RoundNumber(item.total, 2)}
                                     </Typography>

@@ -143,12 +143,8 @@ export default function OrderTable() {
     }
     const closeDialogDivide = () => {
         setOpenDialodDivide(false)
-    }
-
-    console.log(orders)
-
-
-
+    } 
+    
     return (
         <React.Fragment>
             <Box sx={{ width: "100%" }}>
