@@ -26,6 +26,7 @@ BEGIN
             ,@idTipoIva     INT
             ,@porcentaje    NUMERIC(18,5)
             ,@precioCosto   NUMERIC(18,5)
+            ,@iva           VARCHAR(5)
     
     CREATE TABLE #MenuItem(
         id                  INT
@@ -72,7 +73,7 @@ BEGIN
             , NULL
             , 1 AS [Enabled] 
             , NULL
-            ,@userId            
+            ,@userId
     FROM #MenuItem mi
     WHERE mi.itemId NOT IN (SELECT ISNULL(rmi.ItemId, 0) FROM Restaurant.MenuItem rmi WHERE rmi.MenuId = @id)
 
@@ -115,20 +116,31 @@ BEGIN
         ---- UPDATE -----
         SELECT @productId       = ProductId
                ,@totalPrecio    = SUM(mi.Subtotal) 
-               FROM Restaurant.MenuItem mi
+        FROM Restaurant.MenuItem mi
         INNER JOIN Restaurant.Menu m on m.Id = mi.MenuId       
         WHERE m.Id = @id
         AND ISNULL(mi.Deleted, 0) != 1
         GROUP BY m.ProductId
           
-        SELECT @porcentaje      = ti.porcentaje
-                , @precioCosto  = precioCosto 
-        FROM Inventario.v_Articulo ti WHERE idArticulo = @productId
+        SELECT @porcentaje      = ISNULL(ti.porcentaje, 0)
+                , @precioCosto  = ISNULL(precioCosto, 0)               
+        FROM Inventario.v_Articulo ti 
+        WHERE idArticulo = @productId
+
+        DECLARE @totalIva NUMERIC(18,5)
+                ,@precioVenta NUMERIC(18,5)
+                ,@precioConIva NUMERIC(18,5)
+                ,@porcentajeUtilidad NUMERIC(18,5)
+
+        SET @totalIva = (@porcentaje / 100) + 1;
+        SET @precioVenta = @totalPrecio / @totalIva;
+        SET @precioConIva = @totalPrecio;
+        SET @porcentajeUtilidad = ((@precioVenta / @precioCosto) * 100) - 1;
                
         UPDATE ap 
-        SET ap.PrecioVenta          = @totalPrecio
-            ,ap.precioConIva        = (@totalPrecio * (@porcentaje / 100)) + @totalPrecio
-            ,ap.porcentajeUtilidad  = (@precioCosto * (@porcentaje / 100)) + @precioCosto
+        SET ap.PrecioVenta          = @precioVenta
+            ,ap.precioConIva        = @precioConIva
+            ,ap.porcentajeUtilidad  = @porcentajeUtilidad
         FROM ArticuloPvP ap 
         WHERE ap.idArticulo = @productId 
         AND ap.precioPredeterminado = 1
