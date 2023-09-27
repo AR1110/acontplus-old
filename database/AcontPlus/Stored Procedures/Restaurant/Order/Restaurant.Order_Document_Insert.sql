@@ -455,18 +455,21 @@ BEGIN
     ---- NOTA DE ENTREGA ----
     IF @codDoc = 'NE'
         BEGIN
+            select top 1 * from  NotaEntrega 
             INSERT INTO NotaEntrega 
             (idCliente, idPuntoEmision, idTiempoCredito, nroDocumento, subTotalSinImpuestos, subTotalIva
             ,subTotalNetoIva, subTotalIvaCero, subTotalNetoIvaCero, subTotalNoObjetoIva, subTotalNetoNoObjetoIva
             ,subTotalExentoIva, subTotalNetoExentoIva, totalDescuento, porcentajeDescuento, totalIce
             ,propina, iva, total, tarifa
-            ,observacion, fechaRegistro, idUsuario, idEntidad, fechaEmision, fechaVencimiento, idEstadoPago)
+            ,observacion, fechaRegistro, idUsuario, idEntidad, fechaEmision, fechaVencimiento, idEstadoPago
+            , idTipoDocumento)
             
             VALUES(@customerCompanyId, @puntoEmisionId, @tiempoCreditoId, @nroDocumento, @subtotalSinImpuestos, ISNULL(@subTotalIva,0)
             ,ISNULL(@subTotalNetoIva,0), ISNULL(@subTotalIvaCero,0), ISNULL(@subTotalNetoIvaCero,0), ISNULL(@subTotalNoObjetoIva,0), ISNULL(@subTotalNetoNoObjetoIva,0)
             ,ISNULL(@subTotalExentoIva,0), ISNULL(@subTotalNetoExentoIva,0), @discount, 0, ISNULL(@totalIce,0)
             , @tip, @tax, @total, @taxPercent
-            , @obs, dbo.ufnGetDateEcuador(), @userId, @companyId,  @fechaEmision, @fechaEmision, @estadoPagoId)
+            , @obs, dbo.ufnGetDateEcuador(), @userId, @companyId,  @fechaEmision, @fechaEmision, @estadoPagoId
+            , @tipoDocumentoId)
             
             SET @documentoId = (SELECT SCOPE_IDENTITY())
 
