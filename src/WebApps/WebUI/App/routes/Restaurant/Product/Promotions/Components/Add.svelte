@@ -11,7 +11,6 @@
   import { hideLoader, showLoader } from "$core/utils/loading-spinner";
   import { PromotionService } from "$core/services/restaurant/promotion-service";
   import { PromotionMenuService } from "$core/services/restaurant/promotion-menu-service";
-  import { remove } from "toastr";
 
   // Variables.
   let dataUpdate: Promotion = {
@@ -43,6 +42,7 @@
       return (daysSelected = days.map((e) => {
         return {
           idDia: e.idDia,
+          diaSemana: e.diaSemana,
           descripcion: e.descripcion,
           horaInicio: "00:00",
           horaFin: "00:00",
@@ -169,10 +169,9 @@
     showLoader();
     PromotionService.post({ data: newObject })
       .then((response) => {
-        console.log(response);
         if (response.status === 200) {
           if (response.data.code === "1") {
-            usePromotionStore.get();
+            usePromotionStore.get({ codEstab: $usePromotionStore.codEstab });
             onModalClose();
             toast({ type: "success", message: response.data.message });
           } else {
@@ -199,7 +198,7 @@
       .then((response) => {
         if (response.status === 200) {
           if (response.data.code === "1") {
-            usePromotionStore.get();
+            usePromotionStore.get({ codEstab: $usePromotionStore.codEstab });
             onModalClose();
             toast({ type: "success", message: response.data.message });
           } else {
@@ -258,6 +257,8 @@
     dataUpdate = values.dataUpdate;
     establecimientos = values.establecimientos;
     days = values.days;
+
+    console.log(days);
 
     if (days.length > 0) {
       onDaySelected();
