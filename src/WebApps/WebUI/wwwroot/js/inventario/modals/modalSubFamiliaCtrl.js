@@ -10,15 +10,17 @@ function ModalSubFamiliaCtrl($scope, $uibModalInstance, articuloSvc, subFamiliaS
     $scope.data.montoObjetivo = 0;
     $scope.selectedFile = null
 
-    $scope.getFamilias = async function () {
+    $scope.getFamilias = function () {
         try {
-            let {familias} = await articuloSvc.getDataForm({})
-            $scope.familias = familias; 
+
+            articuloSvc.getDataForm({}).then(response => {
+                $scope.familias = response.familias
+            })
         } catch (error) {
             console.log(error);
         }
     }
-    
+
 
 
     $scope.getFamilias();
