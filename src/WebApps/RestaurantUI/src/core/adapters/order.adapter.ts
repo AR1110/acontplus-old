@@ -2,11 +2,12 @@ import { ItemRead, OrderReadDto, ProductPVPReadDto, RawOrderData } from "../mode
 import { productService } from "../services";
 
 function orderReadAdapter(orders: RawOrderData[]): Array<OrderReadDto> {
-    console.log(orders)
+    
     return orders.map(order => ({
         orderId: order.id,
         documentoId: order.documentoId,
         establecimientoId: order.establecimientoId,
+        codEstab: order.codEstab,
         puntoEmisionId: order.puntoEmisionId,
         nameFiscal: order.nameFiscal,
         userName: order.userName,

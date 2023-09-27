@@ -32,6 +32,7 @@ import OrderConvertDoc from "./Components/OrderConvertDoc";
 import { orderReadForUpdateAdapter } from "@/core/adapters";
 import FullScreenDialog from "@/core/components/FullScreenDialog";
 import { SplitOrderProvider } from "./context";
+import { DOC_TYPE } from "@/core/constants";
 const SplitOrder = lazy(() => import("./SplitOrder/SplitOrder"));
 
 export default function OrderTable() {
@@ -109,15 +110,88 @@ export default function OrderTable() {
         setOpen(false);
     };
 
-    const handleAskToPrint = (orderId: number) => {
-        SharedService.askToPrint(orderId);
+    const handleAskToPrint = (data: typeof orders[0]) => {
+        console.log(data)
+        try {
+            Swal.fire({
+                icon: 'warning',
+                text: 'Seleccione el tipo documento a imprimir!',
+                showDenyButton: data.documentoId > 0,
+                showCancelButton: true,
+                confirmButtonText: 'Pedido',
+                denyButtonText: `Documento`,
+                cancelButtonText: 'Cancelar'
+            })
+        } catch (error) {
+            console.log(error)
+        }
     };
 
-    const handleReport = (orderId: number) => {
-        showLoader(true)
-        SharedService.downloadReport(orderId).then().finally(
-            () => showLoader(false)
-        );
+    // const handleAskToPrint = (orderId: number) => {
+
+    //     // SharedService.askToPrint(orderId);
+    // };
+
+    const handleReport = async (data: typeof orders[0]) => {
+        try {
+            const { isConfirmed, isDenied } = await Swal.fire({
+                icon: 'warning',
+                text: 'Seleccione el tipo documento para generar reporte!',
+                showDenyButton: data.documentoId > 0,
+                showCancelButton: true,
+                confirmButtonText: 'Pedido',
+                denyButtonText: `Documento`,
+                cancelButtonText: 'Cancelar'
+            })
+
+            if (isDenied) {
+                const format = 'pdf';
+                const dataParms = {
+                    id: data.documentoId,
+                    //Factura
+                    format,
+                    codEstab: data.codEstab,
+                }
+
+                if (data.codDoc === DOC_TYPE.NE) {
+                    showLoader(true)
+                    const parameters = {
+                        hasService: true,
+                        reportParams: JSON.stringify({
+                            hasParams: true,
+                            codigo: 'RNE',
+                            codEstab: data.codEstab,
+                            format,
+                            aditionalParams: []
+                        }),
+                        dataParams: JSON.stringify(dataParms)
+                    }
+                    SharedService.downloadExternal(parameters)
+                        .finally(() => showLoader(false));
+                }
+
+                if (data.codDoc === DOC_TYPE.FV) {
+                    showLoader(true)
+                    const parameters = {
+                        dataParams: JSON.stringify({
+                            ...dataParms,
+                            codigo: 'RF'
+                        })
+                    }
+                    SharedService.downloadDynamicExternal(parameters)
+                        .finally(() => showLoader(false));
+                }
+            }
+            if (isConfirmed) {
+                showLoader(true)
+                SharedService.downloadReport(data.orderId)
+                    .finally(() => showLoader(false));
+            }
+
+        } catch (error) {
+            console.log(error)
+        }
+
     };
 
     const handleEdit = (orderId: number) => {
@@ -141,8 +215,8 @@ export default function OrderTable() {
         setOrderId.current = id;
         setOpenDialodDivide(true)
     }
-    function closeDialogDivide<T>(value: T)  {
-        if(typeof value ==='string' && value==='CUSTOM_DETAIL'){
+    function closeDialogDivide<T>(value: T) {
+        if (typeof value === 'string' && value === 'CUSTOM_DETAIL') {
             getOrders()
         }
         setOpenDialodDivide(false)
@@ -166,7 +240,7 @@ export default function OrderTable() {
                                     <TableCell align="center">F. Emisión</TableCell>
                                     <TableCell align="center">Cliente</TableCell>
                                     <TableCell align="right">Total</TableCell>
-                                    <TableCell align="center">Estado</TableCell>
+                                    {/* <TableCell align="center">Estado</TableCell> */}
                                     <TableCell align="center">Usuario</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -217,7 +291,7 @@ export default function OrderTable() {
                                             <Tooltip describeChild title="Impresión">
                                                 <IconButton color="warning"
                                                     aria-label="Impresión"
-                                                    onClick={() => handleAskToPrint(order.orderId)}
+                                                    onClick={() => handleAskToPrint(order)}
                                                 >
                                                     <PrintIcon />
                                                 </IconButton>
@@ -226,7 +300,7 @@ export default function OrderTable() {
                                             <Tooltip describeChild title="Descargar PDF">
                                                 <IconButton size="large" color="secondary"
                                                     aria-label="Impresión"
-                                                    onClick={() => handleReport(order.orderId)}
+                                                    onClick={() => handleReport(order)}
                                                 >
                                                     <SaveAltSharpIcon />
                                                 </IconButton>
@@ -259,7 +333,7 @@ export default function OrderTable() {
                                         <TableCell align="center">{order.createdAt}</TableCell>
                                         <TableCell align="center">{order.nameFiscal}</TableCell>
                                         <TableCell align="right">{order.total}</TableCell>
-                                        <TableCell align="center">{order.divided ? 'Dividiendo' : '-'}</TableCell>
+                                        {/* <TableCell align="center">{order.divided ? 'Dividiendo' : '-'}</TableCell> */}
                                         <TableCell align="center">{order.userName}</TableCell>
                                     </TableRow>
                                 ))}

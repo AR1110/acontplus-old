@@ -4,7 +4,8 @@ export const enum PATHS {
     SALE = 'Venta/',
     ACCOUNTING = 'Contabilidad/',
     CONFIG = 'Config/',
-    CUSTOMER = 'Customer/'
+    CUSTOMER = 'Customer/',
+    REPORT = 'Reporte/'
 }
 
 export const enum PERSIS_USER {

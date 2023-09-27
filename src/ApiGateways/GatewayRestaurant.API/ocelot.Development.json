@@ -150,6 +150,22 @@
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get" ],
       "UpstreamPathTemplate": "/gateway/Customer{everything}"
+    }, 
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7097
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Reporte{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [ "Post" ],
+      "UpstreamPathTemplate": "/gateway/Reporte{everything}"
     }
   ]
 }

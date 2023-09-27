@@ -30,6 +30,7 @@ BEGIN
 
     SET @sql = N'SELECT Id		    = o.Id	
 	                    ,EstablecimientoId	= o.EstablecimientoId
+                        ,sri_e.codEstab           
 	                    ,PuntoEmisionId		= o.PuntoEmisionId
 	                    ,AppTableId			= ISNULL(o.AppTableId, 0)
 	                    ,TableId			= ISNULL(o.TableId, 0)
@@ -54,6 +55,7 @@ BEGIN
                         ,totalRecords       = COUNT(*) OVER()
                         ,Divided
                     FROM Restaurant.[Order] o WITH(NOLOCK)
+                    INNER JOIN Sri.Establecimiento sri_e WITH(NOLOCK) ON sri_e.idEstablecimiento = o.establecimientoId
                     LEFT JOIN Restaurant.OrderDocument od WITH(NOLOCK) ON o.Id = od.OrderId
                     LEFT JOIN TipoDocumento td WITH(NOLOCK) ON od.TipoDocumentoId = td.idTipoDocumento
                     LEFT JOIN Cliente c ON c.idCliente = o.CustomerCompanyId

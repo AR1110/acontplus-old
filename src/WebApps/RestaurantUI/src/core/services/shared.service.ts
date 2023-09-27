@@ -8,8 +8,8 @@ import FileSaver from "file-saver"
 
 
 class Shared {
-    
-    
+
+
     async checkClientSRIByRUC(identificacion: string): Promise<CustomerRucSRI> {
         const resultAxios = await Http({
             method: 'get',
@@ -17,11 +17,11 @@ class Shared {
             params: {
                 Ruc: identificacion
             }
-        }) 
+        })
         return resultAxios.data;
     }
 
-    async checkClientSRIByCedula(identificacion: string):Promise<CustomerCedulaSRI> {
+    async checkClientSRIByCedula(identificacion: string): Promise<CustomerCedulaSRI> {
         const resultAxios = await Http({
             method: 'get',
             url: `${PATHS.CUSTOMER}Consultas/GetCedulaSri`,
@@ -31,6 +31,70 @@ class Shared {
         })
         return resultAxios.data;
     }
+
+    async downloadExternal(parameters: object) {
+        try {
+            const resultAxios = await Http({
+                method: 'post',
+                url: `${PATHS.REPORT}Download`,
+                data: JSON.stringify(parameters),
+                responseType: 'blob'
+            })
+        
+            const ieEDGE = navigator.userAgent.match(/Edge/g);
+            const ie = navigator.userAgent.match(/.NET/g); // IE 11+
+            const oldIE = navigator.userAgent.match(/MSIE/g);
+            const blob = new window.Blob([resultAxios.data], {
+                type: resultAxios.headers["content-type"],
+            });
+            let fileName = resultAxios.headers["content-disposition"]
+                .split(";")[1]
+                .split("=")[1]
+                .replace('"', "");
+            fileName = fileName.replace('"', "");
+            if (ie || oldIE || ieEDGE) {
+                FileSaver.saveAs(blob, fileName);
+            } else {
+                const fileURL = URL.createObjectURL(blob);
+                window.open(fileURL, fileName);
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+    async downloadDynamicExternal(parameters: object) {
+        try {
+            const resultAxios = await Http({
+                method: 'post',
+                url: `${PATHS.REPORT}DynamicReport`,
+                data: JSON.stringify(parameters),
+                responseType: 'blob'
+            })
+        
+            const ieEDGE = navigator.userAgent.match(/Edge/g);
+            const ie = navigator.userAgent.match(/.NET/g); // IE 11+
+            const oldIE = navigator.userAgent.match(/MSIE/g);
+            const blob = new window.Blob([resultAxios.data], {
+                type: resultAxios.headers["content-type"],
+            });
+            let fileName = resultAxios.headers["content-disposition"]
+                .split(";")[1]
+                .split("=")[1]
+                .replace('"', "");
+            fileName = fileName.replace('"', "");
+            if (ie || oldIE || ieEDGE) {
+                FileSaver.saveAs(blob, fileName);
+            } else {
+                const fileURL = URL.createObjectURL(blob);
+                window.open(fileURL, fileName);
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    
 
     async downloadReport(id: number) {
         const resultAxios = await Http({

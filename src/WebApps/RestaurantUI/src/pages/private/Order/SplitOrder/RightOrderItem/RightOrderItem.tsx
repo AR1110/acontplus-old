@@ -224,6 +224,9 @@ const RightOrderItem = () => {
                                 variant="contained"
                                 color='success'
                                 size='large'
+                                sx={{
+                                    height: 60
+                                }}
                                 onClick={() => save(DOC_TYPE.FV)}
                                 startIcon={<FileCopyRoundedIcon />}
                             >
@@ -236,6 +239,9 @@ const RightOrderItem = () => {
                                 variant="contained"
                                 color='warning'
                                 size='large'
+                                sx={{
+                                    height: 60
+                                }}
                                 onClick={() => save(DOC_TYPE.NE)}
                                 startIcon={<FileCopyRoundedIcon />}
                             >

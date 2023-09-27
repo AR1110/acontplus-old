@@ -1,8 +1,10 @@
 import dayjs from "dayjs"; 
 import { formatDateTimeZone } from "../utilities";
+import { DOC_TYPE } from "../constants";
 
 export interface RawOrderData {
   id: number;
+  codEstab: string
   establecimientoId: number;
   puntoEmisionId: number;
   appTableId?: number;
@@ -22,7 +24,7 @@ export interface RawOrderData {
   userId: number;
   uuid?: string;
   documentoId: number;
-  codDoc?: string;
+  codDoc?: "" | DOC_TYPE.FV | DOC_TYPE.NE
   nameFiscal: string
   userName: string
   totalRecords: number
@@ -33,12 +35,13 @@ export interface OrderReadDto {
   orderId: number;
   documentoId: number;
   establecimientoId: number;
+  codEstab: string
   puntoEmisionId: number;
   nameFiscal: string
   userName: string
   serie: string;
   total: number;
-  codDoc?: string;
+  codDoc?: "" | DOC_TYPE.FV | DOC_TYPE.NE;
   createdAt: string;
   totalRecords: number
   divided: boolean
