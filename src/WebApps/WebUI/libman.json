@@ -51,7 +51,7 @@
       "destination": "wwwroot/lib/danialfarid-angular-file-upload/"
     },
     {
-      "library": "limonte-sweetalert2@11.7.27",
+      "library": "limonte-sweetalert2@11.7.31",
       "destination": "wwwroot/lib/limonte-sweetalert2/"
     },
     {
@@ -87,7 +87,7 @@
       "destination": "wwwroot/lib/angular-file-saver/"
     },
     {
-      "library": "Chart.js@4.3.3",
+      "library": "Chart.js@4.4.0",
       "destination": "wwwroot/lib/Chart.js/"
     },
     {
@@ -131,7 +131,7 @@
       "destination": "wwwroot/lib/angular-filter/"
     },
     {
-      "library": "microsoft-signalr@7.0.10",
+      "library": "microsoft-signalr@7.0.11",
       "destination": "wwwroot/lib/microsoft-signalr/"
     },
     {
@@ -147,12 +147,12 @@
       "destination": "wwwroot/lib/angular-media-queries/"
     },
     {
-      "library": "tabulator@5.5.1",
+      "library": "tabulator@5.5.2",
       "destination": "wwwroot/lib/tabulator/"
     },
     {
       "provider": "cdnjs",
-      "library": "UAParser.js@1.0.35",
+      "library": "UAParser.js@1.0.36",
       "destination": "wwwroot/lib/UAParser.js/"
     },
     {
