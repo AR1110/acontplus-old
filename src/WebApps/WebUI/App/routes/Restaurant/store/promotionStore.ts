@@ -15,6 +15,7 @@ type State = {
   establecimientos: any;
   promotions: any;
   days: any;
+  codEstab?: string;
 };
 
 const initialState: State = {
@@ -29,6 +30,7 @@ const initialState: State = {
   establecimientos: [],
   promotions: [],
   days: [],
+  codEstab: "",
 };
 
 const initialModalState: StateModal = {
@@ -44,10 +46,11 @@ const promotionStore = () => {
   });
 
   const get = (params?: object) => {
+    console.log("get");
     showLoader();
     update((state) => ({ ...state, promotions: [], days: [] }));
 
-    let json = { pageIndex: 1, pageSize: 9, tipo: 1 };
+    let json = { pageIndex: 1, pageSize: 9, tipo: 1, ...params };
     PromotionService.get(JSON.stringify(json)).then((response) => {
       if (response) {
         update((state) => ({
@@ -63,15 +66,21 @@ const promotionStore = () => {
   const getEstablecimiento = () => {
     estabAsignService.get(JSON.stringify({ tipo: 1 })).then((response) => {
       if (response) {
+        let codEstab = response[0].codEstab;
+
         update((state) => ({
           ...state,
           establecimientos: response,
+          codEstab: codEstab,
         }));
+
+        get({ codEstab: codEstab });
       }
     });
   };
 
   const openingModal = (data?: Promotion) => {
+    console.log("openingModal");
     update((state) => ({
       ...state,
       isOpen: true,

@@ -1,19 +1,55 @@
 <script lang="ts">
   import { usePromotionStore } from "$routes/Restaurant/store/promotionStore";
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import Add from "../../Menus/Components/Add.svelte";
   import type { Promotion } from "$core/interfaces/restaurant/promotion";
+  import type { Establecimiento } from "$core/interfaces/restaurant/establecimiento";
   let promotions = [] as Promotion[];
+  let establecimientos = [] as Establecimiento[];
+  let codEstab = "";
 
-  usePromotionStore.subscribe((values) => {
+  let unsuscribe = usePromotionStore.subscribe((values) => {
     promotions = values.promotions;
+    establecimientos = values.establecimientos;
+    codEstab = values.codEstab;
   });
 
+  onDestroy(() => {
+    unsuscribe();
+  });
+
+  const onChangeEstablecimiento = (codEstab: string) => {
+    usePromotionStore.update((state) => ({
+      ...state,
+      codEstab: codEstab,
+    }));
+    usePromotionStore.get({ codEstab: codEstab });
+  };
+
   onMount(() => {
-    usePromotionStore.get();
     usePromotionStore.getEstablecimiento();
   });
 </script>
+
+<div class="row">
+  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12" />
+  <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+    <div class="form-group">
+      <select
+        bind:value={codEstab}
+        class="form-control form-control-lg"
+        id="codEstab"
+        on:change={() => onChangeEstablecimiento(codEstab)}
+      >
+        {#each establecimientos as item}
+          <option value={item.codEstab}>
+            {item.nombreComercial}
+          </option>
+        {/each}
+      </select>
+    </div>
+  </div>
+</div>
 
 {#if promotions.length > 0}
   <div class="table-responsive">
