@@ -9,7 +9,7 @@ GO
 -- Author:		Ivan Paz
 -- Create date: 2023-08-10
 -- Description: sp for get restaurant menus
--- Restaurant.Menu_Get 139, '{"textSearch": "plato"}', ''
+-- Restaurant.Menu_Get 139, '{}', ''
 -- =============================================
 CREATE OR ALTER PROCEDURE Restaurant.Menu_Get @userRoleId INT
     ,@json NVARCHAR(MAX)
@@ -31,6 +31,7 @@ BEGIN
                 ,m.MenuTypeId
                 ,m.Content                
                 ,a.s3ObjectUrl
+                ,ISNULL(m.ForPromotion, CAST(0 AS BIT)) AS ForPromotion
 	        FROM Restaurant.Menu m WITH (NOLOCK)
             INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo '
    

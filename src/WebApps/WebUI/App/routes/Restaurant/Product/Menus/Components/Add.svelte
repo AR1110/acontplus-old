@@ -481,7 +481,8 @@
               </select>
             </div>
           </div> -->
-          <div class="col-12">
+
+          <div class="col-6 col-md-6 col-sm-12">
             <div class="form-group">
               <label for="">Nombre</label>
               <input
@@ -489,6 +490,19 @@
                 class="form-control input-group-lg"
                 bind:value={data.title}
               />
+            </div>
+          </div>
+          <div class="col-6 col-md-6 col-sm-6">
+            <div class="form-group">
+              <label class="control-label">Usar en promoción</label>
+              <div class="checkbox icheck-primary">
+                <input
+                  type="checkbox"
+                  bind:checked={data.forPromotion}
+                  id="primary_{data.id}"
+                />
+                <label for="primary_{data.id}"></label>
+              </div>
             </div>
           </div>
         </div>
