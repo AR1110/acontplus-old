@@ -12,7 +12,6 @@ function homeCtrl($scope, mS, $interval) {
                     $scope.docs = JSON.parse(response.payload)[0]
                     $('#comprobantesErroneosModal').modal('show')
                 }
-                console.log(response)
             }
         ).catch(error => {
             console.log(error)
