@@ -1,4 +1,5 @@
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Common.Core.Entities;
 
 namespace Vet.Core.Entities
 {

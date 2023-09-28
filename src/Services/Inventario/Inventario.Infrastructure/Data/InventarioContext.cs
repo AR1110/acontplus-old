@@ -1,4 +1,5 @@
-﻿using Common.Infrastructure.Data;
+﻿using Common.Core.Entities;
+using Common.Infrastructure.Data;
 using Inventario.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
