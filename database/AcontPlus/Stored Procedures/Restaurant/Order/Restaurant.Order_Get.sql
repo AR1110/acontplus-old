@@ -9,7 +9,7 @@ GO
 -- Description:	sp for get order restaurant
 -- =============================================
 -- Restaurant.Order_Get 139, '{"tipo":1,"pageIndex":1,"pageSize":25,"startDate":"2023-09-05T17:18:46.886Z","endDate":"2023-09-05T17:18:46.886Z","customerCompanyId":0}', ''
--- Restaurant.Order_Get 139, '{"id":370,"tipo":2}', ''
+-- Restaurant.Order_Get 139, '{"id":6,"tipo":3}', ''
 CREATE OR ALTER PROCEDURE Restaurant.Order_Get @userRoleId INT
 ,@json NVARCHAR(MAX)
 ,@tableNames VARCHAR(500) OUT
@@ -274,6 +274,48 @@ BEGIN
 
 
             SELECT * FROM @tblOrderItems
+        END
+
+    --Order Document [Nota Entrega, Factura Venta]
+    IF (@tipo=3)
+        BEGIN 
+            DECLARE @tableOrderDoc AS TABLE(
+                documentId INT NOT NULL
+                ,docType VARCHAR(50) NOT NULL
+                ,serie VARCHAR(40) NOT NULL
+                ,createAt VARCHAR(50) NOT NULL
+                ,customerName VARCHAR(150) NOT NULL
+                ,userName VARCHAR(150) NOT NULL
+                ,total NUMERIC(18,2) NOT NULL
+                ,abono NUMERIC(18,2) NOT NULL
+                ,saldo NUMERIC(18,2)
+            )
+            SET @tableNames = 'orderDocuments'
+            --Factura Venta 
+            INSERT @tableOrderDoc (
+                 documentId  
+                ,docType 
+                ,serie 
+                ,createAt 
+                ,customerName 
+                ,userName 
+                ,total  
+                ,abono
+                ,saldo
+            )SELECT 
+                od.DocumentoId
+                ,docType = IIF(v_cpc.codDoc='01', 'FV', v_cpc.codDoc)
+                ,v_cpc.serieComprobante
+                ,FORMAT(v_cpc.fechaEmision, 'dd/MM/yyyy HH:mm')
+                ,v_cpc.razonSocialComprador
+                ,v_cpc.usuario
+                ,v_cpc.importeTotal
+                ,v_cpc.abono
+                ,v_cpc.saldo
+            FROM Restaurant.OrderDocument od WITH(NOLOCK)
+            INNER JOIN v_CuentaPorCobrar v_cpc WITH(NOLOCK) ON v_cpc.idDocumento = od.DocumentoId
+            WHERE od.orderId = @id AND v_cpc.codDoc IN('01', 'NE')
+            SELECT * FROM @tableOrderDoc
         END
 END
 GO

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -9,30 +10,21 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { ChangeEvent, lazy, useRef, useState } from "react";
-import { IconButton, Tooltip } from "@mui/material";
+import { Button, IconButton, Tooltip } from "@mui/material";
 
 import {
     AccountTreeIcon,
     ArrowBackIcon,
-    DeleteIcon,
+    AspectRatioIcon,
     EditIcon,
-    MoveUpIcon,
-    PrintIcon,
-    SaveAltSharpIcon,
-    ShareSharpIcon,
 } from "@/core/components/IconsMaterial";
-import Swal from "sweetalert2";
-import { orderService, SharedService } from "@/core/services";
-import { SnackbarUtility } from "@/core/utilities";
+import { orderService } from "@/core/services";
 import { useLoaderStore, useOrderStore, useSaleStore } from "@/stores";
 import { PrivateRoutes } from "@/core/models";
-import { useNavigate } from "react-router-dom";
-import OrderWhatsApp from "./Components/OrderWhatsApp";
-import OrderConvertDoc from "./Components/OrderConvertDoc";
 import { orderReadForUpdateAdapter } from "@/core/adapters";
 import FullScreenDialog from "@/core/components/FullScreenDialog";
 import { SplitOrderProvider } from "./context";
-import { DOC_TYPE } from "@/core/constants";
+import OrderDocument from "./OrderDocument/OrderDocument";
 const SplitOrder = lazy(() => import("./SplitOrder/SplitOrder"));
 
 export default function OrderTable() {
@@ -44,13 +36,12 @@ export default function OrderTable() {
 
     const [page, setPage] = useState(0);
 
-    const [open, setOpen] = useState(false);
-    const [openTableDialog, setOpenTableDialog] = useState(false);
-
     const [rowsPerPage, setRowsPerPage] = useState(25);
     const showLoader = useLoaderStore((state) => state.showLoader);
     const setDataEdit = useSaleStore((state) => state.setDataEdit);
     const [openDialodDivide, setOpenDialodDivide] = useState(false);
+
+    const [openDocument, setOpenDocument] = useState(false)
 
     const setOrderId = useRef(0);
 
@@ -75,124 +66,96 @@ export default function OrderTable() {
         getOrders()
     };
 
-    const handleUpdateState = async (id: number) => {
-        const { isConfirmed } = await Swal.fire({
-            // title: 'Are you sure?',
-            text: "Esta seguro de anular este documento!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Si, anular",
-            cancelButtonText: "No, cancelar",
-        });
+    // const handleAskToPrint = async (data: typeof orders[0]) => {
+    //     console.log(data)
+    //     try {
+    //         const {isConfirmed, isDenied} = await Swal.fire({
+    //             icon: 'warning',
+    //             text: 'Seleccione el tipo documento a imprimir!',
+    //             showDenyButton: data.documentoId > 0,
+    //             showCancelButton: true,
+    //             confirmButtonText: 'Pedido',
+    //             denyButtonText: `Documento`,
+    //             cancelButtonText: 'Cancelar'
+    //         })
 
-        if (!isConfirmed) return;
+    //         //Pedido 
+    //         if(isConfirmed){
+    //             SharedService.getPrinter(data.orderId)
+    //         }
 
-        showLoader(true);
-        orderService.updateState(id)
-            .then((response) => {
-                if (response.code === "1") {
-                    SnackbarUtility.success(response.message);
-                } else {
-                    SnackbarUtility.error(response.message);
-                }
-            })
-            .finally(() => showLoader(false));
-    };
-
-    const handleClickOpen = (id: number) => {
-        setOrderId.current = id;
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    const handleAskToPrint = (data: typeof orders[0]) => {
-        console.log(data)
-        try {
-            Swal.fire({
-                icon: 'warning',
-                text: 'Seleccione el tipo documento a imprimir!',
-                showDenyButton: data.documentoId > 0,
-                showCancelButton: true,
-                confirmButtonText: 'Pedido',
-                denyButtonText: `Documento`,
-                cancelButtonText: 'Cancelar'
-            })
-        } catch (error) {
-            console.log(error)
-        }
-    };
-
-    // const handleAskToPrint = (orderId: number) => {
-
-    //     // SharedService.askToPrint(orderId);
+    //         //Documento 
+    //         if(isDenied){
+    //             SharedService.getPrinter(data.orderId)
+    //         } 
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
     // };
 
-    const handleReport = async (data: typeof orders[0]) => {
-        try {
-            const { isConfirmed, isDenied } = await Swal.fire({
-                icon: 'warning',
-                text: 'Seleccione el tipo documento para generar reporte!',
-                showDenyButton: data.documentoId > 0,
-                showCancelButton: true,
-                confirmButtonText: 'Pedido',
-                denyButtonText: `Documento`,
-                cancelButtonText: 'Cancelar'
-            })
 
-            if (isDenied) {
-                const format = 'pdf';
-                const dataParms = {
-                    id: data.documentoId,
-                    //Factura
-                    format,
-                    codEstab: data.codEstab,
-                }
+    // const handleReport = async (data: typeof orders[0]) => {
+    //     console.log(data)
+    //     try {
+    //         const { isConfirmed, isDenied } = await Swal.fire({
+    //             icon: 'warning',
+    //             text: 'Seleccione el tipo documento para generar reporte!',
+    //             showDenyButton: data.documentoId > 0,
+    //             showCancelButton: true,
+    //             confirmButtonText: 'Pedido',
+    //             denyButtonText: `Documento`,
+    //             cancelButtonText: 'Cancelar'
+    //         })
 
-                if (data.codDoc === DOC_TYPE.NE) {
-                    showLoader(true)
-                    const parameters = {
-                        hasService: true,
-                        reportParams: JSON.stringify({
-                            hasParams: true,
-                            codigo: 'RNE',
-                            codEstab: data.codEstab,
-                            format,
-                            aditionalParams: []
-                        }),
-                        dataParams: JSON.stringify(dataParms)
-                    }
-                    SharedService.downloadExternal(parameters)
-                        .finally(() => showLoader(false));
-                }
+    //         if (isDenied) {
+    //             const format = 'pdf';
+    //             const dataParms = {
+    //                 id: data.documentoId,
+    //                 //Factura
+    //                 format,
+    //                 codEstab: data.codEstab,
+    //             }
 
-                if (data.codDoc === DOC_TYPE.FV) {
-                    showLoader(true)
-                    const parameters = {
-                        dataParams: JSON.stringify({
-                            ...dataParms,
-                            codigo: 'RF'
-                        })
-                    }
-                    SharedService.downloadDynamicExternal(parameters)
-                        .finally(() => showLoader(false));
-                }
-            }
-            if (isConfirmed) {
-                showLoader(true)
-                SharedService.downloadReport(data.orderId)
-                    .finally(() => showLoader(false));
-            }
+    //             if (data.codDoc === DOC_TYPE.NE) {
+    //                 showLoader(true)
+    //                 const parameters = {
+    //                     hasService: true,
+    //                     reportParams: JSON.stringify({
+    //                         hasParams: true,
+    //                         codigo: 'RNE',
+    //                         codEstab: data.codEstab,
+    //                         format,
+    //                         aditionalParams: []
+    //                     }),
+    //                     dataParams: JSON.stringify(dataParms)
+    //                 }
+    //                 SharedService.downloadExternal(parameters)
+    //                     .finally(() => showLoader(false));
+    //             }
 
-        } catch (error) {
-            console.log(error)
-        }
+    //             if (data.codDoc === DOC_TYPE.FV) {
+    //                 showLoader(true)
+    //                 const parameters = {
+    //                     dataParams: JSON.stringify({
+    //                         ...dataParms,
+    //                         codigo: 'RF'
+    //                     })
+    //                 }
+    //                 SharedService.downloadDynamicExternal(parameters)
+    //                     .finally(() => showLoader(false));
+    //             }
+    //         }
+    //         if (isConfirmed) {
+    //             showLoader(true)
+    //             SharedService.downloadReport(data.orderId)
+    //                 .finally(() => showLoader(false));
+    //         }
 
-    };
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+
+    // };
 
     const handleEdit = (orderId: number) => {
         showLoader(true);
@@ -215,11 +178,16 @@ export default function OrderTable() {
         setOrderId.current = id;
         setOpenDialodDivide(true)
     }
+
     function closeDialogDivide<T>(value: T) {
         if (typeof value === 'string' && value === 'CUSTOM_DETAIL') {
             getOrders()
         }
         setOpenDialodDivide(false)
+    }
+
+    function closeOrderDocument() {
+        setOpenDocument(false)
     }
 
     return (
@@ -276,12 +244,12 @@ export default function OrderTable() {
                                                     {
                                                         !(order.divided) && (
                                                             <Tooltip describeChild title="Editar">
-                                                                <IconButton color="primary"
+                                                                <Button variant="contained" color="primary"
                                                                     aria-label="Editar"
                                                                     onClick={() => handleEdit(order.orderId)}
                                                                 >
                                                                     <EditIcon />
-                                                                </IconButton>
+                                                                </Button>
                                                             </Tooltip>
                                                         )
                                                     }
@@ -289,41 +257,44 @@ export default function OrderTable() {
                                             }
 
                                             <Tooltip describeChild title="Impresión">
-                                                <IconButton color="warning"
+                                                <Button variant="contained" color="success"
                                                     aria-label="Impresión"
-                                                    onClick={() => handleAskToPrint(order)}
+                                                    onClick={() => {
+                                                        setOrderId.current = order.orderId;
+                                                        setOpenDocument(true)
+                                                    }}
                                                 >
-                                                    <PrintIcon />
-                                                </IconButton>
+                                                    <AspectRatioIcon />
+                                                </Button>
                                             </Tooltip>
 
-                                            <Tooltip describeChild title="Descargar PDF">
+                                            {/* <Tooltip describeChild title="Descargar PDF">
                                                 <IconButton size="large" color="secondary"
                                                     aria-label="Impresión"
                                                     onClick={() => handleReport(order)}
                                                 >
                                                     <SaveAltSharpIcon />
                                                 </IconButton>
-                                            </Tooltip>
+                                            </Tooltip> */}
 
-                                            <Tooltip describeChild title="Compartir por WhatsApp">
+                                            {/* <Tooltip describeChild title="Compartir por WhatsApp">
                                                 <IconButton size="large" color="success"
                                                     aria-label="Impresión"
                                                     onClick={() => setOpenTableDialog(true)}
                                                 >
                                                     <ShareSharpIcon />
                                                 </IconButton>
-                                            </Tooltip>
+                                            </Tooltip> */}
 
                                             {
                                                 (!(order.documentoId > 0) || (order.divided)) && (
                                                     <Tooltip describeChild title="Dividir la cuenta">
-                                                        <IconButton size="large" color="inherit"
+                                                        <Button variant="contained" size="large" color="inherit"
                                                             aria-label="Impresión"
                                                             onClick={() => dividerCuenta(order.orderId)}
                                                         >
                                                             <AccountTreeIcon />
-                                                        </IconButton>
+                                                        </Button>
                                                     </Tooltip>
                                                 )
                                             }
@@ -352,16 +323,16 @@ export default function OrderTable() {
                 </Paper>
             </Box>
 
-            <OrderConvertDoc
+            {/* <OrderConvertDoc
                 open={open}
                 handleClose={handleClose}
-            ></OrderConvertDoc>
+            /> */}
 
             {/* { End list  - TABLE } */}
-            <OrderWhatsApp
+            {/* <OrderWhatsApp
                 open={openTableDialog}
                 onClose={setOpenTableDialog} /
-            >
+            > */}
 
             {/* Dividir Cuenta  */}
             <FullScreenDialog
@@ -374,6 +345,15 @@ export default function OrderTable() {
                     <SplitOrder id={setOrderId.current} closeDialogDivide={closeDialogDivide} />
                 </SplitOrderProvider>
             </FullScreenDialog>
+
+
+            {/* Modal Order Document */}
+
+            {
+                openDocument && <OrderDocument id={setOrderId.current} open={openDocument} setOpen={closeOrderDocument} />
+            }
+
+
 
         </React.Fragment>
     );

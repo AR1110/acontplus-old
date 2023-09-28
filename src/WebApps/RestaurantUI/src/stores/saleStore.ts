@@ -15,7 +15,8 @@ import { produce } from 'immer';
 import { productService } from "@/core/services";
 import Swal from "sweetalert2";
 import { useAuthStore, useLoaderStore } from ".";
- 
+const imgUrlPromocion = new URL('/assets/promocion.jpg', import.meta.url).href
+const imgUrlCombo = new URL(`/assets/combo.jpg`, import.meta.url).href
  
 
 type State = {
@@ -157,13 +158,13 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                     idSubFamilia: 0,
                     code: CATEGORY_CODE.PROM,
                     description: 'PROMOCIÓN',
-                    s3ObjectUrl: '/assets/promocion.jpg'
+                    s3ObjectUrl: imgUrlPromocion
                 },
                 {
                     idSubFamilia: 0,
                     code: CATEGORY_CODE.COM,
                     description: 'COMBOS',
-                    s3ObjectUrl: `/assets/combo.jpg`
+                    s3ObjectUrl: imgUrlCombo
                 }, ...dataForm.categories];
                 //customer default
                 if (!(state.order.orderId > 0) && dataForm.customer.customerCompanyId > 0) {
