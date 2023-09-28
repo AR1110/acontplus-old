@@ -4,6 +4,7 @@ import React, { forwardRef, useEffect, useState } from 'react'
 import {
     Box,
     Button,
+    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
@@ -17,57 +18,22 @@ import {
     GridColDef,
 } from '@mui/x-data-grid';
 import { TransitionProps } from '@mui/material/transitions';
-import { PrintIcon, SaveAltSharpIcon, SendToMobileIcon, ShareSharpIcon } from '@/core/components/IconsMaterial';
-import { orderService } from '@/core/services';
+import { PrintIcon, SaveAltSharpIcon, ShareSharpIcon } from '@/core/components/IconsMaterial';
+import { SharedService, orderService } from '@/core/services';
+import { green } from '@mui/material/colors';
+import ButtonAction from './ButtonAction';
+import { IOrderDocument, OrderReadDto } from '@/core/models';
+import WhatsApp from '@/core/components/WhatsApp/WhatsApp';
+import { DOC_TYPE } from '@/core/constants';
+
+
 
 const columns: GridColDef[] = [
     {
         field: 'actions',
         type: 'actions',
         width: 220,
-        renderCell: (cellValues) => {
-            return (
-                <>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        size='large' 
-                        sx={{ ml: 1 }}
-                    >
-                        <PrintIcon />
-                    </Button>
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        size='large'
-                        sx={{ ml: 1 }} 
-                    >
-                        <SaveAltSharpIcon />
-                    </Button>
-                    <Button
-                        variant="contained"
-                        color="success"
-                        size='large'
-                        sx={{ ml: 1, mr:1 }} 
-                    >
-                        {/* <SendToMobileIcon /> */}
-                        <ShareSharpIcon/>
-                    </Button>
-                </>
-            );
-        }
-        // getActions: (params) => [
-        //     <GridActionsCellItem
-        //         size='large'
-        //         icon={<PrintIcon />}
-        //         label="Imprimir"
-
-        //     />,
-        //     <GridActionsCellItem
-        //         icon={<PictureAsPdfIcon />}
-        //         label="Toggle Admin" 
-        //     />, 
-        // ],
+        renderCell: (cellValues) => <ButtonAction data={cellValues} />
     },
     {
         field: 'docType',
@@ -90,12 +56,12 @@ const columns: GridColDef[] = [
         width: 180,
     },
     {
-        field: 'total',
+        field: 'importeTotal',
         headerName: 'Total',
         type: 'number',
         width: 80,
     },
-    
+
 ];
 
 const StyledBox = styled(Box)(({ theme }) => ({
@@ -125,30 +91,20 @@ const Transition = forwardRef(function Transition(
     return <Slide direction="down" ref={ref} {...props} />;
 });
 
-
-type IOrderDocument = {
-    id: number
-    documentId: number
-    docType: string
-    serie: string
-    createAt: string
-    customerName: string
-    userName: string
-    total: number
-    abono: number
-    saldo: number
-}
-
 type OrderDocumentProps = {
-    id: number
+    data: OrderReadDto
     open: boolean,
     setOpen(): void
 }
 
 
-const OrderDocument = ({ id, open, setOpen }: OrderDocumentProps) => {
-    const [loader, setLoader] = useState(false);
-    const [orderDocuments, setOrderDocuments] = useState<Array<IOrderDocument>>([])
+const OrderDocument = ({ data, open, setOpen }: OrderDocumentProps) => {
+    const [loading, setLoading] = useState(false);
+    const [loadingPDF, setLoadingPDF] = useState(false);
+    const [orderDocuments, setOrderDocuments] = useState<Array<IOrderDocument>>([]);
+    const [openDialogWhatsApp, setDialogWhatsApp] = useState(false);
+    const id = data.orderId;
+
     let controller: AbortController;
 
     const closeModal = () => {
@@ -157,7 +113,7 @@ const OrderDocument = ({ id, open, setOpen }: OrderDocumentProps) => {
 
     const getOrderDocuments = async () => {
         try {
-            setLoader(true)
+            setLoading(true)
             const dataFetch = orderService.getId(id, 3);
 
             if (dataFetch.controller) controller = dataFetch.controller;
@@ -169,10 +125,10 @@ const OrderDocument = ({ id, open, setOpen }: OrderDocumentProps) => {
                 ...orderDoc,
                 id: index
             })))
-            setLoader(false)
+            setLoading(false)
         } catch (error) {
             console.log(error)
-            setLoader(false)
+            setLoading(false)
         }
     }
 
@@ -187,75 +143,140 @@ const OrderDocument = ({ id, open, setOpen }: OrderDocumentProps) => {
             // Cancela la solicitud de datos de pedido al desmontar
             cancelEndpoint();
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    const printOrder = () => {
+        try {
+            SharedService.askToPrint(id)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    const reportOrderPDF = async () => {
+        try {
+            setLoadingPDF(true)
+            SharedService.downloadReport(id)
+                .finally(() => setLoadingPDF(false));
+        } catch (error) {
+            setLoadingPDF(false)
+            console.log(error)
+        }
+    };
+
+    const handleClickBtnDialogWhatsApp = () => {
+        setDialogWhatsApp(true)
+    }
+
+    const closeDialogWhatsApp = () => {
+        setDialogWhatsApp(false)
+    }
+
     return (
-        <Dialog
-            fullWidth={true}
-            maxWidth="md"
-            TransitionComponent={Transition}
-            keepMounted
-            open={open}
-        >
-            <DialogTitle>
-                {"Order Documento"}
-            </DialogTitle>
-            {/* <Typography variant="h6" sx={{
-                position: 'absolute',
-                right: 8,
-                top: 15,
-                mr: 3
-            }}>
-                <b>Total:</b> {objTempTotal.total}
-            </Typography> */}
-            <DialogContent dividers>
-                <Grid container spacing={2} columns={{ xs: 4, sm: 8, md: 12 }} paddingBottom={2}>
-                    <Grid item xs={12} sm={4} md={6}>
-                        <Button variant="contained" color='primary' fullWidth startIcon={<PrintIcon />} sx={{
-                            height: 60
-                        }}>
-                            Imprimir pedido
-                        </Button>
+        <>
+            <Dialog
+                fullWidth={true}
+                maxWidth="md"
+                TransitionComponent={Transition}
+                keepMounted
+                open={open}
+            >
+                <DialogTitle>
+                    {"Orden Documento"}
+                </DialogTitle>
+                <DialogContent dividers>
+                    <Grid container spacing={2} columns={{ xs: 4, sm: 8, md: 12 }} paddingBottom={2}>
+                        <Grid item xs={12} sm={4} md={4}>
+                            <Box sx={{ position: 'relative' }}>
+                                <Button variant="contained" color='primary' fullWidth startIcon={<PrintIcon />} sx={{
+                                    height: 60
+                                }} onClick={printOrder}>
+                                    Imprimir pedido
+                                </Button>
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12} sm={4} md={4}>
+                            <Box sx={{ position: 'relative' }}>
+                                <Button
+                                    variant="contained"
+                                    color='secondary'
+                                    fullWidth
+                                    // sx={buttonSx}
+                                    disabled={loadingPDF}
+                                    onClick={reportOrderPDF}
+                                    startIcon={<SaveAltSharpIcon />} sx={{
+                                        height: 60
+                                    }}
+                                >
+                                    Pedido PDF
+                                </Button>
+                                {loadingPDF && (
+                                    <CircularProgress
+                                        size={24}
+                                        sx={{
+                                            color: green[500],
+                                            position: 'absolute',
+                                            top: '50%',
+                                            left: '50%',
+                                            marginTop: '-12px',
+                                            marginLeft: '-12px',
+                                        }}
+                                    />
+                                )}
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12} sm={4} md={4}>
+                            <Box sx={{ position: 'relative' }}>
+                                <Button variant="contained" color='success' fullWidth startIcon={<ShareSharpIcon />} sx={{
+                                    height: 60
+                                }} onClick={handleClickBtnDialogWhatsApp}>
+                                    Compartir
+                                </Button>
+                            </Box>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={12} sm={4} md={6}>
-                        <Button variant="contained" color='secondary' fullWidth startIcon={<SaveAltSharpIcon />} sx={{
-                            height: 60
-                        }}>
-                            Pedido PDF
-                        </Button>
-                    </Grid>
-                </Grid>
-                <StyledBox>
-                    <DataGrid
-                        sx={{
-                            boxShadow: 2,
-                            border: 2,
-                            borderColor: 'primary.light',
-                            '& .MuiDataGrid-cell:hover': {
-                                color: 'primary.main',
-                            },
-                        }}
-                        //autoHeight
-                        loading={loader}
-                        rows={orderDocuments}
-                        columns={columns}
-                        initialState={{
-                            pagination: {
-                                paginationModel: { page: 0, pageSize: 5 },
-                            },
-                        }}
-                        pageSizeOptions={[5, 10]}
-                    />
-                </StyledBox>
-            </DialogContent>
-            <DialogActions>
-                <Button color='inherit' variant='outlined' sx={{
-                    height: 60
-                }} size='large' fullWidth onClick={closeModal}>
-                    Cerrar
-                </Button>
-            </DialogActions>
-        </Dialog>
+                    <StyledBox>
+                        <DataGrid
+                            sx={{
+                                boxShadow: 2,
+                                border: 2,
+                                borderColor: 'primary.light',
+                                '& .MuiDataGrid-cell:hover': {
+                                    color: 'primary.main',
+                                },
+                            }}
+                            //autoHeight
+                            loading={loading}
+                            rows={orderDocuments}
+                            columns={columns}
+                            initialState={{
+                                pagination: {
+                                    paginationModel: { page: 0, pageSize: 5 },
+                                },
+                            }}
+                            pageSizeOptions={[5, 10]}
+                        />
+                    </StyledBox>
+                </DialogContent>
+                <DialogActions>
+                    <Button color='inherit' variant='outlined' sx={{
+                        height: 60
+                    }} size='large' fullWidth onClick={closeModal}>
+                        Cerrar
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            {
+                openDialogWhatsApp && <WhatsApp data={{
+                    telefono: data.telefonoCliente,
+                    documentoId: data.orderId,
+                    docType: DOC_TYPE.OR,
+                    codEstab: data.codEstab,
+                    telefonoEstablecimiento: data.telefonoEstablecimiento,
+                    nombreComercial: data.nombreComercialEstab
+                }} open={openDialogWhatsApp} setOpen={closeDialogWhatsApp} />
+            }
+        </>
     )
 }
 

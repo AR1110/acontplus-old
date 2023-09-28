@@ -30,13 +30,16 @@ BEGIN
 
     SET @sql = N'SELECT Id		    = o.Id	
 	                    ,EstablecimientoId	= o.EstablecimientoId
-                        ,sri_e.codEstab           
+                        ,sri_e.codEstab    
+                        ,telefonoEstablecimiento = sri_e.telefono
+                        ,nombreComercialEstab    = sri_e.nombreComercial
 	                    ,PuntoEmisionId		= o.PuntoEmisionId
 	                    ,AppTableId			= ISNULL(o.AppTableId, 0)
 	                    ,TableId			= ISNULL(o.TableId, 0)
 	                    ,[Sequence]			= o.[Sequence]
 	                    ,Serie				= o.Serie
 	                    ,CustomerCompanyId	= o.CustomerCompanyId
+                        ,telefonoCliente    = ISNULL(c.telefono, '''')
 	                    ,Tax				= o.Tax
 	                    ,Discount			= o.Discount
 	                    ,Tip				= o.Tip
@@ -47,17 +50,13 @@ BEGIN
 	                    ,[Enabled]			= o.[Enabled]
 	                    ,Deleted			= o.Deleted
 	                    ,UserId				= o.UserId
-	                    ,Uuid				= o.Uuid
-                        ,DocumentoId		= ISNULL(od.DocumentoId,0)
-                        ,codDoc				= ISNULL(td.codigo,'''')
+	                    ,Uuid				= o.Uuid 
                         ,nameFiscal 	    = CASE WHEN o.CustomerCompanyId = 0 THEN ''CONSUMIDOR FINAL'' ELSE c.nombreFiscal END
 	                    ,userName           = u.nombreUsuario
                         ,totalRecords       = COUNT(*) OVER()
                         ,Divided
                     FROM Restaurant.[Order] o WITH(NOLOCK)
-                    INNER JOIN Sri.Establecimiento sri_e WITH(NOLOCK) ON sri_e.idEstablecimiento = o.establecimientoId
-                    LEFT JOIN Restaurant.OrderDocument od WITH(NOLOCK) ON o.Id = od.OrderId
-                    LEFT JOIN TipoDocumento td WITH(NOLOCK) ON od.TipoDocumentoId = td.idTipoDocumento
+                    INNER JOIN Sri.Establecimiento sri_e WITH(NOLOCK) ON sri_e.idEstablecimiento = o.establecimientoId 
                     LEFT JOIN Cliente c ON c.idCliente = o.CustomerCompanyId
                     LEFT JOIN Usuario u ON u.idUsuario = o.UserId
                     WHERE CAST(o.CreatedAt AS DATE) BETWEEN CAST(@startDate AS DATE) AND CAST(@endDate AS DATE) '
@@ -278,44 +277,26 @@ BEGIN
 
     --Order Document [Nota Entrega, Factura Venta]
     IF (@tipo=3)
-        BEGIN 
-            DECLARE @tableOrderDoc AS TABLE(
-                documentId INT NOT NULL
-                ,docType VARCHAR(50) NOT NULL
-                ,serie VARCHAR(40) NOT NULL
-                ,createAt VARCHAR(50) NOT NULL
-                ,customerName VARCHAR(150) NOT NULL
-                ,userName VARCHAR(150) NOT NULL
-                ,total NUMERIC(18,2) NOT NULL
-                ,abono NUMERIC(18,2) NOT NULL
-                ,saldo NUMERIC(18,2)
-            )
+        BEGIN  
             SET @tableNames = 'orderDocuments'
-            --Factura Venta 
-            INSERT @tableOrderDoc (
-                 documentId  
-                ,docType 
-                ,serie 
-                ,createAt 
-                ,customerName 
-                ,userName 
-                ,total  
-                ,abono
-                ,saldo
-            )SELECT 
-                od.DocumentoId
+          
+            SELECT
+                v_cpc.codEstab
+                ,od.DocumentoId
                 ,docType = IIF(v_cpc.codDoc='01', 'FV', v_cpc.codDoc)
-                ,v_cpc.serieComprobante
-                ,FORMAT(v_cpc.fechaEmision, 'dd/MM/yyyy HH:mm')
-                ,v_cpc.razonSocialComprador
-                ,v_cpc.usuario
+                ,serie = v_cpc.serieComprobante
+                ,createAt = FORMAT(v_cpc.fechaEmision, 'dd/MM/yyyy HH:mm')
+                ,customerName = v_cpc.razonSocialComprador
+                ,userName = v_cpc.usuario
                 ,v_cpc.importeTotal
                 ,v_cpc.abono
                 ,v_cpc.saldo
+                ,telefono = ISNULL(v_cpc.telefono, '')
+                ,v_cpc.telefonoEstablecimiento
+                ,v_cpc.nombreComercial
             FROM Restaurant.OrderDocument od WITH(NOLOCK)
             INNER JOIN v_CuentaPorCobrar v_cpc WITH(NOLOCK) ON v_cpc.idDocumento = od.DocumentoId
-            WHERE od.orderId = @id AND v_cpc.codDoc IN('01', 'NE')
-            SELECT * FROM @tableOrderDoc
+            WHERE od.orderId = @id AND v_cpc.codDoc IN('01', 'NE') 
         END
 END
 GO
