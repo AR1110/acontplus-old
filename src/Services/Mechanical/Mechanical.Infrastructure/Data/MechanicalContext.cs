@@ -1,5 +1,4 @@
-﻿using Common.Core.Entities;
-using Common.Infrastructure.Data;
+﻿using Common.Infrastructure.Data;
 using Mechanical.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
