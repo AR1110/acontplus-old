@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Common.Core.Entities;
 
 namespace Mechanical.Core.Entities
 {
     [Table("VehiclePart", Schema = "Mechanical")]
-    public class VehiclePart :BaseEntity
+    public class VehiclePart : BaseEntity
     {
         public VehiclePartType vehiclePartType {  get; set; }
         public int VehiclePartTypeId { get; set; }
