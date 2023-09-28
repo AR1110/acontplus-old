@@ -26,6 +26,7 @@
   let daysSelected = [];
   let itemSearch = [];
   let validation = [undefined, null, 0, ""];
+  let regexHour = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
   let promotionMenus: PromotionMenu[] = [];
   let value = "";
   let placeholder = "Buscar menu";
@@ -45,7 +46,7 @@
           diaSemana: e.diaSemana,
           descripcion: e.descripcion,
           horaInicio: "00:00",
-          horaFin: "00:00",
+          horaFin: "23:59",
           checked: false,
         };
       }));
@@ -159,6 +160,7 @@
 
   const onPost = () => {
     if (!onValidation()) return;
+    if (!onValidationHour()) return;
 
     dataUpdate.promotionDays = JSON.stringify(daysSelected);
     let newObject = {
@@ -186,6 +188,7 @@
 
   const onPut = () => {
     if (!onValidation()) return;
+    if (!onValidationHour()) return;
 
     showLoader();
     dataUpdate.promotionDays = JSON.stringify(daysSelected);
@@ -209,6 +212,39 @@
       .finally(() => {
         hideLoader();
       });
+  };
+
+  const onValidationHour = () => {
+    let isValid = true;
+    try {
+      daysSelected.forEach((e) => {
+        if (e.checked) {
+          if (!regexHour.test(e.horaInicio)) {
+            isValid = false;
+            toast({
+              type: "warning",
+              message: `La hora de inicio no es válida para el día ${e.descripcion}`,
+            });
+          }
+
+          if (!regexHour.test(e.horaFin)) {
+            isValid = false;
+            toast({
+              type: "warning",
+              message: `La hora de fin no es válida para el día ${e.descripcion}`,
+            });
+          }
+        }
+      });
+      return isValid;
+
+    } catch (error) {
+      isValid = false;
+      toast({
+        type: "warning",
+        message: "Debe revisar las horas de inicio y fin",
+      });
+    }
   };
 
   const onValidation = () => {
@@ -257,9 +293,6 @@
     dataUpdate = values.dataUpdate;
     establecimientos = values.establecimientos;
     days = values.days;
-
-    console.log(days);
-
     if (days.length > 0) {
       onDaySelected();
       getPromotionMenu(dataUpdate.id);
@@ -350,7 +383,9 @@
           <div class="col-4">
             <div class="form-group">
               <input
-                type="time"
+                type="text"
+                min="00:00"
+                placeholder="00:00"
                 disabled={!item.checked}
                 bind:value={item.horaInicio}
                 class="form-control"
@@ -360,7 +395,9 @@
           <div class="col-4">
             <div class="form-group">
               <input
-                type="time"
+                type="text"
+                max="23:59"
+                placeholder="00:00"
                 disabled={!item.checked}
                 bind:value={item.horaFin}
                 class="form-control"
