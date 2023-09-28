@@ -5,4 +5,6 @@ export interface Promotion {
   startDate: string;
   endDate: string;
   promotionDays: string;
+  s3ObjectKey?: string;
+  s3ObjectUrl?: string;
 }
