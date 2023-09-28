@@ -210,14 +210,14 @@ const OrderDocument = ({ id, open, setOpen }: OrderDocumentProps) => {
             </Typography> */}
             <DialogContent dividers>
                 <Grid container spacing={2} columns={{ xs: 4, sm: 8, md: 12 }} paddingBottom={2}>
-                    <Grid item xs={2} sm={4} md={6}>
+                    <Grid item xs={12} sm={4} md={6}>
                         <Button variant="contained" color='primary' fullWidth startIcon={<PrintIcon />} sx={{
                             height: 60
                         }}>
                             Imprimir pedido
                         </Button>
                     </Grid>
-                    <Grid item xs={2} sm={4} md={6}>
+                    <Grid item xs={12} sm={4} md={6}>
                         <Button variant="contained" color='secondary' fullWidth startIcon={<SaveAltSharpIcon />} sx={{
                             height: 60
                         }}>

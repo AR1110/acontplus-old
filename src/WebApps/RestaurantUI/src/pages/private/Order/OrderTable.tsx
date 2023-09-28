@@ -244,7 +244,7 @@ export default function OrderTable() {
                                                     {
                                                         !(order.divided) && (
                                                             <Tooltip describeChild title="Editar">
-                                                                <Button variant="contained" color="primary"
+                                                                <Button variant="contained" color="success"
                                                                     aria-label="Editar"
                                                                     onClick={() => handleEdit(order.orderId)}
                                                                 >
@@ -257,7 +257,7 @@ export default function OrderTable() {
                                             }
 
                                             <Tooltip describeChild title="Impresión">
-                                                <Button variant="contained" color="success"
+                                                <Button variant="contained" color="primary"
                                                     aria-label="Impresión"
                                                     onClick={() => {
                                                         setOrderId.current = order.orderId;
