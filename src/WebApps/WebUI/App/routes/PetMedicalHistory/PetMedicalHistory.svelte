@@ -8,7 +8,6 @@
   import Add from "./components/Add.svelte";
   import { showLoader, hideLoader } from "$core/utils/loading-spinner";
   import Pagination from "$core/components/Pagination.svelte";
-  //import toast, { Toaster } from 'svelte-french-toast';
   let newRecord = false;
   let codEstab = "0";
 
@@ -52,7 +51,11 @@
     await client
       .get(
         "Vet/MedicalHistories/?json=" +
-          JSON.stringify({ codEstab: codEstab, pageIndex: 1, pageSize: 5 })
+          JSON.stringify({
+            codEstab: codEstab,
+            pageIndex: pageCurrent == 0 ? 1 : pageCurrent,
+            pageSize: pageSize == 0 ? 9 : pageSize,
+          })
       )
       .then((response) => {
         if (response.data.code == "1") {
@@ -66,13 +69,39 @@
     hideLoader();
   };
 
-  let recordsQuantity = [10, 25, 50, 100];
+  let recordsQuantity = [5, 10, 25, 50, 100];
 
   let page = 0;
   let pageCurrent = 0;
   let pageSize = recordsQuantity[0];
 
-  const onPageChange = () => {};
+  const onPageChange = (event) => {
+    page = event.detail.page;
+    pageCurrent = page + 1;
+    initialLoad();
+  };
+
+  const onChange = (e) => {
+    pageSize = parseInt(e.target.value);
+    initialLoad();
+  };
+
+  const search = (e) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      if (e.target.value != "") {
+        initialLoad();
+      } else {
+        initialLoad();
+      }
+    }, 750);
+  };
+
+  const clearInput = () => {
+    document.querySelector("input").value = "";
+    search({ target: { value: "" } });
+  };
+  
   const getReport = async (id) => {
     //Add authentication headers as params
     // var params = {
@@ -247,6 +276,43 @@
 {/if}
 
 {#if medicalHistories.length > 0}
+  <div class="row">
+    <div class="col-lg-9 col-md-9 col-sm-1">
+      <span class="form-group pull-left page-size form-inline">
+        <select
+          class="form-control control-color"
+          on:change={(e) => onChange(e)}
+        >
+          {#each recordsQuantity as record}
+            <option value={record}>{record}</option>
+          {/each}
+        </select>
+      </span>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+      <div class="input-group mb-3">
+        <input
+          type="text"
+          class="form-control form-control-lg search-input"
+          placeholder="Buscar..."
+          aria-label=""
+          aria-describedby="basic-addon1"
+          on:keyup={(e) => {
+            search(e);
+          }}
+        />
+        <div class="input-group-append">
+          <button
+            class="btn btn-outline-secondary"
+            on:click={() => {
+              clearInput();
+            }}
+            type="button"><i class="fa fa-sync" /></button
+          >
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="card">
     <div class="card-body">
       <div class="table-responsive">
