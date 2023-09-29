@@ -59,6 +59,7 @@ export type IOrderDocument = {
   id: number
   codEstab: string
   documentoId: number
+  orderId: number
   docType: DOC_TYPE.FV | DOC_TYPE.NE  
   serie: string
   createAt: string

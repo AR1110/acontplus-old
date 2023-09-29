@@ -15,7 +15,7 @@ import {
 import { TransitionProps } from '@mui/material/transitions';
 import { CloseIcon, SendIcon } from '@/core/components/IconsMaterial';
 import { green } from '@mui/material/colors';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { MuiChipsInput } from 'mui-chips-input';
 import { SnackbarUtility } from '@/core/utilities';
 import { DOC_TYPE, DOC_TYPE_REPORT } from '@/core/constants';
@@ -80,7 +80,7 @@ const WhatsApp = <T extends {
     telefonoEstablecimiento?: string
     nombreComercial?: string
 }>(props: OrderDocumentProps<T>) => {
-    
+
     const { data, open, setOpen } = props;
     const tempPhoneNumbers = data.telefono ? data.telefono.split(';') : [];
 
@@ -88,21 +88,17 @@ const WhatsApp = <T extends {
     const [showAlert, setShowAlert] = useState(true);
     const [loading, setLoading] = useState(false);
 
-    const sendSMS = async (message: string) => {
-        try {
-            const payload = {
-                chatId: phoneNumberFormatter(phoneNumbers[0]!),
-                message,
-            }
-            const response = await http.post(URL_SMS, JSON.stringify(payload), {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            return response;
-        } catch (error) {
-            console.log(error)
+    const sendSMS = async (message: string) => { 
+        const payload = {
+            chatId: phoneNumberFormatter(phoneNumbers[0]!),
+            message,
         }
+        const response = await http.post(URL_SMS, JSON.stringify(payload), {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        return response; 
     }
 
     const sendMedia = async (caption: string, file: File) => {
@@ -144,6 +140,16 @@ const WhatsApp = <T extends {
 
     }
 
+    const contentFile = (responseFile: AxiosResponse) => {
+        const responseHeaders = responseFile.headers;
+        const fileName = responseHeaders["content-disposition"].split(";")[1].split("=")[1];
+        const file = new File([responseFile.data], fileName, { type: responseHeaders["content-type"] })
+        return {
+            file,
+            fileName
+        }
+    }
+
 
     const generateFile = async () => {
         try {
@@ -165,9 +171,7 @@ const WhatsApp = <T extends {
                 setLoading(true)
                 const responseFile = await SharedService.downloadDynamicExternal(parameters, true);
                 if (responseFile) {
-                    const responseHeaders = responseFile.headers;
-                    const fileName = responseHeaders["content-disposition"].split(";")[1].split("=")[1];
-                    const file = new File([responseFile.data], fileName, { type: responseHeaders["content-type"] })
+                    const { file, fileName } = contentFile(responseFile);
                     await sendMedia(fileName, file)
                 }
                 setLoading(false)
@@ -194,22 +198,19 @@ const WhatsApp = <T extends {
 
                 const responseFile = await SharedService.downloadExternal(parameters, true);
                 if (responseFile) {
-                    const responseHeaders = responseFile.headers;
-                    const fileName = responseHeaders["content-disposition"].split(";")[1].split("=")[1];
-                    const file = new File([responseFile.data], fileName, { type: responseHeaders["content-type"] })
+                    const { file, fileName } = contentFile(responseFile);
                     await sendMedia(fileName, file)
                 }
                 setLoading(false)
             }
 
+            //Orden de pedido
             if (data.docType === DOC_TYPE.OR) {
                 setLoading(true)
                 const responseFile = await SharedService.downloadReport(data.documentoId, true)
                 if (responseFile) {
-                    const responseHeaders = responseFile.headers;
-                    const fileName = responseHeaders["content-disposition"].split(";")[1].split("=")[1];
-                    const file = new File([responseFile.data], fileName, { type: responseHeaders["content-type"] })
-                    await sendMedia("OrdenPedido.pdf", file)
+                    const { file, fileName } = contentFile(responseFile);
+                    await sendMedia(fileName, file)
                 }
                 setLoading(false)
             }

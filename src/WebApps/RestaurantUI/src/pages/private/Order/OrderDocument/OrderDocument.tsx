@@ -148,7 +148,11 @@ const OrderDocument = ({ data, open, setOpen }: OrderDocumentProps) => {
 
     const printOrder = () => {
         try {
-            SharedService.askToPrint(id)
+            SharedService.askToPrint({
+                id,
+                documentoId: 0,
+                tipo: 2
+            })
         } catch (error) {
             console.log(error)
         }

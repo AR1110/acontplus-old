@@ -133,7 +133,12 @@ const Cart = () => {
                     //SnackbarUtility.success(response.message);
                     //Order
                     if (codDoc === DOC_TYPE.OR) {
-                        SharedService.getPrinter(JSON.parse(response.payload))
+                        const orderId = JSON.parse(response.payload);
+                        SharedService.getPrinter({
+                            id: orderId,
+                            documentoId: 0,
+                            tipo: 2                
+                        })
                         resetForm();
                         return
                     }
@@ -147,7 +152,11 @@ const Cart = () => {
 
 
                     if (queryParams.printerAutomatic) {
-                        SharedService.getPrinter(queryParams.idDocumento)
+                        SharedService.getPrinter({
+                            id: queryParams.orderId,
+                            documentoId: queryParams.idDocumento,
+                            tipo: 1
+                        })
                     } else {
                         resetForm();
                     }

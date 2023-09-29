@@ -283,6 +283,7 @@ BEGIN
             SELECT
                 v_cpc.codEstab
                 ,od.DocumentoId
+                ,od.orderId
                 ,docType = IIF(v_cpc.codDoc='01', 'FV', v_cpc.codDoc)
                 ,serie = v_cpc.serieComprobante
                 ,createAt = FORMAT(v_cpc.fechaEmision, 'dd/MM/yyyy HH:mm')

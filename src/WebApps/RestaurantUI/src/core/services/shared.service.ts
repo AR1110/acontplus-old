@@ -5,6 +5,7 @@ import { ApiResponse, CustomerCedulaSRI, CustomerRucSRI } from "../models"
 import { Http, SnackbarUtility } from "../utilities"
 import FileSaver from "file-saver"
 
+type ParamsPrint = {id: number, documentoId:number, tipo: 1 | 2 | 3 | 4}
 
 
 class Shared {
@@ -132,7 +133,7 @@ class Shared {
         return resultAxios;
     }
 
-    async askToPrint(orderId: number) {
+    async askToPrint(obj: ParamsPrint) {
         const {
             isConfirmed
         } = await Swal.fire({
@@ -144,14 +145,14 @@ class Shared {
             allowOutsideClick: false
         })
         if (isConfirmed) {
-            this.getPrinter(orderId)
+            this.getPrinter(obj)
         }
     }
 
-    async getPrinter(orderId: number) {
+    async getPrinter(obj: ParamsPrint) {
         const resultAxios = await Http({
             method: 'get',
-            url: `${PATHS.PRIVATE}Order/Print/${orderId}`,
+            url: `${PATHS.PRIVATE}Order/Print/${JSON.stringify(obj)}`,
         })
 
         const response: ApiResponse = resultAxios.data;

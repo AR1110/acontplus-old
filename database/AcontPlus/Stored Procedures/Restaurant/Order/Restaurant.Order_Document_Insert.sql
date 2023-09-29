@@ -455,7 +455,7 @@ BEGIN
     ---- NOTA DE ENTREGA ----
     IF @codDoc = 'NE'
         BEGIN
-            select top 1 * from  NotaEntrega 
+             
             INSERT INTO NotaEntrega 
             (idCliente, idPuntoEmision, idTiempoCredito, nroDocumento, subTotalSinImpuestos, subTotalIva
             ,subTotalNetoIva, subTotalIvaCero, subTotalNetoIvaCero, subTotalNoObjetoIva, subTotalNetoNoObjetoIva

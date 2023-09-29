@@ -1,4 +1,4 @@
-import { PrintIcon, SaveAltSharpIcon, ShareSharpIcon } from '@/core/components/IconsMaterial'; 
+import { PrintIcon, SaveAltSharpIcon, ShareSharpIcon } from '@/core/components/IconsMaterial';
 import WhatsApp from '@/core/components/WhatsApp/WhatsApp';
 import { DOC_TYPE, DOC_TYPE_REPORT } from '@/core/constants';
 import { IOrderDocument } from '@/core/models';
@@ -12,9 +12,8 @@ type ActionsProps = {
 const ButtonAction = ({ data }: ActionsProps) => {
     const [loadingPDF, setLoadingPDF] = useState(false);
     const [openDialogWhatsApp, setDialogWhatsApp] = useState(false);
-
+    const row = data.row as IOrderDocument
     const documentReport = () => {
-        const row = data.row as IOrderDocument
         try {
             const format = 'pdf';
             const dataParms = {
@@ -58,11 +57,32 @@ const ButtonAction = ({ data }: ActionsProps) => {
         }
     }
 
-    const handleClickBtnDialogWhatsApp = ()=>{
+    const documentPrint = () => {
+        try {
+            if (row.docType === DOC_TYPE.FV) {
+                SharedService.askToPrint({
+                    id: row.orderId,
+                    documentoId: row.documentoId,
+                    tipo: 3
+                })
+            }
+            if (row.docType === DOC_TYPE.NE) {
+                SharedService.askToPrint({
+                    id: row.orderId,
+                    documentoId: row.documentoId,
+                    tipo: 4
+                })
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const handleClickBtnDialogWhatsApp = () => {
         setDialogWhatsApp(true)
     }
 
-    const closeDialogWhatsApp = ()=>{
+    const closeDialogWhatsApp = () => {
         setDialogWhatsApp(false)
     }
     return (
@@ -71,6 +91,7 @@ const ButtonAction = ({ data }: ActionsProps) => {
                 variant="contained"
                 color="primary"
                 size='large'
+                onClick={documentPrint}
                 sx={{ ml: 1 }}>
                 <PrintIcon />
             </Button>
