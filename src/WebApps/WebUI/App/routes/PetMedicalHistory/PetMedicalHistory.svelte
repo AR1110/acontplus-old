@@ -1,4 +1,4 @@
-<script>
+<script language="ts">
   import { onMount } from "svelte";
   import { client, clientFile } from "../../core/api/axiosClient";
   import Swal from "sweetalert2";
@@ -7,6 +7,7 @@
   import Search from "$core/components/Search.svelte";
   import Add from "./components/Add.svelte";
   import { showLoader, hideLoader } from "$core/utils/loading-spinner";
+  import Pagination from "$core/components/Pagination.svelte";
   //import toast, { Toaster } from 'svelte-french-toast';
   let newRecord = false;
   let codEstab = "0";
@@ -50,7 +51,8 @@
     showLoader();
     await client
       .get(
-        "Vet/MedicalHistories/?json=" + JSON.stringify({ codEstab: codEstab })
+        "Vet/MedicalHistories/?json=" +
+          JSON.stringify({ codEstab: codEstab, pageIndex: 1, pageSize: 5 })
       )
       .then((response) => {
         if (response.data.code == "1") {
@@ -64,6 +66,13 @@
     hideLoader();
   };
 
+  let recordsQuantity = [10, 25, 50, 100];
+
+  let page = 0;
+  let pageCurrent = 0;
+  let pageSize = recordsQuantity[0];
+
+  const onPageChange = () => {};
   const getReport = async (id) => {
     //Add authentication headers as params
     // var params = {
@@ -287,6 +296,13 @@
             {/each}
           </tbody>
         </table>
+        <!-- Add pagination -->
+        <Pagination
+          {page}
+          {pageSize}
+          count={medicalHistories[0]["totalRecords"]}
+          on:pageChange={onPageChange}
+        />
       </div>
     </div>
   </div>
