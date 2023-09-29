@@ -43,9 +43,7 @@ BEGIN
                                 OR m.Summary LIKE ''%''+@textSearch+''%''
                                 OR m.Content LIKE ''%''+@textSearch+''%'') '
         END
-
-    PRINT @sql
-              
+        
     SET @tableNames = 'menus,menuTypes'
 
     EXEC sp_executesql @sql, @params, @textSearch
