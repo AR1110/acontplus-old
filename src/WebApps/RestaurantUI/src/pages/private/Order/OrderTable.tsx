@@ -10,7 +10,7 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { ChangeEvent, lazy, useRef, useState } from "react";
-import { Button, IconButton, Tooltip } from "@mui/material";
+import { Button, Stack, Tooltip } from "@mui/material";
 
 import {
     AccountTreeIcon,
@@ -43,7 +43,8 @@ export default function OrderTable() {
 
     const [openDocument, setOpenDocument] = useState(false)
 
-    const setOrderId = useRef(0);
+    const setOrderId = useRef(0)
+    const dataOrder = useRef({} as typeof orders[0]);
 
     const handleChangePage = (_: unknown, newPage: number) => {
 
@@ -66,97 +67,7 @@ export default function OrderTable() {
         getOrders()
     };
 
-    // const handleAskToPrint = async (data: typeof orders[0]) => {
-    //     console.log(data)
-    //     try {
-    //         const {isConfirmed, isDenied} = await Swal.fire({
-    //             icon: 'warning',
-    //             text: 'Seleccione el tipo documento a imprimir!',
-    //             showDenyButton: data.documentoId > 0,
-    //             showCancelButton: true,
-    //             confirmButtonText: 'Pedido',
-    //             denyButtonText: `Documento`,
-    //             cancelButtonText: 'Cancelar'
-    //         })
-
-    //         //Pedido 
-    //         if(isConfirmed){
-    //             SharedService.getPrinter(data.orderId)
-    //         }
-
-    //         //Documento 
-    //         if(isDenied){
-    //             SharedService.getPrinter(data.orderId)
-    //         } 
-    //     } catch (error) {
-    //         console.log(error)
-    //     }
-    // };
-
-
-    // const handleReport = async (data: typeof orders[0]) => {
-    //     console.log(data)
-    //     try {
-    //         const { isConfirmed, isDenied } = await Swal.fire({
-    //             icon: 'warning',
-    //             text: 'Seleccione el tipo documento para generar reporte!',
-    //             showDenyButton: data.documentoId > 0,
-    //             showCancelButton: true,
-    //             confirmButtonText: 'Pedido',
-    //             denyButtonText: `Documento`,
-    //             cancelButtonText: 'Cancelar'
-    //         })
-
-    //         if (isDenied) {
-    //             const format = 'pdf';
-    //             const dataParms = {
-    //                 id: data.documentoId,
-    //                 //Factura
-    //                 format,
-    //                 codEstab: data.codEstab,
-    //             }
-
-    //             if (data.codDoc === DOC_TYPE.NE) {
-    //                 showLoader(true)
-    //                 const parameters = {
-    //                     hasService: true,
-    //                     reportParams: JSON.stringify({
-    //                         hasParams: true,
-    //                         codigo: 'RNE',
-    //                         codEstab: data.codEstab,
-    //                         format,
-    //                         aditionalParams: []
-    //                     }),
-    //                     dataParams: JSON.stringify(dataParms)
-    //                 }
-    //                 SharedService.downloadExternal(parameters)
-    //                     .finally(() => showLoader(false));
-    //             }
-
-    //             if (data.codDoc === DOC_TYPE.FV) {
-    //                 showLoader(true)
-    //                 const parameters = {
-    //                     dataParams: JSON.stringify({
-    //                         ...dataParms,
-    //                         codigo: 'RF'
-    //                     })
-    //                 }
-    //                 SharedService.downloadDynamicExternal(parameters)
-    //                     .finally(() => showLoader(false));
-    //             }
-    //         }
-    //         if (isConfirmed) {
-    //             showLoader(true)
-    //             SharedService.downloadReport(data.orderId)
-    //                 .finally(() => showLoader(false));
-    //         }
-
-    //     } catch (error) {
-    //         console.log(error)
-    //     }
-
-    // };
-
+    
     const handleEdit = (orderId: number) => {
         showLoader(true);
         orderService.get({
@@ -222,83 +133,49 @@ export default function OrderTable() {
                                             {index + 1}
                                         </TableCell>
                                         <TableCell>
-                                            {/* {!(order.documentoId > 0) && (
-                                                <Tooltip describeChild title="Transformar a NE O FV">
-                                                    <IconButton color="info"
-                                                        aria-label="delete"
-                                                        onClick={() => handleClickOpen(order.orderId)}
+                                            <Stack direction="row" spacing={1}>
+                                                {
+                                                    order.documentoId > 0 ? '' : (<>
+                                                        {
+                                                            !(order.divided) && (
+                                                                <Tooltip describeChild title="Editar">
+                                                                    <Button variant="contained" color="success"
+                                                                        aria-label="Editar"
+                                                                        onClick={() => handleEdit(order.orderId)}
+                                                                    >
+                                                                        <EditIcon />
+                                                                    </Button>
+                                                                </Tooltip>
+                                                            )
+                                                        }
+                                                    </>)
+                                                }
+
+                                                <Tooltip describeChild title="PDF e Impresión">
+                                                    <Button variant="contained" color="primary"
+                                                        aria-label="PDF e Impresión"
+                                                        onClick={() => {
+                                                            dataOrder.current = order;
+                                                            setOpenDocument(true)
+                                                        }}
                                                     >
-                                                        <MoveUpIcon />
-                                                    </IconButton>
+                                                        <AspectRatioIcon />
+                                                    </Button>
                                                 </Tooltip>
-                                            )} */}
-                                            {/* <IconButton
-                                                aria-label="delete"
-                                                color="error"
-                                                onClick={() => handleUpdateState(order.orderId)}
-                                            >
-                                                <DeleteIcon />
-                                            </IconButton> */}
-                                            {
-                                                order.documentoId > 0 ? '' : (<>
-                                                    {
-                                                        !(order.divided) && (
-                                                            <Tooltip describeChild title="Editar">
-                                                                <Button variant="contained" color="success"
-                                                                    aria-label="Editar"
-                                                                    onClick={() => handleEdit(order.orderId)}
-                                                                >
-                                                                    <EditIcon />
-                                                                </Button>
-                                                            </Tooltip>
-                                                        )
-                                                    }
-                                                </>)
-                                            }
 
-                                            <Tooltip describeChild title="Impresión">
-                                                <Button variant="contained" color="primary"
-                                                    aria-label="Impresión"
-                                                    onClick={() => {
-                                                        setOrderId.current = order.orderId;
-                                                        setOpenDocument(true)
-                                                    }}
-                                                >
-                                                    <AspectRatioIcon />
-                                                </Button>
-                                            </Tooltip>
-
-                                            {/* <Tooltip describeChild title="Descargar PDF">
-                                                <IconButton size="large" color="secondary"
-                                                    aria-label="Impresión"
-                                                    onClick={() => handleReport(order)}
-                                                >
-                                                    <SaveAltSharpIcon />
-                                                </IconButton>
-                                            </Tooltip> */}
-
-                                            {/* <Tooltip describeChild title="Compartir por WhatsApp">
-                                                <IconButton size="large" color="success"
-                                                    aria-label="Impresión"
-                                                    onClick={() => setOpenTableDialog(true)}
-                                                >
-                                                    <ShareSharpIcon />
-                                                </IconButton>
-                                            </Tooltip> */}
-
-                                            {
-                                                (!(order.documentoId > 0) || (order.divided)) && (
-                                                    <Tooltip describeChild title="Dividir la cuenta">
-                                                        <Button variant="contained" size="large" color="inherit"
-                                                            aria-label="Impresión"
-                                                            onClick={() => dividerCuenta(order.orderId)}
-                                                        >
-                                                            <AccountTreeIcon />
-                                                        </Button>
-                                                    </Tooltip>
-                                                )
-                                            }
-
+                                                {
+                                                    (!(order.documentoId > 0) || (order.divided)) && (
+                                                        <Tooltip describeChild title="Dividir la cuenta">
+                                                            <Button variant="contained" size="large" color="inherit"
+                                                                aria-label="Impresión"
+                                                                onClick={() => dividerCuenta(order.orderId)}
+                                                            >
+                                                                <AccountTreeIcon />
+                                                            </Button>
+                                                        </Tooltip>
+                                                    )
+                                                }
+                                            </Stack>
                                         </TableCell>
                                         <TableCell align="center"> {order.serie}</TableCell>
                                         <TableCell align="center">{order.createdAt}</TableCell>
@@ -350,7 +227,7 @@ export default function OrderTable() {
             {/* Modal Order Document */}
 
             {
-                openDocument && <OrderDocument id={setOrderId.current} open={openDocument} setOpen={closeOrderDocument} />
+                openDocument && <OrderDocument data={dataOrder.current} open={openDocument} setOpen={closeOrderDocument} />
             }
 
 

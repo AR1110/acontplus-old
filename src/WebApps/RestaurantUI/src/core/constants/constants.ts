@@ -47,3 +47,8 @@ export enum ITEM_TYPE_CODE {
     MENU = "MENU",
     ITEM = "ITEM"
 }
+
+export enum DOC_TYPE_REPORT {
+    FV = 'RF',
+    NE = 'RNE'    
+}

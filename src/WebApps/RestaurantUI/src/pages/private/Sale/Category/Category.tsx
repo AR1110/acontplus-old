@@ -20,7 +20,7 @@ export default function Category() {
   const [value, setValue] = useState(0);
 
   const handleChange = (_: React.SyntheticEvent, index: number) => {
-    let tipo = 1;
+    let tipo = 2;
     const dataCategory = categories.find((_, indexCategory) => indexCategory === index);
 
     if (dataCategory?.code === CATEGORY_CODE.COM) tipo = 3;

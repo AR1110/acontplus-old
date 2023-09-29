@@ -49,6 +49,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import AspectRatioIcon from '@mui/icons-material/AspectRatio';
 import SendToMobileIcon from '@mui/icons-material/SendToMobile';
+import SendIcon from '@mui/icons-material/Send';
 export {
     RemoveCircleOutlineIcon,
     SaveIcon,
@@ -98,5 +99,6 @@ export {
     InfoIcon,
     PictureAsPdfIcon,
     AspectRatioIcon,
-    SendToMobileIcon
+    SendToMobileIcon,
+    SendIcon
 }

@@ -52,7 +52,7 @@ export interface ItemSearch {
 }
 
 export const itemSearchInitialState: ItemSearch = {
-    tipo: 1, 
+    tipo: 2, 
     checkSubFamilia: false,
     idSubFamilia: 0, 
     pageIndex: 1, 
