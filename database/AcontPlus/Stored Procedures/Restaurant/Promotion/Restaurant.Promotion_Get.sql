@@ -34,8 +34,7 @@ BEGIN
                    ,FORMAT(p.StartDate, 'yyyy-MM-dd')   AS StartDate
                    ,FORMAT(p.EndDate, 'yyyy-MM-dd')     AS EndDate
                    ,p.PromotionDays
-                   ,ISNULL(p.S3ObjectUrl, '')           AS S3ObjectUrl
-                   ,ISNULL(p.S3ObjectKey, '')           AS S3ObjectKey
+                   ,ISNULL(p.S3ObjectUrl, '')           AS S3ObjectUrl                   
 	        FROM Restaurant.Promotion p WITH (NOLOCK)
 
             SELECT * FROM Dia

@@ -21,8 +21,7 @@ BEGIN
             ,@params NVARCHAR(500)
             ,@textSearch VARCHAR(20)
             ,@forPromotion BIT
-
-            
+                        
     SET @params = N'@textSearch VARCHAR(20)'
     SELECT @textSearch = textSearch FROM OPENJSON(@json) WITH(textSearch VARCHAR(20) '$.textSearch')
         
