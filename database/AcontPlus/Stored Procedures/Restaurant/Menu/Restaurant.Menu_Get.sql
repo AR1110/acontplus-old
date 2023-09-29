@@ -9,7 +9,7 @@ GO
 -- Author:		Ivan Paz
 -- Create date: 2023-08-10
 -- Description: sp for get restaurant menus
--- Restaurant.Menu_Get 139, '{}', ''
+-- Restaurant.Menu_Get 139, '{"textSearch": "comb"}', ''
 -- =============================================
 CREATE OR ALTER PROCEDURE Restaurant.Menu_Get @userRoleId INT
     ,@json NVARCHAR(MAX)
@@ -38,10 +38,13 @@ BEGIN
    
      IF @textSearch IS NOT NULL
         BEGIN
-            SET @sql = @sql + ' WHERE m.Title LIKE ''%''+@textSearch+''%'' 
-                                OR m.Summary LIKE ''%''+@textSearch+''%'' 
-                                OR m.Content LIKE ''%''+@textSearch+''%'' '
+            SET @sql = @sql + ' WHERE m.ForPromotion = 1 AND
+                                (m.Title LIKE ''%''+@textSearch+''%''
+                                OR m.Summary LIKE ''%''+@textSearch+''%''
+                                OR m.Content LIKE ''%''+@textSearch+''%'') '
         END
+
+    PRINT @sql
               
     SET @tableNames = 'menus,menuTypes'
 

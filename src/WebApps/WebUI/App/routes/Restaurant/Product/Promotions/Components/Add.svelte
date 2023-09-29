@@ -169,8 +169,7 @@
         menuId: e.menuId,
       };
     });
-
-    console.log(newPromotionMenu);
+    
     dataUpdate.promotionDays = JSON.stringify(daysSelected);
     let newObject = {
       ...dataUpdate,
