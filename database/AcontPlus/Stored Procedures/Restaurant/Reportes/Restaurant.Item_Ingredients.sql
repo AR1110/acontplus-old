@@ -15,9 +15,10 @@ BEGIN
 	SET LANGUAGE SPANISH;
     DECLARE @idEntidad INT
                 
-    SELECT * FROM Restaurant.Recipe rr
+    SELECT ri.Summary
+        ,ri.CreatedAt        
+    FROM Restaurant.Recipe rr    
     INNER JOIN Restaurant.Item ri ON ri.Id = rr.ItemId
+    INNER JOIN Inventario.v_Articulo a ON a.idArticulo = ri.ProductId
     INNER JOIN Restaurant.Ingredient rin ON rin.Id = rr.IngredientId
-    
 END
-
