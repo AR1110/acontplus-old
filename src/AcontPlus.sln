@@ -132,7 +132,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Infrastructure", "Se
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Reports", "Services\Common\Common.Reports\Common.Reports.csproj", "{49F50BBE-2A3E-4D6C-A66B-DAE42672E646}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Core", "Services\Common\Common.Core\Common.Core.csproj", "{843FCCE1-A9AC-4623-980C-90E14AE94C1B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Core", "Services\Common\Common.Core\Common.Core.csproj", "{843FCCE1-A9AC-4623-980C-90E14AE94C1B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -8,9 +8,7 @@ import FileSaver from "file-saver"
 type ParamsPrint = {id: number, documentoId:number, tipo: 1 | 2 | 3 | 4}
 
 
-class Shared {
-
-
+class Shared { 
     async checkClientSRIByRUC(identificacion: string): Promise<CustomerRucSRI> {
         const resultAxios = await Http({
             method: 'get',
