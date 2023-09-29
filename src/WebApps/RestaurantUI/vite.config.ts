@@ -19,5 +19,6 @@ export default defineConfig({
   build: {
     outDir: "../../Services/Restaurant/Restaurant.API/wwwroot", // this line place index.html in the public folder
     assetsDir: "./dist", // this line place your assets in the public/dist folder
+    chunkSizeWarningLimit: 1600
   },
 });

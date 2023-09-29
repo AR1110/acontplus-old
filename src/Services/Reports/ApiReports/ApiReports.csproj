@@ -260,4 +260,8 @@
 	  <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Reports\Restaurant\" />
+	</ItemGroup>
+
 </Project>
