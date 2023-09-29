@@ -1,9 +1,9 @@
 <script>
   import { onMount } from "svelte";
-  import { client } from "../../../core/api/axiosClient";
-  import AdvancedSearch from "../../../core/components/AdvancedSearch.svelte";
-  import toast from "../../../core/utils/toast";
-  import { showLoader, hideLoader } from "../../../core/utils/loading-spinner";
+  import { client } from "$core/api/axiosClient";
+  import AdvancedSearch from "$core/components/AdvancedSearch.svelte";
+  import toast from "$core/utils/toast";
+  import { showLoader, hideLoader } from "$core/utils/loading-spinner";
 
   export let newRecord;
   export let editStatus;
@@ -82,7 +82,7 @@
         .get("Vet/MedicalHistories/" + historyEdited.id)
         .then((response) => {
           let tempArray = JSON.parse(response.data.payload);
-          let objData = tempArray['medicalHistory'][0];
+          let objData = tempArray["medicalHistory"][0];
           petSelected.customer = objData.businessName;
           petSelected.customerIdCard = objData.idCard;
           petSelected.id = objData.petId;
@@ -111,16 +111,16 @@
           medicalHistory.age = objData.age;
           medicalHistory.weight = objData.weight;
 
-          healthChecks = tempArray['healthChecks'];
-          tempArray['healthChecks'].forEach((value, key) => {
+          healthChecks = tempArray["healthChecks"];
+          tempArray["healthChecks"].forEach((value, key) => {
             addDiseaseStatus(value.diseaseId, value.diseaseStatusId, false);
             document.getElementById(
               `${value.diseaseId}-${value.diseaseStatusId}-chkdds`
             ).checked = true;
           });
 
-          behaviorTests = tempArray['behaviors'];
-          tempArray['behaviors'].forEach((value, key) => {
+          behaviorTests = tempArray["behaviors"];
+          tempArray["behaviors"].forEach((value, key) => {
             addBehaviorStatus(value.behaviorId, value.behaviorStatusId);
             document.getElementById(
               `${value.behaviorId}-${value.behaviorStatusId}-chkbbs`

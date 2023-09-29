@@ -2,11 +2,11 @@
   import { onMount } from "svelte";
   import { client, clientFile } from "../../core/api/axiosClient";
   import Swal from "sweetalert2";
-  import toast from "../../core/utils/toast";
+  import toast from "$core/utils/toast";
   import FileSaver from "file-saver";
-  import Search from "../../core/components/Search.svelte";
+  import Search from "$core/components/Search.svelte";
   import Add from "./components/Add.svelte";
-  import { showLoader, hideLoader } from "../../core/utils/loading-spinner";
+  import { showLoader, hideLoader } from "$core/utils/loading-spinner";
   //import toast, { Toaster } from 'svelte-french-toast';
   let newRecord = false;
   let codEstab = "0";
@@ -83,7 +83,7 @@
         var ie = navigator.userAgent.match(/.NET/g); // IE 11+
         var oldIE = navigator.userAgent.match(/MSIE/g);
 
-        var blob = new window.Blob([response.data.data], {
+        var blob = new window.Blob([response.data], {
           type: "application/pdf",
         });
 

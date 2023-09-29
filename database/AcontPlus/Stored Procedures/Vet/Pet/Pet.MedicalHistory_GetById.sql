@@ -12,7 +12,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-    SET @tableNames = 'medicalHistorie,healthChecks,behaviors'
+    SET @tableNames = 'medicalHistory,healthChecks,behaviors'
 
 	SELECT mh.*
 		,p.Id petId

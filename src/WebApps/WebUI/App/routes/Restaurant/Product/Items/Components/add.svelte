@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { hideLoader } from "./../../../../../core/utils/loading-spinner.js";
+  import { hideLoader } from "$core/utils/loading-spinner.js";
   import { itemService } from "$core/services/restaurant/item-service";
   import { showLoader } from "$core/utils/loading-spinner";
   import { useItemStore } from "$routes/Restaurant/store/itemStore.js";

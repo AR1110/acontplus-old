@@ -44,13 +44,13 @@
                 "App/routes/restaurant/*"
             ],
             "$pet/*": [
-                "App/lib/Pet/*"
+                "App/routes/Pet/*"
             ],
             "$petbreed/*": [
-                "App/lib/PetBreed/*"
+                "App/routes/PetBreed/*"
             ],
             "$petmedicalhistory/*": [
-                "App/lib/PetMedicalHistory/*"
+                "App/routes/PetMedicalHistory/*"
             ],
         }
     }

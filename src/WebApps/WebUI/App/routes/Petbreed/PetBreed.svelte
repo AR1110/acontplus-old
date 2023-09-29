@@ -1,10 +1,10 @@
 <script>
   import { onMount } from "svelte";
-  import { showLoader, hideLoader } from "../../core/utils/loading-spinner";
-  import { client } from "../../core/api/axiosClient";
-  import toast from "../../core/utils/toast";
+  import { showLoader, hideLoader } from "$core/utils/loading-spinner";
+  import { client } from "$core/api/axiosClient";
+  import toast from "$core/utils/toast";
   import Swal from "sweetalert2";
-  import Search from "../../core/components/Search.svelte";
+  import Search from "$core/components/Search.svelte";
 
   let petTypes = [],
     breeds = [];

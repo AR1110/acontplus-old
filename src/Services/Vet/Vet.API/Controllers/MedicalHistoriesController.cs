@@ -26,26 +26,12 @@ namespace Vet.API.Controllers
             try
             {
                 int companyId = Convert.ToInt32(User.GetCompanyId());
-                var apiRequest = new ApiRequest();
-                //var data = JsonConvert.DeserializeObject<ApiRequest>(json); 
                 var parameters = new Dictionary<string, object>
                 {
                     { "userRoleId", User.GetUserRoleId() },
                     { "json", json }
                 };
-                //apiRequest.Data = new Dictionary<string, object> { { "json", Converters.SerializeDictionary(dictionary)} };
-
                 return await _medicalHistory.GetAsync(parameters);
-                //if (!_context.MedicalHistories.Any(x =>
-                //                                x.Pet.CompanyId == companyId
-                //                                && x.Enabled
-                //                                ))
-                //{
-                //    return NoContent();
-                //}
-                //return await _context.MedicalHistories.Include(p => p.Pet)
-                //    .Where(x => x.Pet.CompanyId == companyId && x.Enabled)
-                //    .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -90,7 +76,7 @@ namespace Vet.API.Controllers
                 _ = ex.Message;
                 return BadRequest("Error al obtener el reporte");
             }
-            
+
         }
 
         // PUT: api/MedicalHistories/5
@@ -173,7 +159,7 @@ namespace Vet.API.Controllers
                 _ = ex.Message;
                 return BadRequest("Error al guardar");
             }
-            
+
         }
 
         // DELETE: api/MedicalHistories/5

@@ -3,7 +3,7 @@
   import { SubcategoriaService } from "../../../../core/services/subcategoria-service";
   import type { Subcategoria } from "../../../../core/interfaces/subcategoria";
   import Modal from "../../../../core/components/Modal.svelte";
-  import toast from "../../../../core/utils/toast.js";
+  import toast from "$core/utils/toast.js";
 
   export let openNew;
   export let modalClosed;

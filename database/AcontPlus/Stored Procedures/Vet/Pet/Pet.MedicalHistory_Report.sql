@@ -47,7 +47,7 @@ BEGIN
 				END petAge
 		,[p].[Name] petName
 		,p.Color petColor
-		,p.[Weight] petWeight
+		,mh.[Weight] petWeight
 		,pt.[Name] petType
 		,mh.Observations
 		,[b].[Name] petBreed

@@ -2,12 +2,12 @@
 <script>
 	import { v4 } from "uuid";
 	import { onMount } from "svelte";
-	import { client } from "../../core/api/axiosClient";
-	import toast from "../../core/utils/toast";
+	import { client } from "$core/api/axiosClient";
+	import toast from "$core/utils/toast";
 	import Swal from "sweetalert2";
-	import Search from "../../core/components/Search.svelte";
-	import AdvancedSearch from "../../core/components/AdvancedSearch.svelte";
-	import { showLoader, hideLoader } from "../../core/utils/loading-spinner";
+	import Search from "$core/components/Search.svelte";
+	import AdvancedSearch from "$core/components/AdvancedSearch.svelte";
+	import { showLoader, hideLoader } from "$core/utils/loading-spinner";
 
 	let genderes = [],
 		breeds = [],
