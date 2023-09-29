@@ -149,8 +149,6 @@ BEGIN
                     SET @sql = @sql + ' AND a.siglaSubFamilia NOT IN(''COM'') '
                 END
 
-            PRINT @sql
-
             SET @sql = @sql + ' ORDER BY ri.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
 
             SET @tableNames = 'items'

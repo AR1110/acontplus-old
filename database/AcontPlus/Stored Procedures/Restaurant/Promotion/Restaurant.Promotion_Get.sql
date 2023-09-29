@@ -34,6 +34,8 @@ BEGIN
                    ,FORMAT(p.StartDate, 'yyyy-MM-dd')   AS StartDate
                    ,FORMAT(p.EndDate, 'yyyy-MM-dd')     AS EndDate
                    ,p.PromotionDays
+                   ,ISNULL(p.S3ObjectUrl, '')           AS S3ObjectUrl
+                   ,ISNULL(p.S3ObjectKey, '')           AS S3ObjectKey
 	        FROM Restaurant.Promotion p WITH (NOLOCK)
 
             SELECT * FROM Dia
@@ -48,10 +50,11 @@ BEGIN
             SET @day            = (SELECT DATEPART(WEEKDAY, @dateNow));
             SET @hour           = (SELECT FORMAT(@dateNow, 'HH:mm'))
             SET @dateNow        = CONVERT(DATE, @dateNow)
-                  
+
             SET @tableNames = 'promotions_pos'
             SELECT rp.Id
                 ,rp.[Description]
+                ,rp.S3ObjectUrl
             FROM Restaurant.Promotion rp
             WHERE  @dateNow BETWEEN rp.StartDate AND rp.EndDate
             AND @day IN(SELECT diaSemana FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day))

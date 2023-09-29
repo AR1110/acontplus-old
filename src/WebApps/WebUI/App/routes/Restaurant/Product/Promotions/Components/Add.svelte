@@ -30,6 +30,7 @@
   let promotionMenus: PromotionMenu[] = [];
   let value = "";
   let placeholder = "Buscar menu";
+  let file;
 
   //Todo: Manipulate days.
   const onDaySelected = () => {
@@ -168,11 +169,14 @@
       promotionMenus: promotionMenus,
     };
 
+    let params = JSON.stringify(newObject );
+
     showLoader();
-    PromotionService.post({ data: newObject })
+    PromotionService.post(params, file)
       .then((response) => {
         if (response.status === 200) {
           if (response.data.code === "1") {
+            file = undefined;
             usePromotionStore.get({ codEstab: $usePromotionStore.codEstab });
             onModalClose();
             toast({ type: "success", message: response.data.message });
@@ -197,10 +201,14 @@
       promotionMenus: promotionMenus,
     };
 
-    PromotionService.put(dataUpdate.id, { data: newObject })
+    let params = JSON.stringify( newObject );
+
+
+    PromotionService.put(dataUpdate.id, params, file)
       .then((response) => {
         if (response.status === 200) {
           if (response.data.code === "1") {
+            file = undefined;
             usePromotionStore.get({ codEstab: $usePromotionStore.codEstab });
             onModalClose();
             toast({ type: "success", message: response.data.message });
@@ -237,7 +245,6 @@
         }
       });
       return isValid;
-
     } catch (error) {
       isValid = false;
       toast({
@@ -274,19 +281,27 @@
   const onModalClose = () => {
     daysSelected = [];
     promotionMenus = [];
-    dataUpdate = {
+    usePromotionStore.update((state) => ({
+      ...state,
+      isOpen: false,
+      dataUpdate: {
       id: 0,
       codEstab: "",
       description: "",
       startDate: "",
       endDate: "",
       promotionDays: "",
-    };
-    usePromotionStore.update((state) => ({
-      ...state,
-      isOpen: false,
+    },
     }));
   };
+
+  function handleFileChange(event) {
+    file = event.target.files[0];
+  }
+
+  function clearImage() {
+    file = undefined;
+  }
 
   // Todo: Use reactive store.
   usePromotionStore.subscribe((values) => {
@@ -365,6 +380,26 @@
               id="description"
             />
           </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+          <div class="custom-input">
+            <label for="file-input" class="hover-effect">
+              Haz clic o arrastra un archivo aquí
+            </label>
+            <input
+              type="file"
+              id="file-input"
+              accept=".jpg, .jpeg, .png"
+              on:change={handleFileChange}
+            />
+          </div>
+          {#if file}
+            <div class="image-preview">
+              <img src={URL.createObjectURL(file)} alt="Preview" />
+            </div>
+          {/if}
         </div>
       </div>
 
@@ -464,3 +499,62 @@
     </div>
   </Modal>
 {/if}
+
+<style>
+  /* Estilos CSS aquí */
+  /* Estilos CSS aquí */
+  .custom-input {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .custom-input:hover {
+    border-color: #007bff;
+  }
+
+  .hover-effect {
+    display: block;
+    transition: color 0.3s ease;
+    margin-bottom: 10px;
+  }
+
+  .custom-input:hover .hover-effect {
+    color: #007bff;
+  }
+
+  .image-preview {
+    margin-top: 20px;
+  }
+
+  .image-preview img {
+    max-width: 100%;
+    height: 100px;
+    object-fit: cover;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+  }
+
+  /* Estilo para el input file */
+  input[type="file"] {
+    display: none;
+  }
+
+  label[for="file-input"] {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  label[for="file-input"]:hover {
+    background-color: #fff;
+  }
+</style>

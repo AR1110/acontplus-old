@@ -56,6 +56,7 @@
     <table class="table table-hover">
       <thead class="thead-light">
         <tr>
+          <th scope="col">Image</th>
           <th scope="col">Promoción</th>
           <th scope="col">Fecha Inicio</th>
           <th scope="col">Fecha Fin</th>
@@ -65,6 +66,14 @@
       <tbody>
         {#each promotions as item}
           <tr>
+            <th scope="row">
+              <img
+                src={item.s3ObjectUrl || "https://i.stack.imgur.com/GNhxO.png"}
+                width="70"
+                class="rounded"
+                alt=""
+              />
+            </th>
             <th scope="row">{item.description}</th>
             <td>{item.startDate}</td>
             <td>{item.endDate}</td>
