@@ -44,7 +44,7 @@ export const client = createAxiosClient({
 
 export const clientFile = (url) => {
    return axios({
-        url: `${decodedJwt.urlGateway}` + url,
+        url: `${decodedJwt.urlGateway}/gateway/` + url,
         method: 'POST',
         responseType: 'blob',
         headers: { 'Authorization': 'Bearer ' + getCurrentAccessToken() }

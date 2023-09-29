@@ -33,15 +33,19 @@ BEGIN
 		codEstab VARCHAR(15) '$.codEstab'
 	)
 
-	SELECT mh.Id, mh.Observations, p.Name petName, p.Age, p.Color
+	SELECT mh.Id
+        ,mh.Observations
+        ,mh.Age
+        ,mh.[Weight]
+        ,p.[Name] petName
+        ,p.Color
 		,c.businessName customer
 		,[mh].[Date]
-	FROM Pet.MedicalHistory mh
-		INNER JOIN Pet.Pet p ON mh.PetId = p.Id
-		INNER JOIN Customer.Customer c ON p.CustomerId = c.Id
+	FROM Pet.MedicalHistory mh WITH(NOLOCK)
+		INNER JOIN Pet.Pet p WITH(NOLOCK) ON mh.PetId = p.Id
+		INNER JOIN Customer.Customer c WITH(NOLOCK) ON p.CustomerId = c.Id
 	WHERE p.CompanyId = @companyId
-	AND mh.codEstab = @codEstab
-	AND mh.Deleted is null
-	--Select * from pet.Behavior
+	    AND mh.codEstab = @codEstab
+	    AND mh.Deleted is null
 END
 GO

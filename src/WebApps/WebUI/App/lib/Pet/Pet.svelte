@@ -20,11 +20,14 @@
 		await client
 			.get(`Vet/Pets/?json=` + JSON.stringify({ tipo: 1 }))
 			.then((response) => {
-				if (response.code == 1) {
-					pets = JSON.parse(response.payload);
+				if (response.data.code == 1) {
+					pets = JSON.parse(response.data.payload);
 					pets.forEach((element, index) => {
                     if (element.weight === null) {
                         element.weight = "N/A";
+                    }
+                    if (element.age === null) {
+                        element.age = "N/A";
                     }
 					if (element.color === null) {
                         element.color = "N/A";
@@ -41,13 +44,13 @@
 
 	onMount(async () => {
 		await client.get("Vet/Genderes/").then((response) => {
-			genderes = response;
+			genderes = response.data;
 		});
 		await client.get("Vet/PetTypes/").then((response) => {
-			petTypes = response;
+			petTypes = response.data;
 		});
 		await client.get("Vet/Breeds/").then((response) => {
-			breeds = response;
+			breeds = response.data;
 		});
 		await getPets();
 	});
@@ -107,14 +110,13 @@
 			petTypeId: pet.petTypeId,
 			breedId: pet.breedId,
 			genderId: pet.genderId,
-			age: pet.age,
+			// age: pet.age,
 			color: pet.color,
-			weight: pet.weight,
+			// weight: pet.weight,
 		};
 		await client
 			.post("Vet/Pets/", newPet)
 			.then((response) => {
-				console.log(response);
 				toast({
 					type: "success",
 					message: "Registrada exitosamente",
@@ -143,7 +145,6 @@
 			await client
 				.delete("Vet/Pets/" + id)
 				.then((response) => {
-					console.log(response);
 					toast({
 						type: "success",
 						message: "Eliminada exitosamente",
@@ -176,10 +177,10 @@
 			petTypeId: pet.petTypeId,
 			breedId: pet.breedId,
 			genderId: pet.genderId,
-			age: pet.age,
+			// age: pet.age,
 			color: pet.color,
 			enabled: pet.enabled,
-			weight: pet.weight,
+			// weight: pet.weight,
 		};
 
 		await client
@@ -230,8 +231,8 @@
 					},
 				})
 				.then((response) => {
-					if (response.code == "1") {
-						customers = JSON.parse(response.payload);
+					if (response.data.code == "1") {
+						customers = JSON.parse(response.data.payload);
 					}
 				});
 		} else if (customers.length > 0) {
@@ -484,7 +485,7 @@
 									id="pet-age"
 									class="form-control"
 									step="any"
-									required
+									disabled
 									bind:value={pet.age}
 								/>
 							</div>
@@ -511,7 +512,7 @@
 									class="form-control"
 									placeholder="5.5"
 									step="any"
-									required
+									disabled
 									bind:value={pet.weight}
 								/>
 							</div>

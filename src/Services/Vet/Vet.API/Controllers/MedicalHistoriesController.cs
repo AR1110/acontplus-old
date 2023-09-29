@@ -79,16 +79,18 @@ namespace Vet.API.Controllers
         [HttpPost("Report/{id}")]
         public async Task<IActionResult> GetReport(int id)
         {
-            //var medicalHistory = await _context.MedicalHistories.FindAsync(id);
-
-            //if (medicalHistory == null)
-            //{
-            //    return NotFound();
-            //}
-
-            var data = await _medicalHistory.GetReportAsync(new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } });
-            if (data == null) { return BadRequest("No se pudo obtener el reporte"); };
-            return File(data.FileContents, data.ContentType, data.FileDownloadName);
+            try
+            {
+                var data = await _medicalHistory.GetReportAsync(new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "id", id } });
+                if (data == null) { return BadRequest("No se pudo obtener el reporte"); };
+                return File(data.FileContents, data.ContentType, data.FileDownloadName);
+            }
+            catch (Exception ex)
+            {
+                _ = ex.Message;
+                return BadRequest("Error al obtener el reporte");
+            }
+            
         }
 
         // PUT: api/MedicalHistories/5
@@ -105,11 +107,25 @@ namespace Vet.API.Controllers
             var mh = await _context.MedicalHistories.FindAsync(id);
             mh.Date = medicalHistory.Date;
             mh.Observations = medicalHistory.Observations;
+            mh.Age = medicalHistory.Age;
+            mh.Weight = medicalHistory.Weight;
             mh.UpdatedAt = DateTime.Now;
             mh.CodEstab = medicalHistory.CodEstab;
             mh.UserId = User.GetUserId();
+
+            var pet = await _context.Pets.FindAsync(mh.PetId);
+
+            if (pet != null)
+            {
+                pet.Age = medicalHistory.Age;
+                pet.Weight = medicalHistory.Weight;
+            }
+
             try
             {
+                _context.Update(pet);
+                await _context.SaveChangesAsync();
+
                 _context.Update(mh);
                 await _context.SaveChangesAsync();
             }
@@ -133,11 +149,31 @@ namespace Vet.API.Controllers
         [HttpPost]
         public async Task<ActionResult<MedicalHistory>> PostMedicalHistory(MedicalHistory medicalHistory)
         {
-            medicalHistory.UserId = User.GetUserId();
-            _context.MedicalHistories.Add(medicalHistory);
-            await _context.SaveChangesAsync();
+            try
+            {
+                medicalHistory.UserId = User.GetUserId();
+                _context.MedicalHistories.Add(medicalHistory);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetMedicalHistory", new { id = medicalHistory.Id }, medicalHistory);
+                var pet = await _context.Pets.FindAsync(medicalHistory.PetId);
+
+                if (pet != null)
+                {
+                    pet.Age = medicalHistory.Age;
+                    pet.Weight = medicalHistory.Weight;
+                }
+
+                _context.Update(pet);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetMedicalHistory", new { id = medicalHistory.Id }, medicalHistory);
+            }
+            catch (Exception ex)
+            {
+                _ = ex.Message;
+                return BadRequest("Error al guardar");
+            }
+            
         }
 
         // DELETE: api/MedicalHistories/5

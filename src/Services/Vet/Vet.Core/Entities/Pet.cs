@@ -18,8 +18,8 @@ namespace Vet.Core.Entities
         public int? BreedId { get; set; }
         public virtual Gender Gender { get; set; }
         public int? GenderId { get; set; }
-        [Column(TypeName = "numeric(4,2), not null")]
-        public decimal Age { get; set; }
+        [Column(TypeName = "numeric(4,2), null")]
+        public decimal? Age { get; set; }
         [Required]
         [MaxLength(50)]
         public string Color { get; set; }

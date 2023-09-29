@@ -41,9 +41,9 @@ BEGIN
 
 	--Main DS
 		SELECT CASE 
-				WHEN [p].[Age] < 1 THEN CONVERT(VARCHAR, [p].[Age]) + ' meses' 
-				WHEN [p].[Age] = 1 THEN CONVERT(VARCHAR, [p].[Age]) + ' año'
-				WHEN [p].[Age] > 1 THEN CONVERT(VARCHAR, [p].[Age]) + ' años'
+				WHEN [mh].[Age] < 1 THEN CONVERT(VARCHAR, [mh].[Age]) + ' meses' 
+				WHEN [mh].[Age] = 1 THEN CONVERT(VARCHAR, [mh].[Age]) + ' año'
+				WHEN [mh].[Age] > 1 THEN CONVERT(VARCHAR, [mh].[Age]) + ' años'
 				END petAge
 		,[p].[Name] petName
 		,p.Color petColor
@@ -72,7 +72,7 @@ BEGIN
 		,[ds].[Name] diseaseStatus
 		,ds.[Order]
 		,CASE WHEN hc.DiseaseStatusId = ds.Id AND hc.DiseaseId = d.Id THEN 'x' ELSE '' END diseaseSelected
-	FROM Pet.HealthCheck hc
+	FROM Pet.HealthCheck hc WITH(NOLOCK)
 		INNER JOIN Pet.Disease d WITH(NOLOCK) ON hc.DiseaseId = d.Id
 		CROSS JOIN Pet.DiseaseStatus ds
 	WHERE hc.MedicalHistoryId = @id
@@ -83,18 +83,18 @@ BEGIN
 		,[b].[Name] behavior
 		,bs.[Order]
 		,CASE WHEN bt.BehaviorStatusId= bs.Id AND bt.BehaviorId = b.Id THEN 'x' ELSE '' END behaviorSelected
-	FROM Pet.BehaviorTest bt  
+	FROM Pet.BehaviorTest bt WITH(NOLOCK)
 		INNER JOIN Pet.Behavior b WITH(NOLOCK) ON bt.BehaviorId = b.Id
 		CROSS JOIN Pet.BehaviorStatus bs
 	WHERE bt.MedicalHistoryId = @id
 
 		--RdlcParams
 	DECLARE @petId INT 
-	SET @petId = (SELECT PetId FROM Pet.MedicalHistory WHERE id = @id)
+	SET @petId = (SELECT PetId FROM Pet.MedicalHistory WITH(NOLOCK) WHERE id = @id)
 	SELECT TOP 1 @logoImg = imagen
 			,@mimeType = mimeType
-	FROM AcontPlus.Config.Estab_Logo
-	WHERE ruc = (SELECT TOP 1 e.ruc FROM Pet.Pet p INNER JOIN Entidad e ON p.CompanyId = e.idEntidad WHERE id = @petId)
+	FROM AcontPlus.Config.Estab_Logo WITH(NOLOCK)
+	WHERE ruc = (SELECT TOP 1 e.ruc FROM Pet.Pet p WITH(NOLOCK) INNER JOIN Entidad e WITH(NOLOCK) ON p.CompanyId = e.idEntidad WHERE id = @petId)
 	ORDER BY idEstab_Logo DESC
 
     INSERT INTO @tblParams(paramName, isBase64, paramValue)

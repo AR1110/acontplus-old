@@ -567,8 +567,8 @@ namespace Vet.Infrastructure.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("Age")
-                        .HasColumnType("numeric(4,2), not null");
+                    b.Property<decimal?>("Age")
+                        .HasColumnType("numeric(4,2), null");
 
                     b.Property<DateTime?>("Birthdate")
                         .HasColumnType("datetime2");
