@@ -163,16 +163,21 @@
     if (!onValidation()) return;
     if (!onValidationHour()) return;
 
+    let newPromotionMenu = promotionMenus.map((e) => {
+      return {
+        promotionId: e.promotionId,
+        menuId: e.menuId,
+      };
+    });
+    
     dataUpdate.promotionDays = JSON.stringify(daysSelected);
     let newObject = {
       ...dataUpdate,
-      promotionMenus: promotionMenus,
+      promotionMenus: newPromotionMenu,
     };
 
-    let params = JSON.stringify(newObject );
-
     showLoader();
-    PromotionService.post(params, file)
+    PromotionService.post(JSON.stringify(newObject), file)
       .then((response) => {
         if (response.status === 200) {
           if (response.data.code === "1") {
@@ -195,16 +200,19 @@
     if (!onValidationHour()) return;
 
     showLoader();
+
+    let newPromotionMenu = promotionMenus.map((e) => {
+      return { id: e.id, promotionId: e.promotionId,menuId: e.menuId };
+    });
+    console.log(newPromotionMenu);
+
     dataUpdate.promotionDays = JSON.stringify(daysSelected);
     let newObject = {
       ...dataUpdate,
-      promotionMenus: promotionMenus,
+      promotionMenus: newPromotionMenu,
     };
 
-    let params = JSON.stringify( newObject );
-
-
-    PromotionService.put(dataUpdate.id, params, file)
+    PromotionService.put(dataUpdate.id, JSON.stringify(newObject), file)
       .then((response) => {
         if (response.status === 200) {
           if (response.data.code === "1") {
@@ -285,13 +293,13 @@
       ...state,
       isOpen: false,
       dataUpdate: {
-      id: 0,
-      codEstab: "",
-      description: "",
-      startDate: "",
-      endDate: "",
-      promotionDays: "",
-    },
+        id: 0,
+        codEstab: "",
+        description: "",
+        startDate: "",
+        endDate: "",
+        promotionDays: "",
+      },
     }));
   };
 
