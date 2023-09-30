@@ -12,6 +12,30 @@ async function search(params) {
     })
 }
 
+function getDataForm(obj: { tipo: 1 | 5 })  {
+    return client.get(`${url}Get?json=${JSON.stringify(obj)}`).then(responseAxios => {
+        let response = responseAxios.data;
+        let obj = {
+            subfamilias: []
+        }
+        if (response.code === "1") {
+            let mainData = JSON.parse(response.payload);
+            let tempSubfamilias = mainData[2];
+            obj.subfamilias = tempSubfamilias.map(subfamilia => {
+                return {
+                    idSubFamilia: subfamilia.idSubFamilia,
+                    siglas: subfamilia.siglas,
+                    descripcion: subfamilia.subFamilia
+                }
+            })
+        } else {
+            console.log(response.data)
+        }
+        return obj;
+    })
+}
+
 export const ArticleService = {
-    search
+    search,
+    getDataForm
 }

@@ -58,6 +58,7 @@
 		<None Remove="Reports\NotFound.pdf" />
 		<None Remove="Reports\OpenMoneyBox.rdl" />
 		<None Remove="Reports\OrdenCompra.rdlc" />
+		<None Remove="Reports\Restaurant\ItemIngredient.rdl" />
 		<None Remove="Reports\Retencion.rdlc" />
 		<None Remove="Reports\Test.rdlc" />
 		<None Remove="Reports\Ventas\AprobDocument.rdl" />
@@ -182,6 +183,9 @@
 		<Content Include="Reports\OrdenCompra.rdlc">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
+		<Content Include="Reports\Restaurant\ItemIngredient.rdl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 		<Content Include="Reports\Retencion.rdlc">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
@@ -258,10 +262,6 @@
 	  <ProjectReference Include="..\..\Common\Common.Reports\Common.Reports.csproj" />
 	  <ProjectReference Include="..\..\Common\DataAccess\DataAccess.csproj" />
 	  <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Reports\Restaurant\" />
 	</ItemGroup>
 
 </Project>

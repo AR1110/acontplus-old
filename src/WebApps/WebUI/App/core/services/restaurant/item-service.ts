@@ -1,8 +1,9 @@
 import { client } from "$core/api/axiosClient.js";
 let url = "Restaurant/Item/";
 
-async function get(json: string) {
-    return await client.get(url + "?json=" + json).then(
+async function get(json: string, cancelToken?:any) {
+    
+    return await client.get(url + "?json=" + json, {cancelToken: cancelToken.token}).then(
         (res) => {
             if (res.status != 200) return null;
             return res.data;

@@ -1,23 +1,35 @@
 
 
-import { client } from "$core/api/axiosClient"; 
- 
+import FileSaver from "file-saver";
+import { clientFile } from "$core/api/axiosClient";
 
- 
-class Shared {  
+
+
+class Shared {
     download(parameters: object, returnData = false) {
-        client.post('Report/Download', parameters).then(response=>{
-            console.log()
-        })
-        // const resultAxios = await Http({
-        //     method: 'post',
-        //     url: `${PATHS.REPORT}Download`,
-        //     data: JSON.stringify(parameters),
-        //     responseType: 'blob'
-        // })
 
-        
-    } 
+        clientFile('Reporte/Download', parameters).then(response => { 
+            const ieEDGE = navigator.userAgent.match(/Edge/g);
+            const ie = navigator.userAgent.match(/.NET/g); // IE 11+
+            const oldIE = navigator.userAgent.match(/MSIE/g);
+            const blob = new window.Blob([response.data], {
+                type: response.headers["content-type"],
+            });
+            let fileName = response.headers["content-disposition"]
+                .split(";")[1]
+                .split("=")[1]
+                .replace('"', "");
+            fileName = fileName.replace('"', "");
+            if (ie || oldIE || ieEDGE) {
+                FileSaver.saveAs(blob, fileName);
+            } else {
+                const fileURL = URL.createObjectURL(blob);
+                window.open(fileURL, fileName);
+            }
+        })
+
+
+    }
 
 }
 

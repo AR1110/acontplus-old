@@ -8,10 +8,17 @@
 </script>
 
 <input
-	class="form-control"
+	class="form-control border-select"
 	onclick="this.select()"
 	{placeholder}
 	use:events
 	{value}
 	{disabled}
 />
+
+<style>
+    .border-select:focus {
+      border-color: blue !important;
+    }
+  </style>
+  

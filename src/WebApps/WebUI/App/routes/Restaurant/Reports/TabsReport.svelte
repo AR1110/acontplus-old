@@ -1,13 +1,13 @@
 <script lang="ts">
     import Tabs from "$core/components/Tabs.svelte";
-  import Product from "./components/ProductIngredient.svelte";
+  import ItemIngredient from "./components/ItemIngredient.svelte";
 
   let items = [
     {
       icon: "fa-solid fa-boxes-stacked",
       label: "Producto Ingrediente",
       value: 1,
-      component: Product,
+      component: ItemIngredient,
     },
   ];
 </script>
