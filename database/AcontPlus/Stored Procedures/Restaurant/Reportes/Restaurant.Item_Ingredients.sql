@@ -35,6 +35,8 @@ BEGIN
         ,idSubfamilia INT '$.idSubfamilia'
         ,itemId INT '$.itemId'
     ) 
+
+    SELECT TOP 1 @idEntidad = idEntidad FROM v_usuario WHERE idUsuarioRol = @idUsuarioRol
  
     SELECT  
         v_ea.ruc
