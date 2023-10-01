@@ -3,7 +3,7 @@ let url = "Restaurant/Item/";
 
 async function get(json: string, cancelToken?: any) {
   // .get(url + "?json=" + json, { cancelToken: cancelToken })
-  return await client.get(url + "?json=" + json).then(
+  return await client.get(url + "?json=" + json, { cancelToken: cancelToken }).then(
     (res) => {
       if (res.status != 200) return null;
       return res.data;
