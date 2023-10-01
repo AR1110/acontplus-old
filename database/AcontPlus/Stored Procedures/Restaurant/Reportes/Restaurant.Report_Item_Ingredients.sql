@@ -56,7 +56,7 @@ BEGIN
     --INNER JOIN Inventario.v_Articulo a ON a.idArticulo = ri.ProductId
     --INNER JOIN Restaurant.Ingredient rin ON rin.Id = rr.IngredientId
 
-    --SELECT top 10 * FROM Inventario.v_Articulo
+    --SELECT top 10 * FROM Restaurant.Item
     SET @sql = '
                 SELECT 
                     --Item 
@@ -64,6 +64,7 @@ BEGIN
                     ,itemProductCode  = item_va.codigo
                     ,itemProductName = item_va.descripcion
                     ,itemProductCategory = item_va.subFamilia
+                    ,recipe = item.Recipe
                     --Ingredients
                     ,ingredientId = recip.IngredientId
                     ,ingredientProductCode = ing_va.codigo
