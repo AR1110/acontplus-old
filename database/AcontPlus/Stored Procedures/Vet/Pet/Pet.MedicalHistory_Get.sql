@@ -25,22 +25,31 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 
-	DECLARE @companyId INT,
-			@codEstab VARCHAR(15),
-            @pageIndex INT,
-            @pageSize INT
+	DECLARE     @companyId INT
+			,@codEstab VARCHAR(15)
+            ,@pageIndex INT
+            ,@pageSize INT
+            ,@textSearch VARCHAR(100)
+            ,@sql NVARCHAR(MAX)
+            ,@params NVARCHAR(MAX)
+
 
 	SET @companyId = (SELECT idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId)
 	
     SELECT @codEstab = codEstab
         ,@pageIndex = pageIndex
         ,@pageSize = pageSize
+        ,@textSearch = textSearch
+
     FROM OPENJSON(@json) WITH(
 		                       codEstab VARCHAR(15) '$.codEstab',
                                pageIndex		    INT         '$.pageIndex',
-		                       pageSize		    INT         '$.pageSize'
+		                       pageSize		    INT         '$.pageSize',
+                               textSearch         VARCHAR(20) '$.textSearch'
 	                          )
+    SET @params = N'@companyId INT, @codEstab VARCHAR(50), @pageIndex INT, @pageSize INT, @textSearch VARCHAR(20)'
 
+    SET @sql = '
 	SELECT mh.Id
         ,mh.Observations
         ,mh.Age
@@ -55,7 +64,23 @@ BEGIN
 		INNER JOIN Customer.Customer c WITH(NOLOCK) ON p.CustomerId = c.Id
 	WHERE p.CompanyId = @companyId
 	    AND mh.codEstab = @codEstab
-	    AND mh.Deleted is null
-    ORDER BY mh.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY
+	    AND mh.Deleted is null '
+
+
+     IF LEN(LTRIM(RTRIM(@textSearch))) >= 3
+                BEGIN
+                    SET @sql = @sql + ' AND p.[Name] LIKE ''%''+@textSearch+''%'' 
+                                        OR c.[BusinessName] LIKE ''%''+@textSearch+''%'' '
+                END
+                
+	        SET @sql = @sql + ' ORDER BY mh.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
+		           
+	        EXEC sp_executesql @sql 
+                                ,@params
+                                ,@companyId
+                                ,@codEstab
+                                ,@pageIndex
+                                ,@pageSize
+                                ,@textSearch
 END
 GO

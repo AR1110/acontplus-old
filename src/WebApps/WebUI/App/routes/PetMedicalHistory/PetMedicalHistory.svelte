@@ -45,9 +45,18 @@
         console.log(error);
       });
   };
+
+  let recordsQuantity = [10, 25, 50, 100];
+
+  let page = 0;
+  let pageCurrent = 0;
+  let pageSize = recordsQuantity[0];
+  let textSearch = "";
+  let timer;
+
   const initialLoad = async () => {
     medicalHistories = [];
-    showLoader();
+    //showLoader();
     await client
       .get(
         "Vet/MedicalHistories/?json=" +
@@ -55,6 +64,7 @@
             codEstab: codEstab,
             pageIndex: pageCurrent == 0 ? 1 : pageCurrent,
             pageSize: pageSize == 0 ? 9 : pageSize,
+            textSearch: textSearch,
           })
       )
       .then((response) => {
@@ -63,35 +73,33 @@
         }
       })
       .catch((error) => {
-        hideLoader();
+        //hideLoader();
         console.log(error);
       });
-    hideLoader();
+    //hideLoader();
   };
-
-  let recordsQuantity = [5, 10, 25, 50, 100];
-
-  let page = 0;
-  let pageCurrent = 0;
-  let pageSize = recordsQuantity[0];
 
   const onPageChange = (event) => {
     page = event.detail.page;
     pageCurrent = page + 1;
+    console.log("one");
     initialLoad();
   };
 
   const onChange = (e) => {
     pageSize = parseInt(e.target.value);
+    console.log("two");
     initialLoad();
   };
 
   const search = (e) => {
     clearTimeout(timer);
     timer = setTimeout(() => {
-      if (e.target.value != "") {
+      if (e.target.value != "" && e.target.value.length >= 3) {
+        textSearch = e.target.value;
         initialLoad();
       } else {
+        textSearch = "";
         initialLoad();
       }
     }, 750);
@@ -99,9 +107,10 @@
 
   const clearInput = () => {
     document.querySelector("input").value = "";
+    textSearch = "";
     search({ target: { value: "" } });
   };
-  
+
   const getReport = async (id) => {
     //Add authentication headers as params
     // var params = {
@@ -275,49 +284,45 @@
 	/> -->
 {/if}
 
-{#if medicalHistories.length > 0}
-  <div class="row">
-    <div class="col-lg-9 col-md-9 col-sm-1">
-      <span class="form-group pull-left page-size form-inline">
-        <select
-          class="form-control control-color"
-          on:change={(e) => onChange(e)}
-        >
-          {#each recordsQuantity as record}
-            <option value={record}>{record}</option>
-          {/each}
-        </select>
-      </span>
-    </div>
-    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-      <div class="input-group mb-3">
-        <input
-          type="text"
-          class="form-control form-control-lg search-input"
-          placeholder="Buscar..."
-          aria-label=""
-          aria-describedby="basic-addon1"
-          on:keyup={(e) => {
-            search(e);
+<div class="row">
+  <div class="col-lg-9 col-md-9 col-sm-1">
+    <span class="form-group pull-left page-size form-inline">
+      <select class="form-control control-color" on:change={(e) => onChange(e)}>
+        {#each recordsQuantity as record}
+          <option value={record}>{record}</option>
+        {/each}
+      </select>
+    </span>
+  </div>
+  <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+    <div class="input-group mb-3">
+      <input
+        type="text"
+        class="form-control form-control-lg search-input"
+        placeholder="Buscar..."
+        aria-label=""
+        aria-describedby="basic-addon1"
+        on:keyup={(e) => {
+          search(e);
+        }}
+      />
+      <div class="input-group-append">
+        <button
+          class="btn btn-outline-secondary"
+          on:click={() => {
+            clearInput();
           }}
-        />
-        <div class="input-group-append">
-          <button
-            class="btn btn-outline-secondary"
-            on:click={() => {
-              clearInput();
-            }}
-            type="button"><i class="fa fa-sync" /></button
-          >
-        </div>
+          type="button"><i class="fa fa-sync" /></button
+        >
       </div>
     </div>
   </div>
+</div>
+{#if medicalHistories.length > 0}
   <div class="card">
     <div class="card-body">
       <div class="table-responsive">
         <table class="table">
-          <caption>Registros</caption>
           <thead>
             <tr>
               <th>Cliente</th>
