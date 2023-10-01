@@ -7,21 +7,24 @@
   let items = [
     {
       icon: "fa-solid fa-plate-wheat",
-      label: "Menus",
-      value: 1,
-      component: Menus,
-    },
-    {
-      label: "Promociones",
-      value: 2,
-      component: Promotion,
-    },
-    {
       label: "Productos",
-      value: 3,
+      value: 1,
       component: Items,
     },
     {
+      icon: "fa-solid fa-plate-wheat",
+      label: "Menus",
+      value: 2,
+      component: Menus,
+    },
+    {
+      icon: "fa-solid fa-plate-wheat",
+      label: "Promociones",
+      value: 3,
+      component: Promotion,
+    },
+    {
+      icon: "fa-solid fa-plate-wheat",
       label: "Ingredientes",
       value: 4,
       component: Ingredient,
