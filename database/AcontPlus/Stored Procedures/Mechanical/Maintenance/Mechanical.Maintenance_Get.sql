@@ -19,29 +19,52 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
     
-    DECLARE @tipo INT 
-           ,@SupportId INT
+    DECLARE @Id INT ,@tipo INT ,@CompanyId INT 
+
+    SELECT @CompanyId = idEntidad FROM dbo.v_usuario WHERE idUsuarioRol = @userRoleId
 
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
 
+    -- GET
+    IF @tipo = 1
+        BEGIN
+            
+            SET @tableNames = 'maintenances'
 
-    -- GET DATA FORM FOR INSPECTION 
-    IF @tipo = 3
-        BEGIN   
-            SELECT @SupportId = SupportId FROM OPENJSON(@json) WITH (SupportId INT '$.supportId')
-
-            SET @tableNames = 'support,vehicleParts'
-
-            SELECT [Common].[ufnGetSerieDocument](estab,ptoEmi,[Sequence],0) as [Sequence] 
-                  ,Brand
-                  ,VehicleType
-                  ,[Model]
-                  ,Color
-                  ,Engine
-            FROM Mechanical.v_Support WITH (NOLOCK)
-            WHERE Id = @SupportId
-
-            SELECT Id,Part,CodePart,CodeTypePart FROM Mechanical.v_VehiclePart WITH (NOLOCK) WHERE Deleted IS NULL AND [Enabled] = 1
-
+            SELECT Id
+                  ,FORMAT([Date], 'dd/MM/yyyy HH:mm') as [Date]
+                  ,Obs
+	        FROM Mechanical.v_Maintenance WITH (NOLOCK)
+            WHERE CompanyId = @CompanyId
+           
+            RETURN
         END 
+
+    -- GET FOT EDIT 
+     IF @tipo = 2
+        BEGIN
+            
+            SELECT @Id = Id FROM OPENJSON(@json) WITH (Id INT '$.id')
+
+            SET @tableNames = 'maintenance,maintenanceDetail'
+
+            SELECT Id
+                  ,InspectionId
+                  ,FORMAT([Date], 'yyyy-MM-dd') as [Date]
+                  ,Obs
+	        FROM Mechanical.v_Maintenance WITH (NOLOCK)
+            WHERE Id = @Id
+            
+            SELECT md.Id
+                  ,md.ArticuloId as idArticulo
+                  ,md.[Description] as descripcion
+                  ,ar.codigo
+                  ,md.Quantity
+            FROM Mechanical.MaintenanceDetail md WITH (NOLOCK)
+            INNER JOIN dbo.Articulo           ar WITH (NOLOCK) ON ar.idArticulo = md.ArticuloId
+            WHERE MaintenanceId = @Id 
+
+            RETURN 
+        END 
+
 END
