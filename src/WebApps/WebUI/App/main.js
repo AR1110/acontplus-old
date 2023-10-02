@@ -11,6 +11,7 @@ import Reports from "$restaurant/Reports/page.svelte";
 import Vehicle from "$mechanical/Vehicle/page.svelte";
 import Support from "$mechanical/Support/page.svelte";
 import Maintenance from "$mechanical/Maintenance/page.svelte";
+import TechnicalSupport from "$technical-support/page.svelte";
 
 let target = document.querySelector("#pet");
 if (target) {
@@ -75,6 +76,11 @@ if (target) {
 target = document.querySelector("#mechanical-maintenance");
 if (target) {
   new Maintenance({ target });
+}
+
+target = document.querySelector("#technical-support");
+if (target) {
+  new TechnicalSupport({ target });
 }
 
 import App from "./App.svelte";

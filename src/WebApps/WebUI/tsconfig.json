@@ -49,6 +49,9 @@
             "$petmedicalhistory/*": [
                 "App/routes/PetMedicalHistory/*"
             ],
+            "$technical-support/*": [
+                "App/routes/TechnicalSupport"
+            ]
         }
     }
 }

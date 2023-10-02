@@ -37,6 +37,7 @@ export default {
                 { find: "$pet", replacement: path.resolve(__dirname, "../WebUI/App/routes") + "/Pet" },
                 { find: "$petbreed", replacement: path.resolve(__dirname, "../WebUI/App/routes") + "/PetBreed" },
                 { find: "$petmedicalhistory", replacement: path.resolve(__dirname, "../WebUI/App/routes") + "/PetMedicalHistory" },
+                { find: "$technical-support", replacement: path.resolve(__dirname, "../WebUI/App/routes") + "/TechnicalSupport" },
             ]
         }),
         replace({
