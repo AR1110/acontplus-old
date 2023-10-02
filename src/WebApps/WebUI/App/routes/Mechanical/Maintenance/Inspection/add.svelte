@@ -553,18 +553,20 @@
 
           <!-- Cabina -->
           <div class="card">
-            <div class="card-header" id="heading2">
+            <div class="card-header p-3 mb-2 bg-info" id="heading2">
               <h5 class="mb-0">
-                <button
-                  class="btn btn-info"
-                  data-toggle="collapse"
-                  data-target="#collapse2"
-                  aria-expanded="false"
-                  aria-controls="collapse2"
-                  type="button"
-                >
-                  CABINA
-                </button>
+                <center>
+                  <button
+                    class="btn btn-info"
+                    data-toggle="collapse"
+                    data-target="#collapse2"
+                    aria-expanded="false"
+                    aria-controls="collapse2"
+                    type="button"
+                  >
+                    <i class="ti-plus" /> CABINA
+                  </button>
+                </center>
               </h5>
             </div>
 
@@ -577,7 +579,7 @@
               <div class="card-body">
                 <div class="table-responsive">
                   <table class="table table-hover">
-                    <thead>
+                    <thead class="thead-dark">
                       <tr>
                         <th>item</th>
                         <th class="text-center">Bueno</th>
@@ -658,18 +660,20 @@
 
           <!-- Rodamiento -->
           <div class="card">
-            <div class="card-header" id="heading3">
+            <div class="card-header p-3 mb-2 bg-info" id="heading3">
               <h5 class="mb-0">
-                <button
-                  class="btn btn-info"
-                  data-toggle="collapse"
-                  data-target="#collapse3"
-                  aria-expanded="false"
-                  aria-controls="collapse3"
-                  type="button"
-                >
-                  RODAMIENTO
-                </button>
+                <center>
+                  <button
+                    class="btn btn-info"
+                    data-toggle="collapse"
+                    data-target="#collapse3"
+                    aria-expanded="false"
+                    aria-controls="collapse3"
+                    type="button"
+                  >
+                    <i class="ti-plus" /> RODAMIENTO
+                  </button>
+                </center>
               </h5>
             </div>
 
@@ -682,7 +686,7 @@
               <div class="card-body">
                 <div class="table-responsive">
                   <table class="table table-hover">
-                    <thead>
+                    <thead class="thead-dark">
                       <tr>
                         <th>item</th>
                         <th class="text-center">Bueno</th>
@@ -763,18 +767,20 @@
 
           <!-- Sistema de Transmision -->
           <div class="card">
-            <div class="card-header" id="heading4">
+            <div class="card-header p-3 mb-2 bg-info" id="heading4">
               <h5 class="mb-0">
-                <button
-                  class="btn btn-info"
-                  data-toggle="collapse"
-                  data-target="#collapse4"
-                  aria-expanded="false"
-                  aria-controls="collapse4"
-                  type="button"
-                >
-                  SISTEMA DE TRANSMISIÓN
-                </button>
+                <center>
+                  <button
+                    class="btn btn-info"
+                    data-toggle="collapse"
+                    data-target="#collapse4"
+                    aria-expanded="false"
+                    aria-controls="collapse4"
+                    type="button"
+                  >
+                    <i class="ti-plus" /> SISTEMA DE TRANSMISIÓN
+                  </button>
+                </center>
               </h5>
             </div>
 
@@ -787,7 +793,7 @@
               <div class="card-body">
                 <div class="table-responsive">
                   <table class="table table-hover">
-                    <thead>
+                    <thead class="thead-dark">
                       <tr>
                         <th>item</th>
                         <th class="text-center">Bueno</th>
@@ -868,18 +874,20 @@
 
           <!-- Sistema de Luces -->
           <div class="card">
-            <div class="card-header" id="heading5">
+            <div class="card-header p-3 mb-2 bg-info" id="heading5">
               <h5 class="mb-0">
-                <button
-                  class="btn btn-info"
-                  data-toggle="collapse"
-                  data-target="#collapse5"
-                  aria-expanded="false"
-                  aria-controls="collapse5"
-                  type="button"
-                >
-                  SISTEMA DE LUCES
-                </button>
+                <center>
+                  <button
+                    class="btn btn-info"
+                    data-toggle="collapse"
+                    data-target="#collapse5"
+                    aria-expanded="false"
+                    aria-controls="collapse5"
+                    type="button"
+                  >
+                    <i class="ti-plus" /> SISTEMA DE LUCES
+                  </button>
+                </center>
               </h5>
             </div>
 
@@ -892,7 +900,7 @@
               <div class="card-body">
                 <div class="table-responsive">
                   <table class="table table-hover">
-                    <thead>
+                    <thead class="thead-dark">
                       <tr>
                         <th>item</th>
                         <th class="text-center">Bueno</th>
@@ -973,18 +981,20 @@
 
           <!-- Sistema de Frenos -->
           <div class="card">
-            <div class="card-header" id="heading6">
+            <div class="card-header p-3 mb-2 bg-info" id="heading6">
               <h5 class="mb-0">
-                <button
-                  class="btn btn-info"
-                  data-toggle="collapse"
-                  data-target="#collapse6"
-                  aria-expanded="false"
-                  aria-controls="collapse6"
-                  type="button"
-                >
-                  SISTEMA DE FRENOS
-                </button>
+                <center>
+                  <button
+                    class="btn btn-info"
+                    data-toggle="collapse"
+                    data-target="#collapse6"
+                    aria-expanded="false"
+                    aria-controls="collapse6"
+                    type="button"
+                  >
+                    <i class="ti-plus" /> SISTEMA DE FRENOS
+                  </button>
+                </center>
               </h5>
             </div>
 
@@ -997,7 +1007,7 @@
               <div class="card-body">
                 <div class="table-responsive">
                   <table class="table table-hover">
-                    <thead>
+                    <thead class="thead-dark">
                       <tr>
                         <th>item</th>
                         <th class="text-center">Bueno</th>
@@ -1078,18 +1088,20 @@
 
           <!-- Sistema de Direccion -->
           <div class="card">
-            <div class="card-header" id="heading7">
+            <div class="card-header p-3 mb-2 bg-info" id="heading7">
               <h5 class="mb-0">
-                <button
-                  class="btn btn-info"
-                  data-toggle="collapse"
-                  data-target="#collapse7"
-                  aria-expanded="false"
-                  aria-controls="collapse7"
-                  type="button"
-                >
-                  SISTEMA DE DIRECCIÓN
-                </button>
+                <center>
+                  <button
+                    class="btn btn-info"
+                    data-toggle="collapse"
+                    data-target="#collapse7"
+                    aria-expanded="false"
+                    aria-controls="collapse7"
+                    type="button"
+                  >
+                    <i class="ti-plus" /> SISTEMA DE DIRECCIÓN
+                  </button>
+                </center>
               </h5>
             </div>
 
@@ -1102,7 +1114,7 @@
               <div class="card-body">
                 <div class="table-responsive">
                   <table class="table table-hover">
-                    <thead>
+                    <thead class="thead-dark">
                       <tr>
                         <th>item</th>
                         <th class="text-center">Bueno</th>
@@ -1183,18 +1195,20 @@
 
           <!-- Sistema de Suspension -->
           <div class="card">
-            <div class="card-header" id="heading8">
+            <div class="card-header p-3 mb-2 bg-info" id="heading8">
               <h5 class="mb-0">
-                <button
-                  class="btn btn-info"
-                  data-toggle="collapse"
-                  data-target="#collapse8"
-                  aria-expanded="false"
-                  aria-controls="collapse8"
-                  type="button"
-                >
-                  SISTEMA DE SUSPENSIÓN
-                </button>
+                <center>
+                  <button
+                    class="btn btn-info"
+                    data-toggle="collapse"
+                    data-target="#collapse8"
+                    aria-expanded="false"
+                    aria-controls="collapse8"
+                    type="button"
+                  >
+                    <i class="ti-plus" /> SISTEMA DE SUSPENSIÓN
+                  </button>
+                </center>
               </h5>
             </div>
 
@@ -1207,7 +1221,7 @@
               <div class="card-body">
                 <div class="table-responsive">
                   <table class="table table-hover">
-                    <thead>
+                    <thead class="thead-dark">
                       <tr>
                         <th>item</th>
                         <th class="text-center">Bueno</th>
