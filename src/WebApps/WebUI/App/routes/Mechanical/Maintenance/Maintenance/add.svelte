@@ -16,6 +16,8 @@
 
   MaintenanceStore.subscribe((values) => {
     maintenance = values.maintenance;
+    maintenanceDetails = values.maintenanceDetail;
+    console.log(values);
   });
 
   // SEARCH THE VECICLES WITH CUSTOMER
@@ -65,6 +67,7 @@
       data: {
         maintenance,
         maintenanceDetails: maintenanceDetails.map((item) => ({
+          id: item.id > 0 ? item.id : 0,
           articuloId: item.idArticulo,
           description: item.descripcion,
           quantity: item.quantity,
@@ -89,8 +92,10 @@
       data: {
         maintenance,
         maintenanceDetails: maintenanceDetails.map((item) => ({
+          id: item.id > 0 ? item.id : 0,
           articuloId: item.idArticulo,
           description: item.descripcion,
+          quantity: item.quantity,
         })),
       },
     }).then((response) => {
@@ -110,6 +115,14 @@
     try {
       if (paramValidation.includes(maintenance.date)) {
         toast({ type: "warning", message: "Ingrese la fecha" });
+        return;
+      }
+
+      if (paramValidation.includes(maintenance.inspectionId)) {
+        toast({
+          type: "warning",
+          message: "Seleccione a que inspección se hará el mantenimiento",
+        });
         return;
       }
 
@@ -141,6 +154,13 @@
     MaintenanceStore.update((state) => ({
       ...state,
       isOpen: false,
+      maintenance: {
+        id: 0,
+        inspectionId: 0,
+        date: new Date().toISOString().slice(0, 10),
+        obs: "",
+      },
+      maintenanceDetail: [],
     }));
   };
 </script>
