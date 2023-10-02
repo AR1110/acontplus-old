@@ -1,9 +1,9 @@
-import { SupportService } from '$core/services/mechanical/support-service'
-import { hideLoader, showLoader } from "$core/utils/loading-spinner";
+import { SupportService } from '$lib/services/mechanical/support-service'
+import { hideLoader, showLoader } from "$lib/utils/loading-spinner";
 import { writable } from 'svelte/store'
-import type { Support } from '$core/interfaces/mechanical/support';
-import type { Vehicle } from '$core/interfaces/mechanical/vehicle';
-import type { Customer } from '$core/interfaces/customer/customer';
+import type { Support } from '$lib/interfaces/mechanical/support';
+import type { Vehicle } from '$lib/interfaces/mechanical/vehicle';
+import type { Customer } from '$lib/interfaces/customer/customer';
 
 type StateModal = {
     isOpen: boolean;

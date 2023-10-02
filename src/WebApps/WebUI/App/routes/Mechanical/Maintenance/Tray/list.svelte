@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { SupportService } from "$core/services/mechanical/support-service";
+  import { SupportService } from "$lib/services/mechanical/support-service";
   import { InspectionStore } from "$routes/Mechanical/Store/inspection.store";
-  import { hideLoader, showLoader } from "$core/utils/loading-spinner";
+  import { hideLoader, showLoader } from "$lib/utils/loading-spinner";
   import Add from "../Inspection/add.svelte";
 
   let trays = [];

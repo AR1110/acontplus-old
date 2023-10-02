@@ -1,11 +1,11 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { hideLoader, showLoader } from "$core/utils/loading-spinner";
+  import { hideLoader, showLoader } from "$lib/utils/loading-spinner";
   import { supportStore } from "$routes/Mechanical/Store/support.store";
-  import { SupportService } from "$core/services/mechanical/support-service";
-  import toast from "$core/utils/toast";
+  import { SupportService } from "$lib/services/mechanical/support-service";
+  import toast from "$lib/utils/toast";
   import Swal from "sweetalert2";
-  import Pagination from "$core/components/Pagination.svelte";
+  import Pagination from "$lib/components/Pagination.svelte";
   import Add from "./add.svelte";
 
   let supports = [];

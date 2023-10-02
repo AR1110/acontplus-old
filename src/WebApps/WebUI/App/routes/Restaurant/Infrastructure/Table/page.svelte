@@ -1,14 +1,14 @@
 <script lang="ts">
-  import Breadcrumbs from "$core/components/Breadcrumbs.svelte";
+  import Breadcrumbs from "$lib/components/Breadcrumbs.svelte";
   import { onMount } from "svelte";
   import Add from "./components/add.svelte";
   import List from "./components/list.svelte";
-  import { estabAsignService } from "$core/services/restaurant/estab-asign-service";
-  import { tableService } from "$core/services/restaurant/table-service";
+  import { estabAsignService } from "$lib/services/restaurant/estab-asign-service";
+  import { tableService } from "$lib/services/restaurant/table-service";
   import SelectEstablecimiento from "../Components/SelectEstablecimiento.svelte";
-  import { hideLoader, showLoader } from "$core/utils/loading-spinner";
-  import type { Room } from "$core/interfaces/restaurant/room";
-  import { roomService } from "$core/services/restaurant/room-service";
+  import { hideLoader, showLoader } from "$lib/utils/loading-spinner";
+  import type { Room } from "$lib/interfaces/restaurant/room";
+  import { roomService } from "$lib/services/restaurant/room-service";
   let title = "Mesas";
 
   // Modal management

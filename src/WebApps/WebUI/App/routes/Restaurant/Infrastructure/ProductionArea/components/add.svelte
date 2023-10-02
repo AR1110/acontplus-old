@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { productionAreaService } from "$core/services/restaurant/production-area-service";
-	import Modal from "$core/components/Modal.svelte";
-	import type { ProductionArea } from "$core/interfaces/restaurant/production-area";
-	import toast from "$core/utils/toast";
-  import { hideLoader, showLoader } from "$core/utils/loading-spinner";
+	import { productionAreaService } from "$lib/services/restaurant/production-area-service";
+	import Modal from "$lib/components/Modal.svelte";
+	import type { ProductionArea } from "$lib/interfaces/restaurant/production-area";
+	import toast from "$lib/utils/toast";
+  import { hideLoader, showLoader } from "$lib/utils/loading-spinner";
 
 	export let openNew;
 	export let modalClosed;

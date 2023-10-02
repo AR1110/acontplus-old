@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { hideLoader, showLoader } from "$core/utils/loading-spinner";
-  import { IngredientService } from "$core/services/restaurant/ingredient-service";
+  import { hideLoader, showLoader } from "$lib/utils/loading-spinner";
+  import { IngredientService } from "$lib/services/restaurant/ingredient-service";
   import { useIngredientStore } from "$routes/Restaurant/store/ingredientsStore";
-  import Modal from "$core/components/Modal.svelte";
-  import toast from "$core/utils/toast";
-  import type { Ingredient } from "$core/interfaces/restaurant/ingredient";
+  import Modal from "$lib/components/Modal.svelte";
+  import toast from "$lib/utils/toast";
+  import type { Ingredient } from "$lib/interfaces/restaurant/ingredient";
 
   let ingredient;
   let ingredientType = [];

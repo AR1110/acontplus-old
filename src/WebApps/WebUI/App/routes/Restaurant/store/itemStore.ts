@@ -1,11 +1,11 @@
 import { writable } from "svelte/store";
-import { itemService } from "$core/services/restaurant/item-service";
-import { hideLoader, showLoader } from "$core/utils/loading-spinner";
-import { IngredientService } from "$core/services/restaurant/ingredient-service";
-import { productionAreaService } from "$core/services/restaurant/production-area-service";
-import type { Item } from "$core/interfaces/restaurant/item";
-import { RecipeService } from "../../../core/services/restaurant/recipe-service";
-import type { Ingredient } from "../../../core/interfaces/restaurant/ingredient";
+import { itemService } from "$lib/services/restaurant/item-service";
+import { hideLoader, showLoader } from "$lib/utils/loading-spinner";
+import { IngredientService } from "$lib/services/restaurant/ingredient-service";
+import { productionAreaService } from "$lib/services/restaurant/production-area-service";
+import type { Item } from "$lib/interfaces/restaurant/item";
+import { RecipeService } from "$lib/services/restaurant/recipe-service";
+import type { Ingredient } from "$lib/interfaces/restaurant/ingredient";
 
 type StateModal = {
     description: string;

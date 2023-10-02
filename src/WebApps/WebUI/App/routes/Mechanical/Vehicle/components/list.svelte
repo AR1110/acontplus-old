@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { showLoader, hideLoader } from "$core/utils/loading-spinner";
-  import toast from "$core/utils/toast";
+  import { showLoader, hideLoader } from "$lib/utils/loading-spinner";
+  import toast from "$lib/utils/toast";
   import Swal from "sweetalert2";
-  import Search from "$core/components/Search.svelte";
-  import type { Vehicle } from "$core/interfaces/Mechanical/vehicle";
-  import type { Customer } from "$core/interfaces/customer/customer";
-  import { VehicleService } from "$core/services/Mechanical/vehicle-service";
+  import Search from "$lib/components/Search.svelte";
+  import type { Vehicle } from "$lib/interfaces/Mechanical/vehicle";
+  import type { Customer } from "$lib/interfaces/customer/customer";
+  import { VehicleService } from "$lib/services/Mechanical/vehicle-service";
   import Add from "./add.svelte";
   import { vehicleStore } from "$routes/Mechanical/Store/vehicle.store";
   import { onMount } from "svelte";

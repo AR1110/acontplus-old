@@ -2,7 +2,7 @@
   import Items from "../Items/page.svelte";
   import Menus from "../Menus/page.svelte";
   import Ingredient from "../Ingredient/page.svelte";
-  import Tabs from "$core/components/Tabs.svelte";
+  import Tabs from "$lib/components/Tabs.svelte";
   import Promotion from "../Promotions/page.svelte";
   let items = [
     {

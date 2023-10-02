@@ -3,7 +3,7 @@
   import Floors from '../Floor/page.svelte';
   import Rooms from '../Room/page.svelte';
   import Tables from '../Table/page.svelte';
-  import Tabs from '$core/components/Tabs.svelte';
+  import Tabs from '$lib/components/Tabs.svelte';
 
   let items = [
     {

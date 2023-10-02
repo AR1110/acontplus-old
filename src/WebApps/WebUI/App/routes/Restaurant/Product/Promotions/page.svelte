@@ -1,6 +1,6 @@
 ﻿<script lang="ts">
   import { usePromotionStore } from "$routes/Restaurant/store/promotionStore";
-  import Breadcrumbs from "$core/components/Breadcrumbs.svelte";
+  import Breadcrumbs from "$lib/components/Breadcrumbs.svelte";
   import Add from "./Components/Add.svelte";
   import List from "./Components/List.svelte";
 </script>

@@ -1,13 +1,13 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import Modal from "$core/components/Modal.svelte";
-  import toast from "$core/utils/toast";
-  import { showLoader, hideLoader } from "$core/utils/loading-spinner";
-  import type { Vehicle } from "$core/interfaces/mechanical/vehicle";
-  import type { Customer } from "$core/interfaces/customer/customer";
-  import { VehicleService } from "$core/services/mechanical/vehicle-service";
-  import { CustomerService } from "$core/services/customer/customer-service";
-  import AdvancedSearch from "$core/components/AdvancedSearch.svelte";
+  import Modal from "$lib/components/Modal.svelte";
+  import toast from "$lib/utils/toast";
+  import { showLoader, hideLoader } from "$lib/utils/loading-spinner";
+  import type { Vehicle } from "$lib/interfaces/mechanical/vehicle";
+  import type { Customer } from "$lib/interfaces/customer/customer";
+  import { VehicleService } from "$lib/services/mechanical/vehicle-service";
+  import { CustomerService } from "$lib/services/customer/customer-service";
+  import AdvancedSearch from "$lib/components/AdvancedSearch.svelte";
   import { vehicleStore } from "$routes/Mechanical/Store/vehicle.store";
 
   export let openNew;

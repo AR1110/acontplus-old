@@ -1,9 +1,9 @@
 <script lang="ts">
   import { InspectionStore } from "$routes/Mechanical/Store/inspection.store";
-  import { InspectionService } from "$core/services/mechanical/inspection-service";
-  import { showLoader, hideLoader } from "$core/utils/loading-spinner";
-  import Modal from "$core/components/Modal.svelte";
-  import toast from "$core/utils/toast";
+  import { InspectionService } from "$lib/services/mechanical/inspection-service";
+  import { showLoader, hideLoader } from "$lib/utils/loading-spinner";
+  import Modal from "$lib/components/Modal.svelte";
+  import toast from "$lib/utils/toast";
 
   let support;
   let inspection;

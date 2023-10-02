@@ -27,10 +27,9 @@ export default {
     plugins: [
         alias({
             entries: [
-                { find: "$core", replacement: path.resolve(__dirname, "../WebUI/App/core") },
-                { find: "$interfaces", replacement: path.resolve(__dirname, "../WebUI/App/core/interfaces") },
-                { find: "$services", replacement: path.resolve(__dirname, "../WebUI/App/core/services") },
-                { find: "$utils", replacement: path.resolve(__dirname, "../WebUI/App/core/utils") },
+                { find: "$interfaces", replacement: path.resolve(__dirname, "../WebUI/App/lib/interfaces") },
+                { find: "$services", replacement: path.resolve(__dirname, "../WebUI/App/lib/services") },
+                { find: "$utils", replacement: path.resolve(__dirname, "../WebUI/App/lib/utils") },
                 { find: "$lib", replacement: path.resolve(__dirname, "../WebUI/App/lib") },
                 { find: "$routes", replacement: path.resolve(__dirname, "../WebUI/App/routes") },
                 { find: "$restaurant", replacement: path.resolve(__dirname, "../WebUI/App/routes/Restaurant") },

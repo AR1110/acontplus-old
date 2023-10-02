@@ -1,9 +1,9 @@
 <script>
   import { onMount } from "svelte";
-  import { client } from "$core/api/axiosClient";
-  import AdvancedSearch from "$core/components/AdvancedSearch.svelte";
-  import toast from "$core/utils/toast";
-  import { showLoader, hideLoader } from "$core/utils/loading-spinner";
+  import { client } from "$lib/utils/axiosClient";
+  import AdvancedSearch from "$lib/components/AdvancedSearch.svelte";
+  import toast from "$lib/utils/toast";
+  import { showLoader, hideLoader } from "$lib/utils/loading-spinner";
 
   export let newRecord;
   export let editStatus;
