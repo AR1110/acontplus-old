@@ -2804,7 +2804,6 @@
                           </Style>
                         </Textbox>
                         <ColSpan>6</ColSpan>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell />
@@ -2944,9 +2943,9 @@
               </Paragraphs>
               <rd:DefaultName>ExecutionTime</rd:DefaultName>
               <Top>1.76389mm</Top>
-              <Left>184.3871mm</Left>
+              <Left>188.35585mm</Left>
               <Height>6.35mm</Height>
-              <Width>50.8mm</Width>
+              <Width>46.83125mm</Width>
               <Style>
                 <Border>
                   <Style>None</Style>

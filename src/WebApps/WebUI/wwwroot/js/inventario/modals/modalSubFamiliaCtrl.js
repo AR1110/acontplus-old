@@ -12,11 +12,12 @@ function ModalSubFamiliaCtrl($scope, $uibModalInstance, articuloSvc, subFamiliaS
 
     $scope.getFamilias = function () {
         try {
-
+            showLoader();
             articuloSvc.getDataForm({}).then(response => {
-                $scope.familias = response.familias
-            })
+                $scope.familias = response.familias;
+            }).finally(() => hideLoader())
         } catch (error) {
+            hideLoader();
             console.log(error);
         }
     }
