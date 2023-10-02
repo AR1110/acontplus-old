@@ -791,7 +791,7 @@
             try {
                 let modalRef = _modalSvc.openModalCustom({
                     controller: 'ModalConsolidacionImportacionCtrl',
-                    template: '~/Areas/Consolidacion/Pages/Shared/_ModalConsolidacionImportacion.cshtml' ,
+                    template: '~/Areas/Consolidacion/Pages/Shared/_ModalConsolidacionImportacion.cshtml',
                     isRenderRazorPartial: true,
                     size: 'xl',
                     windowClass: 'uibModalFullScreen'
@@ -1130,33 +1130,33 @@
 
         $scope.initialLoad = () => {
             try {
-                
-                showLoader();
-                const query = { 
-                    tipo: 9, 
-                }
-                articleSvc.getForImportation(query).then(response=>{
-                    hideLoader();                    
-                    $scope.articulosImportados = response;
-                        let num = 1;
-                        $scope.gridOptions.data = $scope.articulosImportados.map(item => ({
-                            ...item,
-                            idBodega: $scope.idBodega,
-                            precioActual: item.precioCosto,
-                            cantidad: item.stock,
-                            total: item.stock * item.precioCosto,
-                            num: num++
-                        }))
-                        $scope.setTotalDetalle();
 
-                }).catch(error=>{
+                showLoader();
+                const query = {
+                    tipo: 9,
+                }
+                articleSvc.getForImportation(query).then(response => {
+                    hideLoader();
+                    $scope.articulosImportados = response;
+                    let num = 1;
+                    $scope.gridOptions.data = $scope.articulosImportados.map(item => ({
+                        ...item,
+                        idBodega: $scope.idBodega,
+                        precioActual: item.precioCosto,
+                        cantidad: item.stock,
+                        total: item.stock * item.precioCosto,
+                        num: num++
+                    }))
+                    $scope.setTotalDetalle();
+
+                }).catch(error => {
                     hideLoader();
                     console.log(error)
                 })
             } catch (error) {
                 hideLoader();
                 console.log(error)
-            } 
+            }
         }
         $scope.initialLoad()
 
@@ -1277,7 +1277,7 @@
                     detalle: $scope.gridOptions.data
                 }
 
-                
+
                 _mS.getData('post', 'Consolidacion/', { data: data }, true).then(response => {
                     if (response.code === '0') {
                         hideLoader();
@@ -1349,18 +1349,18 @@
                 precioCosto: dc.precioCosto
             })
 
-            let tempArrayMedidas = medidasTemp.filter(mTemp=>mTemp.idConsolidacionInventarioDetalle===dc.idConsolidacionInventarioDetalle).map(resM=>{
-                let tempArray =  resM.medidasTemp && JSON.parse(resM.medidasTemp) || []
+            let tempArrayMedidas = medidasTemp.filter(mTemp => mTemp.idConsolidacionInventarioDetalle === dc.idConsolidacionInventarioDetalle).map(resM => {
+                let tempArray = resM.medidasTemp && JSON.parse(resM.medidasTemp) || []
                 tempMedidas.push({
                     idConsolidacionInventarioDetalle: resM.idConsolidacionInventarioDetalle,
                     idMedida: resM.idMedida,
                     descripcion: resM.medida,
                     precioCosto: resM.precioCosto
                 })
-               let resultArr =  tempMedidas.concat(tempArray);   
-               return resultArr;
-            }) 
-            
+                let resultArr = tempMedidas.concat(tempArray);
+                return resultArr;
+            })
+
             tempArrayMedidas = tempArrayMedidas[0]
             // if (dc.fraccionado) {
             //     for(let mm of tempArrayMedidas){
@@ -1370,7 +1370,7 @@
             //             precioCosto: mm.precioCosto
             //         })
             //         let tempArray =  mm.medidasTemp && JSON.parse(mm.medidasTemp) || []
-                    
+
             //     }
             //     // for (const tm of tempArray) {
             //     //     tempMedidas.push(tm)
@@ -1378,9 +1378,9 @@
             // }
             let uniquesMedidas = tempArrayMedidas.filter((obj, i) => {
                 return tempArrayMedidas.findIndex((obj2) => obj2.idMedida === obj.idMedida) === i;
-              });
+            });
             console.log(uniquesMedidas)
-            dc.medidas =  uniquesMedidas;
+            dc.medidas = uniquesMedidas;
             index++
         }
 
@@ -2162,6 +2162,31 @@
         $scope.setColumnDefsView()
 
         $scope.gridOptions.data = $scope.detalleDocumento
+
+
+        $scope.getReport = () => {
+            try {
+                let format = 'excel';
+                let dataParms = {
+                    id: $scope.data.idConsolidacionInventario,
+                    codEstab: $scope.data.codEstab,
+                    codigo: 'RCD',
+                    codDoc: 'CI',
+                    format,
+                }
+
+                const parameters = {
+                    dataParams: JSON.stringify(dataParms)
+                }
+
+                _commonSvc.getReportDynamic({
+                    parameters,
+                    format
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        }
 
         $scope.closeModal = () => {
             $uibModalInstance.close();
