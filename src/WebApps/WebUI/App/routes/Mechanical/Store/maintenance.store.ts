@@ -1,4 +1,5 @@
 import { writable } from 'svelte/store';
+import type { Maintenance } from '$core/interfaces/mechanical/maintenance';
 
 type StateModal = {
     isOpen: boolean;
@@ -7,7 +8,7 @@ type StateModal = {
 };
 
 type State = {
-    maintenance: any;
+    maintenance: Maintenance;
 };
 
 const initialModalState: StateModal = {
@@ -17,7 +18,12 @@ const initialModalState: StateModal = {
 };
 
 const initialState: State = {
-    maintenance: [],
+    maintenance: {
+        id: 0,
+        inspectionId: 0,
+        date: new Date().toISOString().slice(0, 10),
+        obs: ''
+    },
 };
 
 const createMaintenance = () => {
@@ -30,7 +36,6 @@ const createMaintenance = () => {
         update((state) => ({
             ...state,
             isOpen: true,
-
         }));
     }
 

@@ -1,13 +1,22 @@
 <script lang="ts">
   import { MaintenanceStore } from "$routes/Mechanical/Store/maintenance.store";
   import { ArticleService } from "$core/services/inventory/article-service";
+  import { MaintenanceService } from "$core/services/mechanical/maintenance-service";
   import AdvancedSearch from "$core/components/AdvancedSearch.svelte";
+  import { showLoader, hideLoader } from "$core/utils/loading-spinner";
   import Modal from "$core/components/Modal.svelte";
+  import toast from "$core/utils/toast";
 
+  let maintenance;
+  let paramValidation = [undefined, null, "", 0];
   let value = "";
   let placeholder = "Buscar Artículos";
   let articles = [];
-  let supportDetails = [];
+  let maintenanceDetails = [];
+
+  MaintenanceStore.subscribe((values) => {
+    maintenance = values.maintenance;
+  });
 
   // SEARCH THE VECICLES WITH CUSTOMER
   const onInput = async (e) => {
@@ -38,12 +47,93 @@
   const selectArticle = (e) => {
     articles = [];
     value = "";
-    supportDetails = [...supportDetails, e];
+    maintenanceDetails = [...maintenanceDetails, e];
   };
 
   // REVOME ITEM THE DETAILT SUPPORT
   const removeIten = (i) => {
-    supportDetails = supportDetails.filter((item, index) => index !== i);
+    maintenanceDetails = maintenanceDetails.filter(
+      (item, index) => index !== i
+    );
+  };
+
+  // Save
+  const onSave = () => {
+    if (!onValidate()) return;
+    showLoader();
+    MaintenanceService.post({
+      data: {
+        maintenance,
+        maintenanceDetails: maintenanceDetails.map((item) => ({
+          articuloId: item.idArticulo,
+          description: item.descripcion,
+          quantity: item.quantity,
+        })),
+      },
+    }).then((response) => {
+      hideLoader();
+      if (response.code == 1) {
+        toast({ type: "success", message: response.message });
+        onModalClose();
+      } else {
+        toast({ type: "warning", message: response.message });
+      }
+    });
+  };
+
+  // edit
+  const onUpdate = () => {
+    if (!onValidate()) return;
+    showLoader();
+    MaintenanceService.put(maintenance.id, {
+      data: {
+        maintenance,
+        maintenanceDetails: maintenanceDetails.map((item) => ({
+          articuloId: item.idArticulo,
+          description: item.descripcion,
+        })),
+      },
+    }).then((response) => {
+      hideLoader();
+      if (response.code == 1) {
+        toast({ type: "success", message: response.message });
+        onModalClose();
+      } else {
+        toast({ type: "warning", message: response.message });
+      }
+    });
+  };
+
+  // validation
+  const onValidate = () => {
+    let isValid = true;
+    try {
+      if (paramValidation.includes(maintenance.date)) {
+        toast({ type: "warning", message: "Ingrese la fecha" });
+        return;
+      }
+
+      if (paramValidation.includes(maintenance.obs)) {
+        toast({
+          type: "warning",
+          message: "Detalle el mantenimiento que esta realizando",
+        });
+        return;
+      }
+
+      if (maintenanceDetails.length == 0) {
+        toast({
+          type: "warning",
+          message: "Ingreso un detalle",
+        });
+        return;
+      }
+
+      return isValid;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
   };
 
   // CLOSE MODAL
@@ -58,14 +148,18 @@
 {#if $MaintenanceStore.isOpen}
   <Modal
     open={$MaintenanceStore.isOpen}
-    iconTitle={"ti-plus"}
-    title={"Registrar"}
+    iconTitle={maintenance.id > 0 ? "ti-async" : "ti-plus"}
+    title={maintenance.id > 0 ? "Actualizar" : "Registrar"}
     onClosed={() => onModalClose()}
     fullScreen={true}
     size={"modal-dialog-scrollable"}
   >
     <div class="modal-body">
-      <form autocomplete="off" style="text-transform:uppercase">
+      <form
+        autocomplete="off"
+        style="text-transform:uppercase"
+        on:submit|preventDefault={maintenance.id > 0 ? onUpdate : onSave}
+      >
         <div class="row">
           <div class="col">
             <label for="serch">Datos del Mantenimiento </label>
@@ -78,7 +172,11 @@
               <label for="country"
                 >Fecha <span class="text-danger"> *</span></label
               >
-              <input type="Date" class="form-control" />
+              <input
+                type="Date"
+                class="form-control"
+                bind:value={maintenance.date}
+              />
             </div>
           </div>
 
@@ -88,7 +186,11 @@
                 *</span
               ></label
             >
-            <input type="text" class="form-control" />
+            <input
+              type="text"
+              class="form-control"
+              bind:value={maintenance.obs}
+            />
           </div>
         </div>
 
@@ -139,11 +241,19 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {#each supportDetails as item, index}
+                  {#each maintenanceDetails as item, index}
                     <tr>
                       <td class="text-center">{item.codigo}</td>
                       <td class="text-center">{item.descripcion}</td>
-                      <td class="text-center">1</td>
+                      <td class="text-center"
+                        ><div class="col-12 col-sm-12 col-md-12 col-lg-12">
+                          <input
+                            type="text"
+                            class="form-control form-control-sm"
+                            bind:value={item.quantity}
+                          />
+                        </div></td
+                      >
                       <td class="text-center">
                         <button
                           type="button"

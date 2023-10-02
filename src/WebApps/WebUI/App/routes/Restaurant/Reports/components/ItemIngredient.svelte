@@ -88,7 +88,7 @@
         tipo: 1,
         textSearch: dataSearchProduct.textSearch,
       };
-      itemService.get(JSON.stringify(json), cancelToken).then((response) => {
+      itemService.get(JSON.stringify(json), cancelToken?.token).then((response) => {
         console.log(response);
         if (response) {
           productsFound = response["items"];
