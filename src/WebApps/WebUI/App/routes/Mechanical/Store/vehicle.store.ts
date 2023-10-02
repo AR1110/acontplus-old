@@ -1,4 +1,4 @@
-import { VehicleService } from '$core/services/mechanical/vehicle-service'
+import { VehicleService } from '$lib/services/mechanical/vehicle-service'
 import { writable } from 'svelte/store'
 
 const cretaeVehicle = () => {

@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
-import { hideLoader, showLoader } from "$core/utils/loading-spinner";
-import { InspectionService } from '$core/services/mechanical/inspection-service';
-import type { Inspection } from '$core/interfaces/mechanical/inspection';
+import { hideLoader, showLoader } from "$lib/utils/loading-spinner";
+import { InspectionService } from '$lib/services/mechanical/inspection-service';
+import type { Inspection } from '$lib/interfaces/mechanical/inspection';
 
 type StateModal = {
     isOpen: boolean;

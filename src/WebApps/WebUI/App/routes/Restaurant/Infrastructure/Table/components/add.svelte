@@ -1,10 +1,10 @@
 <script lang="ts">
-  import Modal from "$core/components/Modal.svelte";
-  import type { Room } from "$core/interfaces/restaurant/room";
-  import type { Table } from "$core/interfaces/restaurant/table";
-  import { tableService } from "$core/services/restaurant/table-service";
-  import { hideLoader, showLoader } from "$core/utils/loading-spinner";
-  import toast from "$core/utils/toast";
+  import Modal from "$lib/components/Modal.svelte";
+  import type { Room } from "$lib/interfaces/restaurant/room";
+  import type { Table } from "$lib/interfaces/restaurant/table";
+  import { tableService } from "$lib/services/restaurant/table-service";
+  import { hideLoader, showLoader } from "$lib/utils/loading-spinner";
+  import toast from "$lib/utils/toast";
 
   export let openNew;
   export let modalClosed;

@@ -1,7 +1,7 @@
 <script>
-  import { IngredientService } from "$core/services/restaurant/ingredient-service";
+  import { IngredientService } from "$lib/services/restaurant/ingredient-service";
   import ItemsList from "./items-list.svelte";
-  import toast from "$core/utils/toast";
+  import toast from "$lib/utils/toast";
 
   export let setOnChange;
   let filteredCountries = [];

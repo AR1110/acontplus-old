@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import type { Maintenance } from '$core/interfaces/mechanical/maintenance';
+import type { Maintenance } from '$lib/interfaces/mechanical/maintenance';
 
 type StateModal = {
     isOpen: boolean;
