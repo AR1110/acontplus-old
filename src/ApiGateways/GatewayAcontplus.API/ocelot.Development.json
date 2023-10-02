@@ -1340,7 +1340,7 @@
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/Mechanical{everything}"
-    }
+    },
     {
       "AuthenticationOptions": {
         "AllowedScopes": [],
