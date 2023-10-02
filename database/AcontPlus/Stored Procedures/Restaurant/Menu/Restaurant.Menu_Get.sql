@@ -9,7 +9,7 @@ GO
 -- Author:		Ivan Paz
 -- Create date: 2023-08-10
 -- Description: sp for get restaurant menus
--- Restaurant.Menu_Get 139, '{"textSearch": "plato"}', ''
+-- Restaurant.Menu_Get 139, '{"textSearch": "comb"}', ''
 -- =============================================
 CREATE OR ALTER PROCEDURE Restaurant.Menu_Get @userRoleId INT
     ,@json NVARCHAR(MAX)
@@ -20,7 +20,8 @@ BEGIN
     DECLARE @sql NVARCHAR(MAX)
             ,@params NVARCHAR(500)
             ,@textSearch VARCHAR(20)
-            
+            ,@forPromotion BIT
+                        
     SET @params = N'@textSearch VARCHAR(20)'
     SELECT @textSearch = textSearch FROM OPENJSON(@json) WITH(textSearch VARCHAR(20) '$.textSearch')
         
@@ -31,16 +32,18 @@ BEGIN
                 ,m.MenuTypeId
                 ,m.Content                
                 ,a.s3ObjectUrl
+                ,ISNULL(m.ForPromotion, CAST(0 AS BIT)) AS ForPromotion
 	        FROM Restaurant.Menu m WITH (NOLOCK)
             INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo '
    
      IF @textSearch IS NOT NULL
         BEGIN
-            SET @sql = @sql + ' WHERE m.Title LIKE ''%''+@textSearch+''%'' 
-                                OR m.Summary LIKE ''%''+@textSearch+''%'' 
-                                OR m.Content LIKE ''%''+@textSearch+''%'' '
+            SET @sql = @sql + ' WHERE m.ForPromotion = 1 AND
+                                (m.Title LIKE ''%''+@textSearch+''%''
+                                OR m.Summary LIKE ''%''+@textSearch+''%''
+                                OR m.Content LIKE ''%''+@textSearch+''%'') '
         END
-              
+        
     SET @tableNames = 'menus,menuTypes'
 
     EXEC sp_executesql @sql, @params, @textSearch

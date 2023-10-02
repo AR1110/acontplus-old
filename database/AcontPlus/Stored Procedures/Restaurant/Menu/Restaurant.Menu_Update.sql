@@ -29,6 +29,7 @@ BEGIN
             ,@endDate       DATETIME2
             ,@response      VARCHAR(300)
             ,@promotionDays NVARCHAR(MAX)
+            ,@forPromotion  BIT
                
    SELECT @title            = title
           ,@menuTypeId      = menuTypeId
@@ -38,6 +39,7 @@ BEGIN
           ,@endDate         = endDate
           ,@promotionDays   = promotionDays
           ,@menuItem        = menuItem
+          ,@forPromotion    = forPromotion
    FROM OPENJSON(@json)
    WITH(
     title           VARCHAR(500)    '$.title'
@@ -48,6 +50,7 @@ BEGIN
     ,endDate        DATETIME2       '$.endDate'
     ,promotionDays  NVARCHAR(MAX)   '$.promotionDays'
     ,menuItem       NVARCHAR(MAX)   '$.menuItems' AS JSON
+    ,forPromotion   BIT             '$.forPromotion'
    )
             
    BEGIN TRY
@@ -57,7 +60,8 @@ BEGIN
             SET Title           = @title
                 ,MenuTypeId     = @menuTypeId
                 ,Summary        = @summary
-                ,Content        = @content                
+                ,Content        = @content
+                ,ForPromotion   = ISNULL(@forPromotion, 0)
             WHERE Id = @id
                       
             --- Execute for insert Menu_Item ---           

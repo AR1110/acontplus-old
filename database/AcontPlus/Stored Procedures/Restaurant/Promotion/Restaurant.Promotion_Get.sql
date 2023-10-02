@@ -34,6 +34,7 @@ BEGIN
                    ,FORMAT(p.StartDate, 'yyyy-MM-dd')   AS StartDate
                    ,FORMAT(p.EndDate, 'yyyy-MM-dd')     AS EndDate
                    ,p.PromotionDays
+                   ,ISNULL(p.S3ObjectUrl, '')           AS S3ObjectUrl                   
 	        FROM Restaurant.Promotion p WITH (NOLOCK)
 
             SELECT * FROM Dia
@@ -41,21 +42,23 @@ BEGIN
         
     IF @tipo = 2
         BEGIN
-             DECLARE @day            VARCHAR(15)
+             DECLARE @day            INT
                     ,@hour           VARCHAR(5)
                     ,@dayForParam    VARCHAR(15)
                                        
-            SET @day            = IIF(LOWER(TRIM((SELECT DATENAME(weekday, @dateNow))))='sábado', 'Sabado',  LOWER(TRIM((SELECT DATENAME(weekday, @dateNow)))))
+            SET @day            = (SELECT DATEPART(WEEKDAY, @dateNow));
             SET @hour           = (SELECT FORMAT(@dateNow, 'HH:mm'))
             SET @dateNow        = CONVERT(DATE, @dateNow)
-                        
+
             SET @tableNames = 'promotions_pos'
             SELECT rp.Id
                 ,rp.[Description]
+                ,rp.S3ObjectUrl
             FROM Restaurant.Promotion rp
-            WHERE  CAST(@dateNow as date) BETWEEN CAST(rp.StartDate as date) AND CAST(rp.EndDate as date)
-            AND @day IN(SELECT [day] FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day))
-          --  AND @hour BETWEEN(SELECT startHour FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day)) AND (SELECT endHour FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day))            
+            WHERE  @dateNow BETWEEN rp.StartDate AND rp.EndDate
+            AND @day IN(SELECT diaSemana FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day))
+            AND @hour BETWEEN(SELECT startHour FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day)) 
+            AND (SELECT endHour FROM dbo.ufnGetPromotionDay(rp.PromotionDays, @day))            
         END
 END
 GO

@@ -16,10 +16,10 @@ const orderService = {
         return response;
     },
 
-    getId(id: number) {
+    getId(id: number, tipo = 2) {
         const controller = loadAbort(); //Cancelar peticion 
         const json = JSON.stringify({
-            tipo: 2,
+            tipo,
             id
         })
 
@@ -35,7 +35,6 @@ const orderService = {
             controller
         }
     },
-
     async post(data: object) {
         const resultAxios = await Http({
             method: 'post',

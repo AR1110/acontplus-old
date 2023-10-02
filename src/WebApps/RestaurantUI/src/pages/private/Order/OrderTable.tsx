@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -9,29 +10,21 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { ChangeEvent, lazy, useRef, useState } from "react";
-import { IconButton, Tooltip } from "@mui/material";
+import { Button, Stack, Tooltip } from "@mui/material";
 
 import {
     AccountTreeIcon,
     ArrowBackIcon,
-    DeleteIcon,
+    AspectRatioIcon,
     EditIcon,
-    MoveUpIcon,
-    PrintIcon,
-    SaveAltSharpIcon,
-    ShareSharpIcon,
 } from "@/core/components/IconsMaterial";
-import Swal from "sweetalert2";
-import { orderService, SharedService } from "@/core/services";
-import { SnackbarUtility } from "@/core/utilities";
+import { orderService } from "@/core/services";
 import { useLoaderStore, useOrderStore, useSaleStore } from "@/stores";
 import { PrivateRoutes } from "@/core/models";
-import { useNavigate } from "react-router-dom";
-import OrderWhatsApp from "./Components/OrderWhatsApp";
-import OrderConvertDoc from "./Components/OrderConvertDoc";
 import { orderReadForUpdateAdapter } from "@/core/adapters";
 import FullScreenDialog from "@/core/components/FullScreenDialog";
 import { SplitOrderProvider } from "./context";
+import OrderDocument from "./OrderDocument/OrderDocument";
 const SplitOrder = lazy(() => import("./SplitOrder/SplitOrder"));
 
 export default function OrderTable() {
@@ -43,15 +36,15 @@ export default function OrderTable() {
 
     const [page, setPage] = useState(0);
 
-    const [open, setOpen] = useState(false);
-    const [openTableDialog, setOpenTableDialog] = useState(false);
-
     const [rowsPerPage, setRowsPerPage] = useState(25);
     const showLoader = useLoaderStore((state) => state.showLoader);
     const setDataEdit = useSaleStore((state) => state.setDataEdit);
     const [openDialodDivide, setOpenDialodDivide] = useState(false);
 
-    const setOrderId = useRef(0);
+    const [openDocument, setOpenDocument] = useState(false)
+
+    const setOrderId = useRef(0)
+    const dataOrder = useRef({} as typeof orders[0]);
 
     const handleChangePage = (_: unknown, newPage: number) => {
 
@@ -74,52 +67,7 @@ export default function OrderTable() {
         getOrders()
     };
 
-    const handleUpdateState = async (id: number) => {
-        const { isConfirmed } = await Swal.fire({
-            // title: 'Are you sure?',
-            text: "Esta seguro de anular este documento!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Si, anular",
-            cancelButtonText: "No, cancelar",
-        });
-
-        if (!isConfirmed) return;
-
-        showLoader(true);
-        orderService.updateState(id)
-            .then((response) => {
-                if (response.code === "1") {
-                    SnackbarUtility.success(response.message);
-                } else {
-                    SnackbarUtility.error(response.message);
-                }
-            })
-            .finally(() => showLoader(false));
-    };
-
-    const handleClickOpen = (id: number) => {
-        setOrderId.current = id;
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    const handleAskToPrint = (orderId: number) => {
-        SharedService.askToPrint(orderId);
-    };
-
-    const handleReport = (orderId: number) => {
-        showLoader(true)
-        SharedService.downloadReport(orderId).then().finally(
-            () => showLoader(false)
-        );
-    };
-
+    
     const handleEdit = (orderId: number) => {
         showLoader(true);
         orderService.get({
@@ -141,13 +89,17 @@ export default function OrderTable() {
         setOrderId.current = id;
         setOpenDialodDivide(true)
     }
-    const closeDialogDivide = () => {
+
+    function closeDialogDivide<T>(value: T) {
+        if (typeof value === 'string' && value === 'CUSTOM_DETAIL') {
+            getOrders()
+        }
         setOpenDialodDivide(false)
     }
 
-    console.log(orders)
-
-
+    function closeOrderDocument() {
+        setOpenDocument(false)
+    }
 
     return (
         <React.Fragment>
@@ -167,7 +119,7 @@ export default function OrderTable() {
                                     <TableCell align="center">F. Emisión</TableCell>
                                     <TableCell align="center">Cliente</TableCell>
                                     <TableCell align="right">Total</TableCell>
-                                    <TableCell align="center">Estado</TableCell>
+                                    {/* <TableCell align="center">Estado</TableCell> */}
                                     <TableCell align="center">Usuario</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -181,78 +133,55 @@ export default function OrderTable() {
                                             {index + 1}
                                         </TableCell>
                                         <TableCell>
-                                            {/* {!(order.documentoId > 0) && (
-                                                <Tooltip describeChild title="Transformar a NE O FV">
-                                                    <IconButton color="info"
-                                                        aria-label="delete"
-                                                        onClick={() => handleClickOpen(order.orderId)}
+                                            <Stack direction="row" spacing={1}>
+                                                {
+                                                    order.documentoId > 0 ? '' : (<>
+                                                        {
+                                                            !(order.divided) && (
+                                                                <Tooltip describeChild title="Editar">
+                                                                    <Button variant="contained" color="success"
+                                                                        aria-label="Editar"
+                                                                        onClick={() => handleEdit(order.orderId)}
+                                                                    >
+                                                                        <EditIcon />
+                                                                    </Button>
+                                                                </Tooltip>
+                                                            )
+                                                        }
+                                                    </>)
+                                                }
+
+                                                <Tooltip describeChild title="PDF e Impresión">
+                                                    <Button variant="contained" color="primary"
+                                                        aria-label="PDF e Impresión"
+                                                        onClick={() => {
+                                                            dataOrder.current = order;
+                                                            setOpenDocument(true)
+                                                        }}
                                                     >
-                                                        <MoveUpIcon />
-                                                    </IconButton>
+                                                        <AspectRatioIcon />
+                                                    </Button>
                                                 </Tooltip>
-                                            )} */}
-                                            <IconButton
-                                                aria-label="delete"
-                                                color="error"
-                                                onClick={() => handleUpdateState(order.orderId)}
-                                            >
-                                                <DeleteIcon />
-                                            </IconButton>
 
-                                            {!(order.documentoId > 0) && (
-                                                <Tooltip describeChild title="Editar">
-                                                    <IconButton color="primary"
-                                                        aria-label="Editar"
-                                                        onClick={() => handleEdit(order.orderId)}
-                                                    >
-                                                        <EditIcon />
-                                                    </IconButton>
-                                                </Tooltip>
-                                            )}
-
-                                            <Tooltip describeChild title="Impresión">
-                                                <IconButton color="warning"
-                                                    aria-label="Impresión"
-                                                    onClick={() => handleAskToPrint(order.orderId)}
-                                                >
-                                                    <PrintIcon />
-                                                </IconButton>
-                                            </Tooltip>
-
-                                            <Tooltip describeChild title="Descargar PDF">
-                                                <IconButton size="large" color="secondary"
-                                                    aria-label="Impresión"
-                                                    onClick={() => handleReport(order.orderId)}
-                                                >
-                                                    <SaveAltSharpIcon />
-                                                </IconButton>
-                                            </Tooltip>
-
-                                            <Tooltip describeChild title="Compartir por WhatsApp">
-                                                <IconButton size="large" color="success"
-                                                    aria-label="Impresión"
-                                                    onClick={() => setOpenTableDialog(true)}
-                                                >
-                                                    <ShareSharpIcon />
-                                                </IconButton>
-                                            </Tooltip>
-
-                                            {!(order.documentoId > 0) && (
-                                                <Tooltip describeChild title="Dividir la cuenta">
-                                                    <IconButton size="large" color="inherit"
-                                                        aria-label="Impresión"
-                                                        onClick={() => dividerCuenta(order.orderId)}
-                                                    >
-                                                        <AccountTreeIcon />
-                                                    </IconButton>
-                                                </Tooltip>
-                                            )} 
+                                                {
+                                                    (!(order.documentoId > 0) || (order.divided)) && (
+                                                        <Tooltip describeChild title="Dividir la cuenta">
+                                                            <Button variant="contained" size="large" color="inherit"
+                                                                aria-label="Impresión"
+                                                                onClick={() => dividerCuenta(order.orderId)}
+                                                            >
+                                                                <AccountTreeIcon />
+                                                            </Button>
+                                                        </Tooltip>
+                                                    )
+                                                }
+                                            </Stack>
                                         </TableCell>
-                                        <TableCell align="center">{order.serie}</TableCell>
+                                        <TableCell align="center"> {order.serie}</TableCell>
                                         <TableCell align="center">{order.createdAt}</TableCell>
                                         <TableCell align="center">{order.nameFiscal}</TableCell>
                                         <TableCell align="right">{order.total}</TableCell>
-                                        <TableCell align="center">-</TableCell>
+                                        {/* <TableCell align="center">{order.divided ? 'Dividiendo' : '-'}</TableCell> */}
                                         <TableCell align="center">{order.userName}</TableCell>
                                     </TableRow>
                                 ))}
@@ -271,16 +200,16 @@ export default function OrderTable() {
                 </Paper>
             </Box>
 
-            <OrderConvertDoc
+            {/* <OrderConvertDoc
                 open={open}
                 handleClose={handleClose}
-            ></OrderConvertDoc>
+            /> */}
 
             {/* { End list  - TABLE } */}
-            <OrderWhatsApp
+            {/* <OrderWhatsApp
                 open={openTableDialog}
                 onClose={setOpenTableDialog} /
-            >
+            > */}
 
             {/* Dividir Cuenta  */}
             <FullScreenDialog
@@ -293,6 +222,15 @@ export default function OrderTable() {
                     <SplitOrder id={setOrderId.current} closeDialogDivide={closeDialogDivide} />
                 </SplitOrderProvider>
             </FullScreenDialog>
+
+
+            {/* Modal Order Document */}
+
+            {
+                openDocument && <OrderDocument data={dataOrder.current} open={openDocument} setOpen={closeOrderDocument} />
+            }
+
+
 
         </React.Fragment>
     );

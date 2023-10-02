@@ -19,15 +19,7 @@ export default function Order() {
 
     const handleNewOrder = () => {
         navigate(`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.SALE}`, { replace: true })
-    }
-
-    // const getOrders = async () => {
-    //     showLoader(true)
-    //     await OrdenService.get({ pageIndex: 1, pageSize: 2, tipo: 1 }).then(response => {
-    //         console.log(response.orders)
-    //         setOrders(orderReadAdapter(response.orders))
-    //     }).finally(() => showLoader(false))
-    // }
+    } 
 
     useEffect(() => {
         getOrders();
@@ -50,8 +42,7 @@ export default function Order() {
     }
 
     return (
-        //-->OrderProvider 1
-        //-->SplitAccountProvider 2 
+        //-->OrderProvider 1 
         <Paper sx={{ maxWidth: "auto", margin: 'auto', overflow: 'hidden' }}>
             <AppBar
                 position="static"
@@ -100,37 +91,11 @@ export default function Order() {
 
                             </Grid>
                         </Grid>
-                    </Grid>
-                    {/* <Grid container spacing={2} alignItems="center">
-
-                        <Grid item xs={4}>
-                            <DateRangeFilter label="Fecha Inicio"/> 
-                        </Grid>
-                        <Grid item xs={4}>
-                            <DateRangeFilter label="Fecha Fin"/> 
-                        </Grid>
-                        <Grid item xs={4}>
-                            <DateRangeFilter label="Fecha Fin"/> 
-                        </Grid>
-                        <Grid item xs={4}>
-                            <Button variant="contained" sx={{ mr: 1 }} onClick={handleNewOrder}>
-                                Nuevo
-                            </Button>
-                            <Tooltip title="Reload">
-                                <IconButton onClick={getOrders}>
-                                    <RefreshIcon color="inherit" sx={{ display: 'block' }} />
-                                </IconButton>
-                            </Tooltip>
-                        </Grid>
-                    </Grid> */}
+                    </Grid> 
                 </Toolbar>
             </AppBar>
 
-            <OrderTable />
-
-            {/* <Typography sx={{ my: 5, mx: 2 }} color="text.secondary" align="center">
-      No users for this project yet
-    </Typography> */}
+            <OrderTable /> 
         </Paper>
 
     )

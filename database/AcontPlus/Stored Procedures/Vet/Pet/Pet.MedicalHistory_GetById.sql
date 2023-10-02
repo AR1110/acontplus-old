@@ -7,10 +7,12 @@ GO
 --Date: 2023-07-14
 --Description: SP FOR GET BY
 CREATE OR ALTER PROCEDURE Pet.MedicalHistory_GetById @id INT
+,@tableNames VARCHAR(500) OUT
 AS
 BEGIN
 	SET NOCOUNT ON;
 
+    SET @tableNames = 'medicalHistory,healthChecks,behaviors'
 
 	SELECT mh.*
 		,p.Id petId
@@ -33,9 +35,9 @@ BEGIN
 	WHERE mh.id = @id
 	AND mh.Deleted IS NULL
 
-	SELECT * FROM Pet.HealthCheck WHERE MedicalHistoryId = @id
+	SELECT * FROM Pet.HealthCheck WITH(NOLOCK) WHERE MedicalHistoryId = @id
 
-	SELECT * FROM Pet.BehaviorTest WHERE MedicalHistoryId = @id
+	SELECT * FROM Pet.BehaviorTest WITH(NOLOCK) WHERE MedicalHistoryId = @id
 
 	--Pet.Pet_GetById 3
 END

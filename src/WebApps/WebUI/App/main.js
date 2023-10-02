@@ -1,12 +1,13 @@
-﻿import Pet from "./lib/Pet/Pet.svelte";
-import PetMedicalHistory from "./lib/PetMedicalHistory/PetMedicalHistory.svelte";
-import PetBreed from "./lib/PetBreed/PetBreed.svelte";
+﻿import Pet from "$pet/Pet.svelte";
+import PetMedicalHistory from "$petmedicalhistory/PetMedicalHistory.svelte";
+import PetBreed from "$petbreed/PetBreed.svelte";
 import ConfigEmail from "./lib/ConfigEmail/ConfigEmail.svelte";
 import MotivoDiscrepancia from "./lib/StockFisico/MotivoDiscrepancia.svelte";
 import Stock from "./lib/StockFisico/index.svelte";
 import Subcategoria from "./lib/Contabilidad/Subcategoria/index.svelte";
 import Infrastructure from "$restaurant/Infrastructure/page.svelte";
 import Product from "$restaurant/Product/page.svelte";
+import Reports from "$restaurant/Reports/page.svelte";
 import Vehicle from "$mechanical/Vehicle/page.svelte";
 import Support from "$mechanical/Support/page.svelte";
 import Maintenance from "$mechanical/Maintenance/page.svelte";
@@ -54,6 +55,11 @@ if (target) {
 target = document.querySelector("#restaurant-product");
 if (target) {
   new Product({ target });
+}
+
+target = document.querySelector("#restaurant-reports");
+if (target) {
+  new Reports({ target });
 }
 
 target = document.querySelector("#mechanical-vehicle");

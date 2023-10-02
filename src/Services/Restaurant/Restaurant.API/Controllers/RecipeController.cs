@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
+using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
-using Restaurant.Core.Common;
 using Restaurant.Core.Entities;
 using Restaurant.Core.Interfaces;
 using Services.Common;
@@ -19,9 +19,9 @@ namespace Restaurant.API.Controllers
             _log = log;
         }
         [HttpGet]
-        public async Task<ActionResult<StructureResponse>> Get()
+        public async Task<ActionResult<APIResponse>> Get()
         {
-            var _response = new StructureResponse();
+            var _response = new APIResponse();
             try
             {
                 _response.payload = await _recipe.GetAsync();

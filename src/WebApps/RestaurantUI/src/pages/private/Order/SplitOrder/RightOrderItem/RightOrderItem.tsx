@@ -58,6 +58,7 @@ const RightOrderItem = () => {
     const { leftOrder, rightOrder, setRightOrderData, rightOrderItems } = useSplitOrderContext();
     const { fetchOrderData, setPaymentData, resetData} = useSplitOrderContext();
     const { showLoader} = useLoaderStore();
+    
     //store checkout
     const setQueryParams = useCheckoutStore(state => state.setQueryParams)
 
@@ -120,22 +121,21 @@ const RightOrderItem = () => {
             }
 
             showLoader(true);
-            orderService.post(data).then(response => {
-                showLoader(false)
+            orderService.put(leftOrder.orderId, data).then(response => { 
                 if (response.code === '0') {
                     SnackbarUtility.warning(response.message)
                 }
                 if (response.code === "1") {
-                    SnackbarUtility.success(response.message);
-                    
+                    SnackbarUtility.success(response.message); 
+                    console.log(response)
                     const queryParams: QueryParams = JSON.parse(response.payload)[0];
-                   
-                    resetData();
+                    console.log(queryParams)                    
                     setPaymentData({
                         open:true,
-                       payload: queryParams
+                        payload: queryParams
                     })
                     setQueryParams(queryParams);
+                    resetData();
                     // if (queryParams.payAutomatic) {
                     //     setQueryParams(queryParams);
                     //     payment.openDialogCustom();
@@ -224,6 +224,9 @@ const RightOrderItem = () => {
                                 variant="contained"
                                 color='success'
                                 size='large'
+                                sx={{
+                                    height: 60
+                                }}
                                 onClick={() => save(DOC_TYPE.FV)}
                                 startIcon={<FileCopyRoundedIcon />}
                             >
@@ -236,6 +239,9 @@ const RightOrderItem = () => {
                                 variant="contained"
                                 color='warning'
                                 size='large'
+                                sx={{
+                                    height: 60
+                                }}
                                 onClick={() => save(DOC_TYPE.NE)}
                                 startIcon={<FileCopyRoundedIcon />}
                             >

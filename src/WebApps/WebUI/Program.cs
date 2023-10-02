@@ -1,6 +1,7 @@
 ﻿using Lib.Common;
 using Services.Common;
 using Services.Common.Logs;
+using WebUI.Hubs;
 
 namespace testWebApi
 {
@@ -38,8 +39,9 @@ namespace testWebApi
 
             // Add services to the container.
             builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
+
             //SignalR
-            //builder.Services.AddSignalR();
+            builder.Services.AddSignalR();
 
             builder.Services.AddDistributedMemoryCache();
 
@@ -93,7 +95,7 @@ namespace testWebApi
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
-            //app.MapHub<NotificationHub>("/notificationHub");
+            app.MapHub<NotificationHub>("/notificationHub");
 
             app.MapRazorPages(); //added manually
 

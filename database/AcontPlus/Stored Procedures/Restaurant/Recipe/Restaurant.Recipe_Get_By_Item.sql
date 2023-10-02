@@ -60,6 +60,7 @@ DECLARE @idEntidad INT
             ,ri.summary
             ,ISNULL(rr.ExtentId, 0) ExtentId 
             ,v.precioCosto
+            ,v.precioCosto * rr.Quantity AS costPrice
             ,extents = (SELECT * FROM #Measures mr WHERE mr.idArticulo = ri.ProductId FOR JSON PATH)
     FROM Restaurant.Recipe rr
     INNER JOIN Restaurant.Ingredient ri ON ri.Id = rr.IngredientId

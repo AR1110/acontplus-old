@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Common.Core.Entities;
 using Common.Infrastructure.Data;
 using Contabilidad.Core.Entities;
 using Microsoft.EntityFrameworkCore;

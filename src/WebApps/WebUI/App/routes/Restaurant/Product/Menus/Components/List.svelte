@@ -44,7 +44,7 @@
     {/each}
   </div>
 {:else}
-  <h5>No se en  traron registros</h5>
+  <h5>No existe menus registrados</h5>
 {/if}
 
 <Add />

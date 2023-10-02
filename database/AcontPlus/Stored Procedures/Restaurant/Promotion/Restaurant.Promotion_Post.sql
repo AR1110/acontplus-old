@@ -11,6 +11,8 @@ GO
 CREATE PROC Restaurant.Promotion_Post
 @userRoleId INT
 ,@json VARCHAR(MAX)
+,@s3ObjectUrl VARCHAR(800)
+,@s3ObjectKey VARCHAR(500)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -47,10 +49,12 @@ BEGIN
 	BEGIN TRY
 		BEGIN TRAN
             INSERT INTO Restaurant.Promotion([CodEstab], [Description], [StartDate], [EndDate], [CreatedAt]
-                                            , [UpdatedAt], [Enabled], [Deleted], [UserId], [PromotionDays])
+                                            , [UpdatedAt], [Enabled], [Deleted], [UserId], [PromotionDays]
+                                            , [S3ObjectUrl], [S3ObjectKey])
 
                                     VALUES(@codEstab, @description, @startDate, @endDate, @dateNow, 
-                                            NULL, 1, NULL, @userId, @promotionDays)
+                                            NULL, 1, NULL, @userId, @promotionDays,
+                                            @s3ObjectUrl, @s3ObjectKey)
 
             SET @id = @@IDENTITY
 

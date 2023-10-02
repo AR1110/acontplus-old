@@ -58,6 +58,7 @@
 		<None Remove="Reports\NotFound.pdf" />
 		<None Remove="Reports\OpenMoneyBox.rdl" />
 		<None Remove="Reports\OrdenCompra.rdlc" />
+		<None Remove="Reports\Restaurant\ItemIngredient.rdl" />
 		<None Remove="Reports\Retencion.rdlc" />
 		<None Remove="Reports\Test.rdlc" />
 		<None Remove="Reports\Ventas\AprobDocument.rdl" />
@@ -181,6 +182,9 @@
 		</Content>
 		<Content Include="Reports\OrdenCompra.rdlc">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Reports\Restaurant\ItemIngredient.rdl">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Include="Reports\Retencion.rdlc">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>

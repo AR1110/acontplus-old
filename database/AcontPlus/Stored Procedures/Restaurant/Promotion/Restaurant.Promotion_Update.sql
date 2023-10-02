@@ -12,6 +12,8 @@ CREATE PROC Restaurant.Promotion_Update
 @userRoleId INT
 ,@id INT
 ,@json VARCHAR(MAX)
+,@s3ObjectUrl VARCHAR(800)
+,@s3ObjectKey VARCHAR(500)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -26,7 +28,7 @@ BEGIN
     DECLARE @dateNow        DATETIME    
     DECLARE @response       NVARCHAR(100)
 
-    SET @userId     = (SELECT idUsuario FROM V_usuario WHERE idUsuarioRol = @userRoleId)
+    SET @userId     = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId)
     SET @dateNow    = (SELECT dbo.ufnGetDateEcuador())
     
     SELECT  @codEstab           = codEstab
@@ -43,9 +45,14 @@ BEGIN
         ,promotionDays  NVARCHAR(MAX)    '$.promotionDays'
         ,promotionMenus NVARCHAR(MAX)    '$.promotionMenus' AS JSON
     )
-       
-    PRINT @json
-    PRINT @promotionDays
+
+    IF @s3ObjectUrl = '' OR @s3ObjectKey = ''
+        BEGIN
+            SELECT @s3ObjectUrl     = S3ObjectUrl
+                    ,@s3ObjectKey   = S3ObjectKey 
+            FROM Restaurant.Promotion
+            WHERE Id = @id
+        END
        
 	BEGIN TRY
 		BEGIN TRAN
@@ -53,9 +60,11 @@ BEGIN
 			SET CodEstab		= @codEstab
 				,Description	= @description
 				,StartDate		= @startDate
-				,EndDate		= @endDate				
+				,EndDate		= @endDate
 				,PromotionDays  = @promotionDays
 				,UpdatedAt		= @dateNow
+                ,S3ObjectUrl    = @s3ObjectUrl
+                ,S3ObjectKey    = @s3ObjectKey
 			WHERE Id = @id
 
             EXEC Restaurant.Promotion_Menu_Insert @userRoleId, @id, @promotionMenus, @response 

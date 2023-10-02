@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { hideLoader, showLoader } from './../../../../core/utils/loading-spinner.js';
+	import { hideLoader, showLoader } from '$core/utils/loading-spinner.js';
 	import Breadcrumbs from "$core/components/Breadcrumbs.svelte";
 	import { onMount } from "svelte";
 	import Add from "./components/add.svelte";

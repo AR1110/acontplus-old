@@ -9,4 +9,5 @@ export interface Menu {
   startDate?: string;
   endDate?: string;
   promotionDays?: string;
+  forPromotion: boolean;
 }

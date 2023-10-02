@@ -30,7 +30,7 @@ BEGIN
 	DECLARE @idUsuario INT
 	DECLARE @idEntidad INT
 	DECLARE @count INT
-	DECLARE @sequential INT
+	--DECLARE @sequential INT
 	DECLARE @table table 
 	(
 		id INT IDENTITY(1,1) UNIQUE NOT NULL
@@ -40,7 +40,7 @@ BEGIN
 	   ,ultimoSecuencial INT DEFAULT 1
 	)
 
-	SELECT @sequential = COUNT(*) FROM dbo.SubFamilia
+	--SELECT @sequential = COUNT(*) FROM dbo.SubFamilia
 
 	SELECT @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
 
@@ -54,7 +54,7 @@ BEGIN
 	BEGIN TRY
 		BEGIN TRAN 
 			INSERT INTO dbo.SubFamilia(codigo,siglas,descripcion,fechaRegistro,idUsuario,idEntidad,importacion,ultimoSecuencial)
-			SELECT 'F'+Helper.F_Auto_Sequential(id+@sequential),siglas,descripcion,dbo.ufnGetDateEcuador(),@idUsuario,@idEntidad,importacion,ultimoSecuencial FROM @table 
+			SELECT NEWID(),siglas,descripcion,dbo.ufnGetDateEcuador(),@idUsuario,@idEntidad,importacion,ultimoSecuencial FROM @table 
 
 			INSERT INTO Importaciones.Historial(idUsuario,idEntidad,modulo,cantidad,fechaRegistro)
 			SELECT @idUsuario,@idEntidad,'/Almacen/SubFamilia',@count,dbo.ufnGetDateEcuador()

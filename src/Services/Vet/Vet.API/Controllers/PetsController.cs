@@ -116,9 +116,9 @@ namespace Vet.API.Controllers
             petFounded.PetTypeId = pet.PetTypeId;
             petFounded.BreedId = pet.BreedId;
             petFounded.GenderId = pet.GenderId;
-            petFounded.Age = pet.Age;
+            //petFounded.Age = pet.Age;
             petFounded.Color = pet.Color;
-            petFounded.Weight = pet.Weight;
+            //petFounded.Weight = pet.Weight;
             petFounded.Enabled = pet.Enabled;
             petFounded.Weight = pet.Weight;
             petFounded.UpdatedAt = DateTime.Now;

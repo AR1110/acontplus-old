@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Common.Core.Entities;
 
 namespace Restaurant.Core.Entities
 {
@@ -26,6 +27,7 @@ namespace Restaurant.Core.Entities
         public decimal Total { get; set; }
         [MaxLength(500)]
         public string Obs { get; set; }
+        public bool Divided { get; set; }
         public List<OrderItem> OrderItems { get; set; }
     }
 }

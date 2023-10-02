@@ -46,6 +46,10 @@ import CalculateIcon from '@mui/icons-material/Calculate';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import InfoIcon from '@mui/icons-material/Info'; 
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import AspectRatioIcon from '@mui/icons-material/AspectRatio';
+import SendToMobileIcon from '@mui/icons-material/SendToMobile';
+import SendIcon from '@mui/icons-material/Send';
 export {
     RemoveCircleOutlineIcon,
     SaveIcon,
@@ -92,5 +96,9 @@ export {
     CalculateIcon,
     KeyboardArrowDownIcon,
     AccountTreeIcon,
-    InfoIcon
+    InfoIcon,
+    PictureAsPdfIcon,
+    AspectRatioIcon,
+    SendToMobileIcon,
+    SendIcon
 }

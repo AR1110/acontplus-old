@@ -2,18 +2,24 @@ import { ItemRead, OrderReadDto, ProductPVPReadDto, RawOrderData } from "../mode
 import { productService } from "../services";
 
 function orderReadAdapter(orders: RawOrderData[]): Array<OrderReadDto> {
+    
     return orders.map(order => ({
         orderId: order.id,
         documentoId: order.documentoId,
         establecimientoId: order.establecimientoId,
+        codEstab: order.codEstab,
+        telefonoEstablecimiento: order.telefonoEstablecimiento,
+        nombreComercialEstab: order.nombreComercialEstab,
         puntoEmisionId: order.puntoEmisionId,
         nameFiscal: order.nameFiscal,
+        telefonoCliente: order.telefonoCliente,
         userName: order.userName,
         serie: order.serie,
         total: order.total,
         codDoc: order.codDoc,
         createdAt: order.createdAt,
-        totalRecords: order.totalRecords
+        totalRecords: order.totalRecords,
+        divided: order.divided
     })
     )
 }
@@ -80,6 +86,7 @@ async function orderReadForUpdateAdapter(obj: any) {
             feeId: orderItem.feeId,
             bodegaId: orderItem.bodegaId,
             description: orderItem.descripcion,
+            summary: orderItem.summary,
             code: orderItem.codigoArticulo,
             s3ObjectUrl: orderItem.s3ObjectUrl,
             carryInventory: orderItem.llevaInventario,
@@ -89,7 +96,10 @@ async function orderReadForUpdateAdapter(obj: any) {
             pvps: pvps,
             taxRateCode: orderItem.taxRateCode,
             envioSri: orderItem.envioSri,
-            paid: orderItem.paid ?? false
+            paid: orderItem.paid ?? false,
+            menuId: orderItem.menuId,
+            itemTypeCode: orderItem.itemTypeCode,
+            remainingQuantity: orderItem.remainingQuantity
         };
     })
 

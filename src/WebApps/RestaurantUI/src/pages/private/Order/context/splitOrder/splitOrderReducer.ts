@@ -4,9 +4,9 @@ import {
     GET_ORDER_BEGIN,
     GET_ORDER_ERROR,
     GET_ORDER_SUCCESS,
+    SET_ACTION_TYPE,
     SET_CHANGE_ORDER_ITEMS,
-    SET_DATA_FORM,
-    SET_FUNCTION_CLOSE_DIALOG,
+    SET_DATA_FORM, 
     SET_LEFT_CHECKED_ORDER_ITEMS,
     SET_LEFT_ORDER_ITEMS,
     SET_PAYMENT_DATA,
@@ -25,11 +25,15 @@ export const splitOrderReducer = (state: SplitOrderState, action: any): SplitOrd
         }
         case GET_ORDER_SUCCESS: {
             const { order, orderItems } = action.payload;
+            console.log(orderItems)
             return {
                 ...state,
                 orderLoading: false,
                 leftOrder: order,
-                leftOrderItems: orderItems,
+                leftOrderItems: orderItems.map((orderItem: any) => ({
+                    ...orderItem,
+                    remainingQuantity: ((orderItem.remainingQuantity > 0 || orderItem.remainingQuantity === 0) && orderItem.paid) ? orderItem.remainingQuantity : orderItem.quantity
+                })),
                 leftOrderItemsLength: orderItems.length
             }
         }
@@ -41,6 +45,13 @@ export const splitOrderReducer = (state: SplitOrderState, action: any): SplitOrd
                 ...state,
                 dataForm: action.payload
             }
+
+        case SET_ACTION_TYPE: {
+            return {
+                ...state,
+                actionType: action.payload
+            }
+        }
         case SET_LEFT_ORDER_ITEMS: {
             return {
                 ...state,
@@ -88,7 +99,7 @@ export const splitOrderReducer = (state: SplitOrderState, action: any): SplitOrd
                 ...state,
                 changeOrderItems: action.payload.map((orderItem: any, index: number) => ({
                     ...orderItem,
-                    quantityTemp: state.leftOrderItems.find(leftOrderItem => leftOrderItem.id === orderItem.id)?.quantity,
+                    quantityTemp: state.leftOrderItems.find(leftOrderItem => leftOrderItem.id === orderItem.id)?.remainingQuantity,
                     index: index + 1
                 }))
             }
@@ -111,15 +122,7 @@ export const splitOrderReducer = (state: SplitOrderState, action: any): SplitOrd
                 changeOrderItems: [],
                 leftCheckedOrderItems: [],
                 rightCheckedOrderItems: []
-            }
-
-        case SET_FUNCTION_CLOSE_DIALOG: {
-            return {
-                ...state,
-                closeDialogDivide: action.payload
-            }
-        }
-
+            } 
         default:
             return state;
     }

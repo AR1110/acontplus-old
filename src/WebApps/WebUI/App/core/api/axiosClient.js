@@ -33,7 +33,7 @@ export const client = createAxiosClient({
         timeout: 300000,
         headers: {
             "Content-Type": "application/json",
-        },
+        }, 
     },
     getCurrentAccessToken,
     getCurrentRefreshToken,
@@ -42,11 +42,12 @@ export const client = createAxiosClient({
     setRefreshedTokens,
 });
 
-export const clientFile = (url) => {
+export const clientFile = (url, parameters) => {
    return axios({
-        url: `${decodedJwt.urlGateway}` + url,
+        url: `${decodedJwt.urlGateway}/gateway/` + url,
         method: 'POST',
         responseType: 'blob',
+        data: parameters,
         headers: { 'Authorization': 'Bearer ' + getCurrentAccessToken() }
     })
 };

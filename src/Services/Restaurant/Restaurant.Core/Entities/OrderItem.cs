@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Common.Core.Entities;
+
 
 namespace Restaurant.Core.Entities
 {

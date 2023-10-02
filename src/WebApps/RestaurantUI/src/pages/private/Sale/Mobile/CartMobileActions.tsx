@@ -145,7 +145,11 @@ export default function CartMobileAction() {
 
 
                     if (queryParams.printerAutomatic) {
-                        SharedService.getPrinter(1)
+                        SharedService.getPrinter({
+                            id: queryParams.orderId,
+                            documentoId: queryParams.idDocumento,
+                            tipo: 1
+                        })
                     } else {
                         resetForm();
                     }

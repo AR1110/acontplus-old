@@ -39,14 +39,14 @@ namespace Restaurant.API.Controllers
             }
         }
 
-        [HttpGet("Print/{id}")]
-        public async Task<IActionResult> Print(int id)
+        [HttpGet("Print/{json}")]
+        public async Task<IActionResult> Print(string json)
         {
             try
             {
                 var parameters = new Dictionary<string, object>{
                     { "userRoleId", User.GetUserRoleId()},
-                    { "id", id}
+                    { "json", json}
                 };
                 var prints = await _orderService.PrintAsync(parameters);
                 if (prints == null | string.IsNullOrEmpty(prints))

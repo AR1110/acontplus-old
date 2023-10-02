@@ -395,9 +395,6 @@
   const onUpdate = () => {
     if (!onValidate()) return;
 
-    let summary = productsAdded.map((item) => item.descripcion).join(", ");
-    data.summary = summary;
-
     let forSave = {
       ...data,
       menuItems: productsAdded,
@@ -436,6 +433,14 @@
     }
   };
 
+  let generateDescription = () => {
+    data.summary = "";
+    let summary = productsAdded
+      .map((item) => item.quantity + " " + item.descripcion)
+      .join(", ");
+    data.summary = summary;
+  };
+
   useMenuStore.subscribe((values) => {
     data = values.dataUpdate;
     menuTypes = values.menuTypes;
@@ -459,7 +464,7 @@
     <div class="modal-body">
       <div class="modal-body">
         <div class="row">
-          <div class="col-6">
+          <!-- <div class="col-6">
             <div class="form-group input-group-lg">
               <label for="menu-type">Tipo Menu</label>
               <select
@@ -475,10 +480,11 @@
                 {/each}
               </select>
             </div>
-          </div>
-          <div class="col-6">
+          </div> -->
+
+          <div class="col-6 col-md-6 col-sm-12">
             <div class="form-group">
-              <label for="">Descripción</label>
+              <label for="">Nombre</label>
               <input
                 type="text"
                 class="form-control input-group-lg"
@@ -486,11 +492,39 @@
               />
             </div>
           </div>
+          <div class="col-6 col-md-6 col-sm-6">
+            <div class="form-group">
+              <label class="control-label">Usar en promoción</label>
+              <div class="checkbox icheck-primary">
+                <input
+                  type="checkbox"
+                  bind:checked={data.forPromotion}
+                  id="primary_{data.id}"
+                />
+                <label for="primary_{data.id}"></label>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="row">
           <div class="col-12">
             <div class="form-group">
-              <label for="">Resumen</label>
+              <label for=""
+                >Descripción -
+                <span>
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-outline-info"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    on:click={() => generateDescription()}
+                    title="Generar la descripción para el combo"
+                  >
+                    <i class="fa-solid fa-sync" />
+                    Generar descripción
+                  </button>
+                </span>
+              </label>
               <textarea class="form-control" bind:value={data.summary} />
             </div>
           </div>

@@ -4,18 +4,17 @@ import { Navigate, Outlet } from "react-router-dom";
 import { PublicRoutes } from "../models";
 import { getToken } from "../services";
 
-interface Props {
-  privateValidation: boolean;
-}
+// interface Props {
+//   privateValidation?: boolean;
+// }
 
-const AuthGuard = ({ privateValidation }: Props) => {
-  console.log(privateValidation)
+const AuthGuard = () => {
+
   //const userState = useSelector((store: AppStore) => store.user);
   const userState = getToken() ? true : false;
- 
-  return userState ?  <Outlet /> : 
-    <Navigate replace to={PublicRoutes.LOGIN}></Navigate>
-  
+
+  return userState ? <Outlet /> : <Navigate replace to={PublicRoutes.LOGIN} />
+
 };
 
 export default AuthGuard;

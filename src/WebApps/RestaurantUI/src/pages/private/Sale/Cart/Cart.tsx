@@ -14,20 +14,19 @@ import { useState } from 'react';
 import CustomerSearch from '../Customer/CustomerSearch';
 
 const Cart = () => {
-
     const cartItems = useSaleStore(state => state.items);
-    const { order } = useSaleStore(state => ({
+    const { order, tarifaImpuestoVigente } = useSaleStore(state => ({
         order: state.order,
         items: state.items,
+        tarifaImpuestoVigente: state.dataForm.tarifaImpuestoVigente
     }));
     const setOrder = useSaleStore(state => state.setSummary)
-
-    //store checkout
-    const setQueryParams = useCheckoutStore(state => state.setQueryParams)
 
     const resetForm = useSaleStore(state => state.resetForm);
     const payment = useSaleStore(state => state.payment);
 
+    //store checkout
+    const setQueryParams = useCheckoutStore(state => state.setQueryParams)
     const { showLoader } = useLoaderStore();
 
     //Modal Tables
@@ -62,26 +61,18 @@ const Cart = () => {
         }
     }
     const askToSave = async function (codDoc: string) {
-
-
-        // setVoucher({
-        //     payingAmount: summary.total,
-        //     receivedAmount: summary.total.toString(),
-        //     changeReturn: 0,
-        //     creationDate: new Date()
-        // });
-        // payment.openDialogCustom();
-
-        // if(!(summary.customerCompanyId > 0)){
-        //     SnackbarUtility.warning('Seleccione el cliente');
-        //     return
-        // }
         if (!(order.tableId > 0)) {
-            SnackbarUtility.warning('Seleccione la Mesa');
+            Swal.fire({
+                icon: 'warning',
+                html: `Seleccione la Mesa`
+            })
             return
         }
         if (cartItems.length === 0) {
-            SnackbarUtility.warning('Agregue Item');
+            Swal.fire({
+                icon: 'warning',
+                html: `Agregue al menos un Item`
+            })
             return
         }
         const { isConfirmed } = await Swal.fire({
@@ -118,8 +109,8 @@ const Cart = () => {
                 }
                 if (response.code === "1") {
                     SnackbarUtility.success(response.message);
-                    const queryParams: QueryParams = JSON.parse(response.payload)[0];
-                    console.log(queryParams)
+                    // const queryParams: QueryParams = JSON.parse(response.payload)[0];
+                    resetForm();
                 }
             }).finally(() => showLoader(false))
         } else {
@@ -127,13 +118,27 @@ const Cart = () => {
             orderService.post(data).then(response => {
                 showLoader(false)
                 if (response.code === '0') {
-                    SnackbarUtility.warning(response.message)
+                    Swal.fire({
+                        icon:'warning',
+                        html: response.message
+                    })
+                   
                 }
                 if (response.code === "1") {
-                    SnackbarUtility.success(response.message);
+                    Swal.fire({
+                        icon:'success',
+                        html: response.message,
+                        timer: 1000
+                    })
+                    //SnackbarUtility.success(response.message);
                     //Order
                     if (codDoc === DOC_TYPE.OR) {
-                        SharedService.getPrinter(JSON.parse(response.payload))
+                        const orderId = JSON.parse(response.payload);
+                        SharedService.getPrinter({
+                            id: orderId,
+                            documentoId: 0,
+                            tipo: 2                
+                        })
                         resetForm();
                         return
                     }
@@ -147,7 +152,11 @@ const Cart = () => {
 
 
                     if (queryParams.printerAutomatic) {
-                        SharedService.getPrinter(queryParams.idDocumento)
+                        SharedService.getPrinter({
+                            id: queryParams.orderId,
+                            documentoId: queryParams.idDocumento,
+                            tipo: 1
+                        })
                     } else {
                         resetForm();
                     }
@@ -235,7 +244,7 @@ const Cart = () => {
                             <b>Subtotal: ${order.subTotalSinImpuestos}</b>
                         </Typography>
                         <Typography variant="body2" color="text.primary">
-                            <b>Impuestos: ${order.tax}</b>
+                            <b>Impuesto({tarifaImpuestoVigente.description}): ${order.tax}</b>
                         </Typography>
                         <Typography variant="h6" color="error">
                             Total: ${order.total}

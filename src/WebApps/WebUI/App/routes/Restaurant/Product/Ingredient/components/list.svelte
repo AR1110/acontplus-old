@@ -26,8 +26,6 @@
 
   onMount(() => {
     useIngredientStore.get();
-    useIngredientStore.getIngredientType();
-
     return () => unSuscribe();
   });
 </script>

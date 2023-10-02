@@ -11,7 +11,6 @@
   import { hideLoader, showLoader } from "$core/utils/loading-spinner";
   import { PromotionService } from "$core/services/restaurant/promotion-service";
   import { PromotionMenuService } from "$core/services/restaurant/promotion-menu-service";
-  import { remove } from "toastr";
 
   // Variables.
   let dataUpdate: Promotion = {
@@ -27,9 +26,11 @@
   let daysSelected = [];
   let itemSearch = [];
   let validation = [undefined, null, 0, ""];
+  let regexHour = /^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
   let promotionMenus: PromotionMenu[] = [];
   let value = "";
   let placeholder = "Buscar menu";
+  let file;
 
   //Todo: Manipulate days.
   const onDaySelected = () => {
@@ -43,9 +44,10 @@
       return (daysSelected = days.map((e) => {
         return {
           idDia: e.idDia,
+          diaSemana: e.diaSemana,
           descripcion: e.descripcion,
           horaInicio: "00:00",
-          horaFin: "00:00",
+          horaFin: "23:59",
           checked: false,
         };
       }));
@@ -159,20 +161,28 @@
 
   const onPost = () => {
     if (!onValidation()) return;
+    if (!onValidationHour()) return;
 
+    let newPromotionMenu = promotionMenus.map((e) => {
+      return {
+        promotionId: e.promotionId,
+        menuId: e.menuId,
+      };
+    });
+    
     dataUpdate.promotionDays = JSON.stringify(daysSelected);
     let newObject = {
       ...dataUpdate,
-      promotionMenus: promotionMenus,
+      promotionMenus: newPromotionMenu,
     };
 
     showLoader();
-    PromotionService.post({ data: newObject })
+    PromotionService.post(JSON.stringify(newObject), file)
       .then((response) => {
-        console.log(response);
         if (response.status === 200) {
           if (response.data.code === "1") {
-            usePromotionStore.get();
+            file = undefined;
+            usePromotionStore.get({ codEstab: $usePromotionStore.codEstab });
             onModalClose();
             toast({ type: "success", message: response.data.message });
           } else {
@@ -187,19 +197,27 @@
 
   const onPut = () => {
     if (!onValidation()) return;
+    if (!onValidationHour()) return;
 
     showLoader();
+
+    let newPromotionMenu = promotionMenus.map((e) => {
+      return { id: e.id, promotionId: e.promotionId,menuId: e.menuId };
+    });
+    console.log(newPromotionMenu);
+
     dataUpdate.promotionDays = JSON.stringify(daysSelected);
     let newObject = {
       ...dataUpdate,
-      promotionMenus: promotionMenus,
+      promotionMenus: newPromotionMenu,
     };
 
-    PromotionService.put(dataUpdate.id, { data: newObject })
+    PromotionService.put(dataUpdate.id, JSON.stringify(newObject), file)
       .then((response) => {
         if (response.status === 200) {
           if (response.data.code === "1") {
-            usePromotionStore.get();
+            file = undefined;
+            usePromotionStore.get({ codEstab: $usePromotionStore.codEstab });
             onModalClose();
             toast({ type: "success", message: response.data.message });
           } else {
@@ -210,6 +228,38 @@
       .finally(() => {
         hideLoader();
       });
+  };
+
+  const onValidationHour = () => {
+    let isValid = true;
+    try {
+      daysSelected.forEach((e) => {
+        if (e.checked) {
+          if (!regexHour.test(e.horaInicio)) {
+            isValid = false;
+            toast({
+              type: "warning",
+              message: `La hora de inicio no es válida para el día ${e.descripcion}`,
+            });
+          }
+
+          if (!regexHour.test(e.horaFin)) {
+            isValid = false;
+            toast({
+              type: "warning",
+              message: `La hora de fin no es válida para el día ${e.descripcion}`,
+            });
+          }
+        }
+      });
+      return isValid;
+    } catch (error) {
+      isValid = false;
+      toast({
+        type: "warning",
+        message: "Debe revisar las horas de inicio y fin",
+      });
+    }
   };
 
   const onValidation = () => {
@@ -239,26 +289,33 @@
   const onModalClose = () => {
     daysSelected = [];
     promotionMenus = [];
-    dataUpdate = {
-      id: 0,
-      codEstab: "",
-      description: "",
-      startDate: "",
-      endDate: "",
-      promotionDays: "",
-    };
     usePromotionStore.update((state) => ({
       ...state,
       isOpen: false,
+      dataUpdate: {
+        id: 0,
+        codEstab: "",
+        description: "",
+        startDate: "",
+        endDate: "",
+        promotionDays: "",
+      },
     }));
   };
+
+  function handleFileChange(event) {
+    file = event.target.files[0];
+  }
+
+  function clearImage() {
+    file = undefined;
+  }
 
   // Todo: Use reactive store.
   usePromotionStore.subscribe((values) => {
     dataUpdate = values.dataUpdate;
     establecimientos = values.establecimientos;
     days = values.days;
-
     if (days.length > 0) {
       onDaySelected();
       getPromotionMenu(dataUpdate.id);
@@ -333,6 +390,26 @@
           </div>
         </div>
       </div>
+      <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+          <div class="custom-input">
+            <label for="file-input" class="hover-effect">
+              Haz clic o arrastra un archivo aquí
+            </label>
+            <input
+              type="file"
+              id="file-input"
+              accept=".jpg, .jpeg, .png"
+              on:change={handleFileChange}
+            />
+          </div>
+          {#if file}
+            <div class="image-preview">
+              <img src={URL.createObjectURL(file)} alt="Preview" />
+            </div>
+          {/if}
+        </div>
+      </div>
 
       <div class="row mt-3">
         {#each daysSelected as item}
@@ -349,7 +426,9 @@
           <div class="col-4">
             <div class="form-group">
               <input
-                type="time"
+                type="text"
+                min="00:00"
+                placeholder="00:00"
                 disabled={!item.checked}
                 bind:value={item.horaInicio}
                 class="form-control"
@@ -359,7 +438,9 @@
           <div class="col-4">
             <div class="form-group">
               <input
-                type="time"
+                type="text"
+                max="23:59"
+                placeholder="00:00"
                 disabled={!item.checked}
                 bind:value={item.horaFin}
                 class="form-control"
@@ -426,3 +507,62 @@
     </div>
   </Modal>
 {/if}
+
+<style>
+  /* Estilos CSS aquí */
+  /* Estilos CSS aquí */
+  .custom-input {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .custom-input:hover {
+    border-color: #007bff;
+  }
+
+  .hover-effect {
+    display: block;
+    transition: color 0.3s ease;
+    margin-bottom: 10px;
+  }
+
+  .custom-input:hover .hover-effect {
+    color: #007bff;
+  }
+
+  .image-preview {
+    margin-top: 20px;
+  }
+
+  .image-preview img {
+    max-width: 100%;
+    height: 100px;
+    object-fit: cover;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+  }
+
+  /* Estilo para el input file */
+  input[type="file"] {
+    display: none;
+  }
+
+  label[for="file-input"] {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  label[for="file-input"]:hover {
+    background-color: #fff;
+  }
+</style>

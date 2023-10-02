@@ -9,7 +9,7 @@ import path from "path";
 import alias from "@rollup/plugin-alias";
 import nodeResolve from '@rollup/plugin-node-resolve';
 
-const production = !process.env.ROLLUP_WATCH; 
+const production = !process.env.ROLLUP_WATCH;
 const appObject = "bundle"
 
 export default {
@@ -35,9 +35,9 @@ export default {
                 { find: "$routes", replacement: path.resolve(__dirname, "../WebUI/App/routes") },
                 { find: "$restaurant", replacement: path.resolve(__dirname, "../WebUI/App/routes/Restaurant") },
                 { find: "$mechanical", replacement: path.resolve(__dirname, "../WebUI/App/routes/Mechanical") },
-                { find: "$pet", replacement: path.resolve(__dirname, "../WebUI/App/lib") + "/Pet" },
-                { find: "$petbreed", replacement: path.resolve(__dirname, "../WebUI/App/lib") + "/PetBreed" },
-                { find: "$petmedicalhistory", replacement: path.resolve(__dirname, "../WebUI/App/lib") + "/PetMedicalHistory" },
+                { find: "$pet", replacement: path.resolve(__dirname, "../WebUI/App/routes") + "/Pet" },
+                { find: "$petbreed", replacement: path.resolve(__dirname, "../WebUI/App/routes") + "/PetBreed" },
+                { find: "$petmedicalhistory", replacement: path.resolve(__dirname, "../WebUI/App/routes") + "/PetMedicalHistory" },
             ]
         }),
         replace({

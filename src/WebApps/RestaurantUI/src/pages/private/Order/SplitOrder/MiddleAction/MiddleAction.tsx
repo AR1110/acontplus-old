@@ -24,7 +24,7 @@ const MiddleAction = () => {
     const [open, setOpen] = useState(false)
  
     const handleCheckedRight = () => {
-        const filteredItems = leftChecked.filter(orderItem => orderItem.quantity > 1); 
+        const filteredItems = leftChecked.filter(orderItem => orderItem.remainingQuantity > 1); 
         if (filteredItems.length > 0) {
             setChangeOrderItems(leftChecked)
             setOpen(true)

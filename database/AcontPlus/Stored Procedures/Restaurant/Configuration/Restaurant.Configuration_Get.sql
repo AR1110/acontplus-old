@@ -18,14 +18,16 @@ BEGIN
 	DECLARE @idEntidad INT
 	DECLARE @codEstab VARCHAR(20)
     DECLARE @customerCompanyId INT 
+    DECLARE @actividad VARCHAR(4)
     
 	SELECT TOP 1  @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 	SELECT @codEstab = codEstab FROM OPENJSON(@json) WITH(codEstab VARCHAR(20)  '$.codEstab')
+    SELECT TOP 1 @actividad = actividad FROM Sri.Establecimiento WITH (NOLOCK) WHERE codEstab = @codEstab
 
     --cliente por defecto agregado en configuracion general
     SELECT TOP 1 @customerCompanyId = ISNULL(JSON_VALUE(jsonConfig, '$.idCliente'), 0) FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND  codConfig = 'CV'
 
-	SET @tableNames = 'ConfigDecimal,Table,SubCategorias,Impuesto,TarifaImpuesto,PtoEmi_Asig,Bodega_Asign,Floor,Room,Customer'
+	SET @tableNames = 'ConfigDecimal,Table,SubCategorias,Impuesto,TarifaImpuesto,PtoEmi_Asig,Bodega_Asign,Floor,Room,Customer,tarifaImpuestoVigente'
 	
     SELECT * FROM v_ConfigDecimal WHERE idEntidad = @idEntidad AND codTrasaccion = 'V'
     
@@ -69,7 +71,7 @@ BEGIN
 
     SELECT id, code, [description], capacity, floorId FROM Restaurant.v_room
 
-    --CUSTOMER DEFAULT 11121    
+    --CUSTOMER DEFAULT      
 	SELECT 
 		cl.idCliente
 	   ,cl.numeroIdentificacion
@@ -77,17 +79,12 @@ BEGIN
 	   ,cl.nombreFiscal
 	   ,cl.direccion
 	   ,cl.correo
-	FROM dbo.Cliente cl WITH (NOLOCK) WHERE cl.idCliente = @customerCompanyId
+	FROM dbo.Cliente cl WITH (NOLOCK) WHERE cl.idCliente = @customerCompanyId 
 
-    --SELECT idEntidadFinanciera,descripcion,detalle,codigo FROM dbo.EntidadFinanciera WITH (NOLOCK) WHERE estado = 1
 
-    --SELECT idEntidadFinanciera
-    --        , idSubEntidadFinanciera
-    --        , descripcion
-    --        , codigo
-    --        , interes
-    --        ,controlCaja 
-    --FROM dbo.SubEntidadFinanciera WITH (NOLOCK) 
-    --WHERE idEntidad = @idEntidad AND estado = 1
+     
+	SELECT descripcion, codigo, porcentaje FROM Sri.TarifaImpuesto WITH (NOLOCK) WHERE codigo IN ('2') AND estado = 1 ORDER BY codigo DESC
+		 
+
 END
 GO

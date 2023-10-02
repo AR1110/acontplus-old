@@ -14,8 +14,9 @@ import { create } from "zustand";
 import { produce } from 'immer';
 import { productService } from "@/core/services";
 import Swal from "sweetalert2";
-import { useLoaderStore } from ".";
- 
+import { useAuthStore, useLoaderStore } from ".";
+const imgUrlPromocion = new URL('/assets/promocion.jpg', import.meta.url).href
+const imgUrlCombo = new URL(`/assets/combo.jpg`, import.meta.url).href
  
 
 type State = {
@@ -157,13 +158,13 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                     idSubFamilia: 0,
                     code: CATEGORY_CODE.PROM,
                     description: 'PROMOCIÓN',
-                    s3ObjectUrl: '/assets/promocion.jpg'
+                    s3ObjectUrl: imgUrlPromocion
                 },
                 {
                     idSubFamilia: 0,
                     code: CATEGORY_CODE.COM,
                     description: 'COMBOS',
-                    s3ObjectUrl: `/assets/combo.jpg`
+                    s3ObjectUrl: imgUrlCombo
                 }, ...dataForm.categories];
                 //customer default
                 if (!(state.order.orderId > 0) && dataForm.customer.customerCompanyId > 0) {
@@ -306,7 +307,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                 state.order.table = {}
             })
         )
-        clearSound();
+        // clearSound();
         get().caculateTotals();
 
     },
@@ -337,10 +338,12 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
         caculateTotals();
     },
     caculateTotals() {
-
+        //Invocamos otro store de autencation en donde se recupera los establecimientos al inicar sesión 
+        const dataEstab = useAuthStore.getState().dataEstab;
+        
         // Obtener los datos necesarios del estado (state)
         const { items, dataForm } = get();
-        const decimal = dataForm.decimal;
+        const {decimal, tarifaImpuestoVigente} = dataForm; 
 
         // Inicializar variables para los totales
         let subTotalSinImpuestos = 0; // Subtotal sin impuestos
@@ -366,13 +369,13 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
             );
 
             // Si hay un impuesto correspondiente, agregar el total del ítem al total neto con IVA
-            if (matchingTaxRate?.taxRateCode === "2") {
+            if (matchingTaxRate?.taxRateCode === tarifaImpuestoVigente.taxRateCode) {
                 totalNetoIva += itemTotal;
             }
         }
 
-        // Calcular el monto del impuesto (IVA 12%)
-        tax = (totalNetoIva * 12) / 100;
+        // Calcular el monto del impuesto (IVA 12%) 
+        tax = (totalNetoIva * tarifaImpuestoVigente.percentage) / 100;
 
         // Calcular el total con IVA
         totalPlusVAT = subTotalSinImpuestos + tax;
@@ -382,8 +385,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
 
         // Actualizar el estado (state) con los totales calculados y redondeados
         set(
-            produce((state: State) => {
-                state.order.netTotal = importeTotal;
+            produce((state: State) => { 
                 state.order.subTotalSinImpuestos = RoundNumber(
                     subTotalSinImpuestos,
                     decimal.nroTotalSubTotal

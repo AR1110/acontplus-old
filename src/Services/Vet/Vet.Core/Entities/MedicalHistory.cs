@@ -1,5 +1,6 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Common.Core.Entities;
 
 namespace Vet.Core.Entities
 {
@@ -16,6 +17,9 @@ namespace Vet.Core.Entities
         public List<BehaviorTest> BehaviorTests { get; set; }
         [MaxLength(15)]
         public string CodEstab { get; set; }
-        public int? UserId { get; set; }
+        [Column(TypeName = "numeric(4,2), null")]
+        public decimal? Age { get; set; }
+        [Column(TypeName = "numeric(4,2), null")]
+        public decimal? Weight { get; set; }
     }
 }

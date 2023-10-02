@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Common.Core.Entities;
 
 namespace Restaurant.Core.Entities
 {
@@ -14,7 +15,8 @@ namespace Restaurant.Core.Entities
         public string Summary { get; set; }
         public MenuType MenuType { get; set; }
         public int? MenuTypeId { get; set; }
-        public string Content { get; set; }       
+        public string Content { get; set; }
+        public bool ForPromotion { get; set; }
         public List<MenuItem> MenuItems { get; set; }
     }
 }

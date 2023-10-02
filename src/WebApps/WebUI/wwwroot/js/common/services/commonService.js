@@ -51,7 +51,7 @@ export class CommonService {
         this.articuloSvc = articuloSvc;
         this.empleadoSvc = empleadoSvc;
         this.ventaSvc = ventaSvc;
- 
+
         // this.$http.get('/TipoDocumento/GetAll').then(({data:response})=>{
         //     this.tipoDoc = response.data.reduce((groups, item)=>{
         //         let val = item.codigo
@@ -220,7 +220,7 @@ export class CommonService {
             }
             return JSON.parse(response.data)
         });
-    } 
+    }
 
     getAllTipoIva() {
         return this.$http.get("/TipoIva/OptionTipoIva")
@@ -284,10 +284,10 @@ export class CommonService {
 
     //Buscador Empleado 
     querySearchEmpleado(textSearch) {
-        if(!textSearch && textSearch.length < 2)  return [] 
+        if (!textSearch && textSearch.length < 2) return []
 
         return this.empleadoSvc.search({
-            textSearch 
+            textSearch
         })
     }
 
@@ -1226,7 +1226,7 @@ export class CommonService {
                 });
                 break;
         }
-        
+
         return {
             cliente,
             dataTipoDocumento,
@@ -1260,7 +1260,7 @@ export class CommonService {
         if (!id) throw "ID DOCUMENTO INVÁLIDO";
 
         await this.mS.getData('get', 'Logistica/GuiaRemision/GetId/' + id, null, true).then(response => {
-            
+
             if (response.code == "0") {
                 this.form.sweetAlert('warning', response.message)
                 throw response.message
@@ -1393,7 +1393,7 @@ export class CommonService {
         }
     }
 
-   
+
     //--------------------------------------------------REPORTE----------------------------------
     async getReport(params) {
         try {
@@ -1592,7 +1592,14 @@ export class CommonService {
 
             let urlPrinter = params[0].urlPrinter + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + encodeURIComponent(params[0].dataSources) + '&rdlcParams=' + params[0].rdlcParams
 
-            fetch(urlPrinter).then(function (response) {
+            fetch(urlPrinter, {
+                method: 'POST',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            }).then(function (response) {
                 if (response.ok) {
                     toastr.success('Impresion correcta!', '', {
                         positionClass: 'toast-bottom-right',
@@ -1882,7 +1889,7 @@ export class CommonService {
         codigoDocumento,
         size,
         windowClass = "uibModalFullScreen",
-        isRenderRazorPartial=false,
+        isRenderRazorPartial = false,
     }) {
         try {
             let controller = null,
@@ -1892,7 +1899,7 @@ export class CommonService {
                 isComplete = false;
             let fileCtrl = null;
             let ctrl;
-            
+
 
             switch (codigoDocumento) {
                 case "FV":
@@ -2011,7 +2018,7 @@ export class CommonService {
                     break
 
                 case "GR":
-                    
+
                     fileCtrl = this.nombreModalLogistica.GUIA_REMISION.fileCtrl;
                     ctrl = this.nombreModalLogistica.GUIA_REMISION.controller;
                     template = this.nombreModalLogistica.GUIA_REMISION.template;
@@ -2027,7 +2034,7 @@ export class CommonService {
                     throw 'Detalle del Documento No definido'
             }
 
-             
+
 
 
             this._modalSvc.openModalCustom({
@@ -2102,7 +2109,7 @@ export class CommonService {
                     motivo: result.value,
                     codigoAccion
                 });
-                this.mS.getData('post', 'Solicitud/Post/' + jsonParams, null, true).then(response => {                    
+                this.mS.getData('post', 'Solicitud/Post/' + jsonParams, null, true).then(response => {
                     if (response.code === "0") {
                         this.form.sweetAlert('warning', response.message)
                     }
@@ -2130,7 +2137,7 @@ export class CommonService {
 
     //========================================END POINT EXTERNOS================== 
     checkClientSRIByRUC = function (identificacion) {
-        return this.mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + identificacion, null, true).then(response=>{
+        return this.mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + identificacion, null, true).then(response => {
             console.log(response)
             return response;
         })
@@ -2144,8 +2151,8 @@ export class CommonService {
     }
 
 
-    checkCantItem(items){
-        if(Array.isArray(items)){
+    checkCantItem(items) {
+        if (Array.isArray(items)) {
             return items.length === 75
         }
         return items.length === 50;

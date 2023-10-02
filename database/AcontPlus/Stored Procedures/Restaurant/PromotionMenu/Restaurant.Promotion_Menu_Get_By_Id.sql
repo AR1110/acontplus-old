@@ -11,7 +11,7 @@ GO
 -- Description: sp for get restaurant menus
 -- Restaurant.Promotion_Get 139, '', ''
 -- =============================================
--- Restaurant.Promotion_Menu_Get_By_Id 139, 5, ''
+-- Restaurant.Promotion_Menu_Get_By_Id 139, 6, '{"id":6,"tipo":2}', ''
 CREATE OR ALTER PROCEDURE Restaurant.Promotion_Menu_Get_By_Id
 @userRoleId     INT
 ,@id            INT
@@ -71,8 +71,7 @@ IF @tipo = 2
             ,totalRecords        = COUNT(*) OVER()
         FROM Restaurant.PromotionMenu rpm
         INNER JOIN Restaurant.Menu m WITH(NOLOCK) ON m.Id = rpm.MenuId
-        INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
-        INNER JOIN Restaurant.MenuType rmt ON rmt.Id = m.MenuTypeId
+        INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo        
         WHERE rpm.PromotionId = @Id
         AND ISNULL(rpm.Deleted, 0) != 1
     END

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Common.Core.Entities;
 
 namespace Restaurant.Core.Entities
 {
@@ -17,5 +18,9 @@ namespace Restaurant.Core.Entities
         public DateTime? StartDate { get; set; }
         [Required]
         public DateTime? EndDate { get; set; }
+        [MaxLength(800)]
+        public string S3ObjectUrl { get; set; }
+        [MaxLength(500)]
+        public string S3ObjectKey { get; set; }
     }
 }

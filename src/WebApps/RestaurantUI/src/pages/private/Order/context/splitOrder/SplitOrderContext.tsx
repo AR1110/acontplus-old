@@ -6,9 +6,9 @@ import {
     GET_ORDER_BEGIN,
     GET_ORDER_ERROR,
     GET_ORDER_SUCCESS,
+    SET_ACTION_TYPE,
     SET_CHANGE_ORDER_ITEMS,
-    SET_DATA_FORM,
-    SET_FUNCTION_CLOSE_DIALOG,
+    SET_DATA_FORM, 
     SET_LEFT_CHECKED_ORDER_ITEMS,
     SET_LEFT_ORDER_ITEMS,
     SET_PAYMENT_DATA,
@@ -19,8 +19,8 @@ import {
 } from "..";
 
 import { orderReadForUpdateAdapter } from "@/core/adapters";
-import { ItemRead, Order, SplitOrderAction, SplitOrderState, dataFormInitialState } from "@/core/models";
-import { RoundNumber } from "@/core/utilities";
+import { OrderItemDivide, Order, SplitOrderAction, SplitOrderState, dataFormInitialState } from "@/core/models";
+import { PricingCalculateUtility, RoundNumber } from "@/core/utilities";
 import { TAX_RATE_CODE } from "@/core/constants";
 
 const leftOrder = {
@@ -68,12 +68,12 @@ const rightOrder = {
 };
 // Define el estado inicial del contexto
 const initialState: SplitOrderState = {
-
+    actionType: '',
     orderLoading: false,
     orderError: false,
     dataForm: dataFormInitialState,
-    leftOrder,
-    rightOrder,
+    leftOrder: structuredClone(leftOrder),
+    rightOrder: structuredClone(rightOrder),
     leftOrderItemsLength: 0,
     leftOrderItems: [],
     rightOrderItems: [],
@@ -83,14 +83,13 @@ const initialState: SplitOrderState = {
     payment: {
         payload: {},
         open: false,
-    },
-    closeDialogDivide: ()=>[]
+    }
 }
 const initialActions: SplitOrderAction = {
+    setActionType: ()=>[],
     fetchOrderData: (id: number) => id,
     intersection: () => [],
     not: () => [],
-
     setRightOrderItem: () => [],
     setLeftOrderItem: () => [],
     setRightOrderData: () => [],
@@ -101,12 +100,11 @@ const initialActions: SplitOrderAction = {
     setRightCheckedOrderItems: () => [],
     calculateOrderItemTotal: () => {
         return {
-            quantity: 0, subTotalSinImpuestos: 0, tax: 0, total: 0
+            remainingQuantity: 0, subTotalSinImpuestos: 0, tax: 0, total: 0
         };
     },
     setPaymentData: () => [],
-    resetData: () => [],
-    setCloseDialogDivide:()=>[], 
+    resetData: () => []
 };
 
 // Crea un contexto llamado SplitOrderContext
@@ -155,9 +153,10 @@ export const SplitOrderProvider = ({ children }: Props) => {
 
             const response = resultAxios.data;
             const orderData = await orderReadForUpdateAdapter(response)
-            console.log(orderData)
+
             await getDataForForm(orderData.order.establecimientoId)
-            // Actualiza el estado con los datos del pedido
+            // Actualiza el estado con los datos del pedido 
+            resetData()
             dispatch({ type: GET_ORDER_SUCCESS, payload: orderData })
 
         } catch (error) {
@@ -174,45 +173,61 @@ export const SplitOrderProvider = ({ children }: Props) => {
     // Utiliza useEffect para realizar una limpieza al desmontar el componente
     useEffect(() => {
         return () => {
-            dispatch({
-                action: SET_RESET_DATA,
-                payload: {
-                    rightOrder,
-                    leftOrder
-                }
-            })
+            console.log('abort component')
+            resetData()
             // Cancela la solicitud de datos de pedido al desmontar
             cancelEndpoint();
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    function setActionType<T>(payload:T){
+        dispatch({
+            type: SET_ACTION_TYPE,
+            payload
+        })
+    }
 
     // Función para calcular la intersección entre dos arreglos
-    const intersection = (checkedOrderItems: Array<ItemRead>, leftOrderItems: Array<ItemRead>) => {
+    const intersection = (checkedOrderItems: Array<OrderItemDivide>, leftOrderItems: Array<OrderItemDivide>) => {
         return checkedOrderItems.filter((value) => {
             return leftOrderItems.some((item) => item.id === value.id);
         });
         // return checkedOrderItems.filter((value) => leftOrderItems.indexOf(value) !== -1);
     }
 
-    const not = (a: Array<ItemRead>, b: Array<ItemRead>) => {
+    const not = (a: Array<OrderItemDivide>, b: Array<OrderItemDivide>) => {
         const results = a.filter((value) => b.indexOf(value) === -1);
         return results;
     }
 
-    const setRightOrderItem = (payload: Array<ItemRead>) => {
+    const setRightOrderItem = (payload: Array<OrderItemDivide>) => {
         dispatch({ type: SET_RIGHT_ORDER_ITEMS, payload })
         caculateTotals(state.rightOrder, payload)
     }
 
-    const setLeftOrderItem = (payload: Array<ItemRead>) => {
+    const setLeftOrderItem = (payload: Array<OrderItemDivide>) => {
         dispatch({ type: SET_LEFT_ORDER_ITEMS, payload })
         caculateTotals(state.leftOrder, payload)
     }
 
+
+
+    const caculateTotals = (order: Order, orderItems: Array<OrderItemDivide>) => {
+        try {
+
+            const obj = calculateOrderItemTotal(orderItems);
+
+            order.subTotalSinImpuestos = obj.subTotalSinImpuestos;
+            order.tax = obj.tax;
+            order.total = obj.total
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     function calculateOrderItemTotal<T extends {
-        quantity: number
+        remainingQuantity: number
         price: number
         discount: number
         total: number
@@ -228,9 +243,9 @@ export const SplitOrderProvider = ({ children }: Props) => {
             const itemPrice = orderItem.price - orderItem.discount;
 
             // Calcular el total del ítem
-            const itemTotal = itemPrice * orderItem.quantity;
+            const itemTotal = itemPrice * orderItem.remainingQuantity;
 
-            total.quantity += orderItem.quantity;
+            total.quantity += orderItem.remainingQuantity;
             // Agregar el total del ítem al subtotal sin impuestos
             total.subTotalSinImpuestos += itemTotal;
 
@@ -239,7 +254,7 @@ export const SplitOrderProvider = ({ children }: Props) => {
                 total.totalNetoIva += itemTotal;
             }
 
-            total.importeTotal += Number((orderItem.priceWithVat * orderItem.quantity).toFixed(2))
+            total.importeTotal += Number((orderItem.priceWithVat * orderItem.remainingQuantity).toFixed(2))
             return total;
         }, {
             quantity: 0,
@@ -247,35 +262,15 @@ export const SplitOrderProvider = ({ children }: Props) => {
             totalNetoIva: 0,
             importeTotal: 0
         })
-
-        // Calcular el monto del impuesto (IVA 12%)
-        tax = (totalNetoIva * 12) / 100;
-
-        // Calcular el total con IVA
-        //  totalPlusVAT = subTotalSinImpuestos + tax;
-
-        // Calcular el importe total con descuento  
-        // importeTotal = totalPlusVAT;
+        // calcular valor impuesto vigente a partir del total 
+        const price = PricingCalculateUtility.calculatePriceSale(importeTotal, state.dataForm.tarifaImpuestoVigente.percentage);
+        tax = importeTotal - price;
 
         return {
-            quantity,
+            remainingQuantity: quantity,
             subTotalSinImpuestos: RoundNumber(subTotalSinImpuestos, 5),
             tax: RoundNumber(tax, 5),
             total: RoundNumber(importeTotal, 5)
-        }
-    }
-
-    const caculateTotals = (order: Order, orderItems: Array<ItemRead>) => {
-        try {
-
-            const obj = calculateOrderItemTotal(orderItems);
-
-            order.netTotal = obj.total;
-            order.subTotalSinImpuestos = obj.subTotalSinImpuestos;
-            order.tax = obj.tax;
-            order.total = obj.total
-        } catch (error) {
-            console.log(error)
         }
     }
 
@@ -286,7 +281,7 @@ export const SplitOrderProvider = ({ children }: Props) => {
         })
     }
 
-    const setChangeOrderItems = (payload: Array<ItemRead>) => {
+    const setChangeOrderItems = (payload: Array<OrderItemDivide>) => {
         dispatch({
             type: SET_CHANGE_ORDER_ITEMS,
             payload
@@ -294,13 +289,13 @@ export const SplitOrderProvider = ({ children }: Props) => {
     }
 
 
-    const setLeftCheckedOrderItems = (payload: Array<ItemRead>) => {
+    const setLeftCheckedOrderItems = (payload: Array<OrderItemDivide>) => {
         dispatch({
             type: SET_LEFT_CHECKED_ORDER_ITEMS,
             payload
         })
     }
-    const setRightCheckedOrderItems = (payload: Array<ItemRead>) => {
+    const setRightCheckedOrderItems = (payload: Array<OrderItemDivide>) => {
         dispatch({
             type: SET_RIGHT_CHECKED_ORDER_ITEMS,
             payload
@@ -309,7 +304,7 @@ export const SplitOrderProvider = ({ children }: Props) => {
 
 
     //Funciona para fusionar items seleccionados(cuenta general) con items (cuenta individual)
-    function mergeArraysByField<T extends { id: number; quantity: number; price: number, total: number }>(array1: T[], array2: T[], field: keyof T): T[] {
+    function mergeArraysByField<T extends { id: number; remainingQuantity: number; price: number, total: number }>(array1: T[], array2: T[], field: keyof T): T[] {
         // Realiza una copia superficial de array1 para evitar mutar el array original
         const mergedArray: T[] = [];
         const closeArray2 = structuredClone(array2);
@@ -319,9 +314,9 @@ export const SplitOrderProvider = ({ children }: Props) => {
 
             if (dataOrderItem) {
                 // Si existe en array2, suma la cantidad y calcula el nuevo precio
-                const qty = dataOrderItem["quantity"] + item1.quantity
+                const qty = dataOrderItem["remainingQuantity"] + item1.remainingQuantity
                 const total = qty + item1.price
-                dataOrderItem.quantity = qty;
+                dataOrderItem.remainingQuantity = qty;
                 dataOrderItem.total = total;
             } else {
                 // Si no existe en array2, agrega el elemento de array1 en array2
@@ -336,12 +331,12 @@ export const SplitOrderProvider = ({ children }: Props) => {
                 mergedArray.push(item2);
             }
         }
-        console.log(array2)
+
         return mergedArray;
     }
 
 
-    function mergeArraysByFieldLeft<T extends { id: number; quantity: number; price: number, total: number }>(
+    function mergeArraysByFieldLeft<T extends { id: number; remainingQuantity: number; price: number, total: number }>(
         array1: T[],
         array2: T[],
         field: keyof T
@@ -353,8 +348,8 @@ export const SplitOrderProvider = ({ children }: Props) => {
 
             if (dataOrderItem) {
                 // Si la cantidad es diferente, resta la cantidad de array1 a newArray2
-                if (item1.quantity !== dataOrderItem.quantity) {
-                    dataOrderItem.quantity -= item1.quantity;
+                if (item1.remainingQuantity !== dataOrderItem.remainingQuantity) {
+                    dataOrderItem.remainingQuantity -= item1.remainingQuantity;
                 } else {
                     // Si la cantidad es igual, elimina el elemento de newArray2
                     const item2Index = newArray2.findIndex((item) => item[field] === item1[field]);
@@ -369,7 +364,6 @@ export const SplitOrderProvider = ({ children }: Props) => {
     }
 
     function setPaymentData<T>(payload: T) {
-        console.log('payment settttt hjdgdhje')
         dispatch({
             type: SET_PAYMENT_DATA,
             payload
@@ -381,19 +375,12 @@ export const SplitOrderProvider = ({ children }: Props) => {
         dispatch({
             type: SET_RESET_DATA,
             payload: {
-                rightOrder,
-                leftOrder
+                rightOrder: structuredClone(rightOrder),
+                leftOrder: structuredClone(rightOrder)
             }
         })
     }
-
-    const setCloseDialogDivide = (payload:()=>void)=>{
-        dispatch({
-            type: SET_FUNCTION_CLOSE_DIALOG,
-            payload
-        })
-    }
-   
+ 
 
 
     // Proporciona el estado y las funciones del contexto a los componentes hijos
@@ -401,6 +388,7 @@ export const SplitOrderProvider = ({ children }: Props) => {
         <SplitOrderContext.Provider value={{
             ...state,
             fetchOrderData,
+            setActionType,
             intersection,
             not,
             setRightOrderItem,
@@ -413,8 +401,7 @@ export const SplitOrderProvider = ({ children }: Props) => {
             setRightCheckedOrderItems,
             calculateOrderItemTotal,
             setPaymentData,
-            resetData,
-            setCloseDialogDivide,  
+            resetData, 
         }}>
             {children}
         </SplitOrderContext.Provider>

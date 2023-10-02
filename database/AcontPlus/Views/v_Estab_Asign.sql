@@ -17,6 +17,8 @@ CREATE VIEW v_Estab_Asign AS (
 	,e.contribuyenteRimpe
 	,e.actividad
     ,ae.idActividadEconomica AS ActividadEconomicaId 
+    ,e.telefono
+    ,e.correo
 	FROM Config.Estab_Asig ea WITH (NOLOCK)     
 	INNER JOIN Sri.Establecimiento e WITH (NOLOCK) ON ea.codEstab = e.codEstab
     INNER JOIN Sri.ActividadEconomica ae WITH (NOLOCK) ON ae.codigo = e.actividad 

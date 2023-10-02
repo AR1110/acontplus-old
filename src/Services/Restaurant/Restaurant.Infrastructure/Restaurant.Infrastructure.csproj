@@ -5,6 +5,24 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="Data\SeedData\Floors.json" />
+	  <None Remove="Data\SeedData\ItemTypes.json" />
+	  <None Remove="Data\SeedData\MenuType.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Data\SeedData\Floors.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Data\SeedData\ItemTypes.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Data\SeedData\MenuType.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" />

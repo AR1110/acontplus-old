@@ -4,7 +4,8 @@ export const enum PATHS {
     SALE = 'Venta/',
     ACCOUNTING = 'Contabilidad/',
     CONFIG = 'Config/',
-    CUSTOMER = 'Customer/'
+    CUSTOMER = 'Customer/',
+    REPORT = 'Reporte/'
 }
 
 export const enum PERSIS_USER {
@@ -45,4 +46,9 @@ export enum TAX_RATE_CODE {
 export enum ITEM_TYPE_CODE {
     MENU = "MENU",
     ITEM = "ITEM"
+}
+
+export enum DOC_TYPE_REPORT {
+    FV = 'RF',
+    NE = 'RNE'    
 }

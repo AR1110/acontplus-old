@@ -377,7 +377,11 @@ export const useCheckoutStore = create<State & StateCalculator & Actions & Actio
                     SnackbarUtility.success(response.message);
 
                     if (queryParams.printerAutomatic) {
-                        SharedService.getPrinter(queryParams.orderId)
+                        SharedService.getPrinter({
+                            id: queryParams.orderId,
+                            documentoId: queryParams.idDocumento,
+                            tipo: 1
+                        })
                     }
 
                     closeDialog();
