@@ -59,7 +59,7 @@
                 </button>
                 <button
                   title="Realizar Mantenimiento"
-                  on:click={() => MaintenanceStore.getOpenModal()}
+                  on:click={() => MaintenanceStore.getOpenModal(0, item.id)}
                   class="btn btn-outline-info btn-sm"
                 >
                   <i class="fa fa-wrench" />

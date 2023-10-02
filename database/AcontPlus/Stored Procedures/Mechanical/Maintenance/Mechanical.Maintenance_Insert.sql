@@ -16,86 +16,82 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
     
-    DECLARE @Id INT, @CompanyId INT, @UserId INT , @jsonInspection VARCHAR(MAX)
-    DECLARE @SupportId INT 
+    DECLARE @Id INT, @CompanyId INT, @UserId INT ,@jsonMaintenance VARCHAR(MAX) ,@jsonMaintenanceDetails VARCHAR(MAX)
     
-    DECLARE @tbInspection AS TABLE (
-        SupportId INT NOT NULL
+
+    DECLARE @tbMaintenance AS TABLE (
+        InspectionId INT NOT NULL
        ,[Date] DATETIME2 NOT NULL
-       ,Mileage INT NOT NULL
-       ,FuelLevel VARCHAR(150) NOT NULL
-       ,Engine VARCHAR(MAX) NOT NULL
-       ,Cabin VARCHAR(MAX) NOT NULL
-       ,Bearing VARCHAR(MAX) NOT NULL
-       ,Transmission VARCHAR(MAX) NOT NULL
-       ,Lighting VARCHAR(MAX) NOT NULL
-       ,Brake VARCHAR(MAX) NOT NULL
-       ,Steering VARCHAR(MAX) NOT NULL
-       ,Suspension VARCHAR(MAX) NOT NULL
-       ,Obs VARCHAR(300) NULL
-       ,[Status] INT DEFAULT 0 NOT NULL
-       ,CreatedAt DATETIME2 DEFAULT GETDATE() NOT NULL
-       ,[Enabled] BIT DEFAULT 1 NOT NULL
+       ,Obs VARCHAR(300) NOT NULL
+       ,[Status] INT DEFAULT 1 
+       ,CreatedAt DATETIME2 DEFAULT GETDATE()
+       ,[Enabled] BIT DEFAULT 1
+    )
+
+    DECLARE @tbMaintenanceDetail AS TABLE(
+        ArticuloId INT NOT NULL
+       ,[Description] VARCHAR(300) NOT NULL
+       ,Quantity NUMERIC(18,5) NOT NULL
+       ,[Status] INT DEFAULT 1 
+       ,CreatedAt DATETIME2 DEFAULT GETDATE()
+       ,[Enabled] BIT DEFAULT 1
     )
 
     BEGIN TRY 
         
        
 
-        SELECT @jsonInspection = inspection FROM OPENJSON(@json) WITH (inspection NVARCHAR(MAX) '$.maintenanceDetails' as json)
+        SELECT @jsonMaintenance = maintenance ,@jsonMaintenanceDetails = maintenanceDetails FROM OPENJSON(@json) WITH (maintenance NVARCHAR(MAX) '$.maintenance' as json ,maintenanceDetails NVARCHAR(MAX) '$.maintenanceDetails' as json)
 
-          SELECT [Common].[ufnSpResponse]('0', @jsonInspection, NULL)
-         RETURN
+        INSERT INTO @tbMaintenance (InspectionId,[Date],Obs)
+                             SELECT InspectionId,[Date],Obs
+                             FROM OPENJSON(@jsonMaintenance) WITH 
+                             (
+                                InspectionId          INT '$.inspectionId' 
+                               ,[Date]          DATETIME2 '$.date'
+                               ,Obs          VARCHAR(300) '$.obs'
+                             )
 
-        INSERT INTO @tbInspection 
-              (SupportId,[Date],Mileage,FuelLevel,Engine,Cabin,Bearing,Transmission,Lighting,Brake,Steering,Suspension,Obs)
-        SELECT SupportId,[Date],Mileage,FuelLevel,Engine,Cabin,Bearing,Transmission,Lighting,Brake,Steering,Suspension,Obs
-        FROM OPENJSON(@jsonInspection) WITH 
-        (
-            SupportId             INT '$.supportId' 
-           ,[Date]          DATETIME2 '$.date' 
-           ,Mileage               INT '$.mileage' 
-           ,FuelLevel    VARCHAR(150) '$.fuelLevel' 
-           ,Engine       VARCHAR(MAX) '$.engine'       
-           ,Cabin        VARCHAR(MAX) '$.cabin'         
-           ,Bearing      VARCHAR(MAX) '$.bearing'      
-           ,Transmission VARCHAR(MAX) '$.transmission'  
-           ,Lighting     VARCHAR(MAX) '$.lighting'     
-           ,Brake        VARCHAR(MAX) '$.brake'        
-           ,Steering     VARCHAR(MAX) '$.steering'     
-           ,Suspension   VARCHAR(MAX) '$.suspension'
-           ,Obs          VARCHAR(300) '$.obs'
-        )
+        INSERT INTO @tbMaintenanceDetail (ArticuloId,[Description],Quantity)
+                                   SELECT ArticuloId,[Description],Quantity
+                                   FROM OPENJSON(@jsonMaintenanceDetails) WITH 
+                                   (
+                                        ArticuloId             INT '$.articuloId' 
+                                       ,[Description] VARCHAR(300) '$.description'
+                                       ,Quantity      VARCHAR(300) '$.quantity'
+                                   )
+
+
 
         -- ======================= VARIABLES ===============================
 
         SELECT TOP 1 @CompanyId = idEntidad , @UserId = idUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-        SELECT TOP 1 @SupportId = SupportId FROM @tbInspection
 
         -- ======================= VALIDATION =============================== 
-        IF (SELECT COUNT(*) FROM @tbInspection) = 0 
+        IF (SELECT COUNT(*) FROM @tbMaintenance) = 0 
             BEGIN
-                 SELECT [Common].[ufnSpResponse]('0', 'Error en la información al registrar', NULL)
-                 RETURN
+                SELECT [Common].[ufnSpResponse]('0', 'Error en el mantenimiento', NULL)
+                RETURN
             END 
 
-        IF EXISTS (SELECT 1 FROM Mechanical.Inspection WITH (NOLOCK) WHERE SupportId = @SupportId)
+        IF (SELECT COUNT(*) FROM @tbMaintenanceDetail) = 0
             BEGIN
-                 SELECT [Common].[ufnSpResponse]('0', 'Ya se encuentra realizado la inspeccion de esta Ficha', NULL)
-                 RETURN
-            END 
+                SELECT [Common].[ufnSpResponse]('0', 'Error en el detalle del mantenimiento', NULL)
+                RETURN
+            END
 
         BEGIN TRAN 
             
-            UPDATE Mechanical.Support SET [Status] = 1 WHERE Id = @SupportId
+           INSERT INTO [Mechanical].[Maintenance]
+                 (InspectionId,[Date],Obs, CompanyId, UserId,[Status],CreatedAt,[Enabled])
+           SELECT InspectionId,[Date],Obs,@CompanyId,@UserId,[Status],CreatedAt,[Enabled] FROM @tbMaintenance
 
-            INSERT INTO [Mechanical].[Inspection]
-                  (SupportId,[Date],Mileage,FuelLevel,Engine,Cabin,Bearing,Transmission,Lighting,Brake,Steering,Suspension,Obs, CompanyId, UserId,[Status],CreatedAt,[Enabled])
-            SELECT SupportId,[Date],Mileage,FuelLevel,Engine,Cabin,Bearing,Transmission,Lighting,Brake,Steering,Suspension,Obs,@CompanyId,@UserId,[Status],CreatedAt,[Enabled]
-            FROM @tbInspection
+           SELECT @Id = SCOPE_IDENTITY()
 
-            SELECT @Id = SCOPE_IDENTITY()
+           INSERT INTO [Mechanical].[MaintenanceDetail]
+                 ([MaintenanceId],[ArticuloId],[Description],[Quantity],[CreatedAt],[Enabled])
+           SELECT @Id            ,[ArticuloId],[Description],[Quantity],[CreatedAt],[Enabled] FROM @tbMaintenanceDetail 
 
         COMMIT TRAN 
 
