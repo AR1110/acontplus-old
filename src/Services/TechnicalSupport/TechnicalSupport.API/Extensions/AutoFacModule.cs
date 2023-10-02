@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Common.Infrastructure.Data;
 using Common.Infrastructure.Repository;
+using TechnicalSupport.Infrastructure.Data;
 
 namespace TechnicalSupport.API.Extensions
 {
@@ -8,16 +9,16 @@ namespace TechnicalSupport.API.Extensions
     {
         protected override void Load(ContainerBuilder builder)
         {
-            //builder.RegisterType<>().As<BaseContext>();
-            //builder.Register(ctx =>
-            //{
-            //    var allContext = new Dictionary<string, BaseContext>
-            //    {
-            //        { "", ctx.Resolve<>() }
-            //    };
-            //    return new DbContextFactory(allContext);
+            builder.RegisterType<TechnicalSupportContext>().As<BaseContext>();
+            builder.Register(ctx =>
+            {
+                var allContext = new Dictionary<string, BaseContext>
+                {
+                    { "TechnicalSupportContext", ctx.Resolve<TechnicalSupportContext>() }
+                };
+                return new DbContextFactory(allContext);
 
-            //});
+            });
             builder.RegisterType<ADORepository>().As<IADORepository>();
 
         }
