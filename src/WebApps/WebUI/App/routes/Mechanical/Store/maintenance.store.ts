@@ -1,7 +1,11 @@
+import type { Maintenance } from '$interfaces/mechanical/maintenance';
+import { MaintenanceService } from '$services/mechanical/maintenance-service';
 import { writable } from 'svelte/store';
-import { hideLoader, showLoader } from "$core/utils/loading-spinner";
-import { MaintenanceService } from '$core/services/mechanical/maintenance-service';
-import type { Maintenance } from '$core/interfaces/mechanical/maintenance';
+import { hideLoader, showLoader } from "$utils/loading-spinner";
+
+// import { hideLoader, showLoader } from "$core/utils/loading-spinner";
+// import { MaintenanceService } from '$core/services/mechanical/maintenance-service';
+// import type { Maintenance } from '$core/interfaces/mechanical/maintenance';
 
 type StateModal = {
     isOpen: boolean;
