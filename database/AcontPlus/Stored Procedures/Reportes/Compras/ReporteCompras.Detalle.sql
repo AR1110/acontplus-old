@@ -8,7 +8,7 @@ END
 GO
 
 
--- exec ReporteCompras.Detalle '{"isReportImport":false,"codEstab":"ESTAB-000000092","id":18739,"codigo":"RCD","codDoc":"01","format":"excel"}'
+-- exec ReporteCompras.Detalle '{"id":15767,"codEstab":"ESTAB-000000222","codigo":"RCD","codDoc":"CI","format":"excel"}'
 CREATE PROCEDURE ReporteCompras.Detalle @json VARCHAR(MAX)
 AS
 BEGIN 
@@ -68,6 +68,10 @@ BEGIN
 	IF @codDoc = 'CNH'
 		BEGIN 
 			SELECT @idEntidad = idEntidad FROM Compra.Documento_Ingreso WITH(NOLOCK) WHERE idDocumentoIngreso = @id		
+		END 
+    IF @codDoc = 'CI'
+		BEGIN 
+			SELECT @idEntidad = idEntidad FROM dbo.ConsolidacionInventario  WITH(NOLOCK) WHERE idConsolidacionInventario = @id		
 		END 
 
 	--SELECT TOP 1 @jsonConfig = jsonConfig FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CD'
@@ -237,6 +241,34 @@ BEGIN
 						FOR JSON PATH		
 			)
 		END 
+
+    IF @codDoc = 'CI'
+	BEGIN 
+		SET @detailDs = (SELECT 
+							id              =cid.idConsolidacionInventarioDetalle
+						,idArticulo     = cid.idArticulo
+						,codigo         = a.codigo
+						,descripcion    = cid.descripcion
+						,cantidad       = CAST(cid.cantidad AS NUMERIC(18,2)) 
+						,medida         = m.descripcion
+						,tipoIva        = ti.descripcion
+						,precioUnitario = cast(cid.precioCosto as numeric(18,2)) 
+						,valorDescuento =  CAST(cantidad * 0 AS numeric(18,5))
+						,total          = cast((cid.cantidad * cid.precioActual) as numeric(18,2))		
+						,precioVenta    = ap.precioVenta
+						,precioConIva   = ap.precioConIva
+						,tarifa         = t.descripcion
+						,nota           = ISNULL(a.observaciones, '')
+					FROM dbo.ConsolidacionInventarioDetalle cid 
+					INNER JOIN ArticuloPvP ap ON ap.idarticulo = cid.idArticulo 
+					INNER JOIN Tarifa       t ON t.idTarifa    = ap.idTarifa
+					INNER JOIN dbo.Medida   m ON m.idMedida    = cid.idMedida		
+					INNER JOIN dbo.Articulo a ON a.idArticulo  = cid.idArticulo 
+					INNER JOIN dbo.TipoIva ti ON ti.idTipoIva  = a.idTipoIva
+					WHERE cid.idConsolidacionInventario = @id AND cid.estado = 1 ORDER BY cid.idConsolidacionInventario ASC
+					FOR JSON PATH		
+		)
+	END 
 	
 	SET @dataSources = (SELECT detailDs = ISNULL(@detailDs, '[]') FOR JSON PATH)	
    
