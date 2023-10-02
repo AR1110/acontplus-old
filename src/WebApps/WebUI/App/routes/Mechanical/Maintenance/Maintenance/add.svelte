@@ -17,7 +17,6 @@
   MaintenanceStore.subscribe((values) => {
     maintenance = values.maintenance;
     maintenanceDetails = values.maintenanceDetail;
-    console.log(values);
   });
 
   // SEARCH THE VECICLES WITH CUSTOMER
@@ -49,7 +48,7 @@
   const selectArticle = (e) => {
     articles = [];
     value = "";
-    maintenanceDetails = [...maintenanceDetails, e];
+    maintenanceDetails = [...maintenanceDetails, { ...e, quantity: 1 }];
   };
 
   // REVOME ITEM THE DETAILT SUPPORT
@@ -265,13 +264,15 @@
                     <tr>
                       <td class="text-center">{item.codigo}</td>
                       <td class="text-center">{item.descripcion}</td>
-                      <td class="text-center"
+                      <td width="5%" class="text-center"
                         ><div class="col-12 col-sm-12 col-md-12 col-lg-12">
-                          <input
-                            type="text"
-                            class="form-control form-control-sm"
-                            bind:value={item.quantity}
-                          />
+                          <b
+                            ><input
+                              type="text"
+                              class="form-control form-control-sm"
+                              bind:value={item.quantity}
+                            /></b
+                          >
                         </div></td
                       >
                       <td class="text-center">
