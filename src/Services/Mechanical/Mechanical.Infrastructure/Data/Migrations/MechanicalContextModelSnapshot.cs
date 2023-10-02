@@ -120,6 +120,100 @@ namespace Mechanical.Infrastructure.Data.Migrations
                     b.ToTable("Inspection", "Mechanical");
                 });
 
+            modelBuilder.Entity("Mechanical.Core.Entities.Maintenance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("InspectionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Obs")
+                        .HasMaxLength(300)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(300)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InspectionId");
+
+                    b.ToTable("Maintenance", "Mechanical");
+                });
+
+            modelBuilder.Entity("Mechanical.Core.Entities.MaintenanceDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ArticuloId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MaintenanceId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("numeric(18,5), not null");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaintenanceId");
+
+                    b.ToTable("MaintenanceDetail", "Mechanical");
+                });
+
             modelBuilder.Entity("Mechanical.Core.Entities.Support", b =>
                 {
                     b.Property<int>("Id")
@@ -452,6 +546,28 @@ namespace Mechanical.Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("support");
+                });
+
+            modelBuilder.Entity("Mechanical.Core.Entities.Maintenance", b =>
+                {
+                    b.HasOne("Mechanical.Core.Entities.Inspection", "Inspection")
+                        .WithMany()
+                        .HasForeignKey("InspectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Inspection");
+                });
+
+            modelBuilder.Entity("Mechanical.Core.Entities.MaintenanceDetail", b =>
+                {
+                    b.HasOne("Mechanical.Core.Entities.Maintenance", "Maintenance")
+                        .WithMany()
+                        .HasForeignKey("MaintenanceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Maintenance");
                 });
 
             modelBuilder.Entity("Mechanical.Core.Entities.Support", b =>
