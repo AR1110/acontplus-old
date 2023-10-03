@@ -59,6 +59,32 @@
       }
     });
   };
+
+  // For report
+  function getReport(item) {
+    showLoader();
+
+    let format = "pdf";
+    let dataParams = { supportId: item.id };
+    const params = {
+      reportParams: JSON.stringify({
+        hasParams: true,
+        codigo: "MS",
+        codEstab: item.codEstab,
+        format,
+        additionalParams: [],
+      }),
+      hasService: false,
+      hasIdUsuarioRol: true,
+      dataParams: JSON.stringify(dataParams),
+    };
+
+    supportStore.getReport(params);
+
+    setTimeout(() => {
+      hideLoader();
+    }, 1000);
+  }
 </script>
 
 {#if supports.length > 0}
@@ -118,6 +144,12 @@
                   on:click={() => supportStore.getOpenModal(item.id)}
                 >
                   <i class="ti-pencil" />
+                </button>
+                <button
+                  class="btn btn-outline-success btn-sm"
+                  on:click={() => getReport(item)}
+                >
+                  <i class="ti-file" />
                 </button>
               </td>
             </tr>
