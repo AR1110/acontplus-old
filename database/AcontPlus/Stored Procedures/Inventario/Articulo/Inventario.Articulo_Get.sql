@@ -639,6 +639,7 @@ BEGIN
 			FROM Inventario.v_Articulo a WHERE idArticulo = @idArticulo AND estado = 1 
             RETURN 
         END 
+
 	SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
 	RETURN 
 END

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Common.Core.Entities;
 
 namespace Mechanical.Core.Entities
@@ -9,9 +10,29 @@ namespace Mechanical.Core.Entities
         public Maintenance Maintenance { get; set; }
         public int MaintenanceId { get; set; }
         public int ArticuloId { get; set; }
+        public int TarifaId { get; set; }
+        public int BodegaId { get; set; }
+        public int MedidaId { get; set; }
+
+        [Required]
+        [MaxLength(300)]
         public string Description { get; set; }
-        
+
         [Column(TypeName = "numeric(18,5), not null")]
         public decimal Quantity { get; set; }
+
+        [Column(TypeName = "numeric(18,5), not null")]
+        public decimal Price { get; set; }
+        
+        [Column(TypeName = "numeric(18,5), not null")]
+        public decimal Cost { get; set; }
+
+        [Column(TypeName = "numeric(18,5), not null")]
+        public decimal Total { get; set; }
+
+        [MaxLength(300)]
+        public string Obs { get; set; }
+
+
     }
 }

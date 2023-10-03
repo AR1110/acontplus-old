@@ -10,7 +10,6 @@ namespace Mechanical.Core.Entities
         public Vehicle Vehicle { get; set; }
         public int VehicleId { get; set; }
         public int CompanyId { get; set; }
-        public int UserId { get; set; }
         public int CustomerId { get; set; }
 
         [MaxLength(300)]
