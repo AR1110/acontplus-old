@@ -89,7 +89,7 @@
                 <button
                   title="Obtner reporte"
                   on:click={() => getReport(item)}
-                  class="btn btn-outline-dark btn-sm"
+                  class="btn btn-outline-danger btn-sm"
                 >
                   <i class="fa fa-file-pdf" />
                 </button>
