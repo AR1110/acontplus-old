@@ -1,27 +1,20 @@
 <script src="ts">
-  import ProductDialog from "$lib/components/ProductDialog/ProductDialog.svelte";
+  // import ProductDialog from "$lib/components/ProductDialog/ProductDialog.svelte";
 
-  let showPopup = false;
+  // let showPopup = false;
 
-  const onShowPopup = (ev) => {
-    showPopup = true;
-  };
+  // const onShowPopup = (ev) => {
+  //   showPopup = true;
+  // };
 
-  const onPopupClose = (data) => {
-    showPopup = false;
+  // const onPopupClose = (data) => {
+  //   showPopup = false;
 
-    console.log(data);
-  };
+  //   console.log(data);
+  // };
 </script>
 
-<div class="card">
-  <div class="row">
-    <div class="col-xl-4">
-      <button type="button" class="btn btn-primary" on:click={onShowPopup}>
-        click me!!
-      </button>
-    </div>
-  </div>
+<div class="card"> 
   <div class="table-responsive">
     <table class="table">
       <thead>
@@ -40,6 +33,6 @@
   </div>
 </div>
 
-{#if showPopup}
+<!-- {#if showPopup}
   <ProductDialog open={showPopup} onClosed={() => onPopupClose()} />
-{/if}
+{/if} -->

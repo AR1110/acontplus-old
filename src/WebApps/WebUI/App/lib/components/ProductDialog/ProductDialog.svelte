@@ -4,7 +4,7 @@
   import { onDestroy, onMount } from "svelte";
   import GeneralInfo from "./GeneralInfo.svelte";
   import Tabs from "../Tabs.svelte";
-  import { getDataForm } from "./productDialogStore"; 
+  import { getDataForm } from "./productDialogStore";
 
   export let open = false;
   export let onClosed;
@@ -94,5 +94,6 @@
   .modal {
     display: block;
     overflow-y: auto;
+    background: rgba(0, 0, 0, 0.5);
   }
 </style>
