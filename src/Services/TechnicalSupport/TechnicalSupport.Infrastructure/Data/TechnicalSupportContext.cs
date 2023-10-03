@@ -14,6 +14,7 @@ namespace TechnicalSupport.Infrastructure.Data
         }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<ProductCustomer> ProductCustomers { get; set; }
         public DbSet<OrderStatus> OrderStatuses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -53,6 +54,9 @@ namespace TechnicalSupport.Infrastructure.Data
 
             builder.Entity<Product>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Product>().Property(x => x.Enabled).HasDefaultValue(true);
+
+            builder.Entity<ProductCustomer>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<ProductCustomer>().Property(x => x.Enabled).HasDefaultValue(true);
 
             builder.Entity<OrderStatus>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<OrderStatus>().Property(x => x.Enabled).HasDefaultValue(true);
