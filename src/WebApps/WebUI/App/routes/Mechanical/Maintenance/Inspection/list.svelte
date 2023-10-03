@@ -2,8 +2,8 @@
   import { onMount } from "svelte";
   import { InspectionStore } from "$routes/Mechanical/Store/inspection.store";
   import { MaintenanceStore } from "$routes/Mechanical/Store/maintenance.store";
-  import { InspectionService } from "$core/services/mechanical/inspection-service";
-  import { hideLoader, showLoader } from "$core/utils/loading-spinner";
+  import { InspectionService } from "$lib/services/mechanical/inspection-service";
+  import { hideLoader, showLoader } from "$lib/utils/loading-spinner";
   import Add from "../Inspection/add.svelte";
   import AddMaintenance from "../Maintenance/add.svelte";
 

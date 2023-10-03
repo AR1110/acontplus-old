@@ -1,16 +1,16 @@
 <script lang="ts">
-  import type { Establecimiento } from "$core/interfaces/restaurant/establecimiento";
-  import type { PromotionMenu } from "$core/interfaces/restaurant/promotion-menu";
-  import Modal from "$core/components/Modal.svelte";
-  import type { Promotion } from "$core/interfaces/restaurant/promotion";
+  import type { Establecimiento } from "$lib/interfaces/restaurant/establecimiento";
+  import type { PromotionMenu } from "$lib/interfaces/restaurant/promotion-menu";
+  import Modal from "$lib/components/Modal.svelte";
+  import type { Promotion } from "$lib/interfaces/restaurant/promotion";
   import { usePromotionStore } from "$routes/Restaurant/store/promotionStore";
-  import AdvancedSearch from "$core/components/AdvancedSearch.svelte";
-  import { MenuService } from "$core/services/restaurant/menu-service";
-  import toast from "$core/utils/toast";
-  import GridForItem from "$core/components/GridForItem.svelte";
-  import { hideLoader, showLoader } from "$core/utils/loading-spinner";
-  import { PromotionService } from "$core/services/restaurant/promotion-service";
-  import { PromotionMenuService } from "$core/services/restaurant/promotion-menu-service";
+  import AdvancedSearch from "$lib/components/AdvancedSearch.svelte";
+  import { MenuService } from "$lib/services/restaurant/menu-service";
+  import toast from "$lib/utils/toast";
+  import GridForItem from "$lib/components/GridForItem.svelte";
+  import { hideLoader, showLoader } from "$lib/utils/loading-spinner";
+  import { PromotionService } from "$lib/services/restaurant/promotion-service";
+  import { PromotionMenuService } from "$lib/services/restaurant/promotion-menu-service";
 
   // Variables.
   let dataUpdate: Promotion = {

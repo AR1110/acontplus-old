@@ -1,55 +1,58 @@
-<form autocomplete="off" ng-submit="onSave()">                                         
+<form autocomplete="off" ng-submit="onSave()">
     <div class="modal-header bg-info text-white">
         <h5 class="modal-title">Detalle Consolidación Inventario</h5>
-        <button type="button" class="close" ng-click="closeModal()">&times;</button>      
-    </div> 
+        <button type="button" class="close" ng-click="closeModal()">&times;</button>
+    </div>
     <div class="modal-body">
         <div class="row">
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="establecimiento">Estab.: </label>
-                    <select name="establecimiento" id="establecimiento" class="form-control border-select" ng-model="data.codEstab" disabled>
+                    <select name="establecimiento" id="establecimiento" class="form-control border-select"
+                        ng-model="data.codEstab" disabled>
                         <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                             {{item.nombreComercial}}
                         </option>
                     </select>
-                </div>            
+                </div>
             </div>
-            
-            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">                
+
+            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="puntoEmision">Punto Emisión: </label>
-                    <select id="puntoEmision" name="puntoEmision" class="form-control border-select" ng-model="data.idPuntoEmision" disabled>
+                    <select id="puntoEmision" name="puntoEmision" class="form-control border-select"
+                        ng-model="data.idPuntoEmision" disabled>
                         <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
                             {{item.ptoEmi}}
                         </option>
                     </select>
-                </div> 
-            </div> 
+                </div>
+            </div>
 
-            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">   
+            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="fechaEmision">Fecha Emisión </label>
-                    <input type="date" name="fechaEmision" ng-model="data.fechaEmision" class="form-control border-select" disabled>
+                    <input type="date" name="fechaEmision" ng-model="data.fechaEmision"
+                        class="form-control border-select" disabled>
                 </div>
             </div>
 
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="observacion">Observación</label>
-                    <input type="text" name="observacion" placeholder="..." ng-model="data.observacion" class="form-control border-select" disabled>
+                    <input type="text" name="observacion" placeholder="..." ng-model="data.observacion"
+                        class="form-control border-select" disabled>
                 </div>
-            </div>                                   
+            </div>
         </div>
 
+        <button type="button" class="btn btn-success mb-2" ng-click="getReport()">
+            <i class="far fa-file-excel"></i> Exportar Excel
+        </button>
 
-        <div id="grid" ui-grid="gridOptions"
-            ui-grid-edit
-            ui-grid-resize-columns
-            ui-grid-cellNav
-            ui-grid-auto-resize
+        <div id="grid" ui-grid="gridOptions" ui-grid-edit ui-grid-resize-columns ui-grid-cellNav ui-grid-auto-resize
             class="grid">
-        </div>                            
+        </div>
 
         <!--Sub Totales -->
         <div class="row justify-content-between mt-2">
@@ -57,14 +60,14 @@
             <div class="col-lg-2">
                 <div class="text-right">
                     <h4><strong>Total: ${{data.total}}</strong></h4>
-                </div>                        
+                </div>
             </div>
         </div>
-        
+
 
     </div>
-    <div class="modal-footer">                        
+    <div class="modal-footer">
         <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
     </div>
-       
+
 </form>

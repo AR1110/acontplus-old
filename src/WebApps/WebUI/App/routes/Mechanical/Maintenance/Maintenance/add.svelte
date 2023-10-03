@@ -1,11 +1,11 @@
 <script lang="ts">
   import { MaintenanceStore } from "$routes/Mechanical/Store/maintenance.store";
-  import { ArticleService } from "$core/services/inventory/article-service";
-  import { MaintenanceService } from "$core/services/mechanical/maintenance-service";
-  import AdvancedSearch from "$core/components/AdvancedSearch.svelte";
-  import { showLoader, hideLoader } from "$core/utils/loading-spinner";
-  import Modal from "$core/components/Modal.svelte";
-  import toast from "$core/utils/toast";
+  import { ArticleService } from "$lib/services/inventory/article-service";
+  import { MaintenanceService } from "$lib/services/mechanical/maintenance-service";
+  import AdvancedSearch from "$lib/components/AdvancedSearch.svelte";
+  import { showLoader, hideLoader } from "$lib/utils/loading-spinner";
+  import Modal from "$lib/components/Modal.svelte";
+  import toast from "$lib/utils/toast";
 
   let maintenance;
   let paramValidation = [undefined, null, "", 0];

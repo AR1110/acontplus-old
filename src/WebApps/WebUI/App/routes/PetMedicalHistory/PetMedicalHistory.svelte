@@ -1,13 +1,13 @@
 <script language="ts">
   import { onMount } from "svelte";
-  import { client, clientFile } from "../../core/api/axiosClient";
+  import { client, clientFile } from "$lib/utils/axiosClient";
   import Swal from "sweetalert2";
-  import toast from "$core/utils/toast";
+  import toast from "$lib/utils/toast";
   import FileSaver from "file-saver";
-  import Search from "$core/components/Search.svelte";
+  import Search from "$lib/components/Search.svelte";
   import Add from "./components/Add.svelte";
-  import { showLoader, hideLoader } from "$core/utils/loading-spinner";
-  import Pagination from "$core/components/Pagination.svelte";
+  import { showLoader, hideLoader } from "$lib/utils/loading-spinner";
+  import Pagination from "$lib/components/Pagination.svelte";
   let newRecord = false;
   let codEstab = "0";
 

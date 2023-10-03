@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Tabs from "$core/components/Tabs.svelte";
+  import Tabs from "$lib/components/Tabs.svelte";
   import ListSupport from "../Tray/list.svelte";
   import ListInspection from "../Inspection/list.svelte";
   import ListMaintenance from "../Maintenance/list.svelte";

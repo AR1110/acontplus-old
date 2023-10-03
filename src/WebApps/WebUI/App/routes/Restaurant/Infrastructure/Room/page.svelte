@@ -1,14 +1,14 @@
 <script lang="ts">
-  import Breadcrumbs from "$core/components/Breadcrumbs.svelte";
-  import { estabAsignService } from "$core/services/restaurant/estab-asign-service";
+  import Breadcrumbs from "$lib/components/Breadcrumbs.svelte";
+  import { estabAsignService } from "$lib/services/restaurant/estab-asign-service";
   import { onMount } from "svelte";
   import Add from "./componets/add.svelte";
   import List from "./componets/list.svelte";
-  import { roomService } from "$core/services/restaurant/room-service";
+  import { roomService } from "$lib/services/restaurant/room-service";
   import SelectEstablecimiento from "../Components/SelectEstablecimiento.svelte";
-  import { hideLoader, showLoader } from "$core/utils/loading-spinner";
-  import { floorService } from "$core/services/restaurant/floor-service";
-  import type { Floor } from "$core/interfaces/restaurant/floor";
+  import { hideLoader, showLoader } from "$lib/utils/loading-spinner";
+  import { floorService } from "$lib/services/restaurant/floor-service";
+  import type { Floor } from "$lib/interfaces/restaurant/floor";
 
   let establecimientos = [];
   let rooms = [];

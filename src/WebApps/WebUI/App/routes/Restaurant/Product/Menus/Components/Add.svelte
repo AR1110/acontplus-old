@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { hideLoader, showLoader } from "$core/utils/loading-spinner";
-  import { MenuService } from "$core/services/restaurant/menu-service";
+  import { hideLoader, showLoader } from "$lib/utils/loading-spinner";
+  import { MenuService } from "$lib/services/restaurant/menu-service";
   import { useMenuStore } from "$routes/Restaurant/store/menuStore";
-  import AdvancedSearch from "$core/components/AdvancedSearch.svelte";
-  import GridForItem from "$core/components/GridForItem.svelte";
-  import Modal from "$core/components/Modal.svelte";
-  import toast from "$core/utils/toast";
-  import type { Menu } from "$core/interfaces/restaurant/menu";
-  import { MenuItemService } from "$core/services/restaurant/menu-item-service";
-  import { itemService } from "$core/services/restaurant/item-service";
+  import AdvancedSearch from "$lib/components/AdvancedSearch.svelte";
+  import GridForItem from "$lib/components/GridForItem.svelte";
+  import Modal from "$lib/components/Modal.svelte";
+  import toast from "$lib/utils/toast";
+  import type { Menu } from "$lib/interfaces/restaurant/menu";
+  import { MenuItemService } from "$lib/services/restaurant/menu-item-service";
+  import { itemService } from "$lib/services/restaurant/item-service";
 
   let data = {} as Menu;
   let value = "";

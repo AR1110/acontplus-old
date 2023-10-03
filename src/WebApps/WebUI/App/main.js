@@ -1,16 +1,17 @@
 ﻿import Pet from "$pet/Pet.svelte";
 import PetMedicalHistory from "$petmedicalhistory/PetMedicalHistory.svelte";
 import PetBreed from "$petbreed/PetBreed.svelte";
-import ConfigEmail from "./lib/ConfigEmail/ConfigEmail.svelte";
-import MotivoDiscrepancia from "./lib/StockFisico/MotivoDiscrepancia.svelte";
-import Stock from "./lib/StockFisico/index.svelte";
-import Subcategoria from "./lib/Contabilidad/Subcategoria/index.svelte";
+import ConfigEmail from "./routes/ConfigEmail/ConfigEmail.svelte";
+import MotivoDiscrepancia from "./routes/StockFisico/MotivoDiscrepancia.svelte";
+import Stock from "./routes/StockFisico/index.svelte";
+import Subcategoria from "./routes/Contabilidad/Subcategoria/index.svelte";
 import Infrastructure from "$restaurant/Infrastructure/page.svelte";
 import Product from "$restaurant/Product/page.svelte";
 import Reports from "$restaurant/Reports/page.svelte";
 import Vehicle from "$mechanical/Vehicle/page.svelte";
 import Support from "$mechanical/Support/page.svelte";
 import Maintenance from "$mechanical/Maintenance/page.svelte";
+import TechnicalSupport from "$technical-support/page.svelte";
 
 let target = document.querySelector("#pet");
 if (target) {
@@ -75,6 +76,11 @@ if (target) {
 target = document.querySelector("#mechanical-maintenance");
 if (target) {
   new Maintenance({ target });
+}
+
+target = document.querySelector("#technical-support");
+if (target) {
+  new TechnicalSupport({ target });
 }
 
 import App from "./App.svelte";

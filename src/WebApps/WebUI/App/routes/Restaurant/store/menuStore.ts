@@ -1,7 +1,7 @@
-import type { Menu } from "$core/interfaces/restaurant/menu";
+import type { Menu } from "$lib/interfaces/restaurant/menu";
 import { writable } from "svelte/store";
-import { hideLoader, showLoader } from "$core/utils/loading-spinner";
-import { MenuService } from "$core/services/restaurant/menu-service";
+import { hideLoader, showLoader } from "$lib/utils/loading-spinner";
+import { MenuService } from "$lib/services/restaurant/menu-service";
 
 type StateModal = {
     isOpen: boolean;

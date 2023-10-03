@@ -2,8 +2,8 @@
   import { usePromotionStore } from "$routes/Restaurant/store/promotionStore";
   import { onDestroy, onMount } from "svelte";
   import Add from "../../Menus/Components/Add.svelte";
-  import type { Promotion } from "$core/interfaces/restaurant/promotion";
-  import type { Establecimiento } from "$core/interfaces/restaurant/establecimiento";
+  import type { Promotion } from "$lib/interfaces/restaurant/promotion";
+  import type { Establecimiento } from "$lib/interfaces/restaurant/establecimiento";
   let promotions = [] as Promotion[];
   let establecimientos = [] as Establecimiento[];
   let codEstab = "";
@@ -56,7 +56,7 @@
     <table class="table table-hover">
       <thead class="thead-light">
         <tr>
-          <th scope="col">Image</th>
+          <th scope="col">Imagen</th>
           <th scope="col">Promoción</th>
           <th scope="col">Fecha Inicio</th>
           <th scope="col">Fecha Fin</th>

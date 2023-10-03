@@ -22,17 +22,14 @@
         ],
         "baseUrl": ".",
         "paths": {
-            "$core/*": [
-                "App/core/*"
-            ],
             "$interfaces/*": [
-                "App/core/interfaces/*"
+                "App/lib/interfaces/*"
             ],
             "$services/*": [
-                "App/core/services/*"
+                "App/lib/services/*"
             ],
             "$utils/*": [
-                "App/core/utils/*"
+                "App/lib/utils/*"
             ],
             "$lib/*": [
                 "App/lib/*"
@@ -52,6 +49,9 @@
             "$petmedicalhistory/*": [
                 "App/routes/PetMedicalHistory/*"
             ],
+            "$technical-support/*": [
+                "App/routes/TechnicalSupport"
+            ]
         }
     }
 }

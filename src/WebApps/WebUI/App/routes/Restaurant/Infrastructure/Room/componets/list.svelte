@@ -1,10 +1,10 @@
 ﻿<script lang="ts">
-  import type { Room } from "$core/interfaces/restaurant/room";
-  import { roomService } from "$core/services/restaurant/room-service";
-  import toast from "$core/utils/toast";
+  import type { Room } from "$lib/interfaces/restaurant/room";
+  import { roomService } from "$lib/services/restaurant/room-service";
+  import toast from "$lib/utils/toast";
   import Swal from "sweetalert2";
   import Add from "./add.svelte";
-  import type { Floor } from "$core/interfaces/restaurant/floor";
+  import type { Floor } from "$lib/interfaces/restaurant/floor";
 
   export let rooms = [] as Room[];
   let edit = {} as Room;

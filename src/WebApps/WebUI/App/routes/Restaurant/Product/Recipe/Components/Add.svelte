@@ -1,10 +1,10 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import Modal from "$core/components/Modal.svelte";
-    import toast from "$core/utils/toast";
-    import type { Recipe } from "$core/interfaces/restaurant/recipe";
-    import { IngredientService } from "$core/services/restaurant/ingredient-service";
-    import Grid from "$core/components/Grid.svelte";
+    import Modal from "$lib/components/Modal.svelte";
+    import toast from "$lib/utils/toast";
+    import type { Recipe } from "$lib/interfaces/restaurant/recipe";
+    import { IngredientService } from "$lib/services/restaurant/ingredient-service";
+    import Grid from "$lib/components/Grid.svelte";
     export let openNew;
     export let modalClosed;
     const onModalClose = () => {

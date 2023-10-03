@@ -1,13 +1,13 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
-  import type { Establecimiento } from "$core/interfaces/restaurant/establecimiento";
-  import { estabAsignService } from "$core/services/restaurant/estab-asign-service";
-  import { sharedService } from "$core/services/shared.service";
-  import { ArticleService } from "$core/services/inventory/article-service";
-  import AdvancedSearch from "$core/components/AdvancedSearch.svelte";
+  import type { Establecimiento } from "$lib/interfaces/restaurant/establecimiento";
+  import { estabAsignService } from "$lib/services/restaurant/estab-asign-service";
+  import { sharedService } from "$lib/services/shared.service";
+  import { ArticleService } from "$lib/services/inventory/article-service";
+  import AdvancedSearch from "$lib/components/AdvancedSearch.svelte";
   import axios from "axios";
-  import { itemService } from "$core/services/restaurant/item-service";
-    import { hideLoader, showLoader } from "$core/utils/loading-spinner";
+  import { itemService } from "$lib/services/restaurant/item-service";
+    import { hideLoader, showLoader } from "$lib/utils/loading-spinner";
 
   type Subfamilia = {
     idSubFamilia: number;
@@ -132,7 +132,7 @@
         reportParams: JSON.stringify({
           hasParams: false,
           codigo: "RII",
-          codEstab: "",
+          codEstab: dataSearch.codEstab,
           format,
           aditionalParams: [],
         }),

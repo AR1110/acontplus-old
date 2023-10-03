@@ -4042,6 +4042,7 @@
 
 	<ItemGroup>
 		<Folder Include="App\lib\StockFisico\" />
+		<Folder Include="App\routes\TechnicalSupport\" />
 		<Folder Include="App\routes\Restaurant\Product\Promotions\Components\" />
 		<Folder Include="wwwroot\lib\angular-daterangepicker\" />
 	</ItemGroup>

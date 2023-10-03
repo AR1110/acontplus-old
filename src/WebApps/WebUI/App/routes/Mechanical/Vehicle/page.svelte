@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Breadcrumbs from "$core/components/Breadcrumbs.svelte";
+  import Breadcrumbs from "$lib/components/Breadcrumbs.svelte";
   import Add from "$routes/Mechanical/Vehicle/components/add.svelte";
   import List from "$routes/Mechanical/Vehicle/components/list.svelte";
   import { onMount } from "svelte";
