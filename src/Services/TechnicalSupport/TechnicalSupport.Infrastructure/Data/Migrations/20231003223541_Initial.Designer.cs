@@ -12,7 +12,7 @@ using TechnicalSupport.Infrastructure.Data;
 namespace TechnicalSupport.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(TechnicalSupportContext))]
-    [Migration("20231003153302_Initial")]
+    [Migration("20231003223541_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -140,9 +140,6 @@ namespace TechnicalSupport.Infrastructure.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -201,6 +198,46 @@ namespace TechnicalSupport.Infrastructure.Data.Migrations
                     b.ToTable("Product", "TechnicalSupport");
                 });
 
+            modelBuilder.Entity("TechnicalSupport.Core.Entities.ProductCustomer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<int>("CustomerCompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductCustomer", "TechnicalSupport");
+                });
+
             modelBuilder.Entity("TechnicalSupport.Core.Entities.Product", b =>
                 {
                     b.HasOne("TechnicalSupport.Core.Entities.Category", "Category")
@@ -210,6 +247,17 @@ namespace TechnicalSupport.Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("TechnicalSupport.Core.Entities.ProductCustomer", b =>
+                {
+                    b.HasOne("TechnicalSupport.Core.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 #pragma warning restore 612, 618
         }

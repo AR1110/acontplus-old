@@ -62,7 +62,6 @@ namespace TechnicalSupport.Infrastructure.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CompanyId = table.Column<int>(type: "int", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: false),
                     Serie = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: false),
@@ -90,6 +89,33 @@ namespace TechnicalSupport.Infrastructure.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ProductCustomer",
+                schema: "TechnicalSupport",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    CustomerCompanyId = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Enabled = table.Column<bool>(type: "bit", nullable: true, defaultValue: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductCustomer", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProductCustomer_Product_ProductId",
+                        column: x => x.ProductId,
+                        principalSchema: "TechnicalSupport",
+                        principalTable: "Product",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "UI_TS_Category",
                 schema: "TechnicalSupport",
@@ -109,6 +135,12 @@ namespace TechnicalSupport.Infrastructure.Data.Migrations
                 schema: "TechnicalSupport",
                 table: "Product",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductCustomer_ProductId",
+                schema: "TechnicalSupport",
+                table: "ProductCustomer",
+                column: "ProductId");
         }
 
         /// <inheritdoc />
@@ -116,6 +148,10 @@ namespace TechnicalSupport.Infrastructure.Data.Migrations
         {
             migrationBuilder.DropTable(
                 name: "OrderStatus",
+                schema: "TechnicalSupport");
+
+            migrationBuilder.DropTable(
+                name: "ProductCustomer",
                 schema: "TechnicalSupport");
 
             migrationBuilder.DropTable(
