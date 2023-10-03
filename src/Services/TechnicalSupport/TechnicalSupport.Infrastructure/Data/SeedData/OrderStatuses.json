@@ -1,0 +1,37 @@
+[
+  {
+    "Code": "PA",
+    "Name": "Por Asignar",
+    "Order": 1
+  },
+  {
+    "Code": "EP",
+    "Name": "En Proceso",
+    "Order": 2
+  },
+  {
+    "Code": "PE",
+    "Name": "Por Entregar",
+    "Order": 3
+  },
+  {
+    "Code": "E",
+    "Name": "Entregado",
+    "Order": 4
+  },
+  {
+    "Code": "R",
+    "Name": "Rechazado",
+    "Order": 5
+  },
+  {
+    "Code": "SS",
+    "Name": "Sin Solución",
+    "Order": 6
+  },
+  {
+    "Code": "G",
+    "Name": "Garantía",
+    "Order": 7
+  }
+]
