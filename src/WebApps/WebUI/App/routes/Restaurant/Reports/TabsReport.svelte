@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Tabs from "$lib/components/Tabs.svelte";
+  import Tabs from "$lib/components/Tabs.svelte";
   import ItemIngredient from "./components/ItemIngredient.svelte";
 
   let items = [

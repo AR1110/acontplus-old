@@ -95,9 +95,9 @@
         <tr>
           <th scope="col" />
           <th scope="col">N°</th>
+          <th scope="col">Categoría</th>
           <th scope="col">Item</th>
           <th scope="col">Resumen</th>
-          <th scope="col">Cocinado</th>
         </tr>
       </thead>
       <tbody>
@@ -114,6 +114,7 @@
               </a>
             </th>
             <th>{index + 1}</th>
+            <td>{item.categoria}</td>
             <td>
               <img
                 src={item.s3ObjectUrl || "https://i.stack.imgur.com/GNhxO.png"}
@@ -124,13 +125,6 @@
               {item.descripcion}
             </td>
             <td>{item.summary}</td>
-            <td>
-              {#if item.cooking}
-                <i class="fas fa-check text-success" />
-              {:else}
-                <i class="fas fa-times text-danger" />
-              {/if}
-            </td>
           </tr>
         {/each}
       </tbody>

@@ -1,9 +1,12 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { MaintenanceService } from "$core/services/mechanical/maintenance-service";
-  import { hideLoader, showLoader } from "$core/utils/loading-spinner";
+  // import { MaintenanceService } from "$core/services/mechanical/maintenance-service";
+  // import { hideLoader, showLoader } from "$core/utils/loading-spinner";
+
+  import { hideLoader, showLoader } from "$utils/loading-spinner";
   import { MaintenanceStore } from "$routes/Mechanical/Store/maintenance.store";
   import Add from "../Maintenance/add.svelte";
+    import { MaintenanceService } from "$services/mechanical/maintenance-service";
 
   let maintenances = [];
 

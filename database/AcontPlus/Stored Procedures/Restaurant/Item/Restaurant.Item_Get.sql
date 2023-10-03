@@ -109,9 +109,12 @@ BEGIN
                     ,codTipoArticulo                = ISNULL(a.codTipoArticulo, '''')
                     ,totalRecords                   = COUNT(*) over()
                     ,itemTypeCode                   = ''ITEM''
-                    ,a.idMedida                        
+                    ,a.idMedida
+                    ,siglaFamilia                   = a.siglaFamilia	
+		            ,categoria                      = f.descripcion
 			FROM Restaurant.Item ri
 			INNER JOIN Inventario.v_Articulo a ON a.idArticulo = ri.ProductId
+            LEFT JOIN Familia f ON f.siglas = a.siglaFamilia
 			LEFT JOIN Restaurant.ProductionArea pa ON pa.Id = ri.ProductionAreaId
 			WHERE a.idEntidad = @idEntidad '
     
