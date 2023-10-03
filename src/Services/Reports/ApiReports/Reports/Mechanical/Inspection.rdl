@@ -173,7 +173,8 @@
       </Query>
       <Fields>
         <Field Name="PartTransmission">
-          <Value>PartTransmission</Value>
+          <DataField>PartTransmission</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="GoodTransmission">
           <DataField>GoodTransmission</DataField>
