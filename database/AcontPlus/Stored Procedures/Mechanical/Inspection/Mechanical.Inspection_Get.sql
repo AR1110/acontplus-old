@@ -39,6 +39,7 @@ BEGIN
 	              ,LicensePlate
 	              ,Brand + '-' + Model as Brand 
 	              ,VehicleType 
+                  ,CodEstab
             FROM Mechanical.v_Inspection WITH (NOLOCK)
             WHERE UserId = @UserId
             ORDER BY Id DESC
