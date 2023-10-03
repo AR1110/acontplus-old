@@ -15,7 +15,6 @@ namespace Mechanical.Core.Entities
         [MaxLength(300)]
         public string Obs { get; set; }
         public int CompanyId { get; set; }
-        public int UserId { get; set; }
         public int Status { get; set; } = 0;
 
 

@@ -1,6 +1,18 @@
 import { client } from "$core/api/axiosClient";
 let url = "Inventario/Articulo/";
 
+
+async function get(params) {
+    return await client.get(`${url}Get?json=${params}`).then((responseAxios) => {
+        const response = responseAxios.data;
+        if (response.code == "1") {
+            return JSON.parse(response.payload);
+        }
+    }, (err) => {
+        return null;
+    })
+}
+
 async function search(params) {
     return await client.get(`${url}Search?json=${params}`).then((responseAxios) => {
         const response = responseAxios.data;
