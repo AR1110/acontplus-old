@@ -39,6 +39,7 @@
     <ProjectReference Include="..\..\Common\Lib.Common\Lib.Common.csproj" />
     <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
     <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
+    <ProjectReference Include="..\TechnicalSupport.Infrastructure\TechnicalSupport.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
