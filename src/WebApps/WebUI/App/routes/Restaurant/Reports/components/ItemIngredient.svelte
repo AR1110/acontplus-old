@@ -132,7 +132,7 @@
         reportParams: JSON.stringify({
           hasParams: false,
           codigo: "RII",
-          codEstab: "",
+          codEstab: dataSearch.codEstab,
           format,
           aditionalParams: [],
         }),
