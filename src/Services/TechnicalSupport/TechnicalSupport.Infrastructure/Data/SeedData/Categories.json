@@ -1,0 +1,14 @@
+[
+  {
+    "Code": "C",
+    "Name": "Celulares"
+  },
+  {
+    "Code": "L",
+    "Name": "Laptos"
+  },
+  {
+    "Code": "DESKTOP",
+    "Name": "Computadoras de Escritorio"
+  }
+]

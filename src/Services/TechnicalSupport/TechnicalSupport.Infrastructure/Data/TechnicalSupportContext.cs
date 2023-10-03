@@ -12,7 +12,9 @@ namespace TechnicalSupport.Infrastructure.Data
         {
 
         }
-        public DbSet<ProductType> ProductTypes { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<OrderStatus> OrderStatuses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -45,8 +47,16 @@ namespace TechnicalSupport.Infrastructure.Data
             }
 
 
+            builder.Entity<Category>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<Category>().Property(x => x.Enabled).HasDefaultValue(true);
+            builder.Entity<Category>().HasIndex(x => x.Code).HasDatabaseName("UI_TS_Category").IsUnique();
 
+            builder.Entity<Product>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<Product>().Property(x => x.Enabled).HasDefaultValue(true);
 
+            builder.Entity<OrderStatus>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
+            builder.Entity<OrderStatus>().Property(x => x.Enabled).HasDefaultValue(true);
+            builder.Entity<OrderStatus>().HasIndex(x => x.Code).HasDatabaseName("UI_TS_OrderStatus").IsUnique();
 
 
         }

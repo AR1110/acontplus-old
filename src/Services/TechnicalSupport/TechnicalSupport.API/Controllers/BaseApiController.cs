@@ -5,7 +5,7 @@ namespace TechnicalSupport.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DeviceController : ControllerBase
+    public class BaseApiController : ControllerBase
     {
     }
 }
