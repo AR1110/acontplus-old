@@ -35,8 +35,6 @@ BEGIN
         Brand               = mvi.Brand
         ,VehicleType        = mvi.VehicleType
         ,Model              = mvi.Model
-        ,Color              = mvsup.Color
-        ,Motor              = mvsup.Engine
         ,[Date]             = FORMAT(mvi.[Date], 'MM/dd/yyyy')
         ,Mileage            = mvi.Mileage
         ,Fuellevel          = mvi.Fuellevel
@@ -122,3 +120,4 @@ BEGIN
     WHERE mvsu.Id = @inspectionId
     AND mvsu.[Status] IS NOT NULL
 END
+

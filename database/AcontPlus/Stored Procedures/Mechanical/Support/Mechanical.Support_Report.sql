@@ -33,10 +33,10 @@ BEGIN
            ,brand           = ms.Brand
            ,tradeName       = ms.TradeName
            ,businessName    = ms.BusinessName
-           ,VehiclePartType = ms.VehicleType
-           ,[Sequence]      = ms.[Sequence]  
-           ,Obs             = ms.Obs
-           ,[Date]          = FORMAT(ms.[Date], 'MM/dd/yyyy')
+           ,vehiclePartType = ms.VehicleType
+           ,[sequence]      = ms.[Sequence]  
+           ,obs             = ms.Obs
+           ,[date]          = FORMAT(ms.[Date], 'MM/dd/yyyy')
     FROM Mechanical.v_Support ms
     WHERE ms.Id = @supportId
 END

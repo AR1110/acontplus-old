@@ -64,14 +64,6 @@
           <DataField>Model</DataField>
           <rd:UserDefined>true</rd:UserDefined>
         </Field>
-        <Field Name="Color">
-          <DataField>Color</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
-        <Field Name="Motor">
-          <DataField>Motor</DataField>
-          <rd:UserDefined>true</rd:UserDefined>
-        </Field>
         <Field Name="Date">
           <DataField>Date</DataField>
           <rd:UserDefined>true</rd:UserDefined>
@@ -352,7 +344,6 @@
                                 <TextRun>
                                   <Value>Motor</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -503,7 +494,6 @@
                                 <TextRun>
                                   <Value>Malo</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -539,7 +529,6 @@
                                 <TextRun>
                                   <Value>Observaciones</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -673,9 +662,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!BadEngine.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style>
@@ -707,9 +694,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!ObsEngine.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -756,7 +741,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>engineDs</DataSetName>
-            <Top>76.32699mm</Top>
+            <Top>73.15199mm</Top>
             <Left>0mm</Left>
             <Height>17.78833mm</Height>
             <Width>168.5121mm</Width>
@@ -803,7 +788,6 @@
                                 <TextRun>
                                   <Value>Cabina</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -954,7 +938,6 @@
                                 <TextRun>
                                   <Value>Malo</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -990,7 +973,6 @@
                                 <TextRun>
                                   <Value>Observaciones</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -1124,9 +1106,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!BadCabin.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style>
@@ -1158,9 +1138,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!ObsCabin.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1207,7 +1185,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>cabinDs</DataSetName>
-            <Top>96.647mm</Top>
+            <Top>93.472mm</Top>
             <Left>0mm</Left>
             <Height>18mm</Height>
             <Width>168.5121mm</Width>
@@ -1255,7 +1233,6 @@
                                 <TextRun>
                                   <Value>Sistema de Rodamiento</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -1406,7 +1383,6 @@
                                 <TextRun>
                                   <Value>Malo</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -1442,7 +1418,6 @@
                                 <TextRun>
                                   <Value>Observaciones</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -1576,9 +1551,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!BadBearing.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style>
@@ -1610,9 +1583,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!ObsBearing.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -1659,7 +1630,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>bearingDs</DataSetName>
-            <Top>117.17867mm</Top>
+            <Top>114.00367mm</Top>
             <Left>0mm</Left>
             <Height>18mm</Height>
             <Width>168.5121mm</Width>
@@ -1707,7 +1678,6 @@
                                 <TextRun>
                                   <Value>Transmisión</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -1858,7 +1828,6 @@
                                 <TextRun>
                                   <Value>Malo</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -1894,7 +1863,6 @@
                                 <TextRun>
                                   <Value>Observaciones</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -2028,9 +1996,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!BadTransmission.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style>
@@ -2062,9 +2028,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!ObsTransmission.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -2111,7 +2075,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>transmissionDs</DataSetName>
-            <Top>137.39284mm</Top>
+            <Top>134.21784mm</Top>
             <Left>0.2371mm</Left>
             <Height>18mm</Height>
             <Width>168.275mm</Width>
@@ -2310,7 +2274,6 @@
                                 <TextRun>
                                   <Value>Malo</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -2346,7 +2309,6 @@
                                 <TextRun>
                                   <Value>Observaciones</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -2480,9 +2442,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!BadLighting.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style>
@@ -2514,9 +2474,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!ObsLighting.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -2563,7 +2521,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>lightingDs</DataSetName>
-            <Top>157.92451mm</Top>
+            <Top>154.74951mm</Top>
             <Left>0.2371mm</Left>
             <Height>18mm</Height>
             <Width>168.275mm</Width>
@@ -2611,7 +2569,6 @@
                                 <TextRun>
                                   <Value>Freno</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -2762,7 +2719,6 @@
                                 <TextRun>
                                   <Value>Malo</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -2798,7 +2754,6 @@
                                 <TextRun>
                                   <Value>Observaciones</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -3015,7 +2970,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>brakeDs</DataSetName>
-            <Top>178.66782mm</Top>
+            <Top>175.49282mm</Top>
             <Left>0.2371mm</Left>
             <Height>18mm</Height>
             <Width>168.275mm</Width>
@@ -3063,7 +3018,6 @@
                                 <TextRun>
                                   <Value>Dirección</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -3214,7 +3168,6 @@
                                 <TextRun>
                                   <Value>Malo</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -3250,7 +3203,6 @@
                                 <TextRun>
                                   <Value>Observaciones</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -3384,9 +3336,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!BadSteering.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style>
@@ -3418,9 +3368,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!ObsSteering.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -3467,7 +3415,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>steeringDs</DataSetName>
-            <Top>200.04616mm</Top>
+            <Top>196.87116mm</Top>
             <Left>0.2371mm</Left>
             <Height>17.78834mm</Height>
             <Width>168.275mm</Width>
@@ -3515,7 +3463,6 @@
                                 <TextRun>
                                   <Value>Suspensión</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -3666,7 +3613,6 @@
                                 <TextRun>
                                   <Value>Malo</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -3702,7 +3648,6 @@
                                 <TextRun>
                                   <Value>Observaciones</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -3836,9 +3781,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!BadSuspension.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style>
@@ -3870,9 +3813,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!ObsSuspension.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -3919,7 +3860,7 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>suspensionDs</DataSetName>
-            <Top>221.31867mm</Top>
+            <Top>218.14367mm</Top>
             <Left>0.2371mm</Left>
             <Height>18mm</Height>
             <Width>168.275mm</Width>
@@ -4009,10 +3950,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!ruc.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style>
@@ -4050,8 +3988,7 @@
                                 <TextRun>
                                   <Value>=Fields!estabName.Value</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -4091,8 +4028,7 @@
                                 <TextRun>
                                   <Value>=Fields!estabPhoneNumber.Value</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -4131,8 +4067,7 @@
                                 <TextRun>
                                   <Value>=Fields!estabAddress.Value</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                    <FontSize>8pt</FontSize>
+                                    <FontSize>9pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -4216,7 +4151,6 @@
                                 <TextRun>
                                   <Value>INSPECCIÓN</Value>
                                   <Style>
-                                    <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -4261,8 +4195,6 @@
                                 <TextRun>
                                   <Value>Marca:</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                    <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -4294,9 +4226,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!Brand.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -4327,8 +4257,6 @@
                                 <TextRun>
                                   <Value>Tipo Vehículo:</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                    <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -4360,9 +4288,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!VehicleType.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -4398,8 +4324,6 @@
                                 <TextRun>
                                   <Value>Modelo:</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                    <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -4431,9 +4355,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!Model.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -4455,144 +4377,7 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox210">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>Color:</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                    <FontSize>9pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox210</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <VerticalAlign>Middle</VerticalAlign>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Color">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Fields!Color.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Color</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <VerticalAlign>Middle</VerticalAlign>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                  </TablixCells>
-                </TablixRow>
-                <TablixRow>
-                  <Height>6mm</Height>
-                  <TablixCells>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Textbox214">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>Motor:</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                    <FontSize>9pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox214</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <VerticalAlign>Middle</VerticalAlign>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Motor">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Fields!Motor.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Motor</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                            <VerticalAlign>Middle</VerticalAlign>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Textbox216">
+                        <Textbox Name="Textbox217">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -4601,8 +4386,6 @@
                                 <TextRun>
                                   <Value>Fecha:</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                    <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -4626,7 +4409,7 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Date">
+                        <Textbox Name="Date2">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -4634,9 +4417,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!Date.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -4672,8 +4453,6 @@
                                 <TextRun>
                                   <Value>Kilometraje:</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                    <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -4705,9 +4484,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!Mileage.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style>
@@ -4740,8 +4517,6 @@
                                 <TextRun>
                                   <Value />
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                    <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -4773,9 +4548,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value />
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -4811,8 +4584,6 @@
                                 <TextRun>
                                   <Value>Nivel de combustible:</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                    <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -4844,9 +4615,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!Fuellevel.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -4877,8 +4646,6 @@
                                 <TextRun>
                                   <Value />
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                    <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -4910,9 +4677,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value />
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -4948,8 +4713,6 @@
                                 <TextRun>
                                   <Value>Observación:</Value>
                                   <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                    <FontSize>9pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -4981,9 +4744,7 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!obs.Value</Value>
-                                  <Style>
-                                    <FontFamily>Arial</FontFamily>
-                                  </Style>
+                                  <Style />
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -5026,13 +4787,12 @@
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
-                <TablixMember />
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>detalleDs</DataSetName>
             <Top>32.30033mm</Top>
             <Left>0.2371mm</Left>
-            <Height>42mm</Height>
+            <Height>36mm</Height>
             <Width>168.275mm</Width>
             <ZIndex>10</ZIndex>
             <Style>
