@@ -12,15 +12,25 @@ async function search(params) {
     })
 }
 
-function getDataForm(obj: { tipo: 1 | 5 })  {
+function getDataForm(obj: { tipo: 1 | 5 }) {
     return client.get(`${url}Get?json=${JSON.stringify(obj)}`).then(responseAxios => {
         let response = responseAxios.data;
+        
         let obj = {
-            subfamilias: []
+            estabs: [],
+            subfamilias: [],
+            medidas: [],
+            tiposProducto: [],
+            tarifasImpuesto: [],
+            tarifas: []
         }
         if (response.code === "1") {
             let mainData = JSON.parse(response.payload);
+            console.log(mainData)
             let tempSubfamilias = mainData[2];
+
+            obj.estabs = mainData[0];
+
             obj.subfamilias = tempSubfamilias.map(subfamilia => {
                 return {
                     idSubFamilia: subfamilia.idSubFamilia,
@@ -28,10 +38,16 @@ function getDataForm(obj: { tipo: 1 | 5 })  {
                     descripcion: subfamilia.subFamilia
                 }
             })
+
+            obj.medidas = mainData[4];
+            obj.tiposProducto = mainData[7];
+            obj.tarifasImpuesto = mainData[8];
+            obj.tarifas = mainData[9];
         } else {
             console.log(response.data)
+            return obj;
         }
-        return obj;
+        return obj
     })
 }
 

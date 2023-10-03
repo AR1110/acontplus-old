@@ -396,6 +396,11 @@ BEGIN
 
 			SELECT idMarca,codigo,descripcion  FROM dbo.Marca   WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
 
+            --Para Crud svelte 
+            SELECT idTipoArticulo,descripcion FROM dbo.TipoArticulo WHERE estado = 1 
+
+            SELECT * FROM dbo.TipoIva WHERE estado = 1
+	        SELECT idTarifa,descripcion,codigo,predeterminada FROM dbo.Tarifa WHERE idEntidad = @idEntidad AND estado = 1 ORDER BY codigo ASC
 			RETURN 
 
             
