@@ -16,6 +16,9 @@ CREATE OR ALTER VIEW Mechanical.v_Support WITH SCHEMABINDING AS (
           ,ct.idCard
           ,ve.LicensePlate
           ,ve.Brand
+          ,ve.[Model]
+          ,ve.Color
+          ,ve.Engine
           ,ct.TradeName
           ,ct.BusinessName
           ,pt.ptoEmi
