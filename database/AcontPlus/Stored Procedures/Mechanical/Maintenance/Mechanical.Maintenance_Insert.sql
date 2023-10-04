@@ -23,6 +23,7 @@ BEGIN
         InspectionId INT NOT NULL
        ,[Date] DATETIME2 NOT NULL
        ,Obs VARCHAR(300) NOT NULL
+       ,Total NUMERIC(18,5) NOT NULL
        ,[Status] INT DEFAULT 1 
        ,CreatedAt DATETIME2 DEFAULT GETDATE()
        ,[Enabled] BIT DEFAULT 1
@@ -30,8 +31,16 @@ BEGIN
 
     DECLARE @tbMaintenanceDetail AS TABLE(
         ArticuloId INT NOT NULL
+       ,TarifaId INT NOT NULL
+       ,BodegaId INT NOT NULL
+       ,MedidaId INT NOT NULL
        ,[Description] VARCHAR(300) NOT NULL
        ,Quantity NUMERIC(18,5) NOT NULL
+       ,Price NUMERIC(18,5) NOT NULL
+       ,Cost NUMERIC(18,5) NOT NULL
+       ,Total NUMERIC(18,5) NOT NULL
+       ,CodePercentage VARCHAR(10) NOT NULL
+       ,[Percentage] NUMERIC(18,5)
        ,[Status] INT DEFAULT 1 
        ,CreatedAt DATETIME2 DEFAULT GETDATE()
        ,[Enabled] BIT DEFAULT 1
@@ -43,22 +52,31 @@ BEGIN
 
         SELECT @jsonMaintenance = maintenance ,@jsonMaintenanceDetails = maintenanceDetails FROM OPENJSON(@json) WITH (maintenance NVARCHAR(MAX) '$.maintenance' as json ,maintenanceDetails NVARCHAR(MAX) '$.maintenanceDetails' as json)
 
-        INSERT INTO @tbMaintenance (InspectionId,[Date],Obs)
-                             SELECT InspectionId,[Date],Obs
+        INSERT INTO @tbMaintenance (InspectionId,[Date],Obs,Total)
+                             SELECT InspectionId,[Date],Obs,Total
                              FROM OPENJSON(@jsonMaintenance) WITH 
                              (
                                 InspectionId          INT '$.inspectionId' 
                                ,[Date]          DATETIME2 '$.date'
                                ,Obs          VARCHAR(300) '$.obs'
+                               ,Total       NUMERIC(18,5) '$.total'
                              )
 
-        INSERT INTO @tbMaintenanceDetail (ArticuloId,[Description],Quantity)
-                                   SELECT ArticuloId,[Description],Quantity
+        INSERT INTO @tbMaintenanceDetail (ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage])
+                                   SELECT ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage]
                                    FROM OPENJSON(@jsonMaintenanceDetails) WITH 
                                    (
                                         ArticuloId             INT '$.articuloId' 
+                                       ,TarifaId               INT '$.tarifaId' 
+                                       ,BodegaId               INT '$.bodegaId' 
+                                       ,MedidaId               INT '$.medidaId' 
                                        ,[Description] VARCHAR(300) '$.description'
-                                       ,Quantity      VARCHAR(300) '$.quantity'
+                                       ,Quantity     NUMERIC(18,5) '$.quantity'
+                                       ,Price        NUMERIC(18,5) '$.price'
+                                       ,Cost         NUMERIC(18,5) '$.cost'
+                                       ,Total        NUMERIC(18,5) '$.total'
+                                       ,CodePercentage VARCHAR(10) '$.codePercentage'
+                                       ,[Percentage] NUMERIC(18,5) '$.percentage'
                                    )
 
 
@@ -84,14 +102,14 @@ BEGIN
         BEGIN TRAN 
             
            INSERT INTO [Mechanical].[Maintenance]
-                 (InspectionId,[Date],Obs, CompanyId, UserId,[Status],CreatedAt,[Enabled])
-           SELECT InspectionId,[Date],Obs,@CompanyId,@UserId,[Status],CreatedAt,[Enabled] FROM @tbMaintenance
+                 (InspectionId,[Date],Obs,Total, CompanyId, UserId,[Status],CreatedAt,[Enabled])
+           SELECT InspectionId,[Date],Obs,Total,@CompanyId,@UserId,[Status],CreatedAt,[Enabled] FROM @tbMaintenance
 
            SELECT @Id = SCOPE_IDENTITY()
 
            INSERT INTO [Mechanical].[MaintenanceDetail]
-                 ([MaintenanceId],[ArticuloId],[Description],[Quantity],[CreatedAt],[Enabled])
-           SELECT @Id            ,[ArticuloId],[Description],[Quantity],[CreatedAt],[Enabled] FROM @tbMaintenanceDetail 
+                 ([MaintenanceId],ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],[CreatedAt],[Enabled])
+           SELECT @Id            ,ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],[CreatedAt],[Enabled] FROM @tbMaintenanceDetail 
 
         COMMIT TRAN 
 
