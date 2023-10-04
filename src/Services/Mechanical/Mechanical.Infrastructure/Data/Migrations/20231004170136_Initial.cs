@@ -25,8 +25,9 @@ namespace Mechanical.Infrastructure.Data.Migrations
                     Description = table.Column<string>(type: "varchar(150)", unicode: false, maxLength: 150, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Enabled = table.Column<bool>(type: "bit", nullable: false),
-                    Deleted = table.Column<bool>(type: "bit", nullable: true)
+                    Enabled = table.Column<bool>(type: "bit", nullable: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -44,8 +45,9 @@ namespace Mechanical.Infrastructure.Data.Migrations
                     Description = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Enabled = table.Column<bool>(type: "bit", nullable: false),
-                    Deleted = table.Column<bool>(type: "bit", nullable: true)
+                    Enabled = table.Column<bool>(type: "bit", nullable: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -64,8 +66,9 @@ namespace Mechanical.Infrastructure.Data.Migrations
                     Description = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Enabled = table.Column<bool>(type: "bit", nullable: false),
-                    Deleted = table.Column<bool>(type: "bit", nullable: true)
+                    Enabled = table.Column<bool>(type: "bit", nullable: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -98,8 +101,9 @@ namespace Mechanical.Infrastructure.Data.Migrations
                     Cylindraje = table.Column<string>(type: "varchar(150)", unicode: false, maxLength: 150, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Enabled = table.Column<bool>(type: "bit", nullable: false),
-                    Deleted = table.Column<bool>(type: "bit", nullable: true)
+                    Enabled = table.Column<bool>(type: "bit", nullable: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -122,13 +126,13 @@ namespace Mechanical.Infrastructure.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     VehicleId = table.Column<int>(type: "int", nullable: false),
                     CompanyId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
                     CustomerId = table.Column<int>(type: "int", nullable: false),
                     Observation = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Enabled = table.Column<bool>(type: "bit", nullable: false),
-                    Deleted = table.Column<bool>(type: "bit", nullable: true)
+                    Enabled = table.Column<bool>(type: "bit", nullable: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -156,13 +160,13 @@ namespace Mechanical.Infrastructure.Data.Migrations
                     CustomerId = table.Column<int>(type: "int", nullable: false),
                     Obs = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: true),
                     CompanyId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
                     UserAssignedId = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Enabled = table.Column<bool>(type: "bit", nullable: false),
-                    Deleted = table.Column<bool>(type: "bit", nullable: true)
+                    Enabled = table.Column<bool>(type: "bit", nullable: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -175,6 +179,132 @@ namespace Mechanical.Infrastructure.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "Inspection",
+                schema: "Mechanical",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SupportId = table.Column<int>(type: "int", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Mileage = table.Column<int>(type: "int", nullable: false),
+                    FuelLevel = table.Column<string>(type: "varchar(150)", unicode: false, maxLength: 150, nullable: false),
+                    Engine = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false),
+                    Cabin = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false),
+                    Bearing = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false),
+                    Transmission = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false),
+                    Lighting = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false),
+                    Brake = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false),
+                    Steering = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false),
+                    Suspension = table.Column<string>(type: "varchar(max)", unicode: false, nullable: false),
+                    Obs = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Enabled = table.Column<bool>(type: "bit", nullable: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Inspection", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Inspection_Support_SupportId",
+                        column: x => x.SupportId,
+                        principalSchema: "Mechanical",
+                        principalTable: "Support",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Maintenance",
+                schema: "Mechanical",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    InspectionId = table.Column<int>(type: "int", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateEnd = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Obs = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: true),
+                    CompanyId = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    Total = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Enabled = table.Column<bool>(type: "bit", nullable: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Maintenance", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Maintenance_Inspection_InspectionId",
+                        column: x => x.InspectionId,
+                        principalSchema: "Mechanical",
+                        principalTable: "Inspection",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MaintenanceDetail",
+                schema: "Mechanical",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MaintenanceId = table.Column<int>(type: "int", nullable: false),
+                    ArticuloId = table.Column<int>(type: "int", nullable: false),
+                    TarifaId = table.Column<int>(type: "int", nullable: false),
+                    BodegaId = table.Column<int>(type: "int", nullable: false),
+                    MedidaId = table.Column<int>(type: "int", nullable: false),
+                    Description = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: false),
+                    Quantity = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
+                    Price = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
+                    Cost = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
+                    Total = table.Column<decimal>(type: "numeric(18,5)", nullable: false),
+                    Obs = table.Column<string>(type: "varchar(300)", unicode: false, maxLength: 300, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Enabled = table.Column<bool>(type: "bit", nullable: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MaintenanceDetail", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MaintenanceDetail_Maintenance_MaintenanceId",
+                        column: x => x.MaintenanceId,
+                        principalSchema: "Mechanical",
+                        principalTable: "Maintenance",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Inspection_SupportId",
+                schema: "Mechanical",
+                table: "Inspection",
+                column: "SupportId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Maintenance_InspectionId",
+                schema: "Mechanical",
+                table: "Maintenance",
+                column: "InspectionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaintenanceDetail_MaintenanceId",
+                schema: "Mechanical",
+                table: "MaintenanceDetail",
+                column: "MaintenanceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Support_VehicleCompanyId",
@@ -233,7 +363,7 @@ namespace Mechanical.Infrastructure.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Support",
+                name: "MaintenanceDetail",
                 schema: "Mechanical");
 
             migrationBuilder.DropTable(
@@ -241,11 +371,23 @@ namespace Mechanical.Infrastructure.Data.Migrations
                 schema: "Mechanical");
 
             migrationBuilder.DropTable(
-                name: "VehicleCompany",
+                name: "Maintenance",
                 schema: "Mechanical");
 
             migrationBuilder.DropTable(
                 name: "VehiclePartType",
+                schema: "Mechanical");
+
+            migrationBuilder.DropTable(
+                name: "Inspection",
+                schema: "Mechanical");
+
+            migrationBuilder.DropTable(
+                name: "Support",
+                schema: "Mechanical");
+
+            migrationBuilder.DropTable(
+                name: "VehicleCompany",
                 schema: "Mechanical");
 
             migrationBuilder.DropTable(

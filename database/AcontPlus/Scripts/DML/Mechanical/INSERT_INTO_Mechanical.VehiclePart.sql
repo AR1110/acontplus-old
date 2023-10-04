@@ -28,7 +28,7 @@ GO
 --	  ,(2,'CC','Caja de cambios',GETDATE(),1)
 --	  ,(2,'FT','Fluido de transmisión',GETDATE(),1)
 
--- Sistema de Transmisión
+-- Sistema de Frenos
 --SELECT * FROM Mechanical.VehiclePartType WHERE Code = 'SF'
 
 --INSERT INTO Mechanical.VehiclePart(VehiclePartTypeId,Code,[Description],CreatedAt,[Enabled])
@@ -67,45 +67,45 @@ GO
 -- Cabina
 --SELECT * FROM Mechanical.VehiclePartType WHERE Code = 'CB'
 --INSERT INTO Mechanical.VehiclePart(VehiclePartTypeId,Code,[Description],CreatedAt,[Enabled])
---VALUES (13,'PBD','Parabrisa delantera',GETDATE(),1)
---      ,(13,'PP','Parabrisa posterior',GETDATE(),1)
---	  ,(13,'VLD','Vidrio lateral derecho',GETDATE(),1)
---	  ,(13,'VLI','Vidrio lateral izquierdo',GETDATE(),1)
---	  ,(13,'PM','Plumillas',GETDATE(),1)
---	  ,(13,'APC','Asiento piloto y copiloto',GETDATE(),1)
---	  ,(13,'AP','Asiento Posterior',GETDATE(),1)
---      ,(13,'CS','Cinturones de Seguridad',GETDATE(),1)	
---	  ,(13,'ER','Espejo retrovisor',GETDATE(),1)	
---	  ,(13,'ELD','Espejo lateral derecho',GETDATE(),1)	
---	  ,(13,'ELI','Espejo lateral izquierdo',GETDATE(),1)	
---	  ,(13,'BC','Bocina',GETDATE(),1)	
---	  ,(13,'TC','Tablero de control',GETDATE(),1)	
---	  ,(13,'RPC','Radio / porta CD',GETDATE(),1)
+--VALUES (8,'PBD','Parabrisa delantera',GETDATE(),1)
+--      ,(8,'PP','Parabrisa posterior',GETDATE(),1)
+--	  ,(8,'VLD','Vidrio lateral derecho',GETDATE(),1)
+--	  ,(8,'VLI','Vidrio lateral izquierdo',GETDATE(),1)
+--	  ,(8,'PM','Plumillas',GETDATE(),1)
+--	  ,(8,'APC','Asiento piloto y copiloto',GETDATE(),1)
+--	  ,(8,'AP','Asiento Posterior',GETDATE(),1)
+--      ,(8,'CS','Cinturones de Seguridad',GETDATE(),1)	
+--	  ,(8,'ER','Espejo retrovisor',GETDATE(),1)	
+--	  ,(8,'ELD','Espejo lateral derecho',GETDATE(),1)	
+--	  ,(8,'ELI','Espejo lateral izquierdo',GETDATE(),1)	
+--	  ,(8,'BC','Bocina',GETDATE(),1)	
+--	  ,(8,'TC','Tablero de control',GETDATE(),1)	
+--	  ,(8,'RPC','Radio / porta CD',GETDATE(),1)
 
 -- Sistema de luces 
  --SELECT * FROM Mechanical.VehiclePartType WHERE Code = 'SL'
 --INSERT INTO Mechanical.VehiclePart(VehiclePartTypeId,Code,[Description],CreatedAt,[Enabled])
---VALUES (14,'LB','Luz baja',GETDATE(),1)
---      ,(14,'LA','Luz alta',GETDATE(),1)
---	  ,(14,'LD','Luces direccionales',GETDATE(),1)
---	  ,(14,'LF','Luz de frenos',GETDATE(),1)
---	  ,(14,'LR','Luz de retroceso',GETDATE(),1)
---	  ,(14,'FN','Faros neblineros',GETDATE(),1)
---	  ,(14,'FR','Faros de retroceso (Pirata)',GETDATE(),1)
---	  ,(14,'LC','Luz de cabina',GETDATE(),1)	
---	  ,(14,'LIT','Luces Indicadores del tablero',GETDATE(),1)	
---	  ,(14,'AR','Alarma de retroceso',GETDATE(),1)	
---	  ,(14,'CL','Circulina',GETDATE(),1)
+--VALUES (7,'LB','Luz baja',GETDATE(),1)
+--      ,(7,'LA','Luz alta',GETDATE(),1)
+--	  ,(7,'LD','Luces direccionales',GETDATE(),1)
+--	  ,(7,'LF','Luz de frenos',GETDATE(),1)
+--	  ,(7,'LR','Luz de retroceso',GETDATE(),1)
+--	  ,(7,'FN','Faros neblineros',GETDATE(),1)
+--	  ,(7,'FR','Faros de retroceso (Pirata)',GETDATE(),1)
+--	  ,(7,'LC','Luz de cabina',GETDATE(),1)	
+--	  ,(7,'LIT','Luces Indicadores del tablero',GETDATE(),1)	
+--	  ,(7,'AR','Alarma de retroceso',GETDATE(),1)	
+--	  ,(7,'CL','Circulina',GETDATE(),1)
 
 
 -- Rodamiento 
 -- SELECT * FROM Mechanical.VehiclePartType WHERE Code = 'RD'
 --INSERT INTO Mechanical.VehiclePart(VehiclePartTypeId,Code,[Description],CreatedAt,[Enabled])
---VALUES (15,'LDB','Llanta delantera derecho',GETDATE(),1)
---      ,(15,'LDI','Llanta delantera izquierdo',GETDATE(),1)
---	  ,(15,'LPD','Llanta posterior derecho',GETDATE(),1)
---	  ,(15,'LPI','Llanta posterior izquierdo',GETDATE(),1)
---	  ,(15,'LLR','Llanta de repuesto',GETDATE(),1)
+--VALUES (9,'LDB','Llanta delantera derecho',GETDATE(),1)
+--      ,(9,'LDI','Llanta delantera izquierdo',GETDATE(),1)
+--	  ,(9,'LPD','Llanta posterior derecho',GETDATE(),1)
+--	  ,(9,'LPI','Llanta posterior izquierdo',GETDATE(),1)
+--	  ,(9,'LLR','Llanta de repuesto',GETDATE(),1)
       --,(5,'PL','Portallanta',GETDATE(),1)	
       --,(5,'GP','Guardapolvos',GETDATE(),1)
 	 

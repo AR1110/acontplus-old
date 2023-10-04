@@ -30,7 +30,15 @@ namespace Mechanical.Core.Entities
         [Column(TypeName = "numeric(18,5), not null")]
         public decimal Total { get; set; }
 
-        [MaxLength(300)]
+        [Required]
+        [MaxLength(10)]
+        public string CodePercentage { get; set; }
+        
+        [Column(TypeName = "numeric(18,5), not null")]
+        public decimal Percentage { get; set; }
+
+
+        [MaxLength(250)]
         public string Obs { get; set; }
 
 

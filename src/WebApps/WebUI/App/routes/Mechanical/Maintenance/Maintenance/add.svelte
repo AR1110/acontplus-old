@@ -4,6 +4,7 @@
   import { MaintenanceService } from "$lib/services/mechanical/maintenance-service";
   import AdvancedSearch from "$lib/components/AdvancedSearch.svelte";
   import { showLoader, hideLoader } from "$lib/utils/loading-spinner";
+  import GridForItem from "$lib/components/GridForItem.svelte";
   import Modal from "$lib/components/Modal.svelte";
   import toast from "$lib/utils/toast";
 
@@ -18,6 +19,162 @@
     maintenance = values.maintenance;
     maintenanceDetails = values.maintenanceDetail;
   });
+
+  // Todo: GRID COLUMNS
+  let selectFee = (cell, onRendered, success, cancel) => {
+    let fees = [];
+    let rows = cell.getRow().getData();
+
+    if (rows.fees === undefined) fees = [];
+    if (rows.fees != undefined) fees = JSON.parse(rows.fees);
+
+    let selectList = document.createElement("select");
+    selectList.style.width = "100%";
+    selectList.style.boxSizing = "border-box";
+
+    onRendered(function () {
+      selectList.focus();
+      selectList.style.height = "100%";
+    });
+
+    function onChange() {
+      if (selectList.selectedOptions[0].value != rows) {
+        success(selectList.selectedOptions[0].value);
+
+        cell.getElement().dataset.tarifa = selectList.selectedOptions[0].text;
+        cell.getElement().dataset.feeId = selectList.selectedOptions[0].value;
+      } else {
+        cancel();
+      }
+    }
+
+    selectList.addEventListener("blur", onChange);
+
+    selectList.addEventListener("keydown", function (e) {
+      if (e.keyCode == 13) {
+        onChange();
+      }
+      if (e.keyCode == 27) {
+        cancel();
+      }
+    });
+
+    for (let i = 0; i < fees.length; i++) {
+      let option = document.createElement("option");
+
+      option.value = fees[i].idTarifa.toString();
+      option.text = fees[i].tarifa;
+      if (fees[i].idMedida === rows) {
+        option.selected = true;
+      }
+      selectList.appendChild(option);
+    }
+    return selectList;
+  };
+
+  let formatterFee = (cell) => {
+    let fees = [];
+    let row = cell.getRow().getData();
+    let value = cell.getValue();
+
+    fees = JSON.parse(row.fees);
+    return fees.find((x) => x.idTarifa == value).tarifa;
+  };
+
+  let calculateTotal = (cell) => {
+    let row = cell.getRow().getData();
+    let totalDiscount = 0;
+
+    let column = cell.getColumn()._column.field;
+
+    if (column === "feeId") {
+      let fee = JSON.parse(row.fees).find((x) => x.idTarifa == row.feeId);
+
+      cell.getRow().update({
+        priceIVA: fee.precioConIva,
+        price: fee.precioVenta,
+      });
+    }
+
+    if (column === "quantity") {
+      if (row.quantity >= 0) {
+        cell.getRow().update({ quantity: row.quantity });
+      } else {
+        let oldValue = cell.getOldValue();
+        cell.getRow().update({ quantity: oldValue });
+      }
+    }
+
+    totalDiscount = (row.priceIVA - row.discountValue) * row.quantity;
+    if (!paramValidation.includes(totalDiscount)) {
+      totalDiscount = parseFloat(totalDiscount.toFixed(2));
+    }
+    cell.getRow().update({ subtotal: totalDiscount });
+  };
+
+  let maintenanceDetailsColumns = [
+    {
+      editable: "never",
+      field: "descripcion",
+      title: "Producto",
+      with: 300,
+    },
+    {
+      editable: "never",
+      field: "codigoArticulo",
+      hozAlign: "center",
+      title: "Código",
+      with: 100,
+    },
+    {
+      editable: "never",
+      field: "medida",
+      hozAlign: "center",
+      title: "Medida",
+      with: 100,
+    },
+    {
+      field: "feeId",
+      hozAlign: "center",
+      title: "Tarifa",
+      typeNumber: true,
+      with: 100,
+    },
+    {
+      editable: "never",
+      field: "priceIva",
+      hozAlign: "center",
+      title: "Precio ",
+      with: 100,
+    },
+    {
+      editor: "input",
+      field: "quantity",
+      hozAlign: "center",
+      title: "Cantidad",
+      sorter: "number",
+      with: 200,
+    },
+    {
+      calcBottom: "sum",
+      editable: false,
+      editor: "input",
+      field: "total",
+      hozAlign: "center",
+      title: "Total",
+      with: 100,
+    },
+    {
+      cellClick: (e, cell) => {
+        cell.getRow().delete();
+      },
+      formatter: "buttonCross",
+      hozAlign: "center",
+      resizable: false,
+      title: "Opción",
+      width: 100,
+    },
+  ];
 
   // SEARCH THE VECICLES WITH CUSTOMER
   const onInput = async (e) => {
@@ -83,12 +240,6 @@
     });
   };
 
-  // REVOME ITEM THE DETAILT SUPPORT
-  const removeIten = (i) => {
-    maintenanceDetails = maintenanceDetails.filter(
-      (item, index) => index !== i
-    );
-  };
 
   // Save
   const onSave = () => {
@@ -279,113 +430,13 @@
           <div class="col" />
         </div>
         <hr />
-        <div class="card">
-          <div class="card-body">
-            <div class="table-responsive">
-              <table class="table table-hover">
-                <thead>
-                  <tr>
-                    <th class="text-center">Codigo</th>
-                    <th class="text-center">Descripción</th>
-                    <th class="text-center">Cantidad</th>
-                    <th class="text-center">Medida</th>
-                    <th class="text-center">Iva</th>
-                    <th class="text-center">Tarifa</th>
-                    <th class="text-center">Precio</th>
-                    <th class="text-center">Total</th>
-                    <th class="text-center">Acción</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {#each maintenanceDetails as item, index}
-                    <tr>
-                      <td class="text-center">{item.codigoArticulo}</td>
-                      <td class="text-center">{item.descripcion}</td>
-                      <td width="5%" class="text-center"
-                        ><div class="form-group">
-                          <b
-                            ><input
-                              type="text"
-                              class="form-control form-control"
-                              bind:value={item.quantity}
-                            /></b
-                          >
-                        </div></td
-                      >
-                      <td width="15%">
-                        <div class="form-group">
-                          <select
-                            name="medidas"
-                            id="medidas"
-                            bind:value={item.idMedida}
-                            class="form-control border-select"
-                          >
-                            {#each item.medidas as medida}
-                              <option value={medida.idMedida}>
-                                {medida.descripcion}
-                              </option>
-                            {/each}
-                          </select>
-                        </div>
-                      </td>
-                      <td width="15%">
-                        {item.nombreTipoIva}
-                      </td>
-                      <td width="15%">
-                        <div class="form-group">
-                          <select
-                            name="country"
-                            id="country"
-                            bind:value={item.idTarifa}
-                            class="form-control border-select"
-                          >
-                            {#each item.tarifas as tarifa}
-                              <option value={tarifa.idTarifa}>
-                                {`${tarifa.tarifa} - ${tarifa.precioConIva}`}
-                              </option>
-                            {/each}
-                          </select>
-                        </div>
-                      </td>
-                      <td width="15%" class="text-center"
-                        ><div class="form-group">
-                          <b
-                            ><input
-                              type="text"
-                              class="form-control form-control"
-                              bind:value={item.price}
-                            /></b
-                          >
-                        </div></td
-                      >
-                      <td width="15%" class="text-center"
-                        ><div class="form-group">
-                          <b
-                            ><input
-                              type="text"
-                              disabled
-                              class="form-control form-control"
-                              bind:value={item.total}
-                            /></b
-                          >
-                        </div></td
-                      >
-                      <td class="text-center">
-                        <button
-                          type="button"
-                          class="btn btn-outline-danger btn-sm"
-                          on:click={() => removeIten(index)}
-                        >
-                          <i class="ti-trash" />
-                        </button>
-                      </td>
-                    </tr>
-                  {/each}
-                </tbody>
-              </table>
-            </div>
+
+        <div class="row mt-2">
+          <div class="col-12">
+            <GridForItem arrayData={maintenanceDetails} columns={maintenanceDetailsColumns} />
           </div>
         </div>
+
         <div class="modal-footer">
           <button type="submit" class="btn btn-success">
             <i class="ti-save" /> Guardar</button
