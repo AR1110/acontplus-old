@@ -5,38 +5,42 @@
 namespace Mechanical.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InspectionAlter : Migration
+    public partial class Maintenance : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
-                name: "FuelLevel",
+                name: "Obs",
                 schema: "Mechanical",
-                table: "Inspection",
-                type: "varchar(150)",
+                table: "MaintenanceDetail",
+                type: "varchar(250)",
                 unicode: false,
-                maxLength: 150,
-                nullable: false,
+                maxLength: 250,
+                nullable: true,
                 oldClrType: typeof(string),
-                oldType: "varchar(max)",
-                oldUnicode: false);
+                oldType: "varchar(300)",
+                oldUnicode: false,
+                oldMaxLength: 300,
+                oldNullable: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
-                name: "FuelLevel",
+                name: "Obs",
                 schema: "Mechanical",
-                table: "Inspection",
-                type: "varchar(max)",
+                table: "MaintenanceDetail",
+                type: "varchar(300)",
                 unicode: false,
-                nullable: false,
+                maxLength: 300,
+                nullable: true,
                 oldClrType: typeof(string),
-                oldType: "varchar(150)",
+                oldType: "varchar(250)",
                 oldUnicode: false,
-                oldMaxLength: 150);
+                oldMaxLength: 250,
+                oldNullable: true);
         }
     }
 }

@@ -17,6 +17,8 @@ namespace Mechanical.Core.Entities
         public int CompanyId { get; set; }
         public int Status { get; set; } = 0;
 
+        [Column(TypeName = "numeric(18,5), not null")]
+        public decimal Total { get; set; }
 
     }
 }
