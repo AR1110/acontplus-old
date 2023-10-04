@@ -27,7 +27,7 @@ function getDataForm() {
             return obj;
         }
         if (response.code === '1') {
-            let mainDataRepository = JSON.parse(response.payload) 
+            let mainDataRepository = JSON.parse(response.payload)
             obj = {
                 tiposIdentificacion: mainDataRepository[0],
                 tipoContribuyentes: mainDataRepository[1],
@@ -44,16 +44,56 @@ function getDataForm() {
     })
 }
 
-function post(data){
-    return client.post(url + 'Insert', data).then(response=>response.data)
+function post(data) {
+    return client.post(url + 'Insert', data).then(response => response.data)
 }
 
-function put(id, data){
-    return client.put(url + 'Update/' + id, data).then(response=>response.data)
+function put(id, data) {
+    return client.put(url + 'Update/' + id, data).then(response => response.data)
 }
 
-async function search(params) {
-    return await client.get(`${url}Search/?json=${params}`).then((responseAxios) => {
+function getId(id) {
+    return client.get(url + 'FindById/' + id).then(responseAxios => {
+        let response = responseAxios.data;
+
+        if (response.code === "0") {
+            throw response;
+        }
+        if (response.code === "1") {
+            let dataRepository = JSON.parse(response.payload)[0];
+
+            return {
+                idCliente: dataRepository.idCliente,
+                idTipoClienteProveedor: dataRepository.idTipoClienteProveedor,
+                idTipoEntidad: dataRepository.idTipoEntidad,
+                idSubContribuyente: dataRepository.idSubContribuyente,
+                idTiempoCredito: dataRepository.idTiempoCredito,
+                idTipoIdentificacion: dataRepository.idTipoIdentificacion,
+                idCiudad: dataRepository.idCiudad,
+                numeroIdentificacion: dataRepository.numeroIdentificacion,
+                nombreFiscal: dataRepository.nombreFiscal,
+                montoCredito: dataRepository.montoCredito,
+                nombreComercial: dataRepository.nombreComercial,
+                direccion: dataRepository.direccion,
+                telefono: dataRepository.telefono,
+                correo: dataRepository.correo,
+                estado: dataRepository.estado,
+                idEmpleado: dataRepository.idEmpleado,
+                diasCredito: dataRepository.diasCredito,
+                empleado: dataRepository.empleado,
+                idEmpresa: dataRepository.idEmpresa,
+                idCargo: dataRepository.idCargo,
+                placa: dataRepository.placa,
+                validationSri: dataRepository.validationSri,
+                correos: dataRepository.correo ? dataRepository.correo.split(';') : [],
+                telefonos: dataRepository.telefono ? dataRepository.telefono.split(';') : [],
+                placas: dataRepository.placa !== '' ? dataRepository.placa.split(';') : []
+            }
+        }
+    })
+}
+async function search(params, cancelToken) {
+    return await client.get(`${url}Search/?json=${params}`, { cancelToken }).then((responseAxios) => {
         const response = responseAxios.data;
         if (response.code == "1") {
             return JSON.parse(response.payload);
@@ -92,6 +132,7 @@ export const CustomerService = {
     getAll,
     post,
     put,
+    getId,
     search,
     getCedula,
     getRuc

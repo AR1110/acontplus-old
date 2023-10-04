@@ -41,52 +41,86 @@ type Data = {
     telefono?: string
 }
 type State = {
+    customerCompanyId: number
     showForm: boolean
+    isUpdateCustomer: boolean
+    isNewCustomer: boolean
     dataForm: DataForm
     data: Data
 }
 
+const initialData: Data = {
+    idCliente: 0,
+    idTipoIdentificacion: 0,
+    idSubContribuyente: 0,
+    idTiempoCredito: 0,
+    numeroIdentificacion: "",
+    nombreFiscal: "",
+    nombreComercial: "",
+    direccion: "",
+    correo: "",
+    telefono: ""
+}
+
 const initialState: State = {
+    customerCompanyId: 0, //id que proviene externamente para actualizar los datos del cliente
     showForm: false,
+    isUpdateCustomer: false,
+    isNewCustomer: false,
     dataForm: {
         tiposIdentificacion: [],
         tipoContribuyentes: [],
         tiempoCreditos: []
     },
-    data: {
-        idCliente: 0,
-        idTipoIdentificacion: 0,
-        idSubContribuyente: 0,
-        idTiempoCredito: 0,
-        numeroIdentificacion: "",
-        nombreFiscal: "",
-        nombreComercial: "",
-        direccion: "",
-        correo: "",
-        telefono: ""
-    }
+    data: structuredClone(initialData)
 }
 
 export const techSpecCustomerStore = writable<State>(initialState);
 
-export const activeShowForm = () => {
-    techSpecCustomerStore.update(state => ({
-        ...state,
-        showForm: !state.showForm
-    }))
+export const activeShowForm = (typeAction: "UPDATE" | "NEW" | "CLOSE", id = 0) => {
+    let isUpdateCustomer = typeAction === "UPDATE";
+    let isNewCustomer = typeAction === "NEW";
+    let showForm = typeAction !== "CLOSE"
+    techSpecCustomerStore.update(state => {
+        state.customerCompanyId = id,
+            state.showForm = showForm,
+            state.isUpdateCustomer = isUpdateCustomer,
+            state.isNewCustomer = isNewCustomer
+        if (typeAction === "CLOSE") {
+            state.data = structuredClone(initialData)
+        }
+        return state;
+    })
 }
 
-export const getDataForm = () => {
+export const getDataForm = async () => {
     try {
-        customerSvc.getDataForm().then((response) => {
-            console.log(response)
+        const { customerCompanyId } = get(techSpecCustomerStore);
+        await customerSvc.getDataForm().then((response: DataForm) => {
+            const { tiposIdentificacion, tiempoCreditos } = response;
+            const { idTipoIdentificacion } = tiposIdentificacion.find(item => item.codigo === 'R');
+            const idTiempoCredito = tiempoCreditos.length > 0 ? tiempoCreditos[0].idTiempoCredito : 0;
             techSpecCustomerStore.update(state => {
-                return {
-                    ...state,
-                    dataForm: response
+                state.dataForm = response;
+                state.data = {
+                    ...state.data,
+                    idTipoIdentificacion,
+                    idTiempoCredito
                 }
+                return state;
             })
         });
+
+        if (customerCompanyId > 0) {
+            customerSvc.getId(customerCompanyId).then(response => {
+                techSpecCustomerStore.update(state => {
+                    state.data = response;
+                    return state;
+                })
+            })
+        }
+
+
     } catch (error) {
         console.log(error)
     }
@@ -158,8 +192,7 @@ const validateForm = function () {
     return true;
 };
 
-const saveResponse = function (response) {
-    console.log(response)
+const saveResponse = async function (response) {
     if (response.code === "0") {
         tS({ type: 'warning', message: response.message });
     }
@@ -167,9 +200,11 @@ const saveResponse = function (response) {
         tS({ type: 'success', message: response.message });
         const { data } = get(techSpecCustomerStore);
 
-        let idCliente = data.idCliente > 0 ? data.idCliente : response.payload
-        // let dataCliente = await clienteSvc.findById(idCliente) || {};
+        let customerCompanyId = data.idCliente > 0 ? data.idCliente : response.payload
+        let dataCustomer = await customerSvc.getId(customerCompanyId)
         //close modal
+        console.log(dataCustomer)
+        activeShowForm("CLOSE")
     }
 }
 
@@ -187,26 +222,24 @@ export const save = () => {
         if (data.idCliente > 0) {
             showLoader();
             customerSvc
-                .post(obj)
+                .put(data.idCliente, obj)
                 .then(saveResponse)
                 .finally(() => hideLoader())
                 .catch((error) => {
-                    hideLoader();
                     console.log(error);
                 });
         }
 
         if (!(data.idCliente > 0)) {
             showLoader();
-
             customerSvc
-                .put(data.idCliente, obj)
+                .post(obj)
                 .then(saveResponse)
                 .finally(() => hideLoader())
                 .catch((error) => {
-                    hideLoader();
                     console.log(error);
                 });
+
         }
     } catch (error) {
         console.log(error)

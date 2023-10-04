@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
 
   import {
+    activeShowForm,
     techSpecCustomerStore,
     getDataForm,
     copiarNombreComercial,
@@ -109,10 +110,20 @@
 <div class="d-inline-flex justify-content-center flex-row mb-3">
   <div class="p-2">
     <button type="button" class="btn btn-info" on:click={save}>
-      <i class="ti-save" /> Guardar
+      {#if data.idCliente > 0}
+        <i class="ti-pencil" /> Actualizar
+      {:else}
+        <i class="ti-save" /> Guardar
+      {/if}
     </button>
   </div>
   <div class="p-2">
-    <button type="button" class="btn btn-danger"> &times; Cancelar </button>
+    <button
+      type="button"
+      class="btn btn-danger"
+      on:click={() => activeShowForm("CLOSE")}
+    >
+      &times; Cerrar
+    </button>
   </div>
 </div>
