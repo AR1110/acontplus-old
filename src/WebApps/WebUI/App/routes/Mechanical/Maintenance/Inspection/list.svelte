@@ -23,6 +23,28 @@
       hideLoader();
     });
   }
+
+  function getReport(item) {
+    showLoader();
+    let format = "pdf";
+    let dataParams = { inspectionId: item.id };
+    const params = {
+      hasService: false,
+      hasIdUsuarioRol: true,
+      reportParams: JSON.stringify({
+        hasParams: true,
+        codigo: "MI",
+        codEstab: item.codEstab,
+        format,
+        additionalParams: [],
+      }),
+      dataParams: JSON.stringify(dataParams),
+    };
+    InspectionStore.getReport(params);
+    setTimeout(() => {
+      hideLoader();
+    }, 1000);
+  }
 </script>
 
 <div class="card">
@@ -63,8 +85,15 @@
                   class="btn btn-outline-info btn-sm"
                 >
                   <i class="fa fa-wrench" />
-                </button></td
-              >
+                </button>
+                <button
+                  title="Obtner reporte"
+                  on:click={() => getReport(item)}
+                  class="btn btn-outline-danger btn-sm"
+                >
+                  <i class="fa fa-file-pdf" />
+                </button>
+              </td>
             </tr>
           {/each}
         </tbody>

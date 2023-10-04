@@ -7,6 +7,7 @@ using Services.Common;
 using Services.Common.Logs;
 using Services.Common.Middleware;
 using TechnicalSupport.API.Extensions;
+using TechnicalSupport.Infrastructure.Data;
 
 internal class Program
 {
@@ -58,7 +59,20 @@ internal class Program
 
         app.MapControllers().RequireAuthorization();
 
-        app.MapFallbackToFile("index.html");
+        using var scope = app.Services.CreateScope();
+        var services = scope.ServiceProvider;
+        var context = services.GetRequiredService<TechnicalSupportContext>();
+        var logger = services.GetRequiredService<ILogger<Program>>();
+
+        try
+        {
+            await context.Database.MigrateAsync();
+            await TechnicalSupportContextSeed.SeedAsync(context);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occured during migration");
+        }
 
         await app.RunAsync();
     }

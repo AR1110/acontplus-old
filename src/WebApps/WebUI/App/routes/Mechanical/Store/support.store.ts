@@ -4,6 +4,7 @@ import { writable } from 'svelte/store'
 import type { Support } from '$lib/interfaces/mechanical/support';
 import type { Vehicle } from '$lib/interfaces/mechanical/vehicle';
 import type { Customer } from '$lib/interfaces/customer/customer';
+import { sharedService } from '$services/shared.service';
 
 type StateModal = {
     isOpen: boolean;
@@ -124,7 +125,12 @@ const cretaeSupport = () => {
         }
     }
 
-    return { set, subscribe, update, get, getOpenModal }
+    const getReport = (parameters: object) => {
+        console.log(parameters);
+        sharedService.download(parameters, true);
+    };
+
+    return { set, subscribe, update, get, getOpenModal, getReport }
 }
 
 export const supportStore = cretaeSupport()

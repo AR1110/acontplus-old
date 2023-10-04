@@ -23,6 +23,7 @@ CREATE OR ALTER VIEW Mechanical.v_Support WITH SCHEMABINDING AS (
           ,es.idEstablecimiento as EstablecimientoId
           ,us.nombreUsuario as UserAssigned
           ,vt.[Description] as VehicleType
+          ,pt.codEstab
     FROM Mechanical.Support              st WITH (NOLOCK)
     INNER JOIN dbo.PuntoEmision          pt WITH (NOLOCK) ON pt.idPuntoEmision = st.PuntoEmisionId
     INNER JOIN Sri.Establecimiento       es WITH (NOLOCK) ON es.codEstab       = pt.codEstab

@@ -54,6 +54,7 @@ BEGIN
                                         ,UserAssigned
                                         ,COUNT(*) OVER() AS [TotalRecords]
                                         ,Obs
+                                        ,codEstab
                                   FROM Mechanical.v_Support WITH (NOLOCK)
                                   WHERE CompanyId = @CompanyId '
            ,@params NVARCHAR(MAX)

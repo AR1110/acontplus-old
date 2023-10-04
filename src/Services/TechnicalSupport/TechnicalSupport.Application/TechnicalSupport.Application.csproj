@@ -6,4 +6,10 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Common\Lib.Common\Lib.Common.csproj" />
+    <ProjectReference Include="..\TechnicalSupport.Core\TechnicalSupport.Core.csproj" />
+  </ItemGroup>
+
 </Project>
