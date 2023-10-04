@@ -46,9 +46,41 @@
 
   // CAPTURE DATA ARTICLE
   const selectArticle = (e) => {
+    let dataArticle = {};
+    let medidas = [];
     articles = [];
     value = "";
-    maintenanceDetails = [...maintenanceDetails, { ...e, quantity: 1 }];
+    ArticleService.get(
+      JSON.stringify({ tipo: 6, idArticulo: e.idArticulo })
+    ).then((response) => {
+      if (response) {
+        dataArticle = response[0][0];
+        medidas = response[1].map((item) => {
+          return {
+            ...item,
+            tarifas: JSON.parse(item.tarifas),
+          };
+        });
+
+        //
+        let dataMedida = medidas[0];
+        let dataTarifa = dataMedida.tarifas[0];
+        let obj = {
+          ...dataArticle,
+          medidas,
+          tarifas: dataMedida.tarifas,
+          idMedida: dataMedida.idMedida,
+          idTarifa: dataTarifa.idTarifa,
+          quantity: 1,
+          price: dataTarifa.precioConIva,
+          total: dataTarifa.precioConIva * 1,
+        };
+
+        console.log(obj);
+
+        maintenanceDetails = [...maintenanceDetails, obj];
+      }
+    });
   };
 
   // REVOME ITEM THE DETAILT SUPPORT
@@ -261,20 +293,79 @@
                     <th class="text-center">Tarifa</th>
                     <th class="text-center">Precio</th>
                     <th class="text-center">Total</th>
+                    <th class="text-center">Acción</th>
                   </tr>
                 </thead>
                 <tbody>
                   {#each maintenanceDetails as item, index}
                     <tr>
-                      <td class="text-center">{item.codigo}</td>
+                      <td class="text-center">{item.codigoArticulo}</td>
                       <td class="text-center">{item.descripcion}</td>
                       <td width="5%" class="text-center"
-                        ><div class="col-12 col-sm-12 col-md-12 col-lg-12">
+                        ><div class="form-group">
                           <b
                             ><input
                               type="text"
-                              class="form-control form-control-sm"
+                              class="form-control form-control"
                               bind:value={item.quantity}
+                            /></b
+                          >
+                        </div></td
+                      >
+                      <td width="15%">
+                        <div class="form-group">
+                          <select
+                            name="medidas"
+                            id="medidas"
+                            bind:value={item.idMedida}
+                            class="form-control border-select"
+                          >
+                            {#each item.medidas as medida}
+                              <option value={medida.idMedida}>
+                                {medida.descripcion}
+                              </option>
+                            {/each}
+                          </select>
+                        </div>
+                      </td>
+                      <td width="15%">
+                        {item.nombreTipoIva}
+                      </td>
+                      <td width="15%">
+                        <div class="form-group">
+                          <select
+                            name="country"
+                            id="country"
+                            bind:value={item.idTarifa}
+                            class="form-control border-select"
+                          >
+                            {#each item.tarifas as tarifa}
+                              <option value={tarifa.idTarifa}>
+                                {`${tarifa.tarifa} - ${tarifa.precioConIva}`}
+                              </option>
+                            {/each}
+                          </select>
+                        </div>
+                      </td>
+                      <td width="15%" class="text-center"
+                        ><div class="form-group">
+                          <b
+                            ><input
+                              type="text"
+                              class="form-control form-control"
+                              bind:value={item.price}
+                            /></b
+                          >
+                        </div></td
+                      >
+                      <td width="15%" class="text-center"
+                        ><div class="form-group">
+                          <b
+                            ><input
+                              type="text"
+                              disabled
+                              class="form-control form-control"
+                              bind:value={item.total}
                             /></b
                           >
                         </div></td

@@ -65,5 +65,6 @@ function getDataForm(obj: { tipo: 1 | 5 }) {
 
 export const ArticleService = {
     search,
+    get,
     getDataForm
 }

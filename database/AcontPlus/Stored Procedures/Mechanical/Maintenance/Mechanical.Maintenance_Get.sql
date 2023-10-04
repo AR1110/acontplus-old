@@ -67,4 +67,13 @@ BEGIN
             RETURN 
         END 
 
+    -- DATA FORM
+    IF @tipo = 3
+        BEGIN
+            
+             SET @tableNames = 'taxes'
+
+            SELECT idTarifaImpuesto,codigo as codigoPorcentaje,descripcion,porcentaje FROM Sri.TarifaImpuesto WHERE codImpuesto = '2'
+        END 
+
 END
