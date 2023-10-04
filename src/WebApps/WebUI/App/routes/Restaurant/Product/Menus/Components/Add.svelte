@@ -494,7 +494,7 @@
           </div>
           <div class="col-6 col-md-6 col-sm-6">
             <div class="form-group">
-              <label class="control-label">Usar en promoción</label>
+              <label for="control-label">Usar en promoción</label>
               <div class="checkbox icheck-primary">
                 <input
                   type="checkbox"

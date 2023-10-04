@@ -4,8 +4,8 @@
 
   let items = [
     {
-      icon: "fa-solid fa-boxes-stacked",
-      label: "Ficha Técnica (Ingreso)",
+      icon: "",
+      label: "Ficha Técnica",
       value: 1,
       component: Techspec,
     },

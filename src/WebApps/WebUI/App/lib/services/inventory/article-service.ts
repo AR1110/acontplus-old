@@ -14,7 +14,7 @@ async function get(params) {
 }
 
 async function search(params) {
-    return await client.get(`${url}Search?json=${params}`).then((responseAxios) => {
+    return await client.get(`${url}Search?json=${JSON.stringify(params)}`).then((responseAxios) => {
         const response = responseAxios.data;
         if (response.code == "1") {
             return JSON.parse(response.payload);
