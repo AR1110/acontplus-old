@@ -6,16 +6,23 @@
     techSpecCustomerStore,
     activeShowForm,
   } from "./../../store/techSpecCustomerStore";
+  import {
+    techSpecStore,
+    setCustomerCompanyId,
+  } from "./../../store/techSpecStore";
   import CustomerListDialog from "$lib/components/Customer/CustomerListDialog.svelte";
   import CustomerFormFast from "./CustomerFormFast.svelte";
+  import CustomerSearch from "./CustomerSearch.svelte";
 
   export let open = false;
   export let showBackdrop = true;
   export let onClosed;
   let title = "Nueva Ficha Técnica";
 
-  /* Start Modal Customer List */
+  // Data Form Tech Spec
+  $: data = $techSpecStore.data;
 
+  /* Start Modal Customer List */
   let showPopupCustomer = false;
 
   const onShowPopupCustomer = (ev) => {
@@ -39,6 +46,12 @@
   onMount(() => {
     console.log("dialog spec");
   });
+
+  const resultCustomerSelected = <T>(data: T) => {
+    if (typeof data === "number") {
+      setCustomerCompanyId(data);
+    }
+  };
 
   /**Customer*/
 </script>
@@ -120,30 +133,34 @@
 
             <!--Start section customer -->
             <div class="row">
-              <div class="col-lg-4">
+              <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                   <label for="customerSearch"
                     >Cliente:
                     <span class="text-danger">*</span>
                   </label>
                   <div class="input-group">
-                    <input
-                      type="text"
-                      name="customerSearch"
-                      id="customerSearch"
-                      class="form-control border-select"
-                    />
+                    <CustomerSearch {resultCustomerSelected} />
                     <div class="input-group-append">
                       <button
                         type="button"
+                        disabled={$techSpecCustomerStore.isUpdateCustomer}
                         class="btn btn-secondary btn-xs"
-                        on:click={activeShowForm}
+                        on:click={() => activeShowForm("NEW", 0)}
                       >
                         <i class="fa fa-plus fa-xs" />
                       </button>
-                      <button type="button" class="btn btn-secondary btn-xs">
-                        <i class="fa fa-edit fa-xs" />
-                      </button>
+                      {#if data.customerCompanyId > 0}
+                        <button
+                          type="button"
+                          disabled={$techSpecCustomerStore.isNewCustomer}
+                          class="btn btn-secondary btn-xs"
+                          on:click={() =>
+                            activeShowForm("UPDATE", data.customerCompanyId)}
+                        >
+                          <i class="fa fa-edit fa-xs" />
+                        </button>
+                      {/if}
                       <button
                         type="button"
                         class="btn btn-secondary btn-xs"
@@ -159,7 +176,7 @@
 
             <!--Start Form register-update customer-->
             {#if $techSpecCustomerStore.showForm}
-              <CustomerFormFast />              
+              <CustomerFormFast />
             {/if}
             <!--End Form register-update customer-->
           </div>
