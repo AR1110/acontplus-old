@@ -235,6 +235,48 @@ namespace TechnicalSupport.Infrastructure.Data.Migrations
                     b.ToTable("ProductCustomer", "TechnicalSupport");
                 });
 
+            modelBuilder.Entity("TechnicalSupport.Core.Entities.TechSpec", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Specs")
+                        .IsRequired()
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("TechSpecs");
+                });
+
             modelBuilder.Entity("TechnicalSupport.Core.Entities.Product", b =>
                 {
                     b.HasOne("TechnicalSupport.Core.Entities.Category", "Category")
@@ -247,6 +289,17 @@ namespace TechnicalSupport.Infrastructure.Data.Migrations
                 });
 
             modelBuilder.Entity("TechnicalSupport.Core.Entities.ProductCustomer", b =>
+                {
+                    b.HasOne("TechnicalSupport.Core.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("TechnicalSupport.Core.Entities.TechSpec", b =>
                 {
                     b.HasOne("TechnicalSupport.Core.Entities.Product", "Product")
                         .WithMany()
