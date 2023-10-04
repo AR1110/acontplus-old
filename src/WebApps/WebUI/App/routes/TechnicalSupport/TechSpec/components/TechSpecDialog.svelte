@@ -5,7 +5,7 @@
   import {
     techSpecCustomerStore,
     activeShowForm,
-  } from "$technical-support/store/techSpecCustomerStore";
+  } from "./../../store/techSpecCustomerStore";
   import CustomerListDialog from "$lib/components/Customer/CustomerListDialog.svelte";
   import CustomerFormFast from "./CustomerFormFast.svelte";
 
@@ -157,10 +157,11 @@
               </div>
             </div>
 
-            <!--Form register-update customer-->
+            <!--Start Form register-update customer-->
             {#if $techSpecCustomerStore.showForm}
-              <CustomerFormFast />
+              <CustomerFormFast />              
             {/if}
+            <!--End Form register-update customer-->
           </div>
 
           <div class="modal-footer">

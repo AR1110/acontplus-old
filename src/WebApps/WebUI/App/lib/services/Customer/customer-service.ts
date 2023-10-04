@@ -14,7 +14,7 @@ function getDataForm() {
     return client.get(url + 'Get?json=' + JSON.stringify({ tipo: 2 })).then(responseAxios => {
         let response = responseAxios.data;
         let obj = {
-            tipoIdentificacion: [],
+            tiposIdentificacion: [],
             tipoContribuyentes: [],
             tiempoCreditos: [],
             ciudades: [],
@@ -27,9 +27,9 @@ function getDataForm() {
             return obj;
         }
         if (response.code === '1') {
-            let mainDataRepository = JSON.parse(response.payload)
+            let mainDataRepository = JSON.parse(response.payload) 
             obj = {
-                tipoIdentificacion: mainDataRepository[0],
+                tiposIdentificacion: mainDataRepository[0],
                 tipoContribuyentes: mainDataRepository[1],
                 tiempoCreditos: mainDataRepository[2],
                 ciudades: mainDataRepository[3],
@@ -43,6 +43,15 @@ function getDataForm() {
         throw response;
     })
 }
+
+function post(data){
+    return client.post(url + 'Insert', data).then(response=>response.data)
+}
+
+function put(id, data){
+    return client.put(url + 'Update/' + id, data).then(response=>response.data)
+}
+
 async function search(params) {
     return await client.get(`${url}Search/?json=${params}`).then((responseAxios) => {
         const response = responseAxios.data;
@@ -81,6 +90,8 @@ async function getRuc(idCard) {
 export const CustomerService = {
     getDataForm,
     getAll,
+    post,
+    put,
     search,
     getCedula,
     getRuc
