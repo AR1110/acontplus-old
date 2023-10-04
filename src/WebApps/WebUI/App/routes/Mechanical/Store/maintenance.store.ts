@@ -56,17 +56,24 @@ const createMaintenance = () => {
                 hideLoader();
             });
         } else {
-            update((state) => ({
-                ...state,
-                isOpen: true,
-                maintenance: {
-                    id: 0,
-                    inspectionId: inspectionId,
-                    date: new Date().toISOString().slice(0, 10),
-                    obs: ''
-                },
-                maintenanceDetail: []
-            }));
+            showLoader();
+            MaintenanceService.get(JSON.stringify({ tipo: 3, inspectionId })).then((response) => {
+                if (response) {
+                    update((state) => ({
+                        ...state,
+                        isOpen: true,
+                        maintenance: {
+                            id: 0,
+                            inspectionId: inspectionId,
+                            date: new Date().toISOString().slice(0, 10),
+                            obs: ''
+                        },
+                        maintenanceDetail: []
+                    }));
+                }
+            }).finally(() => {
+                hideLoader();
+            });
         }
     }
 
