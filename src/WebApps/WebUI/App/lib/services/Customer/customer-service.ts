@@ -10,6 +10,7 @@ function getAll(params) {
 }
 
 
+
 function getDataForm() {
     return client.get(url + 'Get?json=' + JSON.stringify({ tipo: 2 })).then(responseAxios => {
         let response = responseAxios.data;
@@ -41,6 +42,13 @@ function getDataForm() {
         return obj;
     }).catch(response => {
         throw response;
+    })
+}
+
+function checkClientByIdentification(params){
+    return client.get(`${url}Get?json=${JSON.stringify({ ...params, tipo: 3 })}`).then((responseAxios) => {
+        const response = responseAxios.data; 
+        return JSON.parse(response.payload);
     })
 }
 
@@ -128,8 +136,9 @@ async function getRuc(idCard) {
 }
 
 export const CustomerService = {
-    getDataForm,
     getAll,
+    getDataForm,
+    checkClientByIdentification,
     post,
     put,
     getId,

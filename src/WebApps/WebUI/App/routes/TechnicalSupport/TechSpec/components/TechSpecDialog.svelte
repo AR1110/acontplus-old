@@ -1,7 +1,7 @@
 <script lang="ts">
   import { fade, fly } from "svelte/transition";
   import { quintOut } from "svelte/easing";
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import {
     techSpecCustomerStore,
     activeShowForm,
@@ -13,6 +13,7 @@
     setCustomerCompanyId,
     saveDevice,
     resetFormDevice,
+    resetFormMain,
   } from "./../../store/techSpecStore";
   import CustomerListDialog from "$lib/components/Customer/CustomerListDialog.svelte";
   import CustomerFormFast from "./CustomerFormFast.svelte";
@@ -40,9 +41,12 @@
     console.log(data);
   };
 
-  const resultCustomerSelected = <T>(data: T) => {
+  const resultCustomerSelected = <T>(data: T, dataType: string) => {
     if (typeof data === "number") {
       setCustomerCompanyId(data);
+    }
+    if (dataType === "DATASRI") {
+      activeShowForm("NEW", 0, data)
     }
   };
   /* End Modal Customer List */
@@ -58,6 +62,10 @@
       onClosed(data);
     }
   };
+
+  onDestroy(() => {
+    resetFormMain();
+  });
 </script>
 
 {#if open}
@@ -101,12 +109,13 @@
                     name="estab"
                     id="estab"
                     class="form-control border-select"
+                    required
                   >
                     <option value="" />
                   </select>
                 </div>
               </div>
-              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+              <div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">
                 <div class="form-group">
                   <label for="puntoEmision">
                     Punto Emisión: <span class="text-danger">*</span>
@@ -115,21 +124,43 @@
                     name="puntoEmision"
                     id="puntoEmision"
                     class="form-control border-select"
+                    required
                   >
                     <option value="" />
                   </select>
                 </div>
               </div>
-              <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+              <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <div class="form-group">
                   <label for="fechaEmision"
                     >Fecha Emisión:
                     <span class="text-danger">*</span>
                   </label>
-                  <input type="date" class="form-control border-select" />
+                  <input
+                    type="date"
+                    class="form-control border-select"
+                    bind:value={data.createdAt}
+                    required
+                  />
+                </div>
+              </div>
+              <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+                <div class="form-group">
+                  <label for="encargado">
+                    Responsable: <span class="text-danger">*</span>
+                  </label>
+                  <select
+                    name="encargado"
+                    id="encargado"
+                    class="form-control border-select"
+                    required
+                  >
+                    <option value="" />
+                  </select>
                 </div>
               </div>
             </div>
+
             <div class="card rounded border border-info">
               <div class="card-header">Datos cliente:</div>
               <div class="card-body">
@@ -194,48 +225,6 @@
                 >
               </div>
               <div class="card-body">
-                <!-- <div class="row">
-              <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-                <div class="form-group">
-                  <label for="productSearch"
-                    >Producto:
-                    <span class="text-danger">*</span>
-                  </label>
-                  <div class="input-group">
-                    <input type="text" class="form-control" />
-                    <div class="input-group-append">
-                      <button
-                        type="button"
-                        disabled={$techSpecCustomerStore.isUpdateCustomer}
-                        class="btn btn-secondary btn-xs"
-                        on:click={() => activeShowForm("NEW", 0)}
-                      >
-                        <i class="fa fa-plus fa-xs" />
-                      </button>
-                      {#if data.customerCompanyId > 0}
-                        <button
-                          type="button"
-                          disabled={$techSpecCustomerStore.isNewCustomer}
-                          class="btn btn-secondary btn-xs"
-                          on:click={() =>
-                            activeShowForm("UPDATE", data.customerCompanyId)}
-                        >
-                          <i class="fa fa-edit fa-xs" />
-                        </button>
-                      {/if}
-                      <button
-                        type="button"
-                        class="btn btn-secondary btn-xs"
-                        on:click={onShowPopupCustomer}
-                      >
-                        <i class="fa fa-search fa-xs" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div> -->
-
                 <!--Start Form register product-->
                 <div class="row">
                   <div
@@ -391,6 +380,18 @@
                   >
                     <i class="fa fa-refresh" /> Limpiar
                   </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                <div class="form-group">
+                  <label for="observación">Observación:</label>
+                  <textarea
+                    class="form-control border-select"
+                    aria-label="obs"
+                  />
                 </div>
               </div>
             </div>

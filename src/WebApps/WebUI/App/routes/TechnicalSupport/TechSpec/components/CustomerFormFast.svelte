@@ -5,6 +5,7 @@
     activeShowForm,
     techSpecCustomerStore,
     getDataForm,
+    validateExistenceCustomer,
     copiarNombreComercial,
     save,
   } from "./../../store/techSpecCustomerStore";
@@ -43,10 +44,9 @@
           name="numeroIdentificacion"
           id="numeroIdentificacion"
           placeholder="Ej: 2105234568"
+          on:keydown={validateExistenceCustomer}
           bind:value={data.numeroIdentificacion}
         />
-        <small class="invalid-feedback text-right">grftg </small>
-        <small class="valid-feedback text-right">gfrg </small>
       </div>
     </div>
   </div>

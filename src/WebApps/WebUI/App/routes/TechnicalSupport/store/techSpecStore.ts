@@ -11,6 +11,7 @@ type Data = {
     puntoEmisionId: number
     customerCompanyId: number
     deviceId: number
+    createdAt: string
 }
 
 type State = {
@@ -40,18 +41,22 @@ type Device = {
 //End Device 
 
 
-
+console.log(new Date().toISOString().slice(0, 10))
 
 type DeviceState = {
     categories: Array<Category>,
     dataDevice: Device
 }
+const data: Data = {
+    customerCompanyId: 0,
+    deviceId: 0,
+    establecimientoId: 0,
+    puntoEmisionId: 0,
+    createdAt: new Date().toISOString().slice(0, 10),
+}
 
 const initialState: State = {
-    data: {
-        customerCompanyId: 0,
-        deviceId: 0
-    },
+    data: structuredClone(data)
 }
 
 const dataDevice = {
@@ -173,6 +178,14 @@ export const resetFormDevice = () => {
     techSpecStore.update(state => {
         state.dataDevice = structuredClone(dataDevice);
         state.data.deviceId = 0;
+        return state;
+    })
+}
+
+export const resetFormMain = () => {
+    techSpecStore.update(state => {
+        state.data = structuredClone(data);
+        state.dataDevice = structuredClone(dataDevice)
         return state;
     })
 }
