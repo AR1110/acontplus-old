@@ -58,14 +58,63 @@ BEGIN
             
             SELECT md.Id
                   ,md.ArticuloId as idArticulo
+                  ,md.BodegaId as idBodega
+                  ,md.TarifaId as idTarifa
+                  ,md.MedidaId as idMedida
                   ,md.[Description] as descripcion
                   ,ar.codigo
                   ,md.Quantity
+                  ,md.Price
+                  ,md.Cost
+                  ,md.CodePercentage
+                  ,md.[Percentage]
                   ,md.bodegaId
             FROM Mechanical.MaintenanceDetail md WITH (NOLOCK)
             INNER JOIN v_Bodega_Asign         b  WITH (NOLOCK) ON b.idBodega   = md.BodegaId
             INNER JOIN dbo.Articulo           ar WITH (NOLOCK) ON ar.idArticulo = md.ArticuloId
             WHERE MaintenanceId = @Id
+
+
+            SELECT 
+				af.idMedida    
+			   ,descripcion 
+			   ,tarifas		 = (SELECT afs.idTarifa
+                                      ,afs.precioVenta
+                                      ,afs.precioConIva
+                                      ,UPPER(ta.descripcion) as tarifa
+                                      ,ta.ventaPorMayor
+								FROM dbo.ArticuloFraccionadoPvP  afs WITH (NOLOCK)
+								INNER JOIN dbo.Tarifa             ta WITH (NOLOCK) ON ta.idTarifa = afs.idTarifa
+								WHERE afs.idArticuloFraccionado = af.idArticuloFraccionado
+								ORDER BY ta.predeterminada DESC FOR JSON PATH
+                                )
+			   ,orden = IIF(af.gestionVenta = 1,1,3)
+			FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
+			INNER JOIN dbo.Medida         m WITH (NOLOCK) ON m.idMedida = af.idMedida
+			WHERE af.idArticulo IN (SELECT ArticuloId FROM Mechanical.MaintenanceDetail md WITH (NOLOCK) WHERE md.MaintenanceId = @Id)
+		
+			UNION ALL
+
+			SELECT 
+				m.idMedida
+			   ,m.descripcion
+			   ,tarifas		 = (SELECT ap.idTarifa
+                                      ,ap.precioVenta
+                                      ,ap.precioConIva
+                                      ,UPPER(ta.descripcion) as tarifa
+                                      ,ta.ventaPorMayor
+								FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
+								INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
+								WHERE ap.idArticulo = a.idArticulo
+								ORDER BY ta.predeterminada DESC FOR JSON PATH
+                               )
+			  ,orden = 2
+			FROM dbo.Articulo     a WITH (NOLOCK)
+			INNER JOIN dbo.Medida m WITH (NOLOCK) ON m.idMedida = a.idMedida
+			WHERE a.idArticulo IN (SELECT ArticuloId FROM Mechanical.MaintenanceDetail md WITH (NOLOCK) WHERE md.MaintenanceId = @Id )
+			ORDER BY orden ASC
+
+
             RETURN 
         END 
 
@@ -74,15 +123,11 @@ BEGIN
         BEGIN
             SET @tableNames = 'establecimiento,bodega'
             
-            SELECT * 
-            INTO #Estab_Asign
-            FROM v_Estab_Asign WHERE idUsuarioRol = @userRoleId
+            SELECT idEstablecimiento, codEstab, predeterminado, nombreComercial
+            FROM v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY predeterminado DESC
 
-            SELECT idEstablecimiento, codEstab, predeterminado, nombreComercial FROM #Estab_Asign
-
-            SELECT idBodega, bodega, codEstab, nombreComercial
-            FROM v_Bodega_Asign WHERE codEstab IN (SELECT codEstab FROM #Estab_Asign)
-            GROUP BY idBodega, bodega, codEstab, nombreComercial
+            SELECT idBodega ,idEstablecimiento, bodega, codEstab, nombreComercial , defaultBodega
+            FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultBodega DESC
         END 
 
 END
