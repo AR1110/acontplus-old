@@ -4,10 +4,10 @@ using TechnicalSupport.Core.Interfaces;
 
 namespace TechnicalSupport.Application.Services
 {
-    public class ProductService: IProductService
+    public class DeviceService: IDeviceService
     {
         private readonly IADORepository _repository;
-        public ProductService(IADORepository repository)
+        public DeviceService(IADORepository repository)
         {
             _repository = repository;
         }

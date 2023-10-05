@@ -7,8 +7,8 @@ namespace TechnicalSupport.Core.Entities
     [Table("TechSpec", Schema = "TechnicalSupport")]
     public class TechSpec : BaseEntity
     {
-        public Product Product { get; set; }
-        public int ProductId { get; set; }
+        public Device Device { get; set; }
+        public int DeviceId { get; set; }
         [Required]
         public string Specs { get; set; }
     }

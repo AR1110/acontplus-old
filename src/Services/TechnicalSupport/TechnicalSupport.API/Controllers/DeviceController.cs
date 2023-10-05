@@ -9,16 +9,16 @@ using TechnicalSupport.Infrastructure.Data;
 
 namespace TechnicalSupport.API.Controllers
 {
-    public class ProductController : BaseApiController
+    public class DeviceController : BaseApiController
     {
         private readonly TechnicalSupportContext _context;
         private readonly LogWriter _log;
-        private IProductService _productService;
-        public ProductController(TechnicalSupportContext context, LogWriter log, IProductService productService)
+        private IDeviceService _deviceService;
+        public DeviceController(TechnicalSupportContext context, LogWriter log, IDeviceService deviceService)
         {
             _context = context;
             _log = log;
-            _productService = productService;
+            _deviceService = deviceService;
         }
         [HttpGet]
         public async Task<IActionResult> Get(string json)
@@ -30,7 +30,7 @@ namespace TechnicalSupport.API.Controllers
                     {"userRoleId", User.GetUserRoleId()},
                     {"json", SqlStringParam.Sanitize(json)}
                 };
-                var response = await _productService.GetAsync(parameters);
+                var response = await _deviceService.GetAsync(parameters);
                 if (response == null) { return NoContent(); };
                 return Ok(response);
             }
@@ -41,15 +41,15 @@ namespace TechnicalSupport.API.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Product product)
+        public async Task<IActionResult> Post([FromBody] Device device)
         {
             try
             {
-                if (_context.Products.Any(p => p.Name == product.Name))
+                if (_context.Products.Any(p => p.Name == device.Name))
                 {
                     return BadRequest("Codigo Existente");
                 }
-                _context.Products.Add(product);
+                _context.Products.Add(device);
                 await _context.SaveChangesAsync();
                 return Ok("Registrado Exitosamente");
             }
@@ -60,18 +60,18 @@ namespace TechnicalSupport.API.Controllers
             }
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Product product)
+        public async Task<IActionResult> Put(int id, [FromBody] Device device)
         {
             try
             {
-                if (id != product.Id)
+                if (id != device.Id)
                 {
                     return BadRequest("El id no coincide");
                 }
                 var productFounded = await _context.Products.FindAsync(id);
-                productFounded.Color = product.Color;
-                productFounded.Name = product.Name;
-                productFounded.Enabled = product.Enabled;
+                productFounded.Color = device.Color;
+                productFounded.Name = device.Name;
+                productFounded.Enabled = device.Enabled;
                 _context.Update(productFounded);
                 await _context.SaveChangesAsync();
                 return Ok("Actualizado Exitosamente");
@@ -87,15 +87,15 @@ namespace TechnicalSupport.API.Controllers
         {
             try
             {
-                var product = await _context.Products.FindAsync(id);
-                if (product == null)
+                var device = await _context.Products.FindAsync(id);
+                if (device == null)
                 {
                     return NotFound();
                 }
 
-                product.Enabled = false;
-                product.Deleted = true;
-                _context.Entry(product).State = EntityState.Modified;
+                device.Enabled = false;
+                device.Deleted = true;
+                _context.Entry(device).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
                 return Ok("Eliminado Exitosamente");
             }
