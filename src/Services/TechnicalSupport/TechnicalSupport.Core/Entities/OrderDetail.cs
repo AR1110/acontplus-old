@@ -11,24 +11,9 @@ namespace TechnicalSupport.Core.Entities
         public Guid Uuid { get; set; }
         public Order Order { get; set; }
         public int OrderId { get; set; }
-        public Device Product { get; set; }
-        public int ProductId { get; set; }
-        public int? TaxId { get; set; }
-        public int? TaxPercentId { get; set; }
-        [Column(TypeName = "numeric(18,5), not null")]
-        public decimal? TaxValue { get; set; }
-        [Column(TypeName = "numeric(18,5), not null")]
-        public decimal Quantity { get; set; }
-        [Column(TypeName = "numeric(18,5), not null")]
-        public decimal Cost { get; set; }
-        [Column(TypeName = "numeric(18,5), not null")]
-        public decimal Price { get; set; }
-        [Column(TypeName = "numeric(18,5), null")]
-        public decimal Discount { get; set; }
-        [Column(TypeName = "numeric(18,5), not null")]
-        public decimal Total { get; set; }
+        public Device Device { get; set; }
+        public int DeviceId { get; set; }
         [MaxLength(500)]
         public string Obs { get; set; }
-        public int FeeId { get; set; }
     }
 }
