@@ -40,10 +40,8 @@
     function onChange() {
       if (selectList.selectedOptions[0].value != rows) {
         success(selectList.selectedOptions[0].value);
-
         cell.getElement().dataset.bodega = selectList.selectedOptions[0].text;
-        cell.getElement().dataset.idBodega =
-          selectList.selectedOptions[0].value;
+        cell.getElement().dataset.idBodega = selectList.selectedOptions[0].value;
       } else {
         cancel();
       }
@@ -238,7 +236,6 @@
     {
       editor: selectMedidas,
       formatter: formatterMedida,
-      editable: "never",
       field: "idMedida",
       hozAlign: "center",
       title: "Medida",
@@ -309,11 +306,11 @@
     if (maintenanceDetails != undefined || maintenanceDetails != null) {
       if (maintenanceDetails.length != 0) {
         maintenanceDetails.forEach((item) => {
+
+          item.medidas = medidas.filter((x) => x.idArticulo == item.idArticulo);
+          item.tarifas = JSON.parse(medidas.find((x) => x.idMedida == item.idMedida).tarifas);
           item.bodegas = bodegas;
-          item.tarifas = item.tarifas;
           item.priceIva = item.price;
-          item.medidas = medidas;
-          item.tarifas = JSON.parse(medidas[0].tarifas);
           item.total = item.priceIva * item.quantity;
         });
       }
@@ -401,7 +398,6 @@
 
   // REMOVE ARTICLE
   const removeArticle = (idArticulo) => {
-    console.log(idArticulo);
     let newFilter = maintenanceDetails.filter(
       (x) => x.idArticulo != idArticulo
     );
