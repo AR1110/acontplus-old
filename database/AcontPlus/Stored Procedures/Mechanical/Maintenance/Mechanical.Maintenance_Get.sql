@@ -9,6 +9,7 @@ GO
 -- Author:		Alexis Ramirez
 -- Create date: 2021-06-25
 -- Description:	SP Para leer los datos e la tabla articulo
+-- Mechanical.Maintenance_Get  70, '{"tipo": 3}', ''
 -- =============================================
 CREATE OR ALTER PROCEDURE Mechanical.Maintenance_Get 
      @userRoleId INT
@@ -60,20 +61,28 @@ BEGIN
                   ,md.[Description] as descripcion
                   ,ar.codigo
                   ,md.Quantity
+                  ,md.bodegaId
             FROM Mechanical.MaintenanceDetail md WITH (NOLOCK)
+            INNER JOIN v_Bodega_Asign         b  WITH (NOLOCK) ON b.idBodega   = md.BodegaId
             INNER JOIN dbo.Articulo           ar WITH (NOLOCK) ON ar.idArticulo = md.ArticuloId
-            WHERE MaintenanceId = @Id 
-
+            WHERE MaintenanceId = @Id
             RETURN 
         END 
 
     -- DATA FORM
     IF @tipo = 3
         BEGIN
+            SET @tableNames = 'establecimiento,bodega'
             
-             SET @tableNames = 'taxes'
+            SELECT * 
+            INTO #Estab_Asign
+            FROM v_Estab_Asign WHERE idUsuarioRol = @userRoleId
 
-            SELECT idTarifaImpuesto,codigo as codigoPorcentaje,descripcion,porcentaje FROM Sri.TarifaImpuesto WHERE codImpuesto = '2'
+            SELECT idEstablecimiento, codEstab, predeterminado, nombreComercial FROM #Estab_Asign
+
+            SELECT idBodega, bodega, codEstab, nombreComercial
+            FROM v_Bodega_Asign WHERE codEstab IN (SELECT codEstab FROM #Estab_Asign)
+            GROUP BY idBodega, bodega, codEstab, nombreComercial
         END 
 
 END

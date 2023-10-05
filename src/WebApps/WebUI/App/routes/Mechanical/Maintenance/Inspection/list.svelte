@@ -1,4 +1,5 @@
 <script lang="ts">
+
   import { onMount } from "svelte";
   import { InspectionStore } from "$routes/Mechanical/Store/inspection.store";
   import { MaintenanceStore } from "$routes/Mechanical/Store/maintenance.store";
