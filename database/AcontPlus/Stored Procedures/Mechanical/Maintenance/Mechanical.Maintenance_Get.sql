@@ -68,9 +68,8 @@ BEGIN
                   ,md.Cost
                   ,md.CodePercentage
                   ,md.[Percentage]
-                  ,md.bodegaId
             FROM Mechanical.MaintenanceDetail md WITH (NOLOCK)
-            INNER JOIN v_Bodega_Asign         b  WITH (NOLOCK) ON b.idBodega   = md.BodegaId
+            INNER JOIN dbo.Bodega             bo WITH (NOLOCK) ON bo.idBodega   = md.BodegaId
             INNER JOIN dbo.Articulo           ar WITH (NOLOCK) ON ar.idArticulo = md.ArticuloId
             WHERE MaintenanceId = @Id
 
