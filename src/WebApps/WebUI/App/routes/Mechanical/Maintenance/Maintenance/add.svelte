@@ -281,6 +281,7 @@
     },
     {
       cellClick: (e, cell) => {
+        removeArticle(cell.getData().idArticulo);
         cell.getRow().delete();
       },
       formatter: "buttonCross",
@@ -383,6 +384,13 @@
         maintenanceDetails = [...maintenanceDetails, obj];
       }
     });
+  };
+
+  // REMOVE ARTICLE
+  const removeArticle = (idArticulo) => {
+    console.log(idArticulo);
+    let newFilter = maintenanceDetails.filter((x) => x.idArticulo != idArticulo);
+    maintenanceDetails = newFilter;
   };
 
   // Save
