@@ -4,6 +4,7 @@ import { categoryService } from "../services/category.service";
 import { showLoader } from "$utils/loading-spinner";
 import tS from "$utils/toast";
 import { deviceService } from "../services/device.service";
+import { estabAsignService } from "$services/restaurant/estab-asign-service";
 
 //Start Tech Spec 
 type Data = {
@@ -85,11 +86,17 @@ export const techSpecStore = writable<State & DeviceState>({ ...initialState, ..
 export const initiload = async () => {
     try {
         showLoader();
-        const categories = await categoryService.get()
-        techSpecStore.update(state => {
-            state.categories = categories;
-            return state;
+        categoryService.get().then(response=>{
+            techSpecStore.update(state => {
+                state.categories = response;
+                return state;
+            })
         })
+
+        estabAsignService.get(JSON.stringify({})).then(response=>{
+            console.log(response)
+        })
+
         hideLoader();
     } catch (error) {
         console.log(error)
