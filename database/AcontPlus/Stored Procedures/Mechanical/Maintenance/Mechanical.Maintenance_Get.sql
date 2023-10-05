@@ -57,17 +57,19 @@ BEGIN
             WHERE Id = @Id
             
             SELECT md.Id
-                  ,md.ArticuloId as idArticulo
-                  ,md.BodegaId as idBodega
-                  ,md.TarifaId as idTarifa
-                  ,md.MedidaId as idMedida
-                  ,md.[Description] as descripcion
-                  ,ar.codigo
+                  ,md.ArticuloId        as idArticulo
+                  ,md.BodegaId          as idBodega
+                  ,md.TarifaId          as idTarifa
+                  ,md.MedidaId          as idMedida
+                  ,md.[Description]     as descripcion
+                  ,ar.codigo            as codigoArticulo
                   ,md.Quantity
                   ,md.Price
-                  ,md.Cost
-                  ,md.CodePercentage
-                  ,md.[Percentage]
+                  ,md.Cost              as precioCosto
+                  ,md.CodePercentage    as codigoPorcentaje
+                  ,md.[Percentage]      as tarifa
+                  ,ar.llevaInventario
+                  ,bo.codEstab
             FROM Mechanical.MaintenanceDetail md WITH (NOLOCK)
             INNER JOIN dbo.Bodega             bo WITH (NOLOCK) ON bo.idBodega   = md.BodegaId
             INNER JOIN dbo.Articulo           ar WITH (NOLOCK) ON ar.idArticulo = md.ArticuloId

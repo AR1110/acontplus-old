@@ -4,8 +4,8 @@ using Common.Core.Entities;
 
 namespace TechnicalSupport.Core.Entities
 {
-    [Table("Product", Schema = "TechnicalSupport")]
-    public class Product : BaseEntity
+    [Table("Device", Schema = "TechnicalSupport")]
+    public class Device : BaseEntity
     {
         public Category Category { get; set; }
         public int CategoryId { get; set; }

@@ -14,6 +14,7 @@ type State = {
   maintenanceDetail: any;
   establecimiento: any;
   bodega: any;
+  medidas: any;
 };
 
 const initialModalState: StateModal = {
@@ -32,6 +33,7 @@ const initialState: State = {
   maintenanceDetail: [],
   establecimiento: [],
   bodega: [],
+  medidas: [],
 };
 
 const createMaintenance = () => {
@@ -45,35 +47,39 @@ const createMaintenance = () => {
       showLoader();
       MaintenanceService.get(JSON.stringify({ tipo: 2, id }))
         .then((response) => {
+          console.log(response);
           if (response) {
             update((state) => ({
               ...state,
-              isOpen: true,
               maintenance: response["maintenance"][0],
               maintenanceDetail: response["maintenanceDetail"],
+              medidas: response["medidas"],
             }));
           }
         })
         .finally(() => {
           hideLoader();
         });
+    } else {
+      update((state) => ({
+        ...state,
+        isOpen: true,
+        maintenance: {
+          id: 0,
+          inspectionId: inspectionId,
+          date: new Date().toISOString().slice(0, 10),
+          obs: "",
+        },
+        maintenanceDetail: [],
+      }));
     }
 
-    showLoader();
     MaintenanceService.get(JSON.stringify({ tipo: 3, inspectionId }))
       .then((response) => {
-        console.log(response);
         if (response) {
           update((state) => ({
             ...state,
             isOpen: true,
-            maintenance: {
-              id: 0,
-              inspectionId: inspectionId,
-              date: new Date().toISOString().slice(0, 10),
-              obs: "",
-            },
-            maintenanceDetail: [],
             establecimiento: response["establecimiento"],
             bodega: response["bodega"],
           }));
