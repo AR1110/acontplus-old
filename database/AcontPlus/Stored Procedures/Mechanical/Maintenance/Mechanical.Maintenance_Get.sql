@@ -9,7 +9,7 @@ GO
 -- Author:		Alexis Ramirez
 -- Create date: 2021-06-25
 -- Description:	SP Para leer los datos e la tabla articulo
--- Mechanical.Maintenance_Get  70, '{"tipo": 3}', ''
+-- Mechanical.Maintenance_Get  32, '{"tipo": 2,"id":1}', ''
 -- =============================================
 CREATE OR ALTER PROCEDURE Mechanical.Maintenance_Get 
      @userRoleId INT
@@ -75,7 +75,8 @@ BEGIN
 
 
             SELECT 
-				af.idMedida    
+			    af.idArticulo
+               ,af.idMedida    
 			   ,descripcion 
 			   ,tarifas		 = (SELECT afs.idTarifa
                                       ,afs.precioVenta
@@ -95,7 +96,8 @@ BEGIN
 			UNION ALL
 
 			SELECT 
-				m.idMedida
+			    a.idArticulo
+               ,m.idMedida
 			   ,m.descripcion
 			   ,tarifas		 = (SELECT ap.idTarifa
                                       ,ap.precioVenta
