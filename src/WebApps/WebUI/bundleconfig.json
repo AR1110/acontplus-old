@@ -454,5 +454,11 @@
     "inputFiles": [
       "wwwroot/js/controllers/sri/establecimientoCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/common/modalWhatsAppCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/common/modalWhatsAppCtrl.js"
+    ]
   }
 ]
