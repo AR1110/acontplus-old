@@ -16,11 +16,15 @@ CREATE OR ALTER VIEW Mechanical.v_Support WITH SCHEMABINDING AS (
           ,ct.idCard
           ,ve.LicensePlate
           ,ve.Brand
+          ,ve.[Model]
+          ,ve.Color
+          ,ve.Engine
           ,ct.TradeName
           ,ct.BusinessName
           ,pt.ptoEmi
           ,es.estab
           ,es.idEstablecimiento as EstablecimientoId
+          ,us.nombreCompleto as nameAssigned
           ,us.nombreUsuario as UserAssigned
           ,vt.[Description] as VehicleType
           ,pt.codEstab

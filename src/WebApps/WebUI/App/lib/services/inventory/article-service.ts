@@ -14,8 +14,9 @@ async function get(params) {
 }
 
 async function search(params) {
-    return await client.get(`${url}Search?json=${JSON.stringify(params)}`).then((responseAxios) => {
+    return await client.get(`${url}Search?json=${params}`).then((responseAxios) => {
         const response = responseAxios.data;
+        console.log(responseAxios)
         if (response.code == "1") {
             return JSON.parse(response.payload);
         }
@@ -27,7 +28,7 @@ async function search(params) {
 function getDataForm(obj: { tipo: 1 | 5 }) {
     return client.get(`${url}Get?json=${JSON.stringify(obj)}`).then(responseAxios => {
         let response = responseAxios.data;
-        
+
         let obj = {
             estabs: [],
             subfamilias: [],
@@ -65,5 +66,6 @@ function getDataForm(obj: { tipo: 1 | 5 }) {
 
 export const ArticleService = {
     search,
+    get,
     getDataForm
 }
