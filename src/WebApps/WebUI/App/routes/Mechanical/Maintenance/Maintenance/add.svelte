@@ -40,6 +40,7 @@
     function onChange() {
       if (selectList.selectedOptions[0].value != rows) {
         success(selectList.selectedOptions[0].value);
+
         cell.getElement().dataset.bodega = selectList.selectedOptions[0].text;
         cell.getElement().dataset.idBodega = selectList.selectedOptions[0].value;
       } else {
@@ -53,12 +54,13 @@
       let option = document.createElement("option");
 
       option.value = bodegas[i].idBodega.toString();
-      option.text = bodegas[i].nombre;
+      option.text = bodegas[i].bodega;
       if (bodegas[i].idBodega === rows) {
         option.selected = true;
       }
       selectList.appendChild(option);
     }
+    console.log(selectList);
     return selectList;
   };
 
@@ -126,10 +128,8 @@
       if (selectList.selectedOptions[0].value != rows) {
         success(selectList.selectedOptions[0].value);
 
-        cell.getElement().dataset.descripcion =
-          selectList.selectedOptions[0].text;
-        cell.getElement().dataset.idMedida =
-          selectList.selectedOptions[0].value;
+        cell.getElement().dataset.descripcion = selectList.selectedOptions[0].text;
+        cell.getElement().dataset.idMedida = selectList.selectedOptions[0].value;
       } else {
         cancel();
       }
@@ -186,7 +186,7 @@
 
       return bodegas.find((x) => x.idBodega == value).bodega;
     }
-    return "";
+    return "SELECCIONE";
   };
 
   let calculateTotal = (cell) => {
