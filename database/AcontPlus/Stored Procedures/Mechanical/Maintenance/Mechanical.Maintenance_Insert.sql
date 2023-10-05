@@ -15,8 +15,12 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
-    
+   
+   -- Maintenance
     DECLARE @Id INT, @CompanyId INT, @UserId INT ,@jsonMaintenance VARCHAR(MAX) ,@jsonMaintenanceDetails VARCHAR(MAX)
+    
+    -- Inventory 
+    DECLARE @inventory VARCHAR(5)
     
 
     DECLARE @tbMaintenance AS TABLE (
@@ -41,6 +45,7 @@ BEGIN
        ,Total NUMERIC(18,5) NOT NULL
        ,CodePercentage VARCHAR(10) NOT NULL
        ,[Percentage] NUMERIC(18,5)
+       ,Inventory BIT NOT NULL
        ,[Status] INT DEFAULT 1 
        ,CreatedAt DATETIME2 DEFAULT GETDATE()
        ,[Enabled] BIT DEFAULT 1
@@ -77,6 +82,7 @@ BEGIN
                                        ,Total        NUMERIC(18,5) '$.total'
                                        ,CodePercentage VARCHAR(10) '$.codePercentage'
                                        ,[Percentage] NUMERIC(18,5) '$.percentage'
+                                       ,Inventory              BIT '$.inventory'
                                    )
 
 
@@ -84,6 +90,8 @@ BEGIN
         -- ======================= VARIABLES ===============================
 
         SELECT TOP 1 @CompanyId = idEntidad , @UserId = idUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+
+        SELECT TOP 1 @inventory = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.llevaInventario') FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @CompanyId AND codConfig = 'CI'
 
 
         -- ======================= VALIDATION =============================== 
