@@ -89,7 +89,6 @@ const createInspection = () => {
   };
 
   const getReport = (parameters: object) => {
-    console.log(parameters);
     sharedService.download(parameters, true);
   };
 
