@@ -6,8 +6,10 @@
     techSpecCustomerStore,
     activeShowForm,
   } from "./../../store/techSpecCustomerStore";
+
   import {
     techSpecStore,
+    initiload,
     setCustomerCompanyId,
   } from "./../../store/techSpecStore";
   import CustomerListDialog from "$lib/components/Customer/CustomerListDialog.svelte";
@@ -21,6 +23,7 @@
 
   // Data Form Tech Spec
   $: data = $techSpecStore.data;
+  $: dataProduct = $techSpecStore.dataProduct;
 
   /* Start Modal Customer List */
   let showPopupCustomer = false;
@@ -34,7 +37,18 @@
 
     console.log(data);
   };
+
+  const resultCustomerSelected = <T>(data: T) => {
+    if (typeof data === "number") {
+      setCustomerCompanyId(data);
+    }
+  };
   /* End Modal Customer List */
+
+  onMount(() => {
+    initiload();
+    console.log("dialog spec");
+  });
 
   const modalClose = (data) => {
     open = false;
@@ -42,18 +56,6 @@
       onClosed(data);
     }
   };
-
-  onMount(() => {
-    console.log("dialog spec");
-  });
-
-  const resultCustomerSelected = <T>(data: T) => {
-    if (typeof data === "number") {
-      setCustomerCompanyId(data);
-    }
-  };
-
-  /**Customer*/
 </script>
 
 {#if open}
@@ -179,6 +181,191 @@
               <CustomerFormFast />
             {/if}
             <!--End Form register-update customer-->
+
+            <div class="linea-con-letra">
+              <span class="texto-html">Datos Equipo</span>
+            </div>
+
+            <!-- <div class="row">
+              <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                <div class="form-group">
+                  <label for="productSearch"
+                    >Producto:
+                    <span class="text-danger">*</span>
+                  </label>
+                  <div class="input-group">
+                    <input type="text" class="form-control" />
+                    <div class="input-group-append">
+                      <button
+                        type="button"
+                        disabled={$techSpecCustomerStore.isUpdateCustomer}
+                        class="btn btn-secondary btn-xs"
+                        on:click={() => activeShowForm("NEW", 0)}
+                      >
+                        <i class="fa fa-plus fa-xs" />
+                      </button>
+                      {#if data.customerCompanyId > 0}
+                        <button
+                          type="button"
+                          disabled={$techSpecCustomerStore.isNewCustomer}
+                          class="btn btn-secondary btn-xs"
+                          on:click={() =>
+                            activeShowForm("UPDATE", data.customerCompanyId)}
+                        >
+                          <i class="fa fa-edit fa-xs" />
+                        </button>
+                      {/if}
+                      <button
+                        type="button"
+                        class="btn btn-secondary btn-xs"
+                        on:click={onShowPopupCustomer}
+                      >
+                        <i class="fa fa-search fa-xs" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+
+            <!--Start Form register product-->
+            <div class="row">
+              <div
+                class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-xs-12 col-12"
+              >
+                <div class="form-group">
+                  <label for="category"
+                    >Categoria:
+                    <span class="text-danger">*</span>
+                  </label>
+                  <select
+                    name="category"
+                    id="category"
+                    class="form-control border-select"
+                    bind:value={dataProduct.categoryId}
+                  >
+                    {#each $techSpecStore.categories as category}
+                      <option value={category.id}>
+                        {category.name}
+                      </option>
+                    {/each}
+                  </select>
+                </div>
+              </div>
+              <div
+                class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12"
+              >
+                <div class="form-group">
+                  <label for="productName"
+                    >Nombre Producto:
+                    <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="productName"
+                    id="productName"
+                    bind:value={dataProduct.name}
+                    class="form-control border-select"
+                  />
+                </div>
+              </div>
+
+              <div
+                class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12 col-12"
+              >
+                <div class="form-group">
+                  <label for="productIMEISerie"
+                    >IMEI/Serie:
+                    <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="productIMEISerie"
+                    id="productIMEISerie"
+                    class="form-control border-select"
+                    bind:value={dataProduct.marca}
+                  />
+                </div>
+              </div>
+              <div
+                class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12 col-12"
+              >
+                <div class="form-group">
+                  <label for="productMarca"
+                    >Marca:
+                    <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="productMarca"
+                    id="productMarca"
+                    class="form-control border-select"
+                    bind:value={dataProduct.marca}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 col-12">
+                <div class="form-group">
+                  <label for="productModel">Modelo: </label>
+                  <input
+                    type="text"
+                    name="productModel"
+                    id="productModel"
+                    class="form-control border-select"
+                    bind:value={dataProduct.model}
+                  />
+                </div>
+              </div>
+              <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 col-12">
+                <div class="form-group">
+                  <label for="productYear">Año: </label>
+                  <input
+                    type="number"
+                    name="productYear"
+                    id="productYear"
+                    class="form-control border-select"
+                    bind:value={dataProduct.year}
+                  />
+                </div>
+              </div>
+              <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 col-12">
+                <div class="form-group">
+                  <label for="productWarranty">Garantía: </label>
+                  <input
+                    type="text"
+                    name="productWarranty"
+                    id="productWarranty"
+                    class="form-control border-select"
+                    bind:value={dataProduct.warranty}
+                  />
+                </div>
+              </div>
+              <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 col-12">
+                <div class="form-group">
+                  <label for="productColor">Color: </label>
+                  <input
+                    type="text"
+                    name="productColor"
+                    id="productColor"
+                    class="form-control border-select"
+                    bind:value={dataProduct.color}
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="d-inline-flex justify-content-center flex-row mb-3">
+              <button type="button" class="btn btn-info">
+                <!-- {#if data.idCliente > 0}
+                    <i class="ti-pencil" /> Actualizar
+                  {:else}
+                  {/if} -->
+                <i class="ti-save" /> Guardar
+              </button>
+            </div>
+            <!--Start Form register product-->
           </div>
 
           <div class="modal-footer">
@@ -236,7 +423,7 @@
   }
 
   .texto-html {
-    background-color: #00c292; /* Color de fondo (verde) */
+    background-color: #03a9f3; /* Color de fondo (verde) */
     border-radius: 10px; /* Borde redondeado */
     padding: 5px; /* Espaciado dentro del fondo */
     position: relative;
