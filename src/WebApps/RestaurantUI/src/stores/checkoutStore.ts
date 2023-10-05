@@ -44,7 +44,7 @@ export const useCheckoutStore = create<State & StateCalculator & Actions & Actio
     queryParams: queryParamsInitialState,
     checkout: checkoutInitialState,
     isOptionReceivedAmount: false,
-    isReplaceReceivedAmount: false,
+    isReplaceReceivedAmount: true,
     setCheckoutDataForm(data) {
         set(
             produce((state: State) => {

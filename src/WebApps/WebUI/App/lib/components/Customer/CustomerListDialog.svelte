@@ -181,7 +181,7 @@
             type="button"
             class="btn btn-dark"
             data-dismiss="modal"
-            on:click={() => modalClose("close")}>Close</button
+            on:click={() => modalClose("close")}>&times; Cerrar</button
           >
         </div>
       </div>

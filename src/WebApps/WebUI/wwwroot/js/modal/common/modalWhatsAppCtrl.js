@@ -285,6 +285,7 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
             codEstab: params.codEstab,
             codigo: REPORT_CODES[params.codDoc],
             format,
+            versionComp: params.versionComp
         }
 
         let parameters = {
