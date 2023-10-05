@@ -320,6 +320,19 @@
     }
   };
 
+  // Refresh bodegas
+  const refreshBodegas = (codEstab) => {
+    let idBodega = bodegas.find((x) => x.codEstab == codEstab).idBodega;
+
+    if (!paramValidation.includes(idBodega)) {
+      codEstab = codEstab;
+      maintenanceDetails.forEach((item) => {
+        item.idBodega = idBodega;
+      });
+      maintenanceDetails = [...maintenanceDetails];
+    }
+  };
+
   // SEARCH THE VECICLES WITH CUSTOMER
   const onInput = async (e) => {
     value = e.target.value;
@@ -389,7 +402,9 @@
   // REMOVE ARTICLE
   const removeArticle = (idArticulo) => {
     console.log(idArticulo);
-    let newFilter = maintenanceDetails.filter((x) => x.idArticulo != idArticulo);
+    let newFilter = maintenanceDetails.filter(
+      (x) => x.idArticulo != idArticulo
+    );
     maintenanceDetails = newFilter;
   };
 
@@ -621,6 +636,7 @@
                 name="establecimiento"
                 id="establecimiento"
                 class="form-control border-select"
+                on:change={() => refreshBodegas(codEstab)}
                 bind:value={codEstab}
               >
                 {#each establecimientos as item}
