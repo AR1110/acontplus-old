@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { get } from "svelte/store";
   import { MaintenanceStore } from "$routes/Mechanical/Store/maintenance.store";
   import { ArticleService } from "$lib/services/inventory/article-service";
   import { MaintenanceService } from "$lib/services/mechanical/maintenance-service";
@@ -17,20 +16,8 @@
   let maintenanceDetails = [];
   let establecimientos = [];
   let bodegas = [];
+  let medidas = [];
   let codEstab = "";
-
-  MaintenanceStore.subscribe((values) => {
-    maintenance = values.maintenance;
-    maintenanceDetails = values.maintenanceDetail;
-    establecimientos = values.establecimiento;
-    bodegas = values.bodega;
-
-    if (maintenanceDetails.length > 0) {
-      codEstab = maintenanceDetails[0].codEstab;
-    } else if (establecimientos.length > 0) {
-      codEstab = establecimientos[0].codEstab;
-    }
-  });
 
   // Todo: GRID COLUMNS
   let selectBodega = (cell, onRendered, success, cancel) => {
@@ -304,6 +291,34 @@
     },
   ];
 
+  // AUXILIAR FUNCTIONS FOR SELECT DATA
+  const selectCodEstab = () => {
+    if (maintenanceDetails != undefined || maintenanceDetails != null) {
+      if (maintenanceDetails.length > 0) {
+        codEstab = maintenanceDetails[0].codEstab;
+      }
+    }
+
+    if (paramValidation.includes(codEstab) && establecimientos.length > 0) {
+      codEstab = establecimientos[0].codEstab;
+    }
+  };
+
+  let verifyMaintenanceDetailsAndPush = () => {
+    if (maintenanceDetails != undefined || maintenanceDetails != null) {
+      if (maintenanceDetails.length != 0) {
+        maintenanceDetails.forEach((item) => {
+          item.bodegas = bodegas;
+          item.tarifas = item.tarifas;
+          item.priceIva = item.price;
+          item.medidas = medidas;
+          item.tarifas = JSON.parse(medidas[0].tarifas);
+          item.total = item.priceIva * item.quantity;
+        });
+      }
+    }
+  };
+
   // SEARCH THE VECICLES WITH CUSTOMER
   const onInput = async (e) => {
     value = e.target.value;
@@ -365,8 +380,6 @@
           idBodega: idBodega,
           bodegas: bodegas,
         };
-
-        console.log(obj);
         maintenanceDetails = [...maintenanceDetails, obj];
       }
     });
@@ -413,16 +426,28 @@
   // edit
   const onUpdate = () => {
     if (!onValidate()) return;
-
     showLoader();
+
+    let total = maintenanceDetails.reduce((a, b) => a + b.total, 0);
+    maintenance.total = total;
+
     MaintenanceService.put(maintenance.id, {
       data: {
         maintenance,
         maintenanceDetails: maintenanceDetails.map((item) => ({
           id: item.id > 0 ? item.id : 0,
           articuloId: item.idArticulo,
+          tarifaId: item.idTarifa,
+          bodegaId: item.idBodega,
+          medidaId: item.idMedida,
           description: item.descripcion,
           quantity: item.quantity,
+          price: item.priceIva,
+          cost: item.precioCosto,
+          total: item.total,
+          codePercentage: item.codigoPorcentaje,
+          percentage: item.tarifa,
+          inventory: item.llevaInventario,
         })),
       },
     }).then((response) => {
@@ -471,7 +496,6 @@
 
       return isValid;
     } catch (error) {
-      console.log(error);
       return false;
     }
   };
@@ -490,6 +514,17 @@
       maintenanceDetail: [],
     }));
   };
+
+  MaintenanceStore.subscribe((values) => {
+    maintenance = values.maintenance;
+    maintenanceDetails = values.maintenanceDetail;
+    establecimientos = values.establecimiento;
+    bodegas = values.bodega;
+    medidas = values.medidas;
+
+    selectCodEstab();
+    verifyMaintenanceDetailsAndPush();
+  });
 </script>
 
 {#if $MaintenanceStore.isOpen}
