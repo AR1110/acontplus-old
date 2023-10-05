@@ -50,8 +50,8 @@ namespace TechnicalSupport.API.Controllers
                     return BadRequest("Codigo Existente");
                 }
                 _context.Products.Add(device);
-                await _context.SaveChangesAsync();
-                return Ok("Registrado Exitosamente");
+                await _context.SaveChangesAsync(); 
+                return Ok(new { Message = "Registrado Exitosamente", Id = device.Id });
             }
             catch (Exception ex)
             {
