@@ -47,7 +47,7 @@ BEGIN
             
             SELECT @Id = Id FROM OPENJSON(@json) WITH (Id INT '$.id')
 
-            SET @tableNames = 'maintenance,maintenanceDetail'
+            SET @tableNames = 'maintenance,maintenanceDetail,medidas'
 
             SELECT Id
                   ,InspectionId
