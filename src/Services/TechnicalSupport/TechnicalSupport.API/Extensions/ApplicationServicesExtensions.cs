@@ -13,7 +13,7 @@ namespace TechnicalSupport.API.Extensions
             services.AddDbContextPool<TechnicalSupportContext>(options =>
             options.UseSqlServer(Encryption.DecryptString(configuration.GetSection("KeyEncryption").Value, configuration.GetConnectionString("DefaultConnection"))));
 
-            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IDeviceService, DeviceService>();
             return services;
         }
     }
