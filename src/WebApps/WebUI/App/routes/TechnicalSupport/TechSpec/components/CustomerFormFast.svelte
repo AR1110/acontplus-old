@@ -107,23 +107,19 @@
   </div>
 </div>
 
-<div class="d-inline-flex justify-content-center flex-row mb-3">
-  <div class="p-2">
-    <button type="button" class="btn btn-info" on:click={save}>
-      {#if data.idCliente > 0}
-        <i class="ti-pencil" /> Actualizar
-      {:else}
-        <i class="ti-save" /> Guardar
-      {/if}
-    </button>
-  </div>
-  <div class="p-2">
-    <button
-      type="button"
-      class="btn btn-danger"
-      on:click={() => activeShowForm("CLOSE")}
-    >
-      &times; Cerrar
-    </button>
-  </div>
+<div class="d-inline-flex justify-content-center flex-row">
+  <button type="button" class="btn btn-info" on:click={save}>
+    {#if data.idCliente > 0}
+      <i class="ti-pencil" /> Actualizar
+    {:else}
+      <i class="ti-save" /> Guardar
+    {/if}
+  </button>
+  <button
+    type="button"
+    class="btn btn-danger mx-1"
+    on:click={() => activeShowForm("CLOSE")}
+  >
+    &times; Cerrar
+  </button>
 </div>

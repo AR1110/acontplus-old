@@ -11,6 +11,8 @@
     techSpecStore,
     initiload,
     setCustomerCompanyId,
+    saveDevice,
+    resetFormDevice,
   } from "./../../store/techSpecStore";
   import CustomerListDialog from "$lib/components/Customer/CustomerListDialog.svelte";
   import CustomerFormFast from "./CustomerFormFast.svelte";
@@ -23,7 +25,7 @@
 
   // Data Form Tech Spec
   $: data = $techSpecStore.data;
-  $: dataProduct = $techSpecStore.dataProduct;
+  $: dataDevice = $techSpecStore.dataDevice;
 
   /* Start Modal Customer List */
   let showPopupCustomer = false;
@@ -128,65 +130,71 @@
                 </div>
               </div>
             </div>
-            <div class="linea-con-letra">
-              <span class="texto-html">Datos cliente</span>
-            </div>
-            <!--End section general -->
-
-            <!--Start section customer -->
-            <div class="row">
-              <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-                <div class="form-group">
-                  <label for="customerSearch"
-                    >Cliente:
-                    <span class="text-danger">*</span>
-                  </label>
-                  <div class="input-group">
-                    <CustomerSearch {resultCustomerSelected} />
-                    <div class="input-group-append">
-                      <button
-                        type="button"
-                        disabled={$techSpecCustomerStore.isUpdateCustomer}
-                        class="btn btn-secondary btn-xs"
-                        on:click={() => activeShowForm("NEW", 0)}
-                      >
-                        <i class="fa fa-plus fa-xs" />
-                      </button>
-                      {#if data.customerCompanyId > 0}
-                        <button
-                          type="button"
-                          disabled={$techSpecCustomerStore.isNewCustomer}
-                          class="btn btn-secondary btn-xs"
-                          on:click={() =>
-                            activeShowForm("UPDATE", data.customerCompanyId)}
-                        >
-                          <i class="fa fa-edit fa-xs" />
-                        </button>
-                      {/if}
-                      <button
-                        type="button"
-                        class="btn btn-secondary btn-xs"
-                        on:click={onShowPopupCustomer}
-                      >
-                        <i class="fa fa-search fa-xs" />
-                      </button>
+            <div class="card rounded border border-info">
+              <div class="card-header">Datos cliente:</div>
+              <div class="card-body">
+                <!--Start section customer -->
+                <div class="row">
+                  <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                      <label for="customerSearch"
+                        >Cliente:
+                        <span class="text-danger">*</span>
+                      </label>
+                      <div class="input-group">
+                        <CustomerSearch {resultCustomerSelected} />
+                        <div class="input-group-append">
+                          <button
+                            type="button"
+                            disabled={$techSpecCustomerStore.isUpdateCustomer}
+                            class="btn btn-secondary btn-xs"
+                            on:click={() => activeShowForm("NEW", 0)}
+                          >
+                            <i class="fa fa-plus fa-xs" />
+                          </button>
+                          {#if data.customerCompanyId > 0}
+                            <button
+                              type="button"
+                              disabled={$techSpecCustomerStore.isNewCustomer}
+                              class="btn btn-secondary btn-xs"
+                              on:click={() =>
+                                activeShowForm(
+                                  "UPDATE",
+                                  data.customerCompanyId
+                                )}
+                            >
+                              <i class="fa fa-edit fa-xs" />
+                            </button>
+                          {/if}
+                          <button
+                            type="button"
+                            class="btn btn-secondary btn-xs"
+                            on:click={onShowPopupCustomer}
+                          >
+                            <i class="fa fa-search fa-xs" />
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
+
+                <!--Start Form register-update customer-->
+                {#if $techSpecCustomerStore.showForm}
+                  <CustomerFormFast />
+                {/if}
               </div>
             </div>
-
-            <!--Start Form register-update customer-->
-            {#if $techSpecCustomerStore.showForm}
-              <CustomerFormFast />
-            {/if}
             <!--End Form register-update customer-->
-
-            <div class="linea-con-letra">
-              <span class="texto-html">Datos Equipo</span>
-            </div>
-
-            <!-- <div class="row">
+            <div class="card rounded border border-success">
+              <div class="card-header d-flex justify-content-between">
+                <span>Datos Equipo:</span>
+                <button type="button" class="btn btn-outline-info btn-sm"
+                  >Historial</button
+                >
+              </div>
+              <div class="card-body">
+                <!-- <div class="row">
               <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                   <label for="productSearch"
@@ -228,143 +236,165 @@
               </div>
             </div> -->
 
-            <!--Start Form register product-->
-            <div class="row">
-              <div
-                class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-xs-12 col-12"
-              >
-                <div class="form-group">
-                  <label for="category"
-                    >Categoria:
-                    <span class="text-danger">*</span>
-                  </label>
-                  <select
-                    name="category"
-                    id="category"
-                    class="form-control border-select"
-                    bind:value={dataProduct.categoryId}
+                <!--Start Form register product-->
+                <div class="row">
+                  <div
+                    class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-xs-12 col-12"
                   >
-                    {#each $techSpecStore.categories as category}
-                      <option value={category.id}>
-                        {category.name}
-                      </option>
-                    {/each}
-                  </select>
-                </div>
-              </div>
-              <div
-                class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12"
-              >
-                <div class="form-group">
-                  <label for="productName"
-                    >Nombre Producto:
-                    <span class="text-danger">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="productName"
-                    id="productName"
-                    bind:value={dataProduct.name}
-                    class="form-control border-select"
-                  />
-                </div>
-              </div>
+                    <div class="form-group">
+                      <label for="category"
+                        >Categoria:
+                        <span class="text-danger">*</span>
+                      </label>
+                      <select
+                        name="category"
+                        id="category"
+                        class="form-control border-select"
+                        bind:value={dataDevice.categoryId}
+                      >
+                        {#each $techSpecStore.categories as category}
+                          <option value={category.id}>
+                            {category.name}
+                          </option>
+                        {/each}
+                      </select>
+                    </div>
+                  </div>
+                  <div
+                    class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12"
+                  >
+                    <div class="form-group">
+                      <label for="productName"
+                        >Nombre Producto:
+                        <span class="text-danger">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="productName"
+                        id="productName"
+                        bind:value={dataDevice.name}
+                        class="form-control border-select"
+                      />
+                    </div>
+                  </div>
 
-              <div
-                class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12 col-12"
-              >
-                <div class="form-group">
-                  <label for="productIMEISerie"
-                    >IMEI/Serie:
-                    <span class="text-danger">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="productIMEISerie"
-                    id="productIMEISerie"
-                    class="form-control border-select"
-                    bind:value={dataProduct.marca}
-                  />
+                  <div
+                    class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12 col-12"
+                  >
+                    <div class="form-group">
+                      <label for="productIMEISerie"
+                        >IMEI/Serie:
+                        <span class="text-danger">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="productIMEISerie"
+                        id="productIMEISerie"
+                        class="form-control border-select"
+                        bind:value={dataDevice.serie}
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12 col-12"
+                  >
+                    <div class="form-group">
+                      <label for="productMarca"
+                        >Marca:
+                        <span class="text-danger">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        name="productMarca"
+                        id="productMarca"
+                        class="form-control border-select"
+                        bind:value={dataDevice.marca}
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div
-                class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12 col-12"
-              >
-                <div class="form-group">
-                  <label for="productMarca"
-                    >Marca:
-                    <span class="text-danger">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="productMarca"
-                    id="productMarca"
-                    class="form-control border-select"
-                    bind:value={dataProduct.marca}
-                  />
+
+                <div class="row">
+                  <div
+                    class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 col-12"
+                  >
+                    <div class="form-group">
+                      <label for="productModel">Modelo: </label>
+                      <input
+                        type="text"
+                        name="productModel"
+                        id="productModel"
+                        class="form-control border-select"
+                        bind:value={dataDevice.model}
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 col-12"
+                  >
+                    <div class="form-group">
+                      <label for="productYear">Año: </label>
+                      <input
+                        type="number"
+                        name="productYear"
+                        id="productYear"
+                        class="form-control border-select"
+                        bind:value={dataDevice.year}
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 col-12"
+                  >
+                    <div class="form-group">
+                      <label for="productWarranty">Garantía: </label>
+                      <input
+                        type="text"
+                        name="productWarranty"
+                        id="productWarranty"
+                        class="form-control border-select"
+                        bind:value={dataDevice.warranty}
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 col-12"
+                  >
+                    <div class="form-group">
+                      <label for="productColor">Color: </label>
+                      <input
+                        type="text"
+                        name="productColor"
+                        id="productColor"
+                        class="form-control border-select"
+                        bind:value={dataDevice.color}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="d-inline-flex justify-content-center flex-row">
+                  <button
+                    type="button"
+                    class="btn btn-info"
+                    on:click={saveDevice}
+                  >
+                    {#if data.deviceId > 0}
+                      <i class="ti-pencil" /> Actualizar
+                    {:else}
+                      <i class="ti-save" /> Guardar
+                    {/if}
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-danger mx-1"
+                    on:click={resetFormDevice}
+                  >
+                    <i class="fa fa-refresh" /> Limpiar
+                  </button>
                 </div>
               </div>
             </div>
 
-            <div class="row">
-              <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 col-12">
-                <div class="form-group">
-                  <label for="productModel">Modelo: </label>
-                  <input
-                    type="text"
-                    name="productModel"
-                    id="productModel"
-                    class="form-control border-select"
-                    bind:value={dataProduct.model}
-                  />
-                </div>
-              </div>
-              <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 col-12">
-                <div class="form-group">
-                  <label for="productYear">Año: </label>
-                  <input
-                    type="number"
-                    name="productYear"
-                    id="productYear"
-                    class="form-control border-select"
-                    bind:value={dataProduct.year}
-                  />
-                </div>
-              </div>
-              <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 col-12">
-                <div class="form-group">
-                  <label for="productWarranty">Garantía: </label>
-                  <input
-                    type="text"
-                    name="productWarranty"
-                    id="productWarranty"
-                    class="form-control border-select"
-                    bind:value={dataProduct.warranty}
-                  />
-                </div>
-              </div>
-              <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12 col-12">
-                <div class="form-group">
-                  <label for="productColor">Color: </label>
-                  <input
-                    type="text"
-                    name="productColor"
-                    id="productColor"
-                    class="form-control border-select"
-                    bind:value={dataProduct.color}
-                  />
-                </div>
-              </div>
-            </div>
-            <div class="d-inline-flex justify-content-center flex-row mb-3">
-              <button type="button" class="btn btn-info">
-                <!-- {#if data.idCliente > 0}
-                    <i class="ti-pencil" /> Actualizar
-                  {:else}
-                  {/if} -->
-                <i class="ti-save" /> Guardar
-              </button>
-            </div>
             <!--Start Form register product-->
           </div>
 
@@ -404,30 +434,5 @@
     display: block;
     overflow-y: auto;
     background: rgba(0, 0, 0, 0.5);
-  }
-  .linea-con-letra {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative; /* Agregamos posición relativa */
-  }
-
-  .linea-con-letra::before {
-    content: "";
-    position: absolute; /* Agregamos posición absoluta */
-    top: 50%;
-    left: 0;
-    right: 0;
-    border-bottom: 1px solid #e9ecef;
-    transform: translateY(-50%); /* Centramos verticalmente */
-  }
-
-  .texto-html {
-    background-color: #03a9f3; /* Color de fondo (verde) */
-    border-radius: 10px; /* Borde redondeado */
-    padding: 5px; /* Espaciado dentro del fondo */
-    position: relative;
-    color: #fff;
-    z-index: 1; /* Colocamos el texto por encima de la línea */
   }
 </style>
