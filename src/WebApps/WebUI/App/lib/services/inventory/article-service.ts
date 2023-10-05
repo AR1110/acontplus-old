@@ -39,7 +39,6 @@ function getDataForm(obj: { tipo: 1 | 5 }) {
         }
         if (response.code === "1") {
             let mainData = JSON.parse(response.payload);
-            console.log(mainData)
             let tempSubfamilias = mainData[2];
 
             obj.estabs = mainData[0];

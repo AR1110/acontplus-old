@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { get } from "svelte/store";
   import { MaintenanceStore } from "$routes/Mechanical/Store/maintenance.store";
   import { ArticleService } from "$lib/services/inventory/article-service";
   import { MaintenanceService } from "$lib/services/mechanical/maintenance-service";
@@ -14,19 +15,75 @@
   let placeholder = "Buscar Artículos";
   let articles = [];
   let maintenanceDetails = [];
+  let establecimientos = [];
+  let bodegas = [];
+  let codEstab = "";
 
   MaintenanceStore.subscribe((values) => {
     maintenance = values.maintenance;
     maintenanceDetails = values.maintenanceDetail;
+    establecimientos = values.establecimiento;
+    bodegas = values.bodega;
+
+    if (maintenanceDetails.length > 0) {
+      codEstab = maintenanceDetails[0].codEstab;
+    } else if (establecimientos.length > 0) {
+      codEstab = establecimientos[0].codEstab;
+    }
   });
 
   // Todo: GRID COLUMNS
+  let selectBodega = (cell, onRendered, success, cancel) => {
+    let bodegas = [];
+    let rows = cell.getRow().getData();
+
+    if (rows.bodegas != undefined || rows.bodegas != null) {
+      bodegas = rows.bodegas;
+    }
+
+    let selectList = document.createElement("select");
+    selectList.style.width = "100%";
+    selectList.style.boxSizing = "border-box";
+
+    onRendered(function () {
+      selectList.focus();
+      selectList.style.height = "100%";
+    });
+
+    function onChange() {
+      if (selectList.selectedOptions[0].value != rows) {
+        success(selectList.selectedOptions[0].value);
+
+        cell.getElement().dataset.bodega = selectList.selectedOptions[0].text;
+        cell.getElement().dataset.idBodega =
+          selectList.selectedOptions[0].value;
+      } else {
+        cancel();
+      }
+    }
+
+    selectList.addEventListener("blur", onChange);
+
+    for (let i = 0; i < bodegas.length; i++) {
+      let option = document.createElement("option");
+
+      option.value = bodegas[i].idBodega.toString();
+      option.text = bodegas[i].nombre;
+      if (bodegas[i].idBodega === rows) {
+        option.selected = true;
+      }
+      selectList.appendChild(option);
+    }
+    return selectList;
+  };
+
   let selectFee = (cell, onRendered, success, cancel) => {
     let fees = [];
     let rows = cell.getRow().getData();
 
-    if (rows.fees === undefined) fees = [];
-    if (rows.fees != undefined) fees = JSON.parse(rows.fees);
+    if (rows.tarifas != undefined || rows.tarifas != null) {
+      fees = rows.tarifas;
+    }
 
     let selectList = document.createElement("select");
     selectList.style.width = "100%";
@@ -50,21 +107,57 @@
 
     selectList.addEventListener("blur", onChange);
 
-    selectList.addEventListener("keydown", function (e) {
-      if (e.keyCode == 13) {
-        onChange();
-      }
-      if (e.keyCode == 27) {
-        cancel();
-      }
-    });
-
     for (let i = 0; i < fees.length; i++) {
       let option = document.createElement("option");
 
       option.value = fees[i].idTarifa.toString();
       option.text = fees[i].tarifa;
-      if (fees[i].idMedida === rows) {
+      if (fees[i].idTarifa === rows) {
+        option.selected = true;
+      }
+      selectList.appendChild(option);
+    }
+    return selectList;
+  };
+
+  let selectMedidas = (cell, onRendered, success, cancel) => {
+    let medidas = [];
+    let rows = cell.getRow().getData();
+
+    if (rows.medidas != undefined || rows.medidas != null) {
+      medidas = rows.medidas;
+    }
+
+    let selectList = document.createElement("select");
+    selectList.style.width = "100%";
+    selectList.style.boxSizing = "border-box";
+
+    onRendered(function () {
+      selectList.focus();
+      selectList.style.height = "100%";
+    });
+
+    function onChange() {
+      if (selectList.selectedOptions[0].value != rows) {
+        success(selectList.selectedOptions[0].value);
+
+        cell.getElement().dataset.descripcion =
+          selectList.selectedOptions[0].text;
+        cell.getElement().dataset.idMedida =
+          selectList.selectedOptions[0].value;
+      } else {
+        cancel();
+      }
+    }
+
+    selectList.addEventListener("blur", onChange);
+
+    for (let i = 0; i < medidas.length; i++) {
+      let option = document.createElement("option");
+
+      option.value = medidas[i].idMedida.toString();
+      option.text = medidas[i].descripcion;
+      if (medidas[i].idTarifa === rows) {
         option.selected = true;
       }
       selectList.appendChild(option);
@@ -77,39 +170,60 @@
     let row = cell.getRow().getData();
     let value = cell.getValue();
 
-    fees = JSON.parse(row.fees);
-    return fees.find((x) => x.idTarifa == value).tarifa;
+    if (row.tarifas != undefined && value != undefined) {
+      fees = row.tarifas;
+
+      return fees.find((x) => x.idTarifa == value).tarifa;
+    }
+    return "";
+  };
+
+  let formatterMedida = (cell) => {
+    let medidas = [];
+    let row = cell.getRow().getData();
+    let value = cell.getValue();
+
+    if (row.medidas != undefined && value != undefined) {
+      medidas = row.medidas;
+
+      return medidas.find((x) => x.idMedida == value).descripcion;
+    }
+    return "";
+  };
+
+  let formatterBodega = (cell) => {
+    let bodegas = [];
+    let row = cell.getRow().getData();
+    let value = cell.getValue();
+
+    if (row.bodegas != undefined && value != undefined) {
+      bodegas = row.bodegas;
+
+      return bodegas.find((x) => x.idBodega == value).bodega;
+    }
+    return "";
   };
 
   let calculateTotal = (cell) => {
     let row = cell.getRow().getData();
-    let totalDiscount = 0;
-
     let column = cell.getColumn()._column.field;
 
-    if (column === "feeId") {
-      let fee = JSON.parse(row.fees).find((x) => x.idTarifa == row.feeId);
+    if (column == "idTarifa") {
+      let tarifa = row.tarifas.find((x) => x.idTarifa == row.idTarifa);
 
-      cell.getRow().update({
-        priceIVA: fee.precioConIva,
-        price: fee.precioVenta,
-      });
+      cell.getRow().update({ priceIva: tarifa.precioConIva });
     }
 
-    if (column === "quantity") {
+    if (column == "quantity") {
       if (row.quantity >= 0) {
         cell.getRow().update({ quantity: row.quantity });
       } else {
-        let oldValue = cell.getOldValue();
-        cell.getRow().update({ quantity: oldValue });
+        let oldQuantity = cell.getOldValue();
+        cell.getRow().update({ quantity: oldQuantity });
       }
     }
-
-    totalDiscount = (row.priceIVA - row.discountValue) * row.quantity;
-    if (!paramValidation.includes(totalDiscount)) {
-      totalDiscount = parseFloat(totalDiscount.toFixed(2));
-    }
-    cell.getRow().update({ subtotal: totalDiscount });
+    let total = row.priceIva * row.quantity;
+    cell.getRow().update({ total: total });
   };
 
   let maintenanceDetailsColumns = [
@@ -127,14 +241,27 @@
       with: 100,
     },
     {
+      editor: selectBodega,
+      formatter: formatterBodega,
+      field: "idBodega",
+      hozAlign: "center",
+      title: "Bodega",
+      with: 100,
+    },
+    {
+      editor: selectMedidas,
+      formatter: formatterMedida,
       editable: "never",
-      field: "medida",
+      field: "idMedida",
       hozAlign: "center",
       title: "Medida",
       with: 100,
     },
     {
-      field: "feeId",
+      editor: selectFee,
+      formatter: formatterFee,
+      cellEdited: calculateTotal,
+      field: "idTarifa",
       hozAlign: "center",
       title: "Tarifa",
       typeNumber: true,
@@ -144,10 +271,11 @@
       editable: "never",
       field: "priceIva",
       hozAlign: "center",
-      title: "Precio ",
+      title: "Precio",
       with: 100,
     },
     {
+      cellEdited: calculateTotal,
       editor: "input",
       field: "quantity",
       hozAlign: "center",
@@ -205,6 +333,7 @@
   const selectArticle = (e) => {
     let dataArticle = {};
     let medidas = [];
+
     articles = [];
     value = "";
     ArticleService.get(
@@ -212,6 +341,7 @@
     ).then((response) => {
       if (response) {
         dataArticle = response[0][0];
+
         medidas = response[1].map((item) => {
           return {
             ...item,
@@ -219,7 +349,7 @@
           };
         });
 
-        //
+        let idBodega = bodegas.find((x) => x.codEstab == codEstab).idBodega;
         let dataMedida = medidas[0];
         let dataTarifa = dataMedida.tarifas[0];
         let obj = {
@@ -229,30 +359,44 @@
           idMedida: dataMedida.idMedida,
           idTarifa: dataTarifa.idTarifa,
           quantity: 1,
+          priceIva: dataTarifa.precioConIva,
           price: dataTarifa.precioConIva,
           total: dataTarifa.precioConIva * 1,
+          idBodega: idBodega,
+          bodegas: bodegas,
         };
 
         console.log(obj);
-
         maintenanceDetails = [...maintenanceDetails, obj];
       }
     });
   };
 
-
   // Save
   const onSave = () => {
     if (!onValidate()) return;
     showLoader();
+
+    let total = maintenanceDetails.reduce((a, b) => a + b.total, 0);
+    maintenance.total = total;
+
     MaintenanceService.post({
       data: {
         maintenance,
         maintenanceDetails: maintenanceDetails.map((item) => ({
           id: item.id > 0 ? item.id : 0,
           articuloId: item.idArticulo,
+          tarifaId: item.idTarifa,
+          bodegaId: item.idBodega,
+          medidaId: item.idMedida,
           description: item.descripcion,
           quantity: item.quantity,
+          price: item.priceIva,
+          cost: item.precioCosto,
+          total: item.total,
+          codePercentage: item.codigoPorcentaje,
+          percentage: item.tarifa,
+          inventory: item.llevaInventario,
         })),
       },
     }).then((response) => {
@@ -269,6 +413,7 @@
   // edit
   const onUpdate = () => {
     if (!onValidate()) return;
+
     showLoader();
     MaintenanceService.put(maintenance.id, {
       data: {
@@ -400,7 +545,7 @@
 
         <div class="row">
           <div class="col">
-            <label for="serch">Buscar Repuestos </label>
+            <label for="serch">Buscar Repuestos</label>
           </div>
         </div>
 
@@ -427,13 +572,31 @@
               </div>
             {/if}
           </div>
-          <div class="col" />
+          <div class="col">
+            <div class="form-group">
+              <select
+                name="establecimiento"
+                id="establecimiento"
+                class="form-control border-select"
+                bind:value={codEstab}
+              >
+                {#each establecimientos as item}
+                  <option value={item.codEstab}>
+                    {item.nombreComercial}
+                  </option>
+                {/each}
+              </select>
+            </div>
+          </div>
         </div>
         <hr />
 
         <div class="row mt-2">
           <div class="col-12">
-            <GridForItem arrayData={maintenanceDetails} columns={maintenanceDetailsColumns} />
+            <GridForItem
+              arrayData={maintenanceDetails}
+              columns={maintenanceDetailsColumns}
+            />
           </div>
         </div>
 

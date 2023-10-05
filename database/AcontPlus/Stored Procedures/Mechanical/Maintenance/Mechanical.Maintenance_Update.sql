@@ -58,9 +58,7 @@ BEGIN
                                        ,[Description] VARCHAR(300) '$.description'
                                        ,Quantity      VARCHAR(300) '$.quantity'
                                    )
-
-
-
+                                  
         -- ======================= VARIABLES ===============================
 
         SELECT TOP 1 @UserId = idUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId

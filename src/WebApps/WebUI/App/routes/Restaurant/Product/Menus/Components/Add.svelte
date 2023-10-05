@@ -77,15 +77,6 @@
 
     selectList.addEventListener("blur", onChange);
 
-    selectList.addEventListener("keydown", function (e) {
-      if (e.keyCode == 13) {
-        onChange();
-      }
-      if (e.keyCode == 27) {
-        cancel();
-      }
-    });
-
     for (let i = 0; i < fees.length; i++) {
       let option = document.createElement("option");
 
