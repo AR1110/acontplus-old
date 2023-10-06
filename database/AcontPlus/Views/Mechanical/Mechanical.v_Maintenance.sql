@@ -10,4 +10,3 @@ CREATE OR ALTER VIEW Mechanical.v_Maintenance WITH SCHEMABINDING AS (
           ,Total
 	FROM Mechanical.Maintenance ma WITH (NOLOCK)
 )
-
