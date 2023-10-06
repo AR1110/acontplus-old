@@ -19,20 +19,17 @@ import {
     EditIcon,
 } from "@/core/components/IconsMaterial";
 import { orderService } from "@/core/services";
-import { useLoaderStore, useOrderStore, useSaleStore } from "@/stores";
+import { useLoaderStore, useSaleStore } from "@/stores";
 import { PrivateRoutes } from "@/core/models";
 import { orderReadForUpdateAdapter } from "@/core/adapters";
 import FullScreenDialog from "@/core/components/FullScreenDialog";
-import { SplitOrderProvider } from "./context";
+import { SplitOrderProvider, useOrderContext } from "./context";
 import OrderDocument from "./OrderDocument/OrderDocument";
 const SplitOrder = lazy(() => import("./SplitOrder/SplitOrder"));
 
 export default function OrderTable() {
     const navigate = useNavigate();
-    const orders = useOrderStore(state => state.orders);
-    const getOrders = useOrderStore(state => state.getOrders);
-    const orderFilter = useOrderStore(state => state.orderFilter);
-    const setOrderFilter = useOrderStore(state => state.setOrderFilter);
+    const { fetchOrders, orders, setDataFilter } = useOrderContext();
 
     const [page, setPage] = useState(0);
 
@@ -47,41 +44,29 @@ export default function OrderTable() {
     const dataOrder = useRef({} as typeof orders[0]);
 
     const handleChangePage = (_: unknown, newPage: number) => {
-
-        setOrderFilter({
-            ...orderFilter,
-            pageIndex: newPage + 1
-        })
+        setDataFilter("pageIndex", newPage + 1)
         setPage(newPage);
-        getOrders()
     };
-
     const handleChangeRowsPerPage = (event: ChangeEvent<HTMLInputElement>) => {
         const pageSize = parseInt(event.target.value, 10)
-        setOrderFilter({
-            ...orderFilter,
-            pageSize
-        })
+        setDataFilter("pageSize", pageSize)
         setRowsPerPage(pageSize);
         setPage(0)
-        getOrders()
     };
 
-    
+
     const handleEdit = (orderId: number) => {
         showLoader(true);
         orderService.get({
             id: orderId,
             tipo: 2,
-        })
-            .then(async (response) => {
-                const data = await orderReadForUpdateAdapter(response);
-                setDataEdit(data);
-                navigate(`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.SALE}`, {
-                    replace: true,
-                });
-            })
-            .finally(() => showLoader(false));
+        }).then(async (response) => {
+            const data = await orderReadForUpdateAdapter(response);
+            setDataEdit(data);
+            navigate(`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.SALE}`, {
+                replace: true,
+            });
+        }).finally(() => showLoader(false));
     };
 
 
@@ -92,7 +77,7 @@ export default function OrderTable() {
 
     function closeDialogDivide<T>(value: T) {
         if (typeof value === 'string' && value === 'CUSTOM_DETAIL') {
-            getOrders()
+            fetchOrders()
         }
         setOpenDialodDivide(false)
     }
@@ -200,16 +185,6 @@ export default function OrderTable() {
                 </Paper>
             </Box>
 
-            {/* <OrderConvertDoc
-                open={open}
-                handleClose={handleClose}
-            /> */}
-
-            {/* { End list  - TABLE } */}
-            {/* <OrderWhatsApp
-                open={openTableDialog}
-                onClose={setOpenTableDialog} /
-            > */}
 
             {/* Dividir Cuenta  */}
             <FullScreenDialog

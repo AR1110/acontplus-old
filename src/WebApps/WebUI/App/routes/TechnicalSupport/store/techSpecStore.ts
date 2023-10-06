@@ -4,6 +4,7 @@ import { categoryService } from "../services/category.service";
 import { showLoader } from "$utils/loading-spinner";
 import tS from "$utils/toast";
 import { deviceService } from "../services/device.service";
+import { estabAsignService } from "$services/restaurant/estab-asign-service";
 
 //Start Tech Spec 
 type Data = {
@@ -11,6 +12,7 @@ type Data = {
     puntoEmisionId: number
     customerCompanyId: number
     deviceId: number
+    createdAt: string
 }
 
 type State = {
@@ -37,21 +39,22 @@ type Device = {
     color: string
     specs: string
 }
-//End Device 
-
-
-
+//End Device  
 
 type DeviceState = {
     categories: Array<Category>,
     dataDevice: Device
 }
+const data: Data = {
+    customerCompanyId: 0,
+    deviceId: 0,
+    establecimientoId: 0,
+    puntoEmisionId: 0,
+    createdAt: new Date().toISOString().slice(0, 10),
+}
 
 const initialState: State = {
-    data: {
-        customerCompanyId: 0,
-        deviceId: 0
-    },
+    data: structuredClone(data)
 }
 
 const dataDevice = {
@@ -80,11 +83,17 @@ export const techSpecStore = writable<State & DeviceState>({ ...initialState, ..
 export const initiload = async () => {
     try {
         showLoader();
-        const categories = await categoryService.get()
-        techSpecStore.update(state => {
-            state.categories = categories;
-            return state;
+        categoryService.get().then(response=>{
+            techSpecStore.update(state => {
+                state.categories = response;
+                return state;
+            })
         })
+
+        estabAsignService.get(JSON.stringify({})).then(response=>{
+            console.log(response)
+        })
+
         hideLoader();
     } catch (error) {
         console.log(error)
@@ -173,6 +182,14 @@ export const resetFormDevice = () => {
     techSpecStore.update(state => {
         state.dataDevice = structuredClone(dataDevice);
         state.data.deviceId = 0;
+        return state;
+    })
+}
+
+export const resetFormMain = () => {
+    techSpecStore.update(state => {
+        state.data = structuredClone(data);
+        state.dataDevice = structuredClone(dataDevice)
         return state;
     })
 }
