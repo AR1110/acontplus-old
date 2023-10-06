@@ -22,7 +22,7 @@ namespace TechnicalSupport.Infrastructure.Data
                 .AddJsonFile($"sharedsettings.Production.json", optional: true, reloadOnChange: true)
                 .Build();
 
-            var connectionString = Encryption.DecryptString(configuration.GetSection("KeyEncryption").Value, configuration.GetConnectionString(_databaseName));
+            var connectionString = configuration.GetConnectionString(_databaseName);
 
             var dbContextOptionsBuilder = new DbContextOptionsBuilder<TechnicalSupportContext>()
                 .UseSqlServer(connectionString, x => x.MigrationsAssembly(_migrationAssembly));

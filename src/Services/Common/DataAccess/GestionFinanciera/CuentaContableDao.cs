@@ -14,7 +14,7 @@ namespace DataAccess.GestionFinanciera
         public CuentaContableDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _gr = new GenericResponse();
         }
         public async Task<GenericResponse> InsertAsync(int idRol, CuentaBancaria data)
