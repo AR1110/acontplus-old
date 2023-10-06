@@ -76,6 +76,8 @@ BEGIN
         ,totalDetail    = CONVERT(NUMERIC(18,2), md.Total) 
         ,obsDetail      = md.Obs
         ,[percentage]   = md.[Percentage]
+        ,medida         = md.Medida
+        ,code           = md.codigo
     FROM Mechanical.v_MaintenanceDetail md WITH (NOLOCK) 
     INNER JOIN Mechanical.v_Maintenance m  WITH (NOLOCK) ON m.Id = md.MaintenanceId
     WHERE m.SupportId = @supportId

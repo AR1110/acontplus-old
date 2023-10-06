@@ -7,6 +7,7 @@
   import Swal from "sweetalert2";
   import Pagination from "$lib/components/Pagination.svelte";
   import Add from "./add.svelte";
+    import Approve from "./approve.svelte";
 
   let supports = [];
   let recordsQuantity = [10, 25, 50, 100];
@@ -151,6 +152,13 @@
                 >
                   <i class="ti-file" />
                 </button>
+
+                <!-- For approbation -->
+                <button class="btn btn-outline-info btn-sm"
+                  on:click={() => supportStore.getOpenApproveModal(item.id)}
+                  >
+                  <i class="ti-check" />
+                </button>
               </td>
             </tr>
           {/each}
@@ -169,3 +177,4 @@
   </div>
 </div>
 <Add />
+<Approve />
