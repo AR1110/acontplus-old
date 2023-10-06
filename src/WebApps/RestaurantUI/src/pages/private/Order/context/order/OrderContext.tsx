@@ -78,6 +78,7 @@ export const OrderProvider = ({ children }: Props) => {
     useEffect(() => {
         fetchOrders();
         return () => cancelEndpoint();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state.dataFilter])
 
     // Proporciona el estado y las funciones del contexto a los componentes hijos
