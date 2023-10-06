@@ -39,10 +39,7 @@ type Device = {
     color: string
     specs: string
 }
-//End Device 
-
-
-console.log(new Date().toISOString().slice(0, 10))
+//End Device  
 
 type DeviceState = {
     categories: Array<Category>,

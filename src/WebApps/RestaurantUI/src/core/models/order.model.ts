@@ -1,4 +1,4 @@
-import dayjs from "dayjs"; 
+import dayjs from "dayjs";
 import { formatDateTimeZone } from "../utilities";
 import { DOC_TYPE } from "../constants";
 
@@ -49,7 +49,7 @@ export interface OrderReadDto {
   total: number;
   codDoc?: "" | DOC_TYPE.FV | DOC_TYPE.NE;
   createdAt: string;
-  totalRecords: number  
+  totalRecords: number
   divided: boolean
 }
 
@@ -60,7 +60,7 @@ export type IOrderDocument = {
   codEstab: string
   documentoId: number
   orderId: number
-  docType: DOC_TYPE.FV | DOC_TYPE.NE  
+  docType: DOC_TYPE.FV | DOC_TYPE.NE
   serie: string
   createAt: string
   customerName: string
@@ -70,24 +70,42 @@ export type IOrderDocument = {
   saldo: number
   telefono?: string
   telefonoEstablecimiento?: string
-  nombreComercial?:string
+  nombreComercial?: string
 }
 
 
-export interface OrderFilter {
+export interface DataFilter {
   tipo: number
   pageIndex: number
   pageSize: number
   startDate: any
   endDate: any
   customerCompanyId: number
+  customerName: string
 }
- 
-export const orderFilter: OrderFilter = {
+
+export const orderFilter: DataFilter = {
   tipo: 1,
   pageIndex: 1,
   pageSize: 25,
   startDate: formatDateTimeZone(dayjs()),
   endDate: formatDateTimeZone(dayjs()),
-  customerCompanyId: 0
+  customerCompanyId: 0,
+  customerName: ""
+}
+
+export interface OrderState {
+  orderLoading: boolean
+  orderError: boolean
+  dataFilter: DataFilter
+  orders: Array<OrderReadDto>
+}
+
+
+export interface OrderActions {
+  fetchOrders(): void
+  setDataFilter<T extends keyof typeof orderFilter>(
+    prop: T,
+    value: typeof orderFilter[T]
+  ): void;
 }

@@ -4,13 +4,14 @@ import { Http, loadAbort } from "../utilities"
 
 const URL = 'Order'
 const orderService = {
-    async get(obj: object) {
+    async get(obj: object, cancelToken?:any) {
         const resultAxios = await Http({
             method: 'get',
             url: `${PATHS.PRIVATE}${URL}`,
             params: {
                 json: JSON.stringify(obj)
-            }
+            },
+            cancelToken: cancelToken
         })
         const response = resultAxios.data;
         return response;

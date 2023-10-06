@@ -17,7 +17,7 @@
     codigoSri: string;
     customerId: number;
   };
-  let isFindedCustomer = false; //Para validar busqueda de datos del cliente al SRI
+  let isFindedCustomer = false; //Para validar busqueda de datos del cliente a SRI
   let showCustomerFounded = false;
   let customersFounded: Array<Customer> = [];
   let cancelToken;
@@ -73,7 +73,7 @@
     //showProductsFound = false;
   };
 
-  const selectedProduct = (data: Customer) => {
+  const selectedCustomer = (data: Customer) => {
     dataSearch.textSearch = data.nombreFiscal;
     resultCustomerSelected(data.idCliente);
     showCustomerFounded = false;
@@ -200,7 +200,7 @@
         <a
           href={null}
           class="list-group-item"
-          on:click={() => selectedProduct(item)}
+          on:click={() => selectedCustomer(item)}
         >
           <small>{item.numeroIdentificacion}</small><br />
           {item.nombreComercial}
