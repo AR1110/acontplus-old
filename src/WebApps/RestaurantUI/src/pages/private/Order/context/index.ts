@@ -1,2 +1,2 @@
-export * from './actions';
+export * from './order';
 export * from './splitOrder';

@@ -2,7 +2,7 @@
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import { useSaleStore } from '@/stores';
-import { Box, Button, DialogActions, DialogContent, Grid, Paper, Tab, Tabs, styled } from '@mui/material';
+import { Box, Button, DialogActions, DialogContent, FormControl, Grid, InputLabel, MenuItem, Paper, Select, Tab, Tabs, styled } from '@mui/material';
 import { TableReadDto } from '@/core/models';
 import { SyntheticEvent, useEffect, useState } from 'react';
 import TableBarIcon from '@mui/icons-material/TableBar';
@@ -64,12 +64,12 @@ const TableDialog = (props: SimpleDialogProps) => {
             const tables = tempTables.filter(room => room.floorId === tempFloors[0]?.id)
             setTables(tables)
         }
-        if(!(order.tableId > 0)){
+        if (!(order.tableId > 0)) {
             setSelectedButton(null)
-        } 
+        }
     }, [open]);
 
-    
+
 
     const handleButtonClick = (table: TableReadDto, index: any) => {
 
@@ -82,6 +82,7 @@ const TableDialog = (props: SimpleDialogProps) => {
             }
         })
         setSelectedButton(index);
+        handleClose()
     };
 
     return (
@@ -103,6 +104,18 @@ const TableDialog = (props: SimpleDialogProps) => {
                 <CloseIcon />
             </IconButton> */}
             <DialogContent dividers>
+                {/* <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">Age</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select" 
+                        label="Piso" 
+                    >
+                        <MenuItem value={10}>Ten</MenuItem>
+                        <MenuItem value={20}>Twenty</MenuItem>
+                        <MenuItem value={30}>Thirty</MenuItem>
+                    </Select>
+                </FormControl> */}
                 <Box
                     sx={{ flexGrow: 1, display: 'flex', maxHeight: 400 }}
                 >
