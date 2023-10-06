@@ -148,15 +148,15 @@ namespace Mechanical.Infrastructure.Data.Migrations
                     b.Property<bool?>("Enabled")
                         .HasColumnType("bit");
 
-                    b.Property<int>("InspectionId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Obs")
                         .HasMaxLength(300)
                         .IsUnicode(false)
                         .HasColumnType("varchar(300)");
 
                     b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SupportId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Total")
@@ -170,7 +170,7 @@ namespace Mechanical.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("InspectionId");
+                    b.HasIndex("SupportId");
 
                     b.ToTable("Maintenance", "Mechanical");
                 });
@@ -188,6 +188,12 @@ namespace Mechanical.Infrastructure.Data.Migrations
 
                     b.Property<int>("BodegaId")
                         .HasColumnType("int");
+
+                    b.Property<string>("CodePercentage")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(10)");
 
                     b.Property<decimal>("Cost")
                         .HasColumnType("numeric(18,5), not null");
@@ -219,6 +225,9 @@ namespace Mechanical.Infrastructure.Data.Migrations
                         .HasMaxLength(250)
                         .IsUnicode(false)
                         .HasColumnType("varchar(250)");
+
+                    b.Property<decimal>("Percentage")
+                        .HasColumnType("numeric(18,5), not null");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric(18,5), not null");
@@ -593,13 +602,13 @@ namespace Mechanical.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Mechanical.Core.Entities.Maintenance", b =>
                 {
-                    b.HasOne("Mechanical.Core.Entities.Inspection", "Inspection")
+                    b.HasOne("Mechanical.Core.Entities.Support", "Support")
                         .WithMany()
-                        .HasForeignKey("InspectionId")
+                        .HasForeignKey("SupportId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Inspection");
+                    b.Navigation("Support");
                 });
 
             modelBuilder.Entity("Mechanical.Core.Entities.MaintenanceDetail", b =>
