@@ -17,7 +17,7 @@ namespace DataAccess.Almacen
         public ArticuloDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _response = new GenericResponse();
         }
         public async Task<GenericResponse> SearchFilterAsync(int idRol, string busqueda, bool condicion)

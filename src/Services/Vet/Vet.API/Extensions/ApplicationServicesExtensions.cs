@@ -13,7 +13,7 @@ namespace Vet.API.Extensions
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContextPool<VetContext>(options =>
-            options.UseSqlServer(Encryption.DecryptString(configuration.GetSection("KeyEncryption").Value, configuration.GetConnectionString("DefaultConnection"))));
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
             //services.AddTransient(provider =>
             //{
             //    var optionsBuilder = new DbContextOptionsBuilder<RestaurantContext>();

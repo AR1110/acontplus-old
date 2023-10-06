@@ -14,7 +14,7 @@ namespace DataAccess
         public DbAccess(IConfiguration config)
         {
             _config = config;
-            _connection = new SqlConnection(Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection")));
+            _connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
         }
         public async Task QueryExecute(string query)
         {

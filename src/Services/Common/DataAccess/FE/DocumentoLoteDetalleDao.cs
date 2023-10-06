@@ -12,7 +12,7 @@ namespace DataAccess.FE
         public DocumentoLoteDetalleDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
         }
         private GenericResponse _response = new GenericResponse();
         public async Task<GenericResponse> GetAsync(int idRol, int idDocumentoLote)

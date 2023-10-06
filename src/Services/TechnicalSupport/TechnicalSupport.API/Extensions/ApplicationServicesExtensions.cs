@@ -11,7 +11,7 @@ namespace TechnicalSupport.API.Extensions
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContextPool<TechnicalSupportContext>(options =>
-            options.UseSqlServer(Encryption.DecryptString(configuration.GetSection("KeyEncryption").Value, configuration.GetConnectionString("DefaultConnection"))));
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<IDeviceService, DeviceService>();
             return services;

@@ -6,7 +6,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<RazorCompileOnPublish>false</RazorCompileOnPublish>
 		<SatelliteResourceLanguages>en-Us;es-Es</SatelliteResourceLanguages>
-    <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
+   
   </PropertyGroup>
 
 	<!-- <Target Name="Rollup" BeforeTargets="Build">
