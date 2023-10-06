@@ -3,11 +3,16 @@ import { hideLoader } from '$lib/utils/loading-spinner';
 import { categoryService } from "../services/category.service";
 import { showLoader } from "$utils/loading-spinner";
 import tS from "$utils/toast";
-import { productService } from "../services/product.service";
+import { deviceService } from "../services/device.service";
+import { estabAsignService } from "$services/restaurant/estab-asign-service";
 
 //Start Tech Spec 
 type Data = {
+    establecimientoId: number
+    puntoEmisionId: number
     customerCompanyId: number
+    deviceId: number
+    createdAt: string
 }
 
 type State = {
@@ -15,14 +20,14 @@ type State = {
 }
 //End Tech Spec 
 
-//Start Product 
+//Start Device 
 type Category = {
     code: string
     name: string
     id: number
 }
 
-type Product = {
+type Device = {
     id: number
     categoryId: number
     name: string
@@ -32,41 +37,68 @@ type Product = {
     year: number
     warranty: number
     color: string
-    specs: object
+    specs: string
 }
-//End product 
+//End Device  
 
-
-
-
-type ProductState = {
+type DeviceState = {
     categories: Array<Category>,
-    dataProduct: Product
+    dataDevice: Device
 }
- 
-const initialState: State = {
-    data: {
-        customerCompanyId: 0
-    },
+const data: Data = {
+    customerCompanyId: 0,
+    deviceId: 0,
+    establecimientoId: 0,
+    puntoEmisionId: 0,
+    createdAt: new Date().toISOString().slice(0, 10),
 }
 
-const initialProductState: ProductState = {
+const initialState: State = {
+    data: structuredClone(data)
+}
+
+const dataDevice = {
+    id: 0,
+    categoryId: 0,
+    name: '',
+    serie: '',
+    marca: '',
+    model: '',
+    year: 0,
+    warranty: 0,
+    color: '',
+    specs: ""
+}
+const initialDeviceState: DeviceState = {
     categories: [],
-    dataProduct: {
-        id: 0,
-        categoryId: 0,
-        name: '',
-        serie: '',
-        marca: '',
-        model: '',
-        year: 0,
-        warranty: 0,
-        color: '',
-        specs: {}
+    dataDevice: structuredClone(dataDevice)
+}
+
+
+export const techSpecStore = writable<State & DeviceState>({ ...initialState, ...initialDeviceState });
+
+/**
+ * se ejecuta al cargar component TechSpecDialog
+ */
+export const initiload = async () => {
+    try {
+        showLoader();
+        categoryService.get().then(response=>{
+            techSpecStore.update(state => {
+                state.categories = response;
+                return state;
+            })
+        })
+
+        estabAsignService.get(JSON.stringify({})).then(response=>{
+            console.log(response)
+        })
+
+        hideLoader();
+    } catch (error) {
+        console.log(error)
     }
 }
-
-export const techSpecStore = writable<State & ProductState>({ ...initialState, ...initialProductState });
 
 export const setCustomerCompanyId = (id) => {
     techSpecStore.update(state => {
@@ -75,25 +107,12 @@ export const setCustomerCompanyId = (id) => {
     })
 }
 
-export const initiload = async () => {
-    try {
-        showLoader();
-        const categories = await categoryService.get()
-        techSpecStore.update(state => {
-            state.categories = categories;
-            return state;
-        })
-        hideLoader();
-    } catch (error) {
-        console.log(error)
-    }
-}
 
-export const saveProduct = ()=>{
+export const saveDevice = () => {
     try {
-        const {dataProduct} = get(techSpecStore)
+        const { data, dataDevice } = get(techSpecStore)
 
-        if((dataProduct.categoryId>0)){
+        if (!(dataDevice.categoryId > 0)) {
             tS({
                 type: 'warning',
                 message: 'Seleccione la Categoría'
@@ -101,7 +120,7 @@ export const saveProduct = ()=>{
             return
         }
 
-        if(!dataProduct.name || dataProduct.name===""){
+        if (!dataDevice.name || dataDevice.name === "") {
             tS({
                 type: 'warning',
                 message: 'Ingrese el nombre del Producto'
@@ -109,17 +128,68 @@ export const saveProduct = ()=>{
             return
         }
 
-        if(!dataProduct.serie || dataProduct.serie===""){
+        if (!dataDevice.serie || dataDevice.serie === "") {
             tS({
                 type: 'warning',
                 message: 'Ingrese el IMEI/SERIE'
             })
             return
         }
-
-         
-
+        if (!(data.deviceId > 0)) {
+            showLoader();
+            deviceService.post(dataDevice).then(response => {
+                if (response) {
+                    tS({
+                        type: "success",
+                        message: response.message
+                    })
+                    techSpecStore.update(state => {
+                        state.data.deviceId = response.id;
+                        state.dataDevice.id = response.id;
+                        return state;
+                    })
+                } else {
+                    tS({
+                        type: 'warning',
+                        message: response?.data
+                    })
+                }
+            }).finally(() => hideLoader())
+        }
+        if (data.deviceId > 0) {
+            showLoader();
+            deviceService.put(data.deviceId, dataDevice).then(response => {
+                console.log(response)
+                if (response.status === 200) {
+                    tS({
+                        type: "success",
+                        message: response.data
+                    })
+                } else {
+                    tS({
+                        type: "success",
+                        message: response.data
+                    })
+                }
+            }).finally(() => hideLoader())
+        }
     } catch (error) {
         console.log(error)
     }
+}
+
+export const resetFormDevice = () => {
+    techSpecStore.update(state => {
+        state.dataDevice = structuredClone(dataDevice);
+        state.data.deviceId = 0;
+        return state;
+    })
+}
+
+export const resetFormMain = () => {
+    techSpecStore.update(state => {
+        state.data = structuredClone(data);
+        state.dataDevice = structuredClone(dataDevice)
+        return state;
+    })
 }

@@ -1,102 +1,17 @@
-import { RefreshIcon } from "@/core/components/IconsMaterial";
-import { PrivateRoutes } from "@/core/models";
-import { AppBar, Button, Grid, IconButton, Paper, Toolbar, Tooltip } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+
+import { Paper } from "@mui/material";
 import OrderTable from "./OrderTable";
-import { useEffect } from "react";
-import { useOrderStore } from "@/stores";
-import DateRangeFilter from "./Components/DateRangeFilter";
-import { CustomerSearchFilter } from "./Components";
-import dayjs from 'dayjs';
+import { OrderProvider } from "./context";
+import OrderFilter from "./Components/OrderFilter";
 
 
 export default function Order() {
-    const navigate = useNavigate();
-    // const setOrders = useOrderStore(state => state.setOrders); 
-    const getOrders = useOrderStore(state => state.getOrders);
-    const orderFilter = useOrderStore(state => state.orderFilter);
-    const setOrderFilter = useOrderStore(state => state.setOrderFilter);
-
-    const handleNewOrder = () => {
-        navigate(`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.SALE}`, { replace: true })
-    } 
-
-    useEffect(() => {
-        getOrders();
-    }, [])
-
-    const onchangeDateStart = (date: any) => {
-        setOrderFilter({
-            ...orderFilter,
-            startDate: date.format()
-        })
-        getOrders()
-    }
-
-    const onchangeDateEnd = (date: any) => {
-        setOrderFilter({
-            ...orderFilter,
-            endDate: date.format()
-        })
-        getOrders()
-    }
-
     return (
-        //-->OrderProvider 1 
-        <Paper sx={{ maxWidth: "auto", margin: 'auto', overflow: 'hidden' }}>
-            <AppBar
-                position="static"
-                color="default"
-                elevation={0}
-            // sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
-            >
-                <Toolbar sx={{ mt: 1 }}>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12} sm={12} md={8} lg={8} xl={8}>
-                            <Grid container spacing={3}>
-                                <Grid item xs={12} md={4}>
-                                    <DateRangeFilter
-                                        label="Fecha Inicio"
-                                        value={dayjs(orderFilter.startDate)}
-                                        onChange={onchangeDateStart} />
-                                </Grid>
-                                <Grid item xs={12} md={4}>
-                                    <DateRangeFilter
-                                        label="Fecha Fin"
-                                        value={dayjs(orderFilter.endDate)}
-                                        onChange={onchangeDateEnd} />
-                                </Grid>
-                                <Grid item xs={12} md={4}>
-                                    <CustomerSearchFilter />
-                                </Grid>
-                            </Grid>
-
-                        </Grid>
-                        <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-                            <Grid
-                                container
-                                direction="row"
-                                justifyContent="flex-end"
-                                alignItems="center"
-                            >
-
-                                <Button variant="contained" sx={{ mr: 1 }} onClick={handleNewOrder}>
-                                    Nuevo
-                                </Button>
-                                <Tooltip title="Reload">
-                                    <IconButton onClick={getOrders}>
-                                        <RefreshIcon color="inherit" sx={{ display: 'block' }} />
-                                    </IconButton>
-                                </Tooltip>
-
-                            </Grid>
-                        </Grid>
-                    </Grid> 
-                </Toolbar>
-            </AppBar>
-
-            <OrderTable /> 
-        </Paper>
-
+        <OrderProvider>
+            <Paper sx={{ maxWidth: "auto", margin: 'auto', overflow: 'hidden' }}>
+                <OrderFilter />
+                <OrderTable />
+            </Paper>
+        </OrderProvider>
     )
 }
