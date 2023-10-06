@@ -3,7 +3,7 @@ go
 
 CREATE OR ALTER VIEW Mechanical.v_Maintenance WITH SCHEMABINDING AS (
 	SELECT Id
-          ,InspectionId
+          ,SupportId
           ,[Date]
           ,Obs
           ,CompanyId
