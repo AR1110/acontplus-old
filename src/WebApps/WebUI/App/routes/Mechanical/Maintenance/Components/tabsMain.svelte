@@ -11,17 +11,17 @@
       component: ListSupport,
     },
     {
-      label: "Inspección",
-      icon: "fa fa-file-text",
-      value: 2,
-      component: ListInspection,
-    },
-    {
       label: "Mantenimiento",
       icon: "fa fa-wrench",
-      value: 3,
+      value: 2,
       component: ListMaintenance,
     },
+    {
+      label: "Inspección",
+      icon: "fa fa-file-text",
+      value: 3,
+      component: ListInspection,
+    }
   ];
 </script>
 

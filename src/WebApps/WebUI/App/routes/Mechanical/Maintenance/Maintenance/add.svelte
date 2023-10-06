@@ -42,7 +42,8 @@
         success(selectList.selectedOptions[0].value);
 
         cell.getElement().dataset.bodega = selectList.selectedOptions[0].text;
-        cell.getElement().dataset.idBodega = selectList.selectedOptions[0].value;
+        cell.getElement().dataset.idBodega =
+          selectList.selectedOptions[0].value;
       } else {
         cancel();
       }
@@ -128,8 +129,10 @@
       if (selectList.selectedOptions[0].value != rows) {
         success(selectList.selectedOptions[0].value);
 
-        cell.getElement().dataset.descripcion = selectList.selectedOptions[0].text;
-        cell.getElement().dataset.idMedida = selectList.selectedOptions[0].value;
+        cell.getElement().dataset.descripcion =
+          selectList.selectedOptions[0].text;
+        cell.getElement().dataset.idMedida =
+          selectList.selectedOptions[0].value;
       } else {
         cancel();
       }
@@ -306,9 +309,10 @@
     if (maintenanceDetails != undefined || maintenanceDetails != null) {
       if (maintenanceDetails.length != 0) {
         maintenanceDetails.forEach((item) => {
-
           item.medidas = medidas.filter((x) => x.idArticulo == item.idArticulo);
-          item.tarifas = JSON.parse(medidas.find((x) => x.idMedida == item.idMedida).tarifas);
+          item.tarifas = JSON.parse(
+            medidas.find((x) => x.idMedida == item.idMedida).tarifas
+          );
           item.bodegas = bodegas;
           item.priceIva = item.price;
           item.total = item.priceIva * item.quantity;
@@ -489,7 +493,7 @@
         return;
       }
 
-      if (paramValidation.includes(maintenance.inspectionId)) {
+      if (paramValidation.includes(maintenance.supportId)) {
         toast({
           type: "warning",
           message: "Seleccione a que inspección se hará el mantenimiento",
@@ -526,7 +530,8 @@
       isOpen: false,
       maintenance: {
         id: 0,
-        inspectionId: 0,
+        //inspectionId: 0,
+        supportId: 0,
         date: new Date().toISOString().slice(0, 10),
         obs: "",
       },
