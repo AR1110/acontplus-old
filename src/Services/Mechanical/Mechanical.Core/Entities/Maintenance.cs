@@ -7,8 +7,8 @@ namespace Mechanical.Core.Entities
     [Table("Maintenance", Schema = "Mechanical")]
     public class Maintenance : BaseEntity
     {
-        public Inspection Inspection { get; set; }
-        public int InspectionId { get; set; }
+        public Support Support { get; set; }
+        public int SupportId { get; set; }
         public DateTime Date { get; set; }
         public DateTime? DateEnd { get; set; }
 

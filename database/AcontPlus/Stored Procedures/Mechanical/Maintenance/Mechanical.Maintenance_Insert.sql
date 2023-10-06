@@ -24,7 +24,7 @@ BEGIN
     
 
     DECLARE @tbMaintenance AS TABLE (
-        InspectionId INT NOT NULL
+        SupportId INT NOT NULL
        ,[Date] DATETIME2 NOT NULL
        ,Obs VARCHAR(300) NOT NULL
        ,Total NUMERIC(18,5) NOT NULL
@@ -57,11 +57,11 @@ BEGIN
 
         SELECT @jsonMaintenance = maintenance ,@jsonMaintenanceDetails = maintenanceDetails FROM OPENJSON(@json) WITH (maintenance NVARCHAR(MAX) '$.maintenance' as json ,maintenanceDetails NVARCHAR(MAX) '$.maintenanceDetails' as json)
 
-        INSERT INTO @tbMaintenance (InspectionId,[Date],Obs,Total)
-                             SELECT InspectionId,[Date],Obs,Total
+        INSERT INTO @tbMaintenance (SupportId,[Date],Obs,Total)
+                             SELECT SupportId,[Date],Obs,Total
                              FROM OPENJSON(@jsonMaintenance) WITH 
                              (
-                                InspectionId          INT '$.inspectionId' 
+                                SupportId          INT '$.supportId' 
                                ,[Date]          DATETIME2 '$.date'
                                ,Obs          VARCHAR(300) '$.obs'
                                ,Total       NUMERIC(18,5) '$.total'
@@ -110,8 +110,8 @@ BEGIN
         BEGIN TRAN 
             
            INSERT INTO [Mechanical].[Maintenance]
-                 (InspectionId,[Date],Obs,Total, CompanyId, UserId,[Status],CreatedAt,[Enabled])
-           SELECT InspectionId,[Date],Obs,Total,@CompanyId,@UserId,[Status],CreatedAt,[Enabled] FROM @tbMaintenance
+                 (SupportId,[Date],Obs,Total, CompanyId, UserId,[Status],CreatedAt,[Enabled])
+           SELECT SupportId,[Date],Obs,Total,@CompanyId,@UserId,[Status],CreatedAt,[Enabled] FROM @tbMaintenance
 
            SELECT @Id = SCOPE_IDENTITY()
 
