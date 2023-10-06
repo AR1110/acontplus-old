@@ -1,8 +1,7 @@
 import { ItemRead, ItemPostDto, Order, SummaryPostDto } from "../models";
 import { v4 as uuidv4 } from 'uuid';
 
-function  itemToApi(items: ItemRead[]):  Array<ItemPostDto> { 
-    console.log(items)
+function  itemToApi(items: ItemRead[]):  Array<ItemPostDto> {  
     const results = items.map(item => { 
         return {
             orderItemId: item.id,

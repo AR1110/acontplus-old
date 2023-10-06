@@ -20,10 +20,9 @@ import { SnackbarUtility } from '@/core/utilities';
 import { DOC_TYPE } from '@/core/constants';
 import CustomerSearch from '@/core/components/Customer/CustomerSearch';
 import Swal from 'sweetalert2';
-import { itemToApi, summaryToApi } from '@/core/adapters';
-import { useCheckoutStore, useLoaderStore } from '@/stores';
-import { SharedService, orderService } from '@/core/services';
-import { QueryParams } from '@/core/models';
+import { itemToApi, summaryToApi } from '@/core/adapters'; 
+import { orderService } from '@/core/services';
+import { showLoader, hideLoader } from "@/spinner";
 
 const StyledAccordion = styled((props: AccordionProps) => (
     <Accordion disableGutters elevation={0} square {...props} />
@@ -56,11 +55,8 @@ const StyledAccordionDetails = styled(AccordionDetails)(({ theme }) => ({
 
 const RightOrderItem = () => {
     const { leftOrder, rightOrder, setRightOrderData, rightOrderItems } = useSplitOrderContext();
-    const { fetchOrderData, setPaymentData, resetData} = useSplitOrderContext();
-    const { showLoader} = useLoaderStore();
-    
-    //store checkout
-    const setQueryParams = useCheckoutStore(state => state.setQueryParams)
+    const { setPaymentData, resetData} = useSplitOrderContext(); 
+     
 
     const typeActions: { [key: string]: string } = {
         [DOC_TYPE.FV]: `
@@ -120,21 +116,21 @@ const RightOrderItem = () => {
                 itemsToPay: orderItemsResult,
             }
 
-            showLoader(true);
+            showLoader();
             orderService.put(leftOrder.orderId, data).then(response => { 
+                // showLoader(false);
                 if (response.code === '0') {
                     SnackbarUtility.warning(response.message)
                 }
                 if (response.code === "1") {
                     SnackbarUtility.success(response.message); 
                     console.log(response)
-                    const queryParams: QueryParams = JSON.parse(response.payload)[0];
+                    const queryParams = JSON.parse(response.payload)[0];
                     console.log(queryParams)                    
                     setPaymentData({
                         open:true,
                         payload: queryParams
-                    })
-                    setQueryParams(queryParams);
+                    }) 
                     resetData();
                     // if (queryParams.payAutomatic) {
                     //     setQueryParams(queryParams);
@@ -149,7 +145,7 @@ const RightOrderItem = () => {
                     //     resetForm();
                     // }
                 }
-            }).finally(() => showLoader(false))
+            }).catch(() => hideLoader())
 
 
         } catch (error: any) {

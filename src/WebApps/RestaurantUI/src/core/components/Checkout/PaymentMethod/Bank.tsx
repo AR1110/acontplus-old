@@ -1,12 +1,13 @@
 
 import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import { useCheckoutStore } from '@/stores';
+import Autocomplete from '@mui/material/Autocomplete'; 
+import { useCheckoutContext } from '../context';
 
 export default function Bank() {
-    const banks = useCheckoutStore(state => state.checkout.dataForm.banks);
-    const payments = useCheckoutStore(state => state.checkout.payments);
-    const setPayment = useCheckoutStore(state => state.setPayment);
+    const {checkout, setPayment} = useCheckoutContext(); 
+    const {dataForm} = checkout
+
+    const banks = dataForm.banks; 
     return (
         <>
             {
@@ -17,8 +18,7 @@ export default function Bank() {
                         id="banco" 
                         onChange={(_, newValue) => { 
                             const bankId = newValue? newValue.bankId : 0                           
-                            setPayment({
-                                ...payments,
+                            setPayment({ 
                                 idBanco: bankId
 
                             })

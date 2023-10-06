@@ -19,12 +19,13 @@ import {
     EditIcon,
 } from "@/core/components/IconsMaterial";
 import { orderService } from "@/core/services";
-import { useLoaderStore, useSaleStore } from "@/stores";
+import { useSaleStore } from "@/stores";
 import { PrivateRoutes } from "@/core/models";
 import { orderReadForUpdateAdapter } from "@/core/adapters";
 import FullScreenDialog from "@/core/components/FullScreenDialog";
 import { SplitOrderProvider, useOrderContext } from "./context";
 import OrderDocument from "./OrderDocument/OrderDocument";
+import { showLoader, hideLoader } from "@/spinner";
 const SplitOrder = lazy(() => import("./SplitOrder/SplitOrder"));
 
 export default function OrderTable() {
@@ -33,8 +34,7 @@ export default function OrderTable() {
 
     const [page, setPage] = useState(0);
 
-    const [rowsPerPage, setRowsPerPage] = useState(25);
-    const showLoader = useLoaderStore((state) => state.showLoader);
+    const [rowsPerPage, setRowsPerPage] = useState(25); 
     const setDataEdit = useSaleStore((state) => state.setDataEdit);
     const [openDialodDivide, setOpenDialodDivide] = useState(false);
 
@@ -56,7 +56,7 @@ export default function OrderTable() {
 
 
     const handleEdit = (orderId: number) => {
-        showLoader(true);
+        showLoader();
         orderService.get({
             id: orderId,
             tipo: 2,
@@ -66,7 +66,7 @@ export default function OrderTable() {
             navigate(`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.SALE}`, {
                 replace: true,
             });
-        }).finally(() => showLoader(false));
+        }).finally(() => hideLoader());
     };
 
 

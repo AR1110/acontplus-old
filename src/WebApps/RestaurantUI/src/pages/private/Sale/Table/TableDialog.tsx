@@ -6,6 +6,7 @@ import { Box, Button, DialogActions, DialogContent, FormControl, Grid, InputLabe
 import { TableReadDto } from '@/core/models';
 import { SyntheticEvent, useEffect, useState } from 'react';
 import TableBarIcon from '@mui/icons-material/TableBar';
+import { SaleService as saleSvc, getEstabs } from '@/core/services';
 
 export interface SimpleDialogProps {
     open: boolean;
@@ -32,6 +33,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const TableDialog = (props: SimpleDialogProps) => {
+    const establecimientos = getEstabs();
     const dataForm = useSaleStore(state => state.dataForm);
     const setOrder = useSaleStore(state => state.setSummary);
     const order = useSaleStore(state => state.order);
@@ -67,6 +69,16 @@ const TableDialog = (props: SimpleDialogProps) => {
         if (!(order.tableId > 0)) {
             setSelectedButton(null)
         }
+
+        if(!open) return
+        //Get Tables
+        const codEstab = establecimientos.find(eee=>eee.idEstablecimiento===order.establecimientoId)?.codEstab;
+        saleSvc.getDataForForm(JSON.stringify({
+            codEstab
+        })).then(response=>{
+            console.log(response)
+        })
+
     }, [open]);
 
 

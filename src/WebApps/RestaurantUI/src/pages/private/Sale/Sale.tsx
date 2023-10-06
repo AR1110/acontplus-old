@@ -5,19 +5,17 @@ import { useMobileDetect } from "@/hooks";
 import { SaleService, getEstabs } from "@/core/services";
 import CustomBottomNavigation from "./components/CustomBottomNavigation";
 import { useSaleStore, useAuthStore } from "@/stores";
-import { useEffect, useState } from "react"; 
+import { lazy, useEffect, useState } from "react"; 
 import FullScreenDialog from "@/core/components/FullScreenDialog";
 import Category from "./Category/Category";
 import Cart from "./Cart/Cart";
 import CartMobile from "./Mobile/CartMobile";
 import InputSearchItem from "./InputSearchItem/InputSearchItem";
 import TableDialog from "./Table/TableDialog";
-import Checkout from "@/core/components/Checkout/Checkout";
 import { ArrowBackIcon } from "@/core/components/IconsMaterial"; 
 import ItemContent from "./Item/ItemContent";
-import useFetchItems from "./hooks/useFetchItems.hook";
-
-
+import useFetchItems from "./hooks/useFetchItems.hook"; 
+const Checkout = lazy(() => import("@/core/components/Checkout/Checkout"));
 
 export default function Sale() {
     const { isMobile } = useMobileDetect();
@@ -78,6 +76,7 @@ export default function Sale() {
     }, [])
 
     useEffect(() => {
+        
         setCollectionItems([])
         fetchItem(itemSearch).then(response => {
             setCollectionItems(response)
@@ -111,7 +110,7 @@ export default function Sale() {
                 </Grid>
                 <Grid item xs={12} md={5}>
                     {
-                        isMobile ? <></> : <Cart />
+                        isMobile ? "" : <Cart />
                     }
 
                 </Grid>
@@ -119,7 +118,7 @@ export default function Sale() {
 
             {/* start dialog payment */}
             {
-                payment.isOpen && <Checkout open={payment.isOpen} closeDialog={payment.closeDialogCustom} />
+                payment.isOpen && <Checkout open={payment.isOpen} closeDialog={payment.closeDialogCustom} params={payment.params} />
             }
             {/* end dialog payment */}
 

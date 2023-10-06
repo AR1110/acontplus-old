@@ -12,12 +12,27 @@ import {
 import { RoundNumber, SnackbarUtility, addSound, clearSound } from "@/core/utilities";
 import { create } from "zustand";
 import { produce } from 'immer';
-import { productService } from "@/core/services";
+import { SharedService, orderService, productService } from "@/core/services";
 import Swal from "sweetalert2";
-import { useAuthStore, useLoaderStore } from ".";
+import { DOC_TYPE } from "@/core/constants";
+import { itemToApi, summaryToApi } from "@/core/adapters";
+import { showLoader, hideLoader } from "@/spinner";
+
+
 const imgUrlPromocion = new URL('/assets/promocion.jpg', import.meta.url).href
 const imgUrlCombo = new URL(`/assets/combo.jpg`, import.meta.url).href
- 
+
+const typeActions: { [key: string]: string } = {
+    [DOC_TYPE.FV]: `
+    Esta seguro de guardar el pedido como Factura? </br>
+    <small>Ya no será posible modificar la venta para hacer cambios, tendrás que cancelar esta y crear una nueva.!</small>`,
+    [DOC_TYPE.NE]: `
+    Esta seguro de guardar el pedido como Nota de Entrega? </br>
+    <small>Ya no será posible modificar la venta para hacer cambios, tendrás que cancelar esta y crear una nueva.!</small>`,
+    [DOC_TYPE.OR]: `Esta seguro de guardar el pedido? </br>
+    <small>El stock de los productos <strong>no se descontará</strong> hasta que se transforme a "Factura" o "Nota de Entrega".`
+
+}
 
 type State = {
     itemSearch: ItemSearch
@@ -30,7 +45,8 @@ type State = {
     //Pagos
     payment: {
         isOpen: boolean
-        openDialogCustom(): void
+        params: any
+        openDialogCustom(data: any): void
         closeDialogCustom(): void
     },
     //Navigation 
@@ -57,6 +73,7 @@ type Actions = {
     onChangePVP(id: number, index: number): void
     caculateTotals(): void
     resetForm(): void
+    save(codDoc: string): void
 }
 export const useSaleStore = create<State & Actions>((set, get) => ({
     itemSearch: itemSearchInitialState,
@@ -232,13 +249,12 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
     })),
     async setItemChangeQty(index, qty) {
         const { order, items, dataForm, setTotalItems, caculateTotals, getItemQty } = get();
-        const showLoader = useLoaderStore.getState().showLoader;
         const decimal = dataForm.decimal;
 
         const dataOrderItem = items.find((_, indexToCompare) => indexToCompare === index);
-     
+
         if (dataOrderItem?.carryInventory) {
-            showLoader(true);
+            showLoader();
             productService.checkNotificationStock({
                 idArticulo: dataOrderItem.productId,
                 cantidad: getItemQty(dataOrderItem.productId),
@@ -263,7 +279,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                         setQty();
                     }
                 }
-            }).finally(() => showLoader(false))
+            }).finally(() => hideLoader())
         }
         else {
             setQty();
@@ -339,11 +355,11 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
     },
     caculateTotals() {
         //Invocamos otro store de autencation en donde se recupera los establecimientos al inicar sesión 
-        const dataEstab = useAuthStore.getState().dataEstab;
-        
+        // const dataEstab = useAuthStore.getState().dataEstab;
+
         // Obtener los datos necesarios del estado (state)
         const { items, dataForm } = get();
-        const {decimal, tarifaImpuestoVigente} = dataForm; 
+        const { decimal, tarifaImpuestoVigente } = dataForm;
 
         // Inicializar variables para los totales
         let subTotalSinImpuestos = 0; // Subtotal sin impuestos
@@ -385,7 +401,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
 
         // Actualizar el estado (state) con los totales calculados y redondeados
         set(
-            produce((state: State) => { 
+            produce((state: State) => {
                 state.order.subTotalSinImpuestos = RoundNumber(
                     subTotalSinImpuestos,
                     decimal.nroTotalSubTotal
@@ -397,10 +413,12 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
     },
     payment: {
         isOpen: false,
-        openDialogCustom() {
+        params: {},
+        openDialogCustom(params) {
             set(
                 produce((state: State) => {
                     state.payment.isOpen = true
+                    state.payment.params = params;
                 })
             )
         },
@@ -429,5 +447,114 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
                 })
             )
         },
+    }, 
+    async save(codDoc: string) {
+        const { order, items, resetForm, payment } = get();
+        try {
+            if (!(order.tableId > 0)) {
+                Swal.fire({
+                    icon: 'warning',
+                    html: `Seleccione la Mesa`
+                })
+                return
+            }
+            if (items.length === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    html: `Agregue al menos un Item`
+                })
+                return
+            }
+            const { isConfirmed } = await Swal.fire({
+                title: `${order.orderId > 0 ? 'Actualizar' : 'Guardar'} Pedido`,
+                html: typeActions[codDoc],
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: `${order.orderId > 0 ? 'Actualizar' : 'Guardar'}`,
+                cancelButtonText: 'No, cancelar!'
+            })
+
+            if (!isConfirmed) return
+
+            const summaryResult = summaryToApi(order);
+            const itemsResult = itemToApi(items);
+            const taxesResult = items.flatMap(item => item.taxes);
+            const data = {
+                ...summaryResult,
+                updateOrder: (order.orderId > 0) && codDoc === DOC_TYPE.OR,
+                saveDoc: (codDoc === DOC_TYPE.FV) || (codDoc === DOC_TYPE.NE),
+                codDoc,
+                quickSale: (codDoc === DOC_TYPE.FV) || (codDoc === DOC_TYPE.NE),
+                items: itemsResult,
+                taxes: taxesResult,
+                payments: {}
+            }
+            if (order.orderId > 0) {
+                showLoader();
+                orderService.put(order.orderId, data).then(response => {
+                    hideLoader()
+                    if (response.code === '0') {
+                        SnackbarUtility.warning(response.message)
+                    }
+                    if (response.code === "1") {
+                        SnackbarUtility.success(response.message);
+                        // const queryParams: QueryParams = JSON.parse(response.payload)[0];
+                        resetForm();
+                    }
+                }).finally(() => hideLoader())
+            } else {
+                showLoader();
+                orderService.post(data).then(response => {
+                    hideLoader()
+                    if (response.code === '0') {
+                        Swal.fire({
+                            icon: 'warning',
+                            html: response.message
+                        })
+
+                    }
+                    if (response.code === "1") {
+                        Swal.fire({
+                            icon: 'success',
+                            html: response.message,
+                            timer: 1000
+                        })
+                        //SnackbarUtility.success(response.message);
+                        //Order
+                        if (codDoc === DOC_TYPE.OR) {
+                            const orderId = JSON.parse(response.payload);
+                            SharedService.getPrinter({
+                                id: orderId,
+                                documentoId: 0,
+                                tipo: 2
+                            })
+                            resetForm();
+                            return
+                        }
+                        const queryParams = JSON.parse(response.payload)[0];
+
+                        if (queryParams.payAutomatic) {
+                            payment.openDialogCustom(queryParams);
+                            return
+                        }
+
+
+                        if (queryParams.printerAutomatic) {
+                            SharedService.getPrinter({
+                                id: queryParams.orderId,
+                                documentoId: queryParams.idDocumento,
+                                tipo: 1
+                            })
+                        } else {
+                            resetForm();
+                        }
+                    }
+                }).catch(() => hideLoader())
+            }
+        } catch (error) {
+            console.log(error)
+        }
     }
 }))

@@ -46,7 +46,7 @@ const SplitOrder = ({ id, closeDialogDivide }: Props) => {
                 </Grid>
             </Grid>
             {
-                payment.open && <Checkout open={payment.open} closeDialog={closePayment} />
+                payment.open && <Checkout open={payment.open} closeDialog={closePayment} params={payment.payload} />
             }
         </>
     );

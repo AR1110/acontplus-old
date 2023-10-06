@@ -4,16 +4,13 @@ import { Suspense, lazy } from "react";
 import { RoutesWithNotFound, SnackbarUtilitiesConfigurator } from "@/core/utilities/index.ts";
 import { PrivateRoutes, PublicRoutes } from "./core/models";
 import { AuthGuard } from "./core/guards";
-import { SnackbarProvider } from "notistack";
-import BackdropLoader from "./core/components/BackdropLoader";
-import { useLoaderStore } from "./stores";
+import { SnackbarProvider } from "notistack"; 
 import { useDarkMode } from "./context/DarkModeContext";
 
 const Login = lazy(() => import("@/pages/login/Login"));
 const Private = lazy(() => import("@/pages/private/Private"));
 
-export default function App() {
-  const { loading } = useLoaderStore();
+export default function App() { 
   const { darkMode } = useDarkMode();
 
   const darkTheme = createTheme({
@@ -41,8 +38,7 @@ export default function App() {
                 ></Route>
               </Route>
             </RoutesWithNotFound>
-          </BrowserRouter>
-          <BackdropLoader open={loading} />
+          </BrowserRouter> 
         </SnackbarProvider>
       </Suspense>
     </ThemeProvider>

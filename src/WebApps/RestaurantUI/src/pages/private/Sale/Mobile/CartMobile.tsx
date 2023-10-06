@@ -31,83 +31,17 @@ const CartMobile = () => {
         <>
             <div >
                 <CustomerSearch />
-
-
-
                 {
                     orderItems.map((orderItem, index) => (
-
                         <CartItem item={orderItem} index={index} key={index} />
-
-
                     ))
                 }
             </div>
 
             <CartMobileAction />
-            {/* Content to stick to the bottom */}
-            {/* position: 'absolute', */}
-            {/* <Box
-                sx={{
-                    position: 'absolute',
-                    bottom: '0',
-                    left: '0',
-                    right: '0',
-                    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : 'white',
-                    padding: '10px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                }}
-            >
-                <TextField fullWidth size='small'
-                    id="observacion"
-                    label="Observación"
-                    value={order.obs}
-                    onChange={(e) => {
-                        setOrder({
-                            ...order,
-                            obs: e.target.value
-                        })
-                    }}
-                />
-                <Box
-                    sx={{
-                        mt: 2,
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                    }}
-                >
-
-                    <Box>
-                        <Typography variant="body2" color="text.primary">
-                            <b>Subtotal: </b>
-                        </Typography>
-                        <Typography variant="body2" color="text.primary">
-                            <b>IVA: </b>
-                        </Typography>
-                        <Typography variant="body2" color="text.primary">
-                            <b>Importe Total: </b>
-                        </Typography>
-                    </Box>
-                    <Box>
-                        <Typography variant="body2" color="text.primary">
-                            ${order.subTotalSinImpuestos}
-                        </Typography>
-                        <Typography variant="body2" color="text.primary">
-                            ${order.tax}
-                        </Typography>
-                        <Typography variant="body2" color="text.primary">
-                            ${order.total}
-                        </Typography>
-                    </Box>
-                </Box>
-            </Box> */}
             <Box
                 sx={{
-                    
+
                     bottom: '0',
                     left: '0',
                     right: '0',
@@ -163,7 +97,7 @@ const CartMobile = () => {
                         </Typography>
                     </Box>
                 </Box>
-            </Box> 
+            </Box>
         </>
     )
 }

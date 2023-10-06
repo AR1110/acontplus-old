@@ -15,5 +15,6 @@ SELECT  rt.Id
     ,rt.[UserId]
     ,rt.RoomId	
     ,roomDescription = rr.[Description]
+    ,rt.Assigned
 FROM Restaurant.[Table] rt
 INNER JOIN Restaurant.Room rr ON rr.Id = rt.RoomId

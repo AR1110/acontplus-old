@@ -12,14 +12,15 @@ import { ApiResponse } from "../models"
 import { Http, SnackbarUtility } from "../utilities"
 
 const URL = 'CuentaPorCobrar'
-export const AccountReceivableService = {
-    async get(data: object) {
+export const accountReceivableService = {
+    async get(data: object, cancelToken?: any) {
         const resultAxios = await Http({
             method: 'get',
             url: `${PATHS.ACCOUNTING}${URL}`,
             params: {
                 json: JSON.stringify(data)
-            }
+            },
+            cancelToken: cancelToken
         })
 
 
@@ -45,4 +46,15 @@ export const AccountReceivableService = {
         }
         return resultMapper;
     },
+
+    async post(data: any) {
+        const resultAxios = await Http({
+            method: 'post',
+            url: `${PATHS.ACCOUNTING}ComprobanteIngreso/Insert`,
+            data: {
+                data
+            }
+        })
+        return resultAxios.data;
+    }
 }

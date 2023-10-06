@@ -30,12 +30,11 @@ import ProductSearch from '@/core/components/Product/ProductSearch';
 import { v4 as uuidv4 } from 'uuid';
 import { DOC_TYPE, ITEM_TYPE_CODE } from '@/core/constants';
 import { orderService, productService } from '@/core/services';
-import { Measure, ProductPVPReadDto, QueryParams } from '@/core/models';
+import { Measure, ProductPVPReadDto } from '@/core/models';
 import { PricingCalculateUtility, SnackbarUtility } from '@/core/utilities';
 import Swal from 'sweetalert2';
-import { itemToApi, summaryToApi } from '@/core/adapters';
-import { useCheckoutStore } from '@/stores';
-
+import { itemToApi, summaryToApi } from '@/core/adapters'; 
+import {showLoader, hideLoader} from '@/spinner'
 const columns: GridColDef[] = [
     { field: 'index', headerName: 'N°', width: 70 },
     { field: 'code', headerName: 'Código', width: 120 },
@@ -143,10 +142,7 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
     });
     //Totals order items changes QTY
     const objTempTotal = calculateOrderItemTotal(changeOrderItems);
-    const [loader, setLoader] = useState(false);
-
-    //store checkout
-    const setQueryParams = useCheckoutStore(state => state.setQueryParams) 
+    const [loader, setLoader] = useState(false);  
 
     const onChangeProductSearch = (productId: number) => {
         productService.findForSale(productId).then(response => {
@@ -335,26 +331,26 @@ const DialogCustomOrderItem = ({ open, setOpen }: DialogCustomOrderItemProps) =>
             }
              
 
-            setLoader(true)
+            showLoader()
             orderService.put(leftOrder.orderId, data).then(response => {
+                hideLoader()
                 if (response.code === '0') {
                     SnackbarUtility.warning(response.message)
                 }
                 if (response.code === "1") {
                     SnackbarUtility.success(response.message);
-                    const queryParams: QueryParams = JSON.parse(response.payload)[0];
+                    const queryParams = JSON.parse(response.payload)[0];
 
                     resetData();
                     setPaymentData({
                         open: true,
                         payload: queryParams
-                    })
-                    setQueryParams(queryParams);
+                    }) 
                     setActionType("CUSTOM_DETAIL")
-                    setOpen();
-                  //  closeDialogDivide();
+                    setOpen(); 
                 }
-            }).finally(() => setLoader(false))
+            })
+            .catch(() => hideLoader())
         } catch (error) {
             console.log(error)
         }
