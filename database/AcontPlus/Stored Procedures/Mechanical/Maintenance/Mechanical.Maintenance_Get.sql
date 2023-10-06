@@ -50,7 +50,7 @@ BEGIN
             SET @tableNames = 'maintenance,maintenanceDetail,medidas'
 
             SELECT Id
-                  ,InspectionId
+                  ,SupportId
                   ,FORMAT([Date], 'yyyy-MM-dd') as [Date]
                   ,Obs
 	        FROM Mechanical.v_Maintenance WITH (NOLOCK)
