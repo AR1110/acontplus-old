@@ -4,6 +4,8 @@
   import { InspectionStore } from "$routes/Mechanical/Store/inspection.store";
   import { hideLoader, showLoader } from "$lib/utils/loading-spinner";
   import Add from "../Inspection/add.svelte";
+  import { MaintenanceStore } from "$routes/Mechanical/Store/maintenance.store";
+  import AddMaintenance from "../Maintenance/add.svelte";
 
   let trays = [];
   let json = { pageIndex: 1, pageSize: 10, tipo: 1, chkUser: true };
@@ -46,15 +48,22 @@
               <td class="text-center">{item.tradeName}</td>
               <td class="text-center">{item.licensePlate}</td>
               <td class="text-center">{item.obs}</td>
-              <td class="text-center"
-                ><button
+              <td class="text-center">
+                <button
+                  title="Realizar Mantenimiento"
+                  on:click={() => MaintenanceStore.getOpenModal(0, item.id)}
+                  class="btn btn-outline-success btn-sm"
+                >
+                  <i class="fa fa-wrench" />
+                </button>
+                <button
                   title="Registrar Inspección"
                   class="btn btn-outline-info btn-sm"
                   on:click={() => InspectionStore.getOpenModal(0, item.id)}
                 >
                   <i class="fa fa-file-text" />
-                </button></td
-              >
+                </button>
+              </td>
             </tr>
           {/each}
         </tbody>
@@ -65,3 +74,4 @@
   </div>
 </div>
 <Add />
+<AddMaintenance />
