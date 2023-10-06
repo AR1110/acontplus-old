@@ -16,7 +16,8 @@ CREATE VIEW v_Bodega_Asign AS (
 	,ea.idUsuarioRol
 	,ea.predeterminado defaultEstab
 	,ea.estado estadoEstabAsign
-	,e.ruc
+	,e.idEstablecimiento
+    ,e.ruc
 	,e.nombreComercial
 	,e.estab
 	,e.estado estadoEstab

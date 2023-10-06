@@ -17,19 +17,29 @@ BEGIN
 	SET LANGUAGE SPANISH;
     
     DECLARE @UserId INT ,@jsonMaintenance VARCHAR(MAX) ,@jsonMaintenanceDetails VARCHAR(MAX)
-    DECLARE @Date DATETIME2 ,@Obs VARCHAR(300)
+    DECLARE @Date DATETIME2 ,@Obs VARCHAR(300) ,@Total NUMERIC(18,5)
     
 
     DECLARE @tbMaintenance AS TABLE (
         [Date] DATETIME2 NOT NULL
        ,Obs VARCHAR(300) NOT NULL
+       ,Total NUMERIC(18,5) NOT NULL
     )
 
     DECLARE @tbMaintenanceDetail AS TABLE(
         Id INT NOT NULL
        ,ArticuloId INT NOT NULL
+       ,TarifaId INT NOT NULL
+       ,BodegaId INT NOT NULL
+       ,MedidaId INT NOT NULL
        ,[Description] VARCHAR(300) NOT NULL
        ,Quantity NUMERIC(18,5) NOT NULL
+       ,Price NUMERIC(18,5) NOT NULL
+       ,Cost NUMERIC(18,5) NOT NULL
+       ,Total NUMERIC(18,5) NOT NULL
+       ,CodePercentage VARCHAR(10) NOT NULL
+       ,[Percentage] NUMERIC(18,5)
+       ,Inventory BIT NOT NULL
        ,[Status] INT DEFAULT 1 
        ,CreatedAt DATETIME2 DEFAULT GETDATE()
        ,[Enabled] BIT DEFAULT 1
@@ -41,29 +51,39 @@ BEGIN
         SELECT @jsonMaintenance = maintenance ,@jsonMaintenanceDetails = maintenanceDetails FROM OPENJSON(@json) WITH (maintenance NVARCHAR(MAX) '$.maintenance' as json ,maintenanceDetails NVARCHAR(MAX) '$.maintenanceDetails' as json)
 
       
-        INSERT INTO @tbMaintenance ([Date],Obs)
-                             SELECT [Date],Obs
+        INSERT INTO @tbMaintenance ([Date],Obs,Total)
+                             SELECT [Date],Obs,Total
                              FROM OPENJSON(@jsonMaintenance) WITH 
                              ( 
                                 [Date]          DATETIME2 '$.date'
                                ,Obs          VARCHAR(300) '$.obs'
+                               ,Total       NUMERIC(18,5) '$.total'
                              )
 
-        INSERT INTO @tbMaintenanceDetail (Id,ArticuloId,[Description],Quantity)
-                                   SELECT Id,ArticuloId,[Description],Quantity
+        INSERT INTO @tbMaintenanceDetail (Id,ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],Inventory)
+                                   SELECT Id,ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],Inventory
                                    FROM OPENJSON(@jsonMaintenanceDetails) WITH 
                                    (
                                         Id                     INT '$.id' 
                                        ,ArticuloId             INT '$.articuloId' 
+                                       ,TarifaId               INT '$.tarifaId' 
+                                       ,BodegaId               INT '$.bodegaId' 
+                                       ,MedidaId               INT '$.medidaId' 
                                        ,[Description] VARCHAR(300) '$.description'
-                                       ,Quantity      VARCHAR(300) '$.quantity'
+                                       ,Quantity     NUMERIC(18,5) '$.quantity'
+                                       ,Price        NUMERIC(18,5) '$.price'
+                                       ,Cost         NUMERIC(18,5) '$.cost'
+                                       ,Total        NUMERIC(18,5) '$.total'
+                                       ,CodePercentage VARCHAR(10) '$.codePercentage'
+                                       ,[Percentage] NUMERIC(18,5) '$.percentage'
+                                       ,Inventory              BIT '$.inventory'
                                    )
                                   
         -- ======================= VARIABLES ===============================
 
         SELECT TOP 1 @UserId = idUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
         
-        SELECT TOP 1 @Date = [Date] ,@Obs = Obs FROM @tbMaintenance 
+        SELECT TOP 1 @Date = [Date] ,@Obs = Obs ,@Total = Total FROM @tbMaintenance 
 
         -- ======================= VALIDATION =============================== 
         IF (SELECT COUNT(*) FROM @tbMaintenance) = 0 
@@ -83,13 +103,17 @@ BEGIN
             UPDATE [Mechanical].[Maintenance]
                SET [Date]      = @Date
                   ,[Obs]       = @Obs
+                  ,Total       = @Total
                   ,[UpdatedAt] = GETDATE()
              WHERE Id = @id
            
             UPDATE Mechanical.MaintenanceDetail SET [Deleted] = 1 WHERE MaintenanceId = @id
 
             UPDATE md 
-                SET md.Quantity = td.Quantity
+                SET md.Quantity  = td.Quantity
+                   ,md.TarifaId  = td.TarifaId
+                   ,md.MedidaId  = td.MedidaId
+                   ,md.Price     = td.Price
                    ,md.[Deleted] = NULL
                    ,md.UpdatedAt = GETDATE()
             FROM Mechanical.MaintenanceDetail md WITH (NOLOCK)
@@ -97,8 +121,8 @@ BEGIN
             WHERE md.MaintenanceId = @id
 
             INSERT INTO [Mechanical].[MaintenanceDetail]
-                 ([MaintenanceId],[ArticuloId],[Description],[Quantity],[CreatedAt],[Enabled])
-            SELECT @Id           ,[ArticuloId],[Description],[Quantity],[CreatedAt],[Enabled] FROM @tbMaintenanceDetail WHERE Id = 0
+                 ([MaintenanceId],ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],[CreatedAt],[Enabled])
+            SELECT @Id           ,ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],[CreatedAt],[Enabled] FROM @tbMaintenanceDetail WHERE Id = 0
 
             DELETE FROM Mechanical.MaintenanceDetail WHERE MaintenanceId = @id AND [Deleted] = 1
 

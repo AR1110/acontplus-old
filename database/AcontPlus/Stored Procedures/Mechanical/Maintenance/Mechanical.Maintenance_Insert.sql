@@ -67,8 +67,8 @@ BEGIN
                                ,Total       NUMERIC(18,5) '$.total'
                              )
 
-        INSERT INTO @tbMaintenanceDetail (ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage])
-                                   SELECT ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage]
+        INSERT INTO @tbMaintenanceDetail (ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],Inventory)
+                                   SELECT ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],Inventory
                                    FROM OPENJSON(@jsonMaintenanceDetails) WITH 
                                    (
                                         ArticuloId             INT '$.articuloId' 
