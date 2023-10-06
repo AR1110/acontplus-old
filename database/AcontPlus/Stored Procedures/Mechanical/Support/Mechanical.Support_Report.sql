@@ -65,4 +65,18 @@ BEGIN
             ,cylindraje = Cylindraje
     FROM Mechanical.v_Vehicle WITH (NOLOCK) 
     WHERE Id = @VehicleCompranyId
+    
+    SELECT id           = m.Id 
+        ,obs            = m.Obs
+        ,total          = CONVERT(NUMERIC(18,2), m.Total)
+        ,idDetail       = md.Id
+        ,[description]  = md.[Description]
+        ,quantity       = CONVERT(NUMERIC(18,2), md.Quantity)
+        ,price          = CONVERT(NUMERIC(18,2), md.Price)
+        ,totalDetail    = CONVERT(NUMERIC(18,2), md.Total) 
+        ,obsDetail      = md.Obs
+        ,[percentage]   = md.[Percentage]
+    FROM Mechanical.v_MaintenanceDetail md WITH (NOLOCK) 
+    INNER JOIN Mechanical.v_Maintenance m  WITH (NOLOCK) ON m.Id = md.MaintenanceId
+    WHERE m.SupportId = @supportId
 END
