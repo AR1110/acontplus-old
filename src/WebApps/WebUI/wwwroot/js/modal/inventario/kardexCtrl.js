@@ -32,6 +32,13 @@ export class KardexCtrl {
         })
     }
 
+    $onInit(){
+        let startOfMonth = moment().startOf('month').toDate();
+        let endOfMonth = moment().endOf('month').toDate();
+        this.dataSearch.fechaInicio = this.form.formatDateMoment(startOfMonth)
+        this.dataSearch.fechaFin =  this.form.formatDateMoment(endOfMonth)        
+    }
+
     drawTable() {
         this.tableTabulatorKardex = new Tabulator('#tabla-kardex', {
             height: "400px",
@@ -312,8 +319,13 @@ export class KardexCtrl {
             } else {
                 this.dataSearch.checkBoxDefault = true;
             }
+            const params = Object.assign(this.dataSearch, {
+                checkBoxFecha: false,
+                fechaInicio: this.form.formatDateMoment(this.dataSearch.fechaInicio),
+                fechaFin: this.form.formatDateMoment(this.dataSearch.fechaFin),
+            })
 
-            this._mS.getData('get', 'Kardex?json=' + JSON.stringify(this.dataSearch), null, true).then(response => {
+            this._mS.getData('get', 'Kardex?json=' + JSON.stringify(this.params), null, true).then(response => {
                 if (response.code === "0") {
                     hideLoader();
                     Swal.fire({
@@ -469,14 +481,11 @@ export class ModalKardexCtrl extends KardexCtrl {
         super(_mS, _commonSvc, _modalSvc, _nombreModal, _toast, _form)
         this.$uibModalInstance = $uibModalInstance;
         this._params = _params;
+
     }
 
     async $onInit() {
-        // let {
-        //     fechaInicio,
-        //     fechaFin
-        // } = this.form.getFechaInicioFinFilter(new Date().getMonth() + 1);
-
+      
         this.dataSearch.checkBoxFecha = true;
         this.dataSearch.fechaInicio = this.form.formatDateTimeZone(new Date());
         this.dataSearch.fechaFin = this.form.formatDateTimeZone(new Date());
@@ -533,20 +542,61 @@ export class ModalFiltroKardex {
         this._tS = _tS;
         this._params = _params;
 
-
-        this.sucursales = [];
         this.bodegas = [];
 
         this.articulo = _params.articulo;
         this.dataSearch = _params.dataSearch;
         this.dataSearch.checkBoxBodega = true
         this.dataSearch.checkBoxFecha = true
-        this.onChangeFechaFiltro()
         this.articuloFiltro = _params.articuloFiltro;
         this.dataSearch.consolidacion = 0;
 
-        this.meses = this.form.meses();
-        this.dataSearch.mes = new Date().getMonth() + 1;
+        //Rango Fechas 
+        let thisMoment = moment()
+        let endOfMonth = moment(thisMoment).endOf('month');
+        let startOfMonth = moment(thisMoment).startOf('month');
+        console.log(endOfMonth)
+        console.log(startOfMonth)
+        //https://www.daterangepicker.com/
+        this.dateRangePicker = {
+            date: { startDate: startOfMonth, endDate: endOfMonth },
+            picker: null,
+            options: {
+                pickerClasses: 'custom-display', //angular-daterangepicker extra
+                buttonClasses: 'btn',
+                applyButtonClasses: 'btn-success',
+                cancelButtonClasses: 'btn-danger',
+                locale: {
+                    applyLabel: "Aplicar",
+                    cancelLabel: 'Cancelar',
+                    customRangeLabel: 'Rango Personalizado',
+                    separator: ' - ',
+                    format: "YYYY-MM-DD", //will give you 2017-01-06
+                    //format: "D-MMM-YY", //will give you 6-Jan-17
+                    //format: "D-MMMM-YY", //will give you 6-January-17
+                },
+                ranges: {
+                    'Hoy': [moment(), moment()],
+                    'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+                    'Ultimos 15 Días': [moment().subtract(14, 'days'), moment()],
+                    'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
+                    'Este Mes': [moment().startOf('month'), moment().endOf('month')],
+                },
+                eventHandlers: {
+                    'apply.daterangepicker': function (event, picker) {
+                        // $scope.getComprobantes()
+                        //console.log('applied')
+                    }
+                }
+            }
+        };
+
+        this.dataSearch.fechaInicio = this.dateRangePicker.date.startDate
+        this.dataSearch.fechaFin = this.dateRangePicker.date.endDate;
+
+
+
     }
 
     $onInit() {
@@ -565,17 +615,16 @@ export class ModalFiltroKardex {
             }
         })
 
-        this._mS.getData('GET', 'Kardex/Filters', null, true).then(
-            response => {
-                if (response.code == '0') {
-                    console.log(response)
-                    // this._tS.toastr('warning', response.message)
-                }
-                if (response.code == '1') {
-                    let tempArray = JSON.parse(response.payload)
-                    this.estadoMovimientos = tempArray[0]
-                }
+        this._mS.getData('GET', 'Kardex/Filters', null, true).then(response => {
+            if (response.code == '0') {
+                console.log(response)
+                // this._tS.toastr('warning', response.message)
             }
+            if (response.code == '1') {
+                let tempArray = JSON.parse(response.payload)
+                this.estadoMovimientos = tempArray[0]
+            }
+        }
         ).catch(error => {
             console.log(error)
         })
@@ -586,22 +635,16 @@ export class ModalFiltroKardex {
         this._commonSvc.getDataFormEstabAsig(dataEstab).then(response => {
             this.bodegas = response[1];
             this.dataSearch.byBodega = this.bodegas[0].idBodega
-
         })
     }
 
 
     articuloSearch(textSearch) {
         if (textSearch.length < 2) return;
-
-
         return this.articuloSvc.search({ busqueda: textSearch })
             .catch(error => {
                 console.log(error)
             })
-        // return this._commonSvc.articuloSearchGeneral({
-        //     textSearch
-        // });
     }
 
     onKeyupArticuloSearchFiltro() {
@@ -609,12 +652,6 @@ export class ModalFiltroKardex {
             this.data = {};
             this.articulo = {};
             this.articuloFiltro = {};
-
-            // if(this.kardexs.length>0){
-            //     this.tableTabulatorKardex.clearData();
-            //     this.kardexs        = [];
-
-            // }
         }
     }
 
@@ -624,21 +661,6 @@ export class ModalFiltroKardex {
         this.articuloFiltro.descripcion = item.descripcion;
     }
 
-
-    onChangeFechaFiltro() {
-        this.dataSearch.mes = new Date().getMonth() + 1;
-        this.getFechaInicioFinFiltro()
-    }
-
-    //Fecha Inicial y Final dependiendo el Mes que seleccione el usuario en el Filtro AVanzado
-    getFechaInicioFinFiltro() {
-        let {
-            fechaInicio,
-            fechaFin
-        } = this.form.getFechaInicioFinFilter(this.dataSearch.mes);
-        this.dataSearch.fechaInicio = fechaInicio;
-        this.dataSearch.fechaFin = fechaFin;
-    }
 
     onChangeUltimaConsolidacion() {
         this.dataSearch.consolidacion = 0
