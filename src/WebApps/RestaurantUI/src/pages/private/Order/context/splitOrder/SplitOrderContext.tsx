@@ -22,6 +22,7 @@ import { orderReadForUpdateAdapter } from "@/core/adapters";
 import { OrderItemDivide, Order, SplitOrderAction, SplitOrderState, dataFormInitialState } from "@/core/models";
 import { PricingCalculateUtility, RoundNumber } from "@/core/utilities";
 import { TAX_RATE_CODE } from "@/core/constants";
+import { showLoader, hideLoader } from "@/spinner";
 
 const leftOrder = {
     orderId: 0,
@@ -80,7 +81,7 @@ const initialState: SplitOrderState = {
     changeOrderItems: [],
     leftCheckedOrderItems: [],
     rightCheckedOrderItems: [],
-    payment: {
+    payment: { 
         payload: {},
         open: false,
     }

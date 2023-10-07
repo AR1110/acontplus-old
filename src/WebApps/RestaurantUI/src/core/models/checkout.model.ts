@@ -37,14 +37,86 @@ export interface Payment {
     isControlBox: number
     paymentTypeCode?: string
     paymentTypeDescription?: string
-    nro?:string
-    referencia?:string
-    aprobacion?:string
-    lote?:string
+    nro?: string
+    referencia?: string
+    aprobacion?: string
+    lote?: string
     cityId?: number
     idBanco?: number
     posfechado?: boolean
 }
+
+export interface CheckoutDataForm {
+    paymentTypes: Array<PaymentType>
+    paymentSubTypes: Array<PaymentSubType>
+    voucherQuotas: Array<VoucherQuota>
+    banks: Array<Bank>
+    cities: Array<City>
+    comprobante: any
+}
+
+export interface Checkout {
+    dataForm: CheckoutDataForm
+    voucher: Voucher
+    payments: Payment
+}
+export interface PaymentDetail {
+    idCuentaPorCobrar: number
+    idCuotaPorCobrar: number,
+    abono: number
+    interes: number
+    diasMora: number
+    mora: number
+    cuota: number
+    saldo: number
+    secuencial: number
+}
+
+export interface PaymentHistory {
+    idCuentaPorCobrar: number
+    abono: number,
+    diasMora: number
+    mora: number
+}
+
+//Context Checkout
+export interface CheckoutParams {
+    orderId: number
+    idDocumento: number
+    idTipoDocumento: number
+    codEstab: string
+    tiempoCredito: number
+    idCliente: number
+    codDoc: 'NE' | 'FV';
+    idCuentaPorCobrar: number
+    payAutomatic: boolean
+    printerAutomatic: boolean
+}
+
+export interface CheckoutState {
+    isOptionReceivedAmount: boolean
+    isReplaceReceivedAmount: boolean
+    checkoutParams: CheckoutParams
+    checkoutLoading: boolean
+    checkoutError: boolean
+    checkout: Checkout
+    closeDialog(): void
+}
+
+
+ type ActionCalculator = {
+    handleClickOptionReceivedAmount(value: number): void 
+    checkoutClearButton(): void
+}
+
+export type CheckoutActions = ActionCalculator & {
+    fetchCheckout<T extends CheckoutParams>(data: T, callback: () => void): void
+    setPayment<T extends Payment>(data: Partial<T>): void
+    onChangeReceivedAmount(event: React.ChangeEvent<HTMLInputElement>): void
+    handleChangeSetReceivedAmount(value: number | string): void  
+    save(): void
+}
+
 
 export const paymentInitialState: Payment = {
     paymentTypeId: 0,
@@ -55,24 +127,16 @@ export const paymentInitialState: Payment = {
     sequential: 0,
     isControlBox: 0,
     paymentTypeCode: "",
-    paymentTypeDescription: "",   
-    nro:"",
-    referencia:"",
-    aprobacion:"",
-    lote:"",
-    cityId:0,
-    idBanco:0,
-    posfechado:false
+    paymentTypeDescription: "",
+    nro: "",
+    referencia: "",
+    aprobacion: "",
+    lote: "",
+    cityId: 0,
+    idBanco: 0,
+    posfechado: false
 }
 
-export interface CheckoutDataForm {
-    paymentTypes: Array<PaymentType>
-    paymentSubTypes: Array<PaymentSubType>
-    voucherQuotas: Array<VoucherQuota>
-    banks:Array<Bank>
-    cities: Array<City> 
-    comprobante: any
-}
 
 export const checkoutDataFormInitialState: CheckoutDataForm = {
     paymentTypes: [],
@@ -82,32 +146,10 @@ export const checkoutDataFormInitialState: CheckoutDataForm = {
     cities: [],
     comprobante: {}
 }
-export interface Checkout {
-    dataForm: CheckoutDataForm
-    voucher: Voucher
-    payments: Payment
-}
 
-export interface PaymentDetail  {
-    idCuentaPorCobrar: number
-    idCuotaPorCobrar: number,
-    abono: number
-    interes : number
-    diasMora : number
-    mora : number
-    cuota: number
-    saldo: number
-    secuencial: number
-} 
 
-export interface PaymentHistory{
-    idCuentaPorCobrar: number                    
-    abono: number,
-    diasMora : number
-    mora : number
-}
-export const checkoutInitialState: Checkout = {
-    dataForm: checkoutDataFormInitialState,
+export const initialCheckoutState: Checkout = {
+    dataForm: structuredClone(checkoutDataFormInitialState),
     voucher: {
         customerCompanyId: 0,
         customerIdentification: "",
@@ -120,5 +162,8 @@ export const checkoutInitialState: Checkout = {
         creationDate: "",
         nroDoc: ""
     },
-    payments: paymentInitialState
+    payments: structuredClone(paymentInitialState)
 }
+
+
+

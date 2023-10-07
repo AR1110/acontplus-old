@@ -2,11 +2,12 @@
 import Box from '@mui/material/Box'; 
 import Grid from '@mui/material/Grid'; 
 import Typography from '@mui/material/Typography';
-import { Card } from '@mui/material';
-import { useCheckoutStore } from '@/stores';
+import { Card } from '@mui/material'; 
+import { useCheckoutContext } from '../context';
 
 const CheckoutInfo = () => {
-    const voucher = useCheckoutStore(state => state.checkout.voucher);
+    const {checkout} = useCheckoutContext();
+    const voucher = checkout.voucher;
     return (
         <Card variant="outlined">
             <Box sx={{ p: 2 }}>

@@ -1,8 +1,7 @@
 import { SRI_IDENTIFITION_CODE } from '@/core/constants'
 import { CustomerCreateDto, CustomerReadDto, TiempoCredito, TipoContribuyente, TipoIdentificacion } from '@/core/models'
 import { customerService, SharedService } from '@/core/services'
-import { SnackbarUtility } from '@/core/utilities'
-import { useLoaderStore } from '@/stores'
+import { SnackbarUtility } from '@/core/utilities' 
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, MenuItem, Switch, Tab, Tabs, TextField } from '@mui/material'
 
 
@@ -10,6 +9,7 @@ import { useFormik } from 'formik'
 import { MuiChipsInput, MuiChipsInputChip } from 'mui-chips-input'
 import React, { SyntheticEvent, useEffect, useState } from 'react'
 import * as yup from 'yup';
+import {showLoader, hideLoader} from '@/spinner'
 type CustomDialogProp = {
     id?: number
     open: boolean
@@ -42,8 +42,7 @@ function TabPanel(props: TabPanelProps) {
     );
 }
 
-const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
-    const { showLoader } = useLoaderStore();
+const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => { 
     const [tiposIdentificacion, setTiposIdentificacion] = useState<Array<TipoIdentificacion>>([])
     const [tipoContribuyentes, setTipoContribuyentes] = useState<Array<TipoContribuyente>>([])
     const [tiempoCreditos, setTiempoCreditos] = useState<Array<TiempoCredito>>([])
@@ -124,7 +123,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
         initialValues,
         validationSchema: validationSchema,
         onSubmit: (values) => {
-            showLoader(true)
+            showLoader()
             const data = {
                 idCliente: values.idCliente,
                 idTipoIdentificacion: values.idTipoIdentificacion,
@@ -143,18 +142,18 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
             if (id > 0) {
                 customerService.put(values.idCliente, data)
                     .then(successResponse)
-                    .finally(() => showLoader(false))
+                    .finally(() => hideLoader())
             }
             if (!(id > 0)) {
                 customerService.post(data)
                     .then(successResponse)
-                    .finally(() => showLoader(false))
+                    .finally(() => hideLoader())
             }
         },
     });
 
     const onLoad = async () => {
-        showLoader(true)
+        showLoader()
         await customerService.getDataForm().then(response => {
             setTiposIdentificacion(() => response.tipoIdentificacion)
             setTipoContribuyentes(response.tipoContribuyentes)
@@ -186,7 +185,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                 }
 
             }
-        }).finally(() => showLoader(false));
+        }).finally(() => hideLoader());
 
 
         if (id > 0) {
@@ -246,7 +245,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                 obj => obj.idTipoIdentificacion === formik.values.idTipoIdentificacion
             )?.codigoSri === SRI_IDENTIFITION_CODE.RUC) {
             //Buscar SRI 
-            showLoader(true);
+            showLoader();
             SharedService.checkClientSRIByRUC(numeroIdentificacion).then(response => {
                 const { numeroRuc, razonSocial, direccion, telefono, email, error } = response;
                 if (!numeroRuc) {
@@ -264,7 +263,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                     correo: email,
                     telefono: telefono
                 })
-            }).finally(() => showLoader(false))
+            }).finally(() => hideLoader())
         }
 
         //Si es Cedula 
@@ -275,7 +274,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
             )?.codigoSri === SRI_IDENTIFITION_CODE.LICENSE
         ) {
             //Buscar SRI 
-            showLoader(true);
+            showLoader();
             SharedService.checkClientSRIByCedula(numeroIdentificacion).then(response => {
                
                 
@@ -295,7 +294,7 @@ const CustomerDialog = ({ id = 0, open, handleClose }: CustomDialogProp) => {
                     telefono: telefono
                 })
 
-            }).finally(() => showLoader(false))
+            }).finally(() => hideLoader())
         }
     }
 

@@ -10,15 +10,13 @@ namespace Restaurant.Core.Entities
     {
         public Room Room { get; set; }
         public int RoomId { get; set; }
-
         [Required]
         public int NumberTable { get; set; }
-
         [Required]
         [MaxLength(100)]
         public string Description { get; set; }
-
         [Required]
         public int Capacity { get; set; }
+        public bool? Assigned { get; set; }
     }
 }

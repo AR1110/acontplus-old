@@ -1,11 +1,7 @@
 import { Box, Button, Divider, Grid, Paper, Stack, TextField, Typography } from '@mui/material'
 import CartItem from '../CartItem/CartItem'
-import { useCheckoutStore, useLoaderStore, useSaleStore } from '@/stores';
-import Swal from 'sweetalert2';
-import { SnackbarUtility } from '@/core/utilities';
-import { itemToApi, summaryToApi } from '@/core/adapters';
-import { orderService, SharedService } from '@/core/services';
-import { QueryParams } from '@/core/models';
+import {useSaleStore } from '@/stores';
+import Swal from 'sweetalert2'; 
 import { AddShoppingCartIcon, CleaningServicesIcon, FileCopyRoundedIcon, SaveIcon } from '@/core/components/IconsMaterial';
 import { DOC_TYPE } from '@/core/constants';
 import './Cart.css'
@@ -15,33 +11,17 @@ import CustomerSearch from '../Customer/CustomerSearch';
 
 const Cart = () => {
     const cartItems = useSaleStore(state => state.items);
-    const { order, tarifaImpuestoVigente } = useSaleStore(state => ({
+    const { order, tarifaImpuestoVigente, save } = useSaleStore(state => ({
         order: state.order,
         items: state.items,
-        tarifaImpuestoVigente: state.dataForm.tarifaImpuestoVigente
+        tarifaImpuestoVigente: state.dataForm.tarifaImpuestoVigente,
+        save: state.save
     }));
     const setOrder = useSaleStore(state => state.setSummary)
-
-    const resetForm = useSaleStore(state => state.resetForm);
-    const payment = useSaleStore(state => state.payment);
-
-    //store checkout
-    const setQueryParams = useCheckoutStore(state => state.setQueryParams)
-    const { showLoader } = useLoaderStore();
+    const resetForm = useSaleStore(state => state.resetForm); 
 
     //Modal Tables
     const [openTableDialog, setOpenTableDialog] = useState(false);
-    const typeActions: { [key: string]: string } = {
-        [DOC_TYPE.FV]: `
-        Esta seguro de guardar el pedido como Factura? </br>
-        <small>Ya no será posible modificar la venta para hacer cambios, tendrás que cancelar esta y crear una nueva.!</small>`,
-        [DOC_TYPE.NE]: `
-        Esta seguro de guardar el pedido como Nota de Entrega? </br>
-        <small>Ya no será posible modificar la venta para hacer cambios, tendrás que cancelar esta y crear una nueva.!</small>`,
-        [DOC_TYPE.OR]: `Esta seguro de guardar el pedido? </br>
-        <small>El stock de los productos <strong>no se descontará</strong> hasta que se transforme a "Factura" o "Nota de Entrega".`
-
-    }
 
     const onClickResetFrom = async () => {
         if (cartItems.length === 0) return;
@@ -59,111 +39,7 @@ const Cart = () => {
         if (isConfirmed) {
             resetForm();
         }
-    }
-    const askToSave = async function (codDoc: string) {
-        if (!(order.tableId > 0)) {
-            Swal.fire({
-                icon: 'warning',
-                html: `Seleccione la Mesa`
-            })
-            return
-        }
-        if (cartItems.length === 0) {
-            Swal.fire({
-                icon: 'warning',
-                html: `Agregue al menos un Item`
-            })
-            return
-        }
-        const { isConfirmed } = await Swal.fire({
-            title: `${order.orderId > 0 ? 'Actualizar' : 'Guardar'} Pedido`,
-            html: typeActions[codDoc],
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: `${order.orderId > 0 ? 'Actualizar' : 'Guardar'}`,
-            cancelButtonText: 'No, cancelar!'
-        })
-
-        if (!isConfirmed) return
-
-        const summaryResult = summaryToApi(order);
-        const itemsResult = itemToApi(cartItems);
-        const taxesResult = cartItems.flatMap(item => item.taxes);
-        const data = {
-            ...summaryResult,
-            updateOrder: (order.orderId > 0) && codDoc === DOC_TYPE.OR,
-            saveDoc: (codDoc === DOC_TYPE.FV) || (codDoc === DOC_TYPE.NE),
-            codDoc,
-            quickSale: (codDoc === DOC_TYPE.FV) || (codDoc === DOC_TYPE.NE),
-            items: itemsResult,
-            taxes: taxesResult,
-            payments: {}
-        }
-        if (order.orderId > 0) {
-            showLoader(true);
-            orderService.put(order.orderId, data).then(response => {
-                if (response.code === '0') {
-                    SnackbarUtility.warning(response.message)
-                }
-                if (response.code === "1") {
-                    SnackbarUtility.success(response.message);
-                    // const queryParams: QueryParams = JSON.parse(response.payload)[0];
-                    resetForm();
-                }
-            }).finally(() => showLoader(false))
-        } else {
-            showLoader(true);
-            orderService.post(data).then(response => {
-                showLoader(false)
-                if (response.code === '0') {
-                    Swal.fire({
-                        icon:'warning',
-                        html: response.message
-                    })
-                   
-                }
-                if (response.code === "1") {
-                    Swal.fire({
-                        icon:'success',
-                        html: response.message,
-                        timer: 1000
-                    })
-                    //SnackbarUtility.success(response.message);
-                    //Order
-                    if (codDoc === DOC_TYPE.OR) {
-                        const orderId = JSON.parse(response.payload);
-                        SharedService.getPrinter({
-                            id: orderId,
-                            documentoId: 0,
-                            tipo: 2                
-                        })
-                        resetForm();
-                        return
-                    }
-                    const queryParams: QueryParams = JSON.parse(response.payload)[0];
-
-                    if (queryParams.payAutomatic) {
-                        setQueryParams(queryParams);
-                        payment.openDialogCustom();
-                        return
-                    }
-
-
-                    if (queryParams.printerAutomatic) {
-                        SharedService.getPrinter({
-                            id: queryParams.orderId,
-                            documentoId: queryParams.idDocumento,
-                            tipo: 1
-                        })
-                    } else {
-                        resetForm();
-                    }
-                }
-            }).finally(() => showLoader(false))
-        }
-    }
+    } 
 
     return (
         <Paper elevation={0} sx={{
@@ -280,7 +156,7 @@ const Cart = () => {
                                     size="large"
                                     fullWidth
                                     startIcon={<SaveIcon />}
-                                    onClick={() => askToSave(DOC_TYPE.OR)}>
+                                    onClick={() => save(DOC_TYPE.OR)}>
                                     Actualizar
                                 </Button>
                             </Grid>
@@ -314,7 +190,7 @@ const Cart = () => {
                                     size="large"
                                     fullWidth
                                     startIcon={<SaveIcon />}
-                                    onClick={() => askToSave(DOC_TYPE.OR)}>
+                                    onClick={() => save(DOC_TYPE.OR)}>
                                     Guardar
                                 </Button>
                             </Grid>
@@ -326,7 +202,7 @@ const Cart = () => {
                                     size="large"
                                     fullWidth
                                     startIcon={<FileCopyRoundedIcon />}
-                                    onClick={() => askToSave(DOC_TYPE.FV)}>
+                                    onClick={() => save(DOC_TYPE.FV)}>
                                     Factura
                                 </Button>
                             </Grid>
@@ -338,7 +214,7 @@ const Cart = () => {
                                     size="large"
                                     fullWidth
                                     startIcon={<FileCopyRoundedIcon />}
-                                    onClick={() => askToSave(DOC_TYPE.NE)}>
+                                    onClick={() => save(DOC_TYPE.NE)}>
 
                                     Nota Entrega
                                 </Button>

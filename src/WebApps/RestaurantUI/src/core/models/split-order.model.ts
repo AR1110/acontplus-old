@@ -21,8 +21,8 @@ export interface SplitOrderState {
     changeOrderItems: OrderItemDivide[]
     leftCheckedOrderItems: Array<OrderItemDivide>
     rightCheckedOrderItems: Array<OrderItemDivide>
-    payment: {
-        payload: any,
+    payment: { 
+        payload: any
         open: boolean
     }
 }

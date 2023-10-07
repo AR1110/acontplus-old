@@ -1,8 +1,8 @@
  
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import { darken, lighten, styled } from '@mui/material';
-import { useCheckoutStore } from '@/stores';
+import { darken, lighten, styled } from '@mui/material'; 
+import { useCheckoutContext } from '../context';
 
 const GroupHeader = styled('div')(({ theme }) => ({
     position: 'sticky',
@@ -20,9 +20,10 @@ const GroupItems = styled('ul')({
 });
 
 export default function City() {
-    const cities = useCheckoutStore(state => state.checkout.dataForm.cities);
-    const payments = useCheckoutStore(state => state.checkout.payments);
-    const setPayment = useCheckoutStore(state => state.setPayment);
+    const {checkout, setPayment} = useCheckoutContext(); 
+    const {dataForm} = checkout
+
+    const cities = dataForm.cities;  
     const sortedCities = [...cities].sort((a, b) => a.province.localeCompare(b.province));
     return (
         <>
@@ -33,10 +34,8 @@ export default function City() {
                         id="grouped-city"
                         onChange={(_, newValue) => {
                             const cityId = newValue? newValue.cityId : 0                           
-                            setPayment({
-                                ...payments,
-                                cityId
-
+                            setPayment({ 
+                                cityId 
                             })
                           }}
                         options={sortedCities}                        

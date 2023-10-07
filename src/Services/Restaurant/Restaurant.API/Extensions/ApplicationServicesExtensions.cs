@@ -15,7 +15,7 @@ namespace Restaurant.API.Extensions
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContextPool<RestaurantContext>(options =>
-            options.UseSqlServer(Encryption.DecryptString(configuration.GetSection("KeyEncryption").Value, configuration.GetConnectionString("DefaultConnection"))));
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             //
             services.AddScoped<IReportService, ReportService>();

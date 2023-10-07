@@ -165,6 +165,11 @@ BEGIN
 
 	                SET @orderId = (SELECT SCOPE_IDENTITY())
                     
+                    IF (@tableId > 0)
+                        BEGIN
+                            UPDATE Restaurant.[Table] SET Assigned = 1 WHERE Id = @tableId
+                        END
+
                     INSERT INTO Restaurant.OrderItem(OrderId, Uuid, ItemId, TaxId, TaxPercentId, TaxValue, Quantity, Cost
                                                     , Price, Discount, Total, [Enabled], UserId, FeeId, Obs, BodegaId, ItemTypeId, MenuId)
                     SELECT @orderId

@@ -1,24 +1,35 @@
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Card, CardActions, CardContent, Divider, FormControl, FormControlLabel, Grid, InputAdornment, InputLabel, MenuItem, OutlinedInput, Switch, TextField, Typography } from '@mui/material'
+import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Box,
+    Button,
+    Card,
+    CardActions,
+    CardContent,
+    Divider,
+    FormControlLabel,
+    Grid,
+    InputAdornment,
+    MenuItem,
+    Switch,
+    TextField,
+    Typography
+} from '@mui/material'
 import { ExpandMoreIcon, PaymentsIcon, SaveIcon } from '../../IconsMaterial'
-import { useCheckoutStore } from '@/stores';
 import { PaymentTypeCode } from '@/core/constants';
 import City from './City';
 import Bank from './Bank';
 import PaymentSubType from './PaymentSubType';
+import { useCheckoutContext } from '../context';
 
-type PaymentMethodProps = {
-    closeDialog():void
-}
-const PaymentMethod = ({closeDialog}:PaymentMethodProps) => {
-    const voucher = useCheckoutStore(state => state.checkout.voucher);
-    const dataForm = useCheckoutStore(state => state.checkout.dataForm);
-    const payments = useCheckoutStore(state => state.checkout.payments);
-    const setPayment = useCheckoutStore(state => state.setPayment);
-    const onChangeReceivedAmount = useCheckoutStore(state => state.onChangeReceivedAmount)
-    const save = useCheckoutStore(state => state.save)
+const PaymentMethod = () => {
+    const { checkout, setPayment, onChangeReceivedAmount, save } = useCheckoutContext();
+    const { voucher, dataForm, payments } = checkout;
+
+    //const onChangeReceivedAmount = useCheckoutStore(state => state.onChangeReceivedAmount)
+    //const save = useCheckoutStore(state => state.save)
     const paymentTypes = dataForm.paymentTypes;
-
-
     return (
         <Box sx={{ flexGrow: 1 }}>
             <Card variant="outlined">
@@ -52,7 +63,6 @@ const PaymentMethod = ({closeDialog}:PaymentMethodProps) => {
                                         const paymentData = paymentTypes.find(item => item.paymentTypeId === Number(e.target.value));
                                         const paymentSubTypeData = dataForm.paymentSubTypes.filter(item => item.paymentTypeId === Number(e.target.value))[0];
                                         setPayment({
-                                            ...payments,
                                             paymentSubtypeId: paymentSubTypeData?.paymentSubtypeId ?? 0,
                                             paymentTypeId: paymentData?.paymentTypeId ?? 0,
                                             paymentTypeCode: paymentData?.code,
@@ -63,10 +73,7 @@ const PaymentMethod = ({closeDialog}:PaymentMethodProps) => {
                                             lote: "",
                                             cityId: 0,
                                             idBanco: 0
-
-
                                         })
-                                        console.log(e.target.value)
                                     }}
                                 >
                                     {
@@ -170,7 +177,6 @@ const PaymentMethod = ({closeDialog}:PaymentMethodProps) => {
                                                         value={payments.nro}
                                                         onChange={(e) => {
                                                             setPayment({
-                                                                ...payments,
                                                                 nro: e.target.value
 
                                                             })
@@ -187,7 +193,6 @@ const PaymentMethod = ({closeDialog}:PaymentMethodProps) => {
                                                         value={payments.referencia}
                                                         onChange={(e) => {
                                                             setPayment({
-                                                                ...payments,
                                                                 referencia: e.target.value
 
                                                             })
@@ -210,7 +215,6 @@ const PaymentMethod = ({closeDialog}:PaymentMethodProps) => {
                                                         value={payments.aprobacion}
                                                         onChange={(e) => {
                                                             setPayment({
-                                                                ...payments,
                                                                 aprobacion: e.target.value
 
                                                             })
@@ -227,7 +231,6 @@ const PaymentMethod = ({closeDialog}:PaymentMethodProps) => {
                                                         value={payments.lote}
                                                         onChange={(e) => {
                                                             setPayment({
-                                                                ...payments,
                                                                 lote: e.target.value
 
                                                             })
@@ -261,7 +264,6 @@ const PaymentMethod = ({closeDialog}:PaymentMethodProps) => {
                                                         value={payments.nro}
                                                         onChange={(e) => {
                                                             setPayment({
-                                                                ...payments,
                                                                 nro: e.target.value
 
                                                             })
@@ -300,7 +302,6 @@ const PaymentMethod = ({closeDialog}:PaymentMethodProps) => {
                                                         value={payments.nro}
                                                         onChange={(e) => {
                                                             setPayment({
-                                                                ...payments,
                                                                 nro: e.target.value
 
                                                             })
@@ -318,7 +319,6 @@ const PaymentMethod = ({closeDialog}:PaymentMethodProps) => {
                                                         value={payments.referencia}
                                                         onChange={(e) => {
                                                             setPayment({
-                                                                ...payments,
                                                                 referencia: e.target.value
 
                                                             })
@@ -353,7 +353,7 @@ const PaymentMethod = ({closeDialog}:PaymentMethodProps) => {
                                 fontSize: 40
                             }} />} size='large' fullWidth sx={{
                                 height: 80
-                            }} onClick={()=>save(closeDialog)}>
+                            }} onClick={() => save()}>
                                 Guardar
                             </Button>
                         </Grid>

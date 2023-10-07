@@ -8,13 +8,12 @@ import brand_img from '/assets/images/imgProductDefault.png';
 
 import { ItemReadDto, Measure, ProductPVPReadDto } from '@/core/models';
 import { useSaleStore } from '@/stores/saleStore';
-import { productService } from '@/core/services';
-import { useLoaderStore } from '@/stores';
+import { productService } from '@/core/services'; 
 import { PricingCalculateUtility, RoundNumber } from '@/core/utilities';
 import Swal from 'sweetalert2';
 import { v4 as uuidv4 } from 'uuid';
 import HtmlTooltip from '@/core/components/HtmlTooltip';
-
+import { showLoader, hideLoader } from "@/spinner";
 type ItemCardProps = {
     item: ItemReadDto
 }
@@ -28,16 +27,15 @@ export default function ItemCard({ item }: ItemCardProps) {
     const { items, dataForm } = useSaleStore(state => ({
         items: state.items,
         dataForm: state.dataForm,
-    }))
-    const itemSearch = useSaleStore(state => state.itemSearch)
+    })) 
     const order = useSaleStore(state => state.order)
     // const [warehouses, setWarehouses] = useState<Array<WarehouseAsign>>([]) 
 
-    const { showLoader } = useLoaderStore();
+    // const { showLoader } = useLoaderStore();
 
 
     const handleSelectItem = (item: ItemReadDto) => {
-        console.log(item)
+        showLoader(); 
         const decimal = dataForm.decimal;
         // const warehouses: Array<WarehouseAsign> = dataForm.warehouses.filter(warehouse => warehouse.codEstab_Asig === dataEstab.codEstab_Asig);
 
@@ -49,7 +47,7 @@ export default function ItemCard({ item }: ItemCardProps) {
         //     return
         // }
 
-        showLoader(true)
+        // showLoader(true)
         // if (itemSearch.code === "COM") {
         //     console.log('test')
         //     MenuItemService.get(item.itemId).then(response => {
@@ -149,7 +147,7 @@ export default function ItemCard({ item }: ItemCardProps) {
                 })
             }
 
-        }).finally(() => showLoader(false))
+        }).finally(() => hideLoader())
 
     }
 

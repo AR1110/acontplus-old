@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
+    <!--<AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>-->
     <SatelliteResourceLanguages>en-Us;es-Es</SatelliteResourceLanguages>
     <UserSecretsId>e1751ae4-f01e-4426-957e-8450036b2b16</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>

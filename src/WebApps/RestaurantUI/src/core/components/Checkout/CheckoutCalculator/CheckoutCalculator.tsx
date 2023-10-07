@@ -1,14 +1,9 @@
-
-import { useCheckoutStore } from '@/stores'
 import Calculator from '../../Calculator/Calculator'
- 
+import { useCheckoutContext } from '../context';
+
 
 const CheckoutCalculator = () => {
-    const handleChangeSetReceivedAmount = useCheckoutStore(state=>state.handleChangeSetReceivedAmount)
-    const handleClickOptionReceivedAmount = useCheckoutStore(state=>state.handleClickOptionReceivedAmount)
-    const checkoutClearButton = useCheckoutStore(state=>state.checkoutClearButton)
- 
-
+    const { handleChangeSetReceivedAmount, handleClickOptionReceivedAmount, checkoutClearButton } = useCheckoutContext();
     return (
         <Calculator
             clearButton={checkoutClearButton} //Event for button "X"

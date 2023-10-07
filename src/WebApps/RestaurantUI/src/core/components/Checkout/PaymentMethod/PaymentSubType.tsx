@@ -1,11 +1,12 @@
-import { useCheckoutStore } from "@/stores";
 import { MenuItem, TextField } from "@mui/material";
+import { useCheckoutContext } from "../context";
 
  
 const PaymentSubType = () => { 
-    const payments = useCheckoutStore(state => state.checkout.payments);
-    const paymentSubTypes = useCheckoutStore(state => state.checkout.dataForm.paymentSubTypes);
-    const setPayment = useCheckoutStore(state => state.setPayment);
+    const {checkout, setPayment} = useCheckoutContext(); 
+    const {dataForm, payments} = checkout
+
+    const paymentSubTypes = dataForm.paymentSubTypes;
     return (
         <>
             {paymentSubTypes.length > 0 && <TextField fullWidth
@@ -17,11 +18,9 @@ const PaymentSubType = () => {
                 onChange={(e) => {
                     const paymentData = paymentSubTypes.find(item => item.paymentSubtypeId === Number(e.target.value));
                     setPayment({
-                        ...payments,
-                        paymentSubtypeId: paymentData?.paymentSubtypeId ?? 0,
+                        paymentSubtypeId: paymentData?.paymentSubtypeId ?? 0
 
-                    })
-                    console.log(e.target.value)
+                    }) 
                 }}
             >
                 {

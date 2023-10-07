@@ -31,7 +31,7 @@ BEGIN
 	
     SELECT * FROM v_ConfigDecimal WHERE idEntidad = @idEntidad AND codTrasaccion = 'V'
     
-    SELECT rt.Id, rt.Capacity, rt.NumberTable, rt.description, rr.id as roomId, rf.id as floorId
+    SELECT rt.Id, rt.Capacity, rt.NumberTable, rt.description, rr.id as roomId, rf.id as floorId, rt.Assigned
     FROM Restaurant.v_Table rt
 	INNER JOIN Restaurant.v_Room rr ON rr.id = rt.roomId
 	INNER JOIN Restaurant.v_Floor rf ON rf.id = rr.floorId

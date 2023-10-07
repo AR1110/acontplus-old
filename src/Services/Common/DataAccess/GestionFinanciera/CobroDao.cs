@@ -16,7 +16,7 @@ namespace DataAccess.Tesoreria
         public CobroDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _gr = new GenericResponse();
         }
         public async Task<GenericResponse> GetByDocumentAsync(int idRol, int idComprobanteIngreso, int idTipoDocumento, int idComprobante)

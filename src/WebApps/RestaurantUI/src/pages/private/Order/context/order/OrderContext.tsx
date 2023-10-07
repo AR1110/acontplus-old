@@ -3,9 +3,8 @@ import { GET_ORDERS_BEGIN, GET_ORDERS_ERROR, GET_ORDERS_SUCCESS, SET_DATA_FILTER
 import { orderService } from "@/core/services";
 import { OrderActions, OrderState, orderFilter } from "@/core/models";
 import { orderReadAdapter } from "@/core/adapters";
-import axios, { CancelTokenSource } from "axios";
-import { useLoaderStore } from "@/stores";
-
+import axios, { CancelTokenSource } from "axios"; 
+import { showLoader, hideLoader } from "@/spinner";
 
 const initialState: OrderState = {
     orderLoading: false,
@@ -29,8 +28,7 @@ interface Props {
 
 export const OrderProvider = ({ children }: Props) => {
     // Utiliza useReducer para gestionar el estado
-    const [state, dispatch] = useReducer(orderReducer, initialState);
-    const showLoader = useLoaderStore((state) => state.showLoader);
+    const [state, dispatch] = useReducer(orderReducer, initialState); 
     let cancelTokenSource: CancelTokenSource | null = null;
 
     // Función para cargar datos de pedido
@@ -38,7 +36,7 @@ export const OrderProvider = ({ children }: Props) => {
         try {
             // Inicia el indicador de carga
             dispatch({ type: GET_ORDERS_BEGIN })
-            showLoader(true)
+            showLoader()
             // Check if we made a request
             if (cancelTokenSource) {
                 // Cancel the previous request before making a new request
@@ -49,10 +47,10 @@ export const OrderProvider = ({ children }: Props) => {
             const response = await orderService.get(state.dataFilter, cancelTokenSource.token,);
             const orders = orderReadAdapter(response.orders);
             dispatch({ type: GET_ORDERS_SUCCESS, payload: orders });
-            showLoader(false)
+            hideLoader()
         } catch (error) {
             dispatch({ type: GET_ORDERS_ERROR })
-            showLoader(false)
+            hideLoader()
         }
     }
 
@@ -78,6 +76,7 @@ export const OrderProvider = ({ children }: Props) => {
     useEffect(() => {
         fetchOrders();
         return () => cancelEndpoint();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [state.dataFilter])
 
     // Proporciona el estado y las funciones del contexto a los componentes hijos
