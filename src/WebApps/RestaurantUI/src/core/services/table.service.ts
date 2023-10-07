@@ -4,7 +4,9 @@ import { Http, loadAbort } from "../utilities"
 // type tableSearch = {
 //     codEstab: string
 // }
-export const TableService = {
+ 
+const url = 'Tables/'
+export const tableService = {
     getAll: () => {
         const controller = loadAbort(); //Cancelar peticion 
         const query = JSON.stringify({})
@@ -21,4 +23,12 @@ export const TableService = {
             controller
         }
     }, 
+    async putStateAssigned(id:number, data: object){
+        const responseAxios = await Http({
+            method: 'put',
+            url: `${PATHS.PRIVATE}${url}${id}`,
+            data, 
+        })        
+        return responseAxios;
+    }
 }

@@ -8,6 +8,7 @@ function tableReadAdapter(tables: RawTableData[]): Array<TableReadDto> {
         numberTable: table.numberTable,
         description: table.description,
         floorId: table.floorId,
+        roomId: table.roomId,
         assigned: table.assigned ?? false
     })
     )
