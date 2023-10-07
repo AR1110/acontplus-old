@@ -32,11 +32,12 @@ export class KardexCtrl {
         })
     }
 
-    $onInit(){
+    $onInit() {
+        console.log('revo')
         let startOfMonth = moment().startOf('month').toDate();
         let endOfMonth = moment().endOf('month').toDate();
         this.dataSearch.fechaInicio = this.form.formatDateMoment(startOfMonth)
-        this.dataSearch.fechaFin =  this.form.formatDateMoment(endOfMonth)        
+        this.dataSearch.fechaFin = this.form.formatDateMoment(endOfMonth)
     }
 
     drawTable() {
@@ -311,21 +312,21 @@ export class KardexCtrl {
     getKardex() {
         try {
             showLoader();
-            if (this.dataSearch.checkBoxBodega || this.dataSearch.checkBoxFecha ||
-                this.dataSearch.checkBoxUltimaConsolidacion ||
-                this.dataSearch.checkBoxConsolidacion ||
-                this.dataSearch.checkBoxMovement) {
-                this.dataSearch.checkBoxDefault = false;
-            } else {
-                this.dataSearch.checkBoxDefault = true;
-            }
+            // if (this.dataSearch.checkBoxBodega || this.dataSearch.checkBoxFecha ||
+            //     this.dataSearch.checkBoxUltimaConsolidacion ||
+            //     this.dataSearch.checkBoxConsolidacion ||
+            //     this.dataSearch.checkBoxMovement) {
+            //     this.dataSearch.checkBoxDefault = false;
+            // } else {
+            //     this.dataSearch.checkBoxDefault = true;
+            // }
             const params = Object.assign(this.dataSearch, {
-                checkBoxFecha: false,
+                checkBoxFecha: true,
                 fechaInicio: this.form.formatDateMoment(this.dataSearch.fechaInicio),
                 fechaFin: this.form.formatDateMoment(this.dataSearch.fechaFin),
             })
 
-            this._mS.getData('get', 'Kardex?json=' + JSON.stringify(this.params), null, true).then(response => {
+            this._mS.getData('get', 'Kardex?json=' + JSON.stringify(params), null, true).then(response => {
                 if (response.code === "0") {
                     hideLoader();
                     Swal.fire({
@@ -431,7 +432,9 @@ export class KardexCtrl {
                 aditionalParams: []
             }),
 
-            dataParams: JSON.stringify(this.dataSearch)
+            dataParams: JSON.stringify(Object.assign(this.dataSearch, {
+                checkBoxFecha: true
+            }))
         }
 
         this._commonSvc.getReport({
@@ -485,10 +488,16 @@ export class ModalKardexCtrl extends KardexCtrl {
     }
 
     async $onInit() {
-      
+
         this.dataSearch.checkBoxFecha = true;
-        this.dataSearch.fechaInicio = this.form.formatDateTimeZone(new Date());
-        this.dataSearch.fechaFin = this.form.formatDateTimeZone(new Date());
+
+        let startOfMonth = moment().startOf('month').toDate();
+        let endOfMonth = moment().endOf('month').toDate();
+        this.dataSearch.fechaInicio = startOfMonth;
+        this.dataSearch.fechaFin = endOfMonth;
+
+        // this.dataSearch.fechaInicio = this.form.formatDateTimeZone(new Date());
+        // this.dataSearch.fechaFin = this.form.formatDateTimeZone(new Date());
 
         this.articulo = this._params;
         this.articuloFiltro = this.articulo;
