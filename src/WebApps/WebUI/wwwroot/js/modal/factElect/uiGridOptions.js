@@ -139,6 +139,7 @@ export class UiGridOptions{
                 idArticulo: rowEntity.idArticulo,
                 cantidad: rowEntity.cantidad,
                 idBodega: rowEntity.idBodega,
+                idMedida: rowEntity.idMedida
             }).then(async responseApi=>{
                 hideLoader();
                 let {code, message, titleSms} = responseApi; 

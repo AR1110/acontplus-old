@@ -1829,6 +1829,41 @@ export class CommonService {
 
                     break
 
+                case "IV":
+                    let modalParams = {}, {
+                        MODAL_FILE_PATH,
+                        MODAL_DETALLE
+                    } = this._nombreModalConst.compra_no_habitual;
+                    isRenderRazorPartial = true;
+
+
+                    controller = (await import('./../../' + MODAL_FILE_PATH))[MODAL_DETALLE['controller']]
+                    template = MODAL_DETALLE['template']
+
+                    showLoader();
+
+                    await this.mS.getData('get', 'CompraNoHabitual/' + JSON.stringify({
+                        idDocumentoIngreso: id,
+                        typeList: 4
+                    }), null, true).then(response => {
+                        if (response.code === "0") {
+                            console.log(response)
+                            hideLoader();
+                        }
+
+                        if (response.code === "1") {
+                            modalParams.params = JSON.parse(response.payload);
+                            hideLoader();
+                        }
+                    })
+
+                    params = {
+                        TIPO_REGISTRO: 'DETALLE',
+                        data: modalParams.params
+                    }
+
+
+                    break
                 case "IB":
                     let {
                         ingreso_bodega
@@ -1872,9 +1907,10 @@ export class CommonService {
             this._modalSvc.openModalCustom({
                 controller,
                 template,
-                params,
+                params: codigoDocumento == "IV" ? params.data : params,
                 size,
-                windowClass
+                windowClass,
+                isRenderRazorPartial
             })
 
         } catch (error) {
@@ -2142,6 +2178,7 @@ export class CommonService {
             return response;
         })
     }
+    
 
     checkClientSRIByCedula = function (identificacion) {
         return this.mS.getData('get', 'Consultas/GetCedulaSri?Ruc=' + identificacion, null, true).then(response => {
