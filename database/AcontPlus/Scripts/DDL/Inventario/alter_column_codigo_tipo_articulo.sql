@@ -8,7 +8,7 @@
 --	UPDATE dbo.TipoArticulo SET codigo = 'COM' WHERE idTipoArticulo = 3
 --GO
 
----ALTER TABLE dbo.TipoArticulo  ALTER COLUMN codigo VARCHAR(15) NOT NULL
+---ALTER TABLE dbo.TipoArticulo  add codigo VARCHAR(15) NULL
 
 ---UPDATE dbo.Articulo SET idTipoArticulo = 2
 ---select * from Articulo where idArticulo in (77508,77507,77506,77505)
