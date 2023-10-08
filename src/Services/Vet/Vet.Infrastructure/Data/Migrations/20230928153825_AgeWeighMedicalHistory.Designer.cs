@@ -230,9 +230,9 @@ namespace Vet.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Code")
-                        .IsUnique()
-                        .HasDatabaseName("UI_Breed");
+                    // b.HasIndex("Code")
+                    //     .IsUnique()
+                    //     .HasDatabaseName("UI_Breed");
 
                     b.HasIndex("PetTypeId");
 

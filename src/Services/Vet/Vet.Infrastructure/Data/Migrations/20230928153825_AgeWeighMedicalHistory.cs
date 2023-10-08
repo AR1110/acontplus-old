@@ -249,12 +249,12 @@ namespace Vet.Infrastructure.Data.Migrations
                 column: "Code",
                 unique: true);
 
-            migrationBuilder.CreateIndex(
-                name: "UI_Breed",
-                schema: "Pet",
-                table: "Breed",
-                column: "Code",
-                unique: true);
+            // migrationBuilder.CreateIndex(
+            //     name: "UI_Breed",
+            //     schema: "Pet",
+            //     table: "Breed",
+            //     column: "Code",
+            //     unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "UI_BehaviorStatus",
@@ -299,10 +299,10 @@ namespace Vet.Infrastructure.Data.Migrations
                 schema: "Pet",
                 table: "Disease");
 
-            migrationBuilder.DropIndex(
-                name: "UI_Breed",
-                schema: "Pet",
-                table: "Breed");
+            // migrationBuilder.DropIndex(
+            //     name: "UI_Breed",
+            //     schema: "Pet",
+            //     table: "Breed");
 
             migrationBuilder.DropIndex(
                 name: "UI_BehaviorStatus",

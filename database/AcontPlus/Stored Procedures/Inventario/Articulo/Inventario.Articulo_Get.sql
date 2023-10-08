@@ -28,7 +28,7 @@ BEGIN
 
 	-- Tipos de Busqueda 
 	DECLARE @checkBoxSubFamilia  BIT, @idSubFamilia INT
-	DECLARE @checkBoxMedida      BIT, @idMedida     INT
+	DECLARE @checkBoxMedida      BIT, @idMedida     INT ,@fraccion NUMERIC(18,5)
 	DECLARE @checkBoxMarca       BIT, @idMarca      INT
 	DECLARE @checkBoxModelo      BIT, @idModelo     INT
 	DECLARE @checkBoxFraccionado BIT 
@@ -471,7 +471,19 @@ BEGIN
 	IF @tipo = 7
 		BEGIN
 			
-			SELECT @idArticulo = idArticulo, @idBodega = idBodega , @cantidad = cantidad FROM OPENJSON(@json) WITH(idArticulo INT '$.idArticulo',idBodega INT '$.idBodega',cantidad NUMERIC(18,5) '$.cantidad')
+			SELECT @idArticulo = idArticulo
+                  ,@idBodega   = idBodega 
+                  ,@idMedida   = idMedida
+                  ,@cantidad   = cantidad 
+            FROM OPENJSON(@json) WITH
+            (
+                idArticulo INT           '$.idArticulo'
+               ,idBodega   INT           '$.idBodega' 
+               ,idMedida   INT           '$.idMedida' 
+               ,cantidad   NUMERIC(18,5) '$.cantidad'
+            )
+
+            SELECT TOP 1 @fraccion = conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida
 
 			SELECT TOP 1 @stock = cantidad FROM Inventario.Stock WITH (NOLOCK) WHERE idBodega = @idBodega AND idArticulo = @idArticulo
 
@@ -486,7 +498,7 @@ BEGIN
 			-- || Mostrar notificacion de artículos con stock mínimo ||--
 			SELECT TOP 1 @ventaStockMinimo = estado FROM Config.v_Notificacion_Sistema WITH (NOLOCK) WHERE codigo = 'MNM' AND idEntidad = @idEntidad 
 
-			SELECT  @stock =  @stock - @cantidad
+			SELECT  @stock =  @stock - (@cantidad * ISNULL(@fraccion,1))
 			
 			IF @ventaStockCero = 1
 				BEGIN

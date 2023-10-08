@@ -2,7 +2,6 @@
 
   import { onMount } from "svelte";
   import { InspectionStore } from "$routes/Mechanical/Store/inspection.store";
-  import { MaintenanceStore } from "$routes/Mechanical/Store/maintenance.store";
   import { InspectionService } from "$lib/services/mechanical/inspection-service";
   import { hideLoader, showLoader } from "$lib/utils/loading-spinner";
   import Add from "../Inspection/add.svelte";
@@ -79,13 +78,6 @@
                   on:click={() => InspectionStore.getOpenModal(item.id, 0)}
                 >
                   <i class="ti-pencil" />
-                </button>
-                <button
-                  title="Realizar Mantenimiento"
-                  on:click={() => MaintenanceStore.getOpenModal(0, item.id)}
-                  class="btn btn-outline-info btn-sm"
-                >
-                  <i class="fa fa-wrench" />
                 </button>
                 <button
                   title="Obtner reporte"
