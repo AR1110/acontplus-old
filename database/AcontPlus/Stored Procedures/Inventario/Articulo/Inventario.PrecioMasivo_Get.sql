@@ -136,7 +136,7 @@ BEGIN
 
 	IF (@tipo = 1)
 		BEGIN
-			SELECT * FROM Familia WITH (NOLOCK) WHERE idEntidad = @idEntidad
+			SELECT * FROM Familia WITH (NOLOCK) --WHERE idEntidad = @idEntidad
 			SELECT * FROM SubFamilia WITH (NOLOCK) WHERE idEntidad = @idEntidad
 			SELECT * FROM Tarifa WITH (NOLOCK) WHERE idEntidad = @idEntidad
 			SELECT * FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CD' --AND JSON_VALUE(jsonConfig, '$[0].codTransaccion') = 'AL'
