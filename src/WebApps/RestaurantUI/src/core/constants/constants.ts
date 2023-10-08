@@ -1,11 +1,13 @@
+const GATEWAY = "gateway/"
 export const enum PATHS {
-    PRIVATE = "Restaurant/",
-    INVENTARIO = "Inventario/",
-    SALE = 'Venta/',
-    ACCOUNTING = 'Contabilidad/',
-    CONFIG = 'Config/',
-    CUSTOMER = 'Customer/',
-    REPORT = 'Reporte/'
+    ACCOUNT = "Restaurant/Account/login",
+    PRIVATE = `${GATEWAY}Restaurant/`,
+    INVENTARIO = `${GATEWAY}Inventario/`,
+    SALE = `${GATEWAY}Venta/`,
+    ACCOUNTING = `${GATEWAY}Contabilidad/`,
+    CONFIG = `${GATEWAY}Config/`,
+    CUSTOMER = `${GATEWAY}Customer/`,
+    REPORT = `${GATEWAY}Reporte/`
 }
 
 export const enum PERSIS_USER {

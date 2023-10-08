@@ -35,38 +35,6 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44358
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Cliente{everything}",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
-      "UpstreamPathTemplate": "/gateway/Cliente{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 54948
-        }
-      ],
-      "DownstreamPathTemplate": "/api/Factura{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
-      "UpstreamPathTemplate": "/gateway/Factura{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
           "Port": 7111
         }
       ],

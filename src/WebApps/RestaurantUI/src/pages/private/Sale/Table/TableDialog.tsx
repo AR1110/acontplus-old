@@ -219,7 +219,7 @@ const TableDialog = (props: SimpleDialogProps) => {
                         {tables.map((table, index) => (
                             <Grid item xs={4} sm={4} md={4} key={index}>
                                 <CustomButton 
-                                variant={order.tableId > table.tableId ? "contained" : "outlined"} 
+                                variant={order.tableId === table.tableId ? "contained" : "outlined"} 
                                 fullWidth 
                                 disabled={table.assigned}
                                 onClick={()=>handleButtonClick(table)}
