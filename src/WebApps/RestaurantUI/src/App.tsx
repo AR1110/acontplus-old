@@ -4,13 +4,13 @@ import { Suspense, lazy } from "react";
 import { RoutesWithNotFound, SnackbarUtilitiesConfigurator } from "@/core/utilities/index.ts";
 import { PrivateRoutes, PublicRoutes } from "./core/models";
 import { AuthGuard } from "./core/guards";
-import { SnackbarProvider } from "notistack"; 
+import { SnackbarProvider } from "notistack";
 import { useDarkMode } from "./context/DarkModeContext";
 
 const Login = lazy(() => import("@/pages/login/Login"));
 const Private = lazy(() => import("@/pages/private/Private"));
 
-export default function App() { 
+export default function App() {
   const { darkMode } = useDarkMode();
 
   const darkTheme = createTheme({
@@ -26,7 +26,7 @@ export default function App() {
         <SnackbarProvider>
           <SnackbarUtilitiesConfigurator />
           {/* <BrowserRouter basename="/RestaurantUI/"> */}
-          <BrowserRouter> 
+            <BrowserRouter>  
 
             <RoutesWithNotFound>
               <Route path="/" element={<Navigate to={PrivateRoutes.PRIVATE}></Navigate>}></Route>
@@ -38,7 +38,7 @@ export default function App() {
                 ></Route>
               </Route>
             </RoutesWithNotFound>
-          </BrowserRouter> 
+          </BrowserRouter>
         </SnackbarProvider>
       </Suspense>
     </ThemeProvider>

@@ -6,6 +6,7 @@ export interface RawTableData {
     description: string
     floorId: number
     assigned: boolean
+    roomId: number
 }
 
 export interface TableReadDto {
@@ -15,4 +16,5 @@ export interface TableReadDto {
     description: string
     floorId: number
     assigned: boolean
+    roomId: number
 }
