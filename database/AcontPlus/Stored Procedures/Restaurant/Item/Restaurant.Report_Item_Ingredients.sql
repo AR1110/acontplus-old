@@ -14,7 +14,7 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
-    
+    DECLARE @idEntidad INT;
     ---Params    
     DECLARE @codEstab VARCHAR(100)
     DECLARE @idSubfamilia INT 
@@ -35,7 +35,8 @@ BEGIN
         ,itemId INT '$.itemId'
     ) 
 
-    SELECT TOP 1 @codEstab = codEstab 
+    SELECT top 1 @idEntidad = idEntidad FROM v_usuario WHERE idUsuarioRol =  @idUsuarioRol
+    SELECT TOP 1 @codEstab = codEstab
     FROM v_Estab_Asign WHERE idUsuarioRol = @idUsuarioRol
  
     SELECT  
