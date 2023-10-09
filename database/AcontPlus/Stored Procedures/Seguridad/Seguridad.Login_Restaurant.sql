@@ -10,9 +10,9 @@ GO
 --- EXEC Seguridad.Login_Restaurant 0,'edinson.romero','edi12345'
 --- EXEC Seguridad.Login_Restaurant 0,'emilio.senguana','emilio2021'
 CREATE OR ALTER PROCEDURE [Seguridad].[Login_Restaurant] 
-	@id INT,
-	@nombreUsuario nvarchar (150)
-	,@contrasenia nvarchar (150)
+@id INT
+,@nombreUsuario NVARCHAR(150)
+,@contrasenia NVARCHAR(150)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -28,38 +28,39 @@ BEGIN
 									,@rucEmpresa VARCHAR(13)'
 									
 	DECLARE @sql NVARCHAR(MAX) = 'SELECT 
-									 id = IIF(@count = 1,''2'',''1'')
-									,mensaje = IIF(@count = 1,''Iniciando Session....'','''')
-									,title = ''login''
-									,idRol = r.idUsuarioRol
-									,userName = u.nombreUsuario
-									,fullName = u.nombreCompleto
-									,nroIdentificacion = ISNULL(u.nroIdentificacion,'''')
-									,imagen = '''' 
-									,entidad = e.razonSocial
-									,nombreComercial = e.nombreComercial
-									,rol = p.codigo
-									,actividad = ''''
-									,rucEmpresa = e.ruc
+									 id                 = IIF(@count = 1,''2'',''1'')
+									,mensaje            = IIF(@count = 1,''Iniciando Session....'','''')
+									,title              = ''Login''
+									,idRol              = r.idUsuarioRol
+									,userName           = u.nombreUsuario
+									,fullName           = u.nombreCompleto
+									,nroIdentificacion  = ISNULL(u.nroIdentificacion,'''')
+									,imagen             = ''''
+									,entidad            = e.razonSocial
+									,nombreComercial    = e.nombreComercial
+									,rol                = p.codigo
+									,actividad          = ''''
+									,rucEmpresa         = e.ruc
 									,e.idEntidad companyId
 									,r.idUsuario
 								 FROM App.UsuarioRol r 
 								 INNER JOIN dbo.Entidad e ON e.idEntidad = r.idEntidad
 								 INNER JOIN dbo.Usuario u ON u.idUsuario = r.idUsuario
 								 INNER JOIN dbo.Politica p ON p.idPolitica = r.idRol 
-								 WHERE r.estado = 1 '
+								 WHERE r.estado = 1'
 
 	/*Add by Ignacio */
 	/* 01: Restaurante */
-	DECLARE @rucEmpresa VARCHAR(13)
-	DECLARE @actividad VARCHAR(3) = '01'
-	DECLARE @loginMenu NVARCHAR(MAX)
-	DECLARE @loginSubMenu VARCHAR(MAX)
-	DECLARE @establecimientos VARCHAR(MAX)
+	DECLARE @rucEmpresa         VARCHAR(13)
+	DECLARE @actividad          VARCHAR(3) = '01'
+	DECLARE @loginMenu          NVARCHAR(MAX)
+	DECLARE @loginSubMenu       VARCHAR(MAX)
+	DECLARE @establecimientos   VARCHAR(MAX)
+    DECLARE @idUsuarioRol       INT
 	
 	/* Temp Tables*/
 	CREATE TABLE #UserTemp(
-		idUsuario INT
+		idUsuarioRol INT
 		,idEntidad INT
 		,rucEmpresa VARCHAR(13)
 	)
@@ -67,61 +68,53 @@ BEGIN
 	SET @contraseniaEncryptada = HASHBYTES('SHA2_512',@contrasenia)
 
 	IF EXISTS (SELECT 1 FROM dbo.Usuario WHERE nombreUsuario = @nombreUsuario AND contrasenia = @contraseniaEncryptada)
-		BEGIN 
-            PRINT @nombreUsuario
-			/* Obtengo RUC de Usuario*/
-			INSERT INTO #UserTemp
-			SELECT idUsuario
-					, idEntidad
-					, rucEmpresa 
-			FROM v_usuario 
-            WHERE nombreUsuario = @nombreUsuario
-						
-			SELECT * 
-			INTO #Estab_Asign
-			FROM v_Estab_Asign v_a 
-			WHERE v_a.ruc IN (SELECT rucEmpresa FROM #UserTemp)
-			AND  v_a.actividad = '01'
-					
-			SELECT @rucEmpresa = ruc FROM #Estab_Asign
-									
+		BEGIN
+            SELECT @idUsuario = idUsuario
+            FROM dbo.Usuario
+            WHERE nombreUsuario = @nombreUsuario 
+            AND contrasenia = @contraseniaEncryptada
+
+            SELECT  v_ea.*
+            INTO #Estab_Asign
+            FROM v_Estab_Asign v_ea
+            INNER JOIN v_usuario v_u ON v_u.idUsuarioRol = v_ea.idUsuarioRol
+            WHERE v_u.idUsuario = 115
+            AND  v_ea.actividad = '01'
+                        								
 			IF (SELECT COUNT(*) FROM #Estab_Asign) = 0
 				BEGIN
 					SELECT '0', 'No se ha encontrado RESTAURANTE', ''
 					RETURN
 				END
-							
-			IF @id > 0
+                
+			IF @id > 0 ---- En modal se selecciona y envia el id => idUsuarioRol
 				BEGIN
-                    PRINT 'HERE 01'
 					SET @count = 1
-					SET @sql = @sql+'AND r.idUsuarioRol = @idUsuarioRol '
-					SELECT @idPolitica = idRol FROM App.UsuarioRol WHERE idUsuarioRol = @id
-				END 
+					SET @sql = @sql+' AND r.idUsuarioRol = @idUsuarioRol '
+					
+                    SELECT @idPolitica = idRol FROM App.UsuarioRol WHERE idUsuarioRol = @id
+				END
 
 			ELSE IF @id = 0
 				BEGIN
-                    PRINT 'HERE 02'
-
 					SELECT @idUsuario = idUsuario 
 					FROM dbo.Usuario 
 					WHERE nombreUsuario = @nombreUsuario 
 					AND contrasenia = @contraseniaEncryptada
 					
-                    PRINT @idUsuario
-                    PRINT 'idUsuario'
-
 					SELECT @count = COUNT(*) 
 					FROM App.UsuarioRol 
 					WHERE idUsuario = @idUsuario and estado = 1
 
 					SET @sql = @sql+'AND r.idUsuario = @idUsuario '
 					SELECT @idPolitica = idRol FROM App.UsuarioRol WHERE idUsuario = @idUsuario
-				END 
+				END
+
+            PRINT @rucEmpresa
 
 			SET @sql = @sql+ 'AND r.ruc = @rucEmpresa '
 
-            PRINT @sql
+			---SET @sql = @sql+ 'AND r.ruc = @rucEmpresa '
 
 			  IF @count >= 1 
 				BEGIN
@@ -163,12 +156,10 @@ BEGIN
 					SELECT @establecimientos AS establecimientos
 				END
 			  ELSE IF @count = 0 SELECT '0','No tienes acceso',''
-		END 
+		END
 	ELSE 
 		BEGIN
 			SELECT '0','Usuario o Contraseña incorrectos.','Login'
 			RETURN 
-		END 
-
-	
+		END
 END
