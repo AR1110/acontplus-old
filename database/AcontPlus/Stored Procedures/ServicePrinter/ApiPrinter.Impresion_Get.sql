@@ -135,7 +135,7 @@ BEGIN
 	
 	SELECT  @dataSources = dataSources FROM ApiPrinter.Document_Data(@idDocument,@codDoc)
 
-	SELECT '1' code, payload = (SELECT 'http://' + @urlPrinter urlPrinter,  @rdlcProps rdlcProps, @dataSources dataSources, @rdlcParams rdlcParams 
+	SELECT '1' code, payload = (SELECT IIF(@urlPrinter = '127.0.0.1:9100','http://' + @urlPrinter  ,'https://acontplusprint.com:9200') as urlPrinter ,  @rdlcProps rdlcProps, @dataSources dataSources, @rdlcParams rdlcParams 
 	FOR JSON PATH)
 END
 GO

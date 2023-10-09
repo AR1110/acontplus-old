@@ -32,7 +32,6 @@ BEGIN
 	DECLARE @idEntidad INT
 	DECLARE @idPolitica INT 	
 	DECLARE @idUsuario INT
-	DECLARE @jsonConfigDecimal AS VARCHAR(MAX)
 	DECLARE @jsonConfigVentas AS VARCHAR(MAX)
 	
 	DECLARE @configVentas AS TABLE (
@@ -44,23 +43,10 @@ BEGIN
 	   ,multipleVendedor  BIT NOT NULL
 	)
 
-	DECLARE @configDecimal AS TABLE (
-		nroPrecio INT NOT NULL
-	   ,nroCantidad INT NOT NULL
-	   ,nroIva INT NOT NULL
-	   ,nroDescuentoDetalle INT NOT NULL
-	   ,nroTotalDetalle INT NOT NULL
-	   ,nroTotalSubTotal INT NOT NULL
-	   ,nroDescuento INT NOT NULL
-	   ,nroIce INT NOT NULL
-	   ,importeTotal INT NOT NULL
-	)
-
 	SELECT @idEntidad = idEntidad, @idPolitica = idRol, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol	
 
 	SELECT TOP 1 @jsonConfigVentas = jsonConfig FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CV'
 
-	SELECT TOP 1 @jsonConfigDecimal = jsonConfig FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CD'
 
 	INSERT INTO @configVentas (idCliente,idArticulo,searchCode,printerAutomatic,payAutomatic, multipleVendedor)
 						SELECT idCliente,idArticulo,searchCode,printerAutomatic,payAutomatic, ISNULL(multipleVendedor, 0)
@@ -72,20 +58,6 @@ BEGIN
 							 ,payAutomatic     BIT '$.payAutomatic'
 							 ,multipleVendedor BIT '$.multipleVendedor') as dt
 	
-	INSERT INTO @configDecimal(nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle ,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce,importeTotal)
-						SELECT nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle ,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce,importeTotal
-						FROM OPENJSON(@jsonConfigDecimal)
-						WITH (codTransaccion      VARCHAR(5) '$.codTransaccion'
-							 ,nroPrecio                  INT '$.nroPrecio'
-							 ,nroCantidad                INT '$.nroCantidad'
-							 ,nroIva                     INT '$.nroIva'
-							 ,nroDescuentoDetalle        INT '$.nroDescuentoDetalle'
-							 ,nroTotalDetalle            INT '$.nroTotalDetalle'
-							 ,nroTotalSubTotal           INT '$.nroTotalSubTotal'
-							 ,nroDescuento               INT '$.nroDescuento'
-							 ,nroIce                     INT '$.nroIce'
-							 ,importeTotal               INT '$.importeTotal') as dt
-					   WHERE dt.codTransaccion = 'V'
 
 	SELECT 
 		es.codEstab_Asig
@@ -108,7 +80,8 @@ BEGIN
 	   ,nroDescuento
 	   ,nroIce
 	   ,importeTotal
-	FROM @configDecimal
+	FROM v_ConfigDecimal WITH (NOLOCK)
+    WHERE codTrasaccion = 'V'
 
 	SELECT 
 		porcentajeIva
@@ -171,7 +144,7 @@ BEGIN
 	--Permisos 
 	SELECT 
 	 jsonPermission
-	FROM Config.UserPermission WHERE idUsuarioRol = @idRol AND codModule='V'
+	FROM Config.UserPermission WITH (NOLOCK) WHERE idUsuarioRol = @idRol AND codModule='V'
 
 	SELECT a.leer, a.crear, a.editar FROM Acceso a
 	INNER JOIN SubMenu sm WITH(NOLOCK) ON sm.idSubMenu = a.idSubMenu
