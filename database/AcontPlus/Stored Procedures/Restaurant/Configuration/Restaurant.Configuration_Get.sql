@@ -1,9 +1,8 @@
 USE AcontPlus
-GO 
+GO
 --- Author: Ignacio Manchu - Ignacio Manchu
 --- Date: 2023-08-15
 --- Description: Listado general de configuraciones para módulo de ventas - Restaurante.
-
 --- Restaurant.Configuration_Get 139, '{"codEstab":"ESTAB-000000117"}', ''
 IF OBJECT_ID(N'Restaurant.Configuration_Get', N'P') IS NOT NULL
 	DROP PROCEDURE Restaurant.Configuration_Get
@@ -13,7 +12,7 @@ CREATE PROCEDURE Restaurant.Configuration_Get
 ,@json NVARCHAR(MAX)
 ,@tableNames NVARCHAR(MAX) OUTPUT
 AS
-BEGIN 
+BEGIN
 	SET NOCOUNT ON;
 	DECLARE @idEntidad INT
 	DECLARE @codEstab VARCHAR(20)
@@ -80,11 +79,7 @@ BEGIN
 	   ,cl.direccion
 	   ,cl.correo
 	FROM dbo.Cliente cl WITH (NOLOCK) WHERE cl.idCliente = @customerCompanyId 
-
-
-     
+            
 	SELECT descripcion, codigo, porcentaje FROM Sri.TarifaImpuesto WITH (NOLOCK) WHERE codigo IN ('2') AND estado = 1 ORDER BY codigo DESC
-		 
-
 END
 GO

@@ -88,8 +88,12 @@ class ModalMovimientoCajaCtrl extends MovimientoCajaBase {
 
     //Buscar Empleado 
     static searchEmpleado(busqueda) {
-        return this.$http.get('/Empleado/Search?busqueda=' + busqueda).then(response => {
-            return response.data.data
+        return this._mS.getData('GET', 'Empleado/Search?json=' + JSON.stringify({ textSearch: busqueda }), null, true).then(response => {
+            if (response.code == "1") {
+                return JSON.parse(response.payload)
+            } else {
+                return null;
+            }
         })
     }
 
@@ -291,7 +295,7 @@ class MovimientoCajaCtrl {
         this.movCajas = [];
         this.anticipos = [];
 
-        this.searchEmpleado = ModalMovimientoCajaCtrl.searchEmpleado
+        this.searchEmpleado = ModalMovimientoCajaCtrl.searchEmpleado;
         this.clienteSearch = ModalAnticipoCtrl.clienteSearch;
         this.clienteSearchAnticipo = ModalAnticipoCtrl.clienteSearch;
 
