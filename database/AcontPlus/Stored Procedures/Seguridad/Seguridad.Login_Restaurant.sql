@@ -6,7 +6,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
---- EXEC Seguridad.Login_Restaurant 0,'fatima.macias','Fm1245'
+--- EXEC Seguridad.Login_Restaurant 0,'emilio.senguana','emilio2021'
 --- EXEC Seguridad.Login_Restaurant 0,'edinson.romero','edi12345'
 CREATE OR ALTER PROCEDURE [Seguridad].[Login_Restaurant] 
 	@id INT,
@@ -110,10 +110,11 @@ BEGIN
 					SELECT @idPolitica = idRol FROM App.UsuarioRol WHERE idUsuario = @idUsuario
 				END 
 
-			SET @sql = @sql+ 'AND r.ruc = @rucEmpresa '
+			--SET @sql = @sql+ 'AND r.ruc = @rucEmpresa '
 
 			  IF @count >= 1 
 				BEGIN
+                   print @sql
 					EXEC sp_executesql 
 						@sql
 						,@params 

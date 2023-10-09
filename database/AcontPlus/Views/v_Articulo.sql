@@ -43,11 +43,11 @@ SELECT  a.idArticulo
 	,a.idUsuario
 	,a.s3ObjectKey
 	,a.s3ObjectUrl
-FROM dbo.Articulo           a WITH(NOLOCK)
-INNER JOIN dbo.TipoIva     ti WITH(NOLOCK) ON ti.idTipoIva      = a.idTipoIva 
-LEFT JOIN dbo.SubFamilia   sf WITH(NOLOCK) ON sf.idSubFamilia   = a.idSubFamilia
-LEFT JOIN dbo.Marca         m WITH(NOLOCK) ON m.idMarca		    = a.idMarca
-LEFT JOIN dbo.Medida       me WITH(NOLOCK) ON me.idMedida	    = a.idMedida
-LEFT JOIN dbo.Modelo       mo WITH(NOLOCK) ON mo.idModelo       = a.idModelo
-LEFT JOIN dbo.TipoArticulo ta WITH(NOLOCK) ON ta.idTipoArticulo = a.idArticulo
+FROM dbo.Articulo            a WITH(NOLOCK)
+INNER JOIN dbo.TipoIva      ti WITH(NOLOCK) ON ti.idTipoIva      = a.idTipoIva 
+ LEFT JOIN dbo.SubFamilia   sf WITH(NOLOCK) ON sf.idSubFamilia   = a.idSubFamilia
+ LEFT JOIN dbo.Marca         m WITH(NOLOCK) ON m.idMarca		 = a.idMarca
+ LEFT JOIN dbo.Medida       me WITH(NOLOCK) ON me.idMedida	     = a.idMedida
+ LEFT JOIN dbo.Modelo       mo WITH(NOLOCK) ON mo.idModelo       = a.idModelo
+ LEFT JOIN dbo.TipoArticulo ta WITH(NOLOCK) ON ta.idTipoArticulo = a.idArticulo
  )

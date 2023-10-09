@@ -12,7 +12,7 @@ inner join Entidad e on e.idEntidad = sf.idEntidad
 
 
 update sf set
-	sf.idFamilia = (select top 1 idFamilia 
+	sf.idFamilia = (select top 1 f.idFamilia 
 	     from Familia f 
 		 inner join sri.ActividadEconomica ae on ae.idActividadEconomica = f.ActividadEconomicaId
 		 inner join sri.Establecimiento es on es.actividad = ae.codigo
