@@ -5,6 +5,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+
 --- EXEC Seguridad.Login_Restaurant 0,'fatima.macias','Fm1245'
 --- EXEC Seguridad.Login_Restaurant 0,'edinson.romero','edi12345'
 --- EXEC Seguridad.Login_Restaurant 0,'emilio.senguana','emilio2021'
@@ -109,11 +110,15 @@ BEGIN
 					SELECT @idPolitica = idRol FROM App.UsuarioRol WHERE idUsuario = @idUsuario
 				END
 
+            PRINT @rucEmpresa
+
+			SET @sql = @sql+ 'AND r.ruc = @rucEmpresa '
 
 			---SET @sql = @sql+ 'AND r.ruc = @rucEmpresa '
 
 			  IF @count >= 1 
 				BEGIN
+                   print @sql
 					EXEC sp_executesql 
 					@sql
 					,@params 
