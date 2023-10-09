@@ -1739,6 +1739,7 @@ export class CommonService {
             let templates = {};
             let fileCtrl = '';
             let ctrl;
+            let isRenderRazorPartial = false;
 
             switch (codigoDocumento) {
                 case "FE":
