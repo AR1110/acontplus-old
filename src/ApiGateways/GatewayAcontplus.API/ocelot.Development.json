@@ -1310,6 +1310,20 @@
       "UpstreamPathTemplate": "/gateway/Venta{everything}"
     },
     {
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7221
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v2/Account{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Post"
+      ],
+      "UpstreamPathTemplate": "/restaurant/Account{everything}"
+    },
+    {
       "AuthenticationOptions": {
         "AllowedScopes": [],
         "AuthenticationProviderKey": "Bearer"
