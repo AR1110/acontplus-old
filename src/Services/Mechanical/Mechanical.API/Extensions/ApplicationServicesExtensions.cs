@@ -14,10 +14,10 @@ namespace Mechanical.API.Extensions
             services.AddDbContextPool<MechanicalContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-            
+
             services.AddScoped<IVehicleService, VehicleService>();
             services.AddScoped<ISupportService, SupportService>();
-            services.AddScoped<IMaintenanceService, MaintenanceService>();
+            //services.AddScoped<IMaintenanceService, MaintenanceService>();
             services.AddScoped<IInspectionService, InspectionService>();
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             return services;
