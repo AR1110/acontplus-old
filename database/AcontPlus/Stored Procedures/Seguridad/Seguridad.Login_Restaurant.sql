@@ -6,8 +6,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
---- EXEC Seguridad.Login_Restaurant 0,'emilio.senguana','emilio2021'
+--- EXEC Seguridad.Login_Restaurant 0,'fatima.macias','Fm1245'
 --- EXEC Seguridad.Login_Restaurant 0,'edinson.romero','edi12345'
+--- EXEC Seguridad.Login_Restaurant 0,'emilio.senguana','emilio2021'
 CREATE OR ALTER PROCEDURE [Seguridad].[Login_Restaurant] 
 	@id INT,
 	@nombreUsuario nvarchar (150)
@@ -66,13 +67,15 @@ BEGIN
 	SET @contraseniaEncryptada = HASHBYTES('SHA2_512',@contrasenia)
 
 	IF EXISTS (SELECT 1 FROM dbo.Usuario WHERE nombreUsuario = @nombreUsuario AND contrasenia = @contraseniaEncryptada)
-		BEGIN
+		BEGIN 
+            PRINT @nombreUsuario
 			/* Obtengo RUC de Usuario*/
 			INSERT INTO #UserTemp
 			SELECT idUsuario
 					, idEntidad
 					, rucEmpresa 
-			FROM v_usuario WHERE nombreUsuario = @nombreUsuario
+			FROM v_usuario 
+            WHERE nombreUsuario = @nombreUsuario
 						
 			SELECT * 
 			INTO #Estab_Asign
@@ -90,6 +93,7 @@ BEGIN
 							
 			IF @id > 0
 				BEGIN
+                    PRINT 'HERE 01'
 					SET @count = 1
 					SET @sql = @sql+'AND r.idUsuarioRol = @idUsuarioRol '
 					SELECT @idPolitica = idRol FROM App.UsuarioRol WHERE idUsuarioRol = @id
@@ -97,11 +101,16 @@ BEGIN
 
 			ELSE IF @id = 0
 				BEGIN
+                    PRINT 'HERE 02'
+
 					SELECT @idUsuario = idUsuario 
 					FROM dbo.Usuario 
 					WHERE nombreUsuario = @nombreUsuario 
 					AND contrasenia = @contraseniaEncryptada
 					
+                    PRINT @idUsuario
+                    PRINT 'idUsuario'
+
 					SELECT @count = COUNT(*) 
 					FROM App.UsuarioRol 
 					WHERE idUsuario = @idUsuario and estado = 1
@@ -110,52 +119,50 @@ BEGIN
 					SELECT @idPolitica = idRol FROM App.UsuarioRol WHERE idUsuario = @idUsuario
 				END 
 
-			--SET @sql = @sql+ 'AND r.ruc = @rucEmpresa '
+			SET @sql = @sql+ 'AND r.ruc = @rucEmpresa '
+
+            PRINT @sql
 
 			  IF @count >= 1 
 				BEGIN
                    print @sql
 					EXEC sp_executesql 
-						@sql
-						,@params 
-						,@idUsuarioRol = @id
-						,@idUsuario = @idUsuario
-						,@count = @count
-						,@rucEmpresa = @rucEmpresa
+					@sql
+					,@params 
+					,@idUsuarioRol = @id
+					,@idUsuario = @idUsuario
+					,@count = @count
+					,@rucEmpresa = @rucEmpresa
 						
 
-						/* Menus */
-						SET @loginMenu = (
-							SELECT m.idMenu,m.subMenu,m.url,m.icono,m.descripcion
-							FROM Acceso a
-							INNER JOIN dbo.SubMenu sm ON sm.idSubMenu = a.idSubMenu
-							INNER JOIN dbo.Menu m ON m.idMenu = sm.idMenu
-							WHERE idPolitica = @idPolitica AND a.leer = 1
-							GROUP BY m.idMenu,m.subMenu,m.url,m.icono,m.descripcion, m.orden
-							ORDER BY CAST(m.orden AS INT) ASC FOR JSON PATH
-						)
+					/* Menus */
+					SET @loginMenu = (
+						SELECT m.idMenu,m.subMenu,m.url,m.icono,m.descripcion
+						FROM Acceso a
+						INNER JOIN dbo.SubMenu sm ON sm.idSubMenu = a.idSubMenu
+						INNER JOIN dbo.Menu m ON m.idMenu = sm.idMenu
+						WHERE idPolitica = @idPolitica AND a.leer = 1
+						GROUP BY m.idMenu,m.subMenu,m.url,m.icono,m.descripcion, m.orden
+						ORDER BY CAST(m.orden AS INT) ASC FOR JSON PATH
+					)
 									
-						/*Accesos */
-						SET @loginSubMenu = (
-							SELECT sm.idMenu,sm.idSubMenu,sm.url,sm.icono,sm.descripcion 
-							FROM Acceso a
-							INNER JOIN dbo.SubMenu sm ON sm.idSubMenu = a.idSubMenu
-							INNER JOIN dbo.Menu m ON m.idMenu = sm.idMenu
-							WHERE idPolitica = @idPolitica AND a.leer = 1 FOR JSON PATH
-						)
+					/*Accesos */
+					SET @loginSubMenu = (
+						SELECT sm.idMenu,sm.idSubMenu,sm.url,sm.icono,sm.descripcion 
+						FROM Acceso a
+						INNER JOIN dbo.SubMenu sm ON sm.idSubMenu = a.idSubMenu
+						INNER JOIN dbo.Menu m ON m.idMenu = sm.idMenu
+						WHERE idPolitica = @idPolitica AND a.leer = 1 FOR JSON PATH
+					)
 
-						SET @establecimientos = (SELECT * FROM #Estab_Asign FOR JSON PATH)
+					SET @establecimientos = (SELECT * FROM #Estab_Asign FOR JSON PATH)
 
-						/* Establecimientos */
-						SELECT @loginMenu AS loginMenu
-						SELECT @loginSubMenu AS loginSubMenu
-						SELECT @establecimientos AS establecimientos
-
-						
+					/* Establecimientos */
+					SELECT @loginMenu AS loginMenu
+					SELECT @loginSubMenu AS loginSubMenu
+					SELECT @establecimientos AS establecimientos
 				END
 			  ELSE IF @count = 0 SELECT '0','No tienes acceso',''
-						
-
 		END 
 	ELSE 
 		BEGIN

@@ -1,8 +1,7 @@
 export function showLoader() {
   const div = "<div class='loading'><span class='spinner'></span></div>";
   const loaderCss = document.getElementById('loaderCss');
-  if (loaderCss) {
-    console.log('showloader')
+  if (loaderCss) {    
     loaderCss.innerHTML = div;
     loaderCss.classList.add('positionLoading');
   }

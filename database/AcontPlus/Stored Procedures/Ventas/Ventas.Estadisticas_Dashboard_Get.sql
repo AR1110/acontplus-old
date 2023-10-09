@@ -1,5 +1,4 @@
 USE AcontPlus
-
 GO
 --- Author: Ignacio Manchu.
 --- Description: Adding new sp for app 
