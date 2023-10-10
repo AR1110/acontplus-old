@@ -17,18 +17,36 @@ BEGIN
 	DECLARE @codEstado INT
 	DECLARE @message VARCHAR(100) = 'No actualizado'
 	DECLARE @codeResponse VARCHAR(1) = '0'
+    DECLARE @fechaCaducidad DATE ,@firma INT
 
-	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idRol	
-
-	SELECT @codEstado = codEstado FROM dbo.DocumentoElectronico WHERE idDocumentoElectronico = @id
-
-	IF @codEstado = 4 
-		BEGIN
-			SELECT '0'code,'El comprobante ya se encuentra autorizado' as 'message'
-			RETURN 
-		END 
 
 	BEGIN TRY	
+        SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol	
+
+	    SELECT TOP 1 @codEstado = codEstado FROM dbo.DocumentoElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id
+
+        SELECT TOP 1 @fechaCaducidad = fechaCaducidad ,@firma = idFirmaElectronica FROM dbo.FirmaElectronica WITH (NOLOCK) WHERE idEntidad = @idEntidad
+
+	    IF @codEstado = 4 
+		    BEGIN
+			    SELECT '0'code,'El comprobante ya se encuentra autorizado' as 'message'
+			    RETURN 
+		    END
+
+        IF @firma IS NULL
+			BEGIN
+				SELECT '0' code,'No tienes configurada ninguna firma electrónica.' AS 'message'
+				RETURN
+			END
+
+        IF DATEDIFF(DAY,@fechaCaducidad,GETDATE()) = 0 
+			BEGIN
+				SELECT '0'code,'Su firma ha caducado no puede firmar comprobantes electrónicos' as 'message'
+				RETURN
+			END
+
+        
+
 		BEGIN TRAN 
 			IF @codEstado = 2
 				BEGIN 

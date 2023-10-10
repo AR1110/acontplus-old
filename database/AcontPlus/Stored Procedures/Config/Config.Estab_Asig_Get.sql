@@ -36,9 +36,9 @@ BEGIN
 
 	SELECT @idUsuarioRol = idUsuarioRol, @typeList = typeList FROM OPENJSON(@json) WITH (idUsuarioRol INT '$.idUsuarioRol', typeList INT '$.typeList')
 
-	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idUsuarioRol
+	SELECT @idEntidad = idEntidad FROM App.UsuarioRol  WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
-	SELECT @ruc = ruc FROM dbo.Entidad WHERE idEntidad = @idEntidad
+	SELECT @ruc = ruc FROM dbo.Entidad  WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
 	IF @idUsuarioRol IS NULL
 		BEGIN
@@ -53,8 +53,8 @@ BEGIN
 		,es.nombreComercial
 		,asig.predeterminado 
 		,asig.estado
-	FROM Config.Estab_Asig asig
-	INNER JOIN Sri.Establecimiento es ON es.codEstab = asig.codEstab 
+	FROM Config.Estab_Asig       asig  WITH (NOLOCK)
+	INNER JOIN Sri.Establecimiento es  WITH (NOLOCK) ON es.codEstab = asig.codEstab 
 	wHERE asig.idUsuarioRol = @idUsuarioRol  
 
 	UNION ALL
@@ -67,8 +67,8 @@ BEGIN
 		,es.nombreComercial
 		,CAST(0 AS bit)
 		,CAST(0 AS bit)
-	FROM Sri.Establecimiento es 
-	WHERE es.codEstab NOT IN (SELECT sc.codEstab FROM Config.Estab_Asig sc WHERE sc.idUsuarioRol = @idUsuarioRol)
+	FROM Sri.Establecimiento es  WITH (NOLOCK)
+	WHERE es.codEstab NOT IN (SELECT sc.codEstab FROM Config.Estab_Asig sc WITH (NOLOCK) WHERE sc.idUsuarioRol = @idUsuarioRol)
 	AND es.ruc = @ruc 
 	) AS t ORDER BY t.predeterminado DESC
 
