@@ -31,8 +31,4 @@
 		<ProjectReference Include="..\Mechanical.Core\Mechanical.Core.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Data\Migrations\" />
-	</ItemGroup>
-
 </Project>

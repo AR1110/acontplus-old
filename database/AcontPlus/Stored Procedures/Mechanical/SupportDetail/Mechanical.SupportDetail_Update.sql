@@ -10,7 +10,7 @@ GO
 -- Create date: 2021-06-25
 -- Description:	SP Para leer los datos e la tabla articulo
 -- =============================================
--- DROP PROC Mechanical.Maintenance_Update
+-- DROP PROC Mechanical.SupportDetail_Update
 CREATE OR ALTER PROCEDURE Mechanical.SupportDetail_Update @userRoleId INT ,@id INT ,@json VARCHAR(MAX)
 AS
 BEGIN
