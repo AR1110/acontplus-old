@@ -6,6 +6,7 @@ export interface Establecimiento {
     idEstablecimiento: number;
     ruc: number;
     nombreComercial: string;
+    entidad: string
     estab: number;
     obligadoContabilidad: string;
     dirEstablecimiento: string;
@@ -25,5 +26,6 @@ export const estabInitialState: Establecimiento = {
     obligadoContabilidad: "",
     dirEstablecimiento: "",
     contribuyenteRimpe: "",
-    actividad: ""
+    actividad: "",
+    entidad: ""
 }

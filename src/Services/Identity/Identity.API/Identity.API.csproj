@@ -10,6 +10,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Models\**" />
+	  <Content Remove="Models\**" />
+	  <EmbeddedResource Remove="Models\**" />
+	  <None Remove="Models\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<_WebToolingArtifacts Remove="Properties\PublishProfiles\FolderProfile.pubxml" />
 	</ItemGroup>
 
@@ -38,10 +45,6 @@
 		<ProjectReference Include="..\..\Common\DataAccess\DataAccess.csproj" />
 		<ProjectReference Include="..\..\Common\Lib.Common\Lib.Common.csproj" />
 		<ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Models\" />
 	</ItemGroup>
 	<ItemGroup>
 		<Content Include="..\..\..\SharedSettings\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json">

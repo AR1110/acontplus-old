@@ -134,7 +134,12 @@ const TableDialog = (props: SimpleDialogProps) => {
         try {
             const { isConfirmed } = await Swal.fire({
                 icon: 'warning',
-                html: 'Esta seguro de liberar la mesa'
+                html: 'Esta seguro de liberar la mesa?',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si!',
+                cancelButtonText: 'No!'
             })
             if (isConfirmed) {
                 showLoader();
