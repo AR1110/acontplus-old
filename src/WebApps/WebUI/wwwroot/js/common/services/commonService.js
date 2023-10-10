@@ -170,11 +170,13 @@ export class CommonService {
 
     //En uso 
     getEstabAsign(json = {}) {
-        return this.mS.getData('get', '/EstabAsig/Get?json=' + JSON.stringify(json)).then(response => {
+        return this.mS.getData('get', 'Config/EstabAsig/?json=' + JSON.stringify(json), null, true).then(response => {
+            console.log(response)
             if (response.code === "0") {
                 throw response
             }
-            return JSON.parse(response.payload) || [];
+            //return JSON.parse(response.payload) || [];
+            return response || []
         })
     }
 
@@ -1739,6 +1741,7 @@ export class CommonService {
             let templates = {};
             let fileCtrl = '';
             let ctrl;
+            let isRenderRazorPartial = false;
 
             switch (codigoDocumento) {
                 case "FE":

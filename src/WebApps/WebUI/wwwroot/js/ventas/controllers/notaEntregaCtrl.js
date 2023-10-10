@@ -5,21 +5,21 @@
     app.controller('notaEntregaCtrl', notaEntregaCtrl);
 
     notaEntregaCtrl.$inject = [
-        '$scope', 
-        '$filter', 
-        'mainService', 
-        'notaEntregaService', 
-        'commonService', 
-        'modalService', 
-        'nombreModal', 
+        '$scope',
+        '$filter',
+        'mainService',
+        'notaEntregaService',
+        'commonService',
+        'modalService',
+        'nombreModal',
         'nombreModalContabilidad',
-        'toastService', 
+        'toastService',
         'formulario',
         'decodeToken'
     ];
 
     function notaEntregaCtrl($scope, $filter, _mS, notaEntregaSvc, _commonSvc, _modalSvc, _nombreModalConst, nombreModalContabilidad, _tS, _fS, decodeToken) {
-     
+
 
         const TIPO_DOC_NE = _commonSvc.tipoDoc['NE'];
         const PERMISSION_KEY_ACTIONS = {
@@ -45,7 +45,7 @@
 
         $scope.isPrintDocument = false; //Para impresiones termicas al registra el documento 
         $scope.parametersPrint = {};
- 
+
 
         $scope.cliente = {}
         $scope.notaEntregas = [];
@@ -53,7 +53,7 @@
         let idUsuarioRol = Number(decodeToken.idUsuarioRol)
 
 
-       
+
 
 
         // removed focus new NE
@@ -66,18 +66,18 @@
 
         $scope.resultRangeFilter = function (item) {
             $scope.dataSearch.fechaInicio = item.startDate,
-            $scope.dataSearch.fechaFin = item.endDate
+                $scope.dataSearch.fechaFin = item.endDate
             $scope.getNotaEntregas();
         }
 
-    
 
-        $scope.onKeyupCliente = function(e) {
-            if(!$scope.cliente.nombreCliente){
+
+        $scope.onKeyupCliente = function (e) {
+            if (!$scope.cliente.nombreCliente) {
                 $scope.dataSearch.idCliente = 0;
             }
         }
-        $scope.onSelectCliente = function(item) {
+        $scope.onSelectCliente = function (item) {
             $scope.dataSearch.idCliente = item.idCliente;
             $scope.getNotaEntregas();
         }
@@ -135,7 +135,7 @@
 
 
         $scope.getNotaEntregas = async () => {
-            try { 
+            try {
                 let dataSearch = {
                     codEstab: $scope.dataSearch.codEstab,
                     pageIndex: $scope.dataSearch.pageIndex,
@@ -151,7 +151,7 @@
                     fechaInicio: _fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     fechaFin: _fS.formatDateMoment($scope.dataSearch.fechaFin),
                     tipoFecha: 'FE',
-                    isSearchNroSequential: $scope.dataSearch.nroSecuencial? true: false,
+                    isSearchNroSequential: $scope.dataSearch.nroSecuencial ? true : false,
                     nroSecuencial: $scope.dataSearch.nroSecuencial
                 }
 
@@ -162,7 +162,7 @@
 
                 notaEntregaSvc.getAll(dataSearch).then(response => {
                     hideLoader();
-                    let {notaEntregas, dataTotals} = response;
+                    let { notaEntregas, dataTotals } = response;
                     $scope.notaEntregas = notaEntregas;
                     $scope.cloneNotaEntregas = JSON.parse(JSON.stringify($scope.notaEntregas));
 
@@ -171,9 +171,9 @@
                     $scope.total = _fS.roundNumber(dataTotals.totalDocument, 5);
                     $scope.totalAbono = _fS.roundNumber(dataTotals.totalAbono, 5);
                     $scope.totalSaldo = _fS.roundNumber(dataTotals.totalSaldo, 5);
-                    
+
                 }).catch(error => {
-                    hideLoader();                    
+                    hideLoader();
                     console.log(error)
                 })
 
@@ -189,7 +189,7 @@
         }
 
 
-        $scope.initiload = async function()  {
+        $scope.initiload = async function () {
             _commonSvc.getEstabAsign().then(response => {
                 $scope.establecimientos = response;
                 let codEstab = $scope.establecimientos.length > 0 ? $scope.establecimientos[0].codEstab : 0;
@@ -222,18 +222,18 @@
             $scope.getTotales();
         }
 
-        
+
 
         $scope.validateOperationPrintAndPayment = (result) => {
-            
-            let{isRegister, data} = result;
-            
+
+            let { isRegister, data } = result;
+
             $scope.isRegister = isRegister;
             $scope.isPrintDocument = data.printerAutomatic;
 
             $scope.parametersPrint = {
                 ...data,
-                codDoc: data.codDoc==='01'?'FV': 'NE',
+                codDoc: data.codDoc === '01' ? 'FV' : 'NE',
                 idDocument: data.idDocumento,
                 codigo: data.codDoc === "01" ? 'RFPT' : 'RNEPT',
             }
@@ -535,15 +535,15 @@
             try {
                 let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
                 let ctrl = nombreModalContabilidad.COBRO.controllers['CL'];
-                let template = nombreModalContabilidad.COBRO.templates['CL']; 
+                let template = nombreModalContabilidad.COBRO.templates['CL'];
                 let controller = (await import(fileCtrl))[ctrl];
-    
+
                 $scope.openModalCobro({
                     controller,
                     template,
                     params,
                     size: 'xl',
-                 //   windowClass: 'uibModalFullScreen'
+                    //   windowClass: 'uibModalFullScreen'
                 })
             } catch (error) {
                 console.log(error)
@@ -561,13 +561,13 @@
             try {
                 let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
                 let ctrl = nombreModalContabilidad.COBRO.controllers['CR'];
-                let template = nombreModalContabilidad.COBRO.templates['CR']; 
+                let template = nombreModalContabilidad.COBRO.templates['CR'];
                 let controller = (await import(fileCtrl))[ctrl];
-                
+
                 $scope.openModalCobro({
                     controller,
                     template,
-                    params,                
+                    params,
                 })
             } catch (error) {
                 console.log(error)
@@ -610,13 +610,13 @@
 
 
         $scope.openModalCuota = async (item) => {
-            
+
             try {
                 let fileCtrl = nombreModalContabilidad.COBRO.fileCuotaCtrl;
                 let ctrl = nombreModalContabilidad.COBRO.controllers['MC'];
-                let template = nombreModalContabilidad.COBRO.templates['MC']; 
+                let template = nombreModalContabilidad.COBRO.templates['MC'];
                 let controller = (await import(fileCtrl))[ctrl];
-                
+
                 let modalRef = _modalSvc.openModalCustom({
                     controller,
                     template,
@@ -624,14 +624,14 @@
                     params: item,
                     isRenderRazorPartial: true
                 })
-                modalRef.result.then(result=>{
-                    if(typeof result==='object' && result.isReload){
+                modalRef.result.then(result => {
+                    if (typeof result === 'object' && result.isReload) {
                         $scope.getNotaEntregas();
                     }
                 })
             } catch (error) {
                 console.log(error)
-            }           
+            }
         }
 
 
@@ -640,14 +640,14 @@
 
         $scope.openModalHistorialCobro = async (ev, item) => {
             try {
-                if(['PE'].includes(item.codEstado)) return
-                
+                if (['PE'].includes(item.codEstado)) return
+
                 // showLoader();
                 let fileCtrl = nombreModalContabilidad.COBRO.fileCtrl;
                 let ctrl = nombreModalContabilidad.COBRO.controllers['CD'];
-                let templateUrl = nombreModalContabilidad.COBRO.templates['CD']; 
-                let controller = (await import(fileCtrl))[ctrl];                
-                
+                let templateUrl = nombreModalContabilidad.COBRO.templates['CD'];
+                let controller = (await import(fileCtrl))[ctrl];
+
                 let config = {
                     controller,
                     templateUrl,
@@ -655,12 +655,12 @@
                     // Modal dialogs should fully cover application to prevent interaction outside of dialog
                     parent: angular.element(document.body),
                     targetEvent: ev,
-                    clickOutsideToClose: false, 
-                    fullscreen: true,    
-                    params: Object.assign({}, item)                                     
+                    clickOutsideToClose: false,
+                    fullscreen: true,
+                    params: Object.assign({}, item)
                 }
-    
-                _modalSvc.openMdDialog(config)              
+
+                _modalSvc.openMdDialog(config)
             } catch (error) {
                 hideLoader();
                 console.log(error)
@@ -690,7 +690,7 @@
 
 
         $scope.typeSendToMail = 'N'
-        $scope.getParamToSendMail = function(item){
+        $scope.getParamToSendMail = function (item) {
             return {
                 TYPE_NOTIFICATION: 'N',
                 serieComprobante: item.serieComprobante,

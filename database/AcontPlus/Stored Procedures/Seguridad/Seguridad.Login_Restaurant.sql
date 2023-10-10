@@ -75,10 +75,13 @@ BEGIN
             AND contrasenia = @contraseniaEncryptada
 
             SELECT  v_ea.*
+                ,v_u.idEntidad
+                ,v_u.entidad
+                ,v_u.rucEmpresa
             INTO #Estab_Asign
             FROM v_Estab_Asign v_ea
             INNER JOIN v_usuario v_u ON v_u.idUsuarioRol = v_ea.idUsuarioRol
-            WHERE v_u.idUsuario = 115
+            WHERE v_u.idUsuario = @idUsuario
             AND  v_ea.actividad = '01'
                         								
 			IF (SELECT COUNT(*) FROM #Estab_Asign) = 0
@@ -106,19 +109,14 @@ BEGIN
 					FROM App.UsuarioRol 
 					WHERE idUsuario = @idUsuario and estado = 1
 
-					SET @sql = @sql+'AND r.idUsuario = @idUsuario '
+					SET @sql = @sql+' AND r.idUsuario = @idUsuario '
 					SELECT @idPolitica = idRol FROM App.UsuarioRol WHERE idUsuario = @idUsuario
 				END
-
-            PRINT @rucEmpresa
-
-			SET @sql = @sql+ 'AND r.ruc = @rucEmpresa '
-
-			---SET @sql = @sql+ 'AND r.ruc = @rucEmpresa '
+                
+			-- SET @sql = @sql+ 'AND r.ruc = @rucEmpresa '
 
 			  IF @count >= 1 
 				BEGIN
-                   print @sql
 					EXEC sp_executesql 
 					@sql
 					,@params 
@@ -127,7 +125,6 @@ BEGIN
 					,@count = @count
 					,@rucEmpresa = @rucEmpresa
 						
-
 					/* Menus */
 					SET @loginMenu = (
 						SELECT m.idMenu,m.subMenu,m.url,m.icono,m.descripcion

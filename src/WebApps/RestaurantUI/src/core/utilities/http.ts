@@ -3,7 +3,7 @@ import { getToken } from "@/core/services";
 
 const urlPrd = "https://gateway.acontplus.com/"
 //const urlDev = "https://localhost:7112/gateway/"
-const urlLocal = "https://localhost:7112/"
+const urlLocal = "https://localhost:7060/"
 const instance = axios.create({
   //baseURL: import.meta.env.DEV ? "https://localhost:7112/gateway/" : "https://acontplus.xyz/restaurantgateway/",
   baseURL: import.meta.env.DEV ? urlLocal : urlPrd,

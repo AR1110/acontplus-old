@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Index";
+  ViewData["Title"] = "Index";
 }
 <div ng-controller="articuloFraccionableCtrl as $ctrl">
   <div class="row page-titles">
@@ -13,12 +13,7 @@
                     <li class="breadcrumb-item"><a href="javascript:void(0)">Almacen</a></li>
                     <li class="breadcrumb-item active">Articulo Fraccionable</li>
                 </ol>-->
-        <button
-          type="button"
-          class="btn btn-info m-l-15"
-          ng-if="accion.crear"
-          ng-click="openModal()"
-        >
+        <button type="button" class="btn btn-info m-l-15" ng-if="accion.crear" ng-click="openModal()">
           <i class="fa fa-plus-circle"></i> Nuevo
         </button>
       </div>
@@ -27,15 +22,25 @@
 
   <div class="card">
     <div class="card-body">
-      <div class="row justify-content-end">
+      <div class="row justify-content-between">
+        <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+          <span class="form-group pull-left page-size form-inline">
+            <select class="form-control control-color" ng-model="dataSearch.pageSize" ng-change="changePageSize()"
+              ng-options="ra for ra in recordsQuantity">
+            </select>
+          </span>
+        </div>
+
         <div class="col-lg-3 col-md-3 col-sm-12 col-12">
           <form class="form-material">
-            <input
-              type="text"
-              class="form-control"
-              ng-model="buscarText"
-              placeholder="Buscar Articulo"
-            />
+            <div class="input-group">
+              <input type="text" class="form-control" ng-model="buscarText" placeholder="Buscar Articulo" />
+              <div class="input-group-append">
+                <button class="btn btn-secondary btn-sm" ng-click="getAllArticuloFraccionado()">
+                  <i class="fas fa-redo fa-xs"></i>
+                </button>
+              </div>
+            </div>
           </form>
         </div>
       </div>
@@ -55,24 +60,13 @@
             </tr>
           </thead>
           <tbody md-body>
-            <tr
-              md-row
-              ng-repeat="af in articuloFraccionados | filter: buscarText"
-            >
+            <tr md-row ng-repeat="af in articuloFraccionados | filter: buscarText">
               <td md-cell ng-if="accion.editar || accion.eliminar">
-                <button
-                  class="btn btn-info btn-sm"
-                  ng-if="accion.editar"
-                  ng-click="openModal(af)"
-                >
+                <button class="btn btn-info btn-sm" ng-if="accion.editar" ng-click="openModal(af)">
                   <i class="mdi mdi-pencil"></i>
                 </button>
 
-                <button
-                  class="btn btn-danger btn-sm"
-                  ng-if="accion.eliminar"
-                  ng-click="askToDelete(af)"
-                >
+                <button class="btn btn-danger btn-sm" ng-if="accion.eliminar" ng-click="askToDelete(af)">
                   <i class="mdi mdi-delete"></i>
                 </button>
               </td>
@@ -86,23 +80,21 @@
               </td>
               <td md-cell ng-bind-html="af.estado | estadoPrimario"></td>
             </tr>
-            <tr
-              md-row
-              class="text-center"
-              ng-show="articuloFraccionados.length===0"
-            >
+            <tr md-row class="text-center" ng-show="articuloFraccionados.length===0">
               <td md-cell colspan="7">No hay registros :)</td>
             </tr>
           </tbody>
         </table>
       </md-table-container>
     </div>
+    <div class="card-body">
+      <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+        ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize" class="pagination"
+        boundary-links="true" rotate="false"></ul>
+    </div>
   </div>
 </div>
 
-@section Scripts{
-    <script
-      src="~/js/inventario/controllers/articuloFraccionableCtrl.min.js"
-      asp-append-version="true"
-    ></script>
-} 
+@section Scripts {
+  <script src="~/js/inventario/controllers/articuloFraccionableCtrl.min.js" asp-append-version="true"></script>
+}
