@@ -13,6 +13,17 @@
 
         $scope.whatsapp = { number: '0991229095' }
 
+
+        $scope.print = () => {
+            $http.post("http://localhost:5000/api/Print", {
+                headers: {
+                    "Authorization": null
+                }
+            }).then(response => {
+               console.log(response.data.data)
+            });
+        }
+
         $scope.login = () => {
             //socket.emit('create-session', {
             //    id: $scope.client.id,
@@ -82,6 +93,8 @@
                 console.log(error)
             })
         }
+
+
 
         $scope.sendMessage = () => {
             try {

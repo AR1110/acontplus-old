@@ -694,6 +694,7 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
         }
 
         this.data.idTipoIva = this.tipoIva.idTipoIva;
+        this.data.precioSinSubsidio = [null, undefined, "", "0"].includes(this.data.precioSinSubsidio) ? 0 : this.data.precioSinSubsidio;
 
         this.jsonPvp = []
         for (const ap of this.gridOptions.data) {
