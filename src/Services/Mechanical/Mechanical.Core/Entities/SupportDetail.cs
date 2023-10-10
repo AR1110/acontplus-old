@@ -4,11 +4,11 @@ using Common.Core.Entities;
 
 namespace Mechanical.Core.Entities
 {
-    [Table("MaintenanceDetail", Schema = "Mechanical")]
-    public class MaintenanceDetail : BaseEntity
+    [Table("SupportDetail", Schema = "Mechanical")]
+    public class SupportDetail : BaseEntity
     {
-        public Maintenance Maintenance { get; set; }
-        public int MaintenanceId { get; set; }
+        public Support support { get; set; }
+        public int SupportId { get; set; }
         public int ArticuloId { get; set; }
         public int TarifaId { get; set; }
         public int BodegaId { get; set; }
@@ -36,7 +36,6 @@ namespace Mechanical.Core.Entities
         
         [Column(TypeName = "numeric(18,5), not null")]
         public decimal Percentage { get; set; }
-
 
         [MaxLength(250)]
         public string Obs { get; set; }

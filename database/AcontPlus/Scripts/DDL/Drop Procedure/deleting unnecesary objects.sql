@@ -435,3 +435,9 @@ GO
 --- DANIS MANCHU - FECHA: 8/12/2023
 DROP PROCEDURE IF EXISTS [Almacen].[Familia_For_Select]
 GO
+
+
+
+--- RAMIREZ ALEXIS - FECHA: 10/9/2023
+DROP PROCEDURE IF EXISTS [dbo].[aspEntidadOption]
+GO

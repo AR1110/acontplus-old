@@ -1,8 +1,8 @@
-use [Acontplus]
-go 
+--use [Acontplus]
+--go 
 
---INSERT INTO familia(ActividadEconomicaId,descripcion,fechaRegistro)
---select idActividadEconomica,cast(descripcion as varchar(35)),GETDATE() from Sri.ActividadEconomica 
+--INSERT INTO familia(ActividadEconomicaId,descripcion,siglas,fechaRegistro)
+--select idActividadEconomica,descripcion,codigo,GETDATE() from Sri.ActividadEconomica 
 
 select * from Familia where ActividadEconomicaId is not null 
 
