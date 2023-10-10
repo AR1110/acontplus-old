@@ -51,7 +51,7 @@
               <td class="text-center">
                 <button
                   title="Realizar Mantenimiento"
-                  on:click={() => MaintenanceStore.getOpenModal(0, item.id)}
+                  on:click={() => MaintenanceStore.getOpenModal(item.id, 0)}
                   class="btn btn-outline-success btn-sm"
                 >
                   <i class="fa fa-wrench" />

@@ -1,19 +1,19 @@
 <script lang="ts">
   import { MaintenanceStore } from "$routes/Mechanical/Store/maintenance.store";
   import { ArticleService } from "$lib/services/inventory/article-service";
-  import { MaintenanceService } from "$lib/services/mechanical/maintenance-service";
   import AdvancedSearch from "$lib/components/AdvancedSearch.svelte";
   import { showLoader, hideLoader } from "$lib/utils/loading-spinner";
   import GridForItem from "$lib/components/GridForItem.svelte";
   import Modal from "$lib/components/Modal.svelte";
   import toast from "$lib/utils/toast";
+  import { SupportDetailService } from "$services/Mechanical/support-detail-service";
 
-  let maintenance;
+  let support;
   let paramValidation = [undefined, null, "", 0];
   let value = "";
   let placeholder = "Buscar Artículos";
   let articles = [];
-  let maintenanceDetails = [];
+  let supportDetails = [];
   let establecimientos = [];
   let bodegas = [];
   let medidas = [];
@@ -294,9 +294,9 @@
 
   // AUXILIAR FUNCTIONS FOR SELECT DATA
   const selectCodEstab = () => {
-    if (maintenanceDetails != undefined || maintenanceDetails != null) {
-      if (maintenanceDetails.length > 0) {
-        codEstab = maintenanceDetails[0].codEstab;
+    if (supportDetails != undefined || supportDetails != null) {
+      if (supportDetails.length > 0) {
+        codEstab = supportDetails[0].codEstab;
       }
     }
 
@@ -306,9 +306,9 @@
   };
 
   let verifyMaintenanceDetailsAndPush = () => {
-    if (maintenanceDetails != undefined || maintenanceDetails != null) {
-      if (maintenanceDetails.length != 0) {
-        maintenanceDetails.forEach((item) => {
+    if (supportDetails != undefined || supportDetails != null) {
+      if (supportDetails.length != 0) {
+        supportDetails.forEach((item) => {
           item.medidas = medidas.filter((x) => x.idArticulo == item.idArticulo);
           item.tarifas = JSON.parse(
             medidas.find((x) => x.idMedida == item.idMedida).tarifas
@@ -327,10 +327,10 @@
 
     if (!paramValidation.includes(idBodega)) {
       codEstab = codEstab;
-      maintenanceDetails.forEach((item) => {
+      supportDetails.forEach((item) => {
         item.idBodega = idBodega;
       });
-      maintenanceDetails = [...maintenanceDetails];
+      supportDetails = [...supportDetails];
     }
   };
 
@@ -395,17 +395,17 @@
           idBodega: idBodega,
           bodegas: bodegas,
         };
-        maintenanceDetails = [...maintenanceDetails, obj];
+        supportDetails = [...supportDetails, obj];
       }
     });
   };
 
   // REMOVE ARTICLE
   const removeArticle = (idArticulo) => {
-    let newFilter = maintenanceDetails.filter(
+    let newFilter = supportDetails.filter(
       (x) => x.idArticulo != idArticulo
     );
-    maintenanceDetails = newFilter;
+    supportDetails = newFilter;
   };
 
   // Save
@@ -413,13 +413,10 @@
     if (!onValidate()) return;
     showLoader();
 
-    let total = maintenanceDetails.reduce((a, b) => a + b.total, 0);
-    maintenance.total = total;
-
-    MaintenanceService.post({
+    SupportDetailService.post({
       data: {
-        maintenance,
-        maintenanceDetails: maintenanceDetails.map((item) => ({
+        support,
+        supportDetails: supportDetails.map((item) => ({
           id: item.id > 0 ? item.id : 0,
           articuloId: item.idArticulo,
           tarifaId: item.idTarifa,
@@ -451,13 +448,10 @@
     if (!onValidate()) return;
     showLoader();
 
-    let total = maintenanceDetails.reduce((a, b) => a + b.total, 0);
-    maintenance.total = total;
-
-    MaintenanceService.put(maintenance.id, {
+    SupportDetailService.put(support.id, {
       data: {
-        maintenance,
-        maintenanceDetails: maintenanceDetails.map((item) => ({
+        support,
+        supportDetails: supportDetails.map((item) => ({
           id: item.id > 0 ? item.id : 0,
           articuloId: item.idArticulo,
           tarifaId: item.idTarifa,
@@ -488,12 +482,12 @@
   const onValidate = () => {
     let isValid = true;
     try {
-      if (paramValidation.includes(maintenance.date)) {
+      if (paramValidation.includes(support.date)) {
         toast({ type: "warning", message: "Ingrese la fecha" });
         return;
       }
 
-      if (paramValidation.includes(maintenance.supportId)) {
+      if (paramValidation.includes(support.id)) {
         toast({
           type: "warning",
           message: "Seleccione a que inspección se hará el mantenimiento",
@@ -501,7 +495,7 @@
         return;
       }
 
-      if (paramValidation.includes(maintenance.obs)) {
+      if (paramValidation.includes(support.obs)) {
         toast({
           type: "warning",
           message: "Detalle el mantenimiento que esta realizando",
@@ -509,7 +503,7 @@
         return;
       }
 
-      if (maintenanceDetails.length == 0) {
+      if (supportDetails.length == 0) {
         toast({
           type: "warning",
           message: "Ingreso un detalle",
@@ -530,7 +524,6 @@
       isOpen: false,
       maintenance: {
         id: 0,
-        //inspectionId: 0,
         supportId: 0,
         date: new Date().toISOString().slice(0, 10),
         obs: "",
@@ -540,8 +533,8 @@
   };
 
   MaintenanceStore.subscribe((values) => {
-    maintenance = values.maintenance;
-    maintenanceDetails = values.maintenanceDetail;
+    support = values.support;
+    supportDetails = values.supportDetail;
     establecimientos = values.establecimiento;
     bodegas = values.bodega;
     medidas = values.medidas;
@@ -554,8 +547,8 @@
 {#if $MaintenanceStore.isOpen}
   <Modal
     open={$MaintenanceStore.isOpen}
-    iconTitle={maintenance.id > 0 ? "ti-async" : "ti-plus"}
-    title={maintenance.id > 0 ? "Actualizar" : "Registrar"}
+    iconTitle={support.id > 0 ? "ti-async" : "ti-plus"}
+    title={support.id > 0 ? "Actualizar" : "Registrar"}
     onClosed={() => onModalClose()}
     fullScreen={true}
     size={"modal-dialog-scrollable"}
@@ -564,7 +557,7 @@
       <form
         autocomplete="off"
         style="text-transform:uppercase"
-        on:submit|preventDefault={maintenance.id > 0 ? onUpdate : onSave}
+        on:submit|preventDefault={support.id > 0 ? onUpdate : onSave}
       >
         <div class="row">
           <div class="col">
@@ -581,7 +574,8 @@
               <input
                 type="Date"
                 class="form-control"
-                bind:value={maintenance.date}
+                disabled
+                bind:value={support.date}
               />
             </div>
           </div>
@@ -595,7 +589,8 @@
             <input
               type="text"
               class="form-control"
-              bind:value={maintenance.obs}
+              disabled
+              bind:value={support.obs}
             />
           </div>
         </div>
@@ -654,7 +649,7 @@
         <div class="row mt-2">
           <div class="col-12">
             <GridForItem
-              arrayData={maintenanceDetails}
+              arrayData={supportDetails}
               columns={maintenanceDetailsColumns}
             />
           </div>

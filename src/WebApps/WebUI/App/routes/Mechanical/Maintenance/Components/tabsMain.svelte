@@ -2,7 +2,6 @@
   import Tabs from "$lib/components/Tabs.svelte";
   import ListSupport from "../Tray/list.svelte";
   import ListInspection from "../Inspection/list.svelte";
-  import ListMaintenance from "../Maintenance/list.svelte";
   let items = [
     {
       label: "Bandeja",
@@ -11,17 +10,17 @@
       component: ListSupport,
     },
     {
-      label: "Mantenimiento",
-      icon: "fa fa-wrench",
-      value: 2,
-      component: ListMaintenance,
-    },
-    {
       label: "Inspección",
       icon: "fa fa-file-text",
-      value: 3,
+      value: 2,
       component: ListInspection,
-    }
+    },
+    // {
+    //   label: "Mantenimiento",
+    //   icon: "fa fa-wrench",
+    //   value: 2,
+    //   component: ListMaintenance,
+    // },
   ];
 </script>
 

@@ -1,11 +1,9 @@
 <script lang="ts">
-
   import { onMount } from "svelte";
   import { InspectionStore } from "$routes/Mechanical/Store/inspection.store";
   import { InspectionService } from "$lib/services/mechanical/inspection-service";
   import { hideLoader, showLoader } from "$lib/utils/loading-spinner";
   import Add from "../Inspection/add.svelte";
-  import AddMaintenance from "../Maintenance/add.svelte";
 
   let inspections = [];
 
@@ -71,8 +69,8 @@
               <td class="text-center">{item.vehicleType}</td>
               <td class="text-center">{item.mileage}</td>
               <td class="text-center">{item.fuellevel}</td>
-              <td class="text-center"
-                ><button
+              <td class="text-center">
+                <button
                   title="Editar"
                   class="btn btn-outline-warning btn-sm"
                   on:click={() => InspectionStore.getOpenModal(item.id, 0)}
@@ -96,4 +94,4 @@
   </div>
 </div>
 <Add />
-<AddMaintenance />
+<!-- <AddMaintenance /> -->
