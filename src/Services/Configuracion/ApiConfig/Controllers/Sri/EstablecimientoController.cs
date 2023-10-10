@@ -107,12 +107,12 @@ namespace ApiConfig.Controllers.Sri
             }
             finally
             {
-                _db.Close();
+                _db.Close(); 
             }
             return Ok(_response);
         }
 
-        [HttpPut("Update/{id}/{json}")]
+        [HttpPut("Update/{id}")]
         public async Task<IActionResult> Update(int id, string json)
         {
             DbAccess _db = new DbAccess(_configuration);
