@@ -14,21 +14,21 @@ const login = async (username: string, password: string): Promise<ApiResponse> =
   });
   return response.data;
 };
- 
+
 
 const getToken = function (): string | null {
   return localStorage.getItem(PERSIS_USER.auth_token);
 };
- 
+
 
 const decodeToken = function () {
   const token = getToken();
   if (!token) {
     return null;
   }
- 
+
   const tokenToAtob = token.split(".");
-  if(!tokenToAtob) return null;
+  if (!tokenToAtob) return null;
 
   const object = JSON.parse(atob(tokenToAtob[1]!));
   return object;
@@ -52,9 +52,9 @@ const clearStorageToken = () => {
   localStorage.removeItem("USER");
 };
 
-export const AuthService = {
-  login, 
-  getToken, 
+export const authService = {
+  login,
+  getToken,
   decodeToken,
   isTokenExpired,
   clearStorageToken,
