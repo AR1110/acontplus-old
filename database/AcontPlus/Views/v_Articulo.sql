@@ -31,6 +31,7 @@ SELECT  a.idArticulo
 	,a.precioCosto
 	,a.fechaModificacion
 	,a.idMedida
+    ,a.idMarca
 	,a.caducidad
 	,a.fechaCaducidad
 	,a.productoFraccionable fraccionado
