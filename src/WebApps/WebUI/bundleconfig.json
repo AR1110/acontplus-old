@@ -460,5 +460,17 @@
     "inputFiles": [
       "wwwroot/js/modal/common/modalWhatsAppCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/factElect/services/facturaService.min.js",
+    "inputFiles": [
+      "wwwroot/js/factElect/services/facturaService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/factElect/controllers/facturaVentaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/factElect/controllers/facturaVentaCtrl.js"
+    ]
   }
 ]
