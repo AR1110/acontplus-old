@@ -9,13 +9,16 @@
 
     app.factory('ventaService', function($injector){
         let service = {};
-        let mS = $injector.get('mainService');
-        let fS = $injector.get('formulario');
+        let mS = $injector.get('mainService'); 
         /**
          * 
          * @param {object} query  
          * @returns array
          */
+        
+
+
+
         service.getDataForm = function(query) {
             return mS.getData('get', 'CatalogoVenta/?json=' + JSON.stringify(query), null, true).then(response => {
                 if(response.code==='0'){

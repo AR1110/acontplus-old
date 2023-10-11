@@ -170,8 +170,7 @@ export class CommonService {
 
     //En uso 
     getEstabAsign(json = {}) {
-        return this.mS.getData('get', 'Config/EstabAsig/?json=' + JSON.stringify(json), null, true).then(response => {
-            console.log(response)
+        return this.mS.getData('get', 'Config/EstabAsig/?json=' + JSON.stringify(json), null, true).then(response => {            
             if (response.code === "0") {
                 throw response
             }
@@ -721,12 +720,21 @@ export class CommonService {
 
     //-----------------------------METODOS RELACIONADOS AL TIPO DOCUMENTO---------------------------
 
-    //Eliminar mas Adelante 
+    //Eliminar mas Adelante en depuracion co
     getDataFormVenta() {
-        return this.mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response => {
+        // return this.mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response => {
+        //     if (response.code === '0') {
+        //         throw response
+        //     }
+
+        //     console.log(JSON.parse(response.payload))
+        //     return JSON.parse(response.payload)
+        // })
+
+        return this.mS.getData('get', 'Factura/Get?json=' + JSON.stringify({tipo: 3}), null, true).then(response => {
             if (response.code === '0') {
                 throw response
-            }
+            } 
             return JSON.parse(response.payload)
         })
     }
@@ -2176,16 +2184,14 @@ export class CommonService {
 
     //========================================END POINT EXTERNOS================== 
     checkClientSRIByRUC = function (identificacion) {
-        return this.mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + identificacion, null, true).then(response => {
-            console.log(response)
+        return this.mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + identificacion, null, true).then(response => {            
             return response;
         })
     }
     
 
     checkClientSRIByCedula = function (identificacion) {
-        return this.mS.getData('get', 'Consultas/GetCedulaSri?Ruc=' + identificacion, null, true).then(response => {
-            console.log(response)
+        return this.mS.getData('get', 'Consultas/GetCedulaSri?Ruc=' + identificacion, null, true).then(response => {            
             return response;
         })
     }

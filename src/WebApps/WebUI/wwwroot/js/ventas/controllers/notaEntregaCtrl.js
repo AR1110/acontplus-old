@@ -4,19 +4,7 @@
 
     app.controller('notaEntregaCtrl', notaEntregaCtrl);
 
-    notaEntregaCtrl.$inject = [
-        '$scope',
-        '$filter',
-        'mainService',
-        'notaEntregaService',
-        'commonService',
-        'modalService',
-        'nombreModal',
-        'nombreModalContabilidad',
-        'toastService',
-        'formulario',
-        'decodeToken'
-    ];
+    notaEntregaCtrl.$inject = ['$scope','$filter','mainService','notaEntregaService','commonService','modalService','nombreModal','nombreModalContabilidad','toastService','formulario','decodeToken'];
 
     function notaEntregaCtrl($scope, $filter, _mS, notaEntregaSvc, _commonSvc, _modalSvc, _nombreModalConst, nombreModalContabilidad, _tS, _fS, decodeToken) {
 
@@ -176,11 +164,10 @@
                     hideLoader();
                     console.log(error)
                 })
-
-
-                _commonSvc.getDataFormVenta().then(result => {
-                    $scope.jsonPermission = JSON.parse(result[9][0].jsonPermission)
-                })
+ 
+                // notaEntregaSvc.getDataForm().then(result => {
+                //     $scope.jsonPermission = JSON.parse(result[9][0].jsonPermission)
+                // })
 
             } catch (error) {
                 hideLoader();
@@ -198,11 +185,13 @@
                 $scope.getNotaEntregas();
             })
 
-            _commonSvc.getDataFormVenta().then(result => {
+            notaEntregaSvc.getDataForm().then(result => {
                 $scope.jsonPermission = JSON.parse(result[9][0].jsonPermission)
             })
 
-            $scope.estadoDocumentos = await _commonSvc.getEstadoDocByCodDoc('NE');
+            _commonSvc.getEstadoDocByCodDoc('NE').then(response=>{
+                $scope.estadoDocumentos = response;
+            })
 
         }
         $scope.initiload();

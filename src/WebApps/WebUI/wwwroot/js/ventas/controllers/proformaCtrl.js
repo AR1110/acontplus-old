@@ -140,6 +140,7 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
             $scope.total = $scope.sumarColumnaTotal();
 
             let dataSearch = {
+                tipo: 1,
                 codEstab: $scope.dataSearch.codEstab,
                 pageIndex: $scope.dataSearch.pageIndex,
                 pageSize: $scope.dataSearch.pageSize,
@@ -169,10 +170,7 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
                 console.log(error)
             })
 
-            commonSvc.getDataFormVenta().then(result => {
-                $scope.jsonPermission = JSON.parse(result[9][0].jsonPermission)
-            })
-
+           
 
         } catch (error) {
             hideLoader();
@@ -190,6 +188,11 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
             $scope.getProformas();
 
         })
+
+        proformaSvc.getDataForm().then(result => {
+            $scope.jsonPermission = JSON.parse(result[9][0].jsonPermission)
+        })
+
     }
     $scope.initiload();
 

@@ -1,4 +1,4 @@
-(function(e) {
+(function() {
     
     'use strict';
 
@@ -9,18 +9,30 @@
 
         let service = {};
 
+        service.getDataForm = function(){
+            return mS.getData('get', url +'Get?json=' + JSON.stringify({tipo: 2}), null, true ).then(response =>{
+                if(response.code==="0"){
+                    throw response;
+                }
+                
+                if(response.code==="1"){ 
+                    let mainData = JSON.parse(response.payload);  
+                    return mainData;
+                }
+            })
+        }
+
         //se a mas de listar en modulo de proformas en Aprobacion Documento 
         service.getAll = function(query) {
             
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, {tipo: 1})), null, true).then(response => {
                 if(response.code==="0"){
                     throw response;
                 }
                 if(response.code==="1"){
                     let mainData = JSON.parse(response.payload) || [] ;
                     let proformasRepos = mainData[0]; 
-                    let {totalRecords, totalDocument} = proformasRepos[0]; 
-                    
+                    let {totalRecords, totalDocument} = proformasRepos[0];  
                     let proformas = proformasRepos.map(item =>{
                         return {
                             comprobante: 'Proforma',
