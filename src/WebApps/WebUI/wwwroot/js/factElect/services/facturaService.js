@@ -8,6 +8,19 @@
         let formSvc = $injector.get('formulario');
         let service = {}
 
+        service.getDataForm = ()=>{
+            return mainService.getData('get', url +'Get?json=' + JSON.stringify({tipo: 3}), null, true ).then(response =>{
+                if(response.code==="0"){
+                    throw response;
+                }
+                
+                if(response.code==="1"){
+
+                    let mainData = JSON.parse(response.payload); 
+                    return mainData;
+                }
+            })
+        }
 
         /**
          *Esta funcion declarada se usa en Retencion de Venta, Factura Venta(Listado General) 

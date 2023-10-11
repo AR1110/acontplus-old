@@ -1,4 +1,4 @@
-(function(e) { 
+(function() { 
     'use strict';
 
     app.factory('notaEntregaService', function($injector) {
@@ -8,9 +8,24 @@
 
         let service = {};
 
+        service.getDataForm = ()=>{
+            return mS.getData('get', url +'Get?json=' + JSON.stringify({tipo: 2}), null, true ).then(response =>{
+                if(response.code==="0"){
+                    throw response;
+                }
+                
+                if(response.code==="1"){
+
+                    let mainData = JSON.parse(response.payload); 
+                    return mainData;
+                }
+            })
+        }
+
+
         service.getAll = function(query) {
             
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, {tipo: 1})), null, true).then(response => {
                 if(response.code==="0"){
                     throw response;
                 }
@@ -173,10 +188,7 @@
         }
 
 
-        //Mappers 
-
-
-
+        //Mappers  
 
         //Validaciones
         service.getTotales = function(notaEntregas) {
@@ -196,7 +208,5 @@
         return service;
 
     })
-
-
-
+ 
 })(window.angular)

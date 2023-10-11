@@ -13,6 +13,7 @@ export class ModalBaseCtrl {
         _modalSvc,
         _nombreModalConst
     }) {
+
         this._mS = _mS;
         this._commonSvc = _commonSvc;
         this._tS = _tS;
@@ -48,8 +49,7 @@ export class ModalBaseCtrl {
 
         this.popoverCliente = {
             templateUrl: 'infoCliente.html'
-        }
-
+        } 
     }
 
     initiload() {
@@ -750,7 +750,7 @@ export class ModalBaseCtrl {
             const dataEstab = this.establecimientos.find(item => item.codEstab === this.data.codEstab);
 
             //Obtenemos Puntos de Emision y Bodegas 
-            let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
+            let resultsDataFormEstab = await this._commonSvc.getDataFormEstabAsig(dataEstab);
 
             this.puntosEmisiones = resultsDataFormEstab[0];
             this.data.idPuntoEmision = this.puntosEmisiones.length > 0 ? this.puntosEmisiones[0].idPuntoEmision : 0;
