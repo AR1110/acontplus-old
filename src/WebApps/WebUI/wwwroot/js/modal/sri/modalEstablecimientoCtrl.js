@@ -188,12 +188,15 @@ class ModalEstablecimientoCtrl extends ModalBaseCtrl {
             this.data.correo = this.correos.length > 0 ? this.correos.join(';') : "";
 
             if (this.tipoRegistro === 'N') {
-                url = `Config/Establecimiento/Insert?json=${JSON.stringify(this.data)}`
+                url = `Config/Establecimiento/Insert?json=${encodeURIComponent(JSON.stringify(this.data))}`
             } else {
-                url = `Config/Establecimiento/Update/?id=${this._params.idEstablecimiento}&json=${JSON.stringify(this.data) }`;
+                url = `Config/Establecimiento/Update/${this._params.idEstablecimiento}/?json=${encodeURIComponent(JSON.stringify(this.data))}`;
             }
 
+            console.log(url)
+
             await this._mS.getData(method, url, null, true).then(response => {
+                console.log(response)
                 if (response.code === '0') {
                     this._tS.toastr('warning', response.message, response.titleSms)
                 }

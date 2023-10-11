@@ -13,6 +13,7 @@ BEGIN
     DECLARE @codEstab VARCHAR(100)
     DECLARE @customerId INT
     DECLARE @VehicleCompranyId INT
+    DECLARE @total NUMERIC(18,2)
 
     SELECT @supportId =  supportId
     FROM OPENJSON(@json)
@@ -66,9 +67,13 @@ BEGIN
     FROM Mechanical.v_Vehicle WITH (NOLOCK) 
     WHERE Id = @VehicleCompranyId
     
+    SET @total = (SELECT SUM(md.Total)  FROM Mechanical.v_SupportDetail md WITH (NOLOCK) 
+                                        INNER JOIN Mechanical.v_Support m  WITH (NOLOCK) ON m.Id = md.SupportId
+                                        WHERE m.Id = @supportId)
+
     SELECT id           = m.Id 
         ,obs            = m.Obs
-        ,total          = CONVERT(NUMERIC(18,2), m.Total)
+        ,total          = @total
         ,idDetail       = md.Id
         ,[description]  = md.[Description]
         ,quantity       = CONVERT(NUMERIC(18,2), md.Quantity)
@@ -78,7 +83,7 @@ BEGIN
         ,[percentage]   = md.[Percentage]
         ,medida         = md.Medida
         ,code           = md.codigo
-    FROM Mechanical.v_MaintenanceDetail md WITH (NOLOCK) 
-    INNER JOIN Mechanical.v_Maintenance m  WITH (NOLOCK) ON m.Id = md.MaintenanceId
-    WHERE m.SupportId = @supportId
+    FROM Mechanical.v_SupportDetail md WITH (NOLOCK) 
+    INNER JOIN Mechanical.v_Support m  WITH (NOLOCK) ON m.Id = md.SupportId
+    WHERE m.Id = @supportId
 END

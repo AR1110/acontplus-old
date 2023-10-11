@@ -1,99 +1,103 @@
-import type { Maintenance } from "$interfaces/mechanical/maintenance";
-import { MaintenanceService } from "$services/mechanical/maintenance-service";
 import { writable } from "svelte/store";
 import { hideLoader, showLoader } from "$utils/loading-spinner";
+import { SupportDetailService } from "$services/Mechanical/support-detail-service";
+import type { Support } from "$interfaces/mechanical/support";
 
 type StateModal = {
-    isOpen: boolean;
-    openModal(): void;
-    closeModal(): void;
+  isOpen: boolean;
+  openModal(): void;
+  closeModal(): void;
 };
 
 type State = {
-    maintenance: Maintenance;
-    maintenanceDetail: any;
-    establecimiento: any;
-    bodega: any;
-    medidas: any;
+  support: Support;
+  supportDetail: any;
+  establecimiento: any;
+  bodega: any;
+  medidas: any;
 };
 
 const initialModalState: StateModal = {
-    isOpen: false,
-    openModal: () => { },
-    closeModal: () => { },
+  isOpen: false,
+  openModal: () => {},
+  closeModal: () => {},
 };
 
 const initialState: State = {
-    maintenance: {
-        id: 0,
-        //inspectionId: 0,
-        supportId: 0,
-        date: new Date().toISOString().slice(0, 10),
-        obs: "",
-    },
-    maintenanceDetail: [],
-    establecimiento: [],
-    bodega: [],
-    medidas: [],
+  support: {
+    id: 0,
+    puntoEmisionId: 0,
+    vehicleCompanyId: 0,
+    customerId: 0,
+    supportTypeId: 0,
+    date: new Date().toISOString().slice(0, 10),
+    sequence: 0,
+    obs: "",
+    userAssignedId: 0,
+  },
+  supportDetail: [],
+  establecimiento: [],
+  bodega: [],
+  medidas: [],
 };
 
 const createMaintenance = () => {
-    const { set, update, subscribe } = writable<StateModal & State>({
-        ...initialState,
-        ...initialModalState,
-    });
+  const { set, update, subscribe } = writable<StateModal & State>({
+    ...initialState,
+    ...initialModalState,
+  });
 
-    const getOpenModal = (id?: number, inspectionId?) => {
-        if (id > 0) {
-            showLoader();
-            MaintenanceService.get(JSON.stringify({ tipo: 2, id }))
-                .then((response) => {
-                    console.log(response);
-                    if (response) {
-                        update((state) => ({
-                            ...state,
-                            maintenance: response["maintenance"][0],
-                            maintenanceDetail: response["maintenanceDetail"],
-                            medidas: response["medidas"],
-                        }));
-                    }
-                })
-                .finally(() => {
-                    hideLoader();
-                });
-        } else {
+  const getOpenModal = (id?: number, supportId?) => {
+    if (id > 0) {
+      showLoader();
+      SupportDetailService.get(JSON.stringify({ tipo: 1, id }))
+        .then((response) => {
+          if (response) {
             update((state) => ({
-                ...state,
-                isOpen: true,
-                maintenance: {
-                    id: 0,
-                    supportId: inspectionId,
-                    date: new Date().toISOString().slice(0, 10),
-                    obs: "",
-                },
-                maintenanceDetail: [],
+              ...state,
+              isOpen: true,
+              support: response["support"][0],
+              supportDetail: response["supportDetail"],
+              medidas: response["medidas"],
+              establecimiento: response["establecimiento"],
+              bodega: response["bodega"],
             }));
-        }
+          }
+        })
+        .finally(() => {
+          hideLoader();
+        });
+    } else {
+      update((state) => ({
+        ...state,
+        isOpen: true,
+        maintenance: {
+          id: 0,
+          supportId: supportId,
+          date: new Date().toISOString().slice(0, 10),
+          obs: "",
+        },
+        supportDetail: [],
+      }));
+    }
 
-        MaintenanceService.get(JSON.stringify({ tipo: 3, inspectionId }))
-            .then((response) => {
-                console.log("response");
-                console.log(response);
-                if (response) {
-                    update((state) => ({
-                        ...state,
-                        isOpen: true,
-                        establecimiento: response["establecimiento"],
-                        bodega: response["bodega"],
-                    }));
-                }
-            })
-            .finally(() => {
-                hideLoader();
-            });
-    };
+    // SupportDetailService.get(JSON.stringify({ tipo: 2, supportId }))
+    //   .then((response) => {
+    //     if (response) {
+    //       update((state) => ({
+    //         ...state,
+    //         isOpen: true,
+    //         establecimiento: response["establecimiento"],
+    //         bodega: response["bodega"],
+    //       }));
+    //     }
+    //   })
+    //   .finally(() => {
+    //     hideLoader();
+    //   });
+  };
 
-    return { set, subscribe, update, getOpenModal };
+  return { set, subscribe, update, getOpenModal };
 };
 
 export const MaintenanceStore = createMaintenance();

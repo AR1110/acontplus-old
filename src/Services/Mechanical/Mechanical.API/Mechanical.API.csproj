@@ -46,6 +46,5 @@
   <ItemGroup>
     <ProjectReference Include="..\Mechanical.Application\Mechanical.Application.csproj" />
     <ProjectReference Include="..\Mechanical.Core\Mechanical.Core.csproj" />
-    <ProjectReference Include="..\Mechanical.Infrastructure\Mechanical.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Mechanical.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(MechanicalContext))]
-    [Migration("20231004175504_Maintenance")]
-    partial class Maintenance
+    [Migration("20231010220035_Initial_Migration")]
+    partial class Initial_Migration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -123,140 +123,6 @@ namespace Mechanical.Infrastructure.Data.Migrations
                     b.ToTable("Inspection", "Mechanical");
                 });
 
-            modelBuilder.Entity("Mechanical.Core.Entities.Maintenance", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DateEnd")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool?>("Deleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("Enabled")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("InspectionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Obs")
-                        .HasMaxLength(300)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(300)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Total")
-                        .HasColumnType("numeric(18,5), not null");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InspectionId");
-
-                    b.ToTable("Maintenance", "Mechanical");
-                });
-
-            modelBuilder.Entity("Mechanical.Core.Entities.MaintenanceDetail", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ArticuloId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BodegaId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Cost")
-                        .HasColumnType("numeric(18,5), not null");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<bool?>("Deleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(300)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(300)");
-
-                    b.Property<bool?>("Enabled")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("MaintenanceId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MedidaId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Obs")
-                        .HasMaxLength(250)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(250)");
-
-                    b.Property<decimal>("Percentage")
-                        .HasColumnType("numeric(18,5), not null");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric(18,5), not null");
-
-                    b.Property<decimal>("Quantity")
-                        .HasColumnType("numeric(18,5), not null");
-
-                    b.Property<int>("TarifaId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Total")
-                        .HasColumnType("numeric(18,5), not null");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("codePercentage")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(10)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MaintenanceId");
-
-                    b.ToTable("MaintenanceDetail", "Mechanical");
-                });
-
             modelBuilder.Entity("Mechanical.Core.Entities.Support", b =>
                 {
                     b.Property<int>("Id")
@@ -316,6 +182,85 @@ namespace Mechanical.Infrastructure.Data.Migrations
                     b.HasIndex("VehicleCompanyId");
 
                     b.ToTable("Support", "Mechanical");
+                });
+
+            modelBuilder.Entity("Mechanical.Core.Entities.SupportDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ArticuloId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BodegaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CodePercentage")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(10)");
+
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("numeric(18,5), not null");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(300)");
+
+                    b.Property<bool?>("Enabled")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MedidaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Obs")
+                        .HasMaxLength(250)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)");
+
+                    b.Property<decimal>("Percentage")
+                        .HasColumnType("numeric(18,5), not null");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric(18,5), not null");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("numeric(18,5), not null");
+
+                    b.Property<int>("SupportId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TarifaId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("numeric(18,5), not null");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SupportId");
+
+                    b.ToTable("SupportDetail", "Mechanical");
                 });
 
             modelBuilder.Entity("Mechanical.Core.Entities.Vehicle", b =>
@@ -603,28 +548,6 @@ namespace Mechanical.Infrastructure.Data.Migrations
                     b.Navigation("support");
                 });
 
-            modelBuilder.Entity("Mechanical.Core.Entities.Maintenance", b =>
-                {
-                    b.HasOne("Mechanical.Core.Entities.Inspection", "Inspection")
-                        .WithMany()
-                        .HasForeignKey("InspectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Inspection");
-                });
-
-            modelBuilder.Entity("Mechanical.Core.Entities.MaintenanceDetail", b =>
-                {
-                    b.HasOne("Mechanical.Core.Entities.Maintenance", "Maintenance")
-                        .WithMany()
-                        .HasForeignKey("MaintenanceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Maintenance");
-                });
-
             modelBuilder.Entity("Mechanical.Core.Entities.Support", b =>
                 {
                     b.HasOne("Mechanical.Core.Entities.VehicleCompany", "VehicleCompany")
@@ -634,6 +557,17 @@ namespace Mechanical.Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("VehicleCompany");
+                });
+
+            modelBuilder.Entity("Mechanical.Core.Entities.SupportDetail", b =>
+                {
+                    b.HasOne("Mechanical.Core.Entities.Support", "support")
+                        .WithMany()
+                        .HasForeignKey("SupportId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("support");
                 });
 
             modelBuilder.Entity("Mechanical.Core.Entities.Vehicle", b =>

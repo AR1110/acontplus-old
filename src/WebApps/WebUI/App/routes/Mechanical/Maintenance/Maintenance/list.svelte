@@ -1,28 +1,27 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  // import { MaintenanceService } from "$core/services/mechanical/maintenance-service";
-  // import { hideLoader, showLoader } from "$core/utils/loading-spinner";
+  // import { onMount } from "svelte";
+  // // import { MaintenanceService } from "$core/services/mechanical/maintenance-service";
+  // // import { hideLoader, showLoader } from "$core/utils/loading-spinner";
 
-  import { hideLoader, showLoader } from "$utils/loading-spinner";
-  import { MaintenanceStore } from "$routes/Mechanical/Store/maintenance.store";
-  import Add from "../Maintenance/add.svelte";
-    import { MaintenanceService } from "$services/mechanical/maintenance-service";
+  // import { hideLoader, showLoader } from "$utils/loading-spinner";
+  // import { MaintenanceStore } from "$routes/Mechanical/Store/maintenance.store";
+  // import Add from "../Maintenance/add.svelte";
 
-  let maintenances = [];
+  // let maintenances = [];
 
-  onMount(() => {
-    get();
-  });
+  // onMount(() => {
+  //   get();
+  // });
 
-  function get() {
-    showLoader();
-    MaintenanceService.get(JSON.stringify({ tipo: 1 })).then((response) => {
-      if (response) {
-        maintenances = response["maintenances"];
-      }
-      hideLoader();
-    });
-  }
+  // function get() {
+  //   showLoader();
+  //   MaintenanceService.get(JSON.stringify({ tipo: 1 })).then((response) => {
+  //     if (response) {
+  //       maintenances = response["maintenances"];
+  //     }
+  //     hideLoader();
+  //   });
+  // }
 </script>
 
 <div class="card">
@@ -37,7 +36,7 @@
           </tr>
         </thead>
         <tbody>
-          {#each maintenances as item}
+          <!-- {#each maintenances as item}
             <tr>
               <td class="text-center">{item.date}</td>
               <td class="text-center">{item.obs}</td>
@@ -51,11 +50,13 @@
                 </button>
               </td>
             </tr>
-          {/each}
+          {/each} -->
         </tbody>
       </table>
       <!-- Add pagination -->
     </div>
   </div>
 </div>
-<Add />
+
+
+<!-- <Add /> -->

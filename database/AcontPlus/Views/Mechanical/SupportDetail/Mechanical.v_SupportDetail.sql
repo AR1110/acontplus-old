@@ -1,6 +1,6 @@
 USE AcontPlus
 GO
-CREATE OR ALTER VIEW Mechanical.SupportDetail WITH SCHEMABINDING AS(
+CREATE OR ALTER VIEW Mechanical.v_SupportDetail WITH SCHEMABINDING AS(
    SELECT sd.Id
         ,sd.[Description]
         ,sd.Quantity        
@@ -16,7 +16,11 @@ CREATE OR ALTER VIEW Mechanical.SupportDetail WITH SCHEMABINDING AS(
         ,sd.SupportId
         ,a.descripcion  AS Articulo
         ,a.codigo
-    FROM Mechanical.SupportDetail       sd
+        ,m.descripcion  AS Medida
+    FROM Mechanical.SupportDetail       sd WITH (NOLOCK)
     INNER JOIN Inventario.v_Articulo    a  WITH (NOLOCK) ON a.idArticulo = sd.ArticuloId
     INNER JOIN dbo.Medida               m  WITH (NOLOCK) ON m.idMedida   = sd.MedidaId
 )
+
+
+

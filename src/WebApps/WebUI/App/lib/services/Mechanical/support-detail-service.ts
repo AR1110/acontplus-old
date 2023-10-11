@@ -1,5 +1,5 @@
 import { client } from "$lib/utils/axiosClient.js";
-let url = "Mechanical/Maintenance/";
+let url = "Mechanical/SupportDetail/";
 
 async function get(params) {
     return await client.get(`${url}?json=${params}`).then((response) => {
@@ -29,7 +29,7 @@ async function put(id, data) {
     })
 }
 
-export const MaintenanceService = {
+export const SupportDetailService = {
     get,
     post,
     put,
