@@ -417,17 +417,30 @@
     if (supportDetails != undefined || supportDetails != null) {
       if (supportDetails.length != 0) {
         supportDetails.forEach((item) => {
-          item.medidas = measures.filter(
-            (x) => x.idArticulo == item.idArticulo
-          );
+          item.medidas = measures.map((x) => {
+            return {
+              ...x,
+              tarifas: JSON.parse(x.tarifas),
+            };
+          }).filter((x) => x.idArticulo == item.idArticulo);
           item.tarifas = JSON.parse(
             measures.find((x) => x.idMedida == item.idMedida).tarifas
           );
           item.bodegas = warehouses.filter(
             (x) => x.codEstab == support.codEstab
           );
+          item.medidasCopy = measures
+            .map((x) => {
+              return {
+                ...x,
+                tarifas: JSON.parse(x.tarifas),
+              };
+            })
+            .filter((x) => x.idArticulo == item.idArticulo);
         });
       }
+      console.log("supportDetails");
+      console.log(supportDetails);
     }
   };
 
