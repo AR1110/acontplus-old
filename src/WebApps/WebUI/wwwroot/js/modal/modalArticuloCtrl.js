@@ -13,7 +13,7 @@ class ModalBaseCtrl {
     async resultModalMedida(result) {
         try {
             if (typeof result !== "object") return;
-            const { medidas } = await this.articuloSvc.getDataForm({});
+            const { medidas } = await this.articuloSvc.getDataForm({test: 1});
             this.medidas = medidas;
             this.data.idMedida = this.medidas.at(this.medidas.length - 1).idMedida;
         } catch (error) {
@@ -302,16 +302,11 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
     }
 
     getBodegas(dataEstab) {
-        this._mS
-            .getData(
-                "get",
-                "/EstabAsig/GetDataForm?json=" + JSON.stringify(dataEstab)
-            )
-            .then((response) => {
+        this._commonSvc.getDataFormEstabAsig(dataEstab).then((response) => {
                 if (response.code === "0") {
                     throw response;
                 }
-                let results = JSON.parse(response.payload) || [];
+                let results = response;
                 this.bodegas = results[1];
 
                 if (this.bodegas.length > 0) {
@@ -438,7 +433,7 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
         try {
             if (typeof result !== "object") return;
 
-            const { subFamilias } = await this.articuloSvc.getDataForm({});
+            const { subFamilias } = await this.articuloSvc.getDataForm({test: 1});
             this.subFamilias = subFamilias;
             const { idSubFamilia, codigo } = this.subFamilias.at(this.subFamilias.length - 1)
             this.data.idSubFamilia = idSubFamilia;
@@ -452,7 +447,7 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
         try {
             if (typeof result !== "object") return;
 
-            let { marcas } = await this.articuloSvc.getDataForm({});
+            let { marcas } = await this.articuloSvc.getDataForm({test: 2});
             this.marcas = marcas;
             this.data.idMarca = this.marcas.at(this.marcas.length - 1).idMarca;
         } catch (error) {
@@ -463,7 +458,7 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
     async resultModalModelo(result) {
         try {
             if (typeof result !== "object") return;
-            const { modelos } = await this.articuloSvc.getDataForm({});
+            const { modelos } = await this.articuloSvc.getDataForm({test: 2});
             this.modelos = modelos;
             this.data.idModelo = this.modelos.at(this.modelos.length - 1).idModelo;
         } catch (error) {
@@ -1140,16 +1135,11 @@ class UbicacionArticulo {
     }
 
     getBodegas(dataEstab) {
-        this._mS
-            .getData(
-                "get",
-                "/EstabAsig/GetDataForm?json=" + JSON.stringify(dataEstab)
-            )
-            .then((response) => {
+        this._commonSvc.getDataFormEstabAsig(dataEstab).then((response) => {
                 if (response.code === "0") {
                     throw response;
                 }
-                let results = JSON.parse(response.payload) || [];
+                let results = response;
                 this.bodegas = results[1];
 
                 if (this.bodegas.length > 0) {
@@ -1930,7 +1920,7 @@ class ModalArticuloFraccionadoCtrl extends ModalBaseCtrl {
             showLoader();
 
             const { medidas, tarifas, decimal } = await this.articuloSvc.getDataForm(
-                {}
+                {test: 1}
             );
 
             this.medidas = medidas;

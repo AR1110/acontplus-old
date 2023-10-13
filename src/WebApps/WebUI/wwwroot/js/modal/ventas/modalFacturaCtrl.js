@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.118";
+} from "./modalBaseCtrl.js?v=0.121";
 
 class ModalFacturaCtrl extends ModalBaseCtrl {
 
@@ -109,6 +109,19 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
             })
         }, 500)
 
+    }
+
+    initiload(){
+        return this._mS.getData('get', "Factura/" +'Get?json=' + JSON.stringify({tipo: 3}), null, true ).then(response =>{
+            if(response.code==="0"){
+                throw response;
+            }
+             
+            if(response.code==="1"){ 
+                let mainData = JSON.parse(response.payload); 
+                return mainData;
+            }
+        }) 
     }
 
     onKeyupCustomer(){
@@ -524,7 +537,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
         try {
             showLoader();
 
-            let resultsDataForm = this._params.dataForm;
+            let resultsDataForm = await this.initiload();
 
             let {
                 UiGridOptions
@@ -536,7 +549,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
 
 
                 let dataEstab = this.establecimientos[0];
-                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
+                let resultsDataFormEstab = await this._commonSvc.getDataFormEstabAsig(dataEstab);
 
                 //informacion de establecimiento y ptoEmision en Encabezado                              
                 this.data.codEstab = dataEstab.codEstab;
@@ -906,7 +919,7 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
 
                 let dataEstab = this.establecimientos.find(item => item.codEstab === this.dataDocumento.codEstab)
 
-                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
+                let resultsDataFormEstab = await this._commonSvc.getDataFormEstabAsig(dataEstab);
                 this.puntosEmisiones = resultsDataFormEstab[0];
 
                 this.bodegas = resultsDataFormEstab[1];
@@ -1173,7 +1186,7 @@ export class ModalFacturaDetalleCtrl extends ModalFacturaCtrl {
 
                 let dataEstab = this.establecimientos.find(item => item.codEstab === this.dataDocumento.codEstab)
 
-                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
+                let resultsDataFormEstab = await this._commonSvc.getDataFormEstabAsig(dataEstab);
                 this.puntosEmisiones = resultsDataFormEstab[0];
 
                 this.bodegas = resultsDataFormEstab[1];
@@ -1336,7 +1349,7 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
 
                 let dataEstab = this.establecimientos.find(item => item.codEstab === this.dataDocumento.codEstab)
 
-                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
+                let resultsDataFormEstab = await this._commonSvc.getDataFormEstabAsig(dataEstab);
                 this.puntosEmisiones = resultsDataFormEstab[0];
 
                 this.bodegas = resultsDataFormEstab[1];
@@ -1568,9 +1581,7 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
 export class ModalFacturaDividirCtrl {
 
 }
-
-
-
+ 
 export class ModalFacturaFiltroCtrl extends ModalBaseCtrl {
 
     static $inject = ['$scope', '$uibModalInstance', 'mainService', 'commonService', 'formulario', 'toastService', 'params', 'decodeToken']

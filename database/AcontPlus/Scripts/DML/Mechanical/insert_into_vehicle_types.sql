@@ -9,3 +9,4 @@ INSERT INTO Mechanical.VehicleType(Description,Code,CreatedAt,Enabled) values ('
 INSERT INTO Mechanical.VehicleType(Description,Code,CreatedAt,Enabled) values ('Tráiler','TR',GETDATE(),1)
 
 select * from Mechanical.VehicleType
+
