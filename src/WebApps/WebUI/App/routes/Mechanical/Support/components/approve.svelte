@@ -1,7 +1,20 @@
 <script lang="ts">
+  import { supportStore } from "$routes/Mechanical/Store/support.store";
+  import AdvancedSearch from "$lib/components/AdvancedSearch.svelte";
   import GridForItem from "$lib/components/GridForItem.svelte";
   import Modal from "$lib/components/Modal.svelte";
-  import { supportStore } from "$routes/Mechanical/Store/support.store";
+  import { ArticleService } from "$services/inventory/article-service";
+  import toast from "$utils/toast";
+
+  let support;
+  let establishments = [];
+  let measures = [];
+  let warehouses = [];
+  let articles = [];
+  let supportDetails = [];
+  let valueArticle = "";
+  let paramValidation = [undefined, null, "", 0];
+  let placeholderArticle = "Buscar por C.I o Nombre Comercial";
 
   const onModalClose = () => {
     supportStore.update((state) => ({
@@ -10,68 +23,455 @@
     }));
   };
 
+  // Todo: Search articles
+  const onInputArticle = async (e) => {
+    valueArticle = e.target.value;
+    articles = [];
+    let data = {};
+    if (valueArticle.length < 3) return;
+    data = {
+      busqueda: valueArticle,
+    };
+    ArticleService.search(JSON.stringify(data)).then((response) => {
+      if (response) {
+        articles = response;
+      }
+    });
+  };
+
+  const onFocusArticle = () => {};
+
+  const onBlurArticle = (e) => {
+    if (!valueArticle) {
+      articles = [];
+      valueArticle = "";
+    }
+  };
+
+  const selectArticle = (e) => {
+    let dataArticle = {};
+    let medidas = [];
+
+    articles = [];
+    valueArticle = "";
+    ArticleService.get(
+      JSON.stringify({ tipo: 6, idArticulo: e.idArticulo })
+    ).then((response) => {
+      if (response) {
+        dataArticle = response[0][0];
+
+        // Todo: Validate if article has llevaInventario
+        let isExists = hasLlevaInventario(dataArticle);
+
+        if (isExists) {
+          medidas = response[1].map((item) => {
+            return {
+              ...item,
+              tarifas: JSON.parse(item.tarifas),
+            };
+          });
+
+          let idBodega = warehouses.find(
+            (x) => x.codEstab == support.codEstab
+          ).idBodega;
+
+          let dataMedida = medidas[0];
+          let dataTarifa = dataMedida.tarifas[0];
+
+          let obj = {
+            ...dataArticle,
+            bodegas: warehouses,
+            idBodega: idBodega,
+            idMedida: dataMedida.idMedida,
+            idTarifa: dataTarifa.idTarifa,
+            medidas,
+            medidasCopy: medidas,
+            price: dataTarifa.precioConIva,
+            priceIva: dataTarifa.precioConIva,
+            quantity: 1,
+            tarifas: dataMedida.tarifas,
+            total: dataTarifa.precioConIva * 1,
+          };
+
+          console.log("obj");
+          console.log(obj);
+
+          supportDetails = [...supportDetails, obj];
+        }
+      }
+    });
+  };
+  let hasLlevaInventario = (item: any) => {
+    let isValid = true;
+
+    try {
+      let exists = supportDetails.find((x) => x.idArticulo == item.idArticulo);
+
+      if (exists != undefined && item.llevaInventario) {
+        toast({
+          type: "warning",
+          message: "El artículo ya se encuentra en la lista",
+        });
+        isValid = false;
+      }
+      return isValid;
+    } catch (error) {
+      toast({ type: "error", message: "Se ha encontrado errores" });
+      isValid = false;
+    }
+  };
+
+  const removeArticle = (idArticulo) => {
+    let newFilter = supportDetails.filter((x) => x.idArticulo != idArticulo);
+    supportDetails = newFilter;
+  };
+
+  // Todo: Customer select to SupportDetail table
+  let selectWareHouse = (cell, onRendered, success, cancel) => {
+    let warehouses = [];
+    let rows = cell.getRow().getData();
+
+    if (rows.tarifas != undefined || rows.tarifas != null) {
+      warehouses = rows.bodegas;
+    }
+
+    let selectList = document.createElement("select");
+    selectList.style.width = "100%";
+    selectList.style.boxSizing = "border-box";
+
+    onRendered(function () {
+      selectList.focus();
+      selectList.style.height = "100%";
+    });
+
+    function onChange() {
+      if (selectList.selectedOptions[0].value != rows) {
+        success(selectList.selectedOptions[0].value);
+
+        cell.getElement().dataset.bodega = selectList.selectedOptions[0].text;
+        cell.getElement().dataset.idBodega =
+          selectList.selectedOptions[0].value;
+      } else {
+        cancel();
+      }
+    }
+
+    selectList.addEventListener("blur", onChange);
+
+    for (let i = 0; i < warehouses.length; i++) {
+      let option = document.createElement("option");
+
+      option.value = warehouses[i].idBodega.toString();
+      option.text = warehouses[i].bodega;
+      if (warehouses[i].idBodega === rows) {
+        option.selected = true;
+      }
+      selectList.appendChild(option);
+    }
+    return selectList;
+  };
+
+  let selectFee = (cell, onRendered, success, cancel) => {
+    let fees = [];
+    let rows = cell.getRow().getData();
+
+    if (rows.tarifas != undefined || rows.tarifas != null) {
+      fees = rows.tarifas;
+    }
+
+    let selectList = document.createElement("select");
+    selectList.style.width = "100%";
+    selectList.style.boxSizing = "border-box";
+
+    onRendered(function () {
+      selectList.focus();
+      selectList.style.height = "100%";
+    });
+
+    function onChange() {
+      if (selectList.selectedOptions[0].value != rows) {
+        success(selectList.selectedOptions[0].value);
+
+        cell.getElement().dataset.tarifa = selectList.selectedOptions[0].text;
+        cell.getElement().dataset.idTarifa =
+          selectList.selectedOptions[0].value;
+      } else {
+        cancel();
+      }
+    }
+
+    selectList.addEventListener("blur", onChange);
+
+    for (let i = 0; i < fees.length; i++) {
+      let option = document.createElement("option");
+
+      option.value = fees[i].idTarifa.toString();
+      option.text = fees[i].tarifa;
+      if (fees[i].idTarifa === rows) {
+        option.selected = true;
+      }
+      selectList.appendChild(option);
+    }
+    return selectList;
+  };
+
+  let selectMeasures = (cell, onRendered, success, cancel) => {
+    let measures = [];
+    let rows = cell.getRow().getData();
+
+    if (rows.medidas != undefined || rows.medidas != null) {
+      measures = rows.medidas;
+    }
+
+    let selectList = document.createElement("select");
+    selectList.style.width = "100%";
+    selectList.style.boxSizing = "border-box";
+
+    onRendered(function () {
+      selectList.focus();
+      selectList.style.height = "100%";
+    });
+
+    function onChange() {
+      if (selectList.selectedOptions[0].value != rows) {
+        success(selectList.selectedOptions[0].value);
+
+        cell.getElement().dataset.descripcion =
+          selectList.selectedOptions[0].text;
+        cell.getElement().dataset.idMedida =
+          selectList.selectedOptions[0].value;
+      } else {
+        cancel();
+      }
+    }
+
+    selectList.addEventListener("blur", onChange);
+
+    for (let i = 0; i < measures.length; i++) {
+      let option = document.createElement("option");
+
+      option.value = measures[i].idMedida.toString();
+      option.text = measures[i].descripcion;
+      if (measures[i].idMedida === rows) {
+        option.selected = true;
+      }
+      selectList.appendChild(option);
+    }
+    return selectList;
+  };
+
+  let formatters = (cell) => {
+    let column = cell.getColumn()._column.field;
+    let row = cell.getRow().getData();
+    let value = cell.getValue();
+
+    if (column == "idTarifa") {
+      let tarifas = [];
+
+      if (row.tarifas != undefined && value != undefined) {
+        tarifas = row.tarifas;
+
+        return tarifas.find((x) => x.idTarifa == value).tarifa;
+      }
+      return "SELECCIONE";
+    }
+
+    if (column == "idMedida") {
+      let medidas = [];
+
+      if (row.medidas != undefined && value != undefined) {
+        medidas = row.medidas;
+
+        return medidas.find((x) => x.idMedida == value).descripcion;
+      }
+      return "SELECCIONE";
+    }
+
+    if (column == "idBodega") {
+      let bodegas = [];
+
+      if (row.bodegas != undefined && value != undefined) {
+        bodegas = row.bodegas;
+
+        return bodegas.find((x) => x.idBodega == value).bodega;
+      }
+      return "SELECCIONE";
+    }
+  };
+
+  let calculateTotal = (cell) => {
+    let row = cell.getRow().getData();
+    let column = cell.getColumn()._column.field;
+    let value = cell.getValue();
+
+    if (column == "idMedida") {
+      let newMeasure = row.medidas.find((x) => x.idMedida == value);
+
+      cell.getRow().update({
+        tarifas: newMeasure.tarifas,
+        idTarifa: newMeasure.tarifas[0].idTarifa,
+        price: newMeasure.tarifas[0].precioVenta,
+        priceIva: newMeasure.tarifas[0].precioConIva,
+      });
+    }
+
+    if (column == "idTarifa") {
+      let newFee = row.tarifas.find((x) => x.idTarifa == value);
+
+      cell.getRow().update({
+        price: newFee.precioVenta,
+        priceIva: newFee.precioConIva,
+      });
+    }
+
+    if (column == "quantity") {
+    }
+  };
+
+  // Todo: Header for table
   let colums = [
     {
-      title: "Op",
-      field: "code",
+      formatter: "buttonCross",
+      hozAlign: "center",
+      title: "Opción",
+      width: 100,
+      cellClick: (e, cell) => {
+        removeArticle(cell.getData().idArticulo);
+        cell.getRow().delete();
+      },
+    },
+    {
+      editor: selectWareHouse,
+      field: "idBodega",
+      formatter: formatters,
+      hozAlign: "center",
+      title: "Bodega",
       width: 100,
     },
     {
-      title: "N°",
-      field: "client",
-      width: 200,
-    },
-    {
-      title: "Cód.",
-      field: "date",
+      field: "codigoArticulo",
+      hozAlign: "center",
+      title: "Código",
       width: 100,
     },
     {
+      field: "descripcion",
       title: "Descripción",
-      field: "warehouse",
-      width: 100,
     },
     {
+      cellEdited: calculateTotal,
+      editor: "input",
+      field: "quantity",
+      hozAlign: "center",
       title: "Cantidad",
-      field: "rate",
-      width: 100,
     },
     {
+      editor: selectMeasures,
+      field: "idMedida",
+      formatter: formatters,
+      cellEdited: calculateTotal,
+      hozAlign: "center",
       title: "Medida",
-      field: "status",
-      width: 100,
     },
     {
+      field: "iva",
+      hozAlign: "center",
       title: "IVA",
-      field: "actions",
       width: 100,
     },
     {
-      title: "Precio",
-      field: "actions",
+      field: "precioCosto",
+      hozAlign: "center",
+      title: "Precio Costo",
       width: 100,
     },
     {
+      field: "total",
+      hozAlign: "center",
       title: "Total",
-      field: "actions",
-      width: 100,
+      width: 75,
     },
     {
+      cellEdited: calculateTotal,
+      editor: selectFee,
+      field: "idTarifa",
+      formatter: formatters,
+      hozAlign: "center",
       title: "Tarifa",
-      field: "actions",
       width: 100,
     },
     {
       title: "Precio U.",
-      field: "actions",
+      field: "price",
+      hozAlign: "center",
       width: 100,
     },
     {
       title: "P.Iva",
-      field: "actions",
+      field: "priceIva",
       width: 100,
     },
   ];
+
+  let verifySupportDetailsAndPush = () => {
+    if (supportDetails != undefined || supportDetails != null) {
+      if (supportDetails.length != 0) {
+        supportDetails.forEach((item) => {
+          item.medidas = measures.filter(
+            (x) => x.idArticulo == item.idArticulo
+          );
+          item.tarifas = JSON.parse(
+            measures.find((x) => x.idMedida == item.idMedida).tarifas
+          );
+          item.bodegas = warehouses.filter(
+            (x) => x.codEstab == support.codEstab
+          );
+        });
+      }
+    }
+  };
+
+  const selectCodEstab = () => {
+    if (supportDetails != undefined || supportDetails != null) {
+      if (supportDetails.length > 0) {
+        support.codEstab = supportDetails[0].codEstab;
+      }
+    }
+
+    if (
+      paramValidation.includes(support.codEstab) &&
+      establishments.length > 0
+    ) {
+      support.codEstab = establishments[0].codEstab;
+    }
+  };
+
+  const refreshWarehouseCodEstab = (codEstab) => {
+    support.codEstab = codEstab;
+
+    let idBodega = warehouses.find(
+      (x) => x.codEstab == support.codEstab
+    ).idBodega;
+
+    if (!paramValidation.includes(idBodega)) {
+      supportDetails.forEach((item) => {
+        item.idBodega = idBodega;
+        item.bodegas = warehouses.filter((x) => x.codEstab == support.codEstab);
+      });
+      supportDetails = [...supportDetails];
+    }
+  };
+
+  supportStore.subscribe((values) => {
+    support = values.support;
+    supportDetails = values.supportDetails;
+    establishments = values.establishments;
+    measures = values.measures;
+    warehouses = values.warehouses;
+
+    verifySupportDetailsAndPush();
+    selectCodEstab();
+  });
 </script>
 
 {#if $supportStore.isApprove}
@@ -94,27 +494,18 @@
               <div class="input-group bootstrap-touchspin">
                 <input
                   type="text"
+                  bind:value={support.businessName}
                   class="form-control"
+                  disabled
                   placeholder="Ingrese C.I o Nombre Comercial"
                   data-bts-button-down-class="btn btn-secondary btn-outline"
                   data-bts-button-up-class="btn btn-secondary btn-outline"
                 />
-
                 <span
                   class="input-group-btn input-group-append bootstrap-touchspin-injected"
                 >
                   <button
-                    class="btn btn-secondary btn-outline bootstrap-touchspin-up"
-                    type="button"
-                  >
-                    <i class="ti-plus" />
-                  </button>
-                </span>
-
-                <span
-                  class="input-group-btn input-group-append bootstrap-touchspin-injected"
-                >
-                  <button
+                    disabled
                     class="btn btn-secondary btn-outline bootstrap-touchspin-up"
                     type="button"
                   >
@@ -125,37 +516,38 @@
             </div>
           </div>
           <div class="col-sm-2 nopadding">
-            <label for="cliente" class="">
-              Nro Identificación <span class="text-danger">*</span>
+            <label for="">
+              N° Identificación <span class="text-danger">*</span>
             </label>
-            <input type="text" disabled class="form-control" />
+            <input
+              type="text"
+              disabled
+              bind:value={support.idCard}
+              class="form-control"
+            />
           </div>
           <div class="col-sm-2 nopadding">
             <label for="">
               Fecha Emisión <span class="text-danger">*</span>
             </label>
-            <input type="date" class="form-control" />
+            <input type="date" bind:value={support.date} class="form-control" />
             <small><span class="text-success">Datos de prueba</span></small>
           </div>
-          <div class="col-sm-2 nopadding">
+          <div class="col-sm-4 nopadding">
             <div class="form-group">
-              <label for="">Bodega</label>
-              <select class="form-control custom-select">
-                <option>::SELECCIONE::</option>
-                <option>India</option>
-                <option>Sri Lanka</option>
-                <option>USA</option>
-              </select>
-            </div>
-          </div>
-          <div class="col-sm-2 nopadding">
-            <div class="form-group">
-              <label for="">Tarifa</label>
-              <select class="form-control custom-select">
-                <option>::SELECCIONE::</option>
-                <option>India</option>
-                <option>Sri Lanka</option>
-                <option>USA</option>
+              <label for=""
+                >Establecimiento
+                <span class="text-danger"> *</span>
+              </label>
+              <select
+                class="form-control custom-select"
+                bind:value={support.codEstab}
+                on:change={() => refreshWarehouseCodEstab(support.codEstab)}
+              >
+                <option disabled>::SELECCIONE::</option>
+                {#each establishments as item}
+                  <option value={item.codEstab}>{item.nombreComercial}</option>
+                {/each}
               </select>
             </div>
           </div>
@@ -163,23 +555,49 @@
         <div class="row mt-3">
           <div class="col-sm-4 nopadding">
             <div class="form-group m-b-0">
-              <label for=""> Buscar por artíulo </label>
-              <input type="text" class="form-control" />
+              <label for=""> Buscar por artículo </label>
+              <AdvancedSearch
+                on:input={onInputArticle}
+                on:focus={onFocusArticle}
+                on:blur={onBlurArticle}
+                value={valueArticle}
+                placeholder={placeholderArticle}
+              />
+              {#if articles.length > 0}
+                <div class="floating-results list-group">
+                  {#each articles as item}
+                    <a
+                      on:click={() => selectArticle(item)}
+                      href={null}
+                      class="list-group-item"
+                      ><i class="ti-user" /> - {item.codigo}
+                      - {item.descripcion}</a
+                    >
+                  {/each}
+                </div>{/if}
             </div>
           </div>
           <div class="col-sm-2 nopadding">
             <label for="cliente" class=""> Buscar por Código </label>
             <input type="text" class="form-control" placeholder="Ej: COMP1" />
           </div>
-          <div class="col-sm-6 nopadding">
-            <div class="row justify-content-end">
-              <div class="col-lg-6 col-lg-6 col-md-6 col-sm-12 col-12">
+          <div class="col-sm-3 nopadding">
+            <div class="row">
+              <div class="col-lg-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <button type="button" class="btn btn-block btn-success mt-4">
+                  <i class="ti-save" /> Factura
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-3 nopadding">
+            <div class="row">
+              <div class="col-lg-12 col-lg-12 col-md-12 col-sm-12 col-12">
                 <button
                   type="button"
-                  class="btn btn-block btn-lg btn-success mt-4"
-                  id="btnSaveAndUpdateDocument"
+                  class="btn btn-block btn-outline-primary mt-4"
                 >
-                  <i class="ti-save" /> Guardar
+                  <i class="ti-save" /> Nota Entrega
                 </button>
               </div>
             </div>
@@ -189,10 +607,18 @@
         <!--Add tabulator -->
         <div class="row mt-2">
           <div class="col-12">
-            <GridForItem arrayData={[]} columns={colums} />
+            <GridForItem arrayData={supportDetails} columns={colums} />
           </div>
         </div>
       </form>
+    </div>
+    <div class="modal-footer">
+      <button type="submit" class="btn btn-success">
+        <i class="ti-save" /> Guardar
+      </button>
+      <button type="button" class="btn btn-dark" on:click={() => onModalClose()}
+        >&times; Cerrar</button
+      >
     </div>
   </Modal>
 {/if}
