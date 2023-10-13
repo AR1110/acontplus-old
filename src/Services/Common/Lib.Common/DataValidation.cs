@@ -1,5 +1,7 @@
-using System.Data;
+﻿using System.Data;
+using System.Text.RegularExpressions;
 using System.Xml;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Lib.Common
 {
@@ -30,6 +32,12 @@ namespace Lib.Common
             {
                 return false;
             }
+        }
+        public static string RemoveSpecialCharacters(string text)
+        {
+            // Regular expression to match non-alphanumeric characters
+            //Regex regex = new Regex("[^a-zA-Z0-9]");
+            return Regex.Replace(text, "[^0-9A-Za-z _-]", "");
         }
     }
 }
