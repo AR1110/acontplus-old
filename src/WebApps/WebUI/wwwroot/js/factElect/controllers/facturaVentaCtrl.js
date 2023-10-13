@@ -2,7 +2,7 @@
     'use strict';
     app.controller('facturaVentaCtrl', facturaVentaCtrl)
 
-    facturaVentaCtrl.$inject = ['$scope', '$filter', 'mainService', 'commonService', 'documentoVentaService', 'facturaService',
+    facturaVentaCtrl.$inject = ['$scope', '$filter', 'mainService', 'commonService', 'facturaService',
         'modalService',
         'nombreModal',
         'nombreModalContabilidad',
@@ -15,8 +15,7 @@
         $scope,
         $filter,
         _mS,
-        _commonSvc,
-        _docVentaSvc,
+        _commonSvc, 
         facturaSvc,
         _modalSvc,
         _nombreModalConst,
@@ -285,7 +284,7 @@
             let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_NUEVO['controller']];
             let template = MODAL_NUEVO['template'];
             let params = {
-                dataForm: await _docVentaSvc.initiload(),
+                dataForm: await facturaSvc.getDataForm(),
                 TIPO_REGISTRO: 'NUEVO'
             }
 
