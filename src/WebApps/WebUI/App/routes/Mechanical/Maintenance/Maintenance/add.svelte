@@ -402,9 +402,7 @@
 
   // REMOVE ARTICLE
   const removeArticle = (idArticulo) => {
-    let newFilter = supportDetails.filter(
-      (x) => x.idArticulo != idArticulo
-    );
+    let newFilter = supportDetails.filter((x) => x.idArticulo != idArticulo);
     supportDetails = newFilter;
   };
 
