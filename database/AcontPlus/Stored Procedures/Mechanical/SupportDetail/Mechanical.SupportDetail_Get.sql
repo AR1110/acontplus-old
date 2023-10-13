@@ -9,7 +9,7 @@ GO
 -- Author:		Alexis Ramirez
 -- Create date: 2021-06-25
 -- Description:	SP Para leer los datos e la tabla articulo
--- Mechanical.SupportDetail_Get 157, '{"tipo": 2,"id":2, "idArticulo": 77548}', ''
+-- Mechanical.SupportDetail_Get 157, '{"tipo": 1,"id":2}', ''
 -- =============================================
 -- DROP PROC Mechanical.SupportDetail_Get
 CREATE OR ALTER PROCEDURE Mechanical.SupportDetail_Get
@@ -32,7 +32,7 @@ BEGIN
         BEGIN
             SELECT @Id = Id FROM OPENJSON(@json) WITH (Id INT '$.id')
 
-            SET @tableNames = 'support,supportDetail,medidas,establecimiento,bodega'
+            SET @tableNames = 'support,supportDetail,medidas,establecimiento,bodega,tipoIva'
 
             SELECT v_s.Id
                   ,v_s.PuntoEmisionId
@@ -65,7 +65,7 @@ BEGIN
                   ,bo.codEstab
                   ,md.Total
                   ,ar.idTipoIva
-                  ,ar.iva    
+                  ,ar.iva
             FROM Mechanical.SupportDetail md WITH (NOLOCK)
             INNER JOIN dbo.Bodega             bo WITH (NOLOCK) ON bo.idBodega   = md.BodegaId
             INNER JOIN v_Articulo             ar WITH (NOLOCK) ON ar.idArticulo = md.ArticuloId
@@ -116,6 +116,8 @@ BEGIN
 
             SELECT idBodega ,idEstablecimiento, bodega, codEstab, nombreComercial , defaultBodega
             FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultBodega DESC
+
+            SELECT idTipoIva,descripcion, codigo,codigoPorcentaje,porcentaje FROM TipoIva WITH (NOLOCK) WHERE estado = 1
             RETURN
         END
 

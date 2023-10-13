@@ -12,6 +12,7 @@
   let warehouses = [];
   let articles = [];
   let supportDetails = [];
+  let tipoIva = [];
   let valueArticle = "";
   let paramValidation = [undefined, null, "", 0];
   let placeholderArticle = "Buscar por C.I o Nombre Comercial";
@@ -61,7 +62,7 @@
         dataArticle = response[0][0];
 
         // Todo: Validate if article has llevaInventario
-        let isExists = hasLlevaInventario(dataArticle);
+        let isExists = onValidateLlevaInventario(dataArticle);
 
         if (isExists) {
           medidas = response[1].map((item) => {
@@ -70,7 +71,6 @@
               tarifas: JSON.parse(item.tarifas),
             };
           });
-
           let idBodega = warehouses.find(
             (x) => x.codEstab == support.codEstab
           ).idBodega;
@@ -85,23 +85,20 @@
             idMedida: dataMedida.idMedida,
             idTarifa: dataTarifa.idTarifa,
             medidas,
-            medidasCopy: medidas,
             price: dataTarifa.precioConIva,
             priceIva: dataTarifa.precioConIva,
             quantity: 1,
             tarifas: dataMedida.tarifas,
             total: dataTarifa.precioConIva * 1,
+            tipoIvas: tipoIva,
           };
-
-          console.log("obj");
-          console.log(obj);
-
           supportDetails = [...supportDetails, obj];
         }
       }
     });
   };
-  let hasLlevaInventario = (item: any) => {
+
+  let onValidateLlevaInventario = (item: any) => {
     let isValid = true;
 
     try {
@@ -260,6 +257,53 @@
     return selectList;
   };
 
+  let selectTipoIva = (cell, onRendered, success, cancel) => {
+    let tipoIvas = [];
+    let rows = cell.getRow().getData();
+
+    if (rows.tipoIvas != undefined || rows.tipoIvas != null) {
+      tipoIvas = rows.tipoIvas;
+    }
+
+    let selectList = document.createElement("select");
+    selectList.style.width = "100%";
+    selectList.style.boxSizing = "border-box";
+
+    onRendered(function () {
+      selectList.focus();
+      selectList.style.height = "100%";
+    });
+
+    function onChange() {
+      if (selectList.selectedOptions[0].value != rows) {
+        success(selectList.selectedOptions[0].value);
+
+        cell.getElement().dataset.descripcion =
+          selectList.selectedOptions[0].text;
+        cell.getElement().dataset.idTipoIva =
+          selectList.selectedOptions[0].value;
+      } else {
+        cancel();
+      }
+    }
+
+    selectList.addEventListener("blur", onChange);
+
+    for (let i = 0; i < tipoIvas.length; i++) {
+      let option = document.createElement("option");
+
+      option.value = tipoIvas[i].idTipoIva.toString();
+      option.text = tipoIvas[i].descripcion;
+      if (tipoIvas[i].idTipoIva === rows) {
+        option.selected = true;
+      }
+      selectList.appendChild(option);
+    }
+    return selectList;
+  };
+
+
+  // Todo: Formatters for table
   let formatters = (cell) => {
     let column = cell.getColumn()._column.field;
     let row = cell.getRow().getData();
@@ -273,7 +317,7 @@
 
         return tarifas.find((x) => x.idTarifa == value).tarifa;
       }
-      return "SELECCIONE";
+      return "_";
     }
 
     if (column == "idMedida") {
@@ -284,7 +328,7 @@
 
         return medidas.find((x) => x.idMedida == value).descripcion;
       }
-      return "SELECCIONE";
+      return "_";
     }
 
     if (column == "idBodega") {
@@ -295,10 +339,22 @@
 
         return bodegas.find((x) => x.idBodega == value).bodega;
       }
-      return "SELECCIONE";
+      return "_";
+    }
+
+    if (column == "idTipoIva") {
+      let tipoIvas = [];
+
+      if (row.tipoIvas != undefined && value != undefined) {
+        tipoIvas = row.tipoIvas;
+
+        return tipoIvas.find((x) => x.idTipoIva == value).descripcion;
+      }
+      return "_";
     }
   };
 
+  // Todo: Calculate total
   let calculateTotal = (cell) => {
     let row = cell.getRow().getData();
     let column = cell.getColumn()._column.field;
@@ -313,18 +369,74 @@
         price: newMeasure.tarifas[0].precioVenta,
         priceIva: newMeasure.tarifas[0].precioConIva,
       });
+
+      // Todo: Update price and priceIva
     }
 
     if (column == "idTarifa") {
       let newFee = row.tarifas.find((x) => x.idTarifa == value);
+      let porcentaje = row.tipoIvas.find(
+        (x) => x.idTipoIva == row.idTipoIva
+      ).porcentaje;
+
+      let precioConIva = calcularPrecioConIva(newFee.precioVenta, porcentaje);
 
       cell.getRow().update({
         price: newFee.precioVenta,
-        priceIva: newFee.precioConIva,
+        priceIva: precioConIva,
       });
     }
 
     if (column == "quantity") {
+    }
+
+    if (column == "price") {
+      let porcentaje = row.tipoIvas.find(
+        (x) => x.idTipoIva == row.idTipoIva
+      ).porcentaje;
+
+      let precioConIva = calcularPrecioConIva(value, porcentaje);
+
+      cell.getRow().update({
+        priceIva: precioConIva,
+      });
+    }
+
+    if (column == "priceIva") {
+      let porcentaje = row.tipoIvas.find(
+        (x) => x.idTipoIva == row.idTipoIva
+      ).porcentaje;
+
+      let precioVenta = calcularPrecioVenta(value, porcentaje);
+
+      cell.getRow().update({
+        price: precioVenta,
+      });
+    }
+  };
+
+  // Todo: Auxiliar functions
+  const calcularPrecioConIva = (precioVenta: number, porcentaje: number) => {
+    try {
+      const resultadoPorcentaje = Number(porcentaje) / 100;
+      const result = Number(precioVenta) * Number(resultadoPorcentaje);
+      const precioConIva = result + Number(precioVenta);
+      return precioConIva;
+    } catch (error) {
+      toast({
+        type: "error",
+        message: "Se ha encontrado errores en Precio Venta",
+      });
+    }
+  };
+
+  const calcularPrecioVenta = (precioConIva, porcentaje) => {
+    try {
+      const resultadoPorcentaje = Number(porcentaje) / 100 + 1;
+      const precioVenta = Number(precioConIva) / Number(resultadoPorcentaje);
+      return precioVenta;
+    } catch (error) {
+      toastr.error(error);
     }
   };
 
@@ -357,6 +469,7 @@
     {
       field: "descripcion",
       title: "Descripción",
+      editor: "input",
     },
     {
       cellEdited: calculateTotal,
@@ -374,22 +487,12 @@
       title: "Medida",
     },
     {
-      field: "iva",
+      editor: selectTipoIva,
+      field: "idTipoIva",
       hozAlign: "center",
-      title: "IVA",
+      title: "I.V.A",
+      formatter: formatters,
       width: 100,
-    },
-    {
-      field: "precioCosto",
-      hozAlign: "center",
-      title: "Precio Costo",
-      width: 100,
-    },
-    {
-      field: "total",
-      hozAlign: "center",
-      title: "Total",
-      width: 75,
     },
     {
       cellEdited: calculateTotal,
@@ -404,32 +507,31 @@
       title: "Precio U.",
       field: "price",
       hozAlign: "center",
+      editor: "input",
+      cellEdited: calculateTotal,
       width: 100,
     },
     {
       title: "P.Iva",
       field: "priceIva",
+      hozAlign: "center",
+      editor: "input",
+      cellEdited: calculateTotal,
       width: 100,
+    },
+    {
+      field: "total",
+      hozAlign: "center",
+      title: "Total",
+      width: 75,
     },
   ];
 
-  let verifySupportDetailsAndPush = () => {
+  let initialPushData = () => {
     if (supportDetails != undefined || supportDetails != null) {
       if (supportDetails.length != 0) {
         supportDetails.forEach((item) => {
-          item.medidas = measures.map((x) => {
-            return {
-              ...x,
-              tarifas: JSON.parse(x.tarifas),
-            };
-          }).filter((x) => x.idArticulo == item.idArticulo);
-          item.tarifas = JSON.parse(
-            measures.find((x) => x.idMedida == item.idMedida).tarifas
-          );
-          item.bodegas = warehouses.filter(
-            (x) => x.codEstab == support.codEstab
-          );
-          item.medidasCopy = measures
+          item.medidas = measures
             .map((x) => {
               return {
                 ...x,
@@ -437,10 +539,16 @@
               };
             })
             .filter((x) => x.idArticulo == item.idArticulo);
+          item.tarifas = JSON.parse(
+            measures.find((x) => x.idMedida == item.idMedida).tarifas
+          );
+          item.bodegas = warehouses.filter(
+            (x) => x.codEstab == support.codEstab
+          );
+          item.tipoIvas = tipoIva;
+          item.priceIva = item.tarifas.find((x) => x.idTarifa == item.idTarifa).precioConIva;
         });
       }
-      console.log("supportDetails");
-      console.log(supportDetails);
     }
   };
 
@@ -475,14 +583,19 @@
     }
   };
 
+  const findPriceIva = () => {
+     
+  }
+
   supportStore.subscribe((values) => {
     support = values.support;
     supportDetails = values.supportDetails;
     establishments = values.establishments;
     measures = values.measures;
     warehouses = values.warehouses;
+    tipoIva = values.tipoIva;
 
-    verifySupportDetailsAndPush();
+    initialPushData();
     selectCodEstab();
   });
 </script>
