@@ -143,13 +143,11 @@ function layoutCtrl($scope, $http, $rootScope, $window, mS, _modalSvc, toast, fo
                         }
                         if (response.id === "1") {
                             let [permisoModulo, almacenPermiso, ventaPermiso, cajaPermiso, articlePermission] = JSON.parse(response.data);
-
+                            
                             $rootScope.usuarioPermiso = {
-                                almacenPermiso: JSON.parse(almacenPermiso[0].jsonPermission),
-                                ventaPermiso: JSON.parse(ventaPermiso[0].jsonPermission),
-                                cajaPermiso: JSON.parse(cajaPermiso[0].jsonPermission),
-
-
+                                almacenPermiso: almacenPermiso.length > 0 ? JSON.parse(almacenPermiso[0].jsonPermission) : {},
+                                ventaPermiso: ventaPermiso.length > 0 ? JSON.parse(ventaPermiso[0].jsonPermission) : {},
+                                cajaPermiso: cajaPermiso.length > 0 ? JSON.parse(cajaPermiso[0].jsonPermission): {}, 
                             }
                             $scope.accion = permisoModulo[0]
                             $rootScope.articlePermission = articlePermission[0];
