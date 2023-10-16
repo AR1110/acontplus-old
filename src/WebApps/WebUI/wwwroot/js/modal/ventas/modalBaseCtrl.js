@@ -433,7 +433,7 @@ export class ModalBaseCtrl {
                 width: '6%',
                 minWidth: '100',
                 // cellFilter: "currency:'%'",
-                visible: this.configDetalle.porcentajeDescuento || false,
+                visible: ventaDetailPermission.porcentajeDescuento.update || false,
                 type: 'number',
                 /*cellFilter: "limitTo:3",*/
             },
@@ -448,7 +448,7 @@ export class ModalBaseCtrl {
                 width: '6%',
                 minWidth: '100',
                 // cellFilter: "currency:'$'",
-                visible: this.configDetalle.descuento || false
+                visible: ventaDetailPermission.descuento.update || false
             },
             {
                 name: 'T. Dsto.',
