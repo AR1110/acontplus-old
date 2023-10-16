@@ -194,7 +194,8 @@ export class CommonService {
 
     removeAccents(str) {
         str = str || '' ;
-        return str.replace(/[^a-z0-9]/gi, '');
+        //return str.replace(/[^a-z0-9]/gi, '');
+        return str.replace(/^-+|-+$| [^A-Za-z0-9.-]+/g, "");
     }
 
 
