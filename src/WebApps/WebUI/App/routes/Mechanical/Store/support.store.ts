@@ -24,6 +24,7 @@ type State = {
   establishments: any;
   measures: any;
   warehouses: any;
+  tipoIva: any;
 };
 
 const initialModalState: StateModal = {
@@ -77,6 +78,7 @@ const initialState: State = {
   establishments: [],
   measures: [],
   warehouses: [],
+  tipoIva: [],
 };
 
 const cretaeSupport = () => {
@@ -150,6 +152,7 @@ const cretaeSupport = () => {
             measures: response["medidas"],
             establishments: response["establecimiento"],
             warehouses: response["bodega"],
+            tipoIva: response["tipoIva"],
           }));
         }
       })
