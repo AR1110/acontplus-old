@@ -3,6 +3,7 @@ import { Establecimiento, UserData } from "../models"
 
 //Token 
 export const setToken = (token: string) => {
+    console.log(token)
     localStorage.setItem(PERSIS_USER.auth_token, token);
 }
 
