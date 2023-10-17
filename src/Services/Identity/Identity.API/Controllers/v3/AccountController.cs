@@ -74,7 +74,7 @@ namespace Identity.API.Controllers.v3
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error while login into AcontplusWeb: " + ex.ToString());
+                _log.LogActivity("Error while login into Acontplus Restaurant: " + ex.ToString());
                 return BadRequest("Error on login");
             }
         }
@@ -106,56 +106,9 @@ namespace Identity.API.Controllers.v3
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error while login: " + ex.ToString());
+                _log.LogActivity("Error while login in Acontplus Restaurant: " + ex.ToString());
                 return BadRequest("Error on login");
             }
         }
-
-
-        //[HttpPost("loginApp")]
-        //public async Task<IActionResult> LoginApp([FromBody] LoginDto authRequest)
-        //{
-
-        //    LoginDao _l = new LoginDao(_config);
-        //    GenericResponse _response = await _l.LoginAppAsync(authRequest);
-        //    var codSms = _response.id as string;
-        //    try
-        //    {
-        //        if (codSms == "2" || codSms == "1")
-        //        {
-        //            var response = _response.data as LoginViewModelV2;
-
-        //            var loginData = response.userData[0];
-        //            var loginDataDto = new LoginDataDto();
-
-        //            loginDataDto.userIdRole = loginData.idRol;
-        //            loginDataDto.username = loginData.userName;
-        //            loginDataDto.fullname = loginData.fullName;
-        //            loginDataDto.nroIdentificacion = loginData.nroIdentificacion;
-        //            loginDataDto.role = loginData.role;
-        //            loginDataDto.razonSocial = loginData.entidad;
-        //            loginDataDto.rucEmpresa = loginData.ruc ?? "";
-        //            loginData.companyId = loginData.companyId;
-        //            loginDataDto.urlGateway = _config["ApiGateways:Acontplus"];
-
-        //            var jwtToken = _tokenService.GenerateJwtToken(loginDataDto);
-        //            if (jwtToken == null) { return Unauthorized(); }
-        //            _log.LogActivity("Login successful: idRol -> " + Convert.ToString(loginDataDto.userIdRole) + " \n jwt: " + jwtToken);
-
-        //            if (jwtToken == null)
-        //            {
-        //                _response.Create(code: "0", message: "Error al iniciar session");
-        //                return Ok(_response);
-        //            }
-        //            loginData.jwtToken = jwtToken;
-        //        }
-        //        return Ok(_response);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _log.LogActivity("Error while login into AcontplusWeb: " + ex.ToString());
-        //        return BadRequest("Error on login");
-        //    }
-        //}
     }
 }
