@@ -1,29 +1,9 @@
-import toast from "$utils/toast";
+import { sharedService } from "$services/shared.service";
+import { calculoTarifa } from "./calculo-tarifa";
 
 const calculations = () => {
-  const calcularPrecioConIva = (precioVenta: number, porcentaje: number) => {
-    try {
-      const resultadoPorcentaje = Number(porcentaje) / 100;
-      const result = Number(precioVenta) * Number(resultadoPorcentaje);
-      const precioConIva = result + Number(precioVenta);
-      return precioConIva;
-    } catch (error) {
-      toast({
-        type: "error",
-        message: "Se ha encontrado errores en Precio Venta",
-      });
-    }
-  };
-
-  const calcularPrecioVenta = (precioConIva, porcentaje) => {
-    try {
-      const resultadoPorcentaje = Number(porcentaje) / 100 + 1;
-      const precioVenta = Number(precioConIva) / Number(resultadoPorcentaje);
-      return precioVenta;
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // ----------------- Calculations -----------------
+  // Todo: Formatters
 
   const formatters = (cell) => {
     let column = cell.getColumn()._column.field;
@@ -73,6 +53,11 @@ const calculations = () => {
       }
       return "_";
     }
+
+    if (column == "cantidad") {
+      console.log("Cantidad");
+      console.log(value);
+    }
   };
 
   // Todo: Calculate total
@@ -80,6 +65,7 @@ const calculations = () => {
     let row = cell.getRow().getData();
     let column = cell.getColumn()._column.field;
     let value = cell.getValue();
+    let decimal = row.decimals[0];
 
     if (column == "idMedida") {
       let newMeasure = row.medidas.find((x) => x.idMedida == value);
@@ -100,7 +86,10 @@ const calculations = () => {
         (x) => x.idTipoIva == row.idTipoIva
       ).porcentaje;
 
-      let precioConIva = calcularPrecioConIva(newFee.precioVenta, porcentaje);
+      let precioConIva = calculoTarifa.calcularPrecioConIva(
+        newFee.precioVenta,
+        porcentaje
+      );
 
       cell.getRow().update({
         precioVenta: newFee.precioVenta,
@@ -109,6 +98,12 @@ const calculations = () => {
     }
 
     if (column == "cantidad") {
+      let newCantidad = sharedService.roundNumber(
+        parseFloat(value),
+        decimal.nroCantidad
+      );
+
+      cell.getRow().update({ cantidad: newCantidad });
     }
 
     if (column == "precioVenta") {
@@ -116,7 +111,7 @@ const calculations = () => {
         (x) => x.idTipoIva == row.idTipoIva
       ).porcentaje;
 
-      let precioConIva = calcularPrecioConIva(value, porcentaje);
+      let precioConIva = calculoTarifa.calcularPrecioConIva(value, porcentaje);
 
       cell.getRow().update({
         precioConIva: precioConIva,
@@ -128,7 +123,7 @@ const calculations = () => {
         (x) => x.idTipoIva == row.idTipoIva
       ).porcentaje;
 
-      let precioVenta = calcularPrecioVenta(value, porcentaje);
+      let precioVenta = calculoTarifa.calcularPrecioVenta(value, porcentaje);
 
       cell.getRow().update({
         precioVenta: precioVenta,
@@ -136,7 +131,7 @@ const calculations = () => {
     }
   };
 
-  return { formatters, calculateTotal };
+  return { calculateTotal, formatters };
 };
 
 export const Calculations = calculations();

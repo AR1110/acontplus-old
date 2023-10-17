@@ -25,6 +25,7 @@ class Shared {
   }
 
   roundNumber = function (number, max = 1) {
+    console.log("number: " + number);
     if (typeof number !== "number" || isNaN(number)) {
       throw new TypeError("Número inválido: " + number);
     }
@@ -33,17 +34,10 @@ class Shared {
       throw new TypeError("Máximo de dígitos inválido: " + max);
     }
 
-    // let fraccion = number.toString().split('.')[1];
-
-    // if (!fraccion || fraccion.length <= 2) {
-    //     return number;
-    // }
-
     let factor = Math.pow(10, max);
     let tempNumber = number * factor;
     let roundedTempNumber = Math.round(tempNumber);
     return roundedTempNumber / factor;
-    // return Math.trunc(number * Math.pow(10, max)) / Math.pow(10, max);
   };
 }
 

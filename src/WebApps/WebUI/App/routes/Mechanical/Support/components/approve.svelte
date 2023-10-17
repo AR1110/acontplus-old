@@ -18,6 +18,7 @@
   let articles = [];
   let supportDetails = [];
   let tipoIva = [];
+  let decimals = [];
   let valueArticle = "";
   let paramValidation = [undefined, null, "", 0];
   let placeholderArticle = "Buscar por C.I o Nombre Comercial";
@@ -87,6 +88,7 @@
             ...dataArticle,
             bodegas: warehouses,
             cantidad: 1,
+            decimals: decimals,
             idBodega: idBodega,
             idMedida: dataMedida.idMedida,
             idTarifa: dataTarifa.idTarifa,
@@ -234,10 +236,10 @@
             (x) => x.codEstab == support.codEstab
           );
           item.tipoIvas = tipoIva;
-
           item.precioConIva = item.tarifas.find(
             (x) => x.idTarifa == item.idTarifa
           ).precioConIva;
+          item.decimals = decimals;
         });
       }
     }
@@ -300,6 +302,7 @@
     measures = values.measures;
     warehouses = values.warehouses;
     tipoIva = values.tipoIva;
+    decimals = values.decimals;
 
     initialPushData();
     selectCodEstab();
