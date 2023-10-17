@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.54";
+} from "./modalBaseCtrl.js?v=0.55";
 
 
 class ModalNotaEntregaCtrl extends ModalBaseCtrl {
