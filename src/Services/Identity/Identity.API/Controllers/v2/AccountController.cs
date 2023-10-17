@@ -4,6 +4,7 @@ using Lib.Common.Api;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Services.Common.Logs;
 
 namespace Identity.API.Controllers.v2
@@ -44,7 +45,7 @@ namespace Identity.API.Controllers.v2
                     {
                         userData.ForEach(x => x.UrlGateway = _config["ApiGateways:Acontplus"]);
 
-                        var jwtToken = _tokenService.GetJwtToken(userData.FirstOrDefault()); 
+                        var jwtToken = _tokenService.GetJwtToken(userData.FirstOrDefault());
 
                         if (jwtToken == null) { return Unauthorized(); }
 
@@ -54,12 +55,19 @@ namespace Identity.API.Controllers.v2
                         {
                             return BadRequest("Error al iniciar session");
                         }
+
                         userData.ForEach(x => x.Token = jwtToken);
-                        return Ok(new { code = "1", message = "Login correcto", payload = JsonConvert.SerializeObject(userData) });
-                    }
-                    else
-                    {
-                        return Ok(_response);
+
+                        return Ok(new
+                        {
+                            code = "1",
+                            message = "Login correcto",
+                            payload = JsonConvert.SerializeObject(userData, new JsonSerializerSettings
+                            {
+                                ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+                                Formatting = Formatting.Indented
+                            })
+                        });
                     }
                 }
                 return Ok(_response);
@@ -85,7 +93,16 @@ namespace Identity.API.Controllers.v2
                     return BadRequest("Error al iniciar session");
                 }
                 userData.Token = jwtToken;
-                return Ok(new { code = "1", message = "Login correcto", payload = JsonConvert.SerializeObject(userData) });
+                return Ok(new
+                {
+                    code = "1",
+                    message = "Login correcto",
+                    payload = JsonConvert.SerializeObject(userData, new JsonSerializerSettings
+                    {
+                        ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+                        Formatting = Formatting.Indented
+                    })
+                });
             }
             catch (Exception ex)
             {
