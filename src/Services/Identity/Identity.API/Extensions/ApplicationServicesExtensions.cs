@@ -2,6 +2,7 @@
 using Identity.API.Entities;
 using Identity.API.Errors;
 using Identity.API.Interfaces;
+using Identity.API.Services;
 using Identity.Services;
 using Lib.Common;
 using Microsoft.AspNetCore.Identity;
@@ -29,6 +30,7 @@ namespace Identity.API.Extensions
            .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IAccountService, AccountService>();
             //services.AddScoped<IUnitOfWork, UnitOfWork>();
             //services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

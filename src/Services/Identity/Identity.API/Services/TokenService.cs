@@ -79,5 +79,34 @@ namespace Identity.Services
             var securityToken = jwtSecurityTokenHandler.CreateToken(securityTokenDescriptor);
             return jwtSecurityTokenHandler.WriteToken(securityToken);
         }
+
+        public string GetJwtToken(UserDataDto data)
+        {
+            var signingCredentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256Signature);
+            var claimsIdentiy = new ClaimsIdentity(new List<Claim>
+                {
+                    new Claim(JwtRegisteredClaimNames.Name, data.Fullname),
+                    new Claim(JwtRegisteredClaimNames.GivenName, data.Fullname),
+                    new Claim(JwtRegisteredClaimNames.UniqueName, data.Username),
+                    new Claim(ClaimTypes.NameIdentifier, Convert.ToString(data.UserId)),
+                    new Claim(ClaimTypes.Role, data.Role),
+                    new Claim("UserRoleId", Convert.ToString(data.UserRoleId)),
+                    new Claim("IDCardUser", data.IDCardUser),
+                    new Claim("IDCardCompany", data.IDCardCompany),
+                    new Claim("CompanyId", Convert.ToString(data.CompanyId)),
+                    new Claim("TradeName", data.TradeName),
+                    new Claim("BussinesName", data.BussinesName),
+                    new Claim("UrlGateway", data.UrlGateway)
+                });
+            var securityTokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = claimsIdentiy,
+                Expires = DateTime.UtcNow.AddDays(_tokenExp),
+                SigningCredentials = signingCredentials
+            };
+            var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
+            var securityToken = jwtSecurityTokenHandler.CreateToken(securityTokenDescriptor);
+            return jwtSecurityTokenHandler.WriteToken(securityToken);
+        }
     }
 }
