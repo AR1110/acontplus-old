@@ -42,8 +42,8 @@ const LoginPage = () => {
 
   const formik = useFormik({
     initialValues: {
-      username: 'edinson.romero',
-      password: 'edi12345',
+      username: '',
+      password: '', 
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
@@ -68,26 +68,8 @@ const LoginPage = () => {
             setUserData(dataLogin);
             setEstabs(dataLogin.establecimientos);
             navigate(`/${PrivateRoutes.PRIVATE}`, { replace: true });
-          }
-
-
-          // SnackbarUtility.success("Inciando Sessión");
-          // const dataLogin = response.payload as DataLogin;
-          // const userData = dataLogin.userData[0];
-
-          // if (!userData?.jwtToken) return
-
-          // setToken(userData.jwtToken)
-          // setUserData(userData);
-          // setEstabs(JSON.parse(dataLogin.establecimientos));
-          // navigate(`/${PrivateRoutes.PRIVATE}`, { replace: true });
-        }
-
-        // if (response.code === "2") {
-        //   setEstabDialogParms(response.payload.establecimientos)
-        //   setOpen(true);
-        // }
-
+          } 
+        } 
       }).finally(() => {
         hideLoader();
       })
