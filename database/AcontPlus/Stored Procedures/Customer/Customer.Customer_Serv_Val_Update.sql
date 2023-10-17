@@ -66,7 +66,7 @@ BEGIN
 				END
 			--IF EXISTS(SELECT 1 FROM Customer.Customer WHERE Id = @customerId)
 			--	BEGIN
-					UPDATE Customer.Customer SET tradeName = @tradeName, businessName = @businessName, updatedAt = GETDATE(), BusinessNameUpdated = 1
+					UPDATE Customer.Customer SET tradeName = @tradeName, businessName = @businessName, updatedAt = GETDATE(), BusinessNameUpdated = 1, SriValidation = 1
 					WHERE Id = @customerId
 				--END
 		COMMIT TRAN

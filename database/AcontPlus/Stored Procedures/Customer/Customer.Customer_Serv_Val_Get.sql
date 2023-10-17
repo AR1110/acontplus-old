@@ -61,7 +61,7 @@ BEGIN
 	SELECT TOP (@top)
 	Id idCliente, IDCard numeroIdentificacion, IDType codigoSri
 	FROM Customer.Customer 
-	WHERE BusinessNameUpdated is null
+	WHERE (BusinessNameUpdated is null OR SriValidation is null)
 	AND IDType IN ('04', '05')
 	AND Deleted is null
 	END
