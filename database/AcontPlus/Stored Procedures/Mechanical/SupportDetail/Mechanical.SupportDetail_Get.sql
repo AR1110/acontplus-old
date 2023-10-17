@@ -9,7 +9,7 @@ GO
 -- Author:		Alexis Ramirez
 -- Create date: 2021-06-25
 -- Description:	SP Para leer los datos e la tabla articulo
--- Mechanical.SupportDetail_Get  32, '{"tipo": 1,"id":7}', ''
+-- Mechanical.SupportDetail_Get 157, '{"tipo": 1,"id":2}', ''
 -- =============================================
 -- DROP PROC Mechanical.SupportDetail_Get
 CREATE OR ALTER PROCEDURE Mechanical.SupportDetail_Get
@@ -28,22 +28,25 @@ BEGIN
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
 
     -- GET FOT EDIT 
-     IF @tipo = 1
+    IF @tipo = 1
         BEGIN
-            
             SELECT @Id = Id FROM OPENJSON(@json) WITH (Id INT '$.id')
 
-            SET @tableNames = 'support,supportDetail,medidas,establecimiento,bodega'
+            SET @tableNames = 'support,supportDetail,medidas,establecimiento,bodega,tipoIva'
 
-            SELECT Id
-                  ,PuntoEmisionId
-                  ,VehicleCompanyId
-                  ,CustomerId                  
-                  ,FORMAT([Date], 'yyyy-MM-dd') as [Date]
-                  ,[Sequence]
-                  ,Obs
-                  ,UserAssignedId
-	        FROM Mechanical.v_Support WITH (NOLOCK)
+            SELECT v_s.Id
+                  ,v_s.PuntoEmisionId
+                  ,v_s.VehicleCompanyId
+                  ,v_s.CustomerId                  
+                  ,FORMAT(v_s.[Date], 'yyyy-MM-dd') AS [Date]
+                  ,v_s.[Sequence]
+                  ,v_s.Obs
+                  ,v_s.UserAssignedId
+                  ,v_s.CustomerId
+                  ,v_s.BusinessName
+                  ,v_s.idCard
+                  ,v_s.codEstab
+	        FROM Mechanical.v_Support v_s WITH (NOLOCK)
             WHERE Id = @Id
                         
             SELECT md.Id
@@ -60,14 +63,17 @@ BEGIN
                   ,md.[Percentage]      as tarifa
                   ,ar.llevaInventario
                   ,bo.codEstab
+                  ,md.Total
+                  ,ar.idTipoIva
+                  ,ar.iva
             FROM Mechanical.SupportDetail md WITH (NOLOCK)
             INNER JOIN dbo.Bodega             bo WITH (NOLOCK) ON bo.idBodega   = md.BodegaId
-            INNER JOIN dbo.Articulo           ar WITH (NOLOCK) ON ar.idArticulo = md.ArticuloId
+            INNER JOIN v_Articulo             ar WITH (NOLOCK) ON ar.idArticulo = md.ArticuloId
             WHERE SupportId = @Id
             
             SELECT 
 			    af.idArticulo
-               ,af.idMedida    
+               ,af.idMedida
 			   ,descripcion 
 			   ,tarifas		 = (SELECT afs.idTarifa
                                       ,afs.precioVenta
@@ -95,11 +101,10 @@ BEGIN
                                       ,ap.precioConIva
                                       ,UPPER(ta.descripcion) as tarifa
                                       ,ta.ventaPorMayor
-								FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
+								FROM v_ArticuloPvp ap WITH (NOLOCK)
 								INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
 								WHERE ap.idArticulo = a.idArticulo
-								ORDER BY ta.predeterminada DESC FOR JSON PATH
-                               )
+								ORDER BY ta.predeterminada DESC FOR JSON PATH)
 			  ,orden = 2
 			FROM dbo.Articulo     a WITH (NOLOCK)
 			INNER JOIN dbo.Medida m WITH (NOLOCK) ON m.idMedida = a.idMedida
@@ -112,6 +117,10 @@ BEGIN
             SELECT idBodega ,idEstablecimiento, bodega, codEstab, nombreComercial , defaultBodega
             FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultBodega DESC
 
-            RETURN 
+            SELECT idTipoIva,descripcion, codigo,codigoPorcentaje,porcentaje FROM TipoIva WITH (NOLOCK) WHERE estado = 1
+            RETURN
         END
+
 END
+
+   

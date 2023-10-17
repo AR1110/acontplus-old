@@ -193,8 +193,9 @@ export class CommonService {
 
 
     removeAccents(str) {
-        str = str || ''
-        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        str = str || '' ;
+        //return str.replace(/[^a-z0-9]/gi, '');
+        return str.replace(/^-+|-+$| [^A-Za-z0-9.-]+/g, "");
     }
 
 

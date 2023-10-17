@@ -51,7 +51,7 @@
                             <div class="d-flex justify-content-end">
                                 <form class="form-material">
                                     <div class="input-group">
-                                        <input type="text" class="form-control" ng-model="buscar"
+                                        <input type="text" class="form-control" ng-keyup="getClientes()" ng-model="dataSearch.textSearch"
                                             placeholder="Buscar" />
                                         <div class="input-group-append">
                                             <button type="button" class="btn btn-secondary btn-sm" ng-click="refresh()">

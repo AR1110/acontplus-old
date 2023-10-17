@@ -1,10 +1,11 @@
-import { SupportService } from "$lib/services/mechanical/support-service";
 import { hideLoader, showLoader } from "$lib/utils/loading-spinner";
+import { sharedService } from "$services/shared.service";
+import { SupportDetailService } from "$services/Mechanical/support-detail-service";
+import { SupportService } from "$lib/services/mechanical/support-service";
 import { writable } from "svelte/store";
+import type { Customer } from "$lib/interfaces/customer/customer";
 import type { Support } from "$lib/interfaces/mechanical/support";
 import type { Vehicle } from "$lib/interfaces/mechanical/vehicle";
-import type { Customer } from "$lib/interfaces/customer/customer";
-import { sharedService } from "$services/shared.service";
 
 type StateModal = {
   isOpen: boolean;
@@ -19,6 +20,11 @@ type State = {
   support: Support;
   vehicle: Vehicle;
   customer: Customer;
+  supportDetails: any;
+  establishments: any;
+  measures: any;
+  warehouses: any;
+  tipoIva: any;
 };
 
 const initialModalState: StateModal = {
@@ -68,6 +74,11 @@ const initialState: State = {
     telephone: "",
     address: "",
   },
+  supportDetails: [],
+  establishments: [],
+  measures: [],
+  warehouses: [],
+  tipoIva: [],
 };
 
 const cretaeSupport = () => {
@@ -129,11 +140,28 @@ const cretaeSupport = () => {
   };
 
   const getOpenApproveModal = (id?: number) => {
-    update((state) => ({ ...state, isApprove: true }));
+    showLoader();
+    SupportDetailService.get(JSON.stringify({ tipo: 1, id }))
+      .then((response) => {
+        if (response) {
+          update((state) => ({
+            ...state,
+            isApprove: true,
+            support: response["support"][0],
+            supportDetails: response["supportDetail"],
+            measures: response["medidas"],
+            establishments: response["establecimiento"],
+            warehouses: response["bodega"],
+            tipoIva: response["tipoIva"],
+          }));
+        }
+      })
+      .finally(() => {
+        hideLoader();
+      });
   };
 
   const getReport = (parameters: object) => {
-    console.log(parameters);
     sharedService.download(parameters, true);
   };
 
