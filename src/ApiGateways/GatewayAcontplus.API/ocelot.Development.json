@@ -1302,6 +1302,20 @@
       "UpstreamPathTemplate": "/restaurant/Account{everything}"
     },
     {
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7221
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v2/Account{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Post"
+      ],
+      "UpstreamPathTemplate": "/app-mobile/Account{everything}"
+    },
+    {
       "AuthenticationOptions": {
         "AllowedScopes": [],
         "AuthenticationProviderKey": "Bearer"
