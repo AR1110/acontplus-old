@@ -97,8 +97,7 @@ const TableDialog = (props: SimpleDialogProps) => {
 
             setFloorId(() => tempFloorId);
             setRoomId(() => tempRoomId);
-
-            console.log(response)
+            
         }).finally(() => hideLoader())
 
     }, [open]);
@@ -159,7 +158,7 @@ const TableDialog = (props: SimpleDialogProps) => {
                         })
                         SnackbarUtility.success(response.data)
                     }
-                    console.log(response)
+                    
                 }).finally(() => hideLoader())
             }
         } catch (error) {

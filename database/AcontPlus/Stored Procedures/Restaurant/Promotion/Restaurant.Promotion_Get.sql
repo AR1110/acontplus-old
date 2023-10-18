@@ -22,8 +22,9 @@ BEGIN
    
     DECLARE @tipo           INT 
     DECLARE @dateNow        DATETIME = (SELECT dbo.ufnGetDateEcuador())
+    DECLARE @codEstab VARCHAR(150)
    
-    SELECT @tipo = tipo FROM OPENJSON(@json) WITH(tipo INT '$.tipo')
+    SELECT @tipo = tipo,@codEstab = codEstab FROM OPENJSON(@json) WITH(tipo INT '$.tipo', codEstab VARCHAR(150))
 
     IF @tipo = 1
         BEGIN
@@ -36,6 +37,7 @@ BEGIN
                    ,p.PromotionDays
                    ,ISNULL(p.S3ObjectUrl, '')           AS S3ObjectUrl                   
 	        FROM Restaurant.Promotion p WITH (NOLOCK)
+            WHERE p.codEstab = @codEstab 
 
             SELECT * FROM Dia
         END

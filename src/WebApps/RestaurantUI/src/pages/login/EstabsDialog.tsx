@@ -8,16 +8,20 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
-import PersonIcon from '@mui/icons-material/Person'; 
+import PersonIcon from '@mui/icons-material/Person';
 import { blue } from '@mui/material/colors';
 import { TransitionProps } from '@mui/material/transitions';
 import { forwardRef } from 'react';
-import { Button, DialogActions, Slide, Typography } from '@mui/material'; 
-import { Establecimiento } from '@/core/models'; 
+import { Button, DialogActions, Slide, Typography } from '@mui/material';
+import { Establecimiento, PrivateRoutes } from '@/core/models';
+import { authService, setEstabs, setToken, setUserData } from '@/core/services';
+import { SnackbarUtility } from '@/core/utilities';
+import { hideLoader, showLoader } from '@/spinner';
+import { useNavigate } from 'react-router-dom';
 
 interface EstabsDialogProps {
     open: boolean;
-    params: string
+    params: any
     selectedValue: any;
     onClose(value: any): void;
 }
@@ -32,17 +36,40 @@ const Transition = forwardRef(function Transition(
 });
 
 const EstabsDialog = (props: EstabsDialogProps) => {
-    console.log(props.params)
     const { onClose, selectedValue, open, params } = props;
-
-    const establecimientos: Array<Establecimiento> = JSON.parse(params) ?? []
+    const navigate = useNavigate();
+    const establecimientos: Array<Establecimiento> = params.flatMap((userRole: any) => userRole.establecimientos) 
 
     const handleClose = () => {
         onClose(selectedValue);
     };
 
     const handleListItemClick = (value: any) => {
-        onClose(value);
+        const userData = params.find((pp: any) => pp.companyId === value.idEntidad)
+
+        if (userData) {
+            const establecimientos = params.flatMap((userRole: any) => userRole.establecimientos)
+            const dataEstab = establecimientos.find((estab: Establecimiento) => estab.codEstab === value.codEstab);
+            userData.bussinesName = dataEstab.nombreComercial;
+            showLoader();
+            authService.createToken(userData)
+                .then(response => {
+                    if (response.code === "0" || response.id === "0") {
+                        SnackbarUtility.warning(response.message);
+                    }
+                    if (response.code === "1") {
+                        SnackbarUtility.success("Inciando Sessión");
+                        const dataLogin = JSON.parse(response.payload); 
+                        setToken(dataLogin.token)
+                        setUserData(dataLogin);
+                        setEstabs([dataEstab]);
+                        navigate(`/${PrivateRoutes.PRIVATE}`, { replace: true });
+                    }
+                })
+                .finally(() => hideLoader())
+        } else {
+            SnackbarUtility.error('')
+        }
     };
 
     const buttonSx = {
@@ -73,7 +100,7 @@ const EstabsDialog = (props: EstabsDialogProps) => {
                                         color="text.primary"
                                     >
                                         {estab.ruc}
-                                    </Typography> 
+                                    </Typography>
                                     {` — ${estab.entidad}`}
                                 </>
                             } />
