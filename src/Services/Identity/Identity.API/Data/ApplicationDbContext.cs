@@ -1,10 +1,9 @@
-﻿using Identity.API.Entities;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Common.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Identity.API.Data.Identity
 {
-    public class ApplicationDbContext : IdentityDbContext<AppUser>
+    public class ApplicationDbContext : BaseContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
