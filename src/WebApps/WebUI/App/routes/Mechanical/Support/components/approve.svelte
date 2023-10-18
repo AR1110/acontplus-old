@@ -1,9 +1,14 @@
 <script lang="ts">
+  import { ArticleService } from "$services/inventory/article-service";
+  import { Calculations } from "../helpers/calculations";
+  import { customSelect } from "../helpers/custom-select";
+  import { FacturaService } from "$services/Mechanical/factura-service";
+  import { hideLoader, showLoader } from "$utils/loading-spinner";
+  import { MapperToAction } from "../helpers/mapper-to-action";
   import { supportStore } from "$routes/Mechanical/Store/support.store";
   import AdvancedSearch from "$lib/components/AdvancedSearch.svelte";
   import GridForItem from "$lib/components/GridForItem.svelte";
   import Modal from "$lib/components/Modal.svelte";
-  import { ArticleService } from "$services/inventory/article-service";
   import toast from "$utils/toast";
 
   let support;
@@ -13,6 +18,7 @@
   let articles = [];
   let supportDetails = [];
   let tipoIva = [];
+  let decimals = [];
   let valueArticle = "";
   let paramValidation = [undefined, null, "", 0];
   let placeholderArticle = "Buscar por C.I o Nombre Comercial";
@@ -81,16 +87,19 @@
           let obj = {
             ...dataArticle,
             bodegas: warehouses,
+            cantidad: 1,
+            decimals: decimals,
             idBodega: idBodega,
             idMedida: dataMedida.idMedida,
             idTarifa: dataTarifa.idTarifa,
             medidas,
-            price: dataTarifa.precioConIva,
-            priceIva: dataTarifa.precioConIva,
-            quantity: 1,
+            nota: "S/N",
+            precioConIva: dataTarifa.precioConIva,
+            precioUnitario: dataTarifa.precioVenta,
+            precioVenta: dataTarifa.precioVenta,
             tarifas: dataMedida.tarifas,
-            total: dataTarifa.precioConIva * 1,
             tipoIvas: tipoIva,
+            total: dataTarifa.precioConIva * 1,
           };
           supportDetails = [...supportDetails, obj];
         }
@@ -123,323 +132,6 @@
     supportDetails = newFilter;
   };
 
-  // Todo: Customer select to SupportDetail table
-  let selectWareHouse = (cell, onRendered, success, cancel) => {
-    let warehouses = [];
-    let rows = cell.getRow().getData();
-
-    if (rows.tarifas != undefined || rows.tarifas != null) {
-      warehouses = rows.bodegas;
-    }
-
-    let selectList = document.createElement("select");
-    selectList.style.width = "100%";
-    selectList.style.boxSizing = "border-box";
-
-    onRendered(function () {
-      selectList.focus();
-      selectList.style.height = "100%";
-    });
-
-    function onChange() {
-      if (selectList.selectedOptions[0].value != rows) {
-        success(selectList.selectedOptions[0].value);
-
-        cell.getElement().dataset.bodega = selectList.selectedOptions[0].text;
-        cell.getElement().dataset.idBodega =
-          selectList.selectedOptions[0].value;
-      } else {
-        cancel();
-      }
-    }
-
-    selectList.addEventListener("blur", onChange);
-
-    for (let i = 0; i < warehouses.length; i++) {
-      let option = document.createElement("option");
-
-      option.value = warehouses[i].idBodega.toString();
-      option.text = warehouses[i].bodega;
-      if (warehouses[i].idBodega === rows) {
-        option.selected = true;
-      }
-      selectList.appendChild(option);
-    }
-    return selectList;
-  };
-
-  let selectFee = (cell, onRendered, success, cancel) => {
-    let fees = [];
-    let rows = cell.getRow().getData();
-
-    if (rows.tarifas != undefined || rows.tarifas != null) {
-      fees = rows.tarifas;
-    }
-
-    let selectList = document.createElement("select");
-    selectList.style.width = "100%";
-    selectList.style.boxSizing = "border-box";
-
-    onRendered(function () {
-      selectList.focus();
-      selectList.style.height = "100%";
-    });
-
-    function onChange() {
-      if (selectList.selectedOptions[0].value != rows) {
-        success(selectList.selectedOptions[0].value);
-
-        cell.getElement().dataset.tarifa = selectList.selectedOptions[0].text;
-        cell.getElement().dataset.idTarifa =
-          selectList.selectedOptions[0].value;
-      } else {
-        cancel();
-      }
-    }
-
-    selectList.addEventListener("blur", onChange);
-
-    for (let i = 0; i < fees.length; i++) {
-      let option = document.createElement("option");
-
-      option.value = fees[i].idTarifa.toString();
-      option.text = fees[i].tarifa;
-      if (fees[i].idTarifa === rows) {
-        option.selected = true;
-      }
-      selectList.appendChild(option);
-    }
-    return selectList;
-  };
-
-  let selectMeasures = (cell, onRendered, success, cancel) => {
-    let measures = [];
-    let rows = cell.getRow().getData();
-
-    if (rows.medidas != undefined || rows.medidas != null) {
-      measures = rows.medidas;
-    }
-
-    let selectList = document.createElement("select");
-    selectList.style.width = "100%";
-    selectList.style.boxSizing = "border-box";
-
-    onRendered(function () {
-      selectList.focus();
-      selectList.style.height = "100%";
-    });
-
-    function onChange() {
-      if (selectList.selectedOptions[0].value != rows) {
-        success(selectList.selectedOptions[0].value);
-
-        cell.getElement().dataset.descripcion =
-          selectList.selectedOptions[0].text;
-        cell.getElement().dataset.idMedida =
-          selectList.selectedOptions[0].value;
-      } else {
-        cancel();
-      }
-    }
-
-    selectList.addEventListener("blur", onChange);
-
-    for (let i = 0; i < measures.length; i++) {
-      let option = document.createElement("option");
-
-      option.value = measures[i].idMedida.toString();
-      option.text = measures[i].descripcion;
-      if (measures[i].idMedida === rows) {
-        option.selected = true;
-      }
-      selectList.appendChild(option);
-    }
-    return selectList;
-  };
-
-  let selectTipoIva = (cell, onRendered, success, cancel) => {
-    let tipoIvas = [];
-    let rows = cell.getRow().getData();
-
-    if (rows.tipoIvas != undefined || rows.tipoIvas != null) {
-      tipoIvas = rows.tipoIvas;
-    }
-
-    let selectList = document.createElement("select");
-    selectList.style.width = "100%";
-    selectList.style.boxSizing = "border-box";
-
-    onRendered(function () {
-      selectList.focus();
-      selectList.style.height = "100%";
-    });
-
-    function onChange() {
-      if (selectList.selectedOptions[0].value != rows) {
-        success(selectList.selectedOptions[0].value);
-
-        cell.getElement().dataset.descripcion =
-          selectList.selectedOptions[0].text;
-        cell.getElement().dataset.idTipoIva =
-          selectList.selectedOptions[0].value;
-      } else {
-        cancel();
-      }
-    }
-
-    selectList.addEventListener("blur", onChange);
-
-    for (let i = 0; i < tipoIvas.length; i++) {
-      let option = document.createElement("option");
-
-      option.value = tipoIvas[i].idTipoIva.toString();
-      option.text = tipoIvas[i].descripcion;
-      if (tipoIvas[i].idTipoIva === rows) {
-        option.selected = true;
-      }
-      selectList.appendChild(option);
-    }
-    return selectList;
-  };
-
-
-  // Todo: Formatters for table
-  let formatters = (cell) => {
-    let column = cell.getColumn()._column.field;
-    let row = cell.getRow().getData();
-    let value = cell.getValue();
-
-    if (column == "idTarifa") {
-      let tarifas = [];
-
-      if (row.tarifas != undefined && value != undefined) {
-        tarifas = row.tarifas;
-
-        return tarifas.find((x) => x.idTarifa == value).tarifa;
-      }
-      return "_";
-    }
-
-    if (column == "idMedida") {
-      let medidas = [];
-
-      if (row.medidas != undefined && value != undefined) {
-        medidas = row.medidas;
-
-        return medidas.find((x) => x.idMedida == value).descripcion;
-      }
-      return "_";
-    }
-
-    if (column == "idBodega") {
-      let bodegas = [];
-
-      if (row.bodegas != undefined && value != undefined) {
-        bodegas = row.bodegas;
-
-        return bodegas.find((x) => x.idBodega == value).bodega;
-      }
-      return "_";
-    }
-
-    if (column == "idTipoIva") {
-      let tipoIvas = [];
-
-      if (row.tipoIvas != undefined && value != undefined) {
-        tipoIvas = row.tipoIvas;
-
-        return tipoIvas.find((x) => x.idTipoIva == value).descripcion;
-      }
-      return "_";
-    }
-  };
-
-  // Todo: Calculate total
-  let calculateTotal = (cell) => {
-    let row = cell.getRow().getData();
-    let column = cell.getColumn()._column.field;
-    let value = cell.getValue();
-
-    if (column == "idMedida") {
-      let newMeasure = row.medidas.find((x) => x.idMedida == value);
-
-      cell.getRow().update({
-        tarifas: newMeasure.tarifas,
-        idTarifa: newMeasure.tarifas[0].idTarifa,
-        price: newMeasure.tarifas[0].precioVenta,
-        priceIva: newMeasure.tarifas[0].precioConIva,
-      });
-
-      // Todo: Update price and priceIva
-    }
-
-    if (column == "idTarifa") {
-      let newFee = row.tarifas.find((x) => x.idTarifa == value);
-      let porcentaje = row.tipoIvas.find(
-        (x) => x.idTipoIva == row.idTipoIva
-      ).porcentaje;
-
-      let precioConIva = calcularPrecioConIva(newFee.precioVenta, porcentaje);
-
-      cell.getRow().update({
-        price: newFee.precioVenta,
-        priceIva: precioConIva,
-      });
-    }
-
-    if (column == "quantity") {
-    }
-
-    if (column == "price") {
-      let porcentaje = row.tipoIvas.find(
-        (x) => x.idTipoIva == row.idTipoIva
-      ).porcentaje;
-
-      let precioConIva = calcularPrecioConIva(value, porcentaje);
-
-      cell.getRow().update({
-        priceIva: precioConIva,
-      });
-    }
-
-    if (column == "priceIva") {
-      let porcentaje = row.tipoIvas.find(
-        (x) => x.idTipoIva == row.idTipoIva
-      ).porcentaje;
-
-      let precioVenta = calcularPrecioVenta(value, porcentaje);
-
-      cell.getRow().update({
-        price: precioVenta,
-      });
-    }
-  };
-
-  // Todo: Auxiliar functions
-  const calcularPrecioConIva = (precioVenta: number, porcentaje: number) => {
-    try {
-      const resultadoPorcentaje = Number(porcentaje) / 100;
-      const result = Number(precioVenta) * Number(resultadoPorcentaje);
-      const precioConIva = result + Number(precioVenta);
-      return precioConIva;
-    } catch (error) {
-      toast({
-        type: "error",
-        message: "Se ha encontrado errores en Precio Venta",
-      });
-    }
-  };
-
-  const calcularPrecioVenta = (precioConIva, porcentaje) => {
-    try {
-      const resultadoPorcentaje = Number(porcentaje) / 100 + 1;
-      const precioVenta = Number(precioConIva) / Number(resultadoPorcentaje);
-      return precioVenta;
-    } catch (error) {
-      toastr.error(error);
-    }
-  };
-
   // Todo: Header for table
   let colums = [
     {
@@ -453,9 +145,9 @@
       },
     },
     {
-      editor: selectWareHouse,
+      editor: customSelect.selectWareHouses,
       field: "idBodega",
-      formatter: formatters,
+      formatter: Calculations.formatters,
       hozAlign: "center",
       title: "Bodega",
       width: 100,
@@ -472,52 +164,50 @@
       editor: "input",
     },
     {
-      cellEdited: calculateTotal,
+      cellEdited: Calculations.calculateTotal,
       editor: "input",
-      field: "quantity",
+      field: "cantidad",
       hozAlign: "center",
       title: "Cantidad",
     },
     {
-      editor: selectMeasures,
+      cellEdited: Calculations.calculateTotal,
+      editor: customSelect.selectMeasures,
       field: "idMedida",
-      formatter: formatters,
-      cellEdited: calculateTotal,
+      formatter: Calculations.formatters,
       hozAlign: "center",
       title: "Medida",
     },
     {
-      editor: selectTipoIva,
+      editor: customSelect.selectTipoIva,
       field: "idTipoIva",
       hozAlign: "center",
       title: "I.V.A",
-      formatter: formatters,
+      formatter: Calculations.formatters,
       width: 100,
     },
     {
-      cellEdited: calculateTotal,
-      editor: selectFee,
+      cellEdited: Calculations.calculateTotal,
+      editor: customSelect.selectFee,
       field: "idTarifa",
-      formatter: formatters,
+      formatter: Calculations.formatters,
       hozAlign: "center",
       title: "Tarifa",
       width: 100,
     },
     {
       title: "Precio U.",
-      field: "price",
+      field: "precioVenta",
       hozAlign: "center",
       editor: "input",
-      cellEdited: calculateTotal,
-      width: 100,
+      cellEdited: Calculations.calculateTotal,
     },
     {
       title: "P.Iva",
-      field: "priceIva",
+      field: "precioConIva",
       hozAlign: "center",
       editor: "input",
-      cellEdited: calculateTotal,
-      width: 100,
+      cellEdited: Calculations.calculateTotal,
     },
     {
       field: "total",
@@ -546,7 +236,10 @@
             (x) => x.codEstab == support.codEstab
           );
           item.tipoIvas = tipoIva;
-          item.priceIva = item.tarifas.find((x) => x.idTarifa == item.idTarifa).precioConIva;
+          item.precioConIva = item.tarifas.find(
+            (x) => x.idTarifa == item.idTarifa
+          ).precioConIva;
+          item.decimals = decimals;
         });
       }
     }
@@ -583,9 +276,24 @@
     }
   };
 
-  const findPriceIva = () => {
-     
-  }
+  // Todo: Save FACTURA
+  const saveFactura = () => {
+    showLoader();
+
+    let data = {
+      factura: JSON.stringify(MapperToAction.facturaMapperTo(support)),
+      detalle: JSON.stringify(MapperToAction.detalleMapperTo(supportDetails)),
+    };
+
+    FacturaService.post(data)
+      .then((response) => {})
+      .finally(() => {
+        hideLoader();
+      });
+  };
+
+  // Todo: Save NOTA ENTREGA
+  const saveNotaEntrega = () => {};
 
   supportStore.subscribe((values) => {
     support = values.support;
@@ -594,6 +302,7 @@
     measures = values.measures;
     warehouses = values.warehouses;
     tipoIva = values.tipoIva;
+    decimals = values.decimals;
 
     initialPushData();
     selectCodEstab();
@@ -710,7 +419,11 @@
           <div class="col-sm-3 nopadding">
             <div class="row">
               <div class="col-lg-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                <button type="button" class="btn btn-block btn-success mt-4">
+                <button
+                  on:click={saveFactura}
+                  type="button"
+                  class="btn btn-block btn-success mt-4"
+                >
                   <i class="ti-save" /> Factura
                 </button>
               </div>
@@ -721,6 +434,7 @@
               <div class="col-lg-12 col-lg-12 col-md-12 col-sm-12 col-12">
                 <button
                   type="button"
+                  on:click={saveNotaEntrega}
                   class="btn btn-block btn-outline-primary mt-4"
                 >
                   <i class="ti-save" /> Nota Entrega
@@ -731,9 +445,20 @@
         </div>
 
         <!--Add tabulator -->
-        <div class="row mt-2">
+        <div class="row mt-4">
           <div class="col-12">
             <GridForItem arrayData={supportDetails} columns={colums} />
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-12 col-sm-12">
+            <div class="pull-right text-right">
+              <address>
+                <h6>SubTotal sin Impuesto $07</h6>
+                <h6>Total Descuento $07</h6>
+                <h4>Total $435</h4>
+              </address>
+            </div>
           </div>
         </div>
       </form>

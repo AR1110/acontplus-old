@@ -62,10 +62,7 @@ BEGIN
 
     SET @day    = (SELECT DATENAME(weekday, GETDATE()))
     SET @hour   = (SELECT FORMAT(GETDATE(), 'HH:mm'))
-
-    PRINT @day
-    PRINT @hour
-
+    
 	SET @params = N'@idEntidad INT, @idSubFamilia INT, @pageIndex INT, @pageSize INT, @textSearch VARCHAR(20)'
 
 	SET @sql = N'  SELECT Id			            = ri.Id
@@ -117,7 +114,6 @@ BEGIN
             LEFT JOIN Familia f ON f.siglas = a.siglaFamilia
 			LEFT JOIN Restaurant.ProductionArea pa ON pa.Id = ri.ProductionAreaId
 			WHERE a.idEntidad = @idEntidad '
-    
     -- ===== PARTE ADMINISTRATIVA ===== --
     IF @tipo = 1
         BEGIN
