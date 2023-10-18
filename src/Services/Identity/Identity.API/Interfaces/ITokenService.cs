@@ -7,5 +7,6 @@ namespace Identity.API.Interfaces
     {
         Task<string> CreateToken(AppUser user);
         string GenerateJwtToken(LoginDataDto user);
+        string GetJwtToken(UserDataDto data);
     }
 }

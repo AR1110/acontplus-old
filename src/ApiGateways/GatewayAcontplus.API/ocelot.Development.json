@@ -1150,28 +1150,6 @@
     },
     {
       "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "205.209.99.71",
-          "Port": 8003
-        }
-      ],
-      "DownstreamPathTemplate": "/api/v3/Articulo{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get",
-        "Post",
-        "Put",
-        "Delete"
-      ],
-      "UpstreamPathTemplate": "/gateway/v3/Articulo{everything}"
-    },
-    {
-      "AuthenticationOptions": {
         "AllowedScopes": [],
         "AuthenticationProviderKey": "Bearer"
       },
@@ -1316,7 +1294,7 @@
           "Port": 7221
         }
       ],
-      "DownstreamPathTemplate": "/api/v2/Account{everything}",
+      "DownstreamPathTemplate": "/api/v3/Account{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Post"

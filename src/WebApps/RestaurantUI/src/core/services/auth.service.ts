@@ -16,6 +16,15 @@ const login = async (username: string, password: string): Promise<ApiResponse> =
 };
 
 
+const createToken = async (data: any) => {
+  const response = await Http({
+    method: "post",
+    url: PATHS.CREATE_TOKEN,
+    data,
+  });
+  return response.data;
+}
+
 const getToken = function (): string | null {
   return localStorage.getItem(PERSIS_USER.auth_token);
 };
@@ -54,6 +63,7 @@ const clearStorageToken = () => {
 
 export const authService = {
   login,
+  createToken,
   getToken,
   decodeToken,
   isTokenExpired,

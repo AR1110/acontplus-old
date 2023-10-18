@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
-import { DataLogin, PrivateRoutes } from "@/core/models";
+import { PrivateRoutes } from "@/core/models";
 import background from '/assets/images/background/background.jpeg';
 import { SnackbarUtility } from '@/core/utilities';
 import { authService, setEstabs, setToken, setUserData } from '@/core/services';
@@ -42,36 +42,34 @@ const LoginPage = () => {
 
   const formik = useFormik({
     initialValues: {
-      username: 'edinson.romero',
-      password: 'edi12345',
+      username: '',
+      password: '', 
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
       showLoader();
       authService.login(values.username, values.password).then(response => {
-        console.log(response)
+        
         if (response.code === "0" || response.id === "0") {
           SnackbarUtility.warning(response.message);
         }
         if (response.code === "1") {
+          const userRoles = JSON.parse(response.payload);
+          const establecimientos = userRoles.flatMap((userRole: any) => userRole.establecimientos)
 
-          SnackbarUtility.success("Inciando Sessión");
-          const dataLogin = response.payload as DataLogin;
-          const userData = dataLogin.userData[0];
-
-          if (!userData?.jwtToken) return
-
-          setToken(userData.jwtToken)
-          setUserData(userData);
-          setEstabs(JSON.parse(dataLogin.establecimientos));
-          navigate(`/${PrivateRoutes.PRIVATE}`, { replace: true });
-        }
-
-        if (response.code === "2") {
-          setEstabDialogParms(response.payload.establecimientos)
-          setOpen(true);
-        }
-
+          if (establecimientos.length > 1) { 
+            setEstabDialogParms(userRoles)
+            setOpen(true);
+          } else { 
+            SnackbarUtility.success("Inciando Sessión");
+            const dataLogin = userRoles[0];
+        
+            setToken(dataLogin.token)
+            setUserData(dataLogin);
+            setEstabs(dataLogin.establecimientos);
+            navigate(`/${PrivateRoutes.PRIVATE}`, { replace: true });
+          } 
+        } 
       }).finally(() => {
         hideLoader();
       })

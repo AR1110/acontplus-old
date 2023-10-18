@@ -1,4 +1,6 @@
-﻿using Identity.API.Extensions;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Identity.API.Extensions;
 using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -41,6 +43,9 @@ builder.Services.AddVersionedApiExplorer(setup =>
 builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
 builder.Services.AddSingleton<LogWriter>();
+
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
 var app = builder.Build();
 

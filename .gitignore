@@ -81,3 +81,4 @@ bin-release/
 /src/Services/Restaurant/Restaurant.API/wwwroot/index.html
 /src/Services/Restaurant/Restaurant.API/Restaurant.API.csproj.user
 /src/Services/Configuracion/ApiConfig/ApiConfig.csproj.user
+/src/Services/Identity/Identity.API/Identity.API.csproj.user

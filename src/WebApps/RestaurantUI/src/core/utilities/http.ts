@@ -1,7 +1,8 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios"; 
 import { getToken } from "@/core/services"; 
 
-const urlPrd = "https://gateway.acontplus.com/"
+// const urlPrd = "https://gateway.acontplus.com/"
+const urlPrd = 'https://gateway.acontplus.xyz/'
 //const urlDev = "https://localhost:7112/gateway/"
 const urlLocal = "https://localhost:7060/"
 const instance = axios.create({
