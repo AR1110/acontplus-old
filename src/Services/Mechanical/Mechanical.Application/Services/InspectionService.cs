@@ -17,7 +17,7 @@ namespace Mechanical.Application.Services
         }
         public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
-            DataSet ds = await _repository.GetDataSetAsync("MechanicalContext", "Mechanical.Inspection_Get", parameters);
+            DataSet ds = await _repository.GetDataSetAsync("Mechanical.Inspection_Get", parameters);
 
             if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
             {
@@ -34,11 +34,11 @@ namespace Mechanical.Application.Services
         }
         public async Task<string> AddAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("MechanicalContext", "Mechanical.Inspection_Insert", parameters);
+            return await _repository.SPExecuteAsync("Mechanical.Inspection_Insert", parameters);
         }
         public async Task<string> UpdateAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync("MechanicalContext", "Mechanical.Inspection_Update", parameters);
+            return await _repository.SPExecuteAsync("Mechanical.Inspection_Update", parameters);
         }
     }
 }

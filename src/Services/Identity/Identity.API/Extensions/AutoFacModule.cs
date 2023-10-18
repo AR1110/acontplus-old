@@ -14,7 +14,7 @@ namespace Identity.API.Extensions
             {
                 var allContext = new Dictionary<string, BaseContext>
                 {
-                    { "ApplicationDbContext", ctx.Resolve<ApplicationDbContext>() }
+                    {"ApplicationDbContext", ctx.Resolve<ApplicationDbContext>() }
                 };
                 return new DbContextFactory(allContext);
 

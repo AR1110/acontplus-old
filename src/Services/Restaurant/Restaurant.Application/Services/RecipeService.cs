@@ -50,7 +50,7 @@ namespace Restaurant.Application
         // Get
         public async Task<object> GetByItem(Dictionary<string, object> parameters)
         {
-            var ds = await _repository.GetDataSetAsync("RestaurantContext","Restaurant.Recipe_Get_By_Item", parameters);
+            var ds = await _repository.GetDataSetAsync("Restaurant.Recipe_Get_By_Item", parameters);
 
             if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
             {

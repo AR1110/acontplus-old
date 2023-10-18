@@ -21,7 +21,7 @@ namespace Contabilidad.Application.Servicios
         }
         public async Task<object?> GetAsync(Dictionary<string, object> parameters)
         {
-            DataSet ds = await _repository.GetDataSetAsync("ContabilidadContext", "Contabilidad.SubCategoria_Get", parameters);
+            DataSet ds = await _repository.GetDataSetAsync("Contabilidad.SubCategoria_Get", parameters);
 
             if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
             {

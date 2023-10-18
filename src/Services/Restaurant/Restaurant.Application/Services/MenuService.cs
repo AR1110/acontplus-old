@@ -15,7 +15,7 @@ namespace Restaurant.Application.Services
         }
         public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
-            var ds = await _repository.GetDataSetAsync("RestaurantContext", "Restaurant.Menu_Get", parameters);
+            var ds = await _repository.GetDataSetAsync( "Restaurant.Menu_Get", parameters);
             if (ds == null)
             {
                 return null;
@@ -33,7 +33,7 @@ namespace Restaurant.Application.Services
                 {"id", id},
                 {"json", SqlStringParam.Sanitize(Converters.SerializeDictionary(request.Data))}
             };
-            return await _repository.SPExecuteAsync("RestaurantContext", "Restaurant.Menu_Update", parameters);
+            return await _repository.SPExecuteAsync( "Restaurant.Menu_Update", parameters);
         }
     }
 }

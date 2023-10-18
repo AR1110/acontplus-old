@@ -18,7 +18,7 @@ namespace Restaurant.Application.Services
         }
         public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
-            var ds = await _repository.GetDataSetAsync("RestaurantContext","Restaurant.Ingredient_Get", parameters);
+            var ds = await _repository.GetDataSetAsync("Restaurant.Ingredient_Get", parameters);
             if (ds.Tables.Count == 0)
             {
                 return null;
@@ -33,7 +33,7 @@ namespace Restaurant.Application.Services
             var parameters = new Dictionary<string, object>{
                 {"id", id},
             };
-            var ds = await _repository.GetDataSetAsync("RestaurantContext","Restaurant.Ingredient_GetById", parameters);
+            var ds = await _repository.GetDataSetAsync("Restaurant.Ingredient_GetById", parameters);
             if (ds.Tables.Count == 0)
             {
                 return null;
@@ -49,7 +49,7 @@ namespace Restaurant.Application.Services
                     {"userRoleId", data.UserRoleId},
                     {"json", Converters.SerializeDictionary(data.Data)}
                 };
-            var response = await _repository.SPExecuteAsync("RestaurantContext","Restaurant.Ingredient_Insert", parameters);
+            var response = await _repository.SPExecuteAsync("Restaurant.Ingredient_Insert", parameters);
             return response;
         }
         public async Task<string> UpdateAsync(int id, ApiRequest data)
@@ -59,7 +59,7 @@ namespace Restaurant.Application.Services
                 {"id", id},
                 {"json", SqlStringParam.Sanitize(Converters.SerializeDictionary(data.Data))}
             };
-            var response = await _repository.SPExecuteAsync("RestaurantContext","Restaurant.Ingredient_Update", parameters);
+            var response = await _repository.SPExecuteAsync("Restaurant.Ingredient_Update", parameters);
             return response;
         }
 
@@ -75,7 +75,7 @@ namespace Restaurant.Application.Services
             // var parameters = new Dictionary<string, object>{
             //     {"id", id}
             // };
-            // var response = await _repository.SPExecuteAsync("RestaurantContext","Restaurant.Ingredient_Delete", parameters);
+            // var response = await _repository.SPExecuteAsync("Restaurant.Ingredient_Delete", parameters);
             // return response;
         }
     }

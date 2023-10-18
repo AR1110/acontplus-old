@@ -18,7 +18,7 @@ namespace Inventario.Application.Services
         }
         public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
-            DataSet ds = await _repository.GetDataSetAsync("InventarioContext", "Inventario.StockFisico_Get", parameters);
+            DataSet ds = await _repository.GetDataSetAsync("Inventario.StockFisico_Get", parameters);
 
             if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
             {
@@ -39,7 +39,7 @@ namespace Inventario.Application.Services
                 {"userRoleId", request.UserRoleId},
                 {"json", Converters.SerializeDictionary(request.Data)}
             };
-            return await _repository.SPExecuteAsync("InventarioContext", "Inventario.StockFisico_Insert", parameters);
+            return await _repository.SPExecuteAsync("Inventario.StockFisico_Insert", parameters);
         }
 
         public async Task<string> UpdateAsync(int id, ApiRequest request)
@@ -51,13 +51,13 @@ namespace Inventario.Application.Services
                 {"id", id},
                 {"json", Converters.SerializeDictionary(request.Data)}
             };
-            return await _repository.SPExecuteAsync("InventarioContext", "Inventario.StockFisico_Update", request.Data);
+            return await _repository.SPExecuteAsync("Inventario.StockFisico_Update", request.Data);
         }
         public async Task<APIResponse> DeleteAsync(int id)
         {
             // _context.StockFisicos.Add(stockFisico);
             // await _context.SaveChangesAsync(); 
-            var dt = await _repository.GetDataTableAsync("InventarioContext", "Inventario.StockFisico_Delete", null);
+            var dt = await _repository.GetDataTableAsync("Inventario.StockFisico_Delete", null);
             if (!DataValidation.DataTableIsNull(dt))
             {
                 _response.Create(code: "1", payload: DataTableMapper.BindData<APIResponse>(dt));
