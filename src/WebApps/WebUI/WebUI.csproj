@@ -78,6 +78,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="App\lib\services\Mechanical\factura-service.ts" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Include="bundleconfig.json" />
 		<None Include="wwwroot\archivos\NotFound.pdf" />
 		<None Include="wwwroot\assets\icons\crypto-icons\cryptocoins.woff2" />
@@ -4057,6 +4061,10 @@
 	  <ProjectReference Include="..\..\Services\Common\Domain\Domain.csproj" />
 	  <ProjectReference Include="..\..\Services\Common\Lib.Common\Lib.Common.csproj" />
 	  <ProjectReference Include="..\..\Services\Common\Services.Common\Services.Common.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <TypeScriptCompile Include="App\lib\services\Mechanical\factura-service.ts" />
 	</ItemGroup>
 
 </Project>
