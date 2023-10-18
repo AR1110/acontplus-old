@@ -1,8 +1,10 @@
-﻿@{
+﻿@page
+@model WebUI.Pages.Entidad.IndexModel  
+@{
     ViewData["title"] = "Entidad";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
-
+ 
 <div ng-controller="entidadCtrl">
     <div ng-show="accion.leer">
         <div class="row page-titles">
@@ -13,7 +15,7 @@
                 <div class="d-flex justify-content-end align-items-center">
 
                     <button type="button" ng-if="accion.leer && accion.crear" ng-click="openModal()"
-                        class="btn btn-info  m-l-15">
+                            class="btn btn-info  m-l-15">
                         <i class="fa fa-plus-circle"></i> Nuevo
                     </button>
                 </div>
@@ -39,10 +41,10 @@
                                 <form class="form-material">
                                     <div class="input-group">
                                         <input type="text" class="form-control" ng-model="buscar"
-                                            placeholder="Buscar" />
+                                               placeholder="Buscar" />
                                         <div class="input-group-append">
                                             <button type="button" class="btn btn-secondary btn-xs"
-                                                ng-click="getEntidades()">
+                                                    ng-click="getEntidades()">
                                                 <i class="fas fa-redo"></i>
                                             </button>
                                         </div>
@@ -72,8 +74,9 @@
                                         <div class="row justify-content-center">
                                             <div class="col-4">
                                                 <a href="javascript:void(0)" ng-if="accion.editar"
-                                                    ng-click="openModal(e)" class="btn btn-info btn-xs"><i
-                                                        class="ti-pencil"></i></a>
+                                                   ng-click="openModal(e)" class="btn btn-info btn-xs">
+                                                    <i class="ti-pencil"></i>
+                                                </a>
                                             </div>
                                             @* <div class="col-4">
                                             <a href="javascript:void(0)" tooltip-placement='top'
@@ -84,15 +87,20 @@
                                     </td>
                                     <td md-cell>{{$index+1}}</td>
                                     <td md-cell><span ng-click="abrirModal(e,4)">{{e.ruc}}</span></td>
-                                    <td md-cell><a href="javascript:void(0)" ng-click="verDetalle(e)">
-                                            {{e.razonSocial}}</a></td>
+                                    <td md-cell>
+                                        <a href="javascript:void(0)" ng-click="verDetalle(e)">
+                                            {{e.razonSocial}}
+                                        </a>
+                                    </td>
                                     <td md-cell>{{e.nombreComercial}}</td>
                                     <td md-cell>{{e.telefono}}</td>
                                     <td md-cell ng-bind-html="e.estado | estadoPrimario"></td>
                                 </tr>
                                 <tr md-row ng-show="entidades.length==0">
-                                    <td md-cell colspan="8" class="text-center">No hay registros disponibles en esta
-                                        tabla.</td>
+                                    <td md-cell colspan="8" class="text-center">
+                                        No hay registros disponibles en esta
+                                        tabla.
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
