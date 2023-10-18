@@ -23,7 +23,8 @@ BEGIN
 	IF EXISTS (SELECT 1 FROM dbo.Usuario WHERE nombreUsuario = @username AND contrasenia = @passwordEncryptada)
 		BEGIN
             SELECT @userId = idUsuario FROM dbo.Usuario WITH(NOLOCK) WHERE nombreUsuario = @username AND contrasenia = @passwordEncryptada
-
+			
+            
             SELECT  v_ea.*
                 ,v_u.idEntidad
                 ,v_u.entidad
@@ -33,8 +34,8 @@ BEGIN
             INNER JOIN v_usuario v_u ON v_u.idUsuarioRol = v_ea.idUsuarioRol
             WHERE v_u.idUsuario = @userId
             AND  v_ea.actividad = '01'
-                        								
-			IF (SELECT COUNT(*) FROM #Estab_Asign) = 0
+
+            IF (SELECT COUNT(*) FROM #Estab_Asign) = 0
 				BEGIN
 					SELECT Common.ufnSpResponse('0', 'No se ha encontrado RESTAURANTE', default)
 					RETURN
@@ -82,7 +83,13 @@ BEGIN
 						                     INNER JOIN dbo.Menu m WITH(NOLOCK) ON m.idMenu = sm.idMenu
                                              WHERE idPolitica = r.idRol
                                                 AND a.leer = 1 FOR JSON PATH)
-                                ,establecimientos = (SELECT * FROM #Estab_Asign FOR JSON PATH)
+                                ,establecimientos = (SELECT  v_eai.*
+                                                            ,v_u.idEntidad
+                                                            ,v_u.entidad
+                                                            ,v_u.rucEmpresa
+                                                        FROM v_Estab_Asign v_eai
+                                                            INNER JOIN v_usuario v_ui ON v_ui.idUsuarioRol = v_eai.idUsuarioRol
+                                                            WHERE v_eai.idEstab_Asig = v_ea.idEstab_Asig  FOR JSON PATH)
 				                FROM App.UsuarioRol r WITH(NOLOCK)
 				                INNER JOIN dbo.Entidad e WITH(NOLOCK) ON e.idEntidad = r.idEntidad
 				                INNER JOIN dbo.Usuario u WITH(NOLOCK) ON u.idUsuario = r.idUsuario
