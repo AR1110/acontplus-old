@@ -14,7 +14,7 @@ namespace ApiConfig.Services
         public async Task<string> GetAsync(Dictionary<string, object> parameters)
         {
 
-            var dt = await _repository.GetDataTableAsync("ConfigContext", "Config.Estab_Asig_Get", parameters);
+            var dt = await _repository.GetDataTableAsync("Config.Estab_Asig_Get", parameters);
             if (!DataValidation.DataTableIsNull(dt))
             {
                 return Converters.DataTableToJSON(dt);

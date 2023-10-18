@@ -13,7 +13,7 @@ namespace TechnicalSupport.Application.Services
         }
         public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
-            var ds = await _repository.GetDataSetAsync("TechnicalSupportContext", "TechnicalSupport.Product_Get", parameters);
+            var ds = await _repository.GetDataSetAsync("TechnicalSupport.Product_Get", parameters);
             if (ds == null)
             {
                 return null;

@@ -4,7 +4,6 @@ using Lib.Common.Api;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Services.Common.Logs;
 
 namespace Identity.API.Controllers.v2
@@ -35,7 +34,8 @@ namespace Identity.API.Controllers.v2
         {
             try
             {
-                var _response = JsonConvert.DeserializeObject<APIResponse>(await _accountService.LoginAppAsync(authRequest.Username, authRequest.Password));
+                var mainResponse =  await _accountService.LoginAppAsync(authRequest.Username, authRequest.Password);
+                var _response = JsonConvert.DeserializeObject<APIResponse>(mainResponse);
 
                 if (_response.code == "1")
                 {
@@ -43,34 +43,29 @@ namespace Identity.API.Controllers.v2
 
                     if (userData.Count == 1)
                     {
-                        userData.ForEach(x => x.UrlGateway = _config["ApiGateways:Acontplus"]);
+                        var user = userData[0];
 
-                        var jwtToken = _tokenService.GetJwtToken(userData.FirstOrDefault());
+                        user.UrlGateway = _config["ApiGateways:Acontplus"];
 
-                        if (jwtToken == null) { return Unauthorized(); }
+                        var jwtToken = _tokenService.GetJwtToken(user);
 
-                        _log.LogActivity("Login successful: userRoleId" + Convert.ToString(userData.Select(x => x.UserRoleId)) + " \n jwt: " + jwtToken);
-
-                        if (jwtToken == null)
+                        if (jwtToken != null)
+                        {
+                            _log.LogActivity("Login successful jwt: " + jwtToken);
+                        }
+                        else
                         {
                             return BadRequest("Error al iniciar session");
                         }
 
-                        userData.ForEach(x => x.Token = jwtToken);
+                        user.Token = jwtToken;
 
-                        return Ok(new
-                        {
-                            code = "1",
-                            message = "Login correcto",
-                            payload = JsonConvert.SerializeObject(userData, new JsonSerializerSettings
-                            {
-                                ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
-                                Formatting = Formatting.Indented
-                            })
-                        });
+                        _response.Create(code: "1", message: "LoginCorrecto", payload: user);
+
+                        return Ok(_response);
                     }
                 }
-                return Ok(_response);
+                return Ok(mainResponse);
             }
             catch (Exception ex)
             {
@@ -86,23 +81,18 @@ namespace Identity.API.Controllers.v2
             {
                 userData.UrlGateway = _config["ApiGateways:Acontplus"];
                 var jwtToken = _tokenService.GetJwtToken(userData);
-                if (jwtToken == null) { return Unauthorized(); }
-                _log.LogActivity("Login successful: userRoleId" + Convert.ToString(userData.UserRoleId) + " \n jwt: " + jwtToken);
-                if (jwtToken == null)
+                if (jwtToken != null)
+                {
+                    _log.LogActivity("Login successful: userRoleId" + Convert.ToString(userData.UserRoleId) + " \n jwt: " + jwtToken);
+                }
+                else
                 {
                     return BadRequest("Error al iniciar session");
                 }
                 userData.Token = jwtToken;
-                return Ok(new
-                {
-                    code = "1",
-                    message = "Login correcto",
-                    payload = JsonConvert.SerializeObject(userData, new JsonSerializerSettings
-                    {
-                        ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
-                        Formatting = Formatting.Indented
-                    })
-                });
+                var _response = new APIResponse();
+                _response.Create(code: "1", message: "LoginCorrecto", payload: userData);
+                return Ok(_response);
             }
             catch (Exception ex)
             {

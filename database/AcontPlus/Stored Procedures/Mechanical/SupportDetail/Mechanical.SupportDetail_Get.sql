@@ -32,7 +32,7 @@ BEGIN
         BEGIN
             SELECT @Id = Id FROM OPENJSON(@json) WITH (Id INT '$.id')
 
-            SET @tableNames = 'support,supportDetail,medidas,establecimiento,bodega,tipoIva'
+            SET @tableNames = 'support,supportDetail,medidas,establecimiento,bodega,tipoIva,decimal'
 
             SELECT v_s.Id
                   ,v_s.PuntoEmisionId
@@ -41,8 +41,7 @@ BEGIN
                   ,FORMAT(v_s.[Date], 'yyyy-MM-dd') AS [Date]
                   ,v_s.[Sequence]
                   ,v_s.Obs
-                  ,v_s.UserAssignedId
-                  ,v_s.CustomerId
+                  ,v_s.UserAssignedId                  
                   ,v_s.BusinessName
                   ,v_s.idCard
                   ,v_s.codEstab
@@ -50,22 +49,25 @@ BEGIN
             WHERE Id = @Id
                         
             SELECT md.Id
-                  ,md.ArticuloId        as idArticulo
-                  ,md.BodegaId          as idBodega
-                  ,md.TarifaId          as idTarifa
-                  ,md.MedidaId          as idMedida
-                  ,md.[Description]     as descripcion
-                  ,ar.codigo            as codigoArticulo
-                  ,md.Quantity
-                  ,md.Price
-                  ,md.Cost              as precioCosto
-                  ,md.CodePercentage    as codigoPorcentaje
-                  ,md.[Percentage]      as tarifa
-                  ,ar.llevaInventario
+                  ,md.ArticuloId        AS idArticulo
+                  ,md.BodegaId          AS idBodega
+                  ,md.TarifaId          AS idTarifa
+                  ,md.MedidaId          AS idMedida
+                  ,md.[Description]     AS descripcion                  
+                  ,md.Quantity          AS cantidad
+                  ,md.Price             AS precioVenta
+                  ,md.Cost              AS precioCosto
+                  ,md.CodePercentage    AS codigoPorcentaje
+                  ,md.[Percentage]      AS tarifa
                   ,bo.codEstab
                   ,md.Total
+                  ,ar.codigo            AS codigoArticulo
+                  ,ar.llevaInventario
                   ,ar.idTipoIva
                   ,ar.iva
+                  ,ar.stockMinimo
+                  ,ar.stock
+                  ,ar.precioSinSubsidio
             FROM Mechanical.SupportDetail md WITH (NOLOCK)
             INNER JOIN dbo.Bodega             bo WITH (NOLOCK) ON bo.idBodega   = md.BodegaId
             INNER JOIN v_Articulo             ar WITH (NOLOCK) ON ar.idArticulo = md.ArticuloId
@@ -118,6 +120,8 @@ BEGIN
             FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultBodega DESC
 
             SELECT idTipoIva,descripcion, codigo,codigoPorcentaje,porcentaje FROM TipoIva WITH (NOLOCK) WHERE estado = 1
+            
+            SELECT * FROM v_ConfigDecimal WITH (NOLOCK) WHERE codTrasaccion = 'V' AND idEntidad = @CompanyId
             RETURN
         END
 

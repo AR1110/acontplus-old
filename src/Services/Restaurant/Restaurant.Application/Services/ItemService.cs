@@ -22,7 +22,7 @@ namespace Restaurant.Application.Services
 
         public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
-            DataSet ds = await _repository.GetDataSetAsync("RestaurantContext","Restaurant.Item_Get", parameters);
+            DataSet ds = await _repository.GetDataSetAsync("Restaurant.Item_Get", parameters);
 
             if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
             {
@@ -43,7 +43,7 @@ namespace Restaurant.Application.Services
             var parameters = new Dictionary<string, object>{
                 {"id", id},
             };
-            var ds = await _repository.GetDataSetAsync("RestaurantContext","Restaurant.Item_GetById", parameters);
+            var ds = await _repository.GetDataSetAsync("Restaurant.Item_GetById", parameters);
             if (ds.Tables.Count == 0)
             {
                 return null;
@@ -61,7 +61,7 @@ namespace Restaurant.Application.Services
                 {"id", id},
                 {"json", SqlStringParam.Sanitize(Converters.SerializeDictionary(request.Data))}
             };
-            return await _repository.SPExecuteAsync("RestaurantContext","Restaurant.Item_Update", parameters);
+            return await _repository.SPExecuteAsync("Restaurant.Item_Update", parameters);
         }
 
         public async Task<string> DeleteAsync(int id, ApiRequest request)
@@ -70,7 +70,7 @@ namespace Restaurant.Application.Services
                 {"userRoleId", request.UserRoleId},
                 {"id", id}
             };
-            return await _repository.SPExecuteAsync("RestaurantContext","Restaurant.Item_Update_Cancel", request.Data);
+            return await _repository.SPExecuteAsync("Restaurant.Item_Update_Cancel", request.Data);
         }
     }
 }

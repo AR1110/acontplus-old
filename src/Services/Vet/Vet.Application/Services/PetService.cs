@@ -21,7 +21,7 @@ namespace Vet.Application.Services
         }
         public async Task<APIResponse> GetAsync(Dictionary<string, object> parameters)
         {
-            var dt = await _repository.GetDataTableAsync("VetContext", "Pet.Pet_Get", parameters);
+            var dt = await _repository.GetDataTableAsync("Pet.Pet_Get", parameters);
             if (DataValidation.DataTableIsNull(dt))
             {
                 _response.Create(code: "0", "La transacción no devolvio respuesta");
@@ -57,7 +57,7 @@ namespace Vet.Application.Services
 
         public async Task<APIResponse> SearchAsync(Dictionary<string, object> parameters)
         {
-            var dt = await _repository.GetDataTableAsync("VetContext", "Pet.Pet_Get", parameters);
+            var dt = await _repository.GetDataTableAsync("Pet.Pet_Get", parameters);
             if (DataValidation.DataTableIsNull(dt))
             {
                 _response.Create(code: "0", "La transacción no devolvio respuesta");

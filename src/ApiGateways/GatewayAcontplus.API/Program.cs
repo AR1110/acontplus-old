@@ -35,7 +35,7 @@ app.UseCors(builder =>
     builder.WithOrigins(origins)
     .SetIsOriginAllowed(isOriginAllowed: _ => true)
     .SetIsOriginAllowedToAllowWildcardSubdomains()
-    .AllowCredentials()
+    //.AllowCredentials()
     .AllowAnyHeader()
     .WithMethods("GET", "PUT", "POST", "DELETE", "OPTIONS")
     .WithExposedHeaders("Content-Disposition")

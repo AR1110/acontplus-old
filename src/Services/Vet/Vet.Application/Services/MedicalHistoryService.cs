@@ -22,7 +22,7 @@ namespace Vet.Application.Services
         {
             //var sqlParam = new SqlParameter("@json", Converters.SerializeDictionary(parameters.Data));
             //var result = _context.MedicalHistories.FromSqlRaw($"Pet.MedicalHistory_Get {sqlParam}");
-            var dt = await _generic.GetDataTableAsync("VetContext", "Pet.MedicalHistory_Get", parameters);
+            var dt = await _generic.GetDataTableAsync("Pet.MedicalHistory_Get", parameters);
 
             if (DataValidation.DataTableIsNull(dt))
             {
@@ -40,7 +40,7 @@ namespace Vet.Application.Services
             {
                 {"id", id}
             };
-            var ds = await _generic.GetDataSetAsync("VetContext", "Pet.MedicalHistory_GetById", parameters);
+            var ds = await _generic.GetDataSetAsync("Pet.MedicalHistory_GetById", parameters);
 
             if (DataValidation.DataTableIsNull(ds.Tables[0]))
             {
@@ -67,7 +67,7 @@ namespace Vet.Application.Services
 
         public async Task<ReportResponseDto> GetReportAsync(Dictionary<string, object> parameters)
         {
-            var ds = await _generic.GetDataSetAsync("VetContext", "Pet.MedicalHistory_Report", parameters);
+            var ds = await _generic.GetDataSetAsync("Pet.MedicalHistory_Report", parameters);
             return _report.GetReportNew(ds);
         }
     }

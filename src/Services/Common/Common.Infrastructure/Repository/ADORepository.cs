@@ -3,21 +3,24 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 using Common.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Common.Infrastructure.Repository
 {
     public class ADORepository : IADORepository
     {
         DbContextFactory _contexts;
-        public ADORepository(DbContextFactory contexts)
+        private readonly IConfiguration _configuration;
+        public ADORepository(DbContextFactory contexts, IConfiguration configuration)
         {
             _contexts = contexts;
+            _configuration = configuration;
         }
 
-        public async Task<DataTable> GetDataTableAsync(string contextName, string spName, Dictionary<string, object> parameters)
+        public async Task<DataTable> GetDataTableAsync(string spName, Dictionary<string, object> parameters)
         {
             DataTable dt = null;
-            var _context = _contexts.GetContext(contextName);
+            var _context = _contexts.GetContext(_configuration["ContextName"]);
             using (var cmd = _context.Database.GetDbConnection().CreateCommand())
             {
                 bool wasOpen = cmd.Connection.State == ConnectionState.Open;
@@ -53,10 +56,10 @@ namespace Common.Infrastructure.Repository
             return dt;
         }
 
-        public async Task<DataSet> GetDataSetAsync(string contextName, string spName, Dictionary<string, object> parameters)
+        public async Task<DataSet> GetDataSetAsync(string spName, Dictionary<string, object> parameters)
         {
             DataSet ds = null;
-            var _context = _contexts.GetContext(contextName);
+            var _context = _contexts.GetContext(_configuration["ContextName"]);
             using (var cmd = _context.Database.GetDbConnection().CreateCommand())
             {
                 bool wasOpen = cmd.Connection.State == ConnectionState.Open;
@@ -101,10 +104,10 @@ namespace Common.Infrastructure.Repository
             return ds;
         }
 
-        public async Task<string> SPExecuteAsync(string contextName, string spName, Dictionary<string, object> parameters)
+        public async Task<string> SPExecuteAsync(string spName, Dictionary<string, object> parameters)
         {
             string response = string.Empty;
-            var _context = _contexts.GetContext(contextName);
+            var _context = _contexts.GetContext(_configuration["ContextName"]);
             using (var cmd = _context.Database.GetDbConnection().CreateCommand())
             {
                 bool wasOpen = cmd.Connection.State == ConnectionState.Open;

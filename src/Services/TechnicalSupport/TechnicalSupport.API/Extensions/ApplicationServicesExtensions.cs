@@ -1,5 +1,4 @@
-﻿using Lib.Common;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TechnicalSupport.Application.Services;
 using TechnicalSupport.Core.Interfaces;
 using TechnicalSupport.Infrastructure.Data;
@@ -14,6 +13,7 @@ namespace TechnicalSupport.API.Extensions
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<IDeviceService, DeviceService>();
+            services.AddScoped<IOrderService, OrderService>();
             return services;
         }
     }

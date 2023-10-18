@@ -47,11 +47,11 @@ namespace Identity.API.Controllers.v3
 
                         var jwtToken = _tokenService.GetJwtToken(userData.FirstOrDefault());
 
-                        if (jwtToken == null) { return Unauthorized(); }
-
-                        _log.LogActivity("Login successful: userRoleId" + Convert.ToString(userData.Select(x => x.UserRoleId)) + " \n jwt: " + jwtToken);
-
-                        if (jwtToken == null)
+                        if (jwtToken != null)
+                        {
+                            _log.LogActivity("Login successful jwt: " + jwtToken);
+                        }
+                        else
                         {
                             return BadRequest("Error al iniciar session");
                         }
@@ -86,9 +86,11 @@ namespace Identity.API.Controllers.v3
             {
                 userData.UrlGateway = _config["ApiGateways:Acontplus"];
                 var jwtToken = _tokenService.GetJwtToken(userData);
-                if (jwtToken == null) { return Unauthorized(); }
-                _log.LogActivity("Login successful: userRoleId" + Convert.ToString(userData.UserRoleId) + " \n jwt: " + jwtToken);
-                if (jwtToken == null)
+                if (jwtToken != null)
+                {
+                    _log.LogActivity("Login successful: userRoleId" + Convert.ToString(userData.UserRoleId) + " \n jwt: " + jwtToken);
+                }
+                else
                 {
                     return BadRequest("Error al iniciar session");
                 }
