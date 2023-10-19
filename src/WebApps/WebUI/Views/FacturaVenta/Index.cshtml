@@ -24,53 +24,72 @@
     <div class="card">
         <div class="card-body">
             <div class="row">
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                    <div class="form-gorup">
-                        <span for="establecimiento">Establecimiento</span>
-                        <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
-                            class="form-control  border-select" ng-change="getFacturas()">
-                            <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
-                                {{item.nombreComercial}}
-                            </option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                    <div class="form-group">
-                        <span for="">Rango de Fechas</span>
-                        @* <div class="input-group"> *@
-                        <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
-                            end-date="dataSearch.fechaFin"
-                            result-range-date="resultRangeFilter(result)"></date-range-filter>                       
-                    </div>
-                </div>
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                    <div class="form-group">
-                        <span for="clienteFiltro">Cliente</span>
-                        <input type="text" id="customerInputSearch" class="form-control border-select"
-                            ng-model="cliente.nombreCliente" cliente-search-drtv on-select="onSelectCliente(result)"
-                            on-keyup-cliente="onKeyupCliente()" placeholder="Ingrese C.I o Nombre Comercial"
-                            onclick="select();">
+                <div class="col-xl-7 col-lg-7 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12 col-12">
+                            <div class="form-gorup">
+                                <span for="establecimiento">Estab: <span class="text-danger">*</span></span>
+                                <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
+                                    class="form-control  border-select" ng-change="estabFilter()">
+                                    <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
+                                        {{item.nombreComercial}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
 
-                        <script type="text/ng-template" id="autocompleteClienteTemplate.html">
+                        <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                            <div class="form-gorup">
+                                <span for="ptoEmision">Pto. Emisión: <span class="text-danger">*</span> </span>
+                                <select name="ptoEmision" id="ptoEmision" ng-model="dataSearch.idPuntoEmision"
+                                    class="form-control  border-select" ng-change="getFacturas()">
+                                    <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
+                                        {{item.ptoEmi}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                            <div class="form-group">
+                                <span for="">Rango de Fechas: <span class="text-danger">*</span></span>
+                                @* <div class="input-group"> *@
+                                <date-range-filter current-date="dataSearch.fechaInicio"
+                                    start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
+                                    result-range-date="resultRangeFilter(result)"></date-range-filter>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+                            <div class="form-group">
+                                <span for="clienteFiltro">Cliente</span>
+                                <input type="text" id="customerInputSearch" class="form-control border-select"
+                                    ng-model="cliente.nombreCliente" cliente-search-drtv
+                                    on-select="onSelectCliente(result)" on-keyup-cliente="onKeyupCliente()"
+                                    placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
+
+                                <script type="text/ng-template" id="autocompleteClienteTemplate.html">
                             <div class="autocomplete-suggestion-uib-typeahead">
                                 <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
                             </div>
                         </script>
+                            </div>
+                        </div>
+                        <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                            <div class="btn-group btn-group-sm mt-4" role="group" aria-label="Basic example">
+                                <button type="button" class="btn btn-info" ng-click="onClickBtnMore()">
+                                    <i class="fas fa-eye" uib-tooltip="Más opciones"></i>
+                                </button>
+                                <button type="button" class="btn btn-success" uib-tooltip="Recargar"
+                                    ng-click="getFacturas()">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
-                    <button type="button" class="btn btn-info btm-sm mt-4" data-toggle="button" data-more="#sh"
-                        aria-pressed="false" ng-click="onClickBtnMore()">
-                        <span class="text"><i class="fas fa-eye" aria-hidden="true"
-                                uib-tooltip="Más opciones"></i></span>
-                        <span class="text-active"><i class="fas fa-eye" aria-hidden="true"
-                                uib-tooltip="Ocultar opciones"></i></span>
-                    </button>
-                    <button type="button" class="btn btn-success btm-sm mt-4" uib-tooltip="Recargar"
-                        ng-click="getFacturas()">
-                        <i class="fas fa-redo"></i>
-                    </button>
                 </div>
             </div>
 
@@ -100,7 +119,8 @@
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <span>Buscar por Nro. Documento:</span>
-                        <input type="text" class="form-control border-select"  ng-model="dataSearch.nroSecuencial" placeholder="Ej: 123"/>                       
+                        <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial"
+                            placeholder="Ej: 123" />
                     </div>
                 </div>
 
@@ -116,7 +136,7 @@
                         </select>
                     </div>
                 </div>
-                
+
                 <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
                         <span>Buscar</span>
@@ -144,15 +164,18 @@
                 <md-table-container name="wireTable" infinite-scroll="loadMore($index)" infinite-scroll-distance="1"
                     infinite-scroll-parent="true" ng-init="isShow=true" ng-show="isShow"
                     style=" max-height: 400px; overflow-x: hidden">
-                    <table resize master md-table name="innerWireTable" >
-                        <thead md-trim-column-names fix-head md-head  md-on-reorder="onOrderInvoice" md-order="dataSearch.order">
+                    <table resize master md-table name="innerWireTable">
+                        <thead md-trim-column-names fix-head md-head md-on-reorder="onOrderInvoice"
+                            md-order="dataSearch.order">
                             <tr md-row>
                                 <th md-column><span>Op</span></th>
                                 <th md-column md-order-by="nroFactura"><span>Nro. Doc</span></th>
                                 <th md-column md-order-by="fechaEmision"><span>F. Emisión</span></th>
                                 <th md-column><span>F. Vcto</span></th>
                                 <th md-column md-order-by="nombreFiscal"><span>Cliente</span></th>
-                                <th md-column md-numeric md-order-by="total" totales-venta-view="ventaPermiso"><span>Total</span></th>
+                                <th md-column md-numeric md-order-by="total" totales-venta-view="ventaPermiso">
+                                    <span>Total</span>
+                                </th>
                                 <th md-column totales-venta-view="ventaPermiso"><span>Abono</span></th>
                                 <th md-column totales-venta-view="ventaPermiso"><span>Saldo</span></th>
                                 <th md-column><span>Estado</span></th>
@@ -161,7 +184,8 @@
                             </tr>
                         </thead>
                         <tbody md-body>
-                            <tr md-row ng-repeat="item in facturas | orderBy: dataSearch.order track by $index" ng-class="item.style">
+                            <tr md-row ng-repeat="item in facturas | orderBy: dataSearch.order track by $index"
+                                ng-class="item.style">
                                 <td md-cell>
                                     <md-menu>
                                         <md-button aria-label="Open demo menu" class="md-icon-button"
@@ -293,14 +317,14 @@
             </div>
         </div>
         <div class="card-body">
-             <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+            <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
                 ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
                 class="pagination" boundary-links="true" rotate="false"></ul>
         </div>
     </div>
 
 </div>
-@section Scripts{
+@section Scripts {
     <script src="~/js/services/storageService.js" asp-append-version="true"></script>
     <script src="~/js/factElect/directives/factElectDirective.min.js" asp-append-version="true"></script>
     <script src="~/js/factElect/services/facturaService.js" asp-append-version="true"></script>

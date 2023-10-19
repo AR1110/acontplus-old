@@ -35,7 +35,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
 
         this.TIPO_DOC_FV = _commonSvc.tipoDoc['FV']
         this.CAMPOS = ["idSucursal", "idPuntoEmision", "fechaEmision", "fechaVencimiento", "validFechaVcto", "gridOptions", "gridOptionsBodega"];
-        
+
         this.isSearchDataInSRI = true; //Registro Rapido de clientes 
 
         this.datosAdicionalesArticulo = [];
@@ -111,26 +111,27 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
 
     }
 
-    initiload(){
-        return this._mS.getData('get', "Factura/" +'Get?json=' + JSON.stringify({tipo: 3}), null, true ).then(response =>{
-            if(response.code==="0"){
+    initiload() {
+        return this._mS.getData('get', "Factura/" + 'Get?json=' + JSON.stringify({ tipo: 3 }), null, true).then(response => {
+            if (response.code === "0") {
                 throw response;
             }
-             
-            if(response.code==="1"){ 
-                let mainData = JSON.parse(response.payload); 
+
+            if (response.code === "1") {
+                let mainData = JSON.parse(response.payload);
                 return mainData;
             }
-        }) 
+        })
     }
 
-    onKeyupCustomer(){
-        if(!this.cliente.nombreFiscal){
-            console.log(this.cliente)
+    onKeyupCustomer() {
+        if (!this.cliente.nombreFiscal) {
             this.cliente = {};
         }
 
     }
+
+
 
     /**
      * 
@@ -208,7 +209,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
             entity.idMedida = dataMedida.idMedida; //Medida por defecto 
 
             // if(!(entity.idFacturaDetalle > 0)){
-                entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
+            entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
             //}
 
 
@@ -234,7 +235,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
             this.indexRow = index;
 
             this.focusColumnCantidad();
-     
+
 
         } catch (error) {
             console.log(error)
@@ -271,7 +272,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
         entity.productoFraccionable = articulo.productoFraccionable;
         entity.medidas = medidas; //Lista Medida 
         entity.idMedida = dataMedida.idMedida; //Medida por defecto 
-       
+
         entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
 
 
@@ -309,7 +310,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
 
 
     resultModalAdicional(result) {
-        let {entity, historyDatosAdicionales} = result;
+        let { entity, historyDatosAdicionales } = result;
         this.historyDatosAdicionales = historyDatosAdicionales;
     }
 
@@ -457,33 +458,35 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
 
 export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
     static $inject = [
-        '$scope', 
-        '$timeout', 
-        '$uibModalInstance', 
-        'mainService', 
-        'commonService', 
+        '$scope',
+        '$timeout',
+        '$uibModalInstance',
+        'mainService',
+        'commonService',
+        'ventaService',
         'facturaService',
-        'modalService', 
-        'nombreModal', 
-        'formulario', 
-        'toastService', 
-        'params', 
+        'modalService',
+        'nombreModal',
+        'formulario',
+        'toastService',
+        'params',
         'storageService',
         'articuloService'
     ]
 
     constructor(
-        $scope, 
-        $timeout, 
-        $uibModalInstance, 
-        _mS, 
-        _commonSvc, 
+        $scope,
+        $timeout,
+        $uibModalInstance,
+        _mS,
+        _commonSvc,
+        ventaSvc,
         facturaSvc,
-        _modalSvc, 
-        _nombreModalConst, 
-        _fS, 
-        _tS, 
-        _params, 
+        _modalSvc,
+        _nombreModalConst,
+        _fS,
+        _tS,
+        _params,
         _storageSvc,
         articuloSvc
     ) {
@@ -498,8 +501,8 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
             _fS,
             _tS
         })
-        const self = this;
 
+        this.ventaSvc = ventaSvc; // para usar la funcion verificacion de deuda del cliente
         this.facturaSvc = facturaSvc;
 
         this._params = _params;
@@ -531,6 +534,10 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
             $("#btnNewCustomerDocument").on('blur', this.onBlurBtnNewCustomerInvoice)
         })
 
+        this.notificacionVenta = {
+            notificacionVenta: false
+        }
+
     }
 
     async $onInit() {
@@ -538,7 +545,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
             showLoader();
 
             let resultsDataForm = await this.initiload();
-
+            
             let {
                 UiGridOptions
             } = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
@@ -581,7 +588,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
 
 
             this.decimal = resultsDataForm[1][0];
-         
+
             this.configDetalle = resultsDataForm[2][0]
 
             this.tipoIvas = resultsDataForm[3];
@@ -630,10 +637,16 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
             }
 
             this.usuariosVendedor = resultsDataForm[11];
-            if(this.usuariosVendedor.length>0){
+            if (this.usuariosVendedor.length > 0) {
                 this.data.idUsuario = this.usuariosVendedor.find(item => (item.predeterminado)).idUsuario
-            }else{
+            } else {
                 this.data.idUsuario = 0;
+            }
+
+
+            //notificacion deuda venta cliente 
+            if (resultsDataForm[12].length > 0) {
+                this.notificacionVenta = resultsDataForm[12][0];
             }
 
 
@@ -656,14 +669,12 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
                 tipoIvas: this.tipoIvas,
                 decimal: this.decimal,
                 actividadTipoIva: this.actividadTipoIva,
-                codigoDoc: 'FV', 
+                codigoDoc: 'FV',
                 idBodega: this.idBodega,
                 parentScope: this
             })
 
             this.uiGridInvoice.idTarifa = this.idTarifa;
-
-
 
             if (Object.keys(this._storageSvc.getObject("invoiceDetail")).length > 0) {
                 this._storageSvc.restoreInvoiceDetail("invoiceDetail").then(result => {
@@ -701,16 +712,17 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
                 return
             }
 
-
-            let dataCliente = await this.getClienteById(item);
-            this.cliente = dataCliente;
-
-            if (this.TIPO_REGISTRO === 'NUEVO') {
-                this.data.placa = '';
-                this.data.idTiempoCredito = this.cliente.idTiempoCredito;
-                this.getFechaVencimiento(new Date());
+            if (['R', 'C', 'P'].includes(item.tipoIdentificacion)) {
+                let isPendientAccount = await this.ventaSvc.verifyPendientAccount({ idCliente: item.idCliente });
+                if (isPendientAccount && this.notificacionVenta.notificacionVenta) {
+                    this.setCustomerData(item);
+                } else {
+                    this.cliente = {};
+                    this.$scope.$apply();
+                }
+            } else {
+                this.setCustomerData(item)
             }
-            this.$scope.$apply();
 
         } catch (error) {
             this.cliente = {};
@@ -719,16 +731,29 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
         }
     }
 
-    receiveDataCustomerSRI(result) {
-        if(result.idCliente===0) {
-            this.newCustomer = true;
-        }else{
-            this.newCustomer = false;
+    async setCustomerData(item) {
+        console.log('set data customer')
+        let dataCliente = await this.getClienteById(item);
+        this.cliente = dataCliente;
+
+        if (this.TIPO_REGISTRO === 'NUEVO') {
+            this.data.placa = '';
+            this.data.idTiempoCredito = this.cliente.idTiempoCredito;
+            this.getFechaVencimiento(new Date());
         }
-        this.cliente = result; 
+        this.$scope.$apply();
     }
 
-    
+    receiveDataCustomerSRI(result) {
+        if (result.idCliente === 0) {
+            this.newCustomer = true;
+        } else {
+            this.newCustomer = false;
+        }
+        this.cliente = result;
+    }
+
+
 
     async onSave() {
         try {
@@ -736,14 +761,14 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
 
             if (!this.isValidaForm()) return
 
-            if(!(this.data.idTiempoCredito) > 0){
+            if (!(this.data.idTiempoCredito) > 0) {
                 this._fS.sweetAlert('warning', 'Seleccione el tiempo crédito');
                 return
             }
 
-            if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
-                for(let item of this.gridOptions.data){
-                    if(item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)){
+            if (this.gridOptions.data.some(item => item.articuloTarifas.some(ta => (ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))) {
+                for (let item of this.gridOptions.data) {
+                    if (item.articuloTarifas.some(ta => (ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)) {
                         this._fS.sweetAlert('warning', `Artículo ${item.descripcion}: La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`)
                     }
                 }
@@ -768,44 +793,44 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
 
             let textAccion = 'Guardar';
 
-            let {isConfirmed} = await Swal.fire({
+            let { isConfirmed } = await Swal.fire({
                 title: '<small>Guardar Factura</small>',
-                  html: `<small>Esta Ud. seguro de ${textAccion} este <b> Factura de Venta</b> N° ${this.nroDocumentoSecuencial}</small>?`,
-                  icon: 'warning',
-                  showCancelButton: true,
-                  confirmButtonColor: '#3085d6',
-                  cancelButtonColor: '#d33',
-                  confirmButtonText: 'Si, guardar!',
-                  cancelButtonText: 'No, cancelar!',                
-                  allowOutsideClick: false,
-                  allowEscapeKey: true
+                html: `<small>Esta Ud. seguro de ${textAccion} este <b> Factura de Venta</b> N° ${this.nroDocumentoSecuencial}</small>?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si, guardar!',
+                cancelButtonText: 'No, cancelar!',
+                allowOutsideClick: false,
+                allowEscapeKey: true
             })
-  
-            if(isConfirmed){
+
+            if (isConfirmed) {
                 showLoader();
 
-                 //Tarifa Aplicada al Documento
-                 this.data.tarifa = this.actividadTipoIva.tarifa;
+                //Tarifa Aplicada al Documento
+                this.data.tarifa = this.actividadTipoIva.tarifa;
                 //Mappeamos todo el objecto necesario para guardar factura.
                 let params = this.facturaSvc.queryMapper({
-                    data: this.data, 
+                    data: this.data,
                     cliente: this.cliente,
-                    detalles: this.gridOptions.data, 
+                    detalles: this.gridOptions.data,
                     infoAdicionalDocumento: this.infoAdicionalDocumento,
                     historyDatosAdicionales: this.historyDatosAdicionales
                 })
-  
-                this.facturaSvc.save(params).then(response=>{
+
+                this.facturaSvc.save(params).then(response => {
                     hideLoader();
                     if (response.code === '0') {
                         this._fS.sweetAlert('warning', response.message, response.titleSms);
                         return
                     }
-                    if (response.code === "1") {                        
+                    if (response.code === "1") {
                         this._fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
 
                         let mainData = {
-                            isRegister: true,                            
+                            isRegister: true,
                             data: response.dataResponse
                         }
 
@@ -813,8 +838,8 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
 
                     }
                 }).catch(error => {
-                      hideLoader();
-                      console.log(error);
+                    hideLoader();
+                    console.log(error);
                 })
             }
 
@@ -829,25 +854,40 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
 export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
 
     static $inject = [
-        '$scope', 
-        '$timeout', 
-        '$uibModalInstance', 
-        'facturaService', 
-        'mainService', 
-        'commonService', 
-        'modalService', 
-        'nombreModal', 
-        'formulario', 
-        'toastService', 
+        '$scope',
+        '$timeout',
+        '$uibModalInstance',
+        'ventaService',
+        'facturaService',
+        'mainService',
+        'commonService',
+        'modalService',
+        'nombreModal',
+        'formulario',
+        'toastService',
         'params',
         'articuloService'
     ]
 
-    constructor($scope, $timeout, $uibModalInstance, facturaSvc, _mS, _commonSvc, _modalSvc, _nombreModalConst, _fS, _tS, _params, articuloSvc) {
+    constructor(
+        $scope, 
+        $timeout, 
+        $uibModalInstance, 
+        ventaSvc, 
+        facturaSvc, 
+        _mS, 
+        _commonSvc, 
+        _modalSvc, 
+        _nombreModalConst, 
+        _fS, 
+        _tS, 
+        _params, 
+        articuloSvc
+        ) {
         super({
             $scope,
             $timeout,
-            $uibModalInstance,
+            $uibModalInstance, 
             _mS,
             _commonSvc,
             _modalSvc,
@@ -856,6 +896,7 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
             _tS
         })
 
+        this.ventaSvc = ventaSvc;
         this.facturaSvc = facturaSvc;
         this.articuloSvc = articuloSvc;
 
@@ -890,7 +931,7 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
         this.actividadTipoIva = actividadTipoIva;
         this.datosAdicionalesArticulo = datosAdicionalesArticulo || [];
 
-        this.historyDatosAdicionales = this.datosAdicionalesArticulo.map(item=>({
+        this.historyDatosAdicionales = this.datosAdicionalesArticulo.map(item => ({
             idArticulo: item.idArticulo,
             idInfoAdicional: item.idInfoAdicional,
             selected: true,
@@ -903,6 +944,11 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
 
             $("#btnNewCustomerDocument").on('blur', this.onBlurBtnNewCustomerInvoice)
         })
+
+        //Nototificacion de deudas 
+        this.notificacionVenta = {
+            notificacionVenta: false
+        }
     }
 
     async $onInit() {
@@ -972,6 +1018,9 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
             this.ventaComprobantePermission = Object.freeze(this.ventaPermission.comprobante);
             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
 
+            if (resultsDataForm[12].length > 0) {
+                this.notificacionVenta = resultsDataForm[12][0];
+            }
 
             //Usuario-vendedores
             this.setColumnDefs('12%');
@@ -1027,10 +1076,18 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
                 return
             }
 
+            if (['R', 'C', 'P'].includes(item.tipoIdentificacion)) {
+                let isPendientAccount = await this.ventaSvc.verifyPendientAccount({ idCliente: item.idCliente });
+                if (isPendientAccount && this.notificacionVenta.notificacionVenta) {
+                    this.setCustomerData(item);
+                } else {
+                    this.cliente = {};
+                    this.$scope.$apply();
+                }
+            } else {
+                this.setCustomerData(item)
+            }
 
-            let dataCliente = await this.getClienteById(item);
-            this.cliente = dataCliente;
-            this.$scope.$apply();
 
         } catch (error) {
             this.cliente = {};
@@ -1039,11 +1096,17 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
         }
     }
 
+    async setCustomerData(item) {
+        let dataCliente = await this.getClienteById(item);
+        this.cliente = dataCliente;
+        this.$scope.$apply();
+    }
+
     async onSave() {
         try {
             if (!this.isValidaForm()) return
 
-            if(!(this.data.idTiempoCredito) > 0){
+            if (!(this.data.idTiempoCredito) > 0) {
                 this._fS.sweetAlert('warning', 'Seleccione el tiempo crédito');
                 return
             }
@@ -1082,31 +1145,31 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
             if (isConfirmed) {
                 showLoader();
                 //Mappeamos todo el objecto necesario para guardar factura.
-                 //Tarifa Aplicada al Documento
-                 this.data.tarifa = this.actividadTipoIva.tarifa;
+                //Tarifa Aplicada al Documento
+                this.data.tarifa = this.actividadTipoIva.tarifa;
                 let params = this.facturaSvc.queryMapper({
-                    data: this.data, 
+                    data: this.data,
                     cliente: this.cliente,
-                    detalles: this.gridOptions.data, 
+                    detalles: this.gridOptions.data,
                     infoAdicionalDocumento: this.infoAdicionalDocumento,
                     historyDatosAdicionales: this.historyDatosAdicionales
                 })
-  
-                this.facturaSvc.update(this.data.idFactura, params).then(response=>{
+
+                this.facturaSvc.update(this.data.idFactura, params).then(response => {
                     hideLoader();
                     if (response.code === '0') {
                         this._fS.sweetAlert('warning', response.message, response.titleSms);
                         return
                     }
-                    if (response.code === "1") {                        
+                    if (response.code === "1") {
                         this._fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
                         this.isUpdate = true;
-                       // this.$uibModalInstance.close(mainData)
+                        // this.$uibModalInstance.close(mainData)
 
                     }
                 }).catch(error => {
-                      hideLoader();
-                      console.log(error);
+                    hideLoader();
+                    console.log(error);
                 })
             }
 
@@ -1255,31 +1318,33 @@ export class ModalFacturaDetalleCtrl extends ModalFacturaCtrl {
 
 export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
     static $inject = [
-        '$scope', 
-        '$timeout', 
-        '$uibModalInstance', 
-        'mainService', 
-        'commonService', 
+        '$scope',
+        '$timeout',
+        '$uibModalInstance',
+        'mainService',
+        'commonService',
+        'ventaService',
         'facturaService',
-        'modalService', 
-        'nombreModal', 
-        'formulario', 
-        'toastService', 
+        'modalService',
+        'nombreModal',
+        'formulario',
+        'toastService',
         'params',
         'articuloService'
     ]
 
     constructor(
-        $scope, 
-        $timeout, 
-        $uibModalInstance, 
-        _mS, 
-        _commonSvc, 
+        $scope,
+        $timeout,
+        $uibModalInstance,
+        _mS,
+        _commonSvc,
+        ventaSvc,
         facturaSvc,
         _modalSvc,
-        _nombreModalConst, 
-        _fS, 
-        _tS, 
+        _nombreModalConst,
+        _fS,
+        _tS,
         _params,
         articuloSvc
     ) {
@@ -1295,16 +1360,14 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
             _tS
         })
 
+        this.ventaSvc = ventaSvc;
         this.facturaSvc = facturaSvc;
         this.articuloSvc = articuloSvc;
 
 
         this.newCustomer = false;
         this.historyDatosAdicionales = [];
-
-
-
-
+ 
         let {
             TIPO_REGISTRO,
             data
@@ -1333,6 +1396,11 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
 
             $("#btnNewCustomerDocument").on('blur', this.onBlurBtnNewCustomerInvoice)
         })
+
+        this.notificacionVenta = {
+            notificacionVenta: false
+        }
+
     }
 
     async $onInit() {
@@ -1377,7 +1445,7 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
             this.tiempoCreditos = resultsDataForm[5];
 
             if (resultsDataForm[8].length > 0) {
-                let {searchCode, multipleVendedor} = resultsDataForm[8][0];
+                let { searchCode, multipleVendedor } = resultsDataForm[8][0];
                 this.isSearchBarcode = searchCode;
                 this.multipleVendedor = multipleVendedor;
 
@@ -1399,7 +1467,11 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
 
 
             this.usuariosVendedor = resultsDataForm[11] || [];
-            
+
+            if (resultsDataForm[12].length > 0) {
+                this.notificacionVenta = resultsDataForm[12][0];
+            }
+
 
             this.setColumnDefs('12%');
 
@@ -1434,9 +1506,9 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
 
             // this.fechaEmisionEscrita = this._fS.getFechaEscrita(this.data.fechaEmision);
             // this.fechaVencimientoEscrita = this._fS.getFechaEscrita(this.data.fechaVencimiento);
-            if(this.usuariosVendedor.length>0){
+            if (this.usuariosVendedor.length > 0) {
                 this.data.idUsuario = this.usuariosVendedor.find(item => (item.predeterminado)).idUsuario
-            }else{
+            } else {
                 this.data.idUsuario = 0;
             }
 
@@ -1461,17 +1533,17 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
                 return
             }
 
-
-            let dataCliente = await this.getClienteById(item);
-            this.cliente = dataCliente;
-
-            if (this.TIPO_REGISTRO === 'DUPLICAR') {
-                this.data.placa = '';
-                this.data.idTiempoCredito = this.cliente.idTiempoCredito;
-                this.getFechaVencimiento(new Date());
+            if (['R', 'C', 'P'].includes(item.tipoIdentificacion)) {
+                let isPendientAccount = await this.ventaSvc.verifyPendientAccount({ idCliente: item.idCliente });
+                if (isPendientAccount && this.notificacionVenta.notificacionVenta) {
+                    this.setCustomerData(item);
+                } else {
+                    this.cliente = {};
+                    this.$scope.$apply();
+                }
+            } else {
+                this.setCustomerData(item)
             }
-            this.$scope.$apply();
-
         } catch (error) {
             this.cliente = {};
             console.log('ERROR AL OBTENER DATOS DEL CLIENTE', error)
@@ -1479,21 +1551,30 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
         }
     }
 
+    async setCustomerData(item) {
+        let dataCliente = await this.getClienteById(item);
+        this.cliente = dataCliente;
+ 
+        this.data.placa = '';
+        this.data.idTiempoCredito = this.cliente.idTiempoCredito;
+        this.getFechaVencimiento(new Date());         
+        this.$scope.$apply();
+    }
 
     receiveDataCustomerSRI(result) {
-        if(result.idCliente===0) {
+        if (result.idCliente === 0) {
             this.newCustomer = true;
-        }else{
+        } else {
             this.newCustomer = false;
         }
-        this.cliente = result; 
+        this.cliente = result;
     }
 
     async onSave() {
         try {
             if (!this.isValidaForm()) return
 
-            if(!(this.data.idTiempoCredito) > 0){
+            if (!(this.data.idTiempoCredito) > 0) {
                 this._fS.sweetAlert('warning', 'Seleccione el tiempo crédito');
                 return
             }
@@ -1515,47 +1596,47 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
             if (!this.nroDocumentoSecuencial) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"
 
             let textAccion = 'Guardar';
-            
-            let {isConfirmed} = await Swal.fire({
-              title: '<small>Guardar Factura</small>',
+
+            let { isConfirmed } = await Swal.fire({
+                title: '<small>Guardar Factura</small>',
                 html: `<small>Esta Ud. seguro de ${textAccion} este <b> Factura de Venta</b> N° ${this.nroDocumentoSecuencial}</small>?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Si, guardar!',
-                cancelButtonText: 'No, cancelar!',                
+                cancelButtonText: 'No, cancelar!',
                 allowOutsideClick: false,
                 allowEscapeKey: true
             })
 
-            if(isConfirmed){
+            if (isConfirmed) {
                 showLoader();
 
-                 //Tarifa Aplicada al Documento
-                 this.data.tarifa = this.actividadTipoIva.tarifa;
+                //Tarifa Aplicada al Documento
+                this.data.tarifa = this.actividadTipoIva.tarifa;
                 //Mappeamos todo el objecto necesario para guardar factura.
                 let params = this.facturaSvc.queryMapper({
-                    data: this.data, 
+                    data: this.data,
                     cliente: this.cliente,
-                    detalles: this.gridOptions.data, 
+                    detalles: this.gridOptions.data,
                     infoAdicionalDocumento: this.infoAdicionalDocumento,
                     historyDatosAdicionales: this.historyDatosAdicionales
                 })
-  
-                this.facturaSvc.save(params).then(response=>{
+
+                this.facturaSvc.save(params).then(response => {
                     hideLoader();
                     if (response.code === '0') {
                         this._fS.sweetAlert('warning', response.message, response.titleSms);
                         return
                     }
-                    if (response.code === "1") {                        
+                    if (response.code === "1") {
                         this._fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
 
-                        
-                        
+
+
                         let mainData = {
-                            isRegister: true,                            
+                            isRegister: true,
                             data: response.dataResponse
                         }
 
@@ -1563,15 +1644,15 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
 
                     }
                 }).catch(error => {
-                      hideLoader();
-                      console.log(error);
+                    hideLoader();
+                    console.log(error);
                 })
             }
 
         } catch (error) {
             hideLoader();
             console.log(error)
-        }  
+        }
     }
 
 }
@@ -1581,7 +1662,7 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
 export class ModalFacturaDividirCtrl {
 
 }
- 
+
 export class ModalFacturaFiltroCtrl extends ModalBaseCtrl {
 
     static $inject = ['$scope', '$uibModalInstance', 'mainService', 'commonService', 'formulario', 'toastService', 'params', 'decodeToken']
