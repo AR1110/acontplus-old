@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.42";
+} from "./modalBaseCtrl.js?v=0.43";
 
 class ModalNotaCreditoCtrl extends ModalBaseCtrl {
     constructor({
@@ -354,7 +354,7 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
     async $onInit() {
         try {
             showLoader();
-            let resultsDataForm = await this.initiload();
+            let resultsDataForm = await this._commonSvc.getDataFormVenta();
             let {
                 UiGridOptions
             } = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
@@ -664,7 +664,7 @@ export class ModalNotaCreditoEditarCtrl extends ModalNotaCreditoCtrl {
     async $onInit() {
         try {
             showLoader();
-            let resultsDataForm = await this.initiload();
+            let resultsDataForm = await this._commonSvc.getDataFormVenta();
             let {
                 UiGridOptions
             } = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
@@ -847,7 +847,7 @@ export class ModalNotaCreditoDetalleCtrl extends ModalNotaCreditoCtrl {
         try {
             showLoader();
             console.log(this)
-            let resultsDataForm = await this.initiload();
+            let resultsDataForm = await this._commonSvc.getDataFormVenta();
             let {
                 UiGridOptions
             } = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
@@ -936,7 +936,7 @@ export class ModalFacturaFiltroCtrl extends ModalBaseCtrl {
     async $onInit() {
         try {
             showLoader();
-            let resultsDataForm = await this.initiload();
+            let resultsDataForm = await this._commonSvc.getDataFormVenta();
             this.estadoDocumentos = await this._commonSvc.getEstadoDocByCodDoc('FV');
 
             this.establecimientos = resultsDataForm[0];
