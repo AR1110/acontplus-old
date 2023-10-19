@@ -270,14 +270,14 @@
             return mainService.uploadFile("POST", url + "Post/?json=" + encodeURIComponent(JSON.stringify({ data })), file, null, true);
             //    return mainService.getData('post', url + 'Post', { data: data }, true)
         }
-        
+
 
         service.update = function (id, file, data) {
             if (!file) {
                 file = null;
             }
             //return mainService.getData('put', url + 'Put/' + id, { data: data }, true)
-            return mainService.uploadFile("post", url + `Put/${id}/?json=${encodeURIComponent(JSON.stringify({ data }))}`, file, null, true);
+            return mainService.uploadFile("post", url + `Put/${id}?json=${encodeURIComponent(JSON.stringify({ data }))}`, file, null, true);
         }
 
         /**
