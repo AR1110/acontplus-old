@@ -91,6 +91,7 @@ namespace Identity.Services
                     new Claim(ClaimTypes.NameIdentifier, Convert.ToString(data.UserId)),
                     new Claim(ClaimTypes.Role, data.Role),
                     new Claim("UserRoleId", Convert.ToString(data.UserRoleId)),
+                    new Claim("idUsuarioRol", Convert.ToString(data.UserRoleId)),
                     new Claim("IDCardUser", data.IDCardUser),
                     new Claim("IDCardCompany", data.IDCardCompany),
                     new Claim("CompanyId", Convert.ToString(data.CompanyId)),
