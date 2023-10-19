@@ -7,7 +7,7 @@ import typescript from "@rollup/plugin-typescript";
 import replace from '@rollup/plugin-replace';
 import path from "path";
 import alias from "@rollup/plugin-alias";
-import nodeResolve from '@rollup/plugin-node-resolve';
+// import nodeResolve from '@rollup/plugin-node-resolve';
 
 const production = !process.env.ROLLUP_WATCH;
 const appObject = "bundle"
@@ -24,6 +24,7 @@ export default {
         // The IIFE return value will be assigned into a variable called `app`
         name: `${appObject}`,
     },
+    cache: true,
     plugins: [
         alias({
             entries: [
@@ -49,7 +50,7 @@ export default {
             emitCss: false,
             compilerOptions: {
                 // enable run-time checks when not in production
-                dev: !production,
+                //dev: !production,
                 customElement: false,
             }
         }),
@@ -59,17 +60,16 @@ export default {
             browser: true,
             dedupe: ['svelte', 'svelte/transition', 'svelte/internal'], // important!
         }),
-
-        commonjs({
-            include: /node_modules/,
-            sourceMap: !production
-        }),
-        nodeResolve(), // must come before the typescript plugin!
+        //nodeResolve(), // must come before the typescript plugin!
         typescript({
             sourceMap: !production,
             inlineSources: !production,
             types: ["svelte"],
             resolveJsonModule: true
+        }),
+        commonjs({
+            include: /node_modules/,
+            sourceMap: !production
         }),
         production && terser(),
     ],
