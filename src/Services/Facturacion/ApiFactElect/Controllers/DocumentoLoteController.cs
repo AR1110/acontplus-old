@@ -16,11 +16,13 @@ namespace ApiFactElect.Controllers
             _dl = new DocumentoLoteDao(_configuration);
             //_config = config;
         }
+        [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
             var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             return Ok(await _dl.GetAsync(idRol, json));
         }
+        [HttpPost]
         public async Task<IActionResult> Post(string codDoc)
         {
             var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
@@ -46,6 +48,7 @@ namespace ApiFactElect.Controllers
         //    }
         //    return Ok(_responseFE);
         //}
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int idDocumentoLote)
         {
             var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);

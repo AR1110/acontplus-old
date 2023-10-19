@@ -24,7 +24,9 @@ namespace ApiFactElect
                                        {
                                            x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                                            x.SerializerSettings.ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
-                                       }); builder.Services.AddCustomJwtAuthentication(builder.Configuration);
+                                       });
+            
+            builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddSwaggerDocumentation();
@@ -71,19 +73,15 @@ namespace ApiFactElect
                 }
             });
 
-            //app.UseSwaggerDocumentation();
+            app.UseApiVersioning();
 
             app.UseHttpsRedirection();
-
-            app.UseApiVersioning();
 
             app.UseRouting();
 
             app.UseAuthentication();
 
             app.UseAuthorization();
-
-
 
             app.UseEndpoints(endpoints =>
                        {

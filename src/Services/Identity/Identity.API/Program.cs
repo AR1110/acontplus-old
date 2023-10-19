@@ -62,6 +62,8 @@ app.UseSwaggerUI(options =>
     }
 });
 
+app.UseRouting();
+
 app.UseHttpsRedirection();
 
 app.UseMiddleware<ExceptionMiddleware>();
@@ -71,6 +73,15 @@ app.UseStatusCodePagesWithReExecute("/errors/{0}");
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapGet("/", context =>
+    {
+        context.Response.Redirect("swagger");
+        return Task.CompletedTask;
+    });
+});
 
 app.MapControllers();
 

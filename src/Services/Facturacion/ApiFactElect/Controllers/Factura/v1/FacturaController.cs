@@ -5,9 +5,10 @@ using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
-namespace ApiFactElect.Controllers
+namespace ApiFactElect.Controllers.Factura.v1
 {
-    [Route("api/[controller]")]
+    //[Route("api/[controller]")]
+    [Route("api/factura/[action]")]
     [ApiController]
     public class FacturaController : ControllerBase
     {
@@ -21,14 +22,14 @@ namespace ApiFactElect.Controllers
             _log = log;
         }
 
-        [HttpGet("Get")]
+        [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
 
             var _response = new GenericResponse();
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Ventas.Factura_Get", true);
                 _db.AddDynamicParam("idRol", idUsuarioRol);
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -46,14 +47,14 @@ namespace ApiFactElect.Controllers
             return Ok(_response);
         }
 
-        [HttpPost("Insert")]
+        [HttpPost]
         public async Task<IActionResult> Insert([FromBody] FacturaParams data)
         {
 
             var _response = new GenericResponse();
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Ventas.Factura_Insert", true);
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("jsonFactura", SqlStringParam.Sanitize(data.factura));
@@ -74,12 +75,12 @@ namespace ApiFactElect.Controllers
             return Ok(_response);
         }
 
-        [HttpPut("Update/{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] FacturaParams data)
         {
-            DbAccess _db = new DbAccess(_configuration);
+            var _db = new DbAccess(_configuration);
 
-            GenericResponse _response = new GenericResponse();
+            var _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Ventas.Factura_Update", true);
@@ -104,12 +105,12 @@ namespace ApiFactElect.Controllers
         }
 
 
-        [HttpDelete("Delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            DbAccess _db = new DbAccess(_configuration);
+            var _db = new DbAccess(_configuration);
 
-            GenericResponse _response = new GenericResponse();
+            var _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Ventas.Factura_Delete", true);

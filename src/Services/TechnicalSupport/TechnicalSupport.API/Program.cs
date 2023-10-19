@@ -57,6 +57,15 @@ internal class Program
 
         app.UseStaticFiles();
 
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapGet("/", context =>
+            {
+                context.Response.Redirect("swagger");
+                return Task.CompletedTask;
+            });
+        });
+
         app.MapControllers().RequireAuthorization();
 
         using var scope = app.Services.CreateScope();
