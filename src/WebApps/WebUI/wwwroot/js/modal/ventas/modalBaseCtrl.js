@@ -209,7 +209,7 @@ export class ModalBaseCtrl {
 
 
     onChangeTiempoCredito() {
-        if (!this.ventaComprobantePermission.tiempoCedito.update) {
+        if (!this.ventaComprobantePermission.tiempoCredito.update) {
             this._tS.toastr('warning', 'No tienes permiso para realizar esta acción');
             return
         }

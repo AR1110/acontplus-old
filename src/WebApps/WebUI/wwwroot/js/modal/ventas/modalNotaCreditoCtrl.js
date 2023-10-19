@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.40";
+} from "./modalBaseCtrl.js?v=0.42";
 
 class ModalNotaCreditoCtrl extends ModalBaseCtrl {
     constructor({
