@@ -367,17 +367,13 @@
 
         $scope.fillGrid = (articles) => {
             $scope.gridOptions.data = articles.map(item => {
-                item.descripcion = item.descripcion
-                item.tarifa = item.tarifa
-                item.precioCosto = item.precioCosto
-                item.precioVenta = item.precioVenta
-                item.precioConIva = item.precioConIva
-                item.porcentajeUtilidad = item.porcentajeUtilidad
-                item.porcentajeIva = item.iva
-                item.ganancia = _form.roundNumber((Number(item.precioVenta) - item.precioCosto), $scope.config.nroPrecio)
-                item.estado = item.estadoTarifa
-                item.modified = false
-                return item
+                return {
+                    ...item,
+                porcentajeIva: item.iva,
+                ganancia: _form.roundNumber((Number(item.precioVenta) - item.precioCosto), $scope.config.nroPrecio),
+                estado: item.estadoTarifa,
+                modified: false
+            } 
             })
         }
 

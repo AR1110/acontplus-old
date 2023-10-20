@@ -84,9 +84,9 @@ export const techSpecCustomerStore = writable<State>(initialState);
  * @param data Recibe datos devueltos por el SRI
  */
 export const activeShowForm = (typeAction: "UPDATE" | "NEW" | "CLOSE", customerCompanyId = 0, dataSRI?: any) => {
-    let isUpdateCustomer = typeAction === "UPDATE";
-    let isNewCustomer = typeAction === "NEW";
-    let showForm = typeAction !== "CLOSE";
+    const isUpdateCustomer = typeAction === "UPDATE";
+    const isNewCustomer = typeAction === "NEW";
+    const showForm = typeAction !== "CLOSE";
 
     techSpecCustomerStore.update(state => {
         state.customerCompanyId = customerCompanyId,
@@ -127,6 +127,7 @@ export const getDataForm = async () => {
             codeID = data.numeroIdentificacion.length === 13 ? codeID : "C"
         }
 
+        showLoader();
         await customerSvc.getDataForm().then((response: DataForm) => {
 
             const { tiposIdentificacion, tiempoCreditos } = response;
@@ -144,7 +145,7 @@ export const getDataForm = async () => {
                 }
                 return state;
             })
-        });
+        }).finally(() => hideLoader());
 
         if (customerCompanyId > 0) {
             customerSvc.getId(customerCompanyId).then(response => {
@@ -209,7 +210,7 @@ export const serachCustomerToSRI = (event) => {
         customerSvc
             .getRuc(data.numeroIdentificacion)
             .then((response) => {
-                let { numeroRuc, razonSocial, direccion, telefono, email, error } =
+                const { numeroRuc, razonSocial, direccion, telefono, email, error } =
                     response;
                 if (!numeroRuc) {
                     tS({
@@ -235,7 +236,7 @@ export const serachCustomerToSRI = (event) => {
         customerSvc
             .getCedula(data.numeroIdentificacion)
             .then((response) => {
-                let {
+                const {
                     identificacion,
                     nombreCompleto,
                     direccion,
@@ -292,7 +293,7 @@ const validateForm = function () {
         return;
     }
 
-    let IDType = dataForm.tiposIdentificacion.find(
+    const IDType = dataForm.tiposIdentificacion.find(
         (typeID) => typeID.idTipoIdentificacion === data.idTipoIdentificacion
     );
     if (IDType.codigo === "C" && data.numeroIdentificacion.length !== 10) {
@@ -337,8 +338,8 @@ const saveResponse = async function (response) {
         tS({ type: 'success', message: response.message });
         const { data } = get(techSpecCustomerStore);
 
-        let customerCompanyId = data.idCliente > 0 ? data.idCliente : response.payload
-        let dataCustomer = await customerSvc.getId(customerCompanyId)
+        const customerCompanyId = data.idCliente > 0 ? data.idCliente : response.payload
+        const dataCustomer = await customerSvc.getId(customerCompanyId)
         //close modal
         console.log(dataCustomer)
         activeShowForm("CLOSE")

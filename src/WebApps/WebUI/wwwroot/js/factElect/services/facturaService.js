@@ -1,23 +1,79 @@
-(function(){
+(function () {
 
     'use strict';
 
-    app.factory('facturaService', function($injector){
+    app.factory('facturaService', function ($injector) {
         let url = 'Factura/'
         let mainService = $injector.get('mainService');
         let formSvc = $injector.get('formulario');
         let service = {}
 
-        service.getDataForm = ()=>{
-            return mainService.getData('get', url +'Get?json=' + JSON.stringify({tipo: 3}), null, true ).then(response =>{
-                if(response.code==="0"){
+
+        service.getDataForm = () => {
+            return mainService.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 3 }), null, true).then(response => {
+                if (response.code === "0") {
                     throw response;
                 }
-                
-                if(response.code==="1"){
 
-                    let mainData = JSON.parse(response.payload); 
+                if (response.code === "1") {
+
+                    let mainData = JSON.parse(response.payload);
                     return mainData;
+                }
+            })
+        }
+
+        /**
+         * tipo 1: get invoices 
+         * tipo 2: get invoices for credit note 
+         * tipo 3: ----
+         * tipo 4: get estabs, ptos. emisiones para los filtros
+         * @returns 
+         */
+        service.get = (params) => {
+            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(params), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload) 
+                    
+                    if (params.tipo === 4) {
+                        let tempEstabsAndPtosEmision = mainData[0];
+                        let estadosDoc = mainData[1];
+
+                        const estabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
+                            const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
+
+                            if (!existingItem) {
+                                acc.push({
+                                    idEstablecimiento: item.idEstablecimiento,
+                                    nombreComercial: item.nombreComercial,
+                                    codEstab: item.codEstab,
+                                    defaultEstab: item.defaultEstab,
+                                    puntosEmision: [{
+                                        idPuntoEmision: item.idPuntoEmision,
+                                        ptoEmi: item.ptoEmi, 
+                                        defaultPtoEmi: item.defaultPtoEmi
+                                    }]
+                                });
+                            } else {
+                                existingItem.puntosEmision.push({
+                                    idPuntoEmision: item.idPuntoEmision,
+                                    ptoEmi: item.ptoEmi,                                   
+                                    defaultPtoEmi: item.defaultPtoEmi
+                                });
+                            } 
+                            return acc;
+                        }, []);
+ 
+
+                        return {
+                            estabs,
+                            estadosDoc
+                        }
+                    }
                 }
             })
         }
@@ -27,35 +83,35 @@
          * @param {object} query 
          * @returns 
          */
-        service.getAll = function(query){
-            return mainService.getData('get', url +'Get?json=' + JSON.stringify(query), null, true ).then(response =>{
-                if(response.code==="0"){
+        service.getAll = function (query) {
+            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+                if (response.code === "0") {
                     throw response;
                 }
-                
-                if(response.code==="1"){
+
+                if (response.code === "1") {
 
                     let mainData = JSON.parse(response.payload);
                     let facturasRepository = mainData[0];
-                    let {totalRecords, totalDocument, totalAbono, totalSaldo} = facturasRepository[0]; 
+                    let { totalRecords, totalDocument, totalAbono, totalSaldo } = facturasRepository[0];
 
-                    let facturas = facturasRepository.map(item=>{
+                    let facturas = facturasRepository.map(item => {
                         return {
-                            codigoTipoDoc:'FV',
+                            codigoTipoDoc: 'FV',
                             comprobante: 'Factura',
                             idDocumento: item.idDocumento,
-                            idFactura:item.idFactura,
-                            idTipoDocumento:item.idTipoDocumento,
-                            idCuentaPorCobrar : item.idCuentaPorCobrar,
-                            idTiempoCredito:item.idTiempoCredito,
-                            idCliente:item.idCliente,
-                            codEstab:item.codEstab,
+                            idFactura: item.idFactura,
+                            idTipoDocumento: item.idTipoDocumento,
+                            idCuentaPorCobrar: item.idCuentaPorCobrar,
+                            idTiempoCredito: item.idTiempoCredito,
+                            idCliente: item.idCliente,
+                            codEstab: item.codEstab,
                             telefonoEstablecimiento: item.telefonoEstablecimiento,
                             entidad: item.razonSocial,
                             nombreComercial: item.nombreComercial,
-                            fechaEmision:item.fechaEmision,
-                            fechaVencimiento:item.fechaVencimiento,
-                            total:item.total,
+                            fechaEmision: item.fechaEmision,
+                            fechaVencimiento: item.fechaVencimiento,
+                            total: item.total,
                             nroFactura: item.nroFactura,
                             serieComprobante: item.nroFactura,
                             telefono: item.telefono,
@@ -65,11 +121,11 @@
                             estadoFinanciero: item.estadoFinanciero,
                             estadoSri: item.estadoSri,
                             claveAcceso: item.claveAcceso,
-                            codDoc: item.codDoc,                            
+                            codDoc: item.codDoc,
                             abono: item.abono,
                             saldo: item.saldo,
                             posfechado: item.posfechado,
-                            tiempoCredito: item.tiempoCredito, 
+                            tiempoCredito: item.tiempoCredito,
                             style: item.style,
                             usuario: item.usuario,
                             nroNotaCredito: item.nroNotaCredito,
@@ -79,99 +135,99 @@
                             anulada: item.anulada,
                             codEstado: item.codEstado,
                             esContado: item.tiempoCredito,
-                            totalRecords : item.totalRecords
+                            totalRecords: item.totalRecords
                         }
                     })
 
 
                     return {
                         facturas,
-                        dataTotals: {totalRecords, totalDocument, totalAbono, totalSaldo}
+                        dataTotals: { totalRecords, totalDocument, totalAbono, totalSaldo }
                     }
 
                 }
             })
         }
 
-        service.getForCreditNote = function(query){ 
-            if (!query.hasOwnProperty("byCliente")){
+        service.getForCreditNote = function (query) {
+            if (!query.hasOwnProperty("byCliente")) {
                 formSvc.sweetAlert('warning', 'No se ha proporcionado el idCliente')
                 throw ''
             }
-            if (!query.hasOwnProperty("codEstab")){
+            if (!query.hasOwnProperty("codEstab")) {
                 formSvc.sweetAlert('warning', 'No se ha proporcionado el codEstab')
                 throw ''
             }
             query.tipo = 2;
             query.paraNotaCredito = true;
             query.checkBoxCliente = true;
-            return mainService.getData('get', url +'Get?json=' + JSON.stringify(query), null, true ).then(response =>{
-                if(response.code==="0"){
+            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+                if (response.code === "0") {
                     throw response;
                 }
-                
-                if(response.code==="1"){ 
+
+                if (response.code === "1") {
                     let mainData = JSON.parse(response.payload) || [];
                     let facturasRepository = mainData[0];
-                    let facturas = facturasRepository.map(item=>{
-                        return { 
-                            idDocumento: item.idDocumento, 
+                    let facturas = facturasRepository.map(item => {
+                        return {
+                            idDocumento: item.idDocumento,
                             nroFactura: item.nroFactura,
-                            serieComprobante: item.nroFactura,                           
+                            serieComprobante: item.nroFactura,
                         }
-                    }) 
+                    })
                     return {
-                        facturas, 
+                        facturas,
                     }
 
                 }
             })
         }
 
-        service.save = function(data){         
-            return mainService.getData('post', url +'Insert', data, true ).then(response =>{
-                if(response.code==="0"){
+        service.save = function (data) {
+            return mainService.getData('post', url + 'Insert', data, true).then(response => {
+                if (response.code === "0") {
                     return response;
                 }
-                if(response.code==="1"){
+                if (response.code === "1") {
                     let dataRepository = JSON.parse(response.payload)[0];
-                   
+
                     let dataResponse = {
-                        ...dataRepository,                        
+                        ...dataRepository,
                         esContado: dataRepository.tiempoCredito,
                     }
-                    return {                        
+                    return {
                         dataResponse,
-                        code: '1' ,
-                        message: 'Registrado Correctamente'                      
+                        code: '1',
+                        message: 'Registrado Correctamente'
                     }
                 }
             })
         }
 
-        service.update = function(id, data){
-            return mainService.getData('put', url +'Update/' + id, data, true ).then(response =>{
-                if(response.code==="0"){
+        service.update = function (id, data) {
+            return mainService.getData('put', url + 'Update/' + id, data, true).then(response => {
+                if (response.code === "0") {
                     return response;
                 }
-                if(response.code==="1"){
+                if (response.code === "1") {
                     return response;
                 }
             })
         }
 
 
-        service.delete = function(id){
-            return mainService.getData('delete', url +'Delete/' + id, null, true ).then(response =>{
+        service.delete = function (id) {
+            return mainService.getData('delete', url + 'Delete/' + id, null, true).then(response => {
                 return response;
             })
         }
 
-        service.queryMapper = function({data, cliente, detalles, infoAdicionalDocumento, historyDatosAdicionales}){
+        service.queryMapper = function ({ data, cliente, detalles, infoAdicionalDocumento, historyDatosAdicionales }) {
 
-            let factura = Object.assign({}, data);      
-            
-            if(cliente.idCliente===0 && !cliente.razonSocialComprador && !cliente.identificacionComprador){
+            let factura = Object.assign({}, data);
+
+            if (cliente.idCliente === 0 && !cliente.razonSocialComprador && !cliente.identificacionComprador) {
                 throw new Error("Datos de cliente no proporcionados")
             }
 
@@ -194,10 +250,10 @@
             }
         }
 
-        service.detalleMapperTo = function(detalles) {
+        service.detalleMapperTo = function (detalles) {
             let tempDetails = [];
             let orderIndex = 1;
-    
+
             for (let item of detalles) {
                 tempDetails.push({
                     orderIndex: orderIndex++,

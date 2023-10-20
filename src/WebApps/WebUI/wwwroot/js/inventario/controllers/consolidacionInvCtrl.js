@@ -648,8 +648,9 @@
             }
         }
 
-        $scope.setItemArticuloEnDetalle = (item, isAdvanced = null) => {
+        $scope.setItemArticuloEnDetalle = async (item, isAdvanced = null) => {
             try {
+              
                 let articulo = {}
                 let medidas = []
                 if (!isAdvanced) {
@@ -667,8 +668,7 @@
                     }
                     console.log(articulo)
                 }
-
-                console.log(medidas)
+ 
 
                 if (!articulo.llevaInventario) {
                     Swal.fire({
@@ -678,11 +678,27 @@
                     return
                 }
 
-                let entity = {}
+
+                let entity = {};
                 $scope.indexRow = $scope.gridOptions.data.findIndex(value => value.idArticulo === articulo.idArticulo);
                 if ($scope.indexRow !== -1) {
                     entity = $scope.gridOptions.data[$scope.indexRow];
-                    entity.cantidad = entity.cantidad + 1;
+                    if(!item.isUpdateProduct){
+
+                        let {isConfirmed} = await Swal.fire({ 
+                            text: "Desea sumar la cantidad del producto en el detalle?",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Si!',
+                            cancelButtonText: 'No'
+                          })
+                          if(isConfirmed){
+                            entity.cantidad = entity.cantidad + 1;
+                          }
+                    }
+
 
                 } else {
                     $scope.addRow();
@@ -784,7 +800,9 @@
                 $scope.gridOptions.data[0],
                 $scope.gridOptions.columnDefs[2]
             )
-            $scope.$broadcast("editArticulo", item)
+            item.isUpdate = true;
+            let params = Object.assign(item, { isUpdate: true })
+            $scope.$broadcast("editArticulo", params);
         }
 
         $scope.consolidacionArticuloImport = async () => {
@@ -1696,7 +1714,7 @@
             }
         }
 
-        $scope.setItemArticuloEnDetalle = (item, isAdvanced = null) => {
+        $scope.setItemArticuloEnDetalle = async (item, isAdvanced = null) => {
             try {
                 let articulo = {}
                 let medidas = []
@@ -1730,8 +1748,24 @@
                 $scope.indexRow = $scope.gridOptions.data.findIndex(value => value.idArticulo === articulo.idArticulo);
                 if ($scope.indexRow !== -1) {
 
-                    entity = $scope.gridOptions.data[$scope.indexRow];
-                    entity.cantidad = entity.cantidad + 1;
+                    entity = $scope.gridOptions.data[$scope.indexRow]; 
+
+                    if(!item.isUpdateProduct){
+
+                        let {isConfirmed} = await Swal.fire({ 
+                            text: "Desea sumar la cantidad del producto en el detalle?",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Si!',
+                            cancelButtonText: 'No'
+                          })
+                          if(isConfirmed){
+                            entity.cantidad = entity.cantidad + 1;
+                          }
+                    }
+
                     $scope.addItem(entity, articulo, medidas);
                 } else {
                     $scope.addRow();
@@ -1835,7 +1869,9 @@
                 $scope.gridOptions.data[0],
                 $scope.gridOptions.columnDefs[2]
             )
-            $scope.$broadcast("editArticulo", item)
+            item.isUpdate = true;
+            let params = Object.assign(item, { isUpdate: true })
+            $scope.$broadcast("editArticulo", params); 
         }
 
         $scope.validForm = (tituloModal) => {

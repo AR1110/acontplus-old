@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.56";
+} from "./modalBaseCtrl.js?v=0.57";
 
 
 class ModalNotaEntregaCtrl extends ModalBaseCtrl {
@@ -102,21 +102,21 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl {
 
     }
 
-    initiload(){
-        return this._mS.getData('get', 'Venta/NotaEntrega/' +'Get?json=' + JSON.stringify({tipo: 2}), null, true ).then(response =>{
-            if(response.code==="0"){
+    initiload() {
+        return this._mS.getData('get', 'Venta/NotaEntrega/' + 'Get?json=' + JSON.stringify({ tipo: 2 }), null, true).then(response => {
+            if (response.code === "0") {
                 throw response;
             }
-             
-            if(response.code==="1"){ 
-                let mainData = JSON.parse(response.payload); 
+
+            if (response.code === "1") {
+                let mainData = JSON.parse(response.payload);
                 return mainData;
             }
-        }) 
+        })
     }
 
-    onKeyupCustomer(){
-        if(!this.cliente.nombreFiscal){
+    onKeyupCustomer() {
+        if (!this.cliente.nombreFiscal) {
             console.log(this.cliente)
             this.cliente = {};
         }
@@ -132,7 +132,7 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl {
 
         if (isConfirmed && entity.datosAdicionales) {
             this.datosAdicionalesArticulo = this.datosAdicionalesArticulo.filter(val => val.idArticulo !== entity.idArticulo);
-   
+
             this.historyDatosAdicionales = this.historyDatosAdicionales.filter(val => val.idArticulo !== entity.idArticulo);
         }
 
@@ -194,7 +194,7 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl {
             entity.productoFraccionable = articulo.productoFraccionable;
             entity.medidas = medidas; //Lista Medida 
             entity.idMedida = dataMedida.idMedida; //Medida por defecto 
-            
+
             entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
 
             entity.articuloTarifas = JSON.parse(dataMedida.tarifas);
@@ -203,8 +203,8 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl {
             entity.precioUnitario = self._fS.roundNumber(tarifa.precioVenta, self.decimal.nroPrecio);
             entity.precioConIva = self._fS.roundNumber(tarifa.precioConIva, self.decimal.nroPrecio);
 
-              //Datos Adicionales 
-              entity.cantMinimaVentaPorMayor = articulo.cantMinimaVentaPorMayor
+            //Datos Adicionales 
+            entity.cantMinimaVentaPorMayor = articulo.cantMinimaVentaPorMayor
 
             const objCalculo = self.uiGridInvoice.calculoColDef(entity, 0);
 
@@ -292,13 +292,13 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl {
         Swal.fire({
             icon: 'warning',
             title: 'Datos Incorrectos',
-            html: 'Número de identificación inválido, desea editar?', 
-        }) 
+            html: 'Número de identificación inválido, desea editar?',
+        })
 
     }
 
     resultModalAdicional(result) {
-        let {entity, historyDatosAdicionales} = result;
+        let { entity, historyDatosAdicionales } = result;
         this.historyDatosAdicionales = historyDatosAdicionales;
     }
 
@@ -308,35 +308,37 @@ class ModalNotaEntregaCtrl extends ModalBaseCtrl {
 
 export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
     static $inject = [
-        '$scope', 
-        '$timeout', 
-        '$uibModalInstance', 
-        'notaEntregaService', 
+        '$scope',
+        '$timeout',
+        '$uibModalInstance',
+        'ventaService',
+        'notaEntregaService',
         'facturaService',
-        'storageService', 
-        'mainService', 
-        'commonService', 
-        'modalService', 
-        'nombreModal', 
-        'formulario', 
-        'toastService', 
+        'storageService',
+        'mainService',
+        'commonService',
+        'modalService',
+        'nombreModal',
+        'formulario',
+        'toastService',
         'params',
         'articuloService'
     ]
 
     constructor(
-        $scope, 
-        $timeout, 
-        $uibModalInstance, 
+        $scope,
+        $timeout,
+        $uibModalInstance,
+        ventaSvc,
         notaEntregaSvc,
-        facturaSvc, 
-        _storageSvc, 
-        _mS, 
+        facturaSvc,
+        _storageSvc,
+        _mS,
         _commonSvc,
-        _modalSvc, 
-        _nombreModalConst, 
-        _fS, 
-        _tS, 
+        _modalSvc,
+        _nombreModalConst,
+        _fS,
+        _tS,
         _params,
         articuloSvc
     ) {
@@ -352,13 +354,14 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
             _tS
         })
 
-        
-        this.newCustomer = false; //Validacion de datos de cliente cuando cuando la consulta es del SRI 
-    
-        this.facturaSvc = facturaSvc, 
-        this.notaEntregaSvc = notaEntregaSvc,
 
-        this._storageSvc = _storageSvc;
+        this.newCustomer = false; //Validacion de datos de cliente cuando cuando la consulta es del SRI 
+
+        this.ventaSvc = ventaSvc;
+        this.facturaSvc = facturaSvc,
+            this.notaEntregaSvc = notaEntregaSvc,
+
+            this._storageSvc = _storageSvc;
         this.articuloSvc = articuloSvc;
 
         let {
@@ -382,6 +385,11 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
 
             $("#btnNewCustomerDocument").on('blur', this.onBlurBtnNewCustomerInvoice)
         })
+
+        this.notificacionVenta = {
+            notificacionVenta: false
+        }
+
     }
 
     async $onInit() {
@@ -447,7 +455,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
 
             if (resultsDataForm[8].length > 0) {
-                let {searchCode, multipleVendedor} = resultsDataForm[8][0];
+                let { searchCode, multipleVendedor } = resultsDataForm[8][0];
                 this.isSearchBarcode = searchCode;
                 this.multipleVendedor = multipleVendedor;
 
@@ -460,12 +468,19 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
                 })
             }
 
-            this.usuariosVendedor = resultsDataForm[11];   
-            if(this.usuariosVendedor.length>0){
+            this.usuariosVendedor = resultsDataForm[11];
+            if (this.usuariosVendedor.length > 0) {
                 this.data.idUsuario = this.usuariosVendedor.find(item => (item.predeterminado)).idUsuario
-            }else{
+            } else {
                 this.data.idUsuario = 0;
-            }         
+            }
+
+
+            //notificacion deuda venta cliente 
+            if (resultsDataForm[12].length > 0) {
+                this.notificacionVenta = resultsDataForm[12][0];
+            }
+
 
             this.data.fechaEmision = new Date();
             this.getFechaVencimiento();
@@ -530,18 +545,19 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
                 return
             }
 
-
-            let dataCliente = await this.getClienteById(item);
-            this.cliente = dataCliente;
-
-            if (this.TIPO_REGISTRO === 'NUEVO') {
-                this.data.placa = '';
-                this.data.idTiempoCredito = this.cliente.idTiempoCredito || 0;
-                this.data.fechaEmision = new Date();
-                this.getFechaVencimiento();
+            if (['R', 'C', 'P'].includes(item.tipoIdentificacion)) {
+                let isPendientAccount = await this.ventaSvc.verifyPendientAccount({ idCliente: item.idCliente });
+                if (isPendientAccount && this.notificacionVenta.notificacionVenta) {
+                    this.setCustomerData(item);
+                } else if (this.notificacionVenta.notificacionVenta) {
+                    this.setCustomerData(item);
+                } else {
+                    this.cliente = {};
+                    this.$scope.$apply();
+                }
+            } else {
+                this.setCustomerData(item)
             }
-            this.$scope.$apply();
-
         } catch (error) {
             this.cliente = {};
             console.log('ERROR AL OBTENER DATOS DEL CLIENTE', error)
@@ -550,13 +566,24 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
     }
 
 
+    async setCustomerData(item) {
+        let dataCliente = await this.getClienteById(item);
+        this.cliente = dataCliente;
+        this.data.placa = '';
+        this.data.idTiempoCredito = this.cliente.idTiempoCredito || 0;
+        this.data.fechaEmision = new Date();
+        this.getFechaVencimiento();
+        this.$scope.$apply();
+    }
+
+
     receiveDataCustomerSRI(result) {
-        if(result.idCliente===0) {
+        if (result.idCliente === 0) {
             this.newCustomer = true;
-        }else{
+        } else {
             this.newCustomer = false;
         }
-        this.cliente = result; 
+        this.cliente = result;
     }
 
 
@@ -566,14 +593,14 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
 
             if (!this.isValidaForm()) return
 
-            if(!(this.data.idTiempoCredito) > 0){
+            if (!(this.data.idTiempoCredito) > 0) {
                 this._fS.sweetAlert('warning', 'Seleccione el tiempo crédito');
                 return
             }
 
-            if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
-                for(let item of this.gridOptions.data){
-                    if(item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)){
+            if (this.gridOptions.data.some(item => item.articuloTarifas.some(ta => (ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))) {
+                for (let item of this.gridOptions.data) {
+                    if (item.articuloTarifas.some(ta => (ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)) {
                         this._fS.sweetAlert('warning', `Artículo ${item.descripcion}: La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`)
                     }
                 }
@@ -621,24 +648,24 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
 
                     //Tarifa Aplicada al Documento
                     this.data.tarifa = this.actividadTipoIva.tarifa;
-                   
+
                     let query = this.notaEntregaSvc.queryMapper({
                         data: this.data,
                         cliente: this.cliente,
                         detalles: this.gridOptions.data,
                         historyDatosAdicionales: this.historyDatosAdicionales
                     })
-                    
+
                     this.notaEntregaSvc.save(query).then(response => {
                         hideLoader()
                         if (response.code === '0') {
                             this._fS.sweetAlert('warning', response.message, response.titleSms);
                         }
-                        if (response.code === "1") {                            
+                        if (response.code === "1") {
                             this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                            
+
                             let mainData = {
-                                isRegister: true,                                                                
+                                isRegister: true,
                                 data: response.dataResponse
                             }
 
@@ -660,7 +687,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
             hideLoader();
             console.log(error)
 
-        } 
+        }
     }
 
 
@@ -671,14 +698,14 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
 
             if (!this.isValidaForm()) return
 
-            if(!(this.data.idTiempoCredito) > 0){
+            if (!(this.data.idTiempoCredito) > 0) {
                 this._fS.sweetAlert('warning', 'Seleccione el tiempo crédito');
                 return
             }
 
-            if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
-                for(let item of this.gridOptions.data){
-                    if(item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)){
+            if (this.gridOptions.data.some(item => item.articuloTarifas.some(ta => (ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))) {
+                for (let item of this.gridOptions.data) {
+                    if (item.articuloTarifas.some(ta => (ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)) {
                         this._fS.sweetAlert('warning', `Artículo ${item.descripcion}: La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`)
                     }
                 }
@@ -721,36 +748,36 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
 
                     showLoader();
                     this.data.tarifa = this.actividadTipoIva.tarifa;
-                   
+
                     //Mappeamos todo el objecto necesario para guardar factura.
                     let params = this.facturaSvc.queryMapper({
-                        data: this.data, 
+                        data: this.data,
                         cliente: this.cliente,
-                        detalles: this.gridOptions.data, 
+                        detalles: this.gridOptions.data,
                         infoAdicionalDocumento: [],
                         historyDatosAdicionales: this.historyDatosAdicionales
                     })
 
-                    this.facturaSvc.save(params).then(response=>{
+                    this.facturaSvc.save(params).then(response => {
                         hideLoader();
                         if (response.code === '0') {
                             this._fS.sweetAlert('warning', response.message, response.titleSms);
                             return
                         }
-                        if (response.code === "1") {                        
+                        if (response.code === "1") {
                             this._fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
-     
+
                             let mainData = {
-                                isRegister: true,                            
+                                isRegister: true,
                                 data: response.dataResponse
                             }
-    
+
                             this.$uibModalInstance.close(mainData)
-    
+
                         }
                     }).catch(error => {
-                          hideLoader();
-                          console.log(error);
+                        hideLoader();
+                        console.log(error);
                     })
 
                 }
@@ -822,30 +849,30 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
 export class ModalNotaEntregaDetalleCtrl extends ModalNotaEntregaCtrl {
 
     static $inject = [
-        '$scope', 
-        '$timeout', 
-        '$uibModalInstance', 
-        'mainService', 
-        'commonService', 
+        '$scope',
+        '$timeout',
+        '$uibModalInstance',
+        'mainService',
+        'commonService',
         'articuloService',
-        'modalService', 
-        'nombreModal', 
-        'formulario', 
-        'toastService', 
+        'modalService',
+        'nombreModal',
+        'formulario',
+        'toastService',
         'params'
     ]
 
     constructor(
-        $scope, 
-        $timeout, 
-        $uibModalInstance, 
-        _mS, 
-        _commonSvc, 
-        articuloSvc,       
-        _modalSvc, 
-        _nombreModalConst, 
-        _fS, 
-        _tS, 
+        $scope,
+        $timeout,
+        $uibModalInstance,
+        _mS,
+        _commonSvc,
+        articuloSvc,
+        _modalSvc,
+        _nombreModalConst,
+        _fS,
+        _tS,
         _params
     ) {
         super({
@@ -859,10 +886,10 @@ export class ModalNotaEntregaDetalleCtrl extends ModalNotaEntregaCtrl {
             _fS,
             _tS
         })
-        
-       this.articuloSvc = articuloSvc;
 
-      
+        this.articuloSvc = articuloSvc;
+
+
 
         this.CELL_TEMPLATE_OPTION = `
         <a  ng-click="grid.appScope.$ctrl.openModalDatoAdicionalArticle(row.entity)" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar dato Adicional" > <i class="fas fa-tags"></i></a >`;
@@ -972,33 +999,35 @@ export class ModalNotaEntregaDetalleCtrl extends ModalNotaEntregaCtrl {
 export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
 
     static $inject = [
-        '$scope', 
-        '$timeout', 
-        '$uibModalInstance', 
-        'mainService', 
-        'commonService', 
-        'notaEntregaService', 
+        '$scope',
+        '$timeout',
+        '$uibModalInstance',
+        'mainService',
+        'commonService',
+        'ventaService',
+        'notaEntregaService',
         'facturaService',
-        'modalService', 
-        'nombreModal', 
-        'formulario', 
-        'toastService', 
+        'modalService',
+        'nombreModal',
+        'formulario',
+        'toastService',
         'params',
         'articuloService'
     ]
 
     constructor(
-        $scope, 
-        $timeout, 
+        $scope,
+        $timeout,
         $uibModalInstance,
-        _mS, 
-        _commonSvc, 
+        _mS,
+        _commonSvc,
+        ventaSvc,
         notaEntregaSvc,
         facturaSvc,
-        _modalSvc, 
-        _nombreModalConst, 
+        _modalSvc,
+        _nombreModalConst,
         _fS,
-        _tS, 
+        _tS,
         _params,
         articuloSvc
     ) {
@@ -1013,7 +1042,8 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
             _fS,
             _tS
         })
-       
+
+        this.ventaSvc = ventaSvc;
         this.notaEntregaSvc = notaEntregaSvc;
         this.facturaSvc = facturaSvc;
         this.articuloSvc = articuloSvc;
@@ -1050,7 +1080,7 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
 
         this.datosAdicionalesArticulo = datosAdicionalesArticulo || [];
 
-        this.historyDatosAdicionales = this.datosAdicionalesArticulo.map(item=>({
+        this.historyDatosAdicionales = this.datosAdicionalesArticulo.map(item => ({
             idArticulo: item.idArticulo,
             idInfoAdicional: item.idInfoAdicional,
             selected: true,
@@ -1060,9 +1090,12 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
         this.disabledImpuestoTarifa = this.actividadTipoIva.codigoPorcentaje == '2';
 
         $uibModalInstance.rendered.then(() => {
-
             $("#btnNewCustomerDocument").on('blur', this.onBlurBtnNewCustomerInvoice)
         })
+
+        this.notificacionVenta = {
+            notificacionVenta: false
+        }
     }
 
     async $onInit() {
@@ -1121,6 +1154,13 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
             this.ventaComprobantePermission = Object.freeze(this.ventaPermission.comprobante);
             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
 
+
+            //notificacion deuda venta cliente 
+            if (resultsDataForm[12].length > 0) {
+                this.notificacionVenta = resultsDataForm[12][0];
+            }
+
+
             this.setColumnDefs('12%');
 
             this.uiGridInvoice = new UiGridOptions({
@@ -1164,7 +1204,7 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
         }
     }
 
-   
+
 
     async onSelectedClienteChange(item) {
         try {
@@ -1174,10 +1214,19 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
                 return
             }
 
-
-            let dataCliente = await this.getClienteById(item);
-            this.cliente = dataCliente;
-            this.$scope.$apply();
+            if (['R', 'C', 'P'].includes(item.tipoIdentificacion)) {
+                let isPendientAccount = await this.ventaSvc.verifyPendientAccount({ idCliente: item.idCliente });
+                if (isPendientAccount && this.notificacionVenta.notificacionVenta) {
+                    this.setCustomerData(item);
+                } else if (this.notificacionVenta.notificacionVenta) {
+                    this.setCustomerData(item);
+                } else {
+                    this.cliente = {};
+                    this.$scope.$apply();
+                }
+            } else {
+                this.setCustomerData(item)
+            }
 
         } catch (error) {
             this.cliente = {};
@@ -1186,18 +1235,24 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
         }
     }
 
+    async setCustomerData(item) {
+        let dataCliente = await this.getClienteById(item);
+        this.cliente = dataCliente;
+        this.$scope.$apply();
+    }
+
     async onSave() {
         try {
             if (!this.isValidaForm()) return
 
-            if(!(this.data.idTiempoCredito) > 0){
+            if (!(this.data.idTiempoCredito) > 0) {
                 this._fS.sweetAlert('warning', 'Seleccione el tiempo crédito');
                 return
             }
 
-            if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
-                for(let item of this.gridOptions.data){
-                    if(item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)){
+            if (this.gridOptions.data.some(item => item.articuloTarifas.some(ta => (ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))) {
+                for (let item of this.gridOptions.data) {
+                    if (item.articuloTarifas.some(ta => (ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)) {
                         this._fS.sweetAlert('warning', `Artículo ${item.descripcion}: La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`)
                     }
                 }
@@ -1235,39 +1290,39 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
             })
 
 
-            if (isConfirmed){
+            if (isConfirmed) {
                 showLoader();
 
-                    //Tarifa Aplicada al Documento
-                    this.data.tarifa = this.actividadTipoIva.tarifa;
-                   
-                    let query = this.notaEntregaSvc.queryMapper({
-                        data: this.data,
-                        cliente: this.cliente,
-                        detalles: this.gridOptions.data,
-                        historyDatosAdicionales: this.historyDatosAdicionales
-                    })
-                    showLoader();
-                    
-                    this.notaEntregaSvc.update(this.data.idNotaEntrega, query).then(response => {
-                        hideLoader()
-                        if (response.code === '0') {
-                            this._fS.sweetAlert('warning', response.message, response.titleSms);
-                        }
-                        if (response.code === "1") {                            
-                            this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                            this.isUpdate = true;
-                        }
-                    }).catch(error => {
-                        hideLoader();
-                        console.log(error)
-                    })
+                //Tarifa Aplicada al Documento
+                this.data.tarifa = this.actividadTipoIva.tarifa;
+
+                let query = this.notaEntregaSvc.queryMapper({
+                    data: this.data,
+                    cliente: this.cliente,
+                    detalles: this.gridOptions.data,
+                    historyDatosAdicionales: this.historyDatosAdicionales
+                })
+                showLoader();
+
+                this.notaEntregaSvc.update(this.data.idNotaEntrega, query).then(response => {
+                    hideLoader()
+                    if (response.code === '0') {
+                        this._fS.sweetAlert('warning', response.message, response.titleSms);
+                    }
+                    if (response.code === "1") {
+                        this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                        this.isUpdate = true;
+                    }
+                }).catch(error => {
+                    hideLoader();
+                    console.log(error)
+                })
             }
 
         } catch (error) {
             hideLoader();
             console.log(error)
-        } 
+        }
     }
 
     closeModal() {
@@ -1279,33 +1334,35 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
 
 export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
     static $inject = [
-        '$scope', 
-        '$timeout', 
-        '$uibModalInstance', 
-        'mainService', 
-        'commonService', 
+        '$scope',
+        '$timeout',
+        '$uibModalInstance',
+        'mainService',
+        'commonService',
+        'ventaService',
         'notaEntregaService',
         'facturaService',
-        'modalService', 
-        'nombreModal', 
-        'formulario', 
-        'toastService', 
+        'modalService',
+        'nombreModal',
+        'formulario',
+        'toastService',
         'params',
         'articuloService'
     ]
 
     constructor(
-        $scope, 
-        $timeout, 
-        $uibModalInstance, 
-        _mS, 
-        _commonSvc, 
+        $scope,
+        $timeout,
+        $uibModalInstance,
+        _mS,
+        _commonSvc,
+        ventaSvc,
         notaEntregaSvc,
         facturaSvc,
-        _modalSvc, 
-        _nombreModalConst, 
-        _fS, 
-        _tS, 
+        _modalSvc,
+        _nombreModalConst,
+        _fS,
+        _tS,
         _params,
         articuloSvc
     ) {
@@ -1322,6 +1379,8 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
         })
 
         this.newCustomer = false;
+
+        this.ventaSvc = ventaSvc;
 
         this.notaEntregaSvc = notaEntregaSvc;
         this.facturaSvc = facturaSvc;
@@ -1358,6 +1417,12 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
 
             $("#btnNewCustomerDocument").on('blur', this.onBlurBtnNewCustomerInvoice)
         })
+
+
+        this.notificacionVenta = {
+            notificacionVenta: false
+        }
+
     }
 
     async $onInit() {
@@ -1403,7 +1468,7 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
 
             if (resultsDataForm[8].length > 0) {
 
-                let {searchCode, multipleVendedor} = resultsDataForm[8][0];
+                let { searchCode, multipleVendedor } = resultsDataForm[8][0];
                 this.isSearchBarcode = searchCode;
                 this.multipleVendedor = multipleVendedor;
 
@@ -1427,6 +1492,11 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
             this.ventaDetailPermission = Object.freeze(this.ventaPermission.detail);
 
             this.usuariosVendedor = resultsDataForm[11];
+
+            //notificacion deuda venta cliente 
+            if (resultsDataForm[12].length > 0) {
+                this.notificacionVenta = resultsDataForm[12][0];
+            }
 
 
             this.setColumnDefs('12%');
@@ -1463,12 +1533,12 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
             this.fechaEmisionEscrita = this._fS.getFechaEscrita(this.data.fechaEmision);
             this.fechaVencimientoEscrita = this._fS.getFechaEscrita(this.data.fechaVencimiento);
 
-            if(this.usuariosVendedor.length>0){
+            if (this.usuariosVendedor.length > 0) {
                 this.data.idUsuario = this.usuariosVendedor.find(item => (item.predeterminado)).idUsuario
-            }else{
+            } else {
                 this.data.idUsuario = 0;
             }
-            
+
             this.setDataInfoEstab(this.establecimientos, this.puntosEmisiones);
 
             this.$scope.$apply();
@@ -1489,7 +1559,7 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
         } else {
             this.newCustomer = false;
         }
-        this.cliente = result; 
+        this.cliente = result;
     }
 
     async onSelectedClienteChange(item) {
@@ -1500,17 +1570,19 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
                 return
             }
 
-
-            let dataCliente = await this.getClienteById(item);
-            this.cliente = dataCliente;
-
-            if (this.TIPO_REGISTRO === 'DUPLICAR') {
-                this.data.placa = '';
-                this.data.idTiempoCredito = this.cliente.idTiempoCredito;
-                this.getFechaVencimiento(new Date());
+            if (['R', 'C', 'P'].includes(item.tipoIdentificacion)) {
+                let isPendientAccount = await this.ventaSvc.verifyPendientAccount({ idCliente: item.idCliente });
+                if (isPendientAccount && this.notificacionVenta.notificacionVenta) {
+                    this.setCustomerData(item);
+                } else if (this.notificacionVenta.notificacionVenta) {
+                    this.setCustomerData(item);
+                } else {
+                    this.cliente = {};
+                    this.$scope.$apply();
+                }
+            } else {
+                this.setCustomerData(item)
             }
-            this.$scope.$apply();
-
         } catch (error) {
             this.cliente = {};
             console.log('ERROR AL OBTENER DATOS DEL CLIENTE', error)
@@ -1518,20 +1590,29 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
         }
     }
 
+    async setCustomerData(item) {
+        let dataCliente = await this.getClienteById(item);
+        this.cliente = dataCliente;
+        this.data.placa = '';
+        this.data.idTiempoCredito = this.cliente.idTiempoCredito;
+        this.getFechaVencimiento(new Date());
+        this.$scope.$apply();
+    }
+
     async onSave() {
         try {
-          
+
 
             if (!this.isValidaForm()) return
 
-            if(!(this.data.idTiempoCredito) > 0){
+            if (!(this.data.idTiempoCredito) > 0) {
                 this._fS.sweetAlert('warning', 'Seleccione el tiempo crédito');
                 return
             }
 
-            if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
-                for(let item of this.gridOptions.data){
-                    if(item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)){
+            if (this.gridOptions.data.some(item => item.articuloTarifas.some(ta => (ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))) {
+                for (let item of this.gridOptions.data) {
+                    if (item.articuloTarifas.some(ta => (ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)) {
                         this._fS.sweetAlert('warning', `Artículo ${item.descripcion}: La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`)
                     }
                 }
@@ -1579,29 +1660,29 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
             })
 
 
-            if (isConfirmed){
+            if (isConfirmed) {
                 showLoader();
 
                 //Tarifa Aplicada al Documento
                 this.data.tarifa = this.actividadTipoIva.tarifa;
-                
+
                 let query = this.notaEntregaSvc.queryMapper({
                     data: this.data,
                     cliente: this.cliente,
                     detalles: this.gridOptions.data,
                     historyDatosAdicionales: this.historyDatosAdicionales
                 })
-                
+
                 this.notaEntregaSvc.save(query).then(response => {
                     hideLoader()
                     if (response.code === '0') {
                         this._fS.sweetAlert('warning', response.message, response.titleSms);
                     }
-                    if (response.code === "1") {                            
+                    if (response.code === "1") {
                         this._fS.sweetAlert('success', response.message, response.titleSms, 1000);
-                        
+
                         let mainData = {
-                            isRegister: true,                          
+                            isRegister: true,
                             data: response.dataResponse,
                         }
 
@@ -1613,7 +1694,7 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
                 })
             }
 
-            
+
 
         } catch (error) {
             hideLoader();
@@ -1629,14 +1710,14 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
 
             if (!this.isValidaForm()) return
 
-            if(!(this.data.idTiempoCredito) > 0){
+            if (!(this.data.idTiempoCredito) > 0) {
                 this._fS.sweetAlert('warning', 'Seleccione el tiempo crédito');
                 return
             }
 
-            if(this.gridOptions.data.some(item=>item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))){
-                for(let item of this.gridOptions.data){
-                    if(item.articuloTarifas.some(ta=>(ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)){
+            if (this.gridOptions.data.some(item => item.articuloTarifas.some(ta => (ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))) {
+                for (let item of this.gridOptions.data) {
+                    if (item.articuloTarifas.some(ta => (ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)) {
                         this._fS.sweetAlert('warning', `Artículo ${item.descripcion}: La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`)
                     }
                 }
@@ -1685,30 +1766,30 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
             })
 
 
-            if (isConfirmed){
+            if (isConfirmed) {
                 showLoader();
                 this.data.tarifa = this.actividadTipoIva.tarifa;
-               
+
                 //Mappeamos todo el objecto necesario para guardar factura.
                 let params = this.facturaSvc.queryMapper({
-                    data: this.data, 
+                    data: this.data,
                     cliente: this.cliente,
-                    detalles: this.gridOptions.data, 
+                    detalles: this.gridOptions.data,
                     infoAdicionalDocumento: [],
                     historyDatosAdicionales: this.historyDatosAdicionales
                 })
 
-                this.facturaSvc.save(params).then(response=>{
+                this.facturaSvc.save(params).then(response => {
                     hideLoader();
                     if (response.code === '0') {
                         this._fS.sweetAlert('warning', response.message, response.titleSms);
                         return
                     }
-                    if (response.code === "1") {                        
+                    if (response.code === "1") {
                         this._fS.sweetAlert('success', 'Registrado Correctamente', response.titleSms, 1000);
 
                         let mainData = {
-                            isRegister: true,                         
+                            isRegister: true,
                             data: response.dataResponse,
                         }
 
@@ -1716,14 +1797,14 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
 
                     }
                 }).catch(error => {
-                      hideLoader();
-                      console.log(error);
+                    hideLoader();
+                    console.log(error);
                 })
             }
         } catch (error) {
             hideLoader();
             console.log(error)
-        }  
+        }
     }
 
 }

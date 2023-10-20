@@ -23,6 +23,63 @@
         }
 
 
+        /**
+         * tipo 1: get invoices 
+         * tipo 2: get invoices for credit note 
+         * tipo 3: get estabs, ptos. emisiones para los filtros
+         * @returns 
+         */
+
+        service.get = (params) => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(params), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload) 
+                    
+                    if (params.tipo === 3) {
+                        let tempEstabsAndPtosEmision = mainData[0];
+                        let estadosDoc = mainData[1];
+
+                        const estabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
+                            const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
+
+                            if (!existingItem) {
+                                acc.push({
+                                    idEstablecimiento: item.idEstablecimiento,
+                                    nombreComercial: item.nombreComercial,
+                                    codEstab: item.codEstab,
+                                    defaultEstab: item.defaultEstab,
+                                    puntosEmision: [{
+                                        idPuntoEmision: item.idPuntoEmision,
+                                        ptoEmi: item.ptoEmi, 
+                                        defaultPtoEmi: item.defaultPtoEmi
+                                    }]
+                                });
+                            } else {
+                                existingItem.puntosEmision.push({
+                                    idPuntoEmision: item.idPuntoEmision,
+                                    ptoEmi: item.ptoEmi,                                   
+                                    defaultPtoEmi: item.defaultPtoEmi
+                                });
+                            } 
+                            return acc;
+                        }, []);
+ 
+
+                        return {
+                            estabs,
+                            estadosDoc
+                        }
+                    }
+                }
+            })
+        }
+
+
+
         service.getAll = function(query) {
             
             return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, {tipo: 1})), null, true).then(response => {

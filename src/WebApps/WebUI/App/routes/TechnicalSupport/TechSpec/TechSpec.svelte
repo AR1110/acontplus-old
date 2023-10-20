@@ -1,6 +1,6 @@
-<script lang="ts">
+<script lang="ts"> 
   import List from "./components/List.svelte";
-  import TechSpecDialog from "./components/TechSpecDialog.svelte";
+  import TechSpecDialog from "./components/TechSpecDialog.svelte"; 
 
   let showPopup = false;
 
@@ -13,6 +13,8 @@
 
     console.log(data);
   };
+
+  
 </script>
 
 <div class="d-flex justify-content-end mb-3">

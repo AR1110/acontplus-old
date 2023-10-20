@@ -4,7 +4,7 @@
 
     app.controller('notaEntregaCtrl', notaEntregaCtrl);
 
-    notaEntregaCtrl.$inject = ['$scope','$filter','mainService','notaEntregaService','commonService','modalService','nombreModal','nombreModalContabilidad','toastService','formulario','decodeToken'];
+    notaEntregaCtrl.$inject = ['$scope', '$filter', 'mainService', 'notaEntregaService', 'commonService', 'modalService', 'nombreModal', 'nombreModalContabilidad', 'toastService', 'formulario', 'decodeToken'];
 
     function notaEntregaCtrl($scope, $filter, _mS, notaEntregaSvc, _commonSvc, _modalSvc, _nombreModalConst, nombreModalContabilidad, _tS, _fS, decodeToken) {
 
@@ -23,6 +23,7 @@
             pageIndex: 1,
             maxSize: 5,
             totalRecords: 0,
+            nroSecuencial: 0,
             busqueda: "",
             byStock: 0,
         };
@@ -39,10 +40,6 @@
         $scope.notaEntregas = [];
 
         let idUsuarioRol = Number(decodeToken.idUsuarioRol)
-
-
-
-
 
         // removed focus new NE
         let btnNewDocument = document.getElementById("btnNewDocument");
@@ -126,21 +123,16 @@
             try {
                 let dataSearch = {
                     codEstab: $scope.dataSearch.codEstab,
+                    idPuntoEmision: $scope.dataSearch.idPuntoEmision,
                     pageIndex: $scope.dataSearch.pageIndex,
-                    pageSize: $scope.dataSearch.pageSize,
-                    checkBoxDefault: false,
-                    checkBoxCliente: $scope.dataSearch.idCliente > 0,
-                    byCliente: $scope.dataSearch.idCliente,
-                    checkBoxFecha: true,
-                    checkBoxUsuario: $scope.dataSearch.byUsuario > 0,
-                    byUsuario: $scope.dataSearch.byUsuario,
-                    checkBoxEstado: $scope.dataSearch.codEstado ? true : false,
-                    codEstado: $scope.dataSearch.codEstado,
+                    pageSize: $scope.dataSearch.pageSize,  
+                    byCliente: $scope.dataSearch.idCliente, 
+                    checkBoxFecha: $scope.dataSearch.nroSecuencial ? false : true,  
+                    byUsuario: $scope.dataSearch.byUsuario, 
+                    codEstado: $scope.dataSearch.codEstado, 
                     fechaInicio: _fS.formatDateMoment($scope.dataSearch.fechaInicio),
-                    fechaFin: _fS.formatDateMoment($scope.dataSearch.fechaFin),
-                    tipoFecha: 'FE',
-                    isSearchNroSequential: $scope.dataSearch.nroSecuencial ? true : false,
-                    nroSecuencial: $scope.dataSearch.nroSecuencial
+                    fechaFin: _fS.formatDateMoment($scope.dataSearch.fechaFin),   
+                    nroSecuencial: Number($scope.dataSearch.nroSecuencial)
                 }
 
                 showLoader();
@@ -161,40 +153,52 @@
                     $scope.totalSaldo = _fS.roundNumber(dataTotals.totalSaldo, 5);
 
                 }).catch(error => {
+                    $scope.dataSearch.totalRecords = 0;
                     hideLoader();
                     console.log(error)
-                })
- 
-                // notaEntregaSvc.getDataForm().then(result => {
-                //     $scope.jsonPermission = JSON.parse(result[9][0].jsonPermission)
-                // })
-
+                })  
             } catch (error) {
                 hideLoader();
+                $scope.dataSearch.totalRecords = 0;
                 console.log(error)
             }
         }
 
 
         $scope.initiload = async function () {
-            _commonSvc.getEstabAsign().then(response => {
-                $scope.establecimientos = response;
-                let codEstab = $scope.establecimientos.length > 0 ? $scope.establecimientos[0].codEstab : 0;
+            showLoader();
+            notaEntregaSvc.get({ tipo: 3 }).then(response => {
+                hideLoader();
+                $scope.establecimientos = response.estabs;
+                $scope.estadoDocumentos = response.estadosDoc;
 
-                $scope.dataSearch.codEstab = codEstab;
-                $scope.getNotaEntregas();
+                if ($scope.establecimientos.length > 0) {
+                    let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
+                    $scope.puntosEmision = dataEstab.puntosEmision;
+                    $scope.dataSearch.codEstab = dataEstab.codEstab;
+                    $scope.dataSearch.idPuntoEmision = $scope.puntosEmision.find(pto => (pto.defaultPtoEmi)).idPuntoEmision;
+                    $scope.getNotaEntregas();
+                }
+
+                console.log(response)
+            }).catch(() => {
+                hideLoader();
             })
 
             notaEntregaSvc.getDataForm().then(result => {
                 $scope.jsonPermission = JSON.parse(result[9][0].jsonPermission)
             })
 
-            _commonSvc.getEstadoDocByCodDoc('NE').then(response=>{
-                $scope.estadoDocumentos = response;
-            })
-
         }
         $scope.initiload();
+
+
+        $scope.estabFilter = function(){
+            let dataEstab = $scope.establecimientos.find(estab=>estab.codEstab===$scope.dataSearch.codEstab);
+            $scope.puntosEmision = dataEstab.puntosEmision;
+            $scope.dataSearch.idPuntoEmision = $scope.puntosEmision.find(pto=>(pto.defaultPtoEmi)).idPuntoEmision;
+            $scope.getNotaEntregas();
+        }
 
         $scope.pagechanged = function () {
             $scope.getNotaEntregas();
