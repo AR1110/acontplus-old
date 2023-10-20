@@ -17,7 +17,7 @@
   };
 
   onMount(() => {
-    orderService.get().then((response) => {
+    orderService.get({tipo: 1}).then((response) => {
       console.log(response);
     });
   });
