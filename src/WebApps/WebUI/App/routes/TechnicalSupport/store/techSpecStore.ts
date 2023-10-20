@@ -4,12 +4,32 @@ import { categoryService } from "../services/category.service";
 import { showLoader } from "$utils/loading-spinner";
 import tS from "$utils/toast";
 import { deviceService } from "../services/device.service";
-import { estabAsignService } from "$services/restaurant/estab-asign-service";
 import { orderService } from "../services";
+
+type PtoEmi = {
+    idPuntoEmision: number
+    ptoEmi: string
+    defaultPtoEmi: boolean
+}
+type Bodega = {
+    idBodega: number
+    defaultBodega: boolean,
+    nombreBodega: string
+}
+
+type Estab = {
+    idEstablecimiento: number
+    nombreComercial: string
+    codEstab: string
+    defaultEstab: boolean
+    puntosEmision: Array<PtoEmi>,
+    bodegas: Array<Bodega>
+}
 
 //Start Tech Spec 
 type Data = {
     establecimientoId: number
+    tempEstablecimientoId: number
     puntoEmisionId: number
     customerCompanyId: number
     deviceId: number
@@ -43,6 +63,8 @@ type Device = {
 //End Device  
 
 type DeviceState = {
+    estabs: Array<Estab>
+    puntosEmision: Array<PtoEmi>
     categories: Array<Category>,
     dataDevice: Device
 }
@@ -50,6 +72,7 @@ const data: Data = {
     customerCompanyId: 0,
     deviceId: 0,
     establecimientoId: 0,
+    tempEstablecimientoId: 0,
     puntoEmisionId: 0,
     createdAt: new Date().toISOString().slice(0, 10),
 }
@@ -71,6 +94,8 @@ const dataDevice = {
     specs: ""
 }
 const initialDeviceState: DeviceState = {
+    estabs: [],
+    puntosEmision: [],
     categories: [],
     dataDevice: structuredClone(dataDevice)
 }
@@ -80,28 +105,36 @@ export const techSpecStore = writable<State & DeviceState>({ ...initialState, ..
 
 
 
-export const getAll = ()=>{
-    orderService.get()
-}
-
 /**
  * se ejecuta al cargar component TechSpecDialog
  */
 export const initiload = async () => {
     try {
-        showLoader();
-        categoryService.get().then(response=>{
+        categoryService.get().then(response => {
             techSpecStore.update(state => {
                 state.categories = response;
                 return state;
             })
         })
+        showLoader();
+        orderService.get({ tipo: 1 }).then((response) => { 
+            const estabs: Array<Estab> = response.estabs;
 
-        estabAsignService.get(JSON.stringify({})).then(response=>{
-            console.log(response)
-        })
+            //Establecimiento predeterminada.
+            const datastab = estabs.find(estab => (estab.defaultEstab))
+            const puntosEmision: Array<PtoEmi> = datastab.puntosEmision;            
+            //Punto Emision predeterminada
+            const dataPuntoEmision = puntosEmision.find(ptoEmi => (ptoEmi.defaultPtoEmi));
 
-        hideLoader();
+            techSpecStore.update(state => {
+                state.estabs = response.estabs;
+                state.puntosEmision = puntosEmision;
+                state.data.establecimientoId = datastab.idEstablecimiento;
+                state.data.tempEstablecimientoId = datastab.idEstablecimiento;
+                state.data.puntoEmisionId = dataPuntoEmision.idPuntoEmision;
+                return state;
+            })
+        }).finally(()=>hideLoader());
     } catch (error) {
         console.log(error)
     }

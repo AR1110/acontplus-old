@@ -1,8 +1,6 @@
-<script lang="ts">
-  import { onMount } from "svelte";
+<script lang="ts"> 
   import List from "./components/List.svelte";
-  import TechSpecDialog from "./components/TechSpecDialog.svelte";
-  import { orderService } from "../services";
+  import TechSpecDialog from "./components/TechSpecDialog.svelte"; 
 
   let showPopup = false;
 
@@ -16,11 +14,7 @@
     console.log(data);
   };
 
-  onMount(() => {
-    orderService.get({tipo: 1}).then((response) => {
-      console.log(response);
-    });
-  });
+  
 </script>
 
 <div class="d-flex justify-content-end mb-3">

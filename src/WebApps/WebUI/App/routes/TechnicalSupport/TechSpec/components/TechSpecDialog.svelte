@@ -2,6 +2,7 @@
   import { fade, fly } from "svelte/transition";
   import { quintOut } from "svelte/easing";
   import { onDestroy, onMount } from "svelte";
+  import Swal from "sweetalert2";
   import {
     techSpecCustomerStore,
     activeShowForm,
@@ -46,7 +47,7 @@
       setCustomerCompanyId(data);
     }
     if (dataType === "DATASRI") {
-      activeShowForm("NEW", 0, data)
+      activeShowForm("NEW", 0, data);
     }
   };
   /* End Modal Customer List */
@@ -55,6 +56,37 @@
     initiload();
     console.log("dialog spec");
   });
+
+  const onChangeEstab = () => {
+    Swal.fire({
+      text: "Esta seguro de cambiar el establecimiento?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí!",
+      cancelButtonText: "No!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const dataEstab = $techSpecStore.estabs.find(estab=>estab.idEstablecimiento===data.establecimientoId);
+        const puntosEmision = dataEstab.puntosEmision;
+        const dataPuntoEmision = puntosEmision.find(ptoEmi=>(ptoEmi.defaultPtoEmi));
+
+        techSpecStore.update(state=>{
+          state.puntosEmision = puntosEmision;
+          state.data.tempEstablecimientoId = state.data.establecimientoId;
+          state.data.puntoEmisionId = dataPuntoEmision.idPuntoEmision;
+          return state;
+        }) 
+      }else{
+        techSpecStore.update(state=>{
+          state.data.establecimientoId = state.data.tempEstablecimientoId;
+          return state;
+        })
+      }
+    });
+    console.log(data);
+  };
 
   const modalClose = (data) => {
     open = false;
@@ -110,8 +142,14 @@
                     id="estab"
                     class="form-control border-select"
                     required
+                    bind:value={data.establecimientoId}
+                    on:change={onChangeEstab}
                   >
-                    <option value="" />
+                    {#each $techSpecStore.estabs as estab}
+                      <option value={estab.idEstablecimiento}
+                        >{estab.nombreComercial}</option
+                      >
+                    {/each}
                   </select>
                 </div>
               </div>
@@ -124,9 +162,14 @@
                     name="puntoEmision"
                     id="puntoEmision"
                     class="form-control border-select"
+                    bind:value={data.puntoEmisionId}
                     required
                   >
-                    <option value="" />
+                    {#each $techSpecStore.puntosEmision as estab}
+                      <option value={estab.idPuntoEmision}
+                        >{estab.ptoEmi}</option
+                      >
+                    {/each}
                   </select>
                 </div>
               </div>
