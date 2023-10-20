@@ -1,13 +1,5 @@
--- ================================================
--- Template generated from Template Explorer using:
--- Create Procedure (New Menu).SQL
---
--- Use the Specify Values for Template Parameters 
--- command (Ctrl-Shift-M) to fill in the parameter 
--- values below.
---
--- This block of comments will not be included in
--- the definition of the procedure.
+USE Acontplus
+GO
 -- ================================================
 SET ANSI_NULLS ON
 GO
@@ -33,16 +25,9 @@ BEGIN
 
 	IF @tipo = 1
 		BEGIN
-			SET @tableNames = 'puntosEmision,bodegas,subfamilias,configuracion,configDocumento'
+			SET @tableNames = 'puntosEmision,bodegas'
 			SELECT * FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
 			SELECT * FROM v_Bodega_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId
-			SELECT * FROM SubFamilia WITH(NOLOCK) WHERE idEntidad = @companyId
-			SELECT * FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @companyId AND codConfig = 'CD' --AND JSON_VALUE(jsonConfig, '$[0].codTransaccion') = 'AL'
-			SELECT cd.*
-			FROM Config.v_ConfigDocumento cd
-				INNER JOIN v_PtoEmi_Asign pa ON cd.codEstab = pa.codEstab
-			WHERE pa.idUsuarioRol = @userRoleId
-			AND cd.codDoc = 'TF'
 		END
 
 END
