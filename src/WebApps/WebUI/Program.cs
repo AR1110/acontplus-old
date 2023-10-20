@@ -10,9 +10,6 @@ namespace testWebApi
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            //dynamic origins
-            string[] origins = builder.Configuration.GetSection("SafeOrigins").Value.Split('|');
-            //for mor information https://docs.microsoft.com/en-us/aspnet/core/mvc/views/view-compilation?view=aspnetcore-6.0&tabs=visual-studio
 
             //var mvcBuilder = builder.Services.AddRazorPages();
             //if (builder.Environment.IsDevelopment())
@@ -22,28 +19,13 @@ namespace testWebApi
             builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
             ConfigHelper.AddJsonFiles(builder.Configuration);
 
-            builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
-
             builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 
-            builder.Services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(
-                    policy =>
-                    {
-                        policy.AllowAnyHeader();
-                        policy.AllowAnyMethod();
-                        policy.WithOrigins(origins);
-                    });
-            });
+            builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
-            // Add services to the container.
             builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
-            //SignalR
             builder.Services.AddSignalR();
-
-            builder.Services.AddDistributedMemoryCache();
 
             builder.Services.AddMvc();
 
@@ -64,10 +46,10 @@ namespace testWebApi
             var app = builder.Build();
 
             //cookies policy
-            var cookiePolicyOptions = new CookiePolicyOptions
-            {
-                MinimumSameSitePolicy = SameSiteMode.Strict
-            };
+            //var cookiePolicyOptions = new CookiePolicyOptions
+            //{
+            //    MinimumSameSitePolicy = SameSiteMode.Strict
+            //};
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -82,8 +64,6 @@ namespace testWebApi
             app.UseStaticFiles();
 
             app.UseRouting();
-
-            app.UseCors();
 
             app.UseAuthentication(); //added manually
 
