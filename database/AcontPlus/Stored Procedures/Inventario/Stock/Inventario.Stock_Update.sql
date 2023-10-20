@@ -55,7 +55,10 @@ BEGIN
 
 	UPDATE Inventario.Stock WITH(ROWLOCK) SET cantidad = ISNULL(@cantidadActual,0) WHERE idArticulo = @idArticulo AND idBodega = @idBodega
 
-	SELECT @stock = SUM(cantidad) FROM Inventario.Stock WITH (NOLOCK) WHERE idArticulo = @idArticulo 
+	SELECT @stock = SUM(cantidad) 
+    FROM Inventario.Stock s WITH (NOLOCK)
+    INNER JOIN dbo.Bodega b WITH (NOLOCK) ON b.idBodega = s.idBodega
+    WHERE idArticulo = @idArticulo AND b.estado = 1
 
 	UPDATE dbo.Articulo WITH(ROWLOCK) SET stock = ISNULL(@stock,0) WHERE idArticulo = @idArticulo
 	

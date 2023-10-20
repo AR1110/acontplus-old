@@ -11,7 +11,7 @@ GO
 -- Description:	SP Para leer los datos e la tabla articulo
 -- =============================================
 --Almacen.Articulo_Get 28, '{"tipo":10,"idArticulo":5}'
--- Inventario.Articulo_Get 28, '{"tipo":5,"idArticulo":5}'
+-- Inventario.Articulo_Get 28, '{"idArticulo":77528,"idBodega":128,"tipo":10}'
 IF OBJECT_ID(N'Inventario.Articulo_Get', N'P') IS NOT NULL
 DROP PROCEDURE Inventario.Articulo_Get
 GO
@@ -639,7 +639,7 @@ BEGIN
 					,stock    
                     ,s3ObjectKey
 	                ,s3ObjectUrl
-			FROM Inventario.v_Articulo WHERE idArticulo = @idArticulo 
+			FROM Inventario.v_Articulo WITH (NOLOCK) WHERE idArticulo = @idArticulo 
 
 			SELECT 
 				a.idMedida

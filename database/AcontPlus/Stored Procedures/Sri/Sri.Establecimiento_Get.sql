@@ -32,9 +32,9 @@ BEGIN
 	DECLARE @idEntidad INT
 	DECLARE @ruc VARCHAR(15)
 
-	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
+	SELECT @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
-	SELECT @ruc = ruc FROM dbo.Entidad WHERE idEntidad  = @idEntidad
+	SELECT @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad  = @idEntidad
 
 	SELECT 
 		e.idEstablecimiento
