@@ -452,5 +452,20 @@ BEGIN
 				  ,codEstado
 			FROM @tbCuotasInteres 
 		END 
+
+    -- DEUDAS EN NOTIFICACIONES DE LAS VENTAS 
+    IF @tipo = 5
+        BEGIN
+            SELECT @idCliente = idCliente FROM OPENJSON(@json) WITH (idCliente INT '$.idCliente')
+
+            SELECT CAST(count(*) AS varchar) + '  '  + IIF(codDoc = '01','Facturas','Notas de Entrega') as documento 
+                  ,SUM(importeTotal) as importeTotal
+                  ,SUM(abono) as abono
+                  ,SUM(saldo) as saldo
+            FROM v_CuentaPorCobrar WITH (NOLOCK) 
+            WHERE idCliente = @idCliente
+              AND codEstado IN ('PP','PE')
+            GROUP BY codDoc
+        END 
 END
 GO
