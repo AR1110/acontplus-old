@@ -3,6 +3,7 @@ GO
 CREATE OR ALTER VIEW Inventario.v_Articulo_Transaccion WITH SCHEMABINDING AS (
 	SELECT ts.idTransaccion
 		  ,ts.idTipoDocumento
+          ,ts.idDocumento
 		  ,ts.idTipoTransaccion
 		  ,ts.idArticulo
 		  ,ts.idBodega

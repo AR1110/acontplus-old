@@ -210,7 +210,7 @@ BEGIN
 				,idEntidad
 				,importacion)
 			SELECT 
-				 'I'+Helper.F_Auto_Sequential(id+@sequential)
+				 NEWID()
 				,idTipoIva
 				,idMedida
 				,idSubFamilia

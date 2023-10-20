@@ -18,7 +18,7 @@ CREATE OR ALTER VIEW Mechanical.v_SupportDetail WITH SCHEMABINDING AS(
         ,a.codigo
         ,m.descripcion  AS Medida
     FROM Mechanical.SupportDetail       sd WITH (NOLOCK)
-    INNER JOIN Inventario.v_Articulo    a  WITH (NOLOCK) ON a.idArticulo = sd.ArticuloId
+    INNER JOIN dbo.Articulo             a  WITH (NOLOCK) ON a.idArticulo = sd.ArticuloId
     INNER JOIN dbo.Medida               m  WITH (NOLOCK) ON m.idMedida   = sd.MedidaId
 )
 

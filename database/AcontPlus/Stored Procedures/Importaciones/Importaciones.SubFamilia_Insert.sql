@@ -42,16 +42,18 @@ BEGIN
 
 	--SELECT @sequential = COUNT(*) FROM dbo.SubFamilia
 
-	SELECT @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
-
-
-	INSERT INTO @table(descripcion,siglas)
-	SELECT js.descripcion,js.siglas FROM OPENJSON(@json) 
-	WITH(descripcion VARCHAR(200) '$.descripcion',siglas VARCHAR(10)'$.siglas') as js
-
-	SELECT @count = COUNT(*) FROM @table 
 
 	BEGIN TRY
+        
+        SELECT @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @idRol
+
+
+	    INSERT INTO @table(descripcion,siglas)
+	    SELECT js.descripcion,js.siglas FROM OPENJSON(@json) 
+	    WITH(descripcion VARCHAR(200) '$.descripcion',siglas VARCHAR(10)'$.siglas') as js
+
+	    SELECT @count = COUNT(*) FROM @table 
+
 		BEGIN TRAN 
 			INSERT INTO dbo.SubFamilia(codigo,siglas,descripcion,fechaRegistro,idUsuario,idEntidad,importacion,ultimoSecuencial)
 			SELECT NEWID(),siglas,descripcion,dbo.ufnGetDateEcuador(),@idUsuario,@idEntidad,importacion,ultimoSecuencial FROM @table 
@@ -68,29 +70,32 @@ BEGIN
 		BEGIN
 			ROLLBACK TRAN; 
 		END
+        INSERT INTO ErroresSistema (
+			token
+			,method
+			,errorNumber
+			,errorSeverity
+			,errorState
+			,errorProcedure
+			,errorLine
+			,errorMessage
+			,errorDate
+			,idUsuario
+			)
+		VALUES (
+			NEWID()
+			,'/ImportacionesSubfamilia/Insert'
+			,ERROR_NUMBER()
+			,ERROR_SEVERITY()
+			,ERROR_STATE()
+			,ERROR_PROCEDURE()
+			,ERROR_LINE()
+			,ERROR_MESSAGE()
+			,GETDATE()
+			,@idUsuario
+			)
 		SELECT '0' code, 'Error en el procedimiento: '+ERROR_MESSAGE() as 'message'
-		INSERT INTO ErroresSistema
-								   (token
-								   ,method
-								   ,errorNumber
-								   ,errorSeverity 
-								   ,errorState
-								   ,errorProcedure
-								   ,errorLine
-								   ,errorMessage
-								   ,errorDate
-								   ,idUsuario)
-							VALUES
-									(NEWID()
-									,'/ImportacionSubFamilia'
-									,ERROR_NUMBER()
-									,ERROR_SEVERITY()
-									,ERROR_STATE()
-									,ERROR_PROCEDURE()
-									,ERROR_LINE()
-									,ERROR_MESSAGE()
-									,GETDATE()
-									,@idUsuario)
+		
 	END CATCH
 END
 GO

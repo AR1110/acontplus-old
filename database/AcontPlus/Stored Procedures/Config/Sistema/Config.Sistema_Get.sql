@@ -93,7 +93,7 @@ BEGIN
 
 	IF @codConfig = 'CS'
 		BEGIN
-			SELECT dt.*,notificacion = ns.descripcion,idSistema = @idSistema
+			SELECT ISNULL(dt.estado,0) as estado,notificacion = ns.descripcion,idSistema = @idSistema, ns.codigo , ns.idNotificacionSistema
 			FROM OPENJSON(@jsonConfig)
 			WITH (idNotificacionSistema INT '$.idNotificacionSistema'
 			     ,codigo         VARCHAR(5) '$.codigo'

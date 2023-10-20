@@ -42,14 +42,14 @@ BEGIN
 	DECLARE @table table 
 	(
 		id INT UNIQUE NOT NULL
-	   ,codigo VARCHAR(10) UNIQUE
+	   ,codigo VARCHAR(300) UNIQUE NOT NULL
 	   ,descripcion VARCHAR(200) NOT NULL
 	)
 
 	DECLARE @tableFamily TABLE 
 	(
 		id INT UNIQUE NOT NULL
-	   ,codigo VARCHAR(10) UNIQUE
+	   ,codigo  UNIQUEIDENTIFIER NOT NULL
 	   ,siglas VARCHAR(25) NOT NULL
 	   ,descripcion VARCHAR(200) NOT NULL
 	)
