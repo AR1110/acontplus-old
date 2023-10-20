@@ -545,7 +545,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
             showLoader();
 
             let resultsDataForm = await this.initiload();
-            
+
             let {
                 UiGridOptions
             } = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
@@ -716,6 +716,8 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
                 let isPendientAccount = await this.ventaSvc.verifyPendientAccount({ idCliente: item.idCliente });
                 if (isPendientAccount && this.notificacionVenta.notificacionVenta) {
                     this.setCustomerData(item);
+                } else if (this.notificacionVenta.notificacionVenta) {
+                    this.setCustomerData(item);
                 } else {
                     this.cliente = {};
                     this.$scope.$apply();
@@ -870,24 +872,24 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
     ]
 
     constructor(
-        $scope, 
-        $timeout, 
-        $uibModalInstance, 
-        ventaSvc, 
-        facturaSvc, 
-        _mS, 
-        _commonSvc, 
-        _modalSvc, 
-        _nombreModalConst, 
-        _fS, 
-        _tS, 
-        _params, 
+        $scope,
+        $timeout,
+        $uibModalInstance,
+        ventaSvc,
+        facturaSvc,
+        _mS,
+        _commonSvc,
+        _modalSvc,
+        _nombreModalConst,
+        _fS,
+        _tS,
+        _params,
         articuloSvc
-        ) {
+    ) {
         super({
             $scope,
             $timeout,
-            $uibModalInstance, 
+            $uibModalInstance,
             _mS,
             _commonSvc,
             _modalSvc,
@@ -1079,6 +1081,8 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
             if (['R', 'C', 'P'].includes(item.tipoIdentificacion)) {
                 let isPendientAccount = await this.ventaSvc.verifyPendientAccount({ idCliente: item.idCliente });
                 if (isPendientAccount && this.notificacionVenta.notificacionVenta) {
+                    this.setCustomerData(item);
+                } else if (this.notificacionVenta.notificacionVenta) {
                     this.setCustomerData(item);
                 } else {
                     this.cliente = {};
@@ -1367,7 +1371,7 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
 
         this.newCustomer = false;
         this.historyDatosAdicionales = [];
- 
+
         let {
             TIPO_REGISTRO,
             data
@@ -1537,6 +1541,8 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
                 let isPendientAccount = await this.ventaSvc.verifyPendientAccount({ idCliente: item.idCliente });
                 if (isPendientAccount && this.notificacionVenta.notificacionVenta) {
                     this.setCustomerData(item);
+                } else if (this.notificacionVenta.notificacionVenta) {
+                    this.setCustomerData(item);
                 } else {
                     this.cliente = {};
                     this.$scope.$apply();
@@ -1554,10 +1560,10 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
     async setCustomerData(item) {
         let dataCliente = await this.getClienteById(item);
         this.cliente = dataCliente;
- 
+
         this.data.placa = '';
         this.data.idTiempoCredito = this.cliente.idTiempoCredito;
-        this.getFechaVencimiento(new Date());         
+        this.getFechaVencimiento(new Date());
         this.$scope.$apply();
     }
 

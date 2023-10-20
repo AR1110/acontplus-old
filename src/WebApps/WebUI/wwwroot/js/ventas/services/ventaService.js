@@ -161,7 +161,7 @@
                         <thead>
                             <tr>
                                 <th><small>N°</small></th>                              
-                                <th><small>Tipo. Dov</small></th>                                                              
+                                <th><small>Tipo. Doc.</small></th>                                                              
                                 <th><small>Total</small></th>
                                 <th><small>Abono</small></th>
                                 <th><small>Saldo</small></th>

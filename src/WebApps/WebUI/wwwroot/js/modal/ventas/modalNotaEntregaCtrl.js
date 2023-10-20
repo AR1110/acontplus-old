@@ -549,6 +549,8 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
                 let isPendientAccount = await this.ventaSvc.verifyPendientAccount({ idCliente: item.idCliente });
                 if (isPendientAccount && this.notificacionVenta.notificacionVenta) {
                     this.setCustomerData(item);
+                } else if (this.notificacionVenta.notificacionVenta) {
+                    this.setCustomerData(item);
                 } else {
                     this.cliente = {};
                     this.$scope.$apply();
@@ -1216,6 +1218,8 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
                 let isPendientAccount = await this.ventaSvc.verifyPendientAccount({ idCliente: item.idCliente });
                 if (isPendientAccount && this.notificacionVenta.notificacionVenta) {
                     this.setCustomerData(item);
+                } else if (this.notificacionVenta.notificacionVenta) {
+                    this.setCustomerData(item);
                 } else {
                     this.cliente = {};
                     this.$scope.$apply();
@@ -1569,6 +1573,8 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
             if (['R', 'C', 'P'].includes(item.tipoIdentificacion)) {
                 let isPendientAccount = await this.ventaSvc.verifyPendientAccount({ idCliente: item.idCliente });
                 if (isPendientAccount && this.notificacionVenta.notificacionVenta) {
+                    this.setCustomerData(item);
+                } else if (this.notificacionVenta.notificacionVenta) {
                     this.setCustomerData(item);
                 } else {
                     this.cliente = {};
