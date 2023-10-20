@@ -51,10 +51,7 @@ BEGIN
 
 
     --==============Inventario==============
-	DECLARE @idArticulo INT ,@idBodega INT ,@idMedida INT ,@idTipoTransaccion  INT ,@idTipoDocumento INT
-	       ,@cantidad NUMERIC(18,2) ,@precioUnitario NUMERIC(18,5) ,@precioCosto NUMERIC(18,5) ,@precioTotalSinImpuesto NUMERIC(18,5)
-           ,@fraccion NUMERIC(18,5) ,@fechaConsolidacion DATETIME ,@stock NUMERIC(18,5) ,@inventory VARCHAR(5) ,@cantidadActual NUMERIC(18,5)
-           ,@estado BIT 
+	DECLARE @inventory VARCHAR(5)
 
 	--==========Tablas temporales para la validacion===================
 	DECLARE @document AS TABLE(
@@ -172,10 +169,6 @@ BEGIN
 
 		SELECT TOP 1 @codPago = codigo FROM dbo.EstadoPago WITH (NOLOCK) WHERE idEstadoPago = @idEstadoPago
 
-        SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'IV'
-
-        SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'E'
-
 		--==================================Validacion de la informacion============================================================
 
 		IF @idTiempoCredito IS NOT NULL
@@ -258,6 +251,14 @@ BEGIN
 			--==============================================================Inventario============================================================================================
 			IF @inventory = 'SI'
 				BEGIN 
+                    
+                    DECLARE @idArticulo INT ,@idBodega INT ,@idMedida INT ,@idTipoTransaccion  INT ,@idTipoDocumento INT
+	                       ,@cantidad NUMERIC(18,2) ,@precioUnitario NUMERIC(18,5) ,@precioCosto NUMERIC(18,5) ,@precioTotalSinImpuesto NUMERIC(18,5)
+                           ,@fraccion NUMERIC(18,5) ,@fechaConsolidacion DATETIME ,@stock NUMERIC(18,5) ,@estado BIT 
+
+                    SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'IV'
+
+                    SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'E'
 
 					DELETE FROM Inventario.Transaccion WITH (ROWLOCK) WHERE idDocumento = @idDocumentoIngreso AND idTipoDocumento = @idTipoDocumento AND idTipoTransaccion = @idTipoTransaccion
 
@@ -287,7 +288,7 @@ BEGIN
                                             BEGIN
                                                   SELECT TOP 1 @fechaConsolidacion = fechaConsolidacion , @cantidad = consolidacion  FROM Inventario.Stock WITH(NOLOCK)  WHERE idArticulo = @idArticulo AND idBodega = @idBodega
 
-                                                  SELECT @cantidadActual = @cantidad + ISNULL(sum(cantidadEntrada - cantidadSalida),0)
+                                                  SELECT @cantidad = @cantidad + ISNULL(sum(cantidadEntrada - cantidadSalida),0)
 			                                      FROM Inventario.v_Articulo_Transaccion WITH (NOLOCK)
 			                                      WHERE idBodega = @idbodega 
 			                                        AND idArticulo = @idarticulo
@@ -298,7 +299,7 @@ BEGIN
                                     
                                     ELSE
                                         BEGIN
-                                            SELECT @cantidadActual = ISNULL(sum(cantidadEntrada - cantidadSalida),0)
+                                            SELECT @cantidad = ISNULL(sum(cantidadEntrada - cantidadSalida),0)
 			                                FROM Inventario.v_Articulo_Transaccion WITH (NOLOCK)
 			                                WHERE idBodega = @idbodega 
 			                                  AND idArticulo = @idarticulo 
@@ -306,7 +307,7 @@ BEGIN
 			                                  AND codTransaccion in ('E','S')
                                         END 
 
-                                    UPDATE Inventario.Stock WITH(ROWLOCK) SET cantidad = ISNULL(@cantidadActual,0) WHERE idArticulo = @idArticulo AND idBodega = @idBodega
+                                    UPDATE Inventario.Stock WITH(ROWLOCK) SET cantidad = ISNULL(@cantidad,0) WHERE idArticulo = @idArticulo AND idBodega = @idBodega
 
 	                                SELECT @stock = SUM(cantidad) FROM Inventario.Stock s WITH (NOLOCK) WHERE idArticulo = @idArticulo AND s.estado = 1
 

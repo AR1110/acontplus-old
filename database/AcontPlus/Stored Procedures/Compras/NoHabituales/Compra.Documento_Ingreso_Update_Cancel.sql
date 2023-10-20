@@ -44,9 +44,7 @@ BEGIN
 	
 
 	 -- Inventario
-    DECLARE @idTipoDocumento INT ,@idTipoTransaccion INT ,@inventory VARCHAR(15)
-           ,@idArticulo INT ,@idBodega INT ,@cantidad NUMERIC(18,2) ,@fraccion NUMERIC(18,5)
-           ,@idMedida INT ,@fechaConsolidacion DATETIME ,@stock NUMERIC(18,5) ,@cantidadActual NUMERIC(18,5)
+    DECLARE @inventory VARCHAR(15)
 
 
 	BEGIN TRY 
@@ -63,10 +61,6 @@ BEGIN
 		SELECT TOP 1 @idEstado = idEstadoPago FROM Contabilidad.CuentaPorPagar WITH (NOLOCK) WHERE uniqueId = @uniqueId
 
 		SELECT TOP 1 @codPago = codigo FROM dbo.EstadoPago WITH (NOLOCK) WHERE idEstadoPago = @idEstado
-
-        SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'IV'
-
-        SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'E'
 
 		--==================================Validacion de la informacion============================================================
 
@@ -98,6 +92,15 @@ BEGIN
 			IF @inventory = 'SI'
 				BEGIN 
 					
+                     -- Inventario
+                    DECLARE @idTipoDocumento INT ,@idTipoTransaccion INT ,@idArticulo INT 
+                           ,@idBodega INT ,@cantidad NUMERIC(18,2) ,@fraccion NUMERIC(18,5)
+                           ,@idMedida INT ,@fechaConsolidacion DATETIME ,@stock NUMERIC(18,5)
+
+                    SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'IV'
+
+                    SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'E'
+
 					UPDATE Inventario.Transaccion WITH (ROWLOCK) SET estado = 0 WHERE idDocumento = @idDocumentoIngreso AND idTipoDocumento = @idTipoDocumento AND idTipoTransaccion = @idTipoTransaccion
 
 					IF EXISTS (SELECT 1 FROM Compra.Documento_Ingreso_Detail td WITH (NOLOCK)
@@ -121,7 +124,7 @@ BEGIN
 								
 								    SELECT TOP 1 @fraccion = conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida
 
-                                    SELECT  @cantidadActual = @cantidad * ISNULL(@fraccion,1)
+                                    SELECT  @cantidad = @cantidad * ISNULL(@fraccion,1)
 
 
                                     IF EXISTS (SELECT 1 FROM Inventario.Stock WITh (NOLOCK) WHERE idArticulo = @idArticulo AND idBodega = @idBodega AND fechaConsolidacion IS NOT NULL)
@@ -130,11 +133,11 @@ BEGIN
 
                                                   IF @fechaConsolidacion >= @fechaEmision
                                                         BEGIN
-                                                            SELECT @cantidadActual = 0
+                                                            SELECT @cantidad = 0
                                                         END 
                                             END 
 
-                                    UPDATE Inventario.Stock WITH(ROWLOCK) SET cantidad = cantidad - ISNULL(@cantidadActual,0) WHERE idArticulo = @idArticulo AND idBodega = @idBodega
+                                    UPDATE Inventario.Stock WITH(ROWLOCK) SET cantidad = cantidad - ISNULL(@cantidad,0) WHERE idArticulo = @idArticulo AND idBodega = @idBodega
 
 	                                SELECT @stock = SUM(cantidad) FROM Inventario.Stock s WITH (NOLOCK) WHERE idArticulo = @idArticulo AND s.estado = 1
 
