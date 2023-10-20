@@ -22,12 +22,24 @@
   let valueArticle = "";
   let paramValidation = [undefined, null, "", 0];
   let placeholderArticle = "Buscar por C.I o Nombre Comercial";
+  let currentDateString = "";
 
   const onModalClose = () => {
     supportStore.update((state) => ({
       ...state,
       isApprove: false,
     }));
+  };
+
+  // Todo: Create human format date
+  const convertFormat = (date) => {
+    let currentDate = new Date(date);
+    currentDateString = currentDate.toLocaleDateString("es-ES", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
   };
 
   // Todo: Search articles
@@ -93,7 +105,6 @@
             idMedida: dataMedida.idMedida,
             idTarifa: dataTarifa.idTarifa,
             medidas,
-            nota: "S/N",
             precioConIva: dataTarifa.precioConIva,
             precioUnitario: dataTarifa.precioVenta,
             precioVenta: dataTarifa.precioVenta,
@@ -306,6 +317,7 @@
 
     initialPushData();
     selectCodEstab();
+    convertFormat(support.date);
   });
 </script>
 
@@ -366,7 +378,7 @@
               Fecha Emisión <span class="text-danger">*</span>
             </label>
             <input type="date" bind:value={support.date} class="form-control" />
-            <small><span class="text-success">Datos de prueba</span></small>
+            <small><span class="text-success">{currentDateString}</span></small>
           </div>
           <div class="col-sm-4 nopadding">
             <div class="form-group">
@@ -454,8 +466,8 @@
           <div class="col-12 col-sm-12">
             <div class="pull-right text-right">
               <address>
-                <h6>SubTotal sin Impuesto $07</h6>
-                <h6>Total Descuento $07</h6>
+                <h6>SubTotal sin Impuesto 7</h6>
+                <h6>Total Descuento 7</h6>
                 <h4>Total $435</h4>
               </address>
             </div>
