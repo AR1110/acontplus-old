@@ -3,12 +3,16 @@
   "defaultProvider": "cdnjs",
   "libraries": [
     {
-      "library": "jquery@3.6.4" ,
+      "library": "jquery@3.6.4",
       "destination": "wwwroot/lib/jquery/"
     },
     {
       "library": "bootstrap@4.6.2",
       "destination": "wwwroot/lib/bootstrap/"
+    },
+    {
+      "library": "angular-aria@1.8.3",
+      "destination": "wwwroot/lib/angular-aria/"
     },
     {
       "library": "angular-material@1.2.5",
@@ -51,7 +55,7 @@
       "destination": "wwwroot/lib/danialfarid-angular-file-upload/"
     },
     {
-      "library": "limonte-sweetalert2@11.7.31",
+      "library": "limonte-sweetalert2@11.7.32",
       "destination": "wwwroot/lib/limonte-sweetalert2/"
     },
     {
@@ -59,20 +63,8 @@
       "destination": "wwwroot/lib/angular-animate/"
     },
     {
-      "library": "angular-aria@1.8.3",
-      "destination": "wwwroot/lib/angular-aria/"
-    },
-    {
-      "library": "angular-mocks@1.8.3",
-      "destination": "wwwroot/lib/angular-mocks/"
-    },
-    {
       "library": "angular-sanitize@1.8.3",
       "destination": "wwwroot/lib/angular-sanitize/"
-    },
-    {
-      "library": "angular-touch@1.8.3",
-      "destination": "wwwroot/lib/angular-touch/"
     },
     {
       "library": "angular.js@1.8.3",
@@ -157,14 +149,13 @@
     },
     {
       "provider": "cdnjs",
-      "library": "axios@1.4.0",
+      "library": "axios@1.5.1",
       "destination": "wwwroot/lib/axios/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "material-design-iconic-font@2.2.0",
+      "destination": "wwwroot/assets/icons/material-design-iconic-font/"
     }
-  ,
-{
-  "provider": "cdnjs",
-  "library": "material-design-iconic-font@2.2.0",
-  "destination": "wwwroot/assets/icons/material-design-iconic-font/"
-}
-]
+  ]
 }
