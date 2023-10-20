@@ -669,6 +669,7 @@
                 }
 
                 console.log(medidas)
+                console.log(articulo)
 
                 if (!articulo.llevaInventario) {
                     Swal.fire({
@@ -678,11 +679,11 @@
                     return
                 }
 
-                let entity = {}
+                let entity = {};
                 $scope.indexRow = $scope.gridOptions.data.findIndex(value => value.idArticulo === articulo.idArticulo);
                 if ($scope.indexRow !== -1) {
                     entity = $scope.gridOptions.data[$scope.indexRow];
-                    entity.cantidad = entity.cantidad + 1;
+                    // entity.cantidad = entity.cantidad + 1;
 
                 } else {
                     $scope.addRow();
@@ -784,7 +785,9 @@
                 $scope.gridOptions.data[0],
                 $scope.gridOptions.columnDefs[2]
             )
-            $scope.$broadcast("editArticulo", item)
+            item.isUpdate = true;
+            let params = Object.assign(item, { isUpdate: true })
+            $scope.$broadcast("editArticulo", params);
         }
 
         $scope.consolidacionArticuloImport = async () => {
