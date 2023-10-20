@@ -472,5 +472,41 @@
     "inputFiles": [
       "wwwroot/js/factElect/controllers/facturaVentaCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/css/acontplus-style.min.css",
+    "inputFiles": [
+      "wwwroot/css/acontplus-style.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/dist/css/pages/user-card.min.css",
+    "inputFiles": [
+      "wwwroot/dist/css/pages/user-card.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/dist/css/pages/stylish-tooltip.min.css",
+    "inputFiles": [
+      "wwwroot/dist/css/pages/stylish-tooltip.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/dist/css/pages/tab-page.min.css",
+    "inputFiles": [
+      "wwwroot/dist/css/pages/tab-page.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/dist/css/pages/floating-label.min.css",
+    "inputFiles": [
+      "wwwroot/dist/css/pages/floating-label.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/dist/css/pages/other-pages.min.css",
+    "inputFiles": [
+      "wwwroot/dist/css/pages/other-pages.css"
+    ]
   }
 ]

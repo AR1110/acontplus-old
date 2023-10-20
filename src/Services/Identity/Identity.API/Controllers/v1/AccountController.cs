@@ -4,10 +4,11 @@ using DataAccess;
 using Domain.Dtos;
 using Domain.ViewModels;
 using Identity.API.Dtos;
-using Identity.API.Entities;
 using Identity.API.Errors;
 using Identity.API.Extensions;
 using Identity.API.Interfaces;
+using Identity.Core.Entities;
+using Identity.Infrastructure.Data;
 using Lib.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -27,8 +28,15 @@ namespace Identity.API.Controllers.v1
         private readonly IMapper _mapper;
         private readonly IConfiguration _config;
         private readonly LogWriter _log;
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
-            ITokenService tokenService, IMapper mapper, IConfiguration config, LogWriter log)
+        private readonly ApplicationDbContext _context;
+        public AccountController(UserManager<AppUser> userManager,
+            SignInManager<AppUser> signInManager,
+            ITokenService tokenService, 
+            IMapper mapper,
+            IConfiguration config, 
+            LogWriter log,
+            ApplicationDbContext context
+            )
         {
             _mapper = mapper;
             _tokenService = tokenService;
@@ -36,6 +44,7 @@ namespace Identity.API.Controllers.v1
             _userManager = userManager;
             _config = config;
             _log = log;
+            _context = context;
         }
 
         [HttpGet]
@@ -158,15 +167,21 @@ namespace Identity.API.Controllers.v1
                     loginDataDto.urlGateway = _config["ApiGateways:Acontplus"];
                     loginDataDto.idUsuario = loginData.idUsuario;
                     var jwtToken = _tokenService.GenerateJwtToken(loginDataDto);
-                    if (jwtToken == null) { return Unauthorized(); }
-                    _log.LogActivity("Login successful: idRol -> " + Convert.ToString(loginDataDto.idUsuarioRol) + " \n jwt: " + jwtToken);
 
                     if (jwtToken == null)
                     {
                         _gr.Create(code: "0", message: "Error al iniciar session");
                         return Ok(_gr);
                     }
+                    //_log.LogActivity("Login successful: userRoleId -> " + Convert.ToString(loginDataDto.idUsuarioRol) + " \n Token: " + jwtToken);
                     loginData.jwtToken = jwtToken;
+                    _context.LoginHistories.Add(new LoginHistory { UserId = loginData.idUsuario, Username = loginDataDto.userName, UserRoleId = loginDataDto.idUsuarioRol, UserAgent = authRequest.userAgent, Token = jwtToken });
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    _context.loginFaileds.Add(new LoginFailed { UserAgent = authRequest.userAgent, Username = authRequest.username, Password = authRequest.password });
+                    await _context.SaveChangesAsync();
                 }
                 return Ok(_gr);
             }

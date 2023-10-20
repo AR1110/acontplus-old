@@ -1,7 +1,7 @@
 ﻿using Autofac;
 using Common.Infrastructure.Data;
 using Common.Infrastructure.Repository;
-using Identity.API.Data.Identity;
+using Identity.Infrastructure.Data;
 
 namespace Identity.API.Extensions
 {

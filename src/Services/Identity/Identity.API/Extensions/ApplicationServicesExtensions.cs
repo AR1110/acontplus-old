@@ -1,10 +1,9 @@
-﻿using Identity.API.Data.Identity;
-using Identity.API.Entities;
-using Identity.API.Errors;
+﻿using Identity.API.Errors;
 using Identity.API.Interfaces;
 using Identity.API.Services;
+using Identity.Core.Entities;
+using Identity.Infrastructure.Data;
 using Identity.Services;
-using Lib.Common;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +20,7 @@ namespace Identity.API.Extensions
 
             services.AddIdentityCore<AppUser>(opt =>
             {
-                // add identity options here
+                 
             })
            .AddRoles<AppRole>()
            .AddRoleManager<RoleManager<AppRole>>()
@@ -31,8 +30,7 @@ namespace Identity.API.Extensions
 
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IAccountService, AccountService>();
-            //services.AddScoped<IUnitOfWork, UnitOfWork>();
-            //services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.Configure<ApiBehaviorOptions>(options =>
               options.InvalidModelStateResponseFactory = ActionContext =>

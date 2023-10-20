@@ -2,8 +2,8 @@
 using System.Security.Claims;
 using System.Text;
 using AutoMapper;
-using Identity.API.Entities;
 using Identity.API.Service.Interfaces;
+using Identity.Core.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 

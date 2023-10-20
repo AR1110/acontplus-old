@@ -47,6 +47,9 @@
         $scope.ver = false;
         $scope.data = {};
 
+        let parser = new UAParser(navigator.userAgent)
+        let parserResults = parser.getResult()
+
         $scope.verContrasenia = function (ver) {
             let contra = $("#password")
             if (!ver) {
@@ -66,6 +69,7 @@
         $scope.login = function () {
             try {
                 showLoader();
+                $scope.data.userAgent = JSON.stringify(parserResults);
                 $scope.data.returnUrl = $('#returnUrl').val();
                 if ($scope.data.returnUrl == undefined || $scope.data.returnUrl === "" || $scope.data.returnUrl == null) {
                     $scope.data.returnUrl = '/';

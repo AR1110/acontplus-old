@@ -1,5 +1,5 @@
 ﻿using Identity.API.Dtos;
-using Identity.API.Entities;
+using Identity.Core.Entities;
 
 namespace Identity.API.Interfaces
 {

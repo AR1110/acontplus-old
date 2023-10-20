@@ -28,7 +28,6 @@
     <Compile Remove="wwwroot\js\controllers\ingresos\**" />
     <Compile Remove="wwwroot\js\controllers\logistica\**" />
     <Compile Remove="wwwroot\js\controllers\ventas\**" />
-    <Compile Remove="wwwroot\js\svelte\app\Pet\components\**" />
     <Compile Remove="wwwroot\lib\angular-toastr\**" />
     <Content Remove="App\lib\StockFisico\**" />
     <Content Remove="App\routes\ProductionArea\**" />
@@ -40,7 +39,6 @@
     <Content Remove="wwwroot\js\controllers\ingresos\**" />
     <Content Remove="wwwroot\js\controllers\logistica\**" />
     <Content Remove="wwwroot\js\controllers\ventas\**" />
-    <Content Remove="wwwroot\js\svelte\app\Pet\components\**" />
     <Content Remove="wwwroot\lib\angular-toastr\**" />
     <EmbeddedResource Remove="App\lib\StockFisico\**" />
     <EmbeddedResource Remove="App\routes\ProductionArea\**" />
@@ -52,7 +50,6 @@
     <EmbeddedResource Remove="wwwroot\js\controllers\ingresos\**" />
     <EmbeddedResource Remove="wwwroot\js\controllers\logistica\**" />
     <EmbeddedResource Remove="wwwroot\js\controllers\ventas\**" />
-    <EmbeddedResource Remove="wwwroot\js\svelte\app\Pet\components\**" />
     <EmbeddedResource Remove="wwwroot\lib\angular-toastr\**" />
     <None Remove="App\lib\StockFisico\**" />
     <None Remove="App\routes\ProductionArea\**" />
@@ -64,7 +61,6 @@
     <None Remove="wwwroot\js\controllers\ingresos\**" />
     <None Remove="wwwroot\js\controllers\logistica\**" />
     <None Remove="wwwroot\js\controllers\ventas\**" />
-    <None Remove="wwwroot\js\svelte\app\Pet\components\**" />
     <None Remove="wwwroot\lib\angular-toastr\**" />
   </ItemGroup>
 
@@ -599,7 +595,6 @@
     <None Include="wwwroot\dist\scss\widgets\weather-widget.scss" />
     <None Include="wwwroot\dist\scss\widgets\widgets.scss" />
     <None Include="wwwroot\js\app\acontPlusApp.js" />
-    <None Include="wwwroot\js\svelte\build\bundle.js" />
     <None Include="wwwroot\js\controllers\admin\anioFiscalCtrl.js" />
     <None Include="wwwroot\js\controllers\admin\anioFiscalCtrl.min.js" />
     <None Include="wwwroot\js\controllers\admin\asignacionCajaCtrl.js" />
@@ -1832,14 +1827,6 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
     <Content Update="wwwroot\css\angular-bootstrap-toggle.min.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\css\custom.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\css\custom.min.css">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
