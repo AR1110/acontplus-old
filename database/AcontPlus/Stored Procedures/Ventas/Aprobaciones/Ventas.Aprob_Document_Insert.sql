@@ -166,7 +166,7 @@ BEGIN
 
 		SELECT TOP 1 @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
-		SELECT @docOrigen = docOrigen , @docDestino = docDestino FROM @tbComprobante
+		SELECT TOP 1 @docOrigen = docOrigen , @docDestino = docDestino FROM @tbComprobante
 
 		SELECT	
 			@idPuntoEmision          = dt.idPuntoEmision 
@@ -195,7 +195,7 @@ BEGIN
 			END 
 		ELSE
 			BEGIN
-				SET @claveAcceso= NEWID()
+				SET @claveAcceso = NEWID()
 
 				SET @codDoc = 'NE'
 			END 

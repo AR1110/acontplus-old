@@ -38,8 +38,7 @@ BEGIN
 	
 	
 	--=============Globales===========================
-	DECLARE @idEntidad AS INT 
-	DECLARE @idUsuario AS INT 
+	DECLARE @idEntidad INT ,@idUsuario INT 
 
 	--============Compra ==============
 	DECLARE @idPuntoEmision INT
@@ -51,9 +50,7 @@ BEGIN
 	DECLARE @secuencial INT
 
 	--==============Inventario==============
-	DECLARE @idArticulo INT ,@idBodega INT ,@idMedida INT ,@idTipoTransaccion  INT ,@idTipoDocumento INT
-	       ,@cantidad NUMERIC(18,2) ,@precioUnitario NUMERIC(18,5) ,@precioCosto NUMERIC(18,5) ,@precioTotalSinImpuesto NUMERIC(18,5)
-           ,@fraccion NUMERIC(18,5) ,@fechaConsolidacion DATETIME ,@stock NUMERIC(18,5) ,@inventory VARCHAR(5) ,@cantidadActual NUMERIC(18,5)
+	DECLARE @inventory VARCHAR(5)
 	
 	--======================Fecha Emision===============================
 	--DECLARE @fechaEmision DATETIME 
@@ -180,10 +177,6 @@ BEGIN
 		
 		SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
 
-        SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'IV'
-
-        SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'E'
-
 		SELECT @year = DATEPART(YEAR,dbo.ufnGetDateEcuador())
 
 		SELECT @uniqueId = 'D'+@year+Helper.F_Auto_Sequential(COUNT(*)+1) FROM Compra.Documento_Ingreso WITH(NOLOCK) WHERE DATEPART(YEAR,fechaRegistro) = @year
@@ -257,6 +250,15 @@ BEGIN
 			--==============================================================Inventario============================================================================================
 			IF @inventory = 'SI'
 				BEGIN
+                    
+                    DECLARE @idArticulo INT ,@idBodega INT ,@idMedida INT ,@idTipoTransaccion  INT ,@idTipoDocumento INT
+	                       ,@cantidad NUMERIC(18,2) ,@precioUnitario NUMERIC(18,5) ,@precioCosto NUMERIC(18,5) ,@precioTotalSinImpuesto NUMERIC(18,5)
+                           ,@fraccion NUMERIC(18,5) ,@fechaConsolidacion DATETIME ,@stock NUMERIC(18,5)
+
+                    SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'IV'
+
+                    SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'E'
+
 					IF EXISTS (SELECT 1 FROM @detail td INNER JOIN Articulo a WITH (NOLOCK) ON td.idArticulo = a.idArticulo WHERE a.llevaInventario = 1)
 						BEGIN 
 
@@ -275,7 +277,7 @@ BEGIN
 								
                                     SELECT TOP 1 @fraccion = conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida
 
-                                    SELECT  @cantidadActual = @cantidad * ISNULL(@fraccion,1)
+                                    SELECT  @cantidad = @cantidad * ISNULL(@fraccion,1)
                                     
 								    INSERT INTO Inventario.Transaccion WITH(ROWLOCK)
 				                           (idTipoTransaccion, idArticulo, idBodega, idTipoDocumento, idDocumento, idMedida ,cantidad, precioCosto, precioUnitario, total,fechaRegistro, idUsuario)
@@ -287,11 +289,11 @@ BEGIN
 
                                                    IF @fechaConsolidacion >= @fechaEmision
                                                         BEGIN
-                                                            SELECT @cantidadActual = 0 
+                                                            SELECT @cantidad = 0 
                                                         END 
                                             END 
 
-                                    UPDATE Inventario.Stock WITH(ROWLOCK) SET cantidad = cantidad + ISNULL(@cantidadActual,0) WHERE idArticulo = @idArticulo AND idBodega = @idBodega
+                                    UPDATE Inventario.Stock WITH(ROWLOCK) SET cantidad = cantidad + ISNULL(@cantidad,0) WHERE idArticulo = @idArticulo AND idBodega = @idBodega
 
 	                                SELECT @stock = SUM(cantidad) FROM Inventario.Stock s WITH (NOLOCK) WHERE idArticulo = @idArticulo AND s.estado = 1
 
