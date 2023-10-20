@@ -197,14 +197,14 @@ class BaseSearchArticulo {
 
     async getId() {
         try {
-            showLoader();
-            console.log(this)
+            showLoader(); 
             this.dataArticulo.idBodega = this.idBodega;
             this.articuloSvc.getId(this.dataArticulo.idArticulo).then(response => {
                 hideLoader();
                 this.setItemArticuloEnDetalle({
                     item: { ...response, isUpdateProduct: this.isUpdateProduct }
                 })
+                this.isUpdateProduct = false;
             }).catch(error => {
                 hideLoader();
                 console.log(error);
@@ -349,7 +349,10 @@ class MdArticuloCtrl extends BaseSearchArticulo {
             })
 
             modalRef.result.then(response => {
-                if (typeof response !== 'object') return
+                if (typeof response !== 'object') {
+                    this.isUpdateProduct = false;
+                    return
+                }
                 this.dataArticulo = {
                     idArticulo: response.idArticulo,
                     idPresentacion: response.idPresentacion,
