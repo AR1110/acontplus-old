@@ -5,6 +5,7 @@ import { showLoader } from "$utils/loading-spinner";
 import tS from "$utils/toast";
 import { deviceService } from "../services/device.service";
 import { estabAsignService } from "$services/restaurant/estab-asign-service";
+import { orderService } from "../services";
 
 //Start Tech Spec 
 type Data = {
@@ -76,6 +77,12 @@ const initialDeviceState: DeviceState = {
 
 
 export const techSpecStore = writable<State & DeviceState>({ ...initialState, ...initialDeviceState });
+
+
+
+export const getAll = ()=>{
+    orderService.get()
+}
 
 /**
  * se ejecuta al cargar component TechSpecDialog
