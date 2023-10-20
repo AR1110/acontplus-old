@@ -1,35 +1,34 @@
 module.exports = {
-    root: true,
-    parser: "@typescript-eslint/parser",
-    extends: [
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
         "eslint:recommended",
-        "plugin:svelte/recommended",
-        "plugin:@typescript-eslint/recommended",
-        "prettier"
+        "plugin:@typescript-eslint/recommended"
     ],
-    plugins: ["@typescript-eslint"],
-    ignorePatterns: ["*.cjs"],
-    overrides: [
+    "overrides": [
         {
-            files: ["*.svelte"],
-            parser: "svelte-eslint-parser",
-            parserOptions: {
-                parser: "@typescript-eslint/parser"
+            "env": {
+                "node": true
+            },
+            "files": [
+                ".eslintrc.{js,cjs}"
+            ],
+            "parserOptions": {
+                "sourceType": "script"
             }
         }
     ],
-    parserOptions: {
-        sourceType: "module",
-        ecmaVersion: 2020,
-        project: "./src/WebApps/WebUI/tsconfig.json",
-        extraFileExtensions: [".svelte"]
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
     },
-    env: {
-        browser: true,
-        es2017: true,
-        node: true
-    },
-    rules: {
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "rules": {
         "@typescript-eslint/no-inferrable-types": "off",
         "@typescript-eslint/no-explicit-any": "off",
         "no-undef": "off",
@@ -44,4 +43,4 @@ module.exports = {
             }
         ]
     }
-};
+}

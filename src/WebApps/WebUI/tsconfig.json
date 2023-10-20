@@ -8,15 +8,13 @@
     ],
     "compilerOptions": {
         "target": "esnext",
-        // "module": "CommonJS",
         "module": "ESNext",
         "strict": false,
         "forceConsistentCasingInFileNames": false,
         "noUnusedLocals": false,
         "noUnusedParameters": false,
-        // "lib": [ "es2015", "dom" ],
         "lib": [
-            "ES2020",
+            "ESNext",
             "DOM",
             "DOM.Iterable"
         ],
@@ -25,33 +23,27 @@
             "$interfaces/*": [
                 "App/lib/interfaces/*"
             ],
-            "$services/*": [
-                "App/lib/services/*"
-            ],
-            "$utils/*": [
-                "App/lib/utils/*"
-            ],
             "$lib/*": [
                 "App/lib/*"
             ],
-            "$routes/*": [
-                "App/routes/*"
+            "$mechanical/*": [
+                "App/routes/mechanical/*"
             ],
             "$restaurant/*": [
                 "App/routes/restaurant/*"
             ],
-            "$pet/*": [
-                "App/routes/Pet/*"
+            "$routes/*": [
+                "App/routes/*"
             ],
-            "$petbreed/*": [
-                "App/routes/PetBreed/*"
-            ],
-            "$petmedicalhistory/*": [
-                "App/routes/PetMedicalHistory/*"
+            "$services/*": [
+                "App/lib/services/*"
             ],
             "$technical-support/*": [
-                "App/routes/TechnicalSupport"
-            ]
+                "App/routes/TechnicalSupport/*"
+            ],
+            "$utils/*": [
+                "App/lib/utils/*"
+            ],
         }
     }
 }

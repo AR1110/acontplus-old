@@ -1,6 +1,6 @@
-﻿import Pet from "$pet/Pet.svelte";
-import PetMedicalHistory from "$petmedicalhistory/PetMedicalHistory.svelte";
-import PetBreed from "$petbreed/PetBreed.svelte";
+﻿import Pet from "./routes/Pet/Pet.svelte";
+import PetMedicalHistory from "./routes/PetMedicalHistory/PetMedicalHistory.svelte";
+import PetBreed from "./routes/Petbreed/PetBreed.svelte";
 import ConfigEmail from "./routes/ConfigEmail/ConfigEmail.svelte";
 import MotivoDiscrepancia from "./routes/StockFisico/MotivoDiscrepancia.svelte";
 import Stock from "./routes/StockFisico/index.svelte";
@@ -81,8 +81,7 @@ if (target) {
 target = document.querySelector("#technical-support");
 if (target) {
   new TechnicalSupport({ target });
-}
-
+}  
 import App from "./App.svelte";
 const app = new App({
   target: document.body,
