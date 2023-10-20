@@ -3,7 +3,7 @@ using Services.Common;
 using Services.Common.Logs;
 using WebUI.Hubs;
 
-namespace testWebApi
+namespace WebUI
 {
     public class Program
     {
@@ -27,17 +27,13 @@ namespace testWebApi
 
             builder.Services.AddSignalR();
 
-            builder.Services.AddMvc();
-
             //prevenir ataques
             //builder.Services.AddAntiforgery(options =>
             //{
             //    options.Cookie.SameSite = SameSiteMode.Strict;
             //    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             //    options.Cookie.HttpOnly = true;
-            //});
-
-            //builder.Services.AddScoped<CustomCookieAuthenticationEvents>();
+            //}); +
 
             //builder.Services.AddHttpContextAccessor();
 
