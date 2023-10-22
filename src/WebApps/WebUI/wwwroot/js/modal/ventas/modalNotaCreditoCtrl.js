@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.43";
+} from "./modalBaseCtrl.js?v=0.44";
 
 class ModalNotaCreditoCtrl extends ModalBaseCtrl {
     constructor({
@@ -260,7 +260,7 @@ class ModalNotaCreditoCtrl extends ModalBaseCtrl {
     }
 
 
-    async getDetalleDoc(item) {
+    async getDetalleDoc() {
         try {
             if(!(this.data.idFactura > 0)) return
            
@@ -332,8 +332,7 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
             _nombreModalConst,
             _fS,
             _tS
-        })
-        const self = this;
+        }) 
 
         this.facturaSvc = facturaSvc;
         this.articuloSvc = articuloSvc;
@@ -627,8 +626,7 @@ export class ModalNotaCreditoEditarCtrl extends ModalNotaCreditoCtrl {
             _nombreModalConst,
             _fS,
             _tS
-        })
-        const self = this;
+        }) 
 
         this.articuloSvc = articuloSvc;
 
@@ -814,8 +812,7 @@ export class ModalNotaCreditoDetalleCtrl extends ModalNotaCreditoCtrl {
             _nombreModalConst,
             _fS,
             _tS
-        })
-        const self = this;
+        }) 
         this.articuloSvc = articuloSvc;
 
         this.CELL_TEMPLATE_OPTION = `
@@ -845,12 +842,8 @@ export class ModalNotaCreditoDetalleCtrl extends ModalNotaCreditoCtrl {
 
     async $onInit() {
         try {
-            showLoader();
-            console.log(this)
-            let resultsDataForm = await this._commonSvc.getDataFormVenta();
-            let {
-                UiGridOptions
-            } = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
+            showLoader(); 
+            let resultsDataForm = await this._commonSvc.getDataFormVenta(); 
 
             this.establecimientos = resultsDataForm[0];
 

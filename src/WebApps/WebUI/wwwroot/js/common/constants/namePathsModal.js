@@ -377,18 +377,7 @@ app.constant('nombreModal', {
     articulo_impuesto: {
         MODAL_CTRL: 'modalArticuloImpuestoCtrl.min.js' + CHANGE_VERSION(),
 
-    },
-    bodega: {
-        MODAL_FILE_CTRL: 'modal/inventario/modalBodegaCtrl.js' + CHANGE_VERSION(),
-        MODAL_NUEVO: {
-            controller: 'ModalBodegaCtrl',
-            template: 'Bodega/_ModalNuevo.cshtml'
-        },
-        MODAL_EDITAR: {
-            controller: 'ModalBodegaCtrl',
-            template: 'Bodega/_ModalEditar.cshtml'
-        }
-    },
+    }, 
     categoria_compra: {
         MODAL_CTRL: 'modalCategoriaCompraCtrl.min.js' + CHANGE_VERSION(),
         MODAL_FILE_CTRL: 'modal/compras/modalCategoriaCompraCtrl.min.js' + CHANGE_VERSION(),

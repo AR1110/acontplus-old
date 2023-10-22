@@ -42,7 +42,7 @@ namespace Domain.ViewModels.Almacen
         public ArticuloViewModel articulo { get; set; }
         public List<ArticuloPvPViewModel> pvps { get; set; }
         public List<ArticuloCodBaViewModel> codBarras { get; set; }
-        public List<ArticuloUbViewModel> ubicaciones { get; set; }
+       // public List<ArticuloUbViewModel> ubicaciones { get; set; }
     }
 
     public class ArticuloSearchViewModel

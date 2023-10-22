@@ -529,4 +529,29 @@
 
     }])
 
+
+
+    app.factory('articuloUbicacionService', function ($injector) {
+        const mS = $injector.get('mainService');
+        const URL = 'Inventario/ArticuloUbicacion/';
+
+        const service = {};
+
+        service.save = function (data) {
+            return mS.getData("post", URL + "?json=" + encodeURIComponent(JSON.stringify(data)), null, true);
+        }
+
+
+        service.update = function (id, data) {
+            return mS.getData("put", URL + `${id}?json=${encodeURIComponent(JSON.stringify(data))}`, null, true);
+        }
+
+        service.delete = function (id) {
+            return mS.getData('delete', URL + id, null, true);
+        }
+
+        return service;
+
+    })
+
 })(window.angular)

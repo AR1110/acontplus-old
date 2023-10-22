@@ -23,9 +23,9 @@
                 <div class="row">
                     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                         <div class="form-gorup">
-                            <span for="establecimiento">Establecimiento</span>
+                            <span for="establecimiento">Estab: <span class="text-danger">*</span></span>
                             <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
-                                class="form-control  border-select" ng-change="getNotaCreditos()">
+                                class="form-control  border-select" ng-change="estabFilter()">
                                 <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                                     {{item.nombreComercial}}
                                 </option>
@@ -34,32 +34,10 @@
                     </div>
                     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
-                            <span for="">Rango de Fechas</span>
-                            @* <div class="input-group"> *@
+                            <span for="">Rango de Fechas</span> 
                             <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
                                 end-date="dataSearch.fechaFin"
-                                result-range-date="resultRangeFilter(result)"></date-range-filter>
-                            @* <div class="input-group-append">
-                            <div class="btn-group" data-toggle="buttons" role="group">
-                            <label class="btn btn-outline btn-info">
-                            <div class="custom-control custom-radio">
-                            <input type="radio" id="customRadio1" name="options" value="male"
-                            class="custom-control-input">
-                            <label class="custom-control-label" for="customRadio1"> <i
-                            class="ti-check text-active" aria-hidden="true"></i></label>
-                            </div>
-                            </label>
-                            <label class="btn btn-outline btn-info active">
-                            <div class="custom-control custom-radio">
-                            <input type="radio" id="customRadio2" name="options" value="female"
-                            class="custom-control-input">
-                            <label class="custom-control-label" for="customRadio2"> <i
-                            class="ti-check text-active" aria-hidden="true"></i></label>
-                            </div>
-                            </label>
-                            </div>
-                            </div>
-                            </div> *@
+                                result-range-date="resultRangeFilter(result)"></date-range-filter> 
                         </div>
                     </div>
                     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
@@ -93,7 +71,17 @@
                 </div>
 
                 <div class="row justify-content-between" ng-if="moreSearchOptions">
-
+                    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                        <div class="form-gorup">
+                            <span for="ptoEmision">Pto. Emisión: <span class="text-danger">*</span> </span>
+                            <select name="ptoEmision" id="ptoEmision" ng-model="dataSearch.idPuntoEmision"
+                                class="form-control  border-select" ng-change="getNotaCreditos()">
+                                <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
+                                    {{item.ptoEmi}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
                         <div class="form-group">
                             <span for="usuario">Usuario</span>
@@ -117,10 +105,10 @@
                     <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
                         <div class="form-group">
                             <span>Estado:</span>
-                            <select id="estadoDocumentos" class="form-control" ng-model="dataSearch.codEstado"
+                            <select id="estadoDocumentos" class="form-control" ng-model="dataSearch.idEstadoDocumento"
                                 ng-change="getNotaCreditos()">
                                 <option value="">Todos</option>
-                                <option ng-value="item.codigo" ng-repeat="item in estadoDocumentos">
+                                <option ng-value="item.idEstadocumento" ng-repeat="item in estadoDocumentos">
                                     {{item.descripcion}}
                                 </option>
                             </select>
@@ -223,6 +211,7 @@
 
 
 @section Scripts{    
-    <script src="~/js/factElect/services/facturaService.js" asp-append-version="true"></script>
-    <script src="~/js/ventas/controllers/notaCreditoClienteCtrl.min.js" asp-append-version="true"></script>
+    <script src="~/js/factElect/services/notaCreditoService.js" asp-append-version="true"></script>
+    <script src="~/js/factElect/services/facturaService.min.js" asp-append-version="true"></script>
+    <script src="~/js/factElect/controllers/notaCreditoClienteCtrl.min.js" asp-append-version="true"></script>
 }

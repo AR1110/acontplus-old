@@ -102,8 +102,7 @@
             controller,
             template,
             size = 'lg',
-            params,
-            isReloading = true
+            params, 
         }) => {
             _modalSvc.openModalCustom({
                 controller,
@@ -158,17 +157,14 @@
 
 
 
-        $scope.openModalUserConfig = async (params) => {
-            try {
-                $scope.openModalParam({
-                    controller: 'modalUserConfigCtrl',
-                    template: MODAL_PATH_PARTIAL.modal_user_config,
-                    params,
-                    size: 'xl'
-                })
-            } catch (error) {
-
-            }
+        $scope.openModalUserConfig = async (params) => { 
+            $scope.openModalParam({
+                controller: 'modalUserConfigCtrl',
+                template: MODAL_PATH_PARTIAL.modal_user_config,
+                params,
+                size: 'xl'
+            })
+             
         }
     }
 
@@ -178,9 +174,16 @@
     //----------------------------------START ADD-UPDATE USER----------------------------------------------
     app.controller("modalUserCtrl", modalUserCtrl);
 
-    modalUserCtrl.$inject = ['$scope', '$uibModalInstance', 'mainService', 'toastService', 'params'];
+    modalUserCtrl.$inject = [
+        '$scope', 
+        '$uibModalInstance', 
+        'mainService', 
+        'politicaService',
+        'toastService', 
+        'params'
+    ];
 
-    function modalUserCtrl($scope, $uibModalInstance, mS, tS, params) {
+    function modalUserCtrl($scope, $uibModalInstance, mS, politicaSvc, tS, params) {
 
         $scope.params = params;
         $scope.tipoRegistro = params.tipoRegistro;
@@ -197,9 +200,17 @@
             }
         })
 
-        mS.getData('get', '/Politica/GetAll').then(response => {
-            $scope.politicas = response.data || [];
-        })
+        initiload();
+        function initiload(){
+            try {
+                showLoader();
+                politicaSvc.get({tipo: 2}).then(response=>{  
+                    $scope.politicas = response|| [];
+                }).finally(()=>hideLoader())
+            } catch (error) {
+                hideLoader();
+            }
+        } 
         if ($scope.tipoRegistro === 'E') {
             $scope.data = Object.assign({}, $scope.params.data);
         }
@@ -294,7 +305,7 @@
                 if (!$scope.data.nroIdentificacion) {
                     tS.toastr('warning', 'Ingrese el usuario', tituloModal);
                     return;
-                };
+                }
 
                 if (!$scope.data.nombreCompleto) {
                     tS.toastr('warning', 'Ingrese el Nombre Completo', tituloModal);
@@ -687,7 +698,7 @@
                     }
                 })
             } catch (error) {
-
+                console.log(error)
             }
         }
 
