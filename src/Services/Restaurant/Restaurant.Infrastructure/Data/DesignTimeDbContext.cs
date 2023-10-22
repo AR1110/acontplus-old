@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using Restaurant.Infrastructure.Data;
 
-namespace Restaurant.Infrastructure
+namespace Restaurant.Infrastructure.Data
 {
     public class DesignTimeDbContext : IDesignTimeDbContextFactory<RestaurantContext>
     {
