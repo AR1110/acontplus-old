@@ -41,7 +41,7 @@ BEGIN
    
      IF @textSearch IS NOT NULL
         BEGIN
-            SET @sql = @sql + ' WHERE m.ForPromotion = 1 AND
+            SET @sql = @sql + 'AND m.ForPromotion = 1 AND
                                 (m.Title LIKE ''%''+@textSearch+''%''
                                 OR m.Summary LIKE ''%''+@textSearch+''%''
                                 OR m.Content LIKE ''%''+@textSearch+''%'') '
