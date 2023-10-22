@@ -1,6 +1,6 @@
 ﻿using System.Data;
 using Lib.Common;
-using Services.Lib.Common;
+using Lib.Common.Api;
 
 namespace Domain.Models
 {

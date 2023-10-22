@@ -15,7 +15,7 @@ namespace Mechanical.API.Controllers
         private readonly IVehicleService _vehicleService;
         private readonly LogWriter _log;
 
-        public VehicleController( IVehicleService vehicleService, LogWriter log)
+        public VehicleController(IVehicleService vehicleService, LogWriter log)
         {
             _vehicleService = vehicleService;
             _log = log;
@@ -109,7 +109,7 @@ namespace Mechanical.API.Controllers
             try
             {
                 bool response = await _vehicleService.UpdateStateAsync(id, state);
-                if(!response) { return BadRequest("No se pudo Actualizar"); }
+                if (!response) { return BadRequest("No se pudo Actualizar"); }
                 return Ok(response);
             }
             catch (Exception ex)

@@ -1,5 +1,6 @@
 ﻿using DataAccess;
 using Domain.Models;
+using Domain.Models.Config;
 using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,14 +1,14 @@
 ﻿using Lib.Common.Dtos;
 using Newtonsoft.Json;
 
-namespace Reports.Application
+namespace Common.Reports
 {
     public static class RdlcHelpers
     {
         public static MemoryStream LoadReportDefinition(string filePath)
         {
-            MemoryStream memoryStream = new MemoryStream();
-            using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            var memoryStream = new MemoryStream();
+            using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
             {
                 fileStream.CopyTo(memoryStream);
             }
@@ -17,8 +17,8 @@ namespace Reports.Application
         }
         public static ApiReportParamsDto ConverToModelReportParams(string data)
         {
-            ApiReportParamsDto _response = new ApiReportParamsDto();
-            Dictionary<string, string> rdlcParams = new Dictionary<string, string>();
+            var _response = new ApiReportParamsDto();
+            var rdlcParams = new Dictionary<string, string>();
             var _arrayProps = JsonConvert.DeserializeObject<IEnumerable<IDictionary<string, string>>>(data);
 
             foreach (var item in _arrayProps.FirstOrDefault())
@@ -50,16 +50,16 @@ namespace Reports.Application
                 if (item.Key == "dataSources" && !string.IsNullOrEmpty(item.Value.ToString()))
                 {
                     var arrayDS = JsonConvert.DeserializeObject<IEnumerable<IDictionary<string, string>>>(item.Value.ToString());
-                    Dictionary<string, List<Dictionary<string, string>>> ldDataSources = new Dictionary<string, List<Dictionary<string, string>>>();
+                    var ldDataSources = new Dictionary<string, List<Dictionary<string, string>>>();
 
                     foreach (var dataSource in arrayDS.FirstOrDefault())
                     {
                         var dataDS = JsonConvert.DeserializeObject<IEnumerable<IDictionary<string, string>>>(dataSource.Value);
-                        List<Dictionary<string, string>> dataSources = new List<Dictionary<string, string>>();
+                        var dataSources = new List<Dictionary<string, string>>();
 
                         foreach (var value in dataDS)
                         {
-                            Dictionary<string, string> itemDs = new Dictionary<string, string>();
+                            var itemDs = new Dictionary<string, string>();
                             foreach (var de in value)
                             {
                                 itemDs.Add(de.Key, de.Value);

@@ -3,6 +3,7 @@ using System.Data.SqlClient;
 using Domain.Models.Compras;
 using Domain.ViewModels.Compras;
 using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 

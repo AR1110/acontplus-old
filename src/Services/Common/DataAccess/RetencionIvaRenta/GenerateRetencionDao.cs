@@ -4,7 +4,7 @@ using Domain.Models;
 using Domain.Models.Ventas;
 using Domain.ViewModels;
 using Domain.ViewModels.Ventas;
-using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.RetencionIvaRenta

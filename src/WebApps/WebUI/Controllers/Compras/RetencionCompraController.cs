@@ -3,11 +3,11 @@ using DataAccess.Compras;
 using DataAccess.RetencionIvaRenta;
 using Domain.Models;
 using Domain.ViewModels;
-using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
-namespace WebUI.Controllers.Ingresos
+namespace WebUI.Controllers.Compras
 {
     public class RetencionCompraController : Controller
     {
@@ -40,7 +40,7 @@ namespace WebUI.Controllers.Ingresos
         [HttpPost]
         public async Task<IActionResult> Insert([FromBody] RetencionCompraViewModel data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _rc.InsertAsync(idRol, data);
             return Ok(_gr);
         }
@@ -48,7 +48,7 @@ namespace WebUI.Controllers.Ingresos
 
         public async Task<IActionResult> Get(string json)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _rc.GetAsync(idRol, json);
             return Ok(res);
         }
@@ -56,9 +56,9 @@ namespace WebUI.Controllers.Ingresos
         [HttpGet]
         public async Task<IActionResult> GetId(int id)
         {
-            DbAccess _db = new DbAccess(_configuration);
+            var _db = new DbAccess(_configuration);
 
-            GenericResponse _response = new GenericResponse();
+            var _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Compra.Retencion_Get_Id");
@@ -78,7 +78,7 @@ namespace WebUI.Controllers.Ingresos
 
         public async Task<IActionResult> GetTipoImpuesto(string busqueda)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _gra.GetTipoImpuestoAsync(idRol, busqueda);
             return Ok(res);
         }
@@ -88,7 +88,7 @@ namespace WebUI.Controllers.Ingresos
         [HttpPut]
         public async Task<IActionResult> Update(int id, [FromBody] RetencionCompraViewModel data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             //RetencionCompraViewModel data = JsonConvert.DeserializeObject<RetencionCompraViewModel>(jsonData);
             _gr = await _rc.UpdateAsync(idRol, id, data);
             return Ok(_gr);
@@ -98,7 +98,7 @@ namespace WebUI.Controllers.Ingresos
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            var parameters = new Dictionary<string, object>();
             parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", id);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Compra.Retencion_Delete", parameters)));

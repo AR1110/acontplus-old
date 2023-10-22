@@ -1,6 +1,6 @@
-﻿using Domain.Models;
+﻿using Domain.Models.Ventas;
 
-namespace Domain.ViewModels
+namespace Domain.ViewModels.Ventas
 {
     public class NotaEntregaDetalleViewModel
     {

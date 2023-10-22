@@ -1,6 +1,6 @@
 ﻿using Domain.Models.Tesoreria;
 
-namespace Domain.ViewModels.Tesoreria
+namespace Domain.ViewModels.GestionFinanciera
 {
     public class CobroViewModel
     {

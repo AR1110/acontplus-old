@@ -2,7 +2,7 @@
 using DataAccess.Compras;
 using Domain.Models;
 using Domain.ViewModels.Compras;
-using Lib.Common;
+using Lib.Common.Api;
 using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;

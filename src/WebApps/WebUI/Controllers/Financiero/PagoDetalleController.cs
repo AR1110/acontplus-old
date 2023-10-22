@@ -1,7 +1,7 @@
 ﻿using DataAccess.GestionFinanciera;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers.GestionFinanciera
+namespace WebUI.Controllers.Financiero
 {
     public class PagoDetalleController : Controller
     {
@@ -21,7 +21,7 @@ namespace WebUI.Controllers.GestionFinanciera
 
         public async Task<IActionResult> GetByDocument(int idPago, int idTipoDocumento, int idComprobante)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _pagoD.GetByDocumentAsync(idRol, idPago, idTipoDocumento, idComprobante);
             return Ok(res);
         }

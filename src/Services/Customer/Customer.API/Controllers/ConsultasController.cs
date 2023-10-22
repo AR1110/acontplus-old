@@ -3,12 +3,12 @@ using System.Net;
 using Customer.API.Data;
 using Customer.API.Dtos;
 using Customer.API.Services;
+using Lib.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Services.Common.Logs;
-using Services.Lib.Common;
 
 namespace Customer.API.Controllers
 {

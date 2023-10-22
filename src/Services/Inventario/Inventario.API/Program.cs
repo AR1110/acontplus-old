@@ -1,5 +1,5 @@
-﻿using Autofac.Extensions.DependencyInjection;
-using Autofac;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Inventario.API.Extensions;
 using Lib.Common;
 using Microsoft.AspNetCore.Mvc;

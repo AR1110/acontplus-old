@@ -1,7 +1,7 @@
-﻿using System.Data.Common;
-using System.Data;
-using Microsoft.Data.SqlClient;
+﻿using System.Data;
+using System.Data.Common;
 using Common.Infrastructure.Data;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 

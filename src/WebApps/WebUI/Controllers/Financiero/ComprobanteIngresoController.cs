@@ -1,11 +1,11 @@
 ﻿using DataAccess;
-using DataAccess.Tesoreria;
+using DataAccess.GestionFinanciera;
 using Domain.Models;
-using Lib.Common;
+using Lib.Common.Api;
 using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers.GestionFinanciera
+namespace WebUI.Controllers.Financiero
 {
     public class ComprobanteIngresoController : Controller
     {
@@ -36,7 +36,7 @@ namespace WebUI.Controllers.GestionFinanciera
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            var parameters = new Dictionary<string, object>();
             parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlStringParam.Sanitize(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("GestFinanc.ComprobanteIngreso_Get", parameters)));
@@ -45,8 +45,8 @@ namespace WebUI.Controllers.GestionFinanciera
         [HttpDelete]
         public async Task<IActionResult> Cancel(int id, string observacion)
         {
-            GenericResponse _response = new GenericResponse();
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            var _response = new GenericResponse();
+            var parameters = new Dictionary<string, object>();
             parameters.Add("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("idComprobanteIngreso", id);
             parameters.Add("observacion", observacion);

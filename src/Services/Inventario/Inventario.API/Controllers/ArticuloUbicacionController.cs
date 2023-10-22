@@ -1,9 +1,8 @@
 ﻿
 using DataAccess;
-using Lib.Common;
+using Lib.Common.Api;
 using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Services.Common.Logs;
 
 namespace Inventario.API.Controllers
@@ -20,9 +19,9 @@ namespace Inventario.API.Controllers
             _configuration = configuration;
             _db = new DbAccess(_configuration);
             _log = log;
-        } 
+        }
 
-         
+
 
         [HttpPost]
         public async Task<IActionResult> Insert(string json)
@@ -33,7 +32,7 @@ namespace Inventario.API.Controllers
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Inventario.ArticuloUbicacion_Insert", true);
-                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);                
+                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDefault();
             }

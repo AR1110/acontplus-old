@@ -1,9 +1,9 @@
-﻿using Domain.Models;
-using Domain.Models.Compras;
+﻿using Domain.Models.Compras;
 using Domain.Models.InfoAdicional;
+using Domain.Models.Ventas;
 using Domain.ViewModels.InfoAdicional;
 
-namespace Domain.ViewModels
+namespace Domain.ViewModels.Ventas
 {
     public class FacturaViewModel
     {

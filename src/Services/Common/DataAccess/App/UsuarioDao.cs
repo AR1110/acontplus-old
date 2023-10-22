@@ -1,10 +1,10 @@
 ﻿
 using System.Data;
 using Domain.Models;
-using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.Extensions.Configuration;
 
-namespace DataAccess.Aplicacion
+namespace DataAccess.App
 {
     public class UsuarioDao
     {
@@ -20,10 +20,10 @@ namespace DataAccess.Aplicacion
         {
             try
             {
-                DbAccess db = new DbAccess(_config);
+                var db = new DbAccess(_config);
                 await db.SPExecute("App.Usuario_Get");
                 db.AddParameter("json", SqlDbType.NVarChar, json);
-                DataTable dt = db.GetDataTable();
+                var dt = db.GetDataTable();
                 _response = DbResponse.SPDataTable(dt);
             }
             catch (Exception ex)
@@ -36,10 +36,10 @@ namespace DataAccess.Aplicacion
         {
             try
             {
-                DbAccess db = new DbAccess(_config);
+                var db = new DbAccess(_config);
                 await db.SPExecute("App.Usuario_Get_Search");
                 db.AddParameter("json", SqlDbType.NVarChar, json);
-                DataTable dt = db.GetDataTable();
+                var dt = db.GetDataTable();
                 _response = DbResponse.SPDataTable(dt);
             }
             catch (Exception ex)
@@ -52,10 +52,10 @@ namespace DataAccess.Aplicacion
         {
             try
             {
-                DbAccess db = new DbAccess(_config);
+                var db = new DbAccess(_config);
                 await db.SPExecute("App.Usuario_Insert");
                 db.AddParameter("json", SqlDbType.NVarChar, json);
-                DataTable dt = db.GetDataTable();
+                var dt = db.GetDataTable();
                 _response = DbResponse.SPDefault(dt);
             }
             catch (Exception ex)
@@ -68,11 +68,11 @@ namespace DataAccess.Aplicacion
         {
             try
             {
-                DbAccess db = new DbAccess(_config);
+                var db = new DbAccess(_config);
                 await db.SPExecute("App.Usuario_Update");
                 db.AddParameter("id", SqlDbType.Int, id);
                 db.AddParameter("json", SqlDbType.NVarChar, json);
-                DataTable dt = db.GetDataTable();
+                var dt = db.GetDataTable();
                 _response = DbResponse.SPDefault(dt);
             }
             catch (Exception ex)
@@ -85,10 +85,10 @@ namespace DataAccess.Aplicacion
         {
             try
             {
-                DbAccess db = new DbAccess(_config);
+                var db = new DbAccess(_config);
                 await db.SPExecute("App.Usuario_Delete");
                 db.AddParameter("id", SqlDbType.Int, id);
-                DataTable dt = db.GetDataTable();
+                var dt = db.GetDataTable();
                 _response = DbResponse.SPDefault(dt);
             }
             catch (Exception ex)

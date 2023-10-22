@@ -91,7 +91,7 @@ namespace TechnicalSupport.API.Controllers
         {
             try
             {
-                 
+
                 return Ok();
             }
             catch (Exception ex)

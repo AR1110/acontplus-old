@@ -4,6 +4,7 @@ using Domain.Models.InfoAdicional;
 using Domain.Models.Ventas;
 using Domain.ViewModels.Ventas;
 using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
@@ -227,14 +228,9 @@ namespace DataAccess.Ventas
                     var cmd = new SqlCommand("Ventas.NotaCredito_Update", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.Parameters.AddWithValue("idNotaCredito", idNotaCredito);
-                    var nota = JsonConvert.SerializeObject(data.nota);
-                    cmd.Parameters.Add(new SqlParameter("jsonNotaCredito", nota));
-                    var detalle = JsonConvert.SerializeObject(data.detalle); 
-                    
-                    cmd.Parameters.Add(new SqlParameter("jsonDetalle", detalle));
-                    var infoAdicional = JsonConvert.SerializeObject(data.adicional); 
-                    cmd.Parameters.Add(new SqlParameter("jsonInfoAdicional", infoAdicional));
-
+                    var nota = JsonConvert.SerializeObject(data.nota); cmd.Parameters.Add(new SqlParameter("jsonNotaCredito", nota));
+                    var detalle = JsonConvert.SerializeObject(data.detalle); cmd.Parameters.Add(new SqlParameter("jsonDetalle", detalle));
+                    var infoAdicional = JsonConvert.SerializeObject(data.adicional); cmd.Parameters.Add(new SqlParameter("jsonInfoAdicional", infoAdicional));
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
                     SqlDataReader reader = cmd.ExecuteReader();

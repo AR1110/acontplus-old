@@ -1,5 +1,5 @@
-﻿using Autofac.Extensions.DependencyInjection;
-using Autofac;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Lib.Common;
 using Mechanical.API.Extensions;
 using Newtonsoft.Json.Serialization;

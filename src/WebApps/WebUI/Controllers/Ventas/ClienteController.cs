@@ -1,10 +1,10 @@
 ﻿using DataAccess;
-using Lib.Common;
+using Lib.Common.Api;
 using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
-namespace WebUI.Controllers
+namespace WebUI.Controllers.Ventas
 {
     public class ClienteController : Controller
     {
@@ -29,9 +29,9 @@ namespace WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            DbAccess _db = new DbAccess(_configuration);
+            var _db = new DbAccess(_configuration);
 
-            GenericResponse _response = new GenericResponse();
+            var _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Ventas.Cliente_Get");
@@ -53,9 +53,9 @@ namespace WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetId(int id)
         {
-            DbAccess _db = new DbAccess(_configuration);
+            var _db = new DbAccess(_configuration);
 
-            GenericResponse _response = new GenericResponse();
+            var _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Ventas.Cliente_Get_Id");
@@ -77,9 +77,9 @@ namespace WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> Search(string json)
         {
-            DbAccess _db = new DbAccess(_configuration);
+            var _db = new DbAccess(_configuration);
 
-            GenericResponse _response = new GenericResponse();
+            var _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Ventas.Cliente_Get_Search");

@@ -1,9 +1,9 @@
-﻿using Lib.Common;
-using Lib.Common.Api;
-using Vet.Core.Interfaces;
-using Common.Infrastructure.Repository;
-using Lib.Common.Dtos;
+﻿using Common.Infrastructure.Repository;
 using Common.Reports.Interfaces;
+using Lib.Common;
+using Lib.Common.Api;
+using Lib.Common.Dtos;
+using Vet.Core.Interfaces;
 
 namespace Vet.Application.Services
 {

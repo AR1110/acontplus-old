@@ -1,8 +1,8 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
 using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.Extensions.Configuration;
-using Services.Lib.Common;
 
 namespace DataAccess
 {

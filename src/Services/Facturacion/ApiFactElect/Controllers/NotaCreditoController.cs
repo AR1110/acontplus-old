@@ -1,6 +1,6 @@
 ﻿using DataAccess;
 using Domain.ViewModels.Ventas;
-using Lib.Common;
+using Lib.Common.Api;
 using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -68,7 +68,7 @@ namespace ApiFactElect.Controllers
             {
                 _db.Close();
             }
-            return Ok(_response); 
+            return Ok(_response);
 
         }
 
@@ -84,7 +84,7 @@ namespace ApiFactElect.Controllers
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("jsonNotaCredito", JsonConvert.SerializeObject(data.nota));
                 _db.AddDynamicParam("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
-                _db.AddDynamicParam("jsonInfoAdicional", JsonConvert.SerializeObject(data.adicional)); 
+                _db.AddDynamicParam("jsonInfoAdicional", JsonConvert.SerializeObject(data.adicional));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -101,7 +101,7 @@ namespace ApiFactElect.Controllers
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] NotaCreditoViewModel data)
-        { 
+        {
             var _response = new GenericResponse();
             try
             {
@@ -110,7 +110,7 @@ namespace ApiFactElect.Controllers
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("jsonNotaCredito", JsonConvert.SerializeObject(data.nota));
                 _db.AddDynamicParam("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
-                _db.AddDynamicParam("jsonInfoAdicional", JsonConvert.SerializeObject(data.adicional)); 
+                _db.AddDynamicParam("jsonInfoAdicional", JsonConvert.SerializeObject(data.adicional));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -128,7 +128,7 @@ namespace ApiFactElect.Controllers
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
-        { 
+        {
             var _response = new GenericResponse();
             try
             {

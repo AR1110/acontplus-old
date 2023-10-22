@@ -2,7 +2,7 @@
 using Domain.Models.Almacen;
 using Inventario.Core.Interfaces;
 using Inventario.Core.Models;
-using Lib.Common;
+using Lib.Common.Api;
 using Lib.Common.DbUtils;
 using Lib.Common.Dtos;
 using Microsoft.AspNetCore.Mvc;

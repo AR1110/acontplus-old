@@ -1,7 +1,6 @@
 ﻿using Inventario.Application.Services;
 using Inventario.Core.Interfaces;
 using Inventario.Infrastructure.Data;
-using Lib.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace Inventario.API.Extensions
@@ -12,7 +11,7 @@ namespace Inventario.API.Extensions
         {
             services.AddDbContextPool<InventarioContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-            
+
             services.AddScoped<IStockFisicoService, StockFisicoService>();
             services.AddScoped<IStorageService, StorageService>();
             return services;

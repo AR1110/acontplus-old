@@ -1,5 +1,5 @@
-﻿using DataAccess;
-using Domain.Models;
+﻿using DataAccess.App;
+using Domain.Models.Aplicacion;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

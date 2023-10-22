@@ -1,4 +1,6 @@
-﻿namespace Domain.Models
+﻿using Domain.Models.Administracion;
+
+namespace Domain.Models
 {
     public class Asignaciones
     {

@@ -1,10 +1,11 @@
 ﻿using DataAccess;
 using Domain.Models;
 using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 using WebUI.Utils;
 
-namespace WebUI.Controllers.Configuracion
+namespace WebUI.Controllers.Config
 {
     public class EntidadLogoController : Controller
     {
@@ -25,13 +26,13 @@ namespace WebUI.Controllers.Configuracion
         }
         public async Task<IActionResult> Get()
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var response = await _el.GetAsync(idRol);
             return Ok(response);
         }
         public async Task<IActionResult> Post(EntidadLogo data, IFormFile file)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var nombreImagen = FileExtensions.SanitizeFileName(file.FileName);
             data.nombreImagen = nombreImagen;
             var signFile = new FileModel
@@ -45,7 +46,7 @@ namespace WebUI.Controllers.Configuracion
         }
         public async Task<IActionResult> Put(EntidadLogo data, IFormFile file)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var nombreImagen = FileExtensions.SanitizeFileName(file.FileName);
             data.nombreImagen = nombreImagen;
             var signFile = new FileModel
@@ -60,7 +61,7 @@ namespace WebUI.Controllers.Configuracion
 
         public async Task<IActionResult> Delete(int id)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var response = await _el.DeleteAsync(idRol, id);
             return Ok(response);
         }

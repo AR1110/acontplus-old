@@ -1,10 +1,10 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
 using Domain.Models.Administracion;
-using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.Extensions.Configuration;
 
-namespace DataAccess
+namespace DataAccess.Administracion
 {
     public class SubMenuDao
     {
@@ -23,14 +23,14 @@ namespace DataAccess
             var listar = new List<SubMenu>();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
-                    SqlCommand cmd = new SqlCommand("aspSubMenuGet", con);
+                    var cmd = new SqlCommand("aspSubMenuGet", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.Parameters.AddWithValue("idMenu", idMenu);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);
@@ -69,9 +69,9 @@ namespace DataAccess
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
-                    SqlCommand cmd = new SqlCommand("aspSubMenuInsert", con);
+                    var cmd = new SqlCommand("aspSubMenuInsert", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.Parameters.AddWithValue("idMenu", data.idMenu);
                     cmd.Parameters.AddWithValue("url", data.url);
@@ -80,7 +80,7 @@ namespace DataAccess
                     cmd.Parameters.AddWithValue("codTemp", data.codTemp);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);
@@ -105,9 +105,9 @@ namespace DataAccess
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
-                    SqlCommand cmd = new SqlCommand("aspSubMenuUpdate", con);
+                    var cmd = new SqlCommand("aspSubMenuUpdate", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.Parameters.AddWithValue("idSubMenu", idSubMenu);
                     cmd.Parameters.AddWithValue("descripcion", data.descripcion);
@@ -116,7 +116,7 @@ namespace DataAccess
                     cmd.Parameters.AddWithValue("estado", data.estado);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);
@@ -142,14 +142,14 @@ namespace DataAccess
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
-                    SqlCommand cmd = new SqlCommand("aspSubMenuDelete", con);
+                    var cmd = new SqlCommand("aspSubMenuDelete", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.Parameters.AddWithValue("idSubMenu", idSubMenu);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);

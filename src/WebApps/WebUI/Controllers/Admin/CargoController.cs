@@ -1,8 +1,8 @@
-﻿using DataAccess;
-using Domain.Models;
+﻿using DataAccess.Administracion;
+using Domain.Models.Administracion;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers
+namespace WebUI.Controllers.Admin
 {
     public class CargoController : Controller
     {
@@ -21,7 +21,7 @@ namespace WebUI.Controllers
         }
         public async Task<IActionResult> Get(string json)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _c.GetAsync(idRol, json);
             return Ok(res);
         }
@@ -29,7 +29,7 @@ namespace WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Cargo data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _c.InsertAsync(idRol, data);
             return Ok(res);
         }
@@ -38,14 +38,14 @@ namespace WebUI.Controllers
         [HttpPut]
         public async Task<IActionResult> Put(int id, [FromBody] Cargo data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _c.UpdateAsync(idRol, id, data);
             return Ok(res);
         }
 
         public async Task<IActionResult> Delete(int id)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _c.DeleteAsync(idRol, id);
             return Ok(res);
         }

@@ -1,9 +1,9 @@
 ﻿using DataAccess;
 using DataAccess.Almacen;
-using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers
+namespace WebUI.Controllers.Almacen
 {
     public class MarcaController : Controller
     {

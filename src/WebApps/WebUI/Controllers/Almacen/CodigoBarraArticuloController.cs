@@ -2,10 +2,10 @@
 using DataAccess.Almacen;
 using Domain.Models;
 using Domain.Models.Almacen;
-using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers
+namespace WebUI.Controllers.Almacen
 {
     public class CodigoBarraArticuloController : Controller
     {
@@ -30,7 +30,7 @@ namespace WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(int idArticulo)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _cba.GetIdAsync(idArticulo);
             return Ok(_gr);
         }
@@ -38,8 +38,8 @@ namespace WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ArticuloCodigoBarra data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var parameters = new Dictionary<string, object>();
             parameters.Add("idRol", idRol);
             parameters.Add("idArticulo", data.idArticulo);
             parameters.Add("idMedida", data.idMedida);
@@ -53,8 +53,8 @@ namespace WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Put(int idArticuloCodigoBarra, [FromBody] ArticuloCodigoBarra data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var parameters = new Dictionary<string, object>();
             parameters.Add("idRol", idRol);
             parameters.Add("id", idArticuloCodigoBarra);
             parameters.Add("idMedida", data.idMedida);
@@ -67,8 +67,8 @@ namespace WebUI.Controllers
 
         public async Task<IActionResult> Delete(int idArticuloCodigoBarra)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var parameters = new Dictionary<string, object>();
             parameters.Add("idRol", idRol);
             parameters.Add("id", idArticuloCodigoBarra);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Almacen.CodigoBarra_Delete", parameters)));

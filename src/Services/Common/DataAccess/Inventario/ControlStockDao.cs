@@ -2,7 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 using Domain.Models;
-using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Inventario

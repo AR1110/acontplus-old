@@ -1,10 +1,10 @@
 ﻿using System.Data;
+using Common.Infrastructure.Repository;
 using Contabilidad.Core.Entities;
 using Contabilidad.Core.Interfaces;
 using Contabilidad.Infrastructure.Data;
 using Lib.Common;
 using Lib.Common.Api;
-using Common.Infrastructure.Repository;
 
 namespace Contabilidad.Application.Servicios
 {

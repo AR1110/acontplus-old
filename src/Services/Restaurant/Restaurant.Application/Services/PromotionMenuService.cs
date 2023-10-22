@@ -16,7 +16,7 @@ namespace Restaurant.Application.Services
 
         public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
         {
-            var ds = await _repository.GetDataSetAsync( "Restaurant.Promotion_Menu_Get_By_Id", parameters);
+            var ds = await _repository.GetDataSetAsync("Restaurant.Promotion_Menu_Get_By_Id", parameters);
             if (ds == null)
             {
                 return null;
@@ -25,6 +25,6 @@ namespace Restaurant.Application.Services
             {
                 return Converters.DataSetToJSON(ds);
             }
-        }        
+        }
     }
 }

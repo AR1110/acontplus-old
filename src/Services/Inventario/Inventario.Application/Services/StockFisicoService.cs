@@ -1,9 +1,8 @@
 ﻿using System.Data;
+using Common.Infrastructure.Repository;
 using Inventario.Core.Interfaces;
 using Lib.Common;
 using Lib.Common.Api;
-using Services.Lib.Common;
-using Common.Infrastructure.Repository;
 
 namespace Inventario.Application.Services
 {

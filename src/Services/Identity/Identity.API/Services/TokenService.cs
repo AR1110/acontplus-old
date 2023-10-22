@@ -7,7 +7,7 @@ using Identity.Core.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Identity.Services
+namespace Identity.API.Services
 {
     public class TokenService : ITokenService
     {

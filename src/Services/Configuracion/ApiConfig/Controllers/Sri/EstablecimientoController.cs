@@ -1,6 +1,6 @@
 ﻿using DataAccess;
+using Lib.Common.Api;
 using Lib.Common.DbUtils;
-using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -107,7 +107,7 @@ namespace ApiConfig.Controllers.Sri
             }
             finally
             {
-                _db.Close(); 
+                _db.Close();
             }
             return Ok(_response);
         }

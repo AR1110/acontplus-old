@@ -9,7 +9,7 @@ using Identity.API.Extensions;
 using Identity.API.Interfaces;
 using Identity.Core.Entities;
 using Identity.Infrastructure.Data;
-using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -31,9 +31,9 @@ namespace Identity.API.Controllers.v1
         private readonly ApplicationDbContext _context;
         public AccountController(UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
-            ITokenService tokenService, 
+            ITokenService tokenService,
             IMapper mapper,
-            IConfiguration config, 
+            IConfiguration config,
             LogWriter log,
             ApplicationDbContext context
             )

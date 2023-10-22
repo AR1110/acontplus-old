@@ -1,10 +1,10 @@
 ﻿using System.Data;
+using Common.Infrastructure.Repository;
 using Lib.Common;
 using Lib.Common.Api;
 using Lib.Common.DbUtils;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
-using Common.Infrastructure.Repository;
 
 namespace Restaurant.Application.Services
 {

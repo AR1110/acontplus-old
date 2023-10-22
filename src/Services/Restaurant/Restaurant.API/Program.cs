@@ -1,7 +1,5 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Common.Infrastructure.Data;
-using Common.Infrastructure.Repository;
 using Lib.Common;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
@@ -80,5 +78,5 @@ internal class Program
 
 
         await app.RunAsync();
-    } 
+    }
 }

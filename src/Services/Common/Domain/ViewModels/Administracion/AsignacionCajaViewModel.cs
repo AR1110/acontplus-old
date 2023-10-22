@@ -1,6 +1,6 @@
-﻿using Domain.Models;
+﻿using Domain.Models.Administracion;
 
-namespace Domain.ViewModels
+namespace Domain.ViewModels.Administracion
 {
     public class AsignacionCajaViewModel
     {

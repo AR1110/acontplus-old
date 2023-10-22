@@ -2,7 +2,7 @@
 using System.Data.SqlClient;
 using Domain.Models.CuotaDocumento;
 using Domain.ViewModels.CuotaDocumento;
-using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 

@@ -1,8 +1,7 @@
-﻿using Common.Infrastructure.Repository;
+﻿using System.Data;
+using Common.Infrastructure.Repository;
 using Lib.Common;
-using System.Data;
 using Mechanical.Core.Interfaces;
-using Mechanical.Infrastructure.Data;
 
 namespace Mechanical.Application.Services
 {
@@ -11,7 +10,7 @@ namespace Mechanical.Application.Services
         private readonly IADORepository _repository;
 
 
-        public InspectionService( IADORepository repository)
+        public InspectionService(IADORepository repository)
         {
             _repository = repository;
         }

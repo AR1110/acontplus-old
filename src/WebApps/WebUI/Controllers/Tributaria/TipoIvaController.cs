@@ -1,9 +1,9 @@
 ﻿using DataAccess;
 using Domain.Models;
-using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers
+namespace WebUI.Controllers.Tributaria
 {
     public class TipoIvaController : Controller
     {

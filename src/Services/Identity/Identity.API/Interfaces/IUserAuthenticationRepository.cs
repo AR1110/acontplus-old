@@ -1,4 +1,4 @@
-﻿namespace Identity.API.Service.Interfaces;
+﻿namespace Identity.API.Interfaces;
 
 public interface IUserAuthenticationRepository
 {

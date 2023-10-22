@@ -1,10 +1,10 @@
 ﻿using DataAccess;
-using DataAccess.Tesoreria;
+using DataAccess.GestionFinanciera;
 using Domain.Models;
-using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers.GestionFinanciera
+namespace WebUI.Controllers.Financiero
 {
     public class GestionFinancieraController : Controller
     {
@@ -34,7 +34,7 @@ namespace WebUI.Controllers.GestionFinanciera
         [HttpGet]
         public async Task<IActionResult> GetDocumentsCharge(string json)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            var parameters = new Dictionary<string, object>();
             parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", json);
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("ASPDocumentsCharge", parameters)));
@@ -44,7 +44,7 @@ namespace WebUI.Controllers.GestionFinanciera
         //Get All Docs By Supplier - Proveedor 
         public async Task<IActionResult> GetDocumentsPay(string json)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _gf.GetDocumentsPayAsync(idRol, json);
             return Ok(res);
         }
@@ -52,7 +52,7 @@ namespace WebUI.Controllers.GestionFinanciera
         // 
         public async Task<IActionResult> GetPaymentForDocument(int idProveedor)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _gf.GetPaymentForDocumentAsync(idRol, idProveedor);
             return Ok(res);
         }
@@ -61,7 +61,7 @@ namespace WebUI.Controllers.GestionFinanciera
         //Obtenemos documentos(Retencion Venta y Nota Creditp) que se aplicará en el cobro 
         public async Task<IActionResult> GetChargeForDocument(string json)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _gf.GetChargeForDocumentAsync(idRol, json);
             return Ok(res);
         }

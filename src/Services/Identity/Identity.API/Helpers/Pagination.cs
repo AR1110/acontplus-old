@@ -1,4 +1,4 @@
-﻿namespace Admin.API.Helpers
+﻿namespace Identity.API.Helpers
 {
     public class Pagination<T> where T : class
     {

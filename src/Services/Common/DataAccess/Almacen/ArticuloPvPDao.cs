@@ -3,7 +3,7 @@ using System.Data.SqlClient;
 using Domain.Models;
 using Domain.Models.Almacen;
 using Domain.ViewModels;
-using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Almacen

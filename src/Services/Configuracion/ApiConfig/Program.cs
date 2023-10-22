@@ -1,6 +1,6 @@
 ﻿using ApiConfig.Extensions;
-using Autofac.Extensions.DependencyInjection;
 using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Lib.Common;
 using Newtonsoft.Json.Serialization;
 using Services.Common;

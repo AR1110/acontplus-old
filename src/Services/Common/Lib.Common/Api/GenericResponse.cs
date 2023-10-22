@@ -1,4 +1,4 @@
-﻿namespace Lib.Common
+﻿namespace Lib.Common.Api
 {
     public class GenericResponse
     {
@@ -11,11 +11,11 @@
         public void Create(string code, string message = null, string titleSms = null, dynamic payload = null)
         {
             this.code = code;
-            this.id = code;
+            id = code;
             this.message = message;
             this.titleSms = titleSms;
             this.payload = payload;
-            this.data = payload;
+            data = payload;
         }
         public string typeNotify { get; set; }
         public dynamic gestion { get; set; }

@@ -3,10 +3,10 @@ using System.Data;
 using System.Data.SqlClient;
 using Domain.Models;
 using Domain.ViewModels;
-using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.Extensions.Configuration;
 
-namespace DataAccess
+namespace DataAccess.Ventas
 {
     public class ClienteDao
     {
@@ -25,7 +25,7 @@ namespace DataAccess
             var cl = new ClienteViewModel();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("ASPClienteDetalleGet", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
@@ -33,7 +33,7 @@ namespace DataAccess
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
 
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _response.id = reader.GetString(0);

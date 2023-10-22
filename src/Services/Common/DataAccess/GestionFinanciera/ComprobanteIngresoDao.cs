@@ -1,12 +1,12 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
 using Domain.Models.Tesoreria;
-using Domain.ViewModels.Tesoreria;
-using Lib.Common;
+using Domain.ViewModels.GestionFinanciera;
+using Lib.Common.Api;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
-namespace DataAccess.Tesoreria
+namespace DataAccess.GestionFinanciera
 {
     public class ComprobanteIngresoDao
     {
@@ -26,7 +26,7 @@ namespace DataAccess.Tesoreria
             var comprobantes = new List<ComprobanteIngresoViewModel>();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("GestFinanc.ComprobanteIngreso_Get_ByDocument", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
@@ -34,7 +34,7 @@ namespace DataAccess.Tesoreria
                     cmd.Parameters.AddWithValue("idComprobante", idComprobante);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);
@@ -82,7 +82,7 @@ namespace DataAccess.Tesoreria
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("GestFinanc.ComprobanteIngreso_Insert_Fast", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
@@ -95,7 +95,7 @@ namespace DataAccess.Tesoreria
                     var cobros = JsonConvert.SerializeObject(data.cobros); cmd.Parameters.Add(new SqlParameter("jsonCobro", cobros));
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);

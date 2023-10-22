@@ -8,8 +8,6 @@ using Lib.Common.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Reporting.NETCore;
 using Newtonsoft.Json;
-using Reports.Application;
-using Services.Lib.Common;
 
 namespace Common.Reports.Services
 {

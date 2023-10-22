@@ -1,16 +1,16 @@
 using System.Data;
 
-namespace Services.Lib.Common
+namespace Lib.Common
 {
     public class DataTableMapper
     {
         //use Foo foo = BindData<Foo>(dt);
         public static T BindData<T>(DataTable dt)
         {
-            DataRow dr = dt.Rows[0];
+            var dr = dt.Rows[0];
 
             // Get all columns' name
-            List<string> columns = new List<string>();
+            var columns = new List<string>();
             foreach (DataColumn dc in dt.Columns)
             {
                 columns.Add(dc.ColumnName);
@@ -46,7 +46,7 @@ namespace Services.Lib.Common
         //use List<Foo> lst = BindDataList<Foo>(dt);
         public static List<T> BindDataList<T>(DataTable dt)
         {
-            List<string> columns = new List<string>();
+            var columns = new List<string>();
             foreach (DataColumn dc in dt.Columns)
             {
                 columns.Add(dc.ColumnName);
@@ -55,7 +55,7 @@ namespace Services.Lib.Common
             var fields = typeof(T).GetFields();
             var properties = typeof(T).GetProperties();
 
-            List<T> lst = new List<T>();
+            var lst = new List<T>();
 
             foreach (DataRow dr in dt.Rows)
             {

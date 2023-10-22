@@ -2,19 +2,19 @@
 using System.Security.Claims;
 using System.Text;
 using AutoMapper;
-using Identity.API.Service.Interfaces;
+using Identity.API.Interfaces;
 using Identity.Core.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
-namespace StudentTeacher.Service.Services;
+namespace Identity.API.Services;
 
 internal sealed class UserAuthenticationRepository : IUserAuthenticationRepository
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly IConfiguration _configuration;
     private readonly IMapper _mapper;
-    private AppUser? _user;
+    private AppUser _user;
 
     public UserAuthenticationRepository(UserManager<AppUser> userManager, IConfiguration configuration, IMapper mapper)
     {

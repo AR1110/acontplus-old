@@ -2,7 +2,7 @@
 using System.Data;
 using Domain.Models;
 using Domain.Models.Administracion;
-using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Administracion

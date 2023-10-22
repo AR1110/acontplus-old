@@ -1,11 +1,11 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
-using Domain.Models;
+using Domain.Models.Compras;
 using Domain.ViewModels.Compras;
-using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.Extensions.Configuration;
 
-namespace DataAccess
+namespace DataAccess.Compras
 {
     public class CategoriaCompraDao
     {
@@ -25,7 +25,7 @@ namespace DataAccess
             var listar = new List<CategoriaCompraViewModel>();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("Compra.Categoria_Get", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
@@ -33,7 +33,7 @@ namespace DataAccess
                     cmd.Parameters.AddWithValue("pageSize", pageSize);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);
@@ -74,7 +74,7 @@ namespace DataAccess
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("Compra.Categoria_Insert", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
@@ -82,7 +82,7 @@ namespace DataAccess
                     cmd.Parameters.AddWithValue("codigo", data.codigo);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);
@@ -107,7 +107,7 @@ namespace DataAccess
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("Compra.Categoria_Update", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
@@ -116,7 +116,7 @@ namespace DataAccess
                     cmd.Parameters.AddWithValue("estado", data.estado);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);
@@ -141,14 +141,14 @@ namespace DataAccess
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("Compra.Categoria_Delete", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.Parameters.AddWithValue("idCategoriaCompra", idCategoriaCompra);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);
@@ -175,13 +175,13 @@ namespace DataAccess
             var listar = new List<CategoriaCompra>();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("aspCategoriaCompraOption", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);

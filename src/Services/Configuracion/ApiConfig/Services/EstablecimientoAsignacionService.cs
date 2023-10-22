@@ -1,6 +1,6 @@
-﻿using Lib.Common;
+﻿using ApiConfig.Interfaces;
 using Common.Infrastructure.Repository;
-using ApiConfig.Interfaces;
+using Lib.Common;
 
 namespace ApiConfig.Services
 {

@@ -1,10 +1,9 @@
-﻿using Lib.Common;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Restaurant.Infrastructure.Data;
 
-namespace Restaurant.Infrastructure.Extensions
+namespace Restaurant.Infrastructure
 {
     public class DesignTimeDbContext : IDesignTimeDbContextFactory<RestaurantContext>
     {
@@ -13,7 +12,7 @@ namespace Restaurant.Infrastructure.Extensions
 
         public RestaurantContext CreateDbContext(string[] args)
         {
-            string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
             IConfiguration configuration = new ConfigurationBuilder()
                 .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../../../SharedSettings")) //old ../Restaurant.API

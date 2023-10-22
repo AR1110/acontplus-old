@@ -1,7 +1,8 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
-using Domain.Models;
+using Domain.Models.Administracion;
 using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 

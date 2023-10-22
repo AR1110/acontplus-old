@@ -3,7 +3,7 @@ using System.Text;
 using DataAccess;
 using Domain.Models;
 using FactElect.Application;
-using Lib.Common;
+using Lib.Common.Api;
 using Lib.Common.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;

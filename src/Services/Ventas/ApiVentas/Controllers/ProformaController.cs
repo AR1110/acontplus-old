@@ -1,6 +1,6 @@
 ﻿using DataAccess;
 using Domain.ViewModels.Ventas;
-using Lib.Common;
+using Lib.Common.Api;
 using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;

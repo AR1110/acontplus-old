@@ -1,6 +1,5 @@
 ﻿using Customer.API.Data;
 using Customer.API.Services;
-using Lib.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace Customer.API.Extensions

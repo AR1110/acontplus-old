@@ -2,7 +2,7 @@
 using System.Data.SqlClient;
 using Domain.Models.GestionTributaria;
 using Domain.ViewModels.GestionTributaria;
-using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.GestionTributaria

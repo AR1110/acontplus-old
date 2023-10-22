@@ -1,6 +1,5 @@
 ﻿using Common.Reports.Interfaces;
 using Common.Reports.Services;
-using Lib.Common;
 using Microsoft.EntityFrameworkCore;
 using Vet.Application.Services;
 using Vet.Core.Interfaces;

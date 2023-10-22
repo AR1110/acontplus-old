@@ -4,7 +4,7 @@ using TechnicalSupport.Core.Interfaces;
 
 namespace TechnicalSupport.Application.Services
 {
-    public class DeviceService: IDeviceService
+    public class DeviceService : IDeviceService
     {
         private readonly IADORepository _repository;
         public DeviceService(IADORepository repository)

@@ -1,6 +1,7 @@
 ﻿using DataAccess;
 using Domain.Models;
-using Lib.Common;
+using Domain.Models.Administracion;
+using Lib.Common.Api;
 using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 

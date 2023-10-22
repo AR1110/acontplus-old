@@ -1,10 +1,11 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
-using Domain.Models;
+using Domain.Models.Aplicacion;
 using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.Extensions.Configuration;
 
-namespace DataAccess
+namespace DataAccess.App
 {
     public class UsuarioRolDao
     {
@@ -20,17 +21,17 @@ namespace DataAccess
 
         public async Task<GenericResponse> GetAsync(string json)
         {
-            DataTable dt = new DataTable();
+            var dt = new DataTable();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
-                    using (SqlCommand cmd = new SqlCommand("App.aspUsuarioRol_Get", con))
+                    using (var cmd = new SqlCommand("App.aspUsuarioRol_Get", con))
                     {
                         cmd.Parameters.AddWithValue("json", json);
                         cmd.CommandType = CommandType.StoredProcedure;
                         await con.OpenAsync();
-                        SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                        var dataAdapter = new SqlDataAdapter(cmd);
                         dataAdapter.Fill(dt);
                         if (dt.Rows.Count > 0)
                         {
@@ -54,17 +55,17 @@ namespace DataAccess
         }
         public async Task<GenericResponse> GetIdAsync(int id)
         {
-            DataTable dt = new DataTable();
+            var dt = new DataTable();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
-                    using (SqlCommand cmd = new SqlCommand("App.aspUsuarioRol_GetId", con))
+                    using (var cmd = new SqlCommand("App.aspUsuarioRol_GetId", con))
                     {
                         cmd.Parameters.AddWithValue("id", id);
                         cmd.CommandType = CommandType.StoredProcedure;
                         await con.OpenAsync();
-                        SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                        var dataAdapter = new SqlDataAdapter(cmd);
                         dataAdapter.Fill(dt);
                         if (dt.Rows.Count > 0)
                         {
@@ -90,16 +91,16 @@ namespace DataAccess
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
-                    using (SqlCommand cmd = new SqlCommand("App.aspUsuarioRol_Insert", con))
+                    using (var cmd = new SqlCommand("App.aspUsuarioRol_Insert", con))
                     {
                         cmd.Parameters.AddWithValue("idUsuario", data.idUsuario);
                         cmd.Parameters.AddWithValue("idEntidad", data.idEntidad);
                         cmd.Parameters.AddWithValue("codRol", data.codRol);
                         cmd.CommandType = CommandType.StoredProcedure;
                         await con.OpenAsync();
-                        SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                        var reader = await cmd.ExecuteReaderAsync();
                         while (await reader.ReadAsync())
                         {
                             _response.id = reader.GetString(0);
@@ -125,15 +126,15 @@ namespace DataAccess
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
-                    using (SqlCommand cmd = new SqlCommand("App.aspUsuarioRol_Update", con))
+                    using (var cmd = new SqlCommand("App.aspUsuarioRol_Update", con))
                     {
                         cmd.Parameters.AddWithValue("id", id);
                         cmd.Parameters.AddWithValue("codRol", codRol);
                         cmd.CommandType = CommandType.StoredProcedure;
                         await con.OpenAsync();
-                        SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                        var reader = await cmd.ExecuteReaderAsync();
                         while (await reader.ReadAsync())
                         {
                             _response.id = reader.GetString(0);
@@ -159,14 +160,14 @@ namespace DataAccess
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
-                    using (SqlCommand cmd = new SqlCommand("App.aspUsuarioRol_Delete", con))
+                    using (var cmd = new SqlCommand("App.aspUsuarioRol_Delete", con))
                     {
                         cmd.Parameters.AddWithValue("id", id);
                         cmd.CommandType = CommandType.StoredProcedure;
                         await con.OpenAsync();
-                        SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                        var reader = await cmd.ExecuteReaderAsync();
                         while (await reader.ReadAsync())
                         {
                             _response.id = reader.GetString(0);

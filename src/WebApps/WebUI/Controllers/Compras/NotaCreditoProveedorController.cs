@@ -1,7 +1,7 @@
 ﻿using DataAccess;
 using DataAccess.Compras;
 using Domain.ViewModels.Compras;
-using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 

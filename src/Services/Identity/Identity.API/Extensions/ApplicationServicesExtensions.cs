@@ -3,7 +3,6 @@ using Identity.API.Interfaces;
 using Identity.API.Services;
 using Identity.Core.Entities;
 using Identity.Infrastructure.Data;
-using Identity.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +19,7 @@ namespace Identity.API.Extensions
 
             services.AddIdentityCore<AppUser>(opt =>
             {
-                 
+
             })
            .AddRoles<AppRole>()
            .AddRoleManager<RoleManager<AppRole>>()

@@ -1,12 +1,12 @@
-﻿using Lib.Common;
+﻿using Common.Infrastructure.Repository;
+using Lib.Common;
 using Lib.Common.Api;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Core.Entities;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
-using Common.Infrastructure.Repository;
 
-namespace Restaurant.Application
+namespace Restaurant.Application.Services
 {
     public class RecipeService : IRecipe
     {
@@ -67,6 +67,6 @@ namespace Restaurant.Application
             throw new NotImplementedException();
         }
 
-       
+
     }
 }

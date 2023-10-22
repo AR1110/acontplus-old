@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Lib.Common;
+﻿using Lib.Common;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Services.Common;

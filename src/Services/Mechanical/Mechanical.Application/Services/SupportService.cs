@@ -49,7 +49,7 @@ namespace Mechanical.Application.Services
             support.Enabled = false;
             support.Deleted = true;
             support.UpdatedAt = DateTime.Now;
-            support.Status = 5; 
+            support.Status = 5;
             _context.Update(support);
             await _context.SaveChangesAsync();
             return true;

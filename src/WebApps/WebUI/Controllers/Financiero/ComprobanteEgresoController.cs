@@ -1,12 +1,12 @@
 ﻿using DataAccess;
-using DataAccess.Tesoreria;
+using DataAccess.GestionFinanciera;
 using Domain.Dtos.Contabilidad;
 using Domain.Models;
-using Lib.Common;
+using Lib.Common.Api;
 using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers.GestionFinanciera
+namespace WebUI.Controllers.Financiero
 {
     public class ComprobanteEgresoController : Controller
     {
@@ -38,8 +38,8 @@ namespace WebUI.Controllers.GestionFinanciera
         public async Task<IActionResult> Get(string json)
         {
 
-            GenericResponse _response = new GenericResponse();
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            var _response = new GenericResponse();
+            var parameters = new Dictionary<string, object>();
             parameters.Add("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlStringParam.Sanitize(json));
             _response = DbResponse.SPDataTable(await _dao.GetDataTableAsync("GestFinanc.ComprobanteEgreso_Get", parameters));
@@ -49,8 +49,8 @@ namespace WebUI.Controllers.GestionFinanciera
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CobroPagoDto data)
         {
-            GenericResponse _response = new GenericResponse();
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            var _response = new GenericResponse();
+            var parameters = new Dictionary<string, object>();
             parameters.Add("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("comprobante", SqlStringParam.Sanitize(data.comprobante));
             parameters.Add("pagos", SqlStringParam.Sanitize(data.cobrosPagos));
@@ -62,8 +62,8 @@ namespace WebUI.Controllers.GestionFinanciera
 
         public async Task<IActionResult> Cancel(int id, string observacion)
         {
-            GenericResponse _response = new GenericResponse();
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            var _response = new GenericResponse();
+            var parameters = new Dictionary<string, object>();
             parameters.Add("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("idComprobanteEgreso", id);
             parameters.Add("observacion", observacion);

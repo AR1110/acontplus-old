@@ -2,7 +2,7 @@
 using DataAccess.GestionTributaria;
 using Domain.Models;
 using Domain.Models.GestionTributaria;
-using Lib.Common;
+using Lib.Common.Api;
 using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 

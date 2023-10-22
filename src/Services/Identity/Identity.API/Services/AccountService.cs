@@ -1,6 +1,5 @@
 ﻿using Common.Infrastructure.Repository;
 using Identity.API.Interfaces;
-using Lib.Common;
 
 namespace Identity.API.Services
 {

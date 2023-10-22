@@ -1,6 +1,6 @@
 ﻿using DataAccess;
 using Domain.Dtos.Contabilidad;
-using Lib.Common;
+using Lib.Common.Api;
 using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;

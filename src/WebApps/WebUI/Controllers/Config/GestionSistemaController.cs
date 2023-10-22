@@ -1,7 +1,8 @@
 ﻿using DataAccess;
 using DataAccess.Almacen;
 using Domain.Models;
-using Lib.Common;
+using Domain.Models.Config;
+using Lib.Common.Api;
 using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 

@@ -15,14 +15,14 @@ namespace Restaurant.API.Controllers
         private readonly IPromotionService _promotionService;
         private readonly IStorageService _storageService;
         private readonly IConfiguration _configuration;
-        
+
 
         public PromotionController(IConfiguration configuration, IPromotionService promotionService, IStorageService storage)
         {
             _configuration = configuration;
             _promotionService = promotionService;
             _storageService = storage;
-            
+
         }
 
         [HttpGet]

@@ -1,11 +1,10 @@
-﻿using Lib.Common.Api;
+﻿using Lib.Common;
+using Lib.Common.Api;
 using Lib.Common.DbUtils;
-using Lib.Common;
 using Mechanical.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 using Services.Common.Logs;
-using Mechanical.Application.Services;
 
 namespace Mechanical.API.Controllers
 {
@@ -65,7 +64,7 @@ namespace Mechanical.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id,[FromBody] ApiRequest data)
+        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
         {
             try
             {

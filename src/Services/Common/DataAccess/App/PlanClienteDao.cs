@@ -1,9 +1,9 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
-using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.Extensions.Configuration;
 
-namespace DataAccess.Aplicacion
+namespace DataAccess.App
 {
     public class PlanClienteDao
     {
@@ -21,15 +21,15 @@ namespace DataAccess.Aplicacion
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
-                    using (SqlCommand cmd = new SqlCommand("App.aspPlanCliente_Update", con))
+                    using (var cmd = new SqlCommand("App.aspPlanCliente_Update", con))
                     {
                         cmd.Parameters.AddWithValue("ruc", ruc);
                         cmd.Parameters.AddWithValue("codigo", codigo);
                         cmd.CommandType = CommandType.StoredProcedure;
                         await con.OpenAsync();
-                        SqlDataReader reader = await cmd.ExecuteReaderAsync();
+                        var reader = await cmd.ExecuteReaderAsync();
                         while (await reader.ReadAsync())
                         {
                             _response.id = reader.GetString(0);

@@ -1,4 +1,4 @@
-﻿using DataAccess.CuotasXCobrar;
+﻿using DataAccess.CuotaDocumento;
 using Domain.Models.CuotaDocumento;
 using Domain.ViewModels.CuotaDocumento;
 using Microsoft.AspNetCore.Mvc;

@@ -1,12 +1,12 @@
 ﻿using DataAccess;
 using DataAccess.Almacen;
 using Domain.Models;
-using Lib.Common;
+using Lib.Common.Api;
 using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
-namespace WebUI.Controllers
+namespace WebUI.Controllers.Almacen
 {
     public class ArticuloController : Controller
     {
@@ -47,7 +47,7 @@ namespace WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            var parameters = new Dictionary<string, object>();
             parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlStringParam.Sanitize(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Almacen.Articulo_Get", parameters)));
@@ -56,9 +56,9 @@ namespace WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetId(int id)
         {
-            DbAccess _db = new DbAccess(_configuration);
+            var _db = new DbAccess(_configuration);
 
-            GenericResponse _response = new GenericResponse();
+            var _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Almacen.Articulo_Get_Id");
@@ -81,9 +81,9 @@ namespace WebUI.Controllers
         //Get Data Articulo para Ventas 
         public async Task<IActionResult> GetIdBySale(string json)
         {
-            DbAccess _db = new DbAccess(_configuration);
+            var _db = new DbAccess(_configuration);
 
-            GenericResponse _response = new GenericResponse();
+            var _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Almacen.Articulo_Get_Id_By_Sale");
@@ -108,9 +108,9 @@ namespace WebUI.Controllers
         //Get Data Articulo for Purchase=Compras    
         public async Task<IActionResult> GetIdByPurchase(string json)
         {
-            DbAccess _db = new DbAccess(_configuration);
+            var _db = new DbAccess(_configuration);
 
-            GenericResponse _response = new GenericResponse();
+            var _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Almacen.Articulo_Get_Id_By_Purchase");
@@ -159,7 +159,7 @@ namespace WebUI.Controllers
         //Listar articulo de manera General: bodegas, tarifas, sucursales
         public async Task<IActionResult> List(string json)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            var parameters = new Dictionary<string, object>();
             parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlStringParam.Sanitize(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Almacen.Articulo_Get_List_Info", parameters)));
@@ -169,9 +169,9 @@ namespace WebUI.Controllers
         //Get Data Articulo para Ventas
         public async Task<IActionResult> GetFormData(string json)
         {
-            DbAccess _db = new DbAccess(_configuration);
+            var _db = new DbAccess(_configuration);
 
-            GenericResponse _response = new GenericResponse();
+            var _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Almacen.Articulo_Get_Data_Form");
@@ -193,7 +193,7 @@ namespace WebUI.Controllers
 
         public async Task<IActionResult> Delete(int idArticulo)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            var parameters = new Dictionary<string, object>();
             parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", idArticulo);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Almacen.Articulo_Delete", parameters)));

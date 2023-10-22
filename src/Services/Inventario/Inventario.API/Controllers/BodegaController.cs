@@ -1,5 +1,5 @@
 ﻿using DataAccess;
-using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -23,7 +23,7 @@ namespace Inventario.API.Controllers
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Inventario.Bodega_Get");
+                await _db.SPExecute("");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", json);
                 _response = _db.GetDataTableAsync();
@@ -47,7 +47,7 @@ namespace Inventario.API.Controllers
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Inventario.Bodega_Insert");
+                await _db.SPExecute("");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", json);
                 _response = _db.GetDataTableAsync();
@@ -64,16 +64,15 @@ namespace Inventario.API.Controllers
             }
             return Ok(_response);
         }
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, string json)
+        [HttpPut]
+        public async Task<IActionResult> Put(string json)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Inventario.Bodega_Update");
+                await _db.SPExecute("");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("json", json);
                 _response = _db.GetDefault();
             }
@@ -89,14 +88,14 @@ namespace Inventario.API.Controllers
             }
             return Ok(_response);
         }
-        [HttpDelete("{id}")]
+        [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Inventario.Bodega_Delete");
+                await _db.SPExecute("");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
                 _response = _db.GetDefault();

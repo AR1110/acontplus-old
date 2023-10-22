@@ -1,5 +1,4 @@
-﻿
-namespace Domain.Models
+﻿namespace Domain.Models.Config
 {
     public class GestionSistema
     {

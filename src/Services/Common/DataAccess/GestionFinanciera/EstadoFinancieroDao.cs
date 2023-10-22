@@ -1,8 +1,9 @@
 ﻿using Domain.Models;
+using Domain.Models.GestionFinanciera;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
-namespace DataAccess
+namespace DataAccess.GestionFinanciera
 {
     public class EstadoFinancieroDao
     {
@@ -15,10 +16,10 @@ namespace DataAccess
         }
         public async void Update(int idRol, string json)
         {
-            List<EstadoFinanciero> estadoFinanciero = JsonConvert.DeserializeObject<List<EstadoFinanciero>>(json);
+            var estadoFinanciero = JsonConvert.DeserializeObject<List<EstadoFinanciero>>(json);
             foreach (var item in estadoFinanciero)
             {
-                Dictionary<string, object> parameters = new Dictionary<string, object>();
+                var parameters = new Dictionary<string, object>();
                 parameters.Add("idRol", idRol);
                 parameters.Add("idTipoDocumento", item.idTipoDocumento);
                 parameters.Add("idDocumento", item.idDocumento);

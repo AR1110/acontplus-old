@@ -1,7 +1,6 @@
 ﻿using ApiConfig.Data;
 using ApiConfig.Interfaces;
 using ApiConfig.Services;
-using Lib.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiConfig.Extensions
@@ -12,7 +11,7 @@ namespace ApiConfig.Extensions
         {
             services.AddDbContextPool<ConfigContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-            
+
             services.AddScoped<IEstablecimientoAsignacionService, EstablecimientoAsignacionService>();
             return services;
         }

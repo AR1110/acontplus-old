@@ -1,6 +1,6 @@
 ﻿using DataAccess;
 using DataAccess.Ventas;
-using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 

@@ -3,6 +3,7 @@ using System.Data.SqlClient;
 using System.Text;
 using Domain.Models;
 using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.FE

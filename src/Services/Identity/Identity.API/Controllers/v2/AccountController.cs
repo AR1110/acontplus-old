@@ -34,7 +34,7 @@ namespace Identity.API.Controllers.v2
         {
             try
             {
-                var mainResponse =  await _accountService.LoginAppAsync(authRequest.Username, authRequest.Password);
+                var mainResponse = await _accountService.LoginAppAsync(authRequest.Username, authRequest.Password);
                 var _response = JsonConvert.DeserializeObject<APIResponse>(mainResponse);
 
                 if (_response.code == "1")

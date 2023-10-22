@@ -1,7 +1,6 @@
 ﻿using Common.Reports.Interfaces;
 using Common.Reports.Services;
 using Lib.Common;
-using Reports.Application;
 using Services.Common;
 using Services.Common.Logs;
 

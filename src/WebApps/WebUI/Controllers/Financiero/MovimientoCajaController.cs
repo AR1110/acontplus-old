@@ -1,12 +1,12 @@
 ﻿using DataAccess;
 using DataAccess.GestionFinanciera;
 using Domain.Models.GestionFinanciera;
-using Lib.Common;
+using Lib.Common.Api;
 using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
-namespace WebUI.Controllers.GestionFinanciera
+namespace WebUI.Controllers.Financiero
 {
     public class MovimientoCajaController : Controller
     {
@@ -30,7 +30,7 @@ namespace WebUI.Controllers.GestionFinanciera
         [HttpPost]
         public async Task<IActionResult> Insert([FromBody] MovimientoCaja data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _movc.InsertAsync(idRol, data);
             return Ok(res);
         }
@@ -39,7 +39,7 @@ namespace WebUI.Controllers.GestionFinanciera
 
         public async Task<IActionResult> Get(string json)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _movc.GetAsync(idRol, json);
             return Ok(res);
 
@@ -48,9 +48,9 @@ namespace WebUI.Controllers.GestionFinanciera
 
         public async Task<IActionResult> GetMoneda(string json)
         {
-            DbAccess _db = new DbAccess(_configuration);
+            var _db = new DbAccess(_configuration);
 
-            GenericResponse _response = new GenericResponse();
+            var _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("ReporteIngresos.Ingreso_Egreso_Caja");
@@ -72,9 +72,9 @@ namespace WebUI.Controllers.GestionFinanciera
 
         public async Task<IActionResult> Report(string json)
         {
-            DbAccess _db = new DbAccess(_configuration);
+            var _db = new DbAccess(_configuration);
 
-            GenericResponse _response = new GenericResponse();
+            var _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("ReporteIngresos.Ingreso_Egreso_Caja");

@@ -1,11 +1,11 @@
 ﻿using System.Reflection;
+using Common.Core.Entities;
 using Common.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Restaurant.Core.Entities;
-using Common.Core.Entities;
 
 namespace Restaurant.Infrastructure.Data
 {

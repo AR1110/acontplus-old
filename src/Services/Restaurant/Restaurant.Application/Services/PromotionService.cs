@@ -16,7 +16,7 @@ namespace Restaurant.Application.Services
 
         public async Task<object> GetAsync(Dictionary<string, object> parameters)
         {
-            var ds = await _repository.GetDataSetAsync( "Restaurant.Promotion_Get", parameters);
+            var ds = await _repository.GetDataSetAsync("Restaurant.Promotion_Get", parameters);
             if (ds == null)
             {
                 return null;
@@ -29,12 +29,12 @@ namespace Restaurant.Application.Services
 
         public async Task<string> PostAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync( "Restaurant.Promotion_Post", parameters);
+            return await _repository.SPExecuteAsync("Restaurant.Promotion_Post", parameters);
         }
 
         public async Task<string> PutAsync(Dictionary<string, object> parameters)
         {
-            return await _repository.SPExecuteAsync( "Restaurant.Promotion_Update", parameters);
+            return await _repository.SPExecuteAsync("Restaurant.Promotion_Update", parameters);
         }
     }
 }

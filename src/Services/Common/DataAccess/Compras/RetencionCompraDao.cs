@@ -4,6 +4,7 @@ using Domain.Models;
 using Domain.Models.InfoAdicional;
 using Domain.ViewModels;
 using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 

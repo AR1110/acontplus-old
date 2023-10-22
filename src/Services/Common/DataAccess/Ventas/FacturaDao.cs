@@ -1,10 +1,10 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
-using Domain.Models;
 using Domain.Models.InfoAdicional;
-using Domain.ViewModels;
+using Domain.Models.Ventas;
 using Domain.ViewModels.InfoAdicional;
-using Lib.Common;
+using Domain.ViewModels.Ventas;
+using Lib.Common.Api;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Ventas

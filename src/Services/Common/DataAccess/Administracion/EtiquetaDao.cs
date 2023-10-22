@@ -1,4 +1,4 @@
-﻿namespace DataAccess
+﻿namespace DataAccess.Administracion
 {
     //public class EtiquetaDao
     //{

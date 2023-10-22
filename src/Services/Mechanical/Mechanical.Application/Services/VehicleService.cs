@@ -1,8 +1,8 @@
 ﻿using System.Data;
+using Common.Infrastructure.Repository;
 using Lib.Common;
 using Mechanical.Core.Interfaces;
 using Mechanical.Infrastructure.Data;
-using Common.Infrastructure.Repository;
 
 namespace Mechanical.Application.Services
 {

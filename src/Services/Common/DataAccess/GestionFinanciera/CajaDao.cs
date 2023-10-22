@@ -6,9 +6,10 @@ using Domain.Models.Administracion;
 using Domain.ViewModels;
 using Domain.ViewModels.Administracion;
 using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.Extensions.Configuration;
 
-namespace DataAccess
+namespace DataAccess.GestionFinanciera
 {
     public class CajaDao
     {
@@ -27,7 +28,7 @@ namespace DataAccess
             var listar = new List<CajaViewModel>();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("aspCajaGet", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
@@ -35,7 +36,7 @@ namespace DataAccess
                     cmd.Parameters.AddWithValue("pageSize", pageSize);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _response.id = reader.GetString(0);
@@ -79,14 +80,14 @@ namespace DataAccess
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("aspCajaInsert", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.Parameters.AddWithValue("descripcion", data.descripcion);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _response.id = reader.GetString(0);
@@ -111,7 +112,7 @@ namespace DataAccess
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("aspCajaUpdate", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
@@ -120,7 +121,7 @@ namespace DataAccess
                     cmd.Parameters.AddWithValue("estado", data.estado);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _response.id = reader.GetString(0);
@@ -146,14 +147,14 @@ namespace DataAccess
 
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("aspCajaDelete", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.Parameters.AddWithValue("idCaja", idCaja);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _response.id = reader.GetString(0);
@@ -182,13 +183,13 @@ namespace DataAccess
 
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
-                    SqlCommand cmd = new SqlCommand("aspCajaList", con);
+                    var cmd = new SqlCommand("aspCajaList", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _response.id = reader.GetString(0);
@@ -227,16 +228,16 @@ namespace DataAccess
         //get para traer solo la caja asignada al usuario
         public async Task<GenericResponse> GetAsigAsync(int idRol)
         {
-            DataTable dt = new DataTable();
+            var dt = new DataTable();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("aspCajaGetAsig", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                    var dataAdapter = new SqlDataAdapter(cmd);
                     dataAdapter.Fill(dt);
                     if (dt.Rows.Count > 0)
                     {
@@ -262,11 +263,11 @@ namespace DataAccess
         {
             try
             {
-                DbAccess db = new DbAccess(_config);
+                var db = new DbAccess(_config);
                 await db.SPExecute("GestFinanc.Caja_Get");
                 db.AddParameter("idRol", SqlDbType.Int, idRol);
                 db.AddParameter("json", SqlDbType.NVarChar, json);
-                DataTable dt = db.GetDataTable();
+                var dt = db.GetDataTable();
                 _response = DbResponse.SPDataTable(dt);
             }
             catch (Exception ex)

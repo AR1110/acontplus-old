@@ -5,6 +5,7 @@ using Domain.Models.Compras;
 using Domain.Models.InfoAdicional;
 using Domain.ViewModels.Compras;
 using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AcontPlus.Controllers
+namespace WebUI.Controllers
 {
     public class HomeController : Controller
     {

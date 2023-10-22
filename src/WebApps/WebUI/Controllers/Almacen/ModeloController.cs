@@ -1,9 +1,9 @@
 ﻿using DataAccess;
 using DataAccess.Almacen;
-using Lib.Common;
+using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers
+namespace WebUI.Controllers.Almacen
 {
     public class ModeloController : Controller
     {
@@ -34,7 +34,7 @@ namespace WebUI.Controllers
 
         public async Task<IActionResult> GetBy()
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _m.OptionAsync(idRol);
             return Ok(_gr);
         }

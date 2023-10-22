@@ -1,10 +1,11 @@
 ﻿
 using System.Data;
 using Domain.Models;
-using Lib.Common;
+using Domain.Models.Administracion;
+using Lib.Common.Api;
 using Microsoft.Extensions.Configuration;
 
-namespace DataAccess
+namespace DataAccess.Administracion
 {
     public class CargoDao
     {
@@ -21,11 +22,11 @@ namespace DataAccess
         {
             try
             {
-                DbAccess db = new DbAccess(_config);
+                var db = new DbAccess(_config);
                 await db.SPExecute("Administrador.Cargo_Get");
                 db.AddParameter("idRol", SqlDbType.Int, idRol);
                 db.AddParameter("json", SqlDbType.NVarChar, json);
-                DataTable dt = db.GetDataTable();
+                var dt = db.GetDataTable();
                 _response = DbResponse.SPDataTable(dt);
             }
             catch (Exception ex)
@@ -39,12 +40,12 @@ namespace DataAccess
         {
             try
             {
-                DbAccess db = new DbAccess(_config);
+                var db = new DbAccess(_config);
                 await db.SPExecute("Administrador.Cargo_Insert");
                 db.AddParameter("idRol", SqlDbType.Int, idRol);
                 db.AddParameter("codigo", SqlDbType.NVarChar, data.codigo);
                 db.AddParameter("descripcion", SqlDbType.NVarChar, data.descripcion);
-                DataTable dt = db.GetDataTable();
+                var dt = db.GetDataTable();
                 _response = DbResponse.SPDefault(dt);
             }
             catch (Exception ex)
@@ -57,13 +58,13 @@ namespace DataAccess
         {
             try
             {
-                DbAccess db = new DbAccess(_config);
+                var db = new DbAccess(_config);
                 await db.SPExecute("Administrador.Cargo_Update");
                 db.AddParameter("idRol", SqlDbType.Int, idRol);
                 db.AddParameter("id", SqlDbType.Int, id);
                 db.AddParameter("descripcion", SqlDbType.NVarChar, data.descripcion);
                 db.AddParameter("estado", SqlDbType.Bit, data.estado);
-                DataTable dt = db.GetDataTable();
+                var dt = db.GetDataTable();
                 _response = DbResponse.SPDefault(dt);
             }
             catch (Exception ex)
@@ -76,11 +77,11 @@ namespace DataAccess
         {
             try
             {
-                DbAccess db = new DbAccess(_config);
+                var db = new DbAccess(_config);
                 await db.SPExecute("Administrador.Cargo_Delete");
                 db.AddParameter("idRol", SqlDbType.Int, idRol);
                 db.AddParameter("id", SqlDbType.Int, id);
-                DataTable dt = db.GetDataTable();
+                var dt = db.GetDataTable();
                 _response = DbResponse.SPDefault(dt);
             }
             catch (Exception ex)

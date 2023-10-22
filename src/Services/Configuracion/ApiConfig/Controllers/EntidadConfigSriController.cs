@@ -1,6 +1,7 @@
 ﻿using DataAccess;
-using Domain.Models;
-using Lib.Common;
+using Domain;
+using Domain.Models.ConfigEmpresa;
+using Lib.Common.Api;
 using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;

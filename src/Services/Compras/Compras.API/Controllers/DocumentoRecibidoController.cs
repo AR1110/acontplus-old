@@ -9,6 +9,7 @@ using Domain.Dtos;
 using FactElect.Application;
 using FactElect.Core;
 using Lib.Common;
+using Lib.Common.Api;
 using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -82,16 +83,16 @@ namespace Compras.API.Controllers
                     {
                         _response.code = "1";
                         string xmlDoc = dt.Rows[0]["xmlDoc"].ToString();
-                       
+
                         xdoc.LoadXml(xmlDoc);
-                       
-                        
+
+
                     }
                     else
                     {
                         _response.Create(code: "0", message: "No se encontro xml");
                     }
-                    
+
                 }
                 using (DbAccess _db = new DbAccess(_configuration))
                 {
