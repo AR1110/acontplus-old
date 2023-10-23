@@ -180,7 +180,7 @@ const DialogChangeQty = ({ open, setOpen }: DialogChangeQtyProps) => {
     const next = () => {
         const mergeRightOrderItems = mergeArraysByField(changeOrderItems, rightOrderItems, 'id');
         const mergeLeftOrderItems = mergeArraysByFieldLeft(changeOrderItems, leftOrderItems, 'id');
-
+        console.log(mergeRightOrderItems)
         setRightOrderItem(mergeRightOrderItems);
         setLeftOrderItem(mergeLeftOrderItems);
         setLeftCheckedOrderItems([]);

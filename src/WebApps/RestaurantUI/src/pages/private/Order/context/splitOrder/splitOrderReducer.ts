@@ -24,15 +24,15 @@ export const splitOrderReducer = (state: SplitOrderState, action: any): SplitOrd
             return { ...state, orderLoading: true }
         }
         case GET_ORDER_SUCCESS: {
-            const { order, orderItems } = action.payload;
-            console.log(orderItems)
+            const { order, orderItems } = action.payload; 
             return {
                 ...state,
                 orderLoading: false,
                 leftOrder: order,
                 leftOrderItems: orderItems.map((orderItem: any) => ({
-                    ...orderItem,
-                    remainingQuantity: ((orderItem.remainingQuantity > 0 || orderItem.remainingQuantity === 0) && orderItem.paid) ? orderItem.remainingQuantity : orderItem.quantity
+                    ...orderItem,                
+                    //remainingQuantity: ((orderItem.remainingQuantity > 0 || orderItem.remainingQuantity === 0) && orderItem.paid) ? orderItem.remainingQuantity : orderItem.quantity 
+
                 })),
                 leftOrderItemsLength: orderItems.length
             }
