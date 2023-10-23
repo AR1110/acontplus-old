@@ -44,8 +44,8 @@ namespace ApiConfig.Controllers
             return Ok(_response);
         }
 
-        [HttpPost("Insert")]
-        public async Task<IActionResult> Insert(string json)
+        [HttpPost()]
+        public async Task<IActionResult> Post(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
             GenericResponse _response = new GenericResponse();
@@ -71,8 +71,8 @@ namespace ApiConfig.Controllers
             return Ok(_response);
         }
 
-        [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Update(int id, string json)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, string json)
         {
             DbAccess _db = new DbAccess(_configuration);
             GenericResponse _response = new GenericResponse();
@@ -100,7 +100,7 @@ namespace ApiConfig.Controllers
             return Ok(_response);
         }
 
-        [HttpDelete("Delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
