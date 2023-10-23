@@ -34,6 +34,7 @@
   // Todo: Create human format date
   const convertFormat = (date) => {
     let currentDate = new Date(date);
+
     currentDateString = currentDate.toLocaleDateString("es-ES", {
       weekday: "long",
       month: "long",
@@ -377,7 +378,12 @@
             <label for="">
               Fecha Emisión <span class="text-danger">*</span>
             </label>
-            <input type="date" bind:value={support.date} class="form-control" />
+            <input
+              type="date"
+              on:change={() => convertFormat(support.date)}
+              bind:value={support.date}
+              class="form-control"
+            />
             <small><span class="text-success">{currentDateString}</span></small>
           </div>
           <div class="col-sm-4 nopadding">
