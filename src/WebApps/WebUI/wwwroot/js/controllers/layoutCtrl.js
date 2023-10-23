@@ -1,9 +1,14 @@
 ﻿angular.module('acontPlusApp')
     .controller('layoutCtrl', layoutCtrl);
 
-layoutCtrl.$inject = ['$scope', '$http', '$rootScope', '$window', 'mainService', 'modalService', 'toastService', 'formulario'];
+layoutCtrl.$inject = [
+    '$scope',
+    '$rootScope',
+    '$window',
+    'mainService',
+];
 
-function layoutCtrl($scope, $http, $rootScope, $window, mS, _modalSvc, toast, form) {
+function layoutCtrl($scope, $rootScope, $window, mS) {
     'use strict';
 
     // $scope.IsVisible = false;
@@ -137,13 +142,14 @@ function layoutCtrl($scope, $http, $rootScope, $window, mS, _modalSvc, toast, fo
                 let dataMenu = $scope.subMenus.find(item => item.url === path);
                 if (dataMenu) {
 
-                    mS.getData('get', '/Acceso/GetAccesoBySubMenu?idSubMenu=' + dataMenu.idSubMenu).then(response => {
-                        if (response.id === "0") {
-                            console.log(response)
+                    mS.getData('get', 'Config/Acceso/' + '?json=' + JSON.stringify({ tipo: 2, idSubMenu: dataMenu.idSubMenu }), null, true).then(response => {
+                        if (response.code === "0") {
+                            throw response;
                         }
-                        if (response.id === "1") {
-                            let [permisoModulo, almacenPermiso, ventaPermiso, cajaPermiso, articlePermission] = JSON.parse(response.data);
-                            
+                        if (response.code === "1") {
+                            let mainData = JSON.parse(response.payload) || []; 
+                            let [permisoModulo, almacenPermiso, ventaPermiso, cajaPermiso, articlePermission] = mainData;
+
                             $rootScope.usuarioPermiso = {
                                 almacenPermiso: almacenPermiso.length > 0 ? JSON.parse(almacenPermiso[0].jsonPermission) : {},
                                 ventaPermiso: ventaPermiso.length > 0 ? JSON.parse(ventaPermiso[0].jsonPermission) : {},
@@ -152,11 +158,10 @@ function layoutCtrl($scope, $http, $rootScope, $window, mS, _modalSvc, toast, fo
                             $scope.accion = permisoModulo[0]
                             $rootScope.articlePermission = articlePermission[0];
                             $rootScope.ventaPermiso = $rootScope.usuarioPermiso.ventaPermiso;
-
                         }
-                    })
+                    }) 
                 } else {
-                    // location.href = '/Home/Index'
+                    location.href = '/Home/Index'
                 }
 
             }
@@ -174,53 +179,14 @@ function layoutCtrl($scope, $http, $rootScope, $window, mS, _modalSvc, toast, fo
     // $scope.accion = 'test'
     // console.log(pathname)
     $scope.onChangeSubMenu = function (item) {
-        try {
-            console.log(item);
-            // console.log(item)
-            location.href = item.url;
-            // mS.getData('get', '/Acceso/GetAccesoBySubMenu?idSubMenu=' + item.idSubMenu).then(response => {            
-            //     if (response.id === null) {
-            //         toast.toastr('warning', 'No tienes acceso a este Sub Menu', 'Acceso');
-            //         return
-            //     }
-            //     if (response.id === "0") {
-            //         form.sweetAlert('warning', response.message, response.titleSms);
-            //         return
-            //     }
-            //     if (response.id === "1") {
-            //         localStorage.removeItem("accion");
-            //         localStorage.setItem("accion", JSON.stringify(JSON.parse(response.data)));
-
-            //         return
-            //     }
-
-            //     location.href = '/Login/Logout';
-
-            // });
+        try { 
+            location.href = item.url; 
 
         } catch (error) {
             location.href = '/Login/Logout';
         }
 
     }
-
-    // let dataMenu = $scope.subMenus.find(item=>item.url===pathname);
-    // if(dataMenu && dataMenu.idSubMenu){
-    //     mS.getData('get', '/Acceso/GetAccesoBySubMenu?idSubMenu=' + dataMenu.idSubMenu).then(response => {            
-    //         if (response.id === null) {
-    //             toast.toastr('warning', 'No tienes acceso a este Sub Menu', 'Acceso');
-    //             return
-    //         }
-    //         if (response.id === "0") {
-    //             form.sweetAlert('warning', response.message, response.titleSms);
-    //             return
-    //         }
-    //         if (response.id === "1") {
-    //             localStorage.removeItem("accion");
-    //             localStorage.setItem("accion", JSON.stringify(JSON.parse(response.data)));                
-    //         }            
-    //     });        
-    // }
 
 
     $scope.logout = function () {

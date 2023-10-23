@@ -118,7 +118,7 @@ const RightOrderItem = () => {
 
             showLoader();
             orderService.put(leftOrder.orderId, data).then(response => { 
-                // showLoader(false);
+                hideLoader();
                 if (response.code === '0') {
                     SnackbarUtility.warning(response.message)
                 }
@@ -145,7 +145,8 @@ const RightOrderItem = () => {
                     //     resetForm();
                     // }
                 }
-            }).catch(() => hideLoader())
+            }) 
+            .catch(() => hideLoader())
 
 
         } catch (error: any) {

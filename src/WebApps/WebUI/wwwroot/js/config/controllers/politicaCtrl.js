@@ -5,13 +5,12 @@
 
     politicaCtrl.$inject = [
         '$scope', 
-        'mainService', 
         'politicaService',
-        'toastService', 
+        'toastService',
         'formulario'
     ];
 
-    function politicaCtrl($scope, mS, politicaSvc, tS, form) {
+    function politicaCtrl($scope, politicaSvc, tS, form) {
 
         $scope.data = {}
         $scope.politica = {}
@@ -31,10 +30,10 @@
                 pageSize: $scope.pageSize
             }
             showLoader();
-            politicaSvc.get(params).then(response=>{ 
-                $scope.politicas =response;
-               $scope.totalRecords = $scope.politicas.length>0? $scope.politicas[0].totalRecords : 0;
-            }).finally(()=>hideLoader())
+            politicaSvc.get(params).then(response => {
+                $scope.politicas = response;
+                $scope.totalRecords = $scope.politicas.length > 0 ? $scope.politicas[0].totalRecords : 0;
+            }).finally(() => hideLoader())
 
         }
         $scope.getPoliticas();
@@ -49,14 +48,14 @@
         }
 
         //Abrir Modal Politica y Acceso
-        $scope.abrirModal = function (data, type) { 
+        $scope.abrirModal = function (data, type) {
             $scope.type = type;
             $scope.colorHeader = type == 1 ? 'bg-info' : 'bg-success';
             $scope.iconoModal = type == 1 ? 'fa fa-plus-circle' : 'fa fa-edit';
             $scope.tituloModal = type == 1 ? ' Nuevo' : 'Editar';
             $scope.icono = type == 1 ? 'ti-save' : 'fa fa-edit';
             $scope.btnModal = type == 1 ? ' Guardar' : ' Actualizar';
-            $scope.data = type == 1 ? {} : {...data};
+            $scope.data = type == 1 ? {} : { ...data };
             $('#agregar').modal('show');
             return;
         }
@@ -79,28 +78,28 @@
 
             showLoader();
 
-            if($scope.data.idPolitica > 0){
+            if ($scope.data.idPolitica > 0) {
                 politicaSvc.update($scope.data.idPolitica, $scope.data).then($scope.successReponse)
-                .catch(err => {
-                    hideLoader();
-                    console.log(err);
-                })
-            }else if(!($scope.data.idPolitica>0)){
+                    .catch(err => {
+                        hideLoader();
+                        console.log(err);
+                    })
+            } else if (!($scope.data.idPolitica > 0)) {
                 politicaSvc.save($scope.data).then($scope.successReponse)
-                .catch(err => {
-                    hideLoader();
-                    console.log(err);
-                })
-            } 
+                    .catch(err => {
+                        hideLoader();
+                        console.log(err);
+                    })
+            }
         }
 
-        $scope.successReponse = function(response) {
+        $scope.successReponse = function (response) {
             hideLoader();
-            if (response.code==='0') {
-                tS.toastr('warning', response.message, response.titleSms);            
+            if (response.code === '0') {
+                tS.toastr('warning', response.message, response.titleSms);
             }
-            if (response.code==='1') {
-                tS.toastr('success', response.message, response.titleSms);                            
+            if (response.code === '1') {
+                tS.toastr('success', response.message, response.titleSms);
                 $("#agregar").modal('hide');
             }
         }
@@ -114,18 +113,18 @@
                 showCancelButton: true,
                 cancelButtonText: 'No, cancelar',
                 allowOutsideClick: false
-            }); 
+            });
             if (isConfirmed) {
                 showLoader();
-                politicaSvc.delete(data.idPolitica).then(response => { 
+                politicaSvc.delete(data.idPolitica).then(response => {
                     if (response.code == "0") {
-                        tS.toastr('warning', response.message, response.titleSms); 
+                        tS.toastr('warning', response.message, response.titleSms);
                     }
                     if (response.code == "1") {
                         tS.toastr('success', response.message, response.titleSms);
-                        $scope.getPoliticas(); 
+                        $scope.getPoliticas();
                     }
-                }).finally(()=>hideLoader())
+                }).finally(() => hideLoader())
             }
         };
 
@@ -137,20 +136,14 @@
         /**----------------------------------------------------ASIGNACION DE ACCESOS ----------------- */
         $scope.openModalAcceso = function (item) {
             $scope.nombrePolitica = item.descripcion;
-
-            mS.getData('get', '/Acceso/Get?idPolitica=' + item.idPolitica).then(response => {
-                if (response.id === "0") {
-                    form.sweetAlert('warning', response.message, response.titleSms);
-                    return
-                }
-                if (response.id === "1") {
-
-                    $scope.accesos = JSON.parse(response.data);
-                    return
-                }
-            })
+            showLoader();
+            politicaSvc.getAcceso({
+                tipo: 1,
+                idPolitica: item.idPolitica
+            }).then(response => {
+                $scope.accesos = response[0]
+            }).finally(()=>hideLoader())
             $("#modalAcceso").modal('show');
-            return
         };
 
 
@@ -166,30 +159,23 @@
             });
 
             if (isConfirmed) {
-                form.showLoaderPost(1);
-                mS.getData('post', '/Acceso/Put', $scope.accesos).then(response => {
-                    if (response.id === "0") {
-                        form.sweetAlert('warning', response.message, response.titleSms);
-                        return
+                showLoader();
+                politicaSvc.updateAcceso($scope.accesos).then(response => {
+                    if (response.code === "0") {
+                        form.sweetAlert('warning', response.message, response.titleSms); 
                     }
-                    if (response.id === "1") {
+                    if (response.code === "1") {
                         form.sweetAlert('success', response.message, response.titleSms, 1000);
-                        $("#modalAcceso").modal('hide');
-                        return
+                        $("#modalAcceso").modal('hide'); 
                     }
-                })
+                }).finally(()=>hideLoader()) 
             }
         };
 
         $("#modalAcceso").on('hide.bs.modal', () => {
             $scope.searchAcceso = '';
             $scope.accesos = [];
-        })
-
-
-
-
-
+        }) 
 
     }
 
