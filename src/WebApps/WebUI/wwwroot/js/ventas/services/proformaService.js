@@ -1,39 +1,96 @@
-(function() {
-    
+(function () {
+
     'use strict';
 
-    app.factory('proformaService', function($injector) {
+    app.factory('proformaService', function ($injector) {
         let url = 'Venta/Proforma/';
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario')
 
         let service = {};
 
-        service.getDataForm = function(){
-            return mS.getData('get', url +'Get?json=' + JSON.stringify({tipo: 2}), null, true ).then(response =>{
-                if(response.code==="0"){
+        service.getDataForm = function () {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 2 }), null, true).then(response => {
+                if (response.code === "0") {
                     throw response;
                 }
-                
-                if(response.code==="1"){ 
-                    let mainData = JSON.parse(response.payload);  
+
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
                     return mainData;
                 }
             })
         }
 
-        //se a mas de listar en modulo de proformas en Aprobacion Documento 
-        service.getAll = function(query) {
-            
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, {tipo: 1})), null, true).then(response => {
-                if(response.code==="0"){
+        /**
+         * tipo 1: get proformas  
+         * tipo 3: get estabs, ptos. emisiones para los filtros
+         * @returns 
+         */
+        service.get = (params) => {
+            if (!("tipo" in params)) {
+                throw "Requiere propiedad tipo"
+            }
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(params), null, true).then(response => {
+                if (response.code === "0") {
                     throw response;
                 }
-                if(response.code==="1"){
-                    let mainData = JSON.parse(response.payload) || [] ;
-                    let proformasRepos = mainData[0]; 
-                    let {totalRecords, totalDocument} = proformasRepos[0];  
-                    let proformas = proformasRepos.map(item =>{
+
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
+
+                    
+                    if (params.tipo === 3) {
+                        let tempEstabsAndPtosEmision = mainData[0];
+                        let estadosDoc = mainData[1];
+
+                        const estabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
+                            const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
+
+                            if (!existingItem) {
+                                acc.push({
+                                    idEstablecimiento: item.idEstablecimiento,
+                                    nombreComercial: item.nombreComercial,
+                                    codEstab: item.codEstab,
+                                    defaultEstab: item.defaultEstab,
+                                    puntosEmision: [{
+                                        idPuntoEmision: item.idPuntoEmision,
+                                        ptoEmi: item.ptoEmi, 
+                                        defaultPtoEmi: item.defaultPtoEmi
+                                    }]
+                                });
+                            } else {
+                                existingItem.puntosEmision.push({
+                                    idPuntoEmision: item.idPuntoEmision,
+                                    ptoEmi: item.ptoEmi,                                   
+                                    defaultPtoEmi: item.defaultPtoEmi
+                                });
+                            } 
+                            return acc;
+                        }, []);
+ 
+
+                        return {
+                            estabs,
+                            estadosDoc
+                        }
+                    }
+                }
+            })
+        }
+
+        //se a mas de listar en modulo de proformas en Aprobacion Documento 
+        service.getAll = function (query) {
+
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, { tipo: 1 })), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload) || [];
+                    let proformasRepos = mainData[0];
+                    let { totalRecords, totalDocument } = proformasRepos[0];
+                    let proformas = proformasRepos.map(item => {
                         return {
                             comprobante: 'Proforma',
                             entidad: item.entidad,
@@ -61,31 +118,31 @@
                     })
                     return {
                         proformas,
-                        dataTotals: {totalRecords, totalDocument}
+                        dataTotals: { totalRecords, totalDocument }
                     }
                 }
-            }).catch(error =>{
+            }).catch(error => {
                 console.log('obtener datos->proforma service', error)
                 throw error;
             })
         }
 
-        service.queryMapper = function({data, cliente, detalles}){
+        service.queryMapper = function ({ data, cliente, detalles }) {
             let formattedDateForInsert = null;
             if (moment(data.fechaEmision).isBefore(new Date(), 'day')) {
-                formattedDateForInsert =  moment(data.fechaEmision).startOf('day').toDate();
-            }else{
+                formattedDateForInsert = moment(data.fechaEmision).startOf('day').toDate();
+            } else {
                 formattedDateForInsert = data.fechaEmision
-            } 
+            }
 
-            if(cliente.idCliente===0 && !cliente.razonSocialComprador && !cliente.identificacionComprador){
+            if (cliente.idCliente === 0 && !cliente.razonSocialComprador && !cliente.identificacionComprador) {
                 throw new Error("Datos de cliente no proporcionados")
             }
 
             let proforma = Object.assign({}, data);
-             
+
             //Tarifa Aplicada al Documento
-            proforma.idCliente = cliente.idCliente; 
+            proforma.idCliente = cliente.idCliente;
             proforma.identificacionComprador = cliente.identificacionComprador;
             proforma.razonSocialComprador = cliente.razonSocialComprador;
             proforma.direccionComprador = cliente.direccionComprador;
@@ -93,17 +150,17 @@
             proforma.telefono = cliente.telefono;
             proforma.fechaEmision = fS.formatDateTimeZone(formattedDateForInsert)
             // this.data.tarifa = this.actividadTipoIva.tarifa;            
-    
+
             return {
                 proforma,
                 detalle: service.detalleMapperTo(detalles)
             }
         }
 
-        service.detalleMapperTo = function(detalles) {         
+        service.detalleMapperTo = function (detalles) {
             let tempDetails = [];
             let orderIndex = 1;
-    
+
             for (let item of detalles) {
                 tempDetails.push({
                     orderIndex: orderIndex++,
@@ -130,38 +187,38 @@
                 })
             }
             return tempDetails;
-          
+
         }
 
-        service.save = function(data){
+        service.save = function (data) {
             return mS.getData('post', url + 'Insert/', data, true).then(response => {
-                if(response.code==="0"){
+                if (response.code === "0") {
                     return response;
                 }
-                if(response.code==="1"){
-                   return response;
+                if (response.code === "1") {
+                    return response;
                 }
             })
         }
 
 
-        service.update = function(id, data){
+        service.update = function (id, data) {
             return mS.getData('put', url + 'Update/' + id, data, true).then(response => {
-                if(response.code==="0"){
+                if (response.code === "0") {
                     return response;
                 }
-                if(response.code==="1"){
+                if (response.code === "1") {
                     return response
                 }
             })
         }
 
-        service.delete = function(id){
+        service.delete = function (id) {
             return mS.getData('delete', url + 'Delete/' + id, null, true).then(response => {
-                if(response.code==="0"){
+                if (response.code === "0") {
                     return response;
                 }
-                if(response.code==="1"){
+                if (response.code === "1") {
                     return response
                 }
             })

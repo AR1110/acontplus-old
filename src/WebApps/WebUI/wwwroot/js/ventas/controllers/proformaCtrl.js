@@ -1,13 +1,13 @@
 app.controller('proformaCtrl', proformaCtrl);
 
 proformaCtrl.$inject = [
-    '$scope', 
-    '$filter', 
-    'commonService', 
-    'proformaService', 
+    '$scope',
+    '$filter',
+    'commonService',
+    'proformaService',
     'clienteService',
-    'modalService', 
-    'nombreModalVenta',  
+    'modalService',
+    'nombreModalVenta',
     'formulario'
 ]
 
@@ -28,7 +28,7 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
         E: 'E',
         A: 'A',
     }
-    
+
     let fileCtrl = nombreModalVenta.PROFORMA.fileCtrl;
     let template;
     let controller;
@@ -50,13 +50,13 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
     };
     $scope.proformas = [];
 
-    
+
     //========================Start Filters=================
 
     $scope.resultRangeFilter = function (item) {
         $scope.dataSearch.checkBoxFecha = true;
         $scope.dataSearch.fechaInicio = item.startDate,
-        $scope.dataSearch.fechaFin = item.endDate
+            $scope.dataSearch.fechaFin = item.endDate
         $scope.getProformas();
     }
 
@@ -141,53 +141,54 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
 
             let dataSearch = {
                 tipo: 1,
+                checkBoxFecha: $scope.dataSearch.nroSecuencial ? false : true,
                 codEstab: $scope.dataSearch.codEstab,
-                pageIndex: $scope.dataSearch.pageIndex,
-                pageSize: $scope.dataSearch.pageSize,
-                checkBoxFecha: $scope.dataSearch.checkBoxFecha,
-                checkBoxCliente: $scope.dataSearch.byCliente > 0,
+                idPuntoEmision: $scope.dataSearch.idPuntoEmision,
                 byCliente: $scope.dataSearch.byCliente,
-                checkBoxUsuario: $scope.dataSearch.byUsuario > 0,
                 byUsuario: $scope.dataSearch.byUsuario,
-                checkBoxEstado: $scope.dataSearch.byEstado ? true : false,
-                byEstado: $scope.dataSearch.byEstado,
                 fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
                 fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
-                isSearchNroSequential: $scope.dataSearch.nroSecuencial? true: false,
-                nroSecuencial: $scope.dataSearch.nroSecuencial
+                nroSecuencial: Number($scope.dataSearch.nroSecuencial), 
+                pageIndex: $scope.dataSearch.pageIndex,
+                pageSize: $scope.dataSearch.pageSize, 
             }
-           
-            proformaSvc.getAll(dataSearch).then(response => {
-                hideLoader();
-                let {proformas, dataTotals} = response;
+
+            proformaSvc.getAll(dataSearch).then(response => { 
+                let { proformas, dataTotals } = response;
                 $scope.proformas = proformas;
                 $scope.cloneProformas = JSON.parse(JSON.stringify($scope.proformas));
                 $scope.dataSearch.totalRecords = dataTotals.totalRecords;
                 $scope.total = fS.roundNumber(dataTotals.totalDocument, 5);
-                
-            }).catch(error=>{
-                hideLoader();
-                console.log(error)
-            })
 
-           
+            }).catch(error => { 
+                console.log(error)
+            }).finally(()=>hideLoader())
+
+
 
         } catch (error) {
             hideLoader();
             console.log(error)
-        } 
+        }
     }
 
 
 
     $scope.initiload = () => {
-        commonSvc.getEstabAsign().then(response => {
-            $scope.establecimientos = response;
-            let codEstab = $scope.establecimientos.length > 0 ? $scope.establecimientos[0].codEstab : 0;
-            $scope.dataSearch.codEstab = codEstab;
-            $scope.getProformas();
+        showLoader();
+        proformaSvc.get({ tipo: 3 }).then(response => {
+            console.log(response)
+            $scope.establecimientos = response.estabs; 
 
-        })
+            if ($scope.establecimientos.length > 0) {
+                let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
+                $scope.puntosEmision = dataEstab.puntosEmision;
+                $scope.dataSearch.codEstab = dataEstab.codEstab;
+                $scope.dataSearch.idPuntoEmision = $scope.puntosEmision.find(pto => (pto.defaultPtoEmi)).idPuntoEmision;
+                $scope.getProformas();
+            }
+
+        }).finally(() => hideLoader()) 
 
         proformaSvc.getDataForm().then(result => {
             $scope.jsonPermission = JSON.parse(result[9][0].jsonPermission)
@@ -195,6 +196,18 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
 
     }
     $scope.initiload();
+
+    $scope.estabFilter = function(){
+        let dataEstab = $scope.establecimientos.find(estab=>estab.codEstab===$scope.dataSearch.codEstab);
+        $scope.puntosEmision = dataEstab.puntosEmision;
+        if($scope.puntosEmision.length>0){
+            $scope.dataSearch.idPuntoEmision = $scope.puntosEmision.find(pto=>(pto.defaultPtoEmi)).idPuntoEmision;
+            $scope.getProformas();
+        }else{
+            fS.sweetAlert('warning', "No posee puntos de emisión asignadas!"); 
+        }
+    }
+
 
     $scope.pagechanged = function () {
         $scope.getProformas();
@@ -211,7 +224,7 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
             ctrl = nombreModalVenta.PROFORMA.controllers['MN'];
             template = nombreModalVenta.PROFORMA.templates['MN'];
             let controller = (await import(fileCtrl))[ctrl];
-            
+
             let params = {
                 TIPO_REGISTRO: 'NUEVO'
             }
@@ -226,26 +239,26 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
     }
 
 
-    $scope.openModalFiltro = async function() {
+    $scope.openModalFiltro = async function () {
         try {
             ctrl = nombreModalVenta.PROFORMA.controllers['MF'];
             template = nombreModalVenta.PROFORMA.templates['MF'];
             controller = (await import(fileCtrl))[ctrl];
-    
+
             let params = {
                 dataSearch: $scope.dataSearch,
                 clienteFiltro: $scope.clienteFiltro,
                 usuarioSearchFiltro: $scope.usuarioSearchFiltro,
                 mes: $scope.mes
             }
-    
+
             let modalRef = modalSvc.openModalCustom({
                 controller,
                 template,
                 params,
                 size: 'lg'
             })
-    
+
             modalRef.result.then(result => {
                 let {
                     dataSearch,
@@ -286,22 +299,22 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
                 id: item.idProforma,
                 codigoDocumento: TIPO_DOC_PR.codigo
             })
-    
+
             if (!response.isComplete) return
-    
+
             let params = {
                 TIPO_REGISTRO: 'DETALLE',
                 data: response
             }
-    
+
             $scope.openModalParam({
                 controller,
                 template,
                 params
-            })            
+            })
         } catch (error) {
             console.log(error);
-        }        
+        }
     }
 
     $scope.openModalEdit = async (item) => {
@@ -450,11 +463,11 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
             if (isConfirmed) {
                 showLoader();
                 proformaSvc.delete(item.idProforma).then(response => {
-                    hideLoader();                    
-                    if (response.code === "0") {                        
+                    hideLoader();
+                    if (response.code === "0") {
                         fS.sweetAlert('warning', response.message, response.titleSms);
                     }
-                    if (response.code === "1") {                        
+                    if (response.code === "1") {
                         fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
 
