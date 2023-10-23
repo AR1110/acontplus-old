@@ -76,7 +76,7 @@
                             console.log(error)
                         })
                 } else {
-                    dataSearch = {
+                    let dataSearch = {
                         tipo: 1,
                         codDoc: $scope.dataSearch.codDoc,
                         codEstado: $scope.dataSearch.codEstado,
@@ -96,6 +96,8 @@
                             document.getElementById('menu_toggle').click();
                         }
                         $scope.comprobantes = response;
+                        
+                        console.log($scope.comprobantes)
                         $scope.dataSearch.totalRecords = $scope.comprobantes[0].totalRecords;
                     })
                         .finally(() => hideLoader())
