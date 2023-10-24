@@ -14,18 +14,14 @@ namespace WebUI.Controllers.Compras
         private readonly IConfiguration _configuration;
         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
-        private ArticuloDao _a;
-        private FacturaCompraDao _fc;
+        private ArticuloDao _a; 
         private readonly LogWriter _log;
 
         public FacturaCompraController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-
-
-            _a = new ArticuloDao(_configuration);
-            _fc = new FacturaCompraDao(_configuration);
+            _a = new ArticuloDao(_configuration); 
             _log = log;
         }
 

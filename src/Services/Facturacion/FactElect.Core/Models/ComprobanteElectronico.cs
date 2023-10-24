@@ -1,4 +1,4 @@
-﻿namespace FactElect.Core
+﻿namespace FactElect.Core.Models
 {
     public class ComprobanteElectronico
     {
