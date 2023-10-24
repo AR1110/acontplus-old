@@ -107,7 +107,7 @@
             idTarifa: dataTarifa.idTarifa,
             medidas,
             precioConIva: dataTarifa.precioConIva,
-            precioUnitario: dataTarifa.precioUnitario,
+            precioUnitario: dataTarifa.precioVenta,
             tarifas: dataMedida.tarifas,
             tipoIvas: tipoIva,
             total: dataTarifa.precioConIva * 1,

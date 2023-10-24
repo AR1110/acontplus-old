@@ -15,6 +15,7 @@ const calculations = () => {
     try {
       const response = await ArticleService.get(
         JSON.stringify({
+          tipo: 7,
           idArticulo: rowEntity.idArticulo,
           cantidad: rowEntity.cantidad,
           idBodega: rowEntity.idBodega,
@@ -24,7 +25,7 @@ const calculations = () => {
       hideLoader();
 
       const { code, message } = response[0][0];
-      if (code === "1") return isCalculable;
+      if (code === "1") return (isCalculable = true);
 
       const { isConfirmed } = await Swal.fire({
         title: `<small>Advertencia</small>`,
@@ -125,13 +126,19 @@ const calculations = () => {
       cell.getRow().update({
         tarifas: articuloTarifas,
         idTarifa: articuloTarifas[0].idTarifa,
-        precioUnitario: sS.roundNumber(articuloTarifas[0].precioVenta, decimal.nroPrecio),
-        precioConIva: sS.roundNumber(articuloTarifas[0].precioConIva, decimal.nroPrecio),
+        precioUnitario: sS.roundNumber(
+          articuloTarifas[0].precioVenta,
+          decimal.nroPrecio
+        ),
+        precioConIva: sS.roundNumber(
+          articuloTarifas[0].precioConIva,
+          decimal.nroPrecio
+        ),
       });
     }
 
     if (column == "idTipoIva") {
-      if(oldValue == value) return;
+      if (oldValue == value) return;
 
       try {
         const dataTipoIva = row.tipoIvas.find(
@@ -145,29 +152,37 @@ const calculations = () => {
 
     if (column == "idTarifa") {
       const newFee = row.tarifas.find((x) => x.idTarifa == value);
-      const porcentaje = row.tipoIvas.find((x) => x.idTipoIva == row.idTipoIva).porcentaje;
-
-      const precioConIva = cT.calcularPrecioConIva( newFee.precioVenta, porcentaje);
+      const porcentaje = row.tipoIvas.find(
+        (x) => x.idTipoIva == row.idTipoIva
+      ).porcentaje;
+      const precioConIva = cT.calcularPrecioConIva(
+        newFee.precioVenta,
+        porcentaje
+      );
 
       cell.getRow().update({
         precioUnitario: sS.roundNumber(newFee.precioVenta, decimal.nroPrecio),
-        precioConIva: precioConIva,
+        precioConIva: sS.roundNumber(precioConIva, decimal.nroPrecio),
       });
     }
 
     if (column == "precioUnitario") {
-      const porcentaje = row.tipoIvas.find((x) => x.idTipoIva == row.idTipoIva).porcentaje;
-      const precioConIva = cT.calcularPrecioConIva(value,porcentaje);
+      const porcentaje = row.tipoIvas.find(
+        (x) => x.idTipoIva == row.idTipoIva
+      ).porcentaje;
+      const precioConIva = cT.calcularPrecioConIva(value, porcentaje);
 
       cell.getRow().update({
         precioUnitario: sS.roundNumber(value, decimal.nroPrecio),
-        precioConIva: precioConIva,
+        precioConIva: sS.roundNumber(precioConIva, decimal.nroPrecio),
       });
     }
 
     if (column == "precioConIva") {
-      const porcentaje = row.tipoIvas.find((x) => x.idTipoIva == row.idTipoIva).porcentaje;
-      const precioUnitario = cT.calcularPrecioUnitario(value,porcentaje);
+      const porcentaje = row.tipoIvas.find(
+        (x) => x.idTipoIva == row.idTipoIva
+      ).porcentaje;
+      const precioUnitario = cT.calcularPrecioUnitario(value, porcentaje);
 
       cell.getRow().update({
         precioUnitario: sS.roundNumber(precioUnitario, decimal.nroPrecio),
