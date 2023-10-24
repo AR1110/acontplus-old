@@ -171,7 +171,7 @@ BEGIN
                         END
 
                     INSERT INTO Restaurant.OrderItem(OrderId, Uuid, ItemId, TaxId, TaxPercentId, TaxValue, Quantity, Cost
-                                                    , Price, Discount, Total, [Enabled], UserId, FeeId, Obs, BodegaId, ItemTypeId, MenuId)
+                                                    , Price, Discount, Total, [Enabled], UserId, FeeId, Obs, BodegaId, ItemTypeId, MenuId, RemainingQuantity)
                     SELECT @orderId
                             ,uuid
                             ,IIF(itemId = 0, NULL, itemId)
@@ -190,6 +190,7 @@ BEGIN
                             ,i.bodegaId
                             ,mt.Id
                             ,IIF(i.menuId = 0, NULL, i.menuId)
+                            ,i.quantity
                     FROM @tblItems i
                     INNER JOIN Restaurant.ItemType mt ON mt.Code = i.itemTypeCode
 

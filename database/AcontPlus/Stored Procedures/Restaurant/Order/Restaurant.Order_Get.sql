@@ -54,7 +54,8 @@ BEGIN
                         ,nameFiscal 	    = CASE WHEN o.CustomerCompanyId = 0 THEN ''CONSUMIDOR FINAL'' ELSE c.nombreFiscal END
 	                    ,userName           = u.nombreUsuario
                         ,totalRecords       = COUNT(*) OVER()
-                        ,Divided
+                        ,o.Divided
+                        ,o.Finished
                     FROM Restaurant.[Order] o WITH(NOLOCK)
                     INNER JOIN Sri.Establecimiento sri_e WITH(NOLOCK) ON sri_e.idEstablecimiento = o.establecimientoId 
                     LEFT JOIN Cliente c ON c.idCliente = o.CustomerCompanyId
