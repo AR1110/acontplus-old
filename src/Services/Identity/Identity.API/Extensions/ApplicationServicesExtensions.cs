@@ -20,21 +20,6 @@ namespace Identity.API.Extensions
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IAccountService, AccountService>();
 
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            services.Configure<ApiBehaviorOptions>(options =>
-              options.InvalidModelStateResponseFactory = ActionContext =>
-              {
-                  var error = ActionContext.ModelState
-                              .Where(e => e.Value.Errors.Count > 0)
-                              .SelectMany(e => e.Value.Errors)
-                              .Select(e => e.ErrorMessage).ToArray();
-                  var errorresponce = new ApiValidationErrorResponse
-                  {
-                      Errors = error
-                  };
-                  return new BadRequestObjectResult(error);
-              }
-            );
             return services;
         }
     }
