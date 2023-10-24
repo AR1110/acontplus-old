@@ -776,9 +776,9 @@
                 params: '=',
                 resultModal: '&',
             },
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
     
-                element.on('click', async function (event) {
+                element.on('click', async function () {
                     let fileCtrl = nombreModalVenta.EMPRESA.fileCtrl;
                     let ctrl = nombreModalVenta.EMPRESA.controller 
                     let template = nombreModalVenta.EMPRESA.template 
@@ -790,6 +790,7 @@
                         controller,
                         template,
                         size: 'md',
+                        isRenderRazorPartial: true,
                         params: Object.assign({}, scope.params) || {},                        
                     })
 
@@ -851,9 +852,9 @@
                 params: '=',
                 resultModal: '&',
             },
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
     
-                element.on('click', async function (event) {
+                element.on('click', async function () {
                     let fileCtrl = nombreModalVenta.CARGO.fileCtrl;
                     let ctrl = nombreModalVenta.CARGO.controller 
                     let template = nombreModalVenta.CARGO.template 
@@ -864,7 +865,8 @@
                         controller,
                         template,
                         size: 'md',
-                        params: Object.assign({}, scope.params) || {},                                              
+                        params: Object.assign({}, scope.params) || {},  
+                        isRenderRazorPartial: true                                            
                     })
 
                     modalDialogRef.result.then(result => {
@@ -882,7 +884,7 @@
 
 
     //https://www.daterangepicker.com/
-    app.directive('dateRangeFilter', function (formulario) {
+    app.directive('dateRangeFilter', function () {
         return {
             template: `<div><input date-range-picker class="form-control date-picker border-select" type="text"
                    ng-model="dateRangePicker.date" picker="dateRangePicker.picker"
@@ -897,7 +899,7 @@
                 endDate: '=',
                 resultRangeDate: '&',
             },
-            link: function (scope, $element, $attrs, form) {
+            link: function (scope) {
                 let thisMoment = moment(new Date())
                 scope.startDate = thisMoment;
                 scope.endDate = thisMoment;

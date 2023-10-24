@@ -6,25 +6,23 @@
 
     app.controller('empresaCtrl', empresaCtrl);
 
-    empresaCtrl.$inject=['$scope', 'mainService', 'toastService'];
+    empresaCtrl.$inject=['$scope', 'mainService', 'empresaService', 'toastService'];
 
-    function empresaCtrl($scope, mS, tS){
+    function empresaCtrl($scope, mS, empresaSvc, tS){
         
         $scope.initiload = function(){
             try {
                 showLoader();
                 $scope.empresas = [];
-                mS.getData('get', '/Empresa/Get?json=' + JSON.stringify({})).then(response=>{
-                    hideLoader();
-                    console.log(response);
-                    if(response.code==="0"){                        
-                        console.log(response)
-                        return
-                    }
-                    if(response.code==="1"){
-                        $scope.empresas = JSON.parse(response.payload) || [];            
-                    }
+                empresaSvc.get({pageIndex: 1,pageSize: 10}).then(response=>{
+                    console.log(response)
+                    $scope.empresas = response;
                 })
+                .catch(error=>{
+                    hideLoader();
+                    console.log(error)
+                })
+                .finally(()=>hideLoader()) 
             } catch (error) {
                 hideLoader();
                 console.log(error);                
@@ -52,13 +50,13 @@
             
             if(isConfirmed){
                 showLoader();
-                mS.getData('post', '/Empresa/Delete?id=' + item.idEmpresa).then(response=>{
+                empresaSvc.delete(item.idEmpresa).then(response=>{
                     hideLoader();
-                    if(response.id==="0"){
+                    if(response.code==="0"){
                         tS.toastr('warning',response.message);
                         return
                     }
-                    if(response.id==="1"){                        
+                    if(response.code==="1"){                        
                         tS.toastr('success',response.message, response.titleSms);
                         $scope.initiload();
                     }
