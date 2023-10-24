@@ -6,16 +6,15 @@
 
     app.controller('empresaCtrl', empresaCtrl);
 
-    empresaCtrl.$inject=['$scope', 'mainService', 'empresaService', 'toastService'];
+    empresaCtrl.$inject=['$scope', 'empresaService', 'toastService'];
 
-    function empresaCtrl($scope, mS, empresaSvc, tS){
+    function empresaCtrl($scope, empresaSvc, tS){
         
         $scope.initiload = function(){
             try {
                 showLoader();
                 $scope.empresas = [];
-                empresaSvc.get({pageIndex: 1,pageSize: 10}).then(response=>{
-                    console.log(response)
+                empresaSvc.get({pageIndex: 1,pageSize: 10}).then(response=>{ 
                     $scope.empresas = response;
                 })
                 .catch(error=>{
