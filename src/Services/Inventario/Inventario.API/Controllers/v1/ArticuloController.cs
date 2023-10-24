@@ -1,4 +1,6 @@
-﻿using DataAccess;
+﻿using Common.Core.Interfaces;
+using Common.Core.Models;
+using DataAccess;
 using Inventario.Core.Interfaces;
 using Inventario.Core.Models;
 using Lib.Common;

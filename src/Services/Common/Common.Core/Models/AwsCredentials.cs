@@ -1,4 +1,4 @@
-﻿namespace Restaurant.Core.Entities
+﻿namespace Common.Core.Models
 {
     public class AwsCredentials
     {

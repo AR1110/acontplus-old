@@ -1,4 +1,6 @@
-﻿using Inventario.Application.Services;
+﻿using Common.Application.Services;
+using Common.Core.Interfaces;
+using Inventario.Application.Services;
 using Inventario.Core.Interfaces;
 using Inventario.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
