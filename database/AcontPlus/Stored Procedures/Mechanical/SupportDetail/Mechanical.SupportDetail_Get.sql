@@ -55,7 +55,7 @@ BEGIN
                   ,md.MedidaId          AS idMedida
                   ,md.[Description]     AS descripcion                  
                   ,md.Quantity          AS cantidad
-                  ,md.Price             AS precioVenta
+                  ,md.Price             AS precioUnitario -- PrecioVenta
                   ,md.Cost              AS precioCosto
                   ,md.CodePercentage    AS codigoPorcentaje
                   ,md.[Percentage]      AS tarifa

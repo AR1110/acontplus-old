@@ -108,7 +108,6 @@
             medidas,
             precioConIva: dataTarifa.precioConIva,
             precioUnitario: dataTarifa.precioVenta,
-            precioVenta: dataTarifa.precioVenta,
             tarifas: dataMedida.tarifas,
             tipoIvas: tipoIva,
             total: dataTarifa.precioConIva * 1,
@@ -210,7 +209,7 @@
     },
     {
       title: "Precio U.",
-      field: "precioVenta",
+      field: "precioUnitario",
       hozAlign: "center",
       editor: "input",
       cellEdited: Calculations.calculateTotal,
