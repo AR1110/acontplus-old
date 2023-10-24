@@ -34,7 +34,6 @@ BEGIN
 	DECLARE @idEntidad INT
 	DECLARE @rucProv VARCHAR(20)
 	DECLARE @idProveedor INT 
-	DECLARE @inventory VARCHAR(5)
 	DECLARE @fechaEmision DATETIME
 	DECLARE @codDoc VARCHAR(2)
 	
@@ -42,8 +41,6 @@ BEGIN
 	BEGIN TRY
 	
 		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
-
-		SELECT TOP 1 @inventory = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.llevaInventario') FROM Config.Sistema WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codConfig = 'CI'
 		
 		SELECT TOP 1 @rucProv = rucEmisor, @fechaEmision = CAST(fechaEmision AS date), @codDoc = codDoc FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento 
 		
@@ -61,14 +58,14 @@ BEGIN
 				RETURN
 			END
 
-		IF @inventory = 'NO'
+		 IF NOT EXISTS (SELECT 1 FROM Config.v_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND inventory = 'SI')
 			BEGIN
 				SELECT '0'code,'Tu empresa no lleva Inventario' as 'message'
 				RETURN 
 			END 
 
 		BEGIN TRAN
-			IF (@idArticulo > 0)
+			IF @idArticulo > 0
 				BEGIN
 
 					INSERT INTO Recepcion.DocumentoDetalle(idDocumento, idBodega, idArticulo, idMedida, codigoPrincipal, codigoAuxiliar
@@ -111,7 +108,6 @@ BEGIN
 					FROM Recepcion.Doc_Detalle_Temp t 
 					WHERE t.idDocumento = @idDocumento
 					  AND t.idArticulo > 0
-					  --AND NOT EXISTS (SELECT * FROM Recepcion.DocumentoDetalle rddd WHERE rddd.idDocumento = @idDocumento)
 
 					INSERT INTO Recepcion.Doc_Detalle_Impuesto(idDocumento, codigoPrincipal, codigo, codigoPorcentaje, tarifa, baseImponible, valor)
 					SELECT @idDocumento, codArticulo, codigo, codigoPorcentaje, tarifa, baseImponible, valor 
@@ -119,8 +115,6 @@ BEGIN
 					INNER JOIN Recepcion.Doc_Detalle_Temp ddt ON tt.idDocumento = ddt.idDocumento AND tt.idDetalle = ddt.idDetalle
 					WHERE tt.idDocumento = @idDocumento
 					  AND ddt.idArticulo > 0
-					  --AND NOT EXISTS (SELECT * FROM Recepcion.Doc_Detalle_Impuesto rddd WHERE rddd.idDocumento = @idDocumento)
-
 
 					UPDATE ddi SET ddi.idDocumentoDetalle = t.idDocumentoDetalle
 					FROM Recepcion.Doc_Detalle_Impuesto ddi
@@ -132,21 +126,14 @@ BEGIN
 			UPDATE Recepcion.DocumentoRecibido SET complete = 1 WHERE idDocumento = @idDocumento
 
 			--==================================================================Inventario===============================================================
-			--	END
-
+			
 			IF EXISTS (SELECT 1 FROM Recepcion.DocumentoDetalle t INNER JOIN Articulo a WITH(NOLOCK) ON t.idArticulo = a.idArticulo WHERE t.idDocumento = @idDocumento  AND a.llevaInventario = 1)
 				BEGIN
-					DECLARE @idArticuloStock INT
-					DECLARE @idBodega INT
-					DECLARE @idMedida INT
-					DECLARE @idTarifa INT
-					DECLARE @cantidad NUMERIC(18,2)
-					DECLARE @precioUnitario NUMERIC(18,5)
-					DECLARE @precioCosto NUMERIC(18,5) 
-					DECLARE @precioTotalSimImpuestos AS NUMERIC(18,5)
-					DECLARE @codDocInv VARCHAR(2)
-					DECLARE @multiplier INT 
-					DECLARE @tblDetails AS TABLE (
+					DECLARE @idArticuloStock INT ,@idBodega INT ,@idMedida INT ,@cantidad NUMERIC(18,2) ,@precioUnitario NUMERIC(18,5)
+					       ,@precioCosto NUMERIC(18,5) ,@precioTotalSimImpuestos AS NUMERIC(18,5) ,@codDocInv VARCHAR(2) ,@multiplier INT
+                           ,@idTipoDocumento INT ,@idTipoTransaccion INT
+					
+                    DECLARE @tblDetails AS TABLE (
 							idArticulo  INT NOT NULL
 						   ,idTarifa  INT  NULL
 						   ,idBodega   INT NOT NULL
@@ -177,21 +164,27 @@ BEGIN
 
 					SET @multiplier = (SELECT CASE WHEN @codDoc = '01' THEN 1  WHEN @codDoc = '04' THEN -1 END)
 
+                    SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = @codDocInv
+
+                    SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'E'
+
 					DECLARE cursor_inventory CURSOR LOCAL FOR
-					SELECT td.idArticulo, idBodega,td.idMedida,NULL, cantidad * @multiplier, td.precioUnitario * @multiplier,td.precioUnitario,td.precioTotalSimImpuestos * @multiplier
+					SELECT td.idArticulo, idBodega,td.idMedida,cantidad * @multiplier, td.precioUnitario * @multiplier,td.precioUnitario,td.precioTotalSimImpuestos * @multiplier
 					FROM @tblDetails td
 					INNER JOIN Articulo a WITH(NOLOCK) ON td.idArticulo = a.idArticulo
 							
 					OPEN cursor_inventory
 
-					FETCH NEXT FROM cursor_inventory INTO @idArticuloStock,@idBodega,@idMedida,@idTarifa,@cantidad,@precioUnitario,@precioCosto,@precioTotalSimImpuestos
+					FETCH NEXT FROM cursor_inventory INTO @idArticuloStock,@idBodega,@idMedida,@cantidad,@precioUnitario,@precioCosto,@precioTotalSimImpuestos
 
 					WHILE @@FETCH_STATUS = 0
 						BEGIN
-							--tipo transaccion 2 salidas
-							--tipo documento 1 factura electronica
-							EXEC Inventario.Transaccion_Insert 'E', @codDocInv, @fechaEmision, @idDocumento,  @idArticuloStock, @idBodega ,@idMedida,@idTarifa,@cantidad,@precioUnitario,@precioCosto,@precioTotalSimImpuestos, @idUsuario
-							FETCH NEXT FROM cursor_inventory INTO @idArticuloStock,@idBodega,@idMedida,@idTarifa,@cantidad,@precioUnitario,@precioCosto,@precioTotalSimImpuestos
+							
+
+
+							EXEC Inventario.Transaccion_Insert 'E', @codDocInv, @fechaEmision, @idDocumento,  @idArticuloStock, @idBodega ,@idMedida,@cantidad,@precioUnitario,@precioCosto,@precioTotalSimImpuestos, @idUsuario
+							
+                            FETCH NEXT FROM cursor_inventory INTO @idArticuloStock,@idBodega,@idMedida,@cantidad,@precioUnitario,@precioCosto,@precioTotalSimImpuestos
 						END
 					CLOSE cursor_inventory
 					DEALLOCATE cursor_inventory  
