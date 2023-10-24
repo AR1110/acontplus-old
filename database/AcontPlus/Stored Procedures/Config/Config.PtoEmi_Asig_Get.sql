@@ -1,3 +1,4 @@
+use Acontplus
 -- ================================================
 -- Template generated from Template Explorer using:
 -- Create Procedure (New Menu).SQL
@@ -38,7 +39,7 @@ BEGIN
 		a.idPtoEmi_Asig
 	   ,a.codEstab_Asig
 	   ,a.idPuntoEmision
-	   ,ptoEmi = pe.ptoEmi +'-'+ es.estab
+	   ,ptoEmi = es.estab +'-'+  pe.ptoEmi 
 	   ,a.predeterminado
 	   ,a.estado
 	FROM Config.PtoEmi_Asig a

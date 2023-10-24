@@ -7,7 +7,7 @@ using Compras.Application;
 using DataAccess;
 using Domain.Dtos;
 using FactElect.Application;
-using FactElect.Core;
+using FactElect.Core.Models;
 using Lib.Common;
 using Lib.Common.Api;
 using Lib.Common.DbUtils;

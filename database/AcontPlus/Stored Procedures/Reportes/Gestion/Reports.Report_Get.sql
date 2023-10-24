@@ -35,7 +35,20 @@ BEGIN
 	,@idUsuarioRol INT
 	,@hasParams BIT = 0
 
-	SELECT @codEstab = codEstab, @idUsuarioRol = idUsuarioRol, @hasParams = hasParams FROM OPENJSON(@json) WITH (codEstab VARCHAR(50) '$.codEstab', idUsuarioRol INT '$.idUsuarioRol', hasParams BIT '$.hasParams')
+	SELECT @codEstab = codEstab
+        ,@idUsuarioRol = idUsuarioRol
+        ,@hasParams = hasParams
+        ,@codigo = codigo
+        ,@format = formato
+        ,@aditionalParams = aditionalParams
+    FROM OPENJSON(@json) WITH (
+                                codEstab VARCHAR(50) '$.codEstab',
+                                idUsuarioRol INT '$.idUsuarioRol',
+                                hasParams BIT '$.hasParams',
+                                formato NVARCHAR(15) '$.format',
+		                        codigo NVARCHAR(25) '$.codigo',
+		                        aditionalParams  NVARCHAR(MAX) '$.aditionalParams' AS JSON
+                                )
 	
 	print @codestab
 	IF(@codEstab IS NULL OR LEN(LTRIM(RTRIM(@codEstab))) = 0)
@@ -47,9 +60,6 @@ BEGIN
 
 	SELECT @imagen = imagen, @mimeType = mimeType FROM Config.Estab_Logo WHERE codEstab = @codEstab AND estado = 1
 	
-	
-	SELECT @codigo = codigo, @format = formato, @aditionalParams = aditionalParams FROM dbo.AFTGetReportParamsFromJson(@json)
-
 	IF NOT EXISTS (SELECT 1 FROM Config.Reporte WHERE codigo = @codigo)
 		BEGIN
 			SELECT '0','No existen datos para este reporte',''

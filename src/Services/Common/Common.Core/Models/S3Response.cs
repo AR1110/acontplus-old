@@ -1,4 +1,4 @@
-﻿namespace Lib.Common.Api
+﻿namespace Common.Core.Models
 {
     public class S3Response
     {

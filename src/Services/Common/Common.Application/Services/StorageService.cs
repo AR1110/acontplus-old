@@ -1,11 +1,10 @@
 ﻿using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Transfer;
-using Inventario.Core.Interfaces;
-using Inventario.Core.Models;
-using Lib.Common.Api;
+using Common.Core.Interfaces;
+using Common.Core.Models;
 
-namespace Inventario.Application.Services
+namespace Common.Application.Services
 {
     public class StorageService : IStorageService
     {

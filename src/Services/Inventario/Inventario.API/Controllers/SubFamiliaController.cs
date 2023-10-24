@@ -1,4 +1,6 @@
-﻿using DataAccess;
+﻿using Common.Core.Interfaces;
+using Common.Core.Models;
+using DataAccess;
 using Domain.Models.Almacen;
 using Inventario.Core.Interfaces;
 using Inventario.Core.Models;

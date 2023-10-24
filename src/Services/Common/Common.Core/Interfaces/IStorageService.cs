@@ -1,7 +1,6 @@
-﻿using Inventario.Core.Models;
-using Lib.Common.Api;
+﻿using Common.Core.Models;
 
-namespace Inventario.Core.Interfaces
+namespace Common.Core.Interfaces
 {
     public interface IStorageService
     {

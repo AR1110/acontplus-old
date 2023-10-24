@@ -1,4 +1,4 @@
-﻿namespace Inventario.Core.Models
+﻿namespace Common.Core.Models
 {
     public class S3Object
     {

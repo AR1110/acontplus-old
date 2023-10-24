@@ -15,7 +15,7 @@
         $scope,
         $filter,
         _mS,
-        _commonSvc, 
+        _commonSvc,
         facturaSvc,
         _modalSvc,
         _nombreModalConst,
@@ -23,7 +23,7 @@
         _tS,
         _fS,
         decodeToken
-    ) { 
+    ) {
 
         $scope.typeSend = 'SRI';
 
@@ -156,14 +156,14 @@
                     tipo: 1,
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize,
-                    codEstab: $scope.dataSearch.codEstab, 
+                    codEstab: $scope.dataSearch.codEstab,
                     idPuntoEmision: $scope.dataSearch.idPuntoEmision,
                     byCliente: $scope.dataSearch.idCliente,
-                    checkBoxFecha: $scope.dataSearch.nroSecuencial ? false : true, 
-                    byUsuario: $scope.dataSearch.byUsuario, 
+                    checkBoxFecha: $scope.dataSearch.nroSecuencial ? false : true,
+                    byUsuario: $scope.dataSearch.byUsuario,
                     byEstado: $scope.dataSearch.byEstado,
                     fechaInicio: _fS.formatDateMoment($scope.dataSearch.fechaInicio),
-                    fechaFin: _fS.formatDateMoment($scope.dataSearch.fechaFin), 
+                    fechaFin: _fS.formatDateMoment($scope.dataSearch.fechaFin),
                     nroSecuencial: Number($scope.dataSearch.nroSecuencial)
                 }
 
@@ -180,7 +180,7 @@
                     $scope.dataSearch.totalRecords = dataTotals.totalRecords;
                     $scope.total = _fS.roundNumber(dataTotals.totalDocument, 5);
                     $scope.totalAbono = _fS.roundNumber(dataTotals.totalAbono, 5);
-                    $scope.totalSaldo = _fS.roundNumber(dataTotals.totalSaldo, 5); 
+                    $scope.totalSaldo = _fS.roundNumber(dataTotals.totalSaldo, 5);
                     hideLoader();
                 }).catch(error => {
                     hideLoader();
@@ -198,21 +198,21 @@
 
         $scope.initiload = async function () {
             showLoader();
-            facturaSvc.get({tipo: 4}).then(response=>{
+            facturaSvc.get({ tipo: 4 }).then(response => {
                 hideLoader();
                 $scope.establecimientos = response.estabs;
-                $scope.estadoDocumentos = response.estadosDoc; 
-                
-                if($scope.establecimientos.length>0){
-                    let dataEstab = $scope.establecimientos.find(estab=>(estab.defaultEstab));
+                $scope.estadoDocumentos = response.estadosDoc;
+
+                if ($scope.establecimientos.length > 0) {
+                    let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
                     $scope.puntosEmision = dataEstab.puntosEmision;
                     $scope.dataSearch.codEstab = dataEstab.codEstab;
-                    $scope.dataSearch.idPuntoEmision = $scope.puntosEmision.find(pto=>(pto.defaultPtoEmi)).idPuntoEmision;
-                    $scope.getFacturas();                    
-                }  
-            }).catch(()=>{
+                    $scope.dataSearch.idPuntoEmision = $scope.puntosEmision.find(pto => (pto.defaultPtoEmi)).idPuntoEmision;
+                    $scope.getFacturas();
+                }
+            }).catch(() => {
                 hideLoader();
-            })  
+            })
 
             facturaSvc.getDataForm().then(result => {
                 $scope.jsonPermission = JSON.parse(result[9][0].jsonPermission)
@@ -221,10 +221,10 @@
         }
         $scope.initiload();
 
-        $scope.estabFilter = function(){
-            let dataEstab = $scope.establecimientos.find(estab=>estab.codEstab===$scope.dataSearch.codEstab);
+        $scope.estabFilter = function () {
+            let dataEstab = $scope.establecimientos.find(estab => estab.codEstab === $scope.dataSearch.codEstab);
             $scope.puntosEmision = dataEstab.puntosEmision;
-            $scope.dataSearch.idPuntoEmision = $scope.puntosEmision.find(pto=>(pto.defaultPtoEmi)).idPuntoEmision;
+            $scope.dataSearch.idPuntoEmision = $scope.puntosEmision.find(pto => (pto.defaultPtoEmi)).idPuntoEmision;
             $scope.getFacturas();
         }
 
@@ -542,16 +542,20 @@
             let format = 'pdf';
             let dataParms = {
                 id: item.idDocumento,
-                codEstab: item.codEstab,
-                codigo: 'RF',
-                format,
+                normalMethod: true,
             }
 
             let parameters = {
-                dataParams: JSON.stringify(dataParms)
+                dataParams: JSON.stringify(dataParms),
+                reportParams: JSON.stringify({
+                    codigo: 'RF',
+                    codEstab: item.codEstab,
+                    format,
+                }),
+                hasService: true
             }
 
-            _commonSvc.getReportDynamic({
+            _commonSvc.getReport({
                 parameters,
                 format
             })
@@ -726,7 +730,7 @@
                 console.log(error)
             }
         }
- 
+
         $scope.print = function (item) {
             let parameters = {
                 idDocument: item.idDocumento,
@@ -740,7 +744,7 @@
                 parameters: JSON.stringify(parameters)
             })
 
-        } 
+        }
 
     }
 
