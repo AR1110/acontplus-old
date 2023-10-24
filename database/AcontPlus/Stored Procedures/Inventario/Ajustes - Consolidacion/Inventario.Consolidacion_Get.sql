@@ -56,7 +56,7 @@ BEGIN
 				,CASE WHEN a.fraccionado = 1 THEN (SELECT af.idMedida, m.descripcion, af.precioCostoFraccionado precioCosto FROM ArticuloFraccionado af WITH (NOLOCK) 
 																												   INNER JOIN Medida m WITH (NOLOCK) ON af.idMedida = m.idMedida WHERE af.idArticulo = a.idArticulo FOR JSON PATH)
 				ELSE ''[]'' END medidas
-				FROM v_Articulo a 
+				FROM Inventario.v_Articulo a 
 				WHERE a.estado = 1 
 				AND a.idEntidad = @idEntidad
 				AND a.llevaInventario = 1 '
@@ -140,7 +140,7 @@ BEGIN
 				,m.descripcion medida
 				,total = (cantidad * cid.precioActual)				
 			FROM ConsolidacionInventarioDetalle cid WITH(NOLOCK) 
-			INNER JOIN v_Articulo a WITH(NOLOCK) ON a.idArticulo = cid.idArticulo
+			INNER JOIN Inventario.v_Articulo a WITH(NOLOCK) ON a.idArticulo = cid.idArticulo
 			INNER JOIN Medida m WITH(NOLOCK) ON m.idMedida = cid.idMedida
 			INNER JOIN TipoIva ti WITH(NOLOCK) ON ti.idTipoIva = a.idTipoIva
 			WHERE cid.idConsolidacionInventario = @id AND cid.estado = 1
