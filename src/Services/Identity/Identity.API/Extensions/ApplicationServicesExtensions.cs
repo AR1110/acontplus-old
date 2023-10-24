@@ -17,16 +17,6 @@ namespace Identity.API.Extensions
             services.AddDbContextPool<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentityCore<AppUser>(opt =>
-            {
-
-            })
-           .AddRoles<AppRole>()
-           .AddRoleManager<RoleManager<AppRole>>()
-           .AddSignInManager<SignInManager<AppUser>>()
-           .AddRoleValidator<RoleValidator<AppRole>>()
-           .AddEntityFrameworkStores<ApplicationDbContext>();
-
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IAccountService, AccountService>();
 

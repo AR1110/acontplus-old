@@ -8,7 +8,7 @@ namespace Identity.API.Helpers
     {
         public MappingProfiles()
         {
-            CreateMap<Address, AddressDto>();
+            //CreateMap<Address, AddressDto>();
             //.ForMember(d => d.ProductBrand, o => o.MapFrom(s => s.ProductBrand.Name))
             //.ForMember(d => d.ProductType, o => o.MapFrom(s => s.ProductType.Name))
             //.ForMember(d => d.PictureUrl, o => o.MapFrom<ProductUrlResolver>());
