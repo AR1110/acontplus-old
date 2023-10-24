@@ -63,12 +63,12 @@
                 showLoader();
                 $scope.comprobantes = [];
                 if (tipo > 0) {
-                    docElectSvc.get({ tipo }).then(response => {
+                    docElectSvc.getByStatus({ tipo:Number(tipo) }).then(response => {
                         if (!$scope.isMobile) {
                             document.getElementById('menu_toggle').click();
                         }
                         $scope.comprobantes = response;
-                        $scope.dataSearch.totalRecords = $scope.comprobantes[0].totalRecords;
+                        $scope.dataSearch.totalRecords = $scope.comprobantes.length>0? $scope.comprobantes[0].totalRecords:0
                     })
                         .finally(() => hideLoader())
                         .catch(error => {
@@ -95,10 +95,8 @@
                         if (!$scope.isMobile) {
                             document.getElementById('menu_toggle').click();
                         }
-                        $scope.comprobantes = response;
-                        
-                        console.log($scope.comprobantes)
-                        $scope.dataSearch.totalRecords = $scope.comprobantes[0].totalRecords;
+                        $scope.comprobantes = response;  
+                        $scope.dataSearch.totalRecords = $scope.comprobantes.length>0? $scope.comprobantes[0].totalRecords:0
                     })
                         .finally(() => hideLoader())
                         .catch(error => {

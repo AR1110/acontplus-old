@@ -17,8 +17,7 @@
 
         $scope.initiload = function(){
             showLoader();
-            cargoSvc.get({pageIndex: 1}).then(response=>{
-                console.log(response)
+            cargoSvc.get({pageIndex: 1}).then(response=>{ 
                 $scope.cargos = response;     
             })
             .catch(error=>{
