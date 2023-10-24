@@ -55,7 +55,7 @@ BEGIN
                   ,md.MedidaId          AS idMedida
                   ,md.[Description]     AS descripcion                  
                   ,md.Quantity          AS cantidad
-                  ,md.Price             AS precioVenta
+                  ,md.Price             AS precioUnitario -- PrecioVenta
                   ,md.Cost              AS precioCosto
                   ,md.CodePercentage    AS codigoPorcentaje
                   ,md.[Percentage]      AS tarifa
@@ -121,7 +121,7 @@ BEGIN
 
             SELECT idTipoIva,descripcion, codigo,codigoPorcentaje,porcentaje FROM TipoIva WITH (NOLOCK) WHERE estado = 1
             
-            SELECT * FROM v_ConfigDecimal WITH (NOLOCK) WHERE codTrasaccion = 'V' AND idEntidad = @CompanyId
+            SELECT * FROM Config.v_Sistema_Decimal WITH (NOLOCK) WHERE codTrasaccion = 'V' AND idEntidad = @CompanyId
             RETURN
         END
 

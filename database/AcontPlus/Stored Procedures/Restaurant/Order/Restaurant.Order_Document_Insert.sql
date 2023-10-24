@@ -701,11 +701,8 @@ BEGIN
             AND cd.codDoc = @codDoc
     ) AS vcf ON cf.idConfiguracionDocumento = vcf.idConfiguracionDocumento
 
-    DECLARE @inventory BIT
-
-    SET @inventory = (SELECT inventario FROM Config.v_Sistema WHERE idEntidad = @companyId AND codConfig = 'CI')
-
-    IF (@inventory = 1)
+    
+    IF EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE idEntidad = @companyId AND inventory = 'SI')
         BEGIN
             DECLARE @idArticulo         INT
             ,@idBodega                  INT

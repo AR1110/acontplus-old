@@ -1,6 +1,6 @@
 import { ArticleService } from "$lib/services/inventory/article-service";
-import { sharedService } from "$services/shared.service";
-import { calculoTarifa } from "./calculo-tarifa";
+import { sharedService as sS } from "$services/shared.service";
+import { calculoTarifa as cT } from "./calculo-tarifa";
 import { showLoader, hideLoader } from "$utils/loading-spinner";
 import Swal from "sweetalert2";
 
@@ -15,6 +15,7 @@ const calculations = () => {
     try {
       const response = await ArticleService.get(
         JSON.stringify({
+          tipo: 7,
           idArticulo: rowEntity.idArticulo,
           cantidad: rowEntity.cantidad,
           idBodega: rowEntity.idBodega,
@@ -24,7 +25,7 @@ const calculations = () => {
       hideLoader();
 
       const { code, message } = response[0][0];
-      if (code === "1") return isCalculable;
+      if (code === "1") return (isCalculable = true);
 
       const { isConfirmed } = await Swal.fire({
         title: `<small>Advertencia</small>`,
@@ -105,10 +106,18 @@ const calculations = () => {
 
   const calculateTotal = async (cell) => {
     const row = cell.getRow().getData();
+    const decimal = row.decimals[0];
+
+    // Get values.
     const column = cell.getColumn()._column.field;
     const value = cell.getValue();
-    const decimal = row.decimals[0];
     const oldValue = cell.getOldValue();
+
+    if (column == "cantidad") {
+      const resp = await checkNotificationStock(cell, row, oldValue);
+
+      if (!resp) return;
+    }
 
     if (column == "idMedida") {
       const dataMedida = row.medidas.find((x) => x.idMedida == value);
@@ -117,22 +126,28 @@ const calculations = () => {
       cell.getRow().update({
         tarifas: articuloTarifas,
         idTarifa: articuloTarifas[0].idTarifa,
-        precioVenta: sharedService.roundNumber(
+        precioUnitario: sS.roundNumber(
           articuloTarifas[0].precioVenta,
-          decimal.nroCantidad
+          decimal.nroPrecio
         ),
-        precioConIva: sharedService.roundNumber(
+        precioConIva: sS.roundNumber(
           articuloTarifas[0].precioConIva,
-          decimal.nroCantidad
+          decimal.nroPrecio
         ),
       });
     }
 
     if (column == "idTipoIva") {
-      const dataTipoIva = row.tipoIvas.find(
-        (x) => x.idTipoIva === parseInt(row.idTipoIva)
-      );
-      console.log(dataTipoIva);
+      if (oldValue == value) return;
+
+      try {
+        const dataTipoIva = row.tipoIvas.find(
+          (x) => x.idTipoIva === parseInt(row.idTipoIva)
+        );
+        console.log(dataTipoIva);
+      } catch (error) {
+        console.log(error);
+      }
     }
 
     if (column == "idTarifa") {
@@ -140,40 +155,26 @@ const calculations = () => {
       const porcentaje = row.tipoIvas.find(
         (x) => x.idTipoIva == row.idTipoIva
       ).porcentaje;
-
-      const precioConIva = calculoTarifa.calcularPrecioConIva(
+      const precioConIva = cT.calcularPrecioConIva(
         newFee.precioVenta,
         porcentaje
       );
 
       cell.getRow().update({
-        precioVenta: newFee.precioVenta,
-        precioConIva: precioConIva,
+        precioUnitario: sS.roundNumber(newFee.precioVenta, decimal.nroPrecio),
+        precioConIva: sS.roundNumber(precioConIva, decimal.nroPrecio),
       });
     }
 
-    if (column == "cantidad") {
-      // Call checkNotificationStock
-      const resp = await checkNotificationStock(cell, row, oldValue);
-      console.log(resp);
-
-      if(resp) {
-
-      }
-    }
-
-    if (column == "precioVenta") {
+    if (column == "precioUnitario") {
       const porcentaje = row.tipoIvas.find(
         (x) => x.idTipoIva == row.idTipoIva
       ).porcentaje;
-
-      const precioConIva = calculoTarifa.calcularPrecioConIva(
-        value,
-        porcentaje
-      );
+      const precioConIva = cT.calcularPrecioConIva(value, porcentaje);
 
       cell.getRow().update({
-        precioConIva: precioConIva,
+        precioUnitario: sS.roundNumber(value, decimal.nroPrecio),
+        precioConIva: sS.roundNumber(precioConIva, decimal.nroPrecio),
       });
     }
 
@@ -181,13 +182,20 @@ const calculations = () => {
       const porcentaje = row.tipoIvas.find(
         (x) => x.idTipoIva == row.idTipoIva
       ).porcentaje;
-
-      const precioVenta = calculoTarifa.calcularPrecioVenta(value, porcentaje);
+      const precioUnitario = cT.calcularPrecioUnitario(value, porcentaje);
 
       cell.getRow().update({
-        precioVenta: precioVenta,
+        precioUnitario: sS.roundNumber(precioUnitario, decimal.nroPrecio),
+        precioConIva: sS.roundNumber(row.precioConIva, decimal.nroPrecio),
       });
     }
+
+    // Calculations.
+    const total = (row.precioUnitario - 0) * row.cantidad;
+
+    cell.getRow().update({
+      total: sS.roundNumber(total, decimal.nroTotalDetalle),
+    });
   };
 
   return { calculateTotal, formatters };

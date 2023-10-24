@@ -186,7 +186,7 @@ BEGIN
 
 
 			--==============================Configuracion Decimal============================================================== 
-			 SELECT  nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle ,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce FROM v_ConfigDecimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'C'
+			 SELECT  nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle ,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce FROM Config.v_Sistema_Decimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'C'
 
 
 			--=============================Impuestos===========================================================================
@@ -318,7 +318,7 @@ BEGIN
 
 
 			--==============================Configuracion Decimal============================================================== 
-			SELECT  nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle ,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce FROM v_ConfigDecimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'C'
+			SELECT  nroPrecio,nroCantidad,nroIva,nroDescuentoDetalle ,nroTotalDetalle,nroTotalSubTotal,nroDescuento,nroIce FROM Config.v_Sistema_Decimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'C'
 
 
 			--=============================Impuestos===========================================================================

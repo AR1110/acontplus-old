@@ -25,6 +25,8 @@ class Shared {
   }
 
   roundNumber = function (number, max = 1) {
+    number = Number(number);
+
     if (typeof number !== "number" || isNaN(number)) {
       throw new TypeError("Número inválido: " + number);
     }
