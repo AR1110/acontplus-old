@@ -58,7 +58,7 @@ BEGIN
 				RETURN
 			END
 
-		 IF NOT EXISTS (SELECT 1 FROM Config.v_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND inventory = 'SI')
+		IF NOT EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND inventory = 'SI')
 			BEGIN
 				SELECT '0'code,'Tu empresa no lleva Inventario' as 'message'
 				RETURN 

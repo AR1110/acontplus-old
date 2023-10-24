@@ -28,7 +28,7 @@ BEGIN
 
 	SET @tableNames = 'ConfigDecimal,Table,SubCategorias,Impuesto,TarifaImpuesto,PtoEmi_Asig,Bodega_Asign,Floor,Room,Customer,tarifaImpuestoVigente'
 	
-    SELECT * FROM v_ConfigDecimal WHERE idEntidad = @idEntidad AND codTrasaccion = 'V'
+    SELECT * FROM Config.v_Sistema_Decimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'V'
     
     SELECT rt.Id, rt.Capacity, rt.NumberTable, rt.description, rr.id as roomId, rf.id as floorId, rt.Assigned
     FROM Restaurant.v_Table rt

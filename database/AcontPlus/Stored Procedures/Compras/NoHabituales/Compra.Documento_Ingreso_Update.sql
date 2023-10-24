@@ -246,7 +246,7 @@ BEGIN
 
 
 			--==============================================================Inventario============================================================================================
-            IF EXISTS (SELECT 1 FROM Config.v_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND inventory = 'SI')
+            IF EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND inventory = 'SI')
 				BEGIN 
                     
                     DECLARE @idArticulo INT ,@idBodega INT ,@idMedida INT ,@idTipoTransaccion  INT ,@idTipoDocumento INT
