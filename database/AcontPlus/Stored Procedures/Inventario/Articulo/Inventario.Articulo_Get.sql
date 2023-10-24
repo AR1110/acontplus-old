@@ -490,13 +490,13 @@ BEGIN
 			SELECT TOP 1 @stockMinimo = stockMinimo FROM Inventario.v_Articulo WITH (NOLOCK) WHERE idArticulo = @idArticulo
 
 			--|| Mostrar notificacion de artículos sin stock || --
-			SELECT TOP 1 @stockCantidad  = estado FROM Config.v_Notificacion_Sistema WITH (NOLOCK) WHERE codigo = 'MNS' AND idEntidad = @idEntidad 
+			SELECT TOP 1 @stockCantidad  = estado FROM Config.v_Sistema_Notificacion WITH (NOLOCK) WHERE codigo = 'MNS' AND idEntidad = @idEntidad 
 
 			--|| No permitir la venta de artículos sin stock || --
-			SELECT TOP 1 @ventaStockCero = estado FROM Config.v_Notificacion_Sistema WITH (NOLOCK) WHERE codigo = 'NPS' AND idEntidad = @idEntidad 
+			SELECT TOP 1 @ventaStockCero = estado FROM Config.v_Sistema_Notificacion WITH (NOLOCK) WHERE codigo = 'NPS' AND idEntidad = @idEntidad 
 
 			-- || Mostrar notificacion de artículos con stock mínimo ||--
-			SELECT TOP 1 @ventaStockMinimo = estado FROM Config.v_Notificacion_Sistema WITH (NOLOCK) WHERE codigo = 'MNM' AND idEntidad = @idEntidad 
+			SELECT TOP 1 @ventaStockMinimo = estado FROM Config.v_Sistema_Notificacion WITH (NOLOCK) WHERE codigo = 'MNM' AND idEntidad = @idEntidad 
 
 			SELECT  @stock =  @stock - (@cantidad * ISNULL(@fraccion,1))
 			
@@ -548,7 +548,7 @@ BEGIN
 	IF @tipo = 8
 		BEGIN
 
-			SELECT nroPrecio FROM v_ConfigDecimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'CD'
+			SELECT nroPrecio FROM Config.v_Sistema_Decimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'CD'
 
 			SELECT idFamilia
                     , descripcion 

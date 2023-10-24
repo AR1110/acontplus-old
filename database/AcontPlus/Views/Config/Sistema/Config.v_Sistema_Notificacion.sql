@@ -1,6 +1,6 @@
 USE AcontPlus
 GO
-CREATE OR ALTER VIEW Config.v_Notificacion_Sistema WITH SCHEMABINDING AS (
+CREATE OR ALTER VIEW Config.v_Sistema_Notificacion WITH SCHEMABINDING AS (
    SELECT st.idSistema
 		 ,st.idEntidad
 		 ,JSON_VALUE(dj.[value],'$.codigo') as codigo

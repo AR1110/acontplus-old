@@ -58,7 +58,7 @@ BEGIN
 				RETURN
 			END
 
-		 IF NOT EXISTS (SELECT 1 FROM Config.v_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND inventory = 'SI')
+		IF NOT EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND inventory = 'SI')
 			BEGIN
 				SELECT '0'code,'Tu empresa no lleva Inventario' as 'message'
 				RETURN 
@@ -131,7 +131,7 @@ BEGIN
 				BEGIN
 					DECLARE @idArticuloStock INT ,@idBodega INT ,@idMedida INT ,@cantidad NUMERIC(18,2) ,@precioUnitario NUMERIC(18,5)
 					       ,@precioCosto NUMERIC(18,5) ,@precioTotalSimImpuestos AS NUMERIC(18,5) ,@codDocInv VARCHAR(2) ,@multiplier INT
-                           ,@idTipoDocumento INT ,@idTipoTransaccion INT
+                           ,@idTipoDocumento INT ,@idTipoTransaccion INT ,@fraccion NUMERIC(18,5) ,@fechaConsolidacion DATETIME ,@stock NUMERIC(18,5)
 					
                     DECLARE @tblDetails AS TABLE (
 							idArticulo  INT NOT NULL
@@ -162,7 +162,7 @@ BEGIN
 
 					SET @codDocInv  = (SELECT CASE WHEN @codDoc = '01' THEN 'FE' WHEN @codDoc = '04' THEN 'NC' END)
 
-					SET @multiplier = (SELECT CASE WHEN @codDoc = '01' THEN 1  WHEN @codDoc = '04' THEN -1 END)
+					SET @multiplier = (SELECT CASE WHEN @codDoc = '01' THEN 1 WHEN @codDoc = '04' THEN -1 END)
 
                     SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = @codDocInv
 
@@ -179,12 +179,31 @@ BEGIN
 
 					WHILE @@FETCH_STATUS = 0
 						BEGIN
-							
+							SELECT TOP 1 @fraccion = conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida
 
+                            SELECT  @cantidad = @cantidad * ISNULL(@fraccion,1)
+                                    
+							INSERT INTO Inventario.Transaccion WITH(ROWLOCK)
+				                    (idTipoTransaccion, idArticulo, idBodega, idTipoDocumento, idDocumento, idMedida ,cantidad, precioCosto, precioUnitario, total,fechaRegistro, idUsuario)
+			                SELECT @idTipoTransaccion,@idArticulo,@idBodega,@idTipoDocumento,@idDocumento,@idMedida,@cantidad,@precioCosto,@precioUnitario,@precioTotalSimImpuestos,@fechaEmision,@idUsuario
+								    
+                            IF EXISTS (SELECT 1 FROM Inventario.Stock WHERE idArticulo = @idArticulo AND idBodega = @idBodega AND fechaConsolidacion IS NOT NULL)
+                                    BEGIN
+                                            SELECT TOP 1 @fechaConsolidacion = fechaConsolidacion  FROM Inventario.Stock WITH(NOLOCK)  WHERE idArticulo = @idArticulo AND idBodega = @idBodega
 
-							EXEC Inventario.Transaccion_Insert 'E', @codDocInv, @fechaEmision, @idDocumento,  @idArticuloStock, @idBodega ,@idMedida,@cantidad,@precioUnitario,@precioCosto,@precioTotalSimImpuestos, @idUsuario
-							
-                            FETCH NEXT FROM cursor_inventory INTO @idArticuloStock,@idBodega,@idMedida,@cantidad,@precioUnitario,@precioCosto,@precioTotalSimImpuestos
+                                            IF @fechaConsolidacion >= @fechaEmision
+                                                BEGIN
+                                                    SELECT @cantidad = 0 
+                                                END 
+                                    END 
+
+                            UPDATE Inventario.Stock WITH(ROWLOCK) SET cantidad = cantidad + ISNULL(@cantidad,0) WHERE idArticulo = @idArticulo AND idBodega = @idBodega
+
+	                        SELECT @stock = SUM(cantidad) FROM Inventario.Stock s WITH (NOLOCK) WHERE idArticulo = @idArticulo AND s.estado = 1
+
+	                        UPDATE dbo.Articulo WITH(ROWLOCK) SET stock = ISNULL(@stock,0) WHERE idArticulo = @idArticulo
+
+                            FETCH NEXT FROM cursor_inventory INTO @idArticulo,@idBodega,@idMedida,@cantidad,@precioUnitario,@precioCosto,@precioTotalSimImpuestos
 						END
 					CLOSE cursor_inventory
 					DEALLOCATE cursor_inventory  
