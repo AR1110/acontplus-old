@@ -1,5 +1,3 @@
-use Acontplus
-GO
 USE AcontPlus
 GO
 CREATE OR ALTER VIEW Config.v_Notificacion_Sistema WITH SCHEMABINDING AS (

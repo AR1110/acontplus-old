@@ -37,7 +37,7 @@ BEGIN
 	SET NOCOUNT ON;
 
 	--=============Datos capturados desde BD===========================
-	DECLARE @idUsuario AS INT 
+	DECLARE @idUsuario INT ,@idEntidad INT
 
 
 	--===========Datos para la validacion de informacion===============
@@ -49,9 +49,6 @@ BEGIN
 	DECLARE @idTiempoCredito AS INT 
 	DECLARE @codPago AS VARCHAR(5)
 
-
-    --==============Inventario==============
-	DECLARE @inventory VARCHAR(5)
 
 	--==========Tablas temporales para la validacion===================
 	DECLARE @document AS TABLE(
@@ -159,9 +156,9 @@ BEGIN
 		) 
 
 		----======================================Recuperar datos de las Tablas===========================================================
-		SELECT TOP 1 @fechaEmision = fechaEmision ,@inventory = inventory FROM @document
+		SELECT TOP 1 @fechaEmision = fechaEmision FROM @document
 
-		SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
+		SELECT TOP 1 @idUsuario = idUsuario ,@idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
 		SELECT TOP 1 @uniqueId =  uniqueId FROM Compra.Documento_Ingreso WITH (NOLOCK) WHERE idDocumentoIngreso = @idDocumentoIngreso 
 
@@ -249,7 +246,7 @@ BEGIN
 
 
 			--==============================================================Inventario============================================================================================
-			IF @inventory = 'SI'
+            IF EXISTS (SELECT 1 FROM Config.v_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND inventory = 'SI')
 				BEGIN 
                     
                     DECLARE @idArticulo INT ,@idBodega INT ,@idMedida INT ,@idTipoTransaccion  INT ,@idTipoDocumento INT
