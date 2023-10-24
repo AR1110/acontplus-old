@@ -34,9 +34,9 @@ BEGIN
 			 DELETE FROM FactElect.DocRelacionado WHERE idDocumentoRecibido = @idDocumento
 
 			 DELETE FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento
-
-			 SELECT '1' code, 'Eliminado Exitosamente' as 'message'
+			 
 		COMMIT TRAN
+        SELECT '1' code, 'Eliminado Exitosamente' as 'message'
 	END TRY
 	BEGIN CATCH
 		SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() as 'message'

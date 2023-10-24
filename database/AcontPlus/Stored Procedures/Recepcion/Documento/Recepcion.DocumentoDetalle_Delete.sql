@@ -26,21 +26,20 @@ CREATE PROCEDURE Recepcion.DocumentoDetalle_Delete	@idUsuarioRol INT,@id INT
 AS
 BEGIN
 	SET NOCOUNT ON; 
-	DECLARE @idEntidad AS INT
-	DECLARE @idUsuario AS INT
-	DECLARE @idDocumento AS INT 
-	DECLARE @idArticulo AS INT 
-	DECLARE @idBodega AS INT 
-	DECLARE @inventory AS VARCHAR(5)
+	DECLARE @idEntidad INT , @idUsuario INT
+	DECLARE @idDocumento INT ,@fechaEmision DATETIME
 
 	BEGIN TRY
 		
-		SELECT TOP 1 @idDocumento = idDocumento, @idArticulo = idArticulo, @idBodega = idBodega FROM Recepcion.DocumentoDetalle WITH (NOLOCK) WHERE idDocumentoDetalle = @id
+		SELECT TOP 1 @idDocumento = idDocumento FROM Recepcion.DocumentoDetalle WITH (NOLOCK) WHERE idDocumentoDetalle = @id
 
 		SELECT TOP 1 @idUsuario = idUsuario, @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
-		SELECT TOP 1 @inventory = JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.llevaInventario') FROM Config.Sistema WHERE idEntidad = @idEntidad AND codConfig = 'CI'
-
+        IF NOT EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND inventory = 'SI')
+			BEGIN
+				SELECT '0'code,'Tu empresa no lleva Inventario' as 'message'
+				RETURN 
+			END 
 
 		BEGIN TRAN
 
@@ -53,24 +52,50 @@ BEGIN
 					UPDATE Recepcion.DocumentoRecibido SET complete = 0 WHERE idDocumento = @idDocumento
 				END
 
-			IF @inventory = 'SI'
+
+            IF EXISTS (SELECT 1 FROM Recepcion.DocumentoDetalle t INNER JOIN Articulo a WITH(NOLOCK) ON t.idArticulo = a.idArticulo WHERE t.idDocumento = @idDocumento  AND a.llevaInventario = 1)
 				BEGIN
-					DECLARE @codDoc AS VARCHAR(2)
-					DECLARE @codDocInv VARCHAR(2)
-					DECLARE @idTipoDocumento INT
-					DECLARE @idTipoTransaccion INT
+			
+			        DECLARE @codDoc AS VARCHAR(2) ,@idTipoDocumento INT ,@idTipoTransaccion INT ,@idArticulo INT 
+                           ,@idBodega INT ,@cantidad NUMERIC(18,2) ,@fraccion NUMERIC(18,5) ,@idMedida INT 
+                           ,@fechaConsolidacion DATETIME ,@stock NUMERIC(18,5)
 
-					SELECT TOP 1 @codDoc = codDoc FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento
+                    -- variables 
 
-					SELECT @codDocInv =  CASE WHEN @codDoc = '01' THEN 'FE' WHEN @codDoc = '04' THEN 'NC' END
+			        SELECT TOP 1 @codDoc = CASE WHEN codDoc = '01' THEN 'FE' WHEN codDoc = '04' THEN 'NC' END , @fechaEmision = fechaEmision FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento
 
-					SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo  = @codDocInv
+                    SELECT TOP 1 @idArticulo = idArticulo
+                                ,@idBodega   = idBodega 
+                                ,@idMedida   = idMedida
+                                ,@cantidad   = cantidad * IIF(@codDoc = '01',-1,1)
+                    FROM Recepcion.DocumentoDetalle WITH (NOLOCK) WHERE idDocumentoDetalle = @id
 
-					SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo  = 'E'
+			        SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo  = @codDoc
 
-					UPDATE Inventario.Transaccion SET estado = 0 WHERE idDocumento = @idDocumento AND idTipoDocumento = @idTipoDocumento AND idTipoTransaccion = @idTipoTransaccion AND idArticulo = @idArticulo
+			        SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo  = 'E'
+                    
+                    SELECT TOP 1 @fraccion = conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida
+
+                    SELECT TOP 1 @cantidad = @cantidad * ISNULL(@fraccion,1)
+
+                    -- TRAN 
+			        UPDATE Inventario.Transaccion SET estado = 0 WHERE idDocumento = @idDocumento AND idTipoDocumento = @idTipoDocumento AND idTipoTransaccion = @idTipoTransaccion AND idArticulo = @idArticulo
 					
-					EXEC Inventario.Stock_Update @idArticulo, @idBodega
+                    IF EXISTS (SELECT 1 FROM Inventario.Stock WITh (NOLOCK) WHERE idArticulo = @idArticulo AND idBodega = @idBodega AND fechaConsolidacion IS NOT NULL)
+                            BEGIN
+                                SELECT TOP 1 @fechaConsolidacion = fechaConsolidacion  FROM Inventario.Stock WITH(NOLOCK)  WHERE idArticulo = @idArticulo AND idBodega = @idBodega
+
+                                IF @fechaConsolidacion >= @fechaEmision
+                                    BEGIN
+                                        SELECT @cantidad = 0
+                                    END 
+                            END 
+
+                    UPDATE Inventario.Stock WITH(ROWLOCK) SET cantidad = cantidad + ISNULL(@cantidad,0) WHERE idArticulo = @idArticulo AND idBodega = @idBodega
+
+	                SELECT @stock = SUM(cantidad) FROM Inventario.Stock s WITH (NOLOCK) WHERE idArticulo = @idArticulo AND s.estado = 1
+
+	                UPDATE dbo.Articulo WITH(ROWLOCK) SET stock = ISNULL(@stock,0) WHERE idArticulo = @idArticulo
 				END 
 
 		COMMIT TRAN

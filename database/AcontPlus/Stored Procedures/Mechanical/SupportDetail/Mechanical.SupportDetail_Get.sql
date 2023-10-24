@@ -121,7 +121,7 @@ BEGIN
 
             SELECT idTipoIva,descripcion, codigo,codigoPorcentaje,porcentaje FROM TipoIva WITH (NOLOCK) WHERE estado = 1
             
-            SELECT * FROM v_ConfigDecimal WITH (NOLOCK) WHERE codTrasaccion = 'V' AND idEntidad = @CompanyId
+            SELECT * FROM Config.v_Sistema_Decimal WITH (NOLOCK) WHERE codTrasaccion = 'V' AND idEntidad = @CompanyId
             RETURN
         END
 

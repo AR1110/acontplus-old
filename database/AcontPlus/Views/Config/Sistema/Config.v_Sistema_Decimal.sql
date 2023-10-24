@@ -1,11 +1,6 @@
-use Acontplus
-GO
-IF OBJECT_ID(N'v_ConfigDecimal', N'V') IS NOT NULL
-DROP VIEW v_ConfigDecimal
-GO
-CREATE VIEW v_ConfigDecimal
-AS
-(
+USE [Acontplus]
+go 
+CREATE OR ALTER VIEW Config.v_Sistema_Decimal WITH SCHEMABINDING AS (
    SELECT cs.idSistema
 		 ,cs.idEntidad
 		 ,codTrasaccion       = JSON_VALUE(dt.[value],'$.codTransaccion')

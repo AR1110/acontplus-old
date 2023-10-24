@@ -41,10 +41,6 @@ BEGIN
 	DECLARE @idEstado AS INT
 	DECLARE @idEstadoPago AS INT
 	DECLARE @codPago AS VARCHAR(5)
-	
-
-	 -- Inventario
-    DECLARE @inventory VARCHAR(15)
 
 
 	BEGIN TRY 
@@ -53,8 +49,6 @@ BEGIN
 		SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo  = 'A'
 
 		SELECT TOP 1 @idUsuario = idUsuario, @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
-
-		SELECT TOP 1 @inventory =  JSON_VALUE(dbo.f_sanitize_json(jsonConfig),'$.llevaInventario') FROM Config.Sistema WHERE idEntidad = @idEntidad AND codConfig = 'CI' 
 
 		SELECT TOP 1 @uniqueId = uniqueId ,@fechaEmision = fechaEmision FROM Compra.Documento_Ingreso WITH (NOLOCK) WHERE idDocumentoIngreso = @idDocumentoIngreso
 		
@@ -89,7 +83,7 @@ BEGIN
 			UPDATE Compra.InfoAdicional SET estado = 0 WHERE  uniqueId = @uniqueId
 
 			--==============================================================Inventario============================================================================================
-			IF @inventory = 'SI'
+			IF EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND inventory = 'SI')
 				BEGIN 
 					
                      -- Inventario

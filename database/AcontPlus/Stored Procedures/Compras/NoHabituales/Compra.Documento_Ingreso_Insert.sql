@@ -49,12 +49,6 @@ BEGIN
 	DECLARE @idDocumentoIngreso INT 
 	DECLARE @secuencial INT
 
-	--==============Inventario==============
-	DECLARE @inventory VARCHAR(5)
-	
-	--======================Fecha Emision===============================
-	--DECLARE @fechaEmision DATETIME 
-
 	--==============contabilidad============
 	DECLARE @idEstadoPago AS INT
 
@@ -173,7 +167,7 @@ BEGIN
 		
         SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
-		SELECT TOP 1 @idPuntoEmision = idPuntoEmision,@inventory = inventory,@fechaEmision = fechaEmision FROM @document
+		SELECT TOP 1 @idPuntoEmision = idPuntoEmision ,@fechaEmision = fechaEmision FROM @document
 		
 		SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
 
@@ -248,7 +242,7 @@ BEGIN
 			
 			
 			--==============================================================Inventario============================================================================================
-			IF @inventory = 'SI'
+			IF EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND inventory = 'SI')
 				BEGIN
                     
                     DECLARE @idArticulo INT ,@idBodega INT ,@idMedida INT ,@idTipoTransaccion  INT ,@idTipoDocumento INT
