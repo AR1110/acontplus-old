@@ -670,7 +670,7 @@ BEGIN
                                                 ,idUsuario,idEntidad)
 
             SELECT @ambiente
-                , @codDoc
+                , '01'
                 , @documentoId
                 , @customerCompanyId
                 , @nroDocumento
