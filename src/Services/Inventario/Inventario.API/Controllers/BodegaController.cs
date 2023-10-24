@@ -1,5 +1,6 @@
 ﻿using DataAccess;
 using Lib.Common.Api;
+using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -26,7 +27,7 @@ namespace Inventario.API.Controllers
             {
                 await _db.SPExecute("Inventario.Bodega_Get");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", json);
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
@@ -49,7 +50,7 @@ namespace Inventario.API.Controllers
             {
                 await _db.SPExecute("Inventario.Bodega_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", json);
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
@@ -64,15 +65,16 @@ namespace Inventario.API.Controllers
             }
             return Ok(_response);
         }
-        [HttpPut]
-        public async Task<IActionResult> Put(string json)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, string json)
         {
             GenericResponse _response = new GenericResponse(); 
             try
             {
                 await _db.SPExecute("Inventario.Bodega_Update");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", json);
+                _db.AddDynamicParam("id", id);
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -87,7 +89,7 @@ namespace Inventario.API.Controllers
             }
             return Ok(_response);
         }
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             GenericResponse _response = new GenericResponse(); 
