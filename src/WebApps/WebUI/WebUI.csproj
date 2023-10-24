@@ -21,6 +21,7 @@
     <Compile Remove="App\lib\StockFisico\**" />
     <Compile Remove="App\routes\ProductionArea\**" />
     <Compile Remove="Areas\Pet\**" />
+    <Compile Remove="Areas\TipoEntidad\**" />
     <Compile Remove="Pages\Shared\**" />
     <Compile Remove="Views\ComprobanteImportacion\**" />
     <Compile Remove="wwwroot\js\controllers\almacen\**" />
@@ -32,6 +33,7 @@
     <Content Remove="App\lib\StockFisico\**" />
     <Content Remove="App\routes\ProductionArea\**" />
     <Content Remove="Areas\Pet\**" />
+    <Content Remove="Areas\TipoEntidad\**" />
     <Content Remove="Pages\Shared\**" />
     <Content Remove="Views\ComprobanteImportacion\**" />
     <Content Remove="wwwroot\js\controllers\almacen\**" />
@@ -43,6 +45,7 @@
     <EmbeddedResource Remove="App\lib\StockFisico\**" />
     <EmbeddedResource Remove="App\routes\ProductionArea\**" />
     <EmbeddedResource Remove="Areas\Pet\**" />
+    <EmbeddedResource Remove="Areas\TipoEntidad\**" />
     <EmbeddedResource Remove="Pages\Shared\**" />
     <EmbeddedResource Remove="Views\ComprobanteImportacion\**" />
     <EmbeddedResource Remove="wwwroot\js\controllers\almacen\**" />
@@ -54,6 +57,7 @@
     <None Remove="App\lib\StockFisico\**" />
     <None Remove="App\routes\ProductionArea\**" />
     <None Remove="Areas\Pet\**" />
+    <None Remove="Areas\TipoEntidad\**" />
     <None Remove="Pages\Shared\**" />
     <None Remove="Views\ComprobanteImportacion\**" />
     <None Remove="wwwroot\js\controllers\almacen\**" />
@@ -595,29 +599,15 @@
     <None Include="wwwroot\dist\scss\widgets\weather-widget.scss" />
     <None Include="wwwroot\dist\scss\widgets\widgets.scss" />
     <None Include="wwwroot\js\app\acontPlusApp.js" />
-    <None Include="wwwroot\js\controllers\admin\anioFiscalCtrl.js" />
-    <None Include="wwwroot\js\controllers\admin\anioFiscalCtrl.min.js" />
     <None Include="wwwroot\js\controllers\admin\asignacionCajaCtrl.js" />
     <None Include="wwwroot\js\controllers\admin\asignacionCajaCtrl.min.js" />
-    <None Include="wwwroot\js\controllers\admin\bancoCtrl.js" />
-    <None Include="wwwroot\js\controllers\admin\bancoCtrl.min.js" />
-    <None Include="wwwroot\js\controllers\admin\bodegaCtrl.js" />
     <None Include="wwwroot\js\controllers\admin\cajaCtrl.js" />
     <None Include="wwwroot\js\controllers\admin\cajaCtrl.min.js" />
     <None Include="wwwroot\js\controllers\admin\contraPartidaCtrl.js" />
     <None Include="wwwroot\js\controllers\admin\contraPartidaCtrl.min.js" />
     <None Include="wwwroot\js\controllers\admin\controlCajaCtrl.js" />
-    <None Include="wwwroot\js\controllers\admin\entidadCtrl.js" />
-    <None Include="wwwroot\js\controllers\admin\entidadCtrl.min.js" />
     <None Include="wwwroot\js\controllers\admin\entidadFinancieraCtrl.js" />
     <None Include="wwwroot\js\controllers\admin\entidadFinancieraCtrl.min.js" />
-    <None Include="wwwroot\js\controllers\admin\etiquetaCtrl.js" />
-    <None Include="wwwroot\js\controllers\admin\etiquetaCtrl.min.js" />
-    <None Include="wwwroot\js\controllers\admin\firmaElectronicaCtrl.js" />
-    <None Include="wwwroot\js\controllers\admin\firmaElectronicaCtrl.min.js" />
-    <None Include="wwwroot\js\controllers\admin\politicaCtrl.js" />
-    <None Include="wwwroot\js\controllers\admin\politicaCtrl.min.js" />
-    <None Include="wwwroot\js\controllers\admin\rolCtrl.js" />
     <None Include="wwwroot\js\controllers\admin\turnoCtrl.js" />
     <None Include="wwwroot\js\controllers\admin\turnoCtrl.min.js" />
     <None Include="wwwroot\js\controllers\admin\usuarioCtrl.js" />
@@ -4023,7 +4013,6 @@
   <ItemGroup>
     <Folder Include="App\routes\TechnicalSupport\" />
     <Folder Include="App\routes\Restaurant\Product\Promotions\Components\" />
-    <Folder Include="Areas\TipoEntidad\Pages\Shared\" />
     <Folder Include="wwwroot\lib\angular-daterangepicker\" />
   </ItemGroup>
 

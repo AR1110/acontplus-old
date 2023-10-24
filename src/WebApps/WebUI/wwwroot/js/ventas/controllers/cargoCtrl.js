@@ -5,27 +5,26 @@
     'use strict';
 
     app.controller('cargoCtrl', cargoCtrl);
-    cargoCtrl.$inject=['$scope', 'mainService', 'toastService'];
+    cargoCtrl.$inject=[
+        '$scope',  
+        'cargoService',
+        'toastService'
+    ];
 
-    function cargoCtrl($scope, mS, tS){
+    function cargoCtrl($scope, cargoSvc, tS){
         $scope.cargos    = [];        
    
 
         $scope.initiload = function(){
             showLoader();
-            $scope.cargos = [];
-            mS.getData('get','/Cargo/Get?json=' + JSON.stringify({})).then(response=>{
-                hideLoader();
-                if(response.code==="0"){                
-                    console.log(response);                
-                }
-                if(response.code==="1"){
-                    $scope.cargos = JSON.parse(response.data);            
-                }
-            }).catch(error=>{
-                hideLoader();
-                console.log(error);
+            cargoSvc.get({pageIndex: 1}).then(response=>{
+                console.log(response)
+                $scope.cargos = response;     
             })
+            .catch(error=>{
+                console.log(error)
+            })
+            .finally(()=>hideLoader()) 
         }
         $scope.initiload();
 
@@ -47,13 +46,11 @@
             });
 
             if(isConfirmed){
-                mS.getData('post', '/Cargo/Delete?id='+item.idCargo).then(response=>{
-                    if(response.id==="0"){
-                        tS.toastr('warning', response.message, response.titleSms);
-                        return
-                    }
-        
-                    if(response.id==="1"){
+                cargoSvc.delete(item.idCargo).then(response=>{
+                    if(response.code==="0"){
+                        tS.toastr('warning', response.message, response.titleSms); 
+                    } 
+                    if(response.code==="1"){
                         tS.toastr('success', response.message, response.titleSms);
                         $scope.initiload();
                     }

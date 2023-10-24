@@ -41,8 +41,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                     tipoIdentificacion,
                     tipoContribuyentes,
                     tiempoCreditos,
-                    ciudades,
-                    tiposEntidad,
+                    ciudades, 
                     tiposCliente,
                     empresas,
                     cargos
@@ -114,7 +113,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
 
     $scope.initiload();
 
-    $uibModalInstance.rendered.then(result => {
+    $uibModalInstance.rendered.then(() => {
 
         if ($scope.tipoRegistro === 1) {
             $("#numeroIdentificacion").focus();
@@ -231,8 +230,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                 if (response.numeroRuc) {
 
                     let {
-                        razonSocial,
-                        establecimientos,
+                        razonSocial, 
                         direccion,
                         telefono,
                         email
@@ -376,7 +374,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
         // html2canvas(document.querySelector("#cardBusiness")).then(canvas => {
         //     document.body.appendChild(canvas)
         // });
-        let container = document.getElementById("cardBusiness");; /* full page */
+        let container = document.getElementById("cardBusiness"); /* full page */
         html2canvas(container, {
             allowTaint: true
         }).then(function (canvas) {
@@ -493,7 +491,7 @@ function ModalClienteListaCtrl($scope, clienteSvc, $uibModalInstance, tS) {
     }
 
 
-    $scope.onKeyupSearchCliente = function(e) {
+    $scope.onKeyupSearchCliente = function() {
         $scope.getSearchCustomer();
     }
 

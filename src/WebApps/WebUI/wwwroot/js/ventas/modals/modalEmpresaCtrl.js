@@ -1,9 +1,17 @@
 export { 
     ModalEmpresaCtrl
 }
-ModalEmpresaCtrl.$inject = ['$scope', '$uibModalInstance', 'mainService', 'toastService', 'formulario', 'params'];
+ModalEmpresaCtrl.$inject = [
+    '$scope', 
+    '$uibModalInstance', 
+    'mainService', 
+    'empresaService',
+    'toastService', 
+    'formulario', 
+    'params'
+];
 
-function ModalEmpresaCtrl($scope, $uibModalInstance, mS, tS, fS, params) {        
+function ModalEmpresaCtrl($scope, $uibModalInstance, mS, empresaSvc, tS, fS, params) {        
     $scope.tipoRegistro = 1;
 
     $scope.data = {};
@@ -49,23 +57,32 @@ function ModalEmpresaCtrl($scope, $uibModalInstance, mS, tS, fS, params) {
             return
         }
 
-        const URL = $scope.tipoRegistro === 1 ? '/Empresa/Post' : '/Empresa/Put?id=' + $scope.data.idEmpresa;
         showLoader();
-        mS.getData('post',URL, $scope.data).then(response => {
-            if (response.id === "0") {
-                hideLoader();
-                tS.toastr('warning', response.message);
-                return
-            }
-            if (response.id === "1") {
-                hideLoader();
-                tS.toastr('success', response.message, response.titleSms);
-                $uibModalInstance.close(response);
-            }
-        })
+        if ($scope.data.idEmpresa > 0) {
+            empresaSvc.put($scope.data.idEmpresa, $scope.data).then($scope.successReponse)
+                .catch(err => {
+                    hideLoader();
+                    console.log(err);
+                })
+        } else if(!($scope.data.idEmpresa>0)) { 
+            empresaSvc.post($scope.data).then($scope.successReponse)
+                .catch(err => {
+                    hideLoader();
+                    console.log(err);
+                })
+        }  
 
+    }
 
-
+    $scope.successReponse = function (response) {
+        hideLoader();
+        if (response.code === '0') {
+            tS.toastr('warning', response.message, response.titleSms);
+        }
+        if (response.code === '1') {
+            tS.toastr('success', response.message, response.titleSms);
+            $uibModalInstance.close(response)
+        }
     }
 
     $scope.closeModal = function() {
