@@ -191,11 +191,12 @@
       title: "Medida",
     },
     {
+      cellEdited: Calculations.calculateTotal,
       editor: customSelect.selectTipoIva,
       field: "idTipoIva",
+      formatter: Calculations.formatters,
       hozAlign: "center",
       title: "I.V.A",
-      formatter: Calculations.formatters,
       width: 100,
     },
     {
@@ -297,8 +298,13 @@
       detalle: JSON.stringify(MapperToAction.detalleMapperTo(supportDetails)),
     };
 
+    console.log("Data for save Factura: ");
+    console.log(data);
+
     FacturaService.post(data)
-      .then((response) => {})
+      .then((response) => {
+        console.log(response);
+      })
       .finally(() => {
         hideLoader();
       });

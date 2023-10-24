@@ -32,6 +32,7 @@ export interface RawOrderData {
   userName: string
   totalRecords: number
   divided: boolean
+  finished: boolean
 }
 
 export interface OrderReadDto {
@@ -50,7 +51,8 @@ export interface OrderReadDto {
   codDoc?: "" | DOC_TYPE.FV | DOC_TYPE.NE;
   createdAt: string;
   totalRecords: number
-  divided: boolean
+  divided: boolean 
+  finished: boolean
 }
 
 

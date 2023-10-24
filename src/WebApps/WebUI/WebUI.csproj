@@ -4023,6 +4023,7 @@
   <ItemGroup>
     <Folder Include="App\routes\TechnicalSupport\" />
     <Folder Include="App\routes\Restaurant\Product\Promotions\Components\" />
+    <Folder Include="Areas\TipoEntidad\Pages\Shared\" />
     <Folder Include="wwwroot\lib\angular-daterangepicker\" />
   </ItemGroup>
 

@@ -4,13 +4,13 @@ class CustomSelect  {
   // Todo: Seleccionamos las bodegas
   selectWareHouses = (cell, onRendered, success, cancel) => {
     let warehouses = [];
-    let rows = cell.getRow().getData();
+    const rows = cell.getRow().getData();
 
     if (rows.tarifas != undefined || rows.tarifas != null) {
       warehouses = rows.bodegas;
     }
 
-    let selectList = document.createElement("select");
+    const selectList = document.createElement("select");
     selectList.style.width = "100%";
     selectList.style.boxSizing = "border-box";
 
@@ -34,7 +34,7 @@ class CustomSelect  {
     selectList.addEventListener("blur", onChange);
 
     for (let i = 0; i < warehouses.length; i++) {
-      let option = document.createElement("option");
+      const option = document.createElement("option");
 
       option.value = warehouses[i].idBodega.toString();
       option.text = warehouses[i].bodega;
@@ -49,13 +49,13 @@ class CustomSelect  {
   // Todo: Seleccionamos las tarifas
   selectFee = (cell, onRendered, success, cancel) => {
     let fees = [];
-    let rows = cell.getRow().getData();
+    const rows = cell.getRow().getData();
 
     if (rows.tarifas != undefined || rows.tarifas != null) {
       fees = rows.tarifas;
     }
 
-    let selectList = document.createElement("select");
+    const selectList = document.createElement("select");
     selectList.style.width = "100%";
     selectList.style.boxSizing = "border-box";
 
@@ -79,7 +79,7 @@ class CustomSelect  {
     selectList.addEventListener("blur", onChange);
 
     for (let i = 0; i < fees.length; i++) {
-      let option = document.createElement("option");
+      const option = document.createElement("option");
 
       option.value = fees[i].idTarifa.toString();
       option.text = fees[i].tarifa;
@@ -94,13 +94,13 @@ class CustomSelect  {
   // Todo: Seleccionamos las medidas
   selectMeasures = (cell, onRendered, success, cancel) => {
     let measures = [];
-    let rows = cell.getRow().getData();
+    const rows = cell.getRow().getData();
 
     if (rows.medidas != undefined || rows.medidas != null) {
       measures = rows.medidas;
     }
 
-    let selectList = document.createElement("select");
+    const selectList = document.createElement("select");
     selectList.style.width = "100%";
     selectList.style.boxSizing = "border-box";
 
@@ -125,7 +125,7 @@ class CustomSelect  {
     selectList.addEventListener("blur", onChange);
 
     for (let i = 0; i < measures.length; i++) {
-      let option = document.createElement("option");
+      const option = document.createElement("option");
 
       option.value = measures[i].idMedida.toString();
       option.text = measures[i].descripcion;
@@ -140,13 +140,13 @@ class CustomSelect  {
   // Todo: Seleccionamos el tipo de iva
   selectTipoIva = (cell, onRendered, success, cancel) => {
     let tipoIvas = [];
-    let rows = cell.getRow().getData();
+    const rows = cell.getRow().getData();
 
     if (rows.tipoIvas != undefined || rows.tipoIvas != null) {
       tipoIvas = rows.tipoIvas;
     }
 
-    let selectList = document.createElement("select");
+    const selectList = document.createElement("select");
     selectList.style.width = "100%";
     selectList.style.boxSizing = "border-box";
 
@@ -161,8 +161,7 @@ class CustomSelect  {
 
         cell.getElement().dataset.descripcion =
           selectList.selectedOptions[0].text;
-        cell.getElement().dataset.idTipoIva =
-          selectList.selectedOptions[0].value;
+        cell.getElement().dataset.idTipoIva = selectList.selectedOptions[0].value;
       } else {
         cancel();
       }
@@ -171,7 +170,7 @@ class CustomSelect  {
     selectList.addEventListener("blur", onChange);
 
     for (let i = 0; i < tipoIvas.length; i++) {
-      let option = document.createElement("option");
+      const option = document.createElement("option");
 
       option.value = tipoIvas[i].idTipoIva.toString();
       option.text = tipoIvas[i].descripcion;
@@ -182,6 +181,6 @@ class CustomSelect  {
     }
     return selectList;
   };
-};
+}
 
 export const customSelect = new CustomSelect();

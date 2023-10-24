@@ -83,3 +83,4 @@ bin-release/
 /src/Services/Configuracion/ApiConfig/ApiConfig.csproj.user
 /src/Services/Identity/Identity.API/Identity.API.csproj.user
 /src/src/WebApps/WebUI.sln
+/src/WebApps/WebUI/.vs/WebUI/FileContentIndex

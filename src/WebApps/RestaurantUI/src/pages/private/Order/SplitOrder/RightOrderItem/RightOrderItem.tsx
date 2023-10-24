@@ -20,7 +20,7 @@ import { SnackbarUtility } from '@/core/utilities';
 import { DOC_TYPE } from '@/core/constants';
 import CustomerSearch from '@/core/components/Customer/CustomerSearch';
 import Swal from 'sweetalert2';
-import { itemToApi, summaryToApi } from '@/core/adapters'; 
+import { itemToApi, summaryToApi } from '@/core/adapters';
 import { orderService } from '@/core/services';
 import { showLoader, hideLoader } from "@/spinner";
 
@@ -55,8 +55,8 @@ const StyledAccordionDetails = styled(AccordionDetails)(({ theme }) => ({
 
 const RightOrderItem = () => {
     const { leftOrder, rightOrder, setRightOrderData, rightOrderItems } = useSplitOrderContext();
-    const { setPaymentData, resetData} = useSplitOrderContext(); 
-     
+    const { setPaymentData, resetData } = useSplitOrderContext();
+
 
     const typeActions: { [key: string]: string } = {
         [DOC_TYPE.FV]: `
@@ -101,8 +101,15 @@ const RightOrderItem = () => {
                 bodegaId: leftOrder.bodegaId
             }
 
+            console.log(rightOrderItems)
+
             const orderResult = summaryToApi(mergeLeftIntoRightOrder);
             const orderItemsResult = itemToApi(rightOrderItems);
+            //Corregir la cantidad 
+            const orderItems = orderItemsResult.map(item => ({
+                ...item,
+                quantity: item.remainingQuantity
+            }))
 
             const data = {
                 ...orderResult,
@@ -112,41 +119,29 @@ const RightOrderItem = () => {
                 saveDoc: (codDoc === DOC_TYPE.FV) || (codDoc === DOC_TYPE.NE),
                 codDoc,
                 quickSale: (codDoc === DOC_TYPE.FV) || (codDoc === DOC_TYPE.NE),
-                items: orderItemsResult,
-                itemsToPay: orderItemsResult,
+                items: orderItems,
+                itemsToPay: orderItems,
             }
 
             showLoader();
-            orderService.put(leftOrder.orderId, data).then(response => { 
+            orderService.put(leftOrder.orderId, data).then(response => {
                 hideLoader();
                 if (response.code === '0') {
                     SnackbarUtility.warning(response.message)
                 }
                 if (response.code === "1") {
-                    SnackbarUtility.success(response.message); 
+                    SnackbarUtility.success(response.message);
                     console.log(response)
                     const queryParams = JSON.parse(response.payload)[0];
-                    console.log(queryParams)                    
+                    console.log(queryParams)
                     setPaymentData({
-                        open:true,
+                        open: true,
                         payload: queryParams
-                    }) 
+                    })
                     resetData();
-                    // if (queryParams.payAutomatic) {
-                    //     setQueryParams(queryParams);
-                    //     payment.openDialogCustom();
-                    //     return
-                    // }
-
-
-                    // if (queryParams.printerAutomatic) {
-                    //     SharedService.getPrinter(queryParams.idDocumento)
-                    // } else {
-                    //     resetForm();
-                    // }
                 }
-            }) 
-            .catch(() => hideLoader())
+            })
+                .catch(() => hideLoader())
 
 
         } catch (error: any) {
@@ -182,7 +177,7 @@ const RightOrderItem = () => {
                         <StyledAccordionDetails>
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
-                                    <CustomerSearch customerCompanyId={rightOrder.customerCompanyId} customerName='' onChangeCustomer={(data) => {                                         
+                                    <CustomerSearch customerCompanyId={rightOrder.customerCompanyId} customerName='' onChangeCustomer={(data) => {
                                         if (data) {
                                             setRightOrderData({
                                                 ...rightOrder,

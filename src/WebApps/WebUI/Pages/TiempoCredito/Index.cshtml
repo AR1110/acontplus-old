@@ -1,5 +1,6 @@
-@page
-@model WebUI.Areas.TiempoCredito.Pages.Index
+﻿@page
+@model WebUI.Pages.TiempoCredito.IndexModel
+
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -14,7 +15,7 @@
             <div class="col-md-7 align-self-center text-right">
                 <div class="d-flex justify-content-end align-items-center">
                     <button type="button" ng-if="accion.crear" ng-click="openModal()"
-                        class="btn btn-info d-none d-lg-block m-l-15">
+                            class="btn btn-info d-none d-lg-block m-l-15">
                         <i class="fa fa-plus-circle"></i> Nuevo
                     </button>
                 </div>
@@ -40,7 +41,7 @@
                                 <div class="col-lg-3 col-md-6 col-sm-11 col-xs-11">
                                     <form class="form-material">
                                         <input type="text" class="form-control" ng-model="buscar"
-                                            placeholder="Buscar Tiempo Credito" />
+                                               placeholder="Buscar Tiempo Credito" />
                                     </form>
                                 </div>
 
@@ -68,12 +69,13 @@
                                         <td md-cell ng-if="accion.editar || accion.eliminar">
                                             <div class="justify-content-center">
                                                 <a href="javascript:void(0)" ng-if="accion.editar"
-                                                    ng-click="openModal(item)" class="btn btn-info btn-xs"
-                                                    title="Actualizar" data-toggle="tooltip"><i
-                                                        class="ti-pencil"></i></a>
+                                                   ng-click="openModal(item)" class="btn btn-info btn-xs"
+                                                   title="Actualizar" data-toggle="tooltip">
+                                                    <i class="ti-pencil"></i>
+                                                </a>
                                                 <a href="javascript:void(0)" ng-if="accion.eliminar"
-                                                    ng-click="askToDelete(item)" class="btn btn-danger btn-xs"
-                                                    data-toggle="tooltip" title="Eliminar"><i class="ti-trash"></i></a>
+                                                   ng-click="askToDelete(item)" class="btn btn-danger btn-xs"
+                                                   data-toggle="tooltip" title="Eliminar"><i class="ti-trash"></i></a>
                                             </div>
                                         </td>
                                         <td md-cell>{{$index+1}}</td>
@@ -86,8 +88,10 @@
                                         <td md-cell ng-bind-html="item.estado | estadoPrimario"></td>
                                     </tr>
                                     <tr md-row ng-show="tiempoCreditos.length==0">
-                                        <td md-cell colspan="8" class="text-center">No hay registros disponibles en esta
-                                            tabla.</td>
+                                        <td md-cell colspan="8" class="text-center">
+                                            No hay registros disponibles en esta
+                                            tabla.
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -100,5 +104,6 @@
 </div>
 
 @section Scripts{
+    <script src="~/js/config/services/tiempoCreditoService.js" asp-append-version="true"></script>
     <script src="~/js/config/controllers/tiempoCreditoCtrl.js" asp-append-version="true"></script>
 }

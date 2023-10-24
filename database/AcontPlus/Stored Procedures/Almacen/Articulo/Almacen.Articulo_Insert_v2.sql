@@ -162,7 +162,7 @@ BEGIN
 				,ISNULL(porcentajeUtilidad, 0)
 				,precioPredeterminado
 		FROM OPENJSON(@json) 
-		WITH (idArticuloPvP                INT '$.idArticuloPvP'
+		WITH (idArticuloPvP                   INT '$.idArticuloPvP'
 				,idTarifa                     INT '$.idTarifa' 
 				,precioVenta        NUMERIC(20,5) '$.precioVenta'
 				,precioConIva       NUMERIC(20,5) '$.precioConIva' 
@@ -240,9 +240,30 @@ BEGIN
 			FROM @tbArticle
 
 			SET @idArticulo = @@IDENTITY
+            
+            DECLARE @precioCosto NUMERIC(18,5)
+            DECLARE @porcentaje NUMERIC(18,5)
+            DECLARE @totalIva NUMERIC(18,5)
+            DECLARE @precioVenta NUMERIC(18,5)
+            DECLARE @porcentajeUtilidad NUMERIC(18,5)
+            
+            SELECT @porcentaje  = ISNULL(ti.porcentaje, 0)
+                 , @precioCosto = ISNULL(precioCosto, 0.01)               
+            FROM Inventario.v_Articulo ti
+            WHERE idArticulo = @idArticulo
 
+            IF @precioCosto <= 0
+                BEGIN 
+                    SET @precioCosto = 0.01
+                END
+
+            SET @totalIva = (@porcentaje / 100) + 1;
+            SET @precioVenta = (SELECT TOP 1 precioConIva FROM @tbPrices) / @totalIva;            
+            SET @porcentajeUtilidad = ((@precioVenta / @precioCosto) * 100) - 1;
+           
 			INSERT INTO ArticuloPvP (idArticulo,idTarifa,precioVenta,precioConIva,porcentajeUtilidad,precioPredeterminado)
-					         SELECT @idArticulo,idTarifa,precioVenta,precioConIva,porcentajeUtilidad,precioPredeterminado
+					         
+                             SELECT @idArticulo,idTarifa,@precioVenta,precioConIva,@porcentajeUtilidad,precioPredeterminado
 					         FROM @tbPrices
 			
 			--Registrmos la ubicacion del articulo en las bodegas 

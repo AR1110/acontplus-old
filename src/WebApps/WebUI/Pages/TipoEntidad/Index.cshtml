@@ -1,5 +1,6 @@
-@page
-@model WebUI.Areas.TipoEntidad.Pages.Index
+﻿@page
+@model WebUI.Pages.TipoEntidad.IndexModel 
+
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -54,10 +55,11 @@
                             <td>
                                 <div class="justify-content-center">
                                     <a href="javascript:void(0)" ng-click="openModal(te)" class="btn btn-info btn-xs"
-                                        title="Actualizar" data-toggle="tooltip"><i class="ti-pencil"></i></a>
+                                       title="Actualizar" data-toggle="tooltip"><i class="ti-pencil"></i></a>
                                     <a href="javascript:void(0)" ng-click="askToDelete(te)"
-                                        class="btn btn-danger btn-xs" data-toggle="tooltip" title="Eliminar"><i
-                                            class="ti-trash"></i></a>
+                                       class="btn btn-danger btn-xs" data-toggle="tooltip" title="Eliminar">
+                                        <i class="ti-trash"></i>
+                                    </a>
                                 </div>
                             </td>
                             <td>{{$index+1}}</td>

@@ -70,8 +70,10 @@ CREATE VIEW v_DocElectronico AS (SELECT
 ,estado = (SELECT descripcion FROM FactElect.EstadoServicio es  WITH(NOLOCK) WHERE es.codigo = de.codEstado)
 ,de.fechaRegistro
 ,de.idUsuario
+,de.idPuntoEmision
 ,ISNULL(se.telefono, '') telefonoEstablecimiento
-FROM DocumentoElectronico     de WITH(NOLOCK)
-INNER JOIN             Entidad e WITH(NOLOCK) ON de.idEntidad = e.idEntidad
-LEFT JOIN Sri.Establecimiento se WITH(NOLOCK) ON de.codEstab = se.codEstab
+FROM DocumentoElectronico     de WITH (NOLOCK)
+INNER JOIN             Entidad e WITH (NOLOCK) ON de.idEntidad = e.idEntidad
+INNER JOIN   dbo.PuntoEmision pe WITH (NOLOCK) ON pe.idPuntoEmision = de.idPuntoEmision
+LEFT JOIN Sri.Establecimiento se WITH (NOLOCK) ON pe.codEstab = se.codEstab
 )

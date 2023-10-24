@@ -19,14 +19,7 @@ app.constant('nombreModalCommon', {
         },
     }
 })
-
-app.constant('nombreModalConfig', {
-    TIEMPO_CREDITO: {
-        fileCtrl: '/js/config/modals/modalTiempoCreditoCtrl.js' + CHANGE_VERSION(),
-        controller: 'ModalTiempoCreditoCtrl',
-        template: '~/Areas/TiempoCredito/Pages/Shared/_ModalAddUpdate.cshtml'
-    }
-})
+ 
 
 //Inventario 
 app.constant('nombreModalInventario', {
