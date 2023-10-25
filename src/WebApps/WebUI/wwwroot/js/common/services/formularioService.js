@@ -429,6 +429,21 @@
         formSvc.contieneSecuencia001 = function(numero) {
             return numero.includes("001");
         }
+
+
+        formSvc.validAndFormatedRangeSequential = function(cadena) {
+            // Expresión regular que verifica si la cadena contiene solo números.
+            var formatoValido = /^\d+$/;
+          
+            if (formatoValido.test(cadena)) {
+              // La cadena contiene solo números, así que la formateamos a "xxx-xxx".
+              cadena = `${cadena}-${cadena}`
+            }
+          
+            // Luego, validamos que la cadena siga el formato "xxx-xxx".
+            var formatoValidoFinal = /^\d+-\d+$/;
+            return formatoValidoFinal.test(cadena) ? cadena : null;
+        }
           
      
     

@@ -33,13 +33,26 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                    <div class="form-group">
-                        <span for="rangeDate">Rango de Fechas: <span class="text-danger">*</span></span>
-                        <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
-                            end-date="dataSearch.fechaFin"
-                            result-range-date="resultRangeFilter(result)"></date-range-filter>
-                    </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12"> 
+                    <span for="date-range-filter">Rango Fechas: </span>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <div class="custom-control custom-checkbox mr-sm-2">
+                                            <input type="checkbox" 
+                                                ng-model="dataSearch.checkBoxFecha"
+                                                   ng-disabled="!(dataSearch.idCliente>0)"
+                                                class="custom-control-input" 
+                                                id="checkBoxFecha">
+                                            <label class="custom-control-label" for="checkBoxFecha"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <date-range-filter current-date="dataSearch.fechaInicio"
+                                                   start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
+                                                   result-range-date="resultRangeFilter(result)"></date-range-filter>
+                            </div> 
                 </div>
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
@@ -109,23 +122,11 @@
 
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
-                        <span>Buscar por Nro. Documento:</span>
+                        <span>Buscar por Nro. Doc.:</span>
                         <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial"
-                            placeholder="Ej: 123" />
+                            placeholder="Ej: 123 o 1-30" />
                     </div>
-                </div>
-                @* <div class="col-xl-3">
-                <div class="form-group">
-                <span>Estado:</span>
-                <select id="estadoDocumentos" class="form-control" ng-model="dataSearch.byEstado"
-                ng-change="getAprobComprobantes()">
-                <option value="">Todos</option>
-                <option ng-value="item.codigo" ng-repeat="item in estadoDocumentos">
-                {{item.descripcion}}
-                </option>
-                </select>
-                </div>
-                </div> *@
+                </div> 
                 <div class="col-xl-3">
                     <div class="form-group">
                         <span>Buscar</span>

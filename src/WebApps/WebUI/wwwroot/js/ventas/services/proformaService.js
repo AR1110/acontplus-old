@@ -121,8 +121,7 @@
                         dataTotals: { totalRecords, totalDocument }
                     }
                 }
-            }).catch(error => {
-                console.log('obtener datos->proforma service', error)
+            }).catch(error => { 
                 throw error;
             })
         }
