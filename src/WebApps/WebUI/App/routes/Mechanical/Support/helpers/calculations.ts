@@ -97,11 +97,6 @@ const calculations = () => {
       }
       return "_";
     }
-
-    if (column == "cantidad") {
-      console.log("Cantidad");
-      console.log(value);
-    }
   };
 
   const calculateTotal = async (cell) => {
