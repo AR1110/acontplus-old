@@ -23,6 +23,7 @@ BEGIN
 	DECLARE @dateEnd DATETIME
 	DECLARE @tipo VARCHAR(2)
 	DECLARE @codEstab VARCHAR(20)
+    DECLARE @secuencial VARCHAR(50)
 	DECLARE @idPuntoEmision INT
 	DECLARE @identificacionReceptor VARCHAR(20)
 	DECLARE @pageSize INT
@@ -89,6 +90,7 @@ BEGIN
 	              ,@idUsuario                = idUsuarioSearch
 		          ,@pageSize                 = pageSize
 		          ,@pageIndex                = pageIndex
+                  ,@secuencial               = LTRIM(RTRIM(nroSecuencial))
 	        FROM OPENJSON(@json)
 	        WITH (codDoc                 VARCHAR(10) '$.codDoc'
 		         ,codEstado                      INT '$.codEstado'
@@ -100,7 +102,8 @@ BEGIN
 		         ,idPuntoEmision                 INT '$.idPuntoEmision'
 		         ,identificacionReceptor VARCHAR(20) '$.identificacionReceptor'
 		         ,idUsuarioSearch                INT '$.idUsuario'
-		         ,pageIndex                      INT '$.pageIndex'
+		         ,nroSecuencial          VARCHAR(50) '$.nroSecuencial'
+                 ,pageIndex                      INT '$.pageIndex'
 		         ,pageSize                       INT '$.pageSize'
 		        )
 
@@ -120,6 +123,11 @@ BEGIN
 		        BEGIN 
 			        SET @sql = @sql + 'AND de.idPuntoEmision = @idPuntoEmision '
 		        END 
+
+            IF @secuencial IS NOT NULL
+				BEGIN
+					SET @sql = @sql + 'AND de.secuencial BETWEEN ' + REPLACE(@secuencial,'-',' AND ')
+				END 
 
 	        IF @checkBoxDate = 1
 		        BEGIN 
