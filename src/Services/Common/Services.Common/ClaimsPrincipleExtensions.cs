@@ -1,4 +1,4 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 
 namespace Services.Common
 {
@@ -12,9 +12,9 @@ namespace Services.Common
         {
             return Convert.ToInt32(user.FindFirst("companyId")?.Value);
         }
-        public static string GetCompanyRuc(this ClaimsPrincipal user)
+        public static string GetIDCardCompany(this ClaimsPrincipal user)
         {
-            return user.FindFirst("companyRuc")?.Value;
+            return user.FindFirst("idCardCompany")?.Value;
         }
         public static int GetUserRoleId(this ClaimsPrincipal user)
         {

@@ -1,10 +1,6 @@
-﻿using Identity.API.Errors;
-using Identity.API.Interfaces;
-using Identity.API.Services;
-using Identity.Core.Entities;
+﻿using Identity.API.Services;
+using Identity.Core.Interfaces;
 using Identity.Infrastructure.Data;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Identity.API.Extensions

@@ -508,5 +508,17 @@
     "inputFiles": [
       "wwwroot/dist/css/pages/other-pages.css"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/financiera/modalFormaCobroPagoCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/financiera/modalFormaCobroPagoCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/dist/js/custom.min.js",
+    "inputFiles": [
+      "wwwroot/dist/js/custom.js"
+    ]
   }
 ]

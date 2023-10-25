@@ -9,17 +9,16 @@ $(function () {
     // ==============================================================
     // This is for the top header part and sidebar part
     // ==============================================================
-    var setRemoveBarraLateral = function (){
-        if (!$("body").hasClass("mini-sidebar")) {        
+    var setRemoveBarraLateral = function () {
+        if (!$("body").hasClass("mini-sidebar")) {
             $("#sidebarnav").css({
-                "position": "fixed",
-                "top": "50px",
+                "max-height": "650px",
                 "bottom": "0",
                 "overflow-x": "hidden!important",
                 "overflow-y": "scroll"
             });
         }
-        else {         
+        else {
             $("#sidebarnav").removeAttr("style");
         }
     }
@@ -35,7 +34,7 @@ $(function () {
             $("body").removeClass("mini-sidebar");
             $('.navbar-brand span').show();
         }
-         var height = ((window.innerHeight > 0) ? window.innerHeight : this.screen.height) - 1;
+        var height = ((window.innerHeight > 0) ? window.innerHeight : this.screen.height) - 1;
         height = height - topOffset;
         if (height < 1) height = 1;
         if (height > topOffset) {
@@ -83,25 +82,25 @@ $(function () {
     $('.floating-labels .form-control').on('focus blur', function (e) {
         $(this).parents('.form-group').toggleClass('focused', (e.type === 'focus' || this.value.length > 0));
     }).trigger('blur');
- 
+
     // ==============================================================
     //tooltip
     // ==============================================================
     $(function () {
-            $('[data-toggle="tooltip"]').tooltip()
-        })
+        $('[data-toggle="tooltip"]').tooltip()
+    })
     // ==============================================================
     //Popover
     // ==============================================================
     $(function () {
-         $('[data-toggle="popover"]').popover()
+        $('[data-toggle="popover"]').popover()
     })
 
     // ==============================================================
     // Perfact scrollbar
     // ==============================================================
     $('.scroll-sidebar, .right-side-panel, .message-center, .right-sidebar').perfectScrollbar();
-	$('#chat, #msg, #comment, #todo').perfectScrollbar(); 
+    $('#chat, #msg, #comment, #todo').perfectScrollbar();
     // ==============================================================
     // Resize all elements
     // ==============================================================
@@ -148,12 +147,12 @@ $(function () {
         "skin-purple-dark",
         "skin-megna-dark"
     ]
-        /**
-         * Get a prestored setting
-         *
-         * @param String name Name of of the setting
-         * @returns String The value of the setting | null
-         */
+    /**
+     * Get a prestored setting
+     *
+     * @param String name Name of of the setting
+     * @returns String The value of the setting | null
+     */
     function get(name) {
         if (typeof (Storage) !== 'undefined') {
             return localStorage.getItem(name)
@@ -195,7 +194,7 @@ $(function () {
     function setup() {
         var tmp = get('skin')
         if (tmp && $.inArray(tmp, mySkins)) changeSkin(tmp)
-            // Add the change skin listener
+        // Add the change skin listener
         $('[data-skin]').on('click', function (e) {
             if ($(this).hasClass('knob')) return
             e.preventDefault()
@@ -205,11 +204,11 @@ $(function () {
     setup()
     $("#themecolors").on("click", "a", function () {
         $("#themecolors li a").removeClass("working"),
-        $(this).addClass("working")
+            $(this).addClass("working")
     })
 
     // For Custom File Input
-    $('.custom-file-input').on('change',function(){
+    $('.custom-file-input').on('change', function () {
         //get the file name
         var fileName = $(this).val();
         //replace the "Choose a file" label
