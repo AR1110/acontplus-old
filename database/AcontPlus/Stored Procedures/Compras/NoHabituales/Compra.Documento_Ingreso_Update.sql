@@ -263,7 +263,7 @@ BEGIN
 						BEGIN 
 
 							DECLARE cursor_inventory CURSOR LOCAL FOR
-							SELECT dd.idArticulo,dd.idBodega,dd.idMedida,dd.cantidad,dd.precioUnitario - dd.descuento,dd.precioUnitario - dd.descuento,dd.precioTotalSinImpuesto,dd.estado
+							SELECT dd.idArticulo,dd.idBodega,dd.idMedida,dd.cantidad,dd.precioUnitario - dd.descuento,ar.precioCosto,dd.precioTotalSinImpuesto,dd.estado
 							FROM Compra.Documento_Ingreso_Detail dd WITH (NOLOCK)
 							INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = dd.idArticulo
 							WHERE dd.idDocumentoIngreso = @idDocumentoIngreso AND ar.llevaInventario = 1
@@ -274,6 +274,11 @@ BEGIN
 
 							WHILE @@FETCH_STATUS = 0
 								BEGIN
+
+                                    SELECT TOP 1 @fraccion = conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida
+
+                                    SELECT  @cantidad = @cantidad * ISNULL(@fraccion,1)
+
 									IF @estado = 1
                                         BEGIN
 									        INSERT INTO Inventario.Transaccion WITH(ROWLOCK)

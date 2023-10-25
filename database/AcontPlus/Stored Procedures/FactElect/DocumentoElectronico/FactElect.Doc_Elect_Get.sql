@@ -28,17 +28,17 @@ BEGIN
 	DECLARE @pageSize INT
 	DECLARE @pageIndex INT 
 	
-	DECLARE @params NVARCHAR(MAX) = '@idEntidad INT
-									,@codEstab VARCHAR(20)
-	                                ,@codDoc VARCHAR(10)
+	DECLARE @params NVARCHAR(MAX) = '@idEntidad                      INT
+									,@codEstab               VARCHAR(20)
+	                                ,@codDoc                 VARCHAR(10)
 									,@identificacionReceptor VARCHAR(20)
 									,@codEstado               VARCHAR(5)
 									,@dateStart                 DATETIME
 									,@dateEnd                   DATETIME
-									,@idUsuario      INT
-                                    ,@pageSize       INT
-						            ,@pageIndex      INT
-                                    ,@idPuntoEmision INT'
+									,@idUsuario                      INT
+                                    ,@pageSize                       INT
+						            ,@pageIndex                      INT
+                                    ,@idPuntoEmision                 INT'
 
 	DECLARE @sql NVARCHAR(MAX) = 'SELECT de.idDocumentoElectronico
 										,de.idDocumento
@@ -164,6 +164,8 @@ BEGIN
 						           ,@dateStart              = @dateStart
 						           ,@dateEnd                = @dateEnd
 						           ,@idUsuario              = @idUsuario
+                                   ,@pageSize               = @pageSize
+                                   ,@pageIndex              = @pageIndex
             RETURN 
     END 
 
