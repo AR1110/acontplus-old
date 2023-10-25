@@ -143,6 +143,70 @@
     supportDetails = newFilter;
   };
 
+  // Todo: Calculate totales
+  const getSubTotalSinImpuesto = () => {
+    let total = supportDetails
+      .map((val) => val.subTotal)
+      .reduce((acc, curr) => acc + curr, 0);
+    return total;
+  };
+
+  const getTotalDescuento = () => {
+    let total = supportDetails
+      .map((val) => val.totalDescuento)
+      .reduce((acc, curr) => acc + curr, 0);
+    return total;
+  };
+
+  const getTotalIce = () => {
+    let total = supportDetails
+      .map((val) => val.ice)
+      .reduce((acc, curr) => acc + curr, 0);
+    return total;
+  };
+
+  const getTotalIva = (codigoPorcentaje) => {
+    let total = 0;
+    let totalNetoIva = 0;
+
+    for (let value of supportDetails) {
+      if (value.codigoPorcentaje === codigoPorcentaje) {
+        total += value.subTotal;
+        totalNetoIva += value.total;
+      }
+    }
+    return [total, totalNetoIva];
+  };
+
+  // Todo: Save data calculated
+  const getTotales = () => {
+    let CODIGO_PORCENTAJE_IVA0 = "0";
+    let CODIGO_PORCENTAJE_IVAEXENTO = "7";
+    let CODIGO_PORCENTAJE_IVA_NO_OBJETO = "6";
+    let CODIGO_PORCENTAJE_IVA8 = "8";
+
+    let [subTotalIva, subTotalNetoIva] = getTotalIva(CODIGO_PORCENTAJE_IVA8);
+    let [subTotalIvaCero, subTotalNetoIvaCero] = getTotalIva(
+      CODIGO_PORCENTAJE_IVA0
+    );
+    let [subTotalExentoIva, subTotalNetoExentoIva] = getTotalIva(
+      CODIGO_PORCENTAJE_IVAEXENTO
+    );
+    let [subTotalNoObjetoIva, subTotalNetoNoObjetoIva] = getTotalIva(
+      CODIGO_PORCENTAJE_IVA_NO_OBJETO
+    );
+
+    let iva = (subTotalNetoIva * this.actividadTipoIva.tarifa) / 100;
+    let total = getSubTotalSinImpuesto() + iva + getTotalIce();
+    let importeTotal = total - getTotalDescuento();
+
+    for (let value of supportDetails) {
+      console.log(value);
+    }
+
+    console.log("Total", importeTotal);
+  };
+
   // Todo: Header for table
   let colums = [
     {
@@ -180,9 +244,11 @@
       field: "cantidad",
       hozAlign: "center",
       title: "Cantidad",
+      cellEditing: getTotales,
     },
     {
       cellEdited: Calculations.calculateTotal,
+      // cellEditing: getTotales,
       editor: customSelect.selectMeasures,
       field: "idMedida",
       formatter: Calculations.formatters,
@@ -196,36 +262,35 @@
       formatter: Calculations.formatters,
       hozAlign: "center",
       title: "I.V.A",
-      width: 100,
     },
     {
       cellEdited: Calculations.calculateTotal,
       editor: customSelect.selectFee,
       field: "idTarifa",
-      formatter: Calculations.formatters,
+      // formatter: Calculations.formatters,
       hozAlign: "center",
       title: "Tarifa",
-      width: 100,
     },
     {
-      title: "Precio U.",
+      cellEdited: Calculations.calculateTotal,
+      // cellEditing: getTotales,
+      editor: "input",
       field: "precioUnitario",
       hozAlign: "center",
-      editor: "input",
-      cellEdited: Calculations.calculateTotal,
+      title: "Precio U.",
     },
     {
-      title: "P.Iva",
+      cellEdited: Calculations.calculateTotal,
+      // cellEditing: getTotales,
+      editor: "input",
       field: "precioConIva",
       hozAlign: "center",
-      editor: "input",
-      cellEdited: Calculations.calculateTotal,
+      title: "P.Iva",
     },
     {
       field: "total",
       hozAlign: "center",
       title: "Total",
-      width: 75,
     },
   ];
 
@@ -297,7 +362,6 @@
       detalle: JSON.stringify(MapperToAction.detalleMapperTo(supportDetails)),
     };
 
-    console.log("Data for save Factura: ");
     console.log(data);
 
     FacturaService.post(data)
