@@ -105,8 +105,6 @@ BEGIN
 		idInfoAdicional INT UNIQUE NOT NULL
 	)
 
-	--SELECT '0'code, @comprobante AS 'message'
-	--RETURN
 	--======================Fecha Emision===============================
 
 	BEGIN TRY 
@@ -180,7 +178,7 @@ BEGIN
 		INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.codEstab       = pt.codEstab
 		INNER JOIN dbo.Cliente         cl WITH (NOLOCK) ON cl.idCliente      = dt.idCliente 
 		
-		SELECT @secuencial =  COUNT(*)+1 FROM Ventas.Aprob_Document WHERE idPuntoEmision = @idPuntoEmision
+		SELECT @secuencial =  COUNT(*) + 1 FROM Ventas.Aprob_Document WITH (NOLOCK) WHERE idPuntoEmision = @idPuntoEmision
 
 		IF @docDestino = '01'
 			BEGIN
