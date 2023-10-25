@@ -73,6 +73,7 @@ function layoutCtrl($scope, $rootScope, $window, mS) {
     $scope.menus = dataUser.menus;
     $scope.subMenus = dataUser.submenus;
     $scope.permissions = dataUser.permissions;
+    $scope.accions = dataUser.actions 
 
     $scope.usuario = dataUser.username;
     $scope.politica = dataUser.role;
@@ -134,7 +135,6 @@ function layoutCtrl($scope, $rootScope, $window, mS) {
 
     const pathname = $window.location.pathname;
 
-
     if (pathname) {
 
         if (pathname === '/') {
@@ -145,8 +145,8 @@ function layoutCtrl($scope, $rootScope, $window, mS) {
 
             if ([1, 2].includes(lengthPath)) {
                 let path = pathname.indexOf('/Index') == -1 ? pathname + '/Index' : pathname;
-
-                let dataMenu = $scope.subMenus.find(item => item.url === path);
+                
+                let dataMenu = $scope.subMenus.find(item => item.url === path); 
                 if (dataMenu) {
                     //mS.getData('get', 'Config/Acceso/' + '?json=' + JSON.stringify({ tipo: 2, idSubMenu: dataMenu.idSubMenu }), null, true).then(response => {
                     //    if (response.code === "0") {
@@ -167,12 +167,12 @@ function layoutCtrl($scope, $rootScope, $window, mS) {
                     //    }
                     //})
                     $rootScope.usuarioPermiso = {
-                        almacenPermiso: $scope.permissions.find(x => x.codModule == "AR").permission,
-                        ventaPermiso: $scope.permissions.find(x => x.codModule == "V").permission,
-                        cajaPermiso: $scope.permissions.find(x => x.codModule == "C").permission,
+                        almacenPermiso: JSON.parse($scope.permissions.find(x => x.codModule == "AR").permission),
+                        ventaPermiso: JSON.parse($scope.permissions.find(x => x.codModule == "V").permission),
+                        cajaPermiso: JSON.parse($scope.permissions.find(x => x.codModule == "C").permission),
                     }
-                    $scope.accion = $scope.subMenus.find(x => x.idSubmenu == dataMenu.idSubmenu)
-                    $rootScope.articlePermission = $scope.permissions.find(x => x.codModule == "AR").permission;
+                    $scope.accion = dataMenu
+                    $rootScope.articlePermission = $scope.accions[0];
                     $rootScope.ventaPermiso = $rootScope.usuarioPermiso.ventaPermiso;
                 } else {
                     location.href = '/Home/Index'
