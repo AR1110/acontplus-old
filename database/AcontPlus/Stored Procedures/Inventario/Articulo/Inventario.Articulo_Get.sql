@@ -12,6 +12,7 @@ GO
 -- =============================================
 --Almacen.Articulo_Get 28, '{"tipo":10,"idArticulo":5}'
 -- Inventario.Articulo_Get 28, '{"idArticulo":77528,"idBodega":128,"tipo":10}'
+-- Inventario.Articulo_Get 28, '{"tipo":7,"idArticulo":32546,"cantidad":"2","idBodega":149,"idMedida":278}'
 IF OBJECT_ID(N'Inventario.Articulo_Get', N'P') IS NOT NULL
 DROP PROCEDURE Inventario.Articulo_Get
 GO
@@ -122,7 +123,7 @@ BEGIN
 							   ,totalRecords = COUNT(*) OVER()
 							   ,a.s3ObjectKey
 							   ,a.s3ObjectUrl
-						   FROM v_Articulo a
+						   FROM Inventario.v_Articulo a
 						   WHERE a.idEntidad = @idEntidad  '
 
 			IF @checkBoxSubFamilia =  1
@@ -218,13 +219,13 @@ BEGIN
 
 			SELECT @bySearch = REPLACE(bySearch,SPACE(1),'%') FROM OPENJSON(@json) WITH (bySearch VARCHAR(500) '$.bySearch')
 
-			IF EXISTS (SELECT 1 FROM v_Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND codigo = @bySearch )	
+			IF EXISTS (SELECT 1 FROM Inventario.v_Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND codigo = @bySearch )	
 				BEGIN
 					SELECT idArticulo,llevaInventario FROM dbo.Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND codigo = @bySearch
 					RETURN
 				END 
 
-			IF EXISTS (SELECT 1 FROM v_Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND codigoBarra = @bySearch)	
+			IF EXISTS (SELECT 1 FROM Inventario.v_Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND codigoBarra = @bySearch)	
 				BEGIN
 					SELECT idArticulo,llevaInventario FROM dbo.Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND codigoBarra = @bySearch
 					RETURN
@@ -291,7 +292,7 @@ BEGIN
 											        LEFT JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa =  ap.idTarifa
 											        WHERE ap.idArticulo = a.idArticulo FOR JSON PATH)
 							   ,totalRecords = COUNT(*) OVER()
-						FROM v_Articulo a
+						FROM Inventario.v_Articulo a
 						WHERE a.idEntidad = @idEntidad AND a.estado = 1  '
 
 			
@@ -487,7 +488,7 @@ BEGIN
 
 			SELECT TOP 1 @stock = cantidad FROM Inventario.Stock WITH (NOLOCK) WHERE idBodega = @idBodega AND idArticulo = @idArticulo
 
-			SELECT TOP 1 @stockMinimo = stockMinimo FROM v_Articulo WITH (NOLOCK) WHERE idArticulo = @idArticulo
+			SELECT TOP 1 @stockMinimo = stockMinimo FROM Inventario.v_Articulo WITH (NOLOCK) WHERE idArticulo = @idArticulo
 
 			--|| Mostrar notificacion de artículos sin stock || --
 			SELECT TOP 1 @stockCantidad  = estado FROM Config.v_Sistema_Notificacion WITH (NOLOCK) WHERE codigo = 'MNS' AND idEntidad = @idEntidad 

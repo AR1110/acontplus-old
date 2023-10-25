@@ -1,14 +1,58 @@
-import { sharedService } from "$services/shared.service";
-import { calculoTarifa } from "./calculo-tarifa";
+import { ArticleService } from "$lib/services/inventory/article-service";
+import { sharedService as sS } from "$services/shared.service";
+import { calculoTarifa as cT } from "./calculo-tarifa";
+import { showLoader, hideLoader } from "$utils/loading-spinner";
+import Swal from "sweetalert2";
 
 const calculations = () => {
-  // ----------------- Calculations -----------------
-  // Todo: Formatters
+  // ------- Call to server for verify stock ----------
+  const checkNotificationStock = async (cell, rowEntity, oldValue) => {
+    let isCalculable = false;
 
+    if (!rowEntity.llevaInventario) return isCalculable;
+    showLoader();
+
+    try {
+      const response = await ArticleService.get(
+        JSON.stringify({
+          tipo: 7,
+          idArticulo: rowEntity.idArticulo,
+          cantidad: rowEntity.cantidad,
+          idBodega: rowEntity.idBodega,
+          idMedida: rowEntity.idMedida,
+        })
+      );
+      hideLoader();
+
+      const { code, message } = response[0][0];
+      if (code === "1") return (isCalculable = true);
+
+      const { isConfirmed } = await Swal.fire({
+        title: `<small>Advertencia</small>`,
+        icon: "warning",
+        html: `<small>${message}</small>`,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+      });
+
+      if (isConfirmed) {
+        if (code === "0") {
+          cell.getRow().update({ cantidad: oldValue });
+        }
+        isCalculable = true;
+      }
+      return isCalculable;
+    } catch (error) {
+      console.log(error);
+      return isCalculable;
+    }
+  };
+
+  // ----------------- Calculations -----------------
   const formatters = (cell) => {
-    let column = cell.getColumn()._column.field;
-    let row = cell.getRow().getData();
-    let value = cell.getValue();
+    const column = cell.getColumn()._column.field;
+    const row = cell.getRow().getData();
+    const value = cell.getValue();
 
     if (column == "idTarifa") {
       let tarifas = [];
@@ -53,82 +97,100 @@ const calculations = () => {
       }
       return "_";
     }
-
-    if (column == "cantidad") {
-      console.log("Cantidad");
-      console.log(value);
-    }
   };
 
-  // Todo: Calculate total
-  const calculateTotal = (cell) => {
-    let row = cell.getRow().getData();
-    let column = cell.getColumn()._column.field;
-    let value = cell.getValue();
-    let decimal = row.decimals[0];
+  const calculateTotal = async (cell) => {
+    const row = cell.getRow().getData();
+    const decimal = row.decimals[0];
+
+    // Get values.
+    const column = cell.getColumn()._column.field;
+    const value = cell.getValue();
+    const oldValue = cell.getOldValue();
+
+    if (column == "cantidad") {
+      const resp = await checkNotificationStock(cell, row, oldValue);
+
+      if (!resp) return;
+    }
 
     if (column == "idMedida") {
-      let newMeasure = row.medidas.find((x) => x.idMedida == value);
+      const dataMedida = row.medidas.find((x) => x.idMedida == value);
+      const articuloTarifas = dataMedida.tarifas;
 
       cell.getRow().update({
-        tarifas: newMeasure.tarifas,
-        idTarifa: newMeasure.tarifas[0].idTarifa,
-        precioVenta: newMeasure.tarifas[0].precioVenta,
-        precioConIva: newMeasure.tarifas[0].precioConIva,
+        tarifas: articuloTarifas,
+        idTarifa: articuloTarifas[0].idTarifa,
+        precioUnitario: sS.roundNumber(
+          articuloTarifas[0].precioVenta,
+          decimal.nroPrecio
+        ),
+        precioConIva: sS.roundNumber(
+          articuloTarifas[0].precioConIva,
+          decimal.nroPrecio
+        ),
       });
+    }
 
-      // Todo: Update precioVenta and precioConIva
+    if (column == "idTipoIva") {
+      if (oldValue == value) return;
+
+      try {
+        const dataTipoIva = row.tipoIvas.find(
+          (x) => x.idTipoIva === parseInt(row.idTipoIva)
+        );
+        console.log(dataTipoIva);
+      } catch (error) {
+        console.log(error);
+      }
     }
 
     if (column == "idTarifa") {
-      let newFee = row.tarifas.find((x) => x.idTarifa == value);
-      let porcentaje = row.tipoIvas.find(
+      const newFee = row.tarifas.find((x) => x.idTarifa == value);
+      const porcentaje = row.tipoIvas.find(
         (x) => x.idTipoIva == row.idTipoIva
       ).porcentaje;
-
-      let precioConIva = calculoTarifa.calcularPrecioConIva(
+      const precioConIva = cT.calcularPrecioConIva(
         newFee.precioVenta,
         porcentaje
       );
 
       cell.getRow().update({
-        precioVenta: newFee.precioVenta,
-        precioConIva: precioConIva,
+        precioUnitario: sS.roundNumber(newFee.precioVenta, decimal.nroPrecio),
+        precioConIva: sS.roundNumber(precioConIva, decimal.nroPrecio),
       });
     }
 
-    if (column == "cantidad") {
-      let newCantidad = sharedService.roundNumber(
-        parseFloat(value),
-        decimal.nroCantidad
-      );
-
-      cell.getRow().update({ cantidad: newCantidad });
-    }
-
-    if (column == "precioVenta") {
-      let porcentaje = row.tipoIvas.find(
+    if (column == "precioUnitario") {
+      const porcentaje = row.tipoIvas.find(
         (x) => x.idTipoIva == row.idTipoIva
       ).porcentaje;
-
-      let precioConIva = calculoTarifa.calcularPrecioConIva(value, porcentaje);
+      const precioConIva = cT.calcularPrecioConIva(value, porcentaje);
 
       cell.getRow().update({
-        precioConIva: precioConIva,
+        precioUnitario: sS.roundNumber(value, decimal.nroPrecio),
+        precioConIva: sS.roundNumber(precioConIva, decimal.nroPrecio),
       });
     }
 
     if (column == "precioConIva") {
-      let porcentaje = row.tipoIvas.find(
+      const porcentaje = row.tipoIvas.find(
         (x) => x.idTipoIva == row.idTipoIva
       ).porcentaje;
-
-      let precioVenta = calculoTarifa.calcularPrecioVenta(value, porcentaje);
+      const precioUnitario = cT.calcularPrecioUnitario(value, porcentaje);
 
       cell.getRow().update({
-        precioVenta: precioVenta,
+        precioUnitario: sS.roundNumber(precioUnitario, decimal.nroPrecio),
+        precioConIva: sS.roundNumber(row.precioConIva, decimal.nroPrecio),
       });
     }
+
+    // Calculations.
+    const total = (row.precioUnitario - 0) * row.cantidad;
+
+    cell.getRow().update({
+      total: sS.roundNumber(total, decimal.nroTotalDetalle),
+    });
   };
 
   return { calculateTotal, formatters };

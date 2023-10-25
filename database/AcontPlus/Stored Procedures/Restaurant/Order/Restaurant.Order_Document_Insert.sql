@@ -200,8 +200,9 @@ BEGIN
                         ) AS ij ON ij.uuid = oi.uuid
 
             UPDATE oi 
-            SET oi.Paid = 1
-            ,oi.RemainingQuantity = (oi.Quantity - ISNULL(ij.quantity,0))                        
+            SET  oi.Paid = IIF((oi.RemainingQuantity - ISNULL(ij.quantity,0)) = 0, 1, NULL) 
+            ,oi.RemainingQuantity = (oi.RemainingQuantity - ISNULL(ij.quantity,0))
+            
             FROM Restaurant.OrderItem oi WITH(ROWLOCK)
             JOIN (SELECT uuid, quantity FROM OPENJSON(@itemsToPay)
                                     WITH ( uuid UNIQUEIDENTIFIER '$.uuid',
@@ -209,9 +210,18 @@ BEGIN
                                             )
                         ) AS ij ON ij.uuid = oi.uuid
                         
-            UPDATE Restaurant.[Order]
+            UPDATE Restaurant.[Order] WITH (ROWLOCK)
             SET Divided = 1
-            WHERE Id = @orderId            
+            WHERE Id = @orderId
+            
+            IF NOT EXISTS(SELECT 1 FROM Restaurant.OrderItem WITH (NOLOCK) 
+                                WHERE orderId = @orderId 
+                                    AND Paid IS NULL)
+                BEGIN
+                    UPDATE Restaurant.[Order] WITH (ROWLOCK)
+                    SET Finished = 1
+                    WHERE Id = @orderId
+                END
         END
     ELSE
         BEGIN
@@ -253,7 +263,6 @@ BEGIN
                 END
 
         END
-
 
     --- Select ---
     SELECT @companyId   = idEntidad
@@ -661,7 +670,7 @@ BEGIN
                                                 ,idUsuario,idEntidad)
 
             SELECT @ambiente
-                , @codDoc
+                , '01'
                 , @documentoId
                 , @customerCompanyId
                 , @nroDocumento

@@ -19,14 +19,7 @@ app.constant('nombreModalCommon', {
         },
     }
 })
-
-app.constant('nombreModalConfig', {
-    TIEMPO_CREDITO: {
-        fileCtrl: '/js/config/modals/modalTiempoCreditoCtrl.js' + CHANGE_VERSION(),
-        controller: 'ModalTiempoCreditoCtrl',
-        template: '~/Areas/TiempoCredito/Pages/Shared/_ModalAddUpdate.cshtml'
-    }
-})
+ 
 
 //Inventario 
 app.constant('nombreModalInventario', {
@@ -138,9 +131,9 @@ app.constant('nombreModalVenta', {
         }
     },
     EMPRESA: {
-        fileCtrl: '/js/ventas/modals/modalEmpresaCtrl.js',
+        fileCtrl: '/js/ventas/modals/modalEmpresaCtrl.min.js',
         controller: 'ModalEmpresaCtrl',
-        template: 'Empresa/_ModalAddUpdate.cshtml'
+        template: '~/Pages/Empresa/_ModalAddUpdate.cshtml'
     },
     EMPLEADO: {
         fileCtrl: '/js/ventas/modals/modalEmpleadoCtrl.js',
@@ -150,7 +143,7 @@ app.constant('nombreModalVenta', {
     CARGO: {
         fileCtrl: '/js/ventas/modals/modalCargoCtrl.js',
         controller: 'ModalCargoCtrl',
-        template: 'Cargo/_ModalAddUpdate.cshtml'
+        template: '~/Pages/Cargo/_ModalAddUpdate.cshtml'
     },
     NOTA_ENTREGA: {
         fileCtrl: '/js/modal/ventas/modalNotaEntregaCtrl.js',

@@ -25,7 +25,8 @@ class Shared {
   }
 
   roundNumber = function (number, max = 1) {
-    console.log("number: " + number);
+    number = Number(number);
+
     if (typeof number !== "number" || isNaN(number)) {
       throw new TypeError("Número inválido: " + number);
     }
@@ -34,9 +35,9 @@ class Shared {
       throw new TypeError("Máximo de dígitos inválido: " + max);
     }
 
-    let factor = Math.pow(10, max);
-    let tempNumber = number * factor;
-    let roundedTempNumber = Math.round(tempNumber);
+    const factor = Math.pow(10, max);
+    const tempNumber = number * factor;
+    const roundedTempNumber = Math.round(tempNumber);
     return roundedTempNumber / factor;
   };
 }

@@ -55,7 +55,7 @@ BEGIN
                   ,md.MedidaId          AS idMedida
                   ,md.[Description]     AS descripcion                  
                   ,md.Quantity          AS cantidad
-                  ,md.Price             AS precioVenta
+                  ,md.Price             AS precioUnitario -- PrecioVenta
                   ,md.Cost              AS precioCosto
                   ,md.CodePercentage    AS codigoPorcentaje
                   ,md.[Percentage]      AS tarifa
@@ -70,7 +70,7 @@ BEGIN
                   ,ar.precioSinSubsidio
             FROM Mechanical.SupportDetail md WITH (NOLOCK)
             INNER JOIN dbo.Bodega             bo WITH (NOLOCK) ON bo.idBodega   = md.BodegaId
-            INNER JOIN v_Articulo             ar WITH (NOLOCK) ON ar.idArticulo = md.ArticuloId
+            INNER JOIN Inventario.v_Articulo             ar WITH (NOLOCK) ON ar.idArticulo = md.ArticuloId
             WHERE SupportId = @Id
             
             SELECT 

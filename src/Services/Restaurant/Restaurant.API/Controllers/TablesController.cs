@@ -63,7 +63,20 @@ namespace Restaurant.API.Controllers
             appTable.UserId = User.GetUserId();
             try
             {
-                _context.Entry(appTable).State = EntityState.Modified;
+                //_context.Entry(appTable).State = EntityState.Modified;
+
+                var tableFounded = await _context.Tables.FindAsync(id);
+
+                if (tableFounded == null) return BadRequest();
+
+                tableFounded.UserId = User.GetUserId();
+                tableFounded.RoomId = appTable.RoomId;
+                tableFounded.Description = appTable.Description;
+                tableFounded.NumberTable = appTable.NumberTable;
+                tableFounded.Enabled = appTable.Enabled;
+                tableFounded.Capacity = appTable.Capacity;
+                tableFounded.Assigned = appTable.Assigned;
+                _context.Update(tableFounded);
                 await _context.SaveChangesAsync();
                 return Ok("Actualizado exitosamente");
 

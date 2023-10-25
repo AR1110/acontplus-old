@@ -134,8 +134,7 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
                     $scope.phoneNumbers.push({ number: phone })
                     $scope.whatsapp.number = phone
                     $scope.$apply()
-                } else {
-                }
+                }  
             })
         }
     }
@@ -253,7 +252,7 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
     }
 
     $scope.generateXml = () => {
-        mS.getFile('get', 'DocumentoElectronico/GetXmlSri/' + params.idDocumentoElectronico, null, true).then(response => {
+        mS.getFile('get', 'FactElect/DocumentoElectronico/GetXmlSri/' + params.idDocumentoElectronico, null, true).then(response => {
             let fileName = response.headers()['content-disposition'].split(';')[1].split('=')[1].replace('"', "")
             fileName = fileName.replace('"', "")
             const file = new File([response.data], fileName, { type: response.headers()["content-type"], })

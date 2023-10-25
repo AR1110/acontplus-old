@@ -1,4 +1,6 @@
-﻿using Inventario.Core.Interfaces;
+﻿using Common.Core.Interfaces;
+using Common.Core.Models;
+using Inventario.Core.Interfaces;
 using Inventario.Core.Models;
 using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;

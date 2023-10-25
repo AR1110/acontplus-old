@@ -34,7 +34,7 @@ export default function OrderTable() {
 
     const [page, setPage] = useState(0);
 
-    const [rowsPerPage, setRowsPerPage] = useState(25); 
+    const [rowsPerPage, setRowsPerPage] = useState(25);
     const setDataEdit = useSaleStore((state) => state.setDataEdit);
     const [openDialodDivide, setOpenDialodDivide] = useState(false);
 
@@ -149,7 +149,7 @@ export default function OrderTable() {
                                                 </Tooltip>
 
                                                 {
-                                                    (!(order.documentoId > 0) || (order.divided)) && (
+                                                    ((!(order.divided) || order.divided) && !(order.finished)) && (
                                                         <Tooltip describeChild title="Dividir la cuenta">
                                                             <Button variant="contained" size="large" color="inherit"
                                                                 aria-label="Impresión"

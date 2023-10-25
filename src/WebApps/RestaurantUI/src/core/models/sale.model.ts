@@ -52,6 +52,7 @@ export interface ItemBase {
     description: string
     summary: string
     quantity: number
+    remainingQuantity?: number
     cost: number
     price: number
     priceWithVat: number
@@ -87,6 +88,7 @@ export interface ItemPostDto {
     productId: number
     taxValue: number
     quantity: number
+    remainingQuantity?: number
     description: string
     cost: number
     price: number

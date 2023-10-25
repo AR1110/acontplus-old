@@ -66,6 +66,11 @@ namespace Common.Reports.Services
                 //Recorremos los parametros del reporte como logos, textos, etc
                 if (Convert.ToBoolean(dsParams.Tables[0].Rows[0]["hasParams"]))
                 {
+                    if (ds.Tables[0].Columns.Contains("codigoAutorizacion"))
+                    {
+                        lr.SetParameters(new ReportParameter("barcode", Convert.ToBase64String(BarcodeGen.Create(ds.Tables[0].Rows[0]["codigoAutorizacion"].ToString()), 0, BarcodeGen.Create(ds.Tables[0].Rows[0]["codigoAutorizacion"].ToString()).Length)));
+                        lr.SetParameters(new ReportParameter("mimeTypeBarcode", "image/png"));
+                    }
                     //Recorremos los parametros del reporte como logos, textos, etc
                     if (dsParams.Tables[2].Rows.Count > 0)
                     {

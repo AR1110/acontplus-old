@@ -51,8 +51,8 @@ BEGIN
 		,codDoc VARCHAR(2) NOT NULL
 		,comprobante VARCHAR(100) NOT NULL
 		,serieComprobante VARCHAR(50) NOT NULL
-		,rucReceptor VARCHAR(20) NOT NULL
-		,razonSocial VARCHAR(200) NOT NULL
+		,rucReceptor VARCHAR(20)  NULL
+		,razonSocial VARCHAR(200)  NULL
 		,correo VARCHAR(200) NULL
 		,fechaEmision VARCHAR(150) NOT NULL
 		,claveAcceso VARCHAR(200) NOT NULL

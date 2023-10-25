@@ -24,9 +24,9 @@
             <div class="row">
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-gorup">
-                        <span for="establecimiento">Establecimiento</span>
+                        <span for="establecimiento">Estab: <span class="text-danger">*</span></span>
                         <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
-                            class="form-control  border-select" ng-change="getProformas()">
+                            class="form-control  border-select" ng-change="estabFilter()">
                             <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                                 {{item.nombreComercial}}
                             </option>
@@ -35,7 +35,7 @@
                 </div>
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
-                        <span for="">Rango de Fechas</span>
+                        <span for="rangeDate">Rango de Fechas: <span class="text-danger">*</span></span>
                         <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
                             end-date="dataSearch.fechaFin"
                             result-range-date="resultRangeFilter(result)"></date-range-filter>
@@ -61,23 +61,31 @@
                             </script>
                     </div>
                 </div>
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                    <button type="button" class="btn btn-info btm-sm mt-4" data-toggle="button" data-more="#sh"
-                        aria-pressed="false" ng-click="onClickBtnMore()">
-                        <span class="text"><i class="fas fa-eye" aria-hidden="true"
-                                uib-tooltip="Más opciones"></i></span>
-                        <span class="text-active"><i class="fas fa-eye" aria-hidden="true"
-                                uib-tooltip="Ocultar opciones"></i></span>
-                    </button>
-                    <button type="button" class="btn btn-success btm-sm mt-4" ng-click="getProformas()"
-                        uib-tooltip="Recargar">
-                        <i class="fas fa-redo"></i>
-                    </button>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12"> 
+                     <div class="btn-group btn-group-sm mt-4" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-info" ng-click="onClickBtnMore()">
+                            <i class="fas fa-eye" uib-tooltip="Más opciones"></i>
+                        </button>
+                        <button type="button" class="btn btn-success" uib-tooltip="Recargar"
+                            ng-click="getProformas()">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                    </div> 
                 </div>
             </div>
 
             <div class="row justify-content-between" ng-if="moreSearchOptions">
-
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <div class="form-gorup">
+                        <span for="ptosEmision">Pto. Emisión: <span class="text-danger">*</span></span>
+                        <select name="ptosEmision" id="ptosEmision" ng-model="dataSearch.idPuntoEmision"
+                            class="form-control  border-select" ng-change="getProformas()">
+                            <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
+                                {{item.ptoEmi}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
                 <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
                         <span for="usuario">Usuario</span>
@@ -102,7 +110,8 @@
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <span>Buscar por Nro. Documento:</span>
-                        <input type="text" class="form-control border-select"  ng-model="dataSearch.nroSecuencial" placeholder="Ej: 123"/>                       
+                        <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial"
+                            placeholder="Ej: 123" />
                     </div>
                 </div>
                 @* <div class="col-xl-3">
@@ -236,7 +245,8 @@
                     </tbody>
                     <tfoot md-foot>
                         <tr md-row>
-                            <td md-cell colspan="2"><span class="font-weight-bold">{{dataSearch.totalRecords}} Proformas</span></td>
+                            <td md-cell colspan="2"><span class="font-weight-bold">{{dataSearch.totalRecords}}
+                                    Proformas</span></td>
                             <td md-cell colspan="3"><span class="font-weight-bold">Total:</span></td>
                             <td md-cell><span class="font-weight-bold">{{total}}</span></td>
                             <td md-cell></td>
@@ -247,7 +257,7 @@
             </md-table-container>
         </div>
         <div class="card-body">
-             <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+            <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
                 ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
                 class="pagination" boundary-links="true" rotate="false"></ul>
         </div>
@@ -255,7 +265,7 @@
 
 </div>
 
-@section Scripts{
+@section Scripts {
     <script src="~/js/services/storageService.min.js" asp-append-version="true"></script>
     <script src="~/js/ventas/services/proformaService.js" asp-append-version="true"></script>
     <script src="~/js/ventas/controllers/proformaCtrl.min.js" asp-append-version="true"></script>

@@ -7,6 +7,6 @@
     <ActiveDebugProfile>ApiVentas</ActiveDebugProfile>
     <Controller_SelectedScaffolderID>ApiControllerEmptyScaffolder</Controller_SelectedScaffolderID>
     <Controller_SelectedScaffolderCategoryPath>root/Common/Api</Controller_SelectedScaffolderCategoryPath>
-    <NameOfLastUsedPublishProfile>C:\Users\Ignacio\OneDrive\Escritorio\Docs\AcontPlus\AcontPlus\src\Services\Ventas\ApiVentas\Properties\PublishProfiles\FolderProfile2.pubxml</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>C:\Users\Emilio\source\repos\AcontPlus\src\Services\Ventas\ApiVentas\Properties\PublishProfiles\FolderProfile.pubxml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
 </Project>

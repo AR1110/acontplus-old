@@ -154,39 +154,8 @@
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Delete" ],
       "UpstreamPathTemplate": "/gateway/DocumentoDetalle/{id}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7025
-        }
-      ],
-      "DownstreamPathTemplate": "/api/DocumentoElectronico{everything}",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [ "Get", "Put", "Delete", "Options" ],
-      "UpstreamPathTemplate": "/gateway/DocumentoElectronico{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7025
-        }
-      ],
-      "DownstreamPathTemplate": "/api/DocumentoElectronicoError/{id}",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [ "Get" ],
-      "UpstreamPathTemplate": "/gateway/DocumentoElectronicoError/{id}"
-    },
+    }, 
+     
     {
       "AuthenticationOptions": {
         "AllowedScopes": [],

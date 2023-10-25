@@ -295,10 +295,31 @@ BEGIN
 					,ar.cantMinimaVentaPorMayor = arj.cantMinimaVentaPorMayor
 				FROM Articulo ar WITH (NOLOCK) JOIN @tbArticle arj ON ar.idArticulo = @id
 					
+                DECLARE @precioCosto NUMERIC(18,5)
+                DECLARE @porcentaje NUMERIC(18,5)
+                DECLARE @totalIva NUMERIC(18,5)
+                DECLARE @precioVenta NUMERIC(18,5)
+                DECLARE @porcentajeUtilidad NUMERIC(18,5)
+            
+                SELECT @porcentaje  = ISNULL(ti.porcentaje, 0)
+                     , @precioCosto = ISNULL(precioCosto, 0.01)               
+                FROM Inventario.v_Articulo ti
+                WHERE idArticulo = @id
+
+                IF @precioCosto <= 0
+                BEGIN
+                    SET @precioCosto = 0.01
+                END
+
+                SET @totalIva = (@porcentaje / 100) + 1;
+                SET @precioVenta = (SELECT TOP 1 precioConIva FROM @tbPrices) / @totalIva;
+                SET @porcentajeUtilidad = ((@precioVenta / @precioCosto) * 100) - 1;
+
+
 				UPDATE arpvp SET 
-					 arpvp.precioVenta        = jv.precioVenta
+					 arpvp.precioVenta        = @precioVenta
 					,arpvp.precioConIva       = jv.precioConIva
-					,arpvp.porcentajeUtilidad = jv.porcentajeUtilidad
+					,arpvp.porcentajeUtilidad = @porcentajeUtilidad
 				FROM ArticuloPvP arpvp WITH (NOLOCK)
 				INNER JOIN @tbPrices as jv ON arpvp.idArticuloPvP = jv.idArticuloPvP
 

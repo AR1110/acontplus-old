@@ -431,19 +431,9 @@ BEGIN
 							SET @idCliente = @@IDENTITY
 						END 
 				END
-			--ELSE 
-			--	BEGIN
-			--		UPDATE dbo.Cliente 
-			--		SET direccion	= @direccionComprador,
-			--			correo		= @email,
-			--			telefono	= @telefono
-			--		WHERE idCliente = @idCliente
-			--	END
-	
-			--==== INFORMACION DE LA VENTA =============================================================
-			
+						
 			-- comprobante 
-			INSERT INTO Factura (idCliente ,idPuntoEmision ,idEstadoPago ,idTipoDocumento ,idTiempoCredito ,ambiente ,porcentaje
+			INSERT INTO Factura(idCliente ,idPuntoEmision ,idEstadoPago ,idTipoDocumento ,idTiempoCredito ,ambiente ,porcentaje
 				,idEntidad ,idUsuario ,claveAcceso,nroFactura,fechaEmision,fechaVencimiento,subTotalSinImpuestos,subTotalIva
 				,subTotalNetoIva,subTotalIvaCero,subTotalNetoIvaCero,subTotalNoObjetoIva,subTotalNetoNoObjetoIva
 				,subTotalExentoIva,subTotalNetoExentoIva,totalDescuento,porcentajeDescuento,totalIce,irbpnr,propina

@@ -179,8 +179,6 @@
                     $scope.dataSearch.idPuntoEmision = $scope.puntosEmision.find(pto => (pto.defaultPtoEmi)).idPuntoEmision;
                     $scope.getNotaEntregas();
                 }
-
-                console.log(response)
             }).catch(() => {
                 hideLoader();
             })

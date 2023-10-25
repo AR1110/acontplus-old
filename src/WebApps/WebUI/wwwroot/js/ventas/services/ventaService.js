@@ -354,7 +354,7 @@
             if (!query) {
                 throw new Error('No se ha proporcionado ningun parámetro')
             }
-            if (!query.hasOwnProperty('textSearch')) {
+            if (!('textSearch' in query)) {
                 throw new Error(`La propiedad "textSearch" no se ha proporcionado`)
             }
 
@@ -396,7 +396,7 @@
             if (!data.numeroIdentificacion) {
                 tS.toastr('warning', 'Ingrese Número de Identificación')
                 return;
-            };
+            }
 
             if ($("#numeroIdentificacion").hasClass('is-invalid')) {
                 tS.toastr('warning', 'Ingrese el número de Identificación válido');
@@ -541,7 +541,7 @@
 
     })
 
-    //NO SUBIR HASTA QUE SE HAYA ACTUALIZADO  
+     
     app.factory('empleadoService', function ($injector) {
         let url = 'Venta/Empleado/';
         let mS = $injector.get('mainService');
@@ -617,5 +617,76 @@
 
     })
 
+    
+    app.factory('cargoService', function ($injector) {
+        let URL = 'Venta/Cargo/';
+        let mS = $injector.get('mainService');
+        
+        let service = {}
+
+        service.get= (query)=> {
+            return mS.getData('get', URL + '?json=' + JSON.stringify(query), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+                if (response.code === "1") {
+                    let cargos = JSON.parse(response.payload);
+                    return cargos;
+                     
+                }
+            })
+        }
+
+        service.post = (data)=> {
+            return mS.getData('post', URL + '?json=' + JSON.stringify(data), null, true)
+        }
+
+        service.put = (id, data)=> {
+            return mS.getData('put', URL + id + '?json=' + JSON.stringify(data), null, true)
+        }
+
+        service.delete = (id)=> {
+            return mS.getData('delete', URL + '' + id, null, true)
+        }
+        
+        return service;
+
+    }) 
+
+
+    app.factory('empresaService', function ($injector) {
+        let URL = 'Venta/Empresa/';
+        let mS = $injector.get('mainService');
+        
+        let service = {}
+
+        service.get= (query)=> {
+            return mS.getData('get', URL + '?json=' + JSON.stringify(query), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+                if (response.code === "1") {
+                    let empresas = JSON.parse(response.payload);
+                    return empresas;
+                     
+                }
+            })
+        }
+
+        service.post = (data)=> {
+            return mS.getData('post', URL + '?json=' + JSON.stringify(data), null, true)
+        }
+
+        service.put = (id, data)=> {
+            return mS.getData('put', URL + id + '?json=' + JSON.stringify(data), null, true)
+        }
+
+        service.delete = (id)=> {
+            return mS.getData('delete', URL + '' + id, null, true)
+        }
+        
+        return service;
+
+    }) 
 
 })(window.angular)

@@ -14,6 +14,7 @@ CREATE OR ALTER VIEW Inventario.v_Articulo WITH SCHEMABINDING AS (
 		,stockMinimo  = CAST(a.stockMinimo AS decimal(15,2))
 		,siglaSubfamilia = sf.siglas
 		,subFamilia   = sf.descripcion 
+        ,a.idMarca
 		,marca        = m.descripcion 
 		,medida		  = me.descripcion 
 		,modelo       = mo.descripcion
