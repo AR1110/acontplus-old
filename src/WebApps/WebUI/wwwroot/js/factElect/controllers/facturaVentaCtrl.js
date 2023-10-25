@@ -25,7 +25,7 @@
         decodeToken
     ) {
 
-        $scope.typeSend = 'SRI';
+        $scope.typeSend = 'SRI'; 
 
 
         const TIPO_DOC_FV = _commonSvc.tipoDoc['FV'];
@@ -227,7 +227,7 @@
                 hideLoader();
             })
 
-            facturaSvc.getDataForm().then(result => {
+            facturaSvc.getDataForm().then(result => { 
                 $scope.jsonPermission = JSON.parse(result[9][0].jsonPermission)
             })
 
