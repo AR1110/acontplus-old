@@ -84,3 +84,4 @@ bin-release/
 /src/Services/Identity/Identity.API/Identity.API.csproj.user
 /src/src/WebApps/WebUI.sln
 /src/WebApps/WebUI/.vs/WebUI/FileContentIndex
+/src/Services/Facturacion/ApiFactElect/ApiFactElect.csproj.user

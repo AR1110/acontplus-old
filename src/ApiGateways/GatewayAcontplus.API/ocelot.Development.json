@@ -154,8 +154,8 @@
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Delete" ],
       "UpstreamPathTemplate": "/gateway/DocumentoDetalle/{id}"
-    }, 
-     
+    },
+
     {
       "AuthenticationOptions": {
         "AllowedScopes": [],
@@ -1363,6 +1363,22 @@
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/FactElect{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7001
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "https", 
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "UpstreamPathTemplate": "/gateway/Compra{everything}"
     }
   ]
 }

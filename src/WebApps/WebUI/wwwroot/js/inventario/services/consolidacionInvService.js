@@ -80,7 +80,7 @@
         }
 
         service.delete = function (id) {
-            return mS.getData('delete', URL + '?id' + id, null, true);
+            return mS.getData('delete', URL + '?id=' + id, null, true);
         }
 
         return service;

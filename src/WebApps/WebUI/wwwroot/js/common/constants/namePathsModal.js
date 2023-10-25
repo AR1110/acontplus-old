@@ -68,9 +68,9 @@ app.constant('nombreModalInventario', {
         template: 'ArticuloFraccionado/_ModalArticuloFraccionado.cshtml'
     },
     KARDEX: {
-        fileCtrl: '/js/modal/inventario/kardexCtrl.js',
+        fileCtrl: '/js/inventario/modals/modalKardexCtrl.js',
         controllers: {
-            M: 'ModalKardexCtrl',
+            M: 'modalKardexCtrl',
             MF: ''
         },
         templates: {
@@ -266,6 +266,13 @@ app.constant('nombreModalContabilidad', {
 
 
 app.constant('nombreModal', {
+    DOCUMENTO_RECIBIDO: {
+        fileCtrl: '/js/compras/modals/docRecibidoPreviewCtrl.js' + CHANGE_VERSION(),
+        controller: 'docRecibidoPreviewCtrl',
+        F: {
+            template: '~/Areas/DocumentoRecibido/Pages/Shared/_InvoicePreview.cshtml'
+        }
+    },
     caja: {
         MODAL_CTRL: 'admin/modalCajaCtrl.js' + CHANGE_VERSION(),
         MODAL_CAJA_CSHTML: 'Caja/_ModalCaja.cshtml',

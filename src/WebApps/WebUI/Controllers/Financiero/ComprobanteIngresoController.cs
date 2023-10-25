@@ -9,21 +9,14 @@ namespace WebUI.Controllers.Financiero
 {
     public class ComprobanteIngresoController : Controller
     {
-        private ComprobanteIngresoDao _ci;
         private readonly IConfiguration _configuration;
 
         private DataAccessObject _dao;
-
-        private EstadoFinancieroDao _ef;
 
         public ComprobanteIngresoController(IConfiguration configuration)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-            _ef = new EstadoFinancieroDao(_configuration);
-            _ci = new ComprobanteIngresoDao(_configuration);
-
-
         }
 
 

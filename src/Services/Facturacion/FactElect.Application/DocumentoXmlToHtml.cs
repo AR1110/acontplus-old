@@ -1,4 +1,4 @@
-﻿using FactElect.Core;
+﻿using FactElect.Core.Models;
 using Lib.Common;
 using Lib.Common.Enums;
 using Lib.Common.Utils;
