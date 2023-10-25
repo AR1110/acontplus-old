@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using DataAccess;
+﻿using DataAccess;
 using Domain.Dtos;
 using Domain.ViewModels;
 using Identity.API.Dtos;
@@ -18,19 +17,16 @@ namespace Identity.API.Controllers.v1
     public class AccountController : BaseApiController
     {
         private readonly ITokenService _tokenService;
-        private readonly IMapper _mapper;
         private readonly IConfiguration _config;
         private readonly LogWriter _log;
         private readonly ApplicationDbContext _context;
         public AccountController(
             ITokenService tokenService,
-            IMapper mapper,
             IConfiguration config,
             LogWriter log,
             ApplicationDbContext context
             )
         {
-            _mapper = mapper;
             _tokenService = tokenService;
             _config = config;
             _log = log;
