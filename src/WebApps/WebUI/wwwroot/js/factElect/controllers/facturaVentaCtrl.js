@@ -42,6 +42,7 @@
             pageIndex: 1,
             maxSize: 5,
             totalRecords: 0,
+            checkBoxFecha: true,
             busqueda: "",
             byStock: 0,
         };
@@ -73,13 +74,15 @@
 
 
 
-        $scope.onKeyupCliente = function (e) {
+        $scope.onKeyupCliente = function () {
             if (!$scope.cliente.nombreCliente) {
                 $scope.dataSearch.idCliente = 0;
+                $scope.dataSearch.checkBoxFecha = true;
             }
         }
         $scope.onSelectCliente = function (item) {
             $scope.dataSearch.idCliente = item.idCliente;
+            $scope.dataSearch.checkBoxFecha = true;
             $scope.getFacturas();
         }
 
@@ -140,18 +143,28 @@
                     totalAbono += val.abono;
                     totalSaldo += val.saldo;
                 }
-            };
+            }
             $scope.total = _fS.roundNumber(total, 5);
             $scope.totalAbono = _fS.roundNumber(totalAbono, 5);
             $scope.totalSaldo = _fS.roundNumber(totalSaldo, 5);
         }
 
-
-
+ 
 
         $scope.getFacturas = function () {
 
             try {
+
+                if($scope.dataSearch.nroSecuencial){
+                    if(!_fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)){
+                        _tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
+                        return
+                    }
+                    if(!($scope.dataSearch.idCliente>0)){
+                        $scope.dataSearch.checkBoxFecha = false;
+                    }
+                } 
+
                 let dataSearch = {
                     tipo: 1,
                     pageIndex: $scope.dataSearch.pageIndex,
@@ -159,12 +172,12 @@
                     codEstab: $scope.dataSearch.codEstab,
                     idPuntoEmision: $scope.dataSearch.idPuntoEmision,
                     byCliente: $scope.dataSearch.idCliente,
-                    checkBoxFecha: $scope.dataSearch.nroSecuencial ? false : true,
+                    checkBoxFecha: $scope.dataSearch.checkBoxFecha,
                     byUsuario: $scope.dataSearch.byUsuario,
                     byEstado: $scope.dataSearch.byEstado,
                     fechaInicio: _fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     fechaFin: _fS.formatDateMoment($scope.dataSearch.fechaFin),
-                    nroSecuencial: Number($scope.dataSearch.nroSecuencial)
+                    nroSecuencial: _fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
                 }
 
                 showLoader();
