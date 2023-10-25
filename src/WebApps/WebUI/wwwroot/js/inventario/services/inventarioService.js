@@ -429,6 +429,21 @@
                 return JSON.parse(response.payload)
             })            
         }
+
+        service.getDataFilters = ()=>{
+            return mS.getData('get', URL + 'Filters', null, true).then(response=>{
+                if(response.code==="0"){
+                    throw response;
+                }
+                if(response.code==="1"){
+                    let mainData = JSON.parse(response.payload);                
+                    return {
+                        estadoMovimientos: mainData[0]
+                    }
+                }
+            })
+
+        }
         return service;
     })
 

@@ -9,6 +9,7 @@ modalKardexCtrl.$inject = [
     '$uibModalInstance',
     'commonService',
     'kardexService',
+    'articuloService', 
     'modalService',
     'nombreModal',
     'formulario',
@@ -16,39 +17,92 @@ modalKardexCtrl.$inject = [
     'params'
 ];
 
-function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, modalSvc, nombreModal, fS, tS, params) {
-    console.log(nombreModal)
-
-    $scope.dataSearch = {};
+function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articuloSvc, modalSvc, nombreModal, fS, tS, params) {        
     $scope.articulo = params;
+
+    $scope.dataSearch = {
+        checkBoxFecha: true,
+        checkBoxBodega: true,
+        consolidacion: 0
+    };
+
+    $scope.articuloFiltro = {
+        descripcion: $scope.articulo.descripcion
+    }
+
+    $scope.estadoMovimientos = [];
     $scope.kardexs = [];
 
     $scope.data = {};
+
+    //Rango Fechas 
+    let thisMoment = moment()
+    let endOfMonth = moment(thisMoment).endOf('month');
+    let startOfMonth = moment(thisMoment).startOf('month');
+    
+    //https://www.daterangepicker.com/
+    $scope.dateRangePicker = {
+        date: { startDate: startOfMonth, endDate: endOfMonth },
+        picker: null,
+        options: {
+            pickerClasses: 'custom-display', //angular-daterangepicker extra
+            buttonClasses: 'btn',
+            applyButtonClasses: 'btn-success',
+            cancelButtonClasses: 'btn-danger',
+            locale: {
+                applyLabel: "Aplicar",
+                cancelLabel: 'Cancelar',
+                customRangeLabel: 'Rango Personalizado',
+                separator: ' - ',
+                format: "YYYY-MM-DD", //will give you 2017-01-06
+                //format: "D-MMM-YY", //will give you 6-Jan-17
+                //format: "D-MMMM-YY", //will give you 6-January-17
+            },
+            ranges: {
+                'Hoy': [moment(), moment()],
+                'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+                'Ultimos 15 Días': [moment().subtract(14, 'days'), moment()],
+                'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
+                'Este Mes': [moment().startOf('month'), moment().endOf('month')],
+            },
+            eventHandlers: {
+                'apply.daterangepicker': function () {
+                    $scope.dataSearch.fechaInicio = $scope.dateRangePicker.date.startDate
+                    $scope.dataSearch.fechaFin = $scope.dateRangePicker.date.endDate;
+                    // $scope.getComprobantes()
+                    //console.log('applied')
+                }
+            }
+        }
+    };
+
+    $scope.dataSearch.fechaInicio = $scope.dateRangePicker.date.startDate
+    $scope.dataSearch.fechaFin = $scope.dateRangePicker.date.endDate;
+
 
 
     onInit();
     async function onInit() {
 
-        $scope.dataSearch.checkBoxFecha = true;
-
-        let startOfMonth = moment().startOf('month').toDate();
-        let endOfMonth = moment().endOf('month').toDate();
-        $scope.dataSearch.fechaInicio = startOfMonth;
-        $scope.dataSearch.fechaFin = endOfMonth;
-
         $scope.dataSearch.byArticulo = $scope.articulo.idArticulo;
 
+        kardexSvc.getDataFilters().then(response => {
+            $scope.estadoMovimientos = response.estadoMovimientos; 
+        }).catch(error => {
+            console.log(error)
+        })
+        showLoader();
         await commonSvc.getEstabAsign().then(response => {
             $scope.establecimientos = response;
 
-            if ($scope.establecimientos.length > 0) {
-                console.log($scope.establecimientos)
+            if ($scope.establecimientos.length > 0) { 
                 let dataEstab = $scope.establecimientos.find(estab => (estab.predeterminado
                 ));
                 $scope.dataSearch.codEstab = dataEstab.codEstab;
                 commonSvc.getDataFormEstabAsig(dataEstab).then(response => {
                     $scope.bodegas = response[1];
-                    if ($scope.bodegas.length > 0) { 
+                    if ($scope.bodegas.length > 0) {
                         let dataBodega = $scope.bodegas[0];
                         $scope.dataSearch.byBodega = dataBodega.idBodega
                     }
@@ -56,7 +110,7 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, modalS
             } else {
                 tS.toastr('warning', 'NO TIENES ASIGNADO NINGÚN ESTABLECIMIENTO');
             }
-        })
+        }).finally(()=>hideLoader())
 
         getKardex();
     }
@@ -64,20 +118,18 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, modalS
     function getKardex() {
         try {
             showLoader();
-            $scope.dataSearch.checkBoxDefault = true;
+            $scope.dataSearch.checkBoxDefault = true; 
             const params = Object.assign($scope.dataSearch, {
-                checkBoxFecha: true,
-                fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
-                fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
+                checkBoxMovement: $scope.dataSearch.movement? true: false
             })
 
             kardexSvc.get(params).then(response => {
-                if (Array.isArray(response)) {  
+                if (Array.isArray(response)) {
                     $scope.kardexs = response[2] || [];
                     if ($scope.kardexs.length === 0) {
                         hideLoader();
                         tS.toastr('info', 'No se encontraron los resultados');
-                        drawTable();
+                        drawTabulator();
                         return
                     }
 
@@ -96,7 +148,7 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, modalS
 
                     drawTabulator();
                 }
-                 
+
                 if (response.code === "0") {
                     hideLoader();
                     Swal.fire({
@@ -116,7 +168,7 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, modalS
 
 
 
-    function drawTabulator() { 
+    function drawTabulator() {
         let table = new Tabulator('#table-kardex', {
             height: "400px",
             width: "100%",
@@ -330,7 +382,7 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, modalS
 
     function sumCantidadEntrada() {
         return $scope.data.cantTotalEntrada || 0
-    } 
+    }
 
     function sumCantidadSalida() {
         return $scope.data.cantTotalSalida || 0
@@ -338,34 +390,7 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, modalS
 
     function sumTotalSalida() {
         return $scope.data.totalSalida || 0
-    }  
-
-    $scope.openModalSearch = async () => {
-        const {
-            MODAL_FILTRO_CSHTML
-        } = nombreModal.kardex;
-        const modalRef = modalSvc.openModalCustom({
-            controller: ModalFiltroKardex,
-            template: MODAL_FILTRO_CSHTML,
-            isRenderRazorPartial: true,
-            size: 'lg',
-            params: {
-                articulo: $scope.articulo,
-                dataSearch: $scope.dataSearch,
-                articuloFiltro: $scope.articuloFiltro
-            },
-        })
-        modalRef.result.then(response => {
-            $scope.articulo = response.articulo;
-            $scope.dataSearch = response.dataSearch;
-            $scope.articuloFiltro = response.articuloFiltro;
-            if (typeof response === 'object' && $scope.dataSearch.isSearch) {
-                getKardex();
-            }
-        })
     }
-
-
 
 
     function calculoTotales(prop) {
@@ -375,13 +400,90 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, modalS
     }
 
 
-    // getTotalesSaldo() {            
-    //     if(this.form.campo(this.kardexs) || this.kardexs.length===0) return
+    $scope.getBodegas = function () {
+        let dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.dataSearch.codEstab);
+        commonSvc.getDataFormEstabAsig(dataEstab).then(response => {
+            $scope.bodegas = response[1];
+            $scope.dataSearch.byBodega = $scope.bodegas[0].idBodega
+        })
+    }
 
-    //     let obj = this.kardexs[this.kardexs.length - 1];        
-    //     this.precioCostoSaldo = this.form.roundNumber(obj.precioCosto, 5);
-    //     this.totalGeneral     = this.form.roundNumber(obj.totalGeneral, 5);       
-    // }
+
+    $scope.articuloSearch = function (textSearch) {
+        if (textSearch.length < 2) return;
+        return articuloSvc.search({ busqueda: textSearch })
+            .catch(error => {
+                console.log(error)
+            })
+    }
+
+    $scope.onKeyupArticuloSearchFiltro = function () {
+        if ($scope.articuloFiltro.descripcion) {
+            $scope.data = {};
+            $scope.articulo = {};
+            $scope.articuloFiltro = {};
+        }
+    }
+
+    $scope.selectedArticuloSearchFiltro = function (item) {
+        $scope.articulo = item;
+        $scope.dataSearch.byArticulo = item.idArticulo;
+        $scope.articuloFiltro.descripcion = item.descripcion;
+    }
+
+
+    $scope.onChangeUltimaConsolidacion = function () {
+        $scope.dataSearch.consolidacion = 0
+        if ($scope.dataSearch.checkBoxUltimaConsolidacion) {
+            $scope.dataSearch.consolidacion = 1;
+            $scope.dataSearch.checkBoxConsolidacion = false;
+
+            $scope.dataSearch.checkBoxFecha = false;
+        }
+    }
+
+    $scope.onChangecheckBoxConsolidacionInventario = function () {
+        $scope.dataSearch.consolidacion = 0
+        if ($scope.dataSearch.checkBoxConsolidacion) {
+            $scope.dataSearch.consolidacion = 2;
+            $scope.dataSearch.checkBoxUltimaConsolidacion = false;
+        }
+    }
+
+    //Search Kardex 
+    $scope.searchKardex = function () {
+        if (!($scope.dataSearch.byArticulo > 0)) {
+            tS.toastr('warning', 'Seleccione el Articulo');
+            return
+        }
+
+        if ($scope.dataSearch.checkBoxBodega) {
+            if (!($scope.dataSearch.byBodega > 0)) {
+                tS.toastr('warning', 'Seleccione la Bodega');
+                return
+            }
+        }
+
+        if ($scope.dataSearch.checkBoxFecha) {
+            if (!($scope.dataSearch.fechaInicio)) {
+                tS.toastr('warning', 'Ingrese la Fecha de Inicio');
+                return
+            }
+            if (!($scope.dataSearch.fechaFin)) {
+                tS.toastr('warning', 'Ingrese la Fecha Fin');
+                return
+            }
+        }
+
+        if ($scope.dataSearch.checkBoxMovement) {
+            if ($scope.dataSearch.movement === null || $scope.dataSearch.movement === undefined || $scope.dataSearch.movement === "") {
+                tS.toastr('warning', 'Seleccione el Movimiento', tituloToast);
+                return
+            }
+        }
+        $scope.dataSearch.isSearch = true;
+        getKardex();
+    }
 
     $scope.getReport = async function () {
         if ($scope.kardexs.length === 0) {
@@ -436,23 +538,30 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, modalS
     }
 
 
-    function openModalTipoDocumento(item) {
+    async function openModalTipoDocumento(item) {
         try {
             if (("idDocumento" in item) && ("tipoDoc") in item) {
                 if (item.codTransaccion == 'E' && item.tipoDoc == 'FE') {
-                    showLoader()
-                    this._mS.getData('get', 'DocumentoRecibido/Preview/' + item.idDocumento, null, true).then(
-                        response => {
-                            hideLoader()
-                            $('#facturaModal').modal('show')
-                            $('#bodyFactura').html(response.payload)
-                        }
-                    ).catch(error => {
-                        hideLoader()
-                        console.log(error)
+                 
+                    let {fileCtrl, controller, F} = nombreModal.DOCUMENTO_RECIBIDO;
+                    let ctrl = (await import(fileCtrl))[controller];
+                    let template = F.template;
+
+                    
+                    const params = {
+                        idDocumento: item.idDocumento
+                    } 
+                    modalSvc.openModalCustom({
+                        controller: ctrl,
+                        template,
+                        size: 'xl',
+                        params,
+                        windowClass: 'uibModalFullScreen',
+                        isRenderRazorPartial: true
                     })
+                    
                 } else {
-                    this._commonSvc.viewDetailDocumentII({
+                    commonSvc.viewDetailDocumentII({
                         id: item.idDocumento,
                         codTransaccion: item.codTransaccion,
                         codigoDocumento: item.tipoDoc,
