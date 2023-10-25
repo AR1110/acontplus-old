@@ -139,6 +139,7 @@
                 
                 if($scope.dataSearch.nroSecuencial){
                     if(!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)){
+                        $scope.dataSearch.checkBoxFecha = true;
                         tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
                         return
                     }
