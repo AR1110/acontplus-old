@@ -57,7 +57,7 @@ namespace Restaurant.API.Controllers
                     var fileExt = Path.GetExtension(file.FileName);
                     s3file.BucketName = _configuration["S3Bucket:Name"];
                     s3file.Region = _configuration["S3Bucket:Region"];
-                    s3file.S3ObjectKey = $"{User.GetCompanyRuc()}/articulos/{Guid.NewGuid()}{fileExt}";
+                    s3file.S3ObjectKey = $"{User.GetIDCardCompany()}/articulos/{Guid.NewGuid()}{fileExt}";
                     s3file.S3ObjectUrl = $"https://{s3file.BucketName}.s3.{s3file.Region}.amazonaws.com/{s3file.S3ObjectKey}";
                 }
 
@@ -111,7 +111,7 @@ namespace Restaurant.API.Controllers
                     var fileExt = Path.GetExtension(file.FileName);
                     s3file.BucketName = _configuration["S3Bucket:Name"];
                     s3file.Region = _configuration["S3Bucket:Region"];
-                    s3file.S3ObjectKey = $"{User.GetCompanyRuc()}/articulos/{Guid.NewGuid()}{fileExt}";
+                    s3file.S3ObjectKey = $"{User.GetIDCardCompany()}/articulos/{Guid.NewGuid()}{fileExt}";
                     s3file.S3ObjectUrl = $"https://{s3file.BucketName}.s3.{s3file.Region}.amazonaws.com/{s3file.S3ObjectKey}";
                 }
 

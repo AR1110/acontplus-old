@@ -103,7 +103,7 @@ BEGIN
 		END
 	ELSE 
 		BEGIN
-			SELECT '0','Usuario o Contraseña incorrectos.','Login'
+			SELECT Common.ufnSpResponse('0','Usuario o Contraseña incorrectos.',DEFAULT)
 			RETURN 
 		END
 END

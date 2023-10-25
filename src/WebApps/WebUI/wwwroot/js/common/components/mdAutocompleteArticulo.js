@@ -269,15 +269,18 @@ class MdArticuloCtrl extends BaseSearchArticulo {
     $onInit() {
 
         if (this.isDefaultArticle) {
-            this._commonSvc.getDataFormVenta().then(response => {
-                let mainData = response;
-                let articulo = mainData[6];
+            setTimeout(()=>{
+                this._commonSvc.getDataFormVenta().then(response => {
+                    let mainData = response;
+                    let articulo = mainData[6];
+    
+                    if (this.isDefaultArticle && articulo.length > 0) {
+                        this.searchTextSimple = articulo[0].descripcion;
+                        this.selectArticleSearch(articulo[0])
+                    }
+                })
 
-                if (this.isDefaultArticle && articulo.length > 0) {
-                    this.searchTextSimple = articulo[0].descripcion;
-                    this.selectArticleSearch(articulo[0])
-                }
-            })
+            }, 200)
         }
 
     }

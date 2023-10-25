@@ -70,58 +70,67 @@ function layoutCtrl($scope, $rootScope, $window, mS) {
     }
 
     let dataUser = JSON.parse(localStorage.getItem('userData'));
-    $scope.menus = JSON.parse(localStorage.getItem("menus"));
-    $scope.subMenus = JSON.parse(localStorage.getItem("subMenus"));
+    $scope.menus = dataUser.menus;
+    $scope.subMenus = dataUser.submenus;
+    $scope.permissions = dataUser.permissions;
 
-    $scope.usuario = dataUser.userName;
+    $scope.usuario = dataUser.username;
     $scope.politica = dataUser.role;
-    $scope.entidad = dataUser.entidad;
-    $scope.nombreComercial = dataUser.nombreComercial;
+    $scope.entidad = dataUser.tradeName;
+    $scope.nombreComercial = dataUser.bussinesName;
 
 
 
     $scope.drawMenus = function () {
 
         let textHtml = "";
-        let subMenu = false;
-        //textHtml +=
-        //    '<li class="user-pro"> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><img src="' + userInfo.image + '" alt="" class="img-circle"><span class="hide-menu">' + userInfo.userName + '</span></a>' +
-        //    '<ul aria-expanded="false" class="collapse">' +
-        //    '<li><a href="/Usuario/Profile"><i class="ti-user"></i> Mi Perfil</a></li>' +
-        //    '<li><a href="#" onclick="logout()" id="logoutII"><i class="fa fa-power-off"></i> Salir</a></li>' +
-        //    '</ul>' +
-        //    '</li>';
+        //let subMenu = false;
+        textHtml +=
+            `<li class="user-pro">
+                <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+                    <img src="/assets/images/user/user.png" alt="" class="img-circle">
+                    <span class="hide-menu">${dataUser.fullname}</span>
+                </a>
+                <ul aria-expanded="false" class="collapse">
+                    <li><a href="/Usuario/Perfil"><i class="ti-user"></i> Mi Perfil</a></li>
+                    <li><a href="#" onclick="logout()" id="logoutII"><i class="fa fa-power-off"></i> Salir</a></li>
+                </ul>
+            </li>`;
         for (let i = 0; i < $scope.menus.length; i++) {
-            if (subMenu) {
-                textHtml += '</ul></li>';
-                subMenu = false;
-            }
+            //if (subMenu) {
+            //    textHtml += '</ul></li>';
+            //    subMenu = false;
+            //}
+            textHtml += '</ul></li>';
             //    if ($scope.menus[i].subMenu === false) {
             //        textHtml += '<li>' +
             //            '<a href="' + $scope.menus[i].url + '" class="waves-effect waves-dark">' +
-            //            '<i class="' + $scope.menus[i].icon + '" ></i ><span class="hide-menu"> ' + $scope.menus[i].description + '</a></span>' +
+            //            '<i class="' + $scope.menus[i].icon + '" ></i ><span class="hide-menu"> ' + $scope.menus[i].descripcion + '</a></span>' +
             //            '</li>';
             //    }
-            if ($scope.menus[i].subMenu) {
-                subMenu = true;
-                textHtml += `<li>
-                       <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="${$scope.menus[i].icon}"></i><span class="hide-menu"> ${$scope.menus[i].description}</span></a>
-                       <ul aria-expanded="false" class="collapse">`;
-                for (let sm = 0; sm < $scope.subMenus.length; sm++) {
-                    if ($scope.menus[i].idMenu == $scope.subMenus[sm].idMenu) {
+            /* if ($scope.menus[i].subMenu) {*/
+            //subMenu = true;
+            textHtml += `<li>
+                                <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+                                    <i class="${$scope.menus[i].icono}"></i>
+                                    <span class="hide-menu"> ${$scope.menus[i].descripcion}</span>
+                                </a>
+                <ul aria-expanded="false" class="collapse">`;
+            for (let sm = 0; sm < $scope.subMenus.length; sm++) {
+                if ($scope.menus[i].idMenu == $scope.subMenus[sm].idMenu) {
 
-                        textHtml += '<li><a href="' + $scope.subMenus[sm].url + '">' + $scope.subMenus[sm].description + '</a></li>';
-                    }
+                    textHtml += '<li><a href="' + $scope.subMenus[sm].url + '">' + $scope.subMenus[sm].descripcion + '</a></li>';
                 }
             }
+            //}
         };
 
-        //  $('#sidebarnav').html(textHtml);
+        $('#sidebarnav').html(textHtml);
     };
 
-    // if ($scope.menus.length > 0 || $scope.subMenus.length > 0) {
-    //     $scope.drawMenus();
-    //  };
+    if ($scope.menus.length > 0 || $scope.subMenus.length > 0) {
+        $scope.drawMenus();
+    };
 
     const pathname = $window.location.pathname;
 
@@ -131,8 +140,6 @@ function layoutCtrl($scope, $rootScope, $window, mS) {
         if (pathname === '/') {
             location.href = '/Home/Index';
         }
-
-        //Verificamos si url es /Home/Index
         if (pathname.indexOf('/Home') == -1) {
             let lengthPath = pathname.split('/').splice(1).length;
 
@@ -141,25 +148,32 @@ function layoutCtrl($scope, $rootScope, $window, mS) {
 
                 let dataMenu = $scope.subMenus.find(item => item.url === path);
                 if (dataMenu) {
+                    //mS.getData('get', 'Config/Acceso/' + '?json=' + JSON.stringify({ tipo: 2, idSubMenu: dataMenu.idSubMenu }), null, true).then(response => {
+                    //    if (response.code === "0") {
+                    //        throw response;
+                    //    }
+                    //    if (response.code === "1") {
+                    //        let mainData = JSON.parse(response.payload) || [];
+                    //        let [permisoModulo, almacenPermiso, ventaPermiso, cajaPermiso, articlePermission] = mainData;
 
-                    mS.getData('get', 'Config/Acceso/' + '?json=' + JSON.stringify({ tipo: 2, idSubMenu: dataMenu.idSubMenu }), null, true).then(response => {
-                        if (response.code === "0") {
-                            throw response;
-                        }
-                        if (response.code === "1") {
-                            let mainData = JSON.parse(response.payload) || []; 
-                            let [permisoModulo, almacenPermiso, ventaPermiso, cajaPermiso, articlePermission] = mainData;
-
-                            $rootScope.usuarioPermiso = {
-                                almacenPermiso: almacenPermiso.length > 0 ? JSON.parse(almacenPermiso[0].jsonPermission) : {},
-                                ventaPermiso: ventaPermiso.length > 0 ? JSON.parse(ventaPermiso[0].jsonPermission) : {},
-                                cajaPermiso: cajaPermiso.length > 0 ? JSON.parse(cajaPermiso[0].jsonPermission): {}, 
-                            }
-                            $scope.accion = permisoModulo[0]
-                            $rootScope.articlePermission = articlePermission[0];
-                            $rootScope.ventaPermiso = $rootScope.usuarioPermiso.ventaPermiso;
-                        }
-                    }) 
+                    //        $rootScope.usuarioPermiso = {
+                    //            almacenPermiso: almacenPermiso.length > 0 ? JSON.parse(almacenPermiso[0].jsonPermission) : {},
+                    //            ventaPermiso: ventaPermiso.length > 0 ? JSON.parse(ventaPermiso[0].jsonPermission) : {},
+                    //            cajaPermiso: cajaPermiso.length > 0 ? JSON.parse(cajaPermiso[0].jsonPermission): {},
+                    //        }
+                    //        $scope.accion = permisoModulo[0]
+                    //        $rootScope.articlePermission = articlePermission[0];
+                    //        $rootScope.ventaPermiso = $rootScope.usuarioPermiso.ventaPermiso;
+                    //    }
+                    //})
+                    $rootScope.usuarioPermiso = {
+                        almacenPermiso: $scope.permissions.find(x => x.codModule == "AR").permission,
+                        ventaPermiso: $scope.permissions.find(x => x.codModule == "V").permission,
+                        cajaPermiso: $scope.permissions.find(x => x.codModule == "C").permission,
+                    }
+                    $scope.accion = $scope.subMenus.find(x => x.idSubmenu == dataMenu.idSubmenu)
+                    $rootScope.articlePermission = $scope.permissions.find(x => x.codModule == "AR").permission;
+                    $rootScope.ventaPermiso = $rootScope.usuarioPermiso.ventaPermiso;
                 } else {
                     location.href = '/Home/Index'
                 }
@@ -179,16 +193,14 @@ function layoutCtrl($scope, $rootScope, $window, mS) {
     // $scope.accion = 'test'
     // console.log(pathname)
     $scope.onChangeSubMenu = function (item) {
-        try { 
-            location.href = item.url; 
+        try {
+            location.href = item.url;
 
         } catch (error) {
             location.href = '/Login/Logout';
         }
 
     }
-
-
     $scope.logout = function () {
         Object.keys(localStorage).forEach(function (key) {
             localStorage.removeItem(key);

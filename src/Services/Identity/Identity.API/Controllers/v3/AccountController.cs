@@ -1,5 +1,6 @@
 ﻿using Identity.API.Dtos;
-using Identity.API.Interfaces;
+using Identity.Core.Interfaces;
+using Identity.Core.Models;
 using Lib.Common.Api;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -39,13 +40,13 @@ namespace Identity.API.Controllers.v3
 
                 if (_response.code == "1")
                 {
-                    List<UserDataDto> userData = JsonConvert.DeserializeObject<List<UserDataDto>>(_response.payload);
+                    List<UserData> userData = JsonConvert.DeserializeObject<List<UserData>>(_response.payload);
 
                     if (userData.Count == 1)
                     {
                         userData.ForEach(x => x.UrlGateway = _config["ApiGateways:Acontplus"]);
 
-                        var jwtToken = _tokenService.GetJwtToken(userData.FirstOrDefault());
+                        var jwtToken = _tokenService.CreateToken(userData.FirstOrDefault());
 
                         if (jwtToken != null)
                         {
@@ -80,12 +81,12 @@ namespace Identity.API.Controllers.v3
         }
         [AllowAnonymous]
         [HttpPost("createToken")]
-        public IActionResult CreateToken([FromBody] UserDataDto userData)
+        public IActionResult CreateToken([FromBody] UserData userData)
         {
             try
             {
                 userData.UrlGateway = _config["ApiGateways:Acontplus"];
-                var jwtToken = _tokenService.GetJwtToken(userData);
+                var jwtToken = _tokenService.CreateToken(userData);
                 if (jwtToken != null)
                 {
                     _log.LogActivity("Login successful: userRoleId" + Convert.ToString(userData.UserRoleId) + " \n jwt: " + jwtToken);

@@ -1,5 +1,6 @@
 ﻿using Identity.API.Dtos;
-using Identity.API.Interfaces;
+using Identity.Core.Interfaces;
+using Identity.Core.Models;
 using Lib.Common.Api;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -39,7 +40,7 @@ namespace Identity.API.Controllers.v2
 
                 if (_response.code == "1")
                 {
-                    List<UserDataDto> userData = JsonConvert.DeserializeObject<List<UserDataDto>>(_response.payload);
+                    List<UserData> userData = JsonConvert.DeserializeObject<List<UserData>>(_response.payload);
 
                     if (userData.Count == 1)
                     {
@@ -47,7 +48,7 @@ namespace Identity.API.Controllers.v2
 
                         user.UrlGateway = _config["ApiGateways:Acontplus"];
 
-                        var jwtToken = _tokenService.GetJwtToken(user);
+                        var jwtToken = _tokenService.CreateToken(user);
 
                         if (jwtToken != null)
                         {
@@ -60,7 +61,7 @@ namespace Identity.API.Controllers.v2
 
                         user.Token = jwtToken;
 
-                        _response.Create(code: "1", message: "LoginCorrecto", payload: user);
+                        _response.Create(code: "1", message: "Login Correcto", payload: user);
 
                         return Ok(_response);
                     }
@@ -75,12 +76,12 @@ namespace Identity.API.Controllers.v2
         }
         [AllowAnonymous]
         [HttpPost("createToken")]
-        public IActionResult CreateToken([FromBody] UserDataDto userData)
+        public IActionResult CreateToken([FromBody] UserData userData)
         {
             try
             {
                 userData.UrlGateway = _config["ApiGateways:Acontplus"];
-                var jwtToken = _tokenService.GetJwtToken(userData);
+                var jwtToken = _tokenService.CreateToken(userData);
                 if (jwtToken != null)
                 {
                     _log.LogActivity("Login successful: userRoleId" + Convert.ToString(userData.UserRoleId) + " \n jwt: " + jwtToken);
@@ -91,7 +92,7 @@ namespace Identity.API.Controllers.v2
                 }
                 userData.Token = jwtToken;
                 var _response = new APIResponse();
-                _response.Create(code: "1", message: "LoginCorrecto", payload: userData);
+                _response.Create(code: "1", message: "Login Correcto", payload: userData);
                 return Ok(_response);
             }
             catch (Exception ex)
