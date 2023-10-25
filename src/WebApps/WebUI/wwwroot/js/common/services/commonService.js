@@ -1926,6 +1926,7 @@ export class CommonService {
             })
 
         } catch (error) {
+            hideLoader()
             console.log(error)
         }
 

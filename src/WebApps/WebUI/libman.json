@@ -139,23 +139,24 @@
       "destination": "wwwroot/lib/angular-media-queries/"
     },
     {
-      "library": "tabulator@5.5.2",
-      "destination": "wwwroot/lib/tabulator/"
-    },
-    {
-      "provider": "cdnjs",
       "library": "UAParser.js@1.0.36",
       "destination": "wwwroot/lib/UAParser.js/"
     },
     {
-      "provider": "cdnjs",
       "library": "axios@1.5.1",
       "destination": "wwwroot/lib/axios/"
     },
     {
-      "provider": "cdnjs",
       "library": "material-design-iconic-font@2.2.0",
       "destination": "wwwroot/assets/icons/material-design-iconic-font/"
+    },
+    {
+      "library": "tabulator@5.5.2",
+      "destination": "wwwroot/lib/tabulator/",
+      "files": [
+        "js/tabulator.min.js",
+        "css/tabulator.min.css"
+      ]
     }
   ]
 }

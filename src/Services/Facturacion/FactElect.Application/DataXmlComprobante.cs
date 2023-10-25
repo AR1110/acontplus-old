@@ -1,5 +1,5 @@
 ﻿using System.Xml;
-using FactElect.Core;
+using FactElect.Core.Models;
 
 namespace FactElect.Application
 {
