@@ -119,11 +119,11 @@
                 <div class="row justify-content-start">
                     <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                         <label for="">Buscar Articulo</label>
-                        <md-autocomplete-articulo-component tipo-doc="TIPO_DOC"
+                        <md-autocomplete-articulo-component tipo-doc="tipoDoc"
                             abrir-modal-articulo="abrirModalArticulo(item)"
                             get-data-articulo="getDataIdArticulo(item)"
                             set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)"
-                            scope-parent="scopeParent" id-bodega="idBodega">
+                            scope-parent="scopeParent" id-bodega="data.idBodega">
                         </md-autocomplete-articulo-component>
                     </div>
 
@@ -152,8 +152,8 @@
                                 </option>
                             </select>
                         </div>
-                    </div>
-                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                    </div> 
+                    @* <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                         <div class="form-group">
                             <label for="tarifas">Tarifa:
                                 <span tooltip-placement="top"
@@ -168,7 +168,7 @@
                                 </option>
                             </select>
                         </div>
-                    </div>
+                    </div> *@
                 </div>
             </div>
         </div>
@@ -357,13 +357,14 @@
                             <tr>
                                 <td class="left">
                                     @* <strong class="text-dark">IVA {{actividadTipoIva.tarifa}}%</strong> *@
-                                    <select style="width: 150px;" name="impuestoTarifa" id="impuestoTarifa"
+                                    @* <select style="width: 150px;" name="impuestoTarifa" id="impuestoTarifa"
                                         ng-model="data.tarifa" class="form-control form-control-sm border-select"
                                         ng-change="recalculateImpuestoTarifa()">
                                         <option ng-value="item.tarifa" ng-repeat="item in impuestoTarifas">
                                             {{item.descripcion}}
                                         </option>
-                                    </select>
+                                    </select> *@
+                                    <strong class="text-dark">{{tarifaImpuestoVigente.descripcion}}</strong>                                    
                                 </td>
                                 <td class="right">${{data.iva}}</td>
                             </tr>
@@ -387,8 +388,12 @@
                     </table>
                 </div>
                 <div class="mt-2">
-                    <button type="button" class="btn btn-secondary btn-sm btn-lg btn-block"
-                        ng-click="openModalInfoAdicional(false)">
+                    <button type="button" 
+                            class="btn btn-secondary btn-sm btn-lg btn-block" 
+                            open-modal-additional-data-document
+                            datos-adicionales="infoAdicionalDocumento"
+                            get-data-additional-document="getDataAdditionalDocument(result)"
+                            >
                         <i class="fas fa-info-circle text-info"></i> Dato Adicional
                     </button>
                 </div>

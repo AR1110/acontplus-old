@@ -82,6 +82,7 @@
                                 .map(bodega => ({
                                     idBodega: bodega.idBodega,
                                     bodega: bodega.bodega,
+                                    descripcion: bodega.bodega,
                                     defaultBodega: bodega.defaultBodega,
                                 }))
                         }))
@@ -99,9 +100,16 @@
             })
         }
 
+        service.post = function (data) {
+            return mS.getData('post', URL, data, true)
+        }
+
+        service.put = function (id, data) {
+            return mS.getData('put',`${URL}${id}`, data, true)
+        }
 
         service.delete = function (id) {
-            return mainService.getData('delete', url + 'Delete/' + id, null, true)
+            return mS.getData('delete', `${URL}${id}`, null, true)
         }
 
 

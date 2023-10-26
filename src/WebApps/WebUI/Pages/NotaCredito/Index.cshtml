@@ -6,8 +6,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div ng-controller="notaCreditoClienteCtrl">
-
+<div ng-controller="notaCreditoClienteCtrl"> 
     <div class="row page-titles">
         <div class="col-lg-5 align-self-center">
             <h5 class="text-themecolor">Nota de Crédito Cliente</h5>
@@ -219,6 +218,7 @@
 
 @section Scripts{
     <script src="~/js/factElect/services/notaCreditoService.js" asp-append-version="true"></script>
-    <script src="~/js/factElect/services/facturaService.min.js" asp-append-version="true"></script>
+    <script src="~/js/common/services/gridOptionsService.js" asp-append-version="true"></script>
+    <script src="~/js/factElect/services/facturaService.js" asp-append-version="true"></script>
     <script src="~/js/factElect/controllers/notaCreditoCtrl.min.js" asp-append-version="true"></script>
 }

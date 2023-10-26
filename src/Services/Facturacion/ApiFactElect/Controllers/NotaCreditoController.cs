@@ -73,7 +73,7 @@ namespace ApiFactElect.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Insert([FromBody] NotaCreditoViewModel data)
+        public async Task<IActionResult> Post([FromBody] NotaCreditoViewModel data)
         {
 
             var _response = new GenericResponse();
@@ -81,7 +81,7 @@ namespace ApiFactElect.Controllers
             {
                 var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Ventas.NotaCredito_Insert", true);
-                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
+                _db.AddDynamicParam("idRol", idUsuarioRol);
                 _db.AddDynamicParam("jsonNotaCredito", JsonConvert.SerializeObject(data.nota));
                 _db.AddDynamicParam("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
                 _db.AddDynamicParam("jsonInfoAdicional", JsonConvert.SerializeObject(data.adicional));
@@ -100,7 +100,7 @@ namespace ApiFactElect.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] NotaCreditoViewModel data)
+        public async Task<IActionResult> Put(int id, [FromBody] NotaCreditoViewModel data)
         {
             var _response = new GenericResponse();
             try
