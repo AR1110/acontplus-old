@@ -10,6 +10,7 @@
   import GridForItem from "$lib/components/GridForItem.svelte";
   import Modal from "$lib/components/Modal.svelte";
   import toast from "$utils/toast";
+  import { SupportDetailService } from "$lib/services/Mechanical/support-detail-service";
 
   let support;
   let establishments = [];
@@ -141,6 +142,9 @@
           };
 
           supportDetails = [...supportDetails, obj];
+
+          // Get Articles invoke.
+          getTotales();
         }
       }
     });
@@ -169,6 +173,9 @@
   const removeArticle = (idArticulo) => {
     let newFilter = supportDetails.filter((x) => x.idArticulo != idArticulo);
     supportDetails = newFilter;
+
+    // Get Totales invoke.
+    getTotales();
   };
 
   function getTotales() {
@@ -176,35 +183,53 @@
       CODIGO_PORCENTAJE_IVAEXENTO = "7",
       CODIGO_PORCENTAJE_IVA_NO_OBJETO = "6";
 
-    const dataTotal = supportDetails.reduce((total, itemDetails) => {
-        let dataImpuesto = tipoIva.find((x) => x.idTipoIva == itemDetails.idTipoIva);
+    const dataTotal = supportDetails.reduce(
+      (total, itemDetails) => {
+        let dataImpuesto = tipoIva.find(
+          (x) => x.idTipoIva == itemDetails.idTipoIva
+        );
 
-        let dataImpuestoVigente = tarifaImpuestos.find((x) => x.codigoPorcentaje == dataImpuesto.codigoPorcentaje);
+        let dataImpuestoVigente = tarifaImpuestos.find(
+          (x) => x.codigoPorcentaje == dataImpuesto.codigoPorcentaje
+        );
 
         total.valorIva = dataImpuestoVigente.tarifa;
+
+        console.log(itemDetails);
 
         itemDetails.cantidad = Number(itemDetails.cantidad);
         itemDetails.precioUnitario = Number(itemDetails.precioUnitario);
         itemDetails.valorDescuento = Number(itemDetails.valorDescuento);
 
-        if (dataImpuesto.codigoPorcentaje == dataImpuestoVigente.codigoPorcentaje) {
+        if (
+          dataImpuesto.codigoPorcentaje == dataImpuestoVigente.codigoPorcentaje
+        ) {
           total.totalImpuestoVigente += itemDetails.cantidad * itemDetails.precioUnitario;
           total.totalImpuestoVigenteNeto += (itemDetails.precioUnitario - itemDetails.valorDescuento) * itemDetails.cantidad;
         }
 
         if (dataImpuesto.codigoPorcentaje == CODIGO_PORCENTAJE_IVA0) {
-          total.subTotalIvaCero += itemDetails.cantidad * itemDetails.precioUnitario;
-          total.subTotalNetoIvaCero += (itemDetails.precioUnitario - itemDetails.valorDescuento) *itemDetails.cantidad;
+          total.subTotalIvaCero +=
+            itemDetails.cantidad * itemDetails.precioUnitario;
+          total.subTotalNetoIvaCero +=
+            (itemDetails.precioUnitario - itemDetails.valorDescuento) *
+            itemDetails.cantidad;
         }
 
         if (dataImpuesto.codigoPorcentaje == CODIGO_PORCENTAJE_IVAEXENTO) {
-          total.subTotalExentoIva += itemDetails.cantidad * itemDetails.precioUnitario;
-          total.subTotalNetoExentoIva += (itemDetails.precioUnitario - itemDetails.valorDescuento) * itemDetails.cantidad;
+          total.subTotalExentoIva +=
+            itemDetails.cantidad * itemDetails.precioUnitario;
+          total.subTotalNetoExentoIva +=
+            (itemDetails.precioUnitario - itemDetails.valorDescuento) *
+            itemDetails.cantidad;
         }
 
         if (dataImpuesto.codigoPorcentaje == CODIGO_PORCENTAJE_IVA_NO_OBJETO) {
-          total.subTotalNoObjetoIva += itemDetails.cantidad * itemDetails.precioUnitario;
-          total.subTotalNetoNoObjetoIva += (itemDetails.precioUnitario - itemDetails.valorDescuento) * itemDetails.cantidad;
+          total.subTotalNoObjetoIva +=
+            itemDetails.cantidad * itemDetails.precioUnitario;
+          total.subTotalNetoNoObjetoIva +=
+            (itemDetails.precioUnitario - itemDetails.valorDescuento) *
+            itemDetails.cantidad;
         }
 
         total.sumaTotalNeto += itemDetails.cantidad * itemDetails.precioUnitario;
@@ -232,6 +257,9 @@
         valorIva: 0,
       }
     );
+
+    console.log("dataTotal");
+    console.log(dataTotal);
 
     let iva = (dataTotal.sumaTotalNeto * dataTotal.valorIva) / 100;
 
@@ -386,6 +414,9 @@
 
       support.codEstab = estab.codEstab;
       tarifaImpuestos = [...JSON.parse(estab.tarifasImpuestos)];
+
+      // Get Totales invoke.
+      getTotales();
     }
     // if (
     //   paramValidation.includes(support.codEstab) && establishments.length > 0) {
@@ -437,8 +468,41 @@
       });
   };
 
-  // Todo: Save NOTA ENTREGA
-  const saveNotaEntrega = () => {};
+  // Todo: Save DETALLES
+  const onUpdate = () => {
+    showLoader();
+
+    supportDetails = supportDetails.map((item) => ({
+      id: item.id > 0 ? item.id : 0,
+      articuloId: item.idArticulo,
+      tarifaId: item.idTarifa,
+      bodegaId: item.idBodega,
+      medidaId: item.idMedida,
+      description: item.descripcion,
+      quantity: item.cantidad,
+      price: item.precioUnitario,
+      cost: item.precioCosto,
+      total: item.total,
+      codePercentage: item.codigoPorcentaje,
+      percentage: item.tarifa,
+      inventory: item.llevaInventario,
+    }));
+
+    SupportDetailService.put(support.id, { data: { support, supportDetails } })
+      .then((response) => {
+        if (response) {
+          if(response.code != "1"){
+            return toast({ type: "warning", message: response.message });
+          }
+
+          onModalClose();
+          toast({ type: "success", message: response.message });
+        }
+      })
+      .finally(() => {
+        hideLoader();
+      });
+  };
 
   supportStore.subscribe((values) => {
     support = values.support;
@@ -571,25 +635,40 @@
             <div class="row">
               <div class="col-lg-12 col-lg-12 col-md-12 col-sm-12 col-12">
                 <button
-                  on:click={saveFactura}
                   type="button"
+                  on:click={onUpdate}
                   class="btn btn-block btn-success mt-4"
                 >
-                  <i class="ti-save" /> Factura
+                  <i class="ti-save" /> Guardar
                 </button>
               </div>
             </div>
           </div>
-          <div class="col-sm-3 nopadding">
-            <div class="row">
-              <div class="col-lg-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                <button
-                  type="button"
-                  on:click={saveNotaEntrega}
-                  class="btn btn-block btn-outline-primary mt-4"
-                >
-                  <i class="ti-save" /> Nota Entrega
-                </button>
+          <div class="col-sm-3 mt-4">
+            <div class="col-lg-12 col-lg-12 col-md-12 col-sm-12 col-12">
+              <div
+                class="btn-group"
+                role="group"
+                aria-label="Button group with nested dropdown"
+              >
+                <div class="btn-group" role="group">
+                  <button
+                    id="btnGroupDrop1"
+                    type="button"
+                    class="btn btn-secondary btn-block dropdown-toggle"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                  >
+                    Generar Documento
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                    <!-- svelte-ignore a11y-invalid-attribute -->
+                    <a class="dropdown-item" href="#">Factura</a>
+                    <!-- svelte-ignore a11y-invalid-attribute -->
+                    <a class="dropdown-item" href="#">Nota Entrega</a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
