@@ -90,8 +90,8 @@ const cretaeSupport = () => {
   });
 
   const get = (params?: object) => {
-    let json = { pageIndex: 1, pageSize: 10, tipo: 1 };
-    let query = Object.assign(json, params ? params : json);
+    const json = { pageIndex: 1, pageSize: 10, tipo: 1 };
+    const query = Object.assign(json, params ? params : json);
 
     update((state) => {
       return {

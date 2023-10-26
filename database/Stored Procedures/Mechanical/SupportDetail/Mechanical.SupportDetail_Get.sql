@@ -32,7 +32,7 @@ BEGIN
         BEGIN
             SELECT @Id = Id FROM OPENJSON(@json) WITH (Id INT '$.id')
 
-            SET @tableNames = 'support,supportDetail,medidas,establecimiento,bodega,tipoIva,decimal'
+            SET @tableNames = 'support,supportDetail,medidas,establecimiento,bodega,tipoIva,decimal,ptoEmision'
 
             SELECT v_s.Id
                   ,v_s.PuntoEmisionId
@@ -55,19 +55,21 @@ BEGIN
                   ,md.MedidaId          AS idMedida
                   ,md.[Description]     AS descripcion                  
                   ,md.Quantity          AS cantidad
-                  ,md.Price             AS precioUnitario -- PrecioVenta
+                  ,md.Price             AS precioUnitario
+                  ,md.Price             AS precioVenta
                   ,md.Cost              AS precioCosto
                   ,md.CodePercentage    AS codigoPorcentaje
                   ,md.[Percentage]      AS tarifa
                   ,bo.codEstab
-                  ,md.Total
-                  ,ar.codigo            AS codigoArticulo
+                  ,md.Total                  
                   ,ar.llevaInventario
                   ,ar.idTipoIva
                   ,ar.iva
                   ,ar.stockMinimo
                   ,ar.stock
                   ,ar.precioSinSubsidio
+                  ,ar.codigo            AS codigoArticulo
+                  ,ar.codigoAuxiliar    AS codigoAuxiliar
             FROM Mechanical.SupportDetail md WITH (NOLOCK)
             INNER JOIN dbo.Bodega             bo WITH (NOLOCK) ON bo.idBodega   = md.BodegaId
             INNER JOIN Inventario.v_Articulo             ar WITH (NOLOCK) ON ar.idArticulo = md.ArticuloId
@@ -113,8 +115,25 @@ BEGIN
 			WHERE a.idArticulo IN (SELECT ArticuloId FROM Mechanical.SupportDetail md WITH (NOLOCK) WHERE md.SupportId = @Id )
 			ORDER BY orden ASC
             
-            SELECT idEstablecimiento, codEstab, predeterminado, nombreComercial
-            FROM v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY predeterminado DESC
+            SELECT idEstablecimiento
+                    , codEstab
+                    , predeterminado
+                    , nombreComercial
+                    , tarifasImpuestos = (
+					    SELECT
+						    'IVA ' + descripcion AS descripcion,
+						    'IVA' AS codigo,
+						    codigo AS codigoPorcentaje,
+						    porcentaje AS tarifa
+					    FROM Sri.TarifaImpuesto ti WITH (NOLOCK)
+					    WHERE ti.estado = 1 
+                        AND ((e.actividad = '01' AND ti.codigo IN ('2', '8')) OR (e.actividad <> '01' AND codigo = '2') )
+					    ORDER BY codigoPorcentaje DESC
+					    FOR JSON PATH
+				    )
+            FROM v_Estab_Asign e
+            WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId 
+            ORDER BY predeterminado DESC
 
             SELECT idBodega ,idEstablecimiento, bodega, codEstab, nombreComercial , defaultBodega
             FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultBodega DESC
@@ -122,6 +141,8 @@ BEGIN
             SELECT idTipoIva,descripcion, codigo,codigoPorcentaje,porcentaje FROM TipoIva WITH (NOLOCK) WHERE estado = 1
             
             SELECT * FROM Config.v_Sistema_Decimal WITH (NOLOCK) WHERE codTrasaccion = 'V' AND idEntidad = @CompanyId
+
+             SELECT * FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
             RETURN
         END
 
