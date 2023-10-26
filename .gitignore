@@ -85,3 +85,4 @@ bin-release/
 /src/src/WebApps/WebUI.sln
 /src/WebApps/WebUI/.vs/WebUI/FileContentIndex
 /src/Services/Facturacion/ApiFactElect/ApiFactElect.csproj.user
+/src/Services/Ventas/ApiVentas/ApiVentas.csproj.user

@@ -212,6 +212,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
             entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
             //}
 
+            
 
             entity.articuloTarifas = JSON.parse(dataMedida.tarifas);
             let tarifa = entity.articuloTarifas.find(item => item.idTarifa === self.idTarifa);
@@ -310,7 +311,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
 
 
     resultModalAdicional(result) {
-        let { entity, historyDatosAdicionales } = result;
+        let { historyDatosAdicionales } = result;
         this.historyDatosAdicionales = historyDatosAdicionales;
     }
 
@@ -511,7 +512,8 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
 
 
         let {
-            TIPO_REGISTRO
+            TIPO_REGISTRO,
+
         } = _params;
 
         this.historyDatosAdicionales = [];
@@ -538,13 +540,22 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
             notificacionVenta: false
         }
 
+        //data form del ctrl 
+        this.dataForm = _params.dataForm;
+
     }
 
     async $onInit() {
         try {
             showLoader();
 
-            let resultsDataForm = await this.initiload();
+            //let resultsDataForm = await this.initiload();
+            let resultsDataForm = this.dataForm;
+
+            
+            this.tarifas = resultsDataForm[4];
+            this.idTarifa = this.tarifas.length > 0 ? this.tarifas[0].idTarifa : 0;
+            this.cloneIdTarifa = this.idTarifa;
 
             let {
                 UiGridOptions
@@ -593,9 +604,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
 
             this.tipoIvas = resultsDataForm[3];
 
-            this.tarifas = resultsDataForm[4];
-            this.idTarifa = this.tarifas.length > 0 ? this.tarifas[0].idTarifa : 0;
-            this.cloneIdTarifa = this.idTarifa;
+          
 
             this.tiempoCreditos = resultsDataForm[5];
             this.data.idTiempoCredito = this.tiempoCreditos.length > 0 ? this.tiempoCreditos[0].idTiempoCredito : 0;
@@ -627,7 +636,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
                 this.isSearchBarcode = searchCode;
                 this.multipleVendedor = multipleVendedor;
 
-                this.$uibModalInstance.rendered.then(result => {
+                this.$uibModalInstance.rendered.then(() => {
                     if (this.isSearchBarcode == 1) {
                         $("#inputBarcode").focus();
                     } else {
@@ -696,9 +705,6 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
         } catch (error) {
             hideLoader();
             console.error(error)
-
-        } finally {
-
 
         }
     }
@@ -996,15 +1002,13 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
             //Configuracion de Codigo Barra 
             if (resultsDataForm[8].length > 0) {
                 let {
-                    searchCode,
-                    printerAutomatic,
-                    payAutomatic,
+                    searchCode, 
                     multipleVendedor
                 } = resultsDataForm[8][0];
                 this.isSearchBarcode = searchCode;
                 this.multipleVendedor = multipleVendedor;
 
-                this.$uibModalInstance.rendered.then(result => {
+                this.$uibModalInstance.rendered.then(() => {
                     if (this.isSearchBarcode == 1) {
                         $("#inputBarcode").focus();
                     } else {
@@ -1210,8 +1214,7 @@ export class ModalFacturaDetalleCtrl extends ModalFacturaCtrl {
             _nombreModalConst,
             _fS,
             _tS
-        })
-        const self = this;
+        }) 
         this.articuloSvc = articuloSvc;
 
         this.CELL_TEMPLATE_OPTION = `
@@ -1453,7 +1456,7 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
                 this.isSearchBarcode = searchCode;
                 this.multipleVendedor = multipleVendedor;
 
-                this.$uibModalInstance.rendered.then(result => {
+                this.$uibModalInstance.rendered.then(() => {
                     if (this.isSearchBarcode == 1) {
                         $("#inputBarcode").focus();
                     } else {

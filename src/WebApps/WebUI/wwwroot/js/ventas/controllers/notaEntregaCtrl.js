@@ -4,12 +4,23 @@
 
     app.controller('notaEntregaCtrl', notaEntregaCtrl);
 
-    notaEntregaCtrl.$inject = ['$scope', '$filter', 'mainService', 'notaEntregaService', 'commonService', 'modalService', 'nombreModal', 'nombreModalContabilidad', 'toastService', 'formulario', 'decodeToken'];
+    notaEntregaCtrl.$inject = [
+        '$scope', 
+        '$filter',         
+        'notaEntregaService', 
+        'commonService', 
+        'modalService', 
+        'nombreModal', 
+        'nombreModalContabilidad', 
+        'toastService', 
+        'formulario', 
+        'decodeToken'
+    ];
 
-    function notaEntregaCtrl($scope, $filter, _mS, notaEntregaSvc, _commonSvc, _modalSvc, _nombreModalConst, nombreModalContabilidad, _tS, _fS, decodeToken) {
+    function notaEntregaCtrl($scope, $filter, notaEntregaSvc, commonSvc, modalSvc, nombreModalConst, nombreModalContabilidad, tS, fS, decodeToken) {
 
 
-        const TIPO_DOC_NE = _commonSvc.tipoDoc['NE'];
+        const TIPO_DOC_NE = commonSvc.tipoDoc['NE'];
         const PERMISSION_KEY_ACTIONS = {
             E: 'E',
             A: 'A',
@@ -23,7 +34,8 @@
             pageIndex: 1,
             maxSize: 5,
             totalRecords: 0,
-            nroSecuencial: 0,
+            nroSecuencial: null,
+            checkBoxFecha: true,
             busqueda: "",
             byStock: 0,
         };
@@ -57,13 +69,15 @@
 
 
 
-        $scope.onKeyupCliente = function (e) {
+        $scope.onKeyupCliente = function () {
             if (!$scope.cliente.nombreCliente) {
                 $scope.dataSearch.idCliente = 0;
+                $scope.dataSearch.checkBoxFecha = true;
             }
         }
         $scope.onSelectCliente = function (item) {
             $scope.dataSearch.idCliente = item.idCliente;
+            $scope.dataSearch.checkBoxFecha = true;
             $scope.getNotaEntregas();
         }
 
@@ -75,7 +89,7 @@
                 }
 
                 if (query.busqueda.length > 2) {
-                    return _commonSvc.usuarioSearch(query)
+                    return commonSvc.usuarioSearch(query)
                         .catch(error => {
                             console.log(error);
                             throw error;
@@ -112,27 +126,40 @@
 
         $scope.getTotales = function () {
             let { total, totalAbono, totalSaldo } = notaEntregaSvc.getTotales($scope.notaEntregas)
-            $scope.total = _fS.roundNumber(total, 5);
-            $scope.totalAbono = _fS.roundNumber(totalAbono, 5);
-            $scope.totalSaldo = _fS.roundNumber(totalSaldo, 5);
+            $scope.total = fS.roundNumber(total, 5);
+            $scope.totalAbono = fS.roundNumber(totalAbono, 5);
+            $scope.totalSaldo = fS.roundNumber(totalSaldo, 5);
 
         }
 
 
         $scope.getNotaEntregas = async () => {
             try {
+
+                
+                if($scope.dataSearch.nroSecuencial){
+                    if(!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)){
+                        $scope.dataSearch.checkBoxFecha = true;
+                        tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
+                        return
+                    }
+                    if(!($scope.dataSearch.idCliente>0)){
+                        $scope.dataSearch.checkBoxFecha = false;
+                    }
+                } 
+
                 let dataSearch = {
                     codEstab: $scope.dataSearch.codEstab,
                     idPuntoEmision: $scope.dataSearch.idPuntoEmision,
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize,  
                     byCliente: $scope.dataSearch.idCliente, 
-                    checkBoxFecha: $scope.dataSearch.nroSecuencial ? false : true,  
+                    checkBoxFecha: $scope.dataSearch.checkBoxFecha,
                     byUsuario: $scope.dataSearch.byUsuario, 
                     codEstado: $scope.dataSearch.codEstado, 
-                    fechaInicio: _fS.formatDateMoment($scope.dataSearch.fechaInicio),
-                    fechaFin: _fS.formatDateMoment($scope.dataSearch.fechaFin),   
-                    nroSecuencial: Number($scope.dataSearch.nroSecuencial)
+                    fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
+                    fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),   
+                    nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
                 }
 
                 showLoader();
@@ -148,9 +175,9 @@
 
                     //Totals 
                     $scope.dataSearch.totalRecords = dataTotals.totalRecords;
-                    $scope.total = _fS.roundNumber(dataTotals.totalDocument, 5);
-                    $scope.totalAbono = _fS.roundNumber(dataTotals.totalAbono, 5);
-                    $scope.totalSaldo = _fS.roundNumber(dataTotals.totalSaldo, 5);
+                    $scope.total = fS.roundNumber(dataTotals.totalDocument, 5);
+                    $scope.totalAbono = fS.roundNumber(dataTotals.totalAbono, 5);
+                    $scope.totalSaldo = fS.roundNumber(dataTotals.totalSaldo, 5);
 
                 }).catch(error => {
                     $scope.dataSearch.totalRecords = 0;
@@ -239,7 +266,7 @@
             }
 
             if (data.printerAutomatic) {
-                _commonSvc.getPrinter(JSON.stringify($scope.parametersPrint))
+                commonSvc.getPrinter(JSON.stringify($scope.parametersPrint))
             }
 
             $scope.getNotaEntregas();
@@ -249,14 +276,14 @@
 
         $scope.openModalNew = async () => {
             try {
-                let { MODAL_FILE_CTRL, MODAL_NUEVO } = _nombreModalConst.nota_entrega;
+                let { MODAL_FILE_CTRL, MODAL_NUEVO } = nombreModalConst.nota_entrega;
                 let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_NUEVO['controller']];
                 let template = MODAL_NUEVO['template'];
                 let params = {
                     TIPO_REGISTRO: 'NUEVO'
                 }
 
-                _modalSvc.openModalCustom({
+                modalSvc.openModalCustom({
                     controller,
                     template,
                     size: 'xl',
@@ -281,17 +308,17 @@
          */
 
         $scope.getDataDocumento = (id) => {
-            return _commonSvc.getDataTipoDocVenta({
+            return commonSvc.getDataTipoDocVenta({
                 id,
                 codigoDocumento: TIPO_DOC_NE.codigo
             })
         }
 
         $scope.openModalDetalle = async (item) => {
-            let { MODAL_FILE_CTRL, MODAL_DETALLE } = _nombreModalConst.nota_entrega;
+            let { MODAL_FILE_CTRL, MODAL_DETALLE } = nombreModalConst.nota_entrega;
             let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_DETALLE['controller']];
             let template = MODAL_DETALLE['template'];
-            let response = await _commonSvc.getDataTipoDocVenta({
+            let response = await commonSvc.getDataTipoDocVenta({
                 id: item.idDocumento,
                 codigoDocumento: TIPO_DOC_NE.codigo
             })
@@ -314,25 +341,25 @@
             try {
 
                 if (item.anulada) {
-                    _fS.sweetAlert('warning', 'El documento ya se encuentra anulada');
+                    fS.sweetAlert('warning', 'El documento ya se encuentra anulada');
                     return
                 }
 
 
-                let result = await _commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.E);
+                let result = await commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.E);
                 if (result.code === "2") {
-                    _commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.E);
+                    commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.E);
                     return
                 }
 
                 showLoader();
 
 
-                let { MODAL_FILE_CTRL, MODAL_EDITAR } = _nombreModalConst.nota_entrega;
+                let { MODAL_FILE_CTRL, MODAL_EDITAR } = nombreModalConst.nota_entrega;
                 let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_EDITAR['controller']];
                 let template = MODAL_EDITAR['template'];
 
-                let response = await _commonSvc.getDataTipoDocVenta({
+                let response = await commonSvc.getDataTipoDocVenta({
                     id: item.idDocumento,
                     codigoDocumento: TIPO_DOC_NE.codigo
                 })
@@ -345,7 +372,7 @@
                     data: response
                 }
 
-                _modalSvc.openModalCustom({
+                modalSvc.openModalCustom({
                     controller,
                     template,
                     size: 'xl',
@@ -357,7 +384,7 @@
                         //Una vez actualizado el documento 
                         let { additional } = $scope.jsonPermission;
                         if (typeof $scope.jsonPermission === 'object' && additional.requestAuthorizationKey.requestKey) {
-                            _commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.E);
+                            commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.E);
                         }
 
                         $scope.getNotaEntregas();
@@ -376,11 +403,11 @@
         $scope.openModalDuplicate = async (item) => {
             try {
                 showLoader();
-                let { MODAL_FILE_CTRL, MODAL_DUPLICAR } = _nombreModalConst.nota_entrega;
+                let { MODAL_FILE_CTRL, MODAL_DUPLICAR } = nombreModalConst.nota_entrega;
                 let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_DUPLICAR['controller']];
                 let template = MODAL_DUPLICAR['template'];
 
-                let response = await _commonSvc.getDataTipoDocVenta({
+                let response = await commonSvc.getDataTipoDocVenta({
                     id: item.idDocumento,
                     codigoDocumento: TIPO_DOC_NE.codigo
                 })
@@ -392,7 +419,7 @@
                     data: response
                 }
 
-                _modalSvc.openModalCustom({
+                modalSvc.openModalCustom({
                     controller,
                     template,
                     size: 'xl',
@@ -417,7 +444,7 @@
 
         $scope.openModalInvoiceParam = ({ controller, template, size = 'xl', params }) => {
 
-            _modalSvc.openModalCustom({
+            modalSvc.openModalCustom({
                 controller,
                 template,
                 size,
@@ -437,13 +464,13 @@
 
 
                 if (item.anulada) {
-                    _fS.sweetAlert('warning', 'El documento ya se encuentra anulada');
+                    fS.sweetAlert('warning', 'El documento ya se encuentra anulada');
                     return
                 }
 
-                let result = await _commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.A);
+                let result = await commonSvc.checkHasPermissionToEditOrDelete(PERMISSION_KEY_ACTIONS.A);
                 if (result.code === "2") {
-                    _commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.A);
+                    commonSvc.requestAuthorizationKey(PERMISSION_KEY_ACTIONS.A);
                     return
                 }
 
@@ -471,16 +498,16 @@
                     notaEntregaSvc.delete(item.idDocumento).then(response => {
                         hideLoader();
                         if (response.code === "0") {
-                            _fS.sweetAlert('warning', response.message, response.titleSms);
+                            fS.sweetAlert('warning', response.message, response.titleSms);
                         }
                         if (response.code === "1") {
                             hideLoader();
-                            _fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                            fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
                             //Una vez actualizado el documento 
                             let { additional } = $scope.jsonPermission;
                             if (typeof $scope.jsonPermission === 'object' && additional.requestAuthorizationKey.requestKey) {
-                                _commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.A);
+                                commonSvc.updateRequestKey(PERMISSION_KEY_ACTIONS.A);
                             }
                             $scope.getNotaEntregas();
                         }
@@ -493,7 +520,7 @@
             } catch (error) {
                 console.log(error)
             } finally {
-
+                console.log(error)
             }
         }
 
@@ -504,7 +531,7 @@
         $scope.opcionCobro = (item) => {
 
             if (item.estadoFinanciero === "Cobrada") {
-                _fS.sweetAlert('warning', '<small>Este documento ya se encuentra cobrada!</small>')
+                fS.sweetAlert('warning', '<small>Este documento ya se encuentra cobrada!</small>')
                 return
             }
 
@@ -572,7 +599,7 @@
          */
 
         $scope.openModalCobro = ({ controller, template, size = 'lg', params }) => {
-            let $modalRef = _modalSvc.openModalCustom({
+            let $modalRef = modalSvc.openModalCustom({
                 controller,
                 template,
                 size,
@@ -588,7 +615,7 @@
                 //Cuando el documento es Nuevo o Duplicado 
                 if ($scope.isPrintDocument == 1) {
                     $scope.getNotaEntregas();
-                    _commonSvc.getPrinter(JSON.stringify($scope.parametersPrint))
+                    commonSvc.getPrinter(JSON.stringify($scope.parametersPrint))
                     $scope.isPrintDocument = null;
                 }
 
@@ -608,7 +635,7 @@
                 let template = nombreModalContabilidad.COBRO.templates['MC'];
                 let controller = (await import(fileCtrl))[ctrl];
 
-                let modalRef = _modalSvc.openModalCustom({
+                let modalRef = modalSvc.openModalCustom({
                     controller,
                     template,
                     size: 'xl',
@@ -651,7 +678,7 @@
                     params: Object.assign({}, item)
                 }
 
-                _modalSvc.openMdDialog(config)
+                modalSvc.openMdDialog(config)
             } catch (error) {
                 hideLoader();
                 console.log(error)
@@ -673,7 +700,7 @@
                 codigo: 'RNEPT'
             }
 
-            _commonSvc.askToPrint({
+            commonSvc.askToPrint({
                 parameters: JSON.stringify(parameters)
             })
 
@@ -724,7 +751,7 @@
                 dataParams: JSON.stringify(dataParms)
             }
 
-            _commonSvc.getReport({
+            commonSvc.getReport({
                 parameters,
                 formatType: format
             })

@@ -8,18 +8,11 @@ proformaCtrl.$inject = [
     'clienteService',
     'modalService',
     'nombreModalVenta',
-    'formulario'
+    'formulario',
+    'toastService'
 ]
 
-function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modalSvc, nombreModalVenta, fS) {
-
-    // let accion = JSON.parse(localStorage.getItem("accion"));
-    // if (accion === null) {
-    //     location.href = "/Home/Index";
-    //     return
-    // } else { 
-    //     $scope.accion = accion[0];
-    // }
+function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modalSvc, nombreModalVenta, fS, tS) {
     $scope.typeSend = 'GenericFile';
     $scope.typeSendToMail = 'N'
 
@@ -45,6 +38,8 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
         pageIndex: 1,
         maxSize: 5,
         totalRecords: 0,
+        nroSecuencial: null,
+        checkBoxFecha: true,
         busqueda: "",
         byStock: 0,
     };
@@ -75,11 +70,13 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
     $scope.onKeyupClienteSearchFiltro = function () {
         if (!$scope.modelTextSearch) {
             $scope.dataSearch.byCliente = 0;
+            $scope.dataSearch.checkBoxFecha = true;
         }
     }
 
     $scope.selectedClienteSearchFiltro = function (item) {
         $scope.dataSearch.byCliente = item.idCliente;
+        $scope.dataSearch.checkBoxFecha = true;
         $scope.getProformas();
     }
 
@@ -135,20 +132,32 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
     $scope.getProformas = async () => {
 
         try {
+            
+            if($scope.dataSearch.nroSecuencial){
+                if(!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)){
+                    $scope.dataSearch.checkBoxFecha = true;
+                    tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
+                    return
+                }
+                if(!($scope.dataSearch.idCliente>0)){
+                    $scope.dataSearch.checkBoxFecha = false;
+                }
+            } 
+            
             showLoader();
             $scope.proformas = [];
             $scope.total = $scope.sumarColumnaTotal();
 
             let dataSearch = {
                 tipo: 1,
-                checkBoxFecha: $scope.dataSearch.nroSecuencial ? false : true,
+                checkBoxFecha: $scope.dataSearch.checkBoxFecha,
                 codEstab: $scope.dataSearch.codEstab,
                 idPuntoEmision: $scope.dataSearch.idPuntoEmision,
                 byCliente: $scope.dataSearch.byCliente,
                 byUsuario: $scope.dataSearch.byUsuario,
                 fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
                 fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
-                nroSecuencial: Number($scope.dataSearch.nroSecuencial), 
+                nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial),
                 pageIndex: $scope.dataSearch.pageIndex,
                 pageSize: $scope.dataSearch.pageSize, 
             }
@@ -161,6 +170,7 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
                 $scope.total = fS.roundNumber(dataTotals.totalDocument, 5);
 
             }).catch(error => { 
+                $scope.dataSearch.totalRecords = 0;
                 console.log(error)
             }).finally(()=>hideLoader())
 

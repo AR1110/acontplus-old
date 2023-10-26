@@ -38,7 +38,7 @@
         //DETECT MOBILE DEVICE
         mS.detectDevice()
 
-        const tipo = document.getElementById("tipo").value
+        //const tipo = document.getElementById("tipo").value
 
 
         //Filtro
@@ -47,28 +47,47 @@
             order: '',
             fechaInicio: new Date(),
             fechaFin: new Date(),
+            checkBoxDate: true,
             pageSize: 50,
             pageIndex: 1,
             maxSize: 5,
             totalRecords: 0
         };
 
-        $scope.dataSearch.isCurrentDate = false;
-        $scope.dataSearch.checkBoxDate = true;
+        $scope.dataSearch.isCurrentDate = false; 
 
         $scope.dataSearch.isSearchCustomerProvider = false;
 
+        //Cuando la redieccion es del home - comprobantes error 
+        let params = new URLSearchParams(document.location.search);
+        // Imprime el valor
+        $scope.tipo =  params.get("tipo");
+
         $scope.getComprobantes = () => {
             try {
-                showLoader();
+               
                 $scope.comprobantes = [];
-                if (tipo > 0) {
-                    docElectSvc.getByStatus({ tipo:Number(tipo) }).then(response => {
+
+                if($scope.dataSearch.nroSecuencial){
+                    if(!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)){
+                        $scope.dataSearch.checkBoxDate = true;
+                        tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
+                        return
+                    }
+                    if(!($scope.dataSearch.identificacionReceptor)){
+                        $scope.dataSearch.checkBoxDate = false;
+                    }
+                } 
+
+
+                if ($scope.tipo > 0) {
+                    showLoader();
+                    docElectSvc.getByStatus({ tipo: Number($scope.tipo) }).then(response => {
                         if (!$scope.isMobile) {
                             document.getElementById('menu_toggle').click();
                         }
                         $scope.comprobantes = response;
-                        $scope.dataSearch.totalRecords = $scope.comprobantes.length>0? $scope.comprobantes[0].totalRecords:0
+                        $scope.dataSearch.totalRecords = $scope.comprobantes.length > 0 ? $scope.comprobantes[0].totalRecords : 0
                     })
                         .finally(() => hideLoader())
                         .catch(error => {
@@ -76,6 +95,7 @@
                             console.log(error)
                         })
                 } else {
+                    showLoader();                    
                     let dataSearch = {
                         tipo: 1,
                         codDoc: $scope.dataSearch.codDoc,
@@ -89,14 +109,15 @@
                         idUsuario: $scope.dataSearch.idUsuario,
                         pageIndex: $scope.dataSearch.pageIndex,
                         pageSize: $scope.dataSearch.pageSize,
+                        nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
                     }
 
                     docElectSvc.get(dataSearch).then(response => {
                         if (!$scope.isMobile) {
                             document.getElementById('menu_toggle').click();
                         }
-                        $scope.comprobantes = response;  
-                        $scope.dataSearch.totalRecords = $scope.comprobantes.length>0? $scope.comprobantes[0].totalRecords:0
+                        $scope.comprobantes = response;
+                        $scope.dataSearch.totalRecords = $scope.comprobantes.length > 0 ? $scope.comprobantes[0].totalRecords : 0
                     })
                         .finally(() => hideLoader())
                         .catch(error => {
@@ -175,7 +196,8 @@
         $scope.searchCustomerProvider = function (textSearch) {
             try {
                 $scope.dataSearch.identificacionReceptor = null;
-                $scope.dataSearch.isSearchCustomerProvider = false
+                $scope.dataSearch.isSearchCustomerProvider = false;
+
 
                 if (['01', '06', '04'].includes($scope.dataSearch.codDoc)) {
                     return commonSvc.clienteSearch(textSearch).then(response => {
@@ -243,7 +265,7 @@
             $scope.dataSearch.pageIndex = 1;
             $scope.getComprobantes();
         }
- 
+
         $scope.onSelectComprobante = (item) => {
             console.log(item)
         }

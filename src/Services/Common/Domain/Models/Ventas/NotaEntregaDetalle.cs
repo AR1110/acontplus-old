@@ -2,6 +2,7 @@
 {
     public class NotaEntregaDetalle
     {
+        public int orderIndex { get; set; }
         public long idNotaEntregaDetalle { get; set; }
         public long idNotaEntrega { get; set; }
         public int idArticulo { get; set; }

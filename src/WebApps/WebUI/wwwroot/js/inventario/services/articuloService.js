@@ -286,7 +286,7 @@
          * @returns 
          */
         service.search = function (query) {
-            return mainService.getData('get', url + 'Search?json=' + JSON.stringify(query), null, true).then(response => {
+            return mainService.getData('get', url + 'Search?json=' + encodeURIComponent(JSON.stringify(query)), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
