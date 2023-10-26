@@ -520,5 +520,11 @@
     "inputFiles": [
       "wwwroot/dist/js/custom.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/ventas/controllers/aprobacionDocumentoCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/ventas/controllers/aprobacionDocumentoCtrl.js"
+    ]
   }
 ]

@@ -328,20 +328,21 @@
 
         $scope.getReport = (item) => {
             try {
-
                 let format = 'pdf';
-                let dataParms = {
-                    id: item.idNotaCredito,
-                    codEstab: item.codEstab,
-                    codigo: 'RNCC',
-                    format,
-                }
-
                 const parameters = {
-                    dataParams: JSON.stringify(dataParms)
+                    dataParams: JSON.stringify({
+                        id: item.idNotaCredito,
+                        normalMethod: true,
+                    }),
+                    reportParams: JSON.stringify({
+                        codEstab: item.codEstab,
+                        codigo: 'RNCC',
+                        format,
+                    }),
+                    hasService: true,
                 }
 
-                commonSvc.getReportDynamic({ parameters, format })
+                commonSvc.getReport({ parameters, format })
             } catch (error) {
                 console.log(error)
             }
@@ -825,8 +826,8 @@
          * @param {string} textSearch 
          * @returns 
          */
-        $scope.clienteSearchDynamic = async function(textSearch) {
-            try { 
+        $scope.clienteSearchDynamic = async function (textSearch) {
+            try {
                 if (textSearch.length < 3) return;
                 let response = await commonSvc.clienteSearch(textSearch)
 
@@ -836,7 +837,7 @@
             }
         }
 
-        $scope.onKeyupSearchCliente = function() {
+        $scope.onKeyupSearchCliente = function () {
             if (!$scope.cliente.nombreFiscal) {
                 $scope.cliente = {};
                 $scope.data.idFactura = 0;
@@ -845,25 +846,25 @@
         }
 
 
-        $scope.onSelectedClienteChange = async function(item) {
+        $scope.onSelectedClienteChange = async function (item) {
             try {
-                if (item.tipoIdentificacion=='CF') {
-                   Swal.fire({
-                        icon:'warning',
+                if (item.tipoIdentificacion == 'CF') {
+                    Swal.fire({
+                        icon: 'warning',
                         html: '<p>A nombre de consumir final no se puede generar el Documento Nota de Crédito</p>'
                     })
                     return
                 }
-    
+
                 let dataCliente = await clienteSvc.findById(item.idCliente)
-                $scope.cliente = dataCliente; 
-                getInvoiceByCustomer(); 
+                $scope.cliente = dataCliente;
+                getInvoiceByCustomer();
             } catch (error) {
                 $scope.cliente = {};
-                console.log('ERROR AL OBTENER DATOS DEL CLIENTE', error) 
+                console.log('ERROR AL OBTENER DATOS DEL CLIENTE', error)
             }
         }
-    
+
         function getInvoiceByCustomer() {
             try {
                 showLoader();
@@ -871,24 +872,24 @@
                 $scope.data.idFactura = 0;
                 $scope.nroFactura = '';
                 $scope.gridOptions.data = [];
-    
-                let json = {  
-                    byCliente: $scope.cliente.idCliente, 
-                    codEstab: $scope.data.codEstab, 
+
+                let json = {
+                    byCliente: $scope.cliente.idCliente,
+                    codEstab: $scope.data.codEstab,
                 }
-    
-                facturaSvc.getForCreditNote(json).then(response => { 
-                        $scope.facturas = response.facturas || [];                  
-                }).catch(error=>{
+
+                facturaSvc.getForCreditNote(json).then(response => {
+                    $scope.facturas = response.facturas || [];
+                }).catch(error => {
                     hideLoader();
                     console.log(error)
-                }).finally(()=>hideLoader())
+                }).finally(() => hideLoader())
             } catch (error) {
                 console.log(error)
-            } 
+            }
         }
-    
-        $scope.onKeyupInvoice = function() {
+
+        $scope.onKeyupInvoice = function () {
             if (!$scope.nroFactura) {
                 $scope.data.idFactura = 0;
                 $scope.nroFactura = '';
@@ -896,23 +897,23 @@
                 // $scope.data = Object.assign(this.data, this.uiGridInvoice.getTotales());
             }
         }
-    
-        $scope.selectedInvoiceChange = function(item) {
+
+        $scope.selectedInvoiceChange = function (item) {
             $scope.data.idFactura = item.idDocumento;
             $scope.nroFactura = item.nroFactura;
             $scope.getDataFactura();
         }
-    
-        $scope.getDataFactura = async function() {
+
+        $scope.getDataFactura = async function () {
             try {
                 showLoader();
                 let response = await commonSvc.getDataTipoDocVenta({
                     id: $scope.data.idFactura,
                     codigoDocumento: COD_DOC_FV
                 })
-    
+
                 if (!response.isComplete) return
-    
+
                 $scope.gridOptions.data = response.detalleDocumento;
                 //$scope.data = Object.assign(this.data, this.uiGridInvoice.getTotales());
             } catch (error) {
@@ -921,7 +922,7 @@
                 hideLoader();
             }
         }
-    
+
 
         console.log('modal')
         $scope.closeModal = () => {
