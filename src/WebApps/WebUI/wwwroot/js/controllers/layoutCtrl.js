@@ -10,6 +10,13 @@ layoutCtrl.$inject = [
 function layoutCtrl($scope, $rootScope, $window) {
     'use strict';
 
+    $scope.logout = function () {
+        Object.keys(localStorage).forEach(function (key) {
+            localStorage.removeItem(key);
+        })
+        location.href = '/Login';
+    }
+
     if (JSON.parse(localStorage.getItem('userData')) === null) {
         $scope.logout();
         return
@@ -106,10 +113,5 @@ function layoutCtrl($scope, $rootScope, $window) {
             location.href = '/Login/Logout';
         }
     }
-    $scope.logout = function () {
-        Object.keys(localStorage).forEach(function (key) {
-            localStorage.removeItem(key);
-        })
-        location.href = '/Login';
-    }
+
 }
