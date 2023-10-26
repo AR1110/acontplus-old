@@ -422,7 +422,7 @@ DROP PROCEDURE IF EXISTS [dbo].[ASPComprobanteAutorizadoInsert]
 GO
 
 --
-DROP PROCEDURE Almacen.SubFamilia_Insert
+DROP PROCEDURE IF EXISTS Almacen.SubFamilia_Insert
 GO
 
 -- ALEXIS RAMIREZ -- FECHA 8/11/2023
@@ -440,4 +440,20 @@ GO
 
 --- RAMIREZ ALEXIS - FECHA: 10/9/2023
 DROP PROCEDURE IF EXISTS [dbo].[aspEntidadOption]
+GO
+
+-- RAMIREZ ALEXIS - FECHA :10/26/2023
+DROP PROCEDURE IF EXISTS [Ventas].[Factura_Get_v2]
+GO 
+
+DROP PROCEDURE IF EXISTS [Ventas].[Factura_Insert_v2]
+GO 
+
+DROP PROCEDURE IF EXISTS [Ventas].[Factura_Get_Data_Form]
+GO 
+
+DROP PROCEDURE IF EXISTS [Ventas].[NotaEntrega_SendEmail]
+GO 
+
+DROP PROCEDURE IF EXISTS [Ventas].[Proforma_SendEmail]
 GO
