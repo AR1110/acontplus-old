@@ -457,3 +457,12 @@ GO
 
 DROP PROCEDURE IF EXISTS [Ventas].[Proforma_SendEmail]
 GO
+
+DROP PROCEDURE IF EXISTS [Ventas].[NotaCredito_Get_Id]
+GO
+
+DROP PROCEDURE IF EXISTS [Ventas].[NotaCredito_Send_Email]
+GO
+
+DROP PROCEDURE IF EXISTS [ReporteIngresos].[CarteraCliente]
+GO
