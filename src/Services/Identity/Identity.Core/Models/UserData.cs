@@ -2,6 +2,7 @@
 {
     public class UserData
     {
+        public dynamic Actions { get; set; }
         public string BussinesName { get; set; }
         public string CodeRole { get; set; }
         public int CompanyId { get; set; }
