@@ -5,8 +5,7 @@
     //Variables Constantes
     const URL_TEMPLATE = '~/Areas/AprobacionDocumento/Pages/Shared/'
 
-    //Variable servicios
-    let mS = {};
+    //Variable servicios 
     let tS = {};
     let fS = {};
     let commonSvc = {};
@@ -40,8 +39,7 @@
 
     function aprobacionDocumentoCtrl($scope, $filter, $injector, modalSvc, decodeToken) {
 
-        //Injection Services
-        mS               = $injector.get('mainService');
+        //Injection Services 
         commonSvc        = $injector.get('commonService');
         clienteSvc       = $injector.get('clienteService');
         aprobacionDocSvc = $injector.get('aprobacionDocService');
@@ -569,7 +567,7 @@
         $scope.gridOptionsSelectedDocs.onRegisterApi = function (gridApi) {
             $scope.gridApi = gridApi;
             $scope.gridApi.core.notifyDataChange(uiGridConstants.dataChange.OPTIONS);
-            gridApi.selection.on.rowSelectionChanged($scope, (row) => {
+            gridApi.selection.on.rowSelectionChanged($scope, () => {
                 //------
             })
             gridApi.selection.on.rowSelectionChangedBatch($scope, function () { })
@@ -745,7 +743,7 @@
         //Inicio 
         $scope.initiload = function () {
             try {
-                let { establecimientos, ptosEmision, bodegas, configVenta, decimal, configDetalle, tipoIvas, tarifas, tiempoCreditos, articuloPredeterminado, clientePredeterminado, permisonVenta, permisoArticulo } = mainDataForm;
+                let { establecimientos, ptosEmision, bodegas, decimal, configDetalle, tipoIvas} = mainDataForm;
 
                 /**
                  * Establecimiento - Impuesto Tarifa 
@@ -1127,7 +1125,7 @@
                     editableCellTemplate: 'ui-grid/dropdownEditor',
                     enableCellEdit: true,
                     enableCellEditOnFocus: true,
-                    editDropdownOptionsFunction: function (rowEntity, colDef) {
+                    editDropdownOptionsFunction: function (rowEntity) {
                         return rowEntity.medidas.map(function (val) {
                             return {
                                 id: val.idMedida,
@@ -1153,7 +1151,7 @@
                     minWidth: '100',
                     cellFilter: 'mapTarifa:row.entity.articuloTarifas',
                     editableCellTemplate: 'ui-grid/dropdownEditor',
-                    editDropdownOptionsFunction: function (rowEntity, colDef) {
+                    editDropdownOptionsFunction: function (rowEntity) {
                         return rowEntity.articuloTarifas.map(val => ({
                             id: val.idTarifa,
                             value: val.tarifa + ' - $' + val.precioConIva
@@ -1280,7 +1278,7 @@
                 editableCellTemplate: 'ui-grid/dropdownEditor',
                 enableCellEdit: false,
                 enableCellEditOnFocus: false,
-                editDropdownOptionsFunction: function (rowEntity, colDef) {
+                editDropdownOptionsFunction: function (rowEntity) {
                     return rowEntity.medidas.map(function (val) {
                         return {
                             id: val.idMedida,
@@ -1329,7 +1327,7 @@
                 editableCellTemplate: 'ui-grid/dropdownEditor',
                 enableCellEdit: true,
                 enableCellEditOnFocus: true,
-                editDropdownOptionsFunction: (rowEntity, colDef) => {
+                editDropdownOptionsFunction: (rowEntity) => {
                     return rowEntity.articuloTarifas.map(val => ({
                         id: val.idTarifa,
                         value: val.tarifa + ' - $' + val.precioConIva
@@ -1657,7 +1655,7 @@
 
     function ModalAprobDocDetalleCtrl($scope, $uibModalInstance, $timeout, params) {
         let { docOrigenDesc, docDestinoDesc, data } = params
-        let { comprobante, cliente, detalles, historial, infoAdicionalDocumento, datosAdicionalesArticulo } = data;
+        let { comprobante, cliente, detalles, historial, } = data;
 
         $scope.docOrigenDesc = docOrigenDesc;
         $scope.docDestinoDesc = docDestinoDesc
@@ -1687,7 +1685,7 @@
                 }, 5);
             }
 
-            gridApi.edit.on.afterCellEdit($scope, (rowEntity, colDef, newValue, oldValue) => { })
+            gridApi.edit.on.afterCellEdit($scope, () => { })
         }
 
         initiload();
@@ -1695,7 +1693,7 @@
         async function initiload() {
             try {
                 showLoader();
-                let { establecimientos, ptosEmision, bodegas, configVenta, decimal, configDetalle, tipoIvas, tarifas, tiempoCreditos, articuloPredeterminado, clientePredeterminado, permisonVenta, permisoArticulo } = mainDataForm;
+                let { establecimientos, ptosEmision, bodegas, decimal, configDetalle, tipoIvas } = mainDataForm;
 
                 /**
                  * Establecimiento - Impuesto Tarifa 
@@ -1802,7 +1800,7 @@
                 enableCellEditOnFocus: false,
                 cellFilter: 'mapMedida:row.entity.medidas',
                 editableCellTemplate: 'ui-grid/dropdownEditor',
-                editDropdownOptionsFunction: (rowEntity, colDef) => rowEntity.medidas.map(val => ({
+                editDropdownOptionsFunction: (rowEntity) => rowEntity.medidas.map(val => ({
                     id: val.idMedida,
                     value: val.descripcion
                 })),
@@ -1830,7 +1828,7 @@
                 field: 'idTarifa',
                 cellFilter: 'mapTarifa:row.entity.articuloTarifas',
                 editableCellTemplate: 'ui-grid/dropdownEditor',
-                editDropdownOptionsFunction: (rowEntity, colDef) => {
+                editDropdownOptionsFunction: (rowEntity) => {
                     return rowEntity.articuloTarifas.map(val => ({
                         id: val.idTarifa,
                         value: val.tarifa + ' - $' + val.precioConIva
@@ -1940,7 +1938,7 @@
 
         $scope.showHistorialDocumento = function () {
             try {
-                let message = '', title = ''
+                let message = '';
 
                 message = `<table class="table table-bordered table-sm">
                                 <thead>
@@ -1986,7 +1984,7 @@
     function ModalAprobDocEditarCtrl($scope, $uibModalInstance, $timeout, params) {
 
         let { docOrigenDesc, docDestinoDesc, data } = params
-        let { comprobante, cliente, detalles, historial, infoAdicionalDocumento, datosAdicionalesArticulo } = data;
+        let { comprobante, cliente, detalles, datosAdicionalesArticulo } = data;
 
         $scope.docOrigenDesc = docOrigenDesc;
         $scope.docDestinoDesc = docDestinoDesc;
@@ -2061,7 +2059,7 @@
         $scope.initiload = async function() {
             try {
                 showLoader();
-                let { establecimientos, ptosEmision, bodegas, configVenta, decimal, configDetalle, tipoIvas, tarifas, tiempoCreditos, articuloPredeterminado, clientePredeterminado, permisoVenta, permisoArticulo } = mainDataForm;
+                let { establecimientos, ptosEmision, bodegas, decimal, configDetalle, tipoIvas, tarifas, permisoVenta } = mainDataForm;
 
                 /**
                  * Establecimiento - Impuesto Tarifa 
@@ -2205,7 +2203,7 @@
                 allowCellFocus: ventaDetailPermission.medida.update,
                 cellFilter: 'mapMedida:row.entity.medidas',
                 editableCellTemplate: 'ui-grid/dropdownEditor',
-                editDropdownOptionsFunction: (rowEntity, colDef) => rowEntity.medidas.map(val => ({
+                editDropdownOptionsFunction: (rowEntity) => rowEntity.medidas.map(val => ({
                     id: val.idMedida,
                     value: val.descripcion
                 })),
@@ -2233,7 +2231,7 @@
                 field: 'idTarifa',
                 cellFilter: 'mapTarifa:row.entity.articuloTarifas',
                 editableCellTemplate: 'ui-grid/dropdownEditor',
-                editDropdownOptionsFunction: (rowEntity, colDef) => {
+                editDropdownOptionsFunction: (rowEntity) => {
                     return rowEntity.articuloTarifas.map(val => ({
                         id: val.idTarifa,
                         value: val.tarifa + ' - $' + val.precioConIva
@@ -2563,7 +2561,7 @@
 
         
         $scope.resultModalAdicional = function(result) {
-            let {entity, historyDatosAdicionales} = result;
+            let {historyDatosAdicionales} = result;
             $scope.historyDatosAdicionales = historyDatosAdicionales;
         }
 
@@ -2667,7 +2665,7 @@
 
     function ModalApproveDocCtrl($scope, $uibModalInstance, $timeout, params) {
         let { docOrigenDesc, docDestinoDesc, data } = params
-        let { comprobante, cliente, detalles, historial, infoAdicionalDocumento, datosAdicionalesArticulo } = data;
+        let { comprobante, cliente, detalles, datosAdicionalesArticulo } = data;
 
         $scope.docOrigenDesc = docOrigenDesc;
         $scope.docDestinoDesc = docDestinoDesc;
@@ -2743,7 +2741,7 @@
         $scope.initiload = async function() {
             try {
                 showLoader();
-                let { establecimientos, ptosEmision, bodegas, configVenta, decimal, configDetalle, tipoIvas, tarifas, tiempoCreditos, articuloPredeterminado, clientePredeterminado, permisoVenta, permisoArticulo } = mainDataForm;
+                let { establecimientos, ptosEmision, bodegas, decimal, configDetalle, tipoIvas, tarifas, tiempoCreditos, permisoVenta } = mainDataForm;
 
 
                 /**
@@ -2895,7 +2893,7 @@
                     allowCellFocus: ventaDetailPermission.medida.update,
                     cellFilter: 'mapMedida:row.entity.medidas',
                     editableCellTemplate: 'ui-grid/dropdownEditor',
-                    editDropdownOptionsFunction: (rowEntity, colDef) => rowEntity.medidas.map(val => ({
+                    editDropdownOptionsFunction: (rowEntity) => rowEntity.medidas.map(val => ({
                         id: val.idMedida,
                         value: val.descripcion
                     })),
@@ -2923,7 +2921,7 @@
                     field: 'idTarifa',
                     cellFilter: 'mapTarifa:row.entity.articuloTarifas',
                     editableCellTemplate: 'ui-grid/dropdownEditor',
-                    editDropdownOptionsFunction: (rowEntity, colDef) => {
+                    editDropdownOptionsFunction: (rowEntity) => {
                         return rowEntity.articuloTarifas.map(val => ({
                             id: val.idTarifa,
                             value: val.tarifa + ' - $' + val.precioConIva
@@ -3352,7 +3350,7 @@
 
         
         $scope.resultModalAdicional = function(result) {
-            let {entity, historyDatosAdicionales} = result;
+            let {historyDatosAdicionales} = result;
             $scope.historyDatosAdicionales = historyDatosAdicionales;
         }
 
