@@ -146,7 +146,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity.Infrastructure", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity.Core", "Services\Identity\Identity.Core\Identity.Core.csproj", "{57FD8DA1-857C-4A8D-A26F-313103576A6D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Application", "Services\Common\Common.Application\Common.Application.csproj", "{AFAD16B5-E3A0-4F80-A619-0E919729A8F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Application", "Services\Common\Common.Application\Common.Application.csproj", "{AFAD16B5-E3A0-4F80-A619-0E919729A8F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

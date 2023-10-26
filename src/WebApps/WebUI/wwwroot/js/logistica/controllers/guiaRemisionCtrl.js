@@ -3,7 +3,7 @@
     'use strict';
 
      //Variables Constantes
-    const URL_TEMPLATE = '~/Areas/GuiaRemision/Pages/Shared/'
+    const URL_TEMPLATE = '~/Pages/GuiaRemision/Shared/'
 
     let guiaRemisionSvc = {};
     let commonSvc = {};
@@ -34,7 +34,8 @@
         ]
         $scope.dataSearch = {
             pageIndex: 1,
-            pageSize: 1000
+            pageSize: 50,
+            checkBoxDate: true
         };
 
         $scope.openModalNew = function() {
@@ -80,11 +81,13 @@
         $scope.onKeyupClienteSearchFiltro = function () {
             if (!$scope.modelTextSearch) {
                 $scope.dataSearch.byCliente = 0;
+                $scope.dataSearch.checkBoxDate = true;
             }
         }
 
         $scope.selectedClienteSearchFiltro = function (item) {
             $scope.dataSearch.byCliente = item.idCliente;
+            $scope.dataSearch.checkBoxDate = true;
             $scope.getGuiasRemision();
         }
 
@@ -131,31 +134,42 @@
 
         $scope.getGuiasRemision = function() {
             try {
+
+                if($scope.dataSearch.nroSecuencial){
+                    if(!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)){
+                        $scope.dataSearch.checkBoxDate = true;
+                        tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
+                        return
+                    }
+                    if(!($scope.dataSearch.byCliente>0)){
+                        $scope.dataSearch.checkBoxDate = false;
+                    }
+                } 
+
                 showLoader();
                 $scope.guiasRemision = [];
                 $scope.cloneGuiasRemision = [];
 
                 let query = {
-                    codEstab: $scope.dataSearch.codEstab,                 
-                    checkBoxCustomer: $scope.dataSearch.byCliente > 0,
-                    byCustomer: $scope.dataSearch.byCliente,
-                    checkBoxDate: true,
-                    checkBoxUsuario: $scope.dataSearch.byUsuario > 0,
-                    byUsuario: $scope.dataSearch.byUsuario,
-                    checkBoxStatus: $scope.dataSearch.codEstado ? true : false,
-                    codEstado: $scope.dataSearch.codEstado,
-                    dateStart: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
-                    dateEnd: fS.formatDateTimeZone($scope.dataSearch.fechaFin)
+                    tipo: 1,
+                    codEstab: $scope.dataSearch.codEstab, 
+                    idPuntoEmision: $scope.dataSearch.idPuntoEmision,                
+                    checkBoxDate: $scope.dataSearch.checkBoxDate ,                    
+                    idCliente: $scope.dataSearch.byCliente,
+                    codEstado: $scope.dataSearch.codEstado, 
+                    byUsuario: $scope.dataSearch.byUsuario, 
+                    fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
+                    fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
+                    secuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial) 
                 }
 
-                guiaRemisionSvc.getAll(query).then(response => {
-                    hideLoader();
+                guiaRemisionSvc.get(query).then(response => { 
                     $scope.guiasRemision = response;
                     $scope.cloneGuiasRemision = JSON.parse(JSON.stringify($scope.guiasRemision))
                 }).catch(error => {
                     hideLoader();
                     console.log(error)
-                })
+                }).finally(()=>hideLoader())
 
             } catch (error) {
                 hideLoader();
@@ -164,14 +178,36 @@
         }
         
         $scope.initiload  = function () {
-            commonSvc.getEstabAsign().then(response => {
-                establecimientos = response; //Se usara en el formulario de guia remision(add/update)
-                $scope.establecimientos = response;
-                $scope.dataSearch.codEstab = $scope.establecimientos.find(estab => (estab.predeterminado)).codEstab;
+            showLoader();
+            guiaRemisionSvc.get({tipo: 2}).then(response=>{
+                establecimientos = response.estabs;
+                $scope.establecimientos = response.estabs; 
+
+            if ($scope.establecimientos.length > 0) {
+                let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
+                $scope.puntosEmision = dataEstab.puntosEmision;
+                $scope.dataSearch.codEstab = dataEstab.codEstab;
+                $scope.dataSearch.idPuntoEmision = $scope.puntosEmision.find(pto => (pto.defaultPtoEmi)).idPuntoEmision;
                 $scope.getGuiasRemision();
+            }
             })
+            .catch(error=>{
+                console.log(error)
+            })
+            .finally(()=>hideLoader()) 
         }
         $scope.initiload();
+
+        $scope.estabFilter = function(){
+            let dataEstab = $scope.establecimientos.find(estab=>estab.codEstab===$scope.dataSearch.codEstab);
+            $scope.puntosEmision = dataEstab.puntosEmision;
+            if($scope.puntosEmision.length>0){
+                $scope.dataSearch.idPuntoEmision = $scope.puntosEmision.find(pto=>(pto.defaultPtoEmi)).idPuntoEmision;
+                $scope.getGuiasRemision();
+            }else{
+                fS.sweetAlert('warning', "No posee puntos de emisión asignadas!"); 
+            }
+        }
 
 
 
@@ -469,10 +505,8 @@
                   
                     $scope.infoAdicionalDocumento = infoAdicionalDocumento;
 
-                    let dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.data.codEstab)
-
-                    let resultsDataFormEstab = await commonSvc.getDataFormEstabAsig(dataEstab);    
-                    $scope.puntosEmision = resultsDataFormEstab[0];
+                    let dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.data.codEstab)                    
+                    $scope.puntosEmision = dataEstab.puntosEmision;
 
                     $scope.gridOptionsDetalle.data = detalleDocumento;
                     enumGridOptions()
@@ -482,15 +516,13 @@
                     $scope.titleModal = 'Guardar';
                     $scope.iconBtnSave = 'ti-save';
 
-                    let dataEstab = $scope.establecimientos.find(estab=>(estab.predeterminado));
-
-                    let resultsDataFormEstab = await commonSvc.getDataFormEstabAsig(dataEstab);
+                    let dataEstab = $scope.establecimientos.find(estab=>(estab.defaultEstab)); 
     
                     $scope.data.codEstab = dataEstab.codEstab;
                     $scope.dataClone.codEstab = dataEstab.codEstab;
     
-                    $scope.puntosEmision = resultsDataFormEstab[0];
-                    $scope.data.idPuntoEmision = $scope.puntosEmision.length > 0 ? $scope.puntosEmision[0].idPuntoEmision : 0;
+                    $scope.puntosEmision = dataEstab.puntosEmision;
+                    $scope.data.idPuntoEmision = $scope.puntosEmision.length > 0 ? $scope.puntosEmision.find(ptoEmi=>(ptoEmi.defaultPtoEmi)).idPuntoEmision : 0;
 
                 }
             } catch (error) {
@@ -526,14 +558,9 @@
                 if (isConfirmed) {
                     $scope.dataClone.codEstab = $scope.data.codEstab;
     
-                    const dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.data.codEstab);
-        
-                    //Obtenemos Puntos de Emision y Bodegas 
-                    let resultsDataFormEstab = await commonSvc.getDataFormEstabAsig(dataEstab);
-
-        
-                    $scope.puntosEmision = resultsDataFormEstab[0];
-                    $scope.data.idPuntoEmision = $scope.puntosEmision.length > 0 ? $scope.puntosEmision[0].idPuntoEmision : 0;
+                    const dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.data.codEstab);  
+                    $scope.puntosEmision = dataEstab.puntosEmision;
+                    $scope.data.idPuntoEmision = $scope.puntosEmision.length > 0 ? $scope.puntosEmision.find(ptoEmi=>(ptoEmi.defaultPtoEmi)).idPuntoEmision : 0;
                     $scope.$apply();
                 }else{
                     $scope.data.codEstab = $scope.dataClone.codEstab;
@@ -625,7 +652,7 @@
             try {
     
                 showLoader();
-                let {articulo,medidas} = item;
+                let {articulo} = item;
     
                 let entity = {};
 
@@ -758,7 +785,7 @@
                 if (!($scope.cliente.idCliente > 0)) {
                     tS.toastr('warning', 'Seleccione el Cliente');
                     return
-                };
+                }
         
                 if (!$scope.data.fechaInicio) {
                     tS.toastr('warning', 'Ingrese Fecha de Inicio');
@@ -823,7 +850,6 @@
                     if (!nroDocSecuencial) throw "NO SE GENERÓ CORRECTAMENTE EL NÚMERO SECUENCIAL";
                 }
 
-                        
                 const swalSave = Swal.mixin({
                     customClass: {
                         confirmButton: 'btn btn-success',

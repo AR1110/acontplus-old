@@ -2071,7 +2071,6 @@ export class CommonService {
                     fileCtrl = this.nombreModalLogistica.GUIA_REMISION.fileCtrl;
                     ctrl = this.nombreModalLogistica.GUIA_REMISION.controller;
                     template = this.nombreModalLogistica.GUIA_REMISION.template;
-
                     controller = (await import(fileCtrl))[ctrl];
 
                     response = await this.getDataGuiaRemision(id);
@@ -2082,9 +2081,7 @@ export class CommonService {
                     console.log(`Detalle del Documento No definido: ${codigoDocumento}`);
                     throw 'Detalle del Documento No definido'
             }
-
-
-
+ 
 
             this._modalSvc.openModalCustom({
                 controller,

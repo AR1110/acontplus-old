@@ -7,33 +7,73 @@
         let mS = $injector.get('mainService');
         let service = {};
 
-        service.getAll = function(query) {
+        service.get = function(query) {
             return mS.getData('get', url+ '?json=' + JSON.stringify(query), null, true).then(response=>{
                 if(response.code==='0'){
                     throw response
                 }
                 if(response.code==='1'){
-                    let guiasRemision = JSON.parse(response.payload) || [];
-                    return guiasRemision.map(item=>{
+                    let mainData = JSON.parse(response.payload) || [];
+
+                    if(query.tipo ===1){
+                        let guiasRemision = mainData[0]
+                        return guiasRemision.map(item=>{
+                            return {
+                                idGuiaRemision: item.idGuiaRemision,
+                                fechaEmision: item.fechaEmision,
+                                fechaInicio: item.fechaInicio,
+                                fechaFin: item.fechaFin,
+                                claveAcceso: item.claveAcceso,
+                                autorizada: item.autorizada,
+                                anulada: item.anulada,
+                                nroDoc: item.nroDoc,
+                                serieComprobante: item.nroDoc,
+                                cliente: item.cliente,
+                                correos: item.correos,
+                                nroFactura: item.nroFactura,
+                                transportista: item.transportista,
+                                estadoSri: item.estadoSri,
+                                usuario: item.usuario,
+                                style: item.style,
+                            }
+                        })
+                    }
+
+                    if(query.tipo===2){ 
+                        let tempEstabsAndPtosEmision = mainData[0];
+                        let estadosDoc = mainData[1];
+
+                        const estabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
+                            const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
+
+                            if (!existingItem) {
+                                acc.push({
+                                    idEstablecimiento: item.idEstablecimiento,
+                                    nombreComercial: item.nombreComercial,
+                                    codEstab: item.codEstab,
+                                    defaultEstab: item.defaultEstab,
+                                    puntosEmision: [{
+                                        idPuntoEmision: item.idPuntoEmision,
+                                        ptoEmi: item.ptoEmi, 
+                                        defaultPtoEmi: item.defaultPtoEmi
+                                    }]
+                                });
+                            } else {
+                                existingItem.puntosEmision.push({
+                                    idPuntoEmision: item.idPuntoEmision,
+                                    ptoEmi: item.ptoEmi,                                   
+                                    defaultPtoEmi: item.defaultPtoEmi
+                                });
+                            } 
+                            return acc;
+                        }, []);
+ 
+
                         return {
-                            idGuiaRemision: item.idGuiaRemision,
-                            fechaEmision: item.fechaEmision,
-                            fechaInicio: item.fechaInicio,
-                            fechaFin: item.fechaFin,
-                            claveAcceso: item.claveAcceso,
-                            autorizada: item.autorizada,
-                            anulada: item.anulada,
-                            nroDoc: item.nroDoc,
-                            serieComprobante: item.nroDoc,
-                            cliente: item.cliente,
-                            correos: item.correos,
-                            nroFactura: item.nroFactura,
-                            transportista: item.transportista,
-                            estadoSri: item.estadoSri,
-                            usuario: item.usuario,
-                            style: item.style,
+                            estabs,
+                            estadosDoc
                         }
-                    })
+                    }
                 }
             }).catch(error=>{
                 console.log(error)
