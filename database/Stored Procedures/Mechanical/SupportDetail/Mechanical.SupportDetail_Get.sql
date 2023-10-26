@@ -70,6 +70,7 @@ BEGIN
                   ,ar.precioSinSubsidio
                   ,ar.codigo            AS codigoArticulo
                   ,ar.codigoAuxiliar    AS codigoAuxiliar
+                  ,0                    AS valorDescuento
             FROM Mechanical.SupportDetail md WITH (NOLOCK)
             INNER JOIN dbo.Bodega             bo WITH (NOLOCK) ON bo.idBodega   = md.BodegaId
             INNER JOIN Inventario.v_Articulo             ar WITH (NOLOCK) ON ar.idArticulo = md.ArticuloId
