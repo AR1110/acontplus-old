@@ -186,8 +186,7 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
 
     $scope.initiload = () => {
         showLoader();
-        proformaSvc.get({ tipo: 3 }).then(response => {
-            console.log(response)
+        proformaSvc.get({ tipo: 3 }).then(response => { 
             $scope.establecimientos = response.estabs; 
 
             if ($scope.establecimientos.length > 0) {

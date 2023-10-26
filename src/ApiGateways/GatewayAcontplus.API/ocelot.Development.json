@@ -1225,7 +1225,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44395
+          "Port": 7041
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",
