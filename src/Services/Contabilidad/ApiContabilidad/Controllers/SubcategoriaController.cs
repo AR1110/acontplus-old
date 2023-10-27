@@ -33,7 +33,7 @@ namespace ApiContabilidad.Controllers
                 if (result == null) { return NoContent(); };
                 return Ok(result);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return BadRequest("Error al traer las subcategorias");
             }
@@ -53,7 +53,7 @@ namespace ApiContabilidad.Controllers
             //{
             //    _  = ex.Message;
             //}
-            catch (Exception ex)
+            catch (Exception)
             {
                 return BadRequest();
             }

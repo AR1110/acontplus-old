@@ -1,8 +1,8 @@
 ﻿using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
+using Common.Core.Models;
 using Domain.Models.Tesoreria;
 using Domain.ViewModels.GestionFinanciera;
-using Lib.Common.Api;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.GestionFinanciera

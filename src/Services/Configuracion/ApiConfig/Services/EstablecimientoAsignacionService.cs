@@ -1,6 +1,6 @@
 ﻿using ApiConfig.Interfaces;
 using Common.Core.Interfaces;
-using Lib.Common;
+using Common.Core.Utils;
 
 namespace ApiConfig.Services
 {
@@ -17,7 +17,7 @@ namespace ApiConfig.Services
             var dt = await _repository.GetDataTableAsync("Config.Estab_Asig_Get", parameters);
             if (!DataValidation.DataTableIsNull(dt))
             {
-                return Converters.DataTableToJSON(dt);
+                return DataConverters.DataTableToJSON(dt);
             }
             else
             {

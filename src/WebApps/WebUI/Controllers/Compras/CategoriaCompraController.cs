@@ -1,6 +1,6 @@
-﻿using DataAccess.Compras;
+﻿using Common.Core.Models;
+using DataAccess.Compras;
 using Domain.Models.Compras;
-using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Compras

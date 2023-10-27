@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Lib.Common.Enums
+namespace Common.Core.Enums
 {
     public enum SriDocument
     {

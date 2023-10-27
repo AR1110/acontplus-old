@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Lib.Common.DbUtils
+namespace Common.Core.Utils
 {
     public static class SqlStringParam
     {

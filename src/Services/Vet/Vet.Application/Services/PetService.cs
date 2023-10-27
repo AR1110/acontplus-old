@@ -1,7 +1,6 @@
 ﻿using Common.Core.Interfaces;
-using Common.Infrastructure.Repository;
-using Lib.Common;
-using Lib.Common.Api;
+using Common.Core.Models;
+using Common.Core.Utils;
 using Microsoft.EntityFrameworkCore;
 using Vet.Core.Entities;
 using Vet.Core.Interfaces;
@@ -29,7 +28,7 @@ namespace Vet.Application.Services
             }
             else
             {
-                _response.Create(code: "1", payload: Converters.DataTableToJSON(dt));
+                _response.Create(code: "1", payload: DataConverters.DataTableToJSON(dt));
             }
             return _response;
         }
@@ -65,7 +64,7 @@ namespace Vet.Application.Services
             }
             else
             {
-                _response.Create(code: "1", payload: Converters.DataTableToJSON(dt));
+                _response.Create(code: "1", payload: DataConverters.DataTableToJSON(dt));
             }
             return _response;
         }

@@ -1,7 +1,7 @@
-﻿using DataAccess;
+﻿using Common.Core.Models;
+using Common.Core.Utils;
+using DataAccess;
 using Domain.Models.Config;
-using Lib.Common.Api;
-using Lib.Common.DbUtils; 
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -45,7 +45,7 @@ namespace ApiConfig.Controllers.Sri
             }
             return Ok(_response);
         }
-         
+
 
 
         [HttpPost]
@@ -60,7 +60,7 @@ namespace ApiConfig.Controllers.Sri
                 _db.AddDynamicParam("id", idUsuarioRol);
                 _db.AddDynamicParam("id", data.idPtoEmi_Asig);
                 _db.AddDynamicParam("codEstab_Asig", data.codEstab_Asig);
-                _db.AddDynamicParam("idPuntoEmision", data.idPuntoEmision);                
+                _db.AddDynamicParam("idPuntoEmision", data.idPuntoEmision);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -83,8 +83,8 @@ namespace ApiConfig.Controllers.Sri
             {
                 await _db.SPExecute("Config.PtoEmi_Asig_Update", true);
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("id", id); 
-                _db.AddDynamicParam("predeterminado", true); 
+                _db.AddDynamicParam("id", id);
+                _db.AddDynamicParam("predeterminado", true);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -100,6 +100,6 @@ namespace ApiConfig.Controllers.Sri
         }
 
 
-        
+
     }
 }

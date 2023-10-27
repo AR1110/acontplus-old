@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using System.Xml;
 
-namespace Lib.Common
+namespace Common.Core.Utils
 {
     public static class DataValidation
     {
@@ -12,7 +12,7 @@ namespace Lib.Common
         }
         public static bool DataTableIsNull(DataTable dt)
         {
-            bool isNull = true;
+            var isNull = true;
             if (dt != null && dt.Rows.Count > 0)
             {
                 isNull = false;
@@ -23,7 +23,7 @@ namespace Lib.Common
         {
             try
             {
-                XmlDocument xmlDoc = new XmlDocument();
+                var xmlDoc = new XmlDocument();
                 xmlDoc.LoadXml(input);
                 return true;
             }

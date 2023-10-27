@@ -1,4 +1,4 @@
-﻿namespace Lib.Common.Enums
+﻿namespace Common.Core.Enums
 {
     public enum Env
     {

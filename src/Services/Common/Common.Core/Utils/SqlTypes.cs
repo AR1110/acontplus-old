@@ -1,12 +1,12 @@
 ﻿using System.Data;
 
-namespace Lib.Common.DbUtils
+namespace Common.Core.Utils
 {
     public static class SqlTypes
     {
         public static SqlDbType GetDbType(object obj)
         {
-            Type type = obj.GetType();
+            var type = obj.GetType();
             switch (type.Name)
             {
                 case "Int32":

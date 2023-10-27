@@ -1,7 +1,7 @@
 ﻿using System.Data;
-using System.Data.SqlClient;
-using Lib.Common;
-using Lib.Common.Api;
+using Microsoft.Data.SqlClient;
+using Common.Core.Models;
+using Common.Core.Utils;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Sri
@@ -32,7 +32,7 @@ namespace DataAccess.Sri
                     if (dt.Rows.Count > 0)
                     {
                         _gr.id = "1";
-                        _gr.data = Converters.DataTableToJSON(dt);
+                        _gr.data = DataConverters.DataTableToJSON(dt);
                     }
                 }
             }

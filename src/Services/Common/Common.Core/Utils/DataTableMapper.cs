@@ -1,6 +1,6 @@
 using System.Data;
 
-namespace Lib.Common
+namespace Common.Core.Utils
 {
     public class DataTableMapper
     {

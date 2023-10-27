@@ -38,7 +38,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
 		<ProjectReference Include="..\..\Common\DataAccess\DataAccess.csproj" />
-		<ProjectReference Include="..\..\Common\Lib.Common\Lib.Common.csproj" />
 		<ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
 		<ProjectReference Include="..\Contabilidad.Application\Contabilidad.Application.csproj" />
 		<ProjectReference Include="..\Contabilidad.Infrastructure\Contabilidad.Infrastructure.csproj" />

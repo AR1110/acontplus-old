@@ -2,13 +2,11 @@
 using System.Text;
 using Common.Core.Interfaces;
 using Common.Core.Models;
+using Common.Core.Utils;
 using Common.Reports.Enums;
-using Lib.Common;
-using Lib.Common.Dtos;
-using Lib.Common.Utils;
+using Common.Reports.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Reporting.NETCore;
-using Newtonsoft.Json;
 
 namespace Common.Reports.Services
 {
@@ -92,74 +90,6 @@ namespace Common.Reports.Services
                 return lr.Render(dsParams.Tables[0].Rows[0]["format"].ToString(), null, out _, out _, out _, out _, out _);
             }
         }
-        public byte[] GetDynamicReport(dynamic data, ref string mimeType, ref string fileName)
-        {
-            ApiReportParamsDto parameters = RdlcHelpers.ConverToModelReportParams(data);
-            string format = "", mimeTypeImg = "";
-            using (var lr = new LocalReport())
-            {
-                foreach (var item in parameters.rdlcParams)
-                {
-                    if (item.Key == "reportPath")
-                    {
-                        //lr.ReportPath = _configuration.GetSection("dirReports").Value + item.Value.ToString();
-                        //var paths = item.Value.ToString().Split("/");
-                        //paths = paths.Where(s => !string.IsNullOrEmpty(s)).ToArray();
-
-                        //switch (paths.Length)
-                        //{
-                        //    case 1:
-                        //        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0])));
-                        //        break;
-                        //    case 2:
-                        //        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Reports", paths[0], paths[1])));
-                        //        break;
-                        //    default:
-                        //        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(_configuration.GetSection("dirReports").Value + item.Value.ToString()));
-                        //        break;
-                        //}
-                        var path = Directory.GetCurrentDirectory() + "\\Reports\\" + item.Value.ToString();
-                        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(path));
-                    }
-                    if (item.Key == "format")
-                    {
-                        format = item.Value;
-                    }
-                    if (item.Key == "fileName")
-                    {
-                        fileName = item.Value;
-                    }
-                    if (item.Key == "mimeType")
-                    {
-                        mimeTypeImg = item.Value;
-                    }
-                }
-                if (parameters.dataSources != null)
-                {
-                    foreach (var item in parameters.dataSources)
-                    {
-                        lr.DataSources.Add(new ReportDataSource(item.Key, Converters.JsonToDataTable(JsonConvert.SerializeObject(item.Value))));
-                    }
-                }
-
-                //Recorremos los parametros del reporte como logos, textos, etc
-                foreach (var item in parameters.rdlcParams)
-                {
-                    if (item.Key == "imagen")
-                    {
-                        var array = Convert.FromBase64String(item.Value);
-                        lr.SetParameters(new ReportParameter("logo", FileExtensions.GetBase64FromByte(array)));
-                        lr.SetParameters(new ReportParameter("mimeType", mimeTypeImg));
-                    }
-                    if (item.Key == "claveAcceso")
-                    {
-                        lr.SetParameters(new ReportParameter("barcode", Convert.ToBase64String(BarcodeGen.Create(item.Value), 0, BarcodeGen.Create(item.Value).Length)));
-                        lr.SetParameters(new ReportParameter("mimeTypeBarcode", "image/png"));
-                    }
-                }
-                return lr.Render(format, null, out mimeType, out _, out _, out _, out _);
-            }
-        }
         public ReportResponse GetReportNew(DataSet ds)
         {
             if (!ds.Tables.Contains("RdlcProps") | !ds.Tables.Contains("RdlcDataSources"))
@@ -174,7 +104,7 @@ namespace Common.Reports.Services
 
             using (LocalReport lr = new LocalReport())
             {
-                var rdlcProps = DataTableMapper.BindData<RdlcPropsDto>(ds.Tables["RdlcProps"]);
+                var rdlcProps = DataTableMapper.BindData<RdlcProps>(ds.Tables["RdlcProps"]);
                 string path = Path.Combine(Directory.GetCurrentDirectory(), rdlcProps.ReportPath);
                 lr.ReportPath = path;
 

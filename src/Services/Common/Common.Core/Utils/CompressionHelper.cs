@@ -1,6 +1,6 @@
 ﻿using System.IO.Compression;
 
-namespace Lib.Common
+namespace Common.Core.Utils
 {
     public static class CompressionHelper
     {
@@ -9,9 +9,9 @@ namespace Lib.Common
             byte[] compressArray = null;
             try
             {
-                using (MemoryStream memoryStream = new MemoryStream())
+                using (var memoryStream = new MemoryStream())
                 {
-                    using (DeflateStream deflateStream = new DeflateStream(memoryStream, CompressionMode.Compress))
+                    using (var deflateStream = new DeflateStream(memoryStream, CompressionMode.Compress))
                     {
                         deflateStream.Write(data, 0, data.Length);
                     }
@@ -30,10 +30,10 @@ namespace Lib.Common
             byte[] decompressedArray = null;
             try
             {
-                MemoryStream decompressedStream = new MemoryStream();
-                using (MemoryStream compressStream = new MemoryStream(data))
+                var decompressedStream = new MemoryStream();
+                using (var compressStream = new MemoryStream(data))
                 {
-                    DeflateStream deflateStream = new DeflateStream(compressStream, CompressionMode.Decompress);
+                    var deflateStream = new DeflateStream(compressStream, CompressionMode.Decompress);
                     deflateStream.CopyTo(decompressedStream);
                 }
                 decompressedArray = decompressedStream.ToArray();

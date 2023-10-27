@@ -1,6 +1,6 @@
-﻿using Lib.Common.Enums;
+﻿using Common.Core.Enums;
 
-namespace Lib.Common
+namespace Common.Core.Utils
 {
     public static class EnvHelper
     {

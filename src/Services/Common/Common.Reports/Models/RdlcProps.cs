@@ -1,6 +1,6 @@
-﻿namespace Lib.Common.Dtos
+﻿namespace Common.Reports.Models
 {
-    public class RdlcPropsDto
+    public class RdlcProps
     {
         public string ReportPath { get; set; }
         public string ReportName { get; set; }

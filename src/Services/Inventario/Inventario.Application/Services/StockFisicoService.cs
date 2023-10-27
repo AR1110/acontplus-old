@@ -1,9 +1,8 @@
 ﻿using System.Data;
 using Common.Core.Interfaces;
-using Common.Infrastructure.Repository;
+using Common.Core.Models;
+using Common.Core.Utils;
 using Inventario.Core.Interfaces;
-using Lib.Common;
-using Lib.Common.Api;
 
 namespace Inventario.Application.Services
 {
@@ -30,14 +29,14 @@ namespace Inventario.Application.Services
             }
             else
             {
-                return Converters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJSON(ds);
             }
         }
         public async Task<string> AddAsync(ApiRequest request)
         {
             var parameters = new Dictionary<string, object>{
                 {"userRoleId", request.UserRoleId},
-                {"json", Converters.SerializeDictionary(request.Data)}
+                {"json", DataConverters.SerializeDictionary(request.Data)}
             };
             return await _repository.SPExecuteAsync("Inventario.StockFisico_Insert", parameters);
         }
@@ -49,7 +48,7 @@ namespace Inventario.Application.Services
             var parameters = new Dictionary<string, object>{
                 {"userRoleId", request.UserRoleId},
                 {"id", id},
-                {"json", Converters.SerializeDictionary(request.Data)}
+                {"json", DataConverters.SerializeDictionary(request.Data)}
             };
             return await _repository.SPExecuteAsync("Inventario.StockFisico_Update", request.Data);
         }

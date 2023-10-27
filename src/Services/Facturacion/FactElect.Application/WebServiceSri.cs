@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Xml;
+using Common.Core.Utils;
 using FactElect.Core.Models;
-using Lib.Common;
 using Microsoft.Extensions.Configuration;
 
 namespace FactElect.Application
@@ -153,7 +153,7 @@ namespace FactElect.Application
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 _response.estado = "ERROR";
                 _response.message = "SRI no se encuentra en línea";

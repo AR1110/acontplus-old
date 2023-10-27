@@ -1,6 +1,5 @@
 ﻿using Common.Core.Interfaces;
-using Common.Infrastructure.Repository;
-using Lib.Common;
+using Common.Core.Utils;
 using TechnicalSupport.Core.Interfaces;
 
 namespace TechnicalSupport.Application.Services
@@ -21,7 +20,7 @@ namespace TechnicalSupport.Application.Services
             }
             else
             {
-                return Converters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJSON(ds);
             }
         }
     }

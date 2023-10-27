@@ -3,13 +3,13 @@ using System.Data;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Lib.Common
+namespace Common.Core.Utils
 {
-    public static class Converters
+    public static class DataConverters
     {
         public static string DataTableToJSON(DataTable table)
         {
-            DefaultContractResolver contractResolver = new DefaultContractResolver
+            var contractResolver = new DefaultContractResolver
             {
                 NamingStrategy = new CamelCaseNamingStrategy()
             };
@@ -18,14 +18,14 @@ namespace Lib.Common
                 ContractResolver = contractResolver,
                 Formatting = Formatting.Indented
             };
-            string JSONString = JsonConvert.SerializeObject(table, options);
+            var JSONString = JsonConvert.SerializeObject(table, options);
             return JSONString;
         }
         public static object DataSetToJSON(DataSet ds, bool oldConverter = false)
         {
             if (oldConverter)
             {
-                ArrayList root = new ArrayList();
+                var root = new ArrayList();
                 List<Dictionary<string, object>> table;
                 Dictionary<string, object> data;
 
@@ -45,7 +45,7 @@ namespace Lib.Common
                 }
                 return JsonConvert.SerializeObject(root);
             }
-            DefaultContractResolver contractResolver = new DefaultContractResolver
+            var contractResolver = new DefaultContractResolver
             {
                 NamingStrategy = new CamelCaseNamingStrategy()
             };
@@ -58,7 +58,7 @@ namespace Lib.Common
         }
         public static DataTable JsonToDataTable(string json)
         {
-            DataTable dt = JsonConvert.DeserializeObject(json, (typeof(DataTable))) as DataTable;
+            var dt = JsonConvert.DeserializeObject(json, typeof(DataTable)) as DataTable;
             return dt;
         }
         public static string SerializeDictionary(Dictionary<string, object> data)
@@ -69,7 +69,7 @@ namespace Lib.Common
             //    WriteIndented = true // Optional: makes the output formatted for readability
             //};
             //var result = System.Text.Json.JsonSerializer.Serialize(data, options);
-            DefaultContractResolver contractResolver = new DefaultContractResolver
+            var contractResolver = new DefaultContractResolver
             {
                 NamingStrategy = new CamelCaseNamingStrategy()
             };
@@ -79,7 +79,7 @@ namespace Lib.Common
                 ContractResolver = contractResolver,
                 Formatting = Formatting.Indented
             };
-            string json = JsonConvert.SerializeObject(data, options);
+            var json = JsonConvert.SerializeObject(data, options);
             return json;
         }
 

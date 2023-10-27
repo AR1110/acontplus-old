@@ -54,32 +54,33 @@ BEGIN
 	IF(@codEstab IS NULL OR LEN(LTRIM(RTRIM(@codEstab))) = 0)
 		BEGIN
 		print 'yes'
-			SET @codEstab = (selecT TOP 1 codEstab FROM Config.Estab_Asig WHERE idUsuarioRol = @idUsuarioRol and predeterminado = 1) 
+			SET @codEstab = (selecT TOP 1 codEstab FROM Config.Estab_Asig WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol and predeterminado = 1) 
 		END
 			print @codestab
 
-	SELECT @imagen = imagen, @mimeType = mimeType FROM Config.Estab_Logo WHERE codEstab = @codEstab AND estado = 1
+	SELECT @imagen = imagen, @mimeType = mimeType FROM Config.Estab_Logo WITH (NOLOCK) WHERE codEstab = @codEstab AND estado = 1
 	
-	IF NOT EXISTS (SELECT 1 FROM Config.Reporte WHERE codigo = @codigo)
+	IF NOT EXISTS (SELECT 1 FROM Config.Reporte WITH (NOLOCK) WHERE codigo = @codigo)
 		BEGIN
 			SELECT '0','No existen datos para este reporte',''
 			RETURN
 		END
 
+    SET @fileName = (SELECT nombreReporte FROM Config.Reporte  WITH (NOLOCK) WHERE codigo = @codigo)
 	IF @format = 'pdf'
 		BEGIN
-			SET @fileName = (SELECT nombreReporte + '.pdf' FROM Config.Reporte WHERE codigo = @codigo)
+			SET @fileName = @fileName + '.pdf' 
 			--SET @contentType = 'application/pdf';
 		END
 	IF @format = 'excel'
 		BEGIN
 			SET @format = 'EXCELOPENXML'
-			SET @fileName = (SELECT nombreReporte + '.xlsx' FROM Config.Reporte WHERE codigo = @codigo)
+			SET @fileName = @fileName+ '.xlsx'
 			--SET @contentType = 'application/vnd.ms-excel';
 		END
 	IF @format = 'word'
 		BEGIN
-			SET @fileName = (SELECT nombreReporte + '.doc' FROM Config.Reporte WHERE codigo = @codigo)
+			SET @fileName = @fileName + '.doc'
 			--SET @contentType = 'application/msword';
 		END
 
@@ -91,14 +92,14 @@ BEGIN
 	,storedProcedure 
 	,LTRIM(RTRIM(@fileName)) as 'fileName'
 	,ISNULL(@hasParams, 1) hasParams
-	FROM Config.Reporte r
+	FROM Config.Reporte r WITH (NOLOCK)
 	WHERE codigo = @codigo
 
 	--DATASOURCES
 	SELECT rd.position
 	,rd.dataSource
-	FROM Config.ReporteDataSource rd 
-	INNER JOIN Config.Reporte r ON r.idReporte = rd.idReporte
+	FROM Config.ReporteDataSource rd WITH (NOLOCK)
+	INNER JOIN Config.Reporte r WITH (NOLOCK) ON r.idReporte = rd.idReporte
 	WHERE codigo = @codigo
 	
 	DECLARE @totalParams INT = 2 --DEFAULT PARAMS

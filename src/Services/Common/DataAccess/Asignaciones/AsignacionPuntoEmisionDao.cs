@@ -1,8 +1,8 @@
 ﻿using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
+using Common.Core.Models;
+using Common.Core.Utils;
 using Domain.Models.Administracion;
-using Lib.Common;
-using Lib.Common.Api;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Asignaciones
@@ -35,7 +35,7 @@ namespace DataAccess.Asignaciones
                         if (dt.Rows.Count > 0)
                         {
                             _response.id = "1";
-                            _response.data = Converters.DataTableToJSON(dt);
+                            _response.data = DataConverters.DataTableToJSON(dt);
                         }
                     }
                 }

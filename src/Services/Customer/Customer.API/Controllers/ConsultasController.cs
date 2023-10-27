@@ -1,9 +1,9 @@
 ﻿using System.Data;
 using System.Net;
+using Common.Core.Utils;
 using Customer.API.Data;
 using Customer.API.Dtos;
 using Customer.API.Services;
-using Lib.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;

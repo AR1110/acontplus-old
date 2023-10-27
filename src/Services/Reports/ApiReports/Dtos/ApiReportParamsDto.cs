@@ -1,4 +1,4 @@
-﻿namespace Lib.Common.Dtos
+﻿namespace ApiReports.Dtos
 {
     public class ApiReportParamsDto
     {

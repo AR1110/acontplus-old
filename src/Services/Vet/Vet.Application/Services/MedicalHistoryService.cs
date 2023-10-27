@@ -1,7 +1,6 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Models;
-using Lib.Common;
-using Lib.Common.Api;
+using Common.Core.Utils;
 using Vet.Core.Interfaces;
 
 namespace Vet.Application.Services
@@ -29,7 +28,7 @@ namespace Vet.Application.Services
             }
             else
             {
-                _response.Create(code: "1", payload: Converters.DataTableToJSON(dt));
+                _response.Create(code: "1", payload: DataConverters.DataTableToJSON(dt));
             }
             return _response;
         }
@@ -47,7 +46,7 @@ namespace Vet.Application.Services
             }
             else
             {
-                _response.Create(code: "1", payload: Converters.DataSetToJSON(ds));
+                _response.Create(code: "1", payload: DataConverters.DataSetToJSON(ds));
             }
             return _response;
         }
