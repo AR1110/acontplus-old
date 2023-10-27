@@ -623,9 +623,7 @@ app.filter('mapBodega', () => {
             [curr.idBodega]: curr.descripcion
         }), {
             0: 'Seleccionar bodega'
-        });
-        console.log(result)
-        console.log(idBodega, bodegas)
+        }); 
         return !idBodega ? result[0] : result[idBodega];
     };
 });
