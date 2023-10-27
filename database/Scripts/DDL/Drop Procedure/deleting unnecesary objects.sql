@@ -482,3 +482,6 @@ GO
 
 DROP PROCEDURE IF EXISTS [ReporteIngresos].[CarteraCliente]
 GO
+
+DROP PROCEDURE IF EXISTS [Reporte].[Management_Get_To_Print]
+GO
