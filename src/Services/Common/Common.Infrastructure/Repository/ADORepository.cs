@@ -57,7 +57,7 @@ namespace Common.Infrastructure.Repository
             return dt;
         }
 
-        public async Task<DataSet> GetDataSetAsync(string spName, Dictionary<string, object> parameters)
+        public async Task<DataSet> GetDataSetAsync(string spName, Dictionary<string, object> parameters, bool oldSp)
         {
             DataSet ds = null;
             var _context = _contexts.GetContext(_configuration["ContextName"]);
@@ -79,7 +79,10 @@ namespace Common.Infrastructure.Repository
                     }
 
                     string outParam = "@tableNames";
-                    AddSqlParameterOut(cmd, outParam, SqlDbType.VarChar, 500);
+                    if (!oldSp)
+                    {
+                        AddSqlParameterOut(cmd, outParam, SqlDbType.VarChar, 500);
+                    }
 
                     cmd.CommandType = CommandType.StoredProcedure;
                     if (!wasOpen) await _context.Database.OpenConnectionAsync();
@@ -90,11 +93,14 @@ namespace Common.Infrastructure.Repository
                         adapter.Fill(ds);
                     }
 
-                    string[] tableNames = GetParameter(cmd, outParam).ToString().Split(',');
-
-                    for (int i = 0; i < tableNames.Length; i++)
+                    if (!oldSp)
                     {
-                        ds.Tables[i].TableName = tableNames[i];
+                        string[] tableNames = GetParameter(cmd, outParam).ToString().Split(',');
+
+                        for (int i = 0; i < tableNames.Length; i++)
+                        {
+                            ds.Tables[i].TableName = tableNames[i];
+                        }
                     }
                 }
                 finally

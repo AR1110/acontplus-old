@@ -17,7 +17,7 @@ namespace Restaurant.API.Extensions
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             //
-            services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IRdlcReportService, RdlcReportService>();
             services.AddScoped<IRecipe, RecipeService>();
             services.AddScoped<IAppTableService, AppTableService>();
             services.AddScoped<IMenuService, MenuService>();

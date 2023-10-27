@@ -10,14 +10,14 @@ using Microsoft.Reporting.NETCore;
 
 namespace Common.Reports.Services
 {
-    public class ReportService : IReportService
+    public class RdlcReportService : IRdlcReportService
     {
         private readonly IConfiguration _configuration;
-        public ReportService(IConfiguration configuration)
+        public RdlcReportService(IConfiguration configuration)
         {
             _configuration = configuration;
         }
-        public byte[] GetReport(DataSet dsParams, DataSet ds, bool fromService = false)
+        public byte[] GetCustomReport(DataSet dsParams, DataSet ds, bool fromService = false)
         {
             using (var lr = new LocalReport())
             {
@@ -90,7 +90,7 @@ namespace Common.Reports.Services
                 return lr.Render(dsParams.Tables[0].Rows[0]["format"].ToString(), null, out _, out _, out _, out _, out _);
             }
         }
-        public ReportResponse GetReportNew(DataSet ds)
+        public ReportResponse GetDynamicReport(DataSet ds)
         {
             if (!ds.Tables.Contains("RdlcProps") | !ds.Tables.Contains("RdlcDataSources"))
             {

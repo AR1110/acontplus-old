@@ -1,27 +1,27 @@
 ﻿using System.Data;
-using ApiReports.Dtos;
 using Common.Core.Interfaces;
 using Common.Core.Models;
 using Common.Core.Utils;
-using DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
+using Reports.API.Dtos;
+using Reports.API.Interfaces;
 using Services.Common;
 using Services.Common.Logs;
 
-namespace ApiReports.Controllers
+namespace Reports.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class ReporteController : ControllerBase
-    {
-        private readonly IConfiguration _configuration;
-        private readonly IReportService _report;
+    { 
+        private readonly IReportService _reportService;
+        private readonly IRdlcReportService _rdlcreport;
         private readonly LogWriter _log;
-        public ReporteController(IConfiguration configuration, IReportService report, LogWriter log)
+        public ReporteController(IReportService reportService, IRdlcReportService report, LogWriter log)
         {
-            _configuration = configuration;
-            _report = report;
+            _reportService = reportService;
+            _rdlcreport = report;
             _log = log;
         }
         //method for backend request to db
@@ -35,36 +35,41 @@ namespace ApiReports.Controllers
             {
                 DataSet dsParams = null;
                 DataSet ds = null;
-                int idUsuarioRol = User.GetUserRoleId();
+                var idUsuarioRol = User.GetUserRoleId();
 
-                using (DbAccess _db = new DbAccess(_configuration))
+                dsParams = await _reportService.GetParamsAsync(new Dictionary<string, object> { { "json", SqlStringParam.Sanitize(data.reportParams) } });
+
+                if (dsParams.Tables[0].Rows.Count == 0)
                 {
-                    await _db.SPExecute("Reporte.Report_Get");
-                    _db.AddDynamicParam("json", SqlStringParam.Sanitize(data.reportParams));
-                    dsParams = _db.GetDataSet();
+                    return BadRequest("Can't get report params");
                 }
-                using (DbAccess _db = new DbAccess(_configuration))
+
+                var dataParams = new Dictionary<string, object>();
+                if (!data.hasService)
                 {
-                    await _db.SPExecute(dsParams.Tables[0].Rows[0]["storedProcedure"].ToString());
-                    if (!data.hasService)
+                    if (data.hasIdUsuarioRol)
                     {
-                        if (data.hasIdUsuarioRol)
-                        {
-                            _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                        }
-                        else
-                        {
-                            _db.AddDynamicParam("idRol", idUsuarioRol);
-                        }
+                        dataParams["idUsuarioRol"] = idUsuarioRol;
                     }
-                    _db.AddDynamicParam("json", SqlStringParam.Sanitize(data.dataParams));
-                    ds = _db.GetDataSet();
+                    else
+                    {
+                        dataParams["idRol"]= idUsuarioRol;
+                    }
                 }
 
-                byte[] bytes = _report.GetReport(dsParams, ds);
+                dataParams["json"] = SqlStringParam.Sanitize(data.dataParams);
+
+                ds = await _reportService.GetDataAsync(dsParams.Tables[0].Rows[0].Field<string>("storedProcedure"), dataParams);
+
+                if (ds.Tables[0].Rows.Count == 0)
+                {
+                    return BadRequest("Can't get report data");
+                }
+
+                var bytes = _rdlcreport.GetCustomReport(dsParams, ds);
                 if (bytes == null || bytes.Length == 0)
                 {
-                    _response = await _report.GetErrorAsync();
+                    _response = await _rdlcreport.GetErrorAsync();
                 }
                 else
                 {
@@ -81,7 +86,7 @@ namespace ApiReports.Controllers
             catch (Exception ex)
             {
                 _log.LogActivity("Error in Download: \n" + ex.ToString());
-                _response = await _report.GetErrorAsync();
+                _response = await _rdlcreport.GetErrorAsync();
             }
             return File(_response.FileContents, _response.ContentType, _response.FileDownloadName);
         }

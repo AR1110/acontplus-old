@@ -561,7 +561,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7097
+          "Port": 7146
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte{everything}",
@@ -942,7 +942,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7097
+          "Port": 7146
         }
       ],
       "DownstreamPathTemplate": "/api/Dashboard{everything}",

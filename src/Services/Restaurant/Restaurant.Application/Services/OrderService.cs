@@ -8,8 +8,8 @@ namespace Restaurant.Application.Services
     public class OrderService : IOrderService
     {
         private readonly IADORepository _repository;
-        private readonly IReportService _report;
-        public OrderService(IADORepository repository, IReportService report)
+        private readonly IRdlcReportService _report;
+        public OrderService(IADORepository repository, IRdlcReportService report)
         {
             _repository = repository;
             _report = report;
@@ -51,7 +51,7 @@ namespace Restaurant.Application.Services
         public async Task<ReportResponse> GetReportAsync(Dictionary<string, object> parameters)
         {
             var ds = await _repository.GetDataSetAsync("Restaurant.Order_Report", parameters);
-            return _report.GetReportNew(ds);
+            return _report.GetDynamicReport(ds);
         }
     }
 }
