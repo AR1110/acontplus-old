@@ -43,7 +43,6 @@ BEGIN
 
         SELECT @jsonSupportDetails = supportDetails FROM OPENJSON(@json) WITH (supportDetails NVARCHAR(MAX) '$.supportDetails' as json)
         
-
         INSERT INTO @tbSupportDetail (Id,ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],Inventory)
                                    SELECT Id,ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],Inventory
                                    FROM OPENJSON(@jsonSupportDetails) WITH 

@@ -1,40 +1,41 @@
 const mapperToAction = () => {
   const facturaMapperTo = (support) => {
-    let factura = {
+    console.log(support);
+    const factura = {
       idCliente: support.customerId || 0,
       idPuntoEmision: support.puntoEmisionId || 0,
       fechaEmision: support.date,
       fechaVencimiento: support.date,
-      subTotalSinImpuestos: 0,
-      subTotalIvaCero: 0,
-      subTotalIva: 0,
-      subTotalNetoIva: 0,
-      subTotalNetoIvaCero: 0,
-      subTotalNoObjetoIva: 0,
-      subTotalNetoNoObjetoIva: 0,
-      subTotalExentoIva: 0,
-      subTotalNetoExentoIva: 0,
-      totalDescuento: 0.0,
-      porcentajeDescuento: 0.0,
-      totalIce: 0.0,
-      irbpnr: 0.0,
-      propina: 0.0,
-      iva: 0,
-      recargo: 0.0,
-      transporte: 0.0,
-      total: 0,
-      observacion: "",
-      placa: "",
+      subTotalSinImpuestos: support.sumaTotalNeto || 0,
+      subTotalIvaCero: support.subTotalIvaCero || 0,
+      subTotalIva: support.subTotalIva || 0,
+      subTotalNetoIva: support.subTotalNetoIva || 0,
+      subTotalNetoIvaCero: support.subTotalNetoIvaCero || 0,
+      subTotalNoObjetoIva:  support.subTotalNoObjetoIva || 0,
+      subTotalNetoNoObjetoIva: support.subTotalNetoNoObjetoIva || 0,
+      subTotalExentoIva: support.subTotalExentoIva || 0,
+      subTotalNetoExentoIva: support.subTotalNetoExentoIva || 0,
+      totalDescuento: support.totalDescuento || 0,
+      porcentajeDescuento:  support.porcentajeDescuento || 0,
+      totalIce: support.totalIce || 0,
+      irbpnr: support.irbpnr || 0,
+      propina: support.propina || 0,
+      iva: support.iva || 0,
+      recargo: support.recargo || 0,
+      transporte: support.transporte || 0,
+      total: support.total || 0,
+      observacion: support.obs || "",
+      placa: support.placa || "",
     };
 
     return factura;
   };
 
   const detalleMapperTo = (detalles) => {
-    let tempDetails = [];
+    const tempDetails = [];
     let orderIndex = 1;
 
-    for (let item of detalles) {
+    for (const item of detalles) {
       tempDetails.push({
         orderIndex: orderIndex++,
         idFacturaDetalle: item.idFacturaDetalle || 0,
@@ -66,4 +67,4 @@ const mapperToAction = () => {
   return { facturaMapperTo, detalleMapperTo };
 };
 
-export let MapperToAction = mapperToAction();
+export const MapperToAction = mapperToAction();

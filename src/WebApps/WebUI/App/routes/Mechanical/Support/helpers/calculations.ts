@@ -100,6 +100,9 @@ const calculations = () => {
   };
 
   const calculateTotal = async (cell) => {
+    console.log("calculateTotal");
+    console.log(cell);
+
     const row = cell.getRow().getData();
     const decimal = row.decimals[0];
 
