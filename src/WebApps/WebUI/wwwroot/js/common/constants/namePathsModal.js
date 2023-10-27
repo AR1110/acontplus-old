@@ -114,6 +114,11 @@ app.constant('nombreModalFactElect', {
         templates: {
             D: 'FacturaVenta/_ModalDetalle.cshtml'
         }
+    },
+    NOTA_CREDITO: {
+        fileCtrl: '/js/factElect/modals/modalNotaCreditoDetalleCtrl.min.js' + CHANGE_VERSION(),
+        controller: 'modalNotaCreditoDetalleCtrl',
+        template: '~/Pages/NotaCredito/_ModalDetalle.cshtml'
     }
 })
 
@@ -218,7 +223,7 @@ app.constant('nombreModalLogistica', {
     GUIA_REMISION: {
         fileCtrl: '/js/logistica/modals/guiaRemisionDetalleCtrl.min.js' + CHANGE_VERSION(),
         controller: 'GuiaRemisionDetalleCtrl',
-        template: '~/Areas/GuiaRemision/Pages/Shared/_ModalDetalle.cshtml'
+        template: '~/Pages/GuiaRemision/Shared/_ModalDetalle.cshtml'
     },
     TRANSPORTISTA: {
         fileCtrl: '/js/logistica/modals/modalTransportistaCtrl.js' + CHANGE_VERSION(),

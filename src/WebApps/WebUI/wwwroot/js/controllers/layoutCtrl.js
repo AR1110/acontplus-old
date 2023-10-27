@@ -4,93 +4,49 @@
 layoutCtrl.$inject = [
     '$scope',
     '$rootScope',
-    '$window',
-    'mainService',
+    '$window'
 ];
 
-function layoutCtrl($scope, $rootScope, $window, mS) {
+function layoutCtrl($scope, $rootScope, $window) {
     'use strict';
 
-    // $scope.IsVisible = false;
-    // $scope.idle = 700;
-    // $scope.timeout = 15;
-
-    // $scope.$on('IdleStart', function () {
-    // 	// the user appears to have gone idle
-    //     //tS.toastr('warning', 'Su sesión expirará en ' + $scope.idle + ' segundos.');
-    // });
-
-    // $scope.$on('IdleEnd', function () {
-    //     // the user is doing stuff. if you are warning them, you can use this to hide the dialog.
-    // });
-
-    // $scope.$on('Keepalive', function () {
-    //     // the user is doing stuff. if you are warning them, you can use this to hide the dialog.
-    // });
-
-    // $scope.$on('IdleWarn',  async function (e, countdown) {       
-    //     // the countdown arg is the number of seconds remaining until then.
-    //     // you can change the title or display a warning dialog from here.
-    //     // you can let them resume their session by calling Idle.watch()
-    //     $scope.IsVisible = true;
-    //     // document.getElementById('modalSession').style.display = "block";
-    //     // const {ModalSessionCtrl} = await import('./../modal/modalSessionCtrl.js')
-    //     // $scope.modalRef = _modalSvc.openModalSecond(ModalSessionCtrl, 'Shared/_ModalSession.cshtml', 'md')
-    //   // $('#modalSession').modal('show');
-    // });
-
-    // $scope.$on('IdleTimeout', function () {        
-    //     // the user has timed out (meaning idleDuration + timeout has passed without any activity).
-    //     // this is where you'd log them.
-    //     //    window.location.href = "/Login/Logout";
-    //     //location.href = location.href
-    //     mS.getData('post', '/Home/BackendAlive').then(function (response) {
-    //         $('#modalSession').modal('hide');
-    //     //    Swal.fire('info', 'estoy vivo', '')
-    //     });
-    // });
-
-    // $scope.Reset = function () { window.location = window.location.href; }
-    // $scope.SignOut = function () { window.location.href = "/Login/Logout"; }
-
-    // $scope.$watch('idle', function (value) {
-    //     if (value !== null) {
-    //         Idle.setIdle(value);
-    //     }
-    // });
-    // $scope.$watch('timeout', function (value) {
-    //     if (value !== null) {
-    //         Idle.setTimeout(value);
-    //     }
-    // });
+    $scope.logout = function () {
+        Object.keys(localStorage).forEach(function (key) {
+            localStorage.removeItem(key);
+        })
+        location.href = '/Login';
+    }
 
     if (JSON.parse(localStorage.getItem('userData')) === null) {
+        $scope.logout();
+        return
+    }
+
+    $scope.userData = JSON.parse(localStorage.getItem('userData'));
+
+    $scope.menus = $scope.userData.menus || [];
+
+    if ($scope.menus.length == 0) {
+        $scope.logout();
+        return
+    }
+
+    $scope.subMenus = $scope.userData.submenus || [];
+    $scope.permissions = $scope.userData.permissions || [];
+    $scope.accions = $scope.userData.actions || []
+
+    if ($scope.menus.length == 0) {
         location.href = '/Login';
         return
     }
 
-    let dataUser = JSON.parse(localStorage.getItem('userData'));
-    $scope.menus = dataUser.menus;
-    $scope.subMenus = dataUser.submenus;
-    $scope.permissions = dataUser.permissions;
-    $scope.accions = dataUser.actions 
-
-    $scope.usuario = dataUser.username;
-    $scope.politica = dataUser.role;
-    $scope.entidad = dataUser.tradeName;
-    $scope.nombreComercial = dataUser.bussinesName;
-
-
-
     $scope.drawMenus = function () {
-
         let textHtml = "";
-        //let subMenu = false;
         textHtml +=
             `<li class="user-pro">
                 <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
                     <img src="/assets/images/user/user.png" alt="" class="img-circle">
-                    <span class="hide-menu">${dataUser.fullname}</span>
+                    <span class="hide-menu">${$scope.userData.fullname}</span>
                 </a>
                 <ul aria-expanded="false" class="collapse">
                     <li><a href="/Usuario/Perfil"><i class="ti-user"></i> Mi Perfil</a></li>
@@ -98,19 +54,7 @@ function layoutCtrl($scope, $rootScope, $window, mS) {
                 </ul>
             </li>`;
         for (let i = 0; i < $scope.menus.length; i++) {
-            //if (subMenu) {
-            //    textHtml += '</ul></li>';
-            //    subMenu = false;
-            //}
             textHtml += '</ul></li>';
-            //    if ($scope.menus[i].subMenu === false) {
-            //        textHtml += '<li>' +
-            //            '<a href="' + $scope.menus[i].url + '" class="waves-effect waves-dark">' +
-            //            '<i class="' + $scope.menus[i].icon + '" ></i ><span class="hide-menu"> ' + $scope.menus[i].descripcion + '</a></span>' +
-            //            '</li>';
-            //    }
-            /* if ($scope.menus[i].subMenu) {*/
-            //subMenu = true;
             textHtml += `<li>
                                 <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
                                     <i class="${$scope.menus[i].icono}"></i>
@@ -123,7 +67,6 @@ function layoutCtrl($scope, $rootScope, $window, mS) {
                     textHtml += '<li><a href="' + $scope.subMenus[sm].url + '">' + $scope.subMenus[sm].descripcion + '</a></li>';
                 }
             }
-            //}
         };
 
         $('#sidebarnav').html(textHtml);
@@ -145,27 +88,9 @@ function layoutCtrl($scope, $rootScope, $window, mS) {
 
             if ([1, 2].includes(lengthPath)) {
                 let path = pathname.indexOf('/Index') == -1 ? pathname + '/Index' : pathname;
-                
-                let dataMenu = $scope.subMenus.find(item => item.url === path); 
-                if (dataMenu) {
-                    //mS.getData('get', 'Config/Acceso/' + '?json=' + JSON.stringify({ tipo: 2, idSubMenu: dataMenu.idSubMenu }), null, true).then(response => {
-                    //    if (response.code === "0") {
-                    //        throw response;
-                    //    }
-                    //    if (response.code === "1") {
-                    //        let mainData = JSON.parse(response.payload) || [];
-                    //        let [permisoModulo, almacenPermiso, ventaPermiso, cajaPermiso, articlePermission] = mainData;
 
-                    //        $rootScope.usuarioPermiso = {
-                    //            almacenPermiso: almacenPermiso.length > 0 ? JSON.parse(almacenPermiso[0].jsonPermission) : {},
-                    //            ventaPermiso: ventaPermiso.length > 0 ? JSON.parse(ventaPermiso[0].jsonPermission) : {},
-                    //            cajaPermiso: cajaPermiso.length > 0 ? JSON.parse(cajaPermiso[0].jsonPermission): {},
-                    //        }
-                    //        $scope.accion = permisoModulo[0]
-                    //        $rootScope.articlePermission = articlePermission[0];
-                    //        $rootScope.ventaPermiso = $rootScope.usuarioPermiso.ventaPermiso;
-                    //    }
-                    //})
+                let dataMenu = $scope.subMenus.find(item => item.url === path);
+                if (dataMenu) {
                     $rootScope.usuarioPermiso = {
                         almacenPermiso: JSON.parse($scope.permissions.find(x => x.codModule == "AR").permission),
                         ventaPermiso: JSON.parse($scope.permissions.find(x => x.codModule == "V").permission),
@@ -177,21 +102,9 @@ function layoutCtrl($scope, $rootScope, $window, mS) {
                 } else {
                     location.href = '/Home/Index'
                 }
-
             }
         }
-        // if (url.indexOf('/Index') === -1) {
-
-        // var script = document.createElement('script');
-        // script.src = 'path/to/your/script.js';
-        // document.head.appendChild(script);
-        // }
-
     }
-
-
-    // $scope.accion = 'test'
-    // console.log(pathname)
     $scope.onChangeSubMenu = function (item) {
         try {
             location.href = item.url;
@@ -199,12 +112,6 @@ function layoutCtrl($scope, $rootScope, $window, mS) {
         } catch (error) {
             location.href = '/Login/Logout';
         }
+    }
 
-    }
-    $scope.logout = function () {
-        Object.keys(localStorage).forEach(function (key) {
-            localStorage.removeItem(key);
-        })
-        location.href = '/Login';
-    }
 }

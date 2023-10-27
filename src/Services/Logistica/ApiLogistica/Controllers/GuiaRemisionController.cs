@@ -32,7 +32,7 @@ namespace ApiLogistica.Controllers
                 await _db.SPExecute("Logistica.GuiaRemision_Get", true);
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataTableAsync();
+                _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
             {

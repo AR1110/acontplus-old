@@ -45,35 +45,10 @@ namespace ApiFactElect.Controllers
                 _db.Close();
             }
             return Ok(_response);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetId(int id)
-        {
-            var _response = new GenericResponse();
-            try
-            {
-                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Ventas.NotaCredito_Get_Id", true);
-                _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("id", id);
-                _response = _db.GetDataSetAsync();
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error al obtener datos de nota credito: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al obtener datos de nota credito");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
-
-        }
+        } 
 
         [HttpPost]
-        public async Task<IActionResult> Insert([FromBody] NotaCreditoViewModel data)
+        public async Task<IActionResult> Post([FromBody] NotaCreditoViewModel data)
         {
 
             var _response = new GenericResponse();
@@ -100,13 +75,13 @@ namespace ApiFactElect.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] NotaCreditoViewModel data)
+        public async Task<IActionResult> Put(int id, [FromBody] NotaCreditoViewModel data)
         {
             var _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Ventas.NotaCredito_Update", true);
-                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("jsonNotaCredito", JsonConvert.SerializeObject(data.nota));
                 _db.AddDynamicParam("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
@@ -133,7 +108,7 @@ namespace ApiFactElect.Controllers
             try
             {
                 await _db.SPExecute("Ventas.NotaCredito_Delete", true);
-                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
                 _response = _db.GetDefault();
             }

@@ -3,9 +3,16 @@ export {
     GuiaRemisionDetalleCtrl
 }
 
-GuiaRemisionDetalleCtrl.$inject = ['$scope', '$uibModalInstance', 'commonService', 'toastService', 'params'];
+GuiaRemisionDetalleCtrl.$inject = [
+    '$scope', 
+    '$uibModalInstance', 
+    'commonService', 
+    'toastService', 
+    'guiaRemisionService',
+    'params'
+];
 
-function GuiaRemisionDetalleCtrl($scope, $uibModalInstance, commonSvc, tS, params) {
+function GuiaRemisionDetalleCtrl($scope, $uibModalInstance, commonSvc, tS, guiaRemisionSvc, params) {
 
 
     let {
@@ -101,22 +108,17 @@ function GuiaRemisionDetalleCtrl($scope, $uibModalInstance, commonSvc, tS, param
         try {
 
             showLoader();
+            
+            await guiaRemisionSvc.get({tipo: 2}).then(response=>{
+                $scope.establecimientos = response.estabs;
+                if ($scope.establecimientos.length > 0) {    
+                    let dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.data.codEstab);     
+                    $scope.puntosEmision = dataEstab.puntosEmision;
+                } else {
+                    tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');
+                }
 
-        
-
-            $scope.establecimientos = await commonSvc.getEstabAsign()
-
-            if ($scope.establecimientos.length > 0) {
-
-                let dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.data.codEstab)
-
-                let resultsDataFormEstab = await commonSvc.getDataFormEstabAsig(dataEstab);
-
-                $scope.puntosEmision = resultsDataFormEstab[0];
-            } else {
-                tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO');
-            }
-          
+            }).finally(()=>hideLoader()) 
             $scope.gridOptionsDetalle.data = detalleDocumento;
             enumGridOptions()            
         } catch (error) {
