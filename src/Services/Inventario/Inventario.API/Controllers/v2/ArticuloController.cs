@@ -48,7 +48,7 @@ namespace Inventario.API.Controllers.v2
         }
 
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetId(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
