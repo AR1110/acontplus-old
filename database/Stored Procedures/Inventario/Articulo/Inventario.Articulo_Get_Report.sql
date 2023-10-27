@@ -19,47 +19,44 @@ AS
 BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
-	DECLARE @tipo INT
-	DECLARE @idEntidad INT 
-	DECLARE @filtroFecha VARCHAR(50)
-	DECLARE @checkBoxSubFamilia  BIT ,@idSubFamilia          INT
-	DECLARE @checkBoxStock       BIT ,@byStock               INT
-	DECLARE @checkBoxArticulo    BIT ,@idArticulo            INT
-	DECLARE @checkBoxProveedor   BIT ,@rucProveedor  VARCHAR(25)
-	DECLARE @checkBoxUbicacion   BIT ,@idBodega              INT ,@ubicacion VARCHAR(150)
-	DECLARE @checkBoxFecha       BIT ,@fechaInicio      DATETIME ,@fechaFin DATETIME
-	DECLARE @checkBoxTransaccion BIT ,@idUsuario             INT
-	DECLARE @checkBoxUsuario     BIT ,@codTransaccion VARCHAR(5)
-	DECLARE @checkBoxEstado      BIT ,@estado VARCHAR(5)
+	--> Global
+    DECLARE @tipo INT ,@idEntidad INT 
+	
+    --> Sql
+    DECLARE @params NVARCHAR(MAX),@sql NVARCHAR(MAX)
 
-	DECLARE @checkBoxInventario  BIT 
-	DECLARE @checkboxDetalleBodegaFiltro BIT 
-	DECLARE @byOrder NVARCHAR(10)			
-	DECLARE @byOrderCampo NVARCHAR(50)
-	DECLARE @params NVARCHAR(MAX)
-	DECLARE @sql NVARCHAR(MAX)
-	DECLARE @usuario VARCHAR(150)
+    --> Filters
+    DECLARE @filtroFecha   VARCHAR(50)
+	       ,@idSubFamilia          INT
+	       ,@byStock               INT
+	       ,@idArticulo            INT
+	       ,@rucProveedor  VARCHAR(25)
+	       ,@idBodega              INT 
+           ,@ubicacion    VARCHAR(150)
+	       ,@checkBoxFecha         BIT 
+           ,@fechaInicio      DATETIME 
+           ,@fechaFin         DATETIME
+	       ,@idUsuario             INT
+	       ,@codTransaccion VARCHAR(5)
+	       ,@estado         VARCHAR(5)
+	       ,@byOrder      NVARCHAR(10)			
+	       ,@byOrderCampo NVARCHAR(50)
+	       ,@usuario      VARCHAR(150)
 
 	SELECT TOP 1  @idEntidad = idEntidad, @usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
 	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
 	
-	-- REPORTE DE ARTICULOS FRACCIONADOS ---
+	--> FRACCIONADOS
 	IF @tipo = 1
 		BEGIN
 			
-			SELECT @checkBoxArticulo   = checkBoxArticulo
-				  ,@idArticulo         = idArticulo 
-				  ,@checkBoxSubFamilia = checkboxSubFamilia
-				  ,@idSubFamilia       = bySubFamilia
-				  ,@checkBoxProveedor  = chkProveedor             
+			SELECT @idArticulo         = idArticulo 
+				  ,@idSubFamilia       = bySubFamilia           
 				  ,@rucProveedor       = numeroIdentificacion
 			FROM OPENJSON(@json) 
-			WITH (checkBoxArticulo             BIT '$.checkBoxArticulo'
-			     ,idArticulo                   INT '$.idArticulo'
-				 ,checkboxSubFamilia           BIT '$.checkboxSubFamiliaFiltro'
+			WITH (idArticulo                   INT '$.idArticulo'
 				 ,bySubFamilia                 INT '$.bySubFamilia'
-				 ,chkProveedor                 BIT '$.chkProveedor'            
 				 ,numeroIdentificacion VARCHAR(25) '$.numeroIdentificacion'
 			     )
 
@@ -78,17 +75,17 @@ BEGIN
 						FROM v_Articulo_Fraccionado
 						WHERE idEntidad = @idEntidad AND estado = 1 '
 			
-			IF @checkBoxArticulo = 1 
+			IF @idArticulo > 0 
 				BEGIN
 					SET @sql = @sql + 'AND idArticulo = @idArticulo '
 				END 
 
-			IF @checkBoxSubFamilia = 1
+			IF @idSubFamilia > 0
 				BEGIN
 					SET @sql = @sql + 'AND idSubFamilia = @idSubFamilia '
 				END
 
-			IF @checkBoxProveedor = 1
+			IF @rucProveedor IS NOT NULL
 				BEGIN
 					SET @sql = @sql + 'AND idArticulo IN (SELECT it.idArticulo FROM v_InventarioTransaccion it WHERE it.rucClienteProveedor = @rucProveedor AND codTransaccion = ''E'') '
 				END 
@@ -113,7 +110,7 @@ BEGIN
 			RETURN 
 		END 
 
-	-- REPORTE DE ARTICULOS CON LISTA DE PRECIO -- 
+	--> LISTA DE PRECIO
 	IF @tipo = 2
 		BEGIN
 			
@@ -134,38 +131,38 @@ BEGIN
 						WHERE ar.estado = 1 AND ar.idEntidad = @idEntidad '
 
 			SELECT
-				 @filtroFecha         = filtroFecha
-				,@checkboxSubFamilia  = checkboxSubFamiliaFiltro ,@idSubFamilia = bySubFamilia
-				,@checkboxStock       = checkboxStockFiltro      ,@byStock      = byStock
-				,@checkBoxProveedor   = chkProveedor             ,@rucProveedor = numeroIdentificacion
-				,@byOrder             = byOrder			 
-				,@byOrderCampo        = byOrderCampo		
+				 @filtroFecha   = filtroFecha
+				,@idSubFamilia  = bySubFamilia
+				,@byStock       = byStock
+				,@rucProveedor  = numeroIdentificacion
+				,@byOrder       = byOrder			 
+				,@byOrderCampo  = byOrderCampo		
 			FROM OPENJSON(@json)
 			WITH ( filtroFecha          VARCHAR(50) '$.filtroFecha'			
-				  ,checkboxSubFamiliaFiltro     BIT '$.checkboxSubFamiliaFiltro',bySubFamilia                 INT '$.bySubFamilia'	
-				  ,checkboxStockFiltro          BIT '$.checkboxStockFiltro'     ,byStock                      INT '$.byStock'	
+				  ,bySubFamilia                 INT '$.bySubFamilia'	
+				  ,byStock                      INT '$.byStock'	
 				  ,chkProveedor                 BIT '$.chkProveedor'            ,numeroIdentificacion VARCHAR(25) '$.numeroIdentificacion'
 				  ,byOrder              VARCHAR(10) '$.byOrder'
 				  ,byOrderCampo         VARCHAR(50) '$.byOrderCampo'	
 				) AS dt
 
-			IF @checkBoxProveedor = 1
+			IF @rucProveedor IS NOT NULL
 				BEGIN
 					SET @sql = @sql + 'AND ar.idArticulo IN (SELECT it.idArticulo FROM v_InventarioTransaccion it WHERE it.rucClienteProveedor = @rucProveedor) '
 				END
 
-			IF @checkBoxSubFamilia = 1
+			IF @idSubFamilia > 0
 				BEGIN
 					SET @sql = @sql + 'AND ar.idSubFamilia = @idSubFamilia '
 				END
 
-			IF @checkBoxStock = 1 AND @byStock = 1 
+			IF @byStock = 1 
 				BEGIN			
 					SET @sql = @sql + 'AND ar.stock > 0 '
 				END 
 
 			--Articulo sin Stock 
-			IF  @checkBoxStock = 1 AND @byStock = 2 
+			IF @byStock = 2 
 				BEGIN			
 					SET @sql = @sql + 'AND ar.stock <= 0 '
 				END
@@ -199,7 +196,7 @@ BEGIN
 			RETURN 
 		END 
 
-	-- REPORTE DE ARTICULOS CON STOCK POR BODEGA -- 
+	--> STOCK POR BODEGA 
 	IF @tipo = 3
 		BEGIN 
 			
@@ -228,39 +225,39 @@ BEGIN
 						WHERE ar.estado = 1 AND ar.idEntidad = @idEntidad '	
 
 			SELECT
-				 @filtroFecha         = filtroFecha
-				,@checkboxSubFamilia  = checkboxSubFamiliaFiltro ,@idSubFamilia = bySubFamilia
-				,@checkboxStock       = checkboxStockFiltro      ,@byStock      = byStock
-				,@checkBoxProveedor   = chkProveedor             ,@rucProveedor = numeroIdentificacion
-				,@byOrder             = byOrder			 
-				,@byOrderCampo        = byOrderCampo		
+				 @filtroFecha  = filtroFecha
+				,@idSubFamilia = bySubFamilia
+				,@byStock      = byStock
+				,@rucProveedor = numeroIdentificacion
+				,@byOrder      = byOrder			 
+				,@byOrderCampo = byOrderCampo		
 			FROM OPENJSON(@json)
 			WITH ( filtroFecha          VARCHAR(50) '$.filtroFecha'			
-				  ,checkboxSubFamiliaFiltro     BIT '$.checkboxSubFamiliaFiltro',bySubFamilia                 INT '$.bySubFamilia'	
-				  ,checkboxStockFiltro          BIT '$.checkboxStockFiltro'     ,byStock                      INT '$.byStock'	
-				  ,chkProveedor                 BIT '$.chkProveedor'            ,numeroIdentificacion VARCHAR(25) '$.numeroIdentificacion'
+				  ,bySubFamilia                 INT '$.bySubFamilia'	
+				  ,byStock                      INT '$.byStock'	
+				  ,numeroIdentificacion VARCHAR(25) '$.numeroIdentificacion'
 				  ,byOrder              VARCHAR(10) '$.byOrder'
 				  ,byOrderCampo         VARCHAR(50) '$.byOrderCampo'	
 				) AS dt
 
-			IF @checkBoxProveedor = 1
+			IF @rucProveedor IS NOT NULL
 				BEGIN
 					SET @sql = @sql + ' AND ar.idArticulo IN (SELECT it.idArticulo FROM v_InventarioTransaccion it WHERE it.rucClienteProveedor = @rucProveedor) '
 				END
 
-			IF @checkboxSubFamilia = 1
+			IF @idSubFamilia > 0
 				BEGIN
 					SET @sql = @sql + ' AND ar.idSubFamilia = @idSubFamilia '
 				END
 		
 			--Articulo con stock
-			IF @checkboxStock = 1 AND @byStock = 1
+			IF @byStock = 1
 				BEGIN
 					SET @sql = @sql + ' AND ar.stock > 0 '
 				END
 
 			--Articulo sin Stock 
-			IF @checkboxStock = 1 AND @byStock = 2
+			IF @byStock = 2
 				BEGIN
 					SET @sql = @sql + ' AND ar.stock <= 0 '
 				END
@@ -296,7 +293,7 @@ BEGIN
 			RETURN 
 		END
 	
-	-- REPORTE DE CONSUMO DIARIO DE ARTICULOS --
+	--> CONSUMO DIARIO
 	IF @tipo = 4
 		BEGIN 
 			
@@ -329,9 +326,6 @@ BEGIN
 			SELECT @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idRol
 
 			SELECT @checkBoxFecha       = checkBoxFecha
-				  ,@checkBoxArticulo    = checkBoxArticulo
-				  ,@checkBoxTransaccion = checkBoxTransaccion
-				  ,@checkBoxUsuario     = checkBoxUsuario
 				  ,@idArticulo          = idArticulo
 				  ,@idUsuario           = idUsuario
 				  ,@codTransaccion      = codTransaccion
@@ -341,8 +335,6 @@ BEGIN
 				(
 				 checkBoxArticulo      BIT '$.checkBoxArticulo'
 				,checkBoxFecha         BIT '$.checkBoxFecha'
-				,checkBoxTransaccion   BIT '$.checkBoxTransaccion'
-				,checkBoxUsuario       BIT '$.checkBoxUsuario'
 				,idArticulo            INT '$.idArticulo'
 				,idUsuario             INT '$.idUsuario'
 				,codTransaccion VARCHAR(5) '$.codTransaccion'
@@ -357,17 +349,17 @@ BEGIN
 					SET @sql = @sql + 'AND CAST(tt.fechaRegistro as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
 				END
 
-			IF @checkBoxArticulo = 1
+			IF @idArticulo > 0
 				BEGIN
 					SET @sql = @sql + 'AND tt.idArticulo = @idArticulo '
 				END 
 
-			IF @checkBoxTransaccion = 1
+			IF @codTransaccion IS NOT NULL
 				BEGIN
 					SET @sql = @sql + 'AND tt.codTransaccion = @codTransaccion '
 				END 
 
-			IF @checkBoxUsuario = 1
+			IF @idUsuario > 0 
 				BEGIN
 					SET @sql = @sql + 'AND tt.idUsuario = @idUsuario '
 				END
@@ -399,7 +391,7 @@ BEGIN
 
 		END 
 	
-	-- REPORTE DE CADUCIDADES -- 
+	--> CADUCIDAD 
 	IF @tipo = 5
 		BEGIN
 			
@@ -427,36 +419,28 @@ BEGIN
 						WHERE st.idEntidad = @idEntidad 
 						  AND st.caducidad = 1 '
 
-			SELECT @checkBoxEstado     = chkEstado
-			      ,@estado             = estado
-				  ,@checkBoxProveedor  = chkProveedor
+			SELECT @estado             = estado
 				  ,@rucProveedor       = numeroIdentificacion
-				  ,@checkBoxSubFamilia = checkboxSubFamilia
 				  ,@idSubFamilia       = bySubFamilia
 				  ,@checkBoxFecha      = checkBoxFecha
 				  ,@fechaInicio        = fechaInicio
 				  ,@fechaFin           = fechaFin
-				  ,@checkBoxUbicacion  = checkBoxUbicacion
 				  ,@idBodega           = idBodega
 				  ,@ubicacion          = REPLACE(ubicacion,space(1),'%')
 			FROM OPENJSON(@json) WITH 
 				(    
-			      chkEstado                    BIT '$.chkEstado'
-			     ,estado                VARCHAR(5) '$.estado'
-				 ,chkProveedor                 BIT '$.chkProveedor'            
+			      estado                VARCHAR(5) '$.estado'
 				 ,numeroIdentificacion VARCHAR(25) '$.numeroIdentificacion'
-				 ,checkboxSubFamilia           BIT '$.checkboxSubFamiliaFiltro'
 				 ,bySubFamilia                 INT '$.bySubFamilia'	
 				 ,checkBoxFecha                BIT '$.ckFechaCaducidad'
 				 ,fechaInicio             DATETIME '$.fechaInicio'
 				 ,fechaFin                DATETIME '$.fechaFin'
-				 ,checkBoxUbicacion            BIT '$.chkUbicacion'
 				 ,idBodega                     INT '$.idBodega'
 				 ,ubicacion           VARCHAR(400) '$.ubicacion'
 				)
 
 			
-			IF @checkBoxEstado = 1
+			IF @estado IS NOT NULL
 				BEGIN
 					IF @estado = 'PA'
 						BEGIN
@@ -474,12 +458,12 @@ BEGIN
 						END 
 				END 
 
-			IF @checkBoxProveedor = 1
+			IF @rucProveedor IS NOT NULL
 				BEGIN
 					SET @sql = @sql + 'AND st.idArticulo IN (SELECT it.idArticulo FROM v_InventarioTransaccion it WHERE it.rucClienteProveedor = @rucProveedor) '
 				END 
 
-			IF @checkBoxSubFamilia = 1
+			IF @idSubFamilia > 0
 				BEGIN
 					SET @sql = @sql + 'AND st.idSubFamilia = @idSubFamilia '
 				END 
@@ -489,7 +473,7 @@ BEGIN
 					SET @sql = @sql + 'AND CAST(st.fechaCaducidad as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
 				END 
 
-			IF @checkBoxUbicacion = 1
+			IF @idBodega > 0
 				BEGIN
 					SET @sql = @sql + 'AND st.idBodega = @idBodega AND st.ubicacion LIKE ''%'' + @ubicacion + ''%'' '
 				END 
