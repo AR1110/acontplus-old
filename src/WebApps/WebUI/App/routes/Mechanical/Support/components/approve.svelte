@@ -3,6 +3,7 @@
   import { Calculations } from "../helpers/calculations";
   import { customSelect } from "../helpers/custom-select";
   import { FacturaService } from "$services/Mechanical/factura-service";
+  import { NotaEntregaService } from "$services/Mechanical/nota-entrega-service";
   import { hideLoader, showLoader } from "$utils/loading-spinner";
   import { MapperToAction } from "../helpers/mapper-to-action";
   import { supportStore } from "$routes/Mechanical/Store/support.store";
@@ -473,7 +474,23 @@
       });
   };
 
-  const saveNotaEntrega = () => {};
+  const saveNotaEntrega = () => {
+    showLoader();
+
+    let data = {
+      notaEntrega: support,
+      detalle: supportDetails,
+      infoAdicionalArticulo: null
+    };
+
+    NotaEntregaService.post(data).then((response) => {
+      if(response) {
+        console.log(response);
+      }
+    }).finally(() => {
+      hideLoader();
+    });
+  };
 
   // Todo: Save DETALLES
   const onUpdate = () => {
