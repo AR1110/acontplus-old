@@ -2203,29 +2203,28 @@
                 // }
 
                 let format = 'excel';
-                let dataParms = {
-                    id: $scope.data.idConsolidacionInventario
-                }
 
                 const parameters = {
                     hasService: true,
                     reportParams: JSON.stringify({
                         hasParams: true,
                         codigo: 'RCD',
-                        codDoc: 'CI',
-                        codEstab:  $scope.data.codEstab,
+                        codEstab: $scope.data.codEstab,
                         format,
                         aditionalParams: [
 
                         ]
                     }),
-                    dataParams: JSON.stringify(dataParms)
+                    dataParams: JSON.stringify({
+                        codDoc: 'CI',
+                        id: $scope.data.idConsolidacionInventario,
+                    })
                 }
 
 
                 commonSvc.getReport({
                     parameters,
-                    format
+                    formatType: format
                 })
             } catch (error) {
                 console.log(error)

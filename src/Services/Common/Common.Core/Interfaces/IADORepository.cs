@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace Common.Infrastructure.Repository
+namespace Common.Core.Interfaces
 {
     public interface IADORepository
     {

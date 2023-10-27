@@ -25,8 +25,8 @@
             modalService,
             nameModalConst,
             $q
-        ) { 
-            
+        ) {
+
             $scope.title = 'documentoRecibidoCtrl';
             mS.detectDevice()
 
@@ -1004,11 +1004,11 @@
                             // if ($scope.fullComprobante.infoAdicional) {
                             // }
 
-                        } 
+                        }
                     }).catch((error) => {
                         hideLoader()
                         console.log(error)
-                    }).finally(()=>hideLoader())
+                    }).finally(() => hideLoader())
                 } catch (error) {
                     hideLoader()
                     console.log(error)
@@ -2131,20 +2131,22 @@
             $scope.exportToExcel = () => {
                 try {
                     let format = 'excel';
-                    let dataParms = {
-                        isReportImport: true,
-                        codEstab: $scope.selected[0].codEstab,
-                        id: $scope.selected[0].idDocumento,
-                        codigo: 'RCD',
-                        codDoc: $scope.selected[0].codDoc,
-                        format,
-                    }
                     const parameters = {
-                        dataParams: JSON.stringify(dataParms)
+                        dataParams: JSON.stringify({
+                            isReportImport: true,
+                            id: $scope.selected[0].idDocumento,
+                            codDoc: $scope.selected[0].codDoc,
+                        }),
+                        reportParams: JSON.stringify({
+                            codigo: 'RCD',
+                            codEstab: $scope.selected[0].codEstab,
+                            format,
+                        }),
+                        hasService: true,
                     }
 
 
-                    commonSvc.getReportDynamic({ parameters, format })
+                    commonSvc.getReport({ parameters, formatType: format })
                 } catch (error) {
                     console.log(error)
                 }
@@ -2215,10 +2217,10 @@
                             $scope.initialLoad()
                             $('#migrateEstabModal').modal('hide')
                             tS.toastr("success", response.message)
-                        } 
-                    }).catch(error => { 
+                        }
+                    }).catch(error => {
                         console.log(error)
-                    }).finally(()=>hideLoader())
+                    }).finally(() => hideLoader())
                 } catch (error) {
                     hideLoader()
                     console.log(error)

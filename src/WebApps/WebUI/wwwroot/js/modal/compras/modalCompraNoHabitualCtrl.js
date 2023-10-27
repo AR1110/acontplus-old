@@ -198,22 +198,22 @@ class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
 
 
 
-            let textAccion = this.data.idDocumentoIngreso > 0 ? 'Actualizar' : 'Guardar';           
+            let textAccion = this.data.idDocumentoIngreso > 0 ? 'Actualizar' : 'Guardar';
             let serieComprobante = this.data.ptoEmi + '-' + this.data.secuencial;
 
             //Validaciones
             if (!this.isValidaForm()) return;
 
             //Generar el Numero de Secuencial
-            if (!this.data.idDocumentoIngreso) {              
-                showLoader();                
-                serieComprobante = await this.compraNoHabSvc.generateNroSecuencial(this.data.idPuntoEmision);               
+            if (!this.data.idDocumentoIngreso) {
+                showLoader();
+                serieComprobante = await this.compraNoHabSvc.generateNroSecuencial(this.data.idPuntoEmision);
                 hideLoader();
                 if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"
             }
 
 
-            let {isConfirmed} = await Swal.fire({
+            let { isConfirmed } = await Swal.fire({
                 title: `<small>${textAccion} Documento no Habitual</small>`,
                 html: `<small>Esta Ud. seguro de ${textAccion} este Documento <b> Nro. ${serieComprobante}</b></small>?`,
                 icon: 'warning',
@@ -226,16 +226,16 @@ class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
 
 
             if (isConfirmed) {
-                                
-                showLoader();                    
-                let idEstablecimiento, estab, ptoEmi, query;                
-                
+
+                showLoader();
+                let idEstablecimiento, estab, ptoEmi, query;
+
                 this.data.tarifa = this.actividadTipoIva.tarifa;
 
                 idEstablecimiento = this.establecimientos.find(item => item.codEstab === this.data.codEstab).idEstablecimiento;
 
                 estab = this.establecimientos.find(item => item.codEstab === this.data.codEstab).estab;
-                
+
                 ptoEmi = this.puntosEmision.find(item => item.idPuntoEmision === this.data.idPuntoEmision)
 
                 query = this.compraNoHabSvc.queryMapper({
@@ -244,26 +244,26 @@ class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
                     proveedor: this.proveedor,
                     idEstablecimiento,
                     estab,
-                    ptoEmi: ptoEmi?ptoEmi.puntoEmi: null,
+                    ptoEmi: ptoEmi ? ptoEmi.puntoEmi : null,
                     datosAdicionalesArticulo: this.datosAdicionalesArticulo
                 })
 
                 //Actualizar
-                if(this.data.idDocumentoIngreso>0) {
+                if (this.data.idDocumentoIngreso > 0) {
                     this.compraNoHabSvc.update(this.data.idDocumentoIngreso, query).then(this.successReponse)
-                    .catch(error=>{
-                        hideLoader();
-                        console.log(error);
-                    })
-                }else{                                                
+                        .catch(error => {
+                            hideLoader();
+                            console.log(error);
+                        })
+                } else {
                     this.compraNoHabSvc.create(query).then(this.successReponse)
-                    .catch(error=>{
-                        hideLoader();
-                        console.log(error);
-                    })
+                        .catch(error => {
+                            hideLoader();
+                            console.log(error);
+                        })
                 }
             }
-            
+
 
         } catch (error) {
             hideLoader()
@@ -272,7 +272,7 @@ class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
     }
 
 
-    successReponse =(response)=>{       
+    successReponse = (response) => {
         if (response.code == '0') {
             hideLoader();
             this._fS.sweetAlert('warning', response.message, response.titleSms);
@@ -456,7 +456,7 @@ export class ModalAddCtrl extends ModalCompraNoHabitualCtrl {
 
 export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
 
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'articuloService', 'compraNoHabitualService',  'modalService', 'nombreModal', 'toastService', 'formulario', 'params']
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'articuloService', 'compraNoHabitualService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params']
 
     constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, articuloSvc, compraNoHabSvc, _modalSvc, _nombreModalConst, _tS, _fS, params) {
         super({
@@ -477,7 +477,7 @@ export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
 
         this.searchProveedorOptions = {};
         this.proveedor = this.params.proveedor;
-        this.datosAdicionalesArticulo = this.params.datosAdicionales || [];        
+        this.datosAdicionalesArticulo = this.params.datosAdicionales || [];
 
         this.puntosEmision = [];
         this.searchProveedorOptions.showBtnNew = true;
@@ -529,11 +529,11 @@ export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
             let index = 1;
             this.gridOptions.data = this.params.detalles;
             for (let item of this.gridOptions.data) {
-                item.n = index++;     
-                                      
+                item.n = index++;
+
                 this.articuloSvc.findForPurchase({
                     idArticulo: item.idArticulo
-                }).then(response => {                  
+                }).then(response => {
                     item.medidas = response.medidas
                     item.etiquetas = response.etiquetas;
                 })
@@ -764,21 +764,24 @@ export class ModalDetalleCtrl extends ModalCompraNoHabitualCtrl {
         try {
 
             let format = 'excel';
-            let dataParms = {
-                id: this.data.idDocumentoIngreso,
-                codEstab: this.data.codEstab,
-                codigo: 'RCD',
-                codDoc: 'CNH',
-                format,
-            }
 
             const parameters = {
-                dataParams: JSON.stringify(dataParms)
+                dataParams: JSON.stringify({
+                    id: this.data.idDocumentoIngreso,
+                    codDoc: 'CNH',
+                }),
+                reportParams: JSON.stringify({
+                    codigo: 'RCD',
+                    codEstab: this.data.codEstab,
+                    format,
+
+                }),
+                hasService: true,
             }
 
-            this._commonSvc.getReportDynamic({
+            this._commonSvc.getReport({
                 parameters,
-                format
+                formatType: format
             })
         } catch (error) {
             console.log(error)

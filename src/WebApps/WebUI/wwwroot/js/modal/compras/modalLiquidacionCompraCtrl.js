@@ -718,21 +718,23 @@ export class ModalLiquidacionDetalleCtrl extends ModalLiquidacionCtrl {
         try {
 
             let format = 'excel';
-            let dataParms = {
-                id: this.data.idLiquidacionCompra,
-                codEstab: this.data.codEstab,
-                codigo: 'RCD',
-                codDoc: this.TIPO_DOC.codigo,
-                format,
-            }
 
             const parameters = {
-                dataParams: JSON.stringify(dataParms)
+                dataParams: JSON.stringify({
+                    id: this.data.idLiquidacionCompra,
+                    codDoc: this.TIPO_DOC.codigo,
+                }),
+                reportParams: JSON.stringify({
+                    codEstab: this.data.codEstab,
+                    codigo: 'RCD',
+                    format,
+                }),
+                hasService: true,
             }
 
-            this._commonSvc.getReportDynamic({
+            this._commonSvc.getReport({
                 parameters,
-                format
+                formatType: format
             })
         } catch (error) {
             console.log(error)

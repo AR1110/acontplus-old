@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Data.Common;
+using Common.Core.Interfaces;
 using Common.Infrastructure.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;

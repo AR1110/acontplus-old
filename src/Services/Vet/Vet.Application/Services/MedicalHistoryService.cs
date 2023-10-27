@@ -1,8 +1,7 @@
-﻿using Common.Infrastructure.Repository;
-using Common.Reports.Interfaces;
+﻿using Common.Core.Interfaces;
+using Common.Core.Models;
 using Lib.Common;
 using Lib.Common.Api;
-using Lib.Common.Dtos;
 using Vet.Core.Interfaces;
 
 namespace Vet.Application.Services
@@ -65,7 +64,7 @@ namespace Vet.Application.Services
         //    return _response;
         //}
 
-        public async Task<ReportResponseDto> GetReportAsync(Dictionary<string, object> parameters)
+        public async Task<ReportResponse> GetReportAsync(Dictionary<string, object> parameters)
         {
             var ds = await _generic.GetDataSetAsync("Pet.MedicalHistory_Report", parameters);
             return _report.GetReportNew(ds);

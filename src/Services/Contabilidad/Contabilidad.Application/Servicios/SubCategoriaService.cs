@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using Common.Core.Interfaces;
 using Common.Infrastructure.Repository;
 using Contabilidad.Core.Entities;
 using Contabilidad.Core.Interfaces;

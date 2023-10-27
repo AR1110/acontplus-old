@@ -1,7 +1,8 @@
 ﻿using System.Data;
 using System.Text;
+using Common.Core.Interfaces;
+using Common.Core.Models;
 using Common.Reports.Enums;
-using Common.Reports.Interfaces;
 using Lib.Common;
 using Lib.Common.Dtos;
 using Lib.Common.Utils;
@@ -159,7 +160,7 @@ namespace Common.Reports.Services
                 return lr.Render(format, null, out mimeType, out _, out _, out _, out _);
             }
         }
-        public ReportResponseDto GetReportNew(DataSet ds)
+        public ReportResponse GetReportNew(DataSet ds)
         {
             if (!ds.Tables.Contains("RdlcProps") | !ds.Tables.Contains("RdlcDataSources"))
             {
@@ -200,14 +201,14 @@ namespace Common.Reports.Services
                 byte[] fileReport = lr.Render(rdlcProps.ReportFormat, null, out _, out _, out _, out _, out _);
                 Enum.TryParse(rdlcProps.ReportFormat, out FileFormats.FileContentType fc);
                 Enum.TryParse(rdlcProps.ReportFormat, out FileFormats.FileExtension fe);
-                return new ReportResponseDto { FileContents = fileReport, ContentType = EnumExtensions.DisplayName(fc), FileDownloadName = rdlcProps.ReportName + EnumExtensions.DisplayName(fe) };
+                return new ReportResponse { FileContents = fileReport, ContentType = EnumExtensions.DisplayName(fc), FileDownloadName = rdlcProps.ReportName + EnumExtensions.DisplayName(fe) };
             }
         }
-        public async Task<ReportResponseDto> GetErrorAsync()
+        public async Task<ReportResponse> GetErrorAsync()
         {
             string errorFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Reports", "NotFound.pdf");
             byte[] bytes = await File.ReadAllBytesAsync(errorFilePath);
-            return new ReportResponseDto { FileContents = bytes, ContentType = "application/pdf", FileDownloadName = "Not Found.pdf" };
+            return new ReportResponse { FileContents = bytes, ContentType = "application/pdf", FileDownloadName = "Not Found.pdf" };
         }
     }
 }

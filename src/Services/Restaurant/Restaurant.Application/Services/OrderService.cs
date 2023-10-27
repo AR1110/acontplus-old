@@ -1,9 +1,8 @@
-﻿using Common.Infrastructure.Repository;
-using Common.Reports.Interfaces;
+﻿using Common.Core.Interfaces;
+using Common.Core.Models;
 using Lib.Common;
 using Lib.Common.Api;
 using Lib.Common.DbUtils;
-using Lib.Common.Dtos;
 using Restaurant.Core.Interfaces;
 
 namespace Restaurant.Application.Services
@@ -51,7 +50,7 @@ namespace Restaurant.Application.Services
         {
             return await _repository.SPExecuteAsync("Restaurant.Order_Print", parameters);
         }
-        public async Task<ReportResponseDto> GetReportAsync(Dictionary<string, object> parameters)
+        public async Task<ReportResponse> GetReportAsync(Dictionary<string, object> parameters)
         {
             var ds = await _repository.GetDataSetAsync("Restaurant.Order_Report", parameters);
             return _report.GetReportNew(ds);
