@@ -238,25 +238,7 @@
                     params: response,
                     windowClass: 'uibModalFullScreen',
                     isRenderRazorPartial: true
-                }).result.then(result => {
-    
-                    if (typeof result === 'object') {
-                        $scope.getNotaCreditos();
-                    }
-                }) 
-
-                if (!response.isComplete) return
-
-                let params = {
-                    TIPO_REGISTRO: 'DETALLE',
-                    data: response
-                }
-
-                $scope.openModalParam({
-                    controller,
-                    template,
-                    params
-                })
+                })  
             } catch (error) {
                 console.log(error)
             }
@@ -294,8 +276,8 @@
                 })
 
                 let { isConfirmed } = await swalWithBootstrapButtons.fire({
-                    title: '<small>Anular Nota Credito?</small>',
-                    html: `<small>Esta Ud. seguro/a de anular este documento <b>N° ${item.nroDoc}</b></small>?`,
+                    title: '¿Está seguro de anular este comprobante?',
+                    html: `<small>Asegurese de haber dado de baja este comprobante en el portal del SRI</small>`,                     
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Si, anular!',
@@ -1132,7 +1114,9 @@
                     items: $scope.gridOptions.data,
                     decimal: $scope.decimal,
                     dataTarifaImpuesto: $scope.tarifaImpuestoVigente
-                }))
+                }));
+                //Recalculamos los totales 
+                $scope.setCalculoTotales("cantidad", rowEntity, 0);
             } catch (error) {
                 console.log(error)
             }
