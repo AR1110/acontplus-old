@@ -1,5 +1,5 @@
 ﻿import { client } from "$lib/utils/axiosClient.js";
-const url = "Factura/";
+const url = "FactElect/Factura/";
 
 async function get(params) {
   return await client.get(`${url}Get?json=${params}`).then(
@@ -15,7 +15,7 @@ async function get(params) {
 }
 
 async function post(data) {
-  return await client.post(`${url}`, data).then(
+  return await client.post(`${url}Insert`, data).then(
     (responseAxios) => {
       if (responseAxios.status == 200)
         return {
