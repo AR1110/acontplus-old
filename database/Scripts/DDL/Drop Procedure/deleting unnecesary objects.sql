@@ -466,3 +466,19 @@ GO
 
 DROP PROCEDURE IF EXISTS [ReporteIngresos].[CarteraCliente]
 GO
+
+--> RAMIREZ ALEXIS - FECHA :10/27/2023
+DROP PROCEDURE IF EXISTS [ReporteIngresos].[CarteraCliente]
+GO
+
+DROP PROCEDURE IF EXISTS [ReporteIngresos].[CarteraCliente]
+GO
+
+DROP PROCEDURE IF EXISTS [ReporteIngresos].[CarteraCliente]
+GO
+
+DROP PROCEDURE IF EXISTS [ReporteIngresos].[CarteraCliente]
+GO
+
+DROP PROCEDURE IF EXISTS [ReporteIngresos].[CarteraCliente]
+GO
