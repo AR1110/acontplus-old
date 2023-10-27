@@ -22,8 +22,9 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articu
 
     $scope.dataSearch = {
         checkBoxFecha: true,
-        checkBoxBodega: true,
-        consolidacion: 0
+        checkBoxBodega: false,
+        consolidacion: 0,
+        checkBoxDefault: false 
     };
 
     $scope.articuloFiltro = {
@@ -36,9 +37,11 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articu
     $scope.data = {};
 
     //Rango Fechas 
-    let thisMoment = moment()
-    let endOfMonth = moment(thisMoment).endOf('month');
-    let startOfMonth = moment(thisMoment).startOf('month');
+    let thisMoment = moment() 
+    let startOfMonth = moment(thisMoment).startOf('month') 
+    let endOfMonth = moment(thisMoment).endOf('month') 
+    // $scope.dataSearch.fechaInicio = startOfMonth;
+    // $scope.dataSearch.fechaFin = endOfMonth;
     
     //https://www.daterangepicker.com/
     $scope.dateRangePicker = {
@@ -112,58 +115,79 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articu
             }
         }).finally(()=>hideLoader())
 
-        getKardex();
+        //getKardex();
+        const params = Object.assign($scope.dataSearch, {
+            checkBoxFecha: true,
+            checkBoxMovement: $scope.dataSearch.movement? true: false,
+            fechaInicio: fS.formatDateMoment(startOfMonth),
+            fechaFin: fS.formatDateMoment(endOfMonth),
+        })
+
+        getDataKardex(params)
+
     }
 
+
+
     function getKardex() {
-        try {
-            showLoader();
-            $scope.dataSearch.checkBoxDefault = true; 
+        try { 
+            // const params = Object.assign($scope.dataSearch, {
+            //     checkBoxMovement: $scope.dataSearch.movement? true: false
+            // })
+
             const params = Object.assign($scope.dataSearch, {
-                checkBoxMovement: $scope.dataSearch.movement? true: false
+                checkBoxFecha: true,
+                checkBoxMovement: $scope.dataSearch.movement? true: false,
+                fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
+                fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
             })
 
-            kardexSvc.get(params).then(response => {
-                if (Array.isArray(response)) {
-                    $scope.kardexs = response[2] || [];
-                    if ($scope.kardexs.length === 0) {
-                        hideLoader();
-                        tS.toastr('info', 'No se encontraron los resultados');
-                        drawTabulator();
-                        return
-                    }
-
-                    $scope.data.cantTotalEntrada = calculoTotales("cantidadEntrada");
-                    $scope.data.totalEntrada = calculoTotales("totalEntrada");
-
-                    $scope.data.cantTotalSalida = calculoTotales("cantidadSalida");
-                    $scope.data.totalSalida = calculoTotales("totalSalida");
-
-                    $scope.data.stock = calculoTotales("saldo");
-                    $scope.data.totalGenetal = calculoTotales("totalGeneral");
-
-                    for (let value of $scope.kardexs) {
-                        value.totalGeneral = (value.precioCosto * value.saldo).toFixed(2)
-                    }
-
-                    drawTabulator();
-                }
-
-                if (response.code === "0") {
-                    hideLoader();
-                    Swal.fire({
-                        icon: 'warning',
-                        html: `<small>${response.message}</small>`
-                    })
-                }
-            }).catch(error => {
-                hideLoader()
-                console.log(error)
-            }).finally(() => hideLoader())
+            getDataKardex(params)
         } catch (error) {
             hideLoader();
             console.error(error)
         }
+    }
+
+    function getDataKardex(params){
+        showLoader();
+        kardexSvc.get(params).then(response => {
+            if (Array.isArray(response)) {
+                $scope.kardexs = response[2] || [];
+                if ($scope.kardexs.length === 0) {
+                    hideLoader();
+                    tS.toastr('info', 'No se encontraron los resultados');
+                    drawTabulator();
+                    return
+                }
+
+                $scope.data.cantTotalEntrada = calculoTotales("cantidadEntrada");
+                $scope.data.totalEntrada = calculoTotales("totalEntrada");
+
+                $scope.data.cantTotalSalida = calculoTotales("cantidadSalida");
+                $scope.data.totalSalida = calculoTotales("totalSalida");
+
+                $scope.data.stock = calculoTotales("saldo");
+                $scope.data.totalGenetal = calculoTotales("totalGeneral");
+
+                for (let value of $scope.kardexs) {
+                    value.totalGeneral = (value.precioCosto * value.saldo).toFixed(2)
+                }
+
+                drawTabulator();
+            }
+
+            if (response.code === "0") {
+                hideLoader();
+                Swal.fire({
+                    icon: 'warning',
+                    html: `<small>${response.message}</small>`
+                })
+            }
+        }).catch(error => {
+            hideLoader()
+            console.log(error)
+        }).finally(() => hideLoader())
     }
 
 
