@@ -68,12 +68,12 @@
             consolidacionInvSvc.get({ tipo: 1 }).then(response => {
                 let { estabs } = response;
                 establecimientos = estabs;
-                subfamilias = response.subFamilias; 
+                subfamilias = response.subFamilias;
                 config = response.config;
 
                 if (establecimientos.length > 0) {
                     let dataEstab = establecimientos.find(estab => (estab.defaultEstab));
-                    $scope.dataSearch.codEstab = dataEstab.codEstab; 
+                    $scope.dataSearch.codEstab = dataEstab.codEstab;
                 }
                 $scope.getConsolidaciones();
             })
@@ -157,7 +157,7 @@
 
         $scope.openModalDetalle = async (item) => {
             try {
-                showLoader();  
+                showLoader();
                 const response = await commonSvc.getDataConsolidacionInventario(item.idConsolidacionInventario)
                 if (!response.isComplete) return
 
@@ -181,7 +181,7 @@
 
         $scope.openModalEditar = async (item) => {
             try {
-                showLoader();  
+                showLoader();
 
                 const response = await commonSvc.getDataConsolidacionInventario(item.idConsolidacionInventario)
                 hideLoader();
@@ -1117,8 +1117,8 @@
 
         if (establecimientos.length > 0) {
             $scope.establecimientos = establecimientos
-            let dataEstab = $scope.establecimientos.find(estab=>(estab.defaultEstab)); 
-            $scope.cloneCodEstab =dataEstab.codEstab
+            let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
+            $scope.cloneCodEstab = dataEstab.codEstab
             $scope.puntosEmision = dataEstab.puntosEmision;
             $scope.bodegas = dataEstab.bodegas;
 
@@ -1397,12 +1397,12 @@
 
         if (establecimientos.length > 0) {
             $scope.establecimientos = establecimientos
-            let dataEstab = $scope.establecimientos.find(estab=>(estab.defaultEstab));
+            let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
             $scope.data.codEstab = dataEstab.codEstab;
             $scope.cloneCodEstab = $scope.data.codEstab
             $scope.puntosEmision = dataEstab.puntosEmision
             $scope.bodegas = dataEstab.bodegas;
-            
+
             if ($scope.puntosEmision.length > 0) {
                 $scope.data.idPuntoEmision = $scope.puntosEmision.find(x => (x.defaultPtoEmi)).idPuntoEmision
             }
@@ -2189,20 +2189,41 @@
 
         $scope.getReport = () => {
             try {
+                // let format = 'excel';
+                // let dataParms = {
+                //     id: $scope.data.idConsolidacionInventario,
+                //     codEstab: $scope.data.codEstab,
+                //     codigo: 'RCD',
+                //     codDoc: 'CI',
+                //     format,
+                // }
+
+                // const parameters = {
+                //     dataParams: JSON.stringify(dataParms)
+                // }
+
                 let format = 'excel';
                 let dataParms = {
-                    id: $scope.data.idConsolidacionInventario,
-                    codEstab: $scope.data.codEstab,
-                    codigo: 'RCD',
-                    codDoc: 'CI',
-                    format,
+                    id: $scope.data.idConsolidacionInventario
                 }
 
                 const parameters = {
+                    hasService: true,
+                    reportParams: JSON.stringify({
+                        hasParams: true,
+                        codigo: 'RCD',
+                        codDoc: 'CI',
+                        codEstab:  $scope.data.codEstab,
+                        format,
+                        aditionalParams: [
+
+                        ]
+                    }),
                     dataParams: JSON.stringify(dataParms)
                 }
 
-                commonSvc.getReportDynamic({
+
+                commonSvc.getReport({
                     parameters,
                     format
                 })
