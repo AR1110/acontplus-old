@@ -89,6 +89,8 @@ BEGIN
                                ,@fechaInicio = @fechaInicio
                                ,@fechaFin    = @fechaFin
 
+            RETURN 
+
         END 
 END
 GO
