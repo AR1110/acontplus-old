@@ -36,6 +36,7 @@
         fS = $injector.get('formulario');
         tS = $injector.get('toastService');
         clienteSvc = $injector.get('clienteService');
+        const nombreModalFactElect = $injector.get("nombreModalFactElect");
 
         const TIPO_DOC = commonSvc.tipoDoc['NC'];
 
@@ -219,13 +220,30 @@
 
         $scope.openModalDetalle = async (item) => {
             try {
-                let { MODAL_FILE_CTRL, MODAL_DETALLE } = nombreModalConst.nota_credito_cliente;
-                let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_DETALLE['controller']];
-                let template = MODAL_DETALLE['template'];
+
+                const {fileCtrl, controller, template} = nombreModalFactElect.NOTA_CREDITO 
+                let ctrl = (await import('../../../' + fileCtrl))[controller];  
+                showLoader();
                 let response = await commonSvc.getDataTipoDocVenta({
                     id: item.idNotaCredito,
                     codigoDocumento: TIPO_DOC.codigo
-                })
+                }).finally(()=>hideLoader())
+
+                if(!response.isComplete) throw ''
+
+                modalSvc.openModalCustom({
+                    controller: ctrl,
+                    template,
+                    size: 'xl',
+                    params: response,
+                    windowClass: 'uibModalFullScreen',
+                    isRenderRazorPartial: true
+                }).result.then(result => {
+    
+                    if (typeof result === 'object') {
+                        $scope.getNotaCreditos();
+                    }
+                }) 
 
                 if (!response.isComplete) return
 
@@ -456,19 +474,19 @@
                     actividadTipoIva
                 } = params;
 
-                if (dataDocumento && dataDocumento.idNotaCredito>0) { 
+                if (dataDocumento && dataDocumento.idNotaCredito > 0) {
                     console.log(actividadTipoIva)
                     $scope.factura = factura;
                     $scope.cliente = cliente;
-                    
-                    $scope.infoAdicionalDocumento = infoAdicionalDocumento;                    
+
+                    $scope.infoAdicionalDocumento = infoAdicionalDocumento;
                     //Cargamos los Datos 
                     $scope.data = Object.assign({}, dataDocumento);
-                    $scope.data.tarifa = $scope.actividadTipoIva.tarifa;
+                    $scope.data.tarifa = actividadTipoIva.tarifa;
                     $scope.data.idFactura = $scope.factura.idFactura;
                     $scope.gridOptions.data = detalleDocumento;
 
-                    let dataEstab = $scope.establecimientos.find(estab => (estab.codEstab===$scope.data.codEstab));
+                    let dataEstab = $scope.establecimientos.find(estab => (estab.codEstab === $scope.data.codEstab));
                     $scope.puntosEmision = dataEstab.puntosEmision;
                     $scope.bodegas = dataEstab.bodegas;
 
@@ -484,41 +502,46 @@
 
                     $scope.data.idTarifa = $scope.tarifas.length > 0 ? $scope.tarifas.find(tarifa => (tarifa.predeterminada)).idTarifa : 0;
                     $scope.dataClone.idTarifa = $scope.data.idTarifa;
-    
-                }else{
+
+                    // $scope.data = Object.assign($scope.data, gridOptionsSvc.calculoTotales({
+                    //     items: $scope.gridOptions.data,
+                    //     decimal: $scope.decimal,
+                    //     dataTarifaImpuesto: $scope.tarifaImpuestoVigente
+                    // }))
+                } else {
                     let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
-    
+
                     $scope.puntosEmision = dataEstab.puntosEmision;
                     $scope.bodegas = dataEstab.bodegas;
-    
+
                     $scope.data.codEstab = dataEstab.codEstab;
                     $scope.dataClone.codEstab = dataEstab.codEstab;
-    
+
                     if ($scope.puntosEmision.length > 0) {
                         $scope.data.idPuntoEmision = $scope.puntosEmision.find(ptoEmi => (ptoEmi.defaultPtoEmi)).idPuntoEmision;
                     } else {
                         tS.toastr('warning', 'No tienes asignados puntos de emisión')
                     }
-    
+
                     if ($scope.bodegas.length > 0) {
                         $scope.data.idBodega = $scope.bodegas.find(ptoEmi => (ptoEmi.defaultBodega)).idBodega;
                         $scope.dataClone.idBodega = $scope.data.idBodega;
                     } else {
                         tS.toastr('warning', 'No tienes asignados bodegas')
                     }
-    
+
                     if ($scope.vendedores.length > 0) {
                         $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario
                     } else {
                         $scope.data.idUsuario = 0;
                     }
-    
+
                     $scope.data.tarifa = $scope.tarifaImpuestoVigente.tarifa;
 
                     $scope.data.idTarifa = $scope.tarifas.length > 0 ? $scope.tarifas.find(tarifa => (tarifa.predeterminada)).idTarifa : 0;
                     $scope.dataClone.idTarifa = $scope.data.idTarifa;
 
-                } 
+                }
             } catch (error) {
                 hideLoader();
                 console.log(error);
@@ -560,7 +583,7 @@
                 name: 'Op.',
                 enableCellEdit: false,
                 width,
-                minWidth: '100',
+                minWidth: '50',
                 cellTemplate: CELL_TEMPLATE_OPTION,
             },
             {
@@ -1080,7 +1103,11 @@
                 $scope.data.idFactura = 0;
                 $scope.nroFactura = '';
                 $scope.gridOptions.data = [];
-                // $scope.data = Object.assign(this.data, this.uiGridInvoice.getTotales());
+                $scope.data = Object.assign($scope.data, gridOptionsSvc.calculoTotales({
+                    items: $scope.gridOptions.data,
+                    decimal: $scope.decimal,
+                    dataTarifaImpuesto: $scope.tarifaImpuestoVigente
+                }))
             }
         }
 
@@ -1101,7 +1128,11 @@
                 if (!response.isComplete) return
 
                 $scope.gridOptions.data = response.detalleDocumento;
-                //$scope.data = Object.assign(this.data, this.uiGridInvoice.getTotales());
+                $scope.data = Object.assign($scope.data, gridOptionsSvc.calculoTotales({
+                    items: $scope.gridOptions.data,
+                    decimal: $scope.decimal,
+                    dataTarifaImpuesto: $scope.tarifaImpuestoVigente
+                }))
             } catch (error) {
                 console.log(error)
             }
@@ -1193,7 +1224,7 @@
                 entity.precioUnitario = fS.roundNumber(tarifa.precioVenta, $scope.decimal.nroPrecio);
                 entity.precioConIva = fS.roundNumber(tarifa.precioConIva, $scope.decimal.nroPrecio);
 
-                $scope.setCalculoTotales('precioUnitario', entity, 0);  
+                $scope.setCalculoTotales('precioUnitario', entity, 0);
                 focusColumnCantidad();
             } catch (error) {
                 console.log(error)
@@ -1221,15 +1252,15 @@
                     $scope.gridOptions.columnDefs[index]
                 );
                 $scope.indexRow = null;
-            }, 500) 
-            counterGridOptions() 
+            }, 500)
+            counterGridOptions()
         }
 
         function counterGridOptions() {
             let index = 0;
             for (let item of $scope.gridOptions.data) {
                 item.n = index + 1;
-            } 
+            }
         }
 
 
@@ -1321,7 +1352,7 @@
                     html: textHtml,
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: 'Si, guardar!',
+                    confirmButtonText: `Si, ${textAccion}!`,
                     cancelButtonText: 'No, cancelar!',
                     reverseButtons: false,
                     allowOutsideClick: false,

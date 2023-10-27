@@ -1052,8 +1052,7 @@ export class CommonService {
         let infoAdicionalDocumento = [];
         let datosAdicionalesArticulo = [];
         let factura = {}
-        let actividadTipoIva = {};
-        const TIPO_DOC = this.tipoDoc[codigoDocumento];
+        let actividadTipoIva = {}; 
 
         switch (codigoDocumento) {
             case "FV":
@@ -1159,7 +1158,7 @@ export class CommonService {
                         throw response.message
                     }
                     if (response.code === "1") {
-                        let dataMain = JSON.parse(response.payload);
+                        let dataMain = JSON.parse(response.payload); 
 
                         let detalle = dataMain[2];
                         dataDocumento = dataMain[0][0];
@@ -1182,14 +1181,15 @@ export class CommonService {
                 break;
 
             case "NC":
-                await this.mS.getData('get', '/NotaCreditoCliente/GetId?id=' + id).then(response => {
+                await this.mS.getData('get',  'FactElect/NotaCredito/' + '?json=' + JSON.stringify({id: id, tipo: 4}), null, true).then(response => {
+                    console.log(response)
                     if (response.code == "0") {
                         this.form.sweetAlert('warning', response.message)
                         throw response.message
                     }
                     if (response.code === "1") {
                         let dataMain = JSON.parse(response.payload);
-
+                        console.log(dataMain)
                         let detalle = dataMain[3];
 
                         dataDocumento = dataMain[0][0];

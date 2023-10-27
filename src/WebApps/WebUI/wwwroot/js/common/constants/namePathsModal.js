@@ -114,6 +114,11 @@ app.constant('nombreModalFactElect', {
         templates: {
             D: 'FacturaVenta/_ModalDetalle.cshtml'
         }
+    },
+    NOTA_CREDITO: {
+        fileCtrl: '/js/factElect/modals/modalNotaCreditoDetalleCtrl.min.js' + CHANGE_VERSION(),
+        controller: 'modalNotaCreditoDetalleCtrl',
+        template: '~/Pages/NotaCredito/_ModalDetalle.cshtml'
     }
 })
 
