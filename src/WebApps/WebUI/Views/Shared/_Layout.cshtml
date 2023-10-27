@@ -131,8 +131,8 @@
 
                     <div class="navbar-nav d-lg-block m-md-block d-none mx-auto text-white">
                         <div class="d-flex flex-column">
-                            <div class="p-0 text-white">{{entidad}}</div>
-                            <div class="p-0 text-white"><small>{{nombreComercial}}</small></div>
+                            <div class="p-0 text-white">{{userData.tradeName}}</div>
+                            <div class="p-0 text-white"><small>{{userData.bussinesName}}</small></div>
                         </div>
                     </div>
 
@@ -147,7 +147,7 @@
                                 <img src="~/assets/images/user/user.png" alt="user" class="">
                                 <span class="hidden-md-down">
                                     Hola,
-                                    {{usuario}} &nbsp;<icon class="fa fa-angle-down"></icon>
+                                    {{userData.username}} &nbsp;<icon class="fa fa-angle-down"></icon>
                                 </span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right animated flipInY">
@@ -187,32 +187,7 @@
             <div class="scroll-sidebar">
                 <!-- Sidebar navigation-->
                 <nav class="sidebar-nav">
-                    <ul id="sidebarnav"> 
-
-                       @*  <li>
-                            <span class="has-arrow waves-effect waves-dark">
-                            </span>
-                        </li>
-
-                        <li ng-repeat="m in menus">
-
-                            <a class="has-arrow waves-effect waves-dark {{active?'active':''}}" ng-show="!active"
-                               ng-click="active=true" href="javascript:void(0)" aria-expanded="false">
-                                <i class="{{m.icono}}"></i><span class="hide-menu">{{m.descripcion}}</span>
-                            </a>
-                            <a class="has-arrow waves-effect waves-dark {{active?'active':''}}" ng-show="active"
-                               ng-click="active=false" href="javascript:void(0)" aria-expanded="false">
-                                <i class="{{m.icono}}"></i><span class="hide-menu">{{m.descripcion}}</span>
-                            </a>
-                            <ul ng-repeat="sm in subMenus |orderBy:sm.idSubmenu" aria-expanded="false"
-                                class="collapse {{active?'in':''}}" ng-if="m.idMenu==sm.idMenu">
-                                <li>
-                                    <a href="javascript:void(0)" ng-click="onChangeSubMenu(sm)">
-                                        <i class="{{sm.icono}}"></i> <small class="font-15">{{sm.descripcion}}</small>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li> *@
+                    <ul id="sidebarnav">
                     </ul>
                 </nav>
                 <!-- End Sidebar navigation -->

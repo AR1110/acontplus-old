@@ -43,8 +43,16 @@ BEGIN
 	DECLARE @nameDoc VARCHAR(150)
 	DECLARE @dataMail VARCHAR(MAX)
 	DECLARE @cc VARCHAR(100)
+    DECLARE @normalMethod BIT = 0
 
-	SELECT @idGuiaRemision = idGuiaRemision, @rdlcParams = rdlcParams FROM OPENJSON(@json) WITH (idGuiaRemision INT '$.id',rdlcParams VARCHAR(MAX) '$.rdlcParams') AS dt 
+	SELECT @idGuiaRemision = idGuiaRemision
+        ,@rdlcParams = rdlcParams
+        ,@normalMethod = normalMethod
+    FROM OPENJSON(@json) WITH (
+                                idGuiaRemision INT '$.id',
+                                rdlcParams VARCHAR(MAX) '$.rdlcParams',
+                                normalMethod BIT '$.normalMethod'
+                               ) AS dt 
 
 	SELECT 
 		@idTipoDocumento = gr.idTipoDocumento,
@@ -68,6 +76,72 @@ BEGIN
 	WHERE idGuiaRemision = @idGuiaRemision;
 	
 	SELECT @imagen = imagen, @mimeType = mimeType FROM Config.Estab_Logo WHERE codEstab = @codEstab
+
+    IF (@normalMethod = 1)
+        BEGIN
+            SELECT  nroDocumento        = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,gr.nroDocumento) 
+				,codigoAutorizacion  = gr.claveAcceso 
+				,fechaAutorizacion   = CONVERT(NVARCHAR, FORMAT(ISNULL(gr.fechaAutorizacion, gr.fechaEmision), 'dd/MM/yyy hh:mm:ss'))
+				,tipoDoc             = 'GUIA DE REMISIÓN'
+				,ambiente            = CASE WHEN pe.ambiente = '1' THEN 'PRUEBA' ELSE 'PRODUCIÓN' END 
+				,emision             = CASE WHEN gr.emision = '1' THEN 'NORMAL' ELSE '' END
+				,razonSocial         = e.razonSocial
+				,ruc                 = e.ruc
+				,entidadTelefono     = ISNULL(e.telefono, 'SN')
+				,entidadEmail        = ISNULL(e.email, 'SN') 
+				,claveAcceso         = gr.claveAcceso 
+				,estab          
+				,ptoEmi          
+				,secuencial          = dbo.AFTAutoComplete(gr.nroDocumento) 
+				,dirMatriz           = e.direccion 
+				,fechaEmision        = dbo.AFTConvertDate(gr.fechaEmision)
+				,s.dirEstablecimiento   
+				,s.contribuyenteEspecial
+				,s.obligadoContabilidad 
+				,s.nombreComercial
+				,contribuyenteRimpe = ISNULL(s.contribuyenteRimpe,'')
+				,agenteRetencion = ISNULL('AGENTE DE RETENCION RESOLUCION NRO: '+s.agenteRetencion,'')
+				,nroIdentificacionTransportista = t.nroIdentificacion
+				,nombreTransportista       = t.nombre 
+				,placa                     = v.placa
+				,ptoPartida                = gr.ptoPartida 
+				,fechaInicioTransporte     = gr.fechaInicio
+				,fechaFinTransporte        = gr.fechaFin							
+				,motivoTraslado            = gr.motivo
+				,ptoLlegada                = gr.ptoLlegada 
+				,docAduanero               = gr.docAduanero
+				,codEstablecimientoDestino = gr.estableDestino
+				,ruta                      = gr.ruta 
+				,razonSocialComprador      = cl.nombreFiscal
+				,nroIdentificacionCliente  = cl.numeroIdentificacion 
+				,direccionComprador		   = cl.direccion
+				,direccion                 = cl.direccion  
+				,periodoFiscal             = CONVERT(NVARCHAR, FORMAT(gr.fechaEmision, 'MM/yyyy'),106) 
+				,codigo = '20'
+			FROM dbo.GuiaRemision gr WITH (NOLOCK)
+			INNER JOIN dbo.PuntoEmision   pe WITH (NOLOCK) ON pe.idPuntoEmision  = gr.idPuntoEmision 
+			INNER JOIN Sri.Establecimiento s WITH (NOLOCK) ON s.codEstab         = pe.codEstab
+			INNER JOIN dbo.Cliente        cl WITH (NOLOCK) ON cl.idCliente       = gr.idCliente
+			INNER JOIN dbo.Entidad         e WITH (NOLOCK) ON e.idEntidad        = gr.idEntidad
+			 LEFT JOIN dbo.Transportista   t WITH (NOLOCK) ON t.idTransportista = gr.idTransportista
+			 LEFT JOIN dbo.Vehiculo        v WITH (NOLOCK) ON v.idVehiculo = gr.idVehiculo
+			WHERE gr.idGuiaRemision = @idGuiaRemision
+
+            SELECT a.codigo as codigo
+			    ,a.codigoAuxiliar as codigoAuxiliar
+				,grd.cantidad 
+				,grd.descripcion 			
+			FROM GuiaRemisionDetalle grd WITH (NOLOCK)		
+			INNER JOIN Articulo a WITH (NOLOCK) ON a.idArticulo = grd.idArticulo 
+			WHERE grd.idGuiaRemision = @idGuiaRemision
+
+            SELECT nombre
+                ,valor
+			FROM dbo.InfoAdicionalDoc WITH (NOLOCK)
+			WHERE idComprobante = @idGuiaRemision 
+                AND idTipoDocumento = @idTipoDocumento
+            RETURN
+        END
 
 	SET @headerDs = (
 						SELECT

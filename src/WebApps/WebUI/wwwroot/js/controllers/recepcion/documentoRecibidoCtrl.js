@@ -1415,7 +1415,7 @@
                         jsonAdicional: item.adicionales
                     }
                 })
-                
+
                 console.log(datosAdicionales)
 
                 mS.getData('post', `DatoAdicionalArticulo/Insert/${$scope.selected[0].idDocumento}/?json=${encodeURIComponent(JSON.stringify(datosAdicionales))}`, null, true).then(response => {
@@ -1787,7 +1787,7 @@
                         params: item,
                         isRenderRazorPartial: true
                     })
-                    
+
 
                     $scope.modalCH.result.then(res => {
                         $scope.getTempDetails()
@@ -2125,39 +2125,26 @@
                         return
                     }
 
-                    let dataParms = {
-                        id,
-                        codigo: COD_REPORTS[codDoc],
-                        format,
-                        isReportImported: true,
-                    }
-
                     let parameters = {
+                        dataParams: JSON.stringify({
+                            id,
+                            codigo: COD_REPORTS[codDoc],
+                            isReportImported: true,
+                        }),
                         reportParams: JSON.stringify({
                             codigo: COD_REPORTS[codDoc],
                             codEstab,
                             format,
                             aditionalParams: []
                         }),
+                        hasService: true,
                     }
 
 
-                    if (codDoc === '01') {
-                        parameters.hasService = true;
-                        parameters.dataParams = JSON.stringify(dataParms);
-                        _commonSvc.getReport({
-                            parameters,
-                            formatType: format
-                        })
-                    }
-
-                    if (codDoc === '07') {
-                        parameters.dataParams = JSON.stringify(dataParms);
-                        _commonSvc.getReportDynamic({
-                            parameters,
-                            format
-                        })
-                    }
+                    _commonSvc.getReport({
+                        parameters,
+                        formatType: format
+                    })
 
                 } catch (error) {
                     console.log(error)

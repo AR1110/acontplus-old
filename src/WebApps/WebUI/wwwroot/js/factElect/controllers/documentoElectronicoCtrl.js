@@ -54,30 +54,30 @@
             totalRecords: 0
         };
 
-        $scope.dataSearch.isCurrentDate = false; 
+        $scope.dataSearch.isCurrentDate = false;
 
         $scope.dataSearch.isSearchCustomerProvider = false;
 
         //Cuando la redieccion es del home - comprobantes error 
         let params = new URLSearchParams(document.location.search);
         // Imprime el valor
-        $scope.tipo =  params.get("tipo");
+        $scope.tipo = params.get("tipo");
 
         $scope.getComprobantes = () => {
             try {
-               
+
                 $scope.comprobantes = [];
 
-                if($scope.dataSearch.nroSecuencial){
-                    if(!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)){
+                if ($scope.dataSearch.nroSecuencial) {
+                    if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
                         $scope.dataSearch.checkBoxDate = true;
                         tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
                         return
                     }
-                    if(!($scope.dataSearch.identificacionReceptor)){
+                    if (!($scope.dataSearch.identificacionReceptor)) {
                         $scope.dataSearch.checkBoxDate = false;
                     }
-                } 
+                }
 
 
                 if ($scope.tipo > 0) {
@@ -95,7 +95,7 @@
                             console.log(error)
                         })
                 } else {
-                    showLoader();                    
+                    showLoader();
                     let dataSearch = {
                         tipo: 1,
                         codDoc: $scope.dataSearch.codDoc,
@@ -288,19 +288,22 @@
                 }
 
                 let format = 'pdf';
-                let dataParms = {
-                    versionComp: item.versionComp,
-                    id: item.idDocumento,
-                    codEstab: item.codEstab,
-                    codigo: REPORT_CODES[item.codDoc],
-                    format,
-                }
 
                 const parameters = {
-                    dataParams: JSON.stringify(dataParms)
+                    dataParams: JSON.stringify({
+                        versionComp: item.versionComp,
+                        id: item.idDocumento,
+                        normalMethod: true,
+                    }),
+                    reportParams: JSON.stringify({
+                        codigo: REPORT_CODES[item.codDoc],
+                        codEstab: item.codEstab,
+                        format,
+                    }),
+                    hasService: true,
                 }
 
-                commonSvc.getReportDynamic({
+                commonSvc.getReport({
                     parameters,
                     format
                 })
