@@ -1,6 +1,5 @@
-﻿using Lib.Common;
-using Lib.Common.Api;
-using Lib.Common.DbUtils;
+﻿using Common.Core.Models;
+using Common.Core.Utils;
 using Mechanical.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
@@ -53,7 +52,7 @@ namespace Mechanical.API.Controllers
             {
                 var parameters = new Dictionary<string, object> {
                     { "userRoleId", User.GetUserRoleId() },
-                    { "json", SqlStringParam.Sanitize(Converters.SerializeDictionary(data.Data))}
+                    { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
                 };
                 var response = await _vehicleService.AddAsync(parameters);
                 if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo guardar"); }
@@ -74,7 +73,7 @@ namespace Mechanical.API.Controllers
                 var parameters = new Dictionary<string, object> {
                     { "userRoleId", User.GetUserRoleId() },
                     { "id", id  },
-                    { "json", SqlStringParam.Sanitize(Converters.SerializeDictionary(data.Data)) }
+                    { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
                 };
                 var response = await _vehicleService.UpdateAsync(parameters);
                 if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo Actualizar"); }

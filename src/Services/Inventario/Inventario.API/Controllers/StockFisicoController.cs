@@ -1,7 +1,7 @@
-﻿using Inventario.Core.Entities;
+﻿using Common.Core.Models;
+using Inventario.Core.Entities;
 using Inventario.Core.Interfaces;
 using Inventario.Infrastructure.Data;
-using Lib.Common.Api;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services.Common;
@@ -40,7 +40,7 @@ namespace Inventario.API.Controllers
                 if (response == null) { return NoContent(); }
                 return Ok(response);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return BadRequest();
             }

@@ -1,9 +1,9 @@
-﻿using Identity.API.Dtos;
+﻿using Common.Core.Models;
+using Identity.API.Dtos;
 using Identity.Core.Entities;
 using Identity.Core.Interfaces;
 using Identity.Core.Models;
 using Identity.Infrastructure.Data;
-using Lib.Common.Api;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -55,14 +55,14 @@ namespace Identity.API.Controllers.v1
 
                     //Only has one company
                     if (userData.Count == 1)
-                    { 
+                    {
                         userData.ForEach(x => x.UrlGateway = _config["ApiGateways:Acontplus"]);
 
                         var token = _tokenService.CreateToken(userData.FirstOrDefault());
 
                         if (token == null || string.IsNullOrEmpty(token))
                         {
-                            _log.LogActivity("Error al generar el token: " + _response.payload); 
+                            _log.LogActivity("Error al generar el token: " + _response.payload);
                             return BadRequest("Error al iniciar session");
                         }
 

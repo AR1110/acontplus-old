@@ -1,6 +1,4 @@
 ﻿using Common.Core.Models;
-using Lib.Common.Api;
-using Lib.Common.Dtos;
 
 namespace Restaurant.Core.Interfaces
 {

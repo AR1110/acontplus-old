@@ -1,12 +1,7 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Models;
+using Common.Core.Utils;
 using DataAccess;
-using Inventario.Core.Interfaces;
-using Inventario.Core.Models;
-using Lib.Common;
-using Lib.Common.Api;
-using Lib.Common.DbUtils;
-using Lib.Common.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common;
@@ -86,7 +81,7 @@ namespace Inventario.API.Controllers.v1
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             var data = JsonConvert.DeserializeObject<ApiRequest>(json);
-            var s3file = new S3FileDto();
+            var s3file = new S3File();
 
             try
             {
@@ -100,7 +95,7 @@ namespace Inventario.API.Controllers.v1
                 }
                 await _db.SPExecute("Inventario.Articulo_Insert", true);
                 _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(Converters.SerializeDictionary(data.Data)));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
                 _db.AddDynamicParam("s3ObjectKey", s3file.S3ObjectKey ?? "");
                 _db.AddDynamicParam("s3ObjectUrl", s3file.S3ObjectUrl ?? "");
                 _response = _db.GetDefault();
@@ -143,7 +138,7 @@ namespace Inventario.API.Controllers.v1
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
             var data = JsonConvert.DeserializeObject<ApiRequest>(json);
-            var s3file = new S3FileDto();
+            var s3file = new S3File();
             try
             {
                 if (file != null)
@@ -157,7 +152,7 @@ namespace Inventario.API.Controllers.v1
                 await _db.SPExecute("Inventario.Articulo_Update");
                 _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(Converters.SerializeDictionary(data.Data)));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
                 _db.AddDynamicParam("s3ObjectKey", s3file.S3ObjectKey ?? "");
                 _db.AddDynamicParam("s3ObjectUrl", s3file.S3ObjectUrl ?? "");
                 _response = _db.GetDefault();

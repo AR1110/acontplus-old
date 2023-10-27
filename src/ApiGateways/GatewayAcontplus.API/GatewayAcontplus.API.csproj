@@ -10,7 +10,7 @@
     <PackageReference Include="Ocelot" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Services\Common\Lib.Common\Lib.Common.csproj" />
+    <ProjectReference Include="..\..\Services\Common\Common.Core\Common.Core.csproj" />
     <ProjectReference Include="..\..\Services\Common\Services.Common\Services.Common.csproj" />
   </ItemGroup>
   <ItemGroup>

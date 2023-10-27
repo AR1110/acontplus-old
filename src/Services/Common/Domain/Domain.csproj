@@ -1,26 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup Label="Globals">
-		<SccProjectName>SAK</SccProjectName>
-		<SccProvider>SAK</SccProvider>
-		<SccAuxPath>SAK</SccAuxPath>
-		<SccLocalPath>SAK</SccLocalPath>
-	</PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
 
-	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>disable</Nullable>
-	</PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Models\Reports\**" />
+    <EmbeddedResource Remove="Models\Reports\**" />
+    <None Remove="Models\Reports\**" />
+  </ItemGroup>
 
-	<ItemGroup>
-	  <Compile Remove="Models\Reports\**" />
-	  <EmbeddedResource Remove="Models\Reports\**" />
-	  <None Remove="Models\Reports\**" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\Lib.Common\Lib.Common.csproj" />
-	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common.Core\Common.Core.csproj" />
+  </ItemGroup>
 
 </Project>

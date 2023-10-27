@@ -1,5 +1,4 @@
 ﻿using Common.Core.Models;
-using Lib.Common.Api;
 
 namespace Vet.Core.Interfaces
 {

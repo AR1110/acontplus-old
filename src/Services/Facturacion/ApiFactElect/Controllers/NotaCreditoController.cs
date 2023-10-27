@@ -1,7 +1,7 @@
-﻿using DataAccess;
+﻿using Common.Core.Models;
+using Common.Core.Utils;
+using DataAccess;
 using Domain.ViewModels.Ventas;
-using Lib.Common.Api;
-using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common.Logs;
@@ -45,7 +45,7 @@ namespace ApiFactElect.Controllers
                 _db.Close();
             }
             return Ok(_response);
-        } 
+        }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] NotaCreditoViewModel data)

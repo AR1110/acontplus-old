@@ -39,7 +39,7 @@ namespace ApiContabilidad.Controllers
                 if (result == null) { return NoContent(); };
                 return Ok(result);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return BadRequest("Error al traer las categorias");
             }

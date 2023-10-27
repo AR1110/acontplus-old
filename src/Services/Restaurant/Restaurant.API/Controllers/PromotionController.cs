@@ -1,10 +1,8 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Models;
-using Lib.Common.DbUtils;
-using Lib.Common.Dtos;
+using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Restaurant.Core.Entities;
 using Restaurant.Core.Interfaces;
 using Services.Common;
 
@@ -49,7 +47,7 @@ namespace Restaurant.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(string json, IFormFile file)
         {
-            var s3file = new S3FileDto();
+            var s3file = new S3File();
             try
             {
                 if (file != null)
@@ -103,7 +101,7 @@ namespace Restaurant.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, string json, IFormFile file)
         {
-            var s3file = new S3FileDto();
+            var s3file = new S3File();
             try
             {
                 if (file != null)

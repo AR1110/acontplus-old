@@ -1,9 +1,7 @@
 ﻿using System.Data;
 using Common.Core.Interfaces;
-using Common.Infrastructure.Repository;
-using Lib.Common;
-using Lib.Common.Api;
-using Lib.Common.DbUtils;
+using Common.Core.Models;
+using Common.Core.Utils;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
 
@@ -35,7 +33,7 @@ namespace Restaurant.Application.Services
             }
             else
             {
-                return Converters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJSON(ds);
             }
         }
 
@@ -51,7 +49,7 @@ namespace Restaurant.Application.Services
             }
             else
             {
-                return Converters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJSON(ds);
             }
         }
 
@@ -60,7 +58,7 @@ namespace Restaurant.Application.Services
             var parameters = new Dictionary<string, object>{
                 {"userRoleId", request.UserRoleId},
                 {"id", id},
-                {"json", SqlStringParam.Sanitize(Converters.SerializeDictionary(request.Data))}
+                {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))}
             };
             return await _repository.SPExecuteAsync("Restaurant.Item_Update", parameters);
         }

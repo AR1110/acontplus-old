@@ -1,6 +1,6 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Lib.Common;
+using Common.Core.Utils;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
 using Services.Common.Logs;

@@ -1,4 +1,4 @@
-using Lib.Common.Api;
+using Common.Core.Models;
 using Vet.Core.Entities;
 
 namespace Vet.Core.Interfaces

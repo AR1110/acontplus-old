@@ -1,5 +1,5 @@
-﻿using DataAccess.GestionFinanciera;
-using Lib.Common.Api;
+﻿using Common.Core.Models;
+using DataAccess.GestionFinanciera;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Financiero

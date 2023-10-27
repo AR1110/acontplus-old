@@ -1,5 +1,5 @@
-﻿using Contabilidad.Core.Entities;
-using Lib.Common.Api;
+﻿using Common.Core.Models;
+using Contabilidad.Core.Entities;
 
 namespace Contabilidad.Core.Interfaces
 {

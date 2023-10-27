@@ -1,7 +1,6 @@
 ﻿using Common.Core.Interfaces;
 using Common.Core.Models;
-using Lib.Common;
-using Lib.Common.Api;
+using Common.Core.Utils;
 using Vet.Core.Interfaces;
 
 namespace Vet.Application.Services
@@ -9,9 +8,9 @@ namespace Vet.Application.Services
     public class MedicalHistoryService : IMedicalHistory
     {
         private readonly IADORepository _generic;
-        private readonly IReportService _report;
+        private readonly IRdlcReportService _report;
         private readonly APIResponse _response;
-        public MedicalHistoryService(IADORepository genericRepository, IReportService report)
+        public MedicalHistoryService(IADORepository genericRepository, IRdlcReportService report)
         {
             _response = new APIResponse();
             _generic = genericRepository;
@@ -29,7 +28,7 @@ namespace Vet.Application.Services
             }
             else
             {
-                _response.Create(code: "1", payload: Converters.DataTableToJSON(dt));
+                _response.Create(code: "1", payload: DataConverters.DataTableToJSON(dt));
             }
             return _response;
         }
@@ -47,7 +46,7 @@ namespace Vet.Application.Services
             }
             else
             {
-                _response.Create(code: "1", payload: Converters.DataSetToJSON(ds));
+                _response.Create(code: "1", payload: DataConverters.DataSetToJSON(ds));
             }
             return _response;
         }
@@ -67,7 +66,7 @@ namespace Vet.Application.Services
         public async Task<ReportResponse> GetReportAsync(Dictionary<string, object> parameters)
         {
             var ds = await _generic.GetDataSetAsync("Pet.MedicalHistory_Report", parameters);
-            return _report.GetReportNew(ds);
+            return _report.GetDynamicReport(ds);
         }
     }
 }

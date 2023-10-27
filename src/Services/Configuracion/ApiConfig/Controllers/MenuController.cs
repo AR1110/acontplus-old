@@ -1,9 +1,6 @@
-﻿using DataAccess;
-using Domain.Dtos;
-using Lib.Common.Api;
-using Lib.Common.DbUtils;
-using Lib.Common;
-using Microsoft.AspNetCore.Http;
+﻿using Common.Core.Models;
+using Common.Core.Utils;
+using DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -55,7 +52,7 @@ namespace ApiConfig.Controllers
             try
             {
                 await _db.SPExecute("Config.Menu_Insert", true);
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));                
+                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDefault();
             }

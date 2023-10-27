@@ -1,6 +1,4 @@
-﻿using Domain.Models.Administracion;
-
-namespace Domain.Models
+﻿namespace Domain.Models
 {
     public class Acciones
     {

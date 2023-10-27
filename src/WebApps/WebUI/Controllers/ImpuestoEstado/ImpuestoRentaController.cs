@@ -1,9 +1,9 @@
-﻿using DataAccess;
+﻿using Common.Core.Models;
+using Common.Core.Utils;
+using DataAccess;
 using DataAccess.GestionTributaria;
 using Domain.Models;
 using Domain.Models.GestionTributaria;
-using Lib.Common.Api;
-using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.ImpuestoEstado

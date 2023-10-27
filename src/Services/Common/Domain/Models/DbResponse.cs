@@ -1,6 +1,6 @@
 ﻿using System.Data;
-using Lib.Common;
-using Lib.Common.Api;
+using Common.Core.Models;
+using Common.Core.Utils;
 
 namespace Domain.Models
 {
@@ -49,7 +49,7 @@ namespace Domain.Models
                 }
                 else
                 {
-                    _response.Create(code: "1", payload: Converters.DataTableToJSON(dt));
+                    _response.Create(code: "1", payload: DataConverters.DataTableToJSON(dt));
                 }
             }
             catch (Exception ex)
@@ -76,7 +76,7 @@ namespace Domain.Models
                 }
                 else
                 {
-                    _response.Create(code: "1", payload: Converters.DataSetToJSON(ds, true));
+                    _response.Create(code: "1", payload: DataConverters.DataSetToJSON(ds, true));
                 }
             }
             catch (Exception ex)

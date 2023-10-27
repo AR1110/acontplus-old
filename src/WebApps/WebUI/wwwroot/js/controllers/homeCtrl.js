@@ -19,11 +19,11 @@
 
         $scope.init = () => {
             mS.getData('get', 'Dashboard/', null, true).then(function (response) {
-                if (response.id == 0) {
+                if (response.code == 0) {
                     toast.toastr('warning', response.message, response.titleSms);
                     return
                 }
-                let tempArray = JSON.parse(response.payload)[0]
+                let tempArray = JSON.parse(response.payload)["table"]
                 $scope.cantidad = tempArray[0];
             }).catch(error => {
                 console.log(error)
