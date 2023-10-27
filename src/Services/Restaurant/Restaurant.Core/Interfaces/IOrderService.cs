@@ -1,4 +1,5 @@
-﻿using Lib.Common.Api;
+﻿using Common.Core.Models;
+using Lib.Common.Api;
 using Lib.Common.Dtos;
 
 namespace Restaurant.Core.Interfaces
@@ -9,6 +10,6 @@ namespace Restaurant.Core.Interfaces
         Task<string> AddAsync(ApiRequest data);
         Task<string> PutAsync(int id, ApiRequest data);
         Task<string> PrintAsync(Dictionary<string, object> parameters);
-        Task<ReportResponseDto> GetReportAsync(Dictionary<string, object> parameters);
+        Task<ReportResponse> GetReportAsync(Dictionary<string, object> parameters);
     }
 }

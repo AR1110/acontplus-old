@@ -1,4 +1,5 @@
-﻿using Common.Infrastructure.Repository;
+﻿using Common.Core.Interfaces;
+using Common.Infrastructure.Repository;
 using Lib.Common;
 using Lib.Common.Api;
 using Microsoft.EntityFrameworkCore;

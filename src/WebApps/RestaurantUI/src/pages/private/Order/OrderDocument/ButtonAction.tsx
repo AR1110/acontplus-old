@@ -41,15 +41,20 @@ const ButtonAction = ({ data }: ActionsProps) => {
             }
 
             if (row.docType === DOC_TYPE.FV) {
-                setLoadingPDF(true)
+                setLoadingPDF(true);
                 const parameters = {
-                    dataParams: JSON.stringify({
-                        ...dataParms,
-                        codigo: DOC_TYPE_REPORT.FV
-                    })
+                    hasService: true,
+                    reportParams: JSON.stringify({
+                        hasParams: true,
+                        codigo: DOC_TYPE_REPORT.FV,
+                        codEstab: row.codEstab,
+                        format,
+                        aditionalParams: []
+                    }),
+                    dataParams: JSON.stringify(dataParms)
                 }
-                SharedService.downloadDynamicExternal(parameters)
-                    .finally(() => setLoadingPDF(false));
+                SharedService.downloadExternal(parameters)
+                .finally(() => setLoadingPDF(false)); 
             }
         } catch (error) {
             console.log(error)

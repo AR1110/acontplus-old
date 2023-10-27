@@ -1,5 +1,5 @@
 ﻿using ApiConfig.Interfaces;
-using Common.Infrastructure.Repository;
+using Common.Core.Interfaces;
 using Lib.Common;
 
 namespace ApiConfig.Services

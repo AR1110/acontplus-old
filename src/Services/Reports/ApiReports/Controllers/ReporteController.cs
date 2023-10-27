@@ -1,10 +1,12 @@
 ﻿using System.Data;
-using Common.Reports.Interfaces;
+using Common.Core.Interfaces;
+using Common.Core.Models;
 using DataAccess;
 using Lib.Common.DbUtils;
 using Lib.Common.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
+using Services.Common;
 using Services.Common.Logs;
 
 namespace ApiReports.Controllers
@@ -28,18 +30,17 @@ namespace ApiReports.Controllers
         {
             //Request.Headers.TryGetValue("Authorization", out StringValues headerValues);
             //string jsonWebToken = headerValues.FirstOrDefault();
-            var _response = new ReportResponseDto();
-            string mimeType = string.Empty, fileName = string.Empty;
+            var _response = new ReportResponse();
             try
             {
                 DataSet dsParams = null;
                 DataSet ds = null;
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                int idUsuarioRol = User.GetUserRoleId();
 
                 using (DbAccess _db = new DbAccess(_configuration))
                 {
                     await _db.SPExecute("Reporte.Report_Get");
-                    _db.AddDynamicParam("json", data.reportParams);
+                    _db.AddDynamicParam("json", SqlStringParam.Sanitize(data.reportParams));
                     dsParams = _db.GetDataSet();
                 }
                 using (DbAccess _db = new DbAccess(_configuration))
@@ -56,7 +57,7 @@ namespace ApiReports.Controllers
                             _db.AddDynamicParam("idRol", idUsuarioRol);
                         }
                     }
-                    _db.AddDynamicParam("json", data.dataParams);
+                    _db.AddDynamicParam("json", SqlStringParam.Sanitize(data.dataParams));
                     ds = _db.GetDataSet();
                 }
 
@@ -67,8 +68,9 @@ namespace ApiReports.Controllers
                 }
                 else
                 {
-                    fileName = dsParams.Tables[0].Rows[0].Field<string>("fileName");
+                    var fileName = dsParams.Tables[0].Rows[0].Field<string>("fileName");
                     var provider = new FileExtensionContentTypeProvider();
+                    string mimeType;
                     if (!provider.TryGetContentType(fileName, out mimeType))
                     {
                         mimeType = "application/octet-stream";
@@ -99,7 +101,7 @@ namespace ApiReports.Controllers
         //        _db.AddDynamicParam("json", data.reportParams);
         //        DataSet dsParams = _db.GetDataSet();
 
-        //        int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+        //        int idUsuarioRol = User.GetUserRoledId();
 
         //        await _db.SPExecute(dsParams.Tables[0].Rows[0]["storedProcedure"].ToString());
         //        _db.AddDynamicParam("json", data.dataParams);
@@ -123,47 +125,5 @@ namespace ApiReports.Controllers
         //    }
         //    return File(_response.Content, _response.ContentType, _response.FileName);
         //}
-
-        //Dynamic Report --> From Client
-        [HttpPost("DynamicReport")]
-        public async Task<IActionResult> DynamicReport([FromBody] ApiReportParamsDto data)
-        {
-
-            DbAccess _db = new DbAccess(_configuration);
-            var _response = new ReportResponseDto();
-            string mimeType = string.Empty, fileName = string.Empty;
-            try
-            {
-                await _db.SPExecute("Reporte.Management_Get_To_Print");
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(data.dataParams));
-                var _dt = _db.GetDataTableAsync();
-                if (_dt.code == "1")
-                {
-                    byte[] bytes = _report.GetDynamicReport(_dt.payload, ref mimeType, ref fileName);
-                    if (bytes == null || bytes.Length == 0)
-                    {
-                        _response = await _report.GetErrorAsync();
-                    }
-                    else
-                    {
-                        _response.Create(bytes, mimeType, fileName);
-                    }
-                }
-                else
-                {
-                    _response = await _report.GetErrorAsync();
-                }
-            }
-            catch (Exception ex)
-            {
-                _log.LogActivity("Error in DynamicReport: \n" + ex.ToString());
-                _response = await _report.GetErrorAsync();
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return File(_response.FileContents, _response.ContentType, _response.FileDownloadName);
-        }
     }
 }

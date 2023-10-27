@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using Common.Core.Interfaces;
 using Common.Infrastructure.Repository;
 using Inventario.Core.Interfaces;
 using Lib.Common;

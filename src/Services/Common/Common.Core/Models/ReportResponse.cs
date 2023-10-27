@@ -1,6 +1,6 @@
-﻿namespace Lib.Common.Dtos
+﻿namespace Common.Core.Models
 {
-    public class ReportResponseDto
+    public class ReportResponse
     {
         public byte[] FileContents { get; set; }
         public string ContentType { get; set; }

@@ -653,21 +653,22 @@ export class ModalOrdenCompraDetalleCtrl extends ModalOrdenCompraCtrl {
         try {
 
             let format = 'excel';
-            let dataParms = {
-                id: this.data.idIngresoBodega,
-                codEstab: this.data.codEstab,
-                codigo: 'RCD',
-                codDoc: this.TIPO_DOC.codigo,
-                format,
-            }
-
             const parameters = {
-                dataParams: JSON.stringify(dataParms)
+                dataParams: JSON.stringify({
+                    id: this.data.idIngresoBodega, 
+                    codDoc: this.TIPO_DOC.codigo, 
+                }),
+                hasService: true,
+                reportParams: JSON.stringify({ 
+                    codEstab: this.data.codEstab,
+                    codigo: 'RCD',
+                    format,
+                }),
             }
 
-            this._commonSvc.getReportDynamic({
+            this._commonSvc.getReport({
                 parameters,
-                format
+                formatType: format
             })
         } catch (error) {
             console.log(error)

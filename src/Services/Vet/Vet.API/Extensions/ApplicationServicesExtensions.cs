@@ -1,4 +1,4 @@
-﻿using Common.Reports.Interfaces;
+﻿using Common.Core.Interfaces;
 using Common.Reports.Services;
 using Microsoft.EntityFrameworkCore;
 using Vet.Application.Services;
