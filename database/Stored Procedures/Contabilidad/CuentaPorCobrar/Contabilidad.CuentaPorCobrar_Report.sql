@@ -23,18 +23,19 @@ GO
 CREATE OR ALTER PROCEDURE Contabilidad.CuentaPorCobrar_Report @idUsuarioRol INT, @json VARCHAR(MAX)
 AS
 BEGIN
-    -- Global
+    --> Global
     DECLARE @tipo INT 
 
-    -- Sql
+    --> Sql
     DECLARE @sql NVARCHAR(MAX) ,@params NVARCHAR(MAX)
 
-    --Filters
+    --> Filters
     DECLARE @idCliente INT ,@codEstab VARCHAR(25) ,@fechaInicio DATETIME ,@fechaFin DATETIME
-           ,@ckFecha BIT
+           ,@ckFecha BIT 
+    
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
 
-    -- Cartera Cliente
+    --> Cartera Cliente
     IF @tipo = 1
         BEGIN
             
@@ -49,10 +50,13 @@ BEGIN
                         FROM v_CuentaPorCobrar WITH (NOLOCK)
                         WHERE codEstado IN (''PP'',''PE'') '
 
-            SET @params = '@idCliente INT
-                          ,@codEstab  VARCHAR(25)'
+            SET @params = '@idCliente         INT
+                          ,@codEstab  VARCHAR(25)
+                          ,@fechaInicio  DATETIME
+                          ,@fechaFin     DATETIME'
 
             SELECT @idCliente   = idCliente  
+                  ,@ckFecha     = ckFecha
                   ,@fechaInicio = fechaInicio
                   ,@fechaFin    = fechaFin
             FROM OPENJSON(@json) WITH 
@@ -68,7 +72,10 @@ BEGIN
                     SET @sql = @sql + 'AND codEstab = @codEstab '
                 END 
 
-
+            IF @ckFecha = 1
+                BEGIN
+                    SET @sql = @sql + 'AND CAST(fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
+                END 
 
             IF @idCliente > 0 
                 BEGIN
@@ -77,8 +84,10 @@ BEGIN
 
             EXEC sp_executesql  @sql
 						       ,@params 
-                               ,@codEstab  = @codEstab
-                               ,@idCliente = @idCliente
+                               ,@codEstab    = @codEstab
+                               ,@idCliente   = @idCliente
+                               ,@fechaInicio = @fechaInicio
+                               ,@fechaFin    = @fechaFin
 
         END 
 END
