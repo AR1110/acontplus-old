@@ -204,8 +204,11 @@
         if (
           dataImpuesto.codigoPorcentaje == dataImpuestoVigente.codigoPorcentaje
         ) {
-          total.totalImpuestoVigente += itemDetails.cantidad * itemDetails.precioUnitario;
-          total.totalImpuestoVigenteNeto += (itemDetails.precioUnitario - itemDetails.valorDescuento) * itemDetails.cantidad;
+          total.totalImpuestoVigente +=
+            itemDetails.cantidad * itemDetails.precioUnitario;
+          total.totalImpuestoVigenteNeto +=
+            (itemDetails.precioUnitario - itemDetails.valorDescuento) *
+            itemDetails.cantidad;
         }
 
         if (dataImpuesto.codigoPorcentaje == CODIGO_PORCENTAJE_IVA0) {
@@ -232,8 +235,10 @@
             itemDetails.cantidad;
         }
 
-        total.sumaTotalNeto += itemDetails.cantidad * itemDetails.precioUnitario;
-        total.valorDescuento += itemDetails.cantidad * itemDetails.precioUnitario;
+        total.sumaTotalNeto +=
+          itemDetails.cantidad * itemDetails.precioUnitario;
+        total.valorDescuento +=
+          itemDetails.cantidad * itemDetails.precioUnitario;
         return total;
       },
       {
@@ -468,6 +473,8 @@
       });
   };
 
+  const saveNotaEntrega = () => {};
+
   // Todo: Save DETALLES
   const onUpdate = () => {
     showLoader();
@@ -491,7 +498,7 @@
     SupportDetailService.put(support.id, { data: { support, supportDetails } })
       .then((response) => {
         if (response) {
-          if(response.code != "1"){
+          if (response.code != "1") {
             return toast({ type: "warning", message: response.message });
           }
 
@@ -664,9 +671,13 @@
                   </button>
                   <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                     <!-- svelte-ignore a11y-invalid-attribute -->
-                    <a class="dropdown-item" href="#">Factura</a>
+                    <a on:click={saveFactura} class="dropdown-item" href="#"
+                      >Factura</a
+                    >
                     <!-- svelte-ignore a11y-invalid-attribute -->
-                    <a class="dropdown-item" href="#">Nota Entrega</a>
+                    <a on:click={saveNotaEntrega} class="dropdown-item" href="#"
+                      >Nota Entrega</a
+                    >
                   </div>
                 </div>
               </div>

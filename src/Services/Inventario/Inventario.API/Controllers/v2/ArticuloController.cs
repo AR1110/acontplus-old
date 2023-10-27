@@ -21,6 +21,33 @@ namespace Inventario.API.Controllers.v2
             _log = log;
         }
 
+
+        [HttpGet]
+        public async Task<IActionResult> Get(string json)
+        {
+            GenericResponse _response = new GenericResponse();
+            DbAccess _db = new DbAccess(_configuration);
+            try
+            {
+                await _db.SPExecute("Inventario.Articulo_Get");
+                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+                _response = _db.GetDataSetAsync();
+            }
+            catch (Exception ex)
+            {
+
+                _log.LogActivity("Error al listar articulos: \n" + ex.ToString());
+                _response.Create(code: "0", message: "Error al listar articulos");
+            }
+            finally
+            {
+                _db.Close();
+            }
+            return Ok(_response);
+        }
+
+
         [HttpGet]
         public async Task<IActionResult> GetId(int id)
         {
