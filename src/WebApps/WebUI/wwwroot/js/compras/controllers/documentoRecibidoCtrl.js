@@ -8,30 +8,25 @@
             '$scope',
             'mainService',
             'commonService',
+            'docRecibidoService',
             'toastService',
             'modalService',
             'nombreModal',
-            'uuid2',
-            '$timeout',
             '$q',
-            'Upload'
         ];
 
         function documentoRecibidoCtrl(
             $filter,
             $scope,
             mS,
-            _commonSvc,
+            commonSvc,
+            docRecibidoSvc,
             tS,
             modalService,
             nameModalConst,
-            uuid2,
-            $timeout,
-            $q,
-            Upload
-        ) {
-
-            'use strict';
+            $q
+        ) { 
+            
             $scope.title = 'documentoRecibidoCtrl';
             mS.detectDevice()
 
@@ -93,7 +88,7 @@
                         'Ultimos 30 Días': [moment().subtract(29, 'days'), moment()]
                     },
                     eventHandlers: {
-                        'apply.daterangepicker': function (event, picker) {
+                        'apply.daterangepicker': function () {
                             $scope.getComprobantes()
                             //console.log('applied')
                         }
@@ -120,7 +115,6 @@
             $scope.getDocs = function (doc) {
                 $scope.query.codDoc = doc.codigoSri
                 $scope.getComprobantes()
-                debugger;
             }
             function isDocVenta(codDoc) {
                 switch (codDoc) {
@@ -137,28 +131,20 @@
 
             $scope.getComprobantes = function () {
                 try {
-                    showLoader()
                     $scope.estabToWork = $scope.establecimientos.find(x => x.codEstab == $scope.query.codEstab).nombreComercial
                     $scope.comprobantes = []
                     $scope.query.startDate = $scope.dateRangePicker.date.startDate
                     $scope.query.endDate = $scope.dateRangePicker.date.endDate
                     //console.log($scope.query)
-                    mS.getData('get', 'DocumentoRecibido/Get/' + JSON.stringify($scope.query), null, true).then(response => {
-                        if (response.code == "0") {
-                            hideLoader()
-                            tS.toastr('warning', response.message)
-                        }
-                        if (response.code == "1") {
-                            $scope.comprobantes = JSON.parse(response.payload)[0]
-                            $scope.cloneComprobantes = JSON.parse(JSON.stringify($scope.comprobantes))
-                            $scope.onKeyupSearchFilter();
-                            hideLoader()
-                        }
 
-                    }).catch((error) => {
-                        hideLoader()
+                    showLoader()
+                    docRecibidoSvc.get($scope.query).then(response => {
+                        $scope.comprobantes = response;
+                        $scope.cloneComprobantes = JSON.parse(JSON.stringify($scope.comprobantes))
+                        $scope.onKeyupSearchFilter();
+                    }).catch(error => {
                         console.log(error)
-                    })
+                    }).finally(() => hideLoader())
                 } catch (error) {
                     hideLoader()
                     console.log(error)
@@ -166,7 +152,7 @@
             }
             $scope.estabToWork = ""
             $scope.initialLoad = function () {
-                _commonSvc.getEstabAsign().then(response => {
+                commonSvc.getEstabAsign().then(response => {
                     $scope.establecimientos = response
                     let codEstab = $scope.establecimientos.length > 0 ? $scope.establecimientos[0].codEstab : 0
                     $scope.query.codEstab = codEstab
@@ -200,12 +186,12 @@
             }
 
             // Para redondeo de los decimales en lo precios unitarios
-            const roundNumber = (number, max) => {
-                let factor = Math.pow(10, max)
-                let tempNumber = number * factor;
-                let roundedTempNumber = Math.round(tempNumber)
-                return roundedTempNumber / factor;
-            }
+            // const roundNumber = (number, max) => {
+            //     let factor = Math.pow(10, max)
+            //     let tempNumber = number * factor;
+            //     let roundedTempNumber = Math.round(tempNumber)
+            //     return roundedTempNumber / factor;
+            // }
 
 
 
@@ -269,7 +255,7 @@
                 if ($scope.selected[0].codDoc !== '01') {
                     document.getElementById("btnReport").style.display = "none";
                 } else {
-                    document.getElementById("btnReport").onclick = function (event) {
+                    document.getElementById("btnReport").onclick = function () {
                         $scope.getReport();
                     }
                 }
@@ -372,7 +358,7 @@
             $scope.uploadXml = function (files) {
                 var uploadPromises = [];
                 angular.forEach(files, function (file) {
-                    var uploadPromise = mS.getDataFile('DocumentoRecibido/UploadXml/?json=' + JSON.stringify({ codEstab: $scope.query.codEstab }), file, null, true).then(function (response) {
+                    var uploadPromise = docRecibidoSvc.uploadXml({ codEstab: $scope.query.codEstab }, file).then(function (response) {
                         // Maneja la respuesta del backend aquí
                         if (response) {
                             if (response.code == "0") {
@@ -397,7 +383,7 @@
                         //tS.toastr("info", "Todas las peticiones se han completado")
                         //console.log('Todas las peticiones se han completado');
                     })
-                    .catch(function (error) {
+                    .catch(function () {
                         // Al menos una de las peticiones ha fallado
                         tS.toastr("danger", "Al menos una de las peticiones ha fallado")
                         //console.log('Al menos una de las peticiones ha fallado:', error);
@@ -453,7 +439,7 @@
                     }
 
                     showLoader();
-                    mS.getDataFile('DocumentoRecibido/Read', $scope.fileTxt, null, true).then(response => {
+                    docRecibidoSvc.readFileTxt($scope.fileTxt).then(response => {
                         if (response.code == 0) {
                             hideLoader()
                             tS.toastr('warning', response.message)
@@ -518,7 +504,7 @@
                 }
                 $scope.claveAccesoIsValid = false
                 showLoader();
-                await mS.getData('post', 'DocumentoRecibido/CheckExistenceXml/?claveAcceso=' + item, null, true).then(
+                await docRecibidoSvc.checkExistenceXml(item).then(
                     response => {
                         if (response.estado != "AUTORIZADO") {
                             if (response.message) {
@@ -548,10 +534,9 @@
                     comprobantes: $scope.compToImport
                 }
                 showLoader();
-                mS.getData('post', 'DocumentoRecibido/Post', { data: data }, true).then(
+                docRecibidoSvc.post(data).then(
                     response => {
                         if (response.code == 0) {
-                            hideLoader()
                             tS.toastr('warning', response.message);
                         }
                         if (response.code == 1) {
@@ -563,19 +548,17 @@
                             }
 
                             tS.toastr('success', response.message)
-                            hideLoader();
                         }
                     }
                 ).catch(error => {
-                    hideLoader();
                     console.log(error);
-                })
+                }).finally(() => hideLoader())
 
             }
 
             $scope.mergedDocs = []
             $scope.showOptionsMergeDoc = false;
-            $scope.getMergedDocs = (item) => {
+            $scope.getMergedDocs = () => {
 
                 try {
                     $scope.mergedDocs = []
@@ -585,21 +568,14 @@
                         codDoc: $scope.selected[0].codDoc,
                         claveAcceso: $scope.selected[0].claveAcceso
                     }
-
-
-                    mS.getData('get', 'DocumentoRecibido/Get/' + JSON.stringify(data), null, true).then(
-                        response => {
-                            if (response.code == '0') {
-                                tS.toastr('warning', response.message)
-                            }
-                            if (response.code == '1') {
-                                let arrTemp = JSON.parse(response.payload)[0]
-                                $scope.mergedDocs = arrTemp;
-                            }
-                        }
+                    showLoader();
+                    docRecibidoSvc.get(data).then(response => {
+                        let arrTemp = response;
+                        $scope.mergedDocs = arrTemp;
+                    }
                     ).catch(error => {
                         console.log(error)
-                    })
+                    }).finally(() => hideLoader())
                     Swal.close()
                     $('#docRelModal').modal('show');
                 } catch (error) {
@@ -617,25 +593,21 @@
             $scope.putXml = function () {
                 try {
                     showLoader()
-                    mS.getData('put', 'DocumentoRecibido/Put/' + $scope.selected[0].idDocumento, null, true).then(
+                    docRecibidoSvc.putXml($scope.selected[0].idDocumento).then(
                         response => {
-                            hideLoader()
                             if (response.code == 0) {
-                                hideLoader()
                                 tS.toastr('warning', response.message)
                                 return;
                             }
                             if (response.code == 1) {
-                                hideLoader()
                                 tS.toastr('success', response.message)
                                 return;
                             }
                             if (response.code == 2) {
                                 $scope.askToUploadXml() //call to manual xml update
                             }
-                            hideLoader()
                         }
-                    )
+                    ).finally(() => hideLoader())
 
                 } catch (e) {
                     hideLoader()
@@ -667,24 +639,21 @@
                         alert('No ha seleccionado ningun archivo')
                         return;
                     }
-                    mS.getDataFile('DocumentoRecibido/' + $scope.selected[0].idDocumento + '/' + $scope.selected[0].claveAcceso, file, null, true).then(
+
+                    docRecibidoSvc.putXmlManual($scope.selected[0].idDocumento, $scope.selected[0].claveAcceso, file).then(
                         response => {
-                            hideLoader()
                             if (response.code == 0) {
-                                hideLoader()
                                 tS.toastr('warning', response.message)
                                 return;
                             }
                             if (response.code == 1) {
-                                hideLoader()
                                 $('#xmlIndividualModal').modal('hide')
                                 tS.toastr('success', response.message)
                                 $scope.showOptions()
                                 return;
                             }
-                            hideLoader()
                         }
-                    )
+                    ).finally(() => hideLoader());
                 } catch (error) {
                     console.log(error)
                 }
@@ -711,23 +680,20 @@
 
             $scope.delete = function (item) {
                 try {
-                    showLoader()
-                    mS.getData('delete', 'DocumentoRecibido/' + item, null, true).then(
+                    showLoader();
+                    docRecibidoSvc.delete(item).then(
                         response => {
                             if (response.code == 0) {
-                                hideLoader()
                                 tS.toastr('warning', response.message)
                                 return;
                             }
                             if (response.code == 1) {
-                                hideLoader()
                                 $scope.getComprobantes()
                                 $('#newImportModal').modal('hide')
                                 tS.toastr('success', response.message)
                             }
                         }
-                    )
-                    hideLoader()
+                    ).finally(() => hideLoader())
                 } catch (error) {
                     hideLoader()
                     console.log(error)
@@ -765,26 +731,23 @@
             $scope.medidas = [];
             $scope.getFormData = function () {
                 try {
-                    mS.getData('get', 'DocumentoRecibido/Get/' + JSON.stringify({ tipo: '1', codEstab: $scope.query.codEstab }), null, true).then(
-                        response => {
-                            if (response.code == "0") {
-                                tS.toastr('warning', response.message)
-                            }
-                            if (response.code == "1") {
-                                $scope.arraysForm = JSON.parse(response.payload)
-                                $scope.sustentos = $scope.arraysForm[0];
-                                $scope.tiemposCredito = $scope.arraysForm[1]
-                                $scope.categories = $scope.arraysForm[2];
-                                $scope.bodegas = $scope.arraysForm[3];
-                                if ($scope.selectedEstab.codEstab) {
-                                    $scope.filterBodega()
-                                }
-                                $scope.medidas = $scope.arraysForm[4];
-                                $scope.getProv()
-                            }
-                        }).catch(error => {
-                            console.log(error)
-                        })
+                    showLoader();
+                    let params = { tipo: '1', codEstab: $scope.query.codEstab }
+                    docRecibidoSvc.get(params).then(response => {
+                        $scope.arraysForm = response;
+                        $scope.sustentos = $scope.arraysForm[0];
+                        $scope.tiemposCredito = $scope.arraysForm[1]
+                        $scope.categories = $scope.arraysForm[2];
+                        $scope.bodegas = $scope.arraysForm[3];
+                        if ($scope.selectedEstab.codEstab) {
+                            $scope.filterBodega()
+                        }
+                        $scope.medidas = $scope.arraysForm[4];
+                        $scope.getProv()
+
+                    }).catch(error => {
+                        console.log(error)
+                    }).finally(() => hideLoader())
 
                 } catch (error) {
                     console.log(error)
@@ -870,7 +833,7 @@
 
 
 
-                $scope.modalRef.rendered.then(res => {
+                $scope.modalRef.rendered.then(() => {
                     $("#tbodyTaxes").html(trTaxes)
                     // const table = document.getElementById("tbdoyTaxes")
                     // table.innerHTML = trTaxes
@@ -904,8 +867,8 @@
             $scope.customDetailTemp = []
             $scope.getId = () => {
                 try {
-                    showLoader()
-                    mS.getData('get', 'DocumentoRecibido/GetId/' + $scope.selected[0].idDocumento, null, true).then(response => {
+                    showLoader();
+                    docRecibidoSvc.getId($scope.selected[0].idDocumento).then(response => {
                         if (!response.payload) {
                             tS.toastr('warning', "Aun no se actualizado el Xml del SRI")
                         } else {
@@ -971,7 +934,7 @@
                                         isRenderRazorPartial: true
                                     })
 
-                                    $scope.modalRef.result.then(res => {
+                                    $scope.modalRef.result.then(() => {
                                         $scope.resetMainModal()
                                     })
                                     $scope.setTaxes()
@@ -1025,7 +988,7 @@
                                             isRenderRazorPartial: true
                                         })
 
-                                    $scope.modalRef.result.then(res => {
+                                    $scope.modalRef.result.then(() => {
                                         $scope.resetMainModal()
                                     })
                                     $scope.setTaxes()
@@ -1038,15 +1001,14 @@
                                     break;
                             }
                             /** Info Adicional */
-                            if ($scope.fullComprobante.infoAdicional) {
-                            }
+                            // if ($scope.fullComprobante.infoAdicional) {
+                            // }
 
-                        }
-                        hideLoader()
+                        } 
                     }).catch((error) => {
                         hideLoader()
                         console.log(error)
-                    })
+                    }).finally(()=>hideLoader())
                 } catch (error) {
                     hideLoader()
                     console.log(error)
@@ -1144,7 +1106,7 @@
                                 isRenderRazorPartial: true
                             })
 
-                            $scope.modalRefProv.result.then(res => {
+                            $scope.modalRefProv.result.then(() => {
 
                             })
                         }, error => {
@@ -1284,7 +1246,7 @@
                 }
             }
 
-            $scope.openModalNewArticle = async (event) => {
+            $scope.openModalNewArticle = async () => {
 
                 let { MODAL_CTRL, MODAL_NUEVO_CSHTML } = nameModalConst.articulo;
                 let { ModalArticuloCtrl } = await import('../../modal/' + MODAL_CTRL);
@@ -1442,7 +1404,7 @@
 
             $scope.saveArticleTemp = function (tipo, data) {
                 try {
-                    let method = '', url = ''
+                    let method = '';
                     if (tipo == 1) {
                         method = "post"
                     } else {
@@ -1492,7 +1454,7 @@
                         isRenderRazorPartial: true
                     })
 
-                    $scope.modalRefArtMerg.result.then(res => {
+                    $scope.modalRefArtMerg.result.then(() => {
 
                     })
 
@@ -1649,9 +1611,9 @@
                                 }
                                 )
 
-                                $scope.modalRefArticleHistory.result.then(res => {
+                                // $scope.modalRefArticleHistory.result.then(() => {
 
-                                })
+                                // })
 
                             } else {
                                 tS.toastr('info', "Aun no existen ingresos de este articulo.")
@@ -1789,7 +1751,7 @@
                     })
 
 
-                    $scope.modalCH.result.then(res => {
+                    $scope.modalCH.result.then(() => {
                         $scope.getTempDetails()
                     })
                 } catch (error) {
@@ -1835,7 +1797,7 @@
                     }
                 }
 
-                angular.forEach($scope.customDetailTemp, (value, key) => {
+                angular.forEach($scope.customDetailTemp, (value) => {
                     //console.log(key, value)
                     if (!value.codigoPrincipal) {
                         tS.toastr('warning', 'Por favor ingrese un código')
@@ -2045,27 +2007,27 @@
                         return
                     }
                     showLoader()
-                    let data = {
-                        idDocumento: $scope.selected[0].idDocumento,
-                        secuencial: $scope.infoTributaria.secuencial,
-                        estab: $scope.infoTributaria.estab,
-                        ptoEmi: $scope.infoTributaria.ptoEmi,
-                        claveAcceso: $scope.selected[0].claveAcceso,
-                        fechaEmision: $scope.infoComprobante.fechaEmision,
-                        codDoc: $scope.infoTributaria.codDoc,
-                        idSustentoTributario: Number($scope.comprobanteForm.idSustentoTributario),
-                        idProveedor: Number($scope.idProveedor),
-                        idCategoriaCompra: Number($scope.comprobanteForm.idCategoria),
-                        idBodega: Number($scope.comprobanteForm.idBodega),
-                        idTiempoCredito: Number($scope.comprobanteForm.idTiempoCredito),
-                        totalSinImpuestos: parseFloat($scope.infoComprobante.totalSinImpuestos),
-                        totalDescuento: 0.00,// parseFloat($scope.infoComprobante.totalDescuento),
-                        propina: $scope.infoComprobante.propina,
-                        importeTotal: parseFloat($scope.infoComprobante.importeTotal),
-                        observacion: $scope.comprobanteForm.observacion,
-                        payments: JSON.stringify($scope.payments)
+                    // let data = {
+                    //     idDocumento: $scope.selected[0].idDocumento,
+                    //     secuencial: $scope.infoTributaria.secuencial,
+                    //     estab: $scope.infoTributaria.estab,
+                    //     ptoEmi: $scope.infoTributaria.ptoEmi,
+                    //     claveAcceso: $scope.selected[0].claveAcceso,
+                    //     fechaEmision: $scope.infoComprobante.fechaEmision,
+                    //     codDoc: $scope.infoTributaria.codDoc,
+                    //     idSustentoTributario: Number($scope.comprobanteForm.idSustentoTributario),
+                    //     idProveedor: Number($scope.idProveedor),
+                    //     idCategoriaCompra: Number($scope.comprobanteForm.idCategoria),
+                    //     idBodega: Number($scope.comprobanteForm.idBodega),
+                    //     idTiempoCredito: Number($scope.comprobanteForm.idTiempoCredito),
+                    //     totalSinImpuestos: parseFloat($scope.infoComprobante.totalSinImpuestos),
+                    //     totalDescuento: 0.00,// parseFloat($scope.infoComprobante.totalDescuento),
+                    //     propina: $scope.infoComprobante.propina,
+                    //     importeTotal: parseFloat($scope.infoComprobante.importeTotal),
+                    //     observacion: $scope.comprobanteForm.observacion,
+                    //     payments: JSON.stringify($scope.payments)
 
-                    }
+                    // }
                     let url = ''
                     url = 'DocumentoDetalle/' + $scope.selected[0].idDocumento + '/' + 0
                     //url = _urlService + 'Factura?json=' + JSON.stringify(data)
@@ -2141,7 +2103,7 @@
                     }
 
 
-                    _commonSvc.getReport({
+                    commonSvc.getReport({
                         parameters,
                         formatType: format
                     })
@@ -2182,12 +2144,12 @@
                     }
 
 
-                    _commonSvc.getReportDynamic({ parameters, format })
+                    commonSvc.getReportDynamic({ parameters, format })
                 } catch (error) {
                     console.log(error)
                 }
             }
-            $scope.proveedorSearch = (textSearch) => _commonSvc.proveedorSearch(textSearch);
+            $scope.proveedorSearch = (textSearch) => commonSvc.proveedorSearch(textSearch);
             $scope.selectProveedorFiltro = (item) => {
                 $scope.query.rucProveedor = item.proveedor.numeroIdentificacion
                 $scope.getComprobantes()
@@ -2243,8 +2205,9 @@
 
             $scope.migrate = () => {
                 try {
-                    let data = { codEstab: $scope.migrate.codEstab, jsonData: $scope.comprobantesToMigrate }
-                    mS.getData('put', 'DocumentoRecibido/Migrate', { data: data }, true).then(response => {
+                    let data = { codEstab: $scope.migrate.codEstab, jsonData: $scope.comprobantesToMigrate };
+                    showLoader();
+                    docRecibidoSvc.migrate(data).then(response => {
                         if (response.code == '0') {
                             tS.toastr('warning', response.message)
                         }
@@ -2252,12 +2215,10 @@
                             $scope.initialLoad()
                             $('#migrateEstabModal').modal('hide')
                             tS.toastr("success", response.message)
-                        }
-                        hideLoader()
-                    }).catch(error => {
-                        hideLoader()
+                        } 
+                    }).catch(error => { 
                         console.log(error)
-                    })
+                    }).finally(()=>hideLoader())
                 } catch (error) {
                     hideLoader()
                     console.log(error)
