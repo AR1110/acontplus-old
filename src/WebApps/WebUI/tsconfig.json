@@ -44,6 +44,9 @@
             "$utils/*": [
                 "App/lib/utils/*"
             ],
+            "$contab/*": [
+                "App/routes/Contabilidad/*"
+            ],
         }
     }
 }
