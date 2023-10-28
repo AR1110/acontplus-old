@@ -1,7 +1,7 @@
-using Microsoft.AspNetCore.Mvc;
+﻿ 
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebUI.Pages.Contabilidad.Report
+namespace WebUI.Pages.Ventas.Report
 {
     public class IndexModel : PageModel
     {

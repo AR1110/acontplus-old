@@ -1,8 +1,11 @@
+import { hideLoader } from '$lib/utils/loading-spinner';
+import { showLoader } from '$utils/loading-spinner';
 import FileSaver from "file-saver";
 import { clientFile } from "$lib/utils/axiosClient";
 
 class Shared {
-  download(parameters: object, returnData = false) {
+  download(parameters: object) {
+    showLoader();
     clientFile("Reporte/Download", parameters).then((response) => {
       const ieEDGE = navigator.userAgent.match(/Edge/g);
       const ie = navigator.userAgent.match(/.NET/g); // IE 11+
@@ -21,10 +24,10 @@ class Shared {
         const fileURL = URL.createObjectURL(blob);
         window.open(fileURL, fileName);
       }
-    });
+    }).finally(()=>hideLoader())
   }
 
-  roundNumber = function (number, max = 1) {
+  roundNumber(number, max = 1) {
     number = Number(number);
 
     if (typeof number !== "number" || isNaN(number)) {
@@ -39,7 +42,7 @@ class Shared {
     const tempNumber = number * factor;
     const roundedTempNumber = Math.round(tempNumber);
     return roundedTempNumber / factor;
-  };
+  }
 }
 
 export const sharedService = new Shared();
