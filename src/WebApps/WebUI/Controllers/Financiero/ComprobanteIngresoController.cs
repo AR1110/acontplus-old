@@ -1,29 +1,21 @@
-﻿using DataAccess;
-using DataAccess.Tesoreria;
+﻿using Common.Core.Models;
+using Common.Core.Utils;
+using DataAccess;
 using Domain.Models;
-using Lib.Common;
-using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers.GestionFinanciera
+namespace WebUI.Controllers.Financiero
 {
     public class ComprobanteIngresoController : Controller
     {
-        private ComprobanteIngresoDao _ci;
         private readonly IConfiguration _configuration;
 
         private DataAccessObject _dao;
-
-        private EstadoFinancieroDao _ef;
 
         public ComprobanteIngresoController(IConfiguration configuration)
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-            _ef = new EstadoFinancieroDao(_configuration);
-            _ci = new ComprobanteIngresoDao(_configuration);
-
-
         }
 
 
@@ -36,7 +28,7 @@ namespace WebUI.Controllers.GestionFinanciera
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            var parameters = new Dictionary<string, object>();
             parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlStringParam.Sanitize(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("GestFinanc.ComprobanteIngreso_Get", parameters)));
@@ -45,8 +37,8 @@ namespace WebUI.Controllers.GestionFinanciera
         [HttpDelete]
         public async Task<IActionResult> Cancel(int id, string observacion)
         {
-            GenericResponse _response = new GenericResponse();
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            var _response = new GenericResponse();
+            var parameters = new Dictionary<string, object>();
             parameters.Add("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("idComprobanteIngreso", id);
             parameters.Add("observacion", observacion);

@@ -1,7 +1,7 @@
-﻿using DataAccess;
+﻿using Common.Core.Models;
+using Common.Core.Utils;
+using DataAccess;
 using Domain.ViewModels.Logistica;
-using Lib.Common;
-using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common.Logs;
@@ -32,7 +32,7 @@ namespace ApiLogistica.Controllers
                 await _db.SPExecute("Logistica.GuiaRemision_Get", true);
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataTableAsync();
+                _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
             {

@@ -1,7 +1,7 @@
-﻿using Autofac.Extensions.DependencyInjection;
-using Autofac;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Common.Core.Utils;
 using Inventario.API.Extensions;
-using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;

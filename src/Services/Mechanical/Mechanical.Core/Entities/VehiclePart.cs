@@ -7,7 +7,7 @@ namespace Mechanical.Core.Entities
     [Table("VehiclePart", Schema = "Mechanical")]
     public class VehiclePart : BaseEntity
     {
-        public VehiclePartType vehiclePartType {  get; set; }
+        public VehiclePartType vehiclePartType { get; set; }
         public int VehiclePartTypeId { get; set; }
         [Required]
         [MaxLength(15)]

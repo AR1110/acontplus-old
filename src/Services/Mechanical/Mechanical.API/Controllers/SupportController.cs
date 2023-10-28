@@ -1,11 +1,9 @@
-﻿using Lib.Common.Api;
-using Lib.Common.DbUtils;
-using Lib.Common;
+﻿using Common.Core.Models;
+using Common.Core.Utils;
 using Mechanical.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 using Services.Common.Logs;
-using Mechanical.Application.Services;
 
 namespace Mechanical.API.Controllers
 {
@@ -51,7 +49,7 @@ namespace Mechanical.API.Controllers
             {
                 var parameters = new Dictionary<string, object> {
                     { "userRoleId", User.GetUserRoleId() },
-                    { "json", SqlStringParam.Sanitize(Converters.SerializeDictionary(data.Data))}
+                    { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
                 };
                 var response = await _supportService.AddAsync(parameters);
                 if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo guardar"); }
@@ -65,14 +63,14 @@ namespace Mechanical.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id,[FromBody] ApiRequest data)
+        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
         {
             try
             {
                 var parameters = new Dictionary<string, object> {
                     { "userRoleId", User.GetUserRoleId() },
                     { "id", id },
-                    { "json", SqlStringParam.Sanitize(Converters.SerializeDictionary(data.Data))}
+                    { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
                 };
                 var response = await _supportService.UpdateAsync(parameters);
                 if (response == null | string.IsNullOrEmpty(response)) { return BadRequest("No se pudo guardar"); }

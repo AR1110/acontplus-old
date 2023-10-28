@@ -1,8 +1,7 @@
-﻿using Common.Infrastructure.Repository;
-using Lib.Common;
-using System.Data;
+﻿using System.Data;
+using Common.Core.Interfaces;
+using Common.Core.Utils;
 using Mechanical.Core.Interfaces;
-using Mechanical.Infrastructure.Data;
 
 namespace Mechanical.Application.Services
 {
@@ -11,7 +10,7 @@ namespace Mechanical.Application.Services
         private readonly IADORepository _repository;
 
 
-        public InspectionService( IADORepository repository)
+        public InspectionService(IADORepository repository)
         {
             _repository = repository;
         }
@@ -29,7 +28,7 @@ namespace Mechanical.Application.Services
             }
             else
             {
-                return Converters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJSON(ds);
             }
         }
         public async Task<string> AddAsync(Dictionary<string, object> parameters)

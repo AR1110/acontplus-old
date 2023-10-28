@@ -1,6 +1,7 @@
 ﻿using System.Data;
-using System.Data.SqlClient;
-using Lib.Common;
+using Microsoft.Data.SqlClient;
+using Common.Core.Models;
+using Common.Core.Utils;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.FE
@@ -32,7 +33,7 @@ namespace DataAccess.FE
                     if (dt.Rows.Count > 0)
                     {
                         _response.id = "1";
-                        _response.data = Converters.DataTableToJSON(dt);
+                        _response.data = DataConverters.DataTableToJSON(dt);
                     }
                 }
             }

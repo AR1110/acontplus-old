@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Recepcion_UI.Areas.DocumentoRecibido.Pages
+namespace WebUI.Areas.DocumentoRecibido.Pages
 {
     public class IndexModel : PageModel
     {

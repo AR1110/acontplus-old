@@ -1,18 +1,13 @@
-﻿using System.Security.Claims;
-using AutoMapper;
-using DataAccess;
-using Domain.Dtos;
-using Domain.ViewModels;
+﻿using Common.Core.Models;
 using Identity.API.Dtos;
-using Identity.API.Errors;
-using Identity.API.Extensions;
-using Identity.API.Interfaces;
 using Identity.Core.Entities;
+using Identity.Core.Interfaces;
+using Identity.Core.Models;
 using Identity.Infrastructure.Data;
-using Lib.Common;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Services.Common.Logs;
 
 namespace Identity.API.Controllers.v1
@@ -22,172 +17,131 @@ namespace Identity.API.Controllers.v1
     [ApiVersion("1.0")]
     public class AccountController : BaseApiController
     {
-        private readonly UserManager<AppUser> _userManager;
-        private readonly SignInManager<AppUser> _signInManager;
-        private readonly ITokenService _tokenService;
-        private readonly IMapper _mapper;
         private readonly IConfiguration _config;
         private readonly LogWriter _log;
         private readonly ApplicationDbContext _context;
-        public AccountController(UserManager<AppUser> userManager,
-            SignInManager<AppUser> signInManager,
-            ITokenService tokenService, 
-            IMapper mapper,
-            IConfiguration config, 
+        private readonly ITokenService _tokenService;
+        private readonly IAccountService _accountService;
+        public AccountController(
+            ITokenService tokenService,
+            IConfiguration config,
             LogWriter log,
-            ApplicationDbContext context
+            ApplicationDbContext context,
+            IAccountService accountService
             )
         {
-            _mapper = mapper;
             _tokenService = tokenService;
-            _signInManager = signInManager;
-            _userManager = userManager;
             _config = config;
             _log = log;
             _context = context;
-        }
-
-        [HttpGet]
-        public async Task<ActionResult<UserDto>> GetCurrentUser()
-        {
-            var email = HttpContext.User.Claims.Single(x => x.Type == "Email").Value;
-            var userId = HttpContext.User.FindFirstValue("userId");
-
-            var user = await _userManager.FindByEmailFromClaimsPrincipal(HttpContext.User);
-
-            return new UserDto
-            {
-                Email = user.Email,
-                Token = await _tokenService.CreateToken(user),
-                DisplayName = user.DisplayName
-            };
-        }
-        //[AllowAnonymous]
-
-        //[HttpPost("login")]
-        //public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
-        //{
-        //    var user = await _userManager.FindByEmailAsync(loginDto.Email);
-
-        //    if (user == null) return Unauthorized(new ApiResponse(401));
-
-        //    var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
-
-        //    if (!result.Succeeded) return Unauthorized(new ApiResponse(401));
-
-        //    return new UserDto
-        //    {
-        //        Email = user.Email,
-        //        Token = await _tokenService.CreateToken(user),
-        //        DisplayName = user.DisplayName
-        //    };
-        //}
-        [AllowAnonymous]
-
-        [HttpPost("register")]
-        public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
-        {
-            if (CheckEmailExistsAsync(registerDto.Email).Result.Value)
-            {
-                return new BadRequestObjectResult(new ApiValidationErrorResponse
-                { Errors = new[] { "Email address is in use" } });
-            }
-
-            var user = new AppUser
-            {
-                DisplayName = registerDto.DisplayName,
-                Email = registerDto.Email,
-                UserName = registerDto.Email
-            };
-
-            var result = await _userManager.CreateAsync(user, registerDto.Password);
-
-            if (!result.Succeeded) return BadRequest(new ApiResponse(400));
-
-            return new UserDto
-            {
-                DisplayName = user.DisplayName,
-                Token = await _tokenService.CreateToken(user),
-                Email = user.Email
-            };
+            _accountService = accountService;
         }
         [AllowAnonymous]
-
-        [HttpGet("emailexists")]
-        public async Task<ActionResult<bool>> CheckEmailExistsAsync([FromQuery] string email)
-        {
-            return await _userManager.FindByEmailAsync(email) != null;
-        }
-
-        [HttpGet("address")]
-        public async Task<ActionResult<AddressDto>> GetUserAddress()
-        {
-            var user = await _userManager.FindUserByClaimsPrincipleWithAddress(User);
-
-            return _mapper.Map<Address, AddressDto>(user.Address);
-        }
-
-        [HttpPut("address")]
-        public async Task<ActionResult<AddressDto>> UpdateUserAddress(AddressDto address)
-        {
-            var user = await _userManager.FindUserByClaimsPrincipleWithAddress(User);
-
-            user.Address = _mapper.Map<AddressDto, Address>(address);
-
-            var result = await _userManager.UpdateAsync(user);
-
-            if (result.Succeeded) return Ok(_mapper.Map<AddressDto>(user.Address));
-
-            return BadRequest("Problem updating the user");
-        }
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] LoginDto authRequest)
+        public async Task<IActionResult> Login([FromBody] AuthRequestDto authRequest)
         {
-
-            LoginDao _l = new LoginDao(_config);
-            GenericResponse _gr = await _l.LoginAsync(authRequest);
-            var codSms = _gr.id as string;
             try
             {
-                if (codSms == "2")
+                var mainResponse = await _accountService.LoginAsync(authRequest.Username, authRequest.Password);
+                var _response = JsonConvert.DeserializeObject<APIResponse>(mainResponse);
+                //User founded
+                if (_response.code == "1")
                 {
-                    var response = _gr.data as LoginViewModel;
+                    List<UserData> userData = JsonConvert.DeserializeObject<List<UserData>>(_response.payload);
 
-                    var loginData = response.userData[0];
-                    var loginDataDto = new LoginDataDto();
+                    if (authRequest.ReturnUrl == "/") { authRequest.ReturnUrl = null; }
 
-                    loginDataDto.idUsuarioRol = loginData.idRol; //para jwt authentication
-                    loginDataDto.userName = loginData.userName;
-                    loginDataDto.fullName = loginData.fullName;
-                    loginDataDto.nroIdentificacion = loginData.nroIdentificacion;
-                    loginDataDto.role = loginData.role;
-                    loginDataDto.razonSocial = loginData.entidad;
-                    loginDataDto.rucEmpresa = loginData.ruc ?? "";
-                    loginDataDto.companyId = loginData.companyId;
-                    loginDataDto.urlGateway = _config["ApiGateways:Acontplus"];
-                    loginDataDto.idUsuario = loginData.idUsuario;
-                    var jwtToken = _tokenService.GenerateJwtToken(loginDataDto);
+                    userData.ForEach(x => x.ReturnUrl = authRequest.ReturnUrl ?? "/Home/Index");
 
-                    if (jwtToken == null)
+                    //Only has one company
+                    if (userData.Count == 1)
                     {
-                        _gr.Create(code: "0", message: "Error al iniciar session");
-                        return Ok(_gr);
+                        userData.ForEach(x => x.UrlGateway = _config["ApiGateways:Acontplus"]);
+
+                        var token = _tokenService.CreateToken(userData.FirstOrDefault());
+
+                        if (token == null || string.IsNullOrEmpty(token))
+                        {
+                            _log.LogActivity("Error al generar el token: " + _response.payload);
+                            return BadRequest("Error al iniciar session");
+                        }
+
+                        userData.ForEach(x => x.Token = token);
+
+                        _context.LoginHistories.Add(new LoginHistory { UserId = userData[0].UserId, Username = userData[0].Username, UserRoleId = userData[0].UserRoleId, UserAgent = authRequest.UserAgent, Token = token });
+                        await _context.SaveChangesAsync();
+
+                        return Ok(new
+                        {
+                            code = "1",
+                            message = "Login correcto",
+                            payload = JsonConvert.SerializeObject(userData, new JsonSerializerSettings
+                            {
+                                ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+                                Formatting = Formatting.Indented
+                            })
+                        });
                     }
-                    //_log.LogActivity("Login successful: userRoleId -> " + Convert.ToString(loginDataDto.idUsuarioRol) + " \n Token: " + jwtToken);
-                    loginData.jwtToken = jwtToken;
-                    _context.LoginHistories.Add(new LoginHistory { UserId = loginData.idUsuario, Username = loginDataDto.userName, UserRoleId = loginDataDto.idUsuarioRol, UserAgent = authRequest.userAgent, Token = jwtToken });
-                    await _context.SaveChangesAsync();
+                    else
+                    {
+                        return Ok(new
+                        {
+                            code = "1",
+                            message = "Seleccione la empresa",
+                            payload = JsonConvert.SerializeObject(userData, new JsonSerializerSettings
+                            {
+                                ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+                                Formatting = Formatting.Indented
+                            })
+                        });
+                    }
                 }
                 else
                 {
-                    _context.loginFaileds.Add(new LoginFailed { UserAgent = authRequest.userAgent, Username = authRequest.username, Password = authRequest.password });
+                    _context.loginFaileds.Add(new LoginFailed { UserAgent = authRequest.UserAgent, Username = authRequest.Username, Password = authRequest.Password });
                     await _context.SaveChangesAsync();
                 }
-                return Ok(_gr);
+                return Ok(mainResponse);
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error while login into AcontplusWeb: " + ex.ToString());
+                _log.LogActivity("Error while login into Acontplus Web: " + ex.ToString());
+                return BadRequest("Error on login");
+            }
+        }
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult CreateToken([FromBody] UserData userData)
+        {
+            try
+            {
+                userData.UrlGateway = _config["ApiGateways:Acontplus"];
+                var token = _tokenService.CreateToken(userData);
+                if (token == null)
+                {
+                    _log.LogActivity("Error al generar el token: " + JsonConvert.SerializeObject(userData));
+                    return BadRequest("Error al iniciar session");
+                }
+                else
+                {
+                    _context.LoginHistories.Add(new LoginHistory { UserId = userData.UserId, Username = userData.Username, UserRoleId = userData.UserRoleId, UserAgent = userData.UserAgent, Token = token });
+                    _context.SaveChanges();
+                }
+                userData.Token = token;
+                return Ok(new
+                {
+                    code = "1",
+                    message = "Login correcto",
+                    payload = JsonConvert.SerializeObject(userData, new JsonSerializerSettings
+                    {
+                        ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+                        Formatting = Formatting.Indented
+                    })
+                });
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error while login into Acontplus Web: " + ex.ToString());
                 return BadRequest("Error on login");
             }
         }

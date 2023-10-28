@@ -293,9 +293,9 @@
                 btnTitle: "=",
                 sizeBtn: "="
             },
-            link: function (scope, element, attr) {
+            link: function (scope, element) {
     
-                element.on('click', async function (e) {
+                element.on('click', async function () {
 
                     
                     let {fileCtrl, controllers, templates} = nombreModalInventario.KARDEX;

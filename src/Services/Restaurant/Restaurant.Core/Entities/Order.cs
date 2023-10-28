@@ -28,6 +28,7 @@ namespace Restaurant.Core.Entities
         [MaxLength(500)]
         public string Obs { get; set; }
         public bool Divided { get; set; }
+        public bool Finished { get; set; }
         public List<OrderItem> OrderItems { get; set; }
     }
 }

@@ -1,10 +1,8 @@
-﻿using DataAccess;
+﻿using Common.Core.Interfaces;
+using Common.Core.Models;
+using Common.Core.Utils;
+using DataAccess;
 using Domain.Models.Almacen;
-using Inventario.Core.Interfaces;
-using Inventario.Core.Models;
-using Lib.Common;
-using Lib.Common.DbUtils;
-using Lib.Common.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common;
@@ -55,7 +53,7 @@ namespace Inventario.API.Controllers
             var data = JsonConvert.DeserializeObject<SubFamilia>(json);
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
-            var s3file = new S3FileDto();
+            var s3file = new S3File();
             try
             {
                 if (file != null)
@@ -63,7 +61,7 @@ namespace Inventario.API.Controllers
                     var fileExt = Path.GetExtension(file.FileName);
                     s3file.BucketName = _configuration["S3Bucket:Name"];
                     s3file.Region = _configuration["S3Bucket:Region"];
-                    s3file.S3ObjectKey = $"{User.GetCompanyRuc()}/subfamilias/{Guid.NewGuid()}{fileExt}";
+                    s3file.S3ObjectKey = $"{User.GetIDCardCompany()}/subfamilias/{Guid.NewGuid()}{fileExt}";
                     s3file.S3ObjectUrl = $"https://{s3file.BucketName}.s3.{s3file.Region}.amazonaws.com/{s3file.S3ObjectKey}";
                 }
                 await _db.SPExecute("Inventario.Subfamilia_Insert");
@@ -116,7 +114,7 @@ namespace Inventario.API.Controllers
             DbAccess _db = new DbAccess(_configuration);
             var data = JsonConvert.DeserializeObject<SubFamilia>(json);
 
-            var s3file = new S3FileDto();
+            var s3file = new S3File();
             try
             {
                 if (file != null)
@@ -124,7 +122,7 @@ namespace Inventario.API.Controllers
                     var fileExt = Path.GetExtension(file.FileName);
                     s3file.BucketName = _configuration["S3Bucket:Name"];
                     s3file.Region = _configuration["S3Bucket:Region"];
-                    s3file.S3ObjectKey = $"{User.GetCompanyRuc()}/subfamilias/{Guid.NewGuid()}{fileExt}";
+                    s3file.S3ObjectKey = $"{User.GetIDCardCompany()}/subfamilias/{Guid.NewGuid()}{fileExt}";
                     s3file.S3ObjectUrl = $"https://{s3file.BucketName}.s3.{s3file.Region}.amazonaws.com/{s3file.S3ObjectKey}";
                 }
                 await _db.SPExecute("Inventario.Subfamilia_Update");

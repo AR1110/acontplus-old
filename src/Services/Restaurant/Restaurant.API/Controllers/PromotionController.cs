@@ -1,8 +1,8 @@
-﻿using Lib.Common.DbUtils;
-using Lib.Common.Dtos;
+﻿using Common.Core.Interfaces;
+using Common.Core.Models;
+using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Restaurant.Core.Entities;
 using Restaurant.Core.Interfaces;
 using Services.Common;
 
@@ -15,14 +15,14 @@ namespace Restaurant.API.Controllers
         private readonly IPromotionService _promotionService;
         private readonly IStorageService _storageService;
         private readonly IConfiguration _configuration;
-        
+
 
         public PromotionController(IConfiguration configuration, IPromotionService promotionService, IStorageService storage)
         {
             _configuration = configuration;
             _promotionService = promotionService;
             _storageService = storage;
-            
+
         }
 
         [HttpGet]
@@ -47,7 +47,7 @@ namespace Restaurant.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(string json, IFormFile file)
         {
-            var s3file = new S3FileDto();
+            var s3file = new S3File();
             try
             {
                 if (file != null)
@@ -55,7 +55,7 @@ namespace Restaurant.API.Controllers
                     var fileExt = Path.GetExtension(file.FileName);
                     s3file.BucketName = _configuration["S3Bucket:Name"];
                     s3file.Region = _configuration["S3Bucket:Region"];
-                    s3file.S3ObjectKey = $"{User.GetCompanyRuc()}/articulos/{Guid.NewGuid()}{fileExt}";
+                    s3file.S3ObjectKey = $"{User.GetIDCardCompany()}/articulos/{Guid.NewGuid()}{fileExt}";
                     s3file.S3ObjectUrl = $"https://{s3file.BucketName}.s3.{s3file.Region}.amazonaws.com/{s3file.S3ObjectKey}";
                 }
 
@@ -101,7 +101,7 @@ namespace Restaurant.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, string json, IFormFile file)
         {
-            var s3file = new S3FileDto();
+            var s3file = new S3File();
             try
             {
                 if (file != null)
@@ -109,7 +109,7 @@ namespace Restaurant.API.Controllers
                     var fileExt = Path.GetExtension(file.FileName);
                     s3file.BucketName = _configuration["S3Bucket:Name"];
                     s3file.Region = _configuration["S3Bucket:Region"];
-                    s3file.S3ObjectKey = $"{User.GetCompanyRuc()}/articulos/{Guid.NewGuid()}{fileExt}";
+                    s3file.S3ObjectKey = $"{User.GetIDCardCompany()}/articulos/{Guid.NewGuid()}{fileExt}";
                     s3file.S3ObjectUrl = $"https://{s3file.BucketName}.s3.{s3file.Region}.amazonaws.com/{s3file.S3ObjectKey}";
                 }
 

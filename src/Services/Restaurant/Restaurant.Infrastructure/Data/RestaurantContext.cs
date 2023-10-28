@@ -1,11 +1,11 @@
 ﻿using System.Reflection;
+using Common.Core.Entities;
 using Common.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Restaurant.Core.Entities;
-using Common.Core.Entities;
 
 namespace Restaurant.Infrastructure.Data
 {
@@ -111,6 +111,7 @@ namespace Restaurant.Infrastructure.Data
 
             builder.Entity<Order>().Property(x => x.CreatedAt).HasDefaultValueSql("GETDATE()");
             builder.Entity<Order>().Property(x => x.Divided).HasDefaultValue(false);
+            builder.Entity<Order>().Property(x => x.Finished).HasDefaultValue(false);
             builder.Entity<Order>().Property(x => x.Enabled).HasDefaultValue(true);
             builder.Entity<Order>().HasMany(x => x.OrderItems).WithOne(m => m.Order).HasForeignKey(m => m.OrderId);
 

@@ -1,5 +1,5 @@
-﻿using DataAccess;
-using Lib.Common;
+﻿using Common.Core.Models;
+using DataAccess.App;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers

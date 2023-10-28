@@ -1,8 +1,8 @@
-﻿using DataAccess;
+﻿using Common.Core.Models;
+using DataAccess;
 using DataAccess.Compras;
 using Domain.Models;
 using Domain.ViewModels.Compras;
-using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 

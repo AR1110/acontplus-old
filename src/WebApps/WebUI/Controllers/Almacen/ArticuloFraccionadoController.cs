@@ -5,7 +5,7 @@ using Domain.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
-namespace WebUI.Controllers
+namespace WebUI.Controllers.Almacen
 {
     public class ArticuloFraccionadoController : Controller
     {
@@ -33,7 +33,7 @@ namespace WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            var parameters = new Dictionary<string, object>();
             parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", json);
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Almacen.Fraccionado_Get", parameters)));
@@ -50,7 +50,7 @@ namespace WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ArticuloFraccionadoViewModel data)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            var parameters = new Dictionary<string, object>();
             parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("idArticulo", data.fraccionado.idArticulo);
             parameters.Add("idMedida", data.fraccionado.idMedida);
@@ -65,7 +65,7 @@ namespace WebUI.Controllers
         [HttpPut]
         public async Task<IActionResult> Put(int id, [FromBody] ArticuloFraccionadoViewModel data)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            var parameters = new Dictionary<string, object>();
             parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", id);
             parameters.Add("idMedida", data.fraccionado.idMedida);
@@ -80,7 +80,7 @@ namespace WebUI.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            var parameters = new Dictionary<string, object>();
             parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", id);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Almacen.Fraccionado_Delete", parameters)));

@@ -414,4 +414,37 @@
     })
 
 
+    app.factory('kardexService', function($injector){
+        let mS = $injector.get('mainService');
+        let URL = 'Inventario/Kardex/'
+        let service = {};
+
+
+
+        service.get = (params)=>{
+            return mS.getData('get',  URL + '?json=' + JSON.stringify(params), null, true).then(response=>{   
+                if(response.code==="0")             {
+                    return response;
+                }
+                return JSON.parse(response.payload)
+            })            
+        }
+
+        service.getDataFilters = ()=>{
+            return mS.getData('get', URL + 'Filters', null, true).then(response=>{
+                if(response.code==="0"){
+                    throw response;
+                }
+                if(response.code==="1"){
+                    let mainData = JSON.parse(response.payload);                
+                    return {
+                        estadoMovimientos: mainData[0]
+                    }
+                }
+            })
+
+        }
+        return service;
+    })
+
 })(window.angular)

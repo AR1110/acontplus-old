@@ -1,6 +1,7 @@
 ﻿using System.Data;
+using Common.Core.Models;
+using Common.Core.Utils;
 using DataAccess;
-using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiFactElect.Controllers.Sri
@@ -21,9 +22,9 @@ namespace ApiFactElect.Controllers.Sri
                 DbAccess db = new DbAccess(_config);
                 await db.SPExecute("Sri.Catalogo_Get");
                 DataTable dt = db.GetDataTable();
-                _response.Create(code: "1", payload: Converters.DataTableToJSON(dt));
+                _response.Create(code: "1", payload: DataConverters.DataTableToJSON(dt));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 _response.Create("0", "Error al obtener la lista de catalogos del SRI");
                 //LogWritter.LogError(_config.GetSection("CustomLogs").GetSection("dirLogs").Value, "Error getting sri catalogs:" + ex.Message);

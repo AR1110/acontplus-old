@@ -1,8 +1,8 @@
-﻿using DataAccess;
-using DataAccess.Config;
+﻿using Common.Core.Models;
+using Common.Core.Utils;
+using DataAccess;
 using Domain.Models;
-using Lib.Common;
-using Lib.Common.DbUtils;
+using Domain.Models.Config;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 

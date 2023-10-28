@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers
+namespace WebUI.Controllers.Admin
 {
     public class UsuarioController : Controller
     {

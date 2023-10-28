@@ -1,7 +1,7 @@
-﻿using DataAccess.Tesoreria;
+﻿using DataAccess.GestionFinanciera;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers.GestionFinanciera
+namespace WebUI.Controllers.Financiero
 {
     public class CobroDetalleController : Controller
     {
@@ -21,14 +21,14 @@ namespace WebUI.Controllers.GestionFinanciera
 
         public async Task<IActionResult> GetByIdCobro(int idCobro, int idTipoDoc, int idComprobante)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _cd.GetByDocumentAsync(idRol, idCobro, idTipoDoc, idComprobante);
             return Ok(res);
         }
 
         public async Task<IActionResult> GetByCobro(int idCobro)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _cd.GetByCobroAsync(idRol, idCobro);
             return Ok(res);
         }

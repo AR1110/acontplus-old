@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using Lib.Common.Api;
+using Common.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.Core.Entities;
 using Restaurant.Core.Interfaces;
@@ -28,7 +28,7 @@ namespace Restaurant.API.Controllers
                 _response.code = "0";
                 return _response;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 _response.Create(code: "-1", message: "Error on Get");
                 return _response;

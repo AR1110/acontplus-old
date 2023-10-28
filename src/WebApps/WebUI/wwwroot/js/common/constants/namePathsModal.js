@@ -19,14 +19,7 @@ app.constant('nombreModalCommon', {
         },
     }
 })
-
-app.constant('nombreModalConfig', {
-    TIEMPO_CREDITO: {
-        fileCtrl: '/js/config/modals/modalTiempoCreditoCtrl.js' + CHANGE_VERSION(),
-        controller: 'ModalTiempoCreditoCtrl',
-        template: '~/Areas/TiempoCredito/Pages/Shared/_ModalAddUpdate.cshtml'
-    }
-})
+ 
 
 //Inventario 
 app.constant('nombreModalInventario', {
@@ -75,9 +68,9 @@ app.constant('nombreModalInventario', {
         template: 'ArticuloFraccionado/_ModalArticuloFraccionado.cshtml'
     },
     KARDEX: {
-        fileCtrl: '/js/modal/inventario/kardexCtrl.js',
+        fileCtrl: '/js/inventario/modals/modalKardexCtrl.js',
         controllers: {
-            M: 'ModalKardexCtrl',
+            M: 'modalKardexCtrl',
             MF: ''
         },
         templates: {
@@ -121,6 +114,11 @@ app.constant('nombreModalFactElect', {
         templates: {
             D: 'FacturaVenta/_ModalDetalle.cshtml'
         }
+    },
+    NOTA_CREDITO: {
+        fileCtrl: '/js/factElect/modals/modalNotaCreditoDetalleCtrl.min.js' + CHANGE_VERSION(),
+        controller: 'modalNotaCreditoDetalleCtrl',
+        template: '~/Pages/NotaCredito/_ModalDetalle.cshtml'
     }
 })
 
@@ -138,9 +136,9 @@ app.constant('nombreModalVenta', {
         }
     },
     EMPRESA: {
-        fileCtrl: '/js/ventas/modals/modalEmpresaCtrl.js',
+        fileCtrl: '/js/ventas/modals/modalEmpresaCtrl.min.js',
         controller: 'ModalEmpresaCtrl',
-        template: 'Empresa/_ModalAddUpdate.cshtml'
+        template: '~/Pages/Empresa/_ModalAddUpdate.cshtml'
     },
     EMPLEADO: {
         fileCtrl: '/js/ventas/modals/modalEmpleadoCtrl.js',
@@ -150,7 +148,7 @@ app.constant('nombreModalVenta', {
     CARGO: {
         fileCtrl: '/js/ventas/modals/modalCargoCtrl.js',
         controller: 'ModalCargoCtrl',
-        template: 'Cargo/_ModalAddUpdate.cshtml'
+        template: '~/Pages/Cargo/_ModalAddUpdate.cshtml'
     },
     NOTA_ENTREGA: {
         fileCtrl: '/js/modal/ventas/modalNotaEntregaCtrl.js',
@@ -225,7 +223,7 @@ app.constant('nombreModalLogistica', {
     GUIA_REMISION: {
         fileCtrl: '/js/logistica/modals/guiaRemisionDetalleCtrl.min.js' + CHANGE_VERSION(),
         controller: 'GuiaRemisionDetalleCtrl',
-        template: '~/Areas/GuiaRemision/Pages/Shared/_ModalDetalle.cshtml'
+        template: '~/Pages/GuiaRemision/Shared/_ModalDetalle.cshtml'
     },
     TRANSPORTISTA: {
         fileCtrl: '/js/logistica/modals/modalTransportistaCtrl.js' + CHANGE_VERSION(),
@@ -273,6 +271,13 @@ app.constant('nombreModalContabilidad', {
 
 
 app.constant('nombreModal', {
+    DOCUMENTO_RECIBIDO: {
+        fileCtrl: '/js/compras/modals/docRecibidoPreviewCtrl.js' + CHANGE_VERSION(),
+        controller: 'docRecibidoPreviewCtrl',
+        F: {
+            template: '~/Areas/DocumentoRecibido/Pages/Shared/_InvoicePreview.cshtml'
+        }
+    },
     caja: {
         MODAL_CTRL: 'admin/modalCajaCtrl.js' + CHANGE_VERSION(),
         MODAL_CAJA_CSHTML: 'Caja/_ModalCaja.cshtml',
@@ -377,18 +382,7 @@ app.constant('nombreModal', {
     articulo_impuesto: {
         MODAL_CTRL: 'modalArticuloImpuestoCtrl.min.js' + CHANGE_VERSION(),
 
-    },
-    bodega: {
-        MODAL_FILE_CTRL: 'modal/inventario/modalBodegaCtrl.js' + CHANGE_VERSION(),
-        MODAL_NUEVO: {
-            controller: 'ModalBodegaCtrl',
-            template: 'Bodega/_ModalNuevo.cshtml'
-        },
-        MODAL_EDITAR: {
-            controller: 'ModalBodegaCtrl',
-            template: 'Bodega/_ModalEditar.cshtml'
-        }
-    },
+    }, 
     categoria_compra: {
         MODAL_CTRL: 'modalCategoriaCompraCtrl.min.js' + CHANGE_VERSION(),
         MODAL_FILE_CTRL: 'modal/compras/modalCategoriaCompraCtrl.min.js' + CHANGE_VERSION(),

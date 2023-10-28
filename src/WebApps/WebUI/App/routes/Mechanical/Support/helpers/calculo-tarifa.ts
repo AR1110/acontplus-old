@@ -15,7 +15,7 @@ class CalculoTarifa {
     }
   };
 
-  calcularPrecioVenta = (precioConIva, porcentaje) => {
+  calcularPrecioUnitario = (precioConIva, porcentaje) => {
     try {
       const resultadoPorcentaje = Number(porcentaje) / 100 + 1;
       const precioVenta = Number(precioConIva) / Number(resultadoPorcentaje);

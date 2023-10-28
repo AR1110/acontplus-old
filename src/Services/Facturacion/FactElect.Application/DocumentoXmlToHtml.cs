@@ -1,7 +1,6 @@
-﻿using FactElect.Core;
-using Lib.Common;
-using Lib.Common.Enums;
-using Lib.Common.Utils;
+﻿using Common.Core.Enums;
+using Common.Core.Utils;
+using FactElect.Core.Models;
 
 namespace FactElect.Application
 {

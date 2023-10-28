@@ -2,29 +2,35 @@
 export {
     ModalCargoCtrl
 }
-ModalCargoCtrl.$inject = ['$scope', '$uibModalInstance', 'mainService', 'toastService', 'params'];
+ModalCargoCtrl.$inject = [
+    '$scope',
+    '$uibModalInstance', 
+    'cargoService',
+    'toastService',
+    'params'
+];
 
-function ModalCargoCtrl($scope, $uibModalInstance, mS, tS, params) {
-        
-        $scope.tipoRegistro = 1;
-        $scope.data = {};
-         
+function ModalCargoCtrl($scope, $uibModalInstance, cargoSvc, tS, params) {
+
+    $scope.tipoRegistro = 1;
+    $scope.data = {};
+
 
     onInit();
     function onInit() {
-        if ( params && params.idCargo > 0) {
+        if (params && params.idCargo > 0) {
             $scope.tipoRegistro = 2;
             $scope.data = params;
         }
     }
 
-    $scope.obtenerCodigo = function() {
+    $scope.obtenerCodigo = function () {
         if ($scope.data.descripcion && $scope.tipoRegistro === 1) {
-            $scope.data.codigo =  $scope.data.descripcion.slice(0,3)
-        } 
+            $scope.data.codigo = $scope.data.descripcion.slice(0, 3)
+        }
     }
 
-    $scope.saveAndUpdate = function() {
+    $scope.saveAndUpdate = function () {
         const titulo = $scope.tipoRegistro === 1 ? 'Guardar' : 'Actualizar';
         if (!$scope.data.descripcion) {
             tS.toastr('warning', 'Ingrese la Descripción', titulo);
@@ -34,29 +40,37 @@ function ModalCargoCtrl($scope, $uibModalInstance, mS, tS, params) {
         if (!$scope.data.codigo) {
             tS.toastr('warning', 'Ingrese el Códgio', titulo);
             return
-        }
-
-        const url = $scope.tipoRegistro === 1 ? '/Cargo/Post' : '/Cargo/Put?id=' + $scope.data.idCargo;
-        const method = $scope.tipoRegistro === 1 ? 'post':'put';
+        } 
 
         showLoader();
-        mS.getData(method, url, $scope.data).then(response => {
-            hideLoader();
-            if (response.id === "0") {
-                tS.toastr('warning', response.message, response.titleSms);                
-            }
 
-            if (response.id === "1") {
-                tS.toastr('success', response.message, response.titleSms);
-                $uibModalInstance.close(response)
-            }
-
-        })
-
-
+        if ($scope.data.idCargo > 0) {
+            cargoSvc.put($scope.data.idCargo, $scope.data).then($scope.successReponse)
+                .catch(err => {
+                    hideLoader();
+                    console.log(err);
+                })
+        } else if(!($scope.data.idCargo>0)) {
+            cargoSvc.post($scope.data).then($scope.successReponse)
+                .catch(err => {
+                    hideLoader();
+                    console.log(err);
+                })
+        }
     }
 
-    $scope.closeModal = function() {
+    $scope.successReponse = function (response) {
+        hideLoader();
+        if (response.code === '0') {
+            tS.toastr('warning', response.message, response.titleSms);
+        }
+        if (response.code === '1') {
+            tS.toastr('success', response.message, response.titleSms);
+            $uibModalInstance.close(response)
+        }
+    }
+
+    $scope.closeModal = function () {
         $uibModalInstance.close();
     }
 

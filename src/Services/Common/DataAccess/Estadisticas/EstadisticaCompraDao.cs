@@ -1,6 +1,6 @@
 ﻿using System.Data;
-using System.Data.SqlClient;
-using Lib.Common;
+using Microsoft.Data.SqlClient;
+using Common.Core.Utils;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Estadisticas
@@ -30,7 +30,7 @@ namespace DataAccess.Estadisticas
                     dataAdapter.Fill(_dt);
                     if (_dt.Rows.Count > 0)
                     {
-                        response = Converters.DataTableToJSON(_dt);
+                        response = DataConverters.DataTableToJSON(_dt);
                     }
                     dataAdapter.Dispose();
                 }

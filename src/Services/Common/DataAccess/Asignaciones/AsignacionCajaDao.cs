@@ -1,8 +1,8 @@
 ﻿using System.Data;
-using System.Data.SqlClient;
-using Domain.Models;
-using Domain.ViewModels;
-using Lib.Common;
+using Microsoft.Data.SqlClient;
+using Common.Core.Models;
+using Domain.Models.Administracion;
+using Domain.ViewModels.Administracion;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Asignaciones

@@ -1,5 +1,5 @@
-﻿using DataAccess;
-using Lib.Common;
+﻿using Common.Core.Models;
+using DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 

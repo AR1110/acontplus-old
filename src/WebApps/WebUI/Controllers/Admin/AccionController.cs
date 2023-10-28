@@ -1,9 +1,9 @@
-﻿using DataAccess;
+﻿using Common.Core.Models;
+using DataAccess;
 using Domain.Models;
-using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers
+namespace WebUI.Controllers.Admin
 {
     public class AccionController : Controller
     {

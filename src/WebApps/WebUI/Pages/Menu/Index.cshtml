@@ -1,0 +1,82 @@
+﻿@page
+@model WebUI.Pages.Menu.IndexModel
+@{
+    ViewData["title"] = "Menú";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div ng-controller="menuCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Gestión de Menus</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
+                    <li class="breadcrumb-item active">Menu</li>
+                </ol>
+                <button type="button" ng-click="nuevoMenu()" ng-if="accion.crear" class="btn btn-info m-l-15">
+                    <i class="fa fa-plus-circle"></i> Nuevo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card-group" ng-repeat="m in menus">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="d-flex no-block align-items-center">
+                                    <div>
+                                        <h3><i class="{{m.icono}}"></i></h3>
+                                        <p class="text-muted"><span ng-bind-html="m.estado |estadoSecundario"></span> {{m.descripcion}}</p>
+                                    </div>
+                                    <div class="ml-auto">
+                                        <a class="text-success" ng-if="accion.eliminar" ng-click="editarMenu(m)" href="javascript:void(0);" title="Editar"><i class="ti-pencil"></i></a>
+                                        <a class="text-danger" ng-if="accion.eliminar" ng-click="askToDeleteMenu(m)" href="javascript:void(0);" title="Eliminar"><i class="ti-trash"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Column -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="d-flex no-block align-items-center" ng-repeat="sm in m.subMenus">
+                                    <div>
+                                        <span class="text-dark"><b ng-bind-html="sm.estado |estadoSecundario"></b> <i ng-class="sm.icono"></i> {{sm.descripcion}} </span>
+                                    </div>
+                                    <div class="ml-auto">
+                                        <a class="text-success" ng-if="accion.editar" ng-click="editarSubMenu(m, sm)" href="javascript:void(0);" title="Actualizar"><i class="fa fa-edit"></i></a>
+                                        <a class="text-danger" ng-if="accion.eliminar" ng-click="askToDeleteSubMenu(m, sm)" href="javascript:void(0);" title="Eliminar"><i class="fa fa-trash"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <a href="javascript:void(0);" ng-if="accion.crear" ng-click="nuevoSubMenu(m)" class="text-info text-center"> Nuevo Sub Menu <span><i class="fa fa-plus-circle"></i></span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Modal Para Agregar Menus -->
+    @* <partial name="_ModalAddUpdateMenu" /> *@
+
+    <!--Agregar SubMenus -->
+    @* <partial name="_ModalAddUpSubMenu" /> *@
+
+
+</div>
+@section Scripts{
+    <script src="~/js/config/services/menuService.js" asp-append-version="true"></script>
+    <script src="~/js/config/controllers/menuCtrl.min.js" asp-append-version="true"></script>
+}

@@ -1,9 +1,8 @@
 ﻿@page
 @model WebUI.Areas.DocumentoElectronico.Pages.IndexModel
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-
-@{
-    @RouteData.Values["tipo"]
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers 
+@{ 
+    ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -20,48 +19,55 @@
             <div class="row">
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
-                        <label for="establecimiento">Establecimiento: </label>
+                        <label for="establecimiento">Estab: <span class="text-danger">*</span></label>
                         <select name="establecimiento" id="establecimiento" class="form-control border-select"
-                            ng-model="codEstab_Asig" ng-change="onchangeEstablecimiento()">
-                            <option value="">Todos</option>
-                            <option ng-value="item.codEstab_Asig" ng-repeat="item in establecimientos">
+                            ng-model="dataSearch.codEstab" ng-change="onchangeEstablecimiento()"> 
+                            <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                                 {{item.nombreComercial}}
                             </option>
                         </select>
                     </div>
                 </div>
-                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12" ng-if="codEstab_Asig">
+                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
-                        <label for="puntoEmision">Punto Emisión: </label>
+                        <label for="puntoEmision">Punto Emisión: <span class="text-danger">*</span> </label>
                         <select name="puntoEmision" id="puntoEmision" class="form-control border-select"
-                            ng-model="dataSearch.ptoEmi" ng-change="onchangePuntoEmision()">
-                            <option value="">Todos</option>
-                            <option ng-value="item.ptoEmi" ng-repeat="item in puntosEmision">
+                            ng-model="dataSearch.idPuntoEmision" ng-change="getComprobantes()"> 
+                            <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
                                 {{item.ptoEmi}}
                             </option>
                         </select>
                     </div>
                 </div>
 
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                    <div class="form-group">
-                        <label>Rango de Fechas: </label>
-                          <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
-                            end-date="dataSearch.fechaFin"
-                            result-range-date="resultRangeFilter(result)"></date-range-filter>
-                        @* <input date-range-picker class="form-control date-picker" type="text"
-                            ng-model="dateRangePicker.date" picker="dateRangePicker.picker"
-                            picker-classes="extra-class-names" min="'2014-02-23'" max="dateRangePicker.maxDate"
-                            options="dateRangePicker.options" options="{locale: {separator: " :"}}" /> *@
-                    </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12"> 
+                     <label for="date-range-filter">Rango Fechas: </label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <div class="custom-control custom-checkbox mr-sm-2">
+                                            <input type="checkbox" 
+                                                ng-model="dataSearch.checkBoxDate"
+                                                   ng-disabled="!(dataSearch.identificacionReceptor)"
+                                                class="custom-control-input" 
+                                                id="checkBoxDate">
+                                            <label class="custom-control-label" for="checkBoxDate"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <date-range-filter current-date="dataSearch.fechaInicio"
+                                                   start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
+                                                   result-range-date="resultRangeFilter(result)"></date-range-filter>
+                            </div>
                 </div>
 
                 <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
-                        <label for="">Tipo Documento</label>
-                        <select class="form-control b-0" ng-model="dataSearch.codDoc" ng-change="onSelectTipoDoc()">
+                        <label for="tipoDoc">Tipo Doc:</label>
+                        <select name="tipoDoc" id="tipoDoc" class="form-control b-0" ng-model="dataSearch.codDoc" ng-change="onSelectTipoDoc()">
                             <option value="">Todos</option>
-                            <option ng-value="item.codigoSri" ng-repeat="item in tiposDocumento">
+                            <option ng-value="item.codDoc" ng-repeat="item in tiposDocumento">
                                 {{item.descripcion}}
                             </option>
                         </select>
@@ -72,9 +78,9 @@
                         <label for="">Estado</label>
 
                         <select name="codEstado" id="codEstado" class="form-control border-select"
-                            ng-model="dataSearch.codEstado" ng-change="onChangeEstado()">
+                            ng-model="dataSearch.codEstado" ng-change="getComprobantes()">
                             <option value="">Todos</option>
-                            <option ng-value="item.codigo" ng-repeat="item in estadoServicios">
+                            <option ng-value="item.codEstado" ng-repeat="item in estadosDoc">
                                 {{item.descripcion}}
                             </option>
                         </select>
@@ -83,7 +89,13 @@
             </div>
 
             <div class="row">
-
+                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                    <div class="form-group">
+                        <label>Buscar por Nro. Doc.:</label>
+                        <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial" 
+                               placeholder="Ej: 123 o 1-30" />
+                    </div>
+                </div>
                 <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12" ng-show="dataSearch.codDoc">
                     <div class="form-group">
                         <label for="customer-provider">Cliente/Proveedor</label>
@@ -356,13 +368,12 @@
 
 
 
-    <button class="btn btn-warning btn-lg" ng-if="@ViewData["tipo"] > 0" ng-click="refresh()">
+    <button class="btn btn-warning btn-lg" ng-if="tipo > 0" ng-click="refresh()">
         <i class="fa fa-close"></i> Cancelar
-    </button>
-
-    <input type="text" name="tipo" id="tipo" value="@ViewData["tipo"]" hidden />
+    </button> 
 
 </div>
 @section Scripts{
+    <script src="~/js/factElect/services/docElectService.js" asp-append-version="true"></script>
     <script src="~/js/factElect/controllers/documentoElectronicoCtrl.min.js" asp-append-version="true"></script>
 }

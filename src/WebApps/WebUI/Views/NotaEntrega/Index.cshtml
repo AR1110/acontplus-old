@@ -22,7 +22,7 @@
             <div class="row">
                 <div class="col-xl-7 col-lg-7 col-md-6 col-sm-12 col-12">
                     <div class="row">
-                        <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12 col-12">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
                             <div class="form-gorup">
                                 <span for="establecimiento">Estab: <span class="text-danger">*</span></span>
                                 <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
@@ -34,26 +34,27 @@
                             </div>
                         </div>
 
-                        <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-                            <div class="form-gorup">
-                                <span for="ptoEmision">Pto. Emisión: <span class="text-danger">*</span> </span>
-                                <select name="ptoEmision" id="ptoEmision" ng-model="dataSearch.idPuntoEmision"
-                                    class="form-control  border-select" ng-change="getNotaEntregas()">
-                                    <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
-                                        {{item.ptoEmi}}
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
 
-                        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
-                            <div class="form-group">
-                                <span for="">Rango de Fechas: <span class="text-danger">*</span></span>
-                                @* <div class="input-group"> *@
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            <span for="date-range-filter">Rango Fechas: </span>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <div class="custom-control custom-checkbox mr-sm-2">
+                                            <input type="checkbox" 
+                                                ng-model="dataSearch.checkBoxFecha"
+                                                   ng-disabled="!(dataSearch.idCliente>0)"
+                                                class="custom-control-input" 
+                                                id="checkBoxFecha">
+                                            <label class="custom-control-label" for="checkBoxFecha"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <date-range-filter current-date="dataSearch.fechaInicio"
-                                    start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
-                                    result-range-date="resultRangeFilter(result)"></date-range-filter>
-                            </div>
+                                                   start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
+                                                   result-range-date="resultRangeFilter(result)"></date-range-filter>
+                            </div> 
                         </div>
                     </div>
                 </div>
@@ -91,7 +92,18 @@
 
             <div class="row justify-content-between" ng-if="moreSearchOptions">
 
-                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                   <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
+                            <div class="form-gorup">
+                                <span for="ptoEmision">Pto. Emisión: <span class="text-danger">*</span> </span>
+                                <select name="ptoEmision" id="ptoEmision" ng-model="dataSearch.idPuntoEmision"
+                                    class="form-control  border-select" ng-change="getNotaEntregas()">
+                                    <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
+                                        {{item.ptoEmi}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
                         <span for="usuario">Usuario</span>
                         <input type="text" class="form-control border-select" ng-model="nombreCompleto"
@@ -112,15 +124,15 @@
                     </div>
                 </div>
 
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
-                        <span>Buscar por Nro. Documento:</span>
+                        <span>Buscar por Nro. Doc.:</span>
                         <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial"
-                            placeholder="Ej: 123" />
+                            placeholder="Ej: 123 o 1-30" />
                     </div>
                 </div>
 
-                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
                         <span>Estado:</span>
                         <select id="estadoDocumentos" class="form-control" ng-model="dataSearch.codEstado"
@@ -132,7 +144,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
                         <span>Buscar</span>
                         <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
@@ -321,9 +333,9 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/services/storageService.min.js" asp-append-version="true"></script>
-    <script src="~/js/factElect/directives/factElectDirective.min.js" asp-append-version="true"></script>
-    <script src="~/js/factElect/services/facturaService.js" asp-append-version="true"></script>
-    <script src="~/js/ventas/services/notaEntregaService.js" asp-append-version="true"></script>
-    <script src="~/js/ventas/controllers/notaEntregaCtrl.js" asp-append-version="true"></script>
+        <script src="~/js/services/storageService.min.js" asp-append-version="true"></script>
+        <script src="~/js/factElect/directives/factElectDirective.min.js" asp-append-version="true"></script>
+        <script src="~/js/factElect/services/facturaService.js" asp-append-version="true"></script>
+        <script src="~/js/ventas/services/notaEntregaService.js" asp-append-version="true"></script>
+        <script src="~/js/ventas/controllers/notaEntregaCtrl.js" asp-append-version="true"></script>
 }

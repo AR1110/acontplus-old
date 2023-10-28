@@ -1,0 +1,329 @@
+USE [AcontPlus]
+GO 
+
+-- ================================================
+-- Template generated from Template Explorer using:
+-- Create Procedure (New Menu).SQL
+--
+-- Use the Specify Values for Template Parameters 
+-- command (Ctrl-Shift-M) to fill in the parameter 
+-- values below.
+--
+-- This block of comments will not be included in
+-- the definition of the procedure.
+-- ================================================
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		Alexis Ramirez
+-- Create date: 03/16/2023
+-- Description:	SP para listar las compras que no tiene documento validado por el sri.
+-- =============================================
+IF OBJECT_ID(N'Compra.Documento_Ingreso_Insert', N'P') IS NOT NULL
+DROP PROCEDURE Compra.Documento_Ingreso_Insert
+GO
+CREATE PROCEDURE Compra.Documento_Ingreso_Insert 
+	@idUsuarioRol AS INT
+   ,@comprobante AS VARCHAR(MAX)
+   ,@detalles AS VARCHAR(MAX)
+   ,@impuestos AS VARCHAR(MAX)
+   ,@artInfoAdicionales VARCHAR(MAX)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	
+	
+	--=============Globales===========================
+	DECLARE @idEntidad INT ,@idUsuario INT 
+
+	--============Compra ==============
+	DECLARE @idPuntoEmision INT
+    DECLARE @fechaEmision DATETIME
+    DECLARE @serieComprobante VARCHAR(20)
+	DECLARE @uniqueId VARCHAR(20)
+	DECLARE @year VARCHAR(50)
+	DECLARE @idDocumentoIngreso INT 
+	DECLARE @secuencial INT
+
+	--==============contabilidad============
+	DECLARE @idEstadoPago AS INT
+
+	--==========Tablas temporales para la validacion===================
+
+	DECLARE @document AS TABLE(
+		 idEstablecimiento INT NOT NULL 
+        ,idPuntoEmision INT NOT NULL
+        ,idProveedor INT NOT NULL
+        ,codDoc VARCHAR(5) DEFAULT 'DH' NOT NULL
+		,estab VARCHAR(5) NOT NULL
+        ,ptoEmi VARCHAR(5) NOT NULL
+        ,fechaEmision DATETIME NOT NULL
+        ,totalSinImpuestos NUMERIC (18,5) NOT NULL
+        ,importeTotal NUMERIC (18,5) NOT NULL
+		,inventory VARCHAR(5) NOT NULL
+	)
+
+	DECLARE @detail AS TABLE(
+		 idArticulo INT NOT NULL
+        ,idMedida INT NOT NULL
+        ,idBodega INT NOT NULL
+        ,codigoPrincipal VARCHAR(100) NOT NULL
+        ,codigoAuxiliar VARCHAR(100) NOT NULL
+        ,descripcion VARCHAR(300) NOT NULL
+        ,cantidad NUMERIC (18,5)   NOT NULL
+        ,precioUnitario NUMERIC (18,5)  NOT NULL
+        ,costoNeto NUMERIC (18,5)  NOT NULL
+        ,descuento NUMERIC (18,5)  NOT NULL
+        ,precioTotalSinImpuesto NUMERIC (18,5)  NOT NULL
+        ,codigoPorcentaje VARCHAR(5) NOT NULL
+	)
+
+	DECLARE @taxes AS TABLE(
+		 idArticulo INT NOT NULL
+		,codigo VARCHAR(5)  NOT NULL
+        ,codigoPorcentaje VARCHAR(5) NOT NULL
+        ,tarifa NUMERIC(18,5) NOT NULL
+        ,baseImponible NUMERIC(18,5) NOT NULL
+        ,valor NUMERIC(18,5) NOT NULL
+	)
+
+	 
+	DECLARE @artInfoAdicional AS TABLE (
+		idArticulo INT  NOT NULL		
+		,idEtiqueta INT  NOT NULL
+		,jsonAdicional NVARCHAR(MAX)  NULL
+		
+	)
+	 
+	 --SELECT '0'code, 'message' = CAST(@artInfoAdicionales AS VARCHAR(MAX))
+		--return
+	BEGIN TRY
+
+		INSERT INTO @document 
+		      (idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory)
+		SELECT idEstablecimiento,idPuntoEmision,idProveedor,estab,ptoEmi,fechaEmision,totalSinImpuestos,importeTotal,inventory
+		FROM OPENJSON(@comprobante)WITH 
+        (
+             idEstablecimiento           INT '$.idEstablecimiento' 
+		    ,idPuntoEmision              INT '$.idPuntoEmision'
+		    ,idProveedor                 INT '$.idProveedor' 
+		    ,estab                VARCHAR(5) '$.estab' 
+		    ,ptoEmi               VARCHAR(5) '$.ptoEmi' 
+		    ,fechaEmision       VARCHAR(150) '$.fechaEmision'
+		    ,totalSinImpuestos NUMERIC(18,5) '$.totalSinImpuestos'
+		    ,importeTotal      NUMERIC(18,5) '$.importeTotal'
+		    ,inventory            VARCHAR(5) '$.inventory'
+		) as dt
+		
+		INSERT INTO @detail
+		      (idArticulo,idMedida,idBodega,codigoPrincipal,codigoAuxiliar,descripcion,cantidad,precioUnitario,costoNeto,descuento,precioTotalSinImpuesto,codigoPorcentaje)
+		SELECT idArticulo,idMedida,idBodega,codigoPrincipal,codigoAuxiliar,descripcion,cantidad,precioUnitario,costoNeto,descuento,precioTotalSinImpuesto,codigoPorcentaje
+		FROM OPENJSON(@detalles) WITH
+        (
+		     idArticulo                       INT '$.idArticulo'
+		    ,idMedida                         INT '$.idMedida'
+		    ,idBodega                         INT '$.idBodega'
+		    ,codigoPrincipal         VARCHAR(100) '$.codigoPrincipal'
+		    ,codigoAuxiliar          VARCHAR(100) '$.codigoAuxiliar'
+		    ,descripcion             VARCHAR(300) '$.descripcion'
+		    ,cantidad               NUMERIC(18,5) '$.cantidad'  
+		    ,precioUnitario         NUMERIC(18,5) '$.precioUnitario' 
+		    ,costoNeto              NUMERIC(18,5) '$.costoNeto'
+		    ,descuento              NUMERIC(18,5) '$.descuento' 
+		    ,precioTotalSinImpuesto NUMERIC(18,5) '$.precioTotalSinImpuesto' 
+		    ,codigoPorcentaje          VARCHAR(5) '$.codigoPorcentaje'
+		) as dt
+		
+		INSERT INTO @taxes 
+		      (idArticulo,codigo,codigoPorcentaje,tarifa,baseImponible,valor)
+		SELECT idArticulo,codigo,codigoPorcentaje,tarifa,baseImponible,valor
+		FROM OPENJSON(@impuestos) WITH 
+        (
+		     idArticulo              INT '$.idArticulo'
+		    ,codigo           VARCHAR(5) '$.codigo'
+		    ,codigoPorcentaje VARCHAR(5) '$.codigoPorcentaje'
+		    ,tarifa        NUMERIC(18,5) '$.tarifa'
+            ,baseImponible NUMERIC(18,5) '$.baseImponible'
+            ,valor         NUMERIC(18,5) '$.valor'
+		) as dt
+
+		
+		INSERT INTO @artInfoAdicional  
+              (idArticulo, idEtiqueta, jsonAdicional)
+		SELECT idArticulo, idEtiqueta, jsonAdicional
+		FROM OPENJSON(@artInfoAdicionales) WITH 
+        (
+		  idArticulo INT,
+		  idEtiqueta INT,
+		  jsonAdicional NVARCHAR(max) '$.jsonAdicional' AS JSON		
+		) 
+		
+		
+		----======================================Recuperar datos de las Tablas===========================================================
+		
+        SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
+
+		SELECT TOP 1 @idPuntoEmision = idPuntoEmision ,@fechaEmision = fechaEmision FROM @document
+		
+		SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
+
+		SELECT @year = DATEPART(YEAR,dbo.ufnGetDateEcuador())
+
+		SELECT @uniqueId = 'D'+@year+Helper.F_Auto_Sequential(COUNT(*)+1) FROM Compra.Documento_Ingreso WITH(NOLOCK) WHERE DATEPART(YEAR,fechaRegistro) = @year
+
+		SELECT @secuencial = COUNT(*)+1 FROM Compra.Documento_Ingreso WITH(NOLOCK) WHERE idPuntoEmision = @idPuntoEmision
+
+		SELECT @serieComprobante = estab+'-'+ptoEmi+'-'+Helper.F_Auto_Sequential(@secuencial) FROM @document
+
+		
+		--==================================Validacion de la informacion============================================================
+
+		IF EXISTS (SELECT 1 FROM Compra.Documento_Ingreso WITH (NOLOCK) WHERE uniqueId = @uniqueId)
+			BEGIN
+				SELECT '0' code,'Este Id ya se encuentra registrado' as 'message'
+				RETURN 
+			END
+
+		IF EXISTS (SELECT 1 FROM Compra.Documento_Ingreso WITH (NOLOCK) WHERE idPuntoEmision = @idPuntoEmision AND secuencial = @secuencial)
+			BEGIN
+				SELECT '0' code,'Este secuencial ya se encuentra registrado' as 'message'
+				RETURN 
+			END 
+
+		IF (SELECT COUNT(*) FROM @detail) = 0
+			BEGIN
+				SELECT '0' code,'Se encontro un error en el detalle del documento' as 'message'
+				RETURN 
+			END 
+
+		IF (SELECT COUNT(*) FROM @taxes) = 0
+			BEGIN
+				SELECT '0' code,'Se encontro un error en los impuestos del documento' as 'message'
+				RETURN 
+			END 
+
+        IF CAST(@fechaEmision AS DATE) > dbo.ufnGetDateEcuador()
+			BEGIN 
+				SELECT '0'code, 'La fecha de emisión del documento no puede ser posterior a la fecha actual.' as 'message'
+				RETURN 
+			END
+
+
+		BEGIN TRAN 
+			--============================================================Administracion=========================================================================================
+			INSERT INTO Compra.Documento_Ingreso
+			       (uniqueId,idEstablecimiento,idPuntoEmision,idProveedor,codDoc,estab,ptoEmi,fechaEmision,secuencial,totalSinImpuestos,importeTotal,fechaRegistro,idUsuario,idEntidad)
+			SELECT @uniqueId,idEstablecimiento,idPuntoEmision,idProveedor,codDoc,estab,ptoEmi,fechaEmision,@secuencial,totalSinImpuestos,importeTotal,dbo.ufnGetDateEcuador(),@idUsuario,@idEntidad 
+			FROM @document
+			
+			SET @idDocumentoIngreso = @@IDENTITY
+
+			
+			INSERT INTO Compra.Documento_Ingreso_Detail
+			       (idDocumentoIngreso,idArticulo,idMedida,idBodega,codigoPrincipal,codigoAuxiliar,descripcion,cantidad,precioUnitario,costoNeto,descuento,precioTotalSinImpuesto,codigoPorcentaje)
+			SELECT @idDocumentoIngreso,idArticulo,idMedida,idBodega,codigoPrincipal,codigoAuxiliar,descripcion,cantidad,precioUnitario,costoNeto,descuento,precioTotalSinImpuesto,codigoPorcentaje
+			FROM @detail
+			
+			INSERT INTO Compra.Documento_Ingreso_Taxes
+                   (idDocumentoIngreso,idArticulo,codigo,codigoPorcentaje,tarifa,baseImponible,valor)
+			SELECT @idDocumentoIngreso,idArticulo,codigo,codigoPorcentaje,tarifa,baseImponible,valor
+			FROM @taxes
+
+			---Datos Adicionales de articulo (etiquetas)
+			IF EXISTS (SELECT 1 FROM @artInfoAdicional WHERE JSON_QUERY(jsonAdicional, '$') IS NOT NULL)
+				BEGIN
+					INSERT INTO Compra.InfoAdicional(uniqueId, idArticulo, idEtiqueta, jsonAdicional, fechaRegistro)
+					SELECT @uniqueId, idArticulo, idEtiqueta, jsonAdicional, dbo.ufnGetDateEcuador() FROM @artInfoAdicional
+				END
+			
+			
+			--==============================================================Inventario============================================================================================
+			IF EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND inventory = 'SI')
+				BEGIN
+                    
+                    DECLARE @idArticulo INT ,@idBodega INT ,@idMedida INT ,@idTipoTransaccion  INT ,@idTipoDocumento INT
+	                       ,@cantidad NUMERIC(18,2) ,@precioUnitario NUMERIC(18,5) ,@precioCosto NUMERIC(18,5) ,@precioTotalSinImpuesto NUMERIC(18,5)
+                           ,@fraccion NUMERIC(18,5) ,@fechaConsolidacion DATETIME ,@stock NUMERIC(18,5)
+
+                    SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'IV'
+
+                    SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'E'
+
+					IF EXISTS (SELECT 1 FROM @detail td INNER JOIN Articulo a WITH (NOLOCK) ON td.idArticulo = a.idArticulo WHERE a.llevaInventario = 1)
+						BEGIN 
+
+							DECLARE cursor_inventory CURSOR LOCAL FOR
+							SELECT td.idArticulo, idBodega,td.idMedida,cantidad,td.precioUnitario - td.descuento,a.precioCosto,td.precioTotalSinImpuesto
+							FROM @detail td 
+							INNER JOIN Articulo a WITH (NOLOCK) ON td.idArticulo = a.idArticulo 
+							WHERE a.llevaInventario = 1
+
+							OPEN cursor_inventory
+
+							FETCH NEXT FROM cursor_inventory INTO @idArticulo,@idBodega,@idMedida,@cantidad,@precioUnitario,@precioCosto,@precioTotalSinImpuesto
+							
+							WHILE @@FETCH_STATUS = 0
+							    BEGIN
+								
+                                    SELECT TOP 1 @fraccion = conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida
+
+                                    SELECT  @cantidad = @cantidad * ISNULL(@fraccion,1)
+                                    
+								    INSERT INTO Inventario.Transaccion WITH(ROWLOCK)
+				                           (idTipoTransaccion, idArticulo, idBodega, idTipoDocumento, idDocumento, idMedida ,cantidad, precioCosto, precioUnitario, total,fechaRegistro, idUsuario)
+			                        SELECT @idTipoTransaccion,@idArticulo,@idBodega,@idTipoDocumento,@idDocumentoIngreso,@idMedida,@cantidad,@precioCosto,@precioUnitario,@precioTotalSinImpuesto,@fechaEmision,@idUsuario
+								    
+                                    IF EXISTS (SELECT 1 FROM Inventario.Stock WHERE idArticulo = @idArticulo AND idBodega = @idBodega AND fechaConsolidacion IS NOT NULL)
+                                            BEGIN
+                                                  SELECT TOP 1 @fechaConsolidacion = fechaConsolidacion  FROM Inventario.Stock WITH(NOLOCK)  WHERE idArticulo = @idArticulo AND idBodega = @idBodega
+
+                                                   IF @fechaConsolidacion >= @fechaEmision
+                                                        BEGIN
+                                                            SELECT @cantidad = 0 
+                                                        END 
+                                            END 
+
+                                    UPDATE Inventario.Stock WITH(ROWLOCK) SET cantidad = cantidad + ISNULL(@cantidad,0) WHERE idArticulo = @idArticulo AND idBodega = @idBodega
+
+	                                SELECT @stock = SUM(cantidad) FROM Inventario.Stock s WITH (NOLOCK) WHERE idArticulo = @idArticulo AND s.estado = 1
+
+	                                UPDATE dbo.Articulo WITH(ROWLOCK) SET stock = ISNULL(@stock,0) WHERE idArticulo = @idArticulo
+
+                                    FETCH NEXT FROM cursor_inventory INTO @idArticulo,@idBodega,@idMedida,@cantidad,@precioUnitario,@precioCosto,@precioTotalSinImpuesto
+							    END
+							CLOSE cursor_inventory
+							DEALLOCATE cursor_inventory     
+						END
+				END
+
+			--===========================================================Contabilidad=================================================================================================
+			
+			INSERT INTO Contabilidad.CuentaPorPagar
+                  (idEstablecimiento,idProveedor,idEstadoPago,codDoc,idDocumento,uniqueId,serieComprobante,identificacion,fechaEmision,importeTotal,idEntidad,idUsuario)
+		    SELECT idEstablecimiento,d.idProveedor,@idEstadoPago,codDoc,@idDocumentoIngreso,uniqueId,@serieComprobante,numeroIdentificacion,fechaEmision,importeTotal,d.idEntidad,d.idUsuario
+		    FROM Compra.Documento_Ingreso d WITH (NOLOCK)
+		    INNER JOIN dbo.Proveedor p WITH (NOLOCK) ON p.idProveedor = d.idProveedor 
+		    WHERE d.idDocumentoIngreso = @idDocumentoIngreso
+			
+		COMMIT TRAN 
+		SELECT '1' code,'Registrado Correctamente' as 'message'
+		RETURN 
+	END TRY 
+
+	BEGIN CATCH 
+		IF @@TRANCOUNT > 0 
+		BEGIN
+			ROLLBACK TRAN; 
+		END
+		INSERT INTO ErroresSistema
+		      (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
+		SELECT NEWID(),'/ComprasHabituales/Insert',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
+
+        SELECT '0'code,'Info: Error en el procedimiento ' as 'message'
+	END CATCH
+END
+GO

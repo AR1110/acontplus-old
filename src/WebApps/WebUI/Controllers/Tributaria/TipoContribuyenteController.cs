@@ -1,9 +1,9 @@
-﻿using DataAccess;
+﻿using Common.Core.Models;
+using DataAccess;
 using Domain.Models;
-using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers
+namespace WebUI.Controllers.Tributaria
 {
     public class TipoContribuyenteController : Controller
     {
@@ -28,13 +28,13 @@ namespace WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] TipoContribuyente data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _tc.CreateTipoContribuyenteAsync(idRol, data);
             return Ok(_gr);
         }
         public async Task<IActionResult> Get(int pageIndex, int pageSize)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _tc.ReadTipoContribuyente(idRol, pageIndex, pageSize);
             return Ok(_gr);
         }
@@ -42,7 +42,7 @@ namespace WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Put([FromBody] TipoContribuyente data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _tc.UpdateTipoContribuyenteAsync(idRol, data);
             return Ok(_gr);
         }
@@ -50,14 +50,14 @@ namespace WebUI.Controllers
 
         public async Task<IActionResult> Delete(int idTipoContribuyente)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _tc.DeleteTipoContribuyenteAsync(idRol, idTipoContribuyente);
             return Ok(_gr);
         }
 
         public async Task<IActionResult> OptionTipoContribuyente()
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _tc.OptionTipoContribuyenteAsync(idRol);
             return Ok(_gr);
         }

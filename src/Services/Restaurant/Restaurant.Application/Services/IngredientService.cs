@@ -1,9 +1,8 @@
-﻿using Lib.Common;
-using Lib.Common.Api;
-using Lib.Common.DbUtils;
+﻿using Common.Core.Interfaces;
+using Common.Core.Models;
+using Common.Core.Utils;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
-using Common.Infrastructure.Repository;
 
 namespace Restaurant.Application.Services
 {
@@ -25,7 +24,7 @@ namespace Restaurant.Application.Services
             }
             else
             {
-                return Converters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJSON(ds);
             }
         }
         public async Task<object> GetByIdAsync(int id)
@@ -40,14 +39,14 @@ namespace Restaurant.Application.Services
             }
             else
             {
-                return Converters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJSON(ds);
             }
         }
         public async Task<string> AddAsync(ApiRequest data)
         {
             var parameters = new Dictionary<string, object>{
                     {"userRoleId", data.UserRoleId},
-                    {"json", Converters.SerializeDictionary(data.Data)}
+                    {"json", DataConverters.SerializeDictionary(data.Data)}
                 };
             var response = await _repository.SPExecuteAsync("Restaurant.Ingredient_Insert", parameters);
             return response;
@@ -57,7 +56,7 @@ namespace Restaurant.Application.Services
             var parameters = new Dictionary<string, object>{
                 {"userRoleId", data.UserRoleId},
                 {"id", id},
-                {"json", SqlStringParam.Sanitize(Converters.SerializeDictionary(data.Data))}
+                {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data))}
             };
             var response = await _repository.SPExecuteAsync("Restaurant.Ingredient_Update", parameters);
             return response;

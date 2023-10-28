@@ -1,4 +1,4 @@
-﻿using Lib.Common.DbUtils;
+﻿using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services.Common;
@@ -50,7 +50,7 @@ namespace TechnicalSupport.API.Controllers
                     return BadRequest("Codigo Existente");
                 }
                 _context.Products.Add(device);
-                await _context.SaveChangesAsync(); 
+                await _context.SaveChangesAsync();
                 return Ok(new { Message = "Registrado Exitosamente", Id = device.Id });
             }
             catch (Exception ex)

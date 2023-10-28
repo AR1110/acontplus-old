@@ -1,4 +1,4 @@
-﻿using Lib.Common.Api;
+﻿using Common.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services.Common;
@@ -56,7 +56,7 @@ namespace Vet.API.Controllers
             {
                 return await _medicalHistory.GetByIdAsync(id);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return BadRequest("Error on get by Id");
             }

@@ -3,6 +3,7 @@
   import { Calculations } from "../helpers/calculations";
   import { customSelect } from "../helpers/custom-select";
   import { FacturaService } from "$services/Mechanical/factura-service";
+  import { NotaEntregaService } from "$services/Mechanical/nota-entrega-service";
   import { hideLoader, showLoader } from "$utils/loading-spinner";
   import { MapperToAction } from "../helpers/mapper-to-action";
   import { supportStore } from "$routes/Mechanical/Store/support.store";
@@ -10,6 +11,7 @@
   import GridForItem from "$lib/components/GridForItem.svelte";
   import Modal from "$lib/components/Modal.svelte";
   import toast from "$utils/toast";
+  import { SupportDetailService } from "$lib/services/Mechanical/support-detail-service";
 
   let support;
   let establishments = [];
@@ -23,6 +25,27 @@
   let paramValidation = [undefined, null, "", 0];
   let placeholderArticle = "Buscar por C.I o Nombre Comercial";
   let currentDateString = "";
+  let tarifaImpuestos = [];
+  let dataCalculos = {
+    totalesImpuestos: 0,
+    totalesImpuestosNetos: 0,
+    totalImpuestoVigente: 0,
+    totalImpuestoVigenteNeto: 0,
+    subTotalIvaCero: 0,
+    subTotalNetoIvaCero: 0,
+    subTotalExentoIva: 0,
+    subTotalNetoExentoIva: 0,
+    subTotalNoObjetoIva: 0,
+    subTotalNetoNoObjetoIva: 0,
+    iva: 0,
+    sumaTotalNeto: 0,
+    totalDescuento: 0,
+    totalIce: 0,
+    irbpnr: 0,
+    propina: 0,
+    total: 0,
+    valorIva: 0,
+  };
 
   const onModalClose = () => {
     supportStore.update((state) => ({
@@ -34,6 +57,7 @@
   // Todo: Create human format date
   const convertFormat = (date) => {
     let currentDate = new Date(date);
+
     currentDateString = currentDate.toLocaleDateString("es-ES", {
       weekday: "long",
       month: "long",
@@ -78,7 +102,6 @@
     ).then((response) => {
       if (response) {
         dataArticle = response[0][0];
-
         // Todo: Validate if article has llevaInventario
         let isExists = onValidateLlevaInventario(dataArticle);
 
@@ -97,22 +120,32 @@
           let dataTarifa = dataMedida.tarifas[0];
 
           let obj = {
-            ...dataArticle,
             bodegas: warehouses,
-            cantidad: 1,
             decimals: decimals,
-            idBodega: idBodega,
-            idMedida: dataMedida.idMedida,
-            idTarifa: dataTarifa.idTarifa,
-            medidas,
-            precioConIva: dataTarifa.precioConIva,
-            precioUnitario: dataTarifa.precioVenta,
-            precioVenta: dataTarifa.precioVenta,
             tarifas: dataMedida.tarifas,
             tipoIvas: tipoIva,
+            medidas: medidas,
+            orderIndex: 0,
+            ...dataArticle,
+            idTarifa: dataTarifa.idTarifa,
+            idBodega: idBodega,
+            idMedida: dataMedida.idMedida,
+            cantidad: 1,
+            precioVenta: dataTarifa.precioVenta,
+            precioSinSubsidio: 0,
+            precioUnitario: dataTarifa.precioVenta,
+            precioConIva: dataTarifa.precioConIva,
+            valorDescuento: 0,
+            precioTotalSinImpuesto: 0,
+            porcentajeDescuento: 0,
             total: dataTarifa.precioConIva * 1,
+            nota: "S/N",
           };
+
           supportDetails = [...supportDetails, obj];
+
+          // Get Articles invoke.
+          getTotales();
         }
       }
     });
@@ -141,7 +174,121 @@
   const removeArticle = (idArticulo) => {
     let newFilter = supportDetails.filter((x) => x.idArticulo != idArticulo);
     supportDetails = newFilter;
+
+    // Get Totales invoke.
+    getTotales();
   };
+
+  function getTotales() {
+    let CODIGO_PORCENTAJE_IVA0 = "0",
+      CODIGO_PORCENTAJE_IVAEXENTO = "7",
+      CODIGO_PORCENTAJE_IVA_NO_OBJETO = "6";
+
+    const dataTotal = supportDetails.reduce(
+      (total, itemDetails) => {
+        let dataImpuesto = tipoIva.find(
+          (x) => x.idTipoIva == itemDetails.idTipoIva
+        );
+
+        let dataImpuestoVigente = tarifaImpuestos.find(
+          (x) => x.codigoPorcentaje == dataImpuesto.codigoPorcentaje
+        );
+
+        total.valorIva = dataImpuestoVigente.tarifa;
+
+        console.log(itemDetails);
+
+        itemDetails.cantidad = Number(itemDetails.cantidad);
+        itemDetails.precioUnitario = Number(itemDetails.precioUnitario);
+        itemDetails.valorDescuento = Number(itemDetails.valorDescuento);
+
+        if (
+          dataImpuesto.codigoPorcentaje == dataImpuestoVigente.codigoPorcentaje
+        ) {
+          total.totalImpuestoVigente +=
+            itemDetails.cantidad * itemDetails.precioUnitario;
+          total.totalImpuestoVigenteNeto +=
+            (itemDetails.precioUnitario - itemDetails.valorDescuento) *
+            itemDetails.cantidad;
+        }
+
+        if (dataImpuesto.codigoPorcentaje == CODIGO_PORCENTAJE_IVA0) {
+          total.subTotalIvaCero +=
+            itemDetails.cantidad * itemDetails.precioUnitario;
+          total.subTotalNetoIvaCero +=
+            (itemDetails.precioUnitario - itemDetails.valorDescuento) *
+            itemDetails.cantidad;
+        }
+
+        if (dataImpuesto.codigoPorcentaje == CODIGO_PORCENTAJE_IVAEXENTO) {
+          total.subTotalExentoIva +=
+            itemDetails.cantidad * itemDetails.precioUnitario;
+          total.subTotalNetoExentoIva +=
+            (itemDetails.precioUnitario - itemDetails.valorDescuento) *
+            itemDetails.cantidad;
+        }
+
+        if (dataImpuesto.codigoPorcentaje == CODIGO_PORCENTAJE_IVA_NO_OBJETO) {
+          total.subTotalNoObjetoIva +=
+            itemDetails.cantidad * itemDetails.precioUnitario;
+          total.subTotalNetoNoObjetoIva +=
+            (itemDetails.precioUnitario - itemDetails.valorDescuento) *
+            itemDetails.cantidad;
+        }
+
+        total.sumaTotalNeto +=
+          itemDetails.cantidad * itemDetails.precioUnitario;
+        total.valorDescuento +=
+          itemDetails.cantidad * itemDetails.precioUnitario;
+        return total;
+      },
+      {
+        totalesImpuestos: 0,
+        totalesImpuestosNetos: 0,
+        totalImpuestoVigente: 0,
+        totalImpuestoVigenteNeto: 0,
+        subTotalIvaCero: 0,
+        subTotalNetoIvaCero: 0,
+        subTotalExentoIva: 0,
+        subTotalNetoExentoIva: 0,
+        subTotalNoObjetoIva: 0,
+        subTotalNetoNoObjetoIva: 0,
+        iva: 0,
+        sumaTotalNeto: 0,
+        totalDescuento: 0,
+        totalIce: 0,
+        irbpnr: 0,
+        propina: 0,
+        total: 0,
+        valorIva: 0,
+      }
+    );
+
+    console.log("dataTotal");
+    console.log(dataTotal);
+
+    let iva = (dataTotal.sumaTotalNeto * dataTotal.valorIva) / 100;
+
+    let total = dataTotal.sumaTotalNeto + iva;
+    let importeTotal = total - dataTotal.totalDescuento;
+
+    let { valorIva, totalDescuento, ...result } = dataTotal;
+
+    // Todo: Update support
+    support = {
+      ...support,
+      ...result,
+      iva,
+      total: importeTotal,
+    };
+
+    // Todo: Update dataCalculos
+    dataCalculos = {
+      ...result,
+      iva,
+      total: importeTotal,
+    };
+  }
 
   // Todo: Header for table
   let colums = [
@@ -175,14 +322,19 @@
       editor: "input",
     },
     {
-      cellEdited: Calculations.calculateTotal,
+      cellEdited: function (cell) {
+        Calculations.calculateTotal(cell);
+        getTotales();
+      },
       editor: "input",
       field: "cantidad",
       hozAlign: "center",
       title: "Cantidad",
     },
     {
-      cellEdited: Calculations.calculateTotal,
+      cellEdited: function (cell) {
+        Calculations.calculateTotal(cell), getTotales();
+      },
       editor: customSelect.selectMeasures,
       field: "idMedida",
       formatter: Calculations.formatters,
@@ -190,41 +342,47 @@
       title: "Medida",
     },
     {
+      cellEdited: function (cell) {
+        Calculations.calculateTotal(cell), getTotales();
+      },
       editor: customSelect.selectTipoIva,
       field: "idTipoIva",
+      formatter: Calculations.formatters,
       hozAlign: "center",
       title: "I.V.A",
-      formatter: Calculations.formatters,
-      width: 100,
     },
     {
-      cellEdited: Calculations.calculateTotal,
+      cellEdited: function (cell) {
+        Calculations.calculateTotal(cell), getTotales();
+      },
       editor: customSelect.selectFee,
       field: "idTarifa",
       formatter: Calculations.formatters,
       hozAlign: "center",
       title: "Tarifa",
-      width: 100,
     },
     {
-      title: "Precio U.",
-      field: "precioVenta",
-      hozAlign: "center",
+      cellEdited: function (cell) {
+        Calculations.calculateTotal(cell), getTotales();
+      },
       editor: "input",
-      cellEdited: Calculations.calculateTotal,
+      field: "precioUnitario",
+      hozAlign: "center",
+      title: "Precio U.",
     },
     {
-      title: "P.Iva",
+      cellEdited: function (cell) {
+        Calculations.calculateTotal(cell), getTotales();
+      },
+      editor: "input",
       field: "precioConIva",
       hozAlign: "center",
-      editor: "input",
-      cellEdited: Calculations.calculateTotal,
+      title: "P.Iva",
     },
     {
       field: "total",
       hozAlign: "center",
       title: "Total",
-      width: 75,
     },
   ];
 
@@ -257,26 +415,37 @@
   };
 
   const selectCodEstab = () => {
-    if (supportDetails != undefined || supportDetails != null) {
-      if (supportDetails.length > 0) {
-        support.codEstab = supportDetails[0].codEstab;
-      }
-    }
+    if (establishments.length > 0) {
+      let estab = establishments.find((x) => x.predeterminado === true);
 
-    if (
-      paramValidation.includes(support.codEstab) &&
-      establishments.length > 0
-    ) {
-      support.codEstab = establishments[0].codEstab;
+      support.codEstab = estab.codEstab;
+      tarifaImpuestos = [...JSON.parse(estab.tarifasImpuestos)];
+
+      // Get Totales invoke.
+      getTotales();
     }
+    // if (
+    //   paramValidation.includes(support.codEstab) && establishments.length > 0) {
+    //   let estab = establishments.find((x) => x.predeterminado === true);
+
+    //   support.codEstab = estab.codEstab;
+    //   tarifaImpuestos = [...JSON.parse(estab.tarifasImpuestos)];
+    // }
   };
 
   const refreshWarehouseCodEstab = (codEstab) => {
     support.codEstab = codEstab;
+    tarifaImpuestos = [];
 
     let idBodega = warehouses.find(
       (x) => x.codEstab == support.codEstab
     ).idBodega;
+    tarifaImpuestos = [
+      ...JSON.parse(
+        establishments.find((x) => x.codEstab == support.codEstab)
+          .tarifasImpuestos
+      ),
+    ];
 
     if (!paramValidation.includes(idBodega)) {
       supportDetails.forEach((item) => {
@@ -297,14 +466,67 @@
     };
 
     FacturaService.post(data)
-      .then((response) => {})
+      .then((response) => {
+        console.log(response);
+      })
       .finally(() => {
         hideLoader();
       });
   };
 
-  // Todo: Save NOTA ENTREGA
-  const saveNotaEntrega = () => {};
+  const saveNotaEntrega = () => {
+    showLoader();
+
+    let data = {
+      notaEntrega: support,
+      detalle: supportDetails,
+      infoAdicionalArticulo: null
+    };
+
+    NotaEntregaService.post(data).then((response) => {
+      if(response) {
+        console.log(response);
+      }
+    }).finally(() => {
+      hideLoader();
+    });
+  };
+
+  // Todo: Save DETALLES
+  const onUpdate = () => {
+    showLoader();
+
+    supportDetails = supportDetails.map((item) => ({
+      id: item.id > 0 ? item.id : 0,
+      articuloId: item.idArticulo,
+      tarifaId: item.idTarifa,
+      bodegaId: item.idBodega,
+      medidaId: item.idMedida,
+      description: item.descripcion,
+      quantity: item.cantidad,
+      price: item.precioUnitario,
+      cost: item.precioCosto,
+      total: item.total,
+      codePercentage: item.codigoPorcentaje,
+      percentage: item.tarifa,
+      inventory: item.llevaInventario,
+    }));
+
+    SupportDetailService.put(support.id, { data: { support, supportDetails } })
+      .then((response) => {
+        if (response) {
+          if (response.code != "1") {
+            return toast({ type: "warning", message: response.message });
+          }
+
+          onModalClose();
+          toast({ type: "success", message: response.message });
+        }
+      })
+      .finally(() => {
+        hideLoader();
+      });
+  };
 
   supportStore.subscribe((values) => {
     support = values.support;
@@ -377,7 +599,12 @@
             <label for="">
               Fecha Emisión <span class="text-danger">*</span>
             </label>
-            <input type="date" bind:value={support.date} class="form-control" />
+            <input
+              type="date"
+              on:change={() => convertFormat(support.date)}
+              bind:value={support.date}
+              class="form-control"
+            />
             <small><span class="text-success">{currentDateString}</span></small>
           </div>
           <div class="col-sm-4 nopadding">
@@ -432,25 +659,44 @@
             <div class="row">
               <div class="col-lg-12 col-lg-12 col-md-12 col-sm-12 col-12">
                 <button
-                  on:click={saveFactura}
                   type="button"
+                  on:click={onUpdate}
                   class="btn btn-block btn-success mt-4"
                 >
-                  <i class="ti-save" /> Factura
+                  <i class="ti-save" /> Guardar
                 </button>
               </div>
             </div>
           </div>
-          <div class="col-sm-3 nopadding">
-            <div class="row">
-              <div class="col-lg-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                <button
-                  type="button"
-                  on:click={saveNotaEntrega}
-                  class="btn btn-block btn-outline-primary mt-4"
-                >
-                  <i class="ti-save" /> Nota Entrega
-                </button>
+          <div class="col-sm-3 mt-4">
+            <div class="col-lg-12 col-lg-12 col-md-12 col-sm-12 col-12">
+              <div
+                class="btn-group"
+                role="group"
+                aria-label="Button group with nested dropdown"
+              >
+                <div class="btn-group" role="group">
+                  <button
+                    id="btnGroupDrop1"
+                    type="button"
+                    class="btn btn-secondary btn-block dropdown-toggle"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                  >
+                    Generar Documento
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                    <!-- svelte-ignore a11y-invalid-attribute -->
+                    <a on:click={saveFactura} class="dropdown-item" href="#"
+                      >Factura</a
+                    >
+                    <!-- svelte-ignore a11y-invalid-attribute -->
+                    <a on:click={saveNotaEntrega} class="dropdown-item" href="#"
+                      >Nota Entrega</a
+                    >
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -463,22 +709,39 @@
           </div>
         </div>
         <div class="row mt-4">
-          <div class="col-12 col-sm-12">
-            <div class="pull-right text-right">
-              <address>
-                <h6>SubTotal sin Impuesto 7</h6>
-                <h6>Total Descuento 7</h6>
-                <h4>Total $435</h4>
-              </address>
-            </div>
+          <div class="col-8 col-sm-8" />
+          <div class="col-4 col-sm-4">
+            <table class="table table-sm">
+              <tbody>
+                <tr>
+                  <td>SubTotal sin Impuesto</td>
+                  <td>$ {dataCalculos.totalImpuestoVigenteNeto}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <select class="form-control form-control-sm" disabled>
+                      {#each tarifaImpuestos as item}
+                        <option value={item.tarifa}>{item.descripcion}</option>
+                      {/each}
+                    </select>
+                  </td>
+                  <td>$ {dataCalculos.iva}</td>
+                </tr>
+                <tr>
+                  <td>Total descuento</td>
+                  <td>$ {dataCalculos.totalDescuento ?? 0}</td>
+                </tr>
+                <tr class="font-18">
+                  <th>Total</th>
+                  <th>$ {dataCalculos.total}</th>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </form>
     </div>
     <div class="modal-footer">
-      <button type="submit" class="btn btn-success">
-        <i class="ti-save" /> Guardar
-      </button>
       <button type="button" class="btn btn-dark" on:click={() => onModalClose()}
         >&times; Cerrar</button
       >

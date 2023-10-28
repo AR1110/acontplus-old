@@ -45,7 +45,7 @@
     <link href="~/lib/angular-ui-grid/ui-grid.min.css" rel="stylesheet" asp-append-version="true" />
 
     <!--Tabulator-->
-    <link href="~/lib/tabulator/css/tabulator_simple.min.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/lib/tabulator/css/tabulator.css" rel="stylesheet" asp-append-version="true" />
 
     <!--bg tags por eliminar mas adelante-->
     <link href="~/lib/ng-tags/ng-tags-input.min.css" rel="stylesheet" asp-append-version="true" />
@@ -131,8 +131,8 @@
 
                     <div class="navbar-nav d-lg-block m-md-block d-none mx-auto text-white">
                         <div class="d-flex flex-column">
-                            <div class="p-0 text-white">{{entidad}}</div>
-                            <div class="p-0 text-white"><small>{{nombreComercial}}</small></div>
+                            <div class="p-0 text-white">{{userData.tradeName}}</div>
+                            <div class="p-0 text-white"><small>{{userData.bussinesName}}</small></div>
                         </div>
                     </div>
 
@@ -147,7 +147,7 @@
                                 <img src="~/assets/images/user/user.png" alt="user" class="">
                                 <span class="hidden-md-down">
                                     Hola,
-                                    {{usuario}} &nbsp;<icon class="fa fa-angle-down"></icon>
+                                    {{userData.username}} &nbsp;<icon class="fa fa-angle-down"></icon>
                                 </span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right animated flipInY">
@@ -184,36 +184,10 @@
         <!-- ============================================================== -->
         <aside class="left-sidebar">
             <!-- Sidebar scroll-->
-            <div class="scroll-sidebar" style="overflow: auto;">
+            <div class="scroll-sidebar">
                 <!-- Sidebar navigation-->
                 <nav class="sidebar-nav">
                     <ul id="sidebarnav">
-
-
-                        <li>
-                            <span class="has-arrow waves-effect waves-dark">
-                            </span>
-                        </li>
-
-                        <li ng-repeat="m in menus">
-
-                            <a class="has-arrow waves-effect waves-dark {{active?'active':''}}" ng-show="!active"
-                               ng-click="active=true" href="javascript:void(0)" aria-expanded="false">
-                                <i class="{{m.icon}}"></i><span class="hide-menu">{{m.description}}</span>
-                            </a>
-                            <a class="has-arrow waves-effect waves-dark {{active?'active':''}}" ng-show="active"
-                               ng-click="active=false" href="javascript:void(0)" aria-expanded="false">
-                                <i class="{{m.icon}}"></i><span class="hide-menu">{{m.description}}</span>
-                            </a>
-                            <ul ng-repeat="sm in subMenus |orderBy:sm.idSubmenu" aria-expanded="false"
-                                class="collapse {{active?'in':''}}" ng-if="m.idMenu==sm.idMenu">
-                                <li>
-                                    <a href="javascript:void(0)" ng-click="onChangeSubMenu(sm)">
-                                        <i class="{{sm.icon}}"></i> <small class="font-15">{{sm.description}}</small>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
                     </ul>
                 </nav>
                 <!-- End Sidebar navigation -->
@@ -292,16 +266,16 @@
     <script src="~/lib/bootstrap/js/bootstrap.min.js" asp-append-version="true"></script>
     <script src="~/dist/js/perfect-scrollbar.jquery.min.js" asp-append-version="true"></script>
 
-    <script src="~/dist/js/waves.js"></script>
-    <script src="~/dist/js/sidebarmenu.js"></script>
-    <script src="~/dist/js/custom.min.js"></script>
-
-    <script src="~/lib/magnific-popup.js/jquery.magnific-popup.min.js" asp-append-version="true"></script>
+   
 
     <!--stickey kit -->
     <script src="~/lib/sticky-kit/sticky-kit.min.js" asp-append-version="true"></script>
     <script src="~/lib/jquery-sparklines/jquery.sparkline.min.js" asp-append-version="true"></script>
 
+
+    <script src="~/lib/magnific-popup.js/jquery.magnific-popup.min.js" asp-append-version="true"></script>
+
+  
     <!--Sweet Alert-->
     <script src="~/lib/limonte-sweetalert2/sweetalert2.min.js" asp-append-version="true"></script>
 
@@ -369,10 +343,16 @@
     <!--SingalR-->
     <script src="~/lib/microsoft-signalr/signalr.min.js" asp-append-version="true"></script>
 
+
+    <script src="~/dist/js/waves.js"></script>
+    <script src="~/dist/js/sidebarmenu.js" asp-append-version="true"></script>
+
+    <script src="~/dist/js/custom.min.js" asp-append-version="true"></script>
+
     <script src="~/js/app/acontPlusApp.js" asp-append-version="true"></script>
     <script src="~/js/controllers/layoutCtrl.min.js" asp-append-version="true"></script>
     <!--Common Directives---->
-    <script src="~/js/common/directives/commonDirective.min.js" asp-append-version="true"></script>
+    <script src="~/js/common/directives/commonDirective.js" asp-append-version="true"></script>
     @* <script src="~/js/common/filters/commonFilter.min.js" asp-append-version="true"></script> *@
     <!--Common Constants-->
     <script src="~/js/common/constants/namePathsModal.min.js" asp-append-version="true"></script>
@@ -384,7 +364,7 @@
 
     <!----------------------------Inventory--------------------------------->
     <script src="~/js/inventario/directives/inventarioDirective.js" asp-append-version="true"></script>
-    <script src="~/js/inventario/services/articuloService.min.js" asp-append-version="true"></script>
+    <script src="~/js/inventario/services/articuloService.js" asp-append-version="true"></script>
     <script src="~/js/inventario/services/inventarioService.js" asp-append-version="true"></script>
     <!----------------------------Inventory---------------------------------->
     <!--------------------------Module Ventas-------------------------------->
@@ -403,6 +383,8 @@
 
     <script src="~/lib/axios/axios.min.js" asp-append-version="true"></script>
     <script src="~/build/bundle.js" asp-append-version="true"></script>
+
+  
 
     <script>
 
@@ -431,6 +413,15 @@
         } else {
             console.log('Service workers are not supported.');
         }
+        var sUsrAg = navigator.userAgent;
+
+        function logout() {
+            Object.keys(localStorage)
+                .forEach(function (key) {
+                    localStorage.removeItem(key);
+                });
+            location.href = '/Login';
+        };
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)

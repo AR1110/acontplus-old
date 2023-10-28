@@ -24,22 +24,35 @@
             <div class="row">
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-gorup">
-                        <span for="establecimiento">Establecimiento</span>
+                        <span for="establecimiento">Estab: <span class="text-danger">*</span></span>
                         <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
-                            class="form-control  border-select" ng-change="getProformas()">
+                            class="form-control  border-select" ng-change="estabFilter()">
                             <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                                 {{item.nombreComercial}}
                             </option>
                         </select>
                     </div>
                 </div>
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                    <div class="form-group">
-                        <span for="">Rango de Fechas</span>
-                        <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
-                            end-date="dataSearch.fechaFin"
-                            result-range-date="resultRangeFilter(result)"></date-range-filter>
-                    </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12"> 
+                    <span for="date-range-filter">Rango Fechas: </span>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <div class="custom-control custom-checkbox mr-sm-2">
+                                            <input type="checkbox" 
+                                                ng-model="dataSearch.checkBoxFecha"
+                                                   ng-disabled="!(dataSearch.idCliente>0)"
+                                                class="custom-control-input" 
+                                                id="checkBoxFecha">
+                                            <label class="custom-control-label" for="checkBoxFecha"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <date-range-filter current-date="dataSearch.fechaInicio"
+                                                   start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
+                                                   result-range-date="resultRangeFilter(result)"></date-range-filter>
+                            </div> 
                 </div>
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
@@ -61,23 +74,31 @@
                             </script>
                     </div>
                 </div>
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                    <button type="button" class="btn btn-info btm-sm mt-4" data-toggle="button" data-more="#sh"
-                        aria-pressed="false" ng-click="onClickBtnMore()">
-                        <span class="text"><i class="fas fa-eye" aria-hidden="true"
-                                uib-tooltip="Más opciones"></i></span>
-                        <span class="text-active"><i class="fas fa-eye" aria-hidden="true"
-                                uib-tooltip="Ocultar opciones"></i></span>
-                    </button>
-                    <button type="button" class="btn btn-success btm-sm mt-4" ng-click="getProformas()"
-                        uib-tooltip="Recargar">
-                        <i class="fas fa-redo"></i>
-                    </button>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12"> 
+                     <div class="btn-group btn-group-sm mt-4" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-info" ng-click="onClickBtnMore()">
+                            <i class="fas fa-eye" uib-tooltip="Más opciones"></i>
+                        </button>
+                        <button type="button" class="btn btn-success" uib-tooltip="Recargar"
+                            ng-click="getProformas()">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                    </div> 
                 </div>
             </div>
 
             <div class="row justify-content-between" ng-if="moreSearchOptions">
-
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <div class="form-gorup">
+                        <span for="ptosEmision">Pto. Emisión: <span class="text-danger">*</span></span>
+                        <select name="ptosEmision" id="ptosEmision" ng-model="dataSearch.idPuntoEmision"
+                            class="form-control  border-select" ng-change="getProformas()">
+                            <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
+                                {{item.ptoEmi}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
                 <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
                         <span for="usuario">Usuario</span>
@@ -101,22 +122,11 @@
 
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
-                        <span>Buscar por Nro. Documento:</span>
-                        <input type="text" class="form-control border-select"  ng-model="dataSearch.nroSecuencial" placeholder="Ej: 123"/>                       
+                        <span>Buscar por Nro. Doc.:</span>
+                        <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial"
+                            placeholder="Ej: 123 o 1-30" />
                     </div>
-                </div>
-                @* <div class="col-xl-3">
-                <div class="form-group">
-                <span>Estado:</span>
-                <select id="estadoDocumentos" class="form-control" ng-model="dataSearch.byEstado"
-                ng-change="getAprobComprobantes()">
-                <option value="">Todos</option>
-                <option ng-value="item.codigo" ng-repeat="item in estadoDocumentos">
-                {{item.descripcion}}
-                </option>
-                </select>
-                </div>
-                </div> *@
+                </div> 
                 <div class="col-xl-3">
                     <div class="form-group">
                         <span>Buscar</span>
@@ -236,7 +246,8 @@
                     </tbody>
                     <tfoot md-foot>
                         <tr md-row>
-                            <td md-cell colspan="2"><span class="font-weight-bold">{{dataSearch.totalRecords}} Proformas</span></td>
+                            <td md-cell colspan="2"><span class="font-weight-bold">{{dataSearch.totalRecords}}
+                                    Proformas</span></td>
                             <td md-cell colspan="3"><span class="font-weight-bold">Total:</span></td>
                             <td md-cell><span class="font-weight-bold">{{total}}</span></td>
                             <td md-cell></td>
@@ -247,7 +258,7 @@
             </md-table-container>
         </div>
         <div class="card-body">
-             <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+            <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
                 ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
                 class="pagination" boundary-links="true" rotate="false"></ul>
         </div>
@@ -255,7 +266,7 @@
 
 </div>
 
-@section Scripts{
+@section Scripts {
     <script src="~/js/services/storageService.min.js" asp-append-version="true"></script>
     <script src="~/js/ventas/services/proformaService.js" asp-append-version="true"></script>
     <script src="~/js/ventas/controllers/proformaCtrl.min.js" asp-append-version="true"></script>

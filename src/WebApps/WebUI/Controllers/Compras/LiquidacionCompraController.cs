@@ -1,9 +1,8 @@
-﻿using DataAccess;
-using DataAccess.Compras;
+﻿using Common.Core.Models;
+using Common.Core.Utils;
+using DataAccess;
 using Domain.Models;
 using Domain.ViewModels.Compras;
-using Lib.Common;
-using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common.Logs;
@@ -13,7 +12,6 @@ namespace WebUI.Controllers.Compras
     public class LiquidacionCompraController : Controller
     {
         private GenericResponse _gr = new();
-        private LiquidacionCompraDao _lc;
         private readonly IConfiguration _configuration;
         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
         private DataAccessObject _dao;
@@ -24,7 +22,6 @@ namespace WebUI.Controllers.Compras
         {
             _configuration = configuration;
             _dao = new DataAccessObject(_configuration);
-            _lc = new LiquidacionCompraDao(_configuration);
             _log = log;
         }
         public IActionResult Index()

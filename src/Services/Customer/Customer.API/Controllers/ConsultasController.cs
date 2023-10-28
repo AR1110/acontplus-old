@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Net;
+using Common.Core.Utils;
 using Customer.API.Data;
 using Customer.API.Dtos;
 using Customer.API.Services;
@@ -8,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Services.Common.Logs;
-using Services.Lib.Common;
 
 namespace Customer.API.Controllers
 {

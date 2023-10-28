@@ -9,6 +9,6 @@ namespace Restaurant.Core.Entities
         public Promotion Promotion { get; set; }
         public int PromotionId { get; set; }
         public Menu Menu { get; set; }
-        public int MenuId { get; set; }        
+        public int MenuId { get; set; }
     }
 }

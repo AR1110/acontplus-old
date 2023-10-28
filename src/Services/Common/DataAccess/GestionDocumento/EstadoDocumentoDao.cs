@@ -1,9 +1,9 @@
-﻿using System.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
+using Common.Core.Models;
 using Domain.Models;
-using Lib.Common;
 using Microsoft.Extensions.Configuration;
 
-namespace DataAccess
+namespace DataAccess.GestionDocumento
 {
     public class EstadoDocumentoDao
     {
@@ -21,13 +21,13 @@ namespace DataAccess
 
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
-                    SqlCommand cmd = new SqlCommand("Gestion.EstadoDocumento_Get", con);
+                    var cmd = new SqlCommand("Gestion.EstadoDocumento_Get", con);
                     cmd.Parameters.AddWithValue("json", json);
                     await con.OpenAsync();
                     cmd.CommandType = System.Data.CommandType.StoredProcedure;
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         var item = new EstadoPago

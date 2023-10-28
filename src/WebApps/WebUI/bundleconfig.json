@@ -508,5 +508,65 @@
     "inputFiles": [
       "wwwroot/dist/css/pages/other-pages.css"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/financiera/modalFormaCobroPagoCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/financiera/modalFormaCobroPagoCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/dist/js/custom.min.js",
+    "inputFiles": [
+      "wwwroot/dist/js/custom.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/ventas/controllers/aprobacionDocumentoCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/ventas/controllers/aprobacionDocumentoCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/compras/controllers/documentoRecibidoCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/compras/controllers/documentoRecibidoCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/compras/modalCompraNoHabitualCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/compras/modalCompraNoHabitualCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/compras/modalFacturaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/compras/modalFacturaCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/compras/modalIngresoBodegaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/compras/modalIngresoBodegaCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/compras/modalLiquidacionCompraCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/compras/modalLiquidacionCompraCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/compras/modalNotaCreditoProveedorCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/compras/modalNotaCreditoProveedorCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/compras/modalOrdenCompraCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/compras/modalOrdenCompraCtrl.js"
+    ]
   }
 ]

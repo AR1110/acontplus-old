@@ -1,6 +1,5 @@
-﻿using Common.Reports.Interfaces;
+﻿using Common.Core.Interfaces;
 using Common.Reports.Services;
-using Lib.Common;
 using Microsoft.EntityFrameworkCore;
 using Vet.Application.Services;
 using Vet.Core.Interfaces;
@@ -20,7 +19,7 @@ namespace Vet.API.Extensions
             //    optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultConnection"), builder => builder.MigrationsAssembly("Restaurant.Infrastructure"));
             //    return new RestaurantContext(optionsBuilder.Options);
             //});
-            services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IRdlcReportService, RdlcReportService>();
             services.AddScoped<IMedicalHistory, MedicalHistoryService>();
             services.AddScoped<IPetService, PetService>();
             return services;

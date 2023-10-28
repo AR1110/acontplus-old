@@ -19,7 +19,7 @@ namespace Mechanical.Infrastructure.Data
         public DbSet<VehiclePart> vehicleParts { get; set; }
         public DbSet<Inspection> inspections { get; set; }
         public DbSet<SupportDetail> maintenanceDetails { get; set; }
-        
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -57,9 +57,9 @@ namespace Mechanical.Infrastructure.Data
             .IsUnique();
 
             modelBuilder.Entity<Inspection>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-           
+
             modelBuilder.Entity<SupportDetail>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-            
+
             //modelBuilder.Entity<Maintenance>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
         }
 

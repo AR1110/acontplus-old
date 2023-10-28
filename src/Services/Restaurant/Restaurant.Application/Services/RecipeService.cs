@@ -1,12 +1,12 @@
-﻿using Lib.Common;
-using Lib.Common.Api;
+﻿using Common.Core.Interfaces;
+using Common.Core.Models;
+using Common.Core.Utils;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Core.Entities;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
-using Common.Infrastructure.Repository;
 
-namespace Restaurant.Application
+namespace Restaurant.Application.Services
 {
     public class RecipeService : IRecipe
     {
@@ -58,7 +58,7 @@ namespace Restaurant.Application
             }
             else
             {
-                return Converters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJSON(ds);
             }
         }
 
@@ -67,6 +67,6 @@ namespace Restaurant.Application
             throw new NotImplementedException();
         }
 
-       
+
     }
 }

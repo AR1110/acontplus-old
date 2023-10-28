@@ -1,8 +1,8 @@
 ﻿using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
+using Common.Core.Models;
 using Domain.Models;
 using Domain.ViewModels;
-using Lib.Common;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 

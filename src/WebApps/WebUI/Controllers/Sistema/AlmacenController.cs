@@ -1,10 +1,10 @@
-﻿using DataAccess;
-using Lib.Common;
-using Lib.Common.DbUtils;
+﻿using Common.Core.Models;
+using Common.Core.Utils;
+using DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
-namespace WebUI.Controllers
+namespace WebUI.Controllers.Sistema
 {
     public class AlmacenController : Controller
     {
@@ -19,9 +19,9 @@ namespace WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            DbAccess _db = new DbAccess(_configuration);
+            var _db = new DbAccess(_configuration);
 
-            GenericResponse _response = new GenericResponse();
+            var _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Sistema.Almacen_Get_Data_Form");

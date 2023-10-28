@@ -1,5 +1,5 @@
-﻿using Common.Infrastructure.Repository;
-using Lib.Common;
+﻿using Common.Core.Interfaces;
+using Common.Core.Utils;
 using Restaurant.Core.Interfaces;
 
 namespace Restaurant.Application.Services
@@ -16,15 +16,15 @@ namespace Restaurant.Application.Services
 
         public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
         {
-            var ds = await _repository.GetDataSetAsync( "Restaurant.Promotion_Menu_Get_By_Id", parameters);
+            var ds = await _repository.GetDataSetAsync("Restaurant.Promotion_Menu_Get_By_Id", parameters);
             if (ds == null)
             {
                 return null;
             }
             else
             {
-                return Converters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJSON(ds);
             }
-        }        
+        }
     }
 }

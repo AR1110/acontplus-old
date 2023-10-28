@@ -1,8 +1,8 @@
-﻿using DataAccess;
-using Lib.Common;
+﻿using Common.Core.Models;
+using DataAccess;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers
+namespace WebUI.Controllers.Almacen
 {
     public class TipoArticuloController : Controller
     {

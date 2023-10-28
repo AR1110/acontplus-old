@@ -1,5 +1,5 @@
 ﻿using DataAccess.Asignaciones;
-using Domain.Models;
+using Domain.Models.Administracion;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Admin

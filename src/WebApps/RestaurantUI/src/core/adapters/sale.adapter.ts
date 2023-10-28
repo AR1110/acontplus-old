@@ -14,6 +14,7 @@ function  itemToApi(items: ItemRead[]):  Array<ItemPostDto> {
             productId: item.productId,
             taxValue: item.taxValue,
             quantity: item.quantity,
+            remainingQuantity: item.remainingQuantity,
             cost: item.cost,
             price: item.price,
             discount: item.discount,

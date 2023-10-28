@@ -170,7 +170,7 @@
     app.directive('validLetra', function () {
         return {
             require: 'ngModel',
-            link: function (scope, element, attrs, ngModelCtrl) {
+            link: function (scope, element,) {
                 element.bind('keypress', function (e) {
                     let key = e.keyCode || e.which;
                     let tecla = String.fromCharCode(key).toLowerCase();
@@ -224,16 +224,16 @@
     app.directive('autoFocus', function () {
         return {
             restrict: 'A',
-            link: function (scope, element, attrs) {
+            link: function (scope, element, ) {
                 element.focus();
             }
         };
     });
 
-    app.directive('focusSearchArticulo', function ($timeout, $parse) {
+    app.directive('focusSearchArticulo', function ($timeout,) {
         return {
-            link: function (scope, element, attrs) {
-                element.bind('click', function (e) {
+            link: function (scope, element, ) {
+                element.bind('click', function () {
                     $timeout(() => {
                         element.focus();
                     })
@@ -245,7 +245,7 @@
     app.directive('tooltip', function () {
         return {
             restrict: 'A',
-            link: function (scope, element, attrs) {
+            link: function (scope, element, ) {
                 $(element).hover(function () {
                     // on mouseenter
                     $(element).tooltip('show');
@@ -259,7 +259,7 @@
 
     //keyboard disable
     app.directive('keyboardDisable', function () {
-        return function (scope, elem, attr) {
+        return function (scope, elem, ) {
             elem.on('keydown', function (e) {
                 if (e.which === 9) {
                     return false;
@@ -296,7 +296,7 @@
     app.directive('stopEvent', function () {
         return {
             restrict: 'A',
-            link: function (scope, element, attr) {
+            link: function (scope, element ) {
                 element.bind('click', function (e) {
                     e.stopPropagation();
                 });
@@ -309,7 +309,7 @@
     app.directive('updateArticle', function ($rootScope) {
         return {
 
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
 
                 if (!$rootScope.articlePermission.leer) {
                     element[0].style.display = 'none';
@@ -384,7 +384,7 @@
                 $(element).popover(popoverOptions);
 
                 // // Open popover on element click
-                element.on('mouseover', function (event) {
+                element.on('mouseover', function () {
                     $(element).popover('show');
                 });
 
@@ -406,7 +406,7 @@
 
 
 
-    app.directive('totalesVentaView', function ($rootScope, $timeout) {
+    app.directive('totalesVentaView', function () {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -436,8 +436,8 @@
                 resultModal: '&',
                 params: '='
             },
-            link: function (scope, element, att) {
-                element.on('click', async function (ev) {
+            link: function (scope, element) {
+                element.on('click', async function () {
 
                     let { fileCtrl, controllers, templates } = nombreModalVenta.CLIENTE;
                     let ctrl = (await import(fileCtrl))[controllers['M']];
@@ -471,8 +471,8 @@
                 resultModal: '&',
                 params: '='
             },
-            link: function (scope, element, att) {
-                element.on('click', async function (ev) {
+            link: function (scope, element) {
+                element.on('click', async function () {
 
                     let { fileCtrl, controllers, templates } = nombreModalVenta.CLIENTE;
                     let ctrl = (await import(fileCtrl))[controllers['ML']];
@@ -506,7 +506,7 @@
                 customer: '=',
                 popoverPlacement: '@'
             },
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
                 element.popover({
                     title: '<i class="text-info fas fa-info"></i> Información Cliente',
                     content: `<div>
@@ -532,7 +532,7 @@
                 onKeyupCliente:'&',
                 ngModel: '='
             },
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
                 scope.cliente = {
                     nombreCliente: scope.ngModel
                 }
@@ -594,7 +594,7 @@
                 functionTrigger: '&'
             },
             require: 'ngModel',
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
                 scope.cliente = {
                     nombreCliente: scope.ngModel,                    
                 }
@@ -634,7 +634,7 @@
                        try {
                             showLoader();
                             
-                            let {numeroRuc, razonSocial,establecimientos, direccion, telefono, email, error} = await commonService.checkClientSRIByRUC(textSearch); 
+                            let {numeroRuc, razonSocial, direccion, telefono, email, error} = await commonService.checkClientSRIByRUC(textSearch); 
                             hideLoader();
                             if (!numeroRuc) {
                                 toastService.toastr('warning', error)
@@ -776,9 +776,9 @@
                 params: '=',
                 resultModal: '&',
             },
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
     
-                element.on('click', async function (event) {
+                element.on('click', async function () {
                     let fileCtrl = nombreModalVenta.EMPRESA.fileCtrl;
                     let ctrl = nombreModalVenta.EMPRESA.controller 
                     let template = nombreModalVenta.EMPRESA.template 
@@ -790,6 +790,7 @@
                         controller,
                         template,
                         size: 'md',
+                        isRenderRazorPartial: true,
                         params: Object.assign({}, scope.params) || {},                        
                     })
 
@@ -814,9 +815,9 @@
                 params: '=',
                 resultModal: '&',
             },
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
     
-                element.on('click', async function (event) {
+                element.on('click', async function () {
                     let fileCtrl = nombreModalVenta.EMPLEADO.fileCtrl;
                     let ctrl = nombreModalVenta.EMPLEADO.controller 
                     let template = nombreModalVenta.EMPLEADO.template 
@@ -851,9 +852,9 @@
                 params: '=',
                 resultModal: '&',
             },
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
     
-                element.on('click', async function (event) {
+                element.on('click', async function () {
                     let fileCtrl = nombreModalVenta.CARGO.fileCtrl;
                     let ctrl = nombreModalVenta.CARGO.controller 
                     let template = nombreModalVenta.CARGO.template 
@@ -864,7 +865,8 @@
                         controller,
                         template,
                         size: 'md',
-                        params: Object.assign({}, scope.params) || {},                                              
+                        params: Object.assign({}, scope.params) || {},  
+                        isRenderRazorPartial: true                                            
                     })
 
                     modalDialogRef.result.then(result => {
@@ -882,22 +884,16 @@
 
 
     //https://www.daterangepicker.com/
-    app.directive('dateRangeFilter', function (formulario) {
-        return {
-            template: `<div><input date-range-picker class="form-control date-picker border-select" type="text"
-                   ng-model="dateRangePicker.date" picker="dateRangePicker.picker"
-                   picker-classes="extra-class-names" min="'2014-02-23'" max="dateRangePicker.maxDate"
-                   options="dateRangePicker.options" options="{locale: {separator: " :"}}" />
-       </div>`,
-            restrict: 'E',
-            replace: true,
+    app.directive('dateRangeFilter', function ($compile) {
+        return { 
+            restrict: 'E', 
             scope: {
                 currentDate: '=',
                 startDate: '=',
                 endDate: '=',
                 resultRangeDate: '&',
             },
-            link: function (scope, $element, $attrs, form) {
+            link: function (scope, element) {
                 let thisMoment = moment(new Date())
                 scope.startDate = thisMoment;
                 scope.endDate = thisMoment;
@@ -930,7 +926,7 @@
                             'Este Mes': [moment().startOf('month'), moment().endOf('month')],
                         },
                         eventHandlers: {
-                            'apply.daterangepicker': function (event, picker) {
+                            'apply.daterangepicker': function () {
 
                                 scope.startDate = scope.dateRangePicker.date.startDate
                                 scope.endDate = scope.dateRangePicker.date.endDate;
@@ -940,14 +936,69 @@
                                         startDate: scope.startDate,
                                         endDate: scope.endDate
                                     }
-                                })
-                                // $scope.getComprobantes()
-                                // console.log('applied')
+                                }) 
                             }
                         }
                     }
                 };
+                var html =`<input name="date-range-filter" date-range-picker class="form-control date-picker border-select" type="text"
+                ng-model="dateRangePicker.date" picker="dateRangePicker.picker"
+                picker-classes="extra-class-names" min="'2014-02-23'" max="dateRangePicker.maxDate"
+                options="dateRangePicker.options" options="{locale: {separator: " :"}}" />`;
+                var e =$compile(html)(scope);
+                element.replaceWith(e);
             }
+            // link: function (scope) {
+            //     let thisMoment = moment(new Date())
+            //     scope.startDate = thisMoment;
+            //     scope.endDate = thisMoment;
+            //     scope.dateRangePicker = {
+            //         date: {
+            //             startDate: thisMoment,
+            //             endDate: thisMoment,
+            //         },
+            //         picker: null,
+            //         options: {
+            //             pickerClasses: 'custom-display', //angular-daterangepicker extra
+            //             buttonClasses: 'btn',
+            //             applyButtonClasses: 'btn-success',
+            //             cancelButtonClasses: 'btn-danger',
+            //             locale: {
+            //                 applyLabel: "Aplicar",
+            //                 cancelLabel: 'Cancelar',
+            //                 customRangeLabel: 'Rango Personalizado',
+            //                 separator: ' - ',
+            //                 format: "YYYY-MM-DD", //will give you 2017-01-06
+            //                 //format: "D-MMM-YY", //will give you 6-Jan-17
+            //                 //format: "D-MMMM-YY", //will give you 6-January-17
+            //             },
+            //             ranges: {
+            //                 'Hoy': [moment(), moment()],
+            //                 'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            //                 'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+            //                 'Ultimos 15 Días': [moment().subtract(14, 'days'), moment()],
+            //                 'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
+            //                 'Este Mes': [moment().startOf('month'), moment().endOf('month')],
+            //             },
+            //             eventHandlers: {
+            //                 'apply.daterangepicker': function (event, picker) {
+
+            //                     scope.startDate = scope.dateRangePicker.date.startDate
+            //                     scope.endDate = scope.dateRangePicker.date.endDate;
+
+            //                     scope.resultRangeDate({
+            //                         result: {
+            //                             startDate: scope.startDate,
+            //                             endDate: scope.endDate
+            //                         }
+            //                     })
+            //                     // $scope.getComprobantes()
+            //                     // console.log('applied')
+            //                 }
+            //             }
+            //         }
+            //     };
+            // }
         };
 
     })
@@ -964,7 +1015,7 @@
                 params: '=',
                 resultModal: '&',
             },
-            link: function (scope, element, att) {
+            link: function (scope, element) {
                 element.on('click', async function () {
 
                     let fileCtrl = nombreModalLogistica.TRANSPORTISTA.fileCtrl;
@@ -1000,7 +1051,7 @@
                 params: '=',
                 resultModal: '&',
             },
-            link: function (scope, element, att) {
+            link: function (scope, element) {
                 element.on('click', async function () {
 
                     let fileCtrl = nombreModalLogistica.VEHICULO.fileCtrl;
@@ -1044,7 +1095,7 @@
                 typeSend: '=',
                 getParamToSendMail: '&' //funcion que arma parametro necesario para el envio de correo
             },
-            link: function(scope, element, att){
+            link: function(scope, element){
                 element.on('click', async function(){
                     
                     let fileCtrl = nombreModalCommon.MAIL.fileCtrl;
@@ -1084,7 +1135,7 @@
                 hasPermission: '=',
                 typeSend: '=',
             },
-            link: function (scope, element, att) {
+            link: function (scope, element) {
                 element.on('click', function () {
                     console.log('click')
                     /**
@@ -1162,9 +1213,9 @@
                 isView: '=',
                 getDataAdditionalDocument: '&'
             },
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
     
-                element.on('click', async function (event) {
+                element.on('click', async function () {
                     let {
                         MODAL_INFO_ADICIONAL_TIPO_DOC_CTRL,
                         MODAL_INFO_ADICIONAL_TIPO_DOC_CSHTML
@@ -1207,7 +1258,7 @@
                 onKeyupArticle:'&',
                 ngModel: '='
             },
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
                 scope.cliente = {
                     descripcion: scope.ngModel
                 }
@@ -1269,7 +1320,7 @@
                 onKeyup:'&',
                 ngModel: '='
             },
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
                 scope.dataSearchUser = {
                     nombreCompleto: scope.ngModel
                 }
@@ -1339,7 +1390,7 @@
                 onKeyup:'&',
                 ngModel: '='
             },
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
                 scope.cliente = {
                     nombreCliente: scope.ngModel
                 }
@@ -1396,7 +1447,7 @@
                 onKeyup:'&',
                 ngModel: '='
             },
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
                 scope.proveedor = {
                     nombreProveedor: scope.ngModel
                 }
@@ -1536,7 +1587,7 @@
                 $(element).popover(popoverOptions);
 
                 // // Open popover on element click
-                element.on('mouseover', function (event) {
+                element.on('mouseover', function () {
                     $(element).popover('show');
                 });
 

@@ -1,10 +1,11 @@
-﻿using DataAccess;
+﻿using Common.Core.Utils;
+using DataAccess;
 using Domain.Models;
-using Lib.Common;
+using Domain.Models.Config;
 using Microsoft.AspNetCore.Mvc;
 using WebUI.Utils;
 
-namespace WebUI.Controllers
+namespace WebUI.Controllers.Config
 {
     public class EstabLogoController : Controller
     {
@@ -40,7 +41,7 @@ namespace WebUI.Controllers
                 ContentType = file.ContentType,
                 Content = FileData.GetFileByte(file)
             };
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            var parameters = new Dictionary<string, object>();
             parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("codEstab", data.codEstab);
             parameters.Add("imagen", signFile.Content);
@@ -52,7 +53,7 @@ namespace WebUI.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            var parameters = new Dictionary<string, object>();
             parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("id", id);
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Config.Estab_Logo_Delete", parameters)));

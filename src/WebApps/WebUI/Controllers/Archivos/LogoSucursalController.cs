@@ -1,10 +1,11 @@
-﻿using DataAccess;
+﻿using Common.Core.Utils;
+using DataAccess;
 using Domain.Models;
-using Lib.Common;
+using Domain.Models.Archivos;
 using Microsoft.AspNetCore.Mvc;
 using WebUI.Utils;
 
-namespace WebUI.Controllers
+namespace WebUI.Controllers.Archivos
 {
     public class LogoSucursalController : Controller
     {
@@ -39,7 +40,7 @@ namespace WebUI.Controllers
                 ContentType = file.ContentType,
                 Content = FileData.GetFileByte(file)
             };
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            var parameters = new Dictionary<string, object>();
             parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("idSucursal", data.idSucursal);
             parameters.Add("imagen", signFile.FileName);

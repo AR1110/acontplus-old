@@ -1,13 +1,14 @@
 ﻿import { client } from "$lib/utils/axiosClient.js";
-let url = "Facturacion/Factura/";
+const url = "FactElect/Factura/";
 
 async function get(params) {
-  return await client.get(`${url}?json=${params}`).then(
+  return await client.get(`${url}Get?json=${params}`).then(
     (response) => {
       if (response.status != 200) return null;
       return response.data;
     },
     (err) => {
+      console.log(err);
       return null;
     }
   );

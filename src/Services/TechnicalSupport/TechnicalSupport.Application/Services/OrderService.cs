@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Common.Infrastructure.Repository;
-using Lib.Common;
-using TechnicalSupport.Core.Entities;
+﻿using Common.Core.Interfaces;
+using Common.Core.Utils;
 using TechnicalSupport.Core.Interfaces;
 using TechnicalSupport.Infrastructure.Data;
 
@@ -29,7 +23,7 @@ namespace TechnicalSupport.Application.Services
             }
             else
             {
-                return Converters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJSON(ds);
             }
         }
         public async Task<string> AddAsync(Dictionary<string, object> parameters)

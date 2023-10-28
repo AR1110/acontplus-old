@@ -2,14 +2,14 @@
 using System.Security.Claims;
 using System.Text;
 using System.Xml;
+using Common.Core.Models;
+using Common.Core.Utils;
 using Compras.API.Utils;
 using Compras.Application;
 using DataAccess;
 using Domain.Dtos;
 using FactElect.Application;
-using FactElect.Core;
-using Lib.Common;
-using Lib.Common.DbUtils;
+using FactElect.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common.Logs;
@@ -82,16 +82,16 @@ namespace Compras.API.Controllers
                     {
                         _response.code = "1";
                         string xmlDoc = dt.Rows[0]["xmlDoc"].ToString();
-                       
+
                         xdoc.LoadXml(xmlDoc);
-                       
-                        
+
+
                     }
                     else
                     {
                         _response.Create(code: "0", message: "No se encontro xml");
                     }
-                    
+
                 }
                 using (DbAccess _db = new DbAccess(_configuration))
                 {
@@ -246,7 +246,7 @@ namespace Compras.API.Controllers
                     var dtExistent = _db.GetDataTable();
                     if (dtExistent.Columns.Contains("code") && dtExistent.Rows[0].Field<string>("code") == "-1")
                     {
-                        _response.Create(code: "1", payload: Converters.DataTableToJSON(dt));
+                        _response.Create(code: "1", payload: DataConverters.DataTableToJSON(dt));
                     }
                     else
                     {
@@ -262,7 +262,7 @@ namespace Compras.API.Controllers
                                         where subRow2 == null
                                         select row1).ToList();
                             DataTable filteredDataTable = diff.CopyToDataTable();
-                            _response.Create(code: "1", payload: Converters.DataTableToJSON(filteredDataTable));
+                            _response.Create(code: "1", payload: DataConverters.DataTableToJSON(filteredDataTable));
                         }
                     }
                 }
@@ -400,7 +400,7 @@ namespace Compras.API.Controllers
                 await _db.SPExecute("Recepcion.Documento_Insert", true);
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 //_db.AddDynamicParam("jsonData", SqlValidation.ValidateSqlString(data.jsonData));
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(Converters.SerializeDictionary(parameters.data)));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -448,7 +448,7 @@ namespace Compras.API.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Recepcion.Documento_Migrate");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("json", Converters.SerializeDictionary(parameters.data));
+                _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

@@ -1,8 +1,8 @@
-﻿using DataAccess;
-using Lib.Common;
+﻿using Common.Core.Models;
+using DataAccess;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers.Finanzas
+namespace WebUI.Controllers.Financiero
 {
     public class TiempoCreditoController : Controller
     {
@@ -27,14 +27,14 @@ namespace WebUI.Controllers.Finanzas
         //Gestiones Especiales         
         public async Task<IActionResult> OptionTiempoCredito(bool gestion)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _tc.OptionAsync(idRol, gestion);
             return Ok(res);
         }
 
         public async Task<IActionResult> GetAll()
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _tc.GetAllAsync(idRol);
             return Ok(res);
         }

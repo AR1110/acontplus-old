@@ -1,6 +1,7 @@
 ﻿using System.Data;
-using System.Data.SqlClient;
-using Lib.Common;
+using Microsoft.Data.SqlClient;
+using Common.Core.Models;
+using Common.Core.Utils;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccess

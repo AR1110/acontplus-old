@@ -1,5 +1,6 @@
 ﻿using ApiConfig.Data;
 using Autofac;
+using Common.Core.Interfaces;
 using Common.Infrastructure.Data;
 using Common.Infrastructure.Repository;
 

@@ -1,7 +1,7 @@
-﻿using DataAccess;
+﻿using Common.Core.Models;
+using Common.Core.Utils;
+using DataAccess;
 using Domain.Dtos;
-using Lib.Common;
-using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -105,7 +105,7 @@ namespace ApiConfig.Controllers
             {
                 await _db.SPExecute("ApiPrinter.Impresora_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", Converters.SerializeDictionary(parameters.data));
+                _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -130,7 +130,7 @@ namespace ApiConfig.Controllers
             {
                 await _db.SPExecute("ApiPrinter.Impresora_Update");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", Converters.SerializeDictionary(parameters.data));
+                _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

@@ -1,11 +1,11 @@
 ﻿using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
+using Common.Core.Models;
 using Domain.Models.Tesoreria;
-using Domain.ViewModels.Tesoreria;
-using Lib.Common;
+using Domain.ViewModels.GestionFinanciera;
 using Microsoft.Extensions.Configuration;
 
-namespace DataAccess.Tesoreria
+namespace DataAccess.GestionFinanciera
 {
     public class SubEntidadFinancieraDao
     {
@@ -22,7 +22,7 @@ namespace DataAccess.Tesoreria
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("ASPSubEntidadFinancieraInsert", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
@@ -33,7 +33,7 @@ namespace DataAccess.Tesoreria
                     cmd.Parameters.AddWithValue("interes", data.interes);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);
@@ -59,7 +59,7 @@ namespace DataAccess.Tesoreria
             var listar = new List<SubEntidadFinancieraViewModel>();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("ASPSubEntidadFinancieraGet", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
@@ -68,7 +68,7 @@ namespace DataAccess.Tesoreria
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
 
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);
@@ -114,7 +114,7 @@ namespace DataAccess.Tesoreria
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("ASPSubEntidadFinancieraUpdate", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
@@ -128,7 +128,7 @@ namespace DataAccess.Tesoreria
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
 
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);
@@ -153,14 +153,14 @@ namespace DataAccess.Tesoreria
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("ASPSubEntidadFinancieraDelete", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.Parameters.AddWithValue("idSubEntidadFinanciera", idSubEntidadFinanciera);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);
@@ -187,14 +187,14 @@ namespace DataAccess.Tesoreria
             var list = new List<SubEntidadFinanciera>();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("ASPSubEntidadFinancieraGetByEntidad", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.Parameters.AddWithValue("idEntidadFinanciera", idEntidadFinanciera);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);

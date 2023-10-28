@@ -1,7 +1,7 @@
-﻿using DataAccess;
+﻿using Common.Core.Models;
+using Common.Core.Utils;
+using DataAccess;
 using Domain.Dtos;
-using Lib.Common;
-using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -58,7 +58,7 @@ namespace Compras.API.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Recepcion.Doc_Detail_Temp_Insert");
                 _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("jsonData", SqlStringParam.Sanitize(Converters.SerializeDictionary(parameters.data)));
+                _db.AddDynamicParam("jsonData", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -83,7 +83,7 @@ namespace Compras.API.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Recepcion.Doc_Detail_Temp_Update");
                 _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("jsonData", SqlStringParam.Sanitize(Converters.SerializeDictionary(parameters.data)));
+                _db.AddDynamicParam("jsonData", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

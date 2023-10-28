@@ -1,10 +1,10 @@
-﻿using Common.Infrastructure.Repository;
-using Lib.Common;
+﻿using Common.Core.Interfaces;
+using Common.Core.Utils;
 using TechnicalSupport.Core.Interfaces;
 
 namespace TechnicalSupport.Application.Services
 {
-    public class DeviceService: IDeviceService
+    public class DeviceService : IDeviceService
     {
         private readonly IADORepository _repository;
         public DeviceService(IADORepository repository)
@@ -20,7 +20,7 @@ namespace TechnicalSupport.Application.Services
             }
             else
             {
-                return Converters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJSON(ds);
             }
         }
     }

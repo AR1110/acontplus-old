@@ -1,7 +1,7 @@
 ﻿
 using System.Data;
+using Common.Core.Models;
 using Domain.Models;
-using Lib.Common;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Asignaciones

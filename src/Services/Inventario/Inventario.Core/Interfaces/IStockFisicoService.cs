@@ -1,4 +1,4 @@
-﻿using Lib.Common.Api;
+﻿using Common.Core.Models;
 
 namespace Inventario.Core.Interfaces
 {

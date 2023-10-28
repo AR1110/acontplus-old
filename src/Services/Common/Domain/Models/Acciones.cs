@@ -12,6 +12,6 @@
     public class accionesOperaciones
     {
         public Acciones acciones { get; set; }
-        public Menu menu { get; set; }
+        //public Menu menu { get; set; }
     }
 }

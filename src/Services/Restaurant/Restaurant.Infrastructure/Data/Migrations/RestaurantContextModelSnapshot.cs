@@ -17,7 +17,7 @@ namespace Restaurant.Infrastructure.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.11")
+                .HasAnnotation("ProductVersion", "7.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -539,6 +539,11 @@ namespace Restaurant.Infrastructure.Data.Migrations
 
                     b.Property<int>("EstablecimientoId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("Finished")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("Obs")
                         .HasMaxLength(500)

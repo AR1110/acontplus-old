@@ -1,6 +1,4 @@
-﻿using Lib.Common.Api;
-
-namespace Restaurant.Core.Interfaces
+﻿namespace Restaurant.Core.Interfaces
 {
     public interface IPromotionService
     {

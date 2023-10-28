@@ -1,10 +1,11 @@
 ﻿using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
+using Common.Core.Models;
+using Common.Core.Utils;
 using Domain.Models;
-using Lib.Common;
 using Microsoft.Extensions.Configuration;
 
-namespace DataAccess
+namespace DataAccess.App
 {
     public class CiudadDao
     {
@@ -20,22 +21,22 @@ namespace DataAccess
         }
         public async Task<GenericResponse> GetAsync(string json)
         {
-            DataTable dt = new DataTable();
+            var dt = new DataTable();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
-                    using (SqlCommand cmd = new SqlCommand("App.aspCiudad_Get", con))
+                    using (var cmd = new SqlCommand("App.aspCiudad_Get", con))
                     {
                         cmd.Parameters.AddWithValue("json", json);
                         cmd.CommandType = CommandType.StoredProcedure;
                         await con.OpenAsync();
-                        SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                        var dataAdapter = new SqlDataAdapter(cmd);
                         dataAdapter.Fill(dt);
                         if (dt.Rows.Count > 0)
                         {
                             _response.id = "1";
-                            _response.data = Converters.DataTableToJSON(dt);
+                            _response.data = DataConverters.DataTableToJSON(dt);
                         }
                     }
                 }
@@ -57,13 +58,13 @@ namespace DataAccess
             var listar = new List<Provincia>();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
-                    using (SqlCommand cmd = new SqlCommand("SPProvinciaList", con))
+                    using (var cmd = new SqlCommand("SPProvinciaList", con))
                     {
                         cmd.CommandType = CommandType.StoredProcedure;
                         con.Open();
-                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        using (var reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
                             {
@@ -97,14 +98,14 @@ namespace DataAccess
             var listar = new List<Ciudad>();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
-                    using (SqlCommand cmd = new SqlCommand("SPCiudadList", con))
+                    using (var cmd = new SqlCommand("SPCiudadList", con))
                     {
                         cmd.Parameters.AddWithValue("@idProvincia", data.provincia.idProvincia);
                         cmd.CommandType = CommandType.StoredProcedure;
                         con.Open();
-                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        using (var reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
                             {
@@ -137,12 +138,12 @@ namespace DataAccess
             var listar = new List<Ciudad>();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
-                    SqlCommand cmd = new SqlCommand("ASPReadCiudad", con);
+                    var cmd = new SqlCommand("ASPReadCiudad", con);
                     cmd.CommandType = CommandType.StoredProcedure;
                     con.Open();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _response.id = reader.GetString(0);

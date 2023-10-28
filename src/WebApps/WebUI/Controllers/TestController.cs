@@ -1,5 +1,6 @@
 ﻿using System.Security.Cryptography;
-using Lib.Common;
+using Common.Core.Models;
+using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers

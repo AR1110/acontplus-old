@@ -1,9 +1,8 @@
-﻿using Common.Reports.Interfaces;
+﻿using Common.Application.Services;
+using Common.Core.Interfaces;
 using Common.Reports.Services;
-using Lib.Common;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.API.Helpers;
-using Restaurant.Application;
 using Restaurant.Application.Services;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
@@ -18,7 +17,7 @@ namespace Restaurant.API.Extensions
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             //
-            services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IRdlcReportService, RdlcReportService>();
             services.AddScoped<IRecipe, RecipeService>();
             services.AddScoped<IAppTableService, AppTableService>();
             services.AddScoped<IMenuService, MenuService>();

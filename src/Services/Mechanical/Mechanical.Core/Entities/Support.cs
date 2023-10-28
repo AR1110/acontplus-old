@@ -15,7 +15,7 @@ namespace Mechanical.Core.Entities
         public VehicleCompany VehicleCompany { get; set; }
         public int VehicleCompanyId { get; set; }
         public int CustomerId { get; set; }
-      
+
         [MaxLength(500)]
         public string Obs { get; set; }
         public int CompanyId { get; set; }

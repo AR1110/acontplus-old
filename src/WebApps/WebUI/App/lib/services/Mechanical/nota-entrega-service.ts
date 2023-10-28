@@ -1,5 +1,5 @@
 import { client } from "$lib/utils/axiosClient.js";
-let url = "Ventas/NotaEntrega/";
+const url = "Ventas/NotaEntrega/";
 
 async function get(params) {
   return await client.get(`${url}?json=${params}`).then(
@@ -8,6 +8,7 @@ async function get(params) {
       return response.data;
     },
     (err) => {
+      console.log(err);
       return null;
     }
   );

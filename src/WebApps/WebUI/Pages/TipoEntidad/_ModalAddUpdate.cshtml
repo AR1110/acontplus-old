@@ -1,0 +1,40 @@
+<div class="modal-header">
+  <h5 class="modal-title">{{titleModal}} Tipo Entidad</h5>
+  <button type="button" class="close" ng-click="closeModal()">&times;</button>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
+      <label for="Descripcion">Descripción <span class="text-danger">*</span></label>
+      <input type="text" ng-model="data.descripcion" class="form-control border-select" touppercase ng-keyup="onKeyupDescripcion()" required>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
+      <label for="codigo">Código: <span class="text-danger">*</span></label>
+      <input type="text" ng-model="data.codigo" class="form-control border-select" required>
+    </div>
+  </div>
+
+  <div class="row">
+    <!--Estado -->
+    <div class="form-group col-lg-6 col-md-6 col-sm-6 col-xs-6" ng-if="tipoRegistro==2">
+      <label for="">Estado: </label>
+      <div class="icheck-primary">
+        <input type="radio" ng-model="data.estado" ng-value="true" id="estadoActivo" name="estadoActivo" />
+        <label for="estadoActivo">Activo</label>
+      </div>
+      <div class="icheck-primary">
+        <input type="radio" ng-model="data.estado" ng-value="false" id="estadoInactivo" name="estadoInactivo" />
+        <label for="estadoInactivo">Inactivo</label>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-success" ng-click="save()">
+    {{btnText}}
+  </button>
+  <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
+</div>

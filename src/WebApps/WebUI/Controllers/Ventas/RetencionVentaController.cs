@@ -1,7 +1,7 @@
-﻿using DataAccess;
+﻿using Common.Core.Models;
+using DataAccess;
 using DataAccess.Ventas;
 using Domain.ViewModels.Ventas;
-using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 

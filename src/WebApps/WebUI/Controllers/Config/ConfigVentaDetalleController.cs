@@ -1,9 +1,9 @@
-﻿using DataAccess;
+﻿using Common.Core.Utils;
+using DataAccess;
 using Domain.Models;
-using Lib.Common.DbUtils;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers.Configuracion
+namespace WebUI.Controllers.Config
 {
     public class ConfigVentaDetalleController : Controller
     {
@@ -27,7 +27,7 @@ namespace WebUI.Controllers.Configuracion
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            var parameters = new Dictionary<string, object>();
             parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlStringParam.Sanitize(json));
             return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("ASPConfigVentaDetalleGet", parameters)));
@@ -36,7 +36,7 @@ namespace WebUI.Controllers.Configuracion
         [HttpPut]
         public async Task<IActionResult> Put(string json)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
+            var parameters = new Dictionary<string, object>();
             parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
             parameters.Add("json", SqlStringParam.Sanitize(json));
             return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("ASPConfigVentaDetalleUpdate", parameters)));

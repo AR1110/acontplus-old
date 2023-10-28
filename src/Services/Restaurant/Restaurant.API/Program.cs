@@ -1,8 +1,6 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Common.Infrastructure.Data;
-using Common.Infrastructure.Repository;
-using Lib.Common;
+using Common.Core.Utils;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 using Restaurant.API.Extensions;
@@ -80,5 +78,5 @@ internal class Program
 
 
         await app.RunAsync();
-    } 
+    }
 }

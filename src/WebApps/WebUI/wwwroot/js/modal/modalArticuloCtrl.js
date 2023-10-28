@@ -106,6 +106,7 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
         "mainService",
         "commonService",
         "articuloService",
+        'articuloUbicacionService',
         "modalService",
         "nombreModal",
         "toastService",
@@ -123,6 +124,7 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
         _mS,
         _commonSvc,
         articuloSvc,
+        articuloUbicacionSvc,
         _modalSvc,
         _nombreModal,
         _toastr,
@@ -143,7 +145,10 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
         this.$interval = $interval;
         this.$uibModalInstance = $uibModalInstance;
         this._commonSvc = _commonSvc;
+
         this.articuloSvc = articuloSvc;
+        this.articuloUbicacionSvc = articuloUbicacionSvc;
+
         this._modalSvc = _modalSvc;
         this._nombreModal = _nombreModal;
         this._toastr = _toastr;
@@ -177,12 +182,10 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
             });
 
             const {
-                subFamilias,
-                familias,
+                subFamilias, 
                 medidas,
                 modelos,
-                marcas,
-                valoracionMetodos,
+                marcas, 
                 tipoArticulos,
                 tarifas,
                 etiquetaActividades,
@@ -279,8 +282,7 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
             console.error(error);
             hideLoader();
         }
-
-        this.$uibModalInstance.rendered.then((resolve) => { });
+ 
     }
 
     getEstablecimientos() {
@@ -349,9 +351,8 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
             item.precioConIva = 0;
             item.porcentajeUtilidad = 0;
             item.porcentajeIva = this.tipoIva.porcentaje;
-            (item.predeterminadaVal =
-                item.predeterminada === true ? "Predeterminada" : ""),
-                (item.predeterminada = item.predeterminada);
+            item.predeterminadaVal = item.predeterminada === true ? "Predeterminada" : "";
+                
             item.precioPredeterminado = item.predeterminada;
             item.ganancia = 0;
             return item;
@@ -424,7 +425,8 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
                 this._form,
                 this._commonSvc,
                 this._params,
-                this.articuloSvc
+                this.articuloSvc,
+                this.articuloUbicacionSvc
             );
         }
     }
@@ -1090,12 +1092,15 @@ class ArticuloCodigoBarra {
 //--------------------------------------------------------------------------------------------------
 //--------------------------------------------------Ubicacion Articulo------------------------------
 class UbicacionArticulo {
-    constructor(_mS, _form, _commonSvc, _params, articuloSvc) {
+    constructor(_mS, _form, _commonSvc, _params, articuloSvc, articuloUbicacionSvc) {
         this._mS = _mS;
         this._form = _form;
         this._commonSvc = _commonSvc;
         this._params = _params;
         this.articulSvc = articuloSvc;
+
+        this.articuloUbicacionSvc = articuloUbicacionSvc;
+
         this.data = {};
         this.tipoRegistro = 1;
         this.getUbicacionArticulo();
@@ -1163,23 +1168,38 @@ class UbicacionArticulo {
 
         this.data.idArticulo = this._params.idArticulo;
 
-        const URL =
-            this.tipoRegistro === 1
-                ? "/UbicacionArticulo/Post"
-                : "/UbicacionArticulo/Put?id=" + this.data.idArticuloUbicacion;
-        const method = this.tipoRegistro === 1 ? "post" : "put";
-        this._mS.getData(method, URL, this.data).then((response) => {
-            if (response.id == "0") {
-                toastr.warning(response.message, response.titleSms);
-                return;
-            }
-            if (response.id == "1") {
-                toastr.success(response.message, response.titleSms);
-                this.getUbicacionArticulo();
-                this.data = {};
-                this.tipoRegistro = 1;
-            }
-        });
+        if(this.data.idArticuloUbicacion > 0){
+            showLoader();
+            this.articuloUbicacionSvc.update(this.data.idArticuloUbicacion, this.data)
+            .then((response) => {
+                if (response.code == "0") {
+                    toastr.warning(response.message, response.titleSms);
+                    return;
+                }
+                if (response.code == "1") {
+                    toastr.success(response.message, response.titleSms);
+                    this.getUbicacionArticulo();
+                    this.data = {};
+                    this.tipoRegistro = 1;
+                }
+            }).finally(()=>hideLoader())
+        }
+
+        if((!this.data.idArticuloUbicacion>0)){
+            this.articuloUbicacionSvc.save(this.data)
+            .then((response) => {
+                if (response.code == "0") {
+                    toastr.warning(response.message, response.titleSms);
+                    return;
+                }
+                if (response.code == "1") {
+                    toastr.success(response.message, response.titleSms);
+                    this.getUbicacionArticulo();
+                    this.data = {};
+                    this.tipoRegistro = 1;
+                }
+            }).finally(()=>hideLoader())
+        } 
     }
 
     editUbicacionArt(item) {
@@ -1206,24 +1226,20 @@ class UbicacionArticulo {
         });
 
         if (isConfirmed) {
-            this._mS
-                .getData(
-                    "delete",
-                    "/UbicacionArticulo/Delete?id=" + item.idArticuloUbicacion
-                )
-                .then((response) => {
-                    if (response.id == "0") {
-                        toastr.warning(response.message, response.titleSms);
-                        return;
-                    }
-                    if (response.id == "1") {
-                        toastr.success(response.message, response.titleSms);
-                        this.getUbicacionArticulo();
-                        this.data = {};
-                        this.tipoRegistro = 1;
-                        return;
-                    }
-                });
+            showLoader();
+            this.articuloUbicacionSvc.delete(item.idArticuloUbicacion)
+            .then((response) => {
+                if (response.code == "0") {
+                    toastr.warning(response.message, response.titleSms);
+                    return;
+                }
+                if (response.code == "1") {
+                    toastr.success(response.message, response.titleSms);
+                    this.getUbicacionArticulo();
+                    this.data = {};
+                    this.tipoRegistro = 1;
+                }
+            }).finally(()=>hideLoader()) 
         }
     }
 }
@@ -1478,7 +1494,7 @@ class ModalArticuloDetalleCtrl extends ModalBaseCtrl {
 
                 width: "15%",
                 minWidth: 100,
-                cellClass: function (grid, row, col, rowRenderIndex, colRenderIndex) {
+                cellClass: function (grid, row) {
                     if (row.entity.precioPredeterminado) {
                         row.entity.predeterminadaVal = "Predeterminado";
                         return "blue";
@@ -1844,8 +1860,7 @@ class ModalArticuloImagenDetalleCtrl {
             const dataArticulo = JSON.parse(results[1].payload);
             this.data = dataArticulo[0][0];
 
-            this.tarifas = dataArticulo[1].map((val) => {
-                val.precioConIva = val.precioConIva;
+            this.tarifas = dataArticulo[1].map((val) => { 
                 return val;
             });
             this.$scope.$apply();
@@ -1943,8 +1958,8 @@ class ModalArticuloFraccionadoCtrl extends ModalBaseCtrl {
             hideLoader();
         }
 
-        this.$uibModalInstance.rendered.then((response) => {
-            $("#agregarArtFraccionado").on("shown.bs.modal", (e) => {
+        this.$uibModalInstance.rendered.then(() => {
+            $("#agregarArtFraccionado").on("shown.bs.modal", () => {
                 $("input[name='articuloAutocomplete']").focus();
             });
         });
@@ -1989,7 +2004,7 @@ class ModalArticuloFraccionadoCtrl extends ModalBaseCtrl {
                         return item;
                     });
                 })
-                .catch((error) => {
+                .catch(() => {
                     hideLoader();
                 });
         } catch (error) {

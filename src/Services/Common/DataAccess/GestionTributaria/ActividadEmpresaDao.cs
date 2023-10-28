@@ -1,10 +1,10 @@
 ﻿using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
+using Common.Core.Models;
 using Domain.Models;
-using Lib.Common;
 using Microsoft.Extensions.Configuration;
 
-namespace DataAccess
+namespace DataAccess.GestionTributaria
 {
     public class ActividadEmpresaDao
     {
@@ -22,13 +22,13 @@ namespace DataAccess
             var listar = new List<ActividadEmpresa>();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("ASPActividadEmpresaGetAll", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.CommandType = CommandType.StoredProcedure;
                     con.Open();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);
@@ -63,13 +63,13 @@ namespace DataAccess
             var listar = new List<ActividadEmpresa>();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("ASPActividadEmpresaBySucursal", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.CommandType = CommandType.StoredProcedure;
                     con.Open();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);

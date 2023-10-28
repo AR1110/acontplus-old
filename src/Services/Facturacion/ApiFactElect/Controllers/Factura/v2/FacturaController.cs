@@ -1,7 +1,7 @@
-﻿using DataAccess;
-using Domain.ViewModels;
-using Lib.Common;
-using Lib.Common.DbUtils;
+﻿using Common.Core.Models;
+using Common.Core.Utils;
+using DataAccess;
+using Domain.ViewModels.Ventas;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -30,7 +30,6 @@ namespace ApiFactElect.Controllers.Factura.v2
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                // await _db.SPExecute("Ventas.Factura_Get_v2", true);
                 await _db.SPExecute("Ventas.Factura_Get", true);
                 _db.AddDynamicParam("idRol", idUsuarioRol);
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -51,12 +50,11 @@ namespace ApiFactElect.Controllers.Factura.v2
         [HttpPost("Insert")]
         public async Task<IActionResult> Insert([FromBody] FacturaParams data)
         {
-
             var _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Ventas.Factura_Insert_v2");
+                await _db.SPExecute("Ventas.Factura_Insert");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _db.AddDynamicParam("jsonFactura", SqlStringParam.Sanitize(data.factura));
                 _db.AddDynamicParam("jsonDetalle", SqlStringParam.Sanitize(data.detalle));

@@ -41,7 +41,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
-		<ProjectReference Include="..\..\Common\Lib.Common\Lib.Common.csproj" />
 		<ProjectReference Include="..\Restaurant.Core\Restaurant.Core.csproj" />
 	</ItemGroup>
 

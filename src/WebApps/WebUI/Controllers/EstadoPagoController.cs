@@ -1,4 +1,4 @@
-﻿using DataAccess;
+﻿using DataAccess.GestionDocumento;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers

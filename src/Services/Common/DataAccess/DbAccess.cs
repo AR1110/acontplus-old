@@ -1,8 +1,8 @@
-﻿using System.Data;
-using System.Data.SqlClient;
-using Lib.Common;
+﻿using System.Data; 
+using Common.Core.Models;
+using Common.Core.Utils;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using Services.Lib.Common;
 
 namespace DataAccess
 {
@@ -214,7 +214,7 @@ namespace DataAccess
                     }
                     else
                     {
-                        _response.Create(code: "1", payload: Converters.DataTableToJSON(dt));
+                        _response.Create(code: "1", payload: DataConverters.DataTableToJSON(dt));
                     }
                 }
             }
@@ -239,7 +239,7 @@ namespace DataAccess
                     }
                     else
                     {
-                        _response.Create(code: "1", payload: Converters.DataSetToJSON(ds, true));
+                        _response.Create(code: "1", payload: DataConverters.DataSetToJSON(ds, true));
                     }
                 }
             }

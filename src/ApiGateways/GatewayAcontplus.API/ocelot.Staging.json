@@ -219,48 +219,7 @@
         "Delete"
       ],
       "UpstreamPathTemplate": "/gateway/DocumentoDetalle/{id}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "172.31.30.67",
-          "Port": 90
-        }
-      ],
-      "DownstreamPathTemplate": "/api/DocumentoElectronico{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get",
-        "Put",
-        "Delete",
-        "Options"
-      ],
-      "UpstreamPathTemplate": "/gateway/DocumentoElectronico{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "172.31.30.67",
-          "Port": 90
-        }
-      ],
-      "DownstreamPathTemplate": "/api/DocumentoElectronicoError/{id}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get"
-      ],
-      "UpstreamPathTemplate": "/gateway/DocumentoElectronicoError/{id}"
-    },
+    },  
     {
       "AuthenticationOptions": {
         "AllowedScopes": [
@@ -1792,6 +1751,38 @@
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "UpstreamPathTemplate": "/gateway/Contabilidad{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.30.67",
+          "Port": 90
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "UpstreamPathTemplate": "/gateway/FactElect{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "172.31.30.67",
+          "Port": 93
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Compra{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "UpstreamPathTemplate": "/gateway/Compra{everything}"
     }
   ]
 }

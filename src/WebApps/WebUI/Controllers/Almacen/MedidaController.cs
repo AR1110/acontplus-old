@@ -1,9 +1,9 @@
-﻿using DataAccess;
+﻿using Common.Core.Models;
+using DataAccess;
 using DataAccess.Almacen;
-using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers
+namespace WebUI.Controllers.Almacen
 {
     public class MedidaController : Controller
     {
@@ -30,7 +30,7 @@ namespace WebUI.Controllers
         //Get By Medida
         public async Task<IActionResult> GetByMedida()
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _m.GetByMedida(idRol);
             return Ok(res);
         }

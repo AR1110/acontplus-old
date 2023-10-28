@@ -155,38 +155,7 @@
       "UpstreamHttpMethod": [ "Delete" ],
       "UpstreamPathTemplate": "/gateway/DocumentoDetalle/{id}"
     },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7025
-        }
-      ],
-      "DownstreamPathTemplate": "/api/DocumentoElectronico{everything}",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [ "Get", "Put", "Delete", "Options" ],
-      "UpstreamPathTemplate": "/gateway/DocumentoElectronico{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7025
-        }
-      ],
-      "DownstreamPathTemplate": "/api/DocumentoElectronicoError/{id}",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [ "Get" ],
-      "UpstreamPathTemplate": "/gateway/DocumentoElectronicoError/{id}"
-    },
+
     {
       "AuthenticationOptions": {
         "AllowedScopes": [],
@@ -592,7 +561,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7097
+          "Port": 7146
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte{everything}",
@@ -973,7 +942,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7097
+          "Port": 7146
         }
       ],
       "DownstreamPathTemplate": "/api/Dashboard{everything}",
@@ -1256,7 +1225,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44395
+          "Port": 7041
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",
@@ -1378,6 +1347,38 @@
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/TechnicalSupport{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7025
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "UpstreamPathTemplate": "/gateway/FactElect{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7001
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "https", 
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "UpstreamPathTemplate": "/gateway/Compra{everything}"
     }
   ]
 }
