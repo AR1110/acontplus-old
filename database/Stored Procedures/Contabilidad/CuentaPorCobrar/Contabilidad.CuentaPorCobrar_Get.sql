@@ -98,14 +98,11 @@ BEGIN
 		,fechaEmision DATETIME 
 	)
 
-
-	--============================= Recuperar Variables ==================================================================================
-
 	SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
 	SELECT @idCuentaPorCobrar = idCuentaPorCobrar, @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo',idCuentaPorCobrar INT '$.idCuentaPorCobrar')
 	
-	-- ============================= Gestios de cuotas en los Documentos ===================================================================
+	--> Gestios de cuotas en los Documentos 
 	IF @tipo = 2
 		BEGIN
 			
@@ -180,10 +177,10 @@ BEGIN
 			INNER JOIN dbo.EstadoPago        ep WITH (NOLOCK) ON ep.idEstadoPago = cx.idEstadoPago
 			WHERE cx.idCuentaPorCobrar = @idCuentaPorCobrar AND cx.estado = 1
 			ORDER BY cx.nroCuota ASC
-
+            RETURN 
 		END 
 	
-	-- ============================= Datos para cobros rapidos,lotes,credito ================================================================ 
+	--> Datos para cobros rapidos,lotes,credito 
 	IF @tipo = 3
 		BEGIN
 
@@ -388,10 +385,10 @@ BEGIN
 				  ,fechaEmision         = FORMAT(@fechaEmision,'MM/dd/yyyy')
 				  ,serieComprobante     = @serieComprobante
 			FROM @tbVentas
-			
+			RETURN 
 		END
 	
-	-- ============================= Datos para el calculo de Interes de las moras ==========================================================
+	--> Datos para el calculo de Interes de las moras 
 	IF @tipo = 4
 		BEGIN 
 
@@ -451,9 +448,10 @@ BEGIN
 				  ,estado
 				  ,codEstado
 			FROM @tbCuotasInteres 
+            RETURN 
 		END 
 
-    -- DEUDAS EN NOTIFICACIONES DE LAS VENTAS 
+    --> Notificacion para deudas del cliente 
     IF @tipo = 5
         BEGIN
             SELECT @idCliente = idCliente FROM OPENJSON(@json) WITH (idCliente INT '$.idCliente')
@@ -466,6 +464,24 @@ BEGIN
             WHERE idCliente = @idCliente
               AND codEstado IN ('PP','PE')
             GROUP BY codDoc
+            RETURN 
+        END 
+
+    --> Filter for report
+    IF @tipo = 6
+        BEGIN
+            SELECT idEstablecimiento
+                  ,nombreComercial
+                  ,codEstab
+                  ,idPuntoEmision
+                  ,ptoEmi + '-' + estab as ptoEmi
+                  ,defaultEstab
+                  ,defaultPtoEmi 
+            FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @idUsuarioRol ORDER BY defaultEstab DESC
+
+            SELECT idEstadoPago,descripcion,codigo FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo IN ('A','NCBR','CBR')
+
+            RETURN 
         END 
 END
 GO
