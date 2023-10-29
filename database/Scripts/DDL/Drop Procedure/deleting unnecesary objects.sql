@@ -485,3 +485,7 @@ GO
 
 DROP PROCEDURE IF EXISTS [Reporte].[Management_Get_To_Print]
 GO
+
+--> RAMIREZ ALEXIS - FECHA :10/28/2023
+DROP PROCEDURE IF EXISTS [Compra].[Liquidacion_Send_Email]
+GO

@@ -34,7 +34,8 @@ CREATE VIEW v_CuentaPorCobrar AS (
 		  ,usuario                 = us.nombreUsuario
 		  ,tiempoCredito           = tc.tipo
 		  ,estadoSri               = CASE WHEN cc.codDoc = '01' THEN (SELECT de.codEstado FROM dbo.DocumentoElectronico de WITH (NOLOCK) WHERE de.idDocumento = cc.idDocumento AND de.codDoc = '01') 
-		                                                         ELSE 0 END 
+		                                                         ELSE 0 END     
+          ,cc.mora
 	FROM Contabilidad.CuentaPorCobrar cc WITH (NOLOCK)
 	INNER JOIN dbo.PuntoEmision       pt WITH (NOLOCK) ON pt.idPuntoEmision  = cc.idPuntoEmision
 	INNER JOIN Sri.Establecimiento    es WITH (NOLOCK) ON es.codEstab        = pt.codEstab
