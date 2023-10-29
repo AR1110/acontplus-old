@@ -24,15 +24,17 @@ CREATE OR ALTER PROCEDURE Contabilidad.CuentaPorCobrar_Report @idUsuarioRol INT,
 AS
 BEGIN
     --> Global
-    DECLARE @tipo INT 
+    DECLARE @tipo INT ,@idEntidad INT ,@usuario VARCHAR(150) 
 
     --> Sql
     DECLARE @sql NVARCHAR(MAX) ,@params NVARCHAR(MAX)
 
     --> Filters
     DECLARE @idCliente INT ,@codEstab VARCHAR(25) ,@fechaInicio DATETIME ,@fechaFin DATETIME
-           ,@ckFecha BIT 
+           ,@ckFecha BIT ,@codEstado VARCHAR(15) ,@ckCxcVencida BIT
     
+    SELECT TOP 1 @idEntidad = idEntidad ,@usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
+
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
 
     --> Cartera Cliente
@@ -40,31 +42,39 @@ BEGIN
         BEGIN
             
             SET @sql = 'SELECT codDoc
+                              ,razonSocialComprador
                               ,serieComprobante
                               ,fechaEmision
                               ,fechaVencimiento
-                              ,importeTotal
-                              ,abono
-                              ,saldo
+                              ,CAST(importeTotal as numeric(18,2)) as importeTotal
+                              ,CAST(abono as numeric(18,2)) as abono
+                              ,CAST(saldo as numeric(18,2)) as saldo
                               ,estado 
                         FROM v_CuentaPorCobrar WITH (NOLOCK)
-                        WHERE codEstado IN (''PP'',''PE'') '
+                        WHERE idCuentaPorCobrar > 0 '
 
             SET @params = '@idCliente         INT
                           ,@codEstab  VARCHAR(25)
                           ,@fechaInicio  DATETIME
-                          ,@fechaFin     DATETIME'
+                          ,@fechaFin     DATETIME
+                          ,@codEstado VARCHAR(15)'
 
-            SELECT @idCliente   = idCliente  
-                  ,@ckFecha     = ckFecha
-                  ,@fechaInicio = fechaInicio
-                  ,@fechaFin    = fechaFin
+            SELECT @idCliente    = idCliente  
+                  ,@ckFecha      = ckFecha
+                  ,@fechaInicio  = fechaInicio
+                  ,@fechaFin     = fechaFin
+                  ,@codEstab     = codEstab
+                  ,@codEstado    = codEstado
+                  ,@ckCxcVencida = ckCxcVencida
             FROM OPENJSON(@json) WITH 
             (
-                idCliente        INT '$.idCliente'
-               ,ckFecha          BIT '$.ckFecha'
-               ,fechaInicio DATETIME '$.fechaInicio'
-               ,fechaFin    DATETIME '$.fechaFin'
+                idCliente         INT '$.idCliente'
+               ,ckFecha           BIT '$.ckFecha'
+               ,fechaInicio  DATETIME '$.fechaInicio'
+               ,fechaFin     DATETIME '$.fechaFin'
+               ,codEstab  VARCHAR(25) '$.codEstab'
+               ,codEstado VARCHAR(15) '$.codEstado'
+               ,ckCxcVencida      BIT '$.ckCxcVencida'
             )
 
             IF @codEstab IS NOT NULL 
@@ -82,12 +92,42 @@ BEGIN
                     SET @sql = @sql + 'AND idCliente = @idCliente '
                 END 
 
+            IF @codEstado IS NOT NULL
+                BEGIN
+                    IF @codEstado = 'NCBR'
+                        BEGIN 
+                            SET @sql = @sql + 'AND codEstado IN (''PE'',''PP'') '
+                        END 
+                    ELSE
+                        BEGIN
+                            SET @sql = @sql + 'AND codEstado = @codEstado '
+                        END 
+                END 
+
+            IF @ckCxcVencida = 1
+                BEGIN
+                    SET @sql = @sql + 'AND mora > 0 '
+                END 
+
+            SELECT en.razonSocial
+                  ,es.nombreComercial
+                  ,es.ruc
+                  ,es.telefono
+                  ,es.dirEstablecimiento
+                  ,@usuario             as usuario 
+                  ,FORMAT(@fechaInicio, 'dd/MM/yyyy') + ' a ' + FORMAT( @fechaFin, 'dd/MM/yyyy') as filtroFechas
+                  ,'Cartera de Cliente' as nombreReporte
+            FROM Sri.Establecimiento es WITH (NOLOCK)
+            INNER JOIN dbo.Entidad   en WITH (NOLOCK) ON en.ruc = es.ruc
+            WHERE codEstab = @codEstab
+
             EXEC sp_executesql  @sql
 						       ,@params 
                                ,@codEstab    = @codEstab
                                ,@idCliente   = @idCliente
                                ,@fechaInicio = @fechaInicio
                                ,@fechaFin    = @fechaFin
+                               ,@codEstado   = @codEstado
 
             RETURN 
 
