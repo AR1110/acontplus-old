@@ -1,7 +1,6 @@
 ﻿
 using System.Data;
 using Common.Core.Models;
-using Domain.Models;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Asignaciones
@@ -20,12 +19,14 @@ namespace DataAccess.Asignaciones
         {
             try
             {
-                DbAccess db = new DbAccess(_config);
-                await db.SPExecute("Asignaciones.GestionGeneral_Get");
-                db.AddParameter("idRol", SqlDbType.Int, idRol);
-                db.AddParameter("json", SqlDbType.NVarChar, json);
-                DataSet ds = db.GetDataSet();
-                _response = DbResponse.SPDataSet(ds);
+                using (DbAccess db = new DbAccess(_config))
+                {
+                    await db.SPExecute("Asignaciones.GestionGeneral_Get");
+                    db.AddParameter("idRol", SqlDbType.Int, idRol);
+                    db.AddParameter("json", SqlDbType.NVarChar, json);
+                    DataSet ds = db.GetDataSet();
+                    _response = db.GetDataSetAsync();
+                }  
             }
             catch (Exception ex)
             {
