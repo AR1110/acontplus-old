@@ -269,38 +269,5 @@ namespace DataAccess.Compras
             }
             return _response;
         }
-        public async Task<GenericResponse> GetIdAsycn(int id)
-        {
-            try
-            {
-                DbAccess db = new DbAccess(_config);
-                await db.SPExecute("Compra.Proveedor_Get_Id");
-                db.AddParameter("id", SqlDbType.Int, id);
-                DataTable dt = db.GetDataTable();
-                _response = DbResponse.SPDataTable(dt);
-            }
-            catch (Exception ex)
-            {
-                _response.Create("0", ex.Message);
-            }
-            return _response;
-        }
-        public async Task<GenericResponse> SearchAsync(int idRol, string json)
-        {
-            try
-            {
-                DbAccess db = new DbAccess(_config);
-                await db.SPExecute("Compra.Proveedor_Get_Search");
-                db.AddParameter("idRol", SqlDbType.Int, idRol);
-                db.AddParameter("json", SqlDbType.NVarChar, json);
-                DataTable dt = db.GetDataTable();
-                _response = DbResponse.SPDataTable(dt);
-            }
-            catch (Exception ex)
-            {
-                _response.Create("0", ex.Message);
-            }
-            return _response;
-        }
     }
 }

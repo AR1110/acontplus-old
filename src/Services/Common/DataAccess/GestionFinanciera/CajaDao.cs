@@ -259,23 +259,5 @@ namespace DataAccess.GestionFinanciera
             return _response;
         }
 
-        public async Task<GenericResponse> GetAsync(int idRol, string json)
-        {
-            try
-            {
-                var db = new DbAccess(_config);
-                await db.SPExecute("GestFinanc.Caja_Get");
-                db.AddParameter("idRol", SqlDbType.Int, idRol);
-                db.AddParameter("json", SqlDbType.NVarChar, json);
-                var dt = db.GetDataTable();
-                _response = DbResponse.SPDataTable(dt);
-            }
-            catch (Exception ex)
-            {
-                _response.Create("0", ex.Message);
-            }
-            return _response;
-        }
-
     }
 }

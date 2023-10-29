@@ -33,9 +33,21 @@ namespace WebUI.Controllers.Importacion
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("json", SqlStringParam.Sanitize(json));
-            return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Importaciones.TipoImportacion_Get", parameters)));
+            var response = new GenericResponse();
+            try
+            {
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
+                    await _db.SPExecute("Importaciones.TipoImportacion_Get");
+                    _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+                    response = _db.GetDataTableAsync();
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost]

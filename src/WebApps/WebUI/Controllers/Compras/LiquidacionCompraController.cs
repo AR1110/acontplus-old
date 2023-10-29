@@ -5,6 +5,7 @@ using Domain.Models;
 using Domain.ViewModels.Compras;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Services.Common;
 using Services.Common.Logs;
 
 namespace WebUI.Controllers.Compras
@@ -58,10 +59,22 @@ namespace WebUI.Controllers.Compras
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("json", SqlStringParam.Sanitize(json));
-            return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Compra.Liquidacion_Get", parameters)));
+            var response = new GenericResponse();
+            try
+            {
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
+                    await _db.SPExecute("Compra.Liquidacion_Get");
+                    _db.AddDynamicParam("idRol", User.GetUserRoleId());
+                    _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+                    response = _db.GetDataTableAsync();
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
 

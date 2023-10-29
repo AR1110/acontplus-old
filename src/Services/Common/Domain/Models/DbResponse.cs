@@ -32,31 +32,31 @@ namespace Domain.Models
             }
             return _response;
         }
-        public static GenericResponse SPDataTable(DataTable dt)
-        {
-            GenericResponse _response = new GenericResponse();
-            try
-            {
-                //Error en backend
-                if (dt.Columns.Contains("code") && dt.Rows[0]["code"].ToString() == "-1")
-                {
-                    string payload = string.Empty;
-                    if (dt.Columns.Contains("payload"))
-                    {
-                        payload = dt.Rows[0]["payload"].ToString();
-                    }
-                    _response.Create(code: "0", message: dt.Rows[0]["message"].ToString(), payload: payload);
-                }
-                else
-                {
-                    _response.Create(code: "1", payload: DataConverters.DataTableToJSON(dt));
-                }
-            }
-            catch (Exception ex)
-            {
-                _response.Create(code: "0", message: ex.Message);
-            }
-            return _response;
-        }
+        //public static GenericResponse SPDataTable(DataTable dt)
+        //{
+        //    GenericResponse _response = new GenericResponse();
+        //    try
+        //    {
+        //        //Error en backend
+        //        if (dt.Columns.Contains("code") && dt.Rows[0]["code"].ToString() == "-1")
+        //        {
+        //            string payload = string.Empty;
+        //            if (dt.Columns.Contains("payload"))
+        //            {
+        //                payload = dt.Rows[0]["payload"].ToString();
+        //            }
+        //            _response.Create(code: "0", message: dt.Rows[0]["message"].ToString(), payload: payload);
+        //        }
+        //        else
+        //        {
+        //            _response.Create(code: "1", payload: DataConverters.DataTableToJSON(dt));
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _response.Create(code: "0", message: ex.Message);
+        //    }
+        //    return _response;
+        //}
     }
 }

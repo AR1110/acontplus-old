@@ -20,11 +20,13 @@ namespace DataAccess.Administracion
         {
             try
             {
-                DbAccess db = new DbAccess(_config);
-                await db.SPExecute("Administrador.ActividadEtiqueta_Get");
-                db.AddParameter("json", SqlDbType.NVarChar, json);
-                DataTable dt = db.GetDataTable();
-                _response = DbResponse.SPDataTable(dt);
+                using (DbAccess db = new DbAccess(_config))
+                {
+                    await db.SPExecute("Administrador.ActividadEtiqueta_Get");
+                    db.AddParameter("json", SqlDbType.NVarChar, json);
+                    DataTable dt = db.GetDataTable();
+                    _response = db.GetDataTableAsync();
+                }
             }
             catch (Exception ex)
             {

@@ -63,7 +63,7 @@ namespace DataAccess.FE
                     await con.OpenAsync();
                     SqlDataAdapter adapter = new SqlDataAdapter(cmd);
                     adapter.Fill(ds);
-                    _response = DbResponse.SPDataTable(ds.Tables[0]);
+                    _response = DataTableMapper.BindData<GenericResponse>(ds.Tables[0]);
                     if (_response.id == "1")
                     {
                         _response.data = DataConverters.DataTableToJSON(ds.Tables[1]);
