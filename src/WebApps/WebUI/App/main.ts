@@ -14,7 +14,7 @@ import Maintenance from "$mechanical/Maintenance/page.svelte";
 import TechnicalSupport from "$technical-support/page.svelte";
 
 //Contabilidad report 
-import ContabilidadReport from "$routes/Contabilidad/Report/page.svelte";
+import VentasReports from "$routes/ventas/report/page.svelte";
 
 let target = document.querySelector("#pet");
 if (target) {
@@ -86,9 +86,9 @@ if (target) {
   new TechnicalSupport({ target });
 } 
 
-target = document.querySelector("#contabilidad-report");
+target = document.querySelector("#ventas-report");
 if (target) {
-  new ContabilidadReport({ target });
+    new VentasReports({ target });
 } 
 
 import App from "./App.svelte";

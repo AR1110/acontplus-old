@@ -5,4 +5,4 @@ export interface PromotionMenu {
 
    // readonly;
    readonly title: string;
-};
+}
