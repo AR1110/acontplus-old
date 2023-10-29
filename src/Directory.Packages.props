@@ -37,6 +37,6 @@
     <PackageVersion Include="AWSSDK.Core" Version="3.7.204.8" />
     <PackageVersion Include="ReportViewerCore.NETCore" Version="15.1.18" />
     <PackageVersion Include="BarcodeLib" Version="3.0.3" />
-    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.22" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.24" />
   </ItemGroup>
 </Project>

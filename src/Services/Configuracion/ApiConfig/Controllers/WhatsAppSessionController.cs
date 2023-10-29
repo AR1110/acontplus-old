@@ -44,7 +44,7 @@ namespace ApiConfig.Controllers
             return Ok(_response);
         }
         [HttpPost("Post")]
-        public async Task<IActionResult> Post([FromBody] RequestApiDto parameters)
+        public async Task<IActionResult> Post([FromBody] ApiRequest parameters)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
@@ -53,7 +53,7 @@ namespace ApiConfig.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Config.WhatsAppSession_Insert");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.data));
+                _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.Data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

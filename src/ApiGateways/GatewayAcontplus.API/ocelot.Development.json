@@ -115,7 +115,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/Factura{everything}",
@@ -164,7 +164,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/NotificacionTributaria{everything}",
@@ -180,7 +180,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/RetencionAts/{everything}",
@@ -196,7 +196,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/RetencionAts/cancel/{id}",
@@ -212,7 +212,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/RetencionAts",
@@ -228,7 +228,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/DocSustento{everything}",
@@ -244,7 +244,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/DocSustImpuesto{everything}",
@@ -260,7 +260,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/DocSustPago{everything}",
@@ -276,7 +276,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/DocSustRetencion{everything}",
@@ -292,7 +292,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/RetAtsInfoAdicional/{everything}",
@@ -308,7 +308,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/RetAtsInfoAdicional{everything}",
@@ -420,7 +420,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/CompraNoHabitual/Cancel/{id}",
@@ -781,7 +781,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/Cliente/GetDataForm/{json}",
@@ -797,7 +797,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/Ats{everything}",
@@ -1356,7 +1356,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",

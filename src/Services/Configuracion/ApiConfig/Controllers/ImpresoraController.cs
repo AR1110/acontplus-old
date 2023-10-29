@@ -97,7 +97,7 @@ namespace ApiConfig.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Post(RequestApiDto parameters)
+        public async Task<IActionResult> Post(ApiRequest parameters)
         {
             DbAccess _db = new DbAccess(_configuration);
             GenericResponse _response = new GenericResponse();
@@ -105,7 +105,7 @@ namespace ApiConfig.Controllers
             {
                 await _db.SPExecute("ApiPrinter.Impresora_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.data));
+                _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.Data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -122,7 +122,7 @@ namespace ApiConfig.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put(RequestApiDto parameters)
+        public async Task<IActionResult> Put(ApiRequest parameters)
         {
             DbAccess _db = new DbAccess(_configuration);
             GenericResponse _response = new GenericResponse();
@@ -130,7 +130,7 @@ namespace ApiConfig.Controllers
             {
                 await _db.SPExecute("ApiPrinter.Impresora_Update");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.data));
+                _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.Data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

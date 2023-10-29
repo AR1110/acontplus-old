@@ -44,7 +44,7 @@ namespace ApiConfig.Controllers
             return _response;
         }
         [HttpPost]
-        public async Task<ActionResult<GenericResponse>> Post([FromBody] RequestApiDto parameters)
+        public async Task<ActionResult<GenericResponse>> Post([FromBody] ApiRequest parameters)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
@@ -52,7 +52,7 @@ namespace ApiConfig.Controllers
             {
                 await _db.SPExecute("Config.WhatsappUsage_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.data)));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -68,7 +68,7 @@ namespace ApiConfig.Controllers
             return _response;
         }
         [HttpPut]
-        public async Task<ActionResult<GenericResponse>> Put(int id, [FromBody] RequestApiDto parameters)
+        public async Task<ActionResult<GenericResponse>> Put(int id, [FromBody] ApiRequest parameters)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
@@ -77,7 +77,7 @@ namespace ApiConfig.Controllers
                 await _db.SPExecute("Config.WhatsappUsage_Update");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.data)));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
