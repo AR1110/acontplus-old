@@ -9,6 +9,7 @@ using Compras.Application;
 using DataAccess;
 using Domain.Dtos;
 using FactElect.Application;
+using FactElect.Application.Services;
 using FactElect.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -389,7 +390,7 @@ namespace Compras.API.Controllers
         }
 
         [HttpPost("Post")]
-        public async Task<IActionResult> Post(RequestApiDto parameters)
+        public async Task<IActionResult> Post(Common.Core.Models.ApiRequest parameters)
         {
 
             GenericResponse _response = new GenericResponse();
@@ -400,7 +401,7 @@ namespace Compras.API.Controllers
                 await _db.SPExecute("Recepcion.Documento_Insert", true);
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 //_db.AddDynamicParam("jsonData", SqlValidation.ValidateSqlString(data.jsonData));
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.data)));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -440,7 +441,7 @@ namespace Compras.API.Controllers
             return Ok(_response);
         }
         [HttpPut("Migrate")]
-        public async Task<IActionResult> Migrate(RequestApiDto parameters)
+        public async Task<IActionResult> Migrate(ApiRequest parameters)
         {
             GenericResponse _response = new GenericResponse();
             try
@@ -448,7 +449,7 @@ namespace Compras.API.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Recepcion.Documento_Migrate");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.data));
+                _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.Data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

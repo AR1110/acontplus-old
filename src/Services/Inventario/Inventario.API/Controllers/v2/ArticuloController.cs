@@ -124,7 +124,7 @@ namespace Inventario.API.Controllers.v2
 
 
         [HttpPost("Post")]
-        public async Task<IActionResult> Post([FromBody] RequestApiDto parameters)
+        public async Task<IActionResult> Post([FromBody] ApiRequest parameters)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
@@ -133,7 +133,7 @@ namespace Inventario.API.Controllers.v2
             {
                 await _db.SPExecute("Almacen.Articulo_Insert_v2");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.data)));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -149,7 +149,7 @@ namespace Inventario.API.Controllers.v2
         }
 
         [HttpPut("Put/{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] RequestApiDto parameters)
+        public async Task<IActionResult> Update(int id, [FromBody] ApiRequest parameters)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
@@ -158,7 +158,7 @@ namespace Inventario.API.Controllers.v2
                 await _db.SPExecute("Almacen.Articulo_Update_v2");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.data)));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

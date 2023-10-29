@@ -5,19 +5,13 @@ using Common.Core.Models;
 using Common.Core.Utils;
 using Common.Reports.Enums;
 using Common.Reports.Models;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Reporting.NETCore;
 
 namespace Common.Reports.Services
 {
     public class RdlcReportService : IRdlcReportService
     {
-        private readonly IConfiguration _configuration;
-        public RdlcReportService(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
-        public byte[] GetCustomReport(DataSet dsParams, DataSet ds, bool fromService = false)
+        public byte[] GetCustomReport(DataSet dsParams, DataSet ds)
         {
             using (var lr = new LocalReport())
             {
@@ -28,29 +22,21 @@ namespace Common.Reports.Services
 
                 if (ds.Tables[0].Rows.Count > 0)
                 {
-                    if (fromService)
-                    {
-                        //lr.ReportPath = _configuration.GetSection("dirReports").Value + dsParams.Tables[0].Rows[0]["reportPath"].ToString();
-                        lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(_configuration.GetSection("dirReports").Value + dsParams.Tables[0].Rows[0]["reportPath"].ToString()));
-                    }
-                    else
-                    {
-                        //lr.ReportPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, dsParams.Tables[0].Rows[0]["reportPath"].ToString());
-                        var paths = dsParams.Tables[0].Rows[0].Field<string>("reportPath").Split("/");
-                        paths = paths.Where(s => !string.IsNullOrEmpty(s)).ToArray();
+                    //lr.ReportPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, dsParams.Tables[0].Rows[0]["reportPath"].ToString());
+                    var paths = dsParams.Tables[0].Rows[0].Field<string>("reportPath").Split("/");
+                    paths = paths.Where(s => !string.IsNullOrEmpty(s)).ToArray();
 
-                        switch (paths.Length)
-                        {
-                            case 1:
-                                lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(mainPath, paths[0])));
-                                break;
-                            case 2:
-                                lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(mainPath, paths[0], paths[1])));
-                                break;
-                            default:
-                                lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(mainPath + dsParams.Tables[0].Rows[0].Field<string>("reportPath")));
-                                break;
-                        }
+                    switch (paths.Length)
+                    {
+                        case 1:
+                            lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(mainPath, paths[0])));
+                            break;
+                        case 2:
+                            lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(Path.Combine(mainPath, paths[0], paths[1])));
+                            break;
+                        default:
+                            lr.LoadReportDefinition(RdlcHelpers.LoadReportDefinition(mainPath + dsParams.Tables[0].Rows[0].Field<string>("reportPath")));
+                            break;
                     }
                 }
                 else
