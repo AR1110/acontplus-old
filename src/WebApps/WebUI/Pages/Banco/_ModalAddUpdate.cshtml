@@ -1,0 +1,34 @@
+<div class="modal-header">
+    <h5 class="modal-title">{{titleModal}} Banco</h5>
+    <button type="button" class="close" ng-click="closeModal()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body"> 
+    <div class="row">
+        <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
+            <label for="descripcion">Descripcion: </label>
+            <input type="text" ng-model="data.descripcion" ng-keyup="obtenerTresLetras()" touppercase class="form-control border-select" placeholder="Ej: BANCO PICHINCHA">
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-lg-12 col-md-12 col-sm-12 col-12">
+            <label for="codigo">Código: </label> 
+            <input type="text" id="codigo" name="codigo" ng-model="data.codigo" touppercase class="form-control border-select" placeholder="Ej: BP">             
+        </div>
+    </div>
+
+    <div ng-if="tipoRegistro==2">
+        <label for="estado">Estado: </label>
+        <md-radio-group ng-model="data.estado">
+            <md-radio-button class="md-primary" ng-value="true">Activo</md-radio-button>
+            <md-radio-button ng-value="false">Inactivo</md-radio-button>
+        </md-radio-group>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-success" ng-click="save()">
+        {{btnTextSave}}
+    </button>
+    <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
+</div> 

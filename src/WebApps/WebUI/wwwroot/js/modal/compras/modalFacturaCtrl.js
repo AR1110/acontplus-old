@@ -67,25 +67,14 @@ class ModalFacturaCtrl extends window.modalCompraBaseCtrl {
     }
 
 
-    async openModalCategoria() {
-        let { MODAL_FILE_CTRL, MODAL_NUEVO } = this._nombreModalConst.categoria_compra;
-        let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_NUEVO['controller']];
-        let template = MODAL_NUEVO['template'];
+    async resultModalCategoria(result) {
+        if (typeof result === 'object') {
+            let resultsDataForm = await this.initiload();
+            this.categoriaCompras = resultsDataForm[4];
 
-        let modalRef = this._modalSvc.openModalCustom({
-            controller,
-            template,
-            size: 'md',
-        })
+            this.data.idCategoriaCompra = this.categoriaCompras.at(-1).idCategoriaCompra;
+        }
 
-        modalRef.result.then(async result => {
-            if (typeof result === 'object') {
-                let resultsDataForm = await this.initiload();
-                this.categoriaCompras = resultsDataForm[4];
-
-                this.data.idCategoriaCompra = this.categoriaCompras.at(-1).idCategoriaCompra;
-            }
-        })
     }
 
 
@@ -248,7 +237,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
         try {
             showLoader();
             let resultsDataForm = await this.initiload();
-            console.log(resultsDataForm)
+
             let { UiGridOptionsCompra } = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
 
             this.establecimientos = resultsDataForm[0];

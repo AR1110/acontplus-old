@@ -174,7 +174,7 @@ const cretaeSupport = () => {
   };
 
   const getReport = (parameters: object) => {
-    sharedService.download(parameters, true);
+    sharedService.download(parameters);
   };
 
   return {

@@ -7,7 +7,7 @@
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
-                scope.$watch(attrs.shouldFocus, function (newVal, oldVal) {
+                scope.$watch(attrs.shouldFocus, function (newVal) {
                     if (newVal && element.prop("class").indexOf("active")) {
                         var par = element.parent("ul");
                         var cellHeight = element.children().innerHeight();
@@ -28,7 +28,7 @@
     })
     //Para Doble scroll en los documentos
     app.directive('master', function () { //declaration
-        function link(scope, element, attrs) {
+        function link(scope, element) {
             scope.$watch(function () {
                 scope.duelScroll = {
                     width: element[0].offsetWidth + 'px'
@@ -118,14 +118,11 @@
 
     //DIRECTIVA PARA ENTRADA DE LETRAS MAYUSCULAS
     app.directive('touppercase', function () {
-        let flag = false;
         let teclaAnterior = "";
         return {
             require: 'ngModel',
             restrict: 'A',
             link: function (scope, element, attrs, modelCtrl) {
-
-
 
                 element.on("keydown", event => {
                     teclaAnterior = teclaAnterior + " " + event.keyCode;
@@ -1605,7 +1602,42 @@
             }
         };
     })
-    //filters 
+    
+
+    app.directive('btnCategoriaCompra', function (modalService, nombreModalCompra) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                resultModal: '&',
+            },
+            link: function (scope, element) {
+                element.on('click', async function () {
+
+                    let fileCtrl = nombreModalCompra.CATEGORIA_COMPRA.fileCtrl;
+                    let ctrl = nombreModalCompra.CATEGORIA_COMPRA.controller;
+                    let template = nombreModalCompra.CATEGORIA_COMPRA.template;
+                    let controller = (await import(fileCtrl))[ctrl];
+
+                    const modalDialogRef = modalService.openModalCustom({
+                        controller,
+                        template,
+                        size: 'md',
+                        params: scope.params || {},
+                        isRenderRazorPartial: true
+                    })
+
+                    modalDialogRef.result.then(result => {
+                        if (typeof result === "object") {
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+                });
+            }
+        }
+    })
 
      
 

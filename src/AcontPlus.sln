@@ -144,7 +144,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Application", "Servi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reports.API", "Services\Reports\Reports.API\Reports.API.csproj", "{73066250-156B-41D5-9E23-3530CEB78D18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FactElect.API", "Services\Facturacion\FactElect.API\FactElect.API.csproj", "{76827765-0309-45AF-8B6C-799C3A3CD7C4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FactElect.API", "Services\Facturacion\FactElect.API\FactElect.API.csproj", "{76827765-0309-45AF-8B6C-799C3A3CD7C4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
