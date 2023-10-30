@@ -529,13 +529,13 @@
     support.date = newFormatDate(support.date);
     support.fechaVencimiento = newFormatDate(support.fechaVencimiento);
 
-    NotaEntregaService.post({
-      data: {
-        notaEntrega: MapperToAction.notaEntregaMapper(support),
-        detalle: MapperToAction.detalleNotaEntrega(supportDetails),
-        infoAdicionalArticulo: JSON.stringify({}),
-      },
-    })
+    let newData = {
+      notaEntrega: JSON.stringify(MapperToAction.notaEntregaMapper(support)),
+      detalles: JSON.stringify(MapperToAction.detalleNotaEntrega(supportDetails)),
+      infoAdicionalArticulo: JSON.stringify([])
+    };
+
+    NotaEntregaService.post({ data: newData })
       .then((response) => {
         if (response) {
           if (response.code == "0") {

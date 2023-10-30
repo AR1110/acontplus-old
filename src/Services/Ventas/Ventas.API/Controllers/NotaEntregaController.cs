@@ -53,9 +53,8 @@ namespace Ventas.API.Controllers
             }
         }
 
-        [HttpPost("Insert")]
-        //public async Task<IActionResult> Insert([FromBody] NotaEntregaViewModel data)
-        public async Task<IActionResult> Insert(ApiRequest parameters)
+        [HttpPost("Insert")]        
+        public async Task<IActionResult> Insert(ApiRequest data)
         {
             var _response = new GenericResponse();
             var _db = new DbAccess(_configuration);
@@ -63,8 +62,8 @@ namespace Ventas.API.Controllers
             {
                 var idUsuarioRol = User.GetUserRoleId();
                 await _db.SPExecute("Ventas.NotaEntrega_Insert", true);
-                _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
+                _db.AddDynamicParam("userRoleId", idUsuarioRol);
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -89,7 +88,7 @@ namespace Ventas.API.Controllers
             try
             {
                 await _db.SPExecute("Ventas.NotaEntrega_Update", true);
-                _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
+                _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
                 _response = _db.GetDefault();
