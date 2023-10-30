@@ -142,10 +142,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reports.API", "Services\Rep
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FactElect.API", "Services\Facturacion\FactElect.API\FactElect.API.csproj", "{76827765-0309-45AF-8B6C-799C3A3CD7C4}"
 EndProject
+<<<<<<<<< Temporary merge branch 1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ventas.API", "Services\Ventas\Ventas.API\Ventas.API.csproj", "{68C0A7A9-C384-4819-A3E7-5CDF52D3DC6F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configuracion.API", "Services\Configuracion\Configuracion.API\Configuracion.API.csproj", "{30481BED-26F9-4F92-832E-F404C2871805}"
 EndProject
+=========
+>>>>>>>>> Temporary merge branch 2
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -336,6 +339,8 @@ Global
 		{30481BED-26F9-4F92-832E-F404C2871805}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30481BED-26F9-4F92-832E-F404C2871805}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30481BED-26F9-4F92-832E-F404C2871805}.Release|Any CPU.Build.0 = Release|Any CPU
+=========
+>>>>>>>>> Temporary merge branch 2
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -402,6 +407,8 @@ Global
 		{76827765-0309-45AF-8B6C-799C3A3CD7C4} = {93B17BC7-9BE0-4D5A-9BC0-444DA1C1D105}
 		{68C0A7A9-C384-4819-A3E7-5CDF52D3DC6F} = {6A1E7C25-C4EC-4B49-BCAE-31A42AFEB9D9}
 		{30481BED-26F9-4F92-832E-F404C2871805} = {C757EAA5-16B1-4A93-B3A1-A091A9F1D6A7}
+=========
+>>>>>>>>> Temporary merge branch 2
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BA9DF437-2C4E-4B51-A33F-8A6B93E9A018}
