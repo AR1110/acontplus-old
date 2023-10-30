@@ -23,7 +23,7 @@
   let decimals = [];
   let valueArticle = "";
   let paramValidation = [undefined, null, "", 0];
-  let placeholderArticle = "Buscar por C.I o Nombre Comercial";
+  let placeholderArticle = "Buscar por Nombre";
   let currentDateString = "";
   let tarifaImpuestos = [];
   let dataCalculos = {
@@ -50,6 +50,7 @@
   let ptoEmisionesTemp = [];
   let tiempoCreditos = [];
   let tarifaImpuestoFactura = [];
+  let timeout;
 
   const onModalClose = () => {
     supportStore.update((state) => ({
@@ -98,61 +99,65 @@
   const selectArticle = (e) => {
     let dataArticle = {};
     let medidas = [];
-
     articles = [];
     valueArticle = "";
-    ArticleService.get(
-      JSON.stringify({ tipo: 6, idArticulo: e.idArticulo })
-    ).then((response) => {
-      if (response) {
-        dataArticle = response[0][0];
-        // Todo: Validate if article has llevaInventario
-        let isExists = onValidateLlevaInventario(dataArticle);
 
-        if (isExists) {
-          medidas = response[1].map((item) => {
-            return {
-              ...item,
-              tarifas: JSON.parse(item.tarifas),
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      ArticleService.get(
+        JSON.stringify({ tipo: 6, idArticulo: e.idArticulo })
+      ).then((response) => {
+        if (response) {
+          dataArticle = response[0][0];
+          // Todo: Validate if article has llevaInventario
+          let isExists = onValidateLlevaInventario(dataArticle);
+
+          if (isExists) {
+            medidas = response[1].map((item) => {
+              return {
+                ...item,
+                tarifas: JSON.parse(item.tarifas),
+              };
+            });
+            let idBodega = warehouses.find(
+              (x) => x.codEstab == support.codEstab
+            ).idBodega;
+
+            let dataMedida = medidas[0];
+            let dataTarifa = dataMedida.tarifas[0];
+
+            let obj = {
+              bodegas: warehouses,
+              decimals: decimals,
+              tarifas: dataMedida.tarifas,
+              tipoIvas: tipoIva,
+              medidas: medidas,
+              orderIndex: 0,
+              ...dataArticle,
+              idTarifa: dataTarifa.idTarifa,
+              idBodega: idBodega,
+              idMedida: dataMedida.idMedida,
+              cantidad: 1,
+              precioVenta: dataTarifa.precioVenta,
+              precioSinSubsidio: 0,
+              precioUnitario: dataTarifa.precioVenta,
+              precioConIva: dataTarifa.precioConIva,
+              valorDescuento: 0,
+              precioTotalSinImpuesto: 0,
+              porcentajeDescuento: 0,
+              total: dataTarifa.precioConIva * 1,
+              nota: "S/N",
             };
-          });
-          let idBodega = warehouses.find(
-            (x) => x.codEstab == support.codEstab
-          ).idBodega;
 
-          let dataMedida = medidas[0];
-          let dataTarifa = dataMedida.tarifas[0];
+            supportDetails = [...supportDetails, obj];
 
-          let obj = {
-            bodegas: warehouses,
-            decimals: decimals,
-            tarifas: dataMedida.tarifas,
-            tipoIvas: tipoIva,
-            medidas: medidas,
-            orderIndex: 0,
-            ...dataArticle,
-            idTarifa: dataTarifa.idTarifa,
-            idBodega: idBodega,
-            idMedida: dataMedida.idMedida,
-            cantidad: 1,
-            precioVenta: dataTarifa.precioVenta,
-            precioSinSubsidio: 0,
-            precioUnitario: dataTarifa.precioVenta,
-            precioConIva: dataTarifa.precioConIva,
-            valorDescuento: 0,
-            precioTotalSinImpuesto: 0,
-            porcentajeDescuento: 0,
-            total: dataTarifa.precioConIva * 1,
-            nota: "S/N",
-          };
-
-          supportDetails = [...supportDetails, obj];
-
-          // Get Articles invoke.
-          getTotales();
+            // Get Articles invoke.
+            getTotales();
+          }
         }
-      }
-    });
+      });
+    }, 200);
+
   };
 
   let onValidateLlevaInventario = (item: any) => {
@@ -182,6 +187,19 @@
     // Get Totales invoke.
     getTotales();
   };
+
+  // Article: Search article by Code.
+  const searchArticleCode = (value: any) => {
+    let getValue = value.target.value;
+    if(getValue.length <= 0) return;
+
+    if(timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      
+
+
+    }, 200);
+  }
 
   function getTotales() {
     let CODIGO_PORCENTAJE_IVA0 = "0",
@@ -750,7 +768,7 @@
           </div>
           <div class="col-sm-2 nopadding">
             <label for="cliente" class=""> Buscar por Código </label>
-            <input type="text" class="form-control" placeholder="Ej: COMP1" />
+            <input on:blur={(e) => searchArticleCode(e)} type="text" class="form-control" placeholder="Ej: COMP1" />
           </div>
           <div class="col-sm-3 nopadding">
             <div class="row">
