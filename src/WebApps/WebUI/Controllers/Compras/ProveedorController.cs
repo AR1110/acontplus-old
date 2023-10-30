@@ -13,7 +13,7 @@ namespace WebUI.Controllers.Compras
         // GET: Proveedor
         private readonly IConfiguration _configuration;
         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
-        private DataAccessObject _dao;
+
 
         GenericResponse _gr = new();
         private PersonaDao p;
@@ -24,7 +24,7 @@ namespace WebUI.Controllers.Compras
             _configuration = configuration;
             p = new PersonaDao(_configuration);
             _prov = new ProveedorDao(_configuration);
-            _dao = new DataAccessObject(_configuration);
+
 
 
 
@@ -38,7 +38,7 @@ namespace WebUI.Controllers.Compras
 
         [HttpGet]
         public async Task<IActionResult> Get(string json)
-        { 
+        {
             var response = new GenericResponse();
             try
             {

@@ -2,7 +2,6 @@
 using Common.Core.Utils;
 using DataAccess;
 using DataAccess.GestionFinanciera;
-using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 
@@ -13,14 +12,14 @@ namespace WebUI.Controllers.Financiero
         private GestionFinancieraDao _gf;
         private readonly IConfiguration _configuration;
         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
-        private DataAccessObject _dao;
+
 
         GenericResponse _gr = new();
 
         public GestionFinancieraController(IConfiguration configuration)
         {
             _configuration = configuration;
-            _dao = new DataAccessObject(_configuration);
+
             _gf = new GestionFinancieraDao(_configuration);
 
 

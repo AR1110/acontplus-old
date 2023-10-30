@@ -1,4 +1,4 @@
-﻿using System.Data; 
+﻿using System.Data;
 using Common.Core.Models;
 using Common.Core.Utils;
 using Microsoft.Data.SqlClient;

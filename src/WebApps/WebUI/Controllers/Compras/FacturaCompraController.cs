@@ -2,7 +2,6 @@
 using Common.Core.Utils;
 using DataAccess;
 using DataAccess.Almacen;
-using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 using Services.Common.Logs;
@@ -13,14 +12,14 @@ namespace WebUI.Controllers.Compras
     {
         private readonly IConfiguration _configuration;
         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
-        private DataAccessObject _dao;
+
         private ArticuloDao _a;
         private readonly LogWriter _log;
 
         public FacturaCompraController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
-            _dao = new DataAccessObject(_configuration);
+
             _a = new ArticuloDao(_configuration);
             _log = log;
         }
@@ -37,7 +36,7 @@ namespace WebUI.Controllers.Compras
             var response = new GenericResponse();
             try
             {
-                using(DbAccess _db = new DbAccess(_configuration))
+                using (DbAccess _db = new DbAccess(_configuration))
                 {
                     await _db.SPExecute("Compra.Factura_Get");
                     _db.AddDynamicParam("idRol", User.GetUserRoleId());

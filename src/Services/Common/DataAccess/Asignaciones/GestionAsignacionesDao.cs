@@ -24,9 +24,8 @@ namespace DataAccess.Asignaciones
                     await db.SPExecute("Asignaciones.GestionGeneral_Get");
                     db.AddParameter("idRol", SqlDbType.Int, idRol);
                     db.AddParameter("json", SqlDbType.NVarChar, json);
-                    DataSet ds = db.GetDataSet();
                     _response = db.GetDataSetAsync();
-                }  
+                }
             }
             catch (Exception ex)
             {

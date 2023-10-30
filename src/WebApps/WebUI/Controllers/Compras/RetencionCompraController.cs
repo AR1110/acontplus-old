@@ -2,9 +2,9 @@
 using DataAccess;
 using DataAccess.Compras;
 using DataAccess.RetencionIvaRenta;
-using Domain.Models;
 using Domain.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common;
 using Services.Common.Logs;
 
 namespace WebUI.Controllers.Compras
@@ -14,7 +14,7 @@ namespace WebUI.Controllers.Compras
         GenericResponse _gr = new();
         private RetencionCompraDao _rc;
         private GenerateRetencionDao _gra;
-        private DataAccessObject _dao;
+
 
         private IConfiguration _configuration;
 
@@ -23,7 +23,7 @@ namespace WebUI.Controllers.Compras
         {
             _configuration = config;
 
-            _dao = new DataAccessObject(_configuration);
+
             _gra = new GenerateRetencionDao(_configuration);
             _rc = new RetencionCompraDao(_configuration);
             _log = log;
@@ -98,10 +98,22 @@ namespace WebUI.Controllers.Compras
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            var parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("id", id);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Compra.Retencion_Delete", parameters)));
+            var response = new GenericResponse();
+            try
+            {
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
+                    await _db.SPExecute("Compra.Retencion_Delete");
+                    _db.AddDynamicParam("idRol", User.GetUserRoleId());
+                    _db.AddDynamicParam("id", id);
+                    response = _db.GetDefault();
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
     }

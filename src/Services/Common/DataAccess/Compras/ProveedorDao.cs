@@ -1,9 +1,9 @@
 ﻿
 using System.Data;
-using Microsoft.Data.SqlClient;
 using Common.Core.Models;
 using Domain.Models;
 using Domain.ViewModels;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Compras

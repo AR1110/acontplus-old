@@ -1,8 +1,8 @@
 ﻿using System.Data;
-using Microsoft.Data.SqlClient;
 using Common.Core.Models;
 using Domain.Models.Almacen;
 using Domain.ViewModels.Almacen;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Almacen

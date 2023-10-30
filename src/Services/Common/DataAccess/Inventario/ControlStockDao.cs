@@ -1,8 +1,7 @@
 ﻿
 using System.Data;
-using Microsoft.Data.SqlClient;
 using Common.Core.Models;
-using Domain.Models;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Inventario
@@ -61,12 +60,13 @@ namespace DataAccess.Inventario
         {
             try
             {
-                DbAccess db = new DbAccess(_config);
-                await db.SPExecute("Inventario.Articulo_Update_Stock");
-                db.AddParameter("idRol", SqlDbType.Int, idRol);
-                db.AddParameter("id", SqlDbType.Int, id);
-                DataTable dt = db.GetDataTable();
-                _response = DbResponse.SPDefault(dt);
+                using (DbAccess db = new DbAccess(_config))
+                {
+                    await db.SPExecute("Inventario.Articulo_Update_Stock");
+                    db.AddParameter("idRol", SqlDbType.Int, idRol);
+                    db.AddParameter("id", SqlDbType.Int, id);
+                    _response = db.GetDefault();
+                }
             }
             catch (Exception ex)
             {

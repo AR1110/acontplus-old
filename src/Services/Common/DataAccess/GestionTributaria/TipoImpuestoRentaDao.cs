@@ -1,8 +1,8 @@
 ﻿using System.Data;
-using Microsoft.Data.SqlClient;
 using Common.Core.Models;
 using Domain.Models.GestionTributaria;
 using Domain.ViewModels.GestionTributaria;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.GestionTributaria

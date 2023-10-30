@@ -2,7 +2,6 @@
 using Common.Core.Utils;
 using DataAccess;
 using DataAccess.Almacen;
-using Domain.Models;
 using Domain.Models.Config;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
@@ -14,7 +13,7 @@ namespace WebUI.Controllers.Config
         // GET: Articulo
         private readonly IConfiguration _configuration;
         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
-        private DataAccessObject _dao;
+
 
         GenericResponse _gr = new();
         private ArticuloDao _a;
@@ -22,7 +21,7 @@ namespace WebUI.Controllers.Config
         public GestionSistemaController(IConfiguration configuration)
         {
             _configuration = configuration;
-            _dao = new DataAccessObject(_configuration);
+
             _a = new ArticuloDao(_configuration);
 
 
@@ -52,18 +51,30 @@ namespace WebUI.Controllers.Config
         [HttpPut]
         public async Task<IActionResult> Put(int id, [FromBody] GestionSistema data)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("id", id);
-            parameters.Add("idTipoIva", data.idTipoIva);
-            parameters.Add("idCliente", data.idCliente);
-            parameters.Add("idArticulo", data.idArticulo);
-            parameters.Add("idMetodoValoracion", data.idMetodoValoracion);
-            parameters.Add("llevaInventario", data.llevaInventario);
-            parameters.Add("searchCode", data.searchCode);
-            parameters.Add("printerAutomatic", data.printerAutomatic);
-            parameters.Add("payAutomatic", data.payAutomatic);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Config.GestionSistema_Update", parameters)));
+            var response = new GenericResponse();
+            try
+            {
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
+                    await _db.SPExecute("Config.GestionSistema_Update");
+                    _db.AddDynamicParam("idRol", User.GetUserRoleId());
+                    _db.AddDynamicParam("id", id);
+                    _db.AddDynamicParam("idTipoIva", data.idTipoIva);
+                    _db.AddDynamicParam("idCliente", data.idCliente);
+                    _db.AddDynamicParam("idArticulo", data.idArticulo);
+                    _db.AddDynamicParam("idMetodoValoracion", data.idMetodoValoracion);
+                    _db.AddDynamicParam("llevaInventario", data.llevaInventario);
+                    _db.AddDynamicParam("searchCode", data.searchCode);
+                    _db.AddDynamicParam("printerAutomatic", data.searchCode);
+                    _db.AddDynamicParam("payAutomatic", data.payAutomatic);
+                    response = _db.GetDefault();
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 

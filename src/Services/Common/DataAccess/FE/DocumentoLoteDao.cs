@@ -1,9 +1,8 @@
 ﻿using System.Data;
-using Microsoft.Data.SqlClient;
 using System.Text;
 using Common.Core.Models;
 using Common.Core.Utils;
-using Domain.Models;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.FE
@@ -151,7 +150,7 @@ namespace DataAccess.FE
                     await con.OpenAsync();
                     SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
                     dataAdapter.Fill(dt);
-                    _response = DbResponse.SPDefault(dt);
+                    _response = null;
                 }
             }
             catch (Exception ex)

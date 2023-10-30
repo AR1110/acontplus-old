@@ -1,7 +1,6 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
 using DataAccess;
-using Domain.Models;
 using Domain.Models.Config;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
@@ -13,13 +12,13 @@ namespace WebUI.Controllers.Config
         // GET: Establecimiento
         private readonly IConfiguration _configuration;
         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
-        private DataAccessObject _dao;
+
 
 
         public BodegAsigController(IConfiguration configuration)
         {
             _configuration = configuration;
-            _dao = new DataAccessObject(_configuration);
+
 
 
 
@@ -27,7 +26,7 @@ namespace WebUI.Controllers.Config
 
         [HttpGet]
         public async Task<IActionResult> Get(string json)
-        { 
+        {
             var response = new GenericResponse();
             try
             {
@@ -49,22 +48,46 @@ namespace WebUI.Controllers.Config
         [HttpPost]
         public async Task<IActionResult> Insert([FromBody] BodegAsig data)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("id", data.idBodeg_Asig);
-            parameters.Add("codEstab_Asig", data.codEstab_Asig);
-            parameters.Add("idBodega", data.idBodega);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Config.Bodeg_Asig_Insert", parameters)));
+            var response = new GenericResponse();
+            try
+            {
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
+                    await _db.SPExecute("Config.Bodeg_Asig_Insert");
+                    _db.AddDynamicParam("idRol", User.GetUserRoleId());
+                    _db.AddDynamicParam("id", data.idBodeg_Asig);
+                    _db.AddDynamicParam("codEstab_Asig", data.codEstab_Asig);
+                    _db.AddDynamicParam("idBodega", data.idBodega);
+                    response = _db.GetDefault();
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPut]
         public async Task<IActionResult> Update(int id)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("id", id);
-            parameters.Add("predeterminado", true);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Config.Bodeg_Asig_Update", parameters)));
+            var response = new GenericResponse();
+            try
+            {
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
+                    await _db.SPExecute("Config.Bodeg_Asig_Update");
+                    _db.AddDynamicParam("idRol", User.GetUserRoleId());
+                    _db.AddDynamicParam("id", id);
+                    _db.AddDynamicParam("predeterminado", true);
+                    response = _db.GetDefault();
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

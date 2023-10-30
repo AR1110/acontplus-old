@@ -2,7 +2,6 @@
 using Common.Core.Utils;
 using DataAccess;
 using DataAccess.Almacen;
-using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 using Services.Common.Logs;
@@ -15,7 +14,7 @@ namespace WebUI.Controllers.Almacen
         private readonly IConfiguration _configuration;
         private readonly LogWriter _log;
         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
-        private DataAccessObject _dao;
+
 
         GenericResponse _gr = new();
         private ArticuloDao _a;
@@ -25,7 +24,7 @@ namespace WebUI.Controllers.Almacen
         public ArticuloController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
-            _dao = new DataAccessObject(_configuration);
+
 
 
             _a = new ArticuloDao(_configuration);
@@ -174,7 +173,7 @@ namespace WebUI.Controllers.Almacen
         [HttpGet]
         //Listar articulo de manera General: bodegas, tarifas, sucursales
         public async Task<IActionResult> List(string json)
-        { 
+        {
             var response = new GenericResponse();
             try
             {
@@ -221,10 +220,22 @@ namespace WebUI.Controllers.Almacen
 
         public async Task<IActionResult> Delete(int idArticulo)
         {
-            var parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("id", idArticulo);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Almacen.Articulo_Delete", parameters)));
+            var response = new GenericResponse();
+            try
+            {
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
+                    await _db.SPExecute("Almacen.Articulo_Delete");
+                    _db.AddDynamicParam("idRol", User.GetUserRoleId());
+                    _db.AddDynamicParam("id", idArticulo);
+                    response = _db.GetDefault();
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         //Operaciones Especiales 

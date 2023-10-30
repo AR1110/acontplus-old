@@ -1,9 +1,9 @@
 ﻿using Common.Core.Models;
 using DataAccess;
 using DataAccess.Almacen;
-using Domain.Models;
 using Domain.Models.Almacen;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common;
 
 namespace WebUI.Controllers.Almacen
 {
@@ -11,13 +11,13 @@ namespace WebUI.Controllers.Almacen
     {
         private readonly IConfiguration _configuration;
         // GET: CodigoBarraArticulo 
-        private DataAccessObject _dao;
+
         private ArticuloCodigoBarraDao _cba;
         GenericResponse _gr = new();
         public CodigoBarraArticuloController(IConfiguration configuration)
         {
             _configuration = configuration;
-            _dao = new DataAccessObject(_configuration);
+
             _cba = new ArticuloCodigoBarraDao(_configuration);
         }
 
@@ -38,40 +38,72 @@ namespace WebUI.Controllers.Almacen
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ArticuloCodigoBarra data)
         {
-            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-            var parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", idRol);
-            parameters.Add("idArticulo", data.idArticulo);
-            parameters.Add("idMedida", data.idMedida);
-            parameters.Add("codigoBarra", data.codigoBarra);
-            parameters.Add("descripcion", data.descripcion);
-            parameters.Add("color", data.color ?? "");
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Almacen.CodigoBarra_Insert", parameters)));
-
+            var response = new GenericResponse();
+            try
+            {
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
+                    await _db.SPExecute("Almacen.CodigoBarra_Insert");
+                    _db.AddDynamicParam("idRol", User.GetUserRoleId());
+                    _db.AddDynamicParam("idArticulo", data.idArticulo);
+                    _db.AddDynamicParam("idMedida", data.idMedida);
+                    _db.AddDynamicParam("codigoBarra", data.codigoBarra);
+                    _db.AddDynamicParam("descripcion", data.descripcion);
+                    _db.AddDynamicParam("color", data.color ?? "");
+                    response = _db.GetDefault();
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> Put(int idArticuloCodigoBarra, [FromBody] ArticuloCodigoBarra data)
         {
-            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-            var parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", idRol);
-            parameters.Add("id", idArticuloCodigoBarra);
-            parameters.Add("idMedida", data.idMedida);
-            parameters.Add("codigoBarra", data.codigoBarra);
-            parameters.Add("descripcion", data.descripcion);
-            parameters.Add("color", data.color ?? "");
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Almacen.CodigoBarra_Update", parameters)));
+            var response = new GenericResponse();
+            try
+            {
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
+                    await _db.SPExecute("Almacen.CodigoBarra_Update");
+                    _db.AddDynamicParam("idRol", User.GetUserRoleId());
+                    _db.AddDynamicParam("id", idArticuloCodigoBarra);
+                    _db.AddDynamicParam("idMedida", data.idMedida);
+                    _db.AddDynamicParam("codigoBarra", data.codigoBarra);
+                    _db.AddDynamicParam("descripcion", data.descripcion);
+                    _db.AddDynamicParam("color", data.color ?? "");
+                    response = _db.GetDefault();
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
 
         public async Task<IActionResult> Delete(int idArticuloCodigoBarra)
         {
-            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-            var parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", idRol);
-            parameters.Add("id", idArticuloCodigoBarra);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Almacen.CodigoBarra_Delete", parameters)));
+            var response = new GenericResponse();
+            try
+            {
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
+                    await _db.SPExecute("Almacen.CodigoBarra_Delete");
+                    _db.AddDynamicParam("idRol", User.GetUserRoleId());
+                    _db.AddDynamicParam("id", idArticuloCodigoBarra);
+                    response = _db.GetDefault();
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
