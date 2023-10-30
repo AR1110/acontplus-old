@@ -1,4 +1,4 @@
-﻿namespace Domain.Dtos
+﻿namespace ApiConfig.Dtos
 {
     public class UsuarioPemisoDto
     {

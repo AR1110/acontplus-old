@@ -1,4 +1,4 @@
-﻿namespace Domain.Dtos.Compras
+﻿namespace Compras.API.Dtos
 {
     public class ComprobanteDto
     {

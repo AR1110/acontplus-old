@@ -1,7 +1,7 @@
-﻿using Common.Core.Models;
+﻿using ApiContabilidad.Dtos;
+using Common.Core.Models;
 using Common.Core.Utils;
 using DataAccess;
-using Domain.Dtos.Contabilidad;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
