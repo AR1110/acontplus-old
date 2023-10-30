@@ -89,7 +89,7 @@ const createInspection = () => {
   };
 
   const getReport = (parameters: object) => {
-    sharedService.download(parameters, true);
+    sharedService.download(parameters);
   };
 
   return { set, subscribe, update, getOpenModal, getReport };

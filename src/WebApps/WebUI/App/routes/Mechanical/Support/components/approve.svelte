@@ -46,6 +46,10 @@
     total: 0,
     valorIva: 0,
   };
+  let ptoEmisiones = [];
+  let ptoEmisionesTemp = [];
+  let tiempoCreditos = [];
+  let tarifaImpuestoFactura = [];
 
   const onModalClose = () => {
     supportStore.update((state) => ({
@@ -196,8 +200,6 @@
 
         total.valorIva = dataImpuestoVigente.tarifa;
 
-        console.log(itemDetails);
-
         itemDetails.cantidad = Number(itemDetails.cantidad);
         itemDetails.precioUnitario = Number(itemDetails.precioUnitario);
         itemDetails.valorDescuento = Number(itemDetails.valorDescuento);
@@ -263,9 +265,6 @@
         valorIva: 0,
       }
     );
-
-    console.log("dataTotal");
-    console.log(dataTotal);
 
     let iva = (dataTotal.sumaTotalNeto * dataTotal.valorIva) / 100;
 
@@ -421,21 +420,19 @@
       support.codEstab = estab.codEstab;
       tarifaImpuestos = [...JSON.parse(estab.tarifasImpuestos)];
 
+      ptoEmisiones = [
+        ...ptoEmisionesTemp.filter((x) => x.codEstab === estab.codEstab),
+      ];
+
       // Get Totales invoke.
       getTotales();
     }
-    // if (
-    //   paramValidation.includes(support.codEstab) && establishments.length > 0) {
-    //   let estab = establishments.find((x) => x.predeterminado === true);
-
-    //   support.codEstab = estab.codEstab;
-    //   tarifaImpuestos = [...JSON.parse(estab.tarifasImpuestos)];
-    // }
   };
 
   const refreshWarehouseCodEstab = (codEstab) => {
     support.codEstab = codEstab;
     tarifaImpuestos = [];
+    ptoEmisiones = [];
 
     let idBodega = warehouses.find(
       (x) => x.codEstab == support.codEstab
@@ -446,6 +443,12 @@
           .tarifasImpuestos
       ),
     ];
+
+    // Get => Punto Emisiones.
+    ptoEmisiones = [
+      ...ptoEmisionesTemp.filter((x) => x.codEstab === support.codEstab),
+    ];
+    support.puntoEmisionId = ptoEmisiones[0].puntoEmisionId ?? 0;
 
     if (!paramValidation.includes(idBodega)) {
       supportDetails.forEach((item) => {
@@ -460,18 +463,56 @@
   const saveFactura = () => {
     showLoader();
 
+    let getTiempoCredito = tiempoCreditos[0];
+    support.tarifa = tarifaImpuestoFactura[0].tarifa;
+
+    support.idTiempoCredito = getTiempoCredito.idTiempoCredito;
+    support.fechaVencimiento = getFechaVencimiento(
+      support.date,
+      getTiempoCredito.diasCredito
+    );
+
+    support.date = newFormatDate(support.date);
+    support.fechaVencimiento = newFormatDate(support.fechaVencimiento);
+
     let data = {
       factura: JSON.stringify(MapperToAction.facturaMapperTo(support)),
       detalle: JSON.stringify(MapperToAction.detalleMapperTo(supportDetails)),
+      adicional: JSON.stringify({}),
+      infoAdicionalArticulo: JSON.stringify({}),
     };
 
     FacturaService.post(data)
       .then((response) => {
-        console.log(response);
+        if (response.code == "0") {
+          return toast({ type: "warning", message: response.message });
+        };
+
+        onModalClose();
+        toast({ type: "success", message: response.message });
       })
       .finally(() => {
         hideLoader();
       });
+  };
+
+
+  const newFormatDate = (date: string) => {
+    let splitDate = date.split("-");
+    let newDate = `${splitDate[2]}-${splitDate[1]}-${splitDate[0]}`;
+    return newDate;
+  }
+
+  const getFechaVencimiento = function (fechaEmision, dia) {
+    let fechaVencimiento = new Date(fechaEmision);
+
+    fechaVencimiento.setMinutes(
+      fechaVencimiento.getMinutes() + fechaVencimiento.getTimezoneOffset()
+    );
+    fechaVencimiento.setDate(fechaVencimiento.getDate() + dia);
+
+    let newFechaVencimiento = fechaVencimiento.toISOString().split("T")[0];
+    return newFechaVencimiento;
   };
 
   const saveNotaEntrega = () => {
@@ -480,16 +521,18 @@
     let data = {
       notaEntrega: support,
       detalle: supportDetails,
-      infoAdicionalArticulo: null
+      infoAdicionalArticulo: null,
     };
 
-    NotaEntregaService.post(data).then((response) => {
-      if(response) {
-        console.log(response);
-      }
-    }).finally(() => {
-      hideLoader();
-    });
+    NotaEntregaService.post(data)
+      .then((response) => {
+        if (response) {
+          console.log(response);
+        }
+      })
+      .finally(() => {
+        hideLoader();
+      });
   };
 
   // Todo: Save DETALLES
@@ -536,6 +579,9 @@
     warehouses = values.warehouses;
     tipoIva = values.tipoIva;
     decimals = values.decimals;
+    ptoEmisionesTemp = values.ptoEmisiones;
+    tiempoCreditos = values.tiempoCreditos;
+    tarifaImpuestoFactura = values.tarifaImpuestos;
 
     initialPushData();
     selectCodEstab();
@@ -555,7 +601,7 @@
     <div class="modal-body">
       <form autocomplete="off">
         <div class="row">
-          <div class="col-sm-4 nopadding">
+          <div class="col-sm-3 nopadding">
             <div class="form-group m-b-0">
               <label for="cliente" class="control-label">
                 Cliente <span class="text-danger">*</span>
@@ -607,7 +653,7 @@
             />
             <small><span class="text-success">{currentDateString}</span></small>
           </div>
-          <div class="col-sm-4 nopadding">
+          <div class="col-sm-3 nopadding">
             <div class="form-group">
               <label for=""
                 >Establecimiento
@@ -621,6 +667,23 @@
                 <option disabled>::SELECCIONE::</option>
                 {#each establishments as item}
                   <option value={item.codEstab}>{item.nombreComercial}</option>
+                {/each}
+              </select>
+            </div>
+          </div>
+          <div class="col-sm-2 nopadding">
+            <div class="form-group">
+              <label for=""
+                >P. Emisión
+                <span class="text-danger"> *</span>
+              </label>
+              <select
+                class="form-control custom-select"
+                bind:value={support.puntoEmisionId}
+              >
+                <option disabled>::SELECCIONE::</option>
+                {#each ptoEmisiones as item}
+                  <option value={item.puntoEmisionId}>{item.ptoEmi}</option>
                 {/each}
               </select>
             </div>

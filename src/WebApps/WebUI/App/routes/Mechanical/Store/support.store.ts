@@ -26,6 +26,9 @@ type State = {
   warehouses: any;
   tipoIva: any;
   decimals: any;
+  ptoEmisiones: any;
+  tiempoCreditos: any;
+  tarifaImpuestos: any;
 };
 
 const initialModalState: StateModal = {
@@ -80,7 +83,10 @@ const initialState: State = {
   measures: [],
   warehouses: [],
   tipoIva: [],
-  decimals: 2,
+  decimals: [],
+  ptoEmisiones: [],
+  tiempoCreditos: [],
+  tarifaImpuestos: [],
 };
 
 const cretaeSupport = () => {
@@ -156,6 +162,9 @@ const cretaeSupport = () => {
             warehouses: response["bodega"],
             tipoIva: response["tipoIva"],
             decimals: response["decimal"],
+            ptoEmisiones: response["ptoEmision"],
+            tiempoCreditos: response["tiempoCredito"],
+            tarifaImpuestos: response["tarifaImpuesto"]
           }));
         }
       })

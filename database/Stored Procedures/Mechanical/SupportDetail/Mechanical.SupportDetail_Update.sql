@@ -17,9 +17,16 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
     
-    DECLARE @UserId INT ,@jsonSupportDetails VARCHAR(MAX)
+    DECLARE @UserId INT, @jsonSupport VARCHAR(MAX), @jsonSupportDetails VARCHAR(MAX)
     DECLARE @Date DATETIME2 ,@Obs VARCHAR(300) ,@Total NUMERIC(18,5)
-    
+    DECLARE @fechaEcuador DATETIME = (SELECT dbo.ufnGetDateEcuador())
+
+    DECLARE @tbSupport AS TABLE(
+        Id                  INT NOT NULL
+        ,FechaEmision       DATETIME2 NOT NULL
+        ,PuntoEmisionId     INT NOT NULL
+    )
+        
     DECLARE @tbSupportDetail AS TABLE(
         Id INT NOT NULL
        ,ArticuloId INT NOT NULL
@@ -34,14 +41,27 @@ BEGIN
        ,CodePercentage VARCHAR(10) NOT NULL
        ,[Percentage] NUMERIC(18,5)
        ,Inventory BIT NOT NULL
-       ,[Status] INT DEFAULT 1 
+       ,[Status] INT DEFAULT 1
        ,CreatedAt DATETIME2 DEFAULT GETDATE()
        ,[Enabled] BIT DEFAULT 1
     )
 
     BEGIN TRY        
 
-        SELECT @jsonSupportDetails = supportDetails FROM OPENJSON(@json) WITH (supportDetails NVARCHAR(MAX) '$.supportDetails' as json)
+        SELECT @jsonSupport = support , @jsonSupportDetails = supportDetails
+        FROM OPENJSON(@json)
+        WITH (support NVARCHAR(MAX) '$.support' as json
+                , supportDetails NVARCHAR(MAX) '$.supportDetails' as json
+        )
+
+        INSERT INTO @tbSupport (Id,FechaEmision, PuntoEmisionId)
+        SELECT Id, FechaEmision, PuntoEmisionId
+        FROM OPENJSON(@jsonSupport) WITH
+        (
+            Id              INT         '$.id',
+            FechaEmision    DATETIME2   '$.date',
+            PuntoEmisionId  INT         '$.puntoEmisionId'
+        )
         
         INSERT INTO @tbSupportDetail (Id,ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],Inventory)
                                    SELECT Id,ArticuloId,TarifaId,BodegaId,MedidaId,[Description],Quantity,Price,Cost,Total,CodePercentage,[Percentage],Inventory
@@ -51,7 +71,7 @@ BEGIN
                                        ,ArticuloId             INT '$.articuloId' 
                                        ,TarifaId               INT '$.tarifaId' 
                                        ,BodegaId               INT '$.bodegaId' 
-                                       ,MedidaId               INT '$.medidaId' 
+                                       ,MedidaId               INT '$.medidaId'
                                        ,[Description] VARCHAR(300) '$.description'
                                        ,Quantity     NUMERIC(18,5) '$.quantity'
                                        ,Price        NUMERIC(18,5) '$.price'
@@ -61,7 +81,6 @@ BEGIN
                                        ,[Percentage] NUMERIC(18,5) '$.percentage'
                                        ,Inventory              BIT '$.inventory'
                                    )
-                                  
         -- ======================= VARIABLES ===============================
 
         SELECT TOP 1 @UserId = idUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
@@ -73,7 +92,15 @@ BEGIN
                 RETURN
             END
 
-        BEGIN TRAN            
+        BEGIN TRAN
+            UPDATE ms
+            SET ms.[Date]           = ts.FechaEmision
+                ,ms.PuntoEmisionId  = ts.PuntoEmisionId
+                ,ms.UpdatedAt       = @fechaEcuador
+            FROM Mechanical.Support ms
+            INNER JOIN @tbSupport   ts ON ts.Id = ms.Id
+            WHERE ms.Id = @id
+            
             UPDATE Mechanical.SupportDetail SET [Deleted] = 1 WHERE SupportId = @id
 
             UPDATE md

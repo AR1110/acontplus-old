@@ -32,7 +32,7 @@ BEGIN
         BEGIN
             SELECT @Id = Id FROM OPENJSON(@json) WITH (Id INT '$.id')
 
-            SET @tableNames = 'support,supportDetail,medidas,establecimiento,bodega,tipoIva,decimal,ptoEmision'
+            SET @tableNames = 'support,supportDetail,medidas,establecimiento,bodega,tipoIva,decimal,ptoEmision,tiempoCredito,tarifaImpuesto'
 
             SELECT v_s.Id
                   ,v_s.PuntoEmisionId
@@ -143,10 +143,35 @@ BEGIN
             
             SELECT * FROM Config.v_Sistema_Decimal WITH (NOLOCK) WHERE codTrasaccion = 'V' AND idEntidad = @CompanyId
 
-             SELECT * FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
+            SELECT  idPuntoEmision          as puntoEmisionId
+                    ,codEstab
+                    ,ptoEmi + '-' + estab   as ptoEmi
+                    ,defaultEstab
+                    ,defaultPtoEmi
+            FROM v_PtoEmi_Asign WITH(NOLOCK) 
+            WHERE idUsuarioRol = @userRoleId 
+            ORDER BY defaultEstab DESC
+
+            SELECT idTiempoCredito
+                    ,descripcion
+                    ,diasCredito
+                    ,numeroCuota 
+            FROM TiempoCredito WITH (NOLOCK) 
+            WHERE idEntidad = @CompanyId
+            AND gestion = 1 
+            AND estado = 1
+
+            SELECT descripcion = 'IVA '+descripcion 
+                    , codigo = 'IVA'
+                    , codigoPorcentaje = codigo
+                    , tarifa = porcentaje 
+            FROM Sri.TarifaImpuesto WITH (NOLOCK) 
+            WHERE codigo = '2' 
+            AND estado = 1 
+            ORDER BY codigoPorcentaje DESC
+
             RETURN
         END
-
 END
 
    
