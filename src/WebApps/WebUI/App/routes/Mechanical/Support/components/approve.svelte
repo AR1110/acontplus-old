@@ -546,8 +546,9 @@
 
   // Todo: Save DETALLES
   const onUpdate = () => {
-    showLoader();
+    if(!onValidate()) return;
 
+    showLoader();
     supportDetails = supportDetails.map((item) => ({
       id: item.id > 0 ? item.id : 0,
       articuloId: item.idArticulo,
@@ -579,6 +580,30 @@
         hideLoader();
       });
   };
+
+  const onValidate = () => {
+    let isValidate = true;
+    try {
+      if(paramValidation.includes(support.date)) {
+        toast({ type: "warning", message: "Debe seleccionar la Fecha de Emisión" });
+        return isValidate = false;
+      }
+
+      if(paramValidation.includes(support.codEstab)) {
+        toast({ type: "warning", message: "Debe seleccionar Establecimiento" });
+        return isValidate = false;
+      }
+
+      if(paramValidation.includes(support.puntoEmisionId)) {
+        toast({ type: "warning", message: "Debe seleccionar Punto de Emisión" });
+        return isValidate = false;
+      }
+      return isValidate;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
 
   supportStore.subscribe((values) => {
     support = values.support;
