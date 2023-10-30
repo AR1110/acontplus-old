@@ -13,35 +13,21 @@ GO
 --Almacen.Articulo_Get 28, '{"tipo":10,"idArticulo":5}'
 -- Inventario.Articulo_Get 28, '{"idArticulo":77528,"idBodega":128,"tipo":10}'
 -- Inventario.Articulo_Get 28, '{"tipo":7,"idArticulo":32546,"cantidad":"2","idBodega":149,"idMedida":278}'
-IF OBJECT_ID(N'Inventario.Articulo_Get', N'P') IS NOT NULL
-DROP PROCEDURE Inventario.Articulo_Get
-GO
-CREATE PROCEDURE Inventario.Articulo_Get @idRol INT ,@json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Inventario.Articulo_Get @idRol INT ,@json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
+    
+    --> Global
+	DECLARE @tipo INT ,@idEntidad INT ,@pageIndex INT ,@pageSize INT
 
-	DECLARE @tipo INT
-	DECLARE @idEntidad INT 
-	DECLARE @pageIndex INT
-	DECLARE @pageSize INT
+	--> Filters
+	DECLARE @idSubFamilia INT ,@idMedida  INT ,@fraccion NUMERIC(18,5),@idMarca INT ,@idModelo INT
+	       ,@checkBoxFraccionado BIT ,@idTipoIva INT ,@estado BIT ,@byStock INT ,@checkBoxInventario  BIT 
+	       ,@idArticulo INT ,@idBodega INT ,@bySearch NVARCHAR(300) ,@byColumn VARCHAR(10)
 
-	-- Tipos de Busqueda 
-	DECLARE @checkBoxSubFamilia  BIT, @idSubFamilia INT
-	DECLARE @checkBoxMedida      BIT, @idMedida     INT ,@fraccion NUMERIC(18,5)
-	DECLARE @checkBoxMarca       BIT, @idMarca      INT
-	DECLARE @checkBoxModelo      BIT, @idModelo     INT
-	DECLARE @checkBoxFraccionado BIT 
-	DECLARE @checkBoxTipoIva	 BIT, @idTipoIva    INT  
-	DECLARE @checkBoxStatus      BIT, @estado       BIT
-	DECLARE @checkBoxStock       BIT, @byStock      INT
-	DECLARE @checkBoxInventario  BIT 
-	DECLARE @checkBoxArticulo    BIT, @idArticulo   INT
-
-	DECLARE @idBodega INT
-	DECLARE @bySearch NVARCHAR(300)
-	DECLARE @byColumn VARCHAR(10)
+    --> Sql
 	DECLARE @params NVARCHAR(MAX)
 	DECLARE @sql NVARCHAR(MAX)
 
@@ -57,38 +43,35 @@ BEGIN
 
 	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
 	
-	-- LISTA DE GESTIOS DE ARTICULOS -- 
+	--> Get
 	IF @tipo = 1
 		BEGIN
 			
-			SELECT
-				 @bySearch            = REPLACE(bySearch,SPACE(1),'%')
-				,@checkBoxSubFamilia  = checkBoxSubFamilia ,@idSubFamilia = bySubFamilia
-				,@checkBoxMedida      = checkBoxMedida     ,@idMedida     = byMedida
-				,@checkBoxMarca       = checkBoxMarca      ,@idMarca      = byMarca
-				,@checkBoxModelo      = checkBoxModelo     ,@idModelo     = byModelo
-				,@checkBoxTipoIva     = checkBoxTipoIva    ,@idTipoIva    = byTipoIva
-				,@checkBoxStatus      = checkBoxStatus     ,@estado       = estado
-				,@checkBoxStock       = checkBoxStock      ,@byStock      = byStock
-				,@checkBoxFraccionado = checkBoxFraccionado
-				,@checkBoxInventario  = checkBoxInventario
-				,@pageIndex           = pageIndex
-				,@pageSize            = pageSize
-			FROM OPENJSON(@json)
-			WITH 
+			SELECT @bySearch            = REPLACE(bySearch,SPACE(1),'%')
+				  ,@idSubFamilia        = bySubFamilia
+				  ,@idMedida            = byMedida
+				  ,@idMarca             = byMarca
+				  ,@idModelo            = byModelo
+				  ,@idTipoIva           = byTipoIva
+				  ,@estado              = estado
+				  ,@byStock             = byStock
+				  ,@checkBoxFraccionado = checkBoxFraccionado
+				  ,@checkBoxInventario  = checkBoxInventario
+				  ,@pageIndex           = pageIndex
+				  ,@pageSize            = pageSize
+			FROM OPENJSON(@json) WITH 
 			(   bySearch   VARCHAR(500) '$.bySearch'
-			   ,checkBoxSubFamilia  BIT '$.checkBoxSubFamilia',bySubFamilia INT '$.bySubFamilia'
-			   ,checkBoxMedida      BIT '$.checkBoxMedida'    ,byMedida     INT '$.byMedida'
-			   ,checkBoxMarca       BIT '$.checkBoxMarca'     ,byMarca      INT '$.byMarca'
-			   ,checkBoxModelo      BIT '$.checkBoxModelo'    ,byModelo     INT '$.byModelo'
-			   ,checkBoxTipoIva		BIT '$.checkBoxTipoIva'   ,byTipoIva	INT '$.byTipoIva'
-			   ,checkBoxStatus      BIT '$.checkBoxStatus'    ,estado	    BIT '$.status'
-			   ,checkBoxStock       BIT '$.checkBoxStock'     ,byStock	    INT '$.byStock'
+			   ,bySubFamilia        INT '$.bySubFamilia'
+			   ,byMedida            INT '$.byMedida'
+			   ,byMarca             INT '$.byMarca'
+			   ,byModelo            INT '$.byModelo'
+			   ,byTipoIva	        INT '$.byTipoIva'
+			   ,estado	            BIT '$.status'
+			   ,byStock	            INT '$.byStock'
 			   ,checkBoxFraccionado BIT '$.checkBoxFraccionado'
 			   ,checkBoxInventario  BIT '$.checkBoxInventario'
 			   ,pageIndex			INT '$.pageIndex'
 			   ,pageSize            INT '$.pageSize'
-			   
 			)
 
 			SET @params  = '@idEntidad INT
@@ -126,65 +109,63 @@ BEGIN
 						   FROM Inventario.v_Articulo a
 						   WHERE a.idEntidad = @idEntidad  '
 
-			IF @checkBoxSubFamilia =  1
+			IF @idSubFamilia > 0
 				BEGIN 
-					SET @sql = @sql+'AND a.idSubFamilia = @idSubFamilia '
+					SET @sql = @sql + 'AND a.idSubFamilia = @idSubFamilia '
 				END 
 
-			IF @checkBoxMedida = 1
+			IF @idMedida > 0
 				BEGIN
-					SET @sql = @sql+'AND a.idMedida = @idMedida '
+					SET @sql = @sql + 'AND a.idMedida = @idMedida '
 				END
 
-			IF @checkBoxMarca = 1
+			IF @idMarca > 0
 				BEGIN
-					SET @sql = @sql+'AND a.idMarca = @idMarca '
+					SET @sql = @sql + 'AND a.idMarca = @idMarca '
 				END
 
-			IF @checkBoxModelo = 1
+			IF @idModelo > 0 
 				BEGIN
-					SET @sql = @sql+'AND a.idModelo = @idModelo '
+					SET @sql = @sql + 'AND a.idModelo = @idModelo '
 				END 
 
-			IF @checkBoxTipoIva = 1
+			IF @idTipoIva > 0
 				BEGIN
-					SET @sql = @sql+'AND a.idTipoIva = @idTipoIva '
+					SET @sql = @sql + 'AND a.idTipoIva = @idTipoIva '
 				END 
 
-			IF @checkBoxStatus = 1
+			IF @estado IN (1,0)
 				BEGIN
-					SET @sql = @sql+'AND a.estado  = @estado '
+					SET @sql = @sql + 'AND a.estado  = @estado '
 				END
 
 			IF @checkBoxFraccionado = 1 
 				BEGIN
-					SET @sql = @sql+'AND a.fraccionado = 1 '
+					SET @sql = @sql + 'AND a.fraccionado = 1 '
 				END 
 
 			IF @checkBoxInventario = 1
 				BEGIN
-					SET @sql = @sql+'AND a.llevaInventario = 1 '
+					SET @sql = @sql + 'AND a.llevaInventario = 1 '
 				END 
 
-			IF @checkBoxStock =  1
-				BEGIN
-					IF @byStock = 1
-						BEGIN 
-							SET @sql = @sql+' AND a.stock > 0 AND a.llevaInventario = 1 '
-						END
+			
+			IF @byStock = 1
+				BEGIN 
+					SET @sql = @sql + 'AND a.stock > 0 AND a.llevaInventario = 1 '
+				END
 					
-					IF @byStock = 2
-						BEGIN 
-							SET @sql = @sql+' AND a.stock <= 0 AND a.llevaInventario = 1 '
-						END 
+			IF @byStock = 2
+				BEGIN 
+					SET @sql = @sql + 'AND a.stock <= 0 AND a.llevaInventario = 1 '
 				END 
-
+				
 			IF @bySearch IS NOT NULL
 				BEGIN
-					SET @sql = @sql+' AND (a.descripcion LIKE''%''+ @bySearch +''%'' OR a.codigo LIKE''%'' + @bySearch +''%'' OR a.codigoBarra LIKE''%'' + @bySearch +''%'')'	
+					SET @sql = @sql + 'AND (a.descripcion LIKE''%''+ @bySearch +''%'' OR a.codigo LIKE''%'' + @bySearch +''%'' OR a.codigoBarra LIKE''%'' + @bySearch +''%'') '	
 				END 
 			
-			SET @sql = @sql+ ' ORDER BY a.idArticulo DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY' 
+			SET @sql = @sql+ 'ORDER BY a.idArticulo DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY ' 
 
 			
 			EXEC sp_executesql  @sql
@@ -199,21 +180,10 @@ BEGIN
 						       ,@estado       = @estado
 							   ,@pageIndex    = @pageIndex
 							   ,@pageSize     = @pageSize
-
-			SELECT idSubFamilia,descripcion FROM SubFamilia WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
-
-			SELECT idMedida,descripcion,codigo FROM Medida WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
-
-			SELECT idMarca,descripcion FROM Marca WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
-
-			SELECT idModelo,descripcion FROM Modelo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
-			
-			SELECT idTipoIva,descripcion,codigoPorcentaje FROM TipoIva WITH (NOLOCK) WHERE estado = 1
-
 			RETURN
 		END 
 
-	-- BUSQUEDA SOLO POR CODIGO DESDE LAS VENTAS --- 
+	--> Codigo de barra 
 	IF @tipo = 2
 		BEGIN
 
@@ -239,21 +209,18 @@ BEGIN
 			RETURN 
 		END 
 
-	-- BUSQUEDA DE ARTICULOS PARA CONSULTAS DE PRECIOS --
+	--> Lista de Precio
 	IF @tipo = 3
 		BEGIN 
 			
 			SELECT
 				 @bySearch            = REPLACE(bySearch,SPACE(1),'%')
-				,@checkBoxStock       = checkBoxStock
 				,@byStock             = byStock
 				,@pageIndex           = pageIndex
 				,@pageSize            = pageSize
 				,@byColumn            = byColumn
-			FROM OPENJSON(@json)
-			WITH 
+			FROM OPENJSON(@json) WITH 
 			(   bySearch   VARCHAR(500) '$.bySearch'
-			   ,checkBoxStock       BIT '$.checkBoxStock'
 			   ,byStock				INT '$.byStock'
 			   ,pageIndex			INT '$.pageIndex'
 			   ,pageSize            INT '$.pageSize'
@@ -296,19 +263,16 @@ BEGIN
 						WHERE a.idEntidad = @idEntidad AND a.estado = 1  '
 
 			
-			IF @checkBoxStock =  1
-				BEGIN
-					IF @byStock = 1
-						BEGIN 
-							SET @sql = @sql+' AND a.stock > 0 AND a.llevaInventario = 1 '
-						END
+			
+			IF @byStock = 1
+				BEGIN 
+					SET @sql = @sql+' AND a.stock > 0 AND a.llevaInventario = 1 '
+				END
 					
-					IF @byStock = 2
-						BEGIN 
-							SET @sql = @sql+' AND a.stock <= 0 AND a.llevaInventario = 1 '
-						END 
+			IF @byStock = 2
+				BEGIN 
+					SET @sql = @sql+' AND a.stock <= 0 AND a.llevaInventario = 1 '
 				END 
-
 
 			IF @bySearch IS NOT NULL
 				BEGIN
@@ -336,8 +300,6 @@ BEGIN
 			
 			SET @sql = @sql+ ' ORDER BY a.idArticulo DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY' 
 
-			PRINT @sql
-
 			EXEC sp_executesql  @sql
 						       ,@params 
 						       ,@idEntidad    = @idEntidad
@@ -347,7 +309,7 @@ BEGIN
 			RETURN 
 		END
 
-	-- LISTA PARA MOSTAR LOS PRECIOS DE LOS ARTICULOS FRACCIONADOS --- 
+	--> Articulos Fraccionados 
 	IF @tipo = 4
 		BEGIN
 			
@@ -367,7 +329,7 @@ BEGIN
 			RETURN
 		END
 		
-	-- DATOS PARA EL DATAFORM DE ARTICULOS 
+	--> DataForm 
 	IF @tipo = 5
 		BEGIN
 			
@@ -375,13 +337,12 @@ BEGIN
 
 			SELECT idEstab_Asig,idBodega,bodega,defaultBodega FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @idRol ORDER BY defaultBodega DESC
 
-			SELECT 
-				 idFamilia    = f.idFamilia
-				,idSubFamilia = sf.idSubFamilia
-				,familia      = ISNULL(f.descripcion,'Ninguna')
-				,subFamilia   = sf.descripcion
-				,sf.siglas
-				,sf.ultimoSecuencial
+			SELECT idFamilia    = f.idFamilia
+				  ,idSubFamilia = sf.idSubFamilia
+				  ,familia      = ISNULL(f.descripcion,'Ninguna')
+				  ,subFamilia   = sf.descripcion
+				  ,sf.siglas
+				  ,sf.ultimoSecuencial
 			FROM dbo.SubFamilia sf  WITH (NOLOCK)
 			 LEFT JOIN Familia f    WITH (NOLOCK) ON sf.idFamilia = f.idFamilia 
 			WHERE sf.idEntidad = @idEntidad AND sf.estado = 1
@@ -397,17 +358,16 @@ BEGIN
 
 			SELECT idMarca,codigo,descripcion  FROM dbo.Marca   WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
 
-            --Para Crud svelte 
             SELECT idTipoArticulo,descripcion FROM dbo.TipoArticulo WHERE estado = 1 
 
             SELECT * FROM dbo.TipoIva WHERE estado = 1
-	        SELECT idTarifa,descripcion,codigo,predeterminada FROM dbo.Tarifa WHERE idEntidad = @idEntidad AND estado = 1 ORDER BY codigo ASC
-			RETURN 
-
-            
+	        
+            SELECT idTarifa,descripcion,codigo,predeterminada FROM dbo.Tarifa WHERE idEntidad = @idEntidad AND estado = 1 ORDER BY codigo ASC
+			
+            RETURN
 		END 
 
-	-- LISTA PARA VERIFICAR LOS DATOS DE LA VENTA ----- 
+	--> Verificar datos de la venta
 	IF @tipo = 6
 		BEGIN
 				SELECT @idArticulo = idArticulo FROM OPENJSON(@json) WITH (idArticulo INT '$.idArticulo')
@@ -468,7 +428,7 @@ BEGIN
 			RETURN 
 		END
 
-	-- CONFIGURACION DE STOCK PARA LAS VENTAS ------
+	--> Configuracion 
 	IF @tipo = 7
 		BEGIN
 			
@@ -545,7 +505,7 @@ BEGIN
 			RETURN
 		END 
 
-	-- DATOS PARA EL FORMULARIO DEL ARTICULO RESTAURANTE -- 
+	--> Resturante 
 	IF @tipo = 8
 		BEGIN
 
@@ -577,7 +537,7 @@ BEGIN
 			RETURN 
 		END 
 	
-	-- DATOS PARA CONSOLIDAR LOS ARTICULOS IMPORTADOS -- 
+	--> Articulos Importados 
 	IF @tipo = 9
 		BEGIN
 			SELECT @idBodega = idBodega FROM OPENJSON(@json) WITH (idBodega INT '$.idBodega')
@@ -621,7 +581,7 @@ BEGIN
             RETURN 
 		END 
 
-    -- DATOS PARA EL RESTAURANTE - ORDEN 
+    --> Resturante Orden
     IF @tipo = 10
         BEGIN 
             SELECT @idArticulo = idArticulo FROM OPENJSON(@json) WITH (idArticulo INT '$.idArticulo')
@@ -650,6 +610,22 @@ BEGIN
 								WHERE vat.idArticulo = a.idArticulo
 								ORDER BY precioPredeterminado DESC FOR JSON PATH) 
 			FROM Inventario.v_Articulo a WHERE idArticulo = @idArticulo AND estado = 1 
+            RETURN 
+        END 
+
+    --> Filters
+    IF @tipo = 11
+        BEGIN
+            SELECT idSubFamilia,descripcion FROM SubFamilia WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
+
+			SELECT idMedida,descripcion,codigo FROM Medida WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
+
+			SELECT idMarca,descripcion FROM Marca WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
+
+			SELECT idModelo,descripcion FROM Modelo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1
+			
+			SELECT idTipoIva,descripcion,codigoPorcentaje FROM TipoIva WITH (NOLOCK) WHERE estado = 1
+
             RETURN 
         END 
 
