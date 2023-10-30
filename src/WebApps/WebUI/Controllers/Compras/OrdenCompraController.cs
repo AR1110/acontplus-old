@@ -1,9 +1,9 @@
 ﻿using Common.Core.Models;
 using DataAccess;
 using DataAccess.Compras;
-using Domain.Models;
 using Domain.ViewModels.Compras;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common;
 using Services.Common.Logs;
 
 namespace WebUI.Controllers.Compras
@@ -12,7 +12,7 @@ namespace WebUI.Controllers.Compras
     {
         private readonly IConfiguration _configuration;
         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
-        private DataAccessObject _dao;
+
 
         GenericResponse _gr = new();
         private OrdenCompraDao _oc;
@@ -20,7 +20,7 @@ namespace WebUI.Controllers.Compras
         public OrdenCompraController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
-            _dao = new DataAccessObject(_configuration);
+
             _oc = new OrdenCompraDao(_configuration);
             _oc = new OrdenCompraDao(_configuration);
 
@@ -84,10 +84,22 @@ namespace WebUI.Controllers.Compras
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("id", id);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Compra.Orden_Delete", parameters)));
+            var response = new GenericResponse();
+            try
+            {
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
+                    await _db.SPExecute("Compra.Orden_Delete");
+                    _db.AddDynamicParam("idRol", User.GetUserRoleId());
+                    _db.AddDynamicParam("id", id);
+                    response = _db.GetDefault();
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

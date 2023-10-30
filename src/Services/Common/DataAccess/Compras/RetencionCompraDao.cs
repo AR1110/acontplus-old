@@ -1,10 +1,10 @@
 ﻿using System.Data;
-using Microsoft.Data.SqlClient;
 using Common.Core.Models;
 using Common.Core.Utils;
 using Domain.Models;
 using Domain.Models.InfoAdicional;
 using Domain.ViewModels;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
@@ -269,52 +269,6 @@ namespace DataAccess.Compras
 
             }
             return _gr;
-        }
-        public async Task<object[]> DataSendEmailAsync(string json)
-        {
-            var send = new Email();
-            var urlSri = "";
-            var invoiceName = "";
-            try
-            {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
-                {
-                    var cmd = new SqlCommand("Compra.Retencion_Send_Email", con);
-                    cmd.Parameters.AddWithValue("json", json);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        _gr.id = reader.GetString(0);
-                        _gr.message = reader.GetString(1);
-                        if (_gr.id == "1")
-                        {
-                            send = new Email()
-                            {
-                                from = reader.GetString(2),
-                                password = reader.GetString(3),
-                                to = reader.GetString(4),
-                                subject = reader.GetString(5),
-                                message = reader.GetString(6),
-                                cc = reader.GetString(7),
-                            };
-                            urlSri = reader.GetString(8);
-                            invoiceName = reader.GetString(9);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _gr.id = "0";
-                _gr.message = ex.Message.ToString();
-            }
-            finally
-            {
-
-            }
-            return new object[] { send, urlSri, invoiceName };
         }
     }
 }

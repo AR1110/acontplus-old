@@ -2,7 +2,6 @@
 using Common.Core.Models;
 using Common.Core.Utils;
 using DataAccess;
-using Domain.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -46,7 +45,7 @@ namespace ApiConfig.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<GenericResponse>> Put(int id, [FromBody] RequestApiDto parameters)
+        public async Task<ActionResult<GenericResponse>> Put(int id, [FromBody] ApiRequest parameters)
         {
             DbAccess _db = new DbAccess(_configuration);
             GenericResponse _response = new GenericResponse();
@@ -55,7 +54,7 @@ namespace ApiConfig.Controllers
                 await _db.SPExecute("Config.EmailConfig_Update");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.FindFirstValue("idUsuarioRol")));
                 _db.AddDynamicParam("idEmailConfig", id);
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.data)));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

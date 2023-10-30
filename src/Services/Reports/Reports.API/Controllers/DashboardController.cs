@@ -20,7 +20,7 @@ namespace Reports.API.Controllers
         }
         [HttpGet]
         public async Task<IActionResult> Get(string json)
-        {  
+        {
             try
             {
                 var response = await _dashboard.GetAsync(new Dictionary<string, object> { { "idUsuarioRol", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json ?? "") } });
@@ -28,7 +28,7 @@ namespace Reports.API.Controllers
                 return Ok(new APIResponse() { code = "1", payload = response });
             }
             catch (Exception ex)
-            { 
+            {
                 _log.LogActivity("Error on Get Statistis: \n" + ex.ToString());
                 return BadRequest("Error on get Statistis");
             }

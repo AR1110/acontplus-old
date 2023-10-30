@@ -14,7 +14,7 @@ namespace Reports.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class ReporteController : ControllerBase
-    { 
+    {
         private readonly IReportService _reportService;
         private readonly IRdlcReportService _rdlcreport;
         private readonly LogWriter _log;
@@ -53,7 +53,7 @@ namespace Reports.API.Controllers
                     }
                     else
                     {
-                        dataParams["idRol"]= idUsuarioRol;
+                        dataParams["idRol"] = idUsuarioRol;
                     }
                 }
 

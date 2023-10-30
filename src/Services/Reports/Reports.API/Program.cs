@@ -1,11 +1,9 @@
-﻿using Common.Core.Interfaces;
-using Common.Core.Utils;
-using Common.Reports.Services;
-using Services.Common.Logs;
-using Services.Common;
-using Autofac;
+﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Common.Core.Utils;
 using Reports.API.Extensions;
+using Services.Common;
+using Services.Common.Logs;
 
 namespace Reports.API
 {

@@ -1,7 +1,6 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
 using DataAccess;
-using Domain.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -48,7 +47,7 @@ namespace ApiContabilidad.Controllers
         }
 
         [HttpPost("Insert")]
-        public async Task<IActionResult> Insert([FromBody] RequestApiDto paremeter)
+        public async Task<IActionResult> Insert([FromBody] ApiRequest paremeter)
         {
 
             GenericResponse _response = new GenericResponse();
@@ -57,7 +56,7 @@ namespace ApiContabilidad.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _dbAccess.SPExecute("Contabilidad.ComprobanteIngreso_Insert");
                 _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _dbAccess.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(paremeter.data)));
+                _dbAccess.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(paremeter.Data)));
                 _response = _dbAccess.GetDefault();
             }
             catch (Exception ex)
@@ -73,7 +72,7 @@ namespace ApiContabilidad.Controllers
         }
 
         [HttpPut("Cancel")]
-        public async Task<IActionResult> Cancel([FromBody] RequestApiDto paremeter)
+        public async Task<IActionResult> Cancel([FromBody] ApiRequest paremeter)
         {
 
             GenericResponse _response = new GenericResponse();
@@ -82,7 +81,7 @@ namespace ApiContabilidad.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _dbAccess.SPExecute("Contabilidad.ComprobanteIngreso_Update_Cancel");
                 _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _dbAccess.AddDynamicParam("json", DataConverters.SerializeDictionary(paremeter.data));
+                _dbAccess.AddDynamicParam("json", DataConverters.SerializeDictionary(paremeter.Data));
                 _response = _dbAccess.GetDefault();
             }
             catch (Exception ex)

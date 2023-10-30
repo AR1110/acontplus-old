@@ -1,7 +1,6 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
 using DataAccess;
-using Domain.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -44,7 +43,7 @@ namespace Inventario.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<GenericResponse>> Post(RequestApiDto parameters)
+        public async Task<ActionResult<GenericResponse>> Post(ApiRequest parameters)
         {
             DbAccess _db = new DbAccess(_configuration);
             GenericResponse _response = new GenericResponse();
@@ -52,7 +51,7 @@ namespace Inventario.API.Controllers
             {
                 await _db.SPExecute("Inventario.PrecioMasivo_Insert");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.data));
+                _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.Data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -68,7 +67,7 @@ namespace Inventario.API.Controllers
             return _response;
         }
         [HttpPut]
-        public async Task<ActionResult<GenericResponse>> Put(RequestApiDto parameters)
+        public async Task<ActionResult<GenericResponse>> Put(ApiRequest parameters)
         {
             DbAccess _db = new DbAccess(_configuration);
             GenericResponse _response = new GenericResponse();
@@ -76,7 +75,7 @@ namespace Inventario.API.Controllers
             {
                 await _db.SPExecute("Inventario.PrecioMasivo_Update", true);
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.data));
+                _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.Data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

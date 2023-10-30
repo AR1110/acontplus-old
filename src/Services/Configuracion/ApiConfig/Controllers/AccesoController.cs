@@ -1,7 +1,6 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
 using DataAccess;
-using Domain.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -47,14 +46,14 @@ namespace ApiConfig.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put(RequestApiDto parameters)
+        public async Task<IActionResult> Put(ApiRequest parameters)
         {
             var _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Config.Acceso_Update", true);
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.data));
+                _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.Data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)

@@ -7,8 +7,8 @@ using Common.Core.Utils;
 using Compras.API.Utils;
 using Compras.Application;
 using DataAccess;
-using Domain.Dtos;
 using FactElect.Application;
+using FactElect.Application.Services;
 using FactElect.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -130,40 +130,40 @@ namespace Compras.API.Controllers
         [HttpGet("Preview/{id}")]
         public async Task<IActionResult> Preview(int id)
         {
-
-
             GenericResponse _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
 
-                DbAccess _db = new DbAccess(_configuration);
-                Dictionary<string, object> parameters = new Dictionary<string, object>();
-                await _db.SPExecute("Recepcion.Documento_Get_Id");
-                _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("idDocumento", id);
-                DataTable dt = _db.GetDataTable();
-                if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
+                using (DbAccess _db = new DbAccess(_configuration))
                 {
-                    _response.code = "1";
-                    string xmlDoc = dt.Rows[0]["xmlDoc"].ToString();
-                    XmlDocument xdoc = new XmlDocument();
-                    xdoc.LoadXml(xmlDoc);
-                    ComprobanteElectronico ceXml = new ComprobanteElectronico();
-                    string sms = string.Empty;
-                    DataXmlComprobante _getXmlSriData = new DataXmlComprobante();
-                    if (!_getXmlSriData.GetData(xdoc, ref ceXml, ref sms))
+                    Dictionary<string, object> parameters = new Dictionary<string, object>();
+                    await _db.SPExecute("Recepcion.Documento_Get_Id");
+                    _db.AddDynamicParam("idRol", idUsuarioRol);
+                    _db.AddDynamicParam("idDocumento", id);
+                    DataTable dt = _db.GetDataTable();
+                    if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
                     {
-                        _response.Create("0", sms);
+                        _response.code = "1";
+                        string xmlDoc = dt.Rows[0]["xmlDoc"].ToString();
+                        XmlDocument xdoc = new XmlDocument();
+                        xdoc.LoadXml(xmlDoc);
+                        ComprobanteElectronico ceXml = new ComprobanteElectronico();
+                        string sms = string.Empty;
+                        DataXmlComprobante _getXmlSriData = new DataXmlComprobante();
+                        if (!_getXmlSriData.GetData(xdoc, ref ceXml, ref sms))
+                        {
+                            _response.Create("0", sms);
+                        }
+                        else
+                        {
+                            _response.payload = DocumentoXmlToHtml.CreateHtml(ceXml);
+                        }
                     }
                     else
                     {
-                        _response.payload = DocumentoXmlToHtml.CreateHtml(ceXml);
+                        _response.Create(code: "0", message: "No se encontro xml");
                     }
-                }
-                else
-                {
-                    _response.Create(code: "0", message: "No se encontro xml");
                 }
             }
             catch (Exception ex)
@@ -389,7 +389,7 @@ namespace Compras.API.Controllers
         }
 
         [HttpPost("Post")]
-        public async Task<IActionResult> Post(RequestApiDto parameters)
+        public async Task<IActionResult> Post(Common.Core.Models.ApiRequest parameters)
         {
 
             GenericResponse _response = new GenericResponse();
@@ -400,7 +400,7 @@ namespace Compras.API.Controllers
                 await _db.SPExecute("Recepcion.Documento_Insert", true);
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 //_db.AddDynamicParam("jsonData", SqlValidation.ValidateSqlString(data.jsonData));
-                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.data)));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -440,7 +440,7 @@ namespace Compras.API.Controllers
             return Ok(_response);
         }
         [HttpPut("Migrate")]
-        public async Task<IActionResult> Migrate(RequestApiDto parameters)
+        public async Task<IActionResult> Migrate(ApiRequest parameters)
         {
             GenericResponse _response = new GenericResponse();
             try
@@ -448,7 +448,7 @@ namespace Compras.API.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Recepcion.Documento_Migrate");
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.data));
+                _db.AddDynamicParam("json", DataConverters.SerializeDictionary(parameters.Data));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
