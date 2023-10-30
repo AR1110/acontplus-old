@@ -331,7 +331,7 @@
         </div>
       </div>
       <div class="col-lg-6 col-md-6 col-sm-12 col-12">
-        {#if dataSearch.idCliente > 0}
+        <!-- {#if dataSearch.idCliente > 0} -->
           <div class="custom-control custom-switch">
             <input
               type="checkbox"
@@ -363,7 +363,7 @@
               aria-label="Text input with checkbox"
             />
           </div> -->
-        {/if}
+        <!-- {/if} -->
       </div>
     </div>
   </div>
