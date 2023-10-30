@@ -3,20 +3,23 @@ const mapperToAction = () => {
     console.log(support);
     const factura = {
       idCliente: support.customerId || 0,
+      idTiempoCredito: support.idTiempoCredito || 0,
       idPuntoEmision: support.puntoEmisionId || 0,
+      idUsuario: support.userAssignedId || 0,
+      tarifa: support.tarifa || "",
       fechaEmision: support.date,
-      fechaVencimiento: support.date,
+      fechaVencimiento: support.fechaVencimiento || new Date(),
       subTotalSinImpuestos: support.sumaTotalNeto || 0,
       subTotalIvaCero: support.subTotalIvaCero || 0,
       subTotalIva: support.subTotalIva || 0,
       subTotalNetoIva: support.subTotalNetoIva || 0,
       subTotalNetoIvaCero: support.subTotalNetoIvaCero || 0,
-      subTotalNoObjetoIva:  support.subTotalNoObjetoIva || 0,
+      subTotalNoObjetoIva: support.subTotalNoObjetoIva || 0,
       subTotalNetoNoObjetoIva: support.subTotalNetoNoObjetoIva || 0,
       subTotalExentoIva: support.subTotalExentoIva || 0,
       subTotalNetoExentoIva: support.subTotalNetoExentoIva || 0,
       totalDescuento: support.totalDescuento || 0,
-      porcentajeDescuento:  support.porcentajeDescuento || 0,
+      porcentajeDescuento: support.porcentajeDescuento || 0,
       totalIce: support.totalIce || 0,
       irbpnr: support.irbpnr || 0,
       propina: support.propina || 0,
@@ -26,6 +29,11 @@ const mapperToAction = () => {
       total: support.total || 0,
       observacion: support.obs || "",
       placa: support.placa || "",
+      identificacionComprador: support.identificacionComprador || "",
+      razonSocialComprador: support.razonSocialComprador || "",
+      direccionComprador: support.direccionComprador || "",
+      email: support.email || "",
+      telefono: support.telefono || "",
     };
 
     return factura;
