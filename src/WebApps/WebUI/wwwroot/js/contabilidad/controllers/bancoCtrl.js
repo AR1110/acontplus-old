@@ -43,11 +43,11 @@
                 pageIndex: $scope.pageIndex,
                 pageSize: $scope.pageSize
             }
-            bancoSvc.get(params).then(response=>{
-                console.log(response)
+            showLoader();
+            bancoSvc.get(params).then(response=>{ 
                 $scope.bancos = response;
                 $scope.totalRecords = $scope.bancos.length>0? $scope.bancos[0].totalRecords:0
-            }) 
+            }).finally(()=>hideLoader()) 
         }
         $scope.initiload();
 
@@ -75,6 +75,7 @@
         }
 
         $scope.openModalUpdate = async (item) => {
+            console.log(item)
             modalSvc.openModalCustom({
                 controller: 'modalBancoCtrl',
                 template: URL_TEMPLATE,
@@ -87,7 +88,7 @@
                 }
             })
         } 
-        $scope.delete = function(data) {
+        $scope.askToDelete = function(data) {
             Swal.fire({
                 icon: 'warning',
                 html: '<small>Esta seguro/a de eliminar esta Banco ahora?</small>',
@@ -121,7 +122,7 @@
 
     function modalBancoCtrl($scope, $uibModalInstance, params) {  
     
-        if (params.idCategoriaCompra > 0) {
+        if (params.idBanco > 0) {
             $scope.tipoRegistro = 2;
             $scope.titleModal = 'Editar';
             $scope.btnTextSave = 'Actualizar';

@@ -100,7 +100,7 @@ namespace Contabilidad.API.Controllers
             var _response = new GenericResponse();
             try
             {
-                await _db.SPExecute("Compra.Categoria_Delete");
+                await _db.SPExecute("Contabilidad.Banco_Delete");
                 _db.AddDynamicParam("userRoleId", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
                 _response = _db.GetDefault();
