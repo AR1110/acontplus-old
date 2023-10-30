@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
-namespace ApiContabilidad.Controllers
+namespace Contabilidad.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -28,7 +28,7 @@ namespace ApiContabilidad.Controllers
             var _response = new GenericResponse();
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Contabilidad.Banco_Get");
                 _db.AddDynamicParam("userRoleId", idUsuarioRol);
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -50,7 +50,7 @@ namespace ApiContabilidad.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(string json)
         {
-            GenericResponse _response = new GenericResponse();
+            var _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Contabilidad.Banco_Insert");
@@ -73,7 +73,7 @@ namespace ApiContabilidad.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, string json)
         {
-            GenericResponse _response = new GenericResponse();
+            var _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Contabilidad.Banco_Update");
@@ -97,7 +97,7 @@ namespace ApiContabilidad.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            GenericResponse _response = new GenericResponse();
+            var _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Compra.Categoria_Delete");

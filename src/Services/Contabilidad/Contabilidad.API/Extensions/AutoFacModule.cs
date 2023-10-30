@@ -4,7 +4,7 @@ using Common.Infrastructure.Data;
 using Common.Infrastructure.Repository;
 using Contabilidad.Infrastructure.Data;
 
-namespace ApiContabilidad.Extensions
+namespace Contabilidad.API.Extensions
 {
     public class AutoFacModule : Module
     {

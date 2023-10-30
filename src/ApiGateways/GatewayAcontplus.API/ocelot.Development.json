@@ -324,7 +324,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7273
+          "Port": 7132
         }
       ],
       "DownstreamPathTemplate": "/api/CuentaPorPagar/{everything}",
@@ -340,7 +340,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7273
+          "Port": 7132
         }
       ],
       "DownstreamPathTemplate": "/api/CuentaPorPagar?json={json}",
@@ -356,7 +356,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7273
+          "Port": 7132
         }
       ],
       "DownstreamPathTemplate": "/api/CuentaPorPagar/{id}?json={json}",
@@ -958,7 +958,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7273
+          "Port": 7132
         }
       ],
       "DownstreamPathTemplate": "/api/CuentaPorCobrar{everything}",
@@ -975,7 +975,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7273
+          "Port": 7132
         }
       ],
       "DownstreamPathTemplate": "/api/ComprobanteIngreso{everything}",
@@ -1247,7 +1247,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7273
+          "Port": 7132
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",

@@ -1,13 +1,13 @@
-﻿using ApiContabilidad.Dtos;
-using Common.Core.Models;
+﻿using Common.Core.Models;
 using Common.Core.Utils;
+using Contabilidad.API.Dtos;
 using DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace ApiContabilidad.Controllers
+namespace Contabilidad.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -28,10 +28,10 @@ namespace ApiContabilidad.Controllers
         public async Task<IActionResult> Get(string json)
         {
 
-            GenericResponse _response = new GenericResponse();
+            var _response = new GenericResponse();
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _dbAccess.SPExecute("Contabilidad.CuentaPorPagar_Get");
                 _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _dbAccess.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -54,10 +54,10 @@ namespace ApiContabilidad.Controllers
         public async Task<IActionResult> Post(string json)
         {
 
-            GenericResponse _response = new GenericResponse();
+            var _response = new GenericResponse();
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _dbAccess.SPExecute("Contabilidad.CuentaPorPagar_Insert");
                 _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _dbAccess.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -80,10 +80,10 @@ namespace ApiContabilidad.Controllers
         public async Task<IActionResult> Put(int id, CuentaPorPagarDto data)
         {
 
-            GenericResponse _response = new GenericResponse();
+            var _response = new GenericResponse();
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value); await _dbAccess.SPExecute("Contabilidad.CuentaPorPagar_Update");
+                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value); await _dbAccess.SPExecute("Contabilidad.CuentaPorPagar_Update");
                 _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _dbAccess.AddDynamicParam("idCuentaPorPagar", id);
                 _dbAccess.AddDynamicParam("json", SqlStringParam.Sanitize(data.cuotas));
