@@ -217,6 +217,11 @@ app.constant('nombreModalCompra', {
             L: 'Proveedor/_ModalProveedorLista.cshtml'
         }
     },
+    CATEGORIA_COMPRA: {
+        fileCtrl: '/js/compras/modals/modalCategoriaCompraCtrl.js' + CHANGE_VERSION(),
+        controller: 'modalCategoriaCompraCtrl',        
+        template: '~/Pages/CategoriaCompra/_ModalAddUpdate.cshtml',        
+    }
 })
 
 app.constant('nombreModalLogistica', {

@@ -11,7 +11,7 @@
                 datosAdicionales:'=',
                 codDoc: '='
             },
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
 
                 element.on('click', async function () {
                     let cantidad = parseFloat(scope.entity.cantidad)                    
@@ -61,8 +61,7 @@
                                 scope.getDataEtiqueta({
                                     item: scope.datosAdicionales
                                 })
-                            }
-                            console.log(scope.datosAdicionales)                            
+                            }                            
                         }
                     })
                 });

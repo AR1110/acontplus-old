@@ -4,7 +4,8 @@ import FileSaver from "file-saver";
 import { clientFile } from "$lib/utils/axiosClient";
 
 class Shared {
-  download(parameters: object) {
+    download(parameters: object, isReturnData?: boolean) {
+        console.log(isReturnData)
     showLoader();
     clientFile("Reporte/Download", parameters).then((response) => {
       const ieEDGE = navigator.userAgent.match(/Edge/g);
