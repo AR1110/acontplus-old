@@ -150,11 +150,11 @@
         }
 
         service.getForCreditNote = function (query) {
-            if (!query.hasOwnProperty("byCliente")) {
+            if (!('byCliente' in query)) {
                 formSvc.sweetAlert('warning', 'No se ha proporcionado el idCliente')
                 throw ''
             }
-            if (!query.hasOwnProperty("codEstab")) {
+            if (!('codEstab' in query)) {
                 formSvc.sweetAlert('warning', 'No se ha proporcionado el codEstab')
                 throw ''
             }

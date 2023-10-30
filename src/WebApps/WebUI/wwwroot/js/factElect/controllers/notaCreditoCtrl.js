@@ -13,11 +13,7 @@
     let tS = {};
     let clienteSvc = {};
 
-    let mainDataForm = {};
-
-
-
-
+    let mainDataForm = {}; 
 
     //main Controller Ctrl
     app.controller('notaCreditoClienteCtrl', notaCreditoClienteCtrl);
@@ -31,11 +27,11 @@
     function notaCreditoClienteCtrl($scope, $injector, decodeToken) {
 
         notaCreditoSvc = $injector.get('notaCreditoService');
-        commonSvc = $injector.get('commonService');
-        modalSvc = $injector.get('modalService');
-        fS = $injector.get('formulario');
-        tS = $injector.get('toastService');
-        clienteSvc = $injector.get('clienteService');
+        commonSvc      = $injector.get('commonService');
+        modalSvc       = $injector.get('modalService');
+        fS             = $injector.get('formulario');
+        tS             = $injector.get('toastService');
+        clienteSvc     = $injector.get('clienteService');
         const nombreModalFactElect = $injector.get("nombreModalFactElect");
 
         const TIPO_DOC = commonSvc.tipoDoc['NC'];
@@ -59,15 +55,14 @@
                 $scope.dataSearch.fechaFin = item.endDate
             $scope.getNotaCreditos();
         }
-
-
-
+ 
         $scope.onKeyupCliente = function () {
             if (!$scope.cliente.nombreCliente) {
                 $scope.dataSearch.idCliente = 0;
                 $scope.dataSearch.checkBoxFecha = true;
             }
         }
+
         $scope.onSelectCliente = function (item) {
             $scope.dataSearch.idCliente = item.idCliente;
             $scope.dataSearch.checkBoxFecha = true;
@@ -113,11 +108,9 @@
             // $scope.calculoColumnTotal();
         }
 
-        //=====================Eend Filters=======================
-
+        //=====================Eend Filters======================= 
         $scope.getNotaCreditos = function () {
-            try {
-
+            try { 
                 if ($scope.dataSearch.nroSecuencial) {
                     if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
                         $scope.dataSearch.checkBoxFecha = true;
@@ -143,9 +136,7 @@
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize,
                     nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
-                }
-
-
+                } 
                 $scope.notaCreditos = [];
                 notaCreditoSvc.get(dataSearch).then(response => {
                     $scope.notaCreditos = response || [];
@@ -178,8 +169,7 @@
             })
 
             notaCreditoSvc.get({ tipo: 2 }).then(response => {
-                mainDataForm = response;
-                console.log(response)
+                mainDataForm = response; 
             })
 
         }
@@ -456,8 +446,7 @@
                     actividadTipoIva
                 } = params;
 
-                if (dataDocumento && dataDocumento.idNotaCredito > 0) {
-                    console.log(actividadTipoIva)
+                if (dataDocumento && dataDocumento.idNotaCredito > 0) { 
                     $scope.factura = factura;
                     $scope.cliente = cliente;
 
@@ -531,7 +520,7 @@
         }
 
 
-        function setColumnDefs(width = '5%') {
+        function setColumnDefs() {
             let defaultPermission = Object.freeze({
                 tarifa: {
                     update: true
@@ -564,7 +553,7 @@
             $scope.gridOptions.columnDefs = [{
                 name: 'Op.',
                 enableCellEdit: false,
-                width,
+                width: '5%',
                 minWidth: '50',
                 cellTemplate: CELL_TEMPLATE_OPTION,
             },
