@@ -436,7 +436,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/Impresion/?json={json}",
@@ -452,7 +452,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte/Post",
@@ -468,7 +468,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte/{method}/{everything}",
@@ -484,7 +484,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/ReporteDataSource/",
@@ -500,7 +500,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/ReporteDataSource/{everything}",
@@ -517,7 +517,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/FirmaElectronica{everything}",
@@ -539,7 +539,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/EmailConfig{everything}",
@@ -577,7 +577,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/Usuario/{everything}",
@@ -593,7 +593,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/UsuarioRol/Get/{id}",
@@ -609,7 +609,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/UsuarioPermiso/{everything}",
@@ -625,7 +625,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/UsuarioPermiso",
@@ -641,7 +641,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/UsuarioPermiso/CheckHasPermission/{everything}",
@@ -701,7 +701,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/Solicitud/{everything}",
@@ -717,7 +717,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/Solicitud/Check/{everything}",
@@ -733,7 +733,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/Sistema/{everything}",
@@ -813,7 +813,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/Entidad/{everything}",
@@ -829,7 +829,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/EntidadConfigSri/{everything}",
@@ -845,7 +845,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/SubMenu/{everything}",
@@ -877,7 +877,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/WhatsAppSession{everything}",
@@ -910,7 +910,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/WhatsappMessage{everything}",
@@ -1008,7 +1008,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/WhatsappUsage{everything}",
@@ -1040,7 +1040,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/TipoEntidad{everything}",
@@ -1056,7 +1056,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/TiempoCredito{everything}",
@@ -1104,7 +1104,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/Impresora{everything}",
@@ -1162,7 +1162,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/EstabAsig{everything}",
@@ -1204,7 +1204,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",
