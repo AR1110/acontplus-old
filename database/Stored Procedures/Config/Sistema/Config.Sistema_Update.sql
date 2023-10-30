@@ -27,8 +27,6 @@ BEGIN
 		
 		SELECT @jsonConfig = jsonConfig, @idSistema = idSistema FROM OPENJSON(@json) WITH (idSistema INT '$.idSistema', jsonConfig NVARCHAR(MAX) '$.jsonConfig' AS JSON)
 
-        SELECT '0'code,'Registrado Exitosamente' +  @jsonConfig as 'message'
-		RETURN 
 
 		IF ISJSON(@jsonConfig) = 0	
 			BEGIN
@@ -50,7 +48,7 @@ BEGIN
 		BEGIN
 			ROLLBACK TRAN; 
 		END
-		SELECT '0'code,'Info: Error en el procedimiento ' + ERROR_MESSAGE() as  'message'
+		SELECT '0'code,'Info: Error en el procedimiento ' as 'message'
 	END CATCH
 
 END
