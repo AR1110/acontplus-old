@@ -1,5 +1,5 @@
 import { client } from "$lib/utils/axiosClient.js";
-const url = "Ventas/NotaEntrega/";
+const url = "Venta/NotaEntrega/";
 
 async function get(params) {
   return await client.get(`${url}?json=${params}`).then(
@@ -15,6 +15,7 @@ async function get(params) {
 }
 
 async function post(data) {
+  console.log(data);
   return await client.post(`${url}Insert`, data).then(
     (responseAxios) => {
       if (responseAxios.status == 200)
