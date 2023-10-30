@@ -47,6 +47,7 @@ export default defineConfig({
             "$services": resolve(__dirname, "../WebUI/App/lib/services"),
             "$technical-support": resolve(__dirname, "../WebUI/App/routes") + "/TechnicalSupport",
             "$utils": resolve(__dirname, "../WebUI/App/lib/utils"),
+            "$ventas": resolve(__dirname, "../WebUI/App/routes/ventas"),
         }
     },
     build: {
