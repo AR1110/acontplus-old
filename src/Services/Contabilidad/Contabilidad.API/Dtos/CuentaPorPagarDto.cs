@@ -1,4 +1,4 @@
-﻿namespace ApiContabilidad.Dtos
+﻿namespace Contabilidad.API.Dtos
 {
     public class CuentaPorPagarDto
     {

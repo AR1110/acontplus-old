@@ -4,7 +4,7 @@ using DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
-namespace ApiContabilidad.Controllers
+namespace Contabilidad.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -25,10 +25,10 @@ namespace ApiContabilidad.Controllers
         public async Task<IActionResult> Get(string json)
         {
 
-            GenericResponse _response = new GenericResponse();
+            var _response = new GenericResponse();
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _dbAccess.SPExecute("Contabilidad.ComprobanteIngreso_Get");
                 _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _dbAccess.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -50,10 +50,10 @@ namespace ApiContabilidad.Controllers
         public async Task<IActionResult> Insert([FromBody] ApiRequest paremeter)
         {
 
-            GenericResponse _response = new GenericResponse();
+            var _response = new GenericResponse();
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _dbAccess.SPExecute("Contabilidad.ComprobanteIngreso_Insert");
                 _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _dbAccess.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(paremeter.Data)));
@@ -75,10 +75,10 @@ namespace ApiContabilidad.Controllers
         public async Task<IActionResult> Cancel([FromBody] ApiRequest paremeter)
         {
 
-            GenericResponse _response = new GenericResponse();
+            var _response = new GenericResponse();
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _dbAccess.SPExecute("Contabilidad.ComprobanteIngreso_Update_Cancel");
                 _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _dbAccess.AddDynamicParam("json", DataConverters.SerializeDictionary(paremeter.Data));
