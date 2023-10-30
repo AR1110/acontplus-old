@@ -476,7 +476,7 @@
     support.fechaVencimiento = newFormatDate(support.fechaVencimiento);
 
     let data = {
-      factura: JSON.stringify(MapperToAction.facturaMapperTo(support)),
+      factura: JSON.stringify(MapperToAction.principalMapperTo(support)),
       detalle: JSON.stringify(MapperToAction.detalleMapperTo(supportDetails)),
       adicional: JSON.stringify({}),
       infoAdicionalArticulo: JSON.stringify({}),
@@ -486,7 +486,7 @@
       .then((response) => {
         if (response.code == "0") {
           return toast({ type: "warning", message: response.message });
-        };
+        }
 
         onModalClose();
         toast({ type: "success", message: response.message });
@@ -496,12 +496,11 @@
       });
   };
 
-
   const newFormatDate = (date: string) => {
     let splitDate = date.split("-");
     let newDate = `${splitDate[2]}-${splitDate[1]}-${splitDate[0]}`;
     return newDate;
-  }
+  };
 
   const getFechaVencimiento = function (fechaEmision, dia) {
     let fechaVencimiento = new Date(fechaEmision);
@@ -518,16 +517,33 @@
   const saveNotaEntrega = () => {
     showLoader();
 
-    let data = {
-      notaEntrega: support,
-      detalle: supportDetails,
-      infoAdicionalArticulo: null,
-    };
+    let getTiempoCredito = tiempoCreditos[0];
+    support.tarifa = tarifaImpuestoFactura[0].tarifa;
 
-    NotaEntregaService.post(data)
+    support.idTiempoCredito = getTiempoCredito.idTiempoCredito;
+    support.fechaVencimiento = getFechaVencimiento(
+      support.date,
+      getTiempoCredito.diasCredito
+    );
+
+    support.date = newFormatDate(support.date);
+    support.fechaVencimiento = newFormatDate(support.fechaVencimiento);
+
+    NotaEntregaService.post({
+      data: {
+        notaEntrega: MapperToAction.notaEntregaMapper(support),
+        detalle: MapperToAction.detalleNotaEntrega(supportDetails),
+        infoAdicionalArticulo: JSON.stringify({}),
+      },
+    })
       .then((response) => {
         if (response) {
-          console.log(response);
+          if (response.code == "0") {
+            return toast({ type: "warning", message: response.message });
+          }
+
+          onModalClose();
+          toast({ type: "success", message: response.message });
         }
       })
       .finally(() => {

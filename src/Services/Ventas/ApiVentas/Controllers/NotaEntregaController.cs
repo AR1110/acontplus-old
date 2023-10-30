@@ -71,7 +71,8 @@ namespace ApiVentas.Controllers
         }
 
         [HttpPost("Insert")]
-        public async Task<IActionResult> Insert([FromBody] NotaEntregaViewModel data)
+        //public async Task<IActionResult> Insert([FromBody] NotaEntregaViewModel data)
+        public async Task<IActionResult> Insert(ApiRequest parameters)
         {
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
@@ -80,9 +81,7 @@ namespace ApiVentas.Controllers
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _db.SPExecute("Ventas.NotaEntrega_Insert", true);
                 _db.AddDynamicParam("idUsuarioRol", idUsuarioRol);
-                _db.AddDynamicParam("jsonNotaEntrega", JsonConvert.SerializeObject(data.notaEntrega));
-                _db.AddDynamicParam("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
-                _db.AddDynamicParam("infoAdicionalArticulo", data.infoAdicionalArticulo);
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -99,7 +98,7 @@ namespace ApiVentas.Controllers
         }
 
         [HttpPut("Update/{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] NotaEntregaViewModel data)
+        public async Task<IActionResult> Update(int id, ApiRequest parameters)
         {
             DbAccess _db = new DbAccess(_configuration);
 
@@ -109,9 +108,10 @@ namespace ApiVentas.Controllers
                 await _db.SPExecute("Ventas.NotaEntrega_Update", true);
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("jsonNotaEntrega", JsonConvert.SerializeObject(data.notaEntrega));
-                _db.AddDynamicParam("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
-                _db.AddDynamicParam("infoAdicionalArticulo", data.infoAdicionalArticulo);
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
+                //_db.AddDynamicParam("jsonNotaEntrega", JsonConvert.SerializeObject(data.notaEntrega));
+                //_db.AddDynamicParam("jsonDetalle", JsonConvert.SerializeObject(data.detalle));
+                //_db.AddDynamicParam("infoAdicionalArticulo", data.infoAdicionalArticulo);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
