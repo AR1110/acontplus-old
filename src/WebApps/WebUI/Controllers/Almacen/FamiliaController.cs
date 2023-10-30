@@ -1,5 +1,4 @@
 ﻿using Common.Core.Models;
-using DataAccess;
 using DataAccess.Almacen;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,7 +9,7 @@ namespace WebUI.Controllers.Almacen
         // GET: Familia
         private readonly IConfiguration _configuration;
 
-        private DataAccessObject _dao;
+
         GenericResponse _gr = new();
         private FamiliaDao _f;
 
@@ -18,7 +17,7 @@ namespace WebUI.Controllers.Almacen
         {
             _configuration = configuration;
 
-            _dao = new DataAccessObject(_configuration);
+
             _f = new FamiliaDao(_configuration);
         }
 

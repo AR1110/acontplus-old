@@ -1,8 +1,8 @@
 ﻿using System.Data;
-using Microsoft.Data.SqlClient;
 using Common.Core.Models;
 using Common.Core.Utils;
 using Domain.Models.GestionFinanciera;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.GestionFinanciera

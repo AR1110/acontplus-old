@@ -2,7 +2,7 @@
 using Common.Core.Interfaces;
 using Common.Infrastructure.Data;
 using Common.Infrastructure.Repository;
-using Reports.API.Data; 
+using Reports.API.Data;
 
 namespace Reports.API.Extensions
 {

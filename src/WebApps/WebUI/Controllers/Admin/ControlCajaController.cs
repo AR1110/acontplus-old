@@ -1,9 +1,9 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
 using DataAccess;
-using Domain.Models;
 using Domain.Models.Administracion;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common;
 
 namespace WebUI.Controllers.Admin
 {
@@ -12,14 +12,14 @@ namespace WebUI.Controllers.Admin
         // GET: Articulo
         private readonly IConfiguration _configuration;
         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
-        private DataAccessObject _dao;
+
 
         GenericResponse _gr = new();
 
         public ControlCajaController(IConfiguration configuration)
         {
             _configuration = configuration;
-            _dao = new DataAccessObject(_configuration);
+
 
 
         }
@@ -33,40 +33,88 @@ namespace WebUI.Controllers.Admin
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("json", SqlStringParam.Sanitize(json));
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Administrador.ControlCaja_Get", parameters)));
+            var response = new GenericResponse();
+            try
+            {
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
+                    await _db.SPExecute("Administrador.ControlCaja_Get");
+                    _db.AddDynamicParam("idRol", User.GetUserRoleId());
+                    _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+                    response = _db.GetDefault();
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> Insert([FromBody] ControlCaja data)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("idCaja", data.idCaja);
-            parameters.Add("idEntidadFinanciera", data.idEntidadFinanciera);
-            parameters.Add("concepto", data.concepto ?? "");
-            parameters.Add("entrada", data.entrada);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Administrador.ControlCaja_Insert", parameters)));
+            var response = new GenericResponse();
+            try
+            {
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
+                    await _db.SPExecute("Administrador.ControlCaja_Insert");
+                    _db.AddDynamicParam("idRol", User.GetUserRoleId());
+                    _db.AddDynamicParam("idCaja", data.idCaja);
+                    _db.AddDynamicParam("idEntidadFinanciera", data.idEntidadFinanciera);
+                    _db.AddDynamicParam("concepto", data.concepto ?? "");
+                    _db.AddDynamicParam("entrada", data.entrada);
+                    response = _db.GetDefault();
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPut]
         public async Task<IActionResult> Update(int id, [FromBody] ControlCaja data)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("id", id);
-            parameters.Add("spParams", data.spParams);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Administrador.ControlCaja_Update", parameters)));
+            var response = new GenericResponse();
+            try
+            {
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
+                    await _db.SPExecute("Administrador.ControlCaja_Update");
+                    _db.AddDynamicParam("id", id);
+                    _db.AddDynamicParam("spParams", data.spParams);
+                    response = _db.GetDefault();
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
 
         [HttpGet]
         public async Task<IActionResult> GetArqueoCaja(string json)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("json", SqlStringParam.Sanitize(json));
-            return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("Administrador.DetalleArqueo_Get", parameters)));
+            var response = new GenericResponse();
+            try
+            {
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
+                    await _db.SPExecute("Administrador.DetalleArqueo_Get");
+                    _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+                    response = _db.GetDataTableAsync();
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

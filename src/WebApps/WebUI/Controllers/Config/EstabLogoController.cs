@@ -1,8 +1,10 @@
-﻿using Common.Core.Utils;
+﻿using Common.Core.Models;
+using Common.Core.Utils;
 using DataAccess;
 using Domain.Models;
 using Domain.Models.Config;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common;
 using WebUI.Utils;
 
 namespace WebUI.Controllers.Config
@@ -11,13 +13,13 @@ namespace WebUI.Controllers.Config
     {
         private readonly IConfiguration _configuration;
 
-        private DataAccessObject _dao;
+
 
 
         public EstabLogoController(IConfiguration configuration)
         {
             _configuration = configuration;
-            _dao = new DataAccessObject(_configuration);
+
 
 
 
@@ -41,22 +43,46 @@ namespace WebUI.Controllers.Config
                 ContentType = file.ContentType,
                 Content = FileData.GetFileByte(file)
             };
-            var parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("codEstab", data.codEstab);
-            parameters.Add("imagen", signFile.Content);
-            parameters.Add("mimeType", signFile.ContentType);
-            parameters.Add("nombreImagen", data.nombreImagen ?? "");
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Config.Estab_Logo_Insert", parameters)));
+            var response = new GenericResponse();
+            try
+            {
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
+                    await _db.SPExecute("Config.Estab_Logo_Insert");
+                    _db.AddDynamicParam("idRol", User.GetUserRoleId());
+                    _db.AddDynamicParam("codEstab", data.codEstab);
+                    _db.AddDynamicParam("imagen", signFile.Content);
+                    _db.AddDynamicParam("mimeType", signFile.ContentType);
+                    _db.AddDynamicParam("nombreImagen", data.nombreImagen ?? "");
+                    response = _db.GetDefault();
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            var parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("id", id);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Config.Estab_Logo_Delete", parameters)));
+            var response = new GenericResponse();
+            try
+            {
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
+                    await _db.SPExecute("Config.Estab_Logo_Delete");
+                    _db.AddDynamicParam("idRol", User.GetUserRoleId());
+                    _db.AddDynamicParam("id", id);
+                    response = _db.GetDefault();
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
     }

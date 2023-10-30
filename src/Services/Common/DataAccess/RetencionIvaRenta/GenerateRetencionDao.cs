@@ -1,10 +1,10 @@
 ﻿using System.Data;
-using Microsoft.Data.SqlClient;
 using Common.Core.Models;
 using Domain.Models;
 using Domain.Models.Ventas;
 using Domain.ViewModels;
 using Domain.ViewModels.Ventas;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.RetencionIvaRenta

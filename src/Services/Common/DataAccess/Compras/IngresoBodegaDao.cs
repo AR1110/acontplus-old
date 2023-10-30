@@ -1,9 +1,9 @@
 ﻿using System.Data;
-using Microsoft.Data.SqlClient;
 using Common.Core.Models;
 using Common.Core.Utils;
 using Domain.Models.Compras;
 using Domain.ViewModels.Compras;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 

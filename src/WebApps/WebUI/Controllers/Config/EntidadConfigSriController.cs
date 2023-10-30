@@ -2,7 +2,6 @@
 using Common.Core.Utils;
 using DataAccess;
 using Domain;
-using Domain.Models;
 using Domain.Models.ConfigEmpresa;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -17,13 +16,13 @@ namespace WebUI.Controllers.Config
         private readonly IConfiguration _configuration;
         private readonly LogWriter _log;
 
-        private DataAccessObject _dao;
+
         private readonly ILogger<EntidadConfigSriController> _logger;
         public EntidadConfigSriController(ILogger<EntidadConfigSriController> logger, IConfiguration configuration, LogWriter log)
         {
             _logger = logger;
             _configuration = configuration;
-            _dao = new DataAccessObject(_configuration);
+
             _log = log;
         }
 
@@ -57,17 +56,29 @@ namespace WebUI.Controllers.Config
         [Route("Put/{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] ParamsRequesteViewModel data)
         {
-            EntidadConfigSri config = JsonConvert.DeserializeObject<EntidadConfigSri>(data.jsonHeader);
-            //List<Normativa> jsonNormativa = JsonConvert.DeserializeObject<List<Normativa>>(data.jsonDetail);
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("id", id);
-            parameters.Add("idAnioFiscal", config.idAnioFiscal);
-            parameters.Add("idSubContribuyente", config.idSubContribuyente);
-            parameters.Add("nroContribuyente", config.nroContribuyente ?? "");
-            parameters.Add("obligadoLlevarContabilidad", config.obligadoLlevarContabilidad);
-            parameters.Add("actividad", config.actividad ?? "");
-            parameters.Add("jsonNormativa", data.jsonDetail);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Config.Sri_Update", parameters)));
+            var response = new GenericResponse();
+            try
+            {
+                EntidadConfigSri config = JsonConvert.DeserializeObject<EntidadConfigSri>(data.jsonHeader);
+
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
+                    await _db.SPExecute("Config.Sri_Update");
+                    _db.AddDynamicParam("id", id);
+                    _db.AddDynamicParam("idAnioFiscal", config.idAnioFiscal);
+                    _db.AddDynamicParam("idSubContribuyente", config.idSubContribuyente);
+                    _db.AddDynamicParam("nroContribuyente", config.nroContribuyente ?? "");
+                    _db.AddDynamicParam("obligadoLlevarContabilidad", config.obligadoLlevarContabilidad);
+                    _db.AddDynamicParam("actividad", config.actividad ?? "");
+                    _db.AddDynamicParam("jsonNormativa", data.jsonDetail);
+                    response = _db.GetDefault();
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

@@ -7,7 +7,6 @@ using Common.Core.Utils;
 using Compras.API.Utils;
 using Compras.Application;
 using DataAccess;
-using Domain.Dtos;
 using FactElect.Application;
 using FactElect.Application.Services;
 using FactElect.Core.Models;
@@ -131,40 +130,40 @@ namespace Compras.API.Controllers
         [HttpGet("Preview/{id}")]
         public async Task<IActionResult> Preview(int id)
         {
-
-
             GenericResponse _response = new GenericResponse();
             try
             {
                 int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
 
-                DbAccess _db = new DbAccess(_configuration);
-                Dictionary<string, object> parameters = new Dictionary<string, object>();
-                await _db.SPExecute("Recepcion.Documento_Get_Id");
-                _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("idDocumento", id);
-                DataTable dt = _db.GetDataTable();
-                if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
+                using (DbAccess _db = new DbAccess(_configuration))
                 {
-                    _response.code = "1";
-                    string xmlDoc = dt.Rows[0]["xmlDoc"].ToString();
-                    XmlDocument xdoc = new XmlDocument();
-                    xdoc.LoadXml(xmlDoc);
-                    ComprobanteElectronico ceXml = new ComprobanteElectronico();
-                    string sms = string.Empty;
-                    DataXmlComprobante _getXmlSriData = new DataXmlComprobante();
-                    if (!_getXmlSriData.GetData(xdoc, ref ceXml, ref sms))
+                    Dictionary<string, object> parameters = new Dictionary<string, object>();
+                    await _db.SPExecute("Recepcion.Documento_Get_Id");
+                    _db.AddDynamicParam("idRol", idUsuarioRol);
+                    _db.AddDynamicParam("idDocumento", id);
+                    DataTable dt = _db.GetDataTable();
+                    if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
                     {
-                        _response.Create("0", sms);
+                        _response.code = "1";
+                        string xmlDoc = dt.Rows[0]["xmlDoc"].ToString();
+                        XmlDocument xdoc = new XmlDocument();
+                        xdoc.LoadXml(xmlDoc);
+                        ComprobanteElectronico ceXml = new ComprobanteElectronico();
+                        string sms = string.Empty;
+                        DataXmlComprobante _getXmlSriData = new DataXmlComprobante();
+                        if (!_getXmlSriData.GetData(xdoc, ref ceXml, ref sms))
+                        {
+                            _response.Create("0", sms);
+                        }
+                        else
+                        {
+                            _response.payload = DocumentoXmlToHtml.CreateHtml(ceXml);
+                        }
                     }
                     else
                     {
-                        _response.payload = DocumentoXmlToHtml.CreateHtml(ceXml);
+                        _response.Create(code: "0", message: "No se encontro xml");
                     }
-                }
-                else
-                {
-                    _response.Create(code: "0", message: "No se encontro xml");
                 }
             }
             catch (Exception ex)

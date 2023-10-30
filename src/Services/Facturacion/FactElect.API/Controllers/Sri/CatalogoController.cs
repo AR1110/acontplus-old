@@ -1,6 +1,4 @@
-﻿using System.Data;
-using Common.Core.Models;
-using Common.Core.Utils;
+﻿using Common.Core.Models;
 using DataAccess;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,10 +17,11 @@ namespace FactElect.API.Controllers.Sri
 
             try
             {
-                var db = new DbAccess(_config);
-                await db.SPExecute("Sri.Catalogo_Get");
-                DataTable dt = db.GetDataTable();
-                _response.Create(code: "1", payload: DataConverters.DataTableToJSON(dt));
+                using (var db = new DbAccess(_config))
+                {
+                    await db.SPExecute("Sri.Catalogo_Get");
+                    _response = db.GetDataTableAsync();
+                }
             }
             catch (Exception)
             {
