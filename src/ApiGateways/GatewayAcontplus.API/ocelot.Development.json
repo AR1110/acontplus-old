@@ -749,7 +749,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7079
+          "Port": 7089
         }
       ],
       "DownstreamPathTemplate": "/api/Cliente{everything}",
@@ -765,7 +765,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7079
+          "Port": 7089
         }
       ],
       "DownstreamPathTemplate": "/api/v2/Cliente{everything}",
@@ -992,7 +992,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7079
+          "Port": 7089
         }
       ],
       "DownstreamPathTemplate": "/api/CatalogoVenta{everything}",
@@ -1264,7 +1264,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7079
+          "Port": 7089
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",
