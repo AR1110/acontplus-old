@@ -97,6 +97,7 @@
   };
 
   const selectArticle = (e) => {
+    console.log(e);
     let dataArticle = {};
     let medidas = [];
     articles = [];
@@ -157,7 +158,6 @@
         }
       });
     }, 200);
-
   };
 
   let onValidateLlevaInventario = (item: any) => {
@@ -191,15 +191,28 @@
   // Article: Search article by Code.
   const searchArticleCode = (value: any) => {
     let getValue = value.target.value;
-    if(getValue.length <= 0) return;
+    if (getValue.length <= 0) return;
 
-    if(timeout) clearTimeout(timeout);
+    if (timeout) clearTimeout(timeout);
     timeout = setTimeout(() => {
-      
+      showLoader();
 
+      let data = { bySearch: getValue, tipo: 2 };
 
+      ArticleService.get(JSON.stringify(data))
+        .then((response) => {
+          if (response) {
+            let data = response[0][0];
+            let forSend = { idArticulo: data.idArticulo };
+            selectArticle(forSend);
+            value.target.value = "";
+          }
+        })
+        .finally(() => {
+          hideLoader();
+        });
     }, 200);
-  }
+  };
 
   function getTotales() {
     let CODIGO_PORCENTAJE_IVA0 = "0",
@@ -420,7 +433,9 @@
       );
       item.bodegas = warehouses.filter((x) => x.codEstab == support.codEstab);
       item.tipoIvas = tipoIva;
-      item.precioConIva = item.tarifas.find((x) => x.idTarifa == item.idTarifa).precioConIva;
+      item.precioConIva = item.tarifas.find(
+        (x) => x.idTarifa == item.idTarifa
+      ).precioConIva;
       item.decimals = decimals;
     });
   };
@@ -449,7 +464,8 @@
     ).idBodega;
     tarifaImpuestos = [
       ...JSON.parse(
-        establishments.find((x) => x.codEstab == support.codEstab).tarifasImpuestos
+        establishments.find((x) => x.codEstab == support.codEstab)
+          .tarifasImpuestos
       ),
     ];
 
@@ -564,7 +580,7 @@
 
   // Todo: Save DETALLES
   const onUpdate = () => {
-    if(!onValidate()) return;
+    if (!onValidate()) return;
 
     showLoader();
     supportDetails = supportDetails.map((item) => ({
@@ -602,26 +618,32 @@
   const onValidate = () => {
     let isValidate = true;
     try {
-      if(paramValidation.includes(support.date)) {
-        toast({ type: "warning", message: "Debe seleccionar la Fecha de Emisión" });
-        return isValidate = false;
+      if (paramValidation.includes(support.date)) {
+        toast({
+          type: "warning",
+          message: "Debe seleccionar la Fecha de Emisión",
+        });
+        return (isValidate = false);
       }
 
-      if(paramValidation.includes(support.codEstab)) {
+      if (paramValidation.includes(support.codEstab)) {
         toast({ type: "warning", message: "Debe seleccionar Establecimiento" });
-        return isValidate = false;
+        return (isValidate = false);
       }
 
-      if(paramValidation.includes(support.puntoEmisionId)) {
-        toast({ type: "warning", message: "Debe seleccionar Punto de Emisión" });
-        return isValidate = false;
+      if (paramValidation.includes(support.puntoEmisionId)) {
+        toast({
+          type: "warning",
+          message: "Debe seleccionar Punto de Emisión",
+        });
+        return (isValidate = false);
       }
       return isValidate;
     } catch (error) {
       console.log(error);
       return false;
     }
-  }
+  };
 
   supportStore.subscribe((values) => {
     support = values.support;
@@ -768,7 +790,13 @@
           </div>
           <div class="col-sm-2 nopadding">
             <label for="cliente" class=""> Buscar por Código </label>
-            <input on:blur={(e) => searchArticleCode(e)} type="text" class="form-control" placeholder="Ej: COMP1" />
+            <input
+              on:blur={(e) => searchArticleCode(e)}
+              id="searchArticleCode"
+              type="text"
+              class="form-control"
+              placeholder="Ej: COMP1"
+            />
           </div>
           <div class="col-sm-3 nopadding">
             <div class="row">
