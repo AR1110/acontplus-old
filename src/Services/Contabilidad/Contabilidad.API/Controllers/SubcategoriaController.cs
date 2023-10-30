@@ -4,7 +4,7 @@ using Contabilidad.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common;
 
-namespace ApiContabilidad.Controllers
+namespace Contabilidad.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

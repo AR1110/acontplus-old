@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services.Common;
 
-namespace ApiContabilidad.Controllers
+namespace Contabilidad.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

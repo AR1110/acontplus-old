@@ -2,8 +2,9 @@
 using Contabilidad.Core.Interfaces;
 using Contabilidad.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Services.Common.Logs;
 
-namespace ApiContabilidad.Extensions
+namespace Contabilidad.API.Extensions
 {
     public static class ApplicationServicesExtensions
     {
@@ -13,6 +14,8 @@ namespace ApiContabilidad.Extensions
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<ISubCategoriaService, SubCategoriaService>();
+
+            services.AddSingleton<LogWriter>();
             return services;
         }
     }

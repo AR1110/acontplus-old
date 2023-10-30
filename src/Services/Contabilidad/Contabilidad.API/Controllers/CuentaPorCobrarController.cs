@@ -4,7 +4,7 @@ using DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
-namespace ApiContabilidad.Controllers
+namespace Contabilidad.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -22,12 +22,12 @@ namespace ApiContabilidad.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            DbAccess _dbAccess = new DbAccess(_configuration);
+            var _dbAccess = new DbAccess(_configuration);
 
-            GenericResponse _response = new GenericResponse();
+            var _response = new GenericResponse();
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _dbAccess.SPExecute("Contabilidad.CuentaPorCobrar_Get");
                 _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _dbAccess.AddDynamicParam("json", SqlStringParam.Sanitize(json));
@@ -48,12 +48,12 @@ namespace ApiContabilidad.Controllers
         [HttpPost("Insert/Cuota")]
         public async Task<IActionResult> Insert([FromBody] ApiRequest paremeter)
         {
-            DbAccess _dbAccess = new DbAccess(_configuration);
+            var _dbAccess = new DbAccess(_configuration);
 
-            GenericResponse _response = new GenericResponse();
+            var _response = new GenericResponse();
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _dbAccess.SPExecute("Contabilidad.CuotaPorCobrar_Insert");
                 _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _dbAccess.AddDynamicParam("json", DataConverters.SerializeDictionary(paremeter.Data));
@@ -74,12 +74,12 @@ namespace ApiContabilidad.Controllers
         [HttpPut("Update/Cuota")]
         public async Task<IActionResult> Update([FromBody] ApiRequest paremeter)
         {
-            DbAccess _dbAccess = new DbAccess(_configuration);
+            var _dbAccess = new DbAccess(_configuration);
 
-            GenericResponse _response = new GenericResponse();
+            var _response = new GenericResponse();
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+                var idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
                 await _dbAccess.SPExecute("Contabilidad.CuotaPorCobrar_Update");
                 _dbAccess.AddDynamicParam("idUsuarioRol", idUsuarioRol);
                 _dbAccess.AddDynamicParam("json", DataConverters.SerializeDictionary(paremeter.Data));
