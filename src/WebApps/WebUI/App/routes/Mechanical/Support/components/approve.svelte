@@ -386,47 +386,39 @@
   ];
 
   let initialPushData = () => {
-    if (supportDetails != undefined || supportDetails != null) {
-      if (supportDetails.length != 0) {
-        supportDetails.forEach((item) => {
-          item.medidas = measures
-            .map((x) => {
-              return {
-                ...x,
-                tarifas: JSON.parse(x.tarifas),
-              };
-            })
-            .filter((x) => x.idArticulo == item.idArticulo);
-          item.tarifas = JSON.parse(
-            measures.find((x) => x.idMedida == item.idMedida).tarifas
-          );
-          item.bodegas = warehouses.filter(
-            (x) => x.codEstab == support.codEstab
-          );
-          item.tipoIvas = tipoIva;
-          item.precioConIva = item.tarifas.find(
-            (x) => x.idTarifa == item.idTarifa
-          ).precioConIva;
-          item.decimals = decimals;
-        });
-      }
-    }
+    if (supportDetails.length <= 0) return;
+
+    supportDetails.forEach((item) => {
+      item.medidas = measures
+        .map((x) => {
+          return {
+            ...x,
+            tarifas: JSON.parse(x.tarifas),
+          };
+        })
+        .filter((x) => x.idArticulo == item.idArticulo);
+      item.tarifas = JSON.parse(
+        measures.find((x) => x.idMedida == item.idMedida).tarifas
+      );
+      item.bodegas = warehouses.filter((x) => x.codEstab == support.codEstab);
+      item.tipoIvas = tipoIva;
+      item.precioConIva = item.tarifas.find((x) => x.idTarifa == item.idTarifa).precioConIva;
+      item.decimals = decimals;
+    });
   };
 
   const selectCodEstab = () => {
-    if (establishments.length > 0) {
-      let estab = establishments.find((x) => x.predeterminado === true);
+    if (establishments.length <= 0) return;
 
-      support.codEstab = estab.codEstab;
-      tarifaImpuestos = [...JSON.parse(estab.tarifasImpuestos)];
+    let estab = establishments.find((x) => x.codEstab == support.codEstab);
+    support.codEstab = estab.codEstab;
 
-      ptoEmisiones = [
-        ...ptoEmisionesTemp.filter((x) => x.codEstab === estab.codEstab),
-      ];
+    tarifaImpuestos = [...JSON.parse(estab.tarifasImpuestos)];
 
-      // Get Totales invoke.
-      getTotales();
-    }
+    ptoEmisiones = [
+      ...ptoEmisionesTemp.filter((x) => x.codEstab === estab.codEstab),
+    ];
+    getTotales();
   };
 
   const refreshWarehouseCodEstab = (codEstab) => {
@@ -439,8 +431,7 @@
     ).idBodega;
     tarifaImpuestos = [
       ...JSON.parse(
-        establishments.find((x) => x.codEstab == support.codEstab)
-          .tarifasImpuestos
+        establishments.find((x) => x.codEstab == support.codEstab).tarifasImpuestos
       ),
     ];
 
@@ -531,8 +522,10 @@
 
     let newData = {
       notaEntrega: JSON.stringify(MapperToAction.notaEntregaMapper(support)),
-      detalles: JSON.stringify(MapperToAction.detalleNotaEntrega(supportDetails)),
-      infoAdicionalArticulo: JSON.stringify([])
+      detalles: JSON.stringify(
+        MapperToAction.detalleNotaEntrega(supportDetails)
+      ),
+      infoAdicionalArticulo: JSON.stringify([]),
     };
 
     NotaEntregaService.post({ data: newData })
@@ -553,8 +546,9 @@
 
   // Todo: Save DETALLES
   const onUpdate = () => {
-    showLoader();
+    if(!onValidate()) return;
 
+    showLoader();
     supportDetails = supportDetails.map((item) => ({
       id: item.id > 0 ? item.id : 0,
       articuloId: item.idArticulo,
@@ -586,6 +580,30 @@
         hideLoader();
       });
   };
+
+  const onValidate = () => {
+    let isValidate = true;
+    try {
+      if(paramValidation.includes(support.date)) {
+        toast({ type: "warning", message: "Debe seleccionar la Fecha de Emisión" });
+        return isValidate = false;
+      }
+
+      if(paramValidation.includes(support.codEstab)) {
+        toast({ type: "warning", message: "Debe seleccionar Establecimiento" });
+        return isValidate = false;
+      }
+
+      if(paramValidation.includes(support.puntoEmisionId)) {
+        toast({ type: "warning", message: "Debe seleccionar Punto de Emisión" });
+        return isValidate = false;
+      }
+      return isValidate;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
 
   supportStore.subscribe((values) => {
     support = values.support;

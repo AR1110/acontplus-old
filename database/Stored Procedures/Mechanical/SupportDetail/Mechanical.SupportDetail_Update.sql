@@ -108,6 +108,7 @@ BEGIN
                    ,md.TarifaId  = td.TarifaId
                    ,md.MedidaId  = td.MedidaId
                    ,md.Price     = td.Price
+                   ,md.BodegaId  = td.BodegaId
                    ,md.[Deleted] = NULL
                    ,md.UpdatedAt = GETDATE()
             FROM Mechanical.SupportDetail md WITH (NOLOCK)
