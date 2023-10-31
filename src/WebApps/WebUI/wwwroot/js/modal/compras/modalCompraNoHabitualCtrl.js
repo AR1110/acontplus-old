@@ -359,92 +359,83 @@ export class ModalAddCtrl extends ModalCompraNoHabitualCtrl {
             let {
                 UiGridOptionsCompra
             } = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
-            this._mS.getData('get', 'CompraNoHabitual/' + JSON.stringify({
+
+            this.compraNoHabSvc.get({
                 typeList: 2
-            }), null, true).then(response => {
-                if (response.code == "0") {
-                    hideLoader();
-                    console.log(response)
+            }).then(response => {
+                let {
+                    estabs,
+                    puntosEmision,
+                    bodegas,
+                    decimal,
+                    tarifasImpuesto,
+                    tarifasImpuestoVigente,
+                    config,
+                } = response;
+                this.establecimientos = estabs;
+                this.data.codEstab = this.establecimientos.find(item => (item.predeterminado)).codEstab;
+
+                this.puntosEmisionTemporal = puntosEmision;
+                this.bodegasTemporal = bodegas;
+                this.actividadTipoIvaTemporal = tarifasImpuestoVigente;
+
+                this.decimal = decimal;
+                this.tipoIvas = tarifasImpuesto;
+                this.data.inventory = config.inventory;  
+
+                this.puntosEmision = this.puntosEmisionTemporal.filter(item => item.codEstab === this.data.codEstab)
+                this.data.idPuntoEmision = this.puntosEmision.find(item => (item.predeterminado)).idPuntoEmision;
+
+
+                this.bodegas = this.bodegasTemporal.filter(item => item.codEstab === this.data.codEstab);
+                this.idBodega = this.bodegas.find(item => (item.predeterminado)).idBodega;
+
+                //Actividad Tipo iVA 
+                this.actividadTipoIva = this.actividadTipoIvaTemporal.find(item => item.codEstab === this.data.codEstab)
+ 
+                this.setColumnDefs();
+
+                //Eliminar Mas Adelante 
+
+                this.gridOptions.columnDefs[7] = {
+                    name: 'I.V.A',
+                    field: 'codigoPorcentaje',
+                    width: '8%',
+                    minWidth: '100',
+                    type: 'text',
+                    editableCellTemplate: 'ui-grid/dropdownEditor',
+                    cellFilter: 'cellFilterTipoIva:this',
+                    editDropdownValueLabel: 'descripcion',
+                    editDropdownIdLabel: 'codigoPorcentaje',
+                    enableCellEdit: true,
+                    enableCellEditOnFocus: true,
+                    //    visible: config.porcentajeIva
                 }
 
-                if (response.code === "1") {
+                let indexTipoIva = this.gridOptions.columnDefs.findIndex(item => item.field === 'codigoPorcentaje');
+                this.gridOptions.columnDefs[indexTipoIva].editDropdownOptionsArray = this.tipoIvas;
 
-                    let mainData = JSON.parse(response.payload);
-
-                    this.establecimientos = mainData[0];
-                    this.data.codEstab = this.establecimientos.find(item => (item.predeterminado)).codEstab;
-
+                let indexBodega = this.gridOptions.columnDefs.findIndex(item => item.field === 'idBodega');
+                this.gridOptions.columnDefs[indexBodega].editDropdownOptionsArray = this.bodegas;
 
 
-                    this.puntosEmisionTemporal = mainData[1];
-                    this.bodegasTemporal = mainData[2];
-                    this.actividadTipoIvaTemporal = mainData[5]
-
-                    this.decimal = mainData[3][0];
-                    this.tipoIvas = mainData[4];
-                    this.data.inventory = mainData[6][0].inventory;
-
-
-                    this.puntosEmision = this.puntosEmisionTemporal.filter(item => item.codEstab === this.data.codEstab)
-                    this.data.idPuntoEmision = this.puntosEmision.find(item => (item.predeterminado)).idPuntoEmision;
-
-
-                    this.bodegas = this.bodegasTemporal.filter(item => item.codEstab === this.data.codEstab);
-                    this.idBodega = this.bodegas.find(item => (item.predeterminado)).idBodega;
-
-                    //Actividad Tipo iVA 
-                    this.actividadTipoIva = this.actividadTipoIvaTemporal.find(item => item.codEstab === this.data.codEstab)
-
-
-
-                    this.setColumnDefs();
-
-                    //Eliminar Mas Adelante 
-
-                    this.gridOptions.columnDefs[7] = {
-                        name: 'I.V.A',
-                        field: 'codigoPorcentaje',
-                        width: '8%',
-                        minWidth: '100',
-                        type: 'text',
-                        editableCellTemplate: 'ui-grid/dropdownEditor',
-                        cellFilter: 'cellFilterTipoIva:this',
-                        editDropdownValueLabel: 'descripcion',
-                        editDropdownIdLabel: 'codigoPorcentaje',
-                        enableCellEdit: true,
-                        enableCellEditOnFocus: true,
-                        //    visible: config.porcentajeIva
-                    }
-
-                    let indexTipoIva = this.gridOptions.columnDefs.findIndex(item => item.field === 'codigoPorcentaje');
-                    this.gridOptions.columnDefs[indexTipoIva].editDropdownOptionsArray = this.tipoIvas;
-
-                    let indexBodega = this.gridOptions.columnDefs.findIndex(item => item.field === 'idBodega');
-                    this.gridOptions.columnDefs[indexBodega].editDropdownOptionsArray = this.bodegas;
-
-
-                    this.uiGridInvoice = new UiGridOptionsCompra({
-                        $scope: this.$scope,
-                        gridOptions: this.gridOptions,
-                        _fS: this._fS,
-                        _tS: this._tS,
-                        tipoIvas: this.tipoIvas,
-                        decimal: this.decimal,
-                        actividadTipoIva: this.actividadTipoIva
-                    })
-
-                    hideLoader();
-
-                }
-            })
+                this.uiGridInvoice = new UiGridOptionsCompra({
+                    $scope: this.$scope,
+                    gridOptions: this.gridOptions,
+                    _fS: this._fS,
+                    _tS: this._tS,
+                    tipoIvas: this.tipoIvas,
+                    decimal: this.decimal,
+                    actividadTipoIva: this.actividadTipoIva
+                })  
+            }).finally(()=>hideLoader());
 
             this.$scope.$apply();
 
         } catch (error) {
+            hideLoader();
             console.log(error)
-        } finally {
-            hideLoader()
-        }
+        }  
     }
 
 
@@ -602,11 +593,7 @@ export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
         } finally {
             hideLoader()
         }
-    }
-
-
-
-
+    } 
 
 }
 
