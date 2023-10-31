@@ -208,7 +208,7 @@
       hasIdUsuarioRol: true,
       reportParams: JSON.stringify({
         hasParams: false,
-        codigo: "CCR",
+        codigo: dataSearch.ckCxcVencida ? "CCCR" : "CCR",
         format: format,
         aditionalParams: [],
       }),
