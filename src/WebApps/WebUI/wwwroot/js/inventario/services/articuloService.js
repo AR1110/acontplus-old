@@ -9,6 +9,69 @@
 
         let service = {};
 
+        /**
+         * 
+         * @param {*} params 
+         * 
+         * @returns 
+         */
+        service.get = (params) => {
+            return mainService.getData('get', url + 'Get?json=' + JSON.stringify(params), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
+
+                    if (params.tipo === 1) {
+                        let articles = mainData[0];
+                        let totalRecords = articles.length > 0 ? articles[0].totalRecords : 0
+                        return {
+                            totalRecords,
+                            articulos: articles.map(item => {
+                                return {
+                                    idArticulo: item.idArticulo,
+                                    idMedida: item.idMedida,
+                                    code_unique: item.code_unique,
+                                    codigo: item.codigo,
+                                    descripcion: item.descripcion,
+                                    precioCosto: item.precioCosto,
+                                    estado: item.estado,
+                                    stock: item.stock,
+                                    observaciones: item.observaciones,
+                                    imagen: item.imagen,
+                                    subFamilia: item.subFamilia,
+                                    medida: item.medida,
+                                    tipoIva: item.tipoIva,
+                                    tipoArticulo: item.tipoArticulo,
+                                    totalRecords: item.totalRecords,
+                                    style: item.style,
+                                    s3ObjectKey: item.s3ObjectKey,
+                                    s3ObjectUrl: item.s3ObjectUrl
+                                }
+                            })
+                        }
+                    }
+
+                    if (params.tipo === 5) {
+                        console.log(mainData)
+                        console.log('data form')
+                    }
+
+                    if (params.tipo === 11) {
+                        return {
+                            subFamilias: mainData[0],
+                            medidas: mainData[1],
+                            marcas: mainData[2],
+                            modelos: mainData[3],
+                            tiposIva: mainData[4]
+                        }
+                    }
+
+                }
+            })
+        }
 
         service.getAll = function (query) {
             return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
@@ -21,11 +84,6 @@
 
                     let articulos = mainData[0];
                     let totalRecords = mainData[0][0].totalRecords;
-                    let subFamilias = mainData[1];
-                    let medidas = mainData[2];
-                    let marcas = mainData[3];
-                    let modelos = mainData[4];
-                    let tiposIva = mainData[5];
 
                     //Listado de articulos 
                     return {
@@ -52,11 +110,6 @@
                                 s3ObjectUrl: item.s3ObjectUrl
                             }
                         }),
-                        subFamilias,
-                        medidas,
-                        marcas,
-                        modelos,
-                        tiposIva
                     }
                 }
             })
@@ -67,7 +120,7 @@
          * @param {*} query 
          * @returns 
          */
-        service.getDataForForm = function (query) {
+        service.getDataForForm = function () {
             return mainService.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 5 }), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
@@ -90,7 +143,7 @@
 
         //Lista de articulos fraccionados para buscador rapido 
         service.getArticlesFractionalInfo = function (query) {
-            if (!query.hasOwnProperty('idArticulo')) {
+            if (!('idArticulo' in query)) {
                 fS.sweetAlert('warning', 'Propiedad idArticulo no proporcionado')
                 return
             }
@@ -221,13 +274,11 @@
             })
         }
 
-
         service.getDataForm = function (query) {
             return mainService.getData('get', url + 'GetDataForm?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
-
                 if (response.code === "1") {
                     let mainDataRepository = JSON.parse(response.payload);
                     let subFamiliaRepository = mainDataRepository[0];
@@ -277,7 +328,7 @@
                 file = null;
             }
             //return mainService.getData('put', url + 'Put/' + id, { data: data }, true)
-            return mainService.uploadFile("post", url + `Put/${id}?json=${encodeURIComponent(JSON.stringify({ data }))}`, file, null, true);
+            return mainService.uploadFile("put", url + `Put/${id}?json=${encodeURIComponent(JSON.stringify({ data }))}`, file, null, true);
         }
 
         /**
@@ -402,12 +453,12 @@
          */
         service.findForSale = function (query) {
 
-            if (!query.hasOwnProperty('tipo')) {
+            if (!("tipo" in query)) {
                 query.tipo = 6;
                 // fS.sweetAlert('warning', 'Propiedad tipo no proporcionado - listar articulo')
                 // throw ''
             }
-            if (!query.hasOwnProperty('idArticulo')) {
+            if (!('idArticulo' in query)) {
                 fS.sweetAlert('warning', 'Propiedad idArticulo no proporcionado')
                 throw ''
             }
@@ -492,7 +543,7 @@
 
 
         service.checkNotificationStock = function (query) {
-            if (!query.hasOwnProperty('idArticulo')) {
+            if (!("idArticulo" in query)) {
                 fS.sweetAlert('warning', 'Propiedad idArticulo no proporcionado')
                 throw ''
             }
