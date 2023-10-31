@@ -157,6 +157,10 @@
         "js/tabulator.min.js",
         "css/tabulator.min.css"
       ]
+    },
+    {
+      "library": "jquery.perfect-scrollbar@1.5.5",
+      "destination": "wwwroot/lib/jquery.perfect-scrollbar/"
     }
   ]
 }

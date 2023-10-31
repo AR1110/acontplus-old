@@ -328,7 +328,7 @@
                 file = null;
             }
             //return mainService.getData('put', url + 'Put/' + id, { data: data }, true)
-            return mainService.uploadFile("put", url + `Put/${id}?json=${encodeURIComponent(JSON.stringify({ data }))}`, file, null, true);
+            return mainService.uploadFile("post", url + `Put/${id}?json=${encodeURIComponent(JSON.stringify({ data }))}`, file, null, true);
         }
 
         /**
