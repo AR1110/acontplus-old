@@ -11,10 +11,7 @@ GO
 -- Description:	SP Para leer los datos de los tipos de reportes relacionado con artiuculos
 -- =============================================
 --Almacen.Articulo_Get 28, '{"tipo":10,"idArticulo":5}'
-IF OBJECT_ID(N'Inventario.Articulo_Get_Report', N'P') IS NOT NULL
-DROP PROCEDURE Inventario.Articulo_Get_Report
-GO
-CREATE PROCEDURE Inventario.Articulo_Get_Report @idRol INT ,@json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Inventario.Articulo_Report @idRol INT ,@json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -47,7 +44,7 @@ BEGIN
 
 	SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
 	
-	--> FRACCIONADOS
+	--> Fraccionados
 	IF @tipo = 1
 		BEGIN
 			
@@ -110,7 +107,7 @@ BEGIN
 			RETURN 
 		END 
 
-	--> LISTA DE PRECIO
+	--> Lista de Precio
 	IF @tipo = 2
 		BEGIN
 			
@@ -196,7 +193,7 @@ BEGIN
 			RETURN 
 		END 
 
-	--> STOCK POR BODEGA 
+	--> Stock por Bodega
 	IF @tipo = 3
 		BEGIN 
 			
@@ -293,7 +290,7 @@ BEGIN
 			RETURN 
 		END
 	
-	--> CONSUMO DIARIO
+	--> Consumo Diario
 	IF @tipo = 4
 		BEGIN 
 			
@@ -391,7 +388,7 @@ BEGIN
 
 		END 
 	
-	--> CADUCIDAD 
+	--> Caducidad
 	IF @tipo = 5
 		BEGIN
 			
@@ -487,7 +484,7 @@ BEGIN
 				  ,ISNULL(e.direccion, '')direccionEntidad			
 				  ,tituloReporte = CASE @estado WHEN 'PA' THEN 'ARTICULOS QUE DE 1 A 5 DÍAS CADUCAN ' 
 				                                WHEN 'VI' THEN 'ARTICULO VIGENTES'
-				                                          ELSE  'CADUCIDAD DE ARTÍCULOS' END 
+				                                          ELSE 'CADUCIDAD DE ARTÍCULOS' END 
 				  ,usuario       = @usuario
 				  ,CONVERT(NVARCHAR,FORMAT(@fechaInicio, 'dd/MM/yyyy') +' - ' +  FORMAT(@fechaFin, 'dd/MM/yyyy')) as filtroFecha			
 			FROM Entidad e WITH (NOLOCK)
@@ -504,7 +501,12 @@ BEGIN
 							  ,@ubicacion    = @ubicacion
 			RETURN
 		END 
-
+    
+    --> Kardex 
+    IF @tipo = 6
+        BEGIN
+            RETURN 
+        END 
 	SELECT '0'code,'No se encontraron datos con los parametros solicitados' as 'message'
 	RETURN 
 END

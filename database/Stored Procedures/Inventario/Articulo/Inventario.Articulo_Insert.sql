@@ -46,16 +46,16 @@ BEGIN
 	   
 
 	SELECT @jsonArticulo = jsonArticulo
-		,@jsonPvp = jsonPvp
-		,@idBodega = idBodega
-		,@ubicacion = ubicacion
-	FROM OPENJSON (@json)
-		WITH(
-			jsonArticulo VARCHAR(MAX) '$.jsonArticulo',
-			jsonPvp VARCHAR(MAX) '$.jsonPvp',
-			idBodega INT '$.idBodega',
-			ubicacion VARCHAR(90) '$.ubicacion'
-			)
+		  ,@jsonPvp = jsonPvp
+		  ,@idBodega = idBodega
+		  ,@ubicacion = ubicacion
+	FROM OPENJSON (@json) WITH
+    (
+	    jsonArticulo VARCHAR(MAX) '$.jsonArticulo',
+	    jsonPvp VARCHAR(MAX) '$.jsonPvp',
+	    idBodega INT '$.idBodega',
+	    ubicacion VARCHAR(90) '$.ubicacion'
+    )
 
 	DECLARE @tbArticle AS TABLE (
 		idSubFamilia INT NOT NULL

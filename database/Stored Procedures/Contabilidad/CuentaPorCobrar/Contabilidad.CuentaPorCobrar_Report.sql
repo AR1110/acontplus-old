@@ -77,6 +77,32 @@ BEGIN
                ,ckCxcVencida      BIT '$.ckCxcVencida'
             )
 
+            IF @ckCxcVencida = 1
+                BEGIN
+                    SET @sql = 'SELECT cc.codDoc
+                                      ,cc.razonSocialComprador
+                                      ,cc.serieComprobante
+                                      ,cc.fechaEmision
+                                      ,cc.fechaVencimiento
+                                      ,CAST(cc.importeTotal as numeric(18,2)) as importeTotal
+                                      ,CAST(cc.abono as numeric(18,2)) as abono
+                                      ,CAST(cc.saldo as numeric(18,2)) as saldo
+                                      ,cc.estado 
+		                              ,cp.nroCuota
+		                              ,cp.cuota
+		                              ,cp.fechaVencimiento as fechaEmisionCuota
+		                              ,cp.abono as abonoCuota
+		                              ,cp.saldo as saldoCuota
+		                              ,ep.descripcion as estadoCuota
+                                FROM v_CuentaPorCobrar                 cc WITH (NOLOCK) 
+                                INNER JOIN Contabilidad.CuotaPorCobrar cp WITH (NOLOCK) ON cp.idCuentaPorCobrar = cc.idCuentaPorCobrar
+                                INNER JOIN dbo.EstadoPago              ep WITH (NOLOCK) ON ep.idEstadoPago      = cp.idEstadoPago
+                                WHERE cc.idCuentaPorCobrar > 0 '
+                   
+                    --SET @sql = @sql + 'AND cc.mora > 0 '
+
+                END 
+
             IF @codEstab IS NOT NULL 
                 BEGIN
                     SET @sql = @sql + 'AND codEstab = @codEstab '
@@ -102,11 +128,6 @@ BEGIN
                         BEGIN
                             SET @sql = @sql + 'AND codEstado = @codEstado '
                         END 
-                END 
-
-            IF @ckCxcVencida = 1
-                BEGIN
-                    SET @sql = @sql + 'AND mora > 0 '
                 END 
 
             SELECT en.razonSocial
