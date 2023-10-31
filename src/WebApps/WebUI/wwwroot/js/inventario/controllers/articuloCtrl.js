@@ -1,4 +1,4 @@
-(function() {
+(function () {
 
     'use strict'
 
@@ -7,11 +7,11 @@
     articuloCtrl.$inject = ['$scope', 'mainService', 'articuloService', 'modalService', 'nombreModal', 'formulario'];
 
 
-    function articuloCtrl($scope, mS, articuloSvc, modalSvc, nombreModalConst, form) { 
- 
+    function articuloCtrl($scope, mS, articuloSvc, modalSvc, nombreModalConst, form) {
+
         const {
             MODAL_CTRL,
-            MODAL_NUEVO,  
+            MODAL_NUEVO,
             MODAL_ARTICULO_IMAGEN,
             MODAL_IMAGEN_DETALLE
         } = nombreModalConst.articulo;
@@ -23,7 +23,7 @@
             pageIndex: 1,
             maxSize: 5,
             totalRecords: 0,
-            busqueda: "", 
+            busqueda: "",
             status: 1
         };
 
@@ -51,7 +51,7 @@
             } catch (error) {
                 console.log(error);
             }
-        } 
+        }
 
         $scope.searchArticulo = () => {
             $scope.articulos = [];
@@ -60,88 +60,81 @@
         }
 
 
+        function validParam(campo){
+            return [""].includes(campo) ? null : campo
+        }
 
         $scope.getArticulos = () => {
             try {
-                showLoader();
+                
                 $scope.articulos = [];
 
                 const dataSearch = {
-                    tipo: 1, 
+                    tipo: 1,
                     bySearch: $scope.dataSearch.bySearch,
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize, 
-
-                    checkBoxSubFamilia: $scope.dataSearch.idSubFamilia > 0,
-                    bySubFamilia: $scope.dataSearch.idSubFamilia,
-
-                    checkBoxMedida: $scope.dataSearch.idMedida > 0,                    
-                    byMedida: $scope.dataSearch.idMedida,
-
-                    checkBoxMarca: $scope.dataSearch.idMarca > 0,
-                    byMarca: $scope.dataSearch.idMarca,
-
-                    checkBoxModelo: $scope.dataSearch.idModelo > 0,
-                    idModelo: $scope.dataSearch.idModelo,
-
-                    checkBoxTipoIva: $scope.dataSearch.idTipoIva > 0,
-                    byTipoIva: $scope.dataSearch.idTipoIva,
-
-                    checkBoxStatus: [0, 1].includes($scope.dataSearch.status),
-                    status: $scope.dataSearch.status,
-
-                    checkBoxStock: [1, 2].includes( $scope.dataSearch.byStock),
-                    byStock: $scope.dataSearch.byStock,                    
+                    bySubFamilia: validParam($scope.dataSearch.idSubFamilia), 
+                    byMedida: validParam($scope.dataSearch.idMedida), 
+                    byMarca: validParam($scope.dataSearch.idMarca), 
+                    idModelo: validParam($scope.dataSearch.idModelo), 
+                    byTipoIva: validParam($scope.dataSearch.idTipoIva), 
+                    status: validParam($scope.dataSearch.status), 
+                    byStock: validParam($scope.dataSearch.byStock),
 
                     checkBoxFraccionado: $scope.dataSearch.checkBoxFraccionado,
                     checkBoxInventario: $scope.dataSearch.checkBoxInventario,
-                  };
-    
+                }
 
-                articuloSvc.getAll(dataSearch).then(response=>{
+                showLoader();
+                articuloSvc.get(dataSearch).then(response => {
                     hideLoader();
                     let {
-                        totalRecords, 
+                        totalRecords,
                         articulos, 
-                        subFamilias,  
-                        medidas,  
-                        marcas,
-                        modelos,
-                        tiposIva
-                    } = response;
-
+                    } = response; 
                     $scope.articulos = articulos;
-                    $scope.dataSearch.totalRecords = totalRecords;
-
-                    //Data Filters 
-                    $scope.subFamilias = subFamilias;
-                    $scope.medidas = medidas;
-                    $scope.marcas = marcas;
-                    $scope.modelos = modelos;
-                    $scope.tiposIva = tiposIva;
-
-                }).catch(error=>{
-                    hideLoader();
+                    $scope.dataSearch.totalRecords = totalRecords; 
+                }).catch(error => {                    
                     $scope.dataSearch.totalRecords = 0;
                     console.log(error);
-                })              
+                }).finally(()=>hideLoader())
             } catch (error) {
                 $scope.dataSearch.totalRecords = 0;
-                hideLoader();                
+                hideLoader();
                 console.log(error);
             }
         }
 
-        $scope.getArticulos();
+        initiload();
+        function initiload() {
+            articuloSvc.get({ tipo: 11 }).then(response => {
+                let {
+                    subFamilias,
+                    medidas,
+                    marcas,
+                    modelos,
+                    tiposIva
+                } = response;
+                //Data Filters 
+                $scope.subFamilias = subFamilias;
+                $scope.medidas = medidas;
+                $scope.marcas = marcas;
+                $scope.modelos = modelos;
+                $scope.tiposIva = tiposIva;
+            })
+            $scope.getArticulos();
+        }
+
 
         $scope.pagechanged = function () {
             $scope.getArticulos();
-          };
-        
-          $scope.changePageSize = function () {
+        };
+
+        $scope.changePageSize = function () {
             $scope.dataSearch.pageIndex = 1;
             $scope.getArticulos();
-          };
+        };
 
 
         $scope.openModalEditar = async (params) => {
@@ -235,12 +228,12 @@
                 console.log(error);
                 hideLoader()
             }
-        } 
+        }
 
 
         $scope.askToDelete = async (item) => {
             try {
-                let {isConfirmed} = await Swal.fire({
+                let { isConfirmed } = await Swal.fire({
                     icon: 'warning',
                     html: `<small>Está seguro de elimiar este Artículo: <strong>${item.descripcion}</strong> ahora</small>`,
                     confirmButtonText: 'Sí, eliminar',
@@ -248,8 +241,8 @@
                     denyButtonText: 'No, cancelar',
                     allowOutsideClick: false
                 })
-                
-                if (isConfirmed) {                
+
+                if (isConfirmed) {
                     showLoader();
                     mS.getData('get', `/Articulo/Delete?idArticulo=${item.idArticulo}`).then(
                         response => {
@@ -266,15 +259,15 @@
                         }
                     ).catch(error => {
                         hideLoader()
-                        console.log(error);                        
+                        console.log(error);
                     })
                 }
             } catch (error) {
                 hideLoader()
                 console.log(error);
             }
-            
-        }  
+
+        }
 
 
         //-------------------------------Gestión de Imagenes -------------------------------
