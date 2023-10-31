@@ -1188,8 +1188,7 @@ export class CommonService {
                         throw response.message
                     }
                     if (response.code === "1") {
-                        let dataMain = JSON.parse(response.payload);
-                        console.log(dataMain)
+                        let dataMain = JSON.parse(response.payload); 
                         let detalle = dataMain[3];
 
                         dataDocumento = dataMain[0][0];
