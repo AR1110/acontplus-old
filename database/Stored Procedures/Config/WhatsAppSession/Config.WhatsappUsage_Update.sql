@@ -26,7 +26,7 @@ BEGIN
 	BEGIN TRY
 		BEGIN TRAN
 			UPDATE wu SET wu.used = t.used
-			,wu.limite = t.limite
+			,wu.limite = IIF(t.ilimitado = 1, 0, ISNULL(t.limite, 0))
 			,wu.ilimitado = t.ilimitado
 			,wu.estado = t.estado
 			FROM Config.WhatsappUsage wu

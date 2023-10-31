@@ -1,16 +1,8 @@
-
 USE AcontPlus
-GO
-
-IF OBJECT_ID('ReporteVentas.Aprob_Document')IS NOT NULL
-BEGIN 
-	DROP PROCEDURE ReporteVentas.Aprob_Document
-END 
-GO
-
+GO 
 
 -- exec ReporteVentas.Aprob_Document '{"id":664,"codEstab":"ESTAB-000000209","codDoc":"01","codigo":"RAC","format":"pdf"}'
-CREATE PROCEDURE ReporteVentas.Aprob_Document @json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE ReporteVentas.Aprob_Document @json VARCHAR(MAX)
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -25,31 +17,11 @@ BEGIN
 	DECLARE @telefono VARCHAR(50)
 	DECLARE @razonSocial VARCHAR(200)	
 	
-	--Comprobante
-	DECLARE @codEstab VARCHAR(100)
-	DECLARE @mimeType VARCHAR(100)
-	DECLARE @nroDoc VARCHAR(20)
-	DECLARE @claveAcceso VARCHAR(50)
-	DECLARE @fecha VARCHAR(100)	
+	--Comprobante 
 	DECLARE @importeTotal DECIMAL(15,5)	
 	
 	--Cliente 
-	DECLARE @cliente VARCHAR(150)
-
-	--Report 
-	DECLARE @imagen VARBINARY(MAX)
-	DECLARE @rdlcParams VARCHAR(MAX)
-	DECLARE @headerDs VARCHAR(MAX)
-	DECLARE @detailDs VARCHAR(MAX)
-	DECLARE @paymentDs VARCHAR(MAX)
-	DECLARE @additional VARCHAR(MAX)
-	DECLARE @dataSources VARCHAR(MAX)
-
-	--Email 
-	DECLARE @subject VARCHAR(100) 
-	DECLARE @nameDoc VARCHAR(150)
-	DECLARE @dataMail VARCHAR(MAX)
-	DECLARE @cc VARCHAR(100)
+	DECLARE @cliente VARCHAR(150) 
 	DECLARE @idTipoDocumento INT 
 	
 	-- Declaración de comprobante
@@ -66,6 +38,7 @@ BEGIN
 		agenteRetencion     varchar(150),
 		nroDoc              varchar(50),
 		claveAcceso         varchar(50),
+        codigoAutorizacion         varchar(50),
 		ambiente            varchar(50),
 		emision             varchar(50),
 		fechaEmision        datetime,
@@ -115,34 +88,24 @@ BEGIN
 
 	SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigo = 'APR'
 
-	SELECT @id = id, @docDestino = codDoc,  @rdlcParams = rdlcParams FROM OPENJSON(@json) WITH (id INT '$.id', codDoc VARCHAR(5), rdlcParams VARCHAR(MAX) '$.rdlcParams') AS dt 
+	SELECT @id = id, @docDestino = codDoc  FROM OPENJSON(@json) WITH (id INT '$.id', codDoc VARCHAR(5), rdlcParams VARCHAR(MAX) '$.rdlcParams') AS dt 
 
 	SELECT 	
 
 		@uniqueId        = ad.uniqueId,
-		@idEntidad       = ad.idEntidad,
-		@codEstab        = pe.codEstab,
+		@idEntidad       = ad.idEntidad, 
 		@telefono        = en.telefono,
-		@razonSocial     = en.razonSocial,
-		@cc              = en.email,
-		@nroDoc          = dbo.AFTGenerarNroDocumento(ad.estab+ad.ptoEmi, ad.secuencial),
-		@claveAcceso     = claveAcceso,		
-		@fecha           = CONVERT(NVARCHAR,FORMAT(ad.fechaEmision, 'dd/MM/yyyy HH:mm')),
-		@nameDoc         = 'Prefactura' +'-'+  ad.estab+'-'+ad.ptoEmi+'-'+Helper.F_Auto_Sequential(ad.secuencial),		
-		@subject         = 'Comprobante Electrónico - Acontplus N°: '+ ad.estab+'-'+ad.ptoEmi+'-'+dbo.AFTAutoComplete(ad.secuencial),		
+		@razonSocial     = en.razonSocial,  	
 		@importeTotal    = CAST(ad.importeTotal AS DECIMAL(15,2))				
 	FROM Ventas.Aprob_Document  ad WITH (NOLOCK)
 	INNER JOIN dbo.Entidad      en WITH (NOLOCK) ON en.idEntidad      = ad.idEntidad
 	INNER JOIN dbo.EstadoPago   ep WITH (NOLOCK) ON ep.codigo         = ad.codEstado
 	INNER JOIN dbo.Cliente      cl WITH (NOLOCK) ON cl.idCliente      = ad.idCliente
 	INNER JOIN dbo.PuntoEmision pe WITH (NOLOCK) ON pe.idPuntoEmision = ad.idPuntoEmision
-	WHERE idAprob_Document = @id
-
-	SELECT TOP 1 @imagen = imagen, @mimeType = mimeType FROM Config.Estab_Logo WITH (NOLOCK) WHERE codEstab = @codEstab 
-	
+	WHERE idAprob_Document = @id	
  
 	INSERT INTO @tbComprobante (ruc, razonSocial, nombreComercial, telefonoEntidad, emailEntidad, dirMatriz, contribuyenteEspecial,
-		obligadoContabilidad, contribuyenteRimpe, agenteRetencion, nroDoc, claveAcceso, ambiente, emision, fechaEmision,
+		obligadoContabilidad, contribuyenteRimpe, agenteRetencion, nroDoc, claveAcceso, codigoAutorizacion, ambiente, emision, fechaEmision,
 		fechaAutorizacion, identificacionComprador, razonSocialComprador, direccionComprador, telefonoComprador, emailComprador,
 		porcentajeIva, totalSinImpuestos, subTotalIva12, subTotalNetoIva, subtotalIva0, subtotalNoObjetoIva, subtotalExcentoIva,
 		totalDescuento, tipoIva, valorIva, irbpnr, propina, importeTotal, observacion)
@@ -159,6 +122,7 @@ BEGIN
 		agenteRetencion    = ISNULL(es.agenteRetencion, 'SN'),
 		nroDoc = ad.estab + '-' + ad.ptoEmi + '-' + Helper.F_Auto_Sequential(ad.secuencial),
 		claveAcceso = ad.claveAcceso,
+        codigoAutorizacion = ad.claveAcceso,
 		ambiente = CASE WHEN ad.ambiente = 1 THEN 'PRUEBA' ELSE 'PRODUCCIÓN' END,
 		emision  = CASE WHEN ad.tipoEmision = 1 THEN 'NORMAL' ELSE '' END,
 		fechaEmision = dbo.AFTConvertDate(ad.fechaEmision),
@@ -251,42 +215,14 @@ BEGIN
 		AND idTipoDocumento = @idTipoDocumento
 
 	IF @docDestino='01'
-		BEGIN 
-			
-			SET @headerDs = (SELECT * FROM @tbComprobante FOR JSON PATH	)
-
-			SET @detailDs = (SELECT * FROM @tbDetalle FOR JSON PATH)
-
-
-			SET @paymentDs = (SELECT 
-								descripcion = fp.descripcion
+		BEGIN
+		    SELECT * FROM @tbComprobante
+            SELECT * FROM @tbDetalle
+            SELECT  descripcion = fp.descripcion
 								,valor = CAST(@importeTotal as numeric(15,2))
 								FROM Sri.FormaPago fp WHERE formaPago = 20
-								FOR JSON PATH
-							  )
-
+			SELECT * FROM @tbInfoAdicional
  
-
-			SET @additional = (SELECT * FROM @tbInfoAdicional FOR JSON PATH 
-						
-							)
-
-			SET @dataSources = (SELECT headerDs = @headerDs, detailDs = @detailDs, paymentDs = ISNULL(@paymentDs,'[]'), infoAdicionalDs = ISNULL(@additional,'[]') FOR JSON PATH)
-
-			SET @dataMail = (SELECT 'Prefactura Nro. '+@nroDoc documento, @fecha fechaEmision,  @cliente cliente, @importeTotal importeTotal,
-								@razonSocial razonSocial,
-								@telefono telefono
-								 FOR JSON path )
-
-			SELECT  imagen = @imagen
-					,mimeType =  @mimeType
-				   ,claveAcceso = @claveAcceso
-				   ,rdlcParams = @rdlcParams
-				   ,dataSources = @dataSources 
-				   ,ISNULL(@subject,'') as 'subject'
-				   ,ISNULL(@cc,'') as 'cc'  
-				   ,ISNULL(@nameDoc,'') as 'invoiceName' 
-				   ,dataMail = @dataMail 
 		END 
 
 	IF @docDestino='NE'

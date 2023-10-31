@@ -252,6 +252,9 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
     }
 
     $scope.generateXml = () => {
+        if (!params.idDocumentoElectronico) {
+            return;
+        }
         mS.getFile('get', 'FactElect/DocumentoElectronico/GetXmlSri/' + params.idDocumentoElectronico, null, true).then(response => {
             let fileName = response.headers()['content-disposition'].split(';')[1].split('=')[1].replace('"', "")
             fileName = fileName.replace('"', "")
@@ -273,9 +276,6 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
         'CI': 'RCINGR'
     })
 
-    const reportHasService = () => ['NE', '09', 'CI'].includes($scope.codDoc);
-    const getTypeReport = () => ['NE', '09', 'CI'].includes($scope.codDoc) ? "Reporte/Download" : "Reporte/DynamicReport"
-
     $scope.generateFile = () => {
         let format = 'pdf'
         let dataParms = {
@@ -288,13 +288,11 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
         }
 
         let parameters = {
-            hasService: reportHasService(),
-            sendToWhatsapp: true,
+            hasService: true,
             dataParams: JSON.stringify(dataParms),
             reportParams: JSON.stringify(dataParms)
         }
-        let url = getTypeReport();
-        mS.getFile('post', url, JSON.stringify(parameters), true).then(response => {
+        mS.getFile('post', "Reporte/Download", JSON.stringify(parameters), true).then(response => {
             let fileName = response
                 .headers()["content-disposition"].split(";")[1]
                 .split("=")[1];
