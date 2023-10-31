@@ -132,7 +132,7 @@ namespace Inventario.API.Controllers.v1
             return Ok(_response);
         }
 
-        [HttpPut("{id}")]
+        [HttpPost("{id}")]
         public async Task<IActionResult> Put(int id, string json, IFormFile file)
         {
             GenericResponse _response = new GenericResponse();
