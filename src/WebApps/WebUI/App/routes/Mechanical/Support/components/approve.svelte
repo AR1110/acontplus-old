@@ -12,6 +12,7 @@
   import Modal from "$lib/components/Modal.svelte";
   import toast from "$utils/toast";
   import { SupportDetailService } from "$lib/services/Mechanical/support-detail-service";
+  import { sharedService } from "$lib/services/shared.service";
 
   let support;
   let establishments = [];
@@ -20,7 +21,7 @@
   let articles = [];
   let supportDetails = [];
   let tipoIva = [];
-  let decimals = [];
+  let decimals;
   let valueArticle = "";
   let paramValidation = [undefined, null, "", 0];
   let placeholderArticle = "Buscar por Nombre";
@@ -97,6 +98,7 @@
   };
 
   const selectArticle = (e) => {
+    console.log(e);
     let dataArticle = {};
     let medidas = [];
     articles = [];
@@ -157,7 +159,6 @@
         }
       });
     }, 200);
-
   };
 
   let onValidateLlevaInventario = (item: any) => {
@@ -191,75 +192,85 @@
   // Article: Search article by Code.
   const searchArticleCode = (value: any) => {
     let getValue = value.target.value;
-    if(getValue.length <= 0) return;
+    if (getValue.length <= 0) return;
 
-    if(timeout) clearTimeout(timeout);
+    if (timeout) clearTimeout(timeout);
     timeout = setTimeout(() => {
-      
+      showLoader();
 
+      let data = { bySearch: getValue, tipo: 2 };
 
+      ArticleService.get(JSON.stringify(data))
+        .then((response) => {
+          if (response) {
+            let data = response[0][0];
+            let forSend = { idArticulo: data.idArticulo };
+            selectArticle(forSend);
+            value.target.value = "";
+          }
+        })
+        .finally(() => {
+          hideLoader();
+        });
     }, 200);
-  }
+  };
 
   function getTotales() {
     let CODIGO_PORCENTAJE_IVA0 = "0",
       CODIGO_PORCENTAJE_IVAEXENTO = "7",
-      CODIGO_PORCENTAJE_IVA_NO_OBJETO = "6";
+      CODIGO_PORCENTAJE_IVA_NO_OBJETO = "6",
+      CODIGO_PORCENTAJE_IVA8 = "8";
 
-    const dataTotal = supportDetails.reduce(
-      (total, itemDetails) => {
+    const dataTotal = supportDetails.reduce((total, itemDetails) => {
+
         let dataImpuesto = tipoIva.find(
-          (x) => x.idTipoIva == itemDetails.idTipoIva
+          (x) => x.idTipoIva == Number(itemDetails.idTipoIva)
         );
+        console.log("dataImpuesto");
+        console.log(dataImpuesto);
 
-        let dataImpuestoVigente = tarifaImpuestos.find(
-          (x) => x.codigoPorcentaje == dataImpuesto.codigoPorcentaje
-        );
+        let dataImpuestoVigente = tarifaImpuestos.find((x) => x.codigoPorcentaje == dataImpuesto.codigoPorcentaje);
+        if(dataImpuestoVigente != undefined) {
+          total.valorIva = dataImpuestoVigente.tarifa;
+        }
 
-        total.valorIva = dataImpuestoVigente.tarifa;
+        if(dataImpuestoVigente == undefined) {
+          if(dataImpuesto.codigoPorcentaje == CODIGO_PORCENTAJE_IVA8) {
+            total.valorIva = 8.00
+          }
+          else {
+            total.valorIva = 0;
+          }
+        }
 
         itemDetails.cantidad = Number(itemDetails.cantidad);
         itemDetails.precioUnitario = Number(itemDetails.precioUnitario);
         itemDetails.valorDescuento = Number(itemDetails.valorDescuento);
 
-        if (
-          dataImpuesto.codigoPorcentaje == dataImpuestoVigente.codigoPorcentaje
-        ) {
-          total.totalImpuestoVigente +=
-            itemDetails.cantidad * itemDetails.precioUnitario;
-          total.totalImpuestoVigenteNeto +=
-            (itemDetails.precioUnitario - itemDetails.valorDescuento) *
-            itemDetails.cantidad;
+        if(dataImpuestoVigente != undefined) {
+          if ( dataImpuesto.codigoPorcentaje == dataImpuestoVigente.codigoPorcentaje) {
+            total.totalImpuestoVigente += itemDetails.cantidad * itemDetails.precioUnitario;
+            total.totalImpuestoVigenteNeto += (itemDetails.precioUnitario - itemDetails.valorDescuento) * itemDetails.cantidad;
+          }
         }
 
         if (dataImpuesto.codigoPorcentaje == CODIGO_PORCENTAJE_IVA0) {
-          total.subTotalIvaCero +=
-            itemDetails.cantidad * itemDetails.precioUnitario;
-          total.subTotalNetoIvaCero +=
-            (itemDetails.precioUnitario - itemDetails.valorDescuento) *
-            itemDetails.cantidad;
+          total.subTotalIvaCero += itemDetails.cantidad * itemDetails.precioUnitario;
+          total.subTotalNetoIvaCero +=  (itemDetails.precioUnitario - itemDetails.valorDescuento) * itemDetails.cantidad;
         }
 
         if (dataImpuesto.codigoPorcentaje == CODIGO_PORCENTAJE_IVAEXENTO) {
-          total.subTotalExentoIva +=
-            itemDetails.cantidad * itemDetails.precioUnitario;
-          total.subTotalNetoExentoIva +=
-            (itemDetails.precioUnitario - itemDetails.valorDescuento) *
-            itemDetails.cantidad;
+          total.subTotalExentoIva += itemDetails.cantidad * itemDetails.precioUnitario;
+          total.subTotalNetoExentoIva += (itemDetails.precioUnitario - itemDetails.valorDescuento) *itemDetails.cantidad;
         }
 
         if (dataImpuesto.codigoPorcentaje == CODIGO_PORCENTAJE_IVA_NO_OBJETO) {
-          total.subTotalNoObjetoIva +=
-            itemDetails.cantidad * itemDetails.precioUnitario;
-          total.subTotalNetoNoObjetoIva +=
-            (itemDetails.precioUnitario - itemDetails.valorDescuento) *
-            itemDetails.cantidad;
+          total.subTotalNoObjetoIva += itemDetails.cantidad * itemDetails.precioUnitario;
+          total.subTotalNetoNoObjetoIva += (itemDetails.precioUnitario - itemDetails.valorDescuento) * itemDetails.cantidad;
         }
 
-        total.sumaTotalNeto +=
-          itemDetails.cantidad * itemDetails.precioUnitario;
-        total.valorDescuento +=
-          itemDetails.cantidad * itemDetails.precioUnitario;
+        total.sumaTotalNeto += itemDetails.cantidad * itemDetails.precioUnitario;
+        total.valorDescuento += itemDetails.cantidad * itemDetails.precioUnitario;
         return total;
       },
       {
@@ -286,8 +297,11 @@
 
     let iva = (dataTotal.sumaTotalNeto * dataTotal.valorIva) / 100;
 
+    iva = sharedService.roundNumber(iva, decimals.nroIva);
     let total = dataTotal.sumaTotalNeto + iva;
+
     let importeTotal = total - dataTotal.totalDescuento;
+    importeTotal = sharedService.roundNumber(importeTotal, decimals.importeTotal);
 
     let { valorIva, totalDescuento, ...result } = dataTotal;
 
@@ -420,8 +434,11 @@
       );
       item.bodegas = warehouses.filter((x) => x.codEstab == support.codEstab);
       item.tipoIvas = tipoIva;
-      item.precioConIva = item.tarifas.find((x) => x.idTarifa == item.idTarifa).precioConIva;
+      item.precioConIva = item.tarifas.find(
+        (x) => x.idTarifa == item.idTarifa
+      ).precioConIva;
       item.decimals = decimals;
+      item.total = item.cantidad * item.precioUnitario;
     });
   };
 
@@ -449,7 +466,8 @@
     ).idBodega;
     tarifaImpuestos = [
       ...JSON.parse(
-        establishments.find((x) => x.codEstab == support.codEstab).tarifasImpuestos
+        establishments.find((x) => x.codEstab == support.codEstab)
+          .tarifasImpuestos
       ),
     ];
 
@@ -564,7 +582,7 @@
 
   // Todo: Save DETALLES
   const onUpdate = () => {
-    if(!onValidate()) return;
+    if (!onValidate()) return;
 
     showLoader();
     supportDetails = supportDetails.map((item) => ({
@@ -602,26 +620,32 @@
   const onValidate = () => {
     let isValidate = true;
     try {
-      if(paramValidation.includes(support.date)) {
-        toast({ type: "warning", message: "Debe seleccionar la Fecha de Emisión" });
-        return isValidate = false;
+      if (paramValidation.includes(support.date)) {
+        toast({
+          type: "warning",
+          message: "Debe seleccionar la Fecha de Emisión",
+        });
+        return (isValidate = false);
       }
 
-      if(paramValidation.includes(support.codEstab)) {
+      if (paramValidation.includes(support.codEstab)) {
         toast({ type: "warning", message: "Debe seleccionar Establecimiento" });
-        return isValidate = false;
+        return (isValidate = false);
       }
 
-      if(paramValidation.includes(support.puntoEmisionId)) {
-        toast({ type: "warning", message: "Debe seleccionar Punto de Emisión" });
-        return isValidate = false;
+      if (paramValidation.includes(support.puntoEmisionId)) {
+        toast({
+          type: "warning",
+          message: "Debe seleccionar Punto de Emisión",
+        });
+        return (isValidate = false);
       }
       return isValidate;
     } catch (error) {
       console.log(error);
       return false;
     }
-  }
+  };
 
   supportStore.subscribe((values) => {
     support = values.support;
@@ -768,7 +792,13 @@
           </div>
           <div class="col-sm-2 nopadding">
             <label for="cliente" class=""> Buscar por Código </label>
-            <input on:blur={(e) => searchArticleCode(e)} type="text" class="form-control" placeholder="Ej: COMP1" />
+            <input
+              on:blur={(e) => searchArticleCode(e)}
+              id="searchArticleCode"
+              type="text"
+              class="form-control"
+              placeholder="Ej: COMP1"
+            />
           </div>
           <div class="col-sm-3 nopadding">
             <div class="row">
