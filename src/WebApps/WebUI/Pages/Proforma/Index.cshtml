@@ -1,7 +1,10 @@
-﻿@{
-    ViewData["title"] = "Proforma";
+﻿@page
+@model WebUI.Pages.Proforma.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Proforma";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 
 <div ng-controller="proformaCtrl">
     <div class="row page-titles">
@@ -10,8 +13,9 @@
         </div>
         <div class="col-lg-7 align-items-center text-right">
             <div class="d-flex justify-content-end align-items-center">
-                <button type="button" class="btn btn-info m-l-15" ng-if="accion.crear" ng-click="openModalNew()"><i
-                        class="fa fa-plus-circle"></i> Nuevo</button>
+                <button type="button" class="btn btn-info m-l-15" ng-if="accion.crear" ng-click="openModalNew()">
+                    <i class="fa fa-plus-circle"></i> Nuevo
+                </button>
                 @* <button type="button" class="btn btn-danger m-l-15" ng-if="accion.crear"
                 ng-click="openModalProformaTest()"><i class="fa fa-plus-circle"></i> Nuevo Test</button> *@
             </div>
@@ -26,64 +30,64 @@
                     <div class="form-gorup">
                         <span for="establecimiento">Estab: <span class="text-danger">*</span></span>
                         <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
-                            class="form-control  border-select" ng-change="estabFilter()">
+                                class="form-control  border-select" ng-change="estabFilter()">
                             <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                                 {{item.nombreComercial}}
                             </option>
                         </select>
                     </div>
                 </div>
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12"> 
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <span for="date-range-filter">Rango Fechas: </span>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">
-                                        <div class="custom-control custom-checkbox mr-sm-2">
-                                            <input type="checkbox" 
-                                                ng-model="dataSearch.checkBoxFecha"
-                                                   ng-disabled="!(dataSearch.idCliente>0)"
-                                                class="custom-control-input" 
-                                                id="checkBoxFecha">
-                                            <label class="custom-control-label" for="checkBoxFecha"></label>
-                                        </div>
-                                    </div>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <div class="custom-control custom-checkbox mr-sm-2">
+                                    <input type="checkbox"
+                                           ng-model="dataSearch.checkBoxFecha"
+                                           ng-disabled="!(dataSearch.idCliente>0)"
+                                           class="custom-control-input"
+                                           id="checkBoxFecha">
+                                    <label class="custom-control-label" for="checkBoxFecha"></label>
                                 </div>
+                            </div>
+                        </div>
 
-                                <date-range-filter current-date="dataSearch.fechaInicio"
-                                                   start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
-                                                   result-range-date="resultRangeFilter(result)"></date-range-filter>
-                            </div> 
+                        <date-range-filter current-date="dataSearch.fechaInicio"
+                                           start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
+                                           result-range-date="resultRangeFilter(result)"></date-range-filter>
+                    </div>
                 </div>
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <span for="clienteFiltro">Cliente</span>
                         <input type="text" id="clienteSearchFiltro" autocomplete="off" name="clienteSearchFiltro"
-                            class="form-control border-select" placeholder="Ingrese C.I o Nombre Fiscal"
-                            ng-model="modelTextSearch" typeahead-wait-ms="10" ng-keyup="onKeyupClienteSearchFiltro()"
-                            uib-typeahead="a as a.nombreFiscal for a in clienteSearch($viewValue)"
-                            typeahead-loading="clienteFiltro.loading" typeahead-no-results="clienteFiltro.noResults"
-                            typeahead-template-url="clienteSearchFiltro.html" typeahead-editable="false"
-                            typeahead-on-select="selectedClienteSearchFiltro($item)" onClick="select();" />
+                               class="form-control border-select" placeholder="Ingrese C.I o Nombre Fiscal"
+                               ng-model="modelTextSearch" typeahead-wait-ms="10" ng-keyup="onKeyupClienteSearchFiltro()"
+                               uib-typeahead="a as a.nombreFiscal for a in clienteSearch($viewValue)"
+                               typeahead-loading="clienteFiltro.loading" typeahead-no-results="clienteFiltro.noResults"
+                               typeahead-template-url="clienteSearchFiltro.html" typeahead-editable="false"
+                               typeahead-on-select="selectedClienteSearchFiltro($item)" onClick="select();" />
 
                         <script type="text/ng-template" id="clienteSearchFiltro.html">
-                                <div class="autocomplete-suggestion-uib-typeahead">
-                                    <span class="item-title">
-                                        <b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}
-                                    </span>
-                                </div>
-                            </script>
+                            <div class="autocomplete-suggestion-uib-typeahead">
+                                <span class="item-title">
+                                    <b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}
+                                </span>
+                            </div>
+                        </script>
                     </div>
                 </div>
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12"> 
-                     <div class="btn-group btn-group-sm mt-4" role="group" aria-label="Basic example">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <div class="btn-group btn-group-sm mt-4" role="group" aria-label="Basic example">
                         <button type="button" class="btn btn-info" ng-click="onClickBtnMore()">
                             <i class="fas fa-eye" uib-tooltip="Más opciones"></i>
                         </button>
                         <button type="button" class="btn btn-success" uib-tooltip="Recargar"
-                            ng-click="getProformas()">
+                                ng-click="getProformas()">
                             <i class="fas fa-redo"></i>
                         </button>
-                    </div> 
+                    </div>
                 </div>
             </div>
 
@@ -92,7 +96,7 @@
                     <div class="form-gorup">
                         <span for="ptosEmision">Pto. Emisión: <span class="text-danger">*</span></span>
                         <select name="ptosEmision" id="ptosEmision" ng-model="dataSearch.idPuntoEmision"
-                            class="form-control  border-select" ng-change="getProformas()">
+                                class="form-control  border-select" ng-change="getProformas()">
                             <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
                                 {{item.ptoEmi}}
                             </option>
@@ -103,20 +107,20 @@
                     <div class="form-group">
                         <span for="usuario">Usuario</span>
                         <input type="text" class="form-control border-select" ng-model="nombreCompleto"
-                            ng-keyup="onKeyupUsuarioSearch()"
-                            uib-typeahead="u as u.nombreCompleto for u in usuarioSearch($viewValue)"
-                            typeahead-editable="false" placeholder="Buscar Usuario" autocomplete="off"
-                            typeahead-template-url="usuarioSearchTemplate.html"
-                            typeahead-no-results="usuarioSearch.noResults"
-                            typeahead-on-select="selectedUsuarioSearch($item)">
+                               ng-keyup="onKeyupUsuarioSearch()"
+                               uib-typeahead="u as u.nombreCompleto for u in usuarioSearch($viewValue)"
+                               typeahead-editable="false" placeholder="Buscar Usuario" autocomplete="off"
+                               typeahead-template-url="usuarioSearchTemplate.html"
+                               typeahead-no-results="usuarioSearch.noResults"
+                               typeahead-on-select="selectedUsuarioSearch($item)">
 
                         <script type="text/ng-template" id="usuarioSearchTemplate.html">
-                                <div class="autocomplete-suggestion-uib-typeahead">
-                                    <span class="item-title">
-                                        {{match.model.nombreCompleto}}
-                                    </span>
-                                </div>
-                            </script>
+                            <div class="autocomplete-suggestion-uib-typeahead">
+                                <span class="item-title">
+                                    {{match.model.nombreCompleto}}
+                                </span>
+                            </div>
+                        </script>
                     </div>
                 </div>
 
@@ -124,14 +128,14 @@
                     <div class="form-group">
                         <span>Buscar por Nro. Doc.:</span>
                         <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial"
-                            placeholder="Ej: 123 o 1-30" />
+                               placeholder="Ej: 123 o 1-30" />
                     </div>
-                </div> 
+                </div>
                 <div class="col-xl-3">
                     <div class="form-group">
                         <span>Buscar</span>
                         <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
-                            ng-model="dataSearch.bySearch" placeholder="Ej: 001-002">
+                               ng-model="dataSearch.bySearch" placeholder="Ej: 001-002">
                     </div>
                 </div>
             </div>
@@ -139,7 +143,7 @@
                 <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
                     <span class="form-group pull-left page-size form-inline">
                         <select class="form-control control-color" ng-model="dataSearch.pageSize"
-                            ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                                ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
                         </select>
                     </span>
                 </div>
@@ -164,7 +168,7 @@
                             <td md-cell>
                                 <md-menu>
                                     <md-button aria-label="Open demo menu" class="md-icon-button"
-                                        ng-click="$mdMenu.open($event)">
+                                               ng-click="$mdMenu.open($event)">
                                         <icon class="mdi mdi-menu"></icon>
                                     </md-button>
                                     <md-menu-content class="md-dense">
@@ -183,8 +187,10 @@
 
                                         <md-menu-item ng-if="accion.anular && !p.esAnulado">
                                             <md-button ng-click="askToDelete(p)">
-                                                <span md-menu-align-target><i class="mdi mdi-block-helper"></i>
-                                                    Anular</span>
+                                                <span md-menu-align-target>
+                                                    <i class="mdi mdi-block-helper"></i>
+                                                    Anular
+                                                </span>
                                             </md-button>
                                         </md-menu-item>
 
@@ -210,16 +216,18 @@
 
                                         <md-menu-item ng-if="accion.enviarCorreo">
                                             <md-button btn-send-to-email params="p" type-send="typeSendToMail"
-                                                get-param-to-send-mail="getParamToSendMail(params)">
-                                                <span md-menu-align-target><i class="far fa-envelope"></i> Enviar
-                                                    Correo</span>
+                                                       get-param-to-send-mail="getParamToSendMail(params)">
+                                                <span md-menu-align-target>
+                                                    <i class="far fa-envelope"></i> Enviar
+                                                    Correo
+                                                </span>
                                             </md-button>
                                         </md-menu-item>
 
                                         <md-menu-item>
                                             <md-button uib-tooltip="Enviar por Whatsapp" tooltip-placement="top"
-                                                btn-send-to-whats-app params="p" has-permission="hasPermissions"
-                                                type-send="typeSend">
+                                                       btn-send-to-whats-app params="p" has-permission="hasPermissions"
+                                                       type-send="typeSend">
                                                 <span md-menu-align-target>
                                                     <i class="mdi mdi-whatsapp"></i> Enviar por Whatsapp
                                                 </span>
@@ -233,7 +241,8 @@
                             <td md-cell>{{p.fechaEmision}}</td>
                             <td md-cell>
                                 <span data-toggle="tooltip" data-placement="top" tooltip title=""
-                                    data-original-title="{{p.nroIdentificacion}}">{{p.nombreFiscal}}
+                                      data-original-title="{{p.nroIdentificacion}}">
+                                    {{p.nombreFiscal}}
                                 </span>
                             </td>
                             <td md-cell>${{p.total}}</td>
@@ -246,8 +255,12 @@
                     </tbody>
                     <tfoot md-foot>
                         <tr md-row>
-                            <td md-cell colspan="2"><span class="font-weight-bold">{{dataSearch.totalRecords}}
-                                    Proformas</span></td>
+                            <td md-cell colspan="2">
+                                <span class="font-weight-bold">
+                                    {{dataSearch.totalRecords}}
+                                    Proformas
+                                </span>
+                            </td>
                             <td md-cell colspan="3"><span class="font-weight-bold">Total:</span></td>
                             <td md-cell><span class="font-weight-bold">{{total}}</span></td>
                             <td md-cell></td>

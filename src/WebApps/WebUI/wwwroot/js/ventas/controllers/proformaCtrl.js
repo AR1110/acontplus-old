@@ -357,7 +357,8 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
                 template,
                 size: 'xl',
                 params,
-                windowClass: 'uibModalFullScreen'
+                windowClass: 'uibModalFullScreen',
+                isRenderRazorPartial: true
             }).result.then(result => {
                 if (typeof result === 'object') {
 
@@ -425,7 +426,8 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
             template,
             size,
             params,
-            windowClass: 'uibModalFullScreen'
+            windowClass: 'uibModalFullScreen',
+            isRenderRazorPartial: true
         }).result.then(result => {
             if (typeof result === 'object') {
                 $scope.getProformas();
