@@ -30,9 +30,9 @@ BEGIN
     DECLARE @sql NVARCHAR(MAX) ,@params NVARCHAR(MAX)
 
     --> Filters
-    DECLARE @idCliente INT ,@codEstab VARCHAR(25) ,@fechaInicio DATETIME ,@fechaFin DATETIME
-           ,@ckFecha BIT ,@codEstado VARCHAR(15) ,@ckCxcVencida BIT
+    DECLARE @idCliente INT ,@codEstab VARCHAR(25) ,@fechaInicio DATETIME ,@fechaFin DATETIME ,@ckFecha BIT ,@codEstado VARCHAR(15) ,@ckCxcVencida BIT
     
+    --> Variables
     SELECT TOP 1 @idEntidad = idEntidad ,@usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT '$.tipo')
@@ -47,8 +47,8 @@ BEGIN
                               ,fechaEmision
                               ,fechaVencimiento
                               ,CAST(importeTotal as numeric(18,2)) as importeTotal
-                              ,CAST(abono as numeric(18,2)) as abono
-                              ,CAST(saldo as numeric(18,2)) as saldo
+                              ,CAST(abono as numeric(18,2))        as abono
+                              ,CAST(saldo as numeric(18,2))        as saldo
                               ,estado 
                         FROM v_CuentaPorCobrar WITH (NOLOCK)
                         WHERE idCuentaPorCobrar > 0 '
@@ -79,21 +79,23 @@ BEGIN
 
             IF @ckCxcVencida = 1
                 BEGIN
-                    SET @sql = 'SELECT cc.codDoc
+                    SET @sql = 'SELECT cc.idCuentaPorCobrar
+                                      ,cc.codDoc
                                       ,cc.razonSocialComprador
                                       ,cc.serieComprobante
                                       ,cc.fechaEmision
                                       ,cc.fechaVencimiento
                                       ,CAST(cc.importeTotal as numeric(18,2)) as importeTotal
-                                      ,CAST(cc.abono as numeric(18,2)) as abono
-                                      ,CAST(cc.saldo as numeric(18,2)) as saldo
+                                      ,CAST(cc.abono as numeric(18,2))        as abono
+                                      ,CAST(cc.saldo as numeric(18,2))        as saldo
                                       ,cc.estado 
+                                      ,cp.idCuotaPorCobrar
 		                              ,cp.nroCuota
-		                              ,cp.cuota
-		                              ,cp.fechaVencimiento as fechaEmisionCuota
-		                              ,cp.abono as abonoCuota
-		                              ,cp.saldo as saldoCuota
-		                              ,ep.descripcion as estadoCuota
+		                              ,CAST(cp.cuota as numeric(8,2))         as cuota
+		                              ,cp.fechaVencimiento                    as fechaEmisionCuota
+		                              ,CAST(cp.abono as numeric(8,2))         as abonoCuota
+		                              ,CAST(cp.saldo as numeric(8,2))         as saldoCuota
+		                              ,ep.descripcion                         as estadoCuota
                                 FROM v_CuentaPorCobrar                 cc WITH (NOLOCK) 
                                 INNER JOIN Contabilidad.CuotaPorCobrar cp WITH (NOLOCK) ON cp.idCuentaPorCobrar = cc.idCuentaPorCobrar
                                 INNER JOIN dbo.EstadoPago              ep WITH (NOLOCK) ON ep.idEstadoPago      = cp.idEstadoPago
@@ -142,13 +144,13 @@ BEGIN
             INNER JOIN dbo.Entidad   en WITH (NOLOCK) ON en.ruc = es.ruc
             WHERE codEstab = @codEstab
 
-            EXEC sp_executesql  @sql
-						       ,@params 
-                               ,@codEstab    = @codEstab
-                               ,@idCliente   = @idCliente
-                               ,@fechaInicio = @fechaInicio
-                               ,@fechaFin    = @fechaFin
-                               ,@codEstado   = @codEstado
+            EXEC sp_executesql @sql
+						      ,@params 
+                              ,@codEstab    = @codEstab
+                              ,@idCliente   = @idCliente
+                              ,@fechaInicio = @fechaInicio
+                              ,@fechaFin    = @fechaFin
+                              ,@codEstado   = @codEstado
 
             RETURN 
 

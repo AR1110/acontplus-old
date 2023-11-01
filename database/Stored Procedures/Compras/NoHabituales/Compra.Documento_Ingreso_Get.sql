@@ -293,7 +293,7 @@ BEGIN
 				,dt.precioUnitario
 				,precioCostoNeto = dt.precioUnitario - descuento 
 				,valorDescuento = dt.descuento
-				,porcentajeDescuento = CAST((descuento / precioUnitario) * 100 AS numeric(18,5))
+				,porcentajeDescuento = IIF( descuento > 0, CAST(( precioUnitario / descuento ) * 100 AS numeric(18,5)),0)
 				,totalDescuento = CAST(cantidad * descuento AS numeric(18,5))
 				,dt.precioTotalSinImpuesto
 				,total = dt.precioTotalSinImpuesto
