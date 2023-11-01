@@ -247,7 +247,7 @@ BEGIN
                     
                     DECLARE @idArticulo INT ,@idBodega INT ,@idMedida INT ,@idTipoTransaccion  INT ,@idTipoDocumento INT
 	                       ,@cantidad NUMERIC(18,2) ,@precioUnitario NUMERIC(18,5) ,@precioCosto NUMERIC(18,5) ,@precioTotalSinImpuesto NUMERIC(18,5)
-                           ,@fraccion NUMERIC(18,5) ,@fechaConsolidacion DATETIME ,@stock NUMERIC(18,5)
+                           ,@stock NUMERIC(18,5) ,@porcentaje NUMERIC(18,5)
 
                     SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'IV'
 
@@ -269,23 +269,45 @@ BEGIN
 							WHILE @@FETCH_STATUS = 0
 							    BEGIN
 								
-                                    SELECT TOP 1 @fraccion = conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida
-
-                                    SELECT  @cantidad = @cantidad * ISNULL(@fraccion,1)
+                                    --> Articulo Fraccionado
+                                    IF EXISTS (SELECT 1 FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida)
+                                        BEGIN
+                                            SELECT TOP 1 @cantidad = @cantidad  * conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida
+                                        END 
                                     
 								    INSERT INTO Inventario.Transaccion WITH(ROWLOCK)
 				                           (idTipoTransaccion, idArticulo, idBodega, idTipoDocumento, idDocumento, idMedida ,cantidad, precioCosto, precioUnitario, total,fechaRegistro, idUsuario)
 			                        SELECT @idTipoTransaccion,@idArticulo,@idBodega,@idTipoDocumento,@idDocumentoIngreso,@idMedida,@cantidad,@precioCosto,@precioUnitario,@precioTotalSinImpuesto,@fechaEmision,@idUsuario
 								    
-                                    IF EXISTS (SELECT 1 FROM Inventario.Stock WHERE idArticulo = @idArticulo AND idBodega = @idBodega AND fechaConsolidacion IS NOT NULL)
-                                            BEGIN
-                                                  SELECT TOP 1 @fechaConsolidacion = fechaConsolidacion  FROM Inventario.Stock WITH(NOLOCK)  WHERE idArticulo = @idArticulo AND idBodega = @idBodega
-
-                                                   IF @fechaConsolidacion >= @fechaEmision
-                                                        BEGIN
-                                                            SELECT @cantidad = 0 
+                                    IF EXISTS (SELECT 1 FROM Inventario.Stock WHERE idArticulo = @idArticulo AND idBodega = @idBodega AND fechaConsolidacion >= @fechaEmision)
+                                        BEGIN
+                                            SELECT @cantidad = 0       
+                                        END
+                                        
+                                    --> Metodo UltimoPrecio
+                                    IF EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codMetodoValoracion = 'UEPS')
+                                        BEGIN
+                                            IF EXISTS (SELECT 1 FROM Inventario.Stock WHERE idArticulo = @idArticulo AND idBodega = @idBodega AND fechaUltimoCosto < @fechaEmision)
+                                                BEGIN
+                                                    SELECT TOP 1 @porcentaje = precioCosto / 2 FROM dbo.Articulo WITH (NOLOCK) WHERE idArticulo = @idArticulo  
+                                                    
+                                                    IF @precioUnitario >= @porcentaje 
+				                                        BEGIN
+                                                            IF EXISTS (SELECT 1 FROM dbo.Articulo WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida AND estado = 1)
+						                                        BEGIN 
+							                                        UPDATE dbo.Articulo SET precioCosto = @precioUnitario, fechaModificacion = dbo.ufngetDateEcuador() WHERE idArticulo = @idArticulo
+						
+							                                        UPDATE dbo.ArticuloPvP SET porcentajeUtilidad = ((precioVenta / @precioUnitario) * 100) - 100 WHERE idArticulo = @idArticulo
+						                                        END 
+					                                        ELSE 
+						                                        BEGIN
+							                                        UPDATE dbo.ArticuloFraccionado SET precioCostoFraccionado = @precioUnitario WHERE idArticulo = @idArticulo AND idMedida = @idMedida
+							
+						                                        END
                                                         END 
-                                            END 
+
+                                                END 
+                                        END
 
                                     UPDATE Inventario.Stock WITH(ROWLOCK) SET cantidad = cantidad + ISNULL(@cantidad,0) WHERE idArticulo = @idArticulo AND idBodega = @idBodega
 
