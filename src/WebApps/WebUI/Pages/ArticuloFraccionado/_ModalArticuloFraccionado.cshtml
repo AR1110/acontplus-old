@@ -1,0 +1,109 @@
+<form autocomplete="off" autocomplete>
+    <div class="modal-header">
+        <h5 class="modal-title"> {{tipoRegistro==1?'Nuevo':'Editar'}} Artículo Fraccionado</h5>
+        <button type="button" class="close" ng-click="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                <div class="form-group">
+                    <label class="form-control-label">Buscar Articulo</label><br>
+                    <span class="text-muted" ng-if="tipoRegistro==2">{{data.articulo}}</span>
+ 
+                    <input type="text" id="articuloAutocomplete" ng-if="tipoRegistro==1"  autocomplete="off"
+                        name="articuloAutocomplete" class="form-control  border-select"
+                        placeholder="Ingrese Descripción del Articulo" ng-model="data.selectedArticulo"
+                        ng-keyup="onKeyupSearchArticulo()"
+                        uib-typeahead="a as a.descripcion for a in searchArticuloFraccionadoFilter($viewValue)"
+                        typeahead-loading="loadingLocations" typeahead-no-results="data.noResults"
+                        typeahead-template-url="autocompleteArticulo.html" typeahead-editable="false"
+                        typeahead-on-select="selectedArticuloChange($item)" onClick="select();" />
+                    <span class="text-danger" ng-if="data.noResults">No se encontraron resultados</span><br />
+                    <script type="text/ng-template" id="autocompleteArticulo.html">
+                        <div class="autocomplete-suggestion-cliente">
+                            <span class="item-title">
+                                <small> {{match.model.descripcion}}</small><br>
+                                <small><b>Medida: </b>{{match.model.medida}}</small>
+                            </span>
+                        </div>
+                    </script>
+
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-4 col-12" ng-if="data.idArticulo>0">
+                <div class="form-group">
+                    <label class="form-control-label">Precio Costo:</label><br>
+                    <span class="text-muted">${{data.precioCosto}}</span>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-4 col-12" ng-show="data.idArticulo>0">
+                <div class="form-group">
+                    <label class="form-control-label">Código:</label><br>
+                    <span class="text-muted">{{data.codigo}}</span>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-4 col-12" ng-show="data.idArticulo>0">
+                <div class="form-group">
+                    <label class="form-cntrol-label">Medida principal:</label><br>
+                    <span class="text-muted">{{data.nombreMedida}}</span>
+                </div>
+            </div>
+        </div>
+        <md-divider></md-divider>
+        <div class="row mt-2">
+            <div class="col-lg-3 col-md-6 col-sm-12 col-12">
+                <div class="form-group">
+                    <label class="form-control-label">Conversión: <span class="text-danger">*</span></label>
+                    <input type="text" id="conversion" class="form-control border-select"
+                        ng-model="data.conversion" valid-number placeholder="0.00">
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-12 col-12">
+                <label for="">Medida</label>
+                <div class="input-group">
+                    <select class="form-control border-select" ng-model="data.idMedida">
+                        <option ng-value="m.idMedida" ng-repeat="m in medidas">{{m.descripcion}}</option>
+                    </select>
+                    <div class="input-group-append">
+                        <button type="button" btn-add-update-medida results="resultModalMedida(item)"
+                            class="btn btn-outline-secondary btn-sm"><i class="fas fa-plus fa-xs"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-12 col-12">
+                <div class="form-group" ng-if="tipoRegistro==1">
+                    <label>Precio U./Fraccionable <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control border-select" ng-model="data.precioCostoFraccionado"
+                        ng-keyup="recalculateTarifaAdd()" decimal placeholder="0.00">
+                </div>
+
+                <div class="form-group" ng-if="tipoRegistro==2 && usuarioPermiso.almacenPermiso.precio.update">
+                    <label>Precio U./Fraccionable <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control border-select" ng-model="data.precioCostoFraccionado"
+                        ng-keyup="recalculateTarifaAdd()" decimal placeholder="0.00">
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-12 col-12">
+                <div class="form-group text-center ">
+                    <label>Para Venta:</label>
+                    <div class="icheck-primary">
+                        <input type="checkbox" ng-model="data.gestionVenta" id="gestionVentaCheck" />
+                        <label for="gestionVentaCheck"></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div ui-grid="gridOptions" ng-if="gridOptions.data.length > 0" ui-grid-edit ui-grid-resize-columns
+            ui-grid-cellNav ui-grid-auto-resize class="grid">
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success" ng-click="saveAndUpdate()">
+            <i class="{{tipoRegistro==1?'ti-save':'fa fa-edit'}}"></i>{{tipoRegistro==1?' Guardar':'
+            Actualizar'}}
+        </button>
+        <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
+    </div>
+</form>

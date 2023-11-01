@@ -152,7 +152,6 @@
                             permission.isUpdatePrice = result.precio.update;
                         }
                     }
-
                     const establecimientos = tempEstabs.reduce((acc, item) => {
                         const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
 
@@ -178,8 +177,7 @@
                             });
                         }
                         return acc;
-                    }, []);
-                    console.log(mainData)
+                    }, []); 
                     return {
                         establecimientos,
                         decimal,
@@ -696,8 +694,6 @@
 
     })
 
-
-
     app.factory('articuloUbicacionService', function ($injector) {
         const mS = $injector.get('mainService');
         const URL = 'Inventario/ArticuloUbicacion/';
@@ -721,4 +717,43 @@
 
     })
 
+    app.factory('articuloFraccionadoService', function ($injector) {
+        const mS = $injector.get('mainService');
+        const URL = 'Inventario/ArticuloFraccionado/';
+
+        const service = {};
+
+        service.get = function (params) {
+            return mS.getData("get", URL + "?json=" + encodeURIComponent(JSON.stringify(params)), null, true)
+                .then(response => {
+                    if (response) {
+                        if (params.tipo === 1) {
+                            return response.articulosFraccionados;
+                        }
+                        if (params.tipo === 2) {
+                            console.log(response)
+                        }
+                    }
+                    else {
+                        throw response;
+                    }
+                })
+        }
+
+        service.save = function (data) {
+            return mS.getData("post", URL + "?json=" + encodeURIComponent(JSON.stringify(data)), null, true);
+        }
+
+
+        service.update = function (id, data) {
+            return mS.getData("put", URL + `${id}?json=${encodeURIComponent(JSON.stringify(data))}`, null, true);
+        }
+
+        service.delete = function (id) {
+            return mS.getData('delete', URL + id, null, true);
+        }
+
+        return service;
+
+    })
 })(window.angular)
