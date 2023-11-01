@@ -13,18 +13,12 @@ namespace WebUI.Controllers.Config
         // GET: Articulo
         private readonly IConfiguration _configuration;
         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
-
-
-        GenericResponse _gr = new();
-        private ArticuloDao _a;
+         
+        GenericResponse _gr = new(); 
 
         public GestionSistemaController(IConfiguration configuration)
         {
-            _configuration = configuration;
-
-            _a = new ArticuloDao(_configuration);
-
-
+            _configuration = configuration;  
         }
 
         [HttpGet]

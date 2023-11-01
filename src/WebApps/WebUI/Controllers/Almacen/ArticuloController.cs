@@ -17,7 +17,7 @@ namespace WebUI.Controllers.Almacen
 
 
         GenericResponse _gr = new();
-        private ArticuloDao _a;
+       // private ArticuloDao _a;
         //
         private readonly DbAccess _db;
 
@@ -27,7 +27,7 @@ namespace WebUI.Controllers.Almacen
 
 
 
-            _a = new ArticuloDao(_configuration);
+           // _a = new ArticuloDao(_configuration);
             //
             _db = new DbAccess(_configuration);
             _log = log;
@@ -236,31 +236,7 @@ namespace WebUI.Controllers.Almacen
             {
                 return BadRequest(ex.Message);
             }
-        }
-
-        //Operaciones Especiales 
-        //Buscar Articulo por descripcion o por còdigo
-        public async Task<IActionResult> SearchArticuloFilter(string busqueda, bool condicion)
-        {
-            _gr = await _a.SearchFilterAsync(Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value), busqueda, condicion);
-            return Ok(_gr);
-        }
-
-
-
-
-        //Historial de Compras o Ventas del articulo.
-        public async Task<IActionResult> HistoryEntradaArticulo(int idArticulo)
-        {
-            _gr = await _a.HistoryEntradaAsync(Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value), idArticulo);
-            return Ok(_gr);
-        }
-
-        public async Task<IActionResult> SearchFilterFracc(string busqueda)
-        {
-            var res = await _a.SearchFilterFraccAsync(Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value), busqueda);
-            return Ok(res);
-        }
+        }  
 
     }
 }

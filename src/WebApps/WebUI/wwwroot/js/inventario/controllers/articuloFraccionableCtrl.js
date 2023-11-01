@@ -6,14 +6,13 @@
 
     articuloFraccionableCtrl.$inject = [
         '$scope',
-        'mainService',
         'articuloFraccionadoService',
         'modalService',
         'nombreModalInventario',
         'toastService'
     ];
 
-    function articuloFraccionableCtrl($scope, mS, articuloFraccionadoSvc, modalSvc, nombreModalInventario, tS) {
+    function articuloFraccionableCtrl($scope, articuloFraccionadoSvc, modalSvc, nombreModalInventario, tS) {
 
         $scope.recordsQuantity = [10, 25, 50, 100];
         $scope.dataSearch = {
@@ -34,7 +33,7 @@
                     controller: ctrl,
                     template,
                     size: 'xl',
-                    params: item,
+                    params: item || {},
                     isRenderRazorPartial: true
                 })
                 modalRef.result.then(res => {
@@ -47,17 +46,13 @@
             }
         }
 
-
-
-
         $scope.getAllArticuloFraccionado = function () {
             try {
                 $scope.articuloFraccionados = [];
                 showLoader();
                 articuloFraccionadoSvc.get($scope.dataSearch).then(response => {
                     $scope.articuloFraccionados = response;
-                    $scope.dataSearch.totalRecords = $scope.articuloFraccionados.length > 0 ? $scope.articuloFraccionados[0].totalRecords : 0
-                    console.log(response)
+                    $scope.dataSearch.totalRecords = $scope.articuloFraccionados.length > 0 ? $scope.articuloFraccionados[0].totalRecords : 0                    
                 }).finally(() => hideLoader())
             } catch (error) {
                 console.log(error);
@@ -92,15 +87,16 @@
                 })
 
                 if (isConfirmed) {
-                    mS.getData('delete', '/ArticuloFraccionado/Delete?id=' + item.idArticuloFraccionado).then(response => {
-                        if (response.id == "0") {
+                    showLoader();
+                    articuloFraccionadoSvc.delete(item.idArticuloFraccionado).then(response => {
+                        if (response.code == "0") {
                             tS.toastr('warning', response.message);
                         }
-                        if (response.id == "1") {
+                        if (response.code == "1") {
                             tS.toastr('success', response.message);
                             $scope.getAllArticuloFraccionado();
                         }
-                    })
+                    }).finally(() => hideLoader())
                 }
             } catch (error) {
                 console.log(error);

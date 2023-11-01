@@ -65,7 +65,7 @@
                         <option ng-value="m.idMedida" ng-repeat="m in medidas">{{m.descripcion}}</option>
                     </select>
                     <div class="input-group-append">
-                        <button type="button" btn-add-update-medida results="resultModalMedida(item)"
+                        <button type="button" btn-add-update-medida results="resultModalMedida(result)"
                             class="btn btn-outline-secondary btn-sm"><i class="fas fa-plus fa-xs"></i></button>
                     </div>
                 </div>
@@ -100,7 +100,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-success" ng-click="saveAndUpdate()">
+        <button type="button" class="btn btn-success" ng-click="save()">
             <i class="{{tipoRegistro==1?'ti-save':'fa fa-edit'}}"></i>{{tipoRegistro==1?' Guardar':'
             Actualizar'}}
         </button>
