@@ -1,4 +1,9 @@
-export { modalArticuloCtrl };
+export {
+    modalArticuloCtrl,
+    modalArticuloFraccionadoCtrl,
+    ModalArticuloGeneralCtrl,
+    modalHistorialCompraCtrl
+};
 
 modalArticuloCtrl.$inject = [
     "$scope",
@@ -79,11 +84,11 @@ function modalArticuloCtrl(
         return !([null, undefined, "", 0].includes($scope.data.precioCosto));
     }
 
-    //GridOptions Invoice
+
     $scope.gridOptions = {
         enableColumnMenus: false,
         enableColumnReordering: true,
-        showGridFooter: false, 
+        showGridFooter: false,
         enableSorting: false,
         enableFiltering: false,
         enableRowHashing: false,
@@ -334,7 +339,7 @@ function modalArticuloCtrl(
                     etiquetas,
                     permission,
                 } = response;
-                console.log(response);
+
                 $scope.establecimientos = establecimientos;
                 if ($scope.establecimientos.length > 0) {
                     let dataEstab = $scope.establecimientos.find(
@@ -433,7 +438,7 @@ function modalArticuloCtrl(
         if ($scope.subFamilias.length === 0 || (params && params.isImport)) return;
 
         const { codigo, idSubFamilia } = $scope.subFamilias[0];
-        console.log($scope.subFamilias[0]);
+
         $scope.data.idSubFamilia = idSubFamilia;
         setCodigo(codigo);
     }
@@ -467,7 +472,7 @@ function modalArticuloCtrl(
                 .findById(params.idArticulo)
                 .then((response) => {
                     let { data, articuloTarifas } = response;
-                    console.log(response);
+
                     $scope.data = data;
 
                     $scope.dataCodigoBarra.descripcion = $scope.data.descripcion;
@@ -552,7 +557,7 @@ function modalArticuloCtrl(
         }
     };
 
-    $scope.resultModalMedida = async function(result) {
+    $scope.resultModalMedida = async function (result) {
         try {
             if (typeof result !== "object") return;
             const { medidas } = await articuloSvc.getDataForForm();
@@ -573,7 +578,7 @@ function modalArticuloCtrl(
             return;
         }
         let codigoBarra = $scope.data.codigoBarra;
-        let descripcion = $scope.data.descripcion; 
+        let descripcion = $scope.data.descripcion;
 
         Swal.fire({
             // icon:'info',
@@ -619,7 +624,7 @@ function modalArticuloCtrl(
                     link.href = canvas.toDataURL();
                     link.target = "_blank";
                     link.click();
-                    link.download(); 
+                    link.download();
                 });
             });
     }
@@ -938,7 +943,7 @@ function modalArticuloCtrl(
             idBodega: $scope.dataUbicacion.idBodega,
             ubicacion: $scope.dataUbicacion.ubicacion,
         };
- 
+
         let dataRepository = {};
         if (!($scope.data.idArticulo > 0)) {
             showLoader();
@@ -1020,7 +1025,7 @@ function modalArticuloCtrl(
             }).finally(() => hideLoader())
     }
 
-    $scope.resultModalMedidaCodigoBarra = async function(result) {
+    $scope.resultModalMedidaCodigoBarra = async function (result) {
         try {
             if (typeof result !== "object") return;
             const { medidas } = await articuloSvc.getDataForForm();
@@ -1158,12 +1163,12 @@ function modalArticuloCtrl(
             articuloUbicacionSvc.update($scope.dataUbicacion.idArticuloUbicacion, $scope.dataUbicacion)
                 .then((response) => {
                     if (response.code == "0") {
-                        tS.toastr('warning', response.message)                                                
+                        tS.toastr('warning', response.message)
                     }
                     if (response.code == "1") {
-                        tS.toastr('success', response.message)      
+                        tS.toastr('success', response.message)
                         getUbicacionArticulo();
-                        $scope.dataUbicacion = {};                        
+                        $scope.dataUbicacion = {};
                     }
                 }).finally(() => hideLoader())
         }
@@ -1173,32 +1178,32 @@ function modalArticuloCtrl(
             articuloUbicacionSvc.save($scope.dataUbicacion)
                 .then((response) => {
                     if (response.code == "0") {
-                        tS.toastr('warning', response.message)        
+                        tS.toastr('warning', response.message)
                         return;
                     }
                     if (response.code == "1") {
-                        tS.toastr('success', response.message)        
+                        tS.toastr('success', response.message)
                         getUbicacionArticulo();
-                        $scope.dataUbicacion = {};                        
+                        $scope.dataUbicacion = {};
                     }
                 }).finally(() => hideLoader())
         }
     }
 
-    $scope.editarUbicacion = function(item) { 
-        let dataBodega = $scope.bodegas.find(bodega=>bodega.idBodega===item.idBodega);
-        $scope.dataUbicacion = Object.assign({}, item);        
-        if(dataBodega){
-            let dataEstab = $scope.establecimientos.find(estab=>estab.idEstablecimiento===dataBodega.idEstablecimiento);
+    $scope.editarUbicacion = function (item) {
+        let dataBodega = $scope.bodegas.find(bodega => bodega.idBodega === item.idBodega);
+        $scope.dataUbicacion = Object.assign({}, item);
+        if (dataBodega) {
+            let dataEstab = $scope.establecimientos.find(estab => estab.idEstablecimiento === dataBodega.idEstablecimiento);
             $scope.dataUbicacion.idEstablecimiento = dataEstab.idEstablecimiento;
-        } 
+        }
     }
 
-    $scope.resetDataUbicacion = function() { 
-        $scope.dataUbicacion = {}; 
+    $scope.resetDataUbicacion = function () {
+        $scope.dataUbicacion = {};
     }
 
-    $scope.askToDeleteUbicacion = async function(item) {
+    $scope.askToDeleteUbicacion = async function (item) {
         const { isConfirmed } = await Swal.fire({
             icon: "warning",
             html: `<small>Esta seguro/a de eliminar este Ubicación del Articulo ahora?</small>`,
@@ -1214,12 +1219,12 @@ function modalArticuloCtrl(
             articuloUbicacionSvc.delete(item.idArticuloUbicacion)
                 .then((response) => {
                     if (response.code == "0") {
-                        tS.toastr('warning', response.message)                            
+                        tS.toastr('warning', response.message)
                     }
                     if (response.code == "1") {
-                        tS.toastr('success', response.message)    
+                        tS.toastr('success', response.message)
                         getUbicacionArticulo();
-                        $scope.dataUbicacion = {};                        
+                        $scope.dataUbicacion = {};
                     }
                 }).finally(() => hideLoader())
         }
@@ -1227,3 +1232,1181 @@ function modalArticuloCtrl(
 
 
 }
+
+
+/**
+ * Articulo Fraccionado 
+ */
+modalArticuloFraccionadoCtrl.$inject = ['$scope', '$uibModalInstance', '$injector', '$timeout', 'params'];
+function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $timeout, params) {
+
+    let articuloSvc = $injector.get('articuloService');
+    let articuloFraccionadoSvc = $injector.get('articuloFraccionadoService');
+    let fS = $injector.get("formulario");
+    let pricingUtils = $injector.get("pricingUtils");
+
+
+    $scope.tipoRegistro = 1;
+    $scope.data = {
+        selectedArticulo: ''
+    }
+    $scope.articulo = {};
+
+    function checkPrecioCosto() {
+        return !([null, undefined, "", 0].includes($scope.data.precioCostoFraccionado));
+    }
+
+    $scope.gridOptions = {
+        enableColumnMenus: false,
+        enableColumnReordering: true,
+        showGridFooter: false,
+        enableSorting: false,
+        enableFiltering: false,
+        enableRowHashing: false,
+        enableCellEdit: false,
+        cellEditableCondition: () => {
+            return checkPrecioCosto();
+        },
+    };
+
+    $scope.gridOptions.onRegisterApi = function (gridApi) {
+        $scope.gridApi = gridApi;
+        if ($scope.gridApi) {
+            $timeout(() => {
+                $scope.gridApi.core.handleWindowResize();
+                $scope.gridApi.grid.refresh();
+            }, 5);
+        }
+
+        gridApi.edit.on.afterCellEdit(
+            $scope,
+            (rowEntity, colDef, newValue, oldValue) => {
+                const index = $scope.gridOptions.data.indexOf(rowEntity); //Obtenemos indice
+
+                let precioConIva = 0;
+                let precioVenta = 0;
+                let porcentajeUtilidad = 0;
+                let ganancia = 0;
+                let precioCosto = $scope.data.precioCostoFraccionado
+
+                //Validacion de Campos
+                if (
+                    [null, undefined, "", 0].includes(precioCosto) ||
+                    isNaN(precioCosto)
+                ) {
+                    tS.toastr("warning", "Ingrese el Precio de Costo");
+                    return;
+                }
+
+                if (colDef.field === "precioVenta") {
+                    if ([null, undefined].includes(newValue)) {
+                        rowEntity.precioVenta = oldValue;
+                    }
+                    if (rowEntity.precioVenta > 0) {
+                        if (rowEntity.precioVenta < precioCosto) {
+                            rowEntity[colDef.field] = oldValue;
+                        }
+                    }
+                }
+
+                if (colDef.field === "precioConIva") {
+                    if ([null, undefined].includes(newValue)) {
+                        rowEntity.precioConIva = oldValue;
+                    }
+
+                    if (rowEntity.precioConIva > 0) {
+                        if (rowEntity.precioConIva < precioCosto) {
+                            rowEntity.precioConIva = oldValue;
+                        }
+                    }
+                }
+
+                if (
+                    (colDef.field === "porcentajeUtilidad" && newValue === undefined) ||
+                    newValue === null
+                ) {
+                    rowEntity.porcentajeUtilidad = oldValue;
+                }
+
+                //Calculos
+                switch (colDef.field) {
+                    case "precioVenta":
+                        precioConIva = pricingUtils.calcularPrecioConIva(
+                            rowEntity.precioVenta,
+                            rowEntity.porcentajeIva
+                        );
+                        porcentajeUtilidad = pricingUtils.campoPorcentajeUtilidad(
+                            precioCosto,
+                            rowEntity.precioVenta
+                        );
+
+                        $scope.gridOptions.data[index].precioVenta = fS.roundNumber(
+                            rowEntity.precioVenta,
+                            $scope.decimal.nroPrecio
+                        );
+                        $scope.gridOptions.data[index].precioConIva = fS.roundNumber(
+                            precioConIva,
+                            $scope.decimal.nroPrecio
+                        );
+                        $scope.gridOptions.data[index].porcentajeUtilidad = fS.roundNumber(
+                            porcentajeUtilidad,
+                            5
+                        );
+
+                        break;
+
+                    case "precioConIva":
+                        precioVenta = pricingUtils.calcularPrecioVenta(
+                            rowEntity.precioConIva,
+                            rowEntity.porcentajeIva
+                        );
+                        porcentajeUtilidad = pricingUtils.campoPorcentajeUtilidad(
+                            precioCosto,
+                            precioVenta
+                        );
+
+                        $scope.gridOptions.data[index].precioConIva = fS.roundNumber(
+                            rowEntity.precioConIva,
+                            $scope.decimal.nroPrecio
+                        );
+                        $scope.gridOptions.data[index].precioVenta = fS.roundNumber(
+                            precioVenta,
+                            $scope.decimal.nroPrecio
+                        );
+                        $scope.gridOptions.data[index].porcentajeUtilidad = fS.roundNumber(
+                            porcentajeUtilidad,
+                            5
+                        );
+
+                        break;
+                    case "porcentajeUtilidad":
+                        precioVenta = pricingUtils.calcularPorcentajeUtilidad(
+                            $scope.data.precioCosto,
+                            rowEntity.porcentajeUtilidad
+                        );
+                        precioConIva = pricingUtils.calcularPrecioConIva(
+                            precioVenta,
+                            rowEntity.porcentajeIva
+                        );
+
+                        $scope.gridOptions.data[index].precioVenta = fS.roundNumber(
+                            precioVenta,
+                            $scope.decimal.nroPrecio
+                        );
+                        $scope.gridOptions.data[index].precioConIva = fS.roundNumber(
+                            precioConIva,
+                            $scope.decimal.nroPrecio
+                        );
+                        break;
+                }
+
+                //alexis ramirez
+                ganancia = rowEntity.precioVenta - precioCosto;
+                $scope.gridOptions.data[index].ganancia = fS.roundNumber(ganancia, 5);
+            }
+        );
+    };
+
+
+
+    $scope.gridOptions.columnDefs = [
+        {
+            name: "idTarifa",
+            field: "idTarifa",
+            visible: false,
+        },
+        {
+            name: "tarifa",
+            field: "tarifa",
+            enableCellEdit: false,
+            width: "15%",
+            minWidth: 100,
+        },
+        {
+            name: "Tipo Iva",
+            field: "porcentajeIva",
+            type: "number",
+            enableCellEdit: false,
+            width: "5%",
+            minWidth: 100,
+        },
+        {
+            name: "precioVenta",
+            field: "precioVenta",
+            enableCellEditOnFocus: true,
+            enableCellEdit: true,
+            allowCellFocus: true,
+            type: "number",
+            width: "15%",
+            minWidth: 100,
+        },
+        {
+            name: "precioConIva",
+            field: "precioConIva",
+            enableCellEditOnFocus: true,
+            enableCellEdit: true,
+            allowCellFocus: true,
+            type: "number",
+            width: "15%",
+            minWidth: 100,
+        },
+        {
+            name: "porcentajeUtilidad",
+            field: "porcentajeUtilidad",
+            type: "number",
+            enableCellEditOnFocus: true,
+            enableCellEdit: true,
+            allowCellFocus: true,
+            width: "18%",
+            minWidth: 100,
+        },
+
+        {
+            name: "Utilidad",
+            field: "ganancia",
+            type: "number",
+            enableCellEditOnFocus: true,
+            width: "10%",
+            minWidth: 100,
+        },
+        {
+            name: "P. precioPredeterminado",
+            field: "precioPredeterminado",
+            visible: false,
+        },
+        {
+            name: "Estado",
+            field: "predeterminadaVal",
+            enableCellEdit: false,
+            type: "checkbox",
+            //cellTemplate: '<div class="text-center"><input type="checkbox"' +
+            //    'name="radio" value="radio" ng-click="grid.appScope.updateDefault(row.entity)"/></div>', //'<md-switch style="display:inline;" title="Actualizar estado" aria-label="Predeterminado" ng-click="grid.appScope.updateDefault(row)"></md-switch>',
+
+            width: "15%",
+            minWidth: 100,
+            cellClass: function (grid, row) {
+                if (row.entity.precioPredeterminado) {
+                    row.entity.predeterminadaVal = "Predeterminado";
+                    return "blue";
+                }
+            },
+        },
+    ];
+
+    initialLoad();
+    function initialLoad() {
+        try {
+            showLoader();
+
+            articuloSvc.getDataForForm().then(response => {
+                const { medidas, tarifas, decimal } = response;
+                $scope.medidas = medidas;
+                $scope.data.idMedida = $scope.medidas.length > 0 ? $scope.medidas[0].idMedida : 0;
+
+                $scope.tarifas = tarifas;
+
+                $scope.decimal = decimal;
+
+                if (params && params.idArticuloFraccionado) {
+                    $scope.tipoRegistro = 2;
+                    getDataArticuloFraccionado();
+                }
+            }).finally(() => hideLoader())
+
+        } catch (error) {
+            console.error(error);
+            hideLoader();
+        }
+
+        $uibModalInstance.rendered.then(() => {
+            $("#agregarArtFraccionado").on("shown.bs.modal", () => {
+                $("input[name='articuloAutocomplete']").focus();
+            });
+        });
+    }
+
+    function getDataArticuloFraccionado() {
+        articuloFraccionadoSvc.get({ tipo: 2, id: params.idArticuloFraccionado }).then((response) => {
+            console.log(response)
+            // if (response.id === "0") {
+            //     this._form.sweetAlert("warning", response.message, response.titleSms);
+            // }
+            // if (response.id === "1") {
+            //     let { fraccionado: data, pvps } = response.data;
+
+            //     this.data = {
+            //         ...this._params,
+            //         ...data,
+            //         ...data.fraccionado,
+            //     };
+
+            //     this.gridOptions.data = pvps.map((val) => {
+            //         let ganancia =
+            //             val.pvp.precioVenta - this.data.precioCostoFraccionado;
+            //         val.ganancia = this._form.roundNumber(ganancia, 5);
+            //         return {
+            //             ...val,
+            //             ...val.pvp,
+            //         };
+            //     });
+
+            //     this.tarifaInstance.setPrecioCosto = this.data.precioCostoFraccionado;
+            //     this.tarifaInstance.setPorcentajeIva =
+            //         this.gridOptions.data[0].porcentajeIva;
+            // }
+        });
+    }
+
+    $scope.searchArticuloFraccionadoFilter = function (textSearch) {
+        let query = {
+            checkBoxFraccionado: true,
+            bySearch: textSearch,
+        };
+        let articulos = articuloSvc.searchForFraccionado(query);
+        return articulos;
+    }
+
+    $scope.onKeyupSearchArticulo = function () {
+        console.log($scope.data.selectedArticulo)
+        // if ([null, undefined, ""].includes($scope.data.selectedArticulo)) {
+        //     $scope.data.selectedArticulo = null;
+        //     $scope.articulo = {};
+        // }
+    }
+
+    $scope.selectedArticuloChange = function (item) {
+        try {
+            showLoader();
+            articuloSvc.findById(item.idArticulo).then((response) => {
+                hideLoader();
+                let { data, articuloTarifas } = response;
+                $scope.data = data;
+                $scope.data.selectedArticulo = item;
+
+                $scope.gridOptions.data = articuloTarifas.map((item) => {
+                    item.precioVenta = 0;
+                    item.precioConIva = 0;
+                    item.porcentajeUtilidad = 0;
+                    item.ganancia = 0;
+                    return item;
+                });
+            })
+                .catch((error) => {
+                    console.log(error)
+                }).finally(() => hideLoader())
+        } catch (error) {
+            hideLoader();
+            console.log(error);
+        }
+    }
+
+    $scope.recalculateTarifaAdd = function () {
+        if ($scope.gridOptions.data.length === 0) return;
+
+        const precioCosto = $scope.data.precioCostoFraccionado;
+        const porcentajeIva = $scope.gridOptions.data[0].porcentajeIva;
+
+        if (
+            [null, undefined, ""].includes(precioCosto) ||
+            isNaN(precioCosto)
+        ) {
+            tS.toastr("warning", "Ingrese un número válido");
+            return;
+        }
+        if (precioCosto === 0) {
+            tS.toastr("warning", "El valor mínimo en el precio de costo es 0.01");
+            return;
+        }
+
+
+        try {
+            let index = 0;
+            for (let val of $scope.gridOptions.data) {
+                $scope.gridOptions.data[index].porcentajeIva = porcentajeIva;
+
+                let precioVenta = pricingUtils.calcularPrecioVenta(
+                    val.precioConIva,
+                    val.porcentajeIva
+                );
+                $scope.gridOptions.data[index].precioVenta = fS.roundNumber(
+                    precioVenta,
+                    $scope.decimal.nroPrecio
+                );
+
+                let precioConIva = pricingUtils.calcularPrecioConIva(
+                    val.precioVenta,
+                    val.porcentajeIva
+                );
+                $scope.gridOptions.data[index].precioConIva = fS.roundNumber(
+                    precioConIva,
+                    $scope.decimal.nroPrecio
+                );
+
+                let porcentajeUtilidad = pricingUtils.campoPorcentajeUtilidad(
+                    precioCosto,
+                    precioVenta
+                );
+                $scope.gridOptions.data[index].porcentajeUtilidad = fS.roundNumber(
+                    porcentajeUtilidad,
+                    5
+                );
+
+                let ganancia = getTarifaGanacia(
+                    val.precioVenta,
+                    precioCosto
+                );
+                $scope.gridOptions.data[index].ganancia = fS.roundNumber(ganancia, 5);
+                index++;
+            }
+        } catch (error) {
+            toastr.error(error);
+        }
+    }
+
+    function getTarifaGanacia(precioVenta, precioCosto) {
+        return precioVenta - precioCosto;
+    }
+
+    $scope.save = function () {
+        if (!($scope.data.idArticulo > 0)) {
+            tS.toastr('warning', "Seleccione el Articulo");
+            return;
+        }
+
+        if (["", null, undefined].includes($scope.data.conversion)) {
+            tS.toastr('warning', "Ingrese la Conversión");
+            return;
+        }
+
+        if (isNaN($scope.data.conversion)) {
+            tS.toastr('warning', 'Valor no válido en el campo Conversión');
+            return;
+        }
+        if (!($scope.data.idMedida > 0)) {
+            tS.toastr('warning', "Seleccione la Medida");
+            return;
+        }
+        if (["", null, undefined].includes($scope.data.precioCostoFraccionado)) {
+            tS.toastr('warning', "Ingrese el Precio Costo Fraccionado");
+            return;
+        }
+
+        if (isNaN($scope.data.precioCostoFraccionado)) {
+            tS.toastr('warning', "Valor no válido en el campo Precio Costo Fraccionado");
+            return;
+        }
+
+        let data = {
+            fraccionado: $scope.data,
+            pvps: $scope.gridOptions.data,
+        }
+
+        if (!($scope.data.idArticuloFraccionado > 0)) {
+            showLoader();
+            articuloFraccionadoSvc.post(data).then(successReponse)
+                .finally(() => hideLoader())
+        }
+
+        if ($scope.data.idArticuloFraccionado > 0) {
+            showLoader();
+            articuloFraccionadoSvc.put($scope.data.idArticuloFraccionado, data).then(successReponse)
+                .finally(() => hideLoader())
+        }
+    }
+
+    function successReponse(response) {
+        if (response.code == "0") {
+            tS.toastr('warning', response.message, response.titleSms);
+        }
+        if (response.code === "1") {
+            tS.toastr('success', response.message, response.titleSms);
+            $uibModalInstance.close(response);
+        }
+    }
+
+
+    $scope.closeModal = function () {
+        $uibModalInstance.close();
+    }
+}
+// class ModalArticuloFraccionadoCtrl extends ModalBaseCtrl {
+//     static $inject = [
+//         "$scope",
+//         "$interval",
+//         "$uibModalInstance",
+//         "mainService",
+//         "articuloService",
+//         "commonService",
+//         "modalService",
+//         "nombreModal",
+//         "formulario",
+//         "params",
+//     ];
+//     constructor(
+//         $scope,
+//         $interval,
+//         $uibModalInstance,
+//         _mS,
+//         articuloSvc,
+//         _commonSvc,
+//         _modalSvc,
+//         _nombreModal,
+//         _form,
+//         _params
+//     ) {
+//         super({
+//             $scope,
+//             _mS,
+//             _commonSvc,
+//             _form,
+//         });
+
+//         this.articuloSvc = articuloSvc;
+
+//         this.$uibModalInstance = $uibModalInstance;
+//         this._modalSvc = _modalSvc;
+//         this._nombreModal = _nombreModal;
+//         this._form = _form;
+//         this._params = _params;
+
+//         this.tipoRegistro = 1;
+//         this.data = {};
+//         this.articulo = {};
+
+//         this.gridOptions = this.tarifaInstance.getTarifaGrid($scope, $interval);
+//         // this.gridOptions.data  = [];
+//     }
+
+//     async $onInit() {
+//         try {
+//             showLoader();
+
+//             const { medidas, tarifas, decimal } = await this.articuloSvc.getDataForForm();
+
+//             this.medidas = medidas;
+//             this.data.idMedida = this.medidas.length > 0 ? this.medidas[0].idMedida : 0;
+
+//             this.tarifas = tarifas;
+
+//             this.config = decimal;
+//             this.tarifaInstance.setConfigDecimal = this.config;
+
+//             if (this._params) {
+//                 this.tipoRegistro = 2;
+//                 this.getDataArticuloFraccionado();
+//             }
+//             this.$scope.$apply();
+//             hideLoader();
+//         } catch (error) {
+//             console.error(error);
+//             hideLoader();
+//         }
+
+//         this.$uibModalInstance.rendered.then(() => {
+//             $("#agregarArtFraccionado").on("shown.bs.modal", () => {
+//                 $("input[name='articuloAutocomplete']").focus();
+//             });
+//         });
+//     }
+
+//     searchArticuloFraccionadoFilter(textSearch) {
+//         let query = {
+//             checkBoxFraccionado: true,
+//             bySearch: textSearch,
+//         };
+//         let articulos = this.articuloSvc.searchForFraccionado(query);
+//         return articulos;
+//     }
+
+//     onKeyupSearchArticulo() {
+//         if (
+//             this.data.selectedArticulo === null ||
+//             this.data.selectedArticulo === undefined ||
+//             this.data.selectedArticulo === ""
+//         ) {
+//             this.data.selectedArticulo = undefined;
+//             this.articulo = {};
+//         }
+//     }
+
+//     selectedArticuloChange(item) {
+//         try {
+//             showLoader();
+//             this.articuloSvc
+//                 .getId(item.idArticulo)
+//                 .then((response) => {
+//                     hideLoader();
+//                     const results = JSON.parse(response.payload);
+//                     this.data = results[0][0];
+//                     this.data.selectedArticulo = item;
+
+//                     this.gridOptions.data = results[1].map((item) => {
+//                         item.precioVenta = 0;
+//                         item.precioConIva = 0;
+//                         item.porcentajeUtilidad = 0;
+//                         item.ganancia = 0;
+//                         return item;
+//                     });
+//                 })
+//                 .catch(() => {
+//                     hideLoader();
+//                 });
+//         } catch (error) {
+//             hideLoader();
+//             console.log(error);
+//         }
+//     }
+
+//     recalculateTarifaAdd() {
+//         if (this.gridOptions.data.length === 0) return;
+
+//         this.tarifaInstance.setPrecioCosto = this.data.precioCostoFraccionado;
+
+//         //Por defecto tomammos el porcentaje del Tipo Iva Agregago al Articulo
+//         this.tarifaInstance.setPorcentajeIva =
+//             this.gridOptions.data[0].porcentajeIva;
+//         this.tarifaInstance.recalculateTarifaAdd();
+//     }
+
+//     async getDataArticuloFraccionado() {
+//         this._mS
+//             .getData(
+//                 "get",
+//                 "/ArticuloFraccionado/GetId?id=" + this._params.idArticuloFraccionado
+//             )
+//             .then((response) => {
+//                 if (response.id === "0") {
+//                     this._form.sweetAlert("warning", response.message, response.titleSms);
+//                 }
+//                 if (response.id === "1") {
+//                     let { fraccionado: data, pvps } = response.data;
+
+//                     this.data = {
+//                         ...this._params,
+//                         ...data,
+//                         ...data.fraccionado,
+//                     };
+
+//                     this.gridOptions.data = pvps.map((val) => {
+//                         let ganancia =
+//                             val.pvp.precioVenta - this.data.precioCostoFraccionado;
+//                         val.ganancia = this._form.roundNumber(ganancia, 5);
+//                         return {
+//                             ...val,
+//                             ...val.pvp,
+//                         };
+//                     });
+
+//                     this.tarifaInstance.setPrecioCosto = this.data.precioCostoFraccionado;
+//                     this.tarifaInstance.setPorcentajeIva =
+//                         this.gridOptions.data[0].porcentajeIva;
+//                 }
+//             });
+//     }
+
+//     async saveAndUpdate() {
+//         let tituloToast = this.tipoRegistro === 1 ? "Guardar" : "Actualizar";
+//         if (this._form.campo(this.data.idArticulo)) {
+//             toastr.warning("Seleccione el Articulo", tituloToast);
+//             return;
+//         }
+
+//         if (this._form.campo(this.data.conversion)) {
+//             toastr.warning("Ingrese la Conversión", tituloToast);
+//             return;
+//         }
+
+//         if (isNaN(this.data.conversion)) {
+//             toastr.warning("Valor no válido en el campo Conversión", tituloToast);
+//             return;
+//         }
+//         if (this._form.campo(this.data.idMedida)) {
+//             toastr.warning("Seleccione la Medida", tituloToast);
+//             return;
+//         }
+//         if (this._form.campo(this.data.precioCostoFraccionado)) {
+//             toastr.warning("Ingrese el Precio Costo Fraccionado", tituloToast);
+//             return;
+//         }
+
+//         if (isNaN(this.data.precioCostoFraccionado)) {
+//             toastr.warning(
+//                 "Valor no válido en el campo Precio Costo Fraccionado",
+//                 tituloToast
+//             );
+//             return;
+//         }
+
+//         let data = {
+//             fraccionado: this.data,
+//             pvps: this.gridOptions.data,
+//         };
+
+//         const url =
+//             this.tipoRegistro == 1
+//                 ? "/ArticuloFraccionado/Post"
+//                 : `/ArticuloFraccionado/Put?id=${this._params.idArticuloFraccionado}`;
+//         const method = this.tipoRegistro === 1 ? "post" : "put";
+//         this._mS.getData(method, url, data).then((response) => {
+//             if (response.id == "0") {
+//                 toastr.warning(response.message, response.titleSms);
+//                 return;
+//             }
+//             if (response.id === "1") {
+//                 toastr.success(response.message, response.titleSms);
+//                 this.$uibModalInstance.close(response);
+//             }
+//         });
+//     }
+
+//     closeModal() {
+//         this.$uibModalInstance.close();
+//     }
+// }
+
+
+
+
+//-------------------------------------LISTA DE ARTICULO CON INFORMACIÓN COMPLETA------------------------
+/**
+ * Clase para gestionar el buscador avanzado del articulo, trae las bodegas y pvps
+ * @params null
+ */
+
+ModalArticuloGeneralCtrl.$inject = [
+    "$scope",
+    "$uibModalInstance",
+    "articuloService",
+    "modalService",
+    "nombreModal",
+];
+
+function ModalArticuloGeneralCtrl(
+    $scope,
+    $uibModalInstance,
+    artSvc,
+    modalSvc,
+    nombreModal
+) {
+    console.log("init");
+    $scope.articulos = [];
+    $scope.selectedArticulos = [];
+    //Filtro
+    $scope.recordsQuantity = [10, 25, 50, 100];
+    $scope.dataSearch = {
+        pageSize: 50,
+        pageIndex: 1,
+        maxSize: 5,
+        totalRecords: 0,
+        busqueda: "",
+
+        byColumn: "DESC",
+    };
+
+    $scope.activated = false;
+
+    $scope.tipoBusquedas = [
+        {
+            codigo: "DESC",
+            descripcion: "Descripción",
+        },
+        {
+            codigo: "COD",
+            descripcion: "Código",
+        },
+        {
+            codigo: "AUX",
+            descripcion: "Código Auxiliar",
+        },
+        {
+            codigo: "BAR",
+            descripcion: "Código Barra",
+        },
+    ];
+
+    $scope.dynamicPopover = {
+        content: "Hello, World!",
+        templateUrl: "myPopoverTemplate.html",
+        title: "Title",
+    };
+
+    $scope.options = {
+        rowSelection: true,
+        multiSelect: false,
+        autoSelect: false,
+        decapitate: false,
+        largeEditDialog: false,
+        boundaryLinks: false,
+        limitSelect: true,
+        pageSelect: true,
+    };
+
+    $uibModalInstance.rendered.then(() => {
+        $("#inputTextSearch").focus();
+    });
+
+    $scope.consultarPrecioSearchText = function () {
+        $scope.articulos = []; //Vaciar el array (Lista de Articulos);
+        if ($scope.dataSearch.busqueda && $scope.dataSearch.busqueda.length < 2)
+            return;
+        $scope.querySearchArticulo();
+    };
+
+    $scope.querySearchArticulo = function () {
+        try {
+            $scope.articulos = [];
+            if ($scope.dataSearch.bySearch.length < 2) {
+                $scope.dataSearch.totalRecords = 0;
+                return;
+            }
+            $scope.activated = true;
+            $scope.dataSearch.checkBoxStock = [1, 2].includes(
+                $scope.dataSearch.byStock
+            );
+            artSvc
+                .getAllWithPrices($scope.dataSearch)
+                .then((response) => {
+                    let { articulos, totalRecords } = response;
+                    $scope.activated = false;
+
+                    $scope.articulos = articulos;
+                    $scope.dataSearch.totalRecords = totalRecords;
+                    $scope.tarifas =
+                        $scope.articulos.length > 0 ? $scope.articulos[0].tarifas : [];
+                })
+                .catch((err) => {
+                    $scope.activated = false;
+                    console.log(err);
+                });
+        } catch (error) {
+            $scope.activated = false;
+            console.log(error);
+        }
+    };
+
+    $scope.pagechanged = function () {
+        $scope.querySearchArticulo();
+    };
+
+    $scope.changePageSize = function () {
+        $scope.dataSearch.pageIndex = 1;
+        $scope.querySearchArticulo();
+    };
+
+    $scope.consultarPrecioEnter = function ($event) {
+        if ($scope.dataSearch.bySearch && $event.key === "Enter") {
+            $scope.querySearchArticulo();
+            $scope.dataSearch.bySearch = "";
+        }
+    };
+
+    $scope.onChangeCheckBoxItem = (item) => {
+        const data = {
+            idArticulo: item.idArticulo,
+            idPresentacion: item.idPresentacion,
+            presentacion: item.presentacion,
+            tipoRegistro: 1,
+        };
+        $uibModalInstance.close(data);
+    };
+
+    //   //Presentacion del imagen
+    $scope.getImagen = async function (item) {
+        const { MODAL_CTRL, MODAL_IMAGEN_DETALLE_CSHTML } = nombreModal.articulo;
+        const { ModalArticuloImagenDetalleCtrl } = await import(
+            "./../modal/" + MODAL_CTRL
+        );
+        modalSvc.openModalCustom({
+            controller: ModalArticuloImagenDetalleCtrl,
+            template: `Articulo/${MODAL_IMAGEN_DETALLE_CSHTML}`,
+            size: "xl",
+            params: item,
+        });
+    };
+
+    $scope.closeModal = function () {
+        $uibModalInstance.close();
+    };
+}
+
+
+
+modalHistorialCompraCtrl.$inject = ['$scope', '$uibModalInstance', 'mainService', 'toastService', 'params'];
+
+function modalHistorialCompraCtrl($scope, $uibModalInstance, mS, tS, params) {
+    const URL = 'Compra/CompraHabitual/'
+    $scope.articleName = `${params.codigo} -> ${params.descripcion}`;
+
+    $scope.historyComprasArticle = [];
+
+    initialLoad();
+    function initialLoad() {
+        try {
+            showLoader();
+            //$scope.articleName = item.descripcion
+            mS.getData('get', `${URL}Get?json=${JSON.stringify({
+                tipo: 3,
+                idArticulo: params.idArticulo
+            })}`, null, true).then(
+                response => {
+                    if (!response.payload) {
+                        tS.toastr('warning', 'Este articulo aun no tiene registros de compra habitual')
+                    } else {
+                        $scope.historyComprasArticle = JSON.parse(response.payload)
+                        //console.log($scope.historyComprasArticle)
+                        $scope.articleName = $scope.historyComprasArticle[0].articulo;
+                    }
+                }
+            ).finally(() => hideLoader())
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+    $scope.askToDeleteCH = function (item) {
+        Swal.fire({
+            title: '¿Está seguro/a de desvincular este articulo de compras habituales?',
+            text: "¡No podrás revertir esto!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si!',
+            cancelButtonText: 'No',
+            allowOutsideClick: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $scope.deleteCH(item);
+            }
+        })
+    }
+
+    $scope.deleteCH = (item) => {
+        try {
+            showLoader();
+            mS.getData('delete', `${URL}Delete?id=${item.idCompraHabitual}`, null, true).then(response => {
+                if (response.code == '0') {
+                    tS.toastr('warning', response.message)
+                    return
+                }
+                if (response.code == '1') {
+                    let index = $scope.historyComprasArticle.indexOf(item)
+                    $scope.historyComprasArticle.splice(index, 1)
+                    tS.toastr('success', response.message)
+                }
+            }).finally(() => hideLoader())
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    $scope.closeModal = function () {
+        $uibModalInstance.close({ test: 1 });
+    }
+}
+
+
+
+/**
+ *
+ * ---------------------------------GESTION DE IMAGEN------------------------------
+ * Agregar y eliminar
+ */
+
+// export class ModalArticuloImagenCtrl {
+//     static $inject = [
+//         "$scope",
+//         "mainService",
+//         "$uibModalInstance",
+//         "toastService",
+//         "params",
+//     ];
+//     constructor($scope, _mS, $uibModalInstance, _toastr, _params) {
+//         this.$scope = $scope;
+//         this._mS = _mS;
+//         this.$uibModalInstance = $uibModalInstance;
+//         this._toastr = _toastr;
+//         this._params = _params;
+
+//         this.modelImagenes = [];
+//         this.imagenes = [];
+//     }
+
+//     $onInit() {
+//         this.getAllImage();
+//     }
+
+//     getAllImage() {
+//         showLoader();
+//         this._mS
+//             .getData(
+//                 "get",
+//                 "/ArticuloImagen/GetArticuloImagen?idArticulo=" +
+//                 this._params.idArticulo
+//             )
+//             .then((response) => {
+//                 if (response.id === "0") {
+//                     hideLoader();
+//                     this.toastr.toastr("warning", response.message, response.titleSms);
+//                     return;
+//                 }
+
+//                 this.imagenes = response.data.map((val) => {
+//                     val.imagen = `data:${val.mimeType};base64,${val.imagenBase64}`;
+//                     return val;
+//                 });
+//                 hideLoader();
+//             });
+//     }
+
+//     onChangeSelectImage() {
+//         if (this.modelImagenes.length > 5) {
+//             this.modelImagenes = [];
+//             this._toastr.toastr("Solo puedes ingresar 5 imagenes");
+//             return;
+//         }
+
+//         for (let file of this.modelImagenes) {
+//             let reader = new FileReader();
+
+//             reader.onload = (e) => {
+//                 let imagenBase64 = reader.result
+//                     .replace("data:", "")
+//                     .replace(/^.+,/, "");
+//                 let mimeType = file.type,
+//                     nombreImagen = file.name;
+//                 let obj = {
+//                     imagen: e.target.result,
+//                     imagenBase64,
+//                     mimeType,
+//                     nombreImagen,
+//                 };
+//                 this.imagenes.push(obj);
+//             };
+//             reader.readAsDataURL(file);
+//         }
+//         this.modelImagenes = [];
+//         this.$scope.$apply();
+//     }
+
+//     eliminar(file) {
+//         let index = this.imagenes.indexOf(file);
+//         this.imagenes.splice(index, 1);
+//     }
+
+//     guardar() {
+//         try {
+//             let tituloToast = "Guardar";
+//             if (this.imagenes.length === 0) {
+//                 this._toastr.toastr(
+//                     "warning",
+//                     "Seleccione al menos una imagen",
+//                     tituloToast
+//                 );
+//                 return;
+//             }
+
+//             if (this.imagenes.length > 5) {
+//                 this._toastr.toastr(
+//                     "warning",
+//                     "Solo puedes subir 5 imagenes",
+//                     tituloToast
+//                 );
+//                 return;
+//             }
+
+//             showLoader();
+//             this._mS
+//                 .getData(
+//                     "post",
+//                     "/ArticuloImagen/UploadImagen?idArticulo=" + this._params.idArticulo,
+//                     this.imagenes
+//                 )
+//                 .then((response) => {
+//                     if (response.id === "0") {
+//                         hideLoader();
+//                         this._toastr.toastr("warning", response.message, response.titleSms);
+//                         return;
+//                     }
+//                     if (response.id === "1") {
+//                         hideLoader();
+//                         this._toastr.toastr("success", response.message, response.titleSms);
+//                         this.$uibModalInstance.close(response);
+//                     }
+//                 });
+//         } catch (error) {
+//             hideLoader();
+//         }
+//     }
+
+//     closeModal() {
+//         this.$uibModalInstance.close();
+//     }
+// }
+
+/**
+ *
+ * -------------------------------------Presentacion de Imagen--------------------------
+ *
+ *
+ */
+
+// export class ModalArticuloImagenDetalleCtrl {
+//     static $inject = [
+//         "$scope",
+//         "mainService",
+//         "$uibModalInstance",
+//         "params",
+//         "articuloService",
+//     ];
+
+//     constructor($scope, _mS, $uibModalInstance, _params, articulSvc) {
+//         this.$scope = $scope;
+//         this._mS = _mS;
+//         this.$uibModalInstance = $uibModalInstance;
+//         this._params = _params;
+//         this.data = _params;
+//         this.imagenes = [];
+//         this.tarifas = [];
+//         this.articulSvc = articulSvc;
+//     }
+
+//     $onInit() {
+//         this.getAllImage();
+//     }
+
+//     async getAllImage() {
+//         try {
+//             showLoader();
+//             let results = await Promise.all([
+//                 this._mS.getData(
+//                     "get",
+//                     "/ArticuloImagen/GetArticuloImagen?idArticulo=" +
+//                     this._params.idArticulo
+//                 ),
+//                 this.articulSvc.getId(this._params.idArticulo),
+//             ]);
+
+//             this.imagenes = results[0].data.map((val) => {
+//                 val.imagen = `data:${val.mimeType};base64,${val.imagenBase64}`;
+//                 return val;
+//             });
+
+//             const dataArticulo = JSON.parse(results[1].payload);
+//             this.data = dataArticulo[0][0];
+
+//             this.tarifas = dataArticulo[1].map((val) => {
+//                 return val;
+//             });
+//             this.$scope.$apply();
+//             hideLoader();
+//         } catch (error) {
+//             hideLoader();
+//         }
+//     }
+
+//     closeModal() {
+//         this.$uibModalInstance.close();
+//     }
+// }

@@ -326,6 +326,39 @@
     })
     
 
+    app.directive('btnArticuloHistorialCompra', function(modalService, nombreModalInventario){
+        return {
+            restrict: 'A',
+            scope: {
+                params:'=',
+                resultModal: '&',
+            },
+            link: function(scope, element){
+                element.on('click', async function () {
+                     
+                    const {fileCtrl, controllers, templates} = nombreModalInventario.ARTICULO;
+                    let ctrl = (await import(fileCtrl))[controllers['HC']];
+                    let template = templates['HC'];
+                    const modalDialogRef = modalService.openModalCustom({
+                        controller: ctrl,
+                        template,
+                        size: 'xl',
+                        params: scope.params || {}, 
+                        isRenderRazorPartial: true
+                    })       
+                          
+                    modalDialogRef.result.then(result=>{
+                        if(typeof result==="object"){
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+                });
+            }
+        }
+    })
+
 
 
 })(window.angular)

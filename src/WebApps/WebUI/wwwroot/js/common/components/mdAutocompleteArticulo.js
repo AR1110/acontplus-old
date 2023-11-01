@@ -67,11 +67,11 @@ class BaseSearchArticulo {
 
     selectArticleSearch(item) {
 
-        if (typeof item === 'object' && item.hasOwnProperty('showHeader')) {
+        if (typeof item === 'object' && ("showHeader" in item)) {
             this.searchText = null
             return
         }
-        if (!item || !item.hasOwnProperty('idArticulo')) return
+        if (!item || !("idArticulo" in item)) return
 
         this.dataArticulo = {
             idArticulo: item.idArticulo,
@@ -197,7 +197,7 @@ class BaseSearchArticulo {
 
     async getId() {
         try {
-            showLoader(); 
+            showLoader();
             this.dataArticulo.idBodega = this.idBodega;
             this.articuloSvc.getId(this.dataArticulo.idArticulo).then(response => {
                 hideLoader();
@@ -269,11 +269,11 @@ class MdArticuloCtrl extends BaseSearchArticulo {
     $onInit() {
 
         if (this.isDefaultArticle) {
-            setTimeout(()=>{
+            setTimeout(() => {
                 this._commonSvc.getDataFormVenta().then(response => {
                     let mainData = response;
                     let articulo = mainData[6];
-    
+
                     if (this.isDefaultArticle && articulo.length > 0) {
                         this.searchTextSimple = articulo[0].descripcion;
                         this.selectArticleSearch(articulo[0])
@@ -305,9 +305,8 @@ class MdArticuloCtrl extends BaseSearchArticulo {
                 })
 
                 articulos = articulos.map(item => {
-                    if (!item.hasOwnProperty('showHeader')) {
+                    if (!("showHeader" in item)) {
                         item.priceSale = item.priceSales;
-                        item.warehouses = item.warehouses;
                     }
                     return item;
                 })
@@ -338,20 +337,19 @@ class MdArticuloCtrl extends BaseSearchArticulo {
 
     async openModalArticulo(item) {
         try {
-            let fileCtrl = this.nombreModalInventario.ARTICULO.fileCtrl;
 
-            let ctrl = this.nombreModalInventario.ARTICULO.controllers['M'];
-            let template = this.nombreModalInventario.ARTICULO.templates['M'];
-            let controller = (await import(fileCtrl))[ctrl];
-
-            const modalRef = this._modalSvc.openModalCustom({
-                controller,
+            const { fileCtrl, controllers, templates } = this.nombreModalInventario.ARTICULO;
+            let ctrl = (await import(fileCtrl))[controllers['M']];
+            let template = templates['M'];
+            const modalDialogRef = this._modalSvc.openModalCustom({
+                controller: ctrl,
                 template,
                 size: 'xl',
-                params: item
+                params: item || {},
+                isRenderRazorPartial: true
             })
 
-            modalRef.result.then(response => {
+            modalDialogRef.result.then(response => {
                 if (typeof response !== 'object') {
                     this.isUpdateProduct = false;
                     return
@@ -381,7 +379,8 @@ class MdArticuloCtrl extends BaseSearchArticulo {
                 template,
                 size: 'xl',
                 params: item,
-                windowClass: 'uibModalFullScreen'
+                windowClass: 'uibModalFullScreen',
+                isRenderRazorPartial: true
             })
 
             modalRef.result.then(response => {
@@ -400,26 +399,6 @@ class MdArticuloCtrl extends BaseSearchArticulo {
 
     }
 
-
-
-    async openModalArticuloFraccionadoInfo(item) {
-        try {
-            const { fileCtrl, controllers, templates } = this.nombreModalInventario.ARTICULO;
-            let ctrl = (await import(fileCtrl))[controllers['AFI']];
-            let template = templates['AFI'];
-            let modalRef = this._modalSvc.openModalCustom({
-                controller: ctrl,
-                template,
-                size: 'md',
-                params: item,
-                windowClass: 'zindex'
-            })
-
-
-        } catch (error) {
-            console.log(error)
-        }
-    }
 }
 
 

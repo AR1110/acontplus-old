@@ -8,14 +8,13 @@
         '$scope',
         'mainService',
         'articuloService',
-        'modalService',
-        'nombreModal',
+        'modalService', 
         'nombreModalInventario',
         'formulario'
     ];
 
 
-    function articuloCtrl($scope, mS, articuloSvc, modalSvc, nombreModalConst, nombreModalInventario, form) {
+    function articuloCtrl($scope, mS, articuloSvc, modalSvc, nombreModalInventario, form) {
         const { fileCtrl, controllers, templates } = nombreModalInventario.ARTICULO
 
         $scope.recordsQuantity = [10, 25, 50, 100];
@@ -288,29 +287,6 @@
                     }
                 )
             }
-        }
-
-
-
-        $scope.openModalHistorialCompra = async (item) => {
-            try {
-                let {
-                    MODAL_FILE_CTRL,
-                    MODAL_HISTORIAL_COMPRA
-                } = nombreModalConst.doc_recibido;
-                let controller = (await import(MODAL_FILE_CTRL))[MODAL_HISTORIAL_COMPRA['controller']];
-                let template = MODAL_HISTORIAL_COMPRA['template'];
-
-                modalSvc.openModalCustom({
-                    controller,
-                    template,
-                    size: 'xl',
-                    params: item,
-                    isRenderRazorPartial: true
-                })
-            } catch (error) {
-                console.log(error);
-            }
-        }
+        } 
     }
 })(window.angular) 

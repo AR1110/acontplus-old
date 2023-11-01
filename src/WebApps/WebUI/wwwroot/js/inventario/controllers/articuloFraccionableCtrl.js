@@ -4,12 +4,20 @@
 
     app.controller('articuloFraccionableCtrl', articuloFraccionableCtrl);
 
-    articuloFraccionableCtrl.$inject = ['$scope', 'mainService', 'modalService', 'nombreModalInventario', 'toastService'];
+    articuloFraccionableCtrl.$inject = [
+        '$scope',
+        'mainService',
+        'articuloFraccionadoService',
+        'modalService',
+        'nombreModalInventario',
+        'toastService'
+    ];
 
-    function articuloFraccionableCtrl($scope, mS, modalSvc, nombreModalInventario, tS) {
+    function articuloFraccionableCtrl($scope, mS, articuloFraccionadoSvc, modalSvc, nombreModalInventario, tS) {
 
         $scope.recordsQuantity = [10, 25, 50, 100];
         $scope.dataSearch = {
+            tipo: 1,
             pageSize: 50,
             pageIndex: 1,
             maxSize: 5,
@@ -19,13 +27,15 @@
 
         $scope.openModal = async function (item) {
             try {
-                const { fileCtrl, controller, template } = nombreModalInventario.ARTICULO_FRACCIONADO
-                let ctrl = (await import(fileCtrl))[controller]
+                const { fileCtrl, controllers, templates } = nombreModalInventario.ARTICULO
+                let ctrl = (await import(fileCtrl))[controllers['AF']]
+                let template = templates['AF']
                 const modalRef = modalSvc.openModalCustom({
                     controller: ctrl,
                     template,
                     size: 'xl',
-                    params: item
+                    params: item,
+                    isRenderRazorPartial: true
                 })
                 modalRef.result.then(res => {
                     if (typeof res === 'object') {
@@ -44,24 +54,11 @@
             try {
                 $scope.articuloFraccionados = [];
                 showLoader();
-                mS.getData('get', '/ArticuloFraccionado/Get?json=' + JSON.stringify($scope.dataSearch)).then(
-                    response => {
-                        hideLoader();
-                        if (response.code == "0") {
-                            console.log(response)
-                        }
-
-                        if (response.code === "1") {
-                            $scope.articuloFraccionados = JSON.parse(response.payload) || [];
-                            $scope.dataSearch.totalRecords = $scope.articuloFraccionados.length > 0 ? $scope.articuloFraccionados[0].totalRecords : 0
-                            hideLoader();
-
-                        }
-                    }
-                ).catch(error => {
-                    hideLoader();
-                    console.log(error);
-                })
+                articuloFraccionadoSvc.get($scope.dataSearch).then(response => {
+                    $scope.articuloFraccionados = response;
+                    $scope.dataSearch.totalRecords = $scope.articuloFraccionados.length > 0 ? $scope.articuloFraccionados[0].totalRecords : 0
+                    console.log(response)
+                }).finally(() => hideLoader())
             } catch (error) {
                 console.log(error);
             }

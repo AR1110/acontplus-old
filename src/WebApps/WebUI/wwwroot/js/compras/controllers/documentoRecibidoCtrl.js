@@ -12,6 +12,7 @@
             'toastService',
             'modalService',
             'nombreModal',
+            'nombreModalInventario',
             '$q',
         ];
 
@@ -24,6 +25,7 @@
             tS,
             modalService,
             nameModalConst,
+            nombreModalInventario,
             $q
         ) {
 
@@ -1050,24 +1052,40 @@
 
             $scope.getProv = () => {
                 try {
-                    mS.getData('get', 'Proveedor/' + JSON.stringify({ tipo: 1, ruc: $scope.infoTributaria.ruc }), null, true).then(
-                        response => {
-                            if (response.code == "0") {
-                                $scope.txtIconModalProv = 'ti-plus';
-                                $scope.txtTitleModalProv = 'Registrar Proveedor';
-                                $scope.txtBtnProv = 'Guardar';
-                                handleBtnProv(2)
-                            }
-                            if (response.code == "1") {
-                                let respArray = JSON.parse(response.payload)
-                                $scope.idProveedor = respArray[0][0].idProveedor
-                                $scope.comprobanteForm.idTiempoCredito = respArray[0][0].idTiempoCredito
-                                $scope.txtBtnProv = 'Actualizar'
-                                handleBtnProv(1)
-                            }
-                        }, error => {
-                            console.log(error)
-                        })
+                    showLoader();
+                    docRecibidoSvc.getProveedor({ tipo: 1, ruc: $scope.infoTributaria.ruc }).then(response => {
+                        if (("code" in response) && response.code === "0") {
+                            $scope.txtIconModalProv = 'ti-plus';
+                            $scope.txtTitleModalProv = 'Registrar Proveedor';
+                            $scope.txtBtnProv = 'Guardar';
+                            handleBtnProv(2)
+                            return
+                        }
+                        let respArray = response;
+                        $scope.idProveedor = respArray[0][0].idProveedor
+                        $scope.comprobanteForm.idTiempoCredito = respArray[0][0].idTiempoCredito
+                        $scope.txtBtnProv = 'Actualizar'
+                        handleBtnProv(1)
+
+                    }).finally(() => hideLoader())
+                    // mS.getData('get', 'Proveedor/' + JSON.stringify({ tipo: 1, ruc: $scope.infoTributaria.ruc }), null, true).then(
+                    //     response => {
+                    //         if (response.code == "0") {
+                    //             $scope.txtIconModalProv = 'ti-plus';
+                    //             $scope.txtTitleModalProv = 'Registrar Proveedor';
+                    //             $scope.txtBtnProv = 'Guardar';
+                    //             handleBtnProv(2)
+                    //         }
+                    //         if (response.code == "1") {
+                    //             let respArray = JSON.parse(response.payload)
+                    //             $scope.idProveedor = respArray[0][0].idProveedor
+                    //             $scope.comprobanteForm.idTiempoCredito = respArray[0][0].idTiempoCredito
+                    //             $scope.txtBtnProv = 'Actualizar'
+                    //             handleBtnProv(1)
+                    //         }
+                    //     }, error => {
+                    //         console.log(error)
+                    //     })
                 } catch (error) {
                     console.log(error)
                 }
@@ -1075,43 +1093,43 @@
             $scope.arraysProvClient = [];
             $scope.addProvClient = function () {
                 try {
-                    mS.getData('get', 'Proveedor/' + JSON.stringify({ tipo: 2 }), null, true).then(
-                        response => {
-                            $scope.arraysProvClient = JSON.parse(response.payload)
-                            $scope.tiposIdentificacion = $scope.arraysProvClient[0]
-                            $scope.tiposProveedor = $scope.arraysProvClient[1];
-                            $scope.tiposEntidad = $scope.arraysProvClient[2];
-                            $scope.contribuyentes = $scope.arraysProvClient[3];
-                            $scope.tiemposCredito = $scope.arraysProvClient[4];
-                            $scope.ciudades = $scope.arraysProvClient[5];
+                    docRecibidoSvc.getProveedor({ tipo: 2 }).then(response => {
+                        const {
+                            tiposIdentificacion,
+                            tiposProveedor,
+                            tiposEntidad,
+                            contribuyentes,
+                            tiemposCredito,
+                            ciudades,
+                        } = response;
+                        $scope.tiposIdentificacion = tiposIdentificacion;
+                        $scope.tiposProveedor = tiposProveedor;
+                        $scope.tiposEntidad = tiposEntidad;
+                        $scope.contribuyentes = contribuyentes;
+                        $scope.tiemposCredito = tiemposCredito;
+                        $scope.ciudades = ciudades;
 
-                            $scope.provCliente.idTipoEntidad = 7
-                            $scope.provCliente.idTipoClienteProveedor = 2
-                            for (const element of $scope.tiposIdentificacion) {
-                                if ($scope.provCliente.ruc.length == 10 && element.codigoSri == "05") {
-                                    $scope.provCliente.idTipoIdentificacion = element.idTipoIdentificacion;
-                                }
-                                if ($scope.provCliente.ruc.length == 13 && element.codigoSri == "04") {
-                                    $scope.provCliente.idTipoIdentificacion = element.idTipoIdentificacion;
-                                }
+                        $scope.provCliente.idTipoEntidad = 7
+                        $scope.provCliente.idTipoClienteProveedor = 2
+                        for (const element of $scope.tiposIdentificacion) {
+                            if ($scope.provCliente.ruc.length == 10 && element.codigoSri == "05") {
+                                $scope.provCliente.idTipoIdentificacion = element.idTipoIdentificacion;
                             }
-                            if ($scope.provCliente.ruc.length < 10 || $scope.provCliente > 13) {
-                                document.getElementById('idTipoIdentificacionProv').removeAttribute('disabled')
+                            if ($scope.provCliente.ruc.length == 13 && element.codigoSri == "04") {
+                                $scope.provCliente.idTipoIdentificacion = element.idTipoIdentificacion;
                             }
-                            $scope.modalRefProv = modalService.openModalCustom({
-                                template: '~/Areas/DocumentoRecibido/Pages/Shared/_CompImpProveedor.cshtml',
-                                size: 'xl',
-                                windowClass: 'uibModalFullScreen',
-                                scope: $scope,
-                                isRenderRazorPartial: true
-                            })
-
-                            $scope.modalRefProv.result.then(() => {
-
-                            })
-                        }, error => {
-                            console.log(error)
+                        }
+                        if ($scope.provCliente.ruc.length < 10 || $scope.provCliente > 13) {
+                            document.getElementById('idTipoIdentificacionProv').removeAttribute('disabled')
+                        }
+                        $scope.modalRefProv = modalService.openModalCustom({
+                            template: '~/Areas/DocumentoRecibido/Pages/Shared/_CompImpProveedor.cshtml',
+                            size: 'xl',
+                            windowClass: 'uibModalFullScreen',
+                            scope: $scope,
+                            isRenderRazorPartial: true
                         })
+                    })
                 } catch (error) {
                     console.log(error)
                 }
@@ -1163,25 +1181,20 @@
                     if (warningFrmProv) {
                         return;
                     }
-                    showLoader()
-                    mS.getData('post', 'Proveedor?json=' + JSON.stringify($scope.provCliente), null, true).then(
-                        response => {
-                            if (response.code == "0") {
-                                tS.toastr('warning', response.message)
-                            }
-                            if (response.code == "1") {
-                                let arrayResp = JSON.parse(response.payload)
-                                $scope.idProveedor = arrayResp[0].idProveedor
-                                $scope.comprobanteForm.idTiempoCredito = arrayResp[0].idTiempoCredito
-                                $scope.btnProvIsEnable = true
-                                $scope.modalRefProv.close()
-                                tS.toastr('success', 'Proveedor guardado exitosamente')
-                            }
-                            hideLoader()
-                        }, error => {
-                            hideLoader()
-                            console.log(error)
-                        })
+                    showLoader();
+                    docRecibidoSvc.saveProveedor($scope.provCliente).then(response => {
+                        if (response.code == "0") {
+                            tS.toastr('warning', response.message)
+                        }
+                        if (response.code == "1") {
+                            let arrayResp = JSON.parse(response.payload)
+                            $scope.idProveedor = arrayResp[0].idProveedor
+                            $scope.comprobanteForm.idTiempoCredito = arrayResp[0].idTiempoCredito
+                            $scope.btnProvIsEnable = true
+                            $scope.modalRefProv.close()
+                            tS.toastr('success', 'Proveedor guardado exitosamente')
+                        }
+                    }).finally(() => hideLoader())
                 } catch (error) {
                     hideLoader()
                     console.log(error)
@@ -1475,15 +1488,18 @@
                         precioCosto: parseFloat($scope.articleSelected.costoNeto)
                     }
 
-                    const { articulo } = nameModalConst;
-                    const { ModalArticuloCtrl } = await import('../../modal/' + articulo.MODAL_CTRL)
-                    const modalRef = modalService.openModalCustom({
-                        controller: ModalArticuloCtrl,
-                        template: 'Articulo/' + articulo.MODAL_NUEVO_CSHTML,
+                    const { fileCtrl, controllers, templates } = nombreModalInventario.ARTICULO;
+                    let ctrl = (await import(fileCtrl))[controllers['M']];
+                    let template = templates['M'];
+                    const modalDialogRef = modalService.openModalCustom({
+                        controller: ctrl,
+                        template,
                         size: 'xl',
-                        params: dataNew
+                        params: dataNew,
+                        windowClass: 'uibModalFullScreen',
+                        isRenderRazorPartial: true
                     })
-                    modalRef.result.then(response => {
+                    modalDialogRef.result.then(response => {
                         if (typeof (response) == "object") {
                             $scope.idArticulo = response.idArticulo
                             if ($scope.idArticulo > 0) {
@@ -1734,26 +1750,12 @@
                     console.log(error)
                 }
             };
-
-            $scope.historyComprasArticle = []
-            $scope.getArticleHC = async (item) => {
+         
+            $scope.getArticleHC = async (result) => {
                 try {
-
-                    let { MODAL_FILE_CTRL, MODAL_HISTORIAL_COMPRA } = nameModalConst.doc_recibido;
-                    let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_HISTORIAL_COMPRA['controller']];
-
-                    $scope.modalCH = modalService.openModalCustom({
-                        controller: controller,
-                        template: '~/Areas/DocumentoRecibido/Pages/Shared/_HistoryCompras.cshtml',
-                        size: 'xl',
-                        params: item,
-                        isRenderRazorPartial: true
-                    })
-
-
-                    $scope.modalCH.result.then(() => {
+                    if(typeof result==='object'){
                         $scope.getTempDetails()
-                    })
+                    } 
                 } catch (error) {
                     console.log(error)
                 }
