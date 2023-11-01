@@ -212,7 +212,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
             entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
             //}
 
-            
+
 
             entity.articuloTarifas = JSON.parse(dataMedida.tarifas);
             let tarifa = entity.articuloTarifas.find(item => item.idTarifa === self.idTarifa);
@@ -552,7 +552,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
             //let resultsDataForm = await this.initiload();
             let resultsDataForm = this.dataForm;
 
-            
+
             this.tarifas = resultsDataForm[4];
             this.idTarifa = this.tarifas.length > 0 ? this.tarifas[0].idTarifa : 0;
             this.cloneIdTarifa = this.idTarifa;
@@ -604,7 +604,7 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
 
             this.tipoIvas = resultsDataForm[3];
 
-          
+
 
             this.tiempoCreditos = resultsDataForm[5];
             this.data.idTiempoCredito = this.tiempoCreditos.length > 0 ? this.tiempoCreditos[0].idTiempoCredito : 0;
@@ -718,15 +718,12 @@ export class ModalFacturaNuevoCtrl extends ModalFacturaCtrl {
                 return
             }
 
-            if (['R', 'C', 'P'].includes(item.tipoIdentificacion)) {
+            if (['R', 'C', 'P'].includes(item.tipoIdentificacion) && this.notificacionVenta.notificacionVenta) {
                 let isPendientAccount = await this.ventaSvc.verifyPendientAccount({ idCliente: item.idCliente });
-                if (isPendientAccount && this.notificacionVenta.notificacionVenta) {
-                    this.setCustomerData(item);
-                } else if (this.notificacionVenta.notificacionVenta) {
+                if (isPendientAccount) {
                     this.setCustomerData(item);
                 } else {
-                    this.cliente = {};
-                    this.$scope.$apply();
+                    this.setCustomerData(item);
                 }
             } else {
                 this.setCustomerData(item)
@@ -1002,7 +999,7 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
             //Configuracion de Codigo Barra 
             if (resultsDataForm[8].length > 0) {
                 let {
-                    searchCode, 
+                    searchCode,
                     multipleVendedor
                 } = resultsDataForm[8][0];
                 this.isSearchBarcode = searchCode;
@@ -1082,15 +1079,12 @@ export class ModalFacturaEditarCtrl extends ModalFacturaCtrl {
                 return
             }
 
-            if (['R', 'C', 'P'].includes(item.tipoIdentificacion)) {
+            if (['R', 'C', 'P'].includes(item.tipoIdentificacion) && this.notificacionVenta.notificacionVenta) {
                 let isPendientAccount = await this.ventaSvc.verifyPendientAccount({ idCliente: item.idCliente });
-                if (isPendientAccount && this.notificacionVenta.notificacionVenta) {
-                    this.setCustomerData(item);
-                } else if (this.notificacionVenta.notificacionVenta) {
+                if (isPendientAccount) {
                     this.setCustomerData(item);
                 } else {
-                    this.cliente = {};
-                    this.$scope.$apply();
+                    this.setCustomerData(item);
                 }
             } else {
                 this.setCustomerData(item)
@@ -1214,7 +1208,7 @@ export class ModalFacturaDetalleCtrl extends ModalFacturaCtrl {
             _nombreModalConst,
             _fS,
             _tS
-        }) 
+        })
         this.articuloSvc = articuloSvc;
 
         this.CELL_TEMPLATE_OPTION = `
@@ -1540,15 +1534,12 @@ export class ModalFacturaDuplicarCtrl extends ModalFacturaCtrl {
                 return
             }
 
-            if (['R', 'C', 'P'].includes(item.tipoIdentificacion)) {
+            if (['R', 'C', 'P'].includes(item.tipoIdentificacion) && this.notificacionVenta.notificacionVenta) {
                 let isPendientAccount = await this.ventaSvc.verifyPendientAccount({ idCliente: item.idCliente });
-                if (isPendientAccount && this.notificacionVenta.notificacionVenta) {
-                    this.setCustomerData(item);
-                } else if (this.notificacionVenta.notificacionVenta) {
+                if (isPendientAccount) {
                     this.setCustomerData(item);
                 } else {
-                    this.cliente = {};
-                    this.$scope.$apply();
+                    this.setCustomerData(item);
                 }
             } else {
                 this.setCustomerData(item)

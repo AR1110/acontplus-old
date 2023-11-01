@@ -825,7 +825,8 @@
                         controller,
                         template,
                         size: 'md',
-                        params: Object.assign({}, scope.params) || {},                                               
+                        params: Object.assign({}, scope.params) || {},   
+                        isRenderRazorPartial: true,                                            
                     })
 
                     modalDialogRef.result.then(result => {
@@ -1139,7 +1140,7 @@
                      * Eliminar mas adelante en cuanto se corrija el codDoc en las opciones de factura venta
                      */
                     let params = Object.assign({}, scope.params);
-                    if(params.hasOwnProperty('codigoTipoDoc')){
+                    if(("codigoTipoDoc" in params)){
                         params.codDoc = '01';
                     }
                     //===================================

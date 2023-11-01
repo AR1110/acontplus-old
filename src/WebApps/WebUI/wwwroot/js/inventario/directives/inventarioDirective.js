@@ -9,7 +9,7 @@
                 params:'=',
                 resultModal: '&',
             },
-            link: function(scope, element, att){
+            link: function(scope, element){
                 element.on('click', async function () {
                      
                     const {fileCtrl, controllers, templates} = nombreModalInventario.ARTICULO;
@@ -19,8 +19,9 @@
                         controller: ctrl,
                         template,
                         size: 'xl',
-                        params: scope.params,
-                        windowClass: 'uibModalFullScreen'
+                        params: scope.params || {},
+                        windowClass: 'uibModalFullScreen',
+                        isRenderRazorPartial: true
                     })       
                           
                     modalDialogRef.result.then(result=>{
@@ -42,7 +43,7 @@
                 params:'=',
                 resultModal: '&',
             },
-            link: function(scope, element, att){
+            link: function(scope, element){
                 element.on('click', async function () {
                      
                     const {fileCtrl, controllers, templates} = nombreModalInventario.ARTICULO;
@@ -78,7 +79,7 @@
                 params: '=',   
                 results:'&'             
             },
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
     
                 element.on('click', async function () {
                     const {fileCtrl, controller, template} = nombreModalInventario.FAMILIA;
@@ -112,7 +113,7 @@
                 params: '=',   
                 results:'&'             
             },
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
     
                 element.on('click', async function () {
                     const {fileCtrl, controller, template} = nombreModalInventario.SUBFAMILIA;
@@ -147,7 +148,7 @@
                 params: '=',   
                 results:'&'             
             },
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
     
                 element.on('click', async function () {
                     const {fileCtrl, controller, template} = nombreModalInventario.MEDIDA;
@@ -180,7 +181,7 @@
                 params: '=',   
                 results:'&'             
             },
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
     
                 element.on('click', async function () {
                     const {fileCtrl, controller, template} = nombreModalInventario.MARCA;
@@ -215,7 +216,7 @@
                 params: '=',   
                 results:'&'             
             },
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
     
                 element.on('click', async function () {
                     const {fileCtrl, controller, template} = nombreModalInventario.MODELO;
@@ -252,14 +253,14 @@
                 sizeBtn: "="
             },
             template: ' <a style="cursor:pointer;" ng-if="kardex.view" class= "btn btn-info btn-xs text-white" title="Ver Kardex de Artículo"> <i class="mdi mdi-timetable"></i></a >',
-            link: function (scope, element, attr) {
+            link: function (scope, element) {
                 let {
                     ventaPermiso
                 } = $rootScope.usuarioPermiso;
     
                 scope.kardex = ventaPermiso.additional.kardex;
     
-                element.on('click', async function (e) {
+                element.on('click', async function () {
     
                     let {fileCtrl, controllers, templates} = nombreModalInventario.KARDEX;
                     let ctrl = (await import(fileCtrl))[controllers['M']];
@@ -324,6 +325,39 @@
         };
     })
     
+
+    app.directive('btnArticuloHistorialCompra', function(modalService, nombreModalInventario){
+        return {
+            restrict: 'A',
+            scope: {
+                params:'=',
+                resultModal: '&',
+            },
+            link: function(scope, element){
+                element.on('click', async function () {
+                     
+                    const {fileCtrl, controllers, templates} = nombreModalInventario.ARTICULO;
+                    let ctrl = (await import(fileCtrl))[controllers['HC']];
+                    let template = templates['HC'];
+                    const modalDialogRef = modalService.openModalCustom({
+                        controller: ctrl,
+                        template,
+                        size: 'xl',
+                        params: scope.params || {}, 
+                        isRenderRazorPartial: true
+                    })       
+                          
+                    modalDialogRef.result.then(result=>{
+                        if(typeof result==="object"){
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+                });
+            }
+        }
+    })
 
 
 

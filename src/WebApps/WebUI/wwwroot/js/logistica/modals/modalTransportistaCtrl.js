@@ -12,6 +12,7 @@ function ModalTransportistaCtrl($scope, $uibModalInstance, transportistaSvc,  tS
     
 
     $scope.getTipoIdentificacion = function(){
+        showLoader();
         transportistaSvc.getTipoIdentificacion().then(response => {
             if (response.id === "0") {
                 console.log(response)
@@ -25,7 +26,7 @@ function ModalTransportistaCtrl($scope, $uibModalInstance, transportistaSvc,  tS
                 $scope.tipoRegistro=2;
                 $scope.data = $scope._params;            
             }
-        })
+        }).finally(()=>hideLoader())
     }
 
     $scope.getTipoIdentificacion();
@@ -77,8 +78,7 @@ function ModalTransportistaCtrl($scope, $uibModalInstance, transportistaSvc,  tS
     }
 
     $scope.successResponse = function(response) {
-        hideLoader();
-        console.log(response)
+        hideLoader();        
         if (response.code === "0") {
             tS.toastr('warning',response.message);
             return;

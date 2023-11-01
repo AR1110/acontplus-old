@@ -11,7 +11,7 @@ GO
 -- Description:	SP Para leer los datos e la tabla articulo
 -- =============================================
 --Almacen.Articulo_Get 28, '{"tipo":10,"idArticulo":5}'
--- Inventario.Articulo_Get 28, '{"idArticulo":77528,"idBodega":128,"tipo":10}'
+-- Inventario.Articulo_Get 28, '{"tipo":5}'
 -- Inventario.Articulo_Get 28, '{"tipo":7,"idArticulo":32546,"cantidad":"2","idBodega":149,"idMedida":278}'
 CREATE OR ALTER PROCEDURE Inventario.Articulo_Get @idRol INT ,@json VARCHAR(MAX)
 AS
@@ -332,7 +332,7 @@ BEGIN
 	--> DataForm 
 	IF @tipo = 5
 		BEGIN
-
+            --- NO CAMBIAR EL ORDEN DE LOS SELECT => MAPEO DATO POR POSICIONES EN LA APP ---
 			SELECT idEstablecimiento,nombreComercial,defaultEstab,idBodega,bodega,defaultBodega FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @idRol ORDER BY defaultEstab DESC
 
             SELECT nroPrecio FROM Config.v_Sistema_Decimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'AL'

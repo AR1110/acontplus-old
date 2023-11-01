@@ -375,8 +375,14 @@
                             title="Historial de ingresos de facturas">
                             <md-icon md-font-set="md" class="text-danger">shopping_cart</md-icon>
                         </md-button>
-                        <md-button ng-if="(item.idArticulo > 0 && item.idProveedor > 0)" class="md-icon-button"
-                            ng-click="getArticleHC(item)" aria-label="Historial" title="Historial de vinculación">
+                        <md-button 
+                            ng-if="(item.idArticulo > 0 && item.idProveedor > 0)" 
+                            class="md-icon-button" 
+                            btn-articulo-historial-compra
+                            resultModal="getArticleHC(result)"
+                            params = "item"
+                            aria-label="Historial" 
+                            title="Historial de vinculación">
                             <md-icon md-font-set="md" class="text-info">history</md-icon>
                         </md-button>
                         <md-button ng-if="(item.idDocumentoDetalle == 0 && item.idArticulo > 0 && selected[0].complete)"

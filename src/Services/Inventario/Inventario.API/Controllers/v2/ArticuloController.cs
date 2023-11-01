@@ -2,6 +2,7 @@
 using Common.Core.Utils;
 using DataAccess;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common;
 using Services.Common.Logs;
 
 namespace Inventario.API.Controllers.v2
@@ -45,23 +46,23 @@ namespace Inventario.API.Controllers.v2
             return Ok(_response);
         }
 
-
         [HttpGet("{id}")]
         public async Task<IActionResult> GetId(int id)
         {
+            GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
 
-            GenericResponse _response = new GenericResponse();
             try
             {
-                await _db.SPExecute("Almacen.Articulo_Get_Id");
+                await _db.SPExecute("Inventario.Articulo_Get_Id");
+                _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
                 _db.AddDynamicParam("id", id);
                 _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error in articulo getId: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al Obtener los datos del articulo");
+                _log.LogActivity("Error in articulo getId: \n" + ex.Message);
+                _response.Create(code: "0", message: "Error al Obtener los datos del articulo " + ex.Message);
             }
             finally
             {
@@ -130,9 +131,11 @@ namespace Inventario.API.Controllers.v2
 
             try
             {
-                await _db.SPExecute("Almacen.Articulo_Insert_v2");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                await _db.SPExecute("Inventario.Articulo_Insert");
+                _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
+                _db.AddDynamicParam("s3ObjectKey", "");
+                _db.AddDynamicParam("s3ObjectUrl", "");
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
@@ -154,15 +157,16 @@ namespace Inventario.API.Controllers.v2
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.Articulo_Update_v2");
-                _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                await _db.SPExecute("Inventario.Articulo_Update");
+                _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
                 _db.AddDynamicParam("id", id);
                 _db.AddDynamicParam("json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(parameters.Data)));
+                _db.AddDynamicParam("s3ObjectKey", "");
+                _db.AddDynamicParam("s3ObjectUrl", "");
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
-
                 _log.LogActivity("Error al actualizar articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar articulo");
             }
@@ -181,7 +185,7 @@ namespace Inventario.API.Controllers.v2
             try
             {
                 await _db.SPExecute("Almacen.Articulo_Delete");
-                _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
+                _db.AddDynamicParam("idRol", User.GetUserRoleId());
                 _db.AddDynamicParam("id", id);
                 _response = _db.GetDefault();
             }
@@ -197,6 +201,5 @@ namespace Inventario.API.Controllers.v2
             }
             return Ok(_response);
         }
-
     }
 }

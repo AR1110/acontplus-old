@@ -9,19 +9,6 @@ $(function () {
     // ==============================================================
     // This is for the top header part and sidebar part
     // ==============================================================
-    var setRemoveBarraLateral = function () {
-        if (!$("body").hasClass("mini-sidebar")) {
-            $("#sidebarnav").css({
-                "max-height": "650px",
-                "bottom": "0",
-                "overflow-x": "hidden!important",
-                "overflow-y": "scroll"
-            });
-        }
-        else {
-            $("#sidebarnav").removeAttr("style");
-        }
-    }
     var set = function () {
         var width = (window.innerWidth > 0) ? window.innerWidth : this.screen.width;
         var topOffset = 55;
@@ -40,7 +27,6 @@ $(function () {
         if (height > topOffset) {
             $(".page-wrapper").css("min-height", (height) + "px");
         }
-        setRemoveBarraLateral();
     };
     $(window).ready(set);
     $(window).on("resize", set);
@@ -58,7 +44,6 @@ $(function () {
             $("body").addClass("mini-sidebar");
             $('.navbar-brand span').hide();
         }
-        setRemoveBarraLateral();
     });
     // this is for close icon when navigation open in mobile view
     $(".nav-toggler").click(function () {
@@ -99,8 +84,12 @@ $(function () {
     // ==============================================================
     // Perfact scrollbar
     // ==============================================================
-    $('.scroll-sidebar, .right-side-panel, .message-center, .right-sidebar').perfectScrollbar();
-    $('#chat, #msg, #comment, #todo').perfectScrollbar();
+    //$('.scroll-sidebar, .right-side-panel, .message-center, .right-sidebar').perfectScrollbar();
+    //$('#chat, #msg, #comment, #todo').perfectScrollbar();
+
+    const scrollSideBar = document.querySelector('.scroll-sidebar');
+    const ssb = new PerfectScrollbar(scrollSideBar);
+
     // ==============================================================
     // Resize all elements
     // ==============================================================

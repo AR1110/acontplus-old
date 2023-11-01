@@ -253,12 +253,12 @@ export class CommonService {
     }
 
     getEstadoDocByCodDoc(codDoc) {
-        return this.$http.get("/EstadoDocumento/Get?json=" + JSON.stringify({
+        return this.mS.getData("get","Config/EstadoDocumento/?json=" + JSON.stringify({
             codDoc
-        }))
+        }), null, true)
             .then(({
                 data: response
-            }) => response.data || []);
+            }) => response || []);
     }
 
     getAllCiudadProvincia(json = {}) {
@@ -325,12 +325,6 @@ export class CommonService {
     }
 
     //--------------------------------------CONSULTA COMPRAS --------------------
-    getAllSustentoTributario() {
-        return this.$http.get('/SustentoTributario/GetAll')
-            .then(({
-                data: response
-            }) => response.data)
-    }
 
     getAllCategoriaCompra() {
         return this.$http.get('/CategoriaCompra/GetAll')
@@ -1188,8 +1182,7 @@ export class CommonService {
                         throw response.message
                     }
                     if (response.code === "1") {
-                        let dataMain = JSON.parse(response.payload);
-                        console.log(dataMain)
+                        let dataMain = JSON.parse(response.payload); 
                         let detalle = dataMain[3];
 
                         dataDocumento = dataMain[0][0];

@@ -459,7 +459,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
                 this.isSearchBarcode = searchCode;
                 this.multipleVendedor = multipleVendedor;
 
-                this.$uibModalInstance.rendered.then(result => {
+                this.$uibModalInstance.rendered.then(() => {
                     if (this.isSearchBarcode == 1) {
                         $("#inputBarcode").focus();
                     } else {
@@ -545,16 +545,13 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
                 return
             }
 
-            if (['R', 'C', 'P'].includes(item.tipoIdentificacion)) {
+            if (['R', 'C', 'P'].includes(item.tipoIdentificacion) && this.notificacionVenta.notificacionVenta) {
                 let isPendientAccount = await this.ventaSvc.verifyPendientAccount({ idCliente: item.idCliente });
-                if (isPendientAccount && this.notificacionVenta.notificacionVenta) {
-                    this.setCustomerData(item);
-                } else if (this.notificacionVenta.notificacionVenta) {
+                if (isPendientAccount) {
                     this.setCustomerData(item);
                 } else {
-                    this.cliente = {};
-                    this.$scope.$apply();
-                }
+                    this.setCustomerData(item);
+                } 
             } else {
                 this.setCustomerData(item)
             }
@@ -788,9 +785,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
 
         } catch (error) {
             console.log(error)
-        } finally {
-
-        }
+        }  
     }
 
 
@@ -1214,16 +1209,13 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
                 return
             }
 
-            if (['R', 'C', 'P'].includes(item.tipoIdentificacion)) {
+            if (['R', 'C', 'P'].includes(item.tipoIdentificacion) && this.notificacionVenta.notificacionVenta) {
                 let isPendientAccount = await this.ventaSvc.verifyPendientAccount({ idCliente: item.idCliente });
-                if (isPendientAccount && this.notificacionVenta.notificacionVenta) {
-                    this.setCustomerData(item);
-                } else if (this.notificacionVenta.notificacionVenta) {
+                if (isPendientAccount) {
                     this.setCustomerData(item);
                 } else {
-                    this.cliente = {};
-                    this.$scope.$apply();
-                }
+                    this.setCustomerData(item);
+                } 
             } else {
                 this.setCustomerData(item)
             }
@@ -1570,16 +1562,13 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
                 return
             }
 
-            if (['R', 'C', 'P'].includes(item.tipoIdentificacion)) {
+            if (['R', 'C', 'P'].includes(item.tipoIdentificacion) && this.notificacionVenta.notificacionVenta) {
                 let isPendientAccount = await this.ventaSvc.verifyPendientAccount({ idCliente: item.idCliente });
-                if (isPendientAccount && this.notificacionVenta.notificacionVenta) {
-                    this.setCustomerData(item);
-                } else if (this.notificacionVenta.notificacionVenta) {
+                if (isPendientAccount) {
                     this.setCustomerData(item);
                 } else {
-                    this.cliente = {};
-                    this.$scope.$apply();
-                }
+                    this.setCustomerData(item);
+                } 
             } else {
                 this.setCustomerData(item)
             }

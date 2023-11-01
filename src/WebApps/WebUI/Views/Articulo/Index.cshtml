@@ -28,7 +28,7 @@
         </div>
         <div class="col-md-7 align-self-center text-right">
             <div class="d-flex justify-content-end align-item-center">
-                <button class="btn btn-info m-l-15" ng-if="accion.leer && accion.crear" ng-click="openModalNew()">
+                <button class="btn btn-info m-l-15" ng-if="accion.leer && accion.crear" btn-article-add-update result-modal="resultModal(result)">
                     <i class="fa fa-plus-circle"></i> Nuevo
                 </button>
                 @* <button class="btn btn-warning m-l-15" ng-click="openModalNew()"><i class="fa fa-plus-circle"></i>
@@ -209,7 +209,7 @@
                                     </md-button>
                                     <md-menu-content class="md-dense">
                                         <md-menu-item ng-if="accion.editar">
-                                            <md-button ng-click="openModalEditar(a)">
+                                            <md-button btn-article-add-update result-modal="resultModal(result)" params="a" >
                                                 <span md-menu-align-target>
                                                     <i class="ti-pencil"></i>
                                                     Editar
@@ -255,7 +255,7 @@
 
                                         <!--Historial Compras-->
                                         <md-menu-item>
-                                            <md-button ng-click="openModalHistorialCompra(a)" title="Historial Compras">
+                                            <md-button btn-articulo-historial-compra  params = "a"   title="Historial Compras">
                                                 <span md-menu-align-target>
                                                     <icon class="mdi mdi-history"></icon> Hist. Compras
                                                 </span>

@@ -5,34 +5,68 @@
 
     app.factory('compraNoHabitualService', function($injector){        
        
-        let url = 'CompraNoHabitual/'
+        let url = 'Compra/CompraNoHabitual/'
         let mS = $injector.get('mainService');
 
         let service = {};
 
-        service.getAll = function(query){
-            return mS.getData('get', url  + JSON.stringify(query), null, true).then(response=>{
+        /**
+         * 
+         * @param {*} params 
+         * - tipo 1: listado general 
+         * - tipo 2: datos para el formulario (create, update)
+         * - tipo 4: datos para actualizar 
+         * @returns 
+         */
+        service.get = (params)=>{
+            return mS.getData('get', `${url}${JSON.stringify(params)}`, null, true).then(response=>{
                 if(response.code==='0'){
                     throw response;
                 }
                 if(response.code==='1'){
-                    let results = JSON.parse(response.payload)[0] || [];
-                    return results.map(item => ({
-                        colorRow: item.colorRow,
-                        estado: item.estado,
-                        fechaEmision: item.fechaEmision,
-                        idDocumentoIngreso: item.idDocumentoIngreso,
-                        importeTotal: item.importeTotal,
-                        nombreFiscal: item.nombreFiscal,
-                        serieComprobante: item.serieComprobante, 
-                        usuario: item.usuario
-                    }))
+                    let mainData = JSON.parse(response.payload) || [];
+
+                    if(params.typeList===1){
+                        let results = mainData[0];
+                        return results.map(item => ({
+                            colorRow: item.colorRow,
+                            estado: item.estado,
+                            fechaEmision: item.fechaEmision,
+                            idDocumentoIngreso: item.idDocumentoIngreso,
+                            importeTotal: item.importeTotal,
+                            nombreFiscal: item.nombreFiscal,
+                            serieComprobante: item.serieComprobante, 
+                            usuario: item.usuario
+                        })) 
+                    }
+
+                    if(params.typeList===2){
+                        let estabs = mainData[0];
+                        let puntosEmision = mainData[1];
+                        let bodegas = mainData[2];
+                        let decimal = mainData[3][0];
+                        let tarifasImpuesto =mainData[4]
+                        let tarifasImpuestoVigente = mainData[5];
+                        let config = mainData[6][0];
+                        return {
+                            estabs,
+                            puntosEmision,
+                            bodegas,
+                            decimal,
+                            tarifasImpuesto,
+                            tarifasImpuestoVigente,
+                            config,
+                        } 
+                    }
+                    if(params.typeList===4){
+                        return mainData;
+                    }
                 }
             })
-        }
+        } 
 
         service.create = function(query){                                        
-            return mS.getData('post', 'CompraNoHabitual', query, true).then(response=>{
+            return mS.getData('post', url, query, true).then(response=>{
                 return response
             })
         }
@@ -41,11 +75,12 @@
             return mS.getData('put', url + id, query, true).then(response=>{
                 return response;
             })
-        }
+        } 
 
-        service.delete = function(id){
-
-            
+        service.updateStatus = (id)=>{
+            return mS.getData('put', `${url}Cancel/${id}`, null, true).then(response=>{
+                return response;
+            })
         }
 
         service.findById = function(id){
@@ -89,9 +124,7 @@
                     //         })
                     //     }
                     //     return item;
-                    // })
-                   
-                   console.log(datosAdicionales)
+                    // }) 
                     return {
                         comprobante,
                         proveedor,
@@ -206,7 +239,7 @@
                 idPuntoEmision,
                 typeList: 3
             })
-            return mS.getData('get', url  + query, null, true).then(response => {
+            return mS.getData('get', `${url}${query}`, null, true).then(response => {
                 if(response.code==="0"){
                     throw response;
                 }

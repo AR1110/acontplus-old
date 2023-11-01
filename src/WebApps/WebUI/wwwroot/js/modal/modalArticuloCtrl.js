@@ -80,13 +80,7 @@ class ModalBaseCtrl {
                     link.href = canvas.toDataURL();
                     link.target = "_blank";
                     link.click();
-                    link.download();
-                    // let image = new Image();
-                    // image.src = canvas.toDataURL()
-
-                    // let w = window.open("", '_blank');
-                    // w.document.write(image.outerHTML);
-                    // w.document.close();
+                    link.download(); 
                 });
             });
     };
@@ -122,20 +116,20 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
         $interval,
         $uibModalInstance,
         _mS,
-        _commonSvc,
+        commonSvc,
         articuloSvc,
         articuloUbicacionSvc,
-        _modalSvc,
-        _nombreModal,
-        _toastr,
+        modalSvc,
+        nombreModal,
+        toastr,
         _form,
-        _params,
+        params,
         decodeToken
     ) {
         super({
             $scope,
             _mS,
-            _commonSvc,
+            _commonSvc: commonSvc,
             _form,
         });
 
@@ -144,15 +138,15 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
         this.$timeout = $timeout;
         this.$interval = $interval;
         this.$uibModalInstance = $uibModalInstance;
-        this._commonSvc = _commonSvc;
+        this._commonSvc = commonSvc;
 
         this.articuloSvc = articuloSvc;
         this.articuloUbicacionSvc = articuloUbicacionSvc;
 
-        this._modalSvc = _modalSvc;
-        this._nombreModal = _nombreModal;
-        this._toastr = _toastr;
-        this._params = _params;
+        this._modalSvc = modalSvc;
+        this._nombreModal = nombreModal;
+        this._toastr = toastr;
+        this._params = params;
 
         this.step = 1; //Por Defecto Tab General
         this.data = {};
@@ -177,16 +171,18 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
     async $onInit() {
         try {
             showLoader();
-            let results = await this.articuloSvc.getDataForm({}).catch((error) => {
+            let results = await this.articuloSvc.getDataForForm()
+            .catch((error) => {
                 console.log(error);
-            });
+            }).finally(()=>hideLoader())
+            console.log(results)
 
             const {
                 subFamilias, 
                 medidas,
                 modelos,
                 marcas, 
-                tipoArticulos,
+                tiposArticulo,
                 tarifas,
                 etiquetaActividades,
                 jsonPersmission,
@@ -199,9 +195,9 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
             this.subFamilias = subFamilias;
 
             //  //Tipo Articulo
-            this.tipoArticulos = tipoArticulos;
+            this.tipoArticulos = tiposArticulo;
             this.data.idTipoArticulo =
-                this.tipoArticulos.length > 0
+            this.tipoArticulos.length > 0
                     ? this.tipoArticulos[0].idTipoArticulo
                     : 0;
 
@@ -1672,208 +1668,6 @@ class ModalArticuloImpuestoCtrl {
     }
 }
 
-/**
- *
- * ---------------------------------GESTION DE IMAGEN------------------------------
- * Agregar y eliminar
- */
-
-class ModalArticuloImagenCtrl {
-    static $inject = [
-        "$scope",
-        "mainService",
-        "$uibModalInstance",
-        "toastService",
-        "params",
-    ];
-    constructor($scope, _mS, $uibModalInstance, _toastr, _params) {
-        this.$scope = $scope;
-        this._mS = _mS;
-        this.$uibModalInstance = $uibModalInstance;
-        this._toastr = _toastr;
-        this._params = _params;
-
-        this.modelImagenes = [];
-        this.imagenes = [];
-    }
-
-    $onInit() {
-        this.getAllImage();
-    }
-
-    getAllImage() {
-        showLoader();
-        this._mS
-            .getData(
-                "get",
-                "/ArticuloImagen/GetArticuloImagen?idArticulo=" +
-                this._params.idArticulo
-            )
-            .then((response) => {
-                if (response.id === "0") {
-                    hideLoader();
-                    this.toastr.toastr("warning", response.message, response.titleSms);
-                    return;
-                }
-
-                this.imagenes = response.data.map((val) => {
-                    val.imagen = `data:${val.mimeType};base64,${val.imagenBase64}`;
-                    return val;
-                });
-                hideLoader();
-            });
-    }
-
-    onChangeSelectImage() {
-        if (this.modelImagenes.length > 5) {
-            this.modelImagenes = [];
-            this._toastr.toastr("Solo puedes ingresar 5 imagenes");
-            return;
-        }
-
-        for (let file of this.modelImagenes) {
-            let reader = new FileReader();
-
-            reader.onload = (e) => {
-                let imagenBase64 = reader.result
-                    .replace("data:", "")
-                    .replace(/^.+,/, "");
-                let mimeType = file.type,
-                    nombreImagen = file.name;
-                let obj = {
-                    imagen: e.target.result,
-                    imagenBase64,
-                    mimeType,
-                    nombreImagen,
-                };
-                this.imagenes.push(obj);
-            };
-            reader.readAsDataURL(file);
-        }
-        this.modelImagenes = [];
-        this.$scope.$apply();
-    }
-
-    eliminar(file) {
-        let index = this.imagenes.indexOf(file);
-        this.imagenes.splice(index, 1);
-    }
-
-    guardar() {
-        try {
-            let tituloToast = "Guardar";
-            if (this.imagenes.length === 0) {
-                this._toastr.toastr(
-                    "warning",
-                    "Seleccione al menos una imagen",
-                    tituloToast
-                );
-                return;
-            }
-
-            if (this.imagenes.length > 5) {
-                this._toastr.toastr(
-                    "warning",
-                    "Solo puedes subir 5 imagenes",
-                    tituloToast
-                );
-                return;
-            }
-
-            showLoader();
-            this._mS
-                .getData(
-                    "post",
-                    "/ArticuloImagen/UploadImagen?idArticulo=" + this._params.idArticulo,
-                    this.imagenes
-                )
-                .then((response) => {
-                    if (response.id === "0") {
-                        hideLoader();
-                        this._toastr.toastr("warning", response.message, response.titleSms);
-                        return;
-                    }
-                    if (response.id === "1") {
-                        hideLoader();
-                        this._toastr.toastr("success", response.message, response.titleSms);
-                        this.$uibModalInstance.close(response);
-                    }
-                });
-        } catch (error) {
-            hideLoader();
-        }
-    }
-
-    closeModal() {
-        this.$uibModalInstance.close();
-    }
-}
-
-/**
- *
- * -------------------------------------Presentacion de Imagen--------------------------
- *
- *
- */
-
-class ModalArticuloImagenDetalleCtrl {
-    static $inject = [
-        "$scope",
-        "mainService",
-        "$uibModalInstance",
-        "params",
-        "articuloService",
-    ];
-
-    constructor($scope, _mS, $uibModalInstance, _params, articulSvc) {
-        this.$scope = $scope;
-        this._mS = _mS;
-        this.$uibModalInstance = $uibModalInstance;
-        this._params = _params;
-        this.data = _params;
-        this.imagenes = [];
-        this.tarifas = [];
-        this.articulSvc = articulSvc;
-    }
-
-    $onInit() {
-        this.getAllImage();
-    }
-
-    async getAllImage() {
-        try {
-            showLoader();
-            let results = await Promise.all([
-                this._mS.getData(
-                    "get",
-                    "/ArticuloImagen/GetArticuloImagen?idArticulo=" +
-                    this._params.idArticulo
-                ),
-                this.articulSvc.getId(this._params.idArticulo),
-            ]);
-
-            this.imagenes = results[0].data.map((val) => {
-                val.imagen = `data:${val.mimeType};base64,${val.imagenBase64}`;
-                return val;
-            });
-
-            const dataArticulo = JSON.parse(results[1].payload);
-            this.data = dataArticulo[0][0];
-
-            this.tarifas = dataArticulo[1].map((val) => { 
-                return val;
-            });
-            this.$scope.$apply();
-            hideLoader();
-        } catch (error) {
-            hideLoader();
-        }
-    }
-
-    closeModal() {
-        this.$uibModalInstance.close();
-    }
-}
 
 /**
  *
@@ -1934,13 +1728,10 @@ class ModalArticuloFraccionadoCtrl extends ModalBaseCtrl {
         try {
             showLoader();
 
-            const { medidas, tarifas, decimal } = await this.articuloSvc.getDataForm(
-                {test: 1}
-            );
+            const { medidas, tarifas, decimal } = await this.articuloSvc.getDataForForm();
 
             this.medidas = medidas;
-            this.data.idMedida =
-                this.medidas.length > 0 ? this.medidas[0].idMedida : 0;
+            this.data.idMedida = this.medidas.length > 0 ? this.medidas[0].idMedida : 0;
 
             this.tarifas = tarifas;
 

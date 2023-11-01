@@ -17,7 +17,7 @@ function atsCtrl($scope, mS, tS, FileSaver, Blob) {
 
     function initialLoad() {
         try {
-            mS.getData('get', 'Ats/Get', null, true).then(response => {
+            mS.getData('get', 'FactElect/Ats/Get', null, true).then(response => {
                 $scope.years = response[0];
                 $scope.months = response[1];
                 $scope.yearSelected = response[0][0];
@@ -57,7 +57,7 @@ function atsCtrl($scope, mS, tS, FileSaver, Blob) {
                 month: Number($scope.monthSelected.month)
             }
             showLoader()
-            mS.getFile('get', 'Ats/Download?json=' + JSON.stringify(json), null, true).then(response => {
+            mS.getFile('get', 'FactElect/Ats/Download?json=' + JSON.stringify(json), null, true).then(response => {
                 if (response.id == 0) {
                     hideLoader()
                     tS.toastr('warning', response.message)

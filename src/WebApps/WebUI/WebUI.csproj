@@ -484,10 +484,6 @@
     <None Include="wwwroot\assets\images\tooltip\tooltip3.svg" />
     <None Include="wwwroot\dist\js\custom.js" />
     <None Include="wwwroot\dist\js\custom.min.js" />
-    <None Include="wwwroot\dist\js\dashboard1.js" />
-    <None Include="wwwroot\dist\js\dashboard2.js" />
-    <None Include="wwwroot\dist\js\dashboard3.js" />
-    <None Include="wwwroot\dist\js\dashboard4.js" />
     <None Include="wwwroot\dist\js\pages\bootstrap-table.init.js" />
     <None Include="wwwroot\dist\js\pages\bootstrap-table.init.min.js" />
     <None Include="wwwroot\dist\js\pages\chat.js" />
@@ -514,7 +510,6 @@
     <None Include="wwwroot\dist\js\pages\widget-charts.min.js" />
     <None Include="wwwroot\dist\js\pages\widget-data.js" />
     <None Include="wwwroot\dist\js\pages\widget-data.min.js" />
-    <None Include="wwwroot\dist\js\perfect-scrollbar.jquery.min.js" />
     <None Include="wwwroot\dist\js\sidebarmenu.js" />
     <None Include="wwwroot\dist\js\waves.js" />
     <None Include="wwwroot\dist\scss\colors\blue-dark.scss" />
@@ -625,7 +620,6 @@
     <None Include="wwwroot\js\inventario\controllers\consolidacionInvCtrl.min.js" />
     <None Include="wwwroot\js\controllers\layoutCtrl.js" />
     <None Include="wwwroot\js\controllers\loginCtrl.js" />
-    <None Include="wwwroot\js\controllers\sri\impuestoCtrl.js" />
     <None Include="wwwroot\js\controllers\sri\retencionIvaCtrl.js" />
     <None Include="wwwroot\js\controllers\sri\retencionIvaCtrl.min.js" />
     <None Include="wwwroot\js\controllers\sri\subContribuyenteCtrl.js" />
@@ -642,7 +636,6 @@
     <None Include="wwwroot\js\services\formularioService.min.js" />
     <None Include="wwwroot\js\services\tesoreria\pagoService.js" />
     <None Include="wwwroot\js\services\tesoreria\pagoService.min.js" />
-    <None Include="wwwroot\js\site.js" />
     <None Include="wwwroot\lib\angular-block-ui\dist\angular-block-ui.css.map" />
     <None Include="wwwroot\lib\angular-block-ui\dist\angular-block-ui.js" />
     <None Include="wwwroot\lib\angular-block-ui\dist\angular-block-ui.js.map" />
@@ -1997,10 +1990,6 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
     <Content Update="wwwroot\dist\css\style.css">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="wwwroot\dist\css\style.min.css">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>

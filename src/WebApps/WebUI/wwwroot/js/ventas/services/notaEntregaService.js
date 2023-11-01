@@ -82,11 +82,13 @@
         service.getAll = function (query) {
 
             return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, { tipo: 1 })), null, true).then(response => {
-                if (response.code === "0") {
+                
+                if (!response || response.code === "0") {
                     throw response;
                 }
                 if (response.code === "1") {
                     let mainData = JSON.parse(response.payload);
+                    console.log(mainData)
                     let notaEntregaRepos = mainData[0];
                     let { totalRecords, totalDocument, totalAbono, totalSaldo } = notaEntregaRepos[0];
 
