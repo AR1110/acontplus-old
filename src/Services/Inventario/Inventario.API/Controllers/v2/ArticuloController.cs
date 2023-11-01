@@ -46,23 +46,23 @@ namespace Inventario.API.Controllers.v2
             return Ok(_response);
         }
 
-
         [HttpGet("{id}")]
         public async Task<IActionResult> GetId(int id)
         {
+            GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
 
-            GenericResponse _response = new GenericResponse();
             try
             {
-                await _db.SPExecute("Almacen.Articulo_Get_Id");
+                await _db.SPExecute("Inventario.Articulo_Get_Id");
+                _db.AddDynamicParam("userRoleId", User.GetUserRoleId());
                 _db.AddDynamicParam("id", id);
                 _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error in articulo getId: \n" + ex.ToString());
-                _response.Create(code: "0", message: "Error al Obtener los datos del articulo");
+                _log.LogActivity("Error in articulo getId: \n" + ex.Message);
+                _response.Create(code: "0", message: "Error al Obtener los datos del articulo " + ex.Message);
             }
             finally
             {
