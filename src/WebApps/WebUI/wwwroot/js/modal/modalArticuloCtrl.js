@@ -80,13 +80,7 @@ class ModalBaseCtrl {
                     link.href = canvas.toDataURL();
                     link.target = "_blank";
                     link.click();
-                    link.download();
-                    // let image = new Image();
-                    // image.src = canvas.toDataURL()
-
-                    // let w = window.open("", '_blank');
-                    // w.document.write(image.outerHTML);
-                    // w.document.close();
+                    link.download(); 
                 });
             });
     };
@@ -122,20 +116,20 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
         $interval,
         $uibModalInstance,
         _mS,
-        _commonSvc,
+        commonSvc,
         articuloSvc,
         articuloUbicacionSvc,
-        _modalSvc,
-        _nombreModal,
-        _toastr,
+        modalSvc,
+        nombreModal,
+        toastr,
         _form,
-        _params,
+        params,
         decodeToken
     ) {
         super({
             $scope,
             _mS,
-            _commonSvc,
+            _commonSvc: commonSvc,
             _form,
         });
 
@@ -144,15 +138,15 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
         this.$timeout = $timeout;
         this.$interval = $interval;
         this.$uibModalInstance = $uibModalInstance;
-        this._commonSvc = _commonSvc;
+        this._commonSvc = commonSvc;
 
         this.articuloSvc = articuloSvc;
         this.articuloUbicacionSvc = articuloUbicacionSvc;
 
-        this._modalSvc = _modalSvc;
-        this._nombreModal = _nombreModal;
-        this._toastr = _toastr;
-        this._params = _params;
+        this._modalSvc = modalSvc;
+        this._nombreModal = nombreModal;
+        this._toastr = toastr;
+        this._params = params;
 
         this.step = 1; //Por Defecto Tab General
         this.data = {};
@@ -177,16 +171,18 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
     async $onInit() {
         try {
             showLoader();
-            let results = await this.articuloSvc.getDataForm({}).catch((error) => {
+            let results = await this.articuloSvc.getDataForForm()
+            .catch((error) => {
                 console.log(error);
-            });
+            }).finally(()=>hideLoader())
+            console.log(results)
 
             const {
                 subFamilias, 
                 medidas,
                 modelos,
                 marcas, 
-                tipoArticulos,
+                tiposArticulo,
                 tarifas,
                 etiquetaActividades,
                 jsonPersmission,
@@ -199,9 +195,9 @@ class ModalArticuloCtrl extends ModalBaseCtrl {
             this.subFamilias = subFamilias;
 
             //  //Tipo Articulo
-            this.tipoArticulos = tipoArticulos;
+            this.tipoArticulos = tiposArticulo;
             this.data.idTipoArticulo =
-                this.tipoArticulos.length > 0
+            this.tipoArticulos.length > 0
                     ? this.tipoArticulos[0].idTipoArticulo
                     : 0;
 
@@ -1934,13 +1930,10 @@ class ModalArticuloFraccionadoCtrl extends ModalBaseCtrl {
         try {
             showLoader();
 
-            const { medidas, tarifas, decimal } = await this.articuloSvc.getDataForm(
-                {test: 1}
-            );
+            const { medidas, tarifas, decimal } = await this.articuloSvc.getDataForForm();
 
             this.medidas = medidas;
-            this.data.idMedida =
-                this.medidas.length > 0 ? this.medidas[0].idMedida : 0;
+            this.data.idMedida = this.medidas.length > 0 ? this.medidas[0].idMedida : 0;
 
             this.tarifas = tarifas;
 

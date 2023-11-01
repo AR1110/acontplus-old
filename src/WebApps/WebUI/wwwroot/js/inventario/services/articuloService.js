@@ -73,6 +73,7 @@
             })
         }
 
+        //eliminar mas adelante 
         service.getAll = function (query) {
             return mainService.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
@@ -126,16 +127,86 @@
                     throw response;
                 }
                 if (response.code === "1") {
-                    let dataApi = JSON.parse(response.payload);
-                    return {
-                        establecimientos: dataApi[0],
-                        bodegas: dataApi[1],
-                        subFamilias: dataApi[2],
-                        familias: dataApi[3],
-                        medidas: dataApi[4],
-                        modelos: dataApi[5],
-                        marcas: dataApi[6],
+                    let mainData = JSON.parse(response.payload);
+                    let tempEstabs = mainData[0];
+                    let decimal = mainData[1][0];
+                    let familias = mainData[3];
+                    let subFamilias = mainData[2];
+                    let medidas = mainData[4];
+                    let modelos = mainData[5];
+                    let marcas = mainData[6];
+                    let tiposArticulo = mainData[7];
+                    let tarifasImpuesto = mainData[8];
+                    let tiposICE = mainData[9];
+                    let tarifas = mainData[10];
+                    let etiquetas = mainData[11];
+
+                    let userData = JSON.parse(localStorage.getItem("userData"));
+                    let permission = {
+                        isUpdatePrice: true
                     }
+                    if (userData) {
+                        let jsonDataPermission = userData.permissions.find(dt => dt.codModule === 'AR');
+                        if (jsonDataPermission) {
+                            let result = JSON.parse(jsonDataPermission.permission);
+                            permission.isUpdatePrice = result.precio.update;
+                        }
+                    }
+
+                    const establecimientos = tempEstabs.reduce((acc, item) => {
+                        const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
+
+                        if (!existingItem) {
+                            acc.push({
+                                idEstablecimiento: item.idEstablecimiento,
+                                nombreComercial: item.nombreComercial,
+                                codEstab: item.codEstab,
+                                defaultEstab: item.defaultEstab,
+                                bodegas: [{
+                                    idEstablecimiento: item.idEstablecimiento,
+                                    idBodega: item.idBodega,
+                                    bodega: item.bodega,
+                                    defaultBodega: item.defaultBodega,
+                                }]
+                            });
+                        } else {
+                            existingItem.bodegas.push({
+                                idEstablecimiento: item.idEstablecimiento,
+                                idBodega: item.idBodega,
+                                bodega: item.bodega,
+                                defaultBodega: item.defaultBodega,
+                            });
+                        }
+                        return acc;
+                    }, []);
+                    console.log(mainData)
+                    return {
+                        establecimientos,
+                        decimal,
+                        familias,
+                        subFamilias,
+                        medidas,
+                        modelos,
+                        marcas,
+                        tiposArticulo,
+                        tarifasImpuesto,
+                        tiposICE,
+                        tarifas,
+                        etiquetas,
+                        permission
+                    }
+                    // return {
+                    //     establecimientos: mainData[0],
+                    //     bodegas: mainData[1],
+                    //     subFamilias: mainData[2],
+                    //     familias: mainData[3],
+                    //     medidas: mainData[4],
+                    //     modelos: mainData[5],
+                    //     marcas: mainData[6],
+                    //     tiposArticulo: mainData[7],
+                    //     tarifasImpuesto: mainData[8],
+                    //     tarifas: mainData[9]
+                    // }
                 }
             })
         }
@@ -274,6 +345,7 @@
             })
         }
 
+        //eliminar mas adelante
         service.getDataForm = function (query) {
             return mainService.getData('get', url + 'GetDataForm?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
@@ -563,7 +635,24 @@
         }
 
 
-        //Se usa Recepcion documentos 
+        service.findById = function (id) {
+            return mainService.getData("get", url + "GetId/" + id, null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
+                    return {
+                        data: mainData[0][0],
+                        articuloTarifas: mainData[1],
+                        articuloCodigoBarras: mainData[2],
+                        articuloUbicaciones: mainData[3]
+                    }
+                }
+            })
+        }
+
+        //Se usa Recepcion documentos (posiblemente eliminar mas adelante)
         service.getId = (id) => {
             return mainService.getData("GET", url + "GetId/" + id, null, true).then(
                 response => {
@@ -576,9 +665,36 @@
                 })
         }
 
+        service.delete = function (id) {
+            return mS.getData('delete', `${url}${id}`, null, true);
+        }
+
         return service;
 
     }])
+
+    app.factory('articuloCodigoBarraService', function ($injector) {
+        const URL = '/CodigoBarraArticulo/';
+
+        const mS = $injector.get('mainService');
+        const service = {};
+
+        service.post = function (data) {
+            return mS.getData("post", `${URL}Post`, data);
+        }
+
+
+        service.put = function (id, data) {
+            return mS.getData("post", `${URL}Put?idArticuloCodigoBarra=${id}`, data);
+        }
+
+        service.delete = function (id) {
+            return mS.getData('delete', `${URL}Delete?idArticuloCodigoBarra=${id}`);
+        }
+
+        return service;
+
+    })
 
 
 

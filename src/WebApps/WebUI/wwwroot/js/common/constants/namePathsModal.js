@@ -24,17 +24,20 @@ app.constant('nombreModalCommon', {
 //Inventario 
 app.constant('nombreModalInventario', {
     ARTICULO: {
-        fileCtrl: '/js/modal/modalArticuloCtrl.min.js' + CHANGE_VERSION(),
+        //fileCtrl: '/js/modal/modalArticuloCtrl.min.js' + CHANGE_VERSION(),
+        fileCtrl: '/js/inventario/modals/modalArticuloCtrl.min.js' + CHANGE_VERSION(),
         controllers: {
             'LG': 'ModalArticuloGeneralCtrl',
-            'M': 'ModalArticuloCtrl',
+            //'M': 'ModalArticuloCtrl',
+            'M': 'modalArticuloCtrl', //depuracion crud articulo
             'AFI': 'ModalArticuloFraccionadoInfoCtrl',
             'MAI': 'ModalArticuloImagenCtrl',
             'MID': 'ModalArticuloImagenDetalleCtrl'
         },
         templates: {
             'LG': 'Articulo/_ModalArticuloGeneral.cshtml',
-            'M': 'Articulo/_ModalNuevoArticulo.cshtml',
+            //'M': 'Articulo/_ModalNuevoArticulo.cshtml',
+            'M': '~/Pages/Articulo/_ModalAddUpdate.cshtml', //depuracion crud articulo
             'AFI': 'Articulo/_ArticuloFraccionadoInfo.cshtml',
             'MAI': 'Articulo/_ModalArticuloImagen.cshtml',
             'MID': 'Articulo/_ModalArticuloImagenDetalle.cshtml'
@@ -144,9 +147,9 @@ app.constant('nombreModalVenta', {
         template: '~/Pages/Empresa/_ModalAddUpdate.cshtml'
     },
     EMPLEADO: {
-        fileCtrl: '/js/ventas/modals/modalEmpleadoCtrl.js',
+        fileCtrl: '/js/ventas/modals/modalEmpleadoCtrl.min.js',
         controller: 'ModalEmpleadoCtrl',
-        template: 'Empleado/_ModalAddUpdate.cshtml'
+        template: '~/Pages/Empleado/Shared/_ModalAddUpdate.cshtml'
     },
     CARGO: {
         fileCtrl: '/js/ventas/modals/modalCargoCtrl.js',
