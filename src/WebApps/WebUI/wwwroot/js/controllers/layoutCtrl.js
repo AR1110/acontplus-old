@@ -67,17 +67,17 @@ function layoutCtrl($scope, $rootScope, $window) {
                     textHtml += '<li><a href="' + $scope.subMenus[sm].url + '">' + $scope.subMenus[sm].descripcion + '</a></li>';
                 }
             }
-        };
+        }
 
         $('#sidebarnav').html(textHtml);
     };
 
     if ($scope.menus.length > 0 || $scope.subMenus.length > 0) {
         $scope.drawMenus();
-    };
+    }
 
     const pathname = $window.location.pathname;
-
+    const rutasReservadas = ['/ReporteVentas/ConsumoCliente']
     if (pathname) {
 
         if (pathname === '/') {
@@ -87,7 +87,13 @@ function layoutCtrl($scope, $rootScope, $window) {
             let lengthPath = pathname.split('/').splice(1).length;
 
             if ([1, 2].includes(lengthPath)) {
-                let path = pathname.indexOf('/Index') == -1 ? pathname + '/Index' : pathname;
+                let path = '';
+                if (rutasReservadas.includes(pathname)) {
+                    path = pathname;
+                } else {
+                    path = pathname.indexOf('/Index') == -1 ? pathname + '/Index' : pathname;
+                }
+
 
                 let dataMenu = $scope.subMenus.find(item => item.url === path);
                 if (dataMenu) {

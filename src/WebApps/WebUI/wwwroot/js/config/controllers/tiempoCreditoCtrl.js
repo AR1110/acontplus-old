@@ -6,7 +6,7 @@
 
     //Variable servicios 
     let tS = {}; 
-    let tiempoCreditoSvc = {}; 
+    let tiempoCreditoSvc = {};  
 
 
     app.controller('tiempoCreditoCtrl', tiempoCreditoCtrl);
@@ -19,8 +19,7 @@
 
     function tiempoCreditoCtrl($scope, $injector, modalSvc) {
 
-        tS = $injector.get('toastService');
-        commonSvc = $injector.get('commonService');
+        tS = $injector.get('toastService'); 
         tiempoCreditoSvc = $injector.get('tiempoCreditoService');
         modalSvc = $injector.get('modalService');
 
@@ -40,7 +39,7 @@
                     controller: 'modalTiempoCreditoCtrl',
                     template: URL_TEMPLATE + '_ModalAddUpdate.cshtml',
                     size: 'md',
-                    params: params ?? {},
+                    params: params || {},
                     isRenderRazorPartial: true
                 }).result.then(response => {
                     if (typeof response === 'object') {

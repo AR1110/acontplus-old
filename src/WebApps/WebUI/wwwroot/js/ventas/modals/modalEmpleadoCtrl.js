@@ -20,14 +20,14 @@ function ModalEmpleadoCtrl($scope, mS, empleadoSvc, $uibModalInstance, tS, param
 
     onInit();
     function onInit() {
+        showLoader();
         mS.getData('post', '/TipoIdentificacion/ReadTipoIdentificacion', {
             tipoValidacion: 'V'
         }).then(response => {
             $scope.tipoIdentificaciones = response.data;
             $scope.data.idTipoIdentificacion = $scope.tipoIdentificaciones[0].idTipoIdentificacion;
-            $scope.data.identificacion = $scope.tipoIdentificaciones[0].identificacion;
-            console.log($scope.tipoIdentificaciones)
-        });
+            $scope.data.identificacion = $scope.tipoIdentificaciones[0].identificacion; 
+        }).finally(()=>hideLoader());
 
         
         if (params && params.idEmpleado > 0) {

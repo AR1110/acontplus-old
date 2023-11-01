@@ -825,7 +825,8 @@
                         controller,
                         template,
                         size: 'md',
-                        params: Object.assign({}, scope.params) || {},                                               
+                        params: Object.assign({}, scope.params) || {},   
+                        isRenderRazorPartial: true,                                            
                     })
 
                     modalDialogRef.result.then(result => {
