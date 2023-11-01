@@ -32,17 +32,21 @@ app.constant('nombreModalInventario', {
             'M': 'modalArticuloCtrl', //depuracion crud articulo
             'AFI': 'ModalArticuloFraccionadoInfoCtrl',
             'MAI': 'ModalArticuloImagenCtrl',
-            'MID': 'ModalArticuloImagenDetalleCtrl'
+            'MID': 'ModalArticuloImagenDetalleCtrl',
+            'HC': 'modalHistorialCompraCtrl',
+            'AF': 'modalArticuloFraccionadoCtrl'
         },
         templates: {
-            'LG': 'Articulo/_ModalArticuloGeneral.cshtml',
+            'LG': '~/Pages/Articulo/_ModalArticuloGeneral.cshtml',
             //'M': 'Articulo/_ModalNuevoArticulo.cshtml',
             'M': '~/Pages/Articulo/_ModalAddUpdate.cshtml', //depuracion crud articulo
             'AFI': 'Articulo/_ArticuloFraccionadoInfo.cshtml',
             'MAI': 'Articulo/_ModalArticuloImagen.cshtml',
-            'MID': 'Articulo/_ModalArticuloImagenDetalle.cshtml'
+            'MID': 'Articulo/_ModalArticuloImagenDetalle.cshtml',
+            'HC': '~/Areas/DocumentoRecibido/Pages/Shared/_HistoryCompras.cshtml',
+            'AF': '~/Pages/ArticuloFraccionado/_ModalArticuloFraccionado.cshtml'
         }
-    },
+    },    
     FAMILIA: {
         fileCtrl: '/js/inventario/modals/modalFamiliaCtrl.js' + CHANGE_VERSION(),
         controller: 'ModalFamiliaCtrl',

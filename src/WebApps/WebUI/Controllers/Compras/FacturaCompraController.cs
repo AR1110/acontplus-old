@@ -12,15 +12,12 @@ namespace WebUI.Controllers.Compras
     {
         private readonly IConfiguration _configuration;
         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
-
-        private ArticuloDao _a;
+          
         private readonly LogWriter _log;
 
         public FacturaCompraController(IConfiguration configuration, LogWriter log)
         {
-            _configuration = configuration;
-
-            _a = new ArticuloDao(_configuration);
+            _configuration = configuration; 
             _log = log;
         }
 
