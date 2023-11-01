@@ -66,8 +66,43 @@ BEGIN
               RETURN 
         END 
     IF @tipo = 2
-        BEGIN 
-            SELECT 1
+        BEGIN
+            DECLARE @id INT 
+               SELECT @id = id FROM OPENJSON(@json)WITH(id INT)
+             SET @tableNames = 'data,pvps'
+
+            SELECT  
+		        af.idArticuloFraccionado
+		        ,af.idArticulo
+		        ,af.idMedida
+		        ,af.conversion
+		        ,gestionVenta = ISNULL(af.gestionVenta, 0)
+		        ,af.precioCostoFraccionado
+		        ,a.descripcion
+		        ,a.precioCosto
+		        ,a.codigo
+		        ,nombreMedida = m.descripcion
+	        FROM ArticuloFraccionado af
+	        INNER JOIN Articulo a ON a.idArticulo = af.idArticulo
+	        INNER JOIN Medida m ON m.idMedida = a.idMedida
+	        WHERE af.idArticuloFraccionado = @id
+		
+
+	        SELECT 
+		         afp.idArticuloFraccionadoPvP
+		        ,afp.idTarifa
+		        ,afp.precioVenta
+		        ,afp.precioConIva
+		        ,afp.porcentajeUtilidad
+		        ,porcentajeIva = ti.porcentaje
+		        ,UPPER(t.descripcion) AS tarifa
+	        FROM ArticuloFraccionadoPvP afp
+	        INNER JOIN ArticuloFraccionado af ON af.idArticuloFraccionado = afp.idArticuloFraccionado
+	        INNER JOIN Tarifa t ON t.idTarifa = afp.idTarifa
+	        INNER JOIN Articulo a ON a.idArticulo = af.idArticulo
+	        INNER JOIN TipoIva ti ON ti.idTipoIva = a.idTipoIva
+	        WHERE afp.idArticuloFraccionado = @id
+            return 
         END 
 
 END

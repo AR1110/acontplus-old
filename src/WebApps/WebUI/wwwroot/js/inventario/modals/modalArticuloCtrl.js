@@ -1242,6 +1242,7 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
 
     let articuloSvc = $injector.get('articuloService');
     let articuloFraccionadoSvc = $injector.get('articuloFraccionadoService');
+    let tS = $injector.get("toastService");
     let fS = $injector.get("formulario");
     let pricingUtils = $injector.get("pricingUtils");
 
@@ -1527,34 +1528,17 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
 
     function getDataArticuloFraccionado() {
         articuloFraccionadoSvc.get({ tipo: 2, id: params.idArticuloFraccionado }).then((response) => {
-            console.log(response)
-            // if (response.id === "0") {
-            //     this._form.sweetAlert("warning", response.message, response.titleSms);
-            // }
-            // if (response.id === "1") {
-            //     let { fraccionado: data, pvps } = response.data;
-
-            //     this.data = {
-            //         ...this._params,
-            //         ...data,
-            //         ...data.fraccionado,
-            //     };
-
-            //     this.gridOptions.data = pvps.map((val) => {
-            //         let ganancia =
-            //             val.pvp.precioVenta - this.data.precioCostoFraccionado;
-            //         val.ganancia = this._form.roundNumber(ganancia, 5);
-            //         return {
-            //             ...val,
-            //             ...val.pvp,
-            //         };
-            //     });
-
-            //     this.tarifaInstance.setPrecioCosto = this.data.precioCostoFraccionado;
-            //     this.tarifaInstance.setPorcentajeIva =
-            //         this.gridOptions.data[0].porcentajeIva;
-            // }
-        });
+            const { data, pvps } = response;
+            $scope.data = {
+                ...params,
+                ...data,
+            };
+            $scope.gridOptions.data = pvps.map((val) => {
+                let ganancia = val.precioVenta - $scope.data.precioCostoFraccionado;
+                val.ganancia = fS.roundNumber(ganancia, 5);
+                return val;
+            })
+        })
     }
 
     $scope.searchArticuloFraccionadoFilter = function (textSearch) {
@@ -1605,7 +1589,6 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
 
         const precioCosto = $scope.data.precioCostoFraccionado;
         const porcentajeIva = $scope.gridOptions.data[0].porcentajeIva;
-
         if (
             [null, undefined, ""].includes(precioCosto) ||
             isNaN(precioCosto)
@@ -1667,6 +1650,17 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
         return precioVenta - precioCosto;
     }
 
+    $scope.resultModalMedida = async function (result) {
+        try {
+            if (typeof result !== "object") return;
+            const { medidas } = await articuloSvc.getDataForForm();
+            $scope.medidas = medidas;
+            $scope.data.idMedida = $scope.medidas.at($scope.medidas.length - 1).idMedida;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     $scope.save = function () {
         if (!($scope.data.idArticulo > 0)) {
             tS.toastr('warning', "Seleccione el Articulo");
@@ -1697,7 +1691,11 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
         }
 
         let data = {
-            fraccionado: $scope.data,
+            idArticulo: $scope.data.idArticulo,
+            idMedida: $scope.data.idMedida,
+            conversion: $scope.data.conversion,
+            gestionVenta: $scope.data.gestionVenta,
+            precioCostoFraccionado: $scope.data.precioCostoFraccionado,
             pvps: $scope.gridOptions.data,
         }
 
@@ -1715,6 +1713,7 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
     }
 
     function successReponse(response) {
+        console.log(response)
         if (response.code == "0") {
             tS.toastr('warning', response.message, response.titleSms);
         }
@@ -1729,242 +1728,6 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
         $uibModalInstance.close();
     }
 }
-// class ModalArticuloFraccionadoCtrl extends ModalBaseCtrl {
-//     static $inject = [
-//         "$scope",
-//         "$interval",
-//         "$uibModalInstance",
-//         "mainService",
-//         "articuloService",
-//         "commonService",
-//         "modalService",
-//         "nombreModal",
-//         "formulario",
-//         "params",
-//     ];
-//     constructor(
-//         $scope,
-//         $interval,
-//         $uibModalInstance,
-//         _mS,
-//         articuloSvc,
-//         _commonSvc,
-//         _modalSvc,
-//         _nombreModal,
-//         _form,
-//         _params
-//     ) {
-//         super({
-//             $scope,
-//             _mS,
-//             _commonSvc,
-//             _form,
-//         });
-
-//         this.articuloSvc = articuloSvc;
-
-//         this.$uibModalInstance = $uibModalInstance;
-//         this._modalSvc = _modalSvc;
-//         this._nombreModal = _nombreModal;
-//         this._form = _form;
-//         this._params = _params;
-
-//         this.tipoRegistro = 1;
-//         this.data = {};
-//         this.articulo = {};
-
-//         this.gridOptions = this.tarifaInstance.getTarifaGrid($scope, $interval);
-//         // this.gridOptions.data  = [];
-//     }
-
-//     async $onInit() {
-//         try {
-//             showLoader();
-
-//             const { medidas, tarifas, decimal } = await this.articuloSvc.getDataForForm();
-
-//             this.medidas = medidas;
-//             this.data.idMedida = this.medidas.length > 0 ? this.medidas[0].idMedida : 0;
-
-//             this.tarifas = tarifas;
-
-//             this.config = decimal;
-//             this.tarifaInstance.setConfigDecimal = this.config;
-
-//             if (this._params) {
-//                 this.tipoRegistro = 2;
-//                 this.getDataArticuloFraccionado();
-//             }
-//             this.$scope.$apply();
-//             hideLoader();
-//         } catch (error) {
-//             console.error(error);
-//             hideLoader();
-//         }
-
-//         this.$uibModalInstance.rendered.then(() => {
-//             $("#agregarArtFraccionado").on("shown.bs.modal", () => {
-//                 $("input[name='articuloAutocomplete']").focus();
-//             });
-//         });
-//     }
-
-//     searchArticuloFraccionadoFilter(textSearch) {
-//         let query = {
-//             checkBoxFraccionado: true,
-//             bySearch: textSearch,
-//         };
-//         let articulos = this.articuloSvc.searchForFraccionado(query);
-//         return articulos;
-//     }
-
-//     onKeyupSearchArticulo() {
-//         if (
-//             this.data.selectedArticulo === null ||
-//             this.data.selectedArticulo === undefined ||
-//             this.data.selectedArticulo === ""
-//         ) {
-//             this.data.selectedArticulo = undefined;
-//             this.articulo = {};
-//         }
-//     }
-
-//     selectedArticuloChange(item) {
-//         try {
-//             showLoader();
-//             this.articuloSvc
-//                 .getId(item.idArticulo)
-//                 .then((response) => {
-//                     hideLoader();
-//                     const results = JSON.parse(response.payload);
-//                     this.data = results[0][0];
-//                     this.data.selectedArticulo = item;
-
-//                     this.gridOptions.data = results[1].map((item) => {
-//                         item.precioVenta = 0;
-//                         item.precioConIva = 0;
-//                         item.porcentajeUtilidad = 0;
-//                         item.ganancia = 0;
-//                         return item;
-//                     });
-//                 })
-//                 .catch(() => {
-//                     hideLoader();
-//                 });
-//         } catch (error) {
-//             hideLoader();
-//             console.log(error);
-//         }
-//     }
-
-//     recalculateTarifaAdd() {
-//         if (this.gridOptions.data.length === 0) return;
-
-//         this.tarifaInstance.setPrecioCosto = this.data.precioCostoFraccionado;
-
-//         //Por defecto tomammos el porcentaje del Tipo Iva Agregago al Articulo
-//         this.tarifaInstance.setPorcentajeIva =
-//             this.gridOptions.data[0].porcentajeIva;
-//         this.tarifaInstance.recalculateTarifaAdd();
-//     }
-
-//     async getDataArticuloFraccionado() {
-//         this._mS
-//             .getData(
-//                 "get",
-//                 "/ArticuloFraccionado/GetId?id=" + this._params.idArticuloFraccionado
-//             )
-//             .then((response) => {
-//                 if (response.id === "0") {
-//                     this._form.sweetAlert("warning", response.message, response.titleSms);
-//                 }
-//                 if (response.id === "1") {
-//                     let { fraccionado: data, pvps } = response.data;
-
-//                     this.data = {
-//                         ...this._params,
-//                         ...data,
-//                         ...data.fraccionado,
-//                     };
-
-//                     this.gridOptions.data = pvps.map((val) => {
-//                         let ganancia =
-//                             val.pvp.precioVenta - this.data.precioCostoFraccionado;
-//                         val.ganancia = this._form.roundNumber(ganancia, 5);
-//                         return {
-//                             ...val,
-//                             ...val.pvp,
-//                         };
-//                     });
-
-//                     this.tarifaInstance.setPrecioCosto = this.data.precioCostoFraccionado;
-//                     this.tarifaInstance.setPorcentajeIva =
-//                         this.gridOptions.data[0].porcentajeIva;
-//                 }
-//             });
-//     }
-
-//     async saveAndUpdate() {
-//         let tituloToast = this.tipoRegistro === 1 ? "Guardar" : "Actualizar";
-//         if (this._form.campo(this.data.idArticulo)) {
-//             toastr.warning("Seleccione el Articulo", tituloToast);
-//             return;
-//         }
-
-//         if (this._form.campo(this.data.conversion)) {
-//             toastr.warning("Ingrese la Conversión", tituloToast);
-//             return;
-//         }
-
-//         if (isNaN(this.data.conversion)) {
-//             toastr.warning("Valor no válido en el campo Conversión", tituloToast);
-//             return;
-//         }
-//         if (this._form.campo(this.data.idMedida)) {
-//             toastr.warning("Seleccione la Medida", tituloToast);
-//             return;
-//         }
-//         if (this._form.campo(this.data.precioCostoFraccionado)) {
-//             toastr.warning("Ingrese el Precio Costo Fraccionado", tituloToast);
-//             return;
-//         }
-
-//         if (isNaN(this.data.precioCostoFraccionado)) {
-//             toastr.warning(
-//                 "Valor no válido en el campo Precio Costo Fraccionado",
-//                 tituloToast
-//             );
-//             return;
-//         }
-
-//         let data = {
-//             fraccionado: this.data,
-//             pvps: this.gridOptions.data,
-//         };
-
-//         const url =
-//             this.tipoRegistro == 1
-//                 ? "/ArticuloFraccionado/Post"
-//                 : `/ArticuloFraccionado/Put?id=${this._params.idArticuloFraccionado}`;
-//         const method = this.tipoRegistro === 1 ? "post" : "put";
-//         this._mS.getData(method, url, data).then((response) => {
-//             if (response.id == "0") {
-//                 toastr.warning(response.message, response.titleSms);
-//                 return;
-//             }
-//             if (response.id === "1") {
-//                 toastr.success(response.message, response.titleSms);
-//                 this.$uibModalInstance.close(response);
-//             }
-//         });
-//     }
-
-//     closeModal() {
-//         this.$uibModalInstance.close();
-//     }
-// }
-
-
 
 
 //-------------------------------------LISTA DE ARTICULO CON INFORMACIÓN COMPLETA------------------------

@@ -35,5 +35,30 @@ namespace Inventario.Application.Services
                 return DataConverters.DataSetToJSON(ds);
             }
         }
+
+        public async Task<string> AddAsync(ApiRequest request)
+        {
+            var parameters = new Dictionary<string, object>{
+                {"userRoleId", request.UserRoleId},
+                {"json", DataConverters.SerializeDictionary(request.Data)}
+            };
+            return await _repository.SPExecuteAsync("Inventario.Fraccionado_Insert", parameters);
+        }
+
+        public async Task<string> UpdateAsync(int id, ApiRequest request)
+        { 
+            var parameters = new Dictionary<string, object>{
+                {"userRoleId", request.UserRoleId},
+                {"id", id},
+                {"json", DataConverters.SerializeDictionary(request.Data)}
+            };
+            return await _repository.SPExecuteAsync("Inventario.Fraccionado_Update", parameters);
+        }
+
+        public async Task<string> DeleteAsync(Dictionary<string, object> parameters)
+        {   
+            return await _repository.SPExecuteAsync("Inventario.Fraccionado_Delete", parameters);
+        }
+
     }
 }

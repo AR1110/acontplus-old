@@ -177,7 +177,7 @@
                             });
                         }
                         return acc;
-                    }, []); 
+                    }, []);
                     return {
                         establecimientos,
                         decimal,
@@ -731,7 +731,10 @@
                             return response.articulosFraccionados;
                         }
                         if (params.tipo === 2) {
-                            console.log(response)
+                            return {
+                                data: response.data[0],
+                                pvps: response.pvps
+                            }                            
                         }
                     }
                     else {
@@ -740,13 +743,13 @@
                 })
         }
 
-        service.save = function (data) {
-            return mS.getData("post", URL + "?json=" + encodeURIComponent(JSON.stringify(data)), null, true);
+        service.post = function (data) {
+            return mS.getData("post", URL, {data}, true)
         }
 
 
-        service.update = function (id, data) {
-            return mS.getData("put", URL + `${id}?json=${encodeURIComponent(JSON.stringify(data))}`, null, true);
+        service.put = function (id, data) {
+            return mS.getData("put", URL + `${id}`, {data}, true);
         }
 
         service.delete = function (id) {
