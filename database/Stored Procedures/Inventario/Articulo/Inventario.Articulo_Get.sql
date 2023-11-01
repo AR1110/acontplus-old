@@ -332,10 +332,10 @@ BEGIN
 	--> DataForm 
 	IF @tipo = 5
 		BEGIN
-			
-			SELECT idEstab_Asig,idEstablecimiento,codEstab,nombreComercial,predeterminado FROM v_Estab_Asign WITH (NOLOCK) WHERE idUsuarioRol = @idRol ORDER BY predeterminado DESC
 
-			SELECT idEstab_Asig,idBodega,bodega,defaultBodega FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @idRol ORDER BY defaultBodega DESC
+			SELECT idEstablecimiento,nombreComercial,defaultEstab,idBodega,bodega,defaultBodega FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @idRol ORDER BY defaultEstab DESC
+
+            SELECT nroPrecio FROM Config.v_Sistema_Decimal WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'AL'
 
 			SELECT idFamilia    = f.idFamilia
 				  ,idSubFamilia = sf.idSubFamilia
@@ -344,7 +344,7 @@ BEGIN
 				  ,sf.siglas
 				  ,sf.ultimoSecuencial
 			FROM dbo.SubFamilia sf  WITH (NOLOCK)
-			 LEFT JOIN Familia f    WITH (NOLOCK) ON sf.idFamilia = f.idFamilia 
+			 LEFT JOIN Familia   f  WITH (NOLOCK) ON sf.idFamilia = f.idFamilia 
 			WHERE sf.idEntidad = @idEntidad AND sf.estado = 1
 
 			SELECT idFamilia, descripcion      
@@ -361,8 +361,12 @@ BEGIN
             SELECT idTipoArticulo,descripcion FROM dbo.TipoArticulo WHERE estado = 1 
 
             SELECT * FROM dbo.TipoIva WHERE estado = 1
+
+            SELECT * FROM dbo.TipoIce WHERE estado = 1
 	        
             SELECT idTarifa,descripcion,codigo,predeterminada FROM dbo.Tarifa WHERE idEntidad = @idEntidad AND estado = 1 ORDER BY codigo ASC
+
+            SELECT * FROM Inventario.Etiqueta WHERE idEntidad = @idEntidad AND estado = 1
 			
             RETURN
 		END 
