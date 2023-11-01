@@ -14,6 +14,7 @@ namespace Configuracion.API.Extensions
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<IEstablecimientoAsignacionService, EstablecimientoAsignacionService>();
+            services.AddScoped<IEstadoDocumentoService, EstadoDocumentoService>();
 
             services.AddSingleton<LogWriter>();
             return services;

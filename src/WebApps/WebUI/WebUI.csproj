@@ -620,7 +620,6 @@
     <None Include="wwwroot\js\inventario\controllers\consolidacionInvCtrl.min.js" />
     <None Include="wwwroot\js\controllers\layoutCtrl.js" />
     <None Include="wwwroot\js\controllers\loginCtrl.js" />
-    <None Include="wwwroot\js\controllers\sri\impuestoCtrl.js" />
     <None Include="wwwroot\js\controllers\sri\retencionIvaCtrl.js" />
     <None Include="wwwroot\js\controllers\sri\retencionIvaCtrl.min.js" />
     <None Include="wwwroot\js\controllers\sri\subContribuyenteCtrl.js" />
