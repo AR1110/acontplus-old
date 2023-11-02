@@ -2,8 +2,6 @@
   "profiles": {
     "WebUI": {
       "commandName": "Project",
-      "hotReloadEnabled": true,
-      "hotReloadProfile": "aspnetcore",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -19,12 +17,13 @@
       }
     }
   },
+  "$schema": "https://json.schemastore.org/launchsettings.json",
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
       "applicationUrl": "http://localhost:36779",
-      "sslPort": 0
+      "sslPort": 44314
     }
   }
 }

@@ -1,7 +1,9 @@
-﻿@{
+﻿@page
+@model WebUI.Pages.Home.IndexModel
+@{
     ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 
 <div class="row page-titles">
     <div class="col-md-5 align-self-center">
@@ -192,7 +194,7 @@
             </div>
         </div>
     </div>
-    @await Html.PartialAsync("_ComprobantesErroneos.cshtml")
+    @await Html.PartialAsync("Shared/_ComprobantesErroneos.cshtml")
 </div>
 
 
@@ -200,10 +202,6 @@
     <script src="~/js/factElect/services/docElectService.js" asp-append-version="true"></script>
     <script src="~/js/controllers/homeCtrl.js" asp-append-version="true"></script>
 }
-
-
-
-
 
 
 

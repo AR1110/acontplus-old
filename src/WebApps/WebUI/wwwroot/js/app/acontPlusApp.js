@@ -372,11 +372,11 @@ function modalService($uibModal, $mdDialog) {
 
             let templateUrl = '';
             if (isRenderRazorPartial) {
-                templateUrl = `/Home/RenderView?name=${template}`;
+                templateUrl = `/Index?name=${template}`;
             }
 
             if (!isRenderRazorPartial) {
-                templateUrl = `/Home/RenderView?name=~/Views/${template}`
+                templateUrl = `/Index?name=~/Views/${template}`
             }
 
 
