@@ -1,14 +1,25 @@
 
 app.controller('proveedorCtrl', proveedorCtrl);
-proveedorCtrl.$inject=['$scope', 'mainService', 'modalService', 'nombreModal', 'toastService'];
+proveedorCtrl.$inject=[
+    '$scope', 
+    'mainService', 
+    'proveedorService',
+    'modalService', 
+    'nombreModal', 
+    'toastService'
+];
 
-function proveedorCtrl($scope, _mS, _modalSvc, _nombreModal, toast){    
+function proveedorCtrl($scope, _mS, proveedorSvc, _modalSvc, _nombreModal, toast){    
     // let accion = JSON.parse(localStorage.getItem("accion"));
     // if(accion===null){
     //     location.href = "/Home/Index";
     // }else{
     //     $scope.accion = accion[0];
     // }
+
+    $scope.resultModal = function(result){
+        console.log(result)
+    }
 
     $scope.openModalNew = async(item)=>{                    
         const {MODAL_CTRL, MODAL_NUEVO_CSHTML} = _nombreModal.proveedor;
@@ -36,18 +47,18 @@ function proveedorCtrl($scope, _mS, _modalSvc, _nombreModal, toast){
 
     $scope.getProveedores = ()=> {
         try {
-            showLoader();
-            _mS.getData('get','/Proveedor/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{
-                if (response.code === "0") {
-                    hideLoader();
-                    $scope.proveedores = [];
-                    console.log(response.message)
-                    return
-                }                
-                $scope.proveedores = JSON.parse(response.payload) || [];                
-                $scope.totalRecords = $scope.proveedores.length>0? $scope.proveedores[0].totalRecords: 0;
-                hideLoader();
-            })
+            //showLoader();
+            // _mS.getData('get','/Proveedor/Get?json=' + JSON.stringify($scope.dataSearch)).then(response=>{
+            //     if (response.code === "0") {
+            //         hideLoader();
+            //         $scope.proveedores = [];
+            //         console.log(response.message)
+            //         return
+            //     }                
+            //     $scope.proveedores = JSON.parse(response.payload) || [];                
+            //     $scope.totalRecords = $scope.proveedores.length>0? $scope.proveedores[0].totalRecords: 0;
+            //     hideLoader();
+            // })
         } catch (error) {
             hideLoader();
             console.error(error)

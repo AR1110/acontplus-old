@@ -1,5 +1,9 @@
-﻿@{
-    ViewData["title"] ="Proveedor";
+﻿@page
+@model WebUI.Pages.Proveedor.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Proveedor";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div ng-controller="proveedorCtrl">
@@ -9,7 +13,7 @@
         </div>
         <div class="col-lg-7 align-self-center text-right">
             <div class="d-flex justify-content-end align-items-center">
-                <button class="btn btn-info m-l-15" ng-if="accion.crear" ng-click="openModalNew()"><i class="fa fa-plus-circle"></i> Nuevo</button>
+                <button class="btn btn-info m-l-15" ng-if="accion.crear" btn-proveedor-add-update><i class="fa fa-plus-circle"></i> Nuevo</button>
             </div>
         </div>
     </div>
@@ -20,13 +24,13 @@
                 <md-toolbar class="md-table-toolbar md-default">
                     <div class="md-toolbar-tools">
                         <div class="col-lg-9 col-md-9 col-sm-9 m-t-20">
-                                @*<span class="form-group pull-left page-size form-inline">
-                                    <select class="form-control control-color"
-                                            ng-model="pageSize"
-                                            ng-change="changePageSize()"
-                                            ng-options="ra for ra in recordsQuantity">
-                                    </select>
-                                </span>*@
+                            @*<span class="form-group pull-left page-size form-inline">
+                            <select class="form-control control-color"
+                            ng-model="pageSize"
+                            ng-change="changePageSize()"
+                            ng-options="ra for ra in recordsQuantity">
+                            </select>
+                            </span>*@
                         </div>
                         <div class="col-lg-3 col-md-3 col-sm-3">
                             <form class="form-material">
@@ -38,38 +42,38 @@
                                         </button>
                                     </div>
                                 </div>
-                            </form>            
+                            </form>
                         </div>
                     </div>
                 </md-toolbar>
 
                 <md-table-container md-scroll-y layout-fill style=" max-height: 400px;">
-                    <table md-table >
+                    <table md-table>
                         <thead md-head fix-head>
-                            <tr md-row>                
-                                <th md-column ng-show="accion.editar || accion.eliminar">Op.</th>                
+                            <tr md-row>
+                                <th md-column ng-show="accion.editar || accion.eliminar">Op.</th>
                                 <th md-column>N°</th>
                                 <th md-column>Ruc</th>
                                 <th md-column>Nombre Fiscal</th>
                                 <th md-column>Dirección</th>
                                 <th md-column>Teléfono</th>
-                                <th md-column>Estado</th>                
+                                <th md-column>Estado</th>
                             </tr>
                         </thead>
                         <tbody md-body>
-                            <tr md-row ng-repeat="item in proveedores" >               
+                            <tr md-row ng-repeat="item in proveedores">
                                 <td md-cell ng-show="accion.editar || accion.eliminar">
                                     <div layout="row" layout-align="start center">
                                         <button class="btn btn-info btn-xs" ng-if="accion.editar" ng-click="openModalEdit(item)"> <i class="ti-pencil"></i></button>
-                                        <button class="btn btn-danger btn-xs ml-2" ng-if="accion.eliminar"  ng-click="eliminarProveedor(item)"> <i class="ti-trash"></i></button>
+                                        <button class="btn btn-danger btn-xs ml-2" ng-if="accion.eliminar" ng-click="eliminarProveedor(item)"> <i class="ti-trash"></i></button>
                                     </div>
-                                </td> 
+                                </td>
                                 <td md-cell>{{$index+1}}</td>
                                 <td md-cell>{{item.numeroIdentificacion}}</td>
                                 <td md-cell>{{item.nombreFiscal}}</td>
                                 <td md-cell>{{item.direccion}}</td>
                                 <td md-cell>{{item.telefono}}</td>
-                                <td md-cell ng-bind-html="item.estado|estadoPrimario"></td>                                 
+                                <td md-cell ng-bind-html="item.estado|estadoPrimario"></td>
                             </tr>
                             <tr ng-show="proveedores.length==0" class="text-center">
                                 <td colspan="7">
@@ -81,18 +85,17 @@
                             <tr>
                                 <td align="center" colspan="7">
                                     <div class="pull-left m-t-10">
-                                        
                                     </div>
                                 </td>
                             </tr>
                         </tfoot>
-                    </table>                
+                    </table>
                 </md-table-container>
             </div>
         </div>
     </div>
 </div>
 
-@section Scripts{    
-    <script src="~/js/compras/controllers/proveedorCtrl.min.js" asp-append-version="true"></script>    
+@section Scripts{
+    <script src="~/js/compras/controllers/proveedorCtrl.min.js" asp-append-version="true"></script>
 }

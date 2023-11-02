@@ -67,7 +67,41 @@
                 });
             }
         };
-    });
+    })
+
+    app.directive('btnProveedorAddUpdate', function(modalService, nombreModalCompra){
+        return {
+            restrict: 'A',
+            scope: {
+                params:'=',
+                resultModal: '&',
+            },
+            link: function(scope, element){
+                element.on('click', async function () {
+                     
+                    const {fileCtrl, controllers, templates} = nombreModalCompra["PROVEEDOR"];
+                    let ctrl = (await import(fileCtrl))[controllers['M']];
+                    let template = templates['M'];
+                    const modalDialogRef = modalService.openModalCustom({
+                        controller: ctrl,
+                        template,
+                        size: 'xl',
+                        params: scope.params || {},
+                        windowClass: 'uibModalFullScreen',
+                        isRenderRazorPartial: true
+                    })       
+                          
+                    modalDialogRef.result.then(result=>{
+                        if(typeof result==="object"){
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+                });
+            }
+        }
+    })
 
 
 
