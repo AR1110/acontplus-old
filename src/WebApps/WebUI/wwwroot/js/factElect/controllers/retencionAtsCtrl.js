@@ -255,14 +255,11 @@
                     item = 2
                 }
                 let json = {
-                    tipo: '2',
+                    tipo: 2,
                     textSearch: (item == 1 ? $scope.infoCompRet.razonSocialSujetoRetenido : $scope.infoCompRet.identificacionSujetoRetenido)
                 }
                 console.log($scope.infoCompRet)
-
-                console.log(item)
-                console.log(json)
-                mS.getData('get', '/Proveedor/Get?json=' + JSON.stringify(json)).then(
+                mS.getData('get', 'Compra/Proveedor?json=' + JSON.stringify(json), null, true).then(
                     response => {
                         if (response.code == '0') {
                             if (item == 2) {
@@ -271,7 +268,7 @@
                             tS.toastr('warning', response.message)
                         }
                         if (response.code == '1') {
-                            $scope.proveedores = JSON.parse(response.payload)
+                            $scope.proveedores = JSON.parse(response.payload)["proveedores"]
                             if ($scope.proveedores.length == 1) {
                                 $scope.selectSujetoRetenido($scope.proveedores[0], false)
                             }

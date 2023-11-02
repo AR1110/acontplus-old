@@ -204,7 +204,7 @@ app.constant('nombreModalVenta', {
     }
 })
 
-
+//Compras
 app.constant('nombreModalCompra', {
     FACTURA_FISICA: {
         fileCtrl: '/js/modal/compras/modalFacturaCtrl.js' + CHANGE_VERSION(),
@@ -216,15 +216,15 @@ app.constant('nombreModalCompra', {
         }
     },
     PROVEEDOR: {
-        fileCtrl: '/js/modal/common/modalClienteProveedorCtrl.min.js' + CHANGE_VERSION(),
+        fileCtrl: '/js/compras/modals/modalProveedorCtrl.js' + CHANGE_VERSION(),
         // fileCtrl: '/js/ventas/modals/modalClienteCtrl.js',
         controllers: {
-            M: 'ModalProveedorCtrl',
-            L: 'ModalProveedorListaCtrl'
+            M: 'modalProveedorCtrl',
+            L: 'modalProveedorListaCtrl'
         },
         templates: {
-            M: 'Proveedor/_ModalNuevoProveedor.cshtml',
-            L: 'Proveedor/_ModalProveedorLista.cshtml'
+            M: '~/Pages/Proveedor/_ModalAddUpdate.cshtml',
+            L: '~/Pages/Proveedor/_ModalProveedorLista.cshtml'
         }
     },
     CATEGORIA_COMPRA: {

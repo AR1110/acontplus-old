@@ -13,7 +13,7 @@ function ModalSubFamiliaCtrl($scope, $uibModalInstance, articuloSvc, subFamiliaS
     $scope.getFamilias = function () {
         try {
             showLoader();
-            articuloSvc.getDataForm({}).then(response => {
+            articuloSvc.getDataForForm({}).then(response => {
                 $scope.familias = response.familias;
             }).finally(() => hideLoader())
         } catch (error) {
@@ -64,10 +64,8 @@ function ModalSubFamiliaCtrl($scope, $uibModalInstance, articuloSvc, subFamiliaS
             }
 
             showLoader();
-
-            console.log($scope.selectedFile)
-            let file = $scope.selectedFile
-            debugger;
+ 
+            let file = $scope.selectedFile 
             if ($scope.data.idSubFamilia > 0) {
                 subFamiliaSvc.update($scope.data.idSubFamilia, file, $scope.data).then($scope.successReponse)
                     .catch(err => {
