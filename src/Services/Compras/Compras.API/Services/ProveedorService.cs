@@ -1,4 +1,6 @@
-﻿using Common.Core.Interfaces;
+﻿using Azure.Core;
+using Common.Core.Interfaces;
+using Common.Core.Models;
 using Common.Core.Utils;
 using Compras.API.Interfaces;
 
@@ -16,6 +18,16 @@ namespace Compras.API.Services
             var ds = await _repository.GetDataSetAsync("Compra.Proveedor_Get", parameters);
             if (ds.Tables[0].Rows.Count == 0) { return null; }
             return DataConverters.DataSetToJSON(ds);
+        }
+
+        public async Task<string> AddAsync(ApiRequest request)
+        {
+            var parameters = new Dictionary<string, object>{
+                {"userRoleId", request.UserRoleId},
+                {"json", DataConverters.SerializeDictionary(request.Data)}
+            };
+            return await _repository.SPExecuteAsync("Compra.Proveedor_Insert", parameters);
+             
         }
     }
 }

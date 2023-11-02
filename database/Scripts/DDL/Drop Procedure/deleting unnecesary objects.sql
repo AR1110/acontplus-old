@@ -516,10 +516,3 @@ GO
 
 DROP PROCEDURE IF EXISTS Recepcion.Proveedor_Get
 GO
-
---> DANIS MANCHU - FECHA : 02/11/2023
-DROP PROCEDURE IF EXISTS [Ventas].Cliente_Get_Search_v2
-GO
-
-DROP PROCEDURE IF EXISTS [Ventas].Cliente_Update_App
-GO

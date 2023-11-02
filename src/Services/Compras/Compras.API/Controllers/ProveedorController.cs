@@ -1,4 +1,5 @@
-﻿using Common.Core.Models;
+﻿using Azure.Core;
+using Common.Core.Models;
 using Common.Core.Utils;
 using Compras.API.Interfaces;
 using DataAccess;
@@ -42,28 +43,18 @@ namespace Compras.API.Controllers
 
         }
         [HttpPost]
-        public async Task<IActionResult> Post(string json)
+        public async Task<IActionResult> Post(ApiRequest request)
         {
-
-            var _response = new GenericResponse();
+            request.UserRoleId = User.GetUserRoleId();
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Recepcion.Proveedor_Insert");
-                _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("jsonData", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataTableAsync();
+                var response = await _proveedorService.AddAsync(request);
+                return Ok(response);
             }
             catch (Exception ex)
-            {
-                _log.LogActivity("Error al registrar el proveedor: " + ex.ToString());
-                _response.Create(code: "0", message: "Error al registrar el proveedor");
-            }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
+            { 
+                return BadRequest(ex.Message);
+            } 
         }
         [HttpPut("{json}")]
         public async Task<IActionResult> Put(string json)
