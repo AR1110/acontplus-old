@@ -1,7 +1,9 @@
 ﻿using Common.Core.Models;
 using Common.Core.Utils;
+using Compras.API.Interfaces;
 using DataAccess;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common;
 using Services.Common.Logs;
 
 namespace Compras.API.Controllers
@@ -14,36 +16,29 @@ namespace Compras.API.Controllers
         private readonly IConfiguration _configuration;
         private readonly DbAccess _db;
         private readonly LogWriter _log;
-        public ProveedorController(IConfiguration configuration, LogWriter log)
+        private readonly IProveedorService _proveedorService;
+        public ProveedorController(IConfiguration configuration, LogWriter log, IProveedorService proveedorService)
         {
             _configuration = configuration;
-            _db = new DbAccess(configuration);
+            _db = new DbAccess(_configuration);
             _log = log;
+            _proveedorService = proveedorService;
         }
 
-        [HttpGet("{json}")]
+        [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-
-            GenericResponse _response = new GenericResponse();
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Recepcion.Proveedor_Get");
-                _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("jsonData", SqlStringParam.Sanitize(json));
-                _response = _db.GetDataSetAsync();
+                var response = await _proveedorService.GetAsync(new Dictionary<string, object> { { "userRoleId", User.GetUserRoleId() }, { "json", SqlStringParam.Sanitize(json) } });
+                if (response == null) { return Ok(new { code = "0", message = "No se encontro Datos" }); }
+                return Ok(new { code = "1", payload = response });
             }
             catch (Exception ex)
             {
                 _log.LogActivity("Error al obtener el proveedor: " + ex.ToString());
-                _response.Create(code: "0", message: "Error al obtener el proveedor");
+                return BadRequest(ex.Message);
             }
-            finally
-            {
-                _db.Close();
-            }
-            return Ok(_response);
 
         }
         [HttpPost]
