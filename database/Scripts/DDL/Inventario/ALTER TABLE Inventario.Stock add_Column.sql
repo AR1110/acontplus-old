@@ -16,7 +16,7 @@ GO
 
 --ALTER TABLE Inventario.Stock ADD ultimoCosto NUMERIC(18,5) 
 
-SELECT *
+SELECT top 1*
 
 FROM Inventario.Stock s
 
