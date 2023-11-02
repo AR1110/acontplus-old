@@ -1,6 +1,6 @@
 <div class="modal-header">
-    <h5 class="modal-title">{{$ctrl.tipoRegistro==1?'Nuevo':'Editar'}} Proveedor</h5>
-    <button type="button" class="close" ng-click="$ctrl.closeModal()">&times;</button>
+    <h5 class="modal-title">{{tipoRegistro==1?'Nuevo':'Editar'}} Proveedor</h5>
+    <button type="button" class="close" ng-click="closeModal()">&times;</button>
 </div>
 
 <div class="modal-body">
@@ -16,38 +16,38 @@
                             <div class="form-group">
                                 <label>Tipo Identificación</label>
                                 <select class="form-control border-select" id="tipoDocumento" name="tipoDocumento"
-                                    ng-model="$ctrl.tipoIdentificacion" ng-change="$ctrl.onChangeTipoIdentificacion()"
-                                    ng-disabled="$ctrl.isDisableInputIdentificacion"
-                                    ng-options="ti as ti.identificacion for ti in $ctrl.tipoIdentificaciones track by ti.idTipoIdentificacion">
+                                    ng-model="tipoIdentificacion" ng-change="onChangeTipoIdentificacion()"
+                                    ng-disabled="isDisableInputIdentificacion"
+                                    ng-options="ti as ti.identificacion for ti in tipoIdentificaciones track by ti.idTipoIdentificacion">
                                 </select>
                             </div>
                         </div>
 
                         <div class="col-xl-3 col-lg-3 col-sm-6 col-12">
                             <div class="form-group">
-                                <label>{{$ctrl.tipoIdentificacion.identificacion}}</label>
+                                <label>{{tipoIdentificacion.identificacion}}</label>
                                 <input type="text" class="form-control border-select"
-                                    ng-show="$ctrl.tipoIdentificacion.codigoIdentificacion!=='P'"
+                                    ng-show="tipoIdentificacion.codigoIdentificacion!=='P'"
                                     name="numeroIdentificacion" id="numeroIdentificacion"
-                                    ng-keyup="$ctrl.onKeyupNumeroIndentificacion()" ng-class="$ctrl.typeNotify"
-                                    ng-model="$ctrl.data.numeroIdentificacion"
-                                    ng-disabled="$ctrl.isDisableInputIdentificacion" valid-number
+                                    ng-keyup="onKeyupNumeroIndentificacion()" ng-class="typeNotify"
+                                    ng-model="data.numeroIdentificacion"
+                                    ng-disabled="isDisableInputIdentificacion" valid-number
                                     placeholder="Ej: 2105234568">
 
                                 <input type="text" class="form-control border-select"
-                                    ng-show="$ctrl.tipoIdentificacion.codigoIdentificacion=='P'" name="pasaporte"
-                                    ng-model="$ctrl.data.numeroIdentificacion" ng-disabled="$ctrl.tipoRegistro==2"
+                                    ng-show="tipoIdentificacion.codigoIdentificacion=='P'" name="pasaporte"
+                                    ng-model="data.numeroIdentificacion" ng-disabled="tipoRegistro==2"
                                     placeholder="Ej: EH123457">
-                                <small class="invalid-feedback">{{$ctrl.message}} </small>
-                                <small class="valid-feedback">{{$ctrl.message}} </small>
+                                <small class="invalid-feedback">{{message}} </small>
+                                <small class="valid-feedback">{{message}} </small>
                             </div>
                         </div>
                         <div class="col-xl-6 col-lg-6 col-sm-12 col-12">
                             <div class="form-group">
                                 <label>Contribuyente <span class="text-danger">*</span></label>
-                                <select class="form-control border-select" ng-model="$ctrl.data.idSubContribuyente"
+                                <select class="form-control border-select" ng-model="data.idSubContribuyente"
                                     required="required"
-                                    ng-options="sc.subContribuyente.idSubContribuyente as sc.subContribuyente.descripcion group by sc.tipoContribuyente.descripcion for sc in $ctrl.subContribuyentes ">
+                                    ng-options="sc.subContribuyente.idSubContribuyente as sc.subContribuyente.descripcion group by sc.tipoContribuyente.descripcion for sc in subContribuyentes ">
                                 </select>
                             </div>
                         </div>
@@ -59,15 +59,15 @@
                             <div class="form-group">
                                 <label>Nombre Fiscal <span class="text-danger">*</span></label>
                                 <input type="text" touppercase class="form-control border-select" autocomplete="off"
-                                    name="nombreFiscal" ng-model="$ctrl.data.nombreFiscal"
-                                    ng-keyup="$ctrl.onKeyupNombreFiscal()" required placeholder="Ej: TECNOMEGA" />
+                                    name="nombreFiscal" ng-model="data.nombreFiscal"
+                                    ng-keyup="onKeyupNombreFiscal()" required placeholder="Ej: TECNOMEGA" />
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-12 col-12">
                             <div class="form-group">
                                 <label>Nombre Comercial <span class="text-danger">*</span></label>
                                 <input type="text" touppercase class="form-control border-select" autocomplete="off"
-                                    ng-model="$ctrl.data.nombreComercial" placeholder="Ej: TECNOMEGA" />
+                                    ng-model="data.nombreComercial" placeholder="Ej: TECNOMEGA" />
                             </div>
                         </div>
                     </div>
@@ -76,8 +76,8 @@
                         <div class="col-xl-6 col-md-6 col-sm-6 col-12">
                             <div class="form-group">
                                 <label>Email: </label>
-                                <md-chips ng-model="$ctrl.correos" ng-keyup="$ctrl.onKeyupEmail($event)"
-                                    md-transform-chip="$ctrl.tranformMdChipsEmail($chip)" md-removable="true"
+                                <md-chips ng-model="correos" ng-keyup="onKeyupEmail($event)"
+                                    md-transform-chip="tranformMdChipsEmail($chip)" md-removable="true"
                                     md-enable-chip-edit="true" md-add-on-blur="true" placeholder="Ej: maxi@gmail.com"
                                     input-aria-label="Correos"></md-chips>
                             </div>
@@ -85,7 +85,7 @@
                         <div class="col-xl-6 col-md-6 col-sm-6 col-12">
                             <div class="form-group">
                                 <label>Telefono: </label>
-                                <md-chips ng-model="$ctrl.telefonos" md-transform-chip="$ctrl.transformC($chip)"
+                                <md-chips ng-model="telefonos" md-transform-chip="transformC($chip)"
                                     md-removable="true" md-enable-chip-edit="true" md-add-on-blur="true"
                                     placeholder="Ej: 0959889744" input-aria-label="Número de teléfonos"></md-chips>
                             </div>
@@ -97,7 +97,7 @@
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                             <div class="form-group">
                                 <label>Dirección</label>
-                                <textarea class="form-control border-select" touppercase ng-model="$ctrl.data.direccion"
+                                <textarea class="form-control border-select" touppercase ng-model="data.direccion"
                                     rows="2" placeholder="AV. 09 DE OCTUBRE..."></textarea>
                             </div>
                         </div>
@@ -116,9 +116,9 @@
                         <div class="col-lg-4 col-md-4 col-sm-6 col-12">
                             <div class="form-group">
                                 <label>Tipo Proveedor: </label>
-                                <select class="form-control border-select" ng-model="$ctrl.data.idTipoClienteProveedor">
+                                <select class="form-control border-select" ng-model="data.idTipoClienteProveedor">
                                     <option ng-value="item.idTipoClienteProveedor"
-                                        ng-repeat="item in $ctrl.tipoClienteProveedores">{{item.descripcion}}</option>
+                                        ng-repeat="item in tipoClienteProveedores">{{item.descripcion}}</option>
                                 </select>
                             </div>
                         </div>
@@ -126,8 +126,8 @@
                         <div class="col-lg-4 col-md-4 col-sm-6 col-12">
                             <div class="form-group">
                                 <label>Ciudad: </label>
-                                <select class="form-control border-select" ng-model="$ctrl.data.idCiudad"
-                                    ng-options="cp.idCiudad as cp.descripcion group by cp.provincia.descripcion for cp in $ctrl.ciudadPronvincias">
+                                <select class="form-control border-select" ng-model="data.idCiudad"
+                                    ng-options="cp.idCiudad as cp.descripcion group by cp.provincia.descripcion for cp in ciudadPronvincias">
                                 </select>
                             </div>
                         </div>
@@ -135,8 +135,8 @@
                         <div class="col-lg-4 col-md-4 col-sm-6 col-12">
                             <div class="form-group">
                                 <label>Tipo Entidad: </label>
-                                <select class="form-control border-select" ng-model="$ctrl.data.idTipoEntidad">
-                                    <option ng-value="item.idTipoEntidad" ng-repeat="item in $ctrl.tipoEntidades">
+                                <select class="form-control border-select" ng-model="data.idTipoEntidad">
+                                    <option ng-value="item.idTipoEntidad" ng-repeat="item in tipoEntidades">
                                         {{item.descripcion}}</option>
                                 </select>
                             </div>
@@ -148,13 +148,13 @@
                             <div class="form-group">
                                 <label>Tiempo de Credito</label>
                                 <div class="input-group">
-                                    <select class="form-control border-select" ng-model="$ctrl.data.idTiempoCredito">
+                                    <select class="form-control border-select" ng-model="data.idTiempoCredito">
                                         <option ng-value="item.idTiempoCredito"
-                                            ng-repeat="item in $ctrl.tiempoCreditos">{{item.descripcion}}</option>
+                                            ng-repeat="item in tiempoCreditos">{{item.descripcion}}</option>
                                     </select>
                                     <div class="input-group-append">
                                         <button type="button" class="btn btn-warning"
-                                            ng-click="$ctrl.refreshTiempoCredito()"><i
+                                            ng-click="refreshTiempoCredito()"><i
                                                 class="fas fa-redo fa-xs"></i></button>
                                     </div>
                                 </div>
@@ -162,16 +162,16 @@
                         </div>
 
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12 text-center"
-                            ng-show="$ctrl.tipoRegistro==2">
+                            ng-show="tipoRegistro==2">
                             <div class="form-group">
                                 <label>Estado</label> <br>
                                 <div class="radio icheck-primary icheck-inline">
-                                    <input type="radio" ng-model="$ctrl.data.estado" ng-value="true" id="estadoActivo"
+                                    <input type="radio" ng-model="data.estado" ng-value="true" id="estadoActivo"
                                         name="estadoActivo" />
                                     <label for="estadoActivo">Activo</label>
                                 </div>
                                 <div class="radio icheck-primary icheck-inline">
-                                    <input type="radio" ng-model="$ctrl.data.estado" ng-value="false"
+                                    <input type="radio" ng-model="data.estado" ng-value="false"
                                         id="estadoInactivo" name="estadoInactivo" />
                                     <label for="estadoInactivo">Inactivo</label>
                                 </div>
@@ -185,8 +185,8 @@
     </uib-tabset>
 </div>
 <div class="modal-footer">
-    <button type="button" ng-click="$ctrl.saveAndUpdate()" class="btn btn-success">
-        <i class="{{$ctrl.tipoRegistro==1?'ti-save':'ti-pencil'}}"></i>
-        {{$ctrl.tipoRegistro==1?'Guardar':'Actualizar'}}</button>
-    <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">&times; Cerrar</button>
+    <button type="button" ng-click="saveAndUpdate()" class="btn btn-success">
+        <i class="{{tipoRegistro==1?'ti-save':'ti-pencil'}}"></i>
+        {{tipoRegistro==1?'Guardar':'Actualizar'}}</button>
+    <button type="button" class="btn btn-dark" ng-click="closeModal()">&times; Cerrar</button>
 </div>
