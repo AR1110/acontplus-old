@@ -1,33 +1,25 @@
 ﻿(
     function () {
         'use strict'
+
+
+
         app.controller('documentoRecibidoCtrl', documentoRecibidoCtrl)
 
-        documentoRecibidoCtrl.$inject = [
-            '$filter',
-            '$scope',
-            'mainService',
-            'commonService',
-            'docRecibidoService',
-            'toastService',
-            'modalService',
-            'nombreModal',
-            'nombreModalInventario',
-            '$q',
-        ];
+        documentoRecibidoCtrl.$inject = ['$filter', '$scope', '$injector', '$q'];
 
-        function documentoRecibidoCtrl(
-            $filter,
-            $scope,
-            mS,
-            commonSvc,
-            docRecibidoSvc,
-            tS,
-            modalService,
-            nameModalConst,
-            nombreModalInventario,
-            $q
-        ) {
+        function documentoRecibidoCtrl($filter, $scope, $injector, $q) {
+            const mS = $injector.get('mainService');
+            const commonSvc = $injector.get('commonService');
+            const docRecibidoSvc = $injector.get('docRecibidoService');
+            const tS = $injector.get('toastService');
+            const modalService = $injector.get('modalService');
+            const nameModalConst = $injector.get('nombreModal');
+            const nombreModalInventario = $injector.get('nombreModalInventario');
+            const articuloSvc = $injector.get('articuloService');
+            const proveedorSvc = $injector.get('proveedorService');
+
+            const URL_TEMPLATE = '~/Pages/DocumentoRecibido/Shared/'
 
             $scope.title = 'documentoRecibidoCtrl';
             mS.detectDevice()
@@ -589,9 +581,6 @@
 
             })
 
-
-
-
             $scope.putXml = function () {
                 try {
                     showLoader()
@@ -926,10 +915,13 @@
                                     $scope.provCliente.razonSocial = $scope.infoTributaria.razonSocial
                                     $scope.provCliente.nombreComercial = $scope.infoTributaria.nombreComercial
                                     $scope.provCliente.ruc = $scope.infoTributaria.ruc
-                                    $scope.provCliente.dirMatriz = $scope.infoTributaria.dirMatriz
+                                    $scope.provCliente.dirMatriz = $scope.infoTributaria.dirMatriz;
+
+                                    //Adding by Emilio Senguana 
+                                    $scope.provCliente.isImport = true;
 
                                     $scope.modalRef = modalService.openModalCustom({
-                                        template: '~/Areas/DocumentoRecibido/Pages/Shared/_ModalComprobante.cshtml',
+                                        template: `${URL_TEMPLATE}_ModalComprobante.cshtml`,
                                         size: 'xl',
                                         windowClass: 'uibModalFullScreen',
                                         scope: $scope,
@@ -981,9 +973,12 @@
                                     $scope.provCliente.ruc = $scope.infoTributaria.ruc
                                     $scope.provCliente.dirMatriz = $scope.infoTributaria.dirMatriz
 
+                                    //Adding by Emilio Senguana 
+                                    $scope.provCliente.isImport = true;
+
                                     $scope.modalRef = modalService.openModalCustom(
                                         {
-                                            template: '~/Areas/DocumentoRecibido/Pages/Shared/_ModalComprobante.cshtml',
+                                            template: `${URL_TEMPLATE}_ModalComprobante.cshtml`,
                                             size: 'xl',
                                             windowClass: 'uibModalFullScreen',
                                             scope: $scope,
@@ -1053,154 +1048,36 @@
             $scope.getProv = () => {
                 try {
                     showLoader();
-                    docRecibidoSvc.getProveedor({ tipo: 1, ruc: $scope.infoTributaria.ruc }).then(response => {
-                        if (("code" in response) && response.code === "0") {
+                    proveedorSvc.checkByID($scope.infoTributaria.ruc).then(response => {
+                        if (response.idProveedor > 0) {
+                            $scope.idProveedor = response.idProveedor
+                            $scope.comprobanteForm.idTiempoCredito = response.idTiempoCredito
+                            $scope.txtBtnProv = 'Actualizar'
+                            handleBtnProv(1)
+                        } else {
                             $scope.txtIconModalProv = 'ti-plus';
                             $scope.txtTitleModalProv = 'Registrar Proveedor';
                             $scope.txtBtnProv = 'Guardar';
                             handleBtnProv(2)
-                            return
                         }
-                        let respArray = response;
-                        $scope.idProveedor = respArray[0][0].idProveedor
-                        $scope.comprobanteForm.idTiempoCredito = respArray[0][0].idTiempoCredito
-                        $scope.txtBtnProv = 'Actualizar'
-                        handleBtnProv(1)
-
-                    }).finally(() => hideLoader())
-                    // mS.getData('get', 'Proveedor/' + JSON.stringify({ tipo: 1, ruc: $scope.infoTributaria.ruc }), null, true).then(
-                    //     response => {
-                    //         if (response.code == "0") {
-                    //             $scope.txtIconModalProv = 'ti-plus';
-                    //             $scope.txtTitleModalProv = 'Registrar Proveedor';
-                    //             $scope.txtBtnProv = 'Guardar';
-                    //             handleBtnProv(2)
-                    //         }
-                    //         if (response.code == "1") {
-                    //             let respArray = JSON.parse(response.payload)
-                    //             $scope.idProveedor = respArray[0][0].idProveedor
-                    //             $scope.comprobanteForm.idTiempoCredito = respArray[0][0].idTiempoCredito
-                    //             $scope.txtBtnProv = 'Actualizar'
-                    //             handleBtnProv(1)
-                    //         }
-                    //     }, error => {
-                    //         console.log(error)
-                    //     })
-                } catch (error) {
-                    console.log(error)
-                }
-            }
-            $scope.arraysProvClient = [];
-            $scope.addProvClient = function () {
-                try {
-                    docRecibidoSvc.getProveedor({ tipo: 2 }).then(response => {
-                        const {
-                            tiposIdentificacion,
-                            tiposProveedor,
-                            tiposEntidad,
-                            contribuyentes,
-                            tiemposCredito,
-                            ciudades,
-                        } = response;
-                        $scope.tiposIdentificacion = tiposIdentificacion;
-                        $scope.tiposProveedor = tiposProveedor;
-                        $scope.tiposEntidad = tiposEntidad;
-                        $scope.contribuyentes = contribuyentes;
-                        $scope.tiemposCredito = tiemposCredito;
-                        $scope.ciudades = ciudades;
-
-                        $scope.provCliente.idTipoEntidad = 7
-                        $scope.provCliente.idTipoClienteProveedor = 2
-                        for (const element of $scope.tiposIdentificacion) {
-                            if ($scope.provCliente.ruc.length == 10 && element.codigoSri == "05") {
-                                $scope.provCliente.idTipoIdentificacion = element.idTipoIdentificacion;
-                            }
-                            if ($scope.provCliente.ruc.length == 13 && element.codigoSri == "04") {
-                                $scope.provCliente.idTipoIdentificacion = element.idTipoIdentificacion;
-                            }
-                        }
-                        if ($scope.provCliente.ruc.length < 10 || $scope.provCliente > 13) {
-                            document.getElementById('idTipoIdentificacionProv').removeAttribute('disabled')
-                        }
-                        $scope.modalRefProv = modalService.openModalCustom({
-                            template: '~/Areas/DocumentoRecibido/Pages/Shared/_CompImpProveedor.cshtml',
-                            size: 'xl',
-                            windowClass: 'uibModalFullScreen',
-                            scope: $scope,
-                            isRenderRazorPartial: true
-                        })
                     })
+                        .catch(error => {
+                            console.log(error)
+                        })
+                        .finally(() => hideLoader())
                 } catch (error) {
                     console.log(error)
                 }
             }
 
-            let warningFrmProv = false
-            $scope.validateFrmProv = function () {
-                try {
-                    warningFrmProv = false
-                    if (!$scope.provCliente.idTipoClienteProveedor) {
-                        tS.toastr('warning', 'Seleccione un tipo de proveedor')
-                        warningFrmProv = true;
-                    }
-                    if (!$scope.provCliente.idTipoEntidad) {
-                        tS.toastr('warning', 'Seleccione un tipo de entidad')
-                        warningFrmProv = true;
-                    }
-                    if (!$scope.provCliente.idSubContribuyente) {
-                        tS.toastr('warning', 'Seleccione un contribuyente')
-                        warningFrmProv = true;
-                    }
-                    if (!$scope.provCliente.razonSocial) {
-                        tS.toastr('warning', 'La razón social no puede estar vacia')
-                        warningFrmProv = true;
-                    }
-                    if (!document.getElementById('idTipoIdentificacionProv').value) {
-                        tS.toastr('warning', 'El no puede estar vacio')
-                        warningFrmProv = true;
-                    }
-                    if (!$scope.provCliente.ruc) {
-                        tS.toastr('warning', 'El no puede estar vacio')
-                        warningFrmProv = true;
-                    }
-                    if (!$scope.provCliente.dirMatriz) {
-                        tS.toastr('warning', 'La dirección no puede estar vacia')
-                        warningFrmProv = true;
-                    }
-                } catch (error) {
-                    console.log(error)
-                }
-
-            }
             $scope.btnProvIsEnable = false;
-            $scope.saveProv = function () {
-                try {
-                    // $scope.provCliente.idCiudad = $scope.ciudadProv.idCiudad;
-                    $scope.provCliente.idCiudad = 0;
-                    $scope.validateFrmProv()
-                    if (warningFrmProv) {
-                        return;
-                    }
-                    showLoader();
-                    docRecibidoSvc.saveProveedor($scope.provCliente).then(response => {
-                        if (response.code == "0") {
-                            tS.toastr('warning', response.message)
-                        }
-                        if (response.code == "1") {
-                            let arrayResp = JSON.parse(response.payload)
-                            $scope.idProveedor = arrayResp[0].idProveedor
-                            $scope.comprobanteForm.idTiempoCredito = arrayResp[0].idTiempoCredito
-                            $scope.btnProvIsEnable = true
-                            $scope.modalRefProv.close()
-                            tS.toastr('success', 'Proveedor guardado exitosamente')
-                        }
-                    }).finally(() => hideLoader())
-                } catch (error) {
-                    hideLoader()
-                    console.log(error)
+            $scope.resultModalProveedor = function (result) {
+                if (typeof result === 'object' && result.idProveedor > 0) {
+                    $scope.idProveedor = result.idProveedor
+                    $scope.comprobanteForm.idTiempoCredito = result.idTiempoCredito
+                    $scope.btnProvIsEnable = true
                 }
             }
-            /** End Proveedor */
 
             /** Articulo Temp */
 
@@ -1216,13 +1093,7 @@
                         busqueda: item
                     }
                     //Api Inventario
-                    return mS.getData('get', 'Articulo/Search?json=' + JSON.stringify(data), null, true).then(
-                        response => {
-                            return JSON.parse(response.data)
-                        }
-                        , error => {
-                            console.log(error)
-                        })
+                    return articuloSvc.search(data)
                 } catch (error) {
                     console.log(error)
                 }
@@ -1235,25 +1106,23 @@
             $scope.selectArticleSearch = (item, itemDetail) => {
                 try {
                     //Inventario 
-                    mS.getData('get', 'Articulo/GetId?id=' + item.idArticulo, null, true).then(
-                        response => {
-                            if (response.id == "1") {
-                                $scope.articleFinded = { descripcion: '' }
-                                const results = JSON.parse(response.payload)
-                                const objArticle = results[0][0]
-                                // $scope.customDetail.idArticulo = item.idArticulo
-                                // $scope.customDetail.codigoPrincipal = objArticle.codigo
-                                // $scope.customDetail.codigoAuxiliar = objArticle.codigoAuxiliar
-                                // $scope.customDetail.descripcion = objArticle.descripcion
-                                itemDetail.idArticulo = item.idArticulo
-                                itemDetail.codigoPrincipal = objArticle.codigo
-                                itemDetail.codigoAuxiliar = objArticle.codigoAuxiliar
-                                itemDetail.descripcion = objArticle.descripcion;
-                                itemDetail.datosAdicionales = objArticle.datosAdicionales;
-                            }
-                        }).catch((error) => {
-                            console.log(error)
-                        })
+                    showLoader();
+                    articuloSvc.findById(item.idArticulo).then(response => {
+                        $scope.articleFinded = { descripcion: '' }
+                        const objArticle = response.data;
+                        // $scope.customDetail.idArticulo = item.idArticulo
+                        // $scope.customDetail.codigoPrincipal = objArticle.codigo
+                        // $scope.customDetail.codigoAuxiliar = objArticle.codigoAuxiliar
+                        // $scope.customDetail.descripcion = objArticle.descripcion
+                        itemDetail.idArticulo = item.idArticulo
+                        itemDetail.codigoPrincipal = objArticle.codigo
+                        itemDetail.codigoAuxiliar = objArticle.codigoAuxiliar
+                        itemDetail.descripcion = objArticle.descripcion;
+                        itemDetail.datosAdicionales = objArticle.datosAdicionales;
+
+                    }).catch((error) => {
+                        console.log(error)
+                    }).finally(() => hideLoader())
                 } catch (error) {
                     console.log(error)
                 }
@@ -1293,33 +1162,11 @@
             }
 
 
-            // $scope.openModalEditArticulo = async (item) => {
-            //     try {
-
-            //         let { MODAL_CTRL, MODAL_NUEVO_CSHTML } = nameModalConst.articulo;
-            //         let { ModalArticuloCtrl } = await import('../../modal/' + MODAL_CTRL);
-
-            //         modalService.openModalCustom({
-            //             controller: ModalArticuloCtrl,
-            //             template: 'Articulo/' + MODAL_NUEVO_CSHTML,
-            //             size: 'xl',
-            //             params: {
-            //                 idArticulo: item.idArticulo,
-            //                 isUpdateImport: true
-            //             }
-            //         })
-            //     } catch (error) {
-            //         console.log(error)
-            //     }
-            // }
-
-
-
             $scope.datosAdicionalesArticulo = [];
             $scope.getTempDetails = function () {
                 try {
                     $scope.tempDetail = []
-                    mS.getData('get', 'Doc_Rec_DetailTemp/' + $scope.selected[0].idDocumento, null, true).then(
+                    mS.getData('get', 'Compra/Doc_Rec_DetailTemp/' + $scope.selected[0].idDocumento, null, true).then(
                         response => {
                             if (response.code == "1") {
                                 let tempDetail = JSON.parse(response.payload);
@@ -1355,7 +1202,7 @@
 
             $scope.getDatoAdicionalArticulo = function () {
                 try {
-                    mS.getData('get', 'DatoAdicionalArticulo/Get?json=' + JSON.stringify({
+                    mS.getData('get', 'Compra/DatoAdicionalArticulo/Get?json=' + JSON.stringify({
                         idDocumento: $scope.selected[0].idDocumento
                     }), null, true).then(response => {
                         if (response.code == '0') {
@@ -1393,7 +1240,7 @@
 
                 console.log(datosAdicionales)
 
-                mS.getData('post', `DatoAdicionalArticulo/Insert/${$scope.selected[0].idDocumento}/?json=${encodeURIComponent(JSON.stringify(datosAdicionales))}`, null, true).then(response => {
+                mS.getData('post', `Compra/DatoAdicionalArticulo/Insert/${$scope.selected[0].idDocumento}/?json=${encodeURIComponent(JSON.stringify(datosAdicionales))}`, null, true).then(response => {
                     if (response.code === '0') {
                         tS.toastr('warning', response.message);
                     }
@@ -1423,7 +1270,7 @@
                     } else {
                         method = "put"
                     }
-                    mS.getData(method, "Doc_Rec_DetailTemp/", { data: data }, true).then(
+                    mS.getData(method, "Compra/Doc_Rec_DetailTemp/", { data: data }, true).then(
                         response => {
                             if (response.code == '1') {
                                 $scope.tempDetail = []
@@ -1460,7 +1307,7 @@
                     $scope.searchArticle()
 
                     $scope.modalRefArtMerg = modalService.openModalCustom({
-                        template: '~/Areas/DocumentoRecibido/Pages/Shared/_ModalArticuloMerge.cshtml',
+                        template: `${URL_TEMPLATE}_ModalArticuloMerge.cshtml`,
                         size: 'xl',
                         windowClass: 'uibModalFullScreen',
                         scope: $scope,
@@ -1619,17 +1466,13 @@
                             if (response.code == '1') {
                                 $scope.articleHistory = JSON.parse(response.payload)
                                 $scope.modalRefArticleHistory = modalService.openModalCustom({
-                                    template: '~/Areas/DocumentoRecibido/Pages/Shared/_ArticleHistory.cshtml',
+                                    template: `${URL_TEMPLATE}_ArticleHistory.cshtml`,
                                     size: 'xl',
                                     windowClass: 'uibModalFullScreen',
                                     scope: $scope,
                                     isRenderRazorPartial: true
                                 }
                                 )
-
-                                // $scope.modalRefArticleHistory.result.then(() => {
-
-                                // })
 
                             } else {
                                 tS.toastr('info', "Aun no existen ingresos de este articulo.")
@@ -1728,7 +1571,7 @@
                         idArticulo: item.idArticulo,
                         codArticulo: (($scope.articleSelected.codigoPrincipal) ? $scope.articleSelected.codigoPrincipal : item.codigoPrincipal)
                     }
-                    mS.getData('post', 'CompraHabitual/Post', { data: data }, true).then(
+                    mS.getData('post', 'Compra/CompraHabitual/Post', { data: data }, true).then(
                         response => {
                             if (response.code == '0') {
                                 hideLoader()
@@ -1750,12 +1593,12 @@
                     console.log(error)
                 }
             };
-         
+
             $scope.getArticleHC = async (result) => {
                 try {
-                    if(typeof result==='object'){
+                    if (typeof result === 'object') {
                         $scope.getTempDetails()
-                    } 
+                    }
                 } catch (error) {
                     console.log(error)
                 }
@@ -1882,7 +1725,7 @@
                         tS.toastr('warning', 'Agregue la bodega a los Artículos')
                         return
                     }
-                    mS.getData('post', 'DocumentoDetalle/' + $scope.selected[0].idDocumento + '/' + item.idArticulo, null, true).then(
+                    mS.getData('post', 'Compra/DocumentoDetalle/' + $scope.selected[0].idDocumento + '/' + item.idArticulo, null, true).then(
                         response => {
                             if (response.code == '0') {
                                 tS.toastr('warning', response.message)
@@ -1920,7 +1763,7 @@
 
             $scope.deleteStock = (item) => {
                 try {
-                    mS.getData('delete', 'DocumentoDetalle/' + item.idDocumentoDetalle, null, true).then(
+                    mS.getData('delete', 'Compra/DocumentoDetalle/' + item.idDocumentoDetalle, null, true).then(
                         response => {
                             if (response.code == '0') {
                                 tS.toastr('warning', response.message)
@@ -2031,7 +1874,7 @@
 
                     // }
                     let url = ''
-                    url = 'DocumentoDetalle/' + $scope.selected[0].idDocumento + '/' + 0
+                    url = 'Compra/DocumentoDetalle/' + $scope.selected[0].idDocumento + '/' + 0
                     //url = _urlService + 'Factura?json=' + JSON.stringify(data)
 
                     mS.getData('post', url, null, true).then(response => {

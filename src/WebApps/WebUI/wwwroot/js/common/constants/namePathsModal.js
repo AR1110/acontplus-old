@@ -43,10 +43,10 @@ app.constant('nombreModalInventario', {
             'AFI': 'Articulo/_ArticuloFraccionadoInfo.cshtml',
             'MAI': 'Articulo/_ModalArticuloImagen.cshtml',
             'MID': 'Articulo/_ModalArticuloImagenDetalle.cshtml',
-            'HC': '~/Areas/DocumentoRecibido/Pages/Shared/_HistoryCompras.cshtml',
+            'HC': '~/Pages/DocumentoRecibido/Shared/_HistoryCompras.cshtml',
             'AF': '~/Pages/ArticuloFraccionado/_ModalArticuloFraccionado.cshtml'
         }
-    },    
+    },
     FAMILIA: {
         fileCtrl: '/js/inventario/modals/modalFamiliaCtrl.js' + CHANGE_VERSION(),
         controller: 'ModalFamiliaCtrl',

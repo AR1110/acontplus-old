@@ -1,12 +1,12 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebUI.Areas.DocumentoRecibido.Pages
+namespace WebUI.Pages.DocumentoRecibido
 {
     public class IndexModel : PageModel
     {
         public void OnGet()
         {
-
         }
     }
 }

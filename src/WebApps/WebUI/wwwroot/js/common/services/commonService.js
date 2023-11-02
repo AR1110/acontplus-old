@@ -411,6 +411,7 @@ export class CommonService {
 
 
     //--------------------------------------START PROVEEDOR-------------------------------------
+    //Eliminar posteriormente 
     proveedorSearch(textSearch) {
         return this.$http.get(`/Proveedor/SearchProveedor?busqueda=${textSearch}`)
             .then(({
@@ -418,6 +419,7 @@ export class CommonService {
             }) => response.data)
     }
 
+    //Eliminar posteriormente 
     proveedorSearchGeneral(textSearch) {
         return this.$http.get(`/Proveedor/SearchProveedor?busqueda=${textSearch}`).then(
             response => {
