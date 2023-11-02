@@ -224,7 +224,7 @@ app.constant('nombreModalCompra', {
         },
         templates: {
             M: '~/Pages/Proveedor/_ModalAddUpdate.cshtml',
-            L: '~/Pages/Proveedor/_ModalProveedorLista.cshtml'
+            L: '~/Pages/Proveedor/_ModalLista.cshtml'
         }
     },
     CATEGORIA_COMPRA: {
