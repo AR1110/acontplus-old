@@ -59,16 +59,23 @@
         service.getId = function (id) {
             let params = {
                 id,
-                tipo: 5,
+                tipo: 2,
             };
             return mS
                 .getData("get", `${URL}?json=${JSON.stringify(params)}`, null, true)
                 .then((response) => {
+
                     if (response.code === "0") {
                         throw response;
                     }
                     if (response.code === "1") {
-                        console.log(mainData);
+                        let results = JSON.parse(response.payload)
+                        let proveedor = results.proveedor[0];
+                        return {
+                            ...proveedor, 
+                            correos: proveedor.correo ? proveedor.correo.split(';') : [],
+                            telefonos: proveedor.telefonos ? proveedor.telefonos.split(';') : []
+                        }
                     }
                 });
         };
@@ -77,7 +84,7 @@
             return mS.getData(
                 "post",
                 `${URL}`,
-                {data},
+                { data },
                 true
             );
         };
@@ -85,8 +92,8 @@
         service.put = function (id, data) {
             return mS.getData(
                 "put",
-                `${URL}${id}?json=${JSON.stringify(data)}`,
-                null,
+                `${URL}${id}`,
+                {data},
                 true
             );
         };

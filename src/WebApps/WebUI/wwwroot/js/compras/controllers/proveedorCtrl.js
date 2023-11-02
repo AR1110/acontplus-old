@@ -19,8 +19,7 @@
         $scope.totalRecords = 0;
         $scope.maxSize = 5;
 
-        $scope.resultModal = function (result) {
-            console.log(result)
+        $scope.resultModal = function (result) {            
             if (typeof result === 'object') {
                 $scope.getProveedores();
             }
@@ -35,8 +34,7 @@
                     pageSize: $scope.dataSearch.pageSize,
                     textSearch: $scope.dataSearch.textSearch || undefined
                 }
-                proveedorSvc.get(params).then(response => {
-                    console.log(response)
+                proveedorSvc.get(params).then(response => {                    
                     $scope.proveedores = response || []
                     $scope.totalRecords = $scope.proveedores.length > 0 ? $scope.proveedores[0].totalRecords : 0;
                 }).finally(() => hideLoader())
@@ -71,12 +69,11 @@
         $scope.askToDelete = async (item) => {
             let { isConfirmed } = await Swal.fire({
                 icon: 'warning',
-                html: `<small>Esta Ud. seguro de eliminar el Proveedor <b>${item.nombreFiscal}</b>?</small>`,
+                html: `<small>Esta Ud. seguro de eliminar el Proveedor <b>${item.razonSocial}</b>?</small>`,
                 showConfirmButton: true,
-                confirmButtonText: 'Si, eliminar',
+                confirmButtonText: 'Si',
                 showCancelButton: true,
-                cancelButtonText: 'No, cancelar',
-                allowOutsideclick: false
+                cancelButtonText: 'No', 
             })
 
             if (isConfirmed) {
