@@ -251,7 +251,7 @@ BEGIN
                     
                     DECLARE @idArticulo INT ,@idBodega INT ,@idMedida INT ,@idTipoTransaccion  INT ,@idTipoDocumento INT
 	                       ,@cantidad NUMERIC(18,2) ,@precioUnitario NUMERIC(18,5) ,@precioCosto NUMERIC(18,5) ,@precioTotalSinImpuesto NUMERIC(18,5)
-                           ,@fraccion NUMERIC(18,5) ,@fechaConsolidacion DATETIME ,@stock NUMERIC(18,5) ,@estado BIT 
+                           ,@fechaConsolidacion DATETIME ,@stock NUMERIC(18,5) ,@estado BIT 
 
                     SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'IV'
 
@@ -275,9 +275,11 @@ BEGIN
 							WHILE @@FETCH_STATUS = 0
 								BEGIN
 
-                                    SELECT TOP 1 @fraccion = conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida
-
-                                    SELECT  @cantidad = @cantidad * ISNULL(@fraccion,1)
+                                    --> Articulo Fraccionado
+                                    IF EXISTS (SELECT 1 FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida)
+                                        BEGIN
+                                            SELECT TOP 1 @cantidad = @cantidad  * conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida
+                                        END
 
 									IF @estado = 1
                                         BEGIN

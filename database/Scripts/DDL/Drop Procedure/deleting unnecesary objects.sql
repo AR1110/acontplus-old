@@ -489,10 +489,3 @@ GO
 --> RAMIREZ ALEXIS - FECHA :10/28/2023
 DROP PROCEDURE IF EXISTS [Compra].[Liquidacion_Send_Email]
 GO
-
---> DANIS MANCHU - FECHA 11/01/2023.
-DROP PROCEDURE IF EXISTS [Almacen].[Articulo_Insert_v2]
-GO
-
-DROP PROCEDURE IF EXISTS [Almacen].[Articulo_Update_v2]
-GO

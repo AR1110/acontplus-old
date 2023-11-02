@@ -88,8 +88,7 @@ BEGIN
 					
                      -- Inventario
                     DECLARE @idTipoDocumento INT ,@idTipoTransaccion INT ,@idArticulo INT 
-                           ,@idBodega INT ,@cantidad NUMERIC(18,2) ,@fraccion NUMERIC(18,5)
-                           ,@idMedida INT ,@fechaConsolidacion DATETIME ,@stock NUMERIC(18,5)
+                           ,@idBodega INT ,@cantidad NUMERIC(18,2) ,@idMedida INT ,@stock NUMERIC(18,5)
 
                     SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'IV'
 
@@ -116,20 +115,16 @@ BEGIN
 							WHILE @@FETCH_STATUS = 0
 							    BEGIN
 								
-								    SELECT TOP 1 @fraccion = conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida
+								    --> Articulo Fraccionado
+                                    IF EXISTS (SELECT 1 FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida)
+                                        BEGIN
+                                            SELECT TOP 1 @cantidad = @cantidad  * conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida
+                                        END
 
-                                    SELECT  @cantidad = @cantidad * ISNULL(@fraccion,1)
-
-
-                                    IF EXISTS (SELECT 1 FROM Inventario.Stock WITh (NOLOCK) WHERE idArticulo = @idArticulo AND idBodega = @idBodega AND fechaConsolidacion IS NOT NULL)
-                                            BEGIN
-                                                  SELECT TOP 1 @fechaConsolidacion = fechaConsolidacion  FROM Inventario.Stock WITH(NOLOCK)  WHERE idArticulo = @idArticulo AND idBodega = @idBodega
-
-                                                  IF @fechaConsolidacion >= @fechaEmision
-                                                        BEGIN
-                                                            SELECT @cantidad = 0
-                                                        END 
-                                            END 
+                                   IF EXISTS (SELECT 1 FROM Inventario.Stock WHERE idArticulo = @idArticulo AND idBodega = @idBodega AND fechaConsolidacion >= @fechaEmision)
+                                        BEGIN
+                                            SELECT @cantidad = 0       
+                                        END
 
                                     UPDATE Inventario.Stock WITH(ROWLOCK) SET cantidad = cantidad - ISNULL(@cantidad,0) WHERE idArticulo = @idArticulo AND idBodega = @idBodega
 
