@@ -21,9 +21,17 @@ namespace WebUI
 
             builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 
+
+            builder.Services.AddRazorPages().AddRazorPagesOptions(options =>
+            {
+                //options.RootDirectory = "/Pages";
+                options.Conventions.AddPageRoute("/Home/Index", "");
+                //options.Conventions.AddAreaPageRoute("Manage", "/Admin/AdminIndex", "login");
+            }
+            ).AddRazorRuntimeCompilation();
+
             builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
-            builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
             builder.Services.AddSignalR();
 
