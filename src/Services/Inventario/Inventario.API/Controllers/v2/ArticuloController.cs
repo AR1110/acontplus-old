@@ -184,14 +184,13 @@ namespace Inventario.API.Controllers.v2
             DbAccess _db = new DbAccess(_configuration);
             try
             {
-                await _db.SPExecute("Almacen.Articulo_Delete");
+                await _db.SPExecute("Inventario.Articulo_Delete");
                 _db.AddDynamicParam("idRol", User.GetUserRoleId());
                 _db.AddDynamicParam("id", id);
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
-
                 _log.LogActivity("Error al eliminar articulo: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar articulo");
             }
