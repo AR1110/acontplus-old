@@ -691,36 +691,81 @@ GO
 DROP PROCEDURE IF EXISTS  Sistema.Almacen_Get_Data_Form
 go
 
-DROP PROCEDURE IF EXISTS  Recepcion.Proveedor_Insert
+DROP PROCEDURE IF EXISTS Recepcion.Proveedor_Insert
 go
 
 --> RAMIREZ ALEXIS - FECHA :11/03/2023
-DROP PROCEDURE IF EXISTS  Sistema.Almacen_Get_Data_Form
+DROP PROCEDURE IF EXISTS Sistema.Almacen_Get_Data_Form
 go
 
-DROP PROCEDURE IF EXISTS  Sistema.Almacen_Get_Data_Form
+DROP PROCEDURE IF EXISTS Sistema.Almacen_Get_Data_Form
 go
 
-DROP PROCEDURE IF EXISTS  Sistema.GestionFinanciera_Get_Data_Form
+DROP PROCEDURE IF EXISTS Sistema.GestionFinanciera_Get_Data_Form
 go
 
-DROP PROCEDURE IF EXISTS  Sistema.Impuestos_Get_Data_Form
+DROP PROCEDURE IF EXISTS Sistema.Impuestos_Get_Data_Form
 go  
 
-DROP PROCEDURE IF EXISTS  Sistema.Impuestos_Get_Data_Form
+DROP PROCEDURE IF EXISTS Sistema.Impuestos_Get_Data_Form
 go  
 
-DROP PROCEDURE IF EXISTS  [Sistema].[GestionFinanciera_Update_Document]
+DROP PROCEDURE IF EXISTS [Sistema].[GestionFinanciera_Update_Document]
 go  
 
-DROP PROCEDURE IF EXISTS  Almacen.Marca_For_Select
+DROP PROCEDURE IF EXISTS Almacen.Marca_For_Select
 go      
 
-DROP PROCEDURE IF EXISTS  Almacen.Medida_For_Select
+DROP PROCEDURE IF EXISTS Almacen.Medida_For_Select
 go   
 
-DROP PROCEDURE IF EXISTS  Almacen.Modelo_For_Select
+DROP PROCEDURE IF EXISTS Almacen.Modelo_For_Select
 go   
 
-DROP PROCEDURE IF EXISTS  Almacen.SubFamilia_For_Select
+DROP PROCEDURE IF EXISTS Almacen.SubFamilia_For_Select
 go   
+
+DROP PROCEDURE IF EXISTS SPAccionesCreate
+go   
+
+DROP PROCEDURE IF EXISTS SPAccionesRead
+go   
+
+DROP PROCEDURE IF EXISTS SPAccionesUpdate
+go   
+
+DROP PROCEDURE IF EXISTS SPAccionesDelete
+go   
+
+DROP PROCEDURE IF EXISTS Administrador.ActividadEtiqueta_Get
+go   
+
+DROP PROCEDURE IF EXISTS Administrador.ActividadEtiqueta_Insert
+go   
+
+DROP PROCEDURE IF EXISTS Administrador.ActividadEtiqueta_Update
+go   
+
+DROP PROCEDURE IF EXISTS ASPContraPartidaCreate
+go   
+
+DROP PROCEDURE IF EXISTS ASPContraPartidaRead
+go   
+
+DROP PROCEDURE IF EXISTS ASPContraPartidaUpdate
+go   
+
+DROP PROCEDURE IF EXISTS ASPContraPartidaDelete
+go   
+
+DROP PROCEDURE IF EXISTS ASPContraPartidaCajaRead
+GO
+
+DROP PROCEDURE IF EXISTS ASPContraPartidaEFRead
+go
+
+DROP PROCEDURE IF EXISTS Archivos.LogoSucursal_Insert
+go 
+
+DROP PROCEDURE IF EXISTS Asignaciones.GestionGeneral_Get 
+go
