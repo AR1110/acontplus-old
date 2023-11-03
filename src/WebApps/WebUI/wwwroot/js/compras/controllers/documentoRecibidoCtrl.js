@@ -78,8 +78,12 @@
                         //format: "D-MMMM-YY", //will give you 6-January-17
                     },
                     ranges: {
+                        'Hoy': [moment(), moment()],
+                        'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
                         'Ultimos 15 Días': [moment().subtract(14, 'days'), moment()],
-                        'Ultimos 30 Días': [moment().subtract(29, 'days'), moment()]
+                        'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
+                        'Este Mes': [moment().startOf('month'), moment().endOf('month')],
                     },
                     eventHandlers: {
                         'apply.daterangepicker': function () {

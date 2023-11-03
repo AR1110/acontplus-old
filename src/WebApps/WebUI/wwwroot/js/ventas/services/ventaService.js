@@ -14,7 +14,7 @@
          * 
          * @param {object} query  
          * @returns array
-         */ 
+         */
         service.getDataForm = function (query) {
             return mS.getData('get', 'Venta/CatalogoVenta/?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === '0') {
@@ -112,9 +112,9 @@
 
         service.getIdNotaEntrega = function (id) {
             return mS.getData('get', "Venta/NotaEntrega/GetId/" + id, null, true).catch(error => {
-                    console.log('sale service', error)
-                    throw new Error(error)
-                })
+                console.log('sale service', error)
+                throw new Error(error)
+            })
             // return mS.getData('get', 'Venta/NotaEntrega/' + 'GetId/' + id, null, true)
 
             // .catch(error=>{
@@ -466,7 +466,7 @@
                 }
                 if (response.code === "1") {
 
-                    let clienteRepository = JSON.parse(response.payload)[0]
+                    let clienteRepository = JSON.parse(response.payload)[0][0]
 
                     // return {
                     //     idCliente: clienteRepository.idCliente,
@@ -544,6 +544,7 @@
         let mS = $injector.get('mainService');
         return {
             getAll,
+            getDataForm,
             search,
             deleteEmployee,
             save,
@@ -551,7 +552,11 @@
         }
 
         function getAll(query) {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
+            let spParams = {
+                ...query,
+                tipo: 1,
+            }
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(spParams), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
                 }
@@ -565,6 +570,23 @@
                         estado: item.estado,
                         totalDatos: item.totalDatos,
                     }))
+                }
+            })
+        }
+
+        function getDataForm() {
+            let spParams = { 
+                tipo: 2,
+            }
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(spParams), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
+                    return {
+                        tiposIdentificacion: mainData
+                    }
                 }
             })
         }
