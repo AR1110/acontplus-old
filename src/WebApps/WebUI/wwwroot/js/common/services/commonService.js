@@ -974,10 +974,8 @@ export class CommonService {
                 establecimientoDestino = dataMain[2][0];
 
                 for (let item of dataMain[3]) {
-                    this.getDataArticuloParaCompra({
-                        json: item
-                    }).then(response => {
-                        item.medidas = JSON.parse(response.payload)[1]
+                    this.articuloSvc.findForPurchase(item).then(response => {
+                        item.medidas = response.medidas
                     })
 
                     detalleDocumento.push(item)

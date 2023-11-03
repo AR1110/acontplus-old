@@ -78,11 +78,8 @@ function modalProveedorCtrl($scope, $uibModalInstance, $injector, params) {
                         $scope.data.idTipoIdentificacion = dataTipoIdentificacion.idTipoIdentificacion;
                     }
 
-                    let dataSubContribuyente = $scope.subcontribuyentes.find(data => data.codigo === '06');
-                    if (dataTipoIdentificacion) {
-                        $scope.data.idSubContribuyente = dataSubContribuyente.idSubContribuyente;
-                    }
-                    $scope.data.idTiempoCredito = $scope.tiemposCredito.length > 0 ? $scope.tiemposCredito[0].idTiempoCredito : 0
+                    setDataSubcontribuyenteDefault();
+                    setDataTiempoCreditoDefault();
 
                     //Cuando Si es importacion 
                     if (params.isImport) {
@@ -100,6 +97,12 @@ function modalProveedorCtrl($scope, $uibModalInstance, $injector, params) {
                             $scope.data = rest;
                             $scope.correos = correos;
                             $scope.telefonos = telefonos;
+                            if (!($scope.data.idSubContribuyente > 0)) {
+                                setDataSubcontribuyenteDefault();
+                            }
+                            if (!($scope.tiemposCredito.length > 0)) {
+                                setDataTiempoCreditoDefault();
+                            }
                         });
                     }
                 })
@@ -110,6 +113,17 @@ function modalProveedorCtrl($scope, $uibModalInstance, $injector, params) {
         }
     }
     initiload();
+
+    function setDataSubcontribuyenteDefault() {
+        let dataSubContribuyente = $scope.subcontribuyentes.find(data => data.codigo === '06');
+        if (dataTipoIdentificacion) {
+            $scope.data.idSubContribuyente = dataSubContribuyente.idSubContribuyente;
+        }
+    }
+    function setDataTiempoCreditoDefault() {
+        $scope.data.idTiempoCredito = $scope.tiemposCredito.length > 0 ? $scope.tiemposCredito[0].idTiempoCredito : 0
+
+    }
 
     $scope.onChangeTipoIdentificacion = function () {
         let dataTipoIdentificacion = $scope.tiposIdentificacion.find(data => data.idTipoIdentificacion === $scope.data.idTipoIdentificacion);
@@ -347,7 +361,7 @@ function modalProveedorCtrl($scope, $uibModalInstance, $injector, params) {
                 let results = JSON.parse(response.payload);
                 idProveedor = results.idProveedor;
             }
-            $uibModalInstance.close({ 
+            $uibModalInstance.close({
                 idProveedor,
                 idTiempoCredito: $scope.data.idTiempoCredito
             });
