@@ -1,5 +1,5 @@
 ﻿@page
-@model WebUI.Areas.Kardex.Pages.IndexModel
+@model WebUI.Pages.Kardex.IndexModel
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -55,7 +55,7 @@
     </div>
     <br>
 
-    @await Html.PartialAsync("~/Areas/DocumentoRecibido/Pages/Shared/_FacturaPreview.cshtml")
+    @await Html.PartialAsync("~/Pages/DocumentoRecibido/Shared/_FacturaPreview.cshtml")
 </div>
 
 @section Scripts{
