@@ -16,7 +16,7 @@
          * @returns array
          */ 
         service.getDataForm = function (query) {
-            return mS.getData('get', 'CatalogoVenta/?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', 'Venta/CatalogoVenta/?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === '0') {
                     throw response;
                 }
@@ -129,7 +129,7 @@
                 idCliente: query.idCliente
             }
             showLoader();
-            return mS.getData('get', 'CuentaPorCobrar/?json=' + JSON.stringify(params), null, true)
+            return mS.getData('get', 'Contabilidad/CuentaPorCobrar/?json=' + JSON.stringify(params), null, true)
                 .then(async response => {
                     hideLoader();
                     if (response.code === "0") {

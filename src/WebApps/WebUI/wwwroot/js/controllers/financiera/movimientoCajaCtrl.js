@@ -34,12 +34,23 @@ class MovimientoCajaBase {
 //Modal Movimiento Caja 
 
 class ModalMovimientoCajaCtrl extends MovimientoCajaBase {
-    static $inject = ['$http', '$q', 'mainService', 'commonService', 'modalService', '$uibModalInstance', 'formulario', 'toastService']
-    constructor($http, $q, _mS, _commonSvc, _modalSvc, $uibModalInstance, _form, _toastr) {
+    static $inject = [
+        '$http', 
+        '$q', 
+        'mainService', 
+        'commonService', 
+        'modalService', 
+        '$uibModalInstance', 
+        'formulario', 
+        'toastService',
+        'empleadoService'
+    ]
+    constructor($http, $q, _mS, _commonSvc, _modalSvc, $uibModalInstance, _form, _toastr, empleadoSvc) {
         super($http, _modalSvc, $uibModalInstance, _toastr, _form)
         this.$q = $q;
         this._mS = _mS;
         this._commonSvc = _commonSvc;
+        this.empleadoSvc = empleadoSvc;
         this.tipoDocumentos = [];
         this.cajas = [];
 
@@ -88,13 +99,7 @@ class ModalMovimientoCajaCtrl extends MovimientoCajaBase {
 
     //Buscar Empleado 
     static searchEmpleado(busqueda) {
-        return this._mS.getData('GET', 'Empleado/Search?json=' + JSON.stringify({ textSearch: busqueda }), null, true).then(response => {
-            if (response.code == "1") {
-                return JSON.parse(response.payload)
-            } else {
-                return null;
-            }
-        })
+        return this.empleadoSvc.search({ textSearch: busqueda }); 
     }
 
     onKeyupSearchEmpleado(text) {
@@ -220,12 +225,12 @@ class ModalAnticipoCtrl extends MovimientoCajaBase {
         if (!this.data.codEstab) {
             this._toastr.toastr('warning', 'Seleccion el Establecimiento', tituloToast);
             return
-        };
+        }
 
         if (this._form.campo(this.data.idCliente)) {
             this._toastr.toastr('warning', 'Seleccion el Cliente', tituloToast);
             return
-        };
+        }
 
         if (this._form.campo(this.data.idEntidadFinanciera)) {
             this._toastr.toastr('warning', 'Seleccione la Entidad Financiera', tituloToast);
@@ -338,14 +343,14 @@ class MovimientoCajaCtrl {
         this.dateRangePicker = JSON.parse(JSON.stringify(dateRangePicker))
         
         this.dateRangePicker.options.eventHandlers = {
-                "apply.daterangepicker": (event, picker)=> {
+                "apply.daterangepicker": ()=> {
                     this.getMovCajas()
                     console.log('applied')
                 }
             }
         this.dateRangePickerAnticipo = JSON.parse(JSON.stringify(dateRangePicker))
         this.dateRangePickerAnticipo.options.eventHandlers = {
-            "apply.daterangepicker": (event, picker)=> {
+            "apply.daterangepicker": ()=> {
 
                 this.getAnticipos()
                 console.log('applied')
@@ -378,18 +383,13 @@ class MovimientoCajaCtrl {
         this.getAllEstado();
     }
 
-
-    resultRangeFilter (item) {
-        this.dataSearch.fechaInicio = item.startDate,
-        this.dataSearch.fechaFin = item.endDate
-        this.getMovCajas();
-    }
+ 
     onClickBtnMore() {
         this.moreSearchOptions = !this.moreSearchOptions;
     }
 
     resultRangeFilter (item) {
-        this.dataSearch.fechaInicio = item.startDate,
+        this.dataSearch.fechaInicio = item.startDate; 
         this.dataSearch.fechaFin = item.endDate
         this.getMovCajas();
     }
