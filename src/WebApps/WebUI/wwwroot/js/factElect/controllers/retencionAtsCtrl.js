@@ -11,9 +11,10 @@
         '$window',
         'FileSaver',
         'Blob',
+        'modalService'
     ]
 
-    function retencionAtsCtrl($scope, $injector, $element, $cookies, $window, FileSaver, Blob) {
+    function retencionAtsCtrl($scope, $injector, $element, $cookies, $window, FileSaver, Blob, modalSvc) {
         const mS = $injector.get('mainService')
         const commonSvc = $injector.get('commonService')
         const tS = $injector.get('toastService')
@@ -66,7 +67,9 @@
             return _getFecha;
         }
 
-        const idDocumentoElectronico = document.getElementById("idDocumentoElectronico").value
+        let params = new URLSearchParams(document.location.search);
+
+        const idDocumentoElectronico = params.get("id")
 
         $scope.retencionesTemp = []
 
@@ -77,7 +80,6 @@
                     let expireDate = new Date();
                     expireDate.setDate(expireDate.getDate() + 1);
                     $cookies.put('ck_token', uuid2.newguid(), { expires: expireDate });
-                    console.log($cookies.get('ck_token'))
                 }
                 //console.log($cookies.get('ck_token'))
                 let data = { tipo: 1 }
@@ -126,8 +128,6 @@
                 mS.getData('get', 'RetencionAts/' + JSON.stringify(data), null, true).then(
                     response => {
                         let tempArray = JSON.parse(response.payload)
-                        console.log('this is for edit')
-                        console.log(tempArray)
                         $scope.initialLoad()
                         setTimeout(() => {
                             $scope.infoCompRet = tempArray[0][0]
@@ -220,8 +220,6 @@
             $scope.infoCompRet.contribuyenteEspecial = temp.contribuyenteEspecial
             $scope.infoCompRet.obligadoContabilidad = temp.obligadoContabilidad
             $scope.infoCompRet.dirEstablecimiento = temp.dirEstablecimiento
-            console.log($scope.puntosEmision)
-            console.log($scope.infoCompRet)
         }
 
         /**End Info Comp Retencion */
@@ -263,7 +261,6 @@
  
                 showLoader();
                 proveedorSvc.search(textSearch).then(proveedores => {
-                    console.log(proveedores)
                     $scope.proveedores = proveedores;
                     if ($scope.proveedores.length == 1) {
                         $scope.selectSujetoRetenido($scope.proveedores[0], false)
@@ -297,7 +294,6 @@
                         if (response.code == '1') {
                             $scope.docsFounded = JSON.parse(response.payload)[0]
                             $('#docsModal').modal('show')
-                            console.log($scope.docsFounded)
                         }
                         hideLoader()
                     }, error => {
@@ -332,10 +328,6 @@
                                 $scope.docData = JSON.parse(temp[0].doc)[0]
                                 $scope.tempTaxes = JSON.parse(temp[0].taxes) || []
                                 $scope.paymentsTemp = JSON.parse(temp[0].payments) || []
-                                console.log($scope.docData)
-
-                                console.log($scope.tempTaxes)
-                                console.log($scope.paymentsTemp)
                                 $scope.totalSinImpuestos = $scope.docData.totalSinImpuestos
                                 $scope.docSustento.idDocumento = item.idDocumento
                                 $scope.docSustento.isAutomatic = $scope.docData.isAutomatic
@@ -348,7 +340,6 @@
                                 tS.toastr('warning', 'Impuestos no encontrados')
                             }
                             $('#docsModal').modal('hide')
-                            console.log(temp[0].doc)
                         }
                         hideLoader()
                     }
@@ -364,7 +355,6 @@
 
         $scope.docPreview = async (item) => {
             try {
-                console.log(item)
                 if (!item.isAutomatic) {
                     commonSvc.viewDetailDocument({
                         id: item.idDocumento,
@@ -637,7 +627,6 @@
 
         $scope.setTarifaImp = (item) => {
             let obj = $scope.tarifasImp.find(imp => imp.codigo == item)
-            console.log(obj)
             $scope.tax.tarifa = obj.porcentaje
         }
         $scope.setTaxValue = (item) => {
@@ -748,8 +737,6 @@
                 })
 
                 $scope.tax = {}
-                //console.log($scope.docsAdded)
-                console.log($scope.taxesAdded)
             }
         }
         $scope.editTax = (item, t, d) => {
@@ -1135,8 +1122,6 @@
                     let totalImpuesto = $scope.taxesAdded.map(item => (item.valorImpuesto)).reduce((valorActual, previous) => (Number(valorActual) + Number(previous)), 0)
                     let importeTotal = (totalBaseImp + totalImpuesto)
 
-                    console.log(importeTotal)
-
                     let totalFp = $scope.paymentsAdded.map(item => (item.total)).reduce((valorActual, previous) => (valorActual + previous), 0)
                     totalFp = totalFp + $scope.payment.total
 
@@ -1173,7 +1158,6 @@
         $scope.editPayment = (item, p, d) => {
             $scope.indexPayment = item
             $scope.payment = $scope.paymentsAdded[item]
-            console.log($scope.payment)
             document.getElementById(d.uniqueIdDoc + '-btnAddPaymentAdd').style.display = 'none'
             document.getElementById(d.uniqueIdDoc + '-btnEditPaymentSave').style.display = 'block'
             //document.getElementById(d.uniqueIdDoc + '-totalPago').disabled = true

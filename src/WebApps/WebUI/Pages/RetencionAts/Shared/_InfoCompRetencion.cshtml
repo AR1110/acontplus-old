@@ -59,7 +59,7 @@
             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
                 <div class="form-group">
                     <label for="tipoIdentificacionSujetoRetenido">Tipo Identificacion Sujeto Retenido:</label>
-                    <select id="tipoIdentificacionSujetoRetenido" id="tipoIdentificacionSujetoRetenido"
+                    <select id="tipoIdentificacionSujetoRetenido"
                         class="form-control"
                         ng-change="showTipoSujetoRetenido(infoCompRet.tipoIdentificacionSujetoRetenido)"
                         ng-model="infoCompRet.tipoIdentificacionSujetoRetenido">
@@ -73,7 +73,7 @@
             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
                 <div class="form-group">
                     <label for="tipoSujetoRetenido">Tipo Sujeto Retenido:</label>
-                    <select id="tipoSujetoRetenido" id="tipoSujetoRetenido" class="form-control"
+                    <select id="tipoSujetoRetenido" class="form-control"
                         ng-model="infoCompRet.tipoSujetoRetenido" ng-disabled="isNotForeign">
                         <option ng-value="item.codigo" ng-repeat="item in tiposSujRetenido">
                             {{item.codigo}} -
@@ -85,7 +85,7 @@
             <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
                 <div class="form-group">
                     <label for="parteRel">Parte Relacionada:</label>
-                    <select id="parteRel" id="parteRel" class="form-control" ng-model="infoCompRet.parteRel" required>
+                    <select id="parteRel" class="form-control" ng-model="infoCompRet.parteRel" required>
                         <option ng-value="item.codigo" ng-repeat="item in genericAnswer">{{item.codigo}}</option>
                     </select>
                 </div>

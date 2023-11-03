@@ -1,5 +1,5 @@
 ﻿@page
-@model WebUI.Areas.RetencionAts.Pages.IndexModel
+@model WebUI.Pages.RetencionAts.IndexModel
 @{
     @RouteData.Values["id"]
     ViewData["Title"] = "Index";
@@ -17,15 +17,14 @@
         <md-card-content>
             <div class="row">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                    @await Html.PartialAsync("_InfoTributaria")
-                    @await Html.PartialAsync("_InfoCompRetencion")
-                    @await Html.PartialAsync("_DocsSustento")
+                    @await Html.PartialAsync("Shared/_InfoCompRetencion")
+                    @await Html.PartialAsync("Shared/_DocsSustento")
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                    @await Html.PartialAsync("_InfoAdicional")
+                    @await Html.PartialAsync("Shared/_InfoAdicional")
                 </div>
             </div>
         </md-card-content>
@@ -132,7 +131,6 @@
         </div>
     </div>
     <!-- END MODALS -->
-    @* @await Html.PartialAsync("~/Areas/DocumentoRecibido/Pages/Shared/_FacturaPreview.cshtml") *@
     <input type="text" name="idDocumentoElectronico" id="idDocumentoElectronico" value="@ViewData["ID"]" hidden />
 </div>
 

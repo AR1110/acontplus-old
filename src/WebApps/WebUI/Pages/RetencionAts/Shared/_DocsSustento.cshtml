@@ -174,11 +174,11 @@
                     <div class="card body">
                         <h5 class="card-title">{{item.numDocSustento}}</h5>
 
-        @await Html.PartialAsync("_ImpuestosDocSustento")
+        @await Html.PartialAsync("Shared/_ImpuestosDocSustento")
 
-        @await Html.PartialAsync("_Retenciones")
+        @await Html.PartialAsync("Shared/_Retenciones")
 
-        @await Html.PartialAsync("_Pagos")
+        @await Html.PartialAsync("Shared/_Pagos")
                     </div>
                     <div class="card-footer">
                         <button class="btn btn-warning btn-sm" ng-click="editDocSust($index)" title="Editar datos"><i
@@ -229,11 +229,11 @@
                         <td>
                         </td>
                         <td colspan="5">
-                            @await Html.PartialAsync("_ImpuestosDocSustento")
+                            @await Html.PartialAsync("Shared/_ImpuestosDocSustento")
 
-                            @await Html.PartialAsync("_Retenciones")
+                            @await Html.PartialAsync("Shared/_Retenciones")
 
-                            @await Html.PartialAsync("_Pagos")
+                            @await Html.PartialAsync("Shared/_Pagos")
                         </td>
                     </tr>
                 </tbody>
