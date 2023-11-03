@@ -51,7 +51,7 @@
                     hideLoader();                    
                     $scope.clientes = response;
                     $scope.dataSearch.totalRecords = $scope.clientes.length > 0? $scope.clientes[0].totalRecords:0;
-                    console.log($scope.dataSearch)                                                            
+                                                                        
                 }).catch(error => {
                     $scope.dataSearch.totalRecords = 0;
                     console.log(error);

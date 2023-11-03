@@ -87,8 +87,7 @@
                     throw response;
                 }
                 if (response.code === "1") {
-                    let mainData = JSON.parse(response.payload);
-                    console.log(mainData)
+                    let mainData = JSON.parse(response.payload); 
                     let notaEntregaRepos = mainData[0];
                     let { totalRecords, totalDocument, totalAbono, totalSaldo } = notaEntregaRepos[0];
 
