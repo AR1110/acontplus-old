@@ -16,8 +16,6 @@ namespace Identity.Infrastructure.Data
             IConfiguration configuration = new ConfigurationBuilder()
                 .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../../../SharedSettings")) //old ../Restaurant.API
                 .AddJsonFile($"sharedsettings.Development.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"sharedsettings.Staging.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"sharedsettings.Production.json", optional: true, reloadOnChange: true)
                 .Build();
 
             var connectionString = configuration.GetConnectionString(_databaseName);
