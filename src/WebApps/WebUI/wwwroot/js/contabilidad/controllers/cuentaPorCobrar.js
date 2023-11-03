@@ -4,7 +4,8 @@
 
     'use strict';
 
-    const FILE_PATH_PARTIAL_UI = '~/Areas/CuentaPorPagar/Pages/'
+    const FILE_PATH_PARTIAL_UI = '~/Areas/CuentaPorPagar/Pages/';
+    const URL_API = 'Contabilidad/'
 
     app.controller('cuentaPorPagarCtrl', cuentaPorPagarCtrl)
 
@@ -127,7 +128,7 @@
                 
             
 
-                $scope.promise = _mS.getData('get', 'CuentaPorPagar?json=' + JSON.stringify(dataSearch), null, true).then(response => {
+                $scope.promise = _mS.getData('get', `${URL_API}CuentaPorPagar?json=${JSON.stringify(dataSearch)}`, null, true).then(response => {
                     
                     if (response.code == '0') {
                         hideLoader();
@@ -253,10 +254,8 @@
                     idCuentaPorPagar: item.idCuentaPorPagar,
                     codPago: 'PE',
                     tipo: 2
-                })
-            
-
-            return _mS.getData('get', 'CuentaPorPagar?json=' + spParams, null, true);
+                }) 
+            return _mS.getData('get', `${URL_API}CuentaPorPagar?json=${spParams}`, null, true);
         }
 
 
@@ -319,7 +318,7 @@
                 
                
                 showLoader();
-                _mS.getData('get', 'CuentaPorPagar?json=' + spParams, null, true).then(response => {
+                _mS.getData('get', `${URL_API}CuentaPorPagar?json=${spParams}`, null, true).then(response => {
                     
                     let cuotas = response.payload ? JSON.parse(response.payload)[0] : []
                     
@@ -419,7 +418,7 @@
                 
                 
                 showLoader();
-                _mS.getData('get', 'CuentaPorPagar?json=' + spParams, null, true).then(response=>{
+                _mS.getData('get', `${URL_API}CuentaPorPagar?json=${spParams}`, null, true).then(response=>{
                     if(response.code==='0'){
                         hideLoader()
                         _form.sweetAlert('warning', response.message)
@@ -444,12 +443,7 @@
 
 
 
-
-    
-
-
-
-
+ 
     //---------------------------------------------START CUOTAS----------------------------------------------------
     app.controller("modalCuotaCtrl", modalCuotaCtrl);
 
@@ -517,7 +511,7 @@
                         codPago: $scope.data.codPago
                     };
         
-                    mS.getData('post', 'CuentaPorPagar/'+ JSON.stringify(data), null, true).then(response => {
+                    mS.getData('post', `${URL_API}CuentaPorPagar/${JSON.stringify(data)}`, null, true).then(response => {
                         if (response.code === "0") {
                             fS.sweetAlert('warning', response.message, response.titleSms);                                                                                       
                         }
@@ -766,7 +760,7 @@
                         let data = {
                             cuotas: JSON.stringify($scope.cuotas)
                         }
-                        mS.getData('put', 'CuentaPorPagar/' + $scope.data.id, data, true)
+                        mS.getData('put', `${URL_API}CuentaPorPagar/${$scope.data.id}`, data, true)
                         .then(response => {
                             if (response.code === "0") {
                                 hideLoader()
@@ -1350,7 +1344,7 @@
             try {
                 let spParams = JSON.stringify({tipo: 3, idProveedor: $scope.proveedor.idProveedor})
                 
-                mS.getData('get', 'CuentaPorPagar?json=' + spParams, null, true).then(response=>{
+                mS.getData('get', `${URL_API}CuentaPorPagar?json=${spParams}`, null, true).then(response=>{
               
                     if(response.code==="0"){
                         console.log(response)
