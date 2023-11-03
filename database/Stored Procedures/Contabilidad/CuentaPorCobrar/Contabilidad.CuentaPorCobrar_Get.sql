@@ -361,8 +361,8 @@ BEGIN
 			SELECT idCuentaPorCobrar
 			      ,serieComprobante
 				  ,tipoDoc          = CASE tipoDoc WHEN '01' THEN 'Factura' ELSE 'N. Entrega' END 
-				  ,fechaEmision     = FORMAT(fechaEmision,'MM/dd/yyyy')
-				  ,fechaVencimiento = FORMAT(fechaVencimiento,'MM/dd/yyyy')
+				  ,fechaEmision     = FORMAT(fechaEmision,'dd/MM/yyyy')
+				  ,fechaVencimiento = FORMAT(fechaVencimiento,'dd/MM/yyyy')
 				  ,importeTotal
 				  ,diasMora
 				  ,mora
@@ -382,7 +382,7 @@ BEGIN
 				  ,numeroIdentificacion = @numeroIdentificacion
 				  ,nombreFiscal         = @nombreFiscal
 				  ,codEstab             = @codEstab 
-				  ,fechaEmision         = FORMAT(@fechaEmision,'MM/dd/yyyy')
+				  ,fechaEmision         = FORMAT(@fechaEmision,'dd/MM/yyyy')
 				  ,serieComprobante     = @serieComprobante
 			FROM @tbVentas
 			RETURN 
@@ -483,19 +483,5 @@ BEGIN
 
             RETURN 
         END
-        
-    --> Data Form Cuotas 
-    IF @tipo = 7 
-        BEGIN
-            SELECT idTiempoCredito
-	                ,descripcion
-	                ,diasCredito
-	                ,numeroCuota 
-	        FROM TiempoCredito WITH (NOLOCK) 
-	        WHERE idEntidad = @idEntidad 
-              AND gestion = 1 
-              AND estado = 1
-            RETURN 
-        END 
 END
 GO
