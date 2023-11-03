@@ -516,3 +516,211 @@ GO
 
 DROP PROCEDURE IF EXISTS Recepcion.Proveedor_Get
 GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPProveedorGet]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPProveedorPost]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPProveedorUpdate]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPProveedorGetDetail]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPProveedorNroIdentification]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPPuntoEmisionBySucursal]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPPuntoEmisionList]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPProveedorDelete]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[aspArticuloGet]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPAsignacionBodegaList]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPClienteDetalleGet]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPConfigContribuyenteDelete]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPConfigContribuyenteGet]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPConfigContribuyenteGetId]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPConfigContribuyenteInsert]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPConfigContribuyenteUpdate]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPFamiliaOption]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPGuiaRemisionGetClaveAcceso]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPMarcaOption]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPMedidaGetBy]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPModeloOption]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[aspMenuDelete]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[aspMenuGet]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[aspMenuInsert]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[aspMenuUpdate]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[TipoClienteProveedorOption]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[SPTipoArticuloRead]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[SPAsignacionesCreate]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[SPAsignacionesRead]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[SPAsignacionesUpdate]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPUsuarioDelete]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPUsuarioGet]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[aspUsuarioInsert]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPUsuarioSearch]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPUsuarioUpdate]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[aspTransferenciaBodegaDelete]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[aspTransferenciaBodegaGet]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[aspTransferenciaBodegaGetId]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPTipoPersonaRead]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPTipoTransaccionRead]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPTipoIvaCreate]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPTipoIvaDelete]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPTipoIvaOption]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPTipoIvaRead]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPTipoIvaUpdate]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPTipoIdentificaionRead]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPProveedorGetId]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPProveedorSearch]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPPerfilUsuarioUpdate]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPPerfilUsuarioDelete]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[aspArticuloDataId]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[aspArticuloGetForPvP]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[aspArticuloGetId]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPArticuloPvPGetId]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPArticuloTarifaList]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPAsignacionesRolGetBySucursal]
+GO
+
+DROP PROCEDURE IF EXISTS [dbo].[ASPAsignacionPuntoEmisionList]
+GO
+
+DROP PROCEDURE IF EXISTS  Sistema.Almacen_Get_Data_Form
+go
+
+DROP PROCEDURE IF EXISTS  Recepcion.Proveedor_Insert
+go
+
+--> RAMIREZ ALEXIS - FECHA :11/03/2023
+DROP PROCEDURE IF EXISTS  Sistema.Almacen_Get_Data_Form
+go
+
+DROP PROCEDURE IF EXISTS  Sistema.Almacen_Get_Data_Form
+go
+
+DROP PROCEDURE IF EXISTS  Sistema.GestionFinanciera_Get_Data_Form
+go
+
+DROP PROCEDURE IF EXISTS  Sistema.Impuestos_Get_Data_Form
+go  
+
+DROP PROCEDURE IF EXISTS  Sistema.Impuestos_Get_Data_Form
+go  
+
+DROP PROCEDURE IF EXISTS  [Sistema].[GestionFinanciera_Update_Document]
+go  
+
+DROP PROCEDURE IF EXISTS  Almacen.Marca_For_Select
+go      
+
+DROP PROCEDURE IF EXISTS  Almacen.Medida_For_Select
+go   
+
+DROP PROCEDURE IF EXISTS  Almacen.Modelo_For_Select
+go   
+
+DROP PROCEDURE IF EXISTS  Almacen.SubFamilia_For_Select
+go   
