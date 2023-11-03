@@ -258,14 +258,9 @@
                 }
                 if (!item && $scope.infoCompRet.identificacionSujetoRetenido) {
                     item = 2
-                }
-                // let json = {
-                //     tipo: 2,
-                //     textSearch: (item == 1 ? $scope.infoCompRet.razonSocialSujetoRetenido : $scope.infoCompRet.identificacionSujetoRetenido)
-                // }
+                } 
                 const textSearch = (item == 1 ? $scope.infoCompRet.razonSocialSujetoRetenido : $scope.infoCompRet.identificacionSujetoRetenido)
-
-                console.log($scope.infoCompRet)
+ 
                 showLoader();
                 proveedorSvc.search(textSearch).then(proveedores => {
                     console.log(proveedores)
@@ -276,29 +271,7 @@
                     else {
                         $('#searchProvModal').modal('show')
                     }
-                }).finally(() => hideLoader())
-                // mS.getData('get', 'Compra/Proveedor?json=' + JSON.stringify(json), null, true).then(
-                //     response => {
-                //         if (response.code == '0') {
-                //             if (item == 2) {
-                //                 $scope.infoCompRet.identificacionSujetoRetenido = ''
-                //             }
-                //             tS.toastr('warning', response.message)
-                //         }
-                //         if (response.code == '1') {
-                //             $scope.proveedores = JSON.parse(response.payload)["proveedores"]
-                //             if ($scope.proveedores.length == 1) {
-                //                 $scope.selectSujetoRetenido($scope.proveedores[0], false)
-                //             }
-                //             else {
-                //                 $('#searchProvModal').modal('show')
-                //             }
-                //             //console.log($scope.proveedores)
-                //         }
-                //     }, error => {
-                //         console.log(error)
-                //     }
-                // )
+                }).finally(() => hideLoader()) 
 
             } catch (error) {
                 console.log(error)
