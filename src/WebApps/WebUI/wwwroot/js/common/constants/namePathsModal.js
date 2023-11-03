@@ -84,8 +84,8 @@ app.constant('nombreModalInventario', {
             MF: ''
         },
         templates: {
-            M: '~/Areas/Kardex/Pages/Shared/_ModalKardex.cshtml',
-            MF: '~/Areas/Kardex/Pages/Shared/_ModalFiltroKardex.cshtml'
+            M: '~/Pages/Kardex/Shared/_ModalKardex.cshtml',
+            MF: '~/Pages/Kardex/Shared/_ModalFiltroKardex.cshtml'
         }
     },
     CONSOLIDACION_INVENTARIO: {
@@ -574,8 +574,8 @@ app.constant('nombreModal', {
     },
     kardex: {
         MODAL_CTRL: 'inventario/kardexCtrl.js' + CHANGE_VERSION(50),
-        MODAL_CSHTML: '~/Areas/Kardex/Pages/Shared/_ModalKardex.cshtml',
-        MODAL_FILTRO_CSHTML: '~/Areas/Kardex/Pages/Shared/_ModalFiltroKardex.cshtml'
+        MODAL_CSHTML: '~/Pages/Kardex/Shared/_ModalKardex.cshtml',
+        MODAL_FILTRO_CSHTML: '~/Pages/Kardex/Shared/_ModalFiltroKardex.cshtml'
     },
     liquidacion_compra: {
         MODAL_FILE_CTRL: 'modal/compras/modalLiquidacionCompraCtrl.min.js' + CHANGE_VERSION(),
