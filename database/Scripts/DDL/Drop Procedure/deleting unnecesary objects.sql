@@ -694,3 +694,33 @@ go
 DROP PROCEDURE IF EXISTS  Recepcion.Proveedor_Insert
 go
 
+--> RAMIREZ ALEXIS - FECHA :11/03/2023
+DROP PROCEDURE IF EXISTS  Sistema.Almacen_Get_Data_Form
+go
+
+DROP PROCEDURE IF EXISTS  Sistema.Almacen_Get_Data_Form
+go
+
+DROP PROCEDURE IF EXISTS  Sistema.GestionFinanciera_Get_Data_Form
+go
+
+DROP PROCEDURE IF EXISTS  Sistema.Impuestos_Get_Data_Form
+go  
+
+DROP PROCEDURE IF EXISTS  Sistema.Impuestos_Get_Data_Form
+go  
+
+DROP PROCEDURE IF EXISTS  [Sistema].[GestionFinanciera_Update_Document]
+go  
+
+DROP PROCEDURE IF EXISTS  Almacen.Marca_For_Select
+go      
+
+DROP PROCEDURE IF EXISTS  Almacen.Medida_For_Select
+go   
+
+DROP PROCEDURE IF EXISTS  Almacen.Modelo_For_Select
+go   
+
+DROP PROCEDURE IF EXISTS  Almacen.SubFamilia_For_Select
+go   
