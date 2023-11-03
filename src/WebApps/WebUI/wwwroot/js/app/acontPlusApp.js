@@ -409,7 +409,7 @@ function modalService($uibModal, $mdDialog) {
         openModalSecond: function (controller, template, size, params, animation = true, windowClass = null, $scope, props = {}) {
             return $uibModal.open({
                 animation,
-                templateUrl: `/Home/RenderView?name=~/Views/${template}`,
+                templateUrl: `/Index?name=~/Views/${template}`,
                 controller,
                 controllerAs: '$ctrl',
                 scope: $scope,
@@ -435,7 +435,7 @@ function modalService($uibModal, $mdDialog) {
         openMdDialog: function ({ controller, templateUrl, targetEvent, clickOutsideToClose = false, fullscreen = true, params }) {
             return $mdDialog.show({
                 controller,
-                templateUrl: `/Home/RenderView?name=${templateUrl}`,
+                templateUrl: `/Index?name=${templateUrl}`,
                 // Appending dialog to document.body to cover sidenav in docs app
                 // Modal dialogs should fully cover application to prevent interaction outside of dialog
                 parent: angular.element(document.body),

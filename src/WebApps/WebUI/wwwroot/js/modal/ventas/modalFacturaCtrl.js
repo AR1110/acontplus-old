@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.js?v=0.124";
+} from "./modalBaseCtrl.js?v=0.126";
 
 class ModalFacturaCtrl extends ModalBaseCtrl {
 
@@ -34,7 +34,7 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
         this._fS = _fS;
 
         this.TIPO_DOC_FV = _commonSvc.tipoDoc['FV']
-        this.CAMPOS = ["idSucursal", "idPuntoEmision", "fechaEmision", "fechaVencimiento", "validFechaVcto", "gridOptions", "gridOptionsBodega"];
+        this.CAMPOS = ["idSucursal", "idPuntoEmision", "fechaEmision", "fechaVencimiento", "gridOptions", "gridOptionsBodega"];
 
         this.isSearchDataInSRI = true; //Registro Rapido de clientes 
 

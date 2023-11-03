@@ -18,12 +18,25 @@
                 }
                 if(response.code==="1"){
                     let mainData = JSON.parse(response.payload) || []; 
-                    console.log(mainData)
+                    
                     if(params.tipo===1){
                         return mainData[0]
                     }
-                    if(params.tipo ===5){
+
+                    if(params.tipo===2){
+                        return {
+                            cuotas: mainData[0]
+                        } 
+                    }
+
+                    if(params.tipo===4){
                         console.log(mainData)
+                    }
+
+                    if(params.tipo ===5){
+                        return {
+                            tiemposCredito: mainData[0]
+                        } 
                     }
                 }
             })            
