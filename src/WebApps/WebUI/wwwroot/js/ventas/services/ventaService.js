@@ -213,8 +213,7 @@
         let url = 'Venta/Cliente/';
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
-        let tS = $injector.get('toastService');
-        let cS = $injector.get('commonService')
+        let tS = $injector.get('toastService'); 
 
         let service = {};
 
@@ -358,7 +357,12 @@
                 throw new Error(`La propiedad "textSearch" no se ha proporcionado`)
             }
 
-            let obj = { ...query, textSearch: cS.removeAccents(query.textSearch) }
+            // let text = textSearch ? que
+            // let obj = { 
+            //     ...query, 
+            //     textSearch: cS.removeAccents(query.textSearch) 
+
+            // }
 
             return mS.getData('get', url + 'Search?json=' + JSON.stringify(obj), null, true).then(response => {
                 if (response.code === '0') {
