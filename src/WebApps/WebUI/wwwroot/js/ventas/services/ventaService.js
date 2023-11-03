@@ -14,13 +14,9 @@
          * 
          * @param {object} query  
          * @returns array
-         */
-
-
-
-
+         */ 
         service.getDataForm = function (query) {
-            return mS.getData('get', 'CatalogoVenta/?json=' + JSON.stringify(query), null, true).then(response => {
+            return mS.getData('get', 'Venta/CatalogoVenta/?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === '0') {
                     throw response;
                 }
@@ -115,9 +111,7 @@
 
 
         service.getIdNotaEntrega = function (id) {
-            return mS.getData('get', "/NotaEntrega/GetId?id=" + id)
-
-                .catch(error => {
+            return mS.getData('get', "Venta/NotaEntrega/GetId/" + id, null, true).catch(error => {
                     console.log('sale service', error)
                     throw new Error(error)
                 })
@@ -135,7 +129,7 @@
                 idCliente: query.idCliente
             }
             showLoader();
-            return mS.getData('get', 'CuentaPorCobrar/?json=' + JSON.stringify(params), null, true)
+            return mS.getData('get', 'Contabilidad/CuentaPorCobrar/?json=' + JSON.stringify(params), null, true)
                 .then(async response => {
                     hideLoader();
                     if (response.code === "0") {
@@ -148,13 +142,13 @@
 
                         if (pendientAccounts.length === 0) return false;
 
-                        let {totalImporteTotal, totalAbono, totalSaldo} = pendientAccounts.reduce((value, item)=>{
+                        let { totalImporteTotal, totalAbono, totalSaldo } = pendientAccounts.reduce((value, item) => {
                             value.totalImporteTotal += item.importeTotal;
                             value.totalAbono += item.abono;
                             value.totalSaldo += item.saldo;
                             return value;
 
-                        },{totalImporteTotal:0, totalAbono:0, totalSaldo:0})
+                        }, { totalImporteTotal: 0, totalAbono: 0, totalSaldo: 0 })
 
                         let html = `<div class="table-responsive">
                     <table class="table table-hover table-bordered table-sm">
@@ -213,7 +207,7 @@
         let url = 'Venta/Cliente/';
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
-        let tS = $injector.get('toastService'); 
+        let tS = $injector.get('toastService');
 
         let service = {};
 
@@ -229,11 +223,11 @@
                         return {
                             tipoIdentificacion: mainDataRepository[0],
                             tipoContribuyentes: mainDataRepository[1],
-                            tiempoCreditos: mainDataRepository[2],
+                            tiempoCreditos: mainDataRepository[2] || [],
                             ciudades: mainDataRepository[3],
-                            tiposCliente: mainDataRepository[4],
-                            empresas: mainDataRepository[5],
-                            cargos: mainDataRepository[6],
+                            tiposCliente: mainDataRepository[4] || [],
+                            empresas: mainDataRepository[5] || [],
+                            cargos: mainDataRepository[6] || [],
                         }
                     }
                 }).catch(response => {
@@ -357,12 +351,12 @@
                 throw new Error(`La propiedad "textSearch" no se ha proporcionado`)
             }
 
-            // let text = textSearch ? que
-            // let obj = { 
-            //     ...query, 
-            //     textSearch: cS.removeAccents(query.textSearch) 
+            let text = query.textSearch ? query.textSearch.replace(/^-+|-+$| [^A-Za-z0-9.-]+/g, "") : ''
+            let obj = {
+                ...query,
+                textSearch: text
+            }
 
-            // }
 
             return mS.getData('get', url + 'Search?json=' + JSON.stringify(obj), null, true).then(response => {
                 if (response.code === '0') {
@@ -466,7 +460,6 @@
 
         service.checkClientByIdentification = function (query, codigoIdentificacion, callback) {
             mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
-                console.log(response)
                 if (response.code === '0') {
                     callback(codigoIdentificacion)
                     // return response;
@@ -545,7 +538,7 @@
 
     })
 
-     
+
     app.factory('empleadoService', function ($injector) {
         let url = 'Venta/Empleado/';
         let mS = $injector.get('mainService');
@@ -621,14 +614,14 @@
 
     })
 
-    
+
     app.factory('cargoService', function ($injector) {
         let URL = 'Venta/Cargo/';
         let mS = $injector.get('mainService');
-        
+
         let service = {}
 
-        service.get= (query)=> {
+        service.get = (query) => {
             return mS.getData('get', URL + '?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
@@ -636,35 +629,35 @@
                 if (response.code === "1") {
                     let cargos = JSON.parse(response.payload);
                     return cargos;
-                     
+
                 }
             })
         }
 
-        service.post = (data)=> {
+        service.post = (data) => {
             return mS.getData('post', URL + '?json=' + JSON.stringify(data), null, true)
         }
 
-        service.put = (id, data)=> {
+        service.put = (id, data) => {
             return mS.getData('put', URL + id + '?json=' + JSON.stringify(data), null, true)
         }
 
-        service.delete = (id)=> {
+        service.delete = (id) => {
             return mS.getData('delete', URL + '' + id, null, true)
         }
-        
+
         return service;
 
-    }) 
+    })
 
 
     app.factory('empresaService', function ($injector) {
         let URL = 'Venta/Empresa/';
         let mS = $injector.get('mainService');
-        
+
         let service = {}
 
-        service.get= (query)=> {
+        service.get = (query) => {
             return mS.getData('get', URL + '?json=' + JSON.stringify(query), null, true).then(response => {
                 if (response.code === "0") {
                     throw response;
@@ -672,25 +665,25 @@
                 if (response.code === "1") {
                     let empresas = JSON.parse(response.payload);
                     return empresas;
-                     
+
                 }
             })
         }
 
-        service.post = (data)=> {
+        service.post = (data) => {
             return mS.getData('post', URL + '?json=' + JSON.stringify(data), null, true)
         }
 
-        service.put = (id, data)=> {
+        service.put = (id, data) => {
             return mS.getData('put', URL + id + '?json=' + JSON.stringify(data), null, true)
         }
 
-        service.delete = (id)=> {
+        service.delete = (id) => {
             return mS.getData('delete', URL + '' + id, null, true)
         }
-        
+
         return service;
 
-    }) 
+    })
 
 })(window.angular)

@@ -96,7 +96,10 @@
                     if (response.code === "1") {
                         let results = JSON.parse(response.payload) 
                         let proveedores = results.proveedores; 
-                        return proveedores;
+                        return proveedores.map((proveedor)=>({
+                            ...proveedor,
+                            nombreFiscal: proveedor.razonSocial
+                        }))
                     }
                 });
         }
@@ -116,7 +119,7 @@
                 }
                 if (response.code === "1") {
                     let mainData = JSON.parse(response.payload)                    
-                    return mainData.proveedor;
+                    return mainData.proveedor[0]
                 }
 
             })

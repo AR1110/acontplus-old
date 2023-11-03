@@ -1145,7 +1145,7 @@ export class ModalBaseCtrl {
                 message: 'Ingrese la Fecha de Vencimiento',
             },
             "validFechaVcto": {
-                valor: (Date.parse(this.data.fechaEmision) <= Date.parse(this.data.fechaVencimiento)),
+                valor: this.data.fechaEmision <= this.data.fechaVencimiento,
                 message: 'Fecha de Vencimiento no puede ser menor a  Fecha de Emisión'
             },
             "gridOptions": {

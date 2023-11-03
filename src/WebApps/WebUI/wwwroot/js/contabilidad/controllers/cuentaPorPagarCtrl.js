@@ -4,14 +4,26 @@
 
     'use strict';
 
-    const FILE_PATH_PARTIAL_UI = '~/Areas/CuentaPorPagar/Pages/'
+    const FILE_PATH_PARTIAL_UI = '~/Areas/CuentaPorPagar/Pages/';
+
+    let cuentaPorPagarSvc = {}
 
     app.controller('cuentaPorPagarCtrl', cuentaPorPagarCtrl)
 
-    cuentaPorPagarCtrl.$inject = ['$scope', 'toastService','proveedorService', 'commonService', 'mainService', 'screenSize', '$timeout' ,'modalService', 'formulario']
+    cuentaPorPagarCtrl.$inject = ['$scope', '$injector', '$timeout']
 
-    function cuentaPorPagarCtrl($scope, _tS, proveedorSvc, commonSvc, _mS, _sS, $timeout, _modalSvc, _form) {
-                 
+    function cuentaPorPagarCtrl($scope, $injector, $timeout) {
+        const _tS = $injector.get('toastService');
+        const proveedorSvc = $injector.get('proveedorService');
+        const commonSvc = $injector.get('commonService');
+        const _mS = $injector.get('mainService');
+        const _sS = $injector.get('screenSize');
+        const _modalSvc = $injector.get('modalService');
+        const _form = $injector.get('formulario');
+        cuentaPorPagarSvc = $injector.get('cuentaPorPagarService');
+
+
+
         $scope.isMobile = _sS.on('xs, sm', function (isMatch) {
             $scope.isMobile = isMatch
         })
@@ -103,8 +115,7 @@
               
                 $scope.cuentasPorPagar = [];
                 
-                let dataSearch = {
-                    tipo: 1,
+                let dataSearch = { 
                     checkboxFecha: true,
                     checkboxEstab: $scope.dataSearch.codEstab==='ALL' ? $scope.dataSearch.checkboxEstab = false: $scope.dataSearch.checkboxEstab=true,
                     codEstab: $scope.dataSearch.codEstab,
@@ -125,27 +136,14 @@
                     $scope.options.rowSelection = false;
                 }        
                 
-            
-
-                $scope.promise = _mS.getData('get', 'CuentaPorPagar?json=' + JSON.stringify(dataSearch), null, true).then(response => {
-                    
-                    if (response.code == '0') {
-                        hideLoader();
-                        $scope.cuentasPorPagar = [];
-                        console.log(response)
-                    }
-                    
-                    if (response.code == '1') {                                           
-                        $scope.cuentasPorPagar = JSON.parse(response.payload)[0];
-                        console.log($scope.cuentasPorPagar)                        
-                        hideLoader();
-                    }                    
-
-                }).catch((error) => {
-                    hideLoader();
-                    $scope.cuentasPorPagar = [];
+                showLoader();
+                cuentaPorPagarSvc.get(dataSearch).then(response=>{
+                      $scope.cuentasPorPagar = response; 
+                })
+                .catch((error)=>{
                     console.log(error)
                 })
+                .finally(()=>hideLoader())  
             } catch (error) {
                 console.log(error)
             }            
@@ -156,12 +154,10 @@
                 $scope.getCuentasPorPagar();
 
                 commonSvc.getEstabAsign().then(response=>{            
-                    $scope.establecimientos = response;   
-                    console.log($scope.establecimientos)                                                                  
+                    $scope.establecimientos = response;                                                                   
                 })
 
-                commonSvc.getEstadoDocByCodDoc('CP').then(response => {
-                    console.log(response)
+                commonSvc.getEstadoDocByCodDoc('CP').then(response => {                    
                     $scope.estadoDocumentos = response;
                 })
 
@@ -178,7 +174,6 @@
         //-------------------------------------------Proveedor filter------------------------------
         $scope.proveedorFilte={};
         $scope.searchProveedorFilter = (textSearch)=>{
-            console.log(textSearch)
             return  proveedorSvc.search(textSearch)
         };
 
@@ -278,7 +273,6 @@
                     }
 
                     if(response.code==="1"){
-                        console.log(JSON.parse(response.payload)[0])
                         item.cuotas = JSON.parse(response.payload)[0] || [];                                                   
                         hideLoader();
                     }                   
@@ -440,15 +434,7 @@
         }
 
 
-    }
-
-
-
-
-    
-
-
-
+    } 
 
     //---------------------------------------------START CUOTAS----------------------------------------------------
     app.controller("modalCuotaCtrl", modalCuotaCtrl);
@@ -472,7 +458,7 @@
         
         
         $scope.initialLoad = ()=>{
-            
+            cuentaPorPagarSvc.get({tipo: 5})
             commonSvc.getAllTiempoCredito(false).then(response=>{            
                 $scope.tiempoCreditos = response;       
             })
