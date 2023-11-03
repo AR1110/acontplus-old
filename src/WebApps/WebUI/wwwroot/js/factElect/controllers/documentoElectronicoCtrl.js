@@ -13,6 +13,7 @@
         'formulario',
         'toastService',
         'decodeToken',
+        'proveedorService'
     ]
 
     function documentoElectronicoCtrl(
@@ -25,6 +26,7 @@
         fS,
         tS,
         decodeToken,
+        proveedorSvc
     ) {
 
         $scope.comprobantes = [];
@@ -208,7 +210,7 @@
                         }))
                     })
                 } else {
-                    return commonSvc.proveedorSearch(textSearch).then(response => {
+                    return proveedorSvc.search(textSearch).then(response => {
                         return response.map(item => ({
                             idClienteProveedor: item.proveedor.idProveedor,
                             nameCustomerProvider: item.proveedor.nombreFiscal,

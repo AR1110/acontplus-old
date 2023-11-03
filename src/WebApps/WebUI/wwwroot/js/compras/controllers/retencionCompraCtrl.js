@@ -2,9 +2,9 @@
 
 app.controller('retencionCompraCtrl', retencionCompraCtrl);
 
-retencionCompraCtrl.$inject = ['$scope', '$filter', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'decodeToken']
+retencionCompraCtrl.$inject = ['$scope', '$filter', 'proveedorService', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'decodeToken']
 
-function retencionCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form, _tS, decodeToken) {
+function retencionCompraCtrl($scope, $filter, proveedorSvc, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form, _tS, decodeToken) {
 
     // let accion = JSON.parse(localStorage.getItem("accion"));  
     // if(accion===null){
@@ -120,10 +120,10 @@ function retencionCompraCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombr
     }
 
     $scope.searchProveedorFilter = function (text) {
-        return _commonSvc.proveedorSearch(text);
+        return proveedorSvc.search(text);
     }
 
-    $scope.onKeyupSearchProvPersonalizado = function (text) {
+    $scope.onKeyupSearchProvPersonalizado = function () {
         if (_form.campo($scope.selectedProvPersonalizado)) {
             $scope.dataSearch.byProveedor = 0;
         }

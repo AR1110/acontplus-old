@@ -1996,7 +1996,7 @@
                     console.log(error)
                 }
             }
-            $scope.proveedorSearch = (textSearch) => commonSvc.proveedorSearch(textSearch);
+         
             $scope.selectProveedorFiltro = (item) => {
                 $scope.query.rucProveedor = item.proveedor.numeroIdentificacion
                 $scope.getComprobantes()

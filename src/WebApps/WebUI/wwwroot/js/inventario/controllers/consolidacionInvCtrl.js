@@ -966,9 +966,10 @@
     AdvancedSearchCtrl.$inject = [
         "$scope",
         "$uibModalInstance",
-        "articuloService"
+        "articuloService",
+        'proveedorService'
     ]
-    function AdvancedSearchCtrl($scope, $uibModalInstance, articleSvc) {
+    function AdvancedSearchCtrl($scope, $uibModalInstance, articleSvc, proveedorSvc) {
         $scope.catalogs = [
             { code: 1, description: 'Articulo' },
             { code: 3, description: 'Subfamilias' },
@@ -981,7 +982,7 @@
         $scope.mainForm.tipo = 4
         $scope.mainForm.opcion = $scope.catalogs.find(x => x.code == '4').code
 
-        $scope.proveedorSearch = (textSearch) => commonSvc.proveedorSearch(textSearch)
+        $scope.proveedorSearch = (textSearch) => proveedorSvc.search(textSearch)
         $scope.selectProveedorFiltro = (item) => {
             $scope.mainForm.rucProveedor = item.proveedor.numeroIdentificacion
             $scope.getArticles()

@@ -278,7 +278,7 @@
             })
 
             if (isConfirmed) {
-                fS.showLoaderAnular();
+                showLoader();
                 _mS.getData('delete', '/FacturaCompra/Delete?id=' + item.idFacturaCompra).then(response => {
                     if (response.code === "0") {
                         fS.sweetAlert('warning', response.message, response.titleSms);
@@ -287,7 +287,7 @@
                         fS.sweetAlert('success', response.message, response.titleSms, 1000);
                         $scope.getFacturaCompras();
                     }
-                })
+                }).finally(()=>hideLoader())
             }
         }
 

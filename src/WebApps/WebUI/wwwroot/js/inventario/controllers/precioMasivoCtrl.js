@@ -13,10 +13,11 @@
         '$log',
         '$window',
         'modalService',
-        'uiGridConstants'
+        'uiGridConstants',
+        'proveedorService'
     ]
 
-    function precioMasivoCtrl($scope, _mS, _tS, _commonSvc, _articleSvc, _pricingUtils, _form, $interval, $log, $window, _modalSvc, uiGridConstants) {
+    function precioMasivoCtrl($scope, _mS, _tS, _commonSvc, _articleSvc, _pricingUtils, _form, $interval, $log, $window, _modalSvc, uiGridConstants, proveedorSvc) {
         _mS.detectDevice()
 
         $scope.catalogs = [
@@ -347,7 +348,7 @@
             }
         }
 
-        $scope.proveedorSearch = (textSearch) => _commonSvc.proveedorSearch(textSearch)
+        $scope.proveedorSearch = (textSearch) => proveedorSvc.search(textSearch)
         $scope.selectProveedorFiltro = (item) => {
             $scope.mainForm.rucProveedor = item.proveedor.numeroIdentificacion
             $scope.getArticles()

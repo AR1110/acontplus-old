@@ -1,8 +1,8 @@
 app.controller('carteraProveedorCtrl', carteraProveedorCtrl);
 
-carteraProveedorCtrl.$inject=['mainService', '$scope', '$filter', 'commonService', 'modalService', 'nombreModal', 'toastService','formulario'];
+carteraProveedorCtrl.$inject=['mainService', '$scope','proveedorService', '$filter', 'commonService', 'modalService', 'nombreModal', 'toastService','formulario'];
 
-function carteraProveedorCtrl(_mS, $scope, $filter, commonSvc, _modalSvc, _nombreModal, toast, form){
+function carteraProveedorCtrl(_mS, $scope, proveedorSvc, $filter, commonSvc, _modalSvc, _nombreModal, toast, form){
     $scope.carteraProveedores = [];
     $scope.cloneCarteraProveedores = [];
 
@@ -91,7 +91,7 @@ function carteraProveedorCtrl(_mS, $scope, $filter, commonSvc, _modalSvc, _nombr
     };      
 
     $scope.proveedorSearch = (txtSearch)=>{
-        return commonSvc.proveedorSearch(txtSearch).then(response=>response)          
+        return proveedorSvc.search(txtSearch).then(response=>response)          
     };
 
     $scope.onKeyupProvedorAutocompleteFiltro = ()=>{

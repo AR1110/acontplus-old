@@ -5,9 +5,15 @@
 
     app.controller('configGeneralCtrl', configGeneralCtrl);
 
-    configGeneralCtrl.$inject = ['$scope', 'mainService', 'commonService', 'toastService']
+    configGeneralCtrl.$inject = [
+        '$scope', 
+        'mainService', 
+        'commonService', 
+        'toastService',
+        'articuloService'
+    ]
 
-    function configGeneralCtrl($scope, mS, commonSvc, tS){
+    function configGeneralCtrl($scope, mS, commonSvc, tS, articuloSvc){
 
 
         $scope.data = {};
@@ -114,7 +120,7 @@
     }
 
     $scope.searchArticle = async(textSearch)=>{
-        return  commonSvc.articuloSearchGeneral({
+        return articuloSvc.search({
             textSearch,
             condicion: false
         }) || []

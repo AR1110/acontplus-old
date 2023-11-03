@@ -320,7 +320,7 @@ class MdArticuloCtrl extends BaseSearchArticulo {
     }
 
     async getDynamicSearchArticlesSimple(textSearch) {
-        let results = await this._commonSvc.articuloSearchGeneral({
+        let results = await this.articuloSvc.search({
             textSearch,
             condicion: false
         })

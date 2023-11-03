@@ -78,7 +78,28 @@
                         }
                     }
                 });
-        };
+        }
+
+        service.search = function(textSearch){
+            let params = {
+                textSearch,
+                tipo: 5,
+            };
+            return mS
+                .getData("get", `${URL}?json=${JSON.stringify(params)}`, null, true)
+                .then((response) => {
+
+                    if (response.code === "0") {
+                        console.log(response)
+                        return [];
+                    }
+                    if (response.code === "1") {
+                        let results = JSON.parse(response.payload) 
+                        let proveedores = results.proveedores; 
+                        return proveedores;
+                    }
+                });
+        }
 
         service.checkByID = function (ruc) {
             let params = {

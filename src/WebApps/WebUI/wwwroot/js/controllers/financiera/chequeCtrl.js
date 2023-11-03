@@ -1,12 +1,11 @@
 (function(){
     'use strict';
 
-    angular.module('acontPlusApp')
-        .controller('chequeCtrl', chequeCtrl);
+    app.controller('chequeCtrl', chequeCtrl);
 
-        chequeCtrl.$inject=['$scope','$http', '$filter', 'mainService', 'commonService', 'toastService', 'formulario'];
+        chequeCtrl.$inject=['$scope','$http', '$filter', 'proveedorService', 'mainService', 'commonService', 'toastService', 'formulario'];
 
-    function chequeCtrl($scope, $http, $filter, _mS, commonSvc, toast, form){     
+    function chequeCtrl($scope, $http, $filter, proveedorSvc, _mS, commonSvc, toast, form){     
         // let accion = JSON.parse(localStorage.getItem("accion"));
         // if(accion===null){
         //     location.href = "/Home/Index";
@@ -94,7 +93,7 @@
 
         //Search Proveedor 
         $scope.proveedorFiltro = {};
-        $scope.proveedorSearch=textSearch=>commonSvc.proveedorSearch(textSearch).then(response=>response)            
+        $scope.proveedorSearch = textSearch => proveedorSvc.search(textSearch).then(response=>response)            
         
         $scope.onKeyupProvedorAutocompleteFiltro = ()=>{
             if(form.campo($scope.proveedorFiltro.nombreFiscal)){
