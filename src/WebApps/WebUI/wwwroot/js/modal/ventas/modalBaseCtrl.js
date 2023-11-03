@@ -1144,10 +1144,7 @@ export class ModalBaseCtrl {
                 valor: this.data.fechaVencimiento instanceof Date && !isNaN(this.data.fechaVencimiento),
                 message: 'Ingrese la Fecha de Vencimiento',
             },
-            "validFechaVcto": {
-                valor: this.data.fechaEmision <= this.data.fechaVencimiento,
-                message: 'Fecha de Vencimiento no puede ser menor a  Fecha de Emisión'
-            },
+            
             "gridOptions": {
                 valor: this.gridOptions.data.length,
                 message: 'Ingrese al menos un Articulo en el Detalle',
