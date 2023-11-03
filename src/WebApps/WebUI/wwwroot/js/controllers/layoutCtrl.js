@@ -36,7 +36,7 @@ function layoutCtrl($scope, $rootScope, $window) {
     $scope.accions = $scope.userData.actions || []
 
     if ($scope.menus.length == 0) {
-        location.href = '/Login';
+        $scope.logout();
         return
     }
 

@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebUI.Areas.WhatsappUsage.Pages
+namespace WebUI.Pages.WhatsappUsage
 {
     public class IndexModel : PageModel
     {

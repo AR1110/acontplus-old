@@ -1115,9 +1115,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Areas\Restaurante\Pages\Index.cshtml">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Content>
     <Content Update="libman.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
