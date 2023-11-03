@@ -1710,9 +1710,7 @@ function ModalCobroDetalleCtrl($scope, $mdDialog, mS, tS, fS, params) {
                                 return cobro;
                             })
                         return item;
-                    })
-
-                    console.log($scope.comprobanteIngresos)
+                    }) 
 
 
                 }).catch(error => {

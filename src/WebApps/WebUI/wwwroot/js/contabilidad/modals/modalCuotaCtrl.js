@@ -64,7 +64,7 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
                     
                     let tempCuotas = mainDataRepository[2];
                     $scope.cuotas = tempCuotas.map(cuotaMappFrom)
-                    console.log($scope.comprobante)
+                    
 
                     let tempCuotasMora = mainDataRepository[3];
                     $scope.cuotasMora = tempCuotasMora;
@@ -170,7 +170,6 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
         showLoader();
         mS.getData('post', 'CuentaPorCobrar/Insert/Cuota', {data: query},  true).then(response => {
             hideLoader();
-            console.log(response)
             if (response.code === "0") {
                 fS.sweetAlert('warning', response.message);                                                       
             }
@@ -210,7 +209,7 @@ function ModalCuotaCtrl($scope, $uibModalInstance, mS, modalSvc, nombreModalCont
                 showLoader();
                 mS.getData('get', url + '?json=' + JSON.stringify(query)  , null, true).then(response=>{
                     hideLoader();
-                    console.log(response)
+                    
                     if(response.code==='0'){
                         fS.sweetAlert('warning', response.message)
                     }
