@@ -381,7 +381,7 @@ export class ModalAddCtrl extends ModalCompraNoHabitualCtrl {
 
                 this.decimal = decimal;
                 this.tipoIvas = tarifasImpuesto;
-                this.data.inventory = config.inventory;  
+                this.data.inventory = config.inventory;
 
                 this.puntosEmision = this.puntosEmisionTemporal.filter(item => item.codEstab === this.data.codEstab)
                 this.data.idPuntoEmision = this.puntosEmision.find(item => (item.predeterminado)).idPuntoEmision;
@@ -392,7 +392,7 @@ export class ModalAddCtrl extends ModalCompraNoHabitualCtrl {
 
                 //Actividad Tipo iVA 
                 this.actividadTipoIva = this.actividadTipoIvaTemporal.find(item => item.codEstab === this.data.codEstab)
- 
+
                 this.setColumnDefs();
 
                 //Eliminar Mas Adelante 
@@ -427,15 +427,15 @@ export class ModalAddCtrl extends ModalCompraNoHabitualCtrl {
                     tipoIvas: this.tipoIvas,
                     decimal: this.decimal,
                     actividadTipoIva: this.actividadTipoIva
-                })  
-            }).finally(()=>hideLoader());
+                })
+            }).finally(() => hideLoader());
 
             this.$scope.$apply();
 
         } catch (error) {
             hideLoader();
             console.log(error)
-        }  
+        }
     }
 
 
@@ -593,7 +593,7 @@ export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
         } finally {
             hideLoader()
         }
-    } 
+    }
 
 }
 
@@ -602,9 +602,21 @@ export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
 
 export class ModalDetalleCtrl extends ModalCompraNoHabitualCtrl {
 
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params']
+    static $inject = [
+        '$scope',
+        '$timeout',
+        '$uibModalInstance',
+        'mainService',
+        'commonService',
+        'articuloService',
+        'modalService',
+        'nombreModal',
+        'toastService',
+        'formulario',
+        'params'
+    ]
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS, params) {
+    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, articuloSvc, _modalSvc, _nombreModalConst, _tS, _fS, params) {
         super({
             $scope,
             $timeout,
@@ -618,6 +630,7 @@ export class ModalDetalleCtrl extends ModalCompraNoHabitualCtrl {
         });
 
         this.params = params;
+        this.articuloSvc = articuloSvc;
 
         this.searchProveedorOptions = {}
         this.searchProveedorOptions.showBtnNew = true;
@@ -672,12 +685,11 @@ export class ModalDetalleCtrl extends ModalCompraNoHabitualCtrl {
                     idArticulo: item.idArticulo
                 }
 
-                this._commonSvc.getDataArticuloParaCompra({
+                this.articuloSvc.findForPurchase({
                     json: data
-                }).then(response => {
-                    const results = JSON.parse(response.payload);
-                    item.medidas = results[1]
-                    item.etiquetas = results[2]
+                }).then(response => {                    
+                    item.medidas = response.medidas;
+                    item.etiquetas = response.etiquetas;
                 })
 
                 //Por Anlizar 

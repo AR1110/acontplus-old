@@ -43,10 +43,10 @@ app.constant('nombreModalInventario', {
             'AFI': 'Articulo/_ArticuloFraccionadoInfo.cshtml',
             'MAI': 'Articulo/_ModalArticuloImagen.cshtml',
             'MID': 'Articulo/_ModalArticuloImagenDetalle.cshtml',
-            'HC': '~/Areas/DocumentoRecibido/Pages/Shared/_HistoryCompras.cshtml',
+            'HC': '~/Pages/DocumentoRecibido/Shared/_HistoryCompras.cshtml',
             'AF': '~/Pages/ArticuloFraccionado/_ModalArticuloFraccionado.cshtml'
         }
-    },    
+    },
     FAMILIA: {
         fileCtrl: '/js/inventario/modals/modalFamiliaCtrl.js' + CHANGE_VERSION(),
         controller: 'ModalFamiliaCtrl',
@@ -244,7 +244,14 @@ app.constant('nombreModalCompra', {
             MU: '~/Areas/CompraNoHabitual/Pages/Shared/_ModalNuevo.cshtml',
             MD: '~/Areas/CompraNoHabitual/Pages/Shared/_ModalDetalle.cshtml'
         }
-    }
+    },
+    DOCUMENTO_RECIBIDO: {
+        fileCtrl: '/js/compras/modals/docRecibidoPreviewCtrl.js' + CHANGE_VERSION(),
+        controller: 'docRecibidoPreviewCtrl',
+        F: {
+            template: '~/Pages/DocumentoRecibido/Shared/_InvoicePreview.cshtml'
+        }
+    },
 })
 
 app.constant('nombreModalLogistica', {
@@ -299,13 +306,7 @@ app.constant('nombreModalContabilidad', {
 
 
 app.constant('nombreModal', {
-    DOCUMENTO_RECIBIDO: {
-        fileCtrl: '/js/compras/modals/docRecibidoPreviewCtrl.js' + CHANGE_VERSION(),
-        controller: 'docRecibidoPreviewCtrl',
-        F: {
-            template: '~/Areas/DocumentoRecibido/Pages/Shared/_InvoicePreview.cshtml'
-        }
-    },
+   
     caja: {
         MODAL_CTRL: 'admin/modalCajaCtrl.js' + CHANGE_VERSION(),
         MODAL_CAJA_CSHTML: 'Caja/_ModalCaja.cshtml',

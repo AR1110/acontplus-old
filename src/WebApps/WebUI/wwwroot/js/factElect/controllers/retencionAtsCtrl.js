@@ -3,19 +3,24 @@
 
     app.controller('retencionAtsCtrl', retencionAtsCtrl);
 
-    retencionAtsCtrl.$inject = ['$scope',
-        'mainService',
-        'commonService',
-        'toastService',
+    retencionAtsCtrl.$inject = [
+        '$scope',
+        '$injector',
         '$element',
         '$cookies',
-        'uuid2',
         '$window',
         'FileSaver',
-        'Blob'
+        'Blob',
     ]
 
-    function retencionAtsCtrl($scope, mS, _commonSvc, tS, $element, $cookies, uuid2, $window, FileSaver, Blob) {
+    function retencionAtsCtrl($scope, $injector, $element, $cookies, $window, FileSaver, Blob) {
+        const mS = $injector.get('mainService')
+        const commonSvc = $injector.get('commonService')
+        const tS = $injector.get('toastService')
+        const uuid2 = $injector.get('uuid2')
+        const proveedorSvc = $injector.get('proveedorService')
+        const nombreModalCompra = $injector.get('nombreModalCompra')
+
         mS.detectDevice()
         /**Initial Load */
         $scope.genericAnswer = [{ codigo: 'SI' }, { codigo: 'NO' }]
@@ -48,11 +53,11 @@
             const formatDateMoment = moment.tz(fecha, "America/Guayaquil")
             return formatDateMoment.format("YYYY-MM-DD");
         }
-        const getUTCDate = (date) => {
-            const d = new Date(date);
-            const utcDate = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-            return utcDate;
-        }
+        // const getUTCDate = (date) => {
+        //     const d = new Date(date);
+        //     const utcDate = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+        //     return utcDate;
+        // }
 
         function formatDate(fecha) {
             let _getFecha = new Date(fecha)
@@ -253,34 +258,20 @@
                 }
                 if (!item && $scope.infoCompRet.identificacionSujetoRetenido) {
                     item = 2
-                }
-                let json = {
-                    tipo: 2,
-                    textSearch: (item == 1 ? $scope.infoCompRet.razonSocialSujetoRetenido : $scope.infoCompRet.identificacionSujetoRetenido)
-                }
-                console.log($scope.infoCompRet)
-                mS.getData('get', 'Compra/Proveedor?json=' + JSON.stringify(json), null, true).then(
-                    response => {
-                        if (response.code == '0') {
-                            if (item == 2) {
-                                $scope.infoCompRet.identificacionSujetoRetenido = ''
-                            }
-                            tS.toastr('warning', response.message)
-                        }
-                        if (response.code == '1') {
-                            $scope.proveedores = JSON.parse(response.payload)["proveedores"]
-                            if ($scope.proveedores.length == 1) {
-                                $scope.selectSujetoRetenido($scope.proveedores[0], false)
-                            }
-                            else {
-                                $('#searchProvModal').modal('show')
-                            }
-                            //console.log($scope.proveedores)
-                        }
-                    }, error => {
-                        console.log(error)
+                } 
+                const textSearch = (item == 1 ? $scope.infoCompRet.razonSocialSujetoRetenido : $scope.infoCompRet.identificacionSujetoRetenido)
+ 
+                showLoader();
+                proveedorSvc.search(textSearch).then(proveedores => {
+                    console.log(proveedores)
+                    $scope.proveedores = proveedores;
+                    if ($scope.proveedores.length == 1) {
+                        $scope.selectSujetoRetenido($scope.proveedores[0], false)
                     }
-                )
+                    else {
+                        $('#searchProvModal').modal('show')
+                    }
+                }).finally(() => hideLoader()) 
 
             } catch (error) {
                 console.log(error)
@@ -371,27 +362,31 @@
             }
         }
 
-        $scope.docPreview = (item) => {
+        $scope.docPreview = async (item) => {
             try {
                 console.log(item)
                 if (!item.isAutomatic) {
-                    _commonSvc.viewDetailDocument({
+                    commonSvc.viewDetailDocument({
                         id: item.idDocumento,
                         codigoDocumento: 'FC'
                     })
                     // tS.toastr('warning', 'Este documento no ha sido registrado desde el modulo de recepcion de documentos')
                     return
                 }
-                mS.getData('get', 'DocumentoRecibido/Preview/' + item.idDocumento, null, true).then(
-                    response => {
-                        $('#facturaModal').modal('show')
-                        $('#bodyFactura').html(response.payload)
-                        console.log(response)
-                    }
-                ).catch(error => {
-                    hideLoader()
-                    console.log(error)
-                })
+                let { fileCtrl, controller, F } = nombreModalCompra.DOCUMENTO_RECIBIDO;
+                let ctrl = (await import(fileCtrl))[controller];
+                let template = F.template; 
+                const params = {
+                    idDocumento: item.idDocumento
+                }
+                modalSvc.openModalCustom({
+                    controller: ctrl,
+                    template,
+                    size: 'xl',
+                    params,
+                    windowClass: 'uibModalFullScreen',
+                    isRenderRazorPartial: true
+                }) 
             } catch (error) {
                 console.log(error)
             }

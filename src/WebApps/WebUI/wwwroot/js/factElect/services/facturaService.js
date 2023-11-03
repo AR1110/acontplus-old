@@ -3,7 +3,7 @@
     'use strict';
 
     app.factory('facturaService', function ($injector) {
-        let url = 'Factura/'
+        let url = 'FactElect/Factura/'
         let mainService = $injector.get('mainService');
         let formSvc = $injector.get('formulario');
         let service = {}

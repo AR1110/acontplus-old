@@ -2,9 +2,19 @@
 
 app.controller('notaCreditoProvCtrl', notaCreditoProvCtrl);
 
-notaCreditoProvCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'decodeToken']
+notaCreditoProvCtrl.$inject = [
+    '$scope', 
+    'mainService', 
+    'commonService', 
+    'modalService', 
+    'nombreModal', 
+    'formulario', 
+    'toastService', 
+    'decodeToken',
+    'proveedorService'
+]
 
-function notaCreditoProvCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form, _tS, decodeToken){
+function notaCreditoProvCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form, _tS, decodeToken, proveedorSvc){
 
     // let accion = JSON.parse(localStorage.getItem("accion"));  
     // if(accion===null){
@@ -93,7 +103,7 @@ function notaCreditoProvCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalCon
     
     
     $scope.searchProveedorFilter = (textSearch)=>{
-        return _commonSvc.proveedorSearch(textSearch)
+        return proveedorSvc.search(textSearch)
     }
 
     //Proveedor filter        

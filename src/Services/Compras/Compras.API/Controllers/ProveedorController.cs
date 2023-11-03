@@ -52,34 +52,44 @@ namespace Compras.API.Controllers
                 return Ok(response);
             }
             catch (Exception ex)
-            { 
+            {
+                _log.LogActivity("Error al crear proveedor: " + ex.ToString());
                 return BadRequest(ex.Message);
-            } 
+            }
         }
-        [HttpPut("{json}")]
-        public async Task<IActionResult> Put(string json)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, ApiRequest request)
         {
-
-            GenericResponse _response = new GenericResponse();
+            request.UserRoleId = User.GetUserRoleId();
             try
             {
-                int idUsuarioRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-                await _db.SPExecute("Recepcion.Proveedor_Update");
-                _db.AddDynamicParam("idRol", idUsuarioRol);
-                _db.AddDynamicParam("jsonData", SqlStringParam.Sanitize(json));
-                _response = _db.GetDefault();
+                var response = await _proveedorService.UpdateAsync(id, request);
+                return Ok(response);
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error al actualizar el proveedor: " + ex.ToString());
-                _response.Create(code: "0", message: "Error al actualizar el proveedor");
+                _log.LogActivity("Error al actualizar proveedor: " + ex.ToString());
+                return BadRequest(ex.Message);
             }
-            finally
-            {
-                _db.Close();
-            }
+        }
 
-            return Ok(_response);
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        { 
+            try
+            {
+                var parameters = new Dictionary<string, object>{
+                    {"userRoleId", User.GetUserRoleId()},
+                    {"id", id}
+                };
+                var response = await _proveedorService.DeleteAsync(parameters);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error al eliminar: " + ex.ToString());
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
