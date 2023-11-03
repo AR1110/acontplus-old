@@ -119,7 +119,7 @@
                 }
                 if (response.code === "1") {
                     let mainData = JSON.parse(response.payload)                    
-                    return mainData.proveedor;
+                    return mainData.proveedor[0]
                 }
 
             })
