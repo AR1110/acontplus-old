@@ -42,7 +42,7 @@ namespace Ventas.API.Controllers
         {
             try
             {
-                var response = await _notaEntrega.GetAsync(new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "id", id } });
+                var response = await _notaEntrega.GetByIdAsync(new Dictionary<string, object> { { "idRol", User.GetUserRoleId() }, { "id", id } });
                 if (response == null) { return NoContent(); };
                 return Ok(new { code = "1", payload = response });
             }

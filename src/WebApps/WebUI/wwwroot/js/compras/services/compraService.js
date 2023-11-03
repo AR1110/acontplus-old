@@ -96,7 +96,10 @@
                     if (response.code === "1") {
                         let results = JSON.parse(response.payload) 
                         let proveedores = results.proveedores; 
-                        return proveedores;
+                        return proveedores.map((proveedor)=>({
+                            ...proveedor,
+                            nombreFiscal: proveedor.razonSocial
+                        }))
                     }
                 });
         }
