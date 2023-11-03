@@ -52,14 +52,6 @@ namespace WebUI.Controllers.Financiero
             return Ok(_gr);
         }
 
-        //Listar Caja  para Chackbox Contrapartida--
-        public async Task<IActionResult> ListCaja()
-        {
-            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-            _gr = await _c.ListAsync(idRol);
-            return Ok(_gr);
-        }
-
         public async Task<IActionResult> GetAsigCajaUsuario()
         {
             var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);

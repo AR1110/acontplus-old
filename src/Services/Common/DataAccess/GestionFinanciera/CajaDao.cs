@@ -176,55 +176,6 @@ namespace DataAccess.GestionFinanciera
             return _response;
         }
 
-        //Operaciones Especiales 
-        public async Task<GenericResponse> ListAsync(int idRol)
-        {
-            var listar = new List<ContraPartidaCajaViewModel>();
-
-            try
-            {
-                using (var con = new SqlConnection(_connectionStrings))
-                {
-                    var cmd = new SqlCommand("aspCajaList", con);
-                    cmd.Parameters.AddWithValue("idRol", idRol);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    var reader = cmd.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        _response.id = reader.GetString(0);
-                        _response.message = reader.GetString(1);
-                        _response.titleSms = reader.GetString(2);
-                        if (_response.id == "1")
-                        {
-                            var item = new ContraPartidaCajaViewModel()
-                            {
-                                contraPartidaCaja = new ContraPartidaCaja()
-                                {
-                                    idCaja = reader.GetInt32(3),
-                                    estado = reader.GetBoolean(4)
-                                },
-                                caja = reader.GetString(5),
-                            };
-                            listar.Add(item);
-                        }
-                    }
-                }
-                _response.data = listar;
-            }
-            catch (Exception ex)
-            {
-                _response.id = "0";
-                _response.message = ex.Message.ToString();
-                _response.titleSms = "Listar Caja-ContraPartida";
-            }
-            finally
-            {
-
-            }
-            return _response;
-        }
-
         //get para traer solo la caja asignada al usuario
         public async Task<GenericResponse> GetAsigAsync(int idRol)
         {
