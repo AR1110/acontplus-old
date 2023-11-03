@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
@@ -15,8 +15,6 @@ namespace Contabilidad.Infrastructure.Data
             IConfiguration configuration = new ConfigurationBuilder()
                 .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../../../SharedSettings")) //old ../Vet.API
                 .AddJsonFile($"sharedsettings.Development.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"sharedsettings.Staging.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"sharedsettings.Production.json", optional: true, reloadOnChange: true)
                 .Build();
 
             var connectionString = configuration.GetConnectionString(_databaseName);

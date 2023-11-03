@@ -42,8 +42,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SharedSettings", "SharedSettings", "{6373124D-C7D5-4AC8-88BE-683DE77E17C6}"
 	ProjectSection(SolutionItems) = preProject
 		SharedSettings\sharedsettings.Development.json = SharedSettings\sharedsettings.Development.json
-		SharedSettings\sharedsettings.Production.json = SharedSettings\sharedsettings.Production.json
-		SharedSettings\sharedsettings.Staging.json = SharedSettings\sharedsettings.Staging.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GatewayAcontplus.API", "ApiGateways\GatewayAcontplus.API\GatewayAcontplus.API.csproj", "{B03D81D4-1429-4589-8F69-11BC891C56AC}"
