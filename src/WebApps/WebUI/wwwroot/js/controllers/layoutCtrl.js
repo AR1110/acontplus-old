@@ -36,7 +36,7 @@ function layoutCtrl($scope, $rootScope, $window) {
     $scope.accions = $scope.userData.actions || []
 
     if ($scope.menus.length == 0) {
-        location.href = '/Login';
+        $scope.logout();
         return
     }
 
@@ -77,7 +77,6 @@ function layoutCtrl($scope, $rootScope, $window) {
     }
 
     const pathname = $window.location.pathname;
-    const rutasReservadas = ['/ReporteVentas/ConsumoCliente']
     if (pathname) {
 
         if (pathname === '/') {
@@ -87,15 +86,7 @@ function layoutCtrl($scope, $rootScope, $window) {
             let lengthPath = pathname.split('/').splice(1).length;
 
             if ([1, 2].includes(lengthPath)) {
-                let path = '';
-                if (rutasReservadas.includes(pathname)) {
-                    path = pathname;
-                } else {
-                    path = pathname.indexOf('/Index') == -1 ? pathname + '/Index' : pathname;
-                }
-
-
-                let dataMenu = $scope.subMenus.find(item => item.url === path);
+                let dataMenu = $scope.subMenus.find(item => item.url === pathname);
                 if (dataMenu) {
                     $rootScope.usuarioPermiso = {
                         almacenPermiso: JSON.parse($scope.permissions.find(x => x.codModule == "AR").permission),

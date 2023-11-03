@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebUI.Pages.Restaurant.Floor
+namespace WebUI.Pages.WhatsappUsage
 {
     public class IndexModel : PageModel
     {

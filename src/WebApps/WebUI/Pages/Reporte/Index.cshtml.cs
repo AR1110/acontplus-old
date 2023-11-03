@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebUI.Areas.Restaurante.Pages
+namespace WebUI.Pages.Reporte
 {
     public class IndexModel : PageModel
     {

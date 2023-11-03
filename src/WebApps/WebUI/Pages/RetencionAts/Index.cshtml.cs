@@ -1,11 +1,12 @@
-using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebUI.Areas.WhatsappUsage.Pages
+namespace WebUI.Pages.RetencionAts
 {
     public class IndexModel : PageModel
     {
         public void OnGet()
         {
+
         }
     }
 }
