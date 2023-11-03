@@ -6,3 +6,6 @@ GO
 
 DROP SCHEMA IF EXISTS [Asignaciones]
 GO
+
+DROP SCHEMA IF EXISTS [Sistema]
+GO

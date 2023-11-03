@@ -482,6 +482,20 @@ BEGIN
             SELECT idEstadoPago,descripcion,codigo FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo IN ('A','NCBR','CBR')
 
             RETURN 
+        END
+        
+    --> Data Form Cuotas 
+    IF @tipo = 7 
+        BEGIN
+            SELECT idTiempoCredito
+	                ,descripcion
+	                ,diasCredito
+	                ,numeroCuota 
+	        FROM TiempoCredito WITH (NOLOCK) 
+	        WHERE idEntidad = @idEntidad 
+              AND gestion = 1 
+              AND estado = 1
+            RETURN 
         END 
 END
 GO

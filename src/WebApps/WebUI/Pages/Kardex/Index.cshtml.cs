@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebUI.Areas.Kardex.Pages
+namespace WebUI.Pages.Kardex
 {
     public class IndexModel : PageModel
     {
