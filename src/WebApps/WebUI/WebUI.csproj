@@ -4002,7 +4002,6 @@
   <ItemGroup>
     <Folder Include="App\routes\TechnicalSupport\" />
     <Folder Include="App\routes\Restaurant\Product\Promotions\Components\" />
-    <Folder Include="Controllers\Aplicacion\" />
     <Folder Include="wwwroot\lib\angular-daterangepicker\" />
   </ItemGroup>
 
