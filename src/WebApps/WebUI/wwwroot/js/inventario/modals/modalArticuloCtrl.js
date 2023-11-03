@@ -511,7 +511,7 @@ function modalArticuloCtrl(
             console.log("articulo codigo barra");
         }
 
-        if ($scope.step === 4 || $scope.tipoRegistro === 2) {
+        if ($scope.step === 4 && $scope.data.idArticulo >0) {
             getUbicacionArticulo();
         }
     };

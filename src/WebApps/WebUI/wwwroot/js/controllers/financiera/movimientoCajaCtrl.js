@@ -464,7 +464,7 @@ class MovimientoCajaCtrl {
             hideLoader();
             console.log(error)
         }
-    };
+    }
 
     getAllEstado() {
         this._commonSvc.getEstadoDocByCodDoc('EC').then(response => {

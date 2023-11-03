@@ -1,10 +1,10 @@
 ﻿@page
-@model WebUI.Areas.DocumentoRecibido.Pages.IndexModel
+@model WebUI.Pages.DocumentoRecibido.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "Index";
-    Layout = "_Layout";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 <style>
     .inputdemoInlineForm .demo-inline-form-container {
         padding: 16px;
@@ -76,8 +76,9 @@
                                    options="dateRangePicker.options" options="{locale: {separator: " :"}}" />
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-@*                             @await Html.PartialAsync("~/Views/Proveedor/_ProveedorAutocompleteFiltro.cshtml")
- *@                        </div>
+                            @*                             @await Html.PartialAsync("~/Views/Proveedor/_ProveedorAutocompleteFiltro.cshtml")
+                            *@
+                        </div>
                     </div>
                     <div class="row" ng-if="establecimientos.length > 1">
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
@@ -134,17 +135,16 @@
             </div>
         </div>
     </div>
-    @await Html.PartialAsync("_NewImport")
-    @await Html.PartialAsync("_CompFounded")
-    @await Html.PartialAsync("_MigrateEstab")
-    @await Html.PartialAsync("_Retencion")
-    @await Html.PartialAsync("_NotaCredito")
-    @await Html.PartialAsync("_Doc_Relacionado")
-    @await Html.PartialAsync("_ModalNewManual")
+    @await Html.PartialAsync("Shared/_NewImport.cshtml")
+    @await Html.PartialAsync("Shared/_CompFounded.cshtml")
+    @await Html.PartialAsync("Shared/_MigrateEstab.cshtml")
+    @await Html.PartialAsync("Shared/_Retencion.cshtml")
+    @await Html.PartialAsync("Shared/_NotaCredito.cshtml")
+    @await Html.PartialAsync("Shared/_Doc_Relacionado.cshtml")
+    @await Html.PartialAsync("Shared/_ModalNewManual.cshtml")
 
 </div>
 @section Scripts{
-    <script src="~/js/compras/services/docRecibidoService.js" asp-append-version="true"></script>
-    <script src="~/js/compras/directives/compraDirective.js" asp-append-version="true"></script>
+    <script src="~/js/compras/services/docRecibidoService.js" asp-append-version="true"></script>    
     <script src="~/js/compras/controllers/documentoRecibidoCtrl.min.js" asp-append-version="true"></script>
 }

@@ -1,9 +1,10 @@
 class MdAutocompleteProveedor {
-    static $inject = ['commonService', 'modalService', 'nombreModalCompra']
-    constructor(_commonSvc, _modalSvc, nombreModalCompra) {
-        this._commonSvc = _commonSvc;
-        this._modalSvc = _modalSvc;
+    static $inject = ['commonService', 'modalService', 'nombreModalCompra', 'proveedorService']
+    constructor(commonSvc, modalSvc, nombreModalCompra, proveedorSvc) {
+        this.commonSvc = commonSvc;
+        this.modalSvc = modalSvc;
         this.nombreModalCompra = nombreModalCompra;
+        this.proveedorSvc = proveedorSvc;
         this.search = this.search || {};
     }
 
@@ -27,31 +28,27 @@ class MdAutocompleteProveedor {
 
     }
 
-    $onChanges(changesObj) {
-
-    }
 
     getDynamicSearchProveedor(searchText) {
         if (searchText === null || searchText === undefined) return
-        return this._commonSvc.proveedorSearchGeneral(searchText);
+        return this.proveedorSvc.search(searchText);
     }
 
     async selectedItemChange(item) {
         try {
             if (item === null || item == undefined) return
             showLoader();
-            this.dataProveedor = await this._commonSvc.getDataByProveedor(item.idProveedor);
-
+            this.dataProveedor = await this.proveedorSvc.getId(item.idProveedor).finally(()=>hideLoader())
+    
             this.searchText = this.dataProveedor.nombreFiscal;
             this.idProveedor = this.dataProveedor.idProveedor;
             this.selectedItemProveedor({
                 item: this.dataProveedor
             })
         } catch (error) {
+            hideLoader()
             console.error(error)
-        } finally {
-            hideLoader();
-        }
+        }  
     }
 
     searchTextChange(item) {
@@ -63,44 +60,13 @@ class MdAutocompleteProveedor {
         }
     }
 
-    async abrirModalProveedor(item) {
-        let fileCtrl = this.nombreModalCompra.PROVEEDOR.fileCtrl;
-        let ctrl = this.nombreModalCompra.PROVEEDOR.controllers['M'];
-        let template = this.nombreModalCompra.PROVEEDOR.templates['M'];
-        
-        let controller = (await import(fileCtrl))[ctrl]
-        const modalRef = this._modalSvc.openModalCustom({
-            controller ,
-            template,
-            size: 'xl',
-            params: item
-        })
-        modalRef.result.then(response => {
-            if (typeof response === 'object') {
-                this.selectedItemChange(response)
-            }
-        })
+    resultModal(result) {
+        if (typeof result === 'object') {
+            this.selectedItemChange(result)
+        }
     }
 
-    //Comunicación con el Controlador shared/proveedor/proveedorModalCtrl 
-    abrirModalProveedorLista = async () => {
-        let fileCtrl = this.nombreModalCompra.PROVEEDOR.fileCtrl;
-        let ctrl = this.nombreModalCompra.PROVEEDOR.controllers['L'];
-        let template = this.nombreModalCompra.PROVEEDOR.templates['L'];
-        
-        let controller = (await import(fileCtrl))[ctrl]
-        const modalRef = this._modalSvc.openModalCustom({
-            controller,
-            template,
-            size: 'xl',
-            //windowClass: 'uibModalFullScreen'            
-        })
-        modalRef.result.then(response => {
-            if (typeof response === 'object') {
-                this.selectedItemChange(response)
-            }
-        })
-    }
+
 
 }
 
@@ -129,11 +95,20 @@ app.component("mdAutocompleteProveedor", {
                             <span md-highlight-text="ctrl.searchText">{{item.nombreFiscal}}</span>
                         </md-item-template>   
 
-                        <a ng-if="$ctrl.search.showBtnList" class="btn btn-warning btn-sm mt-1" href="javascript:void(0)" ng-click="$ctrl.abrirModalProveedorLista()"><i class="mdi mdi-account-search"></i> Lista</a>
+                        <a ng-if="$ctrl.search.showBtnList" 
+                        class="btn btn-warning btn-sm mt-1" 
+                        href="javascript:void(0)" 
+                       btn-proveedor-lista result-modal="$ctrl.resultModal(result)" >
+                        <i class="mdi mdi-account-search"></i> Lista</a>
 
-                        <a ng-if="$ctrl.search.showBtnNew" class="btn btn-info btn-sm mt-1" href="javascript:void(0)" ng-click="$ctrl.abrirModalProveedor()"><i class="mdi mdi-plus"></i> Nuevo</a>
+                        <a ng-if="$ctrl.search.showBtnNew" 
+                        class="btn btn-info btn-sm mt-1" 
+                        href="javascript:void(0)" 
+                        btn-proveedor-add-update result-modal="$ctrl.resultModal(result)" ><i class="mdi mdi-plus"></i> Nuevo</a>
 
-                        <a class="btn btn-success btn-sm mt-1" ng-if="$ctrl.search.showBtnEdit && $ctrl.idProveedor>0" href="javascript:void(0)" ng-click="$ctrl.abrirModalProveedor($ctrl.dataProveedor)"><i class="mdi mdi-pencil"></i> Editar</a>
+                        <a class="btn btn-success btn-sm mt-1" 
+                        ng-if="$ctrl.search.showBtnEdit && $ctrl.idProveedor>0" href="javascript:void(0)" 
+                        btn-proveedor-add-update result-modal="$ctrl.resultModal(result)" params="$ctrl.dataProveedor"><i class="mdi mdi-pencil"></i> Editar</a>
 
                     </md-autocomplete>   
                    `,
@@ -172,13 +147,20 @@ app.component('uibModalProveedorSearch', {
                         </script>  
 
                     <div class="input-group-append" ng-if="$ctrl.search.showBtnNew">
-                        <button type="button" type="button" class="btn btn-outline-secondary btn-sm"  ng-click="$ctrl.abrirModalProveedor()"        tabindex="-1">
+                        <button type="button" type="button" class="btn btn-outline-secondary btn-sm"  
+                         btn-proveedor-add-update result-modal="$ctrl.resultModal(result)"      
+                         tabindex="-1">
                                 <i class="fa fa-plus fa-xs"></i>
                         </button>
-                        <button type="button" class="btn btn-outline-secondary btn-sm" ng-if="$ctrl.search.showBtnEdit && $ctrl.idProveedor>0" ng-click="$ctrl.abrirModalProveedor($ctrl.dataProveedor)" 
+                        <button type="button" class="btn btn-outline-secondary btn-sm" 
+                        ng-if="$ctrl.search.showBtnEdit && $ctrl.idProveedor>0" 
+                         btn-proveedor-add-update result-modal="$ctrl.resultModal(result)" params="$ctrl.dataProveedor"
                                 tabindex="-1"> <i class="fas fa-pencil-alt fa-xs"></i>
                         </button>                         
-                        <button type="button" class="btn btn-outline-secondary btn-sm" ng-if="$ctrl.search.showBtnList"  ng-click="$ctrl.abrirModalProveedorLista()" 
+                        <button type="button" 
+                        class="btn btn-outline-secondary btn-sm" 
+                        ng-if="$ctrl.search.showBtnList"  
+                        btn-proveedor-lista result-modal="$ctrl.resultModal(result)" 
                                 tabindex="-1"> <i class="fa fa-search fa-xs"></i>
                         </button>                                                                                               
                     </div>  
@@ -199,14 +181,14 @@ app.component('uibModalProveedorSearch', {
 
 class MdAutocompleteSimpleProveedor {
     static $inject = ['commonService']
-    constructor(_commonSvc) {
-        this._commonSvc = _commonSvc;
+    constructor(commonSvc) {
+        this.commonSvc = commonSvc;
     }
 
 
     getDynamicSearchCliente(searchText) {
         if (searchText === null || searchText === undefined) return
-        return this._commonSvc.clienteSearch(searchText);
+        return commonSvc.clienteSearch(searchText);
     }
 
     selectedItemChange(item) {

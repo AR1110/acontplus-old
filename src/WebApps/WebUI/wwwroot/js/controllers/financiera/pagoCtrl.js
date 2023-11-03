@@ -7,6 +7,7 @@ pagoCtrl.$inject = [
     '$scope',
     'mainService',
     'commonService',
+    'proveedorService',
     'toastService',
     'modalService',
     'nombreModal',
@@ -14,7 +15,7 @@ pagoCtrl.$inject = [
     'decodeToken'
 ];
 
-function pagoCtrl($timeout, $http, $filter, $scope, mS, _commonSvc, toast, _modalSvc, _nombreModal, form, decodeToken) {
+function pagoCtrl($timeout, $http, $filter, $scope, mS, _commonSvc, proveedorSvc, toast, _modalSvc, _nombreModal, form, decodeToken) {
     'use strict'
     // let accion = JSON.parse(localStorage.getItem("accion"));
     // if(accion===null){
@@ -144,7 +145,7 @@ function pagoCtrl($timeout, $http, $filter, $scope, mS, _commonSvc, toast, _moda
 
     $scope.proveedorFiltro = {};
     $scope.proveedorSearch = (textSearch) => {
-        return _commonSvc.proveedorSearch(textSearch).then(response => response)
+        return proveedorSvc.search(textSearch).then(response => response)
     }
 
     $scope.onKeyupProvedorAutocompleteFiltro = () => {

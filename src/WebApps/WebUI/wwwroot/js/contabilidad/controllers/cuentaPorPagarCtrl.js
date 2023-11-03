@@ -8,9 +8,9 @@
 
     app.controller('cuentaPorPagarCtrl', cuentaPorPagarCtrl)
 
-    cuentaPorPagarCtrl.$inject = ['$scope', 'toastService', 'commonService', 'mainService', 'screenSize', '$timeout' ,'modalService', 'formulario']
+    cuentaPorPagarCtrl.$inject = ['$scope', 'toastService','proveedorService', 'commonService', 'mainService', 'screenSize', '$timeout' ,'modalService', 'formulario']
 
-    function cuentaPorPagarCtrl($scope, _tS, commonSvc, _mS, _sS, $timeout, _modalSvc, _form) {
+    function cuentaPorPagarCtrl($scope, _tS, proveedorSvc, commonSvc, _mS, _sS, $timeout, _modalSvc, _form) {
                  
         $scope.isMobile = _sS.on('xs, sm', function (isMatch) {
             $scope.isMobile = isMatch
@@ -179,7 +179,7 @@
         $scope.proveedorFilte={};
         $scope.searchProveedorFilter = (textSearch)=>{
             console.log(textSearch)
-            return  commonSvc.proveedorSearch(textSearch)
+            return  proveedorSvc.search(textSearch)
         };
 
         $scope.selectedOnChangeFilter = (item)=> {            

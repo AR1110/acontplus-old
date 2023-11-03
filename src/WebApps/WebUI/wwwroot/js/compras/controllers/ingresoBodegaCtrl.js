@@ -26,7 +26,7 @@ function ingresoBodegaCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst
     }
 
     $scope.searchProveedorFilter = (textSearch)=>{            
-        return _commonSvc.proveedorSearch(textSearch);
+        return proveedorSvc.search(textSearch);
     } 
 
     $scope.getIngresoBodegas = async()=>{
@@ -272,7 +272,7 @@ function ingresoBodegaCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst
             })
     
             if(isConfirmed){
-                _form.showLoaderAnular();
+                showLoader();
                 _mS.getData('delete', '/IngresoBodega/Delete?id=' + item.idIngresoBodega).then(response=>{
                     if(response.code==="0"){
                         _form.sweetAlert('warning', response.message, response.titleSms);            
@@ -281,11 +281,9 @@ function ingresoBodegaCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst
                         _form.sweetAlert('success', response.message, response.titleSms, 1000);                    
                         $scope.getIngresoBodegas();
                     }
-                }).catch(err=>{
-                    Swal.close();
-                    console.log(err)
-    
-                })           
+                }).catch(err=>{ 
+                    console.log(err) 
+                }).finally(()=>hideLoader())          
             }
         } catch (error) {
             console.log(error)            

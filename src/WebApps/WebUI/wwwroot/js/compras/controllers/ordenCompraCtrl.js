@@ -2,9 +2,9 @@
 
 app.controller('ordenCompraCtrl', ordenCompraCtrl);
 
-ordenCompraCtrl.$inject = ['$scope', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'decodeToken']
+ordenCompraCtrl.$inject = ['$scope', 'mainService', 'proveedorService', 'commonService', 'modalService', 'nombreModal', 'formulario', 'toastService', 'decodeToken']
 
-function ordenCompraCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form, _tS, decodeToken){
+function ordenCompraCtrl($scope, _mS, proveedorSvc, _commonSvc, _modalSvc, _nombreModalConst, _form, _tS, decodeToken){
 
     // let accion = JSON.parse(localStorage.getItem("accion"));  
     // if(accion===null){
@@ -79,7 +79,7 @@ function ordenCompraCtrl($scope, _mS, _commonSvc, _modalSvc, _nombreModalConst, 
     }
 
     $scope.searchProveedorFilter = (textSearch)=>{
-        return _commonSvc.proveedorSearch(textSearch)
+        return proveedorSvc.search(textSearch)
     }
 
     $scope.onChangeFechaFiltro =()=>{

@@ -9,22 +9,22 @@ modalKardexCtrl.$inject = [
     '$uibModalInstance',
     'commonService',
     'kardexService',
-    'articuloService', 
+    'articuloService',
     'modalService',
-    'nombreModal',
+    'nombreModalCompra',
     'formulario',
     'toastService',
     'params'
 ];
 
-function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articuloSvc, modalSvc, nombreModal, fS, tS, params) {        
+function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articuloSvc, modalSvc, nombreModalCompra, fS, tS, params) {
     $scope.articulo = params;
 
     $scope.dataSearch = {
         checkBoxFecha: true,
         checkBoxBodega: false,
         consolidacion: 0,
-        checkBoxDefault: false 
+        checkBoxDefault: false
     };
 
     $scope.articuloFiltro = {
@@ -37,12 +37,12 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articu
     $scope.data = {};
 
     //Rango Fechas 
-    let thisMoment = moment() 
-    let startOfMonth = moment(thisMoment).startOf('month') 
-    let endOfMonth = moment(thisMoment).endOf('month') 
+    let thisMoment = moment()
+    let startOfMonth = moment(thisMoment).startOf('month')
+    let endOfMonth = moment(thisMoment).endOf('month')
     // $scope.dataSearch.fechaInicio = startOfMonth;
     // $scope.dataSearch.fechaFin = endOfMonth;
-    
+
     //https://www.daterangepicker.com/
     $scope.dateRangePicker = {
         date: { startDate: startOfMonth, endDate: endOfMonth },
@@ -91,7 +91,7 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articu
         $scope.dataSearch.byArticulo = $scope.articulo.idArticulo;
 
         kardexSvc.getDataFilters().then(response => {
-            $scope.estadoMovimientos = response.estadoMovimientos; 
+            $scope.estadoMovimientos = response.estadoMovimientos;
         }).catch(error => {
             console.log(error)
         })
@@ -99,7 +99,7 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articu
         await commonSvc.getEstabAsign().then(response => {
             $scope.establecimientos = response;
 
-            if ($scope.establecimientos.length > 0) { 
+            if ($scope.establecimientos.length > 0) {
                 let dataEstab = $scope.establecimientos.find(estab => (estab.predeterminado
                 ));
                 $scope.dataSearch.codEstab = dataEstab.codEstab;
@@ -113,12 +113,12 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articu
             } else {
                 tS.toastr('warning', 'NO TIENES ASIGNADO NINGÚN ESTABLECIMIENTO');
             }
-        }).finally(()=>hideLoader())
+        }).finally(() => hideLoader())
 
         //getKardex();
         const params = Object.assign($scope.dataSearch, {
             checkBoxFecha: true,
-            checkBoxMovement: $scope.dataSearch.movement? true: false,
+            checkBoxMovement: $scope.dataSearch.movement ? true : false,
             fechaInicio: fS.formatDateMoment(startOfMonth),
             fechaFin: fS.formatDateMoment(endOfMonth),
         })
@@ -130,14 +130,14 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articu
 
 
     function getKardex() {
-        try { 
+        try {
             // const params = Object.assign($scope.dataSearch, {
             //     checkBoxMovement: $scope.dataSearch.movement? true: false
             // })
 
             const params = Object.assign($scope.dataSearch, {
                 checkBoxFecha: true,
-                checkBoxMovement: $scope.dataSearch.movement? true: false,
+                checkBoxMovement: $scope.dataSearch.movement ? true : false,
                 fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                 fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
             })
@@ -149,7 +149,7 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articu
         }
     }
 
-    function getDataKardex(params){
+    function getDataKardex(params) {
         showLoader();
         kardexSvc.get(params).then(response => {
             if (Array.isArray(response)) {
@@ -566,15 +566,15 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articu
         try {
             if (("idDocumento" in item) && ("tipoDoc") in item) {
                 if (item.codTransaccion == 'E' && item.tipoDoc == 'FE') {
-                 
-                    let {fileCtrl, controller, F} = nombreModal.DOCUMENTO_RECIBIDO;
+
+                    let { fileCtrl, controller, F } = nombreModalCompra.DOCUMENTO_RECIBIDO;
                     let ctrl = (await import(fileCtrl))[controller];
                     let template = F.template;
 
-                    
+
                     const params = {
                         idDocumento: item.idDocumento
-                    } 
+                    }
                     modalSvc.openModalCustom({
                         controller: ctrl,
                         template,
@@ -583,7 +583,7 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articu
                         windowClass: 'uibModalFullScreen',
                         isRenderRazorPartial: true
                     })
-                    
+
                 } else {
                     commonSvc.viewDetailDocumentII({
                         id: item.idDocumento,

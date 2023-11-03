@@ -26,7 +26,12 @@
                 <label>Obligado Contabilidad:</label>
                 <h5>{{infoComprobante.obligadoContabilidad}}</h5>
             </div>
-            <button type="button" id="btnProv" ng-disabled="btnProvIsEnable" ng-click="addProvClient()"
+
+            @* <button type="button" id="btnProv" ng-disabled="btnProvIsEnable" ng-click="addProvClient()"
+                class="btn btn-success btn-sm">
+                <icon class="ti-save"></icon> Guardar Proveedor
+            </button> *@
+            <button type="button" btn-proveedor-add-update params="provCliente" result-modal="resultModalProveedor(result)"
                 class="btn btn-success btn-sm">
                 <icon class="ti-save"></icon> Guardar Proveedor
             </button>

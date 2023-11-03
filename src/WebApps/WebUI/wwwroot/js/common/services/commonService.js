@@ -14,7 +14,8 @@ export class CommonService {
         "nombreModalLogistica",
         "articuloService",
         "empleadoService",
-        "ventaService"
+        "ventaService",
+        "clienteService"
     ];
 
 
@@ -33,7 +34,8 @@ export class CommonService {
         nombreModalLogistica,
         articuloSvc,
         empleadoSvc,
-        ventaSvc
+        ventaSvc,
+        clienteSvc
     ) {
         this.$rootScope = $rootScope;
         this.$http = $http;
@@ -51,6 +53,7 @@ export class CommonService {
         this.articuloSvc = articuloSvc;
         this.empleadoSvc = empleadoSvc;
         this.ventaSvc = ventaSvc;
+        this.clienteSvc = clienteSvc;
 
         // this.$http.get('/TipoDocumento/GetAll').then(({data:response})=>{
         //     this.tipoDoc = response.data.reduce((groups, item)=>{
@@ -170,7 +173,7 @@ export class CommonService {
 
     //En uso 
     getEstabAsign(json = {}) {
-        return this.mS.getData('get', 'Config/EstabAsig/?json=' + JSON.stringify(json), null, true).then(response => {            
+        return this.mS.getData('get', 'Config/EstabAsig/?json=' + JSON.stringify(json), null, true).then(response => {
             if (response.code === "0") {
                 throw response
             }
@@ -193,51 +196,12 @@ export class CommonService {
 
 
     removeAccents(str) {
-        str = str || '' ;
+        str = str || '';
         //return str.replace(/[^a-z0-9]/gi, '');
         return str.replace(/^-+|-+$| [^A-Za-z0-9.-]+/g, "");
     }
 
-
-    //Gestion de Configuracion del SISTEMA 
-    getGestionSistema(json = {}) {
-        return this.mS.getData('get', '/GestionSistema/Get?json=' + JSON.stringify(json)).then(
-            response => JSON.parse(response.payload) || []
-        )
-    }
-    // Configuración de Decimal en modulo de configuracion general 
-    getModuloDecimal(json = {}) {
-        return this.$http.get("/CantidadDecimal/Get?json=" + JSON.stringify(json))
-            .then(({
-                data: response
-            }) => JSON.parse(response.data));
-    }
-
-    //Obtenemos todas las configuraciones(decimales por modulo, tipo iva asignado a una Entidad)
-    getGestionConfig(json) {
-        return this.mS.getData('get', "/Configuracion/Get?json=" + JSON.stringify(json)).then(response => {
-
-            if (response.id === '0') {
-                toastr.warning(response)
-            }
-            return JSON.parse(response.data)
-        });
-    }
-
-    getAllTipoIva() {
-        return this.$http.get("/TipoIva/OptionTipoIva")
-            .then(({
-                data: response
-            }) => response.data)
-    }
-
-    getAllTarifa() {
-        return this.$http.get("/Tarifa/GetAll")
-            .then(({
-                data: response
-            }) => response.data);
-    }
-
+    //revisar y eliminar posteriormente
     getAllTiempoCredito(gestion) {
         return this.$http.get("/TiempoCredito/OptionTiempoCredito?gestion=" + gestion)
             .then(({
@@ -245,42 +209,13 @@ export class CommonService {
             }) => response.data);
     }
 
-    getAllEstado(tipo) {
-        return this.$http.get("/EstadoPago/Get?type=" + tipo)
-            .then(({
-                data: response
-            }) => response.data);
-    }
-
     getEstadoDocByCodDoc(codDoc) {
-        return this.mS.getData("get","Config/EstadoDocumento/?json=" + JSON.stringify({
+        return this.mS.getData("get", "Config/EstadoDocumento/?json=" + JSON.stringify({
             codDoc
         }), null, true)
             .then(({
                 data: response
             }) => response || []);
-    }
-
-    getAllCiudadProvincia(json = {}) {
-        return this.$http.get("/Ciudad/Get?json=" + JSON.stringify(json)).then(({
-            data: response
-        }) => response)
-    }
-
-
-    /**
-     * Metodos Comunes 
-     * @return [0]=>
-     * @return [1]=>Entidad Financiera
-     * @return [2]=>SubEntidad Financiera 
-     * @return [3]=>Banco
-     * @return [4]=>Estado Movimiento
-     */
-
-    getGestionFinanciera(json = {}) {
-        return this.mS.getData('get', '/GestionFinanciera/Get?json=' + JSON.stringify(json)).then(response => {
-            return JSON.parse(response.payload)
-        })
     }
 
 
@@ -292,23 +227,6 @@ export class CommonService {
             textSearch
         })
     }
-
-
-    /**
-     * 
-     * Médodos relacionados a los Impuestos de Estados 
-     */
-
-    getAllImpuestoEstado(json) {
-        return this.$http.get('/ImpuestoEstado/Get?json=' + JSON.stringify(json))
-            .then(({
-                data: response
-            }) => JSON.parse(response.data))
-    }
-
-
-
-
 
 
     //-------------------------------------Usuario--------------------------------
@@ -324,29 +242,9 @@ export class CommonService {
         })
     }
 
-    //--------------------------------------CONSULTA COMPRAS --------------------
-
-    getAllCategoriaCompra() {
-        return this.$http.get('/CategoriaCompra/GetAll')
-            .then(({
-                data: response
-            }) => response.data)
-    }
-
-
-
-
     //---------------------------------------START CLIENTE-----------------------------------------
     clienteSearch(textSearch) {
-        return this.mS.getData('get', 'Venta/Cliente/Search?json=' + JSON.stringify({
-            textSearch
-        }), null, true).then(response => {
-            if (response.code === '0') {
-                console.warn(response)
-                return
-            }
-            return JSON.parse(response.payload) || []
-        })
+        return this.clienteSvc.search({ textSearch })
     }
 
     /**
@@ -354,304 +252,22 @@ export class CommonService {
      * @param {*} id (idCliente)
      * @returns data;
      */
+    //eliminar posteriormente (se usa en ventas)
     async getDataCliente(id) {
 
         try {
             let data = {};
-            if (id === null || id === 0 || id === undefined) return data
-
-            await this.mS.getData('get', `/Cliente/GetId?id=${id}`).then(
-                response => {
-                    if (response.code === "0") {
-                        toastr.warning(response.message, response.titleSms);
-                    }
-                    if (response.code === "1") {
-                        data = JSON.parse(response.payload)[0] || {};
-                        data.correos = data.correo ? data.correo.split(';') : [];
-                        data.telefonos = data.telefono ? data.telefono.split(';') : []
-                        data.placas = data.placa !== '' ? data.placa.split(';') : []
-                        data.response = response.data
-                    }
-                }
-            )
-
+            if (id === null || id === 0 || id === undefined) return data;
+            showLoader();
+            await this.clienteSvc.findById(id).then(response => {
+                data = response;
+            }
+            ).finally(() => hideLoader())
             return data;
-
         } catch (error) {
             console.log(error)
         }
-
-
     }
-
-
-    getDataClienteByIdCliente(idCliente) {
-        return this.$http.get("/Cliente/GetId?idCliente=" + idCliente).then(({
-            data: response
-        }) => {
-            if (response.id === "0") {
-                toastr.warning(response.message, response.titleSms);
-                return;
-            }
-            if (response.id === "1") {
-                const {
-                    cliente,
-                    nombreCompleto
-                } = response.data;
-                cliente.empleado = nombreCompleto;
-                return cliente;
-            }
-        })
-    }
-
-
-
-
-    //---------------------------------------END CLIENTE --------------------------------------  
-
-
-    //--------------------------------------START PROVEEDOR-------------------------------------
-    proveedorSearch(textSearch) {
-        return this.$http.get(`/Proveedor/SearchProveedor?busqueda=${textSearch}`)
-            .then(({
-                data: response
-            }) => response.data)
-    }
-
-    proveedorSearchGeneral(textSearch) {
-        return this.$http.get(`/Proveedor/SearchProveedor?busqueda=${textSearch}`).then(
-            response => {
-                let proveedores = response.data.data
-                if (response.data.id === '1') {
-                    return proveedores.map(({
-                        proveedor
-                    }) => proveedor)
-                }
-                return []
-            }
-        )
-    }
-
-    getDataByProveedor(idProveedor) {
-        try {
-            showLoader();
-            return this.mS.getData('get', '/Proveedor/GetId?idProveedor=' + idProveedor).then(
-                response => {
-                    if (response.id == "0") {
-                        hideLoader();
-                        toastr.warning(response.message, response.titleSms)
-                        return response
-                    }
-
-                    if (response.id == "1") {
-                        hideLoader();
-                        const item = {};
-                        const {
-                            data
-                        } = response;
-                        item.tipoIdentificacion = {
-                            idTipoIdentificacion: data.proveedor.idTipoIdentificacion,
-                            identificacion: data.tipoIdentificacion
-                        }
-
-                        Object.assign(item, data.proveedor);
-                        return item;
-                    }
-                }
-            )
-        } catch (error) {
-
-        }
-    }
-
-
-
-
-    /**
-     * Métodos relacionaddos con Almacen  *******************************************************
-     */
-
-    /**
-     * -------------------------------Eliminar Posteriormente
-     * 
-     * Función que obtiene Familias, SubFamilias, Marca, modelo
-     * @returns json 
-    
-     *@lectura const {
-            subFamilias,
-            familias,
-            medidas,
-            modelos,
-            marcas,
-            valoracionMetodos,
-            tipoArticulos,
-            tarifas,
-            etiquetaActividades
-        } = results[0]
-     */
-    getGestionAlmacen(json = {}) {
-        return this.mS.getData('get', '/Almacen/Get?json=' + JSON.stringify())
-            .then(
-                response => {
-                    const results = JSON.parse(response.payload);
-
-                    return {
-                        subFamilias: results[0],
-                        familias: results[1],
-                        medidas: results[2],
-                        modelos: results[3],
-                        marcas: results[4],
-                        valoracionMetodos: results[5],
-                        tipoArticulos: results[6],
-                        tarifas: results[7],
-                        etiquetaActividades: results[8],
-                        movimientosStocks: results[9],
-                        jsonPersmission: results[10]
-                    }
-                }
-            ).catch(
-                error => console.error(error)
-            )
-    }
-
-
-    //---------------------------------------------Almacen-------------------------
-    /**
-     *Eliminar mas adelante esta función (depuracion se encuentra en inventario/services/articuloService.js)
-     * @param {*} busqueda 
-     * @param {*} isSearchByCodigo 
-     * @returns 
-     */
-    articuloSearch(busqueda, isSearchByCodigo) {
-        const txtRemovedAccents = this.removeAccents(busqueda);
-        return this.$http.get(`/Articulo/SearchArticuloFilter?busqueda=${txtRemovedAccents}&condicion=${isSearchByCodigo}`)
-            .then(({
-                data: response
-            }) => {
-                if (response.id == "0") {
-                    toastr.warning(response.message, response.titleSms);
-                    return;
-                }
-                let {
-                    filter: articulos
-                } = response.data;
-                return articulos.length > 0 ? this.getArticuloAsTemplate(articulos) : []
-            })
-    }
-
-    getArticuloAsTemplate(articulos) {
-        articulos[0].showHeader = true; //show header table item
-        return articulos.map((val) => {
-            val.getHistorialPrecio = () => {
-                this.$http.get("/Articulo/HistoryEntradaArticulo?idArticulo=" + this.articulo.idArticulo)
-                    .then(({
-                        data: response
-                    }) => {
-                        val.historialPrecio = response.data;
-                    })
-            }
-            val.templateUrl = "viewPoperHistorialPago.html";
-            return val;
-        });
-    }
-
-
-
-    //Eliminar mas adelante esta función (depuracion se encuentra en inventario/services/articuloService.js)
-    articuloSearchGeneral({
-        textSearch,
-        code = false
-    }) {
-        const json = {
-            bySearch: this.removeAccents(textSearch),
-            code
-        }
-        // let articulos = [];
-
-        if (textSearch.length < 3) return
-
-        return this.mS.getData('get', '/Articulo/Get?json=' + JSON.stringify(json)).then(response => {
-            if (response.code === '0') {
-                throw response;
-            }
-            let articulos = JSON.parse(response.data) || []
-            // if (articulos.length > 0) {
-            //     articulos.unshift({
-            //         showHeader: true
-            //     })
-            //articulos[0].showHeader = true; //show header table item
-            //}
-            return articulos
-        })
-
-    }
-
-    //Eliminar mas adelante esta función (depuracion se encuentra en inventario/services/articuloService.js)
-    getDataArticuloParaVenta({
-        json
-    }) {
-        try {
-            showLoader();
-            return this.mS.getData('get', '/Articulo/GetIdBySale?json=' + JSON.stringify(json));
-        } catch (error) {
-            console.error(error)
-        } finally {
-            hideLoader();
-        }
-    }
-
-    //Eliminar mas adelante esta función (depuracion se encuentra en inventario/services/articuloService.js)
-    getDataArticuloParaCompra({
-        json
-    }) {
-        try {
-            showLoader();
-            return this.$http.get('/Articulo/GetIdByPurchase?json=' + JSON.stringify(json))
-                .then(({
-                    data: response
-                }) => response)
-        } catch (error) {
-            console.log(error)
-        } finally {
-            hideLoader();
-        }
-    }
-
-    //Eliminar mas adelante esta función (depuracion se encuentra en inventario/services/articuloService.js)
-    async searchArticuloByCodigo({
-        busqueda
-    }) {
-        return await this.$http.get('/Articulo/SearchArticuloFilter?busqueda=' + busqueda + '&condicion=' + true)
-            .then(({
-                data: response
-            }) => {
-                if (response.id === "0") {
-                    Swal.fire({
-                        title: `<small>${response.titleSms}</small>`,
-                        icon: 'warning',
-                        html: `<small>${response.message}</small>`,
-                        didClose: () => {
-                            $("#searchArticulo").focus();
-                        }
-                    });
-                    return
-                };
-                if (response.id === "2") {
-                    let data = {
-                        idArticulo: response.data.codigo.articulo.idArticulo,
-                        idPresentacion: response.data.codigo.idPresentacion,
-                        presentacion: response.data.codigo.presentacion
-                    };
-                    return data;
-                }
-            })
-    }
-
-
-
-
-    //--------------------------------------END ARTICLE----------------------------------------------------
-
 
 
     /**
@@ -717,19 +333,10 @@ export class CommonService {
 
     //Eliminar mas Adelante en depuracion co
     getDataFormVenta() {
-        // return this.mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response => {
-        //     if (response.code === '0') {
-        //         throw response
-        //     }
-
-        //     console.log(JSON.parse(response.payload))
-        //     return JSON.parse(response.payload)
-        // })
-
-        return this.mS.getData('get', 'Factura/Get?json=' + JSON.stringify({tipo: 3}), null, true).then(response => {
+        return this.mS.getData('get', 'FactElect/Factura/Get?json=' + JSON.stringify({ tipo: 3 }), null, true).then(response => {
             if (response.code === '0') {
                 throw response
-            } 
+            }
             return JSON.parse(response.payload)
         })
     }
@@ -765,16 +372,11 @@ export class CommonService {
     }
 
     //-------------------------------------------------GET DATA TIPO DOCUMENTO COMPRA ---------------------
-    setUiGridDetalleCompra(detalleCompra, nombrePrecio = 'precioUnitario') {
+    setUiGridDetalleCompra(detalleCompra) {
 
         let index = 1;
         return detalleCompra.map(item => {
             item.n = index++
-
-            const data = {
-                idArticulo: item.idArticulo
-            }
-
             this.articuloSvc.findForPurchase({
                 idArticulo: item.idArticulo
             }).then(response => {
@@ -785,7 +387,7 @@ export class CommonService {
             let subTotal = item.cantidad * item.precioUnitario;
             let totalDescuento = item.cantidad * item.valorDescuento;
 
-            if (!item.hasOwnProperty("total")) {
+            if (!("total" in item)) {
                 let total = (item.precioUnitario - item.valorDescuento) * item.cantidad;
                 item.total = total;
             }
@@ -812,7 +414,7 @@ export class CommonService {
         let infoAdicionalDocumento = [];
         let datosAdicionalesArticulo = [];
 
-        const TIPO_DOC = this.tipoDoc[codigoDocumento];
+        // const TIPO_DOC = this.tipoDoc[codigoDocumento];
 
         if (!(id > 0)) {
             throw "ID DOCUMENTO NO VÁLIDO"
@@ -1046,7 +648,7 @@ export class CommonService {
         let infoAdicionalDocumento = [];
         let datosAdicionalesArticulo = [];
         let factura = {}
-        let actividadTipoIva = {}; 
+        let actividadTipoIva = {};
 
         switch (codigoDocumento) {
             case "FV":
@@ -1152,7 +754,7 @@ export class CommonService {
                         throw response.message
                     }
                     if (response.code === "1") {
-                        let dataMain = JSON.parse(response.payload); 
+                        let dataMain = JSON.parse(response.payload);
 
                         let detalle = dataMain[2];
                         dataDocumento = dataMain[0][0];
@@ -1175,14 +777,14 @@ export class CommonService {
                 break;
 
             case "NC":
-                await this.mS.getData('get',  'FactElect/NotaCredito/' + '?json=' + JSON.stringify({id: id, tipo: 4}), null, true).then(response => {
+                await this.mS.getData('get', 'FactElect/NotaCredito/' + '?json=' + JSON.stringify({ id: id, tipo: 4 }), null, true).then(response => {
                     console.log(response)
                     if (response.code == "0") {
                         this.form.sweetAlert('warning', response.message)
                         throw response.message
                     }
                     if (response.code === "1") {
-                        let dataMain = JSON.parse(response.payload); 
+                        let dataMain = JSON.parse(response.payload);
                         let detalle = dataMain[3];
 
                         dataDocumento = dataMain[0][0];
@@ -1638,46 +1240,6 @@ export class CommonService {
         return barcodeData;
     }
 
-
-
-
-
-    //===================================ELIMINAR MAS ADELANTE========================
-    //--------------------------------PETICIONES PARA API ADMIN-CLIENTE----------------------
-    async getDataApi({
-        method,
-        url,
-        data = null,
-        typeUrl
-    }) {
-        let urlApi = '';
-        // let urlApi = await this.$http.get('/ConnectionApiAdmin/GetUrl?typeUrl=' + typeUrl).then(({data:response})=>response)    
-
-        //IP Local 
-        // urlApi = typeUrl == 1 ? "http://localhost:7166/" : "https://localhost:7166/";
-
-        //IP Producción de Desarrollo 
-        //urlApi = typeUrl == 1 ? "http://3.21.205.190:8090/" : "http://206.72.196.229:83/";
-
-
-        //IP Producción
-        urlApi = typeUrl == 1 ? "http://206.72.196.229:81/" : "http://206.72.196.229:83/";
-
-        return this.$http({
-            method,
-            url: `${urlApi}${url}`,
-            data
-        }).then(({
-            data: response
-        }) => {
-            return response
-        }, error => {
-            console.log(error)
-        })
-    }
-
-
-
     /**
      * 
      * @param {Array} param0 arr
@@ -2074,7 +1636,7 @@ export class CommonService {
                     console.log(`Detalle del Documento No definido: ${codigoDocumento}`);
                     throw 'Detalle del Documento No definido'
             }
- 
+
 
             this._modalSvc.openModalCustom({
                 controller,
@@ -2103,7 +1665,7 @@ export class CommonService {
         let result = {};
 
         showLoader();
-        await this.mS.getData('get', 'Solicitud/Check/' + JSON.stringify(jsonParams), null, true).then(response => {
+        await this.mS.getData('get', 'Config/Solicitud/Check/' + JSON.stringify(jsonParams), null, true).then(response => {
             if (response.code === "0") {
                 hideLoader();
                 this.form.sweetAlert('warning', response.message, response.titleSms);
@@ -2148,7 +1710,7 @@ export class CommonService {
                     motivo: result.value,
                     codigoAccion
                 });
-                this.mS.getData('post', 'Solicitud/Post/' + jsonParams, null, true).then(response => {
+                this.mS.getData('post', 'Config/Solicitud/Post/' + jsonParams, null, true).then(response => {
                     if (response.code === "0") {
                         this.form.sweetAlert('warning', response.message)
                     }
@@ -2164,7 +1726,7 @@ export class CommonService {
 
 
     updateRequestKey(codigoAccion) {
-        this.mS.getData('put', 'Solicitud/Put/' + JSON.stringify({
+        this.mS.getData('put', 'Config/Solicitud/Put/' + JSON.stringify({
             codigoAccion,
             typeOperation: 2
         }), null, true).then(response => {
@@ -2176,14 +1738,14 @@ export class CommonService {
 
     //========================================END POINT EXTERNOS================== 
     checkClientSRIByRUC = function (identificacion) {
-        return this.mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + identificacion, null, true).then(response => {            
+        return this.mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + identificacion, null, true).then(response => {
             return response;
         })
     }
-    
+
 
     checkClientSRIByCedula = function (identificacion) {
-        return this.mS.getData('get', 'Consultas/GetCedulaSri?Ruc=' + identificacion, null, true).then(response => {            
+        return this.mS.getData('get', 'Consultas/GetCedulaSri?Ruc=' + identificacion, null, true).then(response => {
             return response;
         })
     }
@@ -2197,8 +1759,6 @@ export class CommonService {
     }
 
 }
-
-
 
 
 app.factory("commonService", CommonService);

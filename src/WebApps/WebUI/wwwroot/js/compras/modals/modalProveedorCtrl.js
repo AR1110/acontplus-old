@@ -12,8 +12,8 @@ function modalProveedorCtrl($scope, $uibModalInstance, $injector, params) {
     let tS = $injector.get("toastService");
     let fS = $injector.get("formulario");
     let commonSvc = $injector.get("commonService");
-    console.log(params);
-    console.log("test updat");
+
+
     $scope.data = {
         idTipoIdentificacion: 0,
         idTiempoCredito: 0,
@@ -64,8 +64,6 @@ function modalProveedorCtrl($scope, $uibModalInstance, $injector, params) {
                         tiposProveedor,
                         ciudades,
                     } = response;
-                    console.log(response);
-
 
                     $scope.tiposIdentificacion = tiposIdentificacion;
                     $scope.subcontribuyentes = subcontribuyentes;
@@ -85,10 +83,23 @@ function modalProveedorCtrl($scope, $uibModalInstance, $injector, params) {
                         $scope.data.idSubContribuyente = dataSubContribuyente.idSubContribuyente;
                     }
                     $scope.data.idTiempoCredito = $scope.tiemposCredito.length > 0 ? $scope.tiemposCredito[0].idTiempoCredito : 0
- 
+
+                    //Cuando Si es importacion 
+                    if (params.isImport) {
+                        $scope.data.nombreFiscal = params.razonSocial;
+                        $scope.data.nombreComercial = params.nombreComercial
+                        $scope.data.numeroIdentificacion = params.ruc;
+                        $scope.data.direccion = params.dirMatriz;
+                        $scope.data.validationSri = true;
+                        return
+                    }
+
                     if (params.idProveedor > 0) {
                         proveedorSvc.getId(params.idProveedor).then((response) => {
-                            console.log(response);
+                            let { correos, telefonos, ...rest } = response;
+                            $scope.data = rest;
+                            $scope.correos = correos;
+                            $scope.telefonos = telefonos;
                         });
                     }
                 })
@@ -114,6 +125,8 @@ function modalProveedorCtrl($scope, $uibModalInstance, $injector, params) {
     }
 
     $scope.onKeyupNumeroIdentificacion = function () {
+        if ($scope.data.idProveedor > 0) return;
+
         let dataTipoIdentificacion = $scope.tiposIdentificacion.find(data => data.idTipoIdentificacion === $scope.data.idTipoIdentificacion);
         $scope.numeroIdentificacionValidationMessage = '';
         if (!$scope.data.numeroIdentificacion) return
@@ -229,7 +242,7 @@ function modalProveedorCtrl($scope, $uibModalInstance, $injector, params) {
     };
 
     function validarEmail(valor) {
-        console.log(valor)
+
         return /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i.test(
             valor
         );
@@ -327,11 +340,17 @@ function modalProveedorCtrl($scope, $uibModalInstance, $injector, params) {
         }
         if (response.code === "1") {
             tS.toastr("success", response.message, response.titleSms);
-            const sharedData = {
-                idProveedor:
-                    $scope.data.idProveedor > 0 ? response.data : $scope.data.idProveedor,
-            };
-            $uibModalInstance.close(sharedData);
+            let idProveedor = 0;
+            if ($scope.data.idProveedor > 0) {
+                idProveedor = $scope.data.idProveedor
+            } else {
+                let results = JSON.parse(response.payload);
+                idProveedor = results.idProveedor;
+            }
+            $uibModalInstance.close({ 
+                idProveedor,
+                idTiempoCredito: $scope.data.idTiempoCredito
+            });
         }
     }
 
