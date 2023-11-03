@@ -207,8 +207,8 @@ BEGIN
 				IF NOT EXISTS (SELECT 1 FROM Contabilidad.CuentaPorPagar WHERE uniqueId = @claveAcceso)
 					BEGIN 
 						INSERT INTO Contabilidad.CuentaPorPagar
-							  (idEstablecimiento,idProveedor,idEstadoPago,codDoc,uniqueId,serieComprobante,identificacion,fechaEmision,importeTotal,idEntidad,idUsuario)
-						SELECT idEstablecimiento,@idProveedor,@idEstadoPago,codDoc,claveAcceso,serieComprobante,@identificacionCliProv,CONVERT (date, fechaEmision, 103),importeTotal,@idEntidad,dr.idUsuario
+							  (idDocumento,idEstablecimiento,idProveedor,idEstadoPago,codDoc,uniqueId,serieComprobante,identificacion,fechaEmision,importeTotal,idEntidad,idUsuario)
+						SELECT @idDocumento,idEstablecimiento,@idProveedor,@idEstadoPago,codDoc,claveAcceso,serieComprobante,@identificacionCliProv,CONVERT (date, fechaEmision, 103),importeTotal,@idEntidad,dr.idUsuario
 						FROM Recepcion.DocumentoRecibido dr WITH (NOLOCK)
 						WHERE dr.idDocumento = @idDocumento AND dr.codDoc = '01'
 					END 

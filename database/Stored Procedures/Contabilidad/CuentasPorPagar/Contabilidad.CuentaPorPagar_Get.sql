@@ -327,6 +327,19 @@ BEGIN
 			ORDER BY fechaRegistro 
 
 		END 
-		
+	
+    --> Data Form Cuotas 
+    IF @tipo = 5 
+        BEGIN
+            SELECT idTiempoCredito
+	                ,descripcion
+	                ,diasCredito
+	                ,numeroCuota 
+	        FROM TiempoCredito WITH (NOLOCK) 
+	        WHERE idEntidad = @idEntidad 
+              AND gestion = 0
+              AND estado = 1
+            RETURN 
+        END 
 END
 GO
