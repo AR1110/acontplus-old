@@ -128,7 +128,7 @@ BEGIN
 
 	--SELECT * FROM #infoRetencion
 
-	SET @headerDs  = (SELECT * FROM #infoRetencion ir FOR JSON PATH)
+	SELECT * FROM #infoRetencion ir 
      
 	-------VERSION 1.0.0
 	IF @versionComp = '1.0.0'
@@ -151,7 +151,7 @@ BEGIN
 			LEFT JOIN Sri.DocumentoSustento ds WITH (NOLOCK) ON ds.codDocSustento = impTemp.codDocSustento
 			
 			--SELECT * FROM #impuestosRetV1
-			SET @detalleDs = (SELECT * FROM #impuestosRetV1 FOR JSON PATH)		
+			SELECT * FROM #impuestosRetV1 
 		END 	
 		
 
@@ -174,49 +174,17 @@ BEGIN
 			INNER JOIN Sri.ImpuestoRetencion ir WITH (NOLOCK) ON ir.codigo       = impTemp.codigo
 			LEFT JOIN Sri.DocumentoSustento ds WITH(NOLOCK) ON ds.codDocSustento = impTemp.codDocSustento
 			--SELECT * FROM #impuestosRetV2
-			SET @detalleDs = (SELECT * FROM #impuestosRetV2 FOR JSON PATH)		
+			SELECT * FROM #impuestosRetV2 
 		END 
 
 	--	SELECT * FROM #impuestosRetV2
 		
-	SET @infoAdditionalDs = (
-						  SELECT 
-							 y.value('@nombre','VARCHAR(100)') as nombre,  
-							 y.value('./.','VARCHAR(100)')  as valor
-						  FROM  @xmlCompRet t
-						  CROSS APPLY t.xmlRet.nodes('//comprobante/comprobanteRetencion/infoAdicional/*') x(y)
-						  FOR JSON PATH
-						 )
-
-						  
-	SET @dataSources = (SELECT headerDs = @headerDs, detalleDs = ISNULL(@detalleDs,'[]'), additionalDs = ISNULL(@infoAdditionalDs,'[]') FOR JSON PATH)
-
-	
-	SELECT  imagen       = @imagen
-		    ,mimeType    = @mimeType
-			,claveAcceso = (SELECT claveAcceso FROM #infoRetencion)
-			,rdlcParams  = @rdlcParams
-			,dataSources = @dataSources
-			,'from'      = 'envio.comprobantes@acontplus.com.ec'
-			,'password'  = 'rmdodmyvosnwxzwt'
-			,'subject'   =  'Comprobante Electrónico - Acontplus N°: '+ @serieComprobante
-			,'cc'        = ISNULL(@cc,'')  
-			,'invoiceName' = ISNULL(@nameDoc,'')
-			,logo = 'logoAcontPlus.jpg'
-			,host = 'smtp.gmail.com'
-			,'port' = 587
-			,EnableSsl = 1
-			
-		   
-
-
-
-	
-	
-
-	
-
-
+	SELECT 
+		y.value('@nombre','VARCHAR(100)') as nombre,  
+		y.value('./.','VARCHAR(100)')  as valor
+	FROM  @xmlCompRet t
+	CROSS APPLY t.xmlRet.nodes('//comprobante/comprobanteRetencion/infoAdicional/*') x(y)
+   
 END 
 
 
