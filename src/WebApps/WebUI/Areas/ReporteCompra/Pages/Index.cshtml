@@ -1,10 +1,10 @@
 ﻿@page
 @model WebUI.Areas.ReporteCompra.Pages.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <div ng-controller="reporteCompraCtrl">
     <div class="row page-titles">
@@ -39,8 +39,8 @@
         </div>
     </div>
 
-    @section Scripts{
-        <script src="~/js/reports/controllers/reporteCompraCtrl.min.js" asp-append-version="true"></script>
+    @section Scripts {
+            <script src="~/js/reports/controllers/reporteCompraCtrl.js" asp-append-version="true"></script>
     }
 
 

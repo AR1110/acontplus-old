@@ -50,6 +50,7 @@
             <div class="form-group">
                 <label for="bodega">Bodega</label>
                 <select class="form-control border-select" ng-model="dataSearch.byBodega">
+                    <option="">Todos</option=>
                     <option ng-value="b.idBodega" ng-repeat="b in bodegas">{{b.descripcion}}</option>
                 </select>
             </div>

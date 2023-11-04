@@ -128,7 +128,7 @@
                     typeahead-show-hint="true"
                     ng-model="selectedProvPersonalizado"
                     ng-keyup="onKeyupSearchProvPersonalizado()"
-                    uib-typeahead="a as a.proveedor.nombreFiscal for a in searchProveedorFilter($viewValue)"
+                    uib-typeahead="a as a.nombreFiscal for a in searchProveedorFilter($viewValue)"
                     typeahead-loading="data.loadingSearchProvPersonalizado"
                     typeahead-no-results="data.noResultsProvPersonalizado"
                     typeahead-template-url="autocompleteProvPersonalizado.html"
@@ -138,7 +138,7 @@
                     <script type="text/ng-template" id="autocompleteProvPersonalizado.html">
                         <div class="autocomplete-suggestion-uib-typeahead">               
                             <span class="item-title">
-                                <b> {{match.model.proveedor.numeroIdentificacion}}</b> - {{match.model.proveedor.nombreFiscal}}
+                                <b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}
                             </span>
                         </div>
                     </script> 
