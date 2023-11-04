@@ -10,7 +10,7 @@
         typeahead-show-hint="true"
         ng-model="proveedorFiltro.nombreFiscal"
         ng-keyup="onKeyupProvedorAutocompleteFiltro()"
-        uib-typeahead="a as a.proveedor.nombreFiscal for a in proveedorSearch($viewValue)"
+        uib-typeahead="a as a.nombreFiscal for a in proveedorSearch($viewValue)"
         typeahead-loading="proveedorFiltro.loading"
         typeahead-no-results="proveedorFiltro.noResults"
         typeahead-template-url="proveedorAutocompleteFiltro.html"
@@ -20,7 +20,7 @@
         <script type="text/ng-template" id="proveedorAutocompleteFiltro.html">
             <div class="autocomplete-suggestion-uib-typeahead">               
                 <span class="item-title">
-                    <b> {{match.model.proveedor.numeroIdentificacion}}</b> - {{match.model.proveedor.nombreFiscal}}
+                    <b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}
                 </span>
             </div>
         </script> 

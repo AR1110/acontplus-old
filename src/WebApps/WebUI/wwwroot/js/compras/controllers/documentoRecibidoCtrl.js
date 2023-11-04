@@ -176,11 +176,17 @@
                 }
 
             }
-            $scope.initialLoad()
+            $scope.initialLoad();
+
+            
 
             $scope.onKeyupSearchFilter = () => {
                 let comprobantes = JSON.parse(JSON.stringify($scope.cloneComprobantes))
                 $scope.comprobantes = $filter("filter")(comprobantes, $scope.search)
+            }
+
+            $scope.proveedorSearch = function(textSearch){
+                return proveedorSvc.search(textSearch);
             }
 
             // Para redondeo de los decimales en lo precios unitarios
@@ -1969,7 +1975,7 @@
             }
 
             $scope.onKeyupProvedorAutocompleteFiltro = function () {
-                if (!$scope.proveedorFiltro.nombreFiscal) {
+                if (!($scope.proveedorFiltro && $scope.proveedorFiltro.nombreFiscal)) {
                     $scope.proveedorFiltro = null
                     $scope.query.rucProveedor = ''
                 }
@@ -2002,7 +2008,7 @@
             }
          
             $scope.selectProveedorFiltro = (item) => {
-                $scope.query.rucProveedor = item.proveedor.numeroIdentificacion
+                $scope.query.rucProveedor = item.numeroIdentificacion
                 $scope.getComprobantes()
             }
 
