@@ -59,7 +59,8 @@
     <!--custom css-->
     <link href="~/css/acontplus-style.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/css/spinners.min.css" rel="stylesheet" asp-append-version="true" />
-
+    <!--Estilos especiales de librerias de svelte-->
+    <link href="~/build/style.css" rel="stylesheet" asp-append-version="true" />
 </head>
 
 <body class="skin-custom fixed-layout" ng-class="miniSidebar" ng-cloak ng-app="acontPlusApp">
@@ -70,7 +71,7 @@
             <p class="loader__label">AcontPlus</p>
         </div>
     </div>
-
+    
     <img id="jsBarcodeImg" src="" alt="" style="display: none;">
 
     <div id="main-wrapper" ng-controller="layoutCtrl">
