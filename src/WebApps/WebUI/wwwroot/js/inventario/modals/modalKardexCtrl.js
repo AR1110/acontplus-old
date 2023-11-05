@@ -120,7 +120,7 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articu
 
         //getKardex();
         const params = Object.assign($scope.dataSearch, {
-            checkBoxFecha: true,
+            checkBoxFecha: $scope.dataSearch.checkBoxFecha,
             checkBoxMovement: $scope.dataSearch.movement ? true : false,
             fechaInicio: fS.formatDateMoment(startOfMonth),
             fechaFin: fS.formatDateMoment(endOfMonth),
@@ -139,7 +139,7 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articu
             // }) 
 
             const params = Object.assign($scope.dataSearch, {
-                checkBoxFecha: true,
+                checkBoxFecha: $scope.dataSearch.checkBoxFecha,
                 checkBoxMovement: $scope.dataSearch.movement ? true : false, 
             })
 

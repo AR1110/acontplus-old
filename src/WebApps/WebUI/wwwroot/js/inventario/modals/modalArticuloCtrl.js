@@ -433,7 +433,16 @@ function modalArticuloCtrl(
             })
             .finally(() => hideLoader());
     }
+    $scope.getArticuloCodigo = () => {
+        if (params && params.isImport) return;
 
+        if ($scope.tipoRegistro === 1 && $scope.subFamilias.length > 0) {
+            let { codigo } = $scope.subFamilias.find(
+                (val) => val.idSubFamilia === $scope.data.idSubFamilia
+            );
+            setCodigo(codigo);
+        }
+    }
     function setCodigoSecuencialArticulo() {
         if ($scope.subFamilias.length === 0 || (params && params.isImport)) return;
 
@@ -511,7 +520,7 @@ function modalArticuloCtrl(
             console.log("articulo codigo barra");
         }
 
-        if ($scope.step === 4 && $scope.data.idArticulo >0) {
+        if ($scope.step === 4 && $scope.data.idArticulo > 0) {
             getUbicacionArticulo();
         }
     };

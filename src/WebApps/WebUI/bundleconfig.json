@@ -568,5 +568,17 @@
     "inputFiles": [
       "wwwroot/js/modal/compras/modalOrdenCompraCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/inventario/modals/modalArticuloCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/inventario/modals/modalArticuloCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/inventario/modals/modalKardexCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/inventario/modals/modalKardexCtrl.js"
+    ]
   }
 ]
