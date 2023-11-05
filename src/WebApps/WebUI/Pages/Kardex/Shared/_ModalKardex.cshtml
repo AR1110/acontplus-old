@@ -49,8 +49,7 @@
         <div class="col-lg-3 col-md-3 col-sm-12 col-12" ng-if="dataSearch.checkBoxBodega">
             <div class="form-group">
                 <label for="bodega">Bodega</label>
-                <select class="form-control border-select" ng-model="dataSearch.byBodega">
-                    <option="">Todos</option=>
+                <select class="form-control border-select" ng-model="dataSearch.byBodega"> 
                     <option ng-value="b.idBodega" ng-repeat="b in bodegas">{{b.descripcion}}</option>
                 </select>
             </div>
