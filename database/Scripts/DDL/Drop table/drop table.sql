@@ -92,3 +92,4 @@ GO
 
 DROP TABLE IF EXISTS FactElect.Config_Comprob_Elect
 GO
+

@@ -101,7 +101,7 @@ BEGIN
                                 INNER JOIN dbo.EstadoPago              ep WITH (NOLOCK) ON ep.idEstadoPago      = cp.idEstadoPago
                                 WHERE cc.idCuentaPorCobrar > 0 '
                    
-                    --SET @sql = @sql + 'AND cc.mora > 0 '
+                    SET @sql = @sql + 'AND cc.mora > 0 '
 
                 END 
 
