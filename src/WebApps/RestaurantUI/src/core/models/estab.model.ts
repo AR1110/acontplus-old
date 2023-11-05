@@ -5,6 +5,7 @@ export interface Establecimiento {
     predeterminado: boolean;
     idEstablecimiento: number;
     ruc: number;
+    bussinesName: string
     nombreComercial: string;
     entidad: string
     estab: number;
@@ -22,6 +23,7 @@ export const estabInitialState: Establecimiento = {
     idEstablecimiento: 0,
     ruc: 0,
     nombreComercial: "",
+    bussinesName: '',
     estab: 0,
     obligadoContabilidad: "",
     dirEstablecimiento: "",
