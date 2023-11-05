@@ -769,3 +769,9 @@ go
 
 DROP PROCEDURE IF EXISTS Asignaciones.GestionGeneral_Get 
 go
+
+DROP PROCEDURE IF EXISTS [Almacen].[Articulo_Insert_v2]
+go
+
+DROP PROCEDURE IF EXISTS [Almacen].[Articulo_Update_v2]
+go
