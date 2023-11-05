@@ -74,22 +74,19 @@ BEGIN
 
 			        SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo  = 'E'
                     
-                    SELECT TOP 1 @fraccion = conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida
-
-                    SELECT TOP 1 @cantidad = @cantidad * ISNULL(@fraccion,1)
+                    -- Articulo Fraccionado
+                    IF EXISTS (SELECT 1 FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida)
+                        BEGIN
+                            SELECT TOP 1 @cantidad = @cantidad  * conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida
+                        END
+					
+                    IF EXISTS (SELECT 1 FROM Inventario.Stock WHERE idArticulo = @idArticulo AND idBodega = @idBodega AND fechaConsolidacion >= @fechaEmision)
+                        BEGIN
+                            SELECT @cantidad = 0       
+                        END 
 
                     -- TRAN 
 			        UPDATE Inventario.Transaccion SET estado = 0 WHERE idDocumento = @idDocumento AND idTipoDocumento = @idTipoDocumento AND idTipoTransaccion = @idTipoTransaccion AND idArticulo = @idArticulo
-					
-                    IF EXISTS (SELECT 1 FROM Inventario.Stock WITh (NOLOCK) WHERE idArticulo = @idArticulo AND idBodega = @idBodega AND fechaConsolidacion IS NOT NULL)
-                            BEGIN
-                                SELECT TOP 1 @fechaConsolidacion = fechaConsolidacion  FROM Inventario.Stock WITH(NOLOCK)  WHERE idArticulo = @idArticulo AND idBodega = @idBodega
-
-                                IF @fechaConsolidacion >= @fechaEmision
-                                    BEGIN
-                                        SELECT @cantidad = 0
-                                    END 
-                            END 
 
                     UPDATE Inventario.Stock WITH(ROWLOCK) SET cantidad = cantidad + ISNULL(@cantidad,0) WHERE idArticulo = @idArticulo AND idBodega = @idBodega
 
