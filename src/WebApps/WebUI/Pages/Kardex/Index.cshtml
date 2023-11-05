@@ -1,0 +1,164 @@
+﻿@page
+@model WebUI.Pages.Kardex.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="kardexCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Gestión Kardex</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+        </div>
+    </div>
+
+
+    <div class="row d-block">
+        <div class="col-lg-12">
+            <div class="card">
+                @* <div class="card-header">
+                <div class="card-actions">
+                <a class="" data-action="collapse"><i class="ti-minus"></i></a>
+                <a class="btn-minimize" data-action="expand"><i class="mdi mdi-arrow-expand"></i></a>
+                <a class="btn-close" data-action="close"><i class="ti-close"></i></a>
+                </div>
+                </div> *@
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label for="">Establecimiento</label>
+                                <select class="form-control border-select" ng-model="dataSearch.codEstab" ng-change="getBodegas()">
+                                    <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
+                                        {{item.nombreComercial}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                            <div class="form-group">
+                                <label for="bodega">Bodega</label>
+                                <select class="form-control border-select" ng-model="dataSearch.byBodega">
+                                    <option ng-value="">Todos</option>
+                                    <option ng-value="b.idBodega" ng-repeat="b in bodegas">{{b.descripcion}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12 align-self-end">
+
+                            <div class="icheck-info">
+                                <input type="checkbox" ng-model="dataSearch.checkBoxConsolidacion"
+                                       ng-change="onChangecheckBoxConsolidacionInventario()" id="checkBoxConsolidacionInventario">
+                                <label for="checkBoxConsolidacionInventario">Buscar consolidaciones de Inventario </label>
+                            </div>
+
+                            <div class="icheck-info">
+                                <input type="checkbox" ng-model="dataSearch.checkBoxUltimaConsolidacion"
+                                       ng-change="onChangeUltimaConsolidacion()" id="checkBoxUltimaConsolidacion">
+                                <label for="checkBoxUltimaConsolidacion">Buscar a partir de la ultima consolidación </label>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-2 col-lg-2 col-md-6 col">
+                            <div class="form-group">
+                                <label for="estadoMovimiento">Movimiento</label>
+                                <select name="estadoMovimiento" di="estadoMovimiento" class="form form-control border-select"
+                                        ng-model="dataSearch.movement">
+                                    <option value="">Todos</option>
+                                    <option ng-value="item.codigo" ng-repeat="item in estadoMovimientos">
+                                        {{item.descripcion}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-6 col">
+                            <div class="form-group">
+                                <label for="dateRange">Rango de Fechas: </label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <div class="custom-control custom-checkbox mr-sm-2">
+                                                <input type="checkbox"
+                                                       ng-model="dataSearch.checkBoxFecha"
+                                                       class="custom-control-input"
+                                                       id="checkBoxFecha">
+                                                <label class="custom-control-label" for="checkBoxFecha"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <input date-range-picker class="form-control date-picker" type="text" ng-model="dateRangePicker.date"
+                                           picker="dateRangePicker.picker" picker-classes="extra-class-names" min="'2014-02-23'"
+                                           max="dateRangePicker.maxDate" options="dateRangePicker.options" options="{locale: {separator: "
+                                           :"}}" />
+                                </div>
+
+
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-6 col">
+                            <div class="form-group">
+                                <label for="articuloFiltro">Articulo</label>
+                                <input type="text" id="articuloSearchFiltro" autocomplete="off" name="articuloSearchFiltro"
+                                       class="form-control border-select" placeholder="Ingrese Descripción del Articulo"
+                                       ng-model="articuloFiltro.descripcion" ng-keyup="onKeyupArticuloSearchFiltro()"
+                                       uib-typeahead="a as a.descripcion for a in articuloSearch($viewValue)"
+                                       typeahead-loading="articuloFiltro.loading" typeahead-no-results="articuloFiltro.noResults"
+                                       typeahead-template-url="articuloSearchFiltroTemplate.html" typeahead-editable="false"
+                                       typeahead-on-select="selectedArticuloSearchFiltro($item)" onClick="this.select()" />
+
+                                <script type="text/ng-template" id="articuloSearchFiltroTemplate.html">
+                                    <div class="autocomplete-suggestion-uib-typeahead">
+                                        <span class="item-title">
+                                            <small> {{match.model.descripcion}}</small><br>
+                                            <small><b>Código: </b>{{match.model.codigo}}</small>
+                                        </span>
+                                    </div>
+                                </script>
+
+                                <span class="ml-5" ng-if="articuloFiltro.loading">
+                                    <i class="fas fa-sync-alt fa-xs"></i>
+                                    Loading...
+                                </span>
+                                <small class="text-danger ml-5" ng-if="articuloFiltro.noResults">
+                                    No se encontraron
+                                    resultados
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-6 col align-self-center mt-3">
+
+                            <button type="button" class="btn btn-info" ng-click="searchKardex()">
+                                <i class="ti-search"></i> Buscar
+                            </button>
+
+                            <button type="button" class="btn btn-secondary" ng-click="getReport()">
+                                <i class="mdi mdi-file"></i> Reporte
+                            </button>
+
+
+
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div id="table-kardex"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+</div>
+
+@section Scripts {
+    @* <script type="module" src="~/js/modal/inventario/kardexCtrl.js" asp-append-version="true"></script> *@
+    <script src="~/js/inventario/controllers/kardexCtrl.min.js" asp-append-version="true"></script>
+}

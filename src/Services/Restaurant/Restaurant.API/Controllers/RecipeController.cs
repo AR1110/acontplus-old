@@ -1,29 +1,34 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Restaurant.Core.Common;
+﻿using System.Security.Claims;
+using Common.Core.Models;
+using Microsoft.AspNetCore.Mvc;
 using Restaurant.Core.Entities;
 using Restaurant.Core.Interfaces;
-using System.Security.Claims;
+using Services.Common;
+using Services.Common.Logs;
 
 namespace Restaurant.API.Controllers
 {
     public class RecipeController : BaseApiController
     {
         private readonly IRecipe _recipe;
-        public RecipeController(IRecipe recipe)
+        private LogWriter _log;
+
+        public RecipeController(IRecipe recipe, LogWriter log)
         {
             _recipe = recipe;
+            _log = log;
         }
         [HttpGet]
-        public async Task<ActionResult<StructureResponse>> Get()
+        public async Task<ActionResult<APIResponse>> Get()
         {
-            var _response = new StructureResponse();
+            var _response = new APIResponse();
             try
             {
                 _response.payload = await _recipe.GetAsync();
                 _response.code = "0";
                 return _response;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 _response.Create(code: "-1", message: "Error on Get");
                 return _response;
@@ -45,6 +50,27 @@ namespace Restaurant.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("GetByItem/{id}")]
+        public async Task<IActionResult> GetByItem(int id)
+        {
+            try
+            {
+                var parameters = new Dictionary<string, object> {
+                    {"userRoleId", User.GetUserRoleId()},
+                    { "id", id }
+                };
+
+                var result = await _recipe.GetByItem(parameters);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _log.LogActivity("Error en catch " + ex.Message);
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Recipe recipe)
         {

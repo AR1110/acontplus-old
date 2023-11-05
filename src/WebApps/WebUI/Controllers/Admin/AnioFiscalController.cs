@@ -2,7 +2,7 @@
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers
+namespace WebUI.Controllers.Admin
 {
     public class AnioFiscalController : Controller
     {

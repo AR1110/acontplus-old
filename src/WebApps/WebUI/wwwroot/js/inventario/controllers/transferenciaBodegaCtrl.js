@@ -112,7 +112,8 @@
             try {
                 showLoader();
                 
-                let response = await commonSvc.getDataTransferenciaBodega(item.idTransferenciaBodega);
+                let response = await commonSvc.getDataTransferenciaBodega(item.idTransferenciaBodega)
+                .finally(()=>hideLoader())
     
                 if(!response.isComplete) throw response;
                 

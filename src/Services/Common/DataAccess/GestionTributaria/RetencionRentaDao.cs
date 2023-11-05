@@ -1,9 +1,9 @@
-﻿using Domain.Models.GestionTributaria;
+﻿using System.Data;
+using Common.Core.Models;
+using Domain.Models.GestionTributaria;
 using Domain.ViewModels.GestionTributaria;
-using Helpers;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace DataAccess.GestionTributaria
 {
@@ -18,7 +18,7 @@ namespace DataAccess.GestionTributaria
         public RetencionRentaDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _gr = new GenericResponse();
         }
 

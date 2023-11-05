@@ -1,0 +1,114 @@
+﻿@page
+@model WebUI.Pages.Establecimiento.IndexModel
+
+@{
+    ViewData["title"] = "Establecimiento";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div ng-controller="establecimientoCtrl as $ctrl">
+    <div class="row page-titles">
+        <div class="col-md-5 alig-self-center">
+            @* <h5 class="text-themecolor">Establecimiento</h5> *@
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+                <button type="button" class="btn btn-info m-l-15" ng-click="$ctrl.openModalNew()"> <i class="ti-plus"></i> Nuevo</button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-9">
+                            <span class="form-group pull-left page-size form-inline">
+                                <select class="form-control control-color"
+                                        ng-model="$ctrl.dataSearch.pageSize"
+                                        ng-change="$ctrl.changePageSize()"
+                                        ng-options="ra for ra in $ctrl.recordsQuantity">
+                                </select>
+                            </span>
+                        </div>
+                        <div class="col-lg-3">
+                            <input type="text" class="form-control border-select" ng-model="$ctrl.dataSearch.textSearch" placeholder="Buscar Estab." />
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Op.</th>
+                                    <th>N°</th>
+                                    <th>No. Establecimiento</th>
+                                    <th>Nombre Comercial</th>
+                                    <th>Ubicación</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in $ctrl.establecimientos | filter:$ctrl.dataSearch.textSearch">
+                                    <td>
+                                        <md-menu>
+                                            <md-button aria-label="Open demo menu" class="md-icon-button"
+                                                       ng-click="$mdMenu.open($event)">
+                                                <icon class="mdi mdi-menu"></icon>
+                                            </md-button>
+                                            <md-menu-content class="md-dense">
+                                                <md-menu-item>
+                                                    <md-button ng-click="$ctrl.openModalEdit(item)">
+                                                        <span md-menu-align-target><i class="fa fa-edit"></i> Editar</span>
+                                                    </md-button>
+                                                </md-menu-item>
+
+                                                <md-menu-item>
+                                                    <md-button ng-click="$ctrl.askToCloseEstab(item)">
+                                                        <span md-menu-align-target><i class="mdi mdi-window-close"></i> Cerrar Estab.</span>
+                                                    </md-button>
+                                                </md-menu-item>
+
+                                                <md-menu-item>
+                                                    <md-button ng-click="$ctrl.openModalConfig(item)">
+                                                        <span md-menu-align-target><i class="mdi mdi-settings"></i> Config.</span>
+                                                    </md-button>
+                                                </md-menu-item>
+
+
+                                            </md-menu-content>
+                                        </md-menu>
+
+                                    </td>
+                                    <td>{{$index+1}}</td>
+                                    <td>{{item.estab}}</td>
+                                    <td>{{item.nombreComercial}}</td>
+                                    <td>{{item.dirEstablecimiento}}</td>
+                                    <td>{{item.estado}}</td>
+                                </tr>
+                                <tr ng-show="$ctrl.establecimientos.length==0" class="text-center">
+                                    <td colspan="6">
+                                        No hay registros en esta tabla.
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td align="center" colspan="10">
+                                        <div class="pull-left">
+                                            <ul uib-pagination total-items="$ctrl.totalRecords" items-Per-Page="$ctrl.dataSearch.pageSize" ng-change="$ctrl.pagechanged()" ng-model="$ctrl.dataSearch.pageIndex" max-size="$ctrl.maxSize" class="pagination" boundary-links="true" rotate="false"></ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts{
+    <script src="~/js/controllers/sri/establecimientoCtrl.js" asp-append-version="true"></script>
+}

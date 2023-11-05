@@ -1,5 +1,5 @@
 ﻿@page
-@model WebUI.CuentaPorPagar.Pages.IndexModel
+@model WebUI.Areas.CuentaPorPagar.Pages.IndexModel
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -36,7 +36,7 @@
                                 onclick="select()"                       
                                 ng-model="dataSearch.selectedProveedor"
                                 ng-keyup="onKeyupSearchProveedor(selectedProveedor)"
-                                uib-typeahead="a as a.proveedor.nombreFiscal for a in searchProveedorFilter($viewValue)"
+                                uib-typeahead="a as a.nombreFiscal for a in searchProveedorFilter($viewValue)"
                                 typeahead-loading="data.loadingSearch"
                                 typeahead-no-results="data.noResults"
                                 typeahead-template-url="autocompleteProveedorFilter.html"
@@ -45,7 +45,7 @@
                                 <script type="text/ng-template" id="autocompleteProveedorFilter.html">
                                     <div class="autocomplete-suggestion-uib-typeahead">
                                         <span class="item-title">
-                                            <b> {{match.model.proveedor.numeroIdentificacion}}</b> - {{match.model.proveedor.nombreFiscal}}
+                                            <b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}
                                         </span>
                                     </div>
                                 </script> 
@@ -196,5 +196,6 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/contabilidad/controllers/cuentaPorPagarCtrl.min.js" asp-append-version="true"></script>
+    <script src="~/js/contabilidad/services/cuentaPorPagarService.js" asp-append-version="true"></script>
+    <script src="~/js/contabilidad/controllers/cuentaPorPagarCtrl.js" asp-append-version="true"></script>
 }

@@ -1,16 +1,17 @@
-import { PrivateRoutes } from "@/core/models";
-import { Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 
- 
+import { Paper } from "@mui/material";
+import OrderTable from "./OrderTable";
+import { OrderProvider } from "./context";
+import OrderFilter from "./Components/OrderFilter";
+
+
 export default function Order() {
-    const navigate = useNavigate();
-    const handleNewOrder = ()=>{
-        navigate(`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.SALE}`, {replace: true})
-    }
-  return (
-    <div>
-        <Button variant="contained" onClick={handleNewOrder}>Nuevo Pedido</Button>
-    </div>
-  )
+    return (
+        <OrderProvider>
+            <Paper sx={{ maxWidth: "auto", margin: 'auto', overflow: 'hidden' }}>
+                <OrderFilter />
+                <OrderTable />
+            </Paper>
+        </OrderProvider>
+    )
 }

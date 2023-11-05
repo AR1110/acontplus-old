@@ -1,86 +1,121 @@
 
 (function () {
     'use strict'
-    let establecimientos = []
-    let allPuntosEmision = []
-    let puntosEmision = []
-    let allBodegas = []
-    let bodegas = []
-    let subfamilias = []
-    let config = {}
+
+    const COD_DOC = 'CIV', URL_TEMPLATE = '~/Areas/Consolidacion/Pages/Shared/'
+
+    let modalSvc = {};
+    let commonSvc = {};
+    let mS = {};
+    let tS = {};
+    let fS = {}
+
+    let establecimientos = [];
+    let bodegas = [];
+    let subfamilias = [];
+    let config = {};
+
+    let consolidacionInvSvc = {};
 
     app.controller('consolidacionInvCtrl', consolidacionInvCtrl);
-    consolidacionInvCtrl.$inject = ['$scope', '$filter', 'mainService', 'commonService', 'modalService', 'nombreModal', 'formulario']
-    function consolidacionInvCtrl($scope, $filter, _mS, _commonSvc, _modalSvc, _nombreModalConst, _form) {
+    consolidacionInvCtrl.$inject = [
+        '$scope',
+        '$injector',
+        '$filter',
+    ]
+    function consolidacionInvCtrl(
+        $scope,
+        $injector,
+        $filter
+    ) {
+
+        modalSvc = $injector.get("modalService");
+        commonSvc = $injector.get("commonService");
+        mS = $injector.get("mainService");
+        tS = $injector.get("toastService");
+        fS = $injector.get("formulario");
+        consolidacionInvSvc = $injector.get("consolidacionInvService");
+
         $scope.btnEditDisabled = false;
-        const TIPO_DOC = _commonSvc.tipoDoc['CIV'];
         $scope.dataSearch = {
             pageIndex: 1,
             pageSize: 1000
         }
         $scope.getConsolidaciones = async () => {
             try {
-                showLoader();
                 $scope.consolidaciones = []
 
-                $scope.dataSearch.tipo = 2
+                $scope.dataSearch.tipo = 2;
 
-                _mS.getData('get', 'Consolidacion/?json=' + JSON.stringify($scope.dataSearch), null, true).then(response => {
-                    if (response.code === "0") {
-                        console.warn(response)
-                    }
-                    if (response.code === "1") {
-                        let tempArray = JSON.parse(response.payload) || []
-                        $scope.consolidaciones = tempArray[0]
-                        $scope.cloneConsolidaciones = tempArray[0]
-                        let total = $scope.consolidaciones.map(val => val.total).reduce((acc, curr) => acc + curr, 0);
-                        $scope.total = _form.roundNumber(total, 5);
-                    }
-                }).catch(error => {
-                    console.error(error)
+                showLoader();
+                consolidacionInvSvc.get($scope.dataSearch).then(response => {
+                    $scope.consolidaciones = response;
+                    $scope.cloneConsolidaciones = JSON.parse(JSON.stringify($scope.consolidaciones))
+                    let total = $scope.consolidaciones.map(val => val.total).reduce((acc, curr) => acc + curr, 0);
+                    $scope.total = fS.roundNumber(total, 5);
                 })
+                    .catch(error => {
+                        console.log(error)
+                    })
+                    .finally(() => hideLoader());
             } catch (error) {
                 console.log(error)
-            } finally {
-                hideLoader();
             }
         }
 
         $scope.initiload = () => {
-            _mS.getData('GET', 'Consolidacion/?json=' + JSON.stringify({ tipo: 1 }), null, true).then(
-                response => {
-                    if (response.code == "1") {
-                        let tempArray = JSON.parse(response.payload) || []
-                        if (tempArray.length > 0) {
-                            establecimientos = tempArray[0]
-                            let codEstab = establecimientos.length > 0 ? establecimientos[0].codEstab : 0
-                            $scope.dataSearch.codEstab = codEstab
-                            allPuntosEmision = tempArray[0]
-                            allBodegas = tempArray[1]
-                            if (codEstab) {
-                                for (const e of allPuntosEmision) {
-                                    if (e.codEstab == codEstab) {
-                                        puntosEmision.push(e)
-                                    }
-                                }
-                                for (const e of allBodegas) {
-                                    if (e.codEstab == codEstab) {
-                                        bodegas.push(e)
-                                    }
-                                }
-                            } else {
-                                puntosEmision = allPuntosEmision
-                                bodegas = allBodegas
-                            }
-                            subfamilias = tempArray[2]
-                            config = JSON.parse(tempArray[3][0].jsonConfig).find(x => x.codTransaccion == 'AL')
-                            $scope.getConsolidaciones()
-                        }
-                    }
+            showLoader();
+            consolidacionInvSvc.get({ tipo: 1 }).then(response => {
+                let { estabs } = response;
+                establecimientos = estabs;
+                subfamilias = response.subFamilias;
+                config = response.config;
+
+                if (establecimientos.length > 0) {
+                    let dataEstab = establecimientos.find(estab => (estab.defaultEstab));
+                    $scope.dataSearch.codEstab = dataEstab.codEstab;
                 }
-            ).catch(error => {
-                console.error(error)
+                $scope.getConsolidaciones();
             })
+                .catch(error => {
+                    console.log(error)
+                })
+                .finally(() => hideLoader());
+
+            // mS.getData('GET', 'Consolidacion/?json=' + JSON.stringify({ tipo: 1 }), null, true).then(
+            //     response => {
+            //         if (response.code == "1") {
+            //             let tempArray = JSON.parse(response.payload) || []
+            //             if (tempArray.length > 0) {
+            //                 establecimientos = tempArray[0]
+            //                 let codEstab = establecimientos.length > 0 ? establecimientos[0].codEstab : 0
+            //                 $scope.dataSearch.codEstab = codEstab
+            //                 allPuntosEmision = tempArray[0]
+            //                 allBodegas = tempArray[1]
+            //                 if (codEstab) {
+            //                     for (const e of allPuntosEmision) {
+            //                         if (e.codEstab == codEstab) {
+            //                             puntosEmision.push(e)
+            //                         }
+            //                     }
+            //                     for (const e of allBodegas) {
+            //                         if (e.codEstab == codEstab) {
+            //                             bodegas.push(e)
+            //                         }
+            //                     }
+            //                 } else {
+            //                     puntosEmision = allPuntosEmision
+            //                     bodegas = allBodegas
+            //                 }
+            //                 subfamilias = tempArray[2]
+            //                 config = JSON.parse(tempArray[3][0].jsonConfig).find(x => x.codTransaccion == 'AL')
+            //                 $scope.getConsolidaciones()
+            //             }
+            //         }
+            //     }
+            // ).catch(error => {
+            //     console.error(error)
+            // })
         }
         $scope.initiload();
 
@@ -88,91 +123,11 @@
             let consolidaciones = JSON.parse(JSON.stringify($scope.cloneConsolidaciones))
             $scope.consolidaciones = $filter("filter")(consolidaciones, $scope.dataSearch.bySearch);
             let total = $scope.consolidaciones.map(val => val.total).reduce((acc, curr) => acc + curr, 0);
-            $scope.total = _form.roundNumber(total, 5);
-        }
-
-        $scope.openModalNew = async () => {
-            let { MODAL_FILE_CTRL, MODAL_NUEVO } = _nombreModalConst.consolidacion_inv;
-            let template = MODAL_NUEVO['template'];
-            let params = {
-                TIPO_REGISTRO: 'NUEVO'
-            }
-            $scope.openModalParam({
-                controller: 'ModalConsolidacionNuevoCtrl',
-                template,
-                params
-            })
-        }
-        $scope.openModalFiltro = async () => {
-            let { MODAL_FILE_CTRL, MODAL_FILTRO } = _nombreModalConst.consolidacion_inv;
-            let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_FILTRO['controller']];
-            let template = MODAL_FILTRO['template'];
-            let params = {
-
-            }
-            let modalRef = _modalSvc.openModalCustom({
-                controller,
-                isRenderRazorPartial: true,
-                template
-            })
-        }
-
-        $scope.openModalDetalle = async (item) => {
-            try {
-                showLoader();
-                let { MODAL_FILE_CTRL, MODAL_DETALLE } = _nombreModalConst.consolidacion_inv;
-                let template = MODAL_DETALLE['template'];
-                const response = await _commonSvc.getDataConsolidacionInventario(item.idConsolidacionInventario)
-                if (!response.isComplete) return
-
-                let params = {
-                    TIPO_REGISTRO: 'DETALLE',
-                    data: response
-                }
-
-                $scope.openModalParam({
-                    controller: "ModalConsolidacionDetalleCtrl",
-                    template,
-                    isRenderRazorPartial: true,
-                    params
-                })
-            } catch (error) {
-                console.log(error)
-            } finally {
-                hideLoader();
-            }
-        }
-
-        $scope.openModalEditar = async (item) => {
-            try {
-                showLoader();
-                let { MODAL_FILE_CTRL, MODAL_EDITAR } = _nombreModalConst.consolidacion_inv;
-                let template = MODAL_EDITAR['template'];
-
-                const response = await _commonSvc.getDataConsolidacionInventario(item.idConsolidacionInventario)
-
-                if (!response.isComplete) return
-
-                let params = {
-                    TIPO_REGISTRO: 'EDITAR',
-                    data: response
-                }
-
-                $scope.openModalParam({
-                    controller: "ModalConsolidacionEditarCtrl",
-                    template,
-                    isRenderRazorPartial: true,
-                    params
-                })
-            } catch (error) {
-                console.log(error)
-            } finally {
-                hideLoader();
-            }
+            $scope.total = fS.roundNumber(total, 5);
         }
 
         $scope.openModalParam = async ({ controller, template, size = 'xl', params }) => {
-            _modalSvc.openModalCustom({
+            modalSvc.openModalCustom({
                 controller,
                 template,
                 size,
@@ -186,6 +141,71 @@
                 }
             })
         }
+
+        $scope.openModalNew = () => {
+            $scope.openModalParam({
+                controller: 'ModalConsolidacionNuevoCtrl',
+                template: URL_TEMPLATE + '_ModalNuevo.cshtml',
+                params: {
+                    TIPO_REGISTRO: 'NUEVO'
+                }
+            })
+        }
+        $scope.openModalFiltro = async () => {
+            console.log('test')
+        }
+
+        $scope.openModalDetalle = async (item) => {
+            try {
+                showLoader();
+                const response = await commonSvc.getDataConsolidacionInventario(item.idConsolidacionInventario)
+                if (!response.isComplete) return
+
+                let params = {
+                    TIPO_REGISTRO: 'DETALLE',
+                    data: response
+                }
+
+                $scope.openModalParam({
+                    controller: "ModalConsolidacionDetalleCtrl",
+                    template: URL_TEMPLATE + '_ModalDetalle.cshtml',
+                    isRenderRazorPartial: true,
+                    params
+                })
+            } catch (error) {
+                console.log(error)
+            } finally {
+                hideLoader();
+            }
+        }
+
+        $scope.openModalEditar = async (item) => {
+            try {
+                showLoader();
+
+                const response = await commonSvc.getDataConsolidacionInventario(item.idConsolidacionInventario)
+                hideLoader();
+                if (!response.isComplete) return
+
+                let params = {
+                    TIPO_REGISTRO: 'EDITAR',
+                    data: response
+                }
+
+                $scope.openModalParam({
+                    controller: "ModalConsolidacionEditarCtrl",
+                    template: URL_TEMPLATE + '_ModalEditar.cshtml',
+                    isRenderRazorPartial: true,
+                    params
+                })
+            } catch (error) {
+                console.log(error)
+            } finally {
+                hideLoader();
+            }
+        }
+
+
 
         $scope.askToDelete = async (item) => {
 
@@ -202,12 +222,12 @@
 
             if (isConfirmed) {
                 showLoader();
-                _mS.getData('delete', 'Consolidacion/?id=' + item.idConsolidacionInventario, null, true).then(response => {
+                consolidacionInvSvc.delete(item.idConsolidacionInventario).then(response => {
                     if (response.code === "0") {
-                        _form.sweetAlert('warning', response.message, response.titleSms);
+                        fS.sweetAlert('warning', response.message, response.titleSms);
                     }
                     if (response.code === "1") {
-                        _form.sweetAlert('success', response.message, response.titleSms, 1000);
+                        fS.sweetAlert('success', response.message, response.titleSms, 1000);
                         $scope.getConsolidaciones();
                     }
                     hideLoader();
@@ -234,7 +254,7 @@
                 sendEmail: false
             }
 
-            _commonSvc.getReport({
+            commonSvc.getReport({
                 parameters,
                 formatType: 'pdf'
             })
@@ -248,28 +268,22 @@
         '$timeout',
         '$uibModalInstance',
         'uiGridConstants',
-        'mainService',
-        'commonService',
-        'modalService',
-        'nombreModal',
-        'toastService',
-        'formulario',
         'params'
     ]
-    function ModalConsolidacionNuevoCtrl($scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params) {
+    function ModalConsolidacionNuevoCtrl($scope, $timeout, $uibModalInstance, uiGridConstants, _params) {
         console.log("inside new modal")
         $scope.TIPO_REGISTRO = _params
         $scope.data = {}
         $scope.data.fechaEmision = new Date()
         $scope.data.total = 0
         $scope.uiGridConstants = uiGridConstants;
-        $scope.TIPO_DOC = _commonSvc.tipoDoc['CIV'];
+        $scope.TIPO_DOC = commonSvc.tipoDoc['CIV'];
 
         $scope.articlesSelected = []
         $scope.advancedSearch = () => {
-            _modalSvc.openModalCustom({
+            modalSvc.openModalCustom({
                 controller: 'AdvancedSearchCtrl',
-                template: '~/Areas/Consolidacion/Pages/Shared/_AdvancedSearch.cshtml',
+                template: URL_TEMPLATE + '_AdvancedSearch.cshtml',
                 isRenderRazorPartial: true,
                 size: 'xl',
                 windowClass: 'uibModalFullScreen'
@@ -357,7 +371,7 @@
                 editableCellTemplate: 'ui-grid/dropdownEditor',
                 enableCellEdit: true,
                 enableCellEditOnFocus: true,
-                editDropdownOptionsFunction: function (rowEntity, colDef) {
+                editDropdownOptionsFunction: function (rowEntity) {
                     return rowEntity.medidas.map(function (val) {
                         //if (val.articuloPvP.idTarifa == rowEntity.idTarifa && rowEntity.precioVenta !== val.articuloPvP.precioVenta) {
                         //    val.articuloPvP.precioVenta = rowEntity.precioVenta
@@ -407,7 +421,7 @@
                 visible: true,
                 aggregationType: $scope.uiGridConstants.aggregationTypes.sum,
                 customTreeAggregationFinalizerFn: function (aggregation) {
-                    aggregation.rendered = _fS.roundNumber(aggregation.value, 2)
+                    aggregation.rendered = fS.roundNumber(aggregation.value, 2)
                 },
                 aggregationLabel: "$",
             },
@@ -421,7 +435,7 @@
                 minWidth: '100',
                 aggregationType: $scope.uiGridConstants.aggregationTypes.sum,
                 customTreeAggregationFinalizerFn: function (aggregation) {
-                    aggregation.rendered = _fS.roundNumber(aggregation.value, 2)
+                    aggregation.rendered = fS.roundNumber(aggregation.value, 2)
                 },
                 aggregationLabel: "$",
             },
@@ -436,7 +450,7 @@
                 minWidth: '100',
                 aggregationType: $scope.uiGridConstants.aggregationTypes.sum,
                 customTreeAggregationFinalizerFn: function (aggregation) {
-                    aggregation.rendered = _fS.roundNumber(aggregation.value, 2)
+                    aggregation.rendered = fS.roundNumber(aggregation.value, 2)
                 },
                 aggregationLabel: "$",
             },
@@ -448,9 +462,9 @@
                 width: '8%',
                 minWidth: '100',
                 type: 'number',
-                aggregationType: _fS.roundNumber($scope.uiGridConstants.aggregationTypes.sum, 2),
+                aggregationType: fS.roundNumber($scope.uiGridConstants.aggregationTypes.sum, 2),
                 customTreeAggregationFinalizerFn: function (aggregation) {
-                    aggregation.rendered = _fS.roundNumber(aggregation.value, 2)
+                    aggregation.rendered = fS.roundNumber(aggregation.value, 2)
                 },
                 aggregationLabel: "$",
             },
@@ -478,21 +492,22 @@
             try {
                 showLoader();
                 if (establecimientos.length > 0) {
-                    $scope.establecimientos = establecimientos
-                    $scope.data.codEstab = establecimientos.length > 0 ? establecimientos[0].codEstab : 0
+                    $scope.establecimientos = establecimientos;
+                    let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
+                    $scope.data.codEstab = dataEstab.codEstab;
                     $scope.cloneCodEstab = $scope.data.codEstab
-                    $scope.puntosEmision = puntosEmision
+                    $scope.puntosEmision = dataEstab.puntosEmision
 
                     if ($scope.puntosEmision.length > 0) {
                         $scope.data.idPuntoEmision = $scope.puntosEmision.find(x => (x.defaultPtoEmi)).idPuntoEmision
                     }
 
-                    $scope.bodegas = bodegas
+                    $scope.bodegas = dataEstab.bodegas
                     $scope.idBodega = $scope.bodegas.length > 0 ? $scope.bodegas.find(x => (x.defaultBodega)).idBodega : 0
                     $scope.cloneIdBodega = $scope.idBodega
 
                 } else {
-                    _tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO')
+                    tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO')
                 }
 
                 $scope.decimal = config
@@ -532,15 +547,15 @@
                 }
 
                 if (colDef.field === "precioActual") {
-                    rowEntity.precioCosto = _fS.roundNumber(rowEntity.precioCosto, $scope.decimal.nroPrecio)
-                    rowEntity.precioActual = _fS.roundNumber(rowEntity.precioActual, $scope.decimal.nroPrecio)
+                    rowEntity.precioCosto = fS.roundNumber(rowEntity.precioCosto, $scope.decimal.nroPrecio)
+                    rowEntity.precioActual = fS.roundNumber(rowEntity.precioActual, $scope.decimal.nroPrecio)
                 }
 
                 if (colDef.field === "idMedida" && rowEntity.idMedida !== oldValue) {
                     let dataMedida = rowEntity.medidas.find(val => val.idMedida === rowEntity.idMedida);
 
-                    rowEntity.precioCosto = _fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio)
-                    rowEntity.precioActual = _fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio)
+                    rowEntity.precioCosto = fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio)
+                    rowEntity.precioActual = fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio)
                 }
 
                 $scope.setTotalColumn(rowEntity);
@@ -551,13 +566,13 @@
 
         $scope.setTotalColumn = (rowEntity) => {
             let total = rowEntity.cantidad * rowEntity.precioActual;
-            rowEntity.total = _fS.roundNumber(total, $scope.decimal.nroTotalDetalle); //Total Precio Venta
+            rowEntity.total = fS.roundNumber(total, $scope.decimal.nroTotalDetalle); //Total Precio Venta
         }
 
         $scope.setTotalDetalle = () => {
             let total = $scope.gridOptions.data.map(val => val.total).reduce((acc, curr) => acc + curr, 0);
 
-            $scope.data.total = _fS.roundNumber(total, $scope.decimal.nroTotalSubTotal)
+            $scope.data.total = fS.roundNumber(total, $scope.decimal.nroTotalSubTotal)
         }
 
         $scope.setFocusArticulo = () => {
@@ -598,19 +613,23 @@
                 $scope.bodegas = []
                 $scope.cloneCodEstab = $scope.data.codEstab;
                 const dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.data.codEstab);
-                for (const p of allPuntosEmision) {
-                    if (dataEstab.codEstab == p.codEstab) {
-                        $scope.puntosEmision.push(p)
-                    }
+                $scope.puntosEmision = dataEstab.puntosEmision;
+                $scope.bodegas = dataEstab.bodegas || [];
+
+                if ($scope.puntosEmision.length > 0) {
+                    $scope.data.idPuntoEmision = $scope.puntosEmision.find(ptoEmi => (ptoEmi.defaultPtoEmi)).idPuntoEmision;
+                } else {
+                    tS.toastr('warning', 'No tienes asignados puntos de emisón');
+                    $scope.data.idPuntoEmision = 0;
                 }
-                $scope.data.idPuntoEmision = $scope.puntosEmision.length > 0 ? $scope.puntosEmision[0].idPuntoEmision : 0;
-                for (const p of allBodegas) {
-                    if (dataEstab.codEstab == p.codEstab) {
-                        $scope.bodegas.push(p)
-                    }
+
+                if ($scope.bodegas.length > 0) {
+                    $scope.idBodega = $scope.bodegas.find(bodega => (bodega.defaultBodega)).idBodega;
+                    $scope.cloneIdBodega = $scope.idBodega;
+                } else {
+                    $scope.idBodega = 0;
                 }
-                $scope.idBodega = $scope.bodegas.length > 0 ? $scope.bodegas[0].idBodega : 0;
-                $scope.cloneIdBodega = $scope.idBodega;
+
                 let indexColumn = $scope.gridOptions.columnDefs.findIndex(item => item.field === 'idBodega');
                 $scope.gridOptions.columnDefs[indexColumn].editDropdownOptionsArray = $scope.bodegas;
                 for (let item of $scope.gridOptions.data) {
@@ -648,8 +667,9 @@
             }
         }
 
-        $scope.setItemArticuloEnDetalle = (item, isAdvanced = null) => {
+        $scope.setItemArticuloEnDetalle = async (item, isAdvanced = null) => {
             try {
+
                 let articulo = {}
                 let medidas = []
                 if (!isAdvanced) {
@@ -665,10 +685,8 @@
                             medidas.push(m)
                         }
                     }
-                    console.log(articulo)
                 }
 
-                console.log(medidas)
 
                 if (!articulo.llevaInventario) {
                     Swal.fire({
@@ -678,11 +696,27 @@
                     return
                 }
 
-                let entity = {}
+
+                let entity = {};
                 $scope.indexRow = $scope.gridOptions.data.findIndex(value => value.idArticulo === articulo.idArticulo);
                 if ($scope.indexRow !== -1) {
                     entity = $scope.gridOptions.data[$scope.indexRow];
-                    entity.cantidad = entity.cantidad + 1;
+                    if (!item.isUpdateProduct) {
+
+                        let { isConfirmed } = await Swal.fire({
+                            text: "Desea sumar la cantidad del producto en el detalle?",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Si!',
+                            cancelButtonText: 'No'
+                        })
+                        if (isConfirmed) {
+                            entity.cantidad = entity.cantidad + 1;
+                        }
+                    }
+
 
                 } else {
                     $scope.addRow();
@@ -725,9 +759,9 @@
             entity.porcentajeTipoIva = articulo.porcentajeTipoIva;
             entity.nombreTipoIva = articulo.nombreTipoIva;
             entity.stock = articulo.stock;
-            entity.precioCosto = _fS.roundNumber(medidas[0].precioCosto, $scope.decimal.nroPrecio)
-            entity.precioActual = _fS.roundNumber(medidas[0].precioCosto, $scope.decimal.nroPrecio)
-            entity.total = _fS.roundNumber(medidas[0].precioCosto, $scope.decimal.nroPrecio)
+            entity.precioCosto = fS.roundNumber(medidas[0].precioCosto, $scope.decimal.nroPrecio)
+            entity.precioActual = fS.roundNumber(medidas[0].precioCosto, $scope.decimal.nroPrecio)
+            entity.total = fS.roundNumber(medidas[0].precioCosto, $scope.decimal.nroPrecio)
             entity.idBodega = $scope.idBodega ? $scope.idBodega : 0;
             entity.llevaInventario = articulo.llevaInventario;
             entity.medidas = medidas; //Lista Medida 
@@ -784,14 +818,16 @@
                 $scope.gridOptions.data[0],
                 $scope.gridOptions.columnDefs[2]
             )
-            $scope.$broadcast("editArticulo", item)
+            item.isUpdate = true;
+            let params = Object.assign(item, { isUpdate: true })
+            $scope.$broadcast("editArticulo", params);
         }
 
         $scope.consolidacionArticuloImport = async () => {
             try {
-                let modalRef = _modalSvc.openModalCustom({
+                let modalRef = modalSvc.openModalCustom({
                     controller: 'ModalConsolidacionImportacionCtrl',
-                    template: '~/Areas/Consolidacion/Pages/Shared/_ModalConsolidacionImportacion.cshtml' ,
+                    template: URL_TEMPLATE + '_ModalConsolidacionImportacion.cshtml',
                     isRenderRazorPartial: true,
                     size: 'xl',
                     windowClass: 'uibModalFullScreen'
@@ -809,34 +845,34 @@
         $scope.onSave = async () => {
             try {
                 if (!$scope.data.codEstab) {
-                    _tS.toastr('warning', 'Seleccione el Establecimiento', tituloModal);
+                    tS.toastr('warning', 'Seleccione el Establecimiento', tituloModal);
                     return
                 }
 
                 if (!($scope.data.idPuntoEmision)) {
-                    _tS.toastr('warning', 'Seleccione el Punto de Emisión', tituloModal);
+                    tS.toastr('warning', 'Seleccione el Punto de Emisión', tituloModal);
                     return
                 }
 
                 if (!($scope.data.fechaEmision)) {
-                    _tS.toastr('warning', 'Ingrese la Fecha de Emisión', tituloModal);
+                    tS.toastr('warning', 'Ingrese la Fecha de Emisión', tituloModal);
                     return
                 }
 
                 if ($scope.gridOptions.data.length === 0) {
-                    _tS.toastr('warning', 'Al menos ingrese un Articulo en el Detalle', tituloModal);
+                    tS.toastr('warning', 'Al menos ingrese un Articulo en el Detalle', tituloModal);
                     return
                 }
 
                 if ($scope.gridOptions.data.some(item => (!(item.idBodega > 0)))) {
-                    _tS.toastr('warning', 'Agregue  bodega a los artículos');
+                    tS.toastr('warning', 'Agregue  bodega a los artículos');
                     return
                 }
 
                 showLoader();
-                $scope.nroDocumentoSecuencial = await _commonSvc.generarNroDocumentoCompra({
+                $scope.nroDocumentoSecuencial = await commonSvc.generarNroDocumentoCompra({
                     idPuntoEmision: $scope.data.idPuntoEmision,
-                    codigoDocumento: $scope.TIPO_DOC.codigo
+                    codigoDocumento: COD_DOC
                 })
                 hideLoader();
 
@@ -868,23 +904,22 @@
                     showLoader();
 
                     let consolidacion = Object.assign({}, $scope.data);
-                    consolidacion.fechaEmision = _fS.formatDateTimeZone($scope.data.fechaEmision, "YYYY-MM-DD HH:mm:ss A")
+                    consolidacion.fechaEmision = fS.formatDateTimeZone($scope.data.fechaEmision, "YYYY-MM-DD HH:mm:ss A")
 
                     let data = {
                         consolidacion,
                         detalle: $scope.gridOptions.data
                     }
 
-                    await _mS.getData('post', 'Consolidacion/', { data: data }, true).then(response => {
+                    consolidacionInvSvc.post(data).then(response => {
                         if (response.code === '0') {
-                            _fS.sweetAlert('warning', response.message, response.titleSms);
+                            fS.sweetAlert('warning', response.message, response.titleSms);
                         }
                         if (response.code === "1") {
-                            _fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                            fS.sweetAlert('success', response.message, response.titleSms, 1000);
                             $uibModalInstance.close(response);
                         }
-                        hideLoader()
-                    })
+                    }).finally(() => hideLoader())
                 }
 
             } catch (error) {
@@ -930,13 +965,11 @@
     app.controller("AdvancedSearchCtrl", AdvancedSearchCtrl)
     AdvancedSearchCtrl.$inject = [
         "$scope",
-        "mainService",
-        "toastService",
         "$uibModalInstance",
-        "commonService",
-        "articuloService"
+        "articuloService",
+        'proveedorService'
     ]
-    function AdvancedSearchCtrl($scope, _mS, _tS, $uibModalInstance, _commonSvc, _articleSvc) {
+    function AdvancedSearchCtrl($scope, $uibModalInstance, articleSvc, proveedorSvc) {
         $scope.catalogs = [
             { code: 1, description: 'Articulo' },
             { code: 3, description: 'Subfamilias' },
@@ -949,7 +982,7 @@
         $scope.mainForm.tipo = 4
         $scope.mainForm.opcion = $scope.catalogs.find(x => x.code == '4').code
 
-        $scope.proveedorSearch = (textSearch) => _commonSvc.proveedorSearch(textSearch)
+        $scope.proveedorSearch = (textSearch) => proveedorSvc.search(textSearch)
         $scope.selectProveedorFiltro = (item) => {
             $scope.mainForm.rucProveedor = item.proveedor.numeroIdentificacion
             $scope.getArticles()
@@ -957,7 +990,7 @@
 
         $scope.articuloSearch = (item) => {
             if (item.length >= 3) {
-                return _articleSvc.search({ busqueda: item })
+                return articleSvc.search({ busqueda: item })
             }
         }
 
@@ -968,24 +1001,16 @@
         $scope.articlesSelected = []
         $scope.articlesFounded = []
         $scope.getArticles = () => {
-            showLoader()
-            _mS.getData("GET", "Consolidacion/?json=" + JSON.stringify($scope.mainForm), null, true).then(
-                response => {
-                    if (response.code == "0") {
-                        _tS.toastr("warning", response.message)
-                    }
-                    if (response.code == "1") {
-                        $scope.articlesFounded = JSON.parse(response.payload)[0] || []
-                        if ($scope.articlesFounded.length > 50) {
-                            Swal.fire({ title: "Aviso", text: "Le recomendamos realizar consolidaciones por cada 50 articulos", icon: "info" })
-                        }
-                    }
-                    hideLoader()
+            showLoader();
+            consolidacionInvSvc.get($scope.mainForm).then(response => {
+                $scope.articlesFounded = response;
+                if ($scope.articlesFounded.length > 50) {
+                    Swal.fire({ title: "Aviso", text: "Le recomendamos realizar consolidaciones por cada 50 articulos", icon: "info" })
                 }
-            ).catch(error => {
+            }).catch(error => {
                 hideLoader()
                 console.log(error)
-            })
+            }).finally(() => hideLoader())
         }
 
         $scope.setArticlesSelected = () => {
@@ -1000,20 +1025,12 @@
     app.controller("ModalConsolidacionImportacionCtrl", ModalConsolidacionImportacionCtrl)
     ModalConsolidacionImportacionCtrl.$inject = [
         '$scope',
-        '$timeout',
         '$uibModalInstance',
         'uiGridConstants',
-        'mainService',
-        'commonService',
-        'modalService',
-        'nombreModal',
         'articuloService',
-        'toastService',
-        'formulario',
-        'params'
     ]
-    function ModalConsolidacionImportacionCtrl($scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, articleSvc, _tS, _fS, _params) {
-        $scope.TIPO_DOC = _commonSvc.tipoDoc['CIV']
+    function ModalConsolidacionImportacionCtrl($scope, $uibModalInstance, uiGridConstants, articleSvc) {
+        $scope.TIPO_DOC = commonSvc.tipoDoc['CIV']
         $scope.uiGridConstants = uiGridConstants
         $scope.data = {};
         $scope.data.fechaEmision = new Date();
@@ -1101,62 +1118,61 @@
 
         if (establecimientos.length > 0) {
             $scope.establecimientos = establecimientos
-            $scope.data.codEstab = establecimientos.length > 0 ? establecimientos[0].codEstab : 0
-            $scope.cloneCodEstab = $scope.data.codEstab
-            $scope.puntosEmision = puntosEmision
+            let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
+            $scope.cloneCodEstab = dataEstab.codEstab
+            $scope.puntosEmision = dataEstab.puntosEmision;
+            $scope.bodegas = dataEstab.bodegas;
 
             if ($scope.puntosEmision.length > 0) {
                 $scope.data.idPuntoEmision = $scope.puntosEmision.find(x => (x.defaultPtoEmi)).idPuntoEmision
             }
 
-            $scope.bodegas = bodegas
             $scope.idBodega = $scope.bodegas.length > 0 ? $scope.bodegas.find(x => (x.defaultBodega)).idBodega : 0
             $scope.cloneIdBodega = $scope.idBodega;
 
 
 
         } else {
-            _tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO')
+            tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO')
         }
 
         $scope.decimal = config
 
-        console.log("Inside Importacion Modal")
         $scope.setTotalDetalle = () => {
             let total = $scope.gridOptions.data.map(val => val.total).reduce((acc, curr) => acc + curr, 0);
 
-            $scope.data.total = _fS.roundNumber(total, $scope.decimal.nroTotalSubTotal)
+            $scope.data.total = fS.roundNumber(total, $scope.decimal.nroTotalSubTotal)
         }
 
         $scope.initialLoad = () => {
             try {
-                
-                showLoader();
-                const query = { 
-                    tipo: 9, 
-                }
-                articleSvc.getForImportation(query).then(response=>{
-                    hideLoader();                    
-                    $scope.articulosImportados = response;
-                        let num = 1;
-                        $scope.gridOptions.data = $scope.articulosImportados.map(item => ({
-                            ...item,
-                            idBodega: $scope.idBodega,
-                            precioActual: item.precioCosto,
-                            cantidad: item.stock,
-                            total: item.stock * item.precioCosto,
-                            num: num++
-                        }))
-                        $scope.setTotalDetalle();
 
-                }).catch(error=>{
+                showLoader();
+                const query = {
+                    tipo: 9,
+                }
+                articleSvc.getForImportation(query).then(response => {
+                    hideLoader();
+                    $scope.articulosImportados = response;
+                    let num = 1;
+                    $scope.gridOptions.data = $scope.articulosImportados.map(item => ({
+                        ...item,
+                        idBodega: $scope.idBodega,
+                        precioActual: item.precioCosto,
+                        cantidad: item.stock,
+                        total: item.stock * item.precioCosto,
+                        num: num++
+                    }))
+                    $scope.setTotalDetalle();
+
+                }).catch(error => {
                     hideLoader();
                     console.log(error)
                 })
             } catch (error) {
                 hideLoader();
                 console.log(error)
-            } 
+            }
         }
         $scope.initialLoad()
 
@@ -1192,19 +1208,20 @@
                 $scope.bodegas = []
                 $scope.cloneCodEstab = $scope.data.codEstab;
                 const dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.data.codEstab);
-                for (const p of allPuntosEmision) {
-                    if (dataEstab.codEstab == p.codEstab) {
-                        $scope.puntosEmision.push(p)
-                    }
+                $scope.puntosEmision = dataEstab.puntosEmision;
+                $scope.bodegas = dataEstab.bodegas;
+
+                if ($scope.puntosEmision.length > 0) {
+                    $scope.data.idPuntoEmision = $scope.puntosEmision.find(ptoEmi => (ptoEmi.defaultPtoEmi)).idPuntoEmision;
                 }
-                $scope.data.idPuntoEmision = $scope.puntosEmision.length > 0 ? $scope.puntosEmision[0].idPuntoEmision : 0;
-                for (const p of allBodegas) {
-                    if (dataEstab.codEstab == p.codEstab) {
-                        $scope.bodegas.push(p)
-                    }
+                if ($scope.bodegas.length > 0) {
+                    $scope.idBodega = $scope.bodegas.find(bodega => (bodega.defaultBodega)).idBodega;
+                    $scope.cloneIdBodega = $scope.idBodega;
                 }
-                $scope.idBodega = $scope.bodegas.length > 0 ? $scope.bodegas[0].idBodega : 0;
-                $scope.cloneIdBodega = $scope.idBodega;
+                else {
+                    $scope.idBodega = 0;
+                    tS.toastr('No tienes asignado las bodegas!')
+                }
                 let indexColumn = $scope.gridOptions.columnDefs.findIndex(item => item.field === 'idBodega');
                 $scope.gridOptions.columnDefs[indexColumn].editDropdownOptionsArray = $scope.bodegas;
                 for (let item of $scope.gridOptions.data) {
@@ -1220,33 +1237,33 @@
             try {
 
                 if (!$scope.data.codEstab || $scope.data.codEstab === 0) {
-                    _tS.toastr('warning', 'Seleccione el Establecimiento');
+                    tS.toastr('warning', 'Seleccione el Establecimiento');
                     return
                 }
 
                 if (!$scope.data.idPuntoEmision || $scope.data.idPuntoEmision === 0) {
-                    _tS.toastr('warning', 'Seleccione el Punto de Emisión');
+                    tS.toastr('warning', 'Seleccione el Punto de Emisión');
                     return
                 }
 
                 if (!$scope.data.fechaEmision) {
-                    _tS.toastr('warning', 'Seleccione la Fecha de Emisión');
+                    tS.toastr('warning', 'Seleccione la Fecha de Emisión');
                     return
                 }
 
                 if ($scope.gridOptions.data.length === 0) {
-                    _tS.toastr('warning', 'No hay articulos a Consolidar');
+                    tS.toastr('warning', 'No hay articulos a Consolidar');
                     return
                 }
 
                 if ($scope.gridOptions.data.some(item => ["", null, undefined, 0].includes(item.idBodega))) {
-                    _tS.toastr('warning', 'La bodega en el detalle es requerido');
+                    tS.toastr('warning', 'La bodega en el detalle es requerido');
                     return
                 }
 
-                let nroDocumentoSecuencial = await _commonSvc.generarNroDocumentoCompra({
+                let nroDocumentoSecuencial = await commonSvc.generarNroDocumentoCompra({
                     idPuntoEmision: $scope.data.idPuntoEmision,
-                    codigoDocumento: $scope.TIPO_DOC.codigo
+                    codigoDocumento: COD_DOC
                 })
 
                 if (!nroDocumentoSecuencial) throw "NO SE GENERÓ CORRECTAMENTE EL NÚMERO SECUENCIAL"
@@ -1270,22 +1287,21 @@
 
                 showLoader();
                 let consolidacion = Object.assign({}, $scope.data);
-                consolidacion.fechaEmision = _fS.formatDateTimeZone($scope.data.fechaEmision, "YYYY-MM-DD HH:mm:ss A")
+                consolidacion.fechaEmision = fS.formatDateTimeZone($scope.data.fechaEmision, "YYYY-MM-DD HH:mm:ss A")
 
                 let data = {
                     consolidacion,
                     detalle: $scope.gridOptions.data
                 }
 
-                
-                _mS.getData('post', 'Consolidacion/', { data: data }, true).then(response => {
+                consolidacionInvSvc.post(data).then(response => {
                     if (response.code === '0') {
                         hideLoader();
-                        _fS.sweetAlert('warning', response.message, response.titleSms);
+                        fS.sweetAlert('warning', response.message, response.titleSms);
                     }
                     if (response.code === "1") {
                         hideLoader();
-                        _fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                        fS.sweetAlert('success', response.message, response.titleSms, 1000);
 
                         if (!$scope.isCloseModal) {
                             $scope.$uibModalInstance.close(response);
@@ -1311,15 +1327,9 @@
         '$timeout',
         '$uibModalInstance',
         'uiGridConstants',
-        'mainService',
-        'commonService',
-        'modalService',
-        'nombreModal',
-        'toastService',
-        'formulario',
         'params'
     ]
-    function ModalConsolidacionEditarCtrl($scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params) {
+    function ModalConsolidacionEditarCtrl($scope, $timeout, $uibModalInstance, uiGridConstants, _params) {
         let {
             TIPO_REGISTRO,
             data
@@ -1331,7 +1341,7 @@
         } = data;
         $scope.uiGridConstants = uiGridConstants
         $scope.TIPO_REGISTRO = TIPO_REGISTRO;
-        $scope.TIPO_DOC = _commonSvc.tipoDoc['CIV'];
+        $scope.TIPO_DOC = commonSvc.tipoDoc['CIV'];
         $scope.data = dataDocumento;
         $scope.detalleDocumento = detalleDocumento;
         $scope.detalleDocumento.num = 0
@@ -1349,18 +1359,18 @@
                 precioCosto: dc.precioCosto
             })
 
-            let tempArrayMedidas = medidasTemp.filter(mTemp=>mTemp.idConsolidacionInventarioDetalle===dc.idConsolidacionInventarioDetalle).map(resM=>{
-                let tempArray =  resM.medidasTemp && JSON.parse(resM.medidasTemp) || []
+            let tempArrayMedidas = medidasTemp.filter(mTemp => mTemp.idConsolidacionInventarioDetalle === dc.idConsolidacionInventarioDetalle).map(resM => {
+                let tempArray = resM.medidasTemp && JSON.parse(resM.medidasTemp) || []
                 tempMedidas.push({
                     idConsolidacionInventarioDetalle: resM.idConsolidacionInventarioDetalle,
                     idMedida: resM.idMedida,
                     descripcion: resM.medida,
                     precioCosto: resM.precioCosto
                 })
-               let resultArr =  tempMedidas.concat(tempArray);   
-               return resultArr;
-            }) 
-            
+                let resultArr = tempMedidas.concat(tempArray);
+                return resultArr;
+            })
+
             tempArrayMedidas = tempArrayMedidas[0]
             // if (dc.fraccionado) {
             //     for(let mm of tempArrayMedidas){
@@ -1370,7 +1380,7 @@
             //             precioCosto: mm.precioCosto
             //         })
             //         let tempArray =  mm.medidasTemp && JSON.parse(mm.medidasTemp) || []
-                    
+
             //     }
             //     // for (const tm of tempArray) {
             //     //     tempMedidas.push(tm)
@@ -1378,9 +1388,9 @@
             // }
             let uniquesMedidas = tempArrayMedidas.filter((obj, i) => {
                 return tempArrayMedidas.findIndex((obj2) => obj2.idMedida === obj.idMedida) === i;
-              });
+            });
             console.log(uniquesMedidas)
-            dc.medidas =  uniquesMedidas;
+            dc.medidas = uniquesMedidas;
             index++
         }
 
@@ -1388,26 +1398,27 @@
 
         if (establecimientos.length > 0) {
             $scope.establecimientos = establecimientos
-            $scope.data.codEstab = establecimientos.length > 0 ? establecimientos[0].codEstab : 0
+            let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
+            $scope.data.codEstab = dataEstab.codEstab;
             $scope.cloneCodEstab = $scope.data.codEstab
-            $scope.puntosEmision = puntosEmision
+            $scope.puntosEmision = dataEstab.puntosEmision
+            $scope.bodegas = dataEstab.bodegas;
 
             if ($scope.puntosEmision.length > 0) {
                 $scope.data.idPuntoEmision = $scope.puntosEmision.find(x => (x.defaultPtoEmi)).idPuntoEmision
             }
 
-            $scope.bodegas = bodegas
             $scope.idBodega = $scope.bodegas.length > 0 ? $scope.bodegas.find(x => (x.defaultBodega)).idBodega : 0
             $scope.cloneIdBodega = $scope.idBodega
 
         } else {
-            _tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO')
+            tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO')
         }
         $scope.decimal = config
 
         $scope.articlesSelected = []
         $scope.advancedSearch = () => {
-            _modalSvc.openModalCustom({
+            modalSvc.openModalCustom({
                 controller: 'AdvancedSearchCtrl',
                 template: '~/Areas/Consolidacion/Pages/Shared/_AdvancedSearch.cshtml',
                 isRenderRazorPartial: true,
@@ -1496,7 +1507,7 @@
                 editableCellTemplate: 'ui-grid/dropdownEditor',
                 enableCellEdit: true,
                 enableCellEditOnFocus: true,
-                editDropdownOptionsFunction: function (rowEntity, colDef) {
+                editDropdownOptionsFunction: function (rowEntity) {
                     return rowEntity.medidas.map(function (val) {
                         return {
                             id: val.idMedida,
@@ -1543,7 +1554,7 @@
                 visible: true,
                 aggregationType: $scope.uiGridConstants.aggregationTypes.sum,
                 customTreeAggregationFinalizerFn: function (aggregation) {
-                    aggregation.rendered = _fS.roundNumber(aggregation.value, 2)
+                    aggregation.rendered = fS.roundNumber(aggregation.value, 2)
                 },
                 aggregationLabel: "$",
             },
@@ -1557,7 +1568,7 @@
                 minWidth: '100',
                 aggregationType: $scope.uiGridConstants.aggregationTypes.sum,
                 customTreeAggregationFinalizerFn: function (aggregation) {
-                    aggregation.rendered = _fS.roundNumber(aggregation.value, 2)
+                    aggregation.rendered = fS.roundNumber(aggregation.value, 2)
                 },
                 aggregationLabel: "$",
             },
@@ -1572,7 +1583,7 @@
                 minWidth: '100',
                 aggregationType: $scope.uiGridConstants.aggregationTypes.sum,
                 customTreeAggregationFinalizerFn: function (aggregation) {
-                    aggregation.rendered = _fS.roundNumber(aggregation.value, 2)
+                    aggregation.rendered = fS.roundNumber(aggregation.value, 2)
                 },
                 aggregationLabel: "$",
             },
@@ -1584,9 +1595,9 @@
                 width: '8%',
                 minWidth: '100',
                 type: 'number',
-                aggregationType: _fS.roundNumber($scope.uiGridConstants.aggregationTypes.sum, 2),
+                aggregationType: fS.roundNumber($scope.uiGridConstants.aggregationTypes.sum, 2),
                 customTreeAggregationFinalizerFn: function (aggregation) {
-                    aggregation.rendered = _fS.roundNumber(aggregation.value, 2)
+                    aggregation.rendered = fS.roundNumber(aggregation.value, 2)
                 },
                 aggregationLabel: "$",
             },
@@ -1636,15 +1647,15 @@
                 }
 
                 if (colDef.field === "precioActual") {
-                    rowEntity.precioCosto = _fS.roundNumber(rowEntity.precioCosto, $scope.decimal.nroPrecio)
-                    rowEntity.precioActual = _fS.roundNumber(rowEntity.precioActual, $scope.decimal.nroPrecio)
+                    rowEntity.precioCosto = fS.roundNumber(rowEntity.precioCosto, $scope.decimal.nroPrecio)
+                    rowEntity.precioActual = fS.roundNumber(rowEntity.precioActual, $scope.decimal.nroPrecio)
                 }
 
                 if (colDef.field === "idMedida" && rowEntity.idMedida !== oldValue) {
                     let dataMedida = rowEntity.medidas.find(val => val.idMedida === rowEntity.idMedida);
 
-                    rowEntity.precioCosto = _fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio)
-                    rowEntity.precioActual = _fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio)
+                    rowEntity.precioCosto = fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio)
+                    rowEntity.precioActual = fS.roundNumber(dataMedida.precioCosto, $scope.decimal.nroPrecio)
                 }
 
                 $scope.setTotalColumn(rowEntity);
@@ -1655,13 +1666,13 @@
 
         $scope.setTotalColumn = (rowEntity) => {
             let total = rowEntity.cantidad * rowEntity.precioActual;
-            rowEntity.total = _fS.roundNumber(total, $scope.decimal.nroTotalDetalle); //Total Precio Venta
+            rowEntity.total = fS.roundNumber(total, $scope.decimal.nroTotalDetalle); //Total Precio Venta
         }
 
         $scope.setTotalDetalle = () => {
             let total = $scope.gridOptions.data.map(val => val.total).reduce((acc, curr) => acc + curr, 0);
 
-            $scope.data.total = _fS.roundNumber(total, $scope.decimal.nroTotalSubTotal)
+            $scope.data.total = fS.roundNumber(total, $scope.decimal.nroTotalSubTotal)
         }
 
         $scope.setFocusArticulo = () => {
@@ -1696,7 +1707,7 @@
             }
         }
 
-        $scope.setItemArticuloEnDetalle = (item, isAdvanced = null) => {
+        $scope.setItemArticuloEnDetalle = async (item, isAdvanced = null) => {
             try {
                 let articulo = {}
                 let medidas = []
@@ -1731,7 +1742,23 @@
                 if ($scope.indexRow !== -1) {
 
                     entity = $scope.gridOptions.data[$scope.indexRow];
-                    entity.cantidad = entity.cantidad + 1;
+
+                    if (!item.isUpdateProduct) {
+
+                        let { isConfirmed } = await Swal.fire({
+                            text: "Desea sumar la cantidad del producto en el detalle?",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Si!',
+                            cancelButtonText: 'No'
+                        })
+                        if (isConfirmed) {
+                            entity.cantidad = entity.cantidad + 1;
+                        }
+                    }
+
                     $scope.addItem(entity, articulo, medidas);
                 } else {
                     $scope.addRow();
@@ -1776,9 +1803,9 @@
             entity.porcentajeTipoIva = articulo.porcentajeTipoIva;
             entity.nombreTipoIva = articulo.nombreTipoIva;
             entity.stock = articulo.stock;
-            entity.precioCosto = _fS.roundNumber(medidas[0].precioCosto, $scope.decimal.nroPrecio)
-            entity.precioActual = _fS.roundNumber(medidas[0].precioCosto, $scope.decimal.nroPrecio)
-            entity.total = _fS.roundNumber(medidas[0].precioCosto, $scope.decimal.nroPrecio)
+            entity.precioCosto = fS.roundNumber(medidas[0].precioCosto, $scope.decimal.nroPrecio)
+            entity.precioActual = fS.roundNumber(medidas[0].precioCosto, $scope.decimal.nroPrecio)
+            entity.total = fS.roundNumber(medidas[0].precioCosto, $scope.decimal.nroPrecio)
             entity.idBodega = $scope.idBodega ? $scope.idBodega : 0;
             entity.llevaInventario = articulo.llevaInventario;
             entity.medidas = medidas; //Lista Medida 
@@ -1835,32 +1862,34 @@
                 $scope.gridOptions.data[0],
                 $scope.gridOptions.columnDefs[2]
             )
-            $scope.$broadcast("editArticulo", item)
+            item.isUpdate = true;
+            let params = Object.assign(item, { isUpdate: true })
+            $scope.$broadcast("editArticulo", params);
         }
 
         $scope.validForm = (tituloModal) => {
             if (!$scope.data.codEstab) {
-                _tS.toastr('warning', 'Seleccione el Establecimiento', tituloModal);
+                tS.toastr('warning', 'Seleccione el Establecimiento', tituloModal);
                 return
             }
 
             if (!($scope.data.idPuntoEmision)) {
-                _tS.toastr('warning', 'Seleccione el Punto de Emisión', tituloModal);
+                tS.toastr('warning', 'Seleccione el Punto de Emisión', tituloModal);
                 return
             }
 
             if (!($scope.data.fechaEmision)) {
-                _tS.toastr('warning', 'Ingrese la Fecha de Emisión', tituloModal);
+                tS.toastr('warning', 'Ingrese la Fecha de Emisión', tituloModal);
                 return
             }
 
             if ($scope.gridOptions.data.length === 0) {
-                _tS.toastr('warning', 'Al menos ingrese un Articulo en el Detalle', tituloModal);
+                tS.toastr('warning', 'Al menos ingrese un Articulo en el Detalle', tituloModal);
                 return
             }
 
             if ($scope.gridOptions.data.some(item => (!(item.idBodega > 0)))) {
-                _tS.toastr('warning', 'Agregue  bodega a los artículos');
+                tS.toastr('warning', 'Agregue  bodega a los artículos');
                 return
             }
             return true
@@ -1899,19 +1928,19 @@
                     showLoader();
 
                     let consolidacion = Object.assign({}, $scope.data);
-                    consolidacion.fechaEmision = _fS.formatDateTimeZone($scope.data.fechaEmision, "YYYY-MM-DD HH:mm:ss A")
+                    consolidacion.fechaEmision = fS.formatDateTimeZone($scope.data.fechaEmision, "YYYY-MM-DD HH:mm:ss A")
 
                     let data = {
                         consolidacion,
                         detalle: $scope.gridOptions.data
                     }
 
-                    _mS.getData('put', 'Consolidacion/?id=' + $scope.data.idConsolidacionInventario, { data: data }, true).then(response => {
+                    mS.getData('put', 'Consolidacion/?id=' + $scope.data.idConsolidacionInventario, { data: data }, true).then(response => {
                         if (response.code === '0') {
-                            _fS.sweetAlert('warning', response.message, response.titleSms);
+                            fS.sweetAlert('warning', response.message, response.titleSms);
                         }
                         if (response.code === "1") {
-                            _fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                            fS.sweetAlert('success', response.message, response.titleSms, 1000);
                             $uibModalInstance.close(response);
                         }
                         hideLoader()
@@ -1934,15 +1963,9 @@
         '$timeout',
         '$uibModalInstance',
         'uiGridConstants',
-        'mainService',
-        'commonService',
-        'modalService',
-        'nombreModal',
-        'toastService',
-        'formulario',
         'params'
     ]
-    function ModalConsolidacionDetalleCtrl($scope, $timeout, $uibModalInstance, uiGridConstants, _mS, _commonSvc, _modalSvc, _nombreConst, _tS, _fS, _params) {
+    function ModalConsolidacionDetalleCtrl($scope, $timeout, $uibModalInstance, uiGridConstants, _params) {
 
         let {
             TIPO_REGISTRO,
@@ -1959,27 +1982,28 @@
         $scope.detalleDocumento = detalleDocumento;
         $scope.detalleDocumento.num = 0
         let index = 1
-        angular.forEach($scope.detalleDocumento, (value, key) => {
+        angular.forEach($scope.detalleDocumento, (value) => {
             value.num = index
             index++
         })
 
         if (establecimientos.length > 0) {
-            $scope.establecimientos = establecimientos
-            $scope.data.codEstab = establecimientos.length > 0 ? establecimientos[0].codEstab : 0
+            $scope.establecimientos = establecimientos;
+            let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
+            $scope.data.codEstab = dataEstab;
             $scope.cloneCodEstab = $scope.data.codEstab
-            $scope.puntosEmision = puntosEmision
+            $scope.puntosEmision = dataEstab.puntosEmision;
+            $scope.bodegas = dataEstab.bodegas;
 
             if ($scope.puntosEmision.length > 0) {
                 $scope.data.idPuntoEmision = $scope.puntosEmision.find(x => (x.defaultPtoEmi)).idPuntoEmision
             }
 
-            $scope.bodegas = bodegas
             $scope.idBodega = $scope.bodegas.length > 0 ? $scope.bodegas.find(x => (x.defaultBodega)).idBodega : 0
             $scope.cloneIdBodega = $scope.idBodega
 
         } else {
-            _tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO')
+            tS.toastr('info', 'NO TIENE ASIGNADO NINGÚN ESTABLECIMIENTO')
         }
 
         $scope.decimal = config
@@ -2051,7 +2075,7 @@
                 editableCellTemplate: 'ui-grid/dropdownEditor',
                 enableCellEdit: false,
                 enableCellEditOnFocus: false,
-                editDropdownOptionsFunction: function (rowEntity, colDef) {
+                editDropdownOptionsFunction: function (rowEntity) {
                     return rowEntity.medidas.map(function (val) {
                         //if (val.articuloPvP.idTarifa == rowEntity.idTarifa && rowEntity.precioVenta !== val.articuloPvP.precioVenta) {
                         //    val.articuloPvP.precioVenta = rowEntity.precioVenta
@@ -2090,7 +2114,7 @@
                 visible: true,
                 aggregationType: $scope.uiGridConstants.aggregationTypes.sum,
                 customTreeAggregationFinalizerFn: function (aggregation) {
-                    aggregation.rendered = _fS.roundNumber(aggregation.value, 2)
+                    aggregation.rendered = fS.roundNumber(aggregation.value, 2)
                 },
                 aggregationLabel: "$",
             },
@@ -2105,7 +2129,7 @@
                 cellFilter: "currency:'$'",
                 aggregationType: $scope.uiGridConstants.aggregationTypes.sum,
                 customTreeAggregationFinalizerFn: function (aggregation) {
-                    aggregation.rendered = _fS.roundNumber(aggregation.value, 2)
+                    aggregation.rendered = fS.roundNumber(aggregation.value, 2)
                 },
                 aggregationLabel: "$",
             },
@@ -2121,7 +2145,7 @@
                 cellFilter: "currency:'$'",
                 aggregationType: $scope.uiGridConstants.aggregationTypes.sum,
                 customTreeAggregationFinalizerFn: function (aggregation) {
-                    aggregation.rendered = _fS.roundNumber(aggregation.value, 2)
+                    aggregation.rendered = fS.roundNumber(aggregation.value, 2)
                 },
                 aggregationLabel: "$",
             },
@@ -2133,9 +2157,9 @@
                 width: '8%',
                 minWidth: '100',
                 type: 'number',
-                aggregationType: _fS.roundNumber($scope.uiGridConstants.aggregationTypes.sum, 2),
+                aggregationType: fS.roundNumber($scope.uiGridConstants.aggregationTypes.sum, 2),
                 customTreeAggregationFinalizerFn: function (aggregation) {
-                    aggregation.rendered = _fS.roundNumber(aggregation.value, 2)
+                    aggregation.rendered = fS.roundNumber(aggregation.value, 2)
                 },
                 aggregationLabel: "$",
             },
@@ -2162,6 +2186,51 @@
         $scope.setColumnDefsView()
 
         $scope.gridOptions.data = $scope.detalleDocumento
+
+
+        $scope.getReport = () => {
+            try {
+                // let format = 'excel';
+                // let dataParms = {
+                //     id: $scope.data.idConsolidacionInventario,
+                //     codEstab: $scope.data.codEstab,
+                //     codigo: 'RCD',
+                //     codDoc: 'CI',
+                //     format,
+                // }
+
+                // const parameters = {
+                //     dataParams: JSON.stringify(dataParms)
+                // }
+
+                let format = 'excel';
+
+                const parameters = {
+                    hasService: true,
+                    reportParams: JSON.stringify({
+                        hasParams: true,
+                        codigo: 'RCD',
+                        codEstab: $scope.data.codEstab,
+                        format,
+                        aditionalParams: [
+
+                        ]
+                    }),
+                    dataParams: JSON.stringify({
+                        codDoc: 'CI',
+                        id: $scope.data.idConsolidacionInventario,
+                    })
+                }
+
+
+                commonSvc.getReport({
+                    parameters,
+                    formatType: format
+                })
+            } catch (error) {
+                console.log(error)
+            }
+        }
 
         $scope.closeModal = () => {
             $uibModalInstance.close();

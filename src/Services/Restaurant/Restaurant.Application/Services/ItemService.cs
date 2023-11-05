@@ -1,13 +1,9 @@
-﻿using Lib.Common;
-using Lib.Common.Api;
+﻿using System.Data;
+using Common.Core.Interfaces;
+using Common.Core.Models;
+using Common.Core.Utils;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Restaurant.Application.Services
 {
@@ -37,7 +33,7 @@ namespace Restaurant.Application.Services
             }
             else
             {
-                return Converters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJSON(ds);
             }
         }
 
@@ -53,7 +49,7 @@ namespace Restaurant.Application.Services
             }
             else
             {
-                return Converters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJSON(ds);
             }
         }
 
@@ -62,9 +58,9 @@ namespace Restaurant.Application.Services
             var parameters = new Dictionary<string, object>{
                 {"userRoleId", request.UserRoleId},
                 {"id", id},
-                {"json", Converters.SerializeDictionary(request.Data)}
+                {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))}
             };
-            return await _repository.SPExecuteAsync("Restaurant.Item_Update", request.Data);
+            return await _repository.SPExecuteAsync("Restaurant.Item_Update", parameters);
         }
 
         public async Task<string> DeleteAsync(int id, ApiRequest request)

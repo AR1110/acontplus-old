@@ -1,10 +1,11 @@
-﻿using Domain.Models.Ventas;
+﻿using System.Data;
+using Common.Core.Models;
+using Common.Core.Utils;
+using Domain.Models.Ventas;
 using Domain.ViewModels.Ventas;
-using Helpers;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace DataAccess.Ventas
 {
@@ -17,7 +18,7 @@ namespace DataAccess.Ventas
         public RetencionVentaDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _gr = new GenericResponse();
         }
 
@@ -38,7 +39,7 @@ namespace DataAccess.Ventas
                     if (dt.Rows.Count > 0)
                     {
                         _gr.id = "1";
-                        _gr.data = DataHelper.DataTableToJSON(dt);
+                        _gr.data = DataConverters.DataTableToJSON(dt);
                     }
                 }
             }
@@ -147,7 +148,7 @@ namespace DataAccess.Ventas
                     cmd.Parameters.AddWithValue("nroAutho", data.retencion.nroAutho);
                     cmd.Parameters.AddWithValue("total", data.retencion.total);
                     cmd.Parameters.AddWithValue("fechaEmision", data.retencion.fechaEmision);
-                    cmd.Parameters.AddWithValue("concepto", DataHelper.ToDBNullOrDefault(data.retencion.concepto));
+                    cmd.Parameters.AddWithValue("concepto", DataValidation.ToDBNullOrDefault(data.retencion.concepto));
                     var p = JsonConvert.SerializeObject(data.detalle); cmd.Parameters.Add(new SqlParameter("json", p));
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
@@ -192,7 +193,7 @@ namespace DataAccess.Ventas
                     cmd.Parameters.AddWithValue("nroAutho", data.retencion.nroAutho);
                     cmd.Parameters.AddWithValue("total", data.retencion.total);
                     cmd.Parameters.AddWithValue("fechaEmision", data.retencion.fechaEmision);
-                    cmd.Parameters.AddWithValue("concepto", DataHelper.ToDBNullOrDefault(data.retencion.concepto));
+                    cmd.Parameters.AddWithValue("concepto", DataValidation.ToDBNullOrDefault(data.retencion.concepto));
                     var p = JsonConvert.SerializeObject(data.detalle); cmd.Parameters.Add(new SqlParameter("json", p));
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();

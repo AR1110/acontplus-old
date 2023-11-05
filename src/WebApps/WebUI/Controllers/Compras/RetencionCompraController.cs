@@ -1,31 +1,32 @@
-﻿using DataAccess;
+﻿using Common.Core.Models;
+using DataAccess;
 using DataAccess.Compras;
 using DataAccess.RetencionIvaRenta;
-using Domain.Models;
 using Domain.ViewModels;
-using Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common;
 using Services.Common.Logs;
 
-namespace WebUI.Controllers.Ingresos
+namespace WebUI.Controllers.Compras
 {
     public class RetencionCompraController : Controller
     {
         GenericResponse _gr = new();
         private RetencionCompraDao _rc;
         private GenerateRetencionDao _gra;
-        private DataAccessObject _dao;
+
 
         private IConfiguration _configuration;
 
-
-        public RetencionCompraController(IConfiguration config)
+        private readonly LogWriter _log;
+        public RetencionCompraController(IConfiguration config, LogWriter log)
         {
             _configuration = config;
 
-            _dao = new DataAccessObject(_configuration);
+
             _gra = new GenerateRetencionDao(_configuration);
             _rc = new RetencionCompraDao(_configuration);
+            _log = log;
         }
 
         //private readonly IWebHostEnvironment _hostingEnviromet; 
@@ -39,7 +40,7 @@ namespace WebUI.Controllers.Ingresos
         [HttpPost]
         public async Task<IActionResult> Insert([FromBody] RetencionCompraViewModel data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _rc.InsertAsync(idRol, data);
             return Ok(_gr);
         }
@@ -47,7 +48,7 @@ namespace WebUI.Controllers.Ingresos
 
         public async Task<IActionResult> Get(string json)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _rc.GetAsync(idRol, json);
             return Ok(res);
         }
@@ -55,9 +56,9 @@ namespace WebUI.Controllers.Ingresos
         [HttpGet]
         public async Task<IActionResult> GetId(int id)
         {
-            DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
-            GenericResponse _response = new GenericResponse();
+            var _db = new DbAccess(_configuration);
+
+            var _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Compra.Retencion_Get_Id");
@@ -67,7 +68,7 @@ namespace WebUI.Controllers.Ingresos
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in GetId: \n" + ex.ToString());
+                _log.LogActivity("Error in GetId: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             return Ok(_response);
@@ -77,7 +78,7 @@ namespace WebUI.Controllers.Ingresos
 
         public async Task<IActionResult> GetTipoImpuesto(string busqueda)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _gra.GetTipoImpuestoAsync(idRol, busqueda);
             return Ok(res);
         }
@@ -87,7 +88,7 @@ namespace WebUI.Controllers.Ingresos
         [HttpPut]
         public async Task<IActionResult> Update(int id, [FromBody] RetencionCompraViewModel data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             //RetencionCompraViewModel data = JsonConvert.DeserializeObject<RetencionCompraViewModel>(jsonData);
             _gr = await _rc.UpdateAsync(idRol, id, data);
             return Ok(_gr);
@@ -97,10 +98,22 @@ namespace WebUI.Controllers.Ingresos
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("id", id);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Compra.Retencion_Delete", parameters)));
+            var response = new GenericResponse();
+            try
+            {
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
+                    await _db.SPExecute("Compra.Retencion_Delete");
+                    _db.AddDynamicParam("idRol", User.GetUserRoleId());
+                    _db.AddDynamicParam("id", id);
+                    response = _db.GetDefault();
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
     }

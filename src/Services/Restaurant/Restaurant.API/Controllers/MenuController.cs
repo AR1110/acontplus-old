@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Common.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.Core.Interfaces;
 using Services.Common;
@@ -30,8 +30,9 @@ namespace Restaurant.API.Controllers
                 return BadRequest("Error on get: " + ex.Message);
             }
         }
+
         [HttpPost]
-        public async Task<IActionResult> Post()
+        public async Task<IActionResult> Post(string json)
         {
             try
             {
@@ -39,22 +40,26 @@ namespace Restaurant.API.Controllers
             }
             catch (Exception ex)
             {
-
-                throw;
+                return BadRequest("Error on put: " + ex.Message);
             }
         }
+
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id)
+        public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
         {
             try
             {
-                return Ok();
+                data.UserRoleId = User.GetUserRoleId();
+                var response = await _menuService.PutAsync(id, data);
+                if (response == null) { return NoContent(); }
+                return Ok(response);
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

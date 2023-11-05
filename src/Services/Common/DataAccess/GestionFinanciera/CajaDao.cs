@@ -1,14 +1,15 @@
 ﻿
+using System.Data;
+using Common.Core.Models;
+using Common.Core.Utils;
 using Domain.Models;
 using Domain.Models.Administracion;
 using Domain.ViewModels;
 using Domain.ViewModels.Administracion;
-using Helpers;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System.Data;
-using System.Data.SqlClient;
 
-namespace DataAccess
+namespace DataAccess.GestionFinanciera
 {
     public class CajaDao
     {
@@ -18,7 +19,7 @@ namespace DataAccess
         public CajaDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _response = new GenericResponse();
         }
 
@@ -27,7 +28,7 @@ namespace DataAccess
             var listar = new List<CajaViewModel>();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("aspCajaGet", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
@@ -35,7 +36,7 @@ namespace DataAccess
                     cmd.Parameters.AddWithValue("pageSize", pageSize);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _response.id = reader.GetString(0);
@@ -79,14 +80,14 @@ namespace DataAccess
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("aspCajaInsert", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.Parameters.AddWithValue("descripcion", data.descripcion);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _response.id = reader.GetString(0);
@@ -111,7 +112,7 @@ namespace DataAccess
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("aspCajaUpdate", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
@@ -120,7 +121,7 @@ namespace DataAccess
                     cmd.Parameters.AddWithValue("estado", data.estado);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _response.id = reader.GetString(0);
@@ -146,14 +147,14 @@ namespace DataAccess
 
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("aspCajaDelete", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.Parameters.AddWithValue("idCaja", idCaja);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _response.id = reader.GetString(0);
@@ -175,73 +176,24 @@ namespace DataAccess
             return _response;
         }
 
-        //Operaciones Especiales 
-        public async Task<GenericResponse> ListAsync(int idRol)
-        {
-            var listar = new List<ContraPartidaCajaViewModel>();
-
-            try
-            {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
-                {
-                    SqlCommand cmd = new SqlCommand("aspCajaList", con);
-                    cmd.Parameters.AddWithValue("idRol", idRol);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        _response.id = reader.GetString(0);
-                        _response.message = reader.GetString(1);
-                        _response.titleSms = reader.GetString(2);
-                        if (_response.id == "1")
-                        {
-                            var item = new ContraPartidaCajaViewModel()
-                            {
-                                contraPartidaCaja = new ContraPartidaCaja()
-                                {
-                                    idCaja = reader.GetInt32(3),
-                                    estado = reader.GetBoolean(4)
-                                },
-                                caja = reader.GetString(5),
-                            };
-                            listar.Add(item);
-                        }
-                    }
-                }
-                _response.data = listar;
-            }
-            catch (Exception ex)
-            {
-                _response.id = "0";
-                _response.message = ex.Message.ToString();
-                _response.titleSms = "Listar Caja-ContraPartida";
-            }
-            finally
-            {
-
-            }
-            return _response;
-        }
-
         //get para traer solo la caja asignada al usuario
         public async Task<GenericResponse> GetAsigAsync(int idRol)
         {
-            DataTable dt = new DataTable();
+            var dt = new DataTable();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("aspCajaGetAsig", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                    var dataAdapter = new SqlDataAdapter(cmd);
                     dataAdapter.Fill(dt);
                     if (dt.Rows.Count > 0)
                     {
                         _response.id = "1";
-                        _response.data = DataHelper.DataTableToJSON(dt);
+                        _response.data = DataConverters.DataTableToJSON(dt);
                     }
                 }
             }
@@ -254,24 +206,6 @@ namespace DataAccess
             finally
             {
 
-            }
-            return _response;
-        }
-
-        public async Task<GenericResponse> GetAsync(int idRol, string json)
-        {
-            try
-            {
-                DbAccess db = new DbAccess(_config);
-                await db.SPExecute("GestFinanc.Caja_Get");
-                db.AddParameter("idRol", SqlDbType.Int, idRol);
-                db.AddParameter("json", SqlDbType.NVarChar, json);
-                DataTable dt = db.GetDataTable();
-                _response = DbResponse.SPDataTable(dt);
-            }
-            catch (Exception ex)
-            {
-                _response.Create("0", ex.Message);
             }
             return _response;
         }

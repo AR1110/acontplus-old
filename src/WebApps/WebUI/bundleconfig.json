@@ -430,5 +430,155 @@
     "inputFiles": [
       "wwwroot/js/inventario/directives/inventarioDirective.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/ventas/services/ventaService.min.js",
+    "inputFiles": [
+      "wwwroot/js/ventas/services/ventaService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/config/controllers/configDocCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/config/controllers/configDocCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/sri/modalEstablecimientoCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/sri/modalEstablecimientoCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/controllers/sri/establecimientoCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/controllers/sri/establecimientoCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/common/modalWhatsAppCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/common/modalWhatsAppCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/factElect/services/facturaService.min.js",
+    "inputFiles": [
+      "wwwroot/js/factElect/services/facturaService.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/factElect/controllers/facturaVentaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/factElect/controllers/facturaVentaCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/acontplus-style.min.css",
+    "inputFiles": [
+      "wwwroot/css/acontplus-style.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/dist/css/pages/user-card.min.css",
+    "inputFiles": [
+      "wwwroot/dist/css/pages/user-card.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/dist/css/pages/stylish-tooltip.min.css",
+    "inputFiles": [
+      "wwwroot/dist/css/pages/stylish-tooltip.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/dist/css/pages/tab-page.min.css",
+    "inputFiles": [
+      "wwwroot/dist/css/pages/tab-page.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/dist/css/pages/floating-label.min.css",
+    "inputFiles": [
+      "wwwroot/dist/css/pages/floating-label.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/dist/css/pages/other-pages.min.css",
+    "inputFiles": [
+      "wwwroot/dist/css/pages/other-pages.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/financiera/modalFormaCobroPagoCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/financiera/modalFormaCobroPagoCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/dist/js/custom.min.js",
+    "inputFiles": [
+      "wwwroot/dist/js/custom.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/ventas/controllers/aprobacionDocumentoCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/ventas/controllers/aprobacionDocumentoCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/compras/controllers/documentoRecibidoCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/compras/controllers/documentoRecibidoCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/compras/modalCompraNoHabitualCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/compras/modalCompraNoHabitualCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/compras/modalFacturaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/compras/modalFacturaCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/compras/modalIngresoBodegaCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/compras/modalIngresoBodegaCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/compras/modalLiquidacionCompraCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/compras/modalLiquidacionCompraCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/compras/modalNotaCreditoProveedorCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/compras/modalNotaCreditoProveedorCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal/compras/modalOrdenCompraCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal/compras/modalOrdenCompraCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/inventario/modals/modalArticuloCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/inventario/modals/modalArticuloCtrl.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/inventario/modals/modalKardexCtrl.min.js",
+    "inputFiles": [
+      "wwwroot/js/inventario/modals/modalKardexCtrl.js"
+    ]
   }
 ]

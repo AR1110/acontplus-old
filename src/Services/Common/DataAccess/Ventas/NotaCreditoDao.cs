@@ -1,11 +1,12 @@
-﻿using Domain.Models.InfoAdicional;
+﻿using System.Data;
+using Common.Core.Models;
+using Common.Core.Utils;
+using Domain.Models.InfoAdicional;
 using Domain.Models.Ventas;
 using Domain.ViewModels.Ventas;
-using Helpers;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace DataAccess.Ventas
 {
@@ -18,7 +19,7 @@ namespace DataAccess.Ventas
         public NotaCreditoDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _gr = new GenericResponse();
         }
 
@@ -39,7 +40,7 @@ namespace DataAccess.Ventas
                     if (dt.Rows.Count > 0)
                     {
                         _gr.id = "1";
-                        _gr.data = DataHelper.DataTableToJSON(dt);
+                        _gr.data = DataConverters.DataTableToJSON(dt);
                     }
                 }
             }

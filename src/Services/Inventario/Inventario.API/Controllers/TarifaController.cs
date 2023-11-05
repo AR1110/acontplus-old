@@ -1,6 +1,7 @@
+﻿using Common.Core.Models;
+using Common.Core.Utils;
 using DataAccess;
 using Domain.Models;
-using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -11,9 +12,11 @@ namespace Inventario.API.Controllers
     public class TarifaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public TarifaController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public TarifaController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
         [HttpGet("Get")]
@@ -25,13 +28,13 @@ namespace Inventario.API.Controllers
             {
                 await _db.SPExecute("Almacen.Tarifa_Get");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar tarifas: \n" + ex.ToString());
+
+                _log.LogActivity("Error al listar tarifas: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar tarifas");
             }
             finally
@@ -56,8 +59,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al insertar tarifa: \n" + ex.ToString());
+
+                _log.LogActivity("Error al insertar tarifa: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar tarifa");
             }
             finally
@@ -77,13 +80,13 @@ namespace Inventario.API.Controllers
                 await _db.SPExecute("Almacen.Tarifa_Update");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
                 _db.AddDynamicParam("id", id);
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al actualizar tarifa: \n" + ex.ToString());
+
+                _log.LogActivity("Error al actualizar tarifa: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar tarifa");
             }
             finally
@@ -107,8 +110,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al eliminar medida: \n" + ex.ToString());
+
+                _log.LogActivity("Error al eliminar medida: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar medida");
             }
             finally
@@ -131,8 +134,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar tarifas para Select: \n" + ex.ToString());
+
+                _log.LogActivity("Error al listar tarifas para Select: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar tarifas para Select");
             }
             finally

@@ -1,6 +1,5 @@
-﻿using Customer.API.Services;
-using Customer.Infrastructure.Data;
-using Lib.Common;
+﻿using Customer.API.Data;
+using Customer.API.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Customer.API.Extensions
@@ -9,8 +8,8 @@ namespace Customer.API.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<CustomerContext>(options =>
-            options.UseSqlServer(Encryption.DecryptString(configuration.GetSection("KeyEncryption").Value, configuration.GetConnectionString("DefaultConnection"))));
+            services.AddDbContextPool<CustomerContext>(options =>
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<RucService>();
             services.AddScoped<CedulaService>();

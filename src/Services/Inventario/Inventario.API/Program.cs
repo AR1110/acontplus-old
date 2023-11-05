@@ -1,10 +1,13 @@
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Common.Core.Utils;
 using Inventario.API.Extensions;
-using Lib.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
+using Services.Common.Logs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,10 +24,12 @@ builder.Configuration.SetBasePath(DirHelper.GetBinRunDir());
 ConfigHelper.AddJsonFiles(builder.Configuration);
 
 builder.Services.AddApplicationServices(builder.Configuration);
+
 builder.Services.AddCustomJwtAuthentication(builder.Configuration);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddSwaggerDocumentation();
+
 builder.Services.AddApiVersioning(opt =>
 {
     opt.DefaultApiVersion = new ApiVersion(1, 0);
@@ -43,6 +48,11 @@ builder.Services.AddVersionedApiExplorer(setup =>
 });
 
 builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
+
+builder.Services.AddSingleton<LogWriter>();
+
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
 var app = builder.Build();
 

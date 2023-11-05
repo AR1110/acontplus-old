@@ -1,14 +1,22 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Common.Core.Entities;
+
 
 namespace Restaurant.Core.Entities
 {
     [Table("OrderItem", Schema = "Restaurant")]
     public class OrderItem : BaseEntity
     {
+        public Guid Uuid { get; set; }
         public Order Order { get; set; }
         public int OrderId { get; set; }
+        public ItemType ItemType { get; set; }
+        public int ItemTypeId { get; set; }
         public Item Item { get; set; }
-        public int ItemId { get; set; }
+        public int? ItemId { get; set; }
+        public Menu Menu { get; set; }
+        public int? MenuId { get; set; }
         public int? TaxId { get; set; }
         public int? TaxPercentId { get; set; }
         [Column(TypeName = "numeric(18,5), not null")]
@@ -23,5 +31,12 @@ namespace Restaurant.Core.Entities
         public decimal Discount { get; set; }
         [Column(TypeName = "numeric(18,5), not null")]
         public decimal Total { get; set; }
+        [MaxLength(500)]
+        public string Obs { get; set; }
+        public int FeeId { get; set; }
+        public int? BodegaId { get; set; }
+        public bool? Paid { get; set; }
+        [Column(TypeName = "numeric(18,5), null")]
+        public decimal? RemainingQuantity { get; set; }
     }
 }

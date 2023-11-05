@@ -13,6 +13,7 @@ export class ModalBaseCtrl {
         _modalSvc,
         _nombreModalConst
     }) {
+
         this._mS = _mS;
         this._commonSvc = _commonSvc;
         this._tS = _tS;
@@ -48,8 +49,7 @@ export class ModalBaseCtrl {
 
         this.popoverCliente = {
             templateUrl: 'infoCliente.html'
-        }
-
+        } 
     }
 
     initiload() {
@@ -209,7 +209,7 @@ export class ModalBaseCtrl {
 
 
     onChangeTiempoCredito() {
-        if (!this.ventaComprobantePermission.tiempoCedito.update) {
+        if (!this.ventaComprobantePermission.tiempoCredito.update) {
             this._tS.toastr('warning', 'No tienes permiso para realizar esta acción');
             return
         }
@@ -433,7 +433,7 @@ export class ModalBaseCtrl {
                 width: '6%',
                 minWidth: '100',
                 // cellFilter: "currency:'%'",
-                visible: this.configDetalle.porcentajeDescuento || false,
+                visible: ventaDetailPermission.porcentajeDescuento.update || false,
                 type: 'number',
                 /*cellFilter: "limitTo:3",*/
             },
@@ -448,7 +448,7 @@ export class ModalBaseCtrl {
                 width: '6%',
                 minWidth: '100',
                 // cellFilter: "currency:'$'",
-                visible: this.configDetalle.descuento || false
+                visible: ventaDetailPermission.descuento.update || false
             },
             {
                 name: 'T. Dsto.',
@@ -750,7 +750,7 @@ export class ModalBaseCtrl {
             const dataEstab = this.establecimientos.find(item => item.codEstab === this.data.codEstab);
 
             //Obtenemos Puntos de Emision y Bodegas 
-            let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
+            let resultsDataFormEstab = await this._commonSvc.getDataFormEstabAsig(dataEstab);
 
             this.puntosEmisiones = resultsDataFormEstab[0];
             this.data.idPuntoEmision = this.puntosEmisiones.length > 0 ? this.puntosEmisiones[0].idPuntoEmision : 0;
@@ -1144,10 +1144,7 @@ export class ModalBaseCtrl {
                 valor: this.data.fechaVencimiento instanceof Date && !isNaN(this.data.fechaVencimiento),
                 message: 'Ingrese la Fecha de Vencimiento',
             },
-            "validFechaVcto": {
-                valor: (Date.parse(this.data.fechaEmision) <= Date.parse(this.data.fechaVencimiento)),
-                message: 'Fecha de Vencimiento no puede ser menor a  Fecha de Emisión'
-            },
+            
             "gridOptions": {
                 valor: this.gridOptions.data.length,
                 message: 'Ingrese al menos un Articulo en el Detalle',

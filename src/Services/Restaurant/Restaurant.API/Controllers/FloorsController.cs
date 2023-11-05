@@ -1,10 +1,7 @@
-﻿using Lib.Common.Api;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Core.Entities;
-using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
-using Restaurant.Infrastructure.Data.Migrations;
 using Services.Common;
 
 namespace Restaurant.API.Controllers
@@ -24,7 +21,7 @@ namespace Restaurant.API.Controllers
         [Route("Get")]
         public async Task<ActionResult<IEnumerable<Floor>>> Get()
         {
-           return await _context.Floors.ToListAsync();
+            return await _context.Floors.ToListAsync();
         }
 
         // GET: api/Floors
@@ -47,7 +44,7 @@ namespace Restaurant.API.Controllers
             var floorExist = FloorExistsCodeEstab(floor.Code, floor.CodEstab);
             if (floorExist) return BadRequest("El código ya está en uso");
 
-            floor.UserId = User.GetUserId();    
+            floor.UserId = User.GetUserId();
             try
             {
                 _context.Floors.Add(floor);

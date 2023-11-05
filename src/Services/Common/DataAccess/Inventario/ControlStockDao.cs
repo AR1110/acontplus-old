@@ -1,9 +1,8 @@
 ﻿
-using Domain.Models;
-using Helpers;
-using Microsoft.Extensions.Configuration;
 using System.Data;
-using System.Data.SqlClient;
+using Common.Core.Models;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Inventario
 {
@@ -15,7 +14,7 @@ namespace DataAccess.Inventario
         public ControlStockDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _response = new GenericResponse();
         }
 
@@ -61,12 +60,13 @@ namespace DataAccess.Inventario
         {
             try
             {
-                DbAccess db = new DbAccess(_config);
-                await db.SPExecute("Inventario.Articulo_Update_Stock");
-                db.AddParameter("idRol", SqlDbType.Int, idRol);
-                db.AddParameter("id", SqlDbType.Int, id);
-                DataTable dt = db.GetDataTable();
-                _response = DbResponse.SPDefault(dt);
+                using (DbAccess db = new DbAccess(_config))
+                {
+                    await db.SPExecute("Inventario.Articulo_Update_Stock");
+                    db.AddParameter("idRol", SqlDbType.Int, idRol);
+                    db.AddParameter("id", SqlDbType.Int, id);
+                    _response = db.GetDefault();
+                }
             }
             catch (Exception ex)
             {

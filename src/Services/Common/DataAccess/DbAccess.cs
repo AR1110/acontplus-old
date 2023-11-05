@@ -1,7 +1,8 @@
-﻿using Helpers;
+﻿using System.Data;
+using Common.Core.Models;
+using Common.Core.Utils;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace DataAccess
 {
@@ -13,7 +14,7 @@ namespace DataAccess
         public DbAccess(IConfiguration config)
         {
             _config = config;
-            _connection = new SqlConnection(Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection")));
+            _connection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
         }
         public async Task QueryExecute(string query)
         {
@@ -36,11 +37,10 @@ namespace DataAccess
                     _command.CommandType = CommandType.StoredProcedure;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Close();
-                //LogWriter _log = new LogWriter(_config);
-                //_log.LogError("Error in SPExecute: " + ex.ToString());
+                throw;
             }
         }
         public void AddParameter(string paramName, SqlDbType paramType, object paramValue, bool isNull = false)
@@ -57,11 +57,10 @@ namespace DataAccess
                     _command.Parameters.Add(sqlParam);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Close();
-                //LogWriter _log = new LogWriter(_config);
-                //_log.LogError("Error in AddParameter: " + ex.ToString());
+                throw;
             }
         }
         public void AddDynamicParam(string paramName, object paramValue)
@@ -77,11 +76,10 @@ namespace DataAccess
                     _command.Parameters.Add(sqlParam);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Close();
-                //LogWriter _log = new LogWriter(_config);
-                //_log.LogError("Error in AddDynamicParam: " + ex.ToString());
+                throw;
             }
         }
         public void AddOutputParam(string paramName, object paramValue)
@@ -101,19 +99,7 @@ namespace DataAccess
         }
         public void OnlyExecute()
         {
-            try
-            {
-                _command.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            {
-                //LogWriter _log = new LogWriter(_config);
-                //_log.LogError("Error in OnlyExecute: " + ex.ToString());
-            }
-            finally
-            {
-                _connection.Close();
-            }
+            _command.ExecuteNonQuery();
         }
         public object ExecuteScalar()
         {
@@ -125,10 +111,9 @@ namespace DataAccess
             {
                 _command.ExecuteReader();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                //LogWriter _log = new LogWriter(_config);
-                //_log.LogError("Error in ExecuteReader: " + ex.ToString());
+                throw;
             }
             finally
             {
@@ -158,22 +143,14 @@ namespace DataAccess
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                //LogWriter _log = new LogWriter(_config);
-
-                //_log.LogError("Error in GetDataSet: " + ex.ToString());
                 if (ds.Tables.Count > 0)
                 {
                     ds = new DataSet();
                 }
-                DtError(ref dtResp, ex.Message);
-                ds.Tables.Add(dtResp);
-            }
-            finally
-            {
-                _command.Dispose();
-                _connection.Close();
+                Close();
+                throw;
             }
             return ds;
         }
@@ -187,24 +164,17 @@ namespace DataAccess
                     using (SqlDataAdapter dataAdapter = new SqlDataAdapter(_command))
                     {
                         dataAdapter.Fill(dt);
-                        if (DataHelper.DataTableIsNull(dt))
+                        if (DataValidation.DataTableIsNull(dt))
                         {
                             DtWarning(ref dt);
                         }
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                //LogWriter _log = new LogWriter(_config);
-
-                //_log.LogError("Error in GetDataTable: " + ex.ToString());
-                DtError(ref dt, ex.ToString());
-            }
-            finally
-            {
-                _command.Dispose();
-                _connection.Close();
+                Close();
+                throw;
             }
             return dt;
         }
@@ -217,13 +187,13 @@ namespace DataAccess
                 using (SqlDataAdapter dataAdapter = new SqlDataAdapter(_command))
                 {
                     dataAdapter.Fill(dt);
-                    if (DataHelper.DataTableIsNull(dt))
+                    if (DataValidation.DataTableIsNull(dt))
                     {
                         _response.Create(code: "0", "La transacción no devolvio respuesta");
                     }
                     else
                     {
-                        _response = DataHelper.BindData<GenericResponse>(dt);
+                        _response = DataTableMapper.BindData<GenericResponse>(dt);
                     }
                 }
             }
@@ -238,14 +208,13 @@ namespace DataAccess
                 using (SqlDataAdapter dataAdapter = new SqlDataAdapter(_command))
                 {
                     dataAdapter.Fill(dt);
-                    if (DataHelper.DataTableIsNull(dt))
+                    if (DataValidation.DataTableIsNull(dt))
                     {
                         _response.Create(code: "0", "La transacción no devolvio respuesta");
-                        //DtWarning(ref dt);
                     }
                     else
                     {
-                        _response.Create(code: "1", payload: DataHelper.DataTableToJSON(dt));
+                        _response.Create(code: "1", payload: DataConverters.DataTableToJSON(dt));
                     }
                 }
             }
@@ -270,7 +239,7 @@ namespace DataAccess
                     }
                     else
                     {
-                        _response.Create(code: "1", payload: DataHelper.DataSetToJSON(ds));
+                        _response.Create(code: "1", payload: DataConverters.DataSetToJSON(ds, true));
                     }
                 }
             }
@@ -294,10 +263,9 @@ namespace DataAccess
                     _connection.Close();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                //LogWriter _log = new LogWriter(_config);
-                //_log.LogError("Error in Close: " + ex.ToString());
+                throw;
             }
         }
         public void DtColumns(ref DataTable dt)
@@ -318,11 +286,6 @@ namespace DataAccess
         {
             DtColumns(ref dt);
             DtRows(ref dt, "La transacción no devolvio respuesta", "");
-        }
-        public void DtError(ref DataTable dt, string message)
-        {
-            DtColumns(ref dt);
-            DtRows(ref dt, "Error al ejecutar la transacción", message);
         }
 
         public void Dispose()

@@ -1,4 +1,6 @@
-﻿using Lib.Common;
+﻿using Common.Core.Interfaces;
+using Common.Core.Models;
+using Common.Core.Utils;
 using Restaurant.Core.Interfaces;
 
 namespace Restaurant.Application.Services
@@ -19,8 +21,18 @@ namespace Restaurant.Application.Services
             }
             else
             {
-                return Converters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJSON(ds);
             }
+        }
+
+        public async Task<string> PutAsync(int id, ApiRequest request)
+        {
+            var parameters = new Dictionary<string, object>{
+                {"userRoleId", request.UserRoleId},
+                {"id", id},
+                {"json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data))}
+            };
+            return await _repository.SPExecuteAsync("Restaurant.Menu_Update", parameters);
         }
     }
 }

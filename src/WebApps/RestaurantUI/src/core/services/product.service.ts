@@ -1,22 +1,75 @@
-import { PATHS } from '@/core/constants/path';
+import { PATHS } from '@/core/constants';
 import { Http, loadAbort } from '@/core/utilities';
+import { ApiResponse, Measure, ProductSaleReadDto } from '../models';
+import { productSaleRateReadAdapter, productSaleReadAdapter } from '../adapters';
 
 const URL = 'Articulo/'
-export const ProductService = {
-    getAll: () => {
-        const controller = loadAbort(); //Cancelar peticion 
-        const query = JSON.stringify({
-            tipo: 1,
-            pageIndex: 1,
-            pageSize: 50,
-        })
+export const productService = {
 
+    async findForSale(productId: number, warehouseId?: number){
+        
+        const json = JSON.stringify(Object.assign({
+            idArticulo: productId,
+            idBodega: warehouseId,
+            tipo: 10
+        }))
+
+        const resultAxios = await Http({
+            method: 'get',
+            url: `${PATHS.INVENTARIO}${URL}Get`,
+            params: {
+                json 
+            }
+        });
+
+        const response: ApiResponse = resultAxios.data;
+         
+        let product = {} as ProductSaleReadDto
+        let measures: Array<Measure> = []
+        
+        if (response.code === '0') {
+            throw response;
+        }
+
+        if(response.code==='1'){
+            const repositoryData = JSON.parse(response.payload); 
+            const productReposData = repositoryData[0][0];
+            const measureReposData = repositoryData[1];
+            product = productSaleReadAdapter(productReposData),
+            measures = productSaleRateReadAdapter(measureReposData)            
+        }
+        
+        return {
+            product,
+            measures
+        }  
+    },
+    async checkNotificationStock(obj: {idArticulo: number, cantidad: number, idBodega: number}):Promise<ApiResponse>{
+        const resultAxios = await Http({
+            method: 'get',
+            url: `${PATHS.INVENTARIO}${URL}Get`,
+            params: {
+                json: JSON.stringify(Object.assign(obj, { tipo: 7 }))
+            }
+        });
+
+        const response: ApiResponse = resultAxios.data;
+        
+        if (response.code === '0') {
+            throw response;
+        }
+        
+        return JSON.parse(response.payload)[0][0];          
+    },
+    search(obj:{ busqueda: string}){
+        const controller = loadAbort(); //Cancelar peticion 
+    
         return {
             call: Http({
                 method: 'get',
-                url: `${PATHS.INVENTARIO}${URL}Get`,
+                url: `${PATHS.INVENTARIO}${URL}Search`,
                 params: {
-                    json: query
+                    json: JSON.stringify(obj)
                 },
                 signal: controller.signal
             }),

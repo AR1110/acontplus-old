@@ -1,16 +1,19 @@
-﻿using DataAccess;
-using Helpers;
+﻿using Common.Core.Models;
+using Common.Core.Utils;
+using DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
-namespace WebUI.Controllers
+namespace WebUI.Controllers.Ventas
 {
     public class ClienteController : Controller
     {
         private readonly IConfiguration _configuration;
-        public ClienteController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public ClienteController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
         public IActionResult Index()
@@ -26,19 +29,19 @@ namespace WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
-            GenericResponse _response = new GenericResponse();
+            var _db = new DbAccess(_configuration);
+
+            var _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Ventas.Cliente_Get");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Get: \n" + ex.ToString());
+                _log.LogActivity("Error in Get: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally
@@ -50,9 +53,9 @@ namespace WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetId(int id)
         {
-            DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
-            GenericResponse _response = new GenericResponse();
+            var _db = new DbAccess(_configuration);
+
+            var _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Ventas.Cliente_Get_Id");
@@ -61,7 +64,7 @@ namespace WebUI.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in GetId: \n" + ex.ToString());
+                _log.LogActivity("Error in GetId: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally
@@ -74,19 +77,19 @@ namespace WebUI.Controllers
         [HttpGet]
         public async Task<IActionResult> Search(string json)
         {
-            DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
-            GenericResponse _response = new GenericResponse();
+            var _db = new DbAccess(_configuration);
+
+            var _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Ventas.Cliente_Get_Search");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Search: \n" + ex.ToString());
+                _log.LogActivity("Error in Search: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally

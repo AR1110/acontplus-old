@@ -1,4 +1,4 @@
-﻿namespace DataAccess.Config
+﻿namespace Domain.Models.Config
 {
     public class EstabAsig
     {

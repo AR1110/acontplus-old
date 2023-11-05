@@ -1,10 +1,10 @@
 ﻿
+using System.Data;
+using Common.Core.Models;
 using Domain.Models;
 using Domain.ViewModels;
-using Helpers;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace DataAccess.Compras
 {
@@ -16,7 +16,7 @@ namespace DataAccess.Compras
         public ProveedorDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _response = new GenericResponse();
         }
         //Gestion de informacion CRUD. 
@@ -266,39 +266,6 @@ namespace DataAccess.Compras
             finally
             {
 
-            }
-            return _response;
-        }
-        public async Task<GenericResponse> GetIdAsycn(int id)
-        {
-            try
-            {
-                DbAccess db = new DbAccess(_config);
-                await db.SPExecute("Compra.Proveedor_Get_Id");
-                db.AddParameter("id", SqlDbType.Int, id);
-                DataTable dt = db.GetDataTable();
-                _response = DbResponse.SPDataTable(dt);
-            }
-            catch (Exception ex)
-            {
-                _response.Create("0", ex.Message);
-            }
-            return _response;
-        }
-        public async Task<GenericResponse> SearchAsync(int idRol, string json)
-        {
-            try
-            {
-                DbAccess db = new DbAccess(_config);
-                await db.SPExecute("Compra.Proveedor_Get_Search");
-                db.AddParameter("idRol", SqlDbType.Int, idRol);
-                db.AddParameter("json", SqlDbType.NVarChar, json);
-                DataTable dt = db.GetDataTable();
-                _response = DbResponse.SPDataTable(dt);
-            }
-            catch (Exception ex)
-            {
-                _response.Create("0", ex.Message);
             }
             return _response;
         }

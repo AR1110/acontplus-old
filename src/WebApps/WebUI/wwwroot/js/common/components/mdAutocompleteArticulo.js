@@ -46,18 +46,18 @@ class BaseSearchArticulo {
                 return
             }
 
-            if(this.searchText.length < 3) return
+            if (this.searchText.length < 3) return
 
             /**
              * return object {idArticulo: 0}
              */
             showLoader();
-            this.articuloSvc.findByEnterCode({textSearch: this.searchText, isSearchByCode: true}).then(response=>{
+            this.articuloSvc.findByEnterCode({ textSearch: this.searchText, isSearchByCode: true }).then(response => {
                 hideLoader();
                 this.selectArticleSearch(response)
-                this.searchText = null                
-            }).catch(error => {  
-                hideLoader();           
+                this.searchText = null
+            }).catch(error => {
+                hideLoader();
                 console.log(error);
             })
         } catch (error) {
@@ -67,14 +67,14 @@ class BaseSearchArticulo {
 
     selectArticleSearch(item) {
 
-        if (typeof item === 'object' && item.hasOwnProperty('showHeader')) {
+        if (typeof item === 'object' && ("showHeader" in item)) {
             this.searchText = null
             return
         }
-        if (!item || !item.hasOwnProperty('idArticulo')) return
+        if (!item || !("idArticulo" in item)) return
 
         this.dataArticulo = {
-            idArticulo: item.idArticulo, 
+            idArticulo: item.idArticulo,
             llevaInventario: item.llevaInventario
         }
         this.selectedItem = null
@@ -91,15 +91,15 @@ class BaseSearchArticulo {
         if (['FC', 'IB', 'LC', 'NCP', 'OC', 'TRA', 'GR'].includes(this.tipoDoc.codigo)) {
             this.getDataArticuloParaCompra();
         }
-         if (['CIV'].includes(this.tipoDoc.codigo)) {
-             this.getId()
-         }
+        if (['CIV'].includes(this.tipoDoc.codigo)) {
+            this.getId()
+        }
     }
 
 
     getDataArticuloParaVenta() {
         try {
-            
+
             showLoader();
             this.dataArticulo.idBodega = this.idBodega;
             this.dataArticulo.tipo = 6;
@@ -110,30 +110,32 @@ class BaseSearchArticulo {
             this.articuloSvc.findForSale(this.dataArticulo).then(async dataArticuloApi => {
 
                 //Cuando el articulo no lleva inventario 
-                if(!dataArticuloApi.articulo.llevaInventario) {
+                if (!dataArticuloApi.articulo.llevaInventario) {
                     hideLoader();
                     this.setItemArticuloEnDetalle({
                         item: dataArticuloApi
                     })
                     return
                 }
+                //Agregando validacion nueva el idMedida 07/10/2023 por emilio 
                 this.articuloSvc.checkNotificationStock({
                     idArticulo: this.dataArticulo.idArticulo,
                     cantidad: 1,
                     idBodega: this.dataArticulo.idBodega,
-                }).then(async responseApi=>{
+                    idMedida: dataArticuloApi.medidas[0].idMedida
+                }).then(async responseApi => {
                     hideLoader();
-                    
-                    let {code, message, titleSms} = responseApi; 
-                    console.log(responseApi);
-                    if (code === "1") { 
+
+                    let { code, message, titleSms } = responseApi;
+
+                    if (code === "1") {
                         this.setItemArticuloEnDetalle({
                             item: dataArticuloApi
                         })
-                        return 
+                        return
                     }
-                    
-                    let {isConfirmed} = await Swal.fire({
+
+                    let { isConfirmed } = await Swal.fire({
                         title: `<small>${titleSms}</small>`,
                         icon: 'warning',
                         html: `<small>${message}</small>`,
@@ -162,14 +164,14 @@ class BaseSearchArticulo {
                 //     item: result
                 // })
                 // hideLoader();               
-                
+
             }).catch(error => {
                 hideLoader();
                 console.log(error);
-            })        
+            })
         } catch (error) {
             hideLoader();
-            console.log(error)            
+            console.log(error)
         }
     }
 
@@ -178,38 +180,39 @@ class BaseSearchArticulo {
 
             showLoader();
             this.dataArticulo.idBodega = this.idBodega;
-            this.articuloSvc.findForPurchase(this.dataArticulo).then(response =>{
+            this.articuloSvc.findForPurchase(this.dataArticulo).then(response => {
                 hideLoader();
                 this.setItemArticuloEnDetalle({
                     item: response
                 })
-            }).catch(error=>{
+            }).catch(error => {
                 hideLoader();
                 console.log(error);
             })
-           
+
         } catch (error) {
             console.error(error)
         }
     }
 
-     async getId() {
-         try {
-             showLoader();
-             this.dataArticulo.idBodega = this.idBodega;
-             this.articuloSvc.getId(this.dataArticulo.idArticulo).then(response => {
-                 hideLoader();
-                 this.setItemArticuloEnDetalle({
-                     item: response
-                 })
-             }).catch(error => {
-                 hideLoader();
-                 console.log(error);
-             })
-         } catch (e) {
-             console.log(e)
-         }
-     }
+    async getId() {
+        try {
+            showLoader();
+            this.dataArticulo.idBodega = this.idBodega;
+            this.articuloSvc.getId(this.dataArticulo.idArticulo).then(response => {
+                hideLoader();
+                this.setItemArticuloEnDetalle({
+                    item: { ...response, isUpdateProduct: this.isUpdateProduct }
+                })
+                this.isUpdateProduct = false;
+            }).catch(error => {
+                hideLoader();
+                console.log(error);
+            })
+        } catch (e) {
+            console.log(e)
+        }
+    }
 
 }
 
@@ -245,6 +248,8 @@ class MdArticuloCtrl extends BaseSearchArticulo {
         }
 
         this.$scope.$on("editArticulo", (e, itemArticulo) => {
+            //validacion de sum cantidad en el detalle cantidad consolidaci
+            this.isUpdateProduct = itemArticulo.isUpdate;
             this.openModalArticulo(itemArticulo)
         })
 
@@ -262,19 +267,21 @@ class MdArticuloCtrl extends BaseSearchArticulo {
 
 
     $onInit() {
-        this._mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response => {
 
-            let mainData = JSON.parse(response.payload);
-            let articulo = mainData[6];
+        if (this.isDefaultArticle) {
+            setTimeout(() => {
+                this._commonSvc.getDataFormVenta().then(response => {
+                    let mainData = response;
+                    let articulo = mainData[6];
 
+                    if (this.isDefaultArticle && articulo.length > 0) {
+                        this.searchTextSimple = articulo[0].descripcion;
+                        this.selectArticleSearch(articulo[0])
+                    }
+                })
 
-            this.$rootScope.articlePermission = mainData[10][0];
-
-            if (this.isDefaultArticle && articulo.length > 0) {
-                this.searchTextSimple = articulo[0].descripcion;
-                this.selectArticleSearch(articulo[0])
-            }
-        })
+            }, 200)
+        }
 
     }
 
@@ -288,7 +295,7 @@ class MdArticuloCtrl extends BaseSearchArticulo {
 
         if (json.busqueda.length < 3) return [];
 
-        return this.articuloSvc.search(json).then(articulos=>{
+        return this.articuloSvc.search(json).then(articulos => {
             if (articulos.length > 0) {
                 articulos.unshift({
                     showHeader: true,
@@ -296,17 +303,16 @@ class MdArticuloCtrl extends BaseSearchArticulo {
                     warehouses: articulos[0].warehouses
 
                 })
-                
+
                 articulos = articulos.map(item => {
-                    if (!item.hasOwnProperty('showHeader')) {
+                    if (!("showHeader" in item)) {
                         item.priceSale = item.priceSales;
-                        item.warehouses = item.warehouses;
                     }
                     return item;
                 })
                 return articulos;
             }
-        }).catch(error=>{
+        }).catch(error => {
             hideLoader();
             console.log(error)
             return [];
@@ -314,7 +320,7 @@ class MdArticuloCtrl extends BaseSearchArticulo {
     }
 
     async getDynamicSearchArticlesSimple(textSearch) {
-        let results = await this._commonSvc.articuloSearchGeneral({
+        let results = await this.articuloSvc.search({
             textSearch,
             condicion: false
         })
@@ -330,22 +336,24 @@ class MdArticuloCtrl extends BaseSearchArticulo {
 
 
     async openModalArticulo(item) {
-        try {          
-            let fileCtrl = this.nombreModalInventario.ARTICULO.fileCtrl;  
-            
-            let ctrl = this.nombreModalInventario.ARTICULO.controllers['M'];
-            let template = this.nombreModalInventario.ARTICULO.templates['M'];
-            let controller = (await import(fileCtrl))[ctrl];
-            
-            const modalRef = this._modalSvc.openModalCustom({
-                controller,
+        try {
+
+            const { fileCtrl, controllers, templates } = this.nombreModalInventario.ARTICULO;
+            let ctrl = (await import(fileCtrl))[controllers['M']];
+            let template = templates['M'];
+            const modalDialogRef = this._modalSvc.openModalCustom({
+                controller: ctrl,
                 template,
                 size: 'xl',
-                params: item
+                params: item || {},
+                isRenderRazorPartial: true
             })
-    
-            modalRef.result.then(response => {
-                if (typeof response !== 'object') return
+
+            modalDialogRef.result.then(response => {
+                if (typeof response !== 'object') {
+                    this.isUpdateProduct = false;
+                    return
+                }
                 this.dataArticulo = {
                     idArticulo: response.idArticulo,
                     idPresentacion: response.idPresentacion,
@@ -357,13 +365,13 @@ class MdArticuloCtrl extends BaseSearchArticulo {
         } catch (error) {
             console.log(error);
         }
-       
+
     }
 
-    
+
     async openModalArticuloGeneral(item) {
         try {
-            const {fileCtrl, controllers, templates} = this.nombreModalInventario.ARTICULO;
+            const { fileCtrl, controllers, templates } = this.nombreModalInventario.ARTICULO;
             let ctrl = (await import(fileCtrl))[controllers['LG']];
             let template = templates['LG'];
             let modalRef = this._modalSvc.openModalCustom({
@@ -371,9 +379,10 @@ class MdArticuloCtrl extends BaseSearchArticulo {
                 template,
                 size: 'xl',
                 params: item,
-                windowClass: 'uibModalFullScreen'
+                windowClass: 'uibModalFullScreen',
+                isRenderRazorPartial: true
             })
-    
+
             modalRef.result.then(response => {
                 if (typeof response !== 'object') return
                 this.dataArticulo = {
@@ -387,29 +396,9 @@ class MdArticuloCtrl extends BaseSearchArticulo {
         } catch (error) {
             console.log(error)
         }
-        
+
     }
 
-
-    
-    async openModalArticuloFraccionadoInfo(item) {
-        try {
-            const {fileCtrl, controllers, templates} = this.nombreModalInventario.ARTICULO;
-            let ctrl = (await import(fileCtrl))[controllers['AFI']];
-            let template = templates['AFI'];
-            let modalRef = this._modalSvc.openModalCustom({
-                controller: ctrl,
-                template,
-                size: 'md',
-                params: item,
-                windowClass: 'zindex'
-            })
-    
-            
-        } catch (error) {
-            console.log(error)
-        }
-    }
 }
 
 

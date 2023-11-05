@@ -1,16 +1,15 @@
-﻿using DataAccess;
+﻿using Common.Core.Models;
 using DataAccess.Almacen;
-using Helpers;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers
+namespace WebUI.Controllers.Almacen
 {
     public class MarcaController : Controller
     {
         // GET: Marca
         private readonly IConfiguration _configuration;
         ///Visit https://learn.microsoft.com/en-us/aspnet/core/fundamentals/http-context?view=aspnetcore-6.0
-        private DataAccessObject _dao;
+
 
         GenericResponse _gr = new();
         private MarcaDao _m;
@@ -18,7 +17,7 @@ namespace WebUI.Controllers
         public MarcaController(IConfiguration configuration)
         {
             _configuration = configuration;
-            _dao = new DataAccessObject(_configuration);
+
             _m = new MarcaDao(_configuration);
 
 

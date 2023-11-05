@@ -3,12 +3,16 @@
   "defaultProvider": "cdnjs",
   "libraries": [
     {
-      "library": "jquery@3.6.4",
+      "library": "jquery@3.7.1",
       "destination": "wwwroot/lib/jquery/"
     },
     {
       "library": "bootstrap@4.6.2",
       "destination": "wwwroot/lib/bootstrap/"
+    },
+    {
+      "library": "angular-aria@1.8.3",
+      "destination": "wwwroot/lib/angular-aria/"
     },
     {
       "library": "angular-material@1.2.5",
@@ -23,7 +27,7 @@
       "destination": "wwwroot/lib/popper/"
     },
     {
-      "library": "angular-ui-grid@4.12.2",
+      "library": "angular-ui-grid@4.12.4",
       "destination": "wwwroot/lib/angular-ui-grid/"
     },
     {
@@ -39,7 +43,7 @@
       "destination": "wwwroot/lib/jquery-sparklines/"
     },
     {
-      "library": "font-awesome@6.4.0",
+      "library": "font-awesome@6.4.2",
       "destination": "wwwroot/assets/icons/font-awesome/"
     },
     {
@@ -51,7 +55,7 @@
       "destination": "wwwroot/lib/danialfarid-angular-file-upload/"
     },
     {
-      "library": "limonte-sweetalert2@11.7.17",
+      "library": "limonte-sweetalert2@11.7.32",
       "destination": "wwwroot/lib/limonte-sweetalert2/"
     },
     {
@@ -59,20 +63,8 @@
       "destination": "wwwroot/lib/angular-animate/"
     },
     {
-      "library": "angular-aria@1.8.3",
-      "destination": "wwwroot/lib/angular-aria/"
-    },
-    {
-      "library": "angular-mocks@1.8.3",
-      "destination": "wwwroot/lib/angular-mocks/"
-    },
-    {
       "library": "angular-sanitize@1.8.3",
       "destination": "wwwroot/lib/angular-sanitize/"
-    },
-    {
-      "library": "angular-touch@1.8.3",
-      "destination": "wwwroot/lib/angular-touch/"
     },
     {
       "library": "angular.js@1.8.3",
@@ -87,7 +79,7 @@
       "destination": "wwwroot/lib/angular-file-saver/"
     },
     {
-      "library": "Chart.js@3.9.1",
+      "library": "Chart.js@4.4.0",
       "destination": "wwwroot/lib/Chart.js/"
     },
     {
@@ -111,7 +103,7 @@
       "destination": "wwwroot/lib/ngMask/"
     },
     {
-      "library": "MaterialDesign-Webfont@7.0.96",
+      "library": "MaterialDesign-Webfont@7.2.96",
       "destination": "wwwroot/assets/icons/MaterialDesign-Webfont/"
     },
     {
@@ -131,7 +123,7 @@
       "destination": "wwwroot/lib/angular-filter/"
     },
     {
-      "library": "microsoft-signalr@7.0.9",
+      "library": "microsoft-signalr@7.0.11",
       "destination": "wwwroot/lib/microsoft-signalr/"
     },
     {
@@ -147,24 +139,28 @@
       "destination": "wwwroot/lib/angular-media-queries/"
     },
     {
-      "library": "tabulator@5.5.0",
-      "destination": "wwwroot/lib/tabulator/"
-    },
-    {
-      "provider": "cdnjs",
-      "library": "UAParser.js@1.0.35",
+      "library": "UAParser.js@1.0.36",
       "destination": "wwwroot/lib/UAParser.js/"
     },
     {
-      "provider": "cdnjs",
-      "library": "axios@1.4.0",
+      "library": "axios@1.5.1",
       "destination": "wwwroot/lib/axios/"
+    },
+    {
+      "library": "material-design-iconic-font@2.2.0",
+      "destination": "wwwroot/assets/icons/material-design-iconic-font/"
+    },
+    {
+      "library": "tabulator@5.5.2",
+      "destination": "wwwroot/lib/tabulator/",
+      "files": [
+        "js/tabulator.min.js",
+        "css/tabulator.min.css"
+      ]
+    },
+    {
+      "library": "jquery.perfect-scrollbar@1.5.5",
+      "destination": "wwwroot/lib/jquery.perfect-scrollbar/"
     }
-  ,
-{
-  "provider": "cdnjs",
-  "library": "material-design-iconic-font@2.2.0",
-  "destination": "wwwroot/assets/icons/material-design-iconic-font/"
-}
-]
+  ]
 }

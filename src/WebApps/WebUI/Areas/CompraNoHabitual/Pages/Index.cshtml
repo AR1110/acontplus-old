@@ -1,10 +1,10 @@
 ﻿@page
-@model WebUI.CompraNoHabitual.Pages.IndexModel
+@model WebUI.Areas.CompraNoHabitual.Pages.IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <div ng-controller="compraNoHabitualCtrl">
     <div class="row page-titles">
@@ -221,10 +221,8 @@
 </div>
 
 @section Scripts{
-
-    <script src="~/js/common/components/mdAutocompleteProveedor.min.js" asp-append-version="true"></script>
-    <script src="~/js/compras/directives/compraDirective.min.js" asp-append-version="true"></script>
+    <script src="~/js/common/components/mdAutocompleteProveedor.min.js" asp-append-version="true"></script>    
     <script src="~/js/compras/services/compraNoHabitualService.js" asp-append-version="true"></script>
-    <script src="~/js/compras/controllers/compraNoHabitualCtrl.js" asp-append-version="true"></script>
+    <script src="~/js/compras/controllers/compraNoHabitualCtrl.min.js" asp-append-version="true"></script>
 
 }

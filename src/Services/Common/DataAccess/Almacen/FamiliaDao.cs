@@ -1,9 +1,9 @@
 ﻿
-using Domain.Models.Almacen;
-using Helpers;
-using Microsoft.Extensions.Configuration;
 using System.Data;
-using System.Data.SqlClient;
+using Common.Core.Models;
+using Domain.Models.Almacen;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.Almacen
 {
@@ -15,7 +15,7 @@ namespace DataAccess.Almacen
         public FamiliaDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _response = new GenericResponse();
         }
         //Operaciones Especiales 

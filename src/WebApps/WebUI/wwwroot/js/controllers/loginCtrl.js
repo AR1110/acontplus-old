@@ -2,50 +2,20 @@
     'use strict';
     angular.module('loginApp', ['ngStorage'])
         .controller('loginCtrl', loginCtrl);
-    //services
 
-    angular
-        .module('loginApp')
-        .factory('loginService', loginService);
+    loginCtrl.$inject = ['$scope', '$http', '$localStorage'];
 
-    loginService.$inject = ['$http', '$localStorage'];
+    function loginCtrl($scope, $http, $localStorage) {
 
-    function loginService($http, $localStorage) {
-        let service = {
-            getData: getData
-        };
+        let urlBase = document.getElementById('urlGateway').value
+        let urlService = `${urlBase}/gateway/`
 
-        return service;
-        function getData(method, url, data = null) {
-            let urlBase = document.getElementById('urlGateway').value
-            console.log(urlBase)
-            let urlService = `${urlBase}/gateway/`
-
-            let serviceData = $http({
-                method: method,
-                url: urlService + url,
-                data: data
-            }).then(response => {
-                console.log(response)
-                if (response.data.code == "2") {
-                    $localStorage.currentUser = {
-                        token: response.data.data.userData[0].jwtToken
-                    }
-                    // add jwt token to auth header for all requests made by the $http service
-                    $http.defaults.headers.common.Authorization = 'Bearer ' + response.data.data.userData[0].jwtToken
-                }
-                return response.data
-            })
-            return serviceData
-        }
-    }
-
-    loginCtrl.$inject = ['$scope', 'loginService'];
-
-    function loginCtrl($scope, mS) {
         $scope.loader = false;
         $scope.ver = false;
         $scope.data = {};
+
+        let parser = new UAParser(navigator.userAgent)
+        let parserResults = parser.getResult()
 
         $scope.verContrasenia = function (ver) {
             let contra = $("#password")
@@ -59,42 +29,81 @@
         }
 
         $scope.loginMultiple = (item) => {
-            $scope.data.id = item.idRol;
-            $scope.login();
+            showLoader();
+            //let data = {
+            //    fullname: item.fullname,
+            //    username: item.username,
+            //    userId: item.userId,
+            //    role: item.role,
+            //    userRoleId: item.userRoleId,
+            //    idCardUser: item.idCardUser,
+            //    idCardCompany
+            //}
+            item.userAgent = JSON.stringify(parserResults);
+            $http.post(`${urlService}account/createToken`, item).then(
+                response => {
+                    if (response.data.code == "0") {
+                        hideLoader();
+                        toastr.warning(response.data.message, "Login", { closeButton: true, progressBar: true, preventDuplicates: true, positionClass: 'toast-bottom-center' });
+                        return;
+                    }
+
+                    if (response.data.code == "1") {
+                        $localStorage.currentUser = {
+                            token: JSON.parse(response.data.payload).token
+                        }
+                        // add jwt token to auth header for all requests made by the $http service
+                        $http.defaults.headers.common.Authorization = 'Bearer ' + JSON.parse(response.data.payload).token
+                        localStorage.setItem('userData', response.data.payload);
+                        hideLoader();
+                        toastr.success(response.message, "Login", { closeButton: true, progressBar: true, preventDuplicates: true, positionClass: 'toast-bottom-center' });
+                        location.href = JSON.parse(response.data.payload).returnUrl;
+                    }
+                }).catch(error => {
+                    hideLoader();
+                    console.log(error);
+                })
         }
 
         $scope.login = function () {
             try {
                 showLoader();
+                $scope.data.userAgent = JSON.stringify(parserResults);
                 $scope.data.returnUrl = $('#returnUrl').val();
                 if ($scope.data.returnUrl == undefined || $scope.data.returnUrl === "" || $scope.data.returnUrl == null) {
                     $scope.data.returnUrl = '/';
                 }
-                mS.getData('post', 'account/login', $scope.data).then(response => {
-                    if (response.id === "0" || response.code === "0") {
+                $http.post(`${urlService}account/login`, $scope.data).then(response => {
+                    if (response.data.code === "0") {
                         hideLoader();
-                        toastr.warning(response.message, response.titleSms, { closeButton: true, progressBar: true });
+                        toastr.warning(response.data.message, "Login", { closeButton: true, progressBar: true, preventDuplicates: true, positionClass: 'toast-bottom-center' });
                         return;
                     };
+                    if (response.data.code == "1") {
+                        let mainResponse = JSON.parse(response.data.payload);
+                        if (mainResponse.length == 1) {
+                            $localStorage.currentUser = {
+                                token: mainResponse[0].token
+                            }
+                            // add jwt token to auth header for all requests made by the $http service
+                            $http.defaults.headers.common.Authorization = 'Bearer ' + mainResponse[0].token
+                            localStorage.setItem('userData', JSON.stringify(mainResponse[0]));
+                            hideLoader();
+                            toastr.success(response.message, "Login", { closeButton: true, progressBar: true, preventDuplicates: true, positionClass: 'toast-bottom-center' });
+                            location.href = mainResponse[0].returnUrl;
+                            return;
+                        }
 
-                    if (response.id === "1" || response.code === "1") {
-                        hideLoader();
-                        $scope.usuarioEntidades = response.data.userData;
-                        // $(".mainLogin").hide();                    
-                        $("#modalLoginUsuarioEntidad").modal('show');
+                        if (mainResponse.length > 1) {
+                            hideLoader();
+                            $scope.usuarioEntidades = mainResponse;
+                            toastr.info(response.message, "Login", { closeButton: true, progressBar: true, preventDuplicates: true, positionClass: 'toast-bottom-center' });
+                            $("#modalLoginUsuarioEntidad").modal('show');
+                        }
                     }
-
-                    if (response.id === "2" || response.code === "2") {
-                        toastr.success(response.message, response.titleSms, { closeButton: true, progressBar: true });
-                        location.href = response.data.returnUrl;
-                        localStorage.setItem('userData', JSON.stringify(response.data.userData[0]));
-                        localStorage.setItem('menus', JSON.stringify(response.data.menus));
-                        localStorage.setItem('subMenus', JSON.stringify(response.data.subMenus));
-                        hideLoader();
-                    };
-                }, function (error) {
+                }).catch(error => {
                     hideLoader();
-                    console.log(error)
+                    console.log(error);
                 });
             } catch (error) {
                 hideLoader();

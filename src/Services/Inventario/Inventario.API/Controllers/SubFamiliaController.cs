@@ -1,16 +1,12 @@
-using Amazon.Util.Internal;
+﻿using Common.Core.Interfaces;
+using Common.Core.Models;
+using Common.Core.Utils;
 using DataAccess;
 using Domain.Models.Almacen;
-using Helpers;
-using Inventario.Core.Interfaces;
-using Inventario.Core.Models;
-using Lib.Common.Dtos;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Services.Common;
 using Services.Common.Logs;
-using System.IO;
 
 namespace Inventario.API.Controllers
 {
@@ -18,10 +14,12 @@ namespace Inventario.API.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly IStorageService _storageService;
-        public SubFamiliaController(IConfiguration configuration, IStorageService storageService)
+        private readonly LogWriter _log;
+        public SubFamiliaController(IConfiguration configuration, IStorageService storageService, LogWriter log)
         {
             _configuration = configuration;
             _storageService = storageService;
+            _log = log;
         }
 
         [HttpGet("Get")]
@@ -33,13 +31,13 @@ namespace Inventario.API.Controllers
             {
                 await _db.SPExecute("Inventario.Subfamilia_Get");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar SubFamilias: \n" + ex.ToString());
+
+                _log.LogActivity("Error al listar SubFamilias: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar SubFamilias");
             }
             finally
@@ -55,7 +53,7 @@ namespace Inventario.API.Controllers
             var data = JsonConvert.DeserializeObject<SubFamilia>(json);
             GenericResponse _response = new GenericResponse();
             DbAccess _db = new DbAccess(_configuration);
-            var s3file = new S3FileDto();
+            var s3file = new S3File();
             try
             {
                 if (file != null)
@@ -63,7 +61,7 @@ namespace Inventario.API.Controllers
                     var fileExt = Path.GetExtension(file.FileName);
                     s3file.BucketName = _configuration["S3Bucket:Name"];
                     s3file.Region = _configuration["S3Bucket:Region"];
-                    s3file.S3ObjectKey = $"{User.GetCompanyRuc()}/subfamilias/{Guid.NewGuid()}{fileExt}";
+                    s3file.S3ObjectKey = $"{User.GetIDCardCompany()}/subfamilias/{Guid.NewGuid()}{fileExt}";
                     s3file.S3ObjectUrl = $"https://{s3file.BucketName}.s3.{s3file.Region}.amazonaws.com/{s3file.S3ObjectKey}";
                 }
                 await _db.SPExecute("Inventario.Subfamilia_Insert");
@@ -98,8 +96,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al insertar subfamilia: \n" + ex.ToString());
+
+                _log.LogActivity("Error al insertar subfamilia: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar subfamilia");
             }
             finally
@@ -116,7 +114,7 @@ namespace Inventario.API.Controllers
             DbAccess _db = new DbAccess(_configuration);
             var data = JsonConvert.DeserializeObject<SubFamilia>(json);
 
-            var s3file = new S3FileDto();
+            var s3file = new S3File();
             try
             {
                 if (file != null)
@@ -124,7 +122,7 @@ namespace Inventario.API.Controllers
                     var fileExt = Path.GetExtension(file.FileName);
                     s3file.BucketName = _configuration["S3Bucket:Name"];
                     s3file.Region = _configuration["S3Bucket:Region"];
-                    s3file.S3ObjectKey = $"{User.GetCompanyRuc()}/subfamilias/{Guid.NewGuid()}{fileExt}";
+                    s3file.S3ObjectKey = $"{User.GetIDCardCompany()}/subfamilias/{Guid.NewGuid()}{fileExt}";
                     s3file.S3ObjectUrl = $"https://{s3file.BucketName}.s3.{s3file.Region}.amazonaws.com/{s3file.S3ObjectKey}";
                 }
                 await _db.SPExecute("Inventario.Subfamilia_Update");
@@ -159,8 +157,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al actualizar subfamilia: \n" + ex.ToString());
+
+                _log.LogActivity("Error al actualizar subfamilia: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar subfamilia");
             }
             finally
@@ -184,8 +182,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al eliminar subfamilia: \n" + ex.ToString());
+
+                _log.LogActivity("Error al eliminar subfamilia: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar subfamilia");
             }
             finally
@@ -204,13 +202,13 @@ namespace Inventario.API.Controllers
             {
                 await _db.SPExecute("Almacen.SubFamilia_For_Select");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar SubFamilias para Select: \n" + ex.ToString());
+
+                _log.LogActivity("Error al listar SubFamilias para Select: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar SubFamilias para Select");
             }
             finally

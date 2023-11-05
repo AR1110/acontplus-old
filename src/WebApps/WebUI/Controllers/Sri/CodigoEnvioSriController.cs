@@ -1,4 +1,4 @@
-﻿using DataAccess;
+﻿using DataAccess.Sri;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers.Sri

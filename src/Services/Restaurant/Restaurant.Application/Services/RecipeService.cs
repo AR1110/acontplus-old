@@ -1,16 +1,23 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Common.Core.Interfaces;
+using Common.Core.Models;
+using Common.Core.Utils;
+using Microsoft.EntityFrameworkCore;
 using Restaurant.Core.Entities;
 using Restaurant.Core.Interfaces;
 using Restaurant.Infrastructure.Data;
 
-namespace Restaurant.Application
+namespace Restaurant.Application.Services
 {
     public class RecipeService : IRecipe
     {
+        private readonly IADORepository _repository;
         private readonly RestaurantContext _context;
-        public RecipeService(RestaurantContext context)
+        private readonly APIResponse _response;
+
+        public RecipeService(IADORepository repository)
         {
-            _context = context;
+            _repository = repository;
+            _response = new APIResponse();
         }
         public async Task<List<Recipe>> GetAsync()
         {
@@ -39,6 +46,27 @@ namespace Restaurant.Application
             _context.Recipes.Remove(recipe);
             _context.SaveChanges();
         }
+
+        // Get
+        public async Task<object> GetByItem(Dictionary<string, object> parameters)
+        {
+            var ds = await _repository.GetDataSetAsync("Restaurant.Recipe_Get_By_Item", parameters);
+
+            if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+            {
+                return null;
+            }
+            else
+            {
+                return DataConverters.DataSetToJSON(ds);
+            }
+        }
+
+        public Task<Recipe> GetByIdAsync(Dictionary<string, object> parameters)
+        {
+            throw new NotImplementedException();
+        }
+
 
     }
 }

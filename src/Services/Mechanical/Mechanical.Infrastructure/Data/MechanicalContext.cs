@@ -1,9 +1,11 @@
-﻿using Mechanical.Core.Entities;
+﻿using Common.Core.Entities;
+using Common.Infrastructure.Data;
+using Mechanical.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mechanical.Infrastructure.Data
 {
-    public class MechanicalContext : DbContext
+    public class MechanicalContext : BaseContext
     {
         public MechanicalContext(DbContextOptions<MechanicalContext> options) : base(options)
         {
@@ -12,6 +14,11 @@ namespace Mechanical.Infrastructure.Data
         public DbSet<VehicleType> VehicleTypes { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<VehicleCompany> VehicleCompanys { get; set; }
+        public DbSet<Support> Supports { get; set; }
+        public DbSet<VehiclePartType> vehiclePartTypes { get; set; }
+        public DbSet<VehiclePart> vehicleParts { get; set; }
+        public DbSet<Inspection> inspections { get; set; }
+        public DbSet<SupportDetail> maintenanceDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -19,7 +26,7 @@ namespace Mechanical.Infrastructure.Data
             foreach (var property in modelBuilder.Model.GetEntityTypes()
                     .SelectMany(t => t.GetProperties())
                     .Where(
-                           p => p.ClrType == typeof(string)  
+                           p => p.ClrType == typeof(string)
                         && p.GetColumnType() == null
                     ))
             {
@@ -35,7 +42,25 @@ namespace Mechanical.Infrastructure.Data
            .HasDatabaseName("UXC_Mechanical_LicensePlate")
            .IsUnique();
 
+            modelBuilder.Entity<Support>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+
             modelBuilder.Entity<VehicleCompany>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+
+            modelBuilder.Entity<VehiclePartType>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<VehiclePartType>().HasIndex(x => x.Code)
+            .HasDatabaseName("UXC_VehiclePartType_Code")
+            .IsUnique();
+
+            modelBuilder.Entity<VehiclePart>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<VehiclePart>().HasIndex(x => x.Code)
+            .HasDatabaseName("UXC_VehiclePart_Code")
+            .IsUnique();
+
+            modelBuilder.Entity<Inspection>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+
+            modelBuilder.Entity<SupportDetail>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+
+            //modelBuilder.Entity<Maintenance>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
         }
 
         public override int SaveChanges()

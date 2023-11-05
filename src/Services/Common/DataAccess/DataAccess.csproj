@@ -4,13 +4,15 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 	</PropertyGroup>
-
 	<ItemGroup>
-		<PackageReference Include="System.Data.SqlClient" />
+	  <PackageReference Include="Microsoft.Data.SqlClient" />
 	</ItemGroup>
-
 	<ItemGroup>
 		<ProjectReference Include="..\Domain\Domain.csproj" />
-		<ProjectReference Include="..\Helpers\Helpers.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Administracion\" />
+	  <Folder Include="App\" />
+	  <Folder Include="Auditoria\" />
 	</ItemGroup>
 </Project>

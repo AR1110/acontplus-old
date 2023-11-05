@@ -1,10 +1,10 @@
-﻿using Domain.Models.CuotaDocumento;
+﻿using System.Data;
+using Common.Core.Models;
+using Domain.Models.CuotaDocumento;
 using Domain.ViewModels.CuotaDocumento;
-using Helpers;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace DataAccess.CuotaDocumento
 {
@@ -17,7 +17,7 @@ namespace DataAccess.CuotaDocumento
         public CuotaXPagarDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _gr = new GenericResponse();
         }
 

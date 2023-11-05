@@ -174,7 +174,7 @@ export class FormaCobroPagoCtrl extends ModalBaseCtrl {
         if (this._params.typePayment === 'P') {
             this.data.referencia = this._params.referencia;
         } else {
-            this.data.referencia = JSON.parse(localStorage.getItem('userData')).entidad
+            this.data.referencia = JSON.parse(localStorage.getItem('userData')).tradeName
         }
 
     }
@@ -316,7 +316,7 @@ export class ModalFormaCobroCtrl extends ModalBaseCtrl {
 
         if (this.entidadFinanciera.codigo !== 'CHE') return
 
-        this.data.referencia = JSON.parse(localStorage.getItem('userData')).entidad
+        this.data.referencia = JSON.parse(localStorage.getItem('userData')).tradeName
 
 
     }

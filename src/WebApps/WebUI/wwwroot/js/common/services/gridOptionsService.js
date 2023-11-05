@@ -303,10 +303,7 @@
                 subTotalNetoExentoIva,
     
                 subTotalNoObjetoIva,
-                subTotalNetoNoObjetoIva,
-    
-                totalDescuento: obj.getTotalDescuento(),
-                porcentajeDescuento: obj.getTotalPorcentajeDescuento(),
+                subTotalNetoNoObjetoIva, 
 
                 totalDescuento: fS.roundNumber(obj.getTotalDescuento(), decimal.nroTotalSubTotal),
                 porcentajeDescuento: fS.roundNumber(obj.getTotalPorcentajeDescuento(), decimal.nroTotalSubTotal),

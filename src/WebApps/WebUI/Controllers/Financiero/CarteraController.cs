@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers.GestionFinanciera
+namespace WebUI.Controllers.Financiero
 {
     public class CarteraController : Controller
     {

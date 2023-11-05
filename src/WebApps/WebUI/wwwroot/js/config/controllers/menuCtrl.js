@@ -1,216 +1,312 @@
 (function () {
     'use strict';
 
-    angular.module('acontPlusApp')
 
-        .controller('menuCtrl', menuCtrl);
+    const URL_TEMPLATE = '~/Pages/Menu/'
 
-    menuCtrl.$inject = ['$scope', 'mainService', 'toastService', 'formulario'];
+    //Variable servicios 
+    let tS = {}; 
+    let menuSvc = {}; 
 
-    function menuCtrl($scope, mS, toast, form) {
-        // let accion = JSON.parse(localStorage.getItem("accion"));
-        // if(accion===null){
-        //     location.href = "/Home/Index";
-        // }else{
-        //     $scope.accion = accion[0];
-        // };
-        
+    app.controller('menuCtrl', menuCtrl);
+
+    menuCtrl.$inject = [
+        '$scope',
+        '$injector',
+        'mainService',
+        'modalService', 
+    ];
+
+    function menuCtrl($scope, $injector, mS, modalSvc) {
+
+        menuSvc = $injector.get('menuService');
+        tS = $injector.get('toastService');
         $scope.data = {};
-        
-        $scope.nuevoMenu = function(){
-            $scope.tipoRegistro = 1;
-            $("#modalAddUpdateMenu").modal('show');            
-            return
-        };
 
-        $scope.getMenus = function(){
-            mS.getData('get', '/Menu/Get').then(response => {
-                if (response.id === "0") {
-                    toast.toastr('warning', response.message, response.titleSms);
-                    return
-                }
-                $scope.menus = response.data;
-                for(let val of $scope.menus){
-                    $scope.getSubMenus(val, val.idMenu);
-                }
-                
-            }, error => console.log(error));
-        }
-        $scope.getMenus();
-
-        $scope.getSubMenus = function(itemMenu, idMenu){
-            mS.getData('get', '/SubMenu/GetSubMenus?idMenu=' + idMenu).then(response => {
-                if (response.id === "0") {
-                    toast.toastr('warning', response.message, response.titleSms);
-                    return
-                }                
-                itemMenu.subMenus = response.data;
-            }, error => console.log(error));
-        };
-
-
-
-        $scope.saveUpdateMenu= function(){
-            let tituloToast = $scope.tipoRegistro === 1?'Guardar':'Actualizar';
-            if (form.campo($scope.data.grupo)) {
-                toast.toastr('warning', 'Ingrese el Grupo', tituloToast);
-                return
-            }
-            if (form.campo($scope.data.descripcion)) {
-                toast.toastr('warning', 'Ingrese la Descripción', tituloToast);
-                return
-            }
-            if (form.campo($scope.data.icono)) {
-                toast.toastr('warning', 'Ingrese el Icono', tituloToast);
-                return
-            }
-          
-            let url = $scope.tipoRegistro ===1?'/Menu/Post':'/Menu/Put?idMenu=' + $scope.data.idMenu;
-            mS.getData('post', url, $scope.data).then(response => {
-                if (response.id == "0") {
-                    toast.toastr('warning', response.message, response.titleSms);
-                    return
-                }
-                if (response.id == "1") {
-                    toast.toastr('success', response.message, response.titleSms);
+        $scope.nuevoMenu = function () {
+            modalSvc.openModalCustom({
+                controller: 'modalMenuCtrl',
+                template: URL_TEMPLATE + '_ModalAddUpdateMenu.cshtml',
+                size: 'md',
+                params: {
+                },
+                isRenderRazorPartial: true
+            }).result.then(response => {
+                if (typeof response === 'object') {
                     $scope.getMenus();
-                    $("#modalAddUpdateMenu").modal('hide');                    
-                    return
                 }
             })
         };
 
-        $scope.editarMenu = function(item){
-            $scope.tipoRegistro = 2;
-            $scope.data = item;
-            $("#modalAddUpdateMenu").modal('show');
-            return            
+        $scope.getMenus = function () {
+            showLoader();
+            menuSvc.get({ tipo: 1 }).then(async response => { 
+                $scope.menus = response;
+                for (let val of $scope.menus) {
+                    await $scope.getSubMenus(val, val.idMenu);
+                }
+            }).finally(() => hideLoader())
+        }
+        $scope.getMenus();
+
+        $scope.getSubMenus = function (itemMenu, idMenu) {
+            menuSvc.findByIdMenu(idMenu).then(response => {
+                itemMenu.subMenus = response;
+            })
+        }; 
+
+        $scope.editarMenu = function (item) {
+            modalSvc.openModalCustom({
+                controller: 'modalMenuCtrl',
+                template: URL_TEMPLATE + '_ModalAddUpdateMenu.cshtml',
+                size: 'md',
+                params: item,
+                isRenderRazorPartial: true
+            }).result.then(response => {
+                if (typeof response === 'object') {
+                    $scope.getMenus();
+                }
+            })
         }
 
-        $scope.askToDeleteMenu = async function(item){
-            let {isConfirmed} = await Swal.fire({
-                icon: 'warning',                
+        $scope.askToDeleteMenu = async function (item) {
+            let { isConfirmed } = await Swal.fire({
+                icon: 'warning',
                 html: `<small>Esta seguro/a de eliminar este Menu ahora?</small>`,
                 showDenyButton: true,
                 confirmButtonText: `Si, eliminar`,
                 denyButtonText: `No, cancelar`,
                 allowOutsideClick: false
             })
-            
-            if(isConfirmed){                
-                mS.getData('post', '/Menu/Delete?idMenu=' + item.idMenu).then(response => {                    
-                    if (response.id == "0") {
-                        toast.toastr('warning', response.message, response.titleSms);
-                        return
-                    }
-                    if (response.id == "1") {
-                        toast.toastr('success', response.message, response.titleSms);
-                        $scope.getMenus();
-                        return
-                    }
-                }, error => console.log(error));
-            };              
-        };
 
-        $("#modalAddUpdateMenu").on('hide.bs.modal', e=>{            
-            $scope.data ={};
-            $scope.getMenus();
-            return
-        })
-        
-        /*------------------------------------SUB MENU-----------------*/        
-       
-        
-        
-        $scope.nuevoSubMenu = function(dataMenu){
+            if (isConfirmed) {
+                showLoader();
+                menuSvc.delete(item.idMenu).then(response => {
+                    if (response.code == "0") {
+                        tS.toastr('warning', response.message, response.titleSms); 
+                    }
+                    if (response.code == "1") {
+                        tS.toastr('success', response.message, response.titleSms);
+                        $scope.getMenus(); 
+                    }
+                }).finally(()=>hideLoader())
+            }
+        }; 
+
+        /*------------------------------------SUB MENU-----------------*/
+
+
+
+        $scope.nuevoSubMenu = function (dataMenu) { 
             $scope.menu = dataMenu;
-            $scope.tipoRegistro = 1;
-            $("#modalAddUpSubMenu").modal('show');
-            return
-        };
-        
-        $scope.obtenerCodigoSubMenu = function(){
-            if (!form.campo($scope.data.descripcion) && $scope.tipoRegistro == 1) {
-                $scope.data.codTemp = form.obtenerTresLetras($scope.data.descripcion);
-                return
-            }
-        }
-
-        $scope.saveUpdateSubMenu = function() {
-            let tituloToast = $scope.tipoRegistro ===1?'Guardar':'Actualizar';
-            if (form.campo($scope.data.descripcion)) {
-                toast.toastr('warning', 'Ingrese la Descripción', tituloToast);
-                return
-            };
-            if(form.campo($scope.data.codTemp)){
-                toast.toastr('warning', 'Ingrese el Código', tituloToast);
-                return
-            }
-            if (form.campo($scope.data.url)) {
-                toast.toastr('warning', 'Ingrese la URL', tituloToast);
-                return
-            };
-            if (form.campo($scope.data.icono)) {
-                toast.toastr('warning', 'Ingrese el Icono', tituloToast);
-                return
-            };
-            $scope.data.idMenu = $scope.menu.idMenu;                        
-            let url = $scope.tipoRegistro == 1 ? '/SubMenu/Post' : '/SubMenu/Put?idSubMenu='+$scope.data.idSubMenu;
-            mS.getData('post', url, $scope.data).then(response => {
-                if (response.id == "0") {
-                    toast.toastr('warning', response.message, response.titleSms);
-                    return
-                }
-                if (response.id == "1") {
-                    toast.toastr('success', response.message, response.titleSms);
+            modalSvc.openModalCustom({
+                controller: 'modalSubMenuCtrl',
+                template: URL_TEMPLATE + '_ModalAddUpSubMenu.cshtml',
+                size: 'md',
+                params: {
+                    idMenu: dataMenu.idMenu
+                },
+                isRenderRazorPartial: true
+            }).result.then(response => {
+                if (typeof response === 'object') { 
                     $scope.getSubMenus($scope.menu, $scope.menu.idMenu);
-                    $("#modalAddUpSubMenu").modal('hide');
-                    return
                 }
-            });
-        };
+            })
+        } 
 
-        $scope.editarSubMenu = function(dataMenu, dataSubMenu){
-            $scope.tipoRegistro = 2;
-            $scope.menu = dataMenu;
-            $scope.data = dataSubMenu;
-            $("#modalAddUpSubMenu").modal('show');
-            return
+        $scope.editarSubMenu = function (dataMenu, dataSubMenu) { 
+            $scope.menu = dataMenu; 
+            modalSvc.openModalCustom({
+                controller: 'modalSubMenuCtrl',
+                template: URL_TEMPLATE + '_ModalAddUpSubMenu.cshtml',
+                size: 'md',
+                params: {
+                    ...dataSubMenu,
+                    idMenu: dataMenu.idMenu,                    
+                },
+                isRenderRazorPartial: true
+            }).result.then(response => {
+                if (typeof response === 'object') { 
+                    $scope.getSubMenus($scope.menu, $scope.menu.idMenu);
+                }
+            }) 
         }
 
         $scope.askToDeleteSubMenu = async function (dataMenu, dataSubMenu) {
-            let {isConfirmed} = await Swal.fire({
-                icon: 'warning',                
+            let { isConfirmed } = await Swal.fire({
+                icon: 'warning',
                 html: `<small>Esta seguro/a de eliminar este Sub Menú ahora?</small>`,
                 showDenyButton: true,
                 confirmButtonText: `Si, eliminar`,
                 denyButtonText: `No, cancelar`,
                 allowOutsideClick: false
             })
-            
-            if(isConfirmed){      
-                showLoader();          
-                mS.getData('delete', 'SubMenu/Delete/' + dataSubMenu.idSubMenu, null, true).then(response => {  
-                    console.log(response);                
-                    if (response. code == "0") {
-                        hideLoader();
-                        toast.toastr('warning', response.message, response.titleSms);                        
+
+            if (isConfirmed) {
+                showLoader();
+                menuSvc.deleteSubMenu(dataSubMenu.idSubMenu).then(response => { 
+                    if (response.code == "0") { 
+                        tS.toastr('warning', response.message, response.titleSms);
                     }
-                    if (response.code == "1") {
-                        hideLoader();
-                        toast.toastr('success', response.message, response.titleSms);
-                        $scope.getSubMenus(dataMenu, dataMenu.idMenu);
-                        return
+                    if (response.code == "1") { 
+                        tS.toastr('success', response.message, response.titleSms);
+                        $scope.getSubMenus(dataMenu, dataMenu.idMenu); 
                     }
-                }).catch(error=>{
+                })
+                .finally(()=>hideLoader())
+                .catch(error => {
                     console.log(error);
                 })
-            };                
+            }
+        } 
+    }
+
+
+    app.controller('modalMenuCtrl', modalMenuCtrl);
+
+    modalMenuCtrl.$inject = ['$scope', '$uibModalInstance', 'params'];
+
+    function modalMenuCtrl($scope, $uibModalInstance, params) {
+        let data = params || {}
+        $scope.data = Object.assign({}, data) || {};
+        $scope.showEstado = $scope.data.idMenu > 0;
+
+        $scope.titleModal = $scope.data.idMenu > 0 ? 'Editar' : 'Guardar';
+        $scope.btnText = $scope.data.idMenu > 0 ? 'Actualizar' : 'Guardar';
+        $scope.btnIcon = $scope.data.idMenu > 0 ? 'ti-pencil' : 'ti-save';
+ 
+
+        $scope.onSave = function () { 
+
+            if (!$scope.data.grupo) {
+                tS.toastr('warning', 'Ingrese el Grupo', $scope.titleModal);
+                return
+            }
+            if (!$scope.data.descripcion) {
+                tS.toastr('warning', 'Ingrese la Descripción', $scope.titleModal);
+                return
+            }
+            if (!$scope.data.icono) {
+                tS.toastr('warning', 'Ingrese el Icono', $scope.titleModal);
+                return
+            }
+
+
+            showLoader();
+
+            if ($scope.data.idMenu > 0) {
+                menuSvc.update($scope.data.idMenu, $scope.data).then($scope.successReponse)
+                    .catch(err => {
+                        hideLoader();
+                        console.log(err);
+                    })
+            } else if (!($scope.data.idMenu > 0)) {
+                menuSvc.save($scope.data).then($scope.successReponse)
+                    .catch(err => {
+                        hideLoader();
+                        console.log(err);
+                    })
+            }
         }
 
-        $('#modalAddUpSubMenu').on('hide.bs.modal', e => {
-            $scope.menu = {};
-            $scope.data = {}                                   
-        });
+        $scope.successReponse = function (response) {
+            hideLoader();
+            if (response.code === '0') {
+                tS.toastr('warning', response.message, response.titleSms);
+            }
+            if (response.code === '1') {
+                tS.toastr('success', response.message, response.titleSms);
+                $uibModalInstance.close(response)
+            }
+        } 
+        $scope.closeModal = function () {
+            $uibModalInstance.close();
+        }
+
     }
+
+    app.controller('modalSubMenuCtrl', modalSubMenuCtrl);
+
+    modalSubMenuCtrl.$inject = ['$scope', '$uibModalInstance', 'params'];
+
+    function modalSubMenuCtrl($scope, $uibModalInstance, params) {
+        let data = params || {}
+        $scope.data = Object.assign({}, data) || {};
+        $scope.showEstado = $scope.data.idSubMenu > 0;
+        let idMenu = $scope.data.idMenu;
+
+        $scope.titleModal = $scope.data.idSubMenu > 0 ? 'Editar' : 'Guardar';
+        $scope.btnText = $scope.data.idSubMenu > 0 ? 'Actualizar' : 'Guardar';
+        $scope.btnIcon = $scope.data.idSubMenu > 0 ? 'ti-pencil' : 'ti-save';
+ 
+        $scope.obtenerCodigoSubMenu = function () {
+            console.log('dkjd')
+            if ($scope.data.descripcion && !($scope.data.idSubMenu > 0)) {
+                $scope.data.codTemp = $scope.data.descripcion.slice(0,3); 
+
+            }
+        }
+
+        $scope.onSave = function () { 
+
+            if (!$scope.data.descripcion) {
+                tS.toastr('warning', 'Ingrese la Descripción', $scope.titleModal);
+                return
+            }
+            if (!$scope.data.codTemp) {
+                tS.toastr('warning', 'Ingrese el Código', $scope.titleModal);
+                return
+            }
+            if (!$scope.data.url) {
+                tS.toastr('warning', 'Ingrese la URL', $scope.titleModal);
+                return
+            }
+            if (!$scope.data.icono) {
+                tS.toastr('warning', 'Ingrese el Icono', $scope.titleModal);
+                return
+            }
+            $scope.data.idMenu = idMenu;
+
+            showLoader();
+
+            if ($scope.data.idSubMenu > 0) {
+                menuSvc.updateSubMenu($scope.data.idSubMenu, $scope.data).then($scope.successReponse)
+                    .catch(err => {
+                        hideLoader();
+                        console.log(err);
+                    })
+            } else if (!($scope.data.idSubMenu > 0)) {
+                menuSvc.saveSubMenu($scope.data).then($scope.successReponse)
+                    .catch(err => {
+                        hideLoader();
+                        console.log(err);
+                    })
+            }
+        }
+
+        $scope.successReponse = function (response) {
+            hideLoader();
+            if (response.code === '0') {
+                tS.toastr('warning', response.message, response.titleSms);
+            }
+            if (response.code === '1') {
+                tS.toastr('success', response.message, response.titleSms);
+                $uibModalInstance.close(response)
+            }
+        }
+
+
+
+
+        $scope.closeModal = function () {
+            $uibModalInstance.close();
+        }
+
+    }
+
+
+
+
+    
+
 })(window.angular);

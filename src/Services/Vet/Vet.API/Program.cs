@@ -1,6 +1,9 @@
-using Lib.Common;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Common.Core.Utils;
 using Newtonsoft.Json.Serialization;
 using Services.Common;
+using Services.Common.Logs;
 using Services.Common.Middleware;
 using Vet.API.Extensions;
 
@@ -25,6 +28,11 @@ builder.Services.AddSwaggerDocumentation();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 //builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
+
+builder.Services.AddSingleton<LogWriter>();
+
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+builder.Host.ConfigureContainer<ContainerBuilder>(b => b.RegisterModule(new AutoFacModule()));
 
 var app = builder.Build();
 

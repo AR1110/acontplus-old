@@ -7,7 +7,7 @@
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
-                scope.$watch(attrs.shouldFocus, function (newVal, oldVal) {
+                scope.$watch(attrs.shouldFocus, function (newVal) {
                     if (newVal && element.prop("class").indexOf("active")) {
                         var par = element.parent("ul");
                         var cellHeight = element.children().innerHeight();
@@ -28,7 +28,7 @@
     })
     //Para Doble scroll en los documentos
     app.directive('master', function () { //declaration
-        function link(scope, element, attrs) {
+        function link(scope, element) {
             scope.$watch(function () {
                 scope.duelScroll = {
                     width: element[0].offsetWidth + 'px'
@@ -118,14 +118,11 @@
 
     //DIRECTIVA PARA ENTRADA DE LETRAS MAYUSCULAS
     app.directive('touppercase', function () {
-        let flag = false;
         let teclaAnterior = "";
         return {
             require: 'ngModel',
             restrict: 'A',
             link: function (scope, element, attrs, modelCtrl) {
-
-
 
                 element.on("keydown", event => {
                     teclaAnterior = teclaAnterior + " " + event.keyCode;
@@ -170,7 +167,7 @@
     app.directive('validLetra', function () {
         return {
             require: 'ngModel',
-            link: function (scope, element, attrs, ngModelCtrl) {
+            link: function (scope, element,) {
                 element.bind('keypress', function (e) {
                     let key = e.keyCode || e.which;
                     let tecla = String.fromCharCode(key).toLowerCase();
@@ -224,16 +221,16 @@
     app.directive('autoFocus', function () {
         return {
             restrict: 'A',
-            link: function (scope, element, attrs) {
+            link: function (scope, element,) {
                 element.focus();
             }
         };
     });
 
-    app.directive('focusSearchArticulo', function ($timeout, $parse) {
+    app.directive('focusSearchArticulo', function ($timeout,) {
         return {
-            link: function (scope, element, attrs) {
-                element.bind('click', function (e) {
+            link: function (scope, element,) {
+                element.bind('click', function () {
                     $timeout(() => {
                         element.focus();
                     })
@@ -245,7 +242,7 @@
     app.directive('tooltip', function () {
         return {
             restrict: 'A',
-            link: function (scope, element, attrs) {
+            link: function (scope, element,) {
                 $(element).hover(function () {
                     // on mouseenter
                     $(element).tooltip('show');
@@ -259,7 +256,7 @@
 
     //keyboard disable
     app.directive('keyboardDisable', function () {
-        return function (scope, elem, attr) {
+        return function (scope, elem,) {
             elem.on('keydown', function (e) {
                 if (e.which === 9) {
                     return false;
@@ -296,7 +293,7 @@
     app.directive('stopEvent', function () {
         return {
             restrict: 'A',
-            link: function (scope, element, attr) {
+            link: function (scope, element) {
                 element.bind('click', function (e) {
                     e.stopPropagation();
                 });
@@ -309,7 +306,7 @@
     app.directive('updateArticle', function ($rootScope) {
         return {
 
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
 
                 if (!$rootScope.articlePermission.leer) {
                     element[0].style.display = 'none';
@@ -384,7 +381,7 @@
                 $(element).popover(popoverOptions);
 
                 // // Open popover on element click
-                element.on('mouseover', function (event) {
+                element.on('mouseover', function () {
                     $(element).popover('show');
                 });
 
@@ -406,7 +403,7 @@
 
 
 
-    app.directive('totalesVentaView', function ($rootScope, $timeout) {
+    app.directive('totalesVentaView', function () {
         return {
             restrict: 'A',
             link: function (scope, element, attrs) {
@@ -436,8 +433,8 @@
                 resultModal: '&',
                 params: '='
             },
-            link: function (scope, element, att) {
-                element.on('click', async function (ev) {
+            link: function (scope, element) {
+                element.on('click', async function () {
 
                     let { fileCtrl, controllers, templates } = nombreModalVenta.CLIENTE;
                     let ctrl = (await import(fileCtrl))[controllers['M']];
@@ -471,8 +468,8 @@
                 resultModal: '&',
                 params: '='
             },
-            link: function (scope, element, att) {
-                element.on('click', async function (ev) {
+            link: function (scope, element) {
+                element.on('click', async function () {
 
                     let { fileCtrl, controllers, templates } = nombreModalVenta.CLIENTE;
                     let ctrl = (await import(fileCtrl))[controllers['ML']];
@@ -506,7 +503,7 @@
                 customer: '=',
                 popoverPlacement: '@'
             },
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
                 element.popover({
                     title: '<i class="text-info fas fa-info"></i> Información Cliente',
                     content: `<div>
@@ -529,22 +526,22 @@
             restrict: 'A',
             scope: {
                 onSelect: '&',
-                onKeyupCliente:'&',
+                onKeyupCliente: '&',
                 ngModel: '='
             },
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
                 scope.cliente = {
                     nombreCliente: scope.ngModel
                 }
                 scope.searchCustomer = function (textSearch) {
                     if (textSearch.length > 1) {
-                        return clienteService.search({textSearch})
-                        .catch(error=>{
-                            console.log(error);
-                        })
+                        return clienteService.search({ textSearch })
+                            .catch(error => {
+                                console.log(error);
+                            })
                     }
                 }
-    
+
                 element.attr('uib-typeahead', 'item as item.nombreFiscal for item in searchCustomer($viewValue)');
                 element.attr('typeahead-on-select', 'onSelect({result: $item})');
                 element.attr('typeahead-template-url', 'autocompleteClienteTemplate.html');
@@ -552,7 +549,7 @@
                 element.attr('typeahead-editable', 'false');
                 element.attr('ng-value', 'ngModel');
 
-                 
+
                 // element.attr('ng-model', 'ngModel')
                 element.removeAttr('cliente-search-drtv');
 
@@ -573,7 +570,7 @@
                         width: auto;
                     }
                 `;
-                
+
                 document.head.appendChild(customStyle);
                 $compile(element)(scope);
             }
@@ -589,37 +586,37 @@
             restrict: 'A',
             scope: {
                 onSelect: '&',
-                onKeyup:'&',
+                onKeyup: '&',
                 ngModel: '<',
                 functionTrigger: '&'
             },
             require: 'ngModel',
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
                 scope.cliente = {
-                    nombreCliente: scope.ngModel,                    
+                    nombreCliente: scope.ngModel,
                 }
 
                 let validationSearchCustomerExternal = false;
 
                 function verificarNumero(numero) {
-                    numero = numero ? numero.trim(): ""
-                   
+                    numero = numero ? numero.trim() : ""
+
                     if (![10, 13].includes(numero.length)) return;
-             
-                    if(isNaN(numero)) return
-             
-                    if(numero.length===13 && numero.slice(-3) !=="001") return; 
-            
+
+                    if (isNaN(numero)) return
+
+                    if (numero.length === 13 && numero.slice(-3) !== "001") return;
+
                     return true;
                 }
 
 
-                scope.checkTypeIdentification = async function(){
-                    
+                scope.checkTypeIdentification = async function () {
+
                     let textSearch = scope.ngModel; //Recuperamos valor ingresado
-                    
-                  
-                    if(!validationSearchCustomerExternal) return;
+
+
+                    if (!validationSearchCustomerExternal) return;
                     scope.functionTrigger({
                         result: {
                             nombreFiscal: textSearch,
@@ -627,73 +624,36 @@
                     })
 
                     //Verificamos si el campo ingresado es cedula o ruc (longitud caracteres)
-                    if(!verificarNumero(textSearch))  return [];
+                    if (!verificarNumero(textSearch)) return [];
 
                     //Numero de RUC 
-                    if(textSearch.length===13){
-                       try {
+                    if (textSearch.length === 13) {
+                        try {
                             showLoader();
-                            
-                            let {numeroRuc, razonSocial,establecimientos, direccion, telefono, email, error} = await commonService.checkClientSRIByRUC(textSearch); 
+
+                            let { numeroRuc, razonSocial, direccion, telefono, email, error } = await commonService.checkClientSRIByRUC(textSearch);
                             hideLoader();
                             if (!numeroRuc) {
                                 toastService.toastr('warning', error)
                                 return
                             }
-    
+
                             console.log('response finish')
                             //retornamos datos al controlador principal donde llamamos la directiva
                             scope.functionTrigger({
-                                result: { 
+                                result: {
                                     nombreFiscal: textSearch,
                                     numeroIdentificacion: numeroRuc,
                                     identificacionComprador: numeroRuc,
-                                    razonSocialComprador: razonSocial ,
+                                    razonSocialComprador: razonSocial,
                                     nombreComercial: razonSocial,
                                     direccionComprador: direccion || null,
                                     telefono: telefono || null,
                                     email: email || null,
                                     idCliente: 0
                                 }
-                            })  
-                            scope.$apply();                       
-                        } catch (error) {
-                            console.log(error);
-                            hideLoader();
-                            scope.functionTrigger({
-                                result: {
-                                    nombreFiscal: textSearch,
-                                }
-                            })                        
-                        }    
-                    }
-
-                    //Numero de Cedula 
-                    if(textSearch.length===10){
-                        try {
-                            showLoader(); 
-                            let {identificacion, nombreCompleto, direccion, telefono, email, error} = await commonService.checkClientSRIByCedula(textSearch) 
-                            hideLoader();
-                            if (!identificacion || !nombreCompleto) {
-                                toastService.toastr('warning', error)
-                                return
-                            }
-
-                            
-                            scope.functionTrigger({                                    
-                                result: { 
-                                    nombreFiscal: textSearch,
-                                    numeroIdentificacion: identificacion,
-                                    identificacionComprador: identificacion,
-                                    razonSocialComprador: nombreCompleto ,
-                                    nombreComercial: nombreCompleto,
-                                    direccionComprador: direccion || null,
-                                    telefono: telefono || null,
-                                    email: email || null,
-                                    idCliente: 0
-                                }
-                            }) 
-                            scope.$apply(); 
+                            })
+                            scope.$apply();
                         } catch (error) {
                             console.log(error);
                             hideLoader();
@@ -705,16 +665,53 @@
                         }
                     }
 
-                } 
+                    //Numero de Cedula 
+                    if (textSearch.length === 10) {
+                        try {
+                            showLoader();
+                            let { identificacion, nombreCompleto, direccion, telefono, email, error } = await commonService.checkClientSRIByCedula(textSearch)
+                            hideLoader();
+                            if (!identificacion || !nombreCompleto) {
+                                toastService.toastr('warning', error)
+                                return
+                            }
+
+
+                            scope.functionTrigger({
+                                result: {
+                                    nombreFiscal: textSearch,
+                                    numeroIdentificacion: identificacion,
+                                    identificacionComprador: identificacion,
+                                    razonSocialComprador: nombreCompleto,
+                                    nombreComercial: nombreCompleto,
+                                    direccionComprador: direccion || null,
+                                    telefono: telefono || null,
+                                    email: email || null,
+                                    idCliente: 0
+                                }
+                            })
+                            scope.$apply();
+                        } catch (error) {
+                            console.log(error);
+                            hideLoader();
+                            scope.functionTrigger({
+                                result: {
+                                    nombreFiscal: textSearch,
+                                }
+                            })
+                        }
+                    }
+
+                }
 
 
                 scope.search = function (textSearch) {
                     validationSearchCustomerExternal = false;
-                    if ( textSearch.length < 2) return;
+                    if (textSearch.length < 2) return;
 
-                    return clienteService.search({textSearch}).then(response => {
-                        if(response.code==="0") {
-                            validationSearchCustomerExternal = true; 
+                    return clienteService.search({ textSearch }).then(response => {
+                        if (response.code === "0") {
+                            validationSearchCustomerExternal = true;
                             // scope.functionTrigger({
                             //     result: {
                             //         nombreFiscal: textSearch,
@@ -723,21 +720,21 @@
                         }
                         return response;
                     })
-                    .catch(error=>{
-                        console.log(error);
-                    })
-                    
+                        .catch(error => {
+                            console.log(error);
+                        })
+
                 }
-    
+
                 element.attr('uib-typeahead', 'item as item.nombreFiscal for item in search($viewValue)');
                 element.attr('typeahead-on-select', 'onSelect({result: $item})');
                 element.attr('typeahead-template-url', 'customerSearchSaleTemplate.html');
-                element.attr('ng-keyup', 'onKeyup()'); 
-                element.attr('typeahead-editable', 'true'); 
-                element.attr('ng-value', 'ngModel'); 
+                element.attr('ng-keyup', 'onKeyup()');
+                element.attr('typeahead-editable', 'true');
+                element.attr('ng-value', 'ngModel');
                 element.attr('ng-enter', 'checkTypeIdentification()');
                 element.removeAttr('customer-search-sale-drtv');
-                
+
 
                 // Add CSS styles dynamically
                 element.attr('style', 'position:relative;');
@@ -756,7 +753,7 @@
                         width: auto;
                     }
                 `;
-                
+
                 document.head.appendChild(customStyle);
                 $compile(element)(scope);
             }
@@ -764,10 +761,10 @@
     });
 
 
-    
 
 
-    
+
+
 
     app.directive('btnEmpresa', function (modalService, nombreModalVenta) {
         return {
@@ -776,21 +773,22 @@
                 params: '=',
                 resultModal: '&',
             },
-            link: function (scope, element, attrs) {
-    
-                element.on('click', async function (event) {
+            link: function (scope, element) {
+
+                element.on('click', async function () {
                     let fileCtrl = nombreModalVenta.EMPRESA.fileCtrl;
-                    let ctrl = nombreModalVenta.EMPRESA.controller 
-                    let template = nombreModalVenta.EMPRESA.template 
+                    let ctrl = nombreModalVenta.EMPRESA.controller
+                    let template = nombreModalVenta.EMPRESA.template
                     let controller = (await import(fileCtrl))[ctrl];
 
 
-                    
+
                     const modalDialogRef = modalService.openModalCustom({
                         controller,
                         template,
                         size: 'md',
-                        params: Object.assign({}, scope.params) || {},                        
+                        isRenderRazorPartial: true,
+                        params: Object.assign({}, scope.params) || {},
                     })
 
                     modalDialogRef.result.then(result => {
@@ -801,12 +799,12 @@
                         }
                     })
                 })
-    
+
             }
         }
     })
-    
-    
+
+
     app.directive('btnEmpleado', function (modalService, nombreModalVenta) {
         return {
             restrict: 'A',
@@ -814,12 +812,12 @@
                 params: '=',
                 resultModal: '&',
             },
-            link: function (scope, element, attrs) {
-    
-                element.on('click', async function (event) {
+            link: function (scope, element) {
+
+                element.on('click', async function () {
                     let fileCtrl = nombreModalVenta.EMPLEADO.fileCtrl;
-                    let ctrl = nombreModalVenta.EMPLEADO.controller 
-                    let template = nombreModalVenta.EMPLEADO.template 
+                    let ctrl = nombreModalVenta.EMPLEADO.controller
+                    let template = nombreModalVenta.EMPLEADO.template
                     let controller = (await import(fileCtrl))[ctrl];
 
 
@@ -827,7 +825,8 @@
                         controller,
                         template,
                         size: 'md',
-                        params: Object.assign({}, scope.params) || {},                                               
+                        params: Object.assign({}, scope.params) || {},
+                        isRenderRazorPartial: true,
                     })
 
                     modalDialogRef.result.then(result => {
@@ -838,12 +837,12 @@
                         }
                     })
                 })
-    
+
             }
         }
     })
-    
-    
+
+
     app.directive('btnCargo', function (modalService, nombreModalVenta) {
         return {
             restrict: 'A',
@@ -851,12 +850,12 @@
                 params: '=',
                 resultModal: '&',
             },
-            link: function (scope, element, attrs) {
-    
-                element.on('click', async function (event) {
+            link: function (scope, element) {
+
+                element.on('click', async function () {
                     let fileCtrl = nombreModalVenta.CARGO.fileCtrl;
-                    let ctrl = nombreModalVenta.CARGO.controller 
-                    let template = nombreModalVenta.CARGO.template 
+                    let ctrl = nombreModalVenta.CARGO.controller
+                    let template = nombreModalVenta.CARGO.template
                     let controller = (await import(fileCtrl))[ctrl];
 
 
@@ -864,7 +863,8 @@
                         controller,
                         template,
                         size: 'md',
-                        params: Object.assign({}, scope.params) || {},                                              
+                        params: Object.assign({}, scope.params) || {},
+                        isRenderRazorPartial: true
                     })
 
                     modalDialogRef.result.then(result => {
@@ -875,29 +875,23 @@
                         }
                     })
                 })
-    
+
             }
         }
     })
 
 
     //https://www.daterangepicker.com/
-    app.directive('dateRangeFilter', function (formulario) {
+    app.directive('dateRangeFilter', function ($compile) {
         return {
-            template: `<div><input date-range-picker class="form-control date-picker border-select" type="text"
-                   ng-model="dateRangePicker.date" picker="dateRangePicker.picker"
-                   picker-classes="extra-class-names" min="'2014-02-23'" max="dateRangePicker.maxDate"
-                   options="dateRangePicker.options" options="{locale: {separator: " :"}}" />
-       </div>`,
             restrict: 'E',
-            replace: true,
             scope: {
                 currentDate: '=',
                 startDate: '=',
                 endDate: '=',
                 resultRangeDate: '&',
             },
-            link: function (scope, $element, $attrs, form) {
+            link: function (scope, element) {
                 let thisMoment = moment(new Date())
                 scope.startDate = thisMoment;
                 scope.endDate = thisMoment;
@@ -930,7 +924,7 @@
                             'Este Mes': [moment().startOf('month'), moment().endOf('month')],
                         },
                         eventHandlers: {
-                            'apply.daterangepicker': function (event, picker) {
+                            'apply.daterangepicker': function () {
 
                                 scope.startDate = scope.dateRangePicker.date.startDate
                                 scope.endDate = scope.dateRangePicker.date.endDate;
@@ -941,13 +935,68 @@
                                         endDate: scope.endDate
                                     }
                                 })
-                                // $scope.getComprobantes()
-                                // console.log('applied')
                             }
                         }
                     }
                 };
+                var html = `<input name="date-range-filter" date-range-picker class="form-control date-picker border-select" type="text"
+                ng-model="dateRangePicker.date" picker="dateRangePicker.picker"
+                picker-classes="extra-class-names" min="'2014-02-23'" max="dateRangePicker.maxDate"
+                options="dateRangePicker.options" options="{locale: {separator: " :"}}" />`;
+                var e = $compile(html)(scope);
+                element.replaceWith(e);
             }
+            // link: function (scope) {
+            //     let thisMoment = moment(new Date())
+            //     scope.startDate = thisMoment;
+            //     scope.endDate = thisMoment;
+            //     scope.dateRangePicker = {
+            //         date: {
+            //             startDate: thisMoment,
+            //             endDate: thisMoment,
+            //         },
+            //         picker: null,
+            //         options: {
+            //             pickerClasses: 'custom-display', //angular-daterangepicker extra
+            //             buttonClasses: 'btn',
+            //             applyButtonClasses: 'btn-success',
+            //             cancelButtonClasses: 'btn-danger',
+            //             locale: {
+            //                 applyLabel: "Aplicar",
+            //                 cancelLabel: 'Cancelar',
+            //                 customRangeLabel: 'Rango Personalizado',
+            //                 separator: ' - ',
+            //                 format: "YYYY-MM-DD", //will give you 2017-01-06
+            //                 //format: "D-MMM-YY", //will give you 6-Jan-17
+            //                 //format: "D-MMMM-YY", //will give you 6-January-17
+            //             },
+            //             ranges: {
+            //                 'Hoy': [moment(), moment()],
+            //                 'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            //                 'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+            //                 'Ultimos 15 Días': [moment().subtract(14, 'days'), moment()],
+            //                 'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
+            //                 'Este Mes': [moment().startOf('month'), moment().endOf('month')],
+            //             },
+            //             eventHandlers: {
+            //                 'apply.daterangepicker': function (event, picker) {
+
+            //                     scope.startDate = scope.dateRangePicker.date.startDate
+            //                     scope.endDate = scope.dateRangePicker.date.endDate;
+
+            //                     scope.resultRangeDate({
+            //                         result: {
+            //                             startDate: scope.startDate,
+            //                             endDate: scope.endDate
+            //                         }
+            //                     })
+            //                     // $scope.getComprobantes()
+            //                     // console.log('applied')
+            //                 }
+            //             }
+            //         }
+            //     };
+            // }
         };
 
     })
@@ -964,7 +1013,7 @@
                 params: '=',
                 resultModal: '&',
             },
-            link: function (scope, element, att) {
+            link: function (scope, element) {
                 element.on('click', async function () {
 
                     let fileCtrl = nombreModalLogistica.TRANSPORTISTA.fileCtrl;
@@ -1000,14 +1049,14 @@
                 params: '=',
                 resultModal: '&',
             },
-            link: function (scope, element, att) {
+            link: function (scope, element) {
                 element.on('click', async function () {
 
                     let fileCtrl = nombreModalLogistica.VEHICULO.fileCtrl;
                     let ctrl = nombreModalLogistica.VEHICULO.controllers['M'];
                     let template = nombreModalLogistica.VEHICULO.templates['M'];
                     let controller = (await import(fileCtrl))[ctrl];
-                  
+
 
                     const modalDialogRef = modalService.openModalCustom({
                         controller,
@@ -1035,7 +1084,7 @@
      * 
      * 
      */
-    app.directive('btnSendToEmail', function(modalService, nombreModalCommon){
+    app.directive('btnSendToEmail', function (modalService, nombreModalCommon) {
         return {
             restrict: 'A',
             scope: {
@@ -1044,14 +1093,14 @@
                 typeSend: '=',
                 getParamToSendMail: '&' //funcion que arma parametro necesario para el envio de correo
             },
-            link: function(scope, element, att){
-                element.on('click', async function(){
-                    
+            link: function (scope, element) {
+                element.on('click', async function () {
+
                     let fileCtrl = nombreModalCommon.MAIL.fileCtrl;
                     let ctrl = nombreModalCommon.MAIL.controllers['ME'];
                     let template = nombreModalCommon.MAIL.templates['ME'];
                     let controller = (await import(fileCtrl))[ctrl];
-                    
+
                     let params = scope.getParamToSendMail({
                         params: scope.params
                     }) || scope.params;
@@ -1084,14 +1133,14 @@
                 hasPermission: '=',
                 typeSend: '=',
             },
-            link: function (scope, element, att) {
+            link: function (scope, element) {
                 element.on('click', function () {
                     console.log('click')
                     /**
                      * Eliminar mas adelante en cuanto se corrija el codDoc en las opciones de factura venta
                      */
                     let params = Object.assign({}, scope.params);
-                    if(params.hasOwnProperty('codigoTipoDoc')){
+                    if (("codigoTipoDoc" in params)) {
                         params.codDoc = '01';
                     }
                     //===================================
@@ -1130,7 +1179,7 @@
                                         template: MODAL_SEND_WHATSAPP_CSHTML,
                                         size: 'md',
                                         params: params || {},
-                                        isRenderRazorPartial: true,  
+                                        isRenderRazorPartial: true,
                                     })
 
                                     modalDialogRef.result.then(result => {
@@ -1162,9 +1211,9 @@
                 isView: '=',
                 getDataAdditionalDocument: '&'
             },
-            link: function (scope, element, attrs) {
-    
-                element.on('click', async function (event) {
+            link: function (scope, element) {
+
+                element.on('click', async function () {
                     let {
                         MODAL_INFO_ADICIONAL_TIPO_DOC_CTRL,
                         MODAL_INFO_ADICIONAL_TIPO_DOC_CSHTML
@@ -1172,7 +1221,7 @@
                     let {
                         InfoAdicionalTipoDocCtrl
                     } = await import('./../../modal/' + MODAL_INFO_ADICIONAL_TIPO_DOC_CTRL);
-    
+
                     let params = {
                         isView: scope.isView,
                         infoAdicionalDocumento: scope.datosAdicionales
@@ -1183,7 +1232,7 @@
                         size: 'md',
                         params
                     })
-    
+
                     modalRef.result.then(function (result) {
                         if (typeof result === 'object') {
                             scope.getDataAdditionalDocument({
@@ -1192,7 +1241,7 @@
                         }
                     })
                 })
-    
+
             }
         }
     })
@@ -1204,10 +1253,10 @@
             restrict: 'A',
             scope: {
                 onSelect: '&',
-                onKeyupArticle:'&',
+                onKeyupArticle: '&',
                 ngModel: '='
             },
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
                 scope.cliente = {
                     descripcion: scope.ngModel
                 }
@@ -1219,19 +1268,19 @@
                             fraccionado: false
                         }
                         return articuloService.search(json)
-                        .catch(error=>{
-                            console.log(error);
-                        })
+                            .catch(error => {
+                                console.log(error);
+                            })
                     }
                 }
-    
+
                 element.attr('uib-typeahead', 'item as item.descripcion for item in searchArticle($viewValue)');
                 element.attr('typeahead-on-select', 'onSelect({result: $item})');
                 element.attr('typeahead-template-url', 'autocompleteArticleTemplate.html');
                 element.attr('ng-keyup', 'onKeyupArticle()');
                 element.attr('typeahead-editable', 'false');
 
-                 
+
                 // element.attr('ng-model', 'ngModel')
                 element.removeAttr('article-search-drtv');
 
@@ -1252,7 +1301,7 @@
                         width: auto;
                     }
                 `;
-                
+
                 console.log('rendered')
                 document.head.appendChild(customStyle);
                 $compile(element)(scope);
@@ -1266,10 +1315,10 @@
             restrict: 'A',
             scope: {
                 onSelect: '&',
-                onKeyup:'&',
+                onKeyup: '&',
                 ngModel: '='
             },
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
                 scope.dataSearchUser = {
                     nombreCompleto: scope.ngModel
                 }
@@ -1279,28 +1328,28 @@
                             busqueda: textSearch,
                             idRol: decodeToken.idUsuarioRol
                         }
-                        return commonService.usuarioSearch(json).then(response=>{
-                           let usuarios = response;
-                           return usuarios.map(item=>({
+                        return commonService.usuarioSearch(json).then(response => {
+                            let usuarios = response;
+                            return usuarios.map(item => ({
                                 idUsuario: item.idUsuario,
                                 nombreCompleto: item.nombreCompleto,
                                 nombreUsuario: item.nombreUsuario,
                                 nroIdentificacion: item.nroIdentificacion,
                             }))
                         })
-                        .catch(error=>{
-                            console.log(error);
-                        })
+                            .catch(error => {
+                                console.log(error);
+                            })
                     }
                 }
-    
+
                 element.attr('uib-typeahead', 'item as item.nombreCompleto for item in search($viewValue)');
                 element.attr('typeahead-on-select', 'onSelect({result: $item})');
                 element.attr('typeahead-template-url', 'autocompleteUserTemplate.html');
                 element.attr('ng-keyup', 'onKeyup()');
                 element.attr('typeahead-editable', 'false');
 
-                 
+
                 // element.attr('ng-model', 'ngModel')
                 element.removeAttr('user-search-drtv');
 
@@ -1321,7 +1370,7 @@
                         width: auto;
                     }
                 `;
-                
+
                 console.log('rendered')
                 document.head.appendChild(customStyle);
                 $compile(element)(scope);
@@ -1331,34 +1380,34 @@
 
 
 
-    app.directive('empleadoSearchDrtv', function ($compile,empleadoService) {
+    app.directive('empleadoSearchDrtv', function ($compile, empleadoService) {
         return {
             restrict: 'A',
             scope: {
                 onSelect: '&',
-                onKeyup:'&',
+                onKeyup: '&',
                 ngModel: '='
             },
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
                 scope.cliente = {
                     nombreCliente: scope.ngModel
                 }
                 scope.search = function (textSearch) {
                     if (textSearch.length > 1) {
-                        return empleadoService.search({textSearch})
-                        .catch(error=>{
-                            console.log(error)
-                        })
+                        return empleadoService.search({ textSearch })
+                            .catch(error => {
+                                console.log(error)
+                            })
                     }
                 }
-    
+
                 element.attr('uib-typeahead', 'item as item.nombreCompleto for item in search($viewValue)');
                 element.attr('typeahead-on-select', 'onSelect({result: $item})');
                 element.attr('typeahead-template-url', 'autocompleteEmpleadoTemplate.html');
                 element.attr('ng-keyup', 'onKeyup()');
                 element.attr('typeahead-editable', 'false');
 
-                 
+
                 // element.attr('ng-model', 'ngModel')
                 element.removeAttr('empleado-search-drtv');
 
@@ -1379,7 +1428,7 @@
                         width: auto;
                     }
                 `;
-                
+
                 document.head.appendChild(customStyle);
                 $compile(element)(scope);
             }
@@ -1388,25 +1437,24 @@
 
 
 
-    app.directive('providerSearchDrtv', function ($compile, commonService) {
+    app.directive('providerSearchDrtv', function ($compile, proveedorService) {
         return {
             restrict: 'A',
             scope: {
                 onSelect: '&',
-                onKeyup:'&',
+                onKeyup: '&',
                 ngModel: '='
             },
-            link: function (scope, element, attrs) {
+            link: function (scope, element) {
                 scope.proveedor = {
                     nombreProveedor: scope.ngModel
                 }
                 scope.search = function (textSearch) {
                     if (textSearch.length > 1) {
-                        return commonService.proveedorSearch(textSearch).then(response=>{
-                            let proveedores = response || []; 
-                            return proveedores.map(item=>{
-                                let proveedor = item.proveedor;
-                                return { 
+                        return proveedorService.search(textSearch).then(response => {
+                            let proveedores = response || [];
+                            return proveedores.map(proveedor => {
+                                return {
                                     idProveedor: proveedor.idProveedor,
                                     idTipoClienteProveedor: proveedor.idTipoClienteProveedor,
                                     idTipoEntidad: proveedor.idTipoEntidad,
@@ -1415,31 +1463,32 @@
                                     idTipoIdentificacion: proveedor.idTipoIdentificacion,
                                     idCiudad: proveedor.idCiudad,
                                     numeroIdentificacion: proveedor.numeroIdentificacion,
-                                    nombreFiscal: proveedor.nombreFiscal,
+                                    razonSocial: proveedor.razonSocial,
+                                    nombreFiscal: proveedor.razonSocial,
                                     nombreComercial: proveedor.nombreComercial,
                                     direccion: proveedor.direccion,
                                     telefono: proveedor.telefono,
                                     correo: proveedor.correo,
                                     estado: proveedor.estado,
                                     validationSri: proveedor.validationSri,
-                                    diasCredito: item.diasCredito,
-                                    codigoIndetificacion: item.codigoIndetificacion
+                                    diasCredito: proveedor.diasCredito,
+                                    codigoIndetificacion: proveedor.codigoIndetificacion
                                 }
                             })
                         })
-                        .catch(error=>{
-                            console.log(error);
-                        })
+                            .catch(error => {
+                                console.log(error);
+                            })
                     }
                 }
-    
+
                 element.attr('uib-typeahead', 'item as item.nombreFiscal for item in search($viewValue)');
                 element.attr('typeahead-on-select', 'onSelect({result: $item})');
                 element.attr('typeahead-template-url', 'autocompleteProviderTemplate.html');
                 element.attr('ng-keyup', 'onKeyup()');
                 element.attr('typeahead-editable', 'false');
 
-                 
+
                 // element.attr('ng-model', 'ngModel')
                 element.removeAttr('provider-search-drtv');
 
@@ -1460,7 +1509,7 @@
                         width: auto;
                     }
                 `;
-                
+
                 document.head.appendChild(customStyle);
                 $compile(element)(scope);
             }
@@ -1506,15 +1555,15 @@
                                             </div>   
                                              `;
 
-                                             const query = {
-                                                tipo: 4,
-                                                idArticulo: scope.article.idArticulo
-                                             }
+                        const query = {
+                            tipo: 4,
+                            idArticulo: scope.article.idArticulo
+                        }
                         articuloService.getArticlesFractionalInfo(query).then(response => {
                             scope.tarifas = response[0].tarifas;
                             scope.articlesFractionals = response;
-                            console.log(response);                    
-                        }).catch(error=>{
+                            console.log(response);
+                        }).catch(error => {
                             console.log(error)
                         })
 
@@ -1536,7 +1585,7 @@
                 $(element).popover(popoverOptions);
 
                 // // Open popover on element click
-                element.on('mouseover', function (event) {
+                element.on('mouseover', function () {
                     $(element).popover('show');
                 });
 
@@ -1554,9 +1603,44 @@
             }
         };
     })
-    //filters 
 
-     
+
+    app.directive('btnCategoriaCompra', function (modalService, nombreModalCompra) {
+        return {
+            restrict: 'A',
+            scope: {
+                params: '=',
+                resultModal: '&',
+            },
+            link: function (scope, element) {
+                element.on('click', async function () {
+
+                    let fileCtrl = nombreModalCompra.CATEGORIA_COMPRA.fileCtrl;
+                    let ctrl = nombreModalCompra.CATEGORIA_COMPRA.controller;
+                    let template = nombreModalCompra.CATEGORIA_COMPRA.template;
+                    let controller = (await import(fileCtrl))[ctrl];
+
+                    const modalDialogRef = modalService.openModalCustom({
+                        controller,
+                        template,
+                        size: 'md',
+                        params: scope.params || {},
+                        isRenderRazorPartial: true
+                    })
+
+                    modalDialogRef.result.then(result => {
+                        if (typeof result === "object") {
+                            scope.resultModal({
+                                result
+                            })
+                        }
+                    })
+                });
+            }
+        }
+    })
+
+
 
 
 })(window.angular)

@@ -1,6 +1,7 @@
+﻿using Common.Core.Models;
+using Common.Core.Utils;
 using DataAccess;
 using Domain.Models.Almacen;
-using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -11,9 +12,11 @@ namespace Inventario.API.Controllers
     public class ModeloController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public ModeloController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public ModeloController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
         [HttpGet("Get")]
@@ -25,13 +28,13 @@ namespace Inventario.API.Controllers
             {
                 await _db.SPExecute("Almacen.Modelo_Get");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar modelos: \n" + ex.ToString());
+
+                _log.LogActivity("Error al listar modelos: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar modelos");
             }
             finally
@@ -56,8 +59,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al insertar modelos: \n" + ex.ToString());
+
+                _log.LogActivity("Error al insertar modelos: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar modelos");
             }
             finally
@@ -84,8 +87,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al actualizar modelos: \n" + ex.ToString());
+
+                _log.LogActivity("Error al actualizar modelos: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar modelos");
             }
             finally
@@ -109,8 +112,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al eliminar modelos: \n" + ex.ToString());
+
+                _log.LogActivity("Error al eliminar modelos: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar modelos");
             }
             finally
@@ -133,8 +136,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar modelos para Select: \n" + ex.ToString());
+
+                _log.LogActivity("Error al listar modelos para Select: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar modelos para Select");
             }
             finally

@@ -1,7 +1,7 @@
-﻿using Helpers;
+﻿using System.Data;
+using Common.Core.Utils;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace DataAccess.Estadisticas
 {
@@ -12,7 +12,7 @@ namespace DataAccess.Estadisticas
         public EstadisticaVentaDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
         }
         public async Task<string> GetAsync(string json)
         {
@@ -30,7 +30,7 @@ namespace DataAccess.Estadisticas
                     dataAdapter.Fill(dt);
                     if (dt.Rows.Count > 0)
                     {
-                        response = DataHelper.DataTableToJSON(dt);
+                        response = DataConverters.DataTableToJSON(dt);
                     }
                     dataAdapter.Dispose();
                 }
@@ -62,7 +62,7 @@ namespace DataAccess.Estadisticas
                     dataAdapter.Fill(dt);
                     if (dt.Rows.Count > 0)
                     {
-                        response = DataHelper.DataTableToJSON(dt);
+                        response = DataConverters.DataTableToJSON(dt);
                     }
                     dataAdapter.Dispose();
                 }

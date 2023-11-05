@@ -1,5 +1,5 @@
 ﻿@page
-@model WebUI.Areas.Login.Pages.IndexModel
+@model WebUI.Login.Pages.IndexModel
 @{
     ViewData["Title"] = "Index";
     Layout = "";
@@ -26,14 +26,16 @@
 
     <title>AcontPlus</title>
 
-    <link rel="apple-touch-icon" sizes="180x180" href="~/assets/images/icon/apple-touch-icon-180x180.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="~/assets/images/icon/ios/180.png" asp-append-version="true">
+    <link rel="icon" type="image/png" sizes="32x32" href="~/assets/images/icon/ios/32.png" asp-append-version="true">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/assets/images/icon/ios/16.png" asp-append-version="true">
     <link href="~/favicon.ico" rel="shortcut icon icon" type="image/x-icon" asp-append-version="true" />
     <link href="~/favicon.ico" rel="icon" type="image/x-icon" asp-append-version="true" />
     <link rel="manifest" href="/manifest.json" crossorigin="use-credentials" asp-append-version="true">
 
     <link href="~/lib/icheck-bootstrap/icheck-bootstrap.min.css" rel="stylesheet" />
     <link href="~/dist/css/pages/login-register-lock.css" rel="stylesheet" />
-    <link href="~/dist/css/style.min.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/dist/css/style.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/lib/limonte-sweetalert2/sweetalert2.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/lib/toastr/toastr.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/css/spinners.min.css" rel="stylesheet" asp-append-version="true" />
@@ -53,7 +55,7 @@
 </head>
 <body class="skin-blue card-no-border" ng-cloak ng-app="loginApp" ng-controller="loginCtrl">
     <div id="loaderCss"></div>
-    <section id="wrapper" class="login-register" style="background-image:url(../assets/images/background/fondo.webp);">
+    <section id="wrapper" class="login-register" style="background-image:url(../assets/images/background/fondo.jpg);">
 
         <div class="login-box card">
              <img class="card-img-top img-fluid" src="~/assets/images/logo/logo.jpg" alt="Img logo">
@@ -133,7 +135,9 @@
     <script src="~/lib/toastr/toastr.min.js" asp-append-version="true"></script>
     <script src="~/js/spinners.min.js" asp-append-version="true"></script>
     <script src="~/lib/ngStorage/ngStorage.min.js" asp-append-version="true"></script>
-    <script src="~/js/controllers/loginCtrl.js" asp-append-version="true"></script>
+    <script src="~/js/controllers/loginCtrl.min.js" asp-append-version="true"></script>
+    <!--Device Info-->
+    <script src="~/lib/UAParser.js/ua-parser.min.js" asp-append-version="true"></script>
 
     <script>
         if ('serviceWorker' in navigator) {

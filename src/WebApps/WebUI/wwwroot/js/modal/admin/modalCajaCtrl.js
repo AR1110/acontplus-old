@@ -371,7 +371,7 @@ class MovimientoCajaCtrl {
     }
 
     theURLTableMovimientoCaja() {
-        return '/Home/RenderView?name=' + '~/Views/Caja/_mdTableMovimientoCaja.cshtml';
+        return `/Index?name=~/Views/Caja/_mdTableMovimientoCaja.cshtml`        
     }
 
     verReporteMovimientoCaja(item) {

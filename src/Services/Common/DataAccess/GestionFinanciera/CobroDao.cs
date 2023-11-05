@@ -1,11 +1,11 @@
-﻿using Domain.Models.Tesoreria;
-using Domain.ViewModels.Tesoreria;
-using Helpers;
+﻿using System.Data;
+using Common.Core.Models;
+using Domain.Models.Tesoreria;
+using Domain.ViewModels.GestionFinanciera;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System.Data;
-using System.Data.SqlClient;
 
-namespace DataAccess.Tesoreria
+namespace DataAccess.GestionFinanciera
 {
     public class CobroDao
     {
@@ -16,7 +16,7 @@ namespace DataAccess.Tesoreria
         public CobroDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _gr = new GenericResponse();
         }
         public async Task<GenericResponse> GetByDocumentAsync(int idRol, int idComprobanteIngreso, int idTipoDocumento, int idComprobante)
@@ -24,7 +24,7 @@ namespace DataAccess.Tesoreria
             var cobros = new List<CobroViewModel>();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("ASPCobroByDocument", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
@@ -33,7 +33,7 @@ namespace DataAccess.Tesoreria
                     cmd.Parameters.AddWithValue("idComprobante", idComprobante);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);
@@ -83,14 +83,14 @@ namespace DataAccess.Tesoreria
             var cobros = new List<CobroViewModel>();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("ASPCobroByComprobante", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.Parameters.AddWithValue("idComprobanteIngreso", idComprobanteIngreso);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);
@@ -137,7 +137,7 @@ namespace DataAccess.Tesoreria
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("ASPCobroUpdate", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
@@ -147,7 +147,7 @@ namespace DataAccess.Tesoreria
                     cmd.Parameters.AddWithValue("anular", anular);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);

@@ -1,7 +1,8 @@
-﻿using Helpers;
+﻿using System.Data;
+using Common.Core.Models;
+using Common.Core.Utils;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace DataAccess.GestionFinanciera
 {
@@ -14,7 +15,7 @@ namespace DataAccess.GestionFinanciera
         public CarteraDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _gr = new GenericResponse();
         }
 
@@ -35,7 +36,7 @@ namespace DataAccess.GestionFinanciera
                     if (dt.Rows.Count > 0)
                     {
                         _gr.id = "1";
-                        _gr.data = DataHelper.DataTableToJSON(dt);
+                        _gr.data = DataConverters.DataTableToJSON(dt);
                     }
                 }
             }
@@ -68,7 +69,7 @@ namespace DataAccess.GestionFinanciera
                     if (dt.Rows.Count > 0)
                     {
                         _gr.id = "1";
-                        _gr.data = DataHelper.DataTableToJSON(dt);
+                        _gr.data = DataConverters.DataTableToJSON(dt);
                     }
                 }
             }

@@ -1,9 +1,9 @@
-﻿using DataAccess;
+﻿using Common.Core.Models;
+using DataAccess;
 using Domain.Models;
-using Helpers;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers
+namespace WebUI.Controllers.Tributaria
 {
     public class SubContribuyenteController : Controller
     {
@@ -28,7 +28,7 @@ namespace WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] SubContribuyenteOperaciones data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _sc.CreateSubContribuyenteAsync(idRol, data);
             return Ok(_gr);
         }
@@ -36,7 +36,7 @@ namespace WebUI.Controllers
 
         public IActionResult GetByIdTipoContribuyente(int idTipoContribuyente)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = _sc.ReadSubContribuyente(idRol, idTipoContribuyente);
             return Ok(_gr);
         }
@@ -44,7 +44,7 @@ namespace WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Put([FromBody] SubContribuyenteOperaciones data)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _sc.UpdateSubContribuyenteAsync(idRol, data);
             return Ok(_gr);
         }
@@ -52,7 +52,7 @@ namespace WebUI.Controllers
 
         public async Task<IActionResult> Delete(int idSubContribuyente)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _sc.DeleteSubContribuyenteAsync(idRol, idSubContribuyente);
             return Ok(_gr);
         }
@@ -60,7 +60,7 @@ namespace WebUI.Controllers
         //Listar Sub Contribuyente para agregar  Agregar Configuración Contribuyente
         public async Task<IActionResult> OptionSubContribuyente()
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             _gr = await _sc.OptionSubContribuyenteAsync(idRol);
             return Ok(_gr);
         }

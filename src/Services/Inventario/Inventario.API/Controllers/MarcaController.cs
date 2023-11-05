@@ -1,6 +1,7 @@
+﻿using Common.Core.Models;
+using Common.Core.Utils;
 using DataAccess;
-using Domain.Models;
-using Helpers;
+using Domain.Models.Almacen;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -11,9 +12,11 @@ namespace Inventario.API.Controllers
     public class MarcaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public MarcaController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public MarcaController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
         [HttpGet("Get")]
@@ -25,13 +28,13 @@ namespace Inventario.API.Controllers
             {
                 await _db.SPExecute("Almacen.Marca_Get");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar Marcas: \n" + ex.ToString());
+
+                _log.LogActivity("Error al listar Marcas: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar Marcas");
             }
             finally
@@ -55,8 +58,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al insertar marca: \n" + ex.ToString());
+
+                _log.LogActivity("Error al insertar marca: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar marca");
             }
             finally
@@ -82,8 +85,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al actualizar marca: \n" + ex.ToString());
+
+                _log.LogActivity("Error al actualizar marca: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar marca");
             }
             finally
@@ -107,8 +110,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al eliminar marca: \n" + ex.ToString());
+
+                _log.LogActivity("Error al eliminar marca: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar marca");
             }
             finally
@@ -127,13 +130,13 @@ namespace Inventario.API.Controllers
             {
                 await _db.SPExecute("Almacen.Marca_For_Select");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error al listar marcas para Select: \n" + ex.ToString());
+
+                _log.LogActivity("Error al listar marcas para Select: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al listar marcas para Select");
             }
             finally

@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { productionAreaService } from "$core/services/restaurant/production-area-service";
-	import toast from "$core/utils/toast";
+	import { productionAreaService } from "$lib/services/restaurant/production-area-service";
+	import toast from "$lib/utils/toast";
 	import Swal from "sweetalert2";
 	import { onMount } from "svelte";
-	import type { ProductionArea } from "$core/interfaces/restaurant/production-area";
+	import type { ProductionArea } from "$lib/interfaces/restaurant/production-area";
 	import Add from "./add.svelte";
-  import { hideLoader, showLoader } from "$core/utils/loading-spinner";
+  import { hideLoader, showLoader } from "$lib/utils/loading-spinner";
 
 	let isNew = false;
 	let productionAreas = [];

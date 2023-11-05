@@ -1,10 +1,10 @@
-﻿using Domain.Models;
-using Helpers;
+﻿using System.Data;
+using Common.Core.Models;
+using Domain.Models;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System.Data;
-using System.Data.SqlClient;
 
-namespace DataAccess
+namespace DataAccess.GestionTributaria
 {
     public class ActividadEmpresaDao
     {
@@ -14,7 +14,7 @@ namespace DataAccess
         public ActividadEmpresaDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _gr = new GenericResponse();
         }
         public GenericResponse GetAllAsync(int idRol)
@@ -22,13 +22,13 @@ namespace DataAccess
             var listar = new List<ActividadEmpresa>();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("ASPActividadEmpresaGetAll", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.CommandType = CommandType.StoredProcedure;
                     con.Open();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);
@@ -63,13 +63,13 @@ namespace DataAccess
             var listar = new List<ActividadEmpresa>();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("ASPActividadEmpresaBySucursal", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.CommandType = CommandType.StoredProcedure;
                     con.Open();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);

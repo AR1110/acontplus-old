@@ -1,21 +1,20 @@
-﻿using Lib.Common;
-using Lib.Common.Api;
-using Vet.Core.Entities;
+﻿using Common.Core.Interfaces;
+using Common.Core.Models;
+using Common.Core.Utils;
 using Vet.Core.Interfaces;
-using Vet.Infrastructure.Data;
 
 namespace Vet.Application.Services
 {
     public class MedicalHistoryService : IMedicalHistory
     {
-        private readonly VetContext _context;
         private readonly IADORepository _generic;
+        private readonly IRdlcReportService _report;
         private readonly APIResponse _response;
-        public MedicalHistoryService(VetContext vetContext, IADORepository genericRepository)
+        public MedicalHistoryService(IADORepository genericRepository, IRdlcReportService report)
         {
-            _context = vetContext;
             _response = new APIResponse();
             _generic = genericRepository;
+            _report = report;
         }
         public async Task<APIResponse> GetAsync(Dictionary<string, object> parameters)
         {
@@ -29,7 +28,7 @@ namespace Vet.Application.Services
             }
             else
             {
-                _response.Create(code: "1", payload: Converters.DataTableToJSON(dt));
+                _response.Create(code: "1", payload: DataConverters.DataTableToJSON(dt));
             }
             return _response;
         }
@@ -47,21 +46,27 @@ namespace Vet.Application.Services
             }
             else
             {
-                _response.Create(code: "1", payload: Converters.DataSetToJSON(ds));
+                _response.Create(code: "1", payload: DataConverters.DataSetToJSON(ds));
             }
             return _response;
         }
-        public async Task<APIResponse> AddAsync(MedicalHistory medicalHistory)
+        //public async Task<APIResponse> AddAsync(MedicalHistory medicalHistory)
+        //{
+        //    return _response;
+        //}
+        //public async Task<APIResponse> UpdateAsync(int id, MedicalHistory medicalHistory)
+        //{
+        //    return _response;
+        //}
+        //public async Task<APIResponse> DeleteAsync(int id)
+        //{
+        //    return _response;
+        //}
+
+        public async Task<ReportResponse> GetReportAsync(Dictionary<string, object> parameters)
         {
-            return _response;
-        }
-        public async Task<APIResponse> UpdateAsync(int id, MedicalHistory medicalHistory)
-        {
-            return _response;
-        }
-        public async Task<APIResponse> DeleteAsync(int id)
-        {
-            return _response;
+            var ds = await _generic.GetDataSetAsync("Pet.MedicalHistory_Report", parameters);
+            return _report.GetDynamicReport(ds);
         }
     }
 }

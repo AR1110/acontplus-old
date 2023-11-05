@@ -1,8 +1,8 @@
-﻿using DataAccess.GestionFinanciera;
-using Helpers;
+﻿using Common.Core.Models;
+using DataAccess.GestionFinanciera;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers.GestionFinanciera
+namespace WebUI.Controllers.Financiero
 {
     public class CarteraProveedorController : Controller
     {
@@ -20,7 +20,7 @@ namespace WebUI.Controllers.GestionFinanciera
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _c.GetEgresosAsync(idRol, json);
             return Ok(res);
         }

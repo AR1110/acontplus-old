@@ -11,21 +11,26 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
-import CssBaseline from '@mui/material/CssBaseline';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Grid } from '@mui/material';
 import { PrivateRoutes, PublicRoutes } from '@/core/models';
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore } from '@/stores/authStore'; 
+import ModeToggleButton from '@/core/components/ModeToggleButton';
+ 
 
 const pages = ['Pedidos'];
-const settings = ['Sign out'];
+const settings = ['Cerrar sesión'];
 
 function MainLayout() {
-    const navigate = useNavigate();
-    const closeSession = useAuthStore(state=>state.logOut);
+    const navigate = useNavigate(); 
+    const dataEstab = useAuthStore(state => state.dataEstab);
+    const closeSession = useAuthStore(state => state.logOut);
+    
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+
+    // const estabs = useAuthStore(state => state.estabs);
+    // const dataEstab = estabs[0] as Establecimiento;
+
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
@@ -35,7 +40,7 @@ function MainLayout() {
     };
 
     const handleCloseNavMenu = () => {
-        
+
         navigate(`/${PrivateRoutes.PRIVATE}/${PrivateRoutes.ORDER}`);
         setAnchorElNav(null);
     };
@@ -44,17 +49,17 @@ function MainLayout() {
         setAnchorElUser(null);
     };
 
-    
-    const logout = () => { 
+
+    const logout = () => {
         closeSession();
         navigate(`/${PublicRoutes.LOGIN}`, { replace: true });
     };
+
     
- 
+
 
     return (
         <Box sx={{ display: 'flex' }}>
-            <CssBaseline />
             <AppBar position="fixed">
                 <Container maxWidth="xl">
                     <Toolbar disableGutters>
@@ -63,7 +68,7 @@ function MainLayout() {
                             variant="h6"
                             noWrap
                             component="a"
-                            href="/"
+                            href="#"
                             sx={{
                                 mr: 2,
                                 display: { xs: 'none', md: 'flex' },
@@ -77,7 +82,15 @@ function MainLayout() {
                             AcontPlus
                         </Typography>
 
-                        <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                        <Box sx={{
+                            flexGrow: 1,
+                            display: {
+                                // xs: 'none',
+                                xs: 'none',
+                                md: 'none'
+                            }
+                        }
+                        } >
                             <IconButton
                                 size="large"
                                 aria-label="account of current user"
@@ -113,7 +126,7 @@ function MainLayout() {
                                 ))}
                             </Menu>
                         </Box>
-                        <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+                        {/* <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} /> */}
                         <Typography
                             variant="h5"
                             noWrap
@@ -121,7 +134,8 @@ function MainLayout() {
                             href=""
                             sx={{
                                 mr: 2,
-                                display: { xs: 'flex', md: 'none' },
+                                // display: { xs: 'flex', md: 'none' },
+                                display: { xs: 'none', md: 'none' },
                                 flexGrow: 1,
                                 fontFamily: 'monospace',
                                 fontWeight: 700,
@@ -144,7 +158,11 @@ function MainLayout() {
                             ))}
                         </Box>
 
+                        <Typography sx={{ display: { xs: 'flex' }, mr: 1 }} variant="body2">
+                            Estab: {dataEstab?.nombreComercial}
+                        </Typography>
                         <Box sx={{ flexGrow: 0 }}>
+                        <ModeToggleButton />
                             <Tooltip title="Open settings">
                                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                                     <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
@@ -176,10 +194,6 @@ function MainLayout() {
                     </Toolbar>
                 </Container>
             </AppBar>
-            {/* <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}>
-                <Toolbar />
-            <Outlet />
-            </Box> */}
             <Box
                 component="main"
                 sx={{
@@ -194,11 +208,10 @@ function MainLayout() {
                 }}
             >
                 <Toolbar />
-                
-                        <Outlet />
-                     
+
+                <Outlet />
+
             </Box>
-            
         </Box>
     );
 }

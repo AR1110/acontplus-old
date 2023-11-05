@@ -5,14 +5,19 @@
     "Exp": 30
   },
   "ConnectionStrings": {
+    //Local
+    //"DefaultConnection": "/8Xc98JLU4+4fA0YsGHXmaGZxA4S6TJFQFZdu8R52HWulPtagiCwl6QqPz1GTQEJOQ7Jwqe2aQG46hAK5lA4xWsn0XEMBPoM4x5qOGk8VbPraOQMwYbKkgQvNGXnLmBX2NX61l6WvU7GsgOPMBH9VjyIKxJ1Mi+xEHNINc1vMPAXCAro6rjW4Q4EOFurHIrn7kfZ8WXu9k2PQYzDMY6uf02EF+cxtnHBGxwW4Uq2F1s="
+
+    //AWS Dev
+    "DefaultConnection": "Server=52.14.110.123;Database=Acontplus;Trusted_Connection=False;MultipleActiveResultSets=true;user id=sa;pwd=Acontplus.c0m;Trusted_Connection=False;TrustServerCertificate=True;"
+
+
+    //AWS Staging
+    //"DefaultConnection": "Server=18.224.78.45;Database=Acontplus;Trusted_Connection=False;MultipleActiveResultSets=true;user id=sa;pwd=Acontplus.c0m;Trusted_Connection=False;TrustServerCertificate=True;"
+
     //server prd
-    //"DefaultConnection": "15orHggFJStXJQcdxKmB7zey8uGNzXHuauqQWdK0DuJSXf2VjmpzLdOKMIjnPzUYDFU4K/2AlmAPe4XV3sr0jD1QPcPxAQWkxXEgLqGTVaQajPJ/KJrm8KZDwI36E+mYhZ13pPEikypvCqS5nH8ZW+GpuwlHSi+siBjQR0TLGX3cezz565QfmVeVE74T5S1ws5jgLD7BFTOvt6OjNqy7xBRS34jFpp58kUlz0xKbjmSBOhJh18J/NhaxVpiNmju0fagJDeXzw1LNVZNQXNTfDg=="
+    //"DefaultConnection": "Server=34.207.9.208;Database=Acontplus;Trusted_Connection=False;MultipleActiveResultSets=true;user id=sa;pwd=Acontplus.c0m;Trusted_Connection=False;TrustServerCertificate=True;"
 
-    //Dev
-    //"DefaultConnection": "o0tfRyHLaUr3ks/qnM+AO7Qe2scVLo79TA61RJwcyY/DN0g4gGhjL4ZJgCjqWBU+E+4S1xMX6On1rZJ7pzOaTQlTdG5mo7i3vICWzn6GheO/Nqq5N2JuC0gfLt6hvQ1eE+NsVepWQX6EXEo44mYGoOqfvDxcfsGtLLHp5XEKTAuyn9fRvguye7FiMrhSA3qFdxLqb+9WQx7FiFAiH2KDXCLy5V/mnkG0pIhKCmAyknCHEUzebGs1WFvsY+lNsuYcRV7onfuCRENyuoa71zihlQ=="
-
-    //AWS
-    "DefaultConnection": "Lv5U39vA40I/cLivr1EniMlIW8l3nrk4VSLC0L0dabbd1/B3h3weE73KeTkh8kgAeIHjjRGGZtPXe7zFJhy1EHemlLAEOgDdbFEf+19pbNKL/bNjZtLmJ0U/FTeYCLgMadUbY5NJdeRlccl3wO8MqMSM+0eR8GTw+fUbuWpm/sg2MhCnjAuEiCpwO7cTuAzfkJw+i1fZ8gpjw8ilAf9JiG0WOUgU9VjCuLA0cdwgtWjPyRlw7MpLY3kAFmlDbNLblLWdkD74c5yZqXqzQ9lo0Y7BF1obKRJjNtrWim8TqNNBh7MLijIPVbFXG8b4YVyM"
   },
   "ApiGateways": {
     "Acontplus": "https://localhost:7060"

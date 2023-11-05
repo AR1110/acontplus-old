@@ -1,5 +1,4 @@
-﻿
-namespace Domain.Models
+﻿namespace Domain.Models.Administracion
 {
     public class AsignacionPuntoEmision
     {

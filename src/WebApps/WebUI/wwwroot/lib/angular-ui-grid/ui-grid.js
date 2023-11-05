@@ -1,5 +1,5 @@
 /*!
- * ui-grid - v4.12.2 - 2023-01-23
+ * ui-grid - v4.12.4 - 2023-08-17
 * http://ui-grid.info/
  * Copyright (c) 2023 ; License: MIT 
  */
@@ -6331,6 +6331,9 @@ angular.module('ui.grid')
       if ( oldRow ) {
         newRow = oldRow;
         newRow.entity = newEntity;
+        if (newRow.index !== i) {
+          newRow.index = i;
+        }
       }
 
       // if we didn't find the row, it must be new, so create it
@@ -23303,11 +23306,14 @@ module.filter('px', function() {
         grid.infiniteScroll.direction = grid.scrollDirection;
         delete grid.infiniteScroll.prevScrollTop;
 
-        if (grid.scrollDirection === uiGridConstants.scrollDirection.UP && grid.infiniteScroll.scrollUp ) {
+        if (grid.scrollDirection === uiGridConstants.scrollDirection.UP && grid.infiniteScroll.scrollUp) {
           grid.infiniteScroll.dataLoading = true;
           grid.api.infiniteScroll.raise.needLoadMoreDataTop();
         }
-        else if (grid.scrollDirection === uiGridConstants.scrollDirection.DOWN && grid.infiniteScroll.scrollDown ) {
+        else if (grid.scrollDirection === uiGridConstants.scrollDirection.DOWN && grid.infiniteScroll.scrollDown) {
+          if (grid.cellNav && grid.cellNav.lastRowCol && grid.cellNav.lastRowCol.row.index === grid.infiniteScroll.previousVisibleRows - 1) {
+            return;
+          }
           grid.infiniteScroll.dataLoading = true;
           grid.api.infiniteScroll.raise.needLoadMoreData();
         }

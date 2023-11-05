@@ -1,10 +1,12 @@
+﻿using System.Reflection;
+using Common.Core.Entities;
+using Common.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 using Vet.Core.Entities;
 
 namespace Vet.Infrastructure.Data
 {
-    public class VetContext : DbContext
+    public class VetContext : BaseContext
     {
         public VetContext(DbContextOptions<VetContext> options) : base(options)
         {
@@ -54,16 +56,52 @@ namespace Vet.Infrastructure.Data
             }
             //modelBuilder.Entity<t>().ToTable("TableName", schema: "Schema")
             modelBuilder.Entity<PetType>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<PetType>().Property(x => x.Enabled).HasDefaultValue(true);
+            modelBuilder.Entity<PetType>().HasIndex(x => x.Code).HasDatabaseName("UI_PetType").IsUnique();
+
+
             modelBuilder.Entity<Breed>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<Breed>().Property(x => x.Enabled).HasDefaultValue(true);
+            modelBuilder.Entity<Breed>().HasIndex(x => x.Code).HasDatabaseName("UI_Breed").IsUnique();
+
+
             modelBuilder.Entity<Gender>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<Gender>().Property(x => x.Enabled).HasDefaultValue(true);
+            modelBuilder.Entity<Gender>().HasIndex(x => x.Code).HasDatabaseName("UI_Gender").IsUnique();
+
+
             modelBuilder.Entity<Pet>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<Pet>().Property(x => x.Enabled).HasDefaultValue(true);
+
             modelBuilder.Entity<DiseaseStatus>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<DiseaseStatus>().Property(x => x.Enabled).HasDefaultValue(true);
+            modelBuilder.Entity<DiseaseStatus>().HasIndex(x => x.Code).HasDatabaseName("UI_DiseaseStatus").IsUnique();
+
+
             modelBuilder.Entity<DiseaseType>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()"); ;
+            modelBuilder.Entity<DiseaseType>().Property(x => x.Enabled).HasDefaultValue(true);
+            modelBuilder.Entity<DiseaseType>().HasIndex(x => x.Code).HasDatabaseName("UI_DiseaseType").IsUnique();
+
             modelBuilder.Entity<Disease>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<Disease>().Property(x => x.Enabled).HasDefaultValue(true);
+            modelBuilder.Entity<Disease>().HasIndex(x => x.Code).HasDatabaseName("UI_Disease").IsUnique();
+
+
             modelBuilder.Entity<HealthCheck>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<HealthCheck>().Property(x => x.Enabled).HasDefaultValue(true);
+
             modelBuilder.Entity<BehaviorStatus>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<BehaviorStatus>().Property(x => x.Enabled).HasDefaultValue(true);
+            modelBuilder.Entity<BehaviorStatus>().HasIndex(x => x.Code).HasDatabaseName("UI_BehaviorStatus").IsUnique();
+
+
             modelBuilder.Entity<Behavior>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<Behavior>().Property(x => x.Enabled).HasDefaultValue(true);
+            modelBuilder.Entity<Behavior>().HasIndex(x => x.Code).HasDatabaseName("UI_Behavior").IsUnique();
+
+
             modelBuilder.Entity<BehaviorTest>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
+            modelBuilder.Entity<BehaviorTest>().Property(x => x.Enabled).HasDefaultValue(true);
 
             modelBuilder.Entity<MedicalHistory>()
            .HasMany(i => i.HealthChecks)
@@ -76,7 +114,7 @@ namespace Vet.Infrastructure.Data
            .HasForeignKey(d => d.MedicalHistoryId);
 
             modelBuilder.Entity<MedicalHistory>().Property(p => p.CreatedAt).HasDefaultValueSql("GETDATE()");
-
+            modelBuilder.Entity<MedicalHistory>().Property(x => x.Enabled).HasDefaultValue(true);
 
         }
 

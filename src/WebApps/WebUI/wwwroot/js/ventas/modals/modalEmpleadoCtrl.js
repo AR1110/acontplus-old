@@ -20,15 +20,17 @@ function ModalEmpleadoCtrl($scope, mS, empleadoSvc, $uibModalInstance, tS, param
 
     onInit();
     function onInit() {
-        mS.getData('post', '/TipoIdentificacion/ReadTipoIdentificacion', {
-            tipoValidacion: 'V'
-        }).then(response => {
-            $scope.tipoIdentificaciones = response.data;
-            $scope.data.idTipoIdentificacion = $scope.tipoIdentificaciones[0].idTipoIdentificacion;
-            $scope.data.identificacion = $scope.tipoIdentificaciones[0].identificacion;
-            console.log($scope.tipoIdentificaciones)
-        });
-
+        showLoader();
+        empleadoSvc.getDataForm().then(response=>{
+            $scope.tipoIdentificaciones = response.tiposIdentificacion;
+            let dataID = $scope.tipoIdentificaciones.find(dd => dd.codigo==='R')
+            $scope.data.idTipoIdentificacion =dataID.idTipoIdentificacion;
+            $scope.data.identificacion = dataID.descripcion;  
+        })
+        .catch(error=>{
+            console.log(error)
+        })
+        .finally(()=>hideLoader()) 
         
         if (params && params.idEmpleado > 0) {
             $scope.tipoRegistro = 2;
@@ -50,7 +52,7 @@ function ModalEmpleadoCtrl($scope, mS, empleadoSvc, $uibModalInstance, tS, param
                 return
             }
             
-            let {codigo: codigoIdentificacion} = $scope.tipoIdentificaciones.find(item=>item.idTipoIdentificacion===$scope.data.idTipoIdentificacion)
+            let { codigoSri: codigoIdentificacion} = $scope.tipoIdentificaciones.find(item=>item.idTipoIdentificacion===$scope.data.idTipoIdentificacion)
 
             if (!$scope.data.nroIdentificacion) {
                 tS.toastr('warning', 'Ingrese Nro. de Identificación', titulo);

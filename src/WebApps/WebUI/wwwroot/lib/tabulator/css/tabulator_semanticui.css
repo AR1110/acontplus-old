@@ -603,7 +603,7 @@
 .tabulator .tabulator-header .tabulator-frozen {
   position: sticky;
   left: 0;
-  z-index: 10;
+  z-index: 11;
 }
 
 .tabulator .tabulator-header .tabulator-frozen.tabulator-frozen-left {
@@ -948,7 +948,7 @@
   position: sticky;
   left: 0;
   background-color: inherit;
-  z-index: 10;
+  z-index: 11;
 }
 
 .tabulator-row .tabulator-cell.tabulator-frozen.tabulator-frozen-left {
@@ -1002,6 +1002,11 @@
   height: 3px;
   margin-top: 2px;
   background: #666;
+}
+
+.tabulator-row .tabulator-cell .tabulator-data-tree-branch-empty {
+  display: inline-block;
+  width: 7px;
 }
 
 .tabulator-row .tabulator-cell .tabulator-data-tree-branch {
@@ -1747,7 +1752,7 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
 }
 
 .tabulator.striped .tabulator-row:nth-child(even) {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: #f2f2f2;
 }
 
 .tabulator.celled {
@@ -1936,7 +1941,7 @@ body.tabulator-print-fullscreen-hide > *:not(.tabulator-print-fullscreen) {
 }
 
 .tabulator-row.tabulator-row-even {
-  background-color: transparent;
+  background-color: #fff;
 }
 
 @media (hover: hover) and (pointer: fine) {

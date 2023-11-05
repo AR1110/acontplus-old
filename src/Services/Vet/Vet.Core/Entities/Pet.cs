@@ -1,5 +1,6 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Common.Core.Entities;
 
 namespace Vet.Core.Entities
 {
@@ -17,14 +18,14 @@ namespace Vet.Core.Entities
         public int? BreedId { get; set; }
         public virtual Gender Gender { get; set; }
         public int? GenderId { get; set; }
-        [Column(TypeName = "numeric(4,2), not null")]
-        public decimal Age { get; set; }
+        [Column(TypeName = "numeric(4,2), null")]
+        public decimal? Age { get; set; }
         [Required]
         [MaxLength(50)]
         public string Color { get; set; }
         [Column(TypeName = "numeric(4,2), null")]
         public decimal? Weight { get; set; }
         public DateTime? Birthdate { get; set; }
-        public int? UserId { get; set; }
+
     }
 }

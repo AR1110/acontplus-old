@@ -1,7 +1,8 @@
-﻿using Helpers;
+﻿using System.Data;
+using Common.Core.Models;
+using Common.Core.Utils;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace DataAccess
 {
@@ -15,7 +16,7 @@ namespace DataAccess
         public GenerarNroDoc(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _gr = new GenericResponse();
 
         }
@@ -27,7 +28,7 @@ namespace DataAccess
                 using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
                     SqlCommand cmd = new SqlCommand("ASPGenerarNroDc", con);
-                    cmd.Parameters.AddWithValue("puntoEmision", DataHelper.ToDBNullOrDefault(puntoEmision));
+                    cmd.Parameters.AddWithValue("puntoEmision", DataValidation.ToDBNullOrDefault(puntoEmision));
                     cmd.Parameters.AddWithValue("idPuntoEmision", idPuntoEmision);
                     cmd.Parameters.AddWithValue("nroDocumento", nroDocumento);
                     cmd.Parameters.AddWithValue("codigoDocumento", codigoDocumento);
@@ -66,7 +67,7 @@ namespace DataAccess
                 using (SqlConnection con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("ASPGenerarNroDv", con);
-                    cmd.Parameters.AddWithValue("puntoEmision", DataHelper.ToDBNullOrDefault(puntoEmision));
+                    cmd.Parameters.AddWithValue("puntoEmision", DataValidation.ToDBNullOrDefault(puntoEmision));
                     cmd.Parameters.AddWithValue("idPuntoEmision", idPuntoEmision);
                     cmd.Parameters.AddWithValue("nroDocumento", nroDocumento);
                     cmd.Parameters.AddWithValue("codigoDocumento", codigoDocumento);

@@ -11,13 +11,7 @@
         formSvc.dataDocumento = {};
         formSvc.opcionEmit = "";
 
-        formSvc.loaderPost = $(".loadingoverlay");
-
-        formSvc.emitEventData = function (item, opcionEmit) {
-            this.opcionEmit = opcionEmit;
-            this.dataDocumento = item;
-            return
-        };
+        formSvc.loaderPost = $(".loadingoverlay"); 
 
         formSvc.sweetAlert = function (icon, message, title = null, timer = undefined, position = 'center') {
             Swal.fire({
@@ -28,46 +22,9 @@
                 position,
                 allowOutsideClick: false,
             });
-        };
-
-        formSvc.showLoaderForm = function (title = null, html = null, imageUrl = "/assets/images/ajax-loader.gif", position = "center", timer = null) {
-            Swal.fire({
-                title: `<small>${title || ''}</small>`,
-                html: `<small>${html || ''}</small>`,
-                imageHeight: '100px',
-                imageUrl,
-                showConfirmButton: false,
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                position,
-                timer
-            });
-        };
-
-        formSvc.showLoaderPost = function (tipoRegistro) {
-            Swal.fire({
-                title: `<small>${tipoRegistro===1?'Guardando...':'Actualizando...'}</small>`,
-                html: "<small>Espere por favor</small>",
-                imageHeight: '100px',
-                imageUrl: "/assets/images/ajax-loader.gif",
-                showConfirmButton: false,
-                allowOutsideClick: false,
-                allowEscapeKey: false
-            });
-        };
-
-        formSvc.showLoaderAnular = function (item) {
-            Swal.fire({
-                title: `<small>Espere</small>`,
-                html: '<small>Anulando...</small>',
-                imageHeight: '150px',
-                imageUrl: "/assets/images/loader-delete.gif",
-                allowOutsideClick: false,
-                showConfirmButton: false,
-            });
         }
 
-        formSvc.showLoaderSendEmail = function (item) {
+        formSvc.showLoaderSendEmail = function () {
             Swal.fire({
                 title: `<small>Enviando...</small>`,
                 html: "<small>Espere por favor</small>",
@@ -77,67 +34,7 @@
                 allowOutsideClick: false,
                 allowEscapeKey: false
             });
-        };
-
-        formSvc.showLoaderGetAuthorizate = function (item) {
-            Swal.fire({
-                title: `<small>Autorizando...</small>`,
-                html: "<small>Espere por favor</small>",
-                imageHeight: '150px',
-                imageUrl: "/assets/images/loader-authorizate.gif",
-                showConfirmButton: false,
-                allowOutsideClick: false,
-                allowEscapeKey: false
-            });
-        };
-
-        formSvc.showLoader = function (title, nombre = "Cargando...") {
-            Swal.fire({
-                title: `<small>${title}</small>`,
-                html: `<small>${nombre}</small>`,
-                imageHeight: '150px',
-                imageUrl: "/assets/images/loader.gif",
-                showConfirmButton: false,
-                allowOutsideClick: false,
-                allowEscapeKey: false
-            });
-        };
-
-        formSvc.getDownload = function (url, parameters) {
-            mS.getFile('post', url, parameters).then(response => {
-
-                Swal.close();
-                let fileBlob = new Blob([response.data], {
-                    type: response.data.type
-                });
-
-                let objectUrl = window.URL || window.webkitURL;
-                let urlFile = objectUrl.createObjectURL(fileBlob);
-
-                //    let height = (parseInt(window.innerHeight) / 2);
-                //     let width = (parseInt(window.innerWidth) / 2);
-
-                // Ajuste horizontal
-                let x = parseInt((screen.width - 1200) / 2);
-                // Ajustae vertical
-                let y = parseInt((screen.height - 650) / 4);
-
-                window.open(urlFile, "_blank",
-                    `resizable=yes
-                                 width=1200
-                                 height=650
-                                 screenY=${y}
-                                 screenX=${x}`
-                );
-
-            })
-        }
-
-        formSvc.renderViewPartial = (urlView) => {
-            return '/Home/RenderView?name=' + urlView;
-        }
-
-
+        }  
         formSvc.letterInline = (text) => {
             if (text) {
                 return text.replace(/[\n\r]+/g, ' ')
@@ -167,21 +64,7 @@
             if (campo.length >= 3 && campo !== undefined) {
                 return campo.substring(0, 3).replace(/[^-A-Za-z0-9]+/g, '').toUpperCase();
             }
-        }
-
-        //Conversion Decimal
-        formSvc.convertDecimal = function (value) {
-            return value ? parseFloat(value).toFixed(5).toString().replace('.', ',') : null;
-        }
-
-        //Validacion de Numero de Cedula y RUC
-        formSvc.validarIdentificacion = function (data) {
-            let obj = {
-                data,
-                tipoValidacion: 'IDENTI'
-            }
-            return mS.getData('post', '/ValidarDatos/VerificarDatos', obj).then(response => response);
-        }
+        }  
 
         /* number: número a redondear
            max: máximo de dígitos fraccionables
@@ -209,19 +92,7 @@
             // return Math.trunc(number * Math.pow(10, max)) / Math.pow(10, max);
 
         }
-
-
-
-        formSvc.asignarFechaEmision = function(fechaEmision, fechaActual) {
-            let fechaEmisionToInsert;          
-            if (moment(fechaEmision).isBefore(fechaActual, 'day')) {
-                fechaEmisionToInsert = moment(fechaEmision).startOf('day').toDate();
-            } else {
-                fechaEmisionToInsert = moment().toDate(); // Esto asume que tienes una función ufnGetDateEcuador() que devuelve la fecha actual en Ecuador
-            }
-          
-            return fechaEmisionToInsert;
-        }
+        
           
         /**
          * 
@@ -251,13 +122,7 @@
         formSvc.isDateValid = function (dateString) {
             var date = new Date(dateString);
             return date instanceof Date && !isNaN(date);
-        }
-
-
-
-
-
-
+        } 
         formSvc.meses = function () {
             let meses = [{
                     nombre: 'Año',
@@ -303,31 +168,7 @@
                 }
             ];
             return meses;
-        }
-
-        //Valid Fornat Date
-        formSvc.validarFormatoFecha = function (campo) {
-            var RegExPattern = /^\d{1,2}\/\d{1,2}\/\d{2,4}$/;
-            if ((campo.match(RegExPattern)) && (campo != '')) {
-                return true;
-            } else {
-                return false;
-            }
-        };
-
-        //Verificar si la fecha cumple con el formato de calendario 
-        formSvc.existeFecha = function (fecha) {
-            let fechaf = fecha.split("/");
-            let day = fechaf[0];
-            let month = fechaf[1];
-            let year = fechaf[2];
-            let date = new Date(year, month, '0');
-            if ((day - 0) > (date.getDate() - 0)) {
-                return false;
-            }
-            return true;
-        }
-
+        }  
 
         formSvc.getFechaEscrita = function (fecha) {
             let mes = this.meses();
@@ -429,17 +270,21 @@
         formSvc.contieneSecuencia001 = function(numero) {
             return numero.includes("001");
         }
+
+
+        formSvc.validAndFormatedRangeSequential = function(cadena) {
+            // Expresión regular que verifica si la cadena contiene solo números.
+            var formatoValido = /^\d+$/;
           
-     
-    
+            if (formatoValido.test(cadena)) {
+              // La cadena contiene solo números, así que la formateamos a "xxx-xxx".
+              cadena = `${cadena}-${cadena}`
+            }
           
-
-        return formSvc;
-
-
-    }
-
-
-
-
+            // Luego, validamos que la cadena siga el formato "xxx-xxx".
+            var formatoValidoFinal = /^\d+-\d+$/;
+            return formatoValidoFinal.test(cadena) ? cadena : null;
+        } 
+        return formSvc; 
+    } 
 })(window.angular)

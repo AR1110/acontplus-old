@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebUI.CuentaPorPagar.Pages
+namespace WebUI.Areas.CuentaPorPagar.Pages
 {
     public class IndexModel : PageModel
     {

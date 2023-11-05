@@ -1,8 +1,9 @@
-﻿using Domain.Models;
-using Helpers;
+﻿using System.Data;
+using Common.Core.Models;
+using Common.Core.Utils;
+using Domain.Models.Administracion;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace DataAccess.Asignaciones
 {
@@ -14,7 +15,7 @@ namespace DataAccess.Asignaciones
         public AsignacionPuntoEmisionDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _response = new GenericResponse();
         }
         public async Task<GenericResponse> GetAsync(string json)
@@ -34,7 +35,7 @@ namespace DataAccess.Asignaciones
                         if (dt.Rows.Count > 0)
                         {
                             _response.id = "1";
-                            _response.data = DataHelper.DataTableToJSON(dt);
+                            _response.data = DataConverters.DataTableToJSON(dt);
                         }
                     }
                 }

@@ -8,46 +8,44 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="description" content="Herramienta Administrativa & Contable">
-    <meta name="keywords" content="AcontPlus, Contabilidad, Sistema Contable" />
-    <meta name="author" content="AcontPlus">
+    <meta name="keywords" content="Acontplus, Contabilidad, Sistema Contable" />
+    <meta name="author" content="Acontplus">
 
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="application-name" content="AcontPlus" />
-    <meta name="apple-mobile-web-app-title" content="AcontPlus" />
+    <meta name="application-name" content="Acontplus" />
+    <meta name="apple-mobile-web-app-title" content="Acontplus" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="theme-color" content="#D61672" />
 
-    <title>@ViewData["Title"] - AcontPlus</title>
+    <title>@ViewData["Title"] - Acontplus</title>
 
-    @* <link rel="apple-touch-icon" sizes="180x180" href="~/assets/images/icon/apple-touch-icon-180x180.png"> *@
-    @* <link rel="icon" type="image/png" sizes="32x32" href="~/assets/images/icon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="~/assets/images/icon/favicon-16x16.png"> *@
+    <link rel="apple-touch-icon" sizes="180x180" href="~/assets/images/icon/ios/180.png" asp-append-version="true">
+    <link rel="icon" type="image/png" sizes="32x32" href="~/assets/images/icon/ios/32.png" asp-append-version="true">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/assets/images/icon/ios/16.png" asp-append-version="true">
     <link href="~/favicon.ico" rel="shortcut icon icon" type="image/x-icon" asp-append-version="true" />
     <link href="~/favicon.ico" rel="icon" type="image/x-icon" asp-append-version="true" />
     <link rel="manifest" href="/manifest.json" asp-append-version="true">
 
     <link href="~/lib/icheck-bootstrap/icheck-bootstrap.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/lib/limonte-sweetalert2/sweetalert2.min.css" rel="stylesheet" asp-append-version="true" />
-    <!--css-->
     <link href="~/lib/bootstrap-daterangepicker/daterangepicker.min.css" rel="stylesheet" />
+    <link href="~/lib/jquery.perfect-scrollbar/css/perfect-scrollbar.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/dist/css/style.css" rel="stylesheet" asp-append-version="true" />
-    <link href="~/dist/css/pages/tab-page.css" rel="stylesheet" asp-append-version="true" />
-    <link href="~/dist/css/pages/floating-label.css" rel="stylesheet" />
+    <link href="~/dist/css/pages/tab-page.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/dist/css/pages/other-pages.css" rel="stylesheet" />
     <link href="~/lib/magnific-popup.js/magnific-popup.min.css" rel="stylesheet" asp-append-version="true">
 
     <!--Tooltip-->
-    <link href="~/dist/css/pages/stylish-tooltip.css" rel="stylesheet" />
-    <link href="~/dist/css/pages/user-card.css" rel="stylesheet">
+    <link href="~/dist/css/pages/user-card.min.css" rel="stylesheet">
+
     <!--Toast-->
     <link href="~/lib/toastr/toastr.min.css" rel="stylesheet" asp-append-version="true" />
-    <link href="~/lib/cute-alert-master/style.css" asp-append-version="true" />
 
     <!--ui-grid-->
-    <link href="~/lib/angular-ui-grid/ui-grid.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/lib/angular-ui-grid/ui-grid.min.css" rel="stylesheet" asp-append-version="true" />
 
     <!--Tabulator-->
-    <link href="~/lib/tabulator/css/tabulator_simple.min.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/lib/tabulator/css/tabulator.css" rel="stylesheet" asp-append-version="true" />
 
     <!--bg tags por eliminar mas adelante-->
     <link href="~/lib/ng-tags/ng-tags-input.min.css" rel="stylesheet" asp-append-version="true" />
@@ -59,8 +57,7 @@
     <link href="~/lib/angular-material-data-table/md-data-table.min.css" rel="stylesheet" asp-append-version="true" />
 
     <!--custom css-->
-    <link href="~/css/acontplus-style.css" rel="stylesheet" asp-append-version="true" />
-    <link href="~/css/custom.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/css/acontplus-style.min.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/css/spinners.min.css" rel="stylesheet" asp-append-version="true" />
 
 </head>
@@ -83,7 +80,7 @@
                 <!-- Logo -->
                 <!-- ============================================================== -->
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="/Home/Index"  >
+                    <a class="navbar-brand" href="/Home/Index">
                         <b>
                             <!-- Dark Logo icon -->
                             <img src="~/assets/images/icon/logo-icon.png" width="190" alt="homepage" class="dark-logo img-fluid">
@@ -94,10 +91,10 @@
                         <!-- dark Logo text -->
                         <span style="">
                             @* <!-- dark Logo text -->
-                         <img src="../assets/images/logo-text.png" alt="homepage" class="dark-logo">
-                         <!-- Light Logo text -->    
-                         <img src="../assets/images/logo-light-text.png" class="light-logo" alt="homepage"> *@
-                         </span>
+                            <img src="../assets/images/logo-text.png" alt="homepage" class="dark-logo">
+                            <!-- Light Logo text -->
+                            <img src="../assets/images/logo-light-text.png" class="light-logo" alt="homepage"> *@
+                        </span>
                     </a>
                 </div>
 
@@ -134,8 +131,8 @@
 
                     <div class="navbar-nav d-lg-block m-md-block d-none mx-auto text-white">
                         <div class="d-flex flex-column">
-                            <div class="p-0 text-white">{{entidad}}</div>
-                            <div class="p-0 text-white"><small>{{nombreComercial}}</small></div>
+                            <div class="p-0 text-white">{{userData.tradeName}}</div>
+                            <div class="p-0 text-white"><small>{{userData.bussinesName}}</small></div>
                         </div>
                     </div>
 
@@ -147,9 +144,10 @@
                         <li class="nav-item dropdown u-pro">
                             <a class="nav-link dropdown-toggle waves-effect waves-dark profile-pic" href=""
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img src="~/assets/images/3.jpg" alt="user" class=""> <span class="hidden-md-down">
+                                <img src="~/assets/images/user/user.png" alt="user" class="">
+                                <span class="hidden-md-down">
                                     Hola,
-                                    {{usuario}} &nbsp;<icon class="fa fa-angle-down"></icon>
+                                    {{userData.username}} &nbsp;<icon class="fa fa-angle-down"></icon>
                                 </span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right animated flipInY">
@@ -186,36 +184,10 @@
         <!-- ============================================================== -->
         <aside class="left-sidebar">
             <!-- Sidebar scroll-->
-            <div class="scroll-sidebar" style="overflow: auto;">
+            <div class="scroll-sidebar">
                 <!-- Sidebar navigation-->
                 <nav class="sidebar-nav">
                     <ul id="sidebarnav">
-
-
-                        <li>
-                            <span class="has-arrow waves-effect waves-dark">
-                            </span>
-                        </li>
-
-                        <li ng-repeat="m in menus">
-
-                            <a class="has-arrow waves-effect waves-dark {{active?'active':''}}" ng-show="!active"
-                               ng-click="active=true" href="javascript:void(0)" aria-expanded="false">
-                                <i class="{{m.icon}}"></i><span class="hide-menu">{{m.description}}</span>
-                            </a>
-                            <a class="has-arrow waves-effect waves-dark {{active?'active':''}}" ng-show="active"
-                               ng-click="active=false" href="javascript:void(0)" aria-expanded="false">
-                                <i class="{{m.icon}}"></i><span class="hide-menu">{{m.description}}</span>
-                            </a>
-                            <ul ng-repeat="sm in subMenus |orderBy:sm.idSubmenu" aria-expanded="false"
-                                class="collapse {{active?'in':''}}" ng-if="m.idMenu==sm.idMenu">
-                                <li>
-                                    <a href="javascript:void(0)" ng-click="onChangeSubMenu(sm)">
-                                        <i class="{{sm.icon}}"></i> <small class="font-15">{{sm.description}}</small>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
                     </ul>
                 </nav>
                 <!-- End Sidebar navigation -->
@@ -292,18 +264,18 @@
     <script src="~/lib/jquery/jquery.min.js" asp-append-version="true"></script>
     <script src="~/lib/popper/popper.min.js" asp-append-version="true"></script>
     <script src="~/lib/bootstrap/js/bootstrap.min.js" asp-append-version="true"></script>
-    <script src="~/dist/js/perfect-scrollbar.jquery.min.js" asp-append-version="true"></script>
+    <script src="~/lib/jquery.perfect-scrollbar/perfect-scrollbar.min.js" asp-append-version="true"></script>
 
-    <script src="~/dist/js/waves.js"></script>
-    <script src="~/dist/js/sidebarmenu.js"></script>
-    <script src="~/dist/js/custom.min.js"></script>
-
-    <script src="~/lib/magnific-popup.js/jquery.magnific-popup.min.js" asp-append-version="true"></script>
+   
 
     <!--stickey kit -->
     <script src="~/lib/sticky-kit/sticky-kit.min.js" asp-append-version="true"></script>
     <script src="~/lib/jquery-sparklines/jquery.sparkline.min.js" asp-append-version="true"></script>
 
+
+    <script src="~/lib/magnific-popup.js/jquery.magnific-popup.min.js" asp-append-version="true"></script>
+
+  
     <!--Sweet Alert-->
     <script src="~/lib/limonte-sweetalert2/sweetalert2.min.js" asp-append-version="true"></script>
 
@@ -342,14 +314,14 @@
     <script src="~/lib/angular-ui-grid/ui-grid.move-columns.js" asp-append-version="true"></script>
 
     <!--angular match-media for screen size-->
-    <script src="~/lib/angular-media-queries/match-media.js"></script>
+    <script src="~/lib/angular-media-queries/match-media.min.js" asp-append-version="true"></script>
 
     <!--Tabulator-->
-    <script src="~/lib/tabulator/js/tabulator.js" asp-append-version="true"></script>
+    <script src="~/lib/tabulator/js/tabulator.min.js" asp-append-version="true"></script>
 
     <!--momment js-->
     <script src="~/lib/moment.js/moment.min.js" asp-append-version="true"></script>
-    <script src="~/lib/moment-timezone/moment-timezone-with-data-10-year-range.js" asp-append-version="true"></script>
+    <script src="~/lib/moment-timezone/moment-timezone-with-data-10-year-range.min.js" asp-append-version="true"></script>
 
     <!--angular-file-upload by daniel farid-->
     <script src="~/lib/danialfarid-angular-file-upload/ng-file-upload-shim.min.js" asp-append-version="true"></script>
@@ -360,21 +332,27 @@
     <script src="~/lib/bootstrap-daterangepicker/daterangepicker.min.js"></script>
     <script src="~/lib/angular-daterangepicker/angular-daterangepicker.min.js"></script>
     <!--angular-jwt-->
-    <script src="~/lib/angular-jwt/angular-jwt.min.js"></script>
+    <script src="~/lib/angular-jwt/angular-jwt.min.js" asp-append-version="true"></script>
     <!--Chartjs-->
-    <script src="~/lib/Chart.js/Chart.min.js" asp-append-version="true"></script>
+    <script src="~/lib/Chart.js/chart.umd.min.js" asp-append-version="true"></script>
 
     <!--JS Barcode-->
-    <script src="~/lib/jsbarcode/JsBarcode.all.min.js"></script>
-    <script src="~/lib/html2canvas/html2canvas.min.js"></script>
+    <script src="~/lib/jsbarcode/JsBarcode.all.min.js" asp-append-version="true"></script>
+    <script src="~/lib/html2canvas/html2canvas.min.js" asp-append-version="true"></script>
 
     <!--SingalR-->
-    <script src="~/lib/microsoft-signalr/signalr.min.js"></script>
+    <script src="~/lib/microsoft-signalr/signalr.min.js" asp-append-version="true"></script>
+
+
+    <script src="~/dist/js/waves.js"></script>
+    <script src="~/dist/js/sidebarmenu.js" asp-append-version="true"></script>
+
+    <script src="~/dist/js/custom.min.js" asp-append-version="true"></script>
 
     <script src="~/js/app/acontPlusApp.js" asp-append-version="true"></script>
     <script src="~/js/controllers/layoutCtrl.min.js" asp-append-version="true"></script>
     <!--Common Directives---->
-    <script src="~/js/common/directives/commonDirective.min.js" asp-append-version="true"></script>
+    <script src="~/js/common/directives/commonDirective.js" asp-append-version="true"></script>
     @* <script src="~/js/common/filters/commonFilter.min.js" asp-append-version="true"></script> *@
     <!--Common Constants-->
     <script src="~/js/common/constants/namePathsModal.min.js" asp-append-version="true"></script>
@@ -383,17 +361,18 @@
     <script src="~/js/common/services/formularioService.min.js" asp-append-version="true"></script>
     <script type="module" src="~/js/common/services/commonService.min.js" asp-append-version="true"></script>
     <script src="~/js/services/documentoVentaService.js" asp-append-version="true"></script>
-    <script src="~/js/services/socketService.js" asp-append-version="true"></script>
-
-
 
     <!----------------------------Inventory--------------------------------->
     <script src="~/js/inventario/directives/inventarioDirective.js" asp-append-version="true"></script>
-    <script src="~/js/inventario/services/articuloService.min.js" asp-append-version="true"></script>
+    <script src="~/js/inventario/services/articuloService.js" asp-append-version="true"></script>
     <script src="~/js/inventario/services/inventarioService.js" asp-append-version="true"></script>
     <!----------------------------Inventory---------------------------------->
     <!--------------------------Module Ventas-------------------------------->
-    <script src="~/js/ventas/services/ventaService.min.js" asp-append-version="true"></script>
+    <script src="~/js/ventas/services/ventaService.js" asp-append-version="true"></script>
+
+    <!--------------------------Compras-------------------------------->
+    <script src="~/js/compras/directives/compraDirective.js" asp-append-version="true"></script>
+    <script src="~/js/compras/services/compraService.js" asp-append-version="true"></script>
 
 
     <!--Components-->
@@ -404,10 +383,13 @@
     <script src="~/js/doubleScroll.min.js" asp-append-version="true"></script>
 
     <!--Device Info-->
-    <script src="~/lib/UAParser.js/ua-parser.min.js"></script>
+    <script src="~/lib/UAParser.js/ua-parser.min.js" asp-append-version="true"></script>
 
     <script src="~/lib/axios/axios.min.js" asp-append-version="true"></script>
-    @*<script src="~/js/svelte/build/bundle.js" asp-append-version="true"></script>*@
+    <script src="~/build/bundle.js" asp-append-version="true"></script>
+
+  
+
     <script>
 
 
@@ -435,6 +417,15 @@
         } else {
             console.log('Service workers are not supported.');
         }
+        var sUsrAg = navigator.userAgent;
+
+        function logout() {
+            Object.keys(localStorage)
+                .forEach(function (key) {
+                    localStorage.removeItem(key);
+                });
+            location.href = '/Login';
+        };
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)

@@ -1,5 +1,5 @@
-﻿using DataAccess;
-using Helpers;
+﻿using Common.Core.Models;
+using DataAccess;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebUI.Controllers

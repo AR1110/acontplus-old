@@ -1,5 +1,4 @@
-using Lib.Common;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
@@ -18,11 +17,9 @@ namespace Vet.Infrastructure.Data
             IConfiguration configuration = new ConfigurationBuilder()
                 .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../../../SharedSettings")) //old ../Vet.API
                 .AddJsonFile($"sharedsettings.Development.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"sharedsettings.Staging.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"sharedsettings.Production.json", optional: true, reloadOnChange: true)
                 .Build();
 
-            var connectionString = Encryption.DecryptString(configuration.GetSection("KeyEncryption").Value, configuration.GetConnectionString(_databaseName));
+            var connectionString = configuration.GetConnectionString(_databaseName);
 
             var dbContextOptionsBuilder = new DbContextOptionsBuilder<VetContext>()
                 .UseSqlServer(connectionString, x => x.MigrationsAssembly(_migrationAssembly));

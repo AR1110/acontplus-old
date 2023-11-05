@@ -35,11 +35,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 12786
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/CompraHabitual{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/CompraHabitual{everything}"
     },
@@ -51,11 +51,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 12786
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/DocumentoRecibido{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/DocumentoRecibido{everything}"
     },
@@ -67,11 +67,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 12786
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/Proveedor/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/Proveedor/{everything}"
     },
@@ -83,11 +83,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 12786
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/Doc_Rec_DetailTemp{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/Doc_Rec_DetailTemp{everything}"
     },
@@ -99,11 +99,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 12786
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/Articulo{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get" ],
       "UpstreamPathTemplate": "/gateway/Recepcion/Articulo{everything}"
     },
@@ -115,7 +115,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/Factura{everything}",
@@ -131,11 +131,11 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 12786
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/DocumentoDetalle/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Post", "Put" ],
       "UpstreamPathTemplate": "/gateway/DocumentoDetalle/{everything}"
     },
@@ -147,14 +147,15 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 12786
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/DocumentoDetalle/{id}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Delete" ],
       "UpstreamPathTemplate": "/gateway/DocumentoDetalle/{id}"
     },
+
     {
       "AuthenticationOptions": {
         "AllowedScopes": [],
@@ -163,39 +164,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
-        }
-      ],
-      "DownstreamPathTemplate": "/api/DocumentoElectronico{everything}",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [ "Get", "Put", "Delete", "Options" ],
-      "UpstreamPathTemplate": "/gateway/DocumentoElectronico{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7025
-        }
-      ],
-      "DownstreamPathTemplate": "/api/DocumentoElectronicoError/{id}",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [ "Get" ],
-      "UpstreamPathTemplate": "/gateway/DocumentoElectronicoError/{id}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/NotificacionTributaria{everything}",
@@ -211,7 +180,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/RetencionAts/{everything}",
@@ -227,7 +196,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/RetencionAts/cancel/{id}",
@@ -243,7 +212,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/RetencionAts",
@@ -259,7 +228,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/DocSustento{everything}",
@@ -275,7 +244,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/DocSustImpuesto{everything}",
@@ -291,7 +260,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/DocSustPago{everything}",
@@ -307,7 +276,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/DocSustRetencion{everything}",
@@ -323,7 +292,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/RetAtsInfoAdicional/{everything}",
@@ -339,7 +308,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/RetAtsInfoAdicional{everything}",
@@ -355,7 +324,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7273
+          "Port": 7132
         }
       ],
       "DownstreamPathTemplate": "/api/CuentaPorPagar/{everything}",
@@ -371,7 +340,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7273
+          "Port": 7132
         }
       ],
       "DownstreamPathTemplate": "/api/CuentaPorPagar?json={json}",
@@ -387,7 +356,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7273
+          "Port": 7132
         }
       ],
       "DownstreamPathTemplate": "/api/CuentaPorPagar/{id}?json={json}",
@@ -403,7 +372,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7152
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/CompraNoHabitual/{everything}",
@@ -419,7 +388,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7152
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/FacturaCompra{everything}",
@@ -435,7 +404,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7152
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/CompraNoHabitual",
@@ -451,7 +420,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/CompraNoHabitual/Cancel/{id}",
@@ -467,7 +436,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/Impresion/?json={json}",
@@ -483,7 +452,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte/Post",
@@ -499,7 +468,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte/{method}/{everything}",
@@ -515,7 +484,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/ReporteDataSource/",
@@ -531,7 +500,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/ReporteDataSource/{everything}",
@@ -548,7 +517,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/FirmaElectronica{everything}",
@@ -570,7 +539,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/EmailConfig{everything}",
@@ -592,7 +561,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7097
+          "Port": 7146
         }
       ],
       "DownstreamPathTemplate": "/api/Reporte{everything}",
@@ -608,7 +577,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/Usuario/{everything}",
@@ -624,7 +593,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/UsuarioRol/Get/{id}",
@@ -640,7 +609,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/UsuarioPermiso/{everything}",
@@ -656,7 +625,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/UsuarioPermiso",
@@ -672,7 +641,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/UsuarioPermiso/CheckHasPermission/{everything}",
@@ -732,7 +701,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/Solicitud/{everything}",
@@ -748,7 +717,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/Solicitud/Check/{everything}",
@@ -764,7 +733,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/Sistema/{everything}",
@@ -780,7 +749,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7079
+          "Port": 7089
         }
       ],
       "DownstreamPathTemplate": "/api/Cliente{everything}",
@@ -796,7 +765,23 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7089
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v2/Cliente{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "UpstreamPathTemplate": "/app-mobile/Cliente{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/Cliente/GetDataForm/{json}",
@@ -812,7 +797,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7025
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api/Ats{everything}",
@@ -828,7 +813,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/Entidad/{everything}",
@@ -844,7 +829,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/EntidadConfigSri/{everything}",
@@ -860,7 +845,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/SubMenu/{everything}",
@@ -892,7 +877,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/WhatsAppSession{everything}",
@@ -908,15 +893,15 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 12786
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/DatoAdicionalArticulo{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/DatoAdicionalArticulo{everything}"
     },
-     
+
     {
       "AuthenticationOptions": {
         "AllowedScopes": [],
@@ -925,7 +910,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/WhatsappMessage{everything}",
@@ -948,7 +933,7 @@
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
       "UpstreamPathTemplate": "/gateway/PrecioMasivo{everything}"
-    },     
+    },
     {
       "AuthenticationOptions": {
         "AllowedScopes": [],
@@ -957,7 +942,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7097
+          "Port": 7146
         }
       ],
       "DownstreamPathTemplate": "/api/Dashboard{everything}",
@@ -973,7 +958,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7273
+          "Port": 7132
         }
       ],
       "DownstreamPathTemplate": "/api/CuentaPorCobrar{everything}",
@@ -990,7 +975,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7273
+          "Port": 7132
         }
       ],
       "DownstreamPathTemplate": "/api/ComprobanteIngreso{everything}",
@@ -1007,7 +992,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7079
+          "Port": 7089
         }
       ],
       "DownstreamPathTemplate": "/api/CatalogoVenta{everything}",
@@ -1023,7 +1008,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/WhatsappUsage{everything}",
@@ -1055,7 +1040,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/TipoEntidad{everything}",
@@ -1071,7 +1056,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/TiempoCredito{everything}",
@@ -1119,7 +1104,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/Impresora{everything}",
@@ -1150,28 +1135,6 @@
     },
     {
       "AuthenticationOptions": {
-        "AllowedScopes": [
-        ],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "205.209.99.71",
-          "Port": 8003
-        }
-      ],
-      "DownstreamPathTemplate": "/api/v3/Articulo{everything}",
-      "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "Get",
-        "Post",
-        "Put",
-        "Delete"
-      ],
-      "UpstreamPathTemplate": "/gateway/v3/Articulo{everything}"
-    },
-    {
-      "AuthenticationOptions": {
         "AllowedScopes": [],
         "AuthenticationProviderKey": "Bearer"
       },
@@ -1199,7 +1162,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api/EstabAsig{everything}",
@@ -1241,7 +1204,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7074
+          "Port": 7295
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",
@@ -1262,7 +1225,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 44395
+          "Port": 7120
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",
@@ -1284,7 +1247,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7273
+          "Port": 7132
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",
@@ -1292,6 +1255,7 @@
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "UpstreamPathTemplate": "/gateway/Contabilidad{everything}"
     },
+
     {
       "AuthenticationOptions": {
         "AllowedScopes": [],
@@ -1300,13 +1264,41 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 7079
+          "Port": 7089
         }
       ],
       "DownstreamPathTemplate": "/api{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "UpstreamPathTemplate": "/gateway/Venta{everything}"
+    },
+    {
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7221
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v3/Account{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Post"
+      ],
+      "UpstreamPathTemplate": "/restaurant/Account{everything}"
+    },
+    {
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7221
+        }
+      ],
+      "DownstreamPathTemplate": "/api/v2/Account{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "Post"
+      ],
+      "UpstreamPathTemplate": "/app-mobile/Account{everything}"
     },
     {
       "AuthenticationOptions": {
@@ -1323,6 +1315,70 @@
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
       "UpstreamPathTemplate": "/gateway/Restaurant{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7023
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "UpstreamPathTemplate": "/gateway/Mechanical{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7194
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "UpstreamPathTemplate": "/gateway/TechnicalSupport{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7120
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "UpstreamPathTemplate": "/gateway/FactElect{everything}"
+    },
+    {
+      "AuthenticationOptions": {
+        "AllowedScopes": [],
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7001
+        }
+      ],
+      "DownstreamPathTemplate": "/api{everything}",
+      "DownstreamScheme": "https", 
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete", "Options" ],
+      "UpstreamPathTemplate": "/gateway/Compra{everything}"
     }
   ]
 }

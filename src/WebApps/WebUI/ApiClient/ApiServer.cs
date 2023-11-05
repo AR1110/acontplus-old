@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Primitives;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
+using Microsoft.Extensions.Primitives;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace WebUI.ApiClient
 {

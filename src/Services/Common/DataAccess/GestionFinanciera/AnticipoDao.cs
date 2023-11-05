@@ -1,8 +1,9 @@
-﻿using Domain.Models.GestionFinanciera;
-using Helpers;
+﻿using System.Data;
+using Common.Core.Models;
+using Common.Core.Utils;
+using Domain.Models.GestionFinanciera;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace DataAccess.GestionFinanciera
 {
@@ -15,7 +16,7 @@ namespace DataAccess.GestionFinanciera
         public AnticipoDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _gr = new GenericResponse();
         }
 
@@ -36,7 +37,7 @@ namespace DataAccess.GestionFinanciera
                     if (dt.Rows.Count > 0)
                     {
                         _gr.id = "1";
-                        _gr.data = DataHelper.DataTableToJSON(dt);
+                        _gr.data = DataConverters.DataTableToJSON(dt);
                     }
                 }
             }
@@ -64,7 +65,7 @@ namespace DataAccess.GestionFinanciera
                     cmd.Parameters.AddWithValue("codEstab", data.codEstab);
                     cmd.Parameters.AddWithValue("idSubEntidadFinanciera", data.idSubEntidadFinanciera);
                     cmd.Parameters.AddWithValue("valor", data.valor);
-                    cmd.Parameters.AddWithValue("observaciones", DataHelper.ToDBNullOrDefault(data.observaciones));
+                    cmd.Parameters.AddWithValue("observaciones", DataValidation.ToDBNullOrDefault(data.observaciones));
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
                     SqlDataReader reader = cmd.ExecuteReader();

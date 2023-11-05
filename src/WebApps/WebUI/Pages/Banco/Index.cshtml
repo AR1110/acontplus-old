@@ -1,0 +1,108 @@
+﻿@page
+@model WebUI.Pages.Banco.IndexModel
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Banco";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div ng-controller="bancoCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h4 class="text-themecolor">Gestión de Bancos</h4>
+        </div>
+        <div class="col-md-7 align-self-center text-right">
+            <div class="d-flex justify-content-end align-items-center">
+                 
+                <button type="button" ng-click="openModalNew()" ng-if="accion.crear" class="btn btn-info d-lg-block m-l-15">
+                    <i class="fa fa-plus-circle"></i> Nuevo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Op</th>
+                                    <th>N°</th>
+                                    <th>Código</th>
+                                    <th>Descripción</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="banco in bancos">
+                                    <td ng-if="accion.editar || accion.eliminar">
+                                        <div class="justify-content-center">
+                                            <button class="btn btn-info btn-sm" ng-if="accion.editar" ng-click="openModalUpdate(banco)">
+                                                <i class="mdi mdi-pencil"></i>
+                                            </button>
+                                            <button class="btn btn-danger btn-sm" ng-if="accion.eliminar" ng-click="askToDelete(banco)">
+                                                <i class="mdi mdi-delete"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td>{{$index+1}}</td>                                    
+                                    <td>{{banco.codigo}}</td>
+                                    <td>{{banco.descripcion}}</td>
+                                    <td ng-bind-html="banco.estado | estadoPrimario"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div> 
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="agregar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" role="document">
+
+            <form ng-submit="saveUpdate(type)" autocomplete="off" novalidate>
+                <div class="modal-content">
+                    <div class="modal-header {{colorHeader}}">
+                        <h5 class="modal-title text-white"><i class="{{iconoModal}}"></i>{{tituloModal}}</h5>
+                        <button class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <md-input-container class="md-block">
+                            <label for="Descripcion">Descripción <span class="text-danger">*</span></label>
+                            <input type="text" ng-model="data.descripcion" ng-keyup="obtenerTresLetras(data)" placeholder="Ej: Guayaquil">
+                        </md-input-container>
+                        <md-input-container class="md-block">
+                            <label for="codigo">Código <span class="text-danger">*</span></label>
+                            <input type="text" ng-model="data.codigo" valid-letra touppercase ng-disabled="data.descripcion==undefined || data.tipoOperacion==2" placeholder="Ej: G">
+                        </md-input-container>
+
+
+                        <div ng-if="type==2">
+                            <label for="">Estado: </label>
+                            <md-radio-group ng-model="data.estado" aria-labelledby="estado">
+                                <md-radio-button ng-value="true" class="md-primary">Activo</md-radio-button>
+                                <md-radio-button ng-value="false">Inactivo</md-radio-button>
+                            </md-radio-group>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn {{colorHeader}} text-white"><i class="{{icono}}"></i> {{btnModal}}</button>
+                        <button type="button" class="btn btn-dark" data-dismiss="modal">&times; Cerrar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/contabilidad/services/bancoService.js" asp-append-version="true"></script>
+    <script src="~/js/contabilidad/controllers/bancoCtrl.min.js" asp-append-version="true"></script>
+}
+

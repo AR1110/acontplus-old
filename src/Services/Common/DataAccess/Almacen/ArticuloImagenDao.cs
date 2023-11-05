@@ -1,9 +1,9 @@
-﻿using Domain.Models.Almacen;
-using Helpers;
+﻿using System.Data;
+using Common.Core.Models;
+using Domain.Models.Almacen;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace DataAccess.Almacen
 {
@@ -16,7 +16,7 @@ namespace DataAccess.Almacen
         public ArticuloImagenDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _gr = new GenericResponse();
         }
         public async Task<GenericResponse> UploadImagen(int idRol, List<ArticuloImagen> list, int idArticulo)

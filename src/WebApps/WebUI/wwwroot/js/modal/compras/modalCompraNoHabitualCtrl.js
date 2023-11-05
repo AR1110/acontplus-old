@@ -198,22 +198,22 @@ class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
 
 
 
-            let textAccion = this.data.idDocumentoIngreso > 0 ? 'Actualizar' : 'Guardar';           
+            let textAccion = this.data.idDocumentoIngreso > 0 ? 'Actualizar' : 'Guardar';
             let serieComprobante = this.data.ptoEmi + '-' + this.data.secuencial;
 
             //Validaciones
             if (!this.isValidaForm()) return;
 
             //Generar el Numero de Secuencial
-            if (!this.data.idDocumentoIngreso) {              
-                showLoader();                
-                serieComprobante = await this.compraNoHabSvc.generateNroSecuencial(this.data.idPuntoEmision);               
+            if (!this.data.idDocumentoIngreso) {
+                showLoader();
+                serieComprobante = await this.compraNoHabSvc.generateNroSecuencial(this.data.idPuntoEmision);
                 hideLoader();
                 if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"
             }
 
 
-            let {isConfirmed} = await Swal.fire({
+            let { isConfirmed } = await Swal.fire({
                 title: `<small>${textAccion} Documento no Habitual</small>`,
                 html: `<small>Esta Ud. seguro de ${textAccion} este Documento <b> Nro. ${serieComprobante}</b></small>?`,
                 icon: 'warning',
@@ -226,16 +226,16 @@ class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
 
 
             if (isConfirmed) {
-                                
-                showLoader();                    
-                let idEstablecimiento, estab, ptoEmi, query;                
-                
+
+                showLoader();
+                let idEstablecimiento, estab, ptoEmi, query;
+
                 this.data.tarifa = this.actividadTipoIva.tarifa;
 
                 idEstablecimiento = this.establecimientos.find(item => item.codEstab === this.data.codEstab).idEstablecimiento;
 
                 estab = this.establecimientos.find(item => item.codEstab === this.data.codEstab).estab;
-                
+
                 ptoEmi = this.puntosEmision.find(item => item.idPuntoEmision === this.data.idPuntoEmision)
 
                 query = this.compraNoHabSvc.queryMapper({
@@ -244,26 +244,26 @@ class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
                     proveedor: this.proveedor,
                     idEstablecimiento,
                     estab,
-                    ptoEmi: ptoEmi?ptoEmi.puntoEmi: null,
+                    ptoEmi: ptoEmi ? ptoEmi.puntoEmi : null,
                     datosAdicionalesArticulo: this.datosAdicionalesArticulo
                 })
 
                 //Actualizar
-                if(this.data.idDocumentoIngreso>0) {
+                if (this.data.idDocumentoIngreso > 0) {
                     this.compraNoHabSvc.update(this.data.idDocumentoIngreso, query).then(this.successReponse)
-                    .catch(error=>{
-                        hideLoader();
-                        console.log(error);
-                    })
-                }else{                                                
+                        .catch(error => {
+                            hideLoader();
+                            console.log(error);
+                        })
+                } else {
                     this.compraNoHabSvc.create(query).then(this.successReponse)
-                    .catch(error=>{
-                        hideLoader();
-                        console.log(error);
-                    })
+                        .catch(error => {
+                            hideLoader();
+                            console.log(error);
+                        })
                 }
             }
-            
+
 
         } catch (error) {
             hideLoader()
@@ -272,7 +272,7 @@ class ModalCompraNoHabitualCtrl extends window.modalCompraBaseCtrl {
     }
 
 
-    successReponse =(response)=>{       
+    successReponse = (response) => {
         if (response.code == '0') {
             hideLoader();
             this._fS.sweetAlert('warning', response.message, response.titleSms);
@@ -359,91 +359,82 @@ export class ModalAddCtrl extends ModalCompraNoHabitualCtrl {
             let {
                 UiGridOptionsCompra
             } = await import('./../factElect/uiGridOptions.min.js' + CHANGE_VERSION());
-            this._mS.getData('get', 'CompraNoHabitual/' + JSON.stringify({
+
+            this.compraNoHabSvc.get({
                 typeList: 2
-            }), null, true).then(response => {
-                if (response.code == "0") {
-                    hideLoader();
-                    console.log(response)
+            }).then(response => {
+                let {
+                    estabs,
+                    puntosEmision,
+                    bodegas,
+                    decimal,
+                    tarifasImpuesto,
+                    tarifasImpuestoVigente,
+                    config,
+                } = response;
+                this.establecimientos = estabs;
+                this.data.codEstab = this.establecimientos.find(item => (item.predeterminado)).codEstab;
+
+                this.puntosEmisionTemporal = puntosEmision;
+                this.bodegasTemporal = bodegas;
+                this.actividadTipoIvaTemporal = tarifasImpuestoVigente;
+
+                this.decimal = decimal;
+                this.tipoIvas = tarifasImpuesto;
+                this.data.inventory = config.inventory;
+
+                this.puntosEmision = this.puntosEmisionTemporal.filter(item => item.codEstab === this.data.codEstab)
+                this.data.idPuntoEmision = this.puntosEmision.find(item => (item.predeterminado)).idPuntoEmision;
+
+
+                this.bodegas = this.bodegasTemporal.filter(item => item.codEstab === this.data.codEstab);
+                this.idBodega = this.bodegas.find(item => (item.predeterminado)).idBodega;
+
+                //Actividad Tipo iVA 
+                this.actividadTipoIva = this.actividadTipoIvaTemporal.find(item => item.codEstab === this.data.codEstab)
+
+                this.setColumnDefs();
+
+                //Eliminar Mas Adelante 
+
+                this.gridOptions.columnDefs[7] = {
+                    name: 'I.V.A',
+                    field: 'codigoPorcentaje',
+                    width: '8%',
+                    minWidth: '100',
+                    type: 'text',
+                    editableCellTemplate: 'ui-grid/dropdownEditor',
+                    cellFilter: 'cellFilterTipoIva:this',
+                    editDropdownValueLabel: 'descripcion',
+                    editDropdownIdLabel: 'codigoPorcentaje',
+                    enableCellEdit: true,
+                    enableCellEditOnFocus: true,
+                    //    visible: config.porcentajeIva
                 }
 
-                if (response.code === "1") {
+                let indexTipoIva = this.gridOptions.columnDefs.findIndex(item => item.field === 'codigoPorcentaje');
+                this.gridOptions.columnDefs[indexTipoIva].editDropdownOptionsArray = this.tipoIvas;
 
-                    let mainData = JSON.parse(response.payload);
-
-                    this.establecimientos = mainData[0];
-                    this.data.codEstab = this.establecimientos.find(item => (item.predeterminado)).codEstab;
-
+                let indexBodega = this.gridOptions.columnDefs.findIndex(item => item.field === 'idBodega');
+                this.gridOptions.columnDefs[indexBodega].editDropdownOptionsArray = this.bodegas;
 
 
-                    this.puntosEmisionTemporal = mainData[1];
-                    this.bodegasTemporal = mainData[2];
-                    this.actividadTipoIvaTemporal = mainData[5]
-
-                    this.decimal = mainData[3][0];
-                    this.tipoIvas = mainData[4];
-                    this.data.inventory = mainData[6][0].inventory;
-
-
-                    this.puntosEmision = this.puntosEmisionTemporal.filter(item => item.codEstab === this.data.codEstab)
-                    this.data.idPuntoEmision = this.puntosEmision.find(item => (item.predeterminado)).idPuntoEmision;
-
-
-                    this.bodegas = this.bodegasTemporal.filter(item => item.codEstab === this.data.codEstab);
-                    this.idBodega = this.bodegas.find(item => (item.predeterminado)).idBodega;
-
-                    //Actividad Tipo iVA 
-                    this.actividadTipoIva = this.actividadTipoIvaTemporal.find(item => item.codEstab === this.data.codEstab)
-
-
-
-                    this.setColumnDefs();
-
-                    //Eliminar Mas Adelante 
-
-                    this.gridOptions.columnDefs[7] = {
-                        name: 'I.V.A',
-                        field: 'codigoPorcentaje',
-                        width: '8%',
-                        minWidth: '100',
-                        type: 'text',
-                        editableCellTemplate: 'ui-grid/dropdownEditor',
-                        cellFilter: 'cellFilterTipoIva:this',
-                        editDropdownValueLabel: 'descripcion',
-                        editDropdownIdLabel: 'codigoPorcentaje',
-                        enableCellEdit: true,
-                        enableCellEditOnFocus: true,
-                        //    visible: config.porcentajeIva
-                    }
-
-                    let indexTipoIva = this.gridOptions.columnDefs.findIndex(item => item.field === 'codigoPorcentaje');
-                    this.gridOptions.columnDefs[indexTipoIva].editDropdownOptionsArray = this.tipoIvas;
-
-                    let indexBodega = this.gridOptions.columnDefs.findIndex(item => item.field === 'idBodega');
-                    this.gridOptions.columnDefs[indexBodega].editDropdownOptionsArray = this.bodegas;
-
-
-                    this.uiGridInvoice = new UiGridOptionsCompra({
-                        $scope: this.$scope,
-                        gridOptions: this.gridOptions,
-                        _fS: this._fS,
-                        _tS: this._tS,
-                        tipoIvas: this.tipoIvas,
-                        decimal: this.decimal,
-                        actividadTipoIva: this.actividadTipoIva
-                    })
-
-                    hideLoader();
-
-                }
-            })
+                this.uiGridInvoice = new UiGridOptionsCompra({
+                    $scope: this.$scope,
+                    gridOptions: this.gridOptions,
+                    _fS: this._fS,
+                    _tS: this._tS,
+                    tipoIvas: this.tipoIvas,
+                    decimal: this.decimal,
+                    actividadTipoIva: this.actividadTipoIva
+                })
+            }).finally(() => hideLoader());
 
             this.$scope.$apply();
 
         } catch (error) {
+            hideLoader();
             console.log(error)
-        } finally {
-            hideLoader()
         }
     }
 
@@ -456,7 +447,7 @@ export class ModalAddCtrl extends ModalCompraNoHabitualCtrl {
 
 export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
 
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'articuloService', 'compraNoHabitualService',  'modalService', 'nombreModal', 'toastService', 'formulario', 'params']
+    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'articuloService', 'compraNoHabitualService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params']
 
     constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, articuloSvc, compraNoHabSvc, _modalSvc, _nombreModalConst, _tS, _fS, params) {
         super({
@@ -477,7 +468,7 @@ export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
 
         this.searchProveedorOptions = {};
         this.proveedor = this.params.proveedor;
-        this.datosAdicionalesArticulo = this.params.datosAdicionales || [];        
+        this.datosAdicionalesArticulo = this.params.datosAdicionales || [];
 
         this.puntosEmision = [];
         this.searchProveedorOptions.showBtnNew = true;
@@ -529,11 +520,11 @@ export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
             let index = 1;
             this.gridOptions.data = this.params.detalles;
             for (let item of this.gridOptions.data) {
-                item.n = index++;     
-                                      
+                item.n = index++;
+
                 this.articuloSvc.findForPurchase({
                     idArticulo: item.idArticulo
-                }).then(response => {                  
+                }).then(response => {
                     item.medidas = response.medidas
                     item.etiquetas = response.etiquetas;
                 })
@@ -604,10 +595,6 @@ export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
         }
     }
 
-
-
-
-
 }
 
 
@@ -615,9 +602,21 @@ export class ModalUpdateCtrl extends ModalCompraNoHabitualCtrl {
 
 export class ModalDetalleCtrl extends ModalCompraNoHabitualCtrl {
 
-    static $inject = ['$scope', '$timeout', '$uibModalInstance', 'mainService', 'commonService', 'modalService', 'nombreModal', 'toastService', 'formulario', 'params']
+    static $inject = [
+        '$scope',
+        '$timeout',
+        '$uibModalInstance',
+        'mainService',
+        'commonService',
+        'articuloService',
+        'modalService',
+        'nombreModal',
+        'toastService',
+        'formulario',
+        'params'
+    ]
 
-    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, _modalSvc, _nombreModalConst, _tS, _fS, params) {
+    constructor($scope, $timeout, $uibModalInstance, _mS, _commonSvc, articuloSvc, _modalSvc, _nombreModalConst, _tS, _fS, params) {
         super({
             $scope,
             $timeout,
@@ -631,6 +630,7 @@ export class ModalDetalleCtrl extends ModalCompraNoHabitualCtrl {
         });
 
         this.params = params;
+        this.articuloSvc = articuloSvc;
 
         this.searchProveedorOptions = {}
         this.searchProveedorOptions.showBtnNew = true;
@@ -685,12 +685,11 @@ export class ModalDetalleCtrl extends ModalCompraNoHabitualCtrl {
                     idArticulo: item.idArticulo
                 }
 
-                this._commonSvc.getDataArticuloParaCompra({
+                this.articuloSvc.findForPurchase({
                     json: data
-                }).then(response => {
-                    const results = JSON.parse(response.payload);
-                    item.medidas = results[1]
-                    item.etiquetas = results[2]
+                }).then(response => {                    
+                    item.medidas = response.medidas;
+                    item.etiquetas = response.etiquetas;
                 })
 
                 //Por Anlizar 
@@ -764,21 +763,24 @@ export class ModalDetalleCtrl extends ModalCompraNoHabitualCtrl {
         try {
 
             let format = 'excel';
-            let dataParms = {
-                id: this.data.idDocumentoIngreso,
-                codEstab: this.data.codEstab,
-                codigo: 'RCD',
-                codDoc: 'CNH',
-                format,
-            }
 
             const parameters = {
-                dataParams: JSON.stringify(dataParms)
+                dataParams: JSON.stringify({
+                    id: this.data.idDocumentoIngreso,
+                    codDoc: 'CNH',
+                }),
+                reportParams: JSON.stringify({
+                    codigo: 'RCD',
+                    codEstab: this.data.codEstab,
+                    format,
+
+                }),
+                hasService: true,
             }
 
-            this._commonSvc.getReportDynamic({
+            this._commonSvc.getReport({
                 parameters,
-                format
+                formatType: format
             })
         } catch (error) {
             console.log(error)

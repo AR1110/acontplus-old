@@ -134,8 +134,7 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
                     $scope.phoneNumbers.push({ number: phone })
                     $scope.whatsapp.number = phone
                     $scope.$apply()
-                } else {
-                }
+                }  
             })
         }
     }
@@ -253,7 +252,10 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
     }
 
     $scope.generateXml = () => {
-        mS.getFile('get', 'DocumentoElectronico/GetXmlSri/' + params.idDocumentoElectronico, null, true).then(response => {
+        if (!params.idDocumentoElectronico) {
+            return;
+        }
+        mS.getFile('get', 'FactElect/DocumentoElectronico/GetXmlSri/' + params.idDocumentoElectronico, null, true).then(response => {
             let fileName = response.headers()['content-disposition'].split(';')[1].split('=')[1].replace('"', "")
             fileName = fileName.replace('"', "")
             const file = new File([response.data], fileName, { type: response.headers()["content-type"], })
@@ -269,13 +271,10 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
         '04': 'RNCC',
         '06': 'RGR',
         '07': 'RRC',
-        '08': 'RNE',
+        'NE': 'RNE',
         '09': 'PR',
         'CI': 'RCINGR'
     })
-
-    const reportHasService = () => ['08', '09', 'CI'].includes($scope.codDoc);
-    const getTypeReport = () => ['08', '09', 'CI'].includes($scope.codDoc) ? "Reporte/Download" : "Reporte/DynamicReport"
 
     $scope.generateFile = () => {
         let format = 'pdf'
@@ -285,16 +284,15 @@ function ModalWhatsAppCtrl($scope, $http, uibModal, tS, mS, params, _token) {
             codEstab: params.codEstab,
             codigo: REPORT_CODES[params.codDoc],
             format,
+            versionComp: params.versionComp
         }
 
         let parameters = {
-            hasService: reportHasService(),
-            sendToWhatsapp: true,
+            hasService: true,
             dataParams: JSON.stringify(dataParms),
             reportParams: JSON.stringify(dataParms)
         }
-        let url = getTypeReport();
-        mS.getFile('post', url, JSON.stringify(parameters), true).then(response => {
+        mS.getFile('post', "Reporte/Download", JSON.stringify(parameters), true).then(response => {
             let fileName = response
                 .headers()["content-disposition"].split(";")[1]
                 .split("=")[1];

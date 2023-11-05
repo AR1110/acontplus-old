@@ -1,9 +1,9 @@
-﻿using Domain.Models;
-using Helpers;
-using Microsoft.Extensions.Configuration;
-using System.Data;
-using System.Data.SqlClient;
+﻿using System.Data;
 using System.Text;
+using Common.Core.Models;
+using Common.Core.Utils;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace DataAccess.FE
 {
@@ -15,7 +15,7 @@ namespace DataAccess.FE
         public DocumentoLoteDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
         }
         public async Task<GenericResponse> GetAsync(int idRol, string json)
         {
@@ -34,7 +34,7 @@ namespace DataAccess.FE
                     if (dt.Rows.Count > 0)
                     {
                         _response.id = "1";
-                        _response.data = DataHelper.DataTableToJSON(dt);
+                        _response.data = DataConverters.DataTableToJSON(dt);
                     }
                 }
             }
@@ -62,10 +62,10 @@ namespace DataAccess.FE
                     await con.OpenAsync();
                     SqlDataAdapter adapter = new SqlDataAdapter(cmd);
                     adapter.Fill(ds);
-                    _response = DbResponse.SPDataTable(ds.Tables[0]);
+                    _response = DataTableMapper.BindData<GenericResponse>(ds.Tables[0]);
                     if (_response.id == "1")
                     {
-                        _response.data = DataHelper.DataTableToJSON(ds.Tables[1]);
+                        _response.data = DataConverters.DataTableToJSON(ds.Tables[1]);
                     }
                 }
             }
@@ -150,7 +150,7 @@ namespace DataAccess.FE
                     await con.OpenAsync();
                     SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
                     dataAdapter.Fill(dt);
-                    _response = DbResponse.SPDefault(dt);
+                    _response = null;
                 }
             }
             catch (Exception ex)

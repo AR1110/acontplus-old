@@ -1,12 +1,12 @@
-﻿using Domain.Models.CuotaDocumento;
+﻿using System.Data;
+using Common.Core.Models;
+using Domain.Models.CuotaDocumento;
 using Domain.ViewModels.CuotaDocumento;
-using Helpers;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System.Data;
-using System.Data.SqlClient;
 
-namespace DataAccess.CuotasXCobrar
+namespace DataAccess.CuotaDocumento
 {
     public class CuotaXCobrarDao
     {
@@ -17,7 +17,7 @@ namespace DataAccess.CuotasXCobrar
         public CuotaXCobrarDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _gr = new GenericResponse();
         }
 
@@ -25,7 +25,7 @@ namespace DataAccess.CuotasXCobrar
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("ASPCuotaxCobrarInsert", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
@@ -36,7 +36,7 @@ namespace DataAccess.CuotasXCobrar
                     cmd.Parameters.AddWithValue("total", data.total); // total de la factura
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);
@@ -62,7 +62,7 @@ namespace DataAccess.CuotasXCobrar
             var cuotas = new List<CuotaXCobrarViewModel>();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("ASPCuotaXCobrarByDocument", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
@@ -70,7 +70,7 @@ namespace DataAccess.CuotasXCobrar
                     cmd.Parameters.AddWithValue("idTipoDocumento", idTipoDocumento);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);
@@ -122,7 +122,7 @@ namespace DataAccess.CuotasXCobrar
         {
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("ASPCuotaxCobrarUpdate", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
@@ -131,7 +131,7 @@ namespace DataAccess.CuotasXCobrar
                     var cuotas = JsonConvert.SerializeObject(data); cmd.Parameters.Add(new SqlParameter("jsonCuotas", cuotas));
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);
@@ -161,7 +161,7 @@ namespace DataAccess.CuotasXCobrar
             var cuotas = new List<CuotaXCobrarViewModel>();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("ASPCuotaXCobrarByCobro", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
@@ -169,7 +169,7 @@ namespace DataAccess.CuotasXCobrar
                     cmd.Parameters.AddWithValue("idTipoDocumento", idTipoDocumento);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);

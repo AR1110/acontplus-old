@@ -1,9 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,8 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Helpers\Helpers.csproj" />
-    <ProjectReference Include="..\..\Common\Lib.Common\Lib.Common.csproj" />
     <ProjectReference Include="..\FactElect.Core\FactElect.Core.csproj" />
   </ItemGroup>
 

@@ -17,7 +17,7 @@ namespace Vet.Infrastructure.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.8")
+                .HasAnnotation("ProductVersion", "7.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -49,8 +49,10 @@ namespace Vet.Infrastructure.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(500)");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -61,7 +63,14 @@ namespace Vet.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("UI_Behavior");
 
                     b.ToTable("Behavior", "Pet");
                 });
@@ -93,8 +102,10 @@ namespace Vet.Infrastructure.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -108,7 +119,14 @@ namespace Vet.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("UI_BehaviorStatus");
 
                     b.ToTable("BehaviorStatus", "Pet");
                 });
@@ -135,14 +153,19 @@ namespace Vet.Infrastructure.Data.Migrations
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<int>("MedicalHistoryId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -182,8 +205,10 @@ namespace Vet.Infrastructure.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(500)");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -197,7 +222,14 @@ namespace Vet.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("UI_Breed");
 
                     b.HasIndex("PetTypeId");
 
@@ -234,8 +266,10 @@ namespace Vet.Infrastructure.Data.Migrations
                     b.Property<int?>("DiseaseTypeId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -246,7 +280,14 @@ namespace Vet.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("UI_Disease");
 
                     b.HasIndex("DiseaseTypeId");
 
@@ -280,8 +321,10 @@ namespace Vet.Infrastructure.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -295,7 +338,14 @@ namespace Vet.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("UI_DiseaseStatus");
 
                     b.ToTable("DiseaseStatus", "Pet");
                 });
@@ -327,8 +377,10 @@ namespace Vet.Infrastructure.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(500)");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -339,7 +391,14 @@ namespace Vet.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("UI_DiseaseType");
 
                     b.ToTable("DiseaseType", "Pet");
                 });
@@ -371,8 +430,10 @@ namespace Vet.Infrastructure.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(300)");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -383,7 +444,14 @@ namespace Vet.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("UI_Gender");
 
                     b.ToTable("Gender", "Pet");
                 });
@@ -410,14 +478,19 @@ namespace Vet.Infrastructure.Data.Migrations
                     b.Property<int>("DiseaseStatusId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<int>("MedicalHistoryId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -438,6 +511,9 @@ namespace Vet.Infrastructure.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<decimal?>("Age")
+                        .HasColumnType("numeric(4,2), null");
+
                     b.Property<string>("CodEstab")
                         .HasMaxLength(15)
                         .IsUnicode(false)
@@ -454,8 +530,10 @@ namespace Vet.Infrastructure.Data.Migrations
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Observations")
                         .HasMaxLength(300)
@@ -470,6 +548,9 @@ namespace Vet.Infrastructure.Data.Migrations
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
+
+                    b.Property<decimal?>("Weight")
+                        .HasColumnType("numeric(4,2), null");
 
                     b.HasKey("Id");
 
@@ -486,8 +567,8 @@ namespace Vet.Infrastructure.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("Age")
-                        .HasColumnType("numeric(4,2), not null");
+                    b.Property<decimal?>("Age")
+                        .HasColumnType("numeric(4,2), null");
 
                     b.Property<DateTime?>("Birthdate")
                         .HasColumnType("datetime2");
@@ -515,8 +596,10 @@ namespace Vet.Infrastructure.Data.Migrations
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<int?>("GenderId")
                         .HasColumnType("int");
@@ -577,8 +660,10 @@ namespace Vet.Infrastructure.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(300)");
 
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("bit");
+                    b.Property<bool?>("Enabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -589,7 +674,14 @@ namespace Vet.Infrastructure.Data.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("UI_PetType");
 
                     b.ToTable("PetType", "Pet");
                 });

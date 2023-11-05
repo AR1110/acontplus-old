@@ -1,6 +1,7 @@
+﻿using Common.Core.Models;
+using Common.Core.Utils;
 using DataAccess;
 using Domain.Models.Inventario;
-using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -11,9 +12,11 @@ namespace Inventario.API.Controllers
     public class TransferenciaBodegaController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        public TransferenciaBodegaController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public TransferenciaBodegaController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
         }
 
 
@@ -26,13 +29,13 @@ namespace Inventario.API.Controllers
             {
                 await _db.SPExecute("Inventario.TransferenciaBodega_Get");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Get Search: \n" + ex.ToString());
+
+                _log.LogActivity("Error on Get Search: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener las trans. a bodegas");
             }
             finally
@@ -45,7 +48,7 @@ namespace Inventario.API.Controllers
         public async Task<IActionResult> GetId(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -55,7 +58,7 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in GetId: \n" + ex.ToString());
+                _log.LogActivity("Error in GetId: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally
@@ -73,14 +76,14 @@ namespace Inventario.API.Controllers
             {
                 await _db.SPExecute("Inventario.TransferenciaBodega_Insert", true);
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("jsonHeader", SqlValidation.ValidateSqlString(data.header));
-                _db.AddDynamicParam("jsonDetalle", SqlValidation.ValidateSqlString(data.detail));
+                _db.AddDynamicParam("jsonHeader", SqlStringParam.Sanitize(data.header));
+                _db.AddDynamicParam("jsonDetalle", SqlStringParam.Sanitize(data.detail));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Insert: \n" + ex.ToString());
+
+                _log.LogActivity("Error on Insert: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al insertar Trans. Bodega");
             }
             finally
@@ -99,14 +102,14 @@ namespace Inventario.API.Controllers
             {
                 await _db.SPExecute("Inventario.TransferenciaBodega_Update", true);
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("jsonHeader", SqlValidation.ValidateSqlString(data.header));
-                _db.AddDynamicParam("jsonDetalle", SqlValidation.ValidateSqlString(data.detail));
+                _db.AddDynamicParam("jsonHeader", SqlStringParam.Sanitize(data.header));
+                _db.AddDynamicParam("jsonDetalle", SqlStringParam.Sanitize(data.detail));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Update: \n" + ex.ToString());
+
+                _log.LogActivity("Error on Update: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al actualizar Trans. Bodega");
             }
             finally
@@ -130,8 +133,8 @@ namespace Inventario.API.Controllers
             }
             catch (Exception ex)
             {
-                LogWriter _log = new LogWriter(_configuration);
-                _log.LogError("Error on Delete: \n" + ex.ToString());
+
+                _log.LogActivity("Error on Delete: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al eliminar Trans. Bodega");
             }
             finally

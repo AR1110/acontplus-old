@@ -1,9 +1,10 @@
-﻿using Contabilidad.Core.Entities;
+﻿using System.Data;
+using Common.Core.Interfaces;
+using Common.Core.Models;
+using Common.Core.Utils;
+using Contabilidad.Core.Entities;
 using Contabilidad.Core.Interfaces;
 using Contabilidad.Infrastructure.Data;
-using Lib.Common;
-using Lib.Common.Api;
-using System.Data;
 
 namespace Contabilidad.Application.Servicios
 {
@@ -32,7 +33,7 @@ namespace Contabilidad.Application.Servicios
             }
             else
             {
-                return Converters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJSON(ds);
             }
         }
 

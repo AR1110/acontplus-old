@@ -1,5 +1,6 @@
-using Lib.Common;
-using Lib.Common.Api;
+ï»¿using Common.Core.Interfaces;
+using Common.Core.Models;
+using Common.Core.Utils;
 using Microsoft.EntityFrameworkCore;
 using Vet.Core.Entities;
 using Vet.Core.Interfaces;
@@ -23,11 +24,11 @@ namespace Vet.Application.Services
             var dt = await _repository.GetDataTableAsync("Pet.Pet_Get", parameters);
             if (DataValidation.DataTableIsNull(dt))
             {
-                _response.Create(code: "0", "La transacción no devolvio respuesta");
+                _response.Create(code: "0", "La transacciÃ³n no devolvio respuesta");
             }
             else
             {
-                _response.Create(code: "1", payload: Converters.DataTableToJSON(dt));
+                _response.Create(code: "1", payload: DataConverters.DataTableToJSON(dt));
             }
             return _response;
         }
@@ -59,11 +60,11 @@ namespace Vet.Application.Services
             var dt = await _repository.GetDataTableAsync("Pet.Pet_Get", parameters);
             if (DataValidation.DataTableIsNull(dt))
             {
-                _response.Create(code: "0", "La transacción no devolvio respuesta");
+                _response.Create(code: "0", "La transacciÃ³n no devolvio respuesta");
             }
             else
             {
-                _response.Create(code: "1", payload: Converters.DataTableToJSON(dt));
+                _response.Create(code: "1", payload: DataConverters.DataTableToJSON(dt));
             }
             return _response;
         }

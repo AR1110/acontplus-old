@@ -1,18 +1,57 @@
-import { ProductReadDto, RawProductData } from "../models";
+import { Measure, ProductSaleReadDto, ProductSearchDto, RawMeasure, RawProductPVPData, RawProductSaleData, RawProductSearchData } from "../models";
 
-function productReadAdapter(products: RawProductData[]): Array<ProductReadDto> {
-    console.log(products)
-    return products.map((product) => ({
-            productId: product.idArticulo,
-            description: product.descripcion,            
-            unitPrice: product.precioCosto,
+function productSaleReadAdapter(product: RawProductSaleData): ProductSaleReadDto { 
+    return ({
+        productId: product.idArticulo,
+        measureId: product.idMedida,
+        vatRatId: product.idTipoIva,
+        taxRateCode: product.codigoPorcentaje,
+        description: product.descripcion,
+        carryInventory: product.llevaInventario,
+        costPrice: product.precioCosto,
+        priceWithoutSubsidy: product.precioSinSubsidio,
+        productCode: product.codigoArticulo,
+        stock: product.stock,
+        s3ObjectKey: product.s3ObjectKey,
+        s3ObjectUrl: product.s3ObjectUrl,
+        tarifaImpuesto: product.tarifaImpuesto
+    })
+}
+
+function productSaleRateReadAdapter(measures: RawMeasure[]): Array<Measure> {
+
+    return measures.map(item => {
+        const productPVPs: RawProductPVPData[] = JSON.parse(item.tarifas);
+        return {
+            measureId: item.idMedida,
+            description: item.medida,
+            pvps: productPVPs.map(pvp => ({
+                feeId: pvp.idTarifa,
+                salePrice: pvp.precioVenta,
+                priceWithVat: pvp.precioConIva,
+                description: pvp.tarifa,
+                default:  pvp.precioPredeterminado
+            }))
+        }
+    })
+}
+
+function productSearchAdapter(products:Array<RawProductSearchData>): Array<ProductSearchDto>{
+    return products.map(product=>{
+        return {
+            productId: product.idArticulo,            
             code: product.codigo,
-            stock: product.stock,
-            s3ObjectUrl: product.s3ObjectUrl
-        })
-    )
+            description: product.descripcion,
+            iva: product.iva,
+            pvps: JSON.parse(product.priceSale) || [],
+            s3ObjectUrl: product.s3ObjectUrl,
+            s3ObjectKey: product.s3ObjectKey
+        }
+    })
 }
 
 export {
-    productReadAdapter
+    productSaleReadAdapter,
+    productSaleRateReadAdapter,
+    productSearchAdapter
 }

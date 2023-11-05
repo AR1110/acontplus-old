@@ -1,0 +1,272 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <SatelliteResourceLanguages>en-Us;es-Es</SatelliteResourceLanguages>
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Reports\Cartera\CarteraCliente.rdlc" />
+    <None Remove="Reports\Cartera\CarteraProveedor.rdlc" />
+    <None Remove="Reports\Compras\CompraDetalle.rdl" />
+    <None Remove="Reports\Compras\FacturaCompra.rdlc" />
+    <None Remove="Reports\Compras\FacturaCompraDetalle.rdlc" />
+    <None Remove="Reports\Compras\IngresoBodega.rdlc" />
+    <None Remove="Reports\Compras\LiquidacionCompra.rdlc" />
+    <None Remove="Reports\Compras\NotaCreditoProveedor.rdlc" />
+    <None Remove="Reports\Compras\OrdenCompra.rdlc" />
+    <None Remove="Reports\Compras\RetencionCompra.rdlc" />
+    <None Remove="Reports\ConsumoEmpresaTpv.rdl" />
+    <None Remove="Reports\ConsumoGeneralTpv.rdl" />
+    <None Remove="Reports\ConsumoIndividualTpv.rdl" />
+    <None Remove="Reports\Contabilidad\GestionCaja.rdl" />
+    <None Remove="Reports\FactElect\ComprobanteRetencion.rdl" />
+    <None Remove="Reports\FactElect\Factura.rdl" />
+    <None Remove="Reports\Factura.rdlc" />
+    <None Remove="Reports\FacturaAutomatica.rdlc" />
+    <None Remove="Reports\GestionFinanciera\Anticipo.rdl" />
+    <None Remove="Reports\GestionFinanciera\Cheque.rdlc" />
+    <None Remove="Reports\GestionFinanciera\ComprobanteEgreso.rdlc" />
+    <None Remove="Reports\GestionFinanciera\ComprobanteIngreso.rdlc" />
+    <None Remove="Reports\GestionFinanciera\ControlCaja.rdl" />
+    <None Remove="Reports\GestionFinanciera\IngresoEgresoCaja.rdl" />
+    <None Remove="Reports\GestionReporte\ArticuloTarifa.rdl" />
+    <None Remove="Reports\GestionReporte\ArticuloValoracion.rdl" />
+    <None Remove="Reports\GestionReporte\ConsolidadoVenta.rdl" />
+    <None Remove="Reports\GestionReporte\ConsumoClienteRG.rdlc" />
+    <None Remove="Reports\GestionReporte\FacturaCompraRG.rdlc" />
+    <None Remove="Reports\GestionReporte\FacturaVentaRG.rdlc" />
+    <None Remove="Reports\GestionReporte\IngresoBodegaRG.rdlc" />
+    <None Remove="Reports\GestionReporte\KardexRG.rdl" />
+    <None Remove="Reports\GestionReporte\LiquidacionCompraRG.rdlc" />
+    <None Remove="Reports\GestionReporte\NotaCreditoProveedorRG.rdlc" />
+    <None Remove="Reports\GestionReporte\NotaCreditoRG.rdlc" />
+    <None Remove="Reports\GestionReporte\NotaEntregaRG.rdlc" />
+    <None Remove="Reports\GestionReporte\OrdenCompraRG.rdlc" />
+    <None Remove="Reports\GestionReporte\ProformaRG.rdlc" />
+    <None Remove="Reports\GestionReporte\RetencionCompraRG.rdlc" />
+    <None Remove="Reports\GestionReporte\RetencionVentaRG.rdlc" />
+    <None Remove="Reports\GuiaRemision.rdlc" />
+    <None Remove="Reports\Inventario\ArticuloFraccionado.rdl" />
+    <None Remove="Reports\Inventario\ConsolidacionInventario.rdlc" />
+    <None Remove="Reports\Inventario\ConsumoDiario.rdl" />
+    <None Remove="Reports\Inventario\Kardex.rdlc" />
+    <None Remove="Reports\Inventario\TransferenciaBodega.rdl" />
+    <None Remove="Reports\NotaCredito.rdlc" />
+    <None Remove="Reports\NotFound.pdf" />
+    <None Remove="Reports\OpenMoneyBox.rdl" />
+    <None Remove="Reports\OrdenCompra.rdlc" />
+    <None Remove="Reports\Restaurant\ItemIngredient.rdl" />
+    <None Remove="Reports\Retencion.rdlc" />
+    <None Remove="Reports\Test.rdlc" />
+    <None Remove="Reports\Ventas\AprobDocument.rdl" />
+    <None Remove="Reports\Ventas\Clientes.rdl" />
+    <None Remove="Reports\Ventas\NotaCreditoCliente.rdlc" />
+    <None Remove="Reports\Ventas\NotaEntrega.rdlc" />
+    <None Remove="Reports\Ventas\Proforma.rdlc" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\..\SharedSettings\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Cartera\CarteraCliente.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Cartera\CarteraProveedor.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Compras\CompraDetalle.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Compras\FacturaCompra.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Compras\FacturaCompraDetalle.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Compras\IngresoBodega.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Compras\LiquidacionCompra.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Compras\NotaCreditoProveedor.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Compras\OrdenCompra.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Compras\RetencionCompra.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\ConsumoEmpresaTpv.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\ConsumoGeneralTpv.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\ConsumoIndividualTpv.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Contabilidad\GestionCaja.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\FactElect\ComprobanteRetencion.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\FactElect\Factura.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Factura.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\FacturaAutomatica.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GestionFinanciera\Anticipo.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GestionFinanciera\Cheque.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GestionFinanciera\ComprobanteEgreso.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GestionFinanciera\ComprobanteIngreso.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GestionFinanciera\ControlCaja.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GestionFinanciera\IngresoEgresoCaja.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GestionReporte\ArticuloTarifa.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GestionReporte\ArticuloValoracion.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GestionReporte\ConsolidadoVenta.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GestionReporte\ConsumoClienteRG.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GestionReporte\FacturaCompraRG.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GestionReporte\FacturaVentaRG.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GestionReporte\IngresoBodegaRG.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GestionReporte\KardexRG.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GestionReporte\LiquidacionCompraRG.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GestionReporte\NotaCreditoProveedorRG.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GestionReporte\NotaCreditoRG.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GestionReporte\NotaEntregaRG.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GestionReporte\OrdenCompraRG.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GestionReporte\ProformaRG.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GestionReporte\RetencionCompraRG.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GestionReporte\RetencionVentaRG.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\GuiaRemision.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Inventario\ArticuloFraccionado.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Inventario\ConsolidacionInventario.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Inventario\ConsumoDiario.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Inventario\Kardex.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Inventario\TransferenciaBodega.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\NotaCredito.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\NotFound.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\OpenMoneyBox.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\OrdenCompra.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Restaurant\ItemIngredient.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Retencion.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Test.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Ventas\AprobDocument.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Ventas\Clientes.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Ventas\NotaCreditoCliente.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Ventas\NotaEntrega.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Reports\Ventas\Proforma.rdlc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.Core\Common.Core.csproj" />
+    <ProjectReference Include="..\..\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Common\Common.Reports\Common.Reports.csproj" />
+    <ProjectReference Include="..\..\Common\Services.Common\Services.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" />
+    <PackageReference Include="AutoMapper" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Reports\Ventas\CuentaPorCobrarCuotas.rdl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

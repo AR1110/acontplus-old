@@ -1,17 +1,18 @@
 ﻿<script lang="ts">
-	import Modal from "$core/components/Modal.svelte";
-	import toast from "$core/utils/toast";
-	import type { Floor } from "$core/interfaces/restaurant/floor";
-	import { floorService } from "$core/services/restaurant/floor-service";
+	import Modal from "$lib/components/Modal.svelte";
+	import toast from "$lib/utils/toast";
+	import type { Floor } from "$lib/interfaces/restaurant/floor";
+	import { floorService } from "$lib/services/restaurant/floor-service";
 	import { onMount } from "svelte";
-	import { estabAsignService } from "$core/services/restaurant/estab-asign-service";
-  import { hideLoader, showLoader } from "$core/utils/loading-spinner";
+	import { estabAsignService } from "$lib/services/restaurant/estab-asign-service";
+   import { hideLoader, showLoader } from "$lib/utils/loading-spinner";
 
 	export let openNew;
 	export let modalClosed;
 
 	export let data = {} as Floor;
 	let establecimientos = [];
+   let validation = [undefined, null, "", 0];
 
 	onMount(() => {
 		getEstabAsign();
@@ -49,10 +50,10 @@
 			hideLoader();
 			if (response.status == 200) {
 				onModalClose();
-				toast({ type: "success", message: "Actualizado exitosamente" });
+				toast({ type: "success", message: response.data });
 				data = {} as Floor;
 			} else {
-				toast({ type: "error", message: "Error al actualizar" });
+				toast({ type: "error", message: response.data });
 			}
 		});
 	};
@@ -61,7 +62,7 @@
 		let isValid = true;
 
 		try {
-			if (data.codEstab === undefined || data.codEstab === null) {
+			if (validation.includes(data.codEstab)) {
 				toast({
 					type: "warning",
 					message: "Seleccione un establecimiento",
@@ -69,23 +70,22 @@
 				isValid = false;
 			}
 
-			if (data.description === undefined || data.description === null) {
+			if (validation.includes(data.description)) {
 				toast({ type: "warning", message: "Ingrese una descripción" });
 				isValid = false;
 			}
 
-			if (data.code === undefined || data.code === null) {
+			if (validation.includes(data.code)) {
 				toast({ type: "warning", message: "Ingrese un código" });
 				isValid = false;
 			}
 
-			if (data.capacity === undefined || data.capacity === null) {
+			if (validation.includes(data.capacity)) {
 				toast({ type: "warning", message: "Ingrese una capacidad" });
 				isValid = false;
 			}
 			return isValid;
 		} catch (error) {
-			console.log(error);
 			return false;
 		}
 	};

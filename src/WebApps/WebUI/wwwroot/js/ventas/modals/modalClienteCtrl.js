@@ -41,8 +41,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                     tipoIdentificacion,
                     tipoContribuyentes,
                     tiempoCreditos,
-                    ciudades,
-                    tiposEntidad,
+                    ciudades, 
                     tiposCliente,
                     empresas,
                     cargos
@@ -59,8 +58,9 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                 $scope.cargos = cargos;
                 
                 if ($scope.tipoRegistro ===1) {
-                    $scope.data.idTipoIdentificacion = $scope.tiposIdentificacion[0].idTipoIdentificacion;
-                    $scope.data.codigoIdentificacion = $scope.tiposIdentificacion[0].codigo;
+                    let {idTipoIdentificacion, codigo} =  $scope.tiposIdentificacion.find(item=>item.codigo==='R');
+                    $scope.data.idTipoIdentificacion = idTipoIdentificacion;
+                    $scope.data.codigoIdentificacion = codigo;
 
                     $scope.data.idTiempoCredito = $scope.tiempoCreditos.length > 0 ? $scope.tiempoCreditos[0].idTiempoCredito : 0;
                 }
@@ -113,7 +113,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
 
     $scope.initiload();
 
-    $uibModalInstance.rendered.then(result => {
+    $uibModalInstance.rendered.then(() => {
 
         if ($scope.tipoRegistro === 1) {
             $("#numeroIdentificacion").focus();
@@ -178,8 +178,8 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
             let inputTextNumeroIdentificacion = $("#numeroIdentificacion");
 
             let query = {
-                dataExists: '1',
-                bySearch: $scope.data.numeroIdentificacion,
+                tipo: 3,
+                textSearch: $scope.data.numeroIdentificacion,
                 codigoIdentificacion
             }
 
@@ -230,8 +230,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
                 if (response.numeroRuc) {
 
                     let {
-                        razonSocial,
-                        establecimientos,
+                        razonSocial, 
                         direccion,
                         telefono,
                         email
@@ -375,7 +374,7 @@ function ModalClienteCtrl($uibModalInstance, $scope, commonSvc, clienteSvc, tS, 
         // html2canvas(document.querySelector("#cardBusiness")).then(canvas => {
         //     document.body.appendChild(canvas)
         // });
-        let container = document.getElementById("cardBusiness");; /* full page */
+        let container = document.getElementById("cardBusiness"); /* full page */
         html2canvas(container, {
             allowTaint: true
         }).then(function (canvas) {
@@ -492,7 +491,7 @@ function ModalClienteListaCtrl($scope, clienteSvc, $uibModalInstance, tS) {
     }
 
 
-    $scope.onKeyupSearchCliente = function(e) {
+    $scope.onKeyupSearchCliente = function() {
         $scope.getSearchCustomer();
     }
 

@@ -1,9 +1,12 @@
+﻿using Common.Core.Entities;
+using Common.Infrastructure.Data;
 using Contabilidad.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace Contabilidad.Infrastructure.Data
 {
-    public class ContabilidadContext : DbContext
+    public class ContabilidadContext : BaseContext
     {
         public ContabilidadContext(DbContextOptions<ContabilidadContext> options) : base(options)
         {

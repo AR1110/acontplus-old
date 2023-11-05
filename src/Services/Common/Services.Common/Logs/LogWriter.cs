@@ -1,101 +1,60 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Globalization;
+using Microsoft.Extensions.Configuration;
 
 namespace Services.Common.Logs
 {
     public sealed class LogWriter
     {
-        private IConfiguration _config;
-        private readonly string _dirLogs = "";
+        private IConfiguration _configuration;
         public LogWriter(IConfiguration configuration)
         {
-            _config = configuration;
-            _dirLogs = _config.GetSection("Logs").GetSection("CustomLogs").Value;
+            _configuration = configuration;
         }
-        public void LogInfo(string message)
+        public void LogActivity(string message, string status = "")
         {
             try
             {
-                string filepath = _dirLogs + "Log Info_" + DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
-                if (!Directory.Exists(_dirLogs))
+                string LogFolderPath = _configuration["Logs:CustomLogs"];
+                if (string.IsNullOrEmpty(LogFolderPath))
                 {
-                    Directory.CreateDirectory(_dirLogs);
+                    LogFolderPath = Environment.CurrentDirectory + "\\Logs\\";
                 }
-                if (!File.Exists(filepath))
+                if (!Directory.Exists(LogFolderPath))
                 {
-                    using (StreamWriter sw = File.CreateText(filepath))
-                    {
-                        sw.WriteLine($"{DateTime.Now} - " + message);
-                    }
+                    DirectoryInfo di = Directory.CreateDirectory(LogFolderPath);
                 }
-                else
-                {
-                    using (StreamWriter sw = File.AppendText(filepath))
-                    {
-                        sw.WriteLine($"{DateTime.Now} - " + message);
-                    }
-                }
+
+                string date = DateTime.Now.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
+                string dateFolder = Path.Combine(LogFolderPath, date);
+                LogFolderPath = dateFolder + ".txt";
+                string Msg = "";
+                Msg = "\n---------------------------- Start -----------------------------------\n" + Environment.NewLine;
+                Msg += "Time : " + DateTime.Now.ToShortDateString().ToString() + " " + DateTime.Now.ToLongTimeString().ToString() + Environment.NewLine;
+                Msg += "Status : " + status + Environment.NewLine;
+                Msg += "Message : " + message + Environment.NewLine;
+                Msg += "\n---------------------------- End -----------------------------------\n" + Environment.NewLine;
+                Log(LogFolderPath, Msg);
             }
             catch (Exception ex)
             {
                 _ = ex.Message;
+                //throw ex;
             }
         }
-        public void LogWarning(string message)
+        public static void Log(string sFilePath, string sErrMsg)
         {
+            StreamWriter sw;
             try
             {
-                string filepath = _dirLogs + "Log Warning_" + DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
-                if (!Directory.Exists(_dirLogs))
-                {
-                    Directory.CreateDirectory(_dirLogs);
-                }
-                if (!File.Exists(filepath))
-                {
-                    using (StreamWriter sw = File.CreateText(filepath))
-                    {
-                        sw.WriteLine($"{DateTime.Now} - " + message);
-                    }
-                }
-                else
-                {
-                    using (StreamWriter sw = File.AppendText(filepath))
-                    {
-                        sw.WriteLine($"{DateTime.Now} - " + message);
-                    }
-                }
+                sw = File.AppendText(sFilePath);
+                sw.WriteLine(sErrMsg);
+                sw.Flush();
+                sw.Close();
             }
             catch (Exception ex)
             {
                 _ = ex.Message;
-            }
-        }
-        public void LogError(string message)
-        {
-            try
-            {
-                string filepath = _dirLogs + "Log Error_" + DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
-                if (!Directory.Exists(_dirLogs))
-                {
-                    Directory.CreateDirectory(_dirLogs);
-                }
-                if (!File.Exists(filepath))
-                {
-                    using (StreamWriter sw = File.CreateText(filepath))
-                    {
-                        sw.WriteLine($"{DateTime.Now} - " + message);
-                    }
-                }
-                else
-                {
-                    using (StreamWriter sw = File.AppendText(filepath))
-                    {
-                        sw.WriteLine($"{DateTime.Now} - " + message);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _ = ex.Message;
+                //throw ex;
             }
         }
     }

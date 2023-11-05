@@ -1,7 +1,7 @@
 ﻿using DataAccess.GestionFinanciera;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebUI.Controllers.GestionFinanciera
+namespace WebUI.Controllers.Financiero
 {
     public class ChequeController : Controller
     {
@@ -22,7 +22,7 @@ namespace WebUI.Controllers.GestionFinanciera
 
         public async Task<IActionResult> Get(string json)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
+            var idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
             var res = await _c.GetAsync(idRol, json);
             return Ok(res);
         }

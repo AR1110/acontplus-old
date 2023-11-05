@@ -3,19 +3,25 @@
 
     app.controller('retencionAtsCtrl', retencionAtsCtrl);
 
-    retencionAtsCtrl.$inject = ['$scope',
-        'mainService',
-        'commonService',
-        'toastService',
+    retencionAtsCtrl.$inject = [
+        '$scope',
+        '$injector',
         '$element',
         '$cookies',
-        'uuid2',
         '$window',
         'FileSaver',
-        'Blob'
+        'Blob',
+        'modalService'
     ]
 
-    function retencionAtsCtrl($scope, mS, _commonSvc, tS, $element, $cookies, uuid2, $window, FileSaver, Blob) {
+    function retencionAtsCtrl($scope, $injector, $element, $cookies, $window, FileSaver, Blob, modalSvc) {
+        const mS = $injector.get('mainService')
+        const commonSvc = $injector.get('commonService')
+        const tS = $injector.get('toastService')
+        const uuid2 = $injector.get('uuid2')
+        const proveedorSvc = $injector.get('proveedorService')
+        const nombreModalCompra = $injector.get('nombreModalCompra')
+
         mS.detectDevice()
         /**Initial Load */
         $scope.genericAnswer = [{ codigo: 'SI' }, { codigo: 'NO' }]
@@ -48,11 +54,11 @@
             const formatDateMoment = moment.tz(fecha, "America/Guayaquil")
             return formatDateMoment.format("YYYY-MM-DD");
         }
-        const getUTCDate = (date) => {
-            const d = new Date(date);
-            const utcDate = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-            return utcDate;
-        }
+        // const getUTCDate = (date) => {
+        //     const d = new Date(date);
+        //     const utcDate = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+        //     return utcDate;
+        // }
 
         function formatDate(fecha) {
             let _getFecha = new Date(fecha)
@@ -61,7 +67,9 @@
             return _getFecha;
         }
 
-        const idDocumentoElectronico = document.getElementById("idDocumentoElectronico").value
+        let params = new URLSearchParams(document.location.search);
+
+        const idDocumentoElectronico = params.get("id")
 
         $scope.retencionesTemp = []
 
@@ -72,7 +80,6 @@
                     let expireDate = new Date();
                     expireDate.setDate(expireDate.getDate() + 1);
                     $cookies.put('ck_token', uuid2.newguid(), { expires: expireDate });
-                    console.log($cookies.get('ck_token'))
                 }
                 //console.log($cookies.get('ck_token'))
                 let data = { tipo: 1 }
@@ -121,8 +128,6 @@
                 mS.getData('get', 'RetencionAts/' + JSON.stringify(data), null, true).then(
                     response => {
                         let tempArray = JSON.parse(response.payload)
-                        console.log('this is for edit')
-                        console.log(tempArray)
                         $scope.initialLoad()
                         setTimeout(() => {
                             $scope.infoCompRet = tempArray[0][0]
@@ -215,8 +220,6 @@
             $scope.infoCompRet.contribuyenteEspecial = temp.contribuyenteEspecial
             $scope.infoCompRet.obligadoContabilidad = temp.obligadoContabilidad
             $scope.infoCompRet.dirEstablecimiento = temp.dirEstablecimiento
-            console.log($scope.puntosEmision)
-            console.log($scope.infoCompRet)
         }
 
         /**End Info Comp Retencion */
@@ -253,37 +256,19 @@
                 }
                 if (!item && $scope.infoCompRet.identificacionSujetoRetenido) {
                     item = 2
-                }
-                let json = {
-                    tipo: '2',
-                    textSearch: (item == 1 ? $scope.infoCompRet.razonSocialSujetoRetenido : $scope.infoCompRet.identificacionSujetoRetenido)
-                }
-                console.log($scope.infoCompRet)
-
-                console.log(item)
-                console.log(json)
-                mS.getData('get', '/Proveedor/Get?json=' + JSON.stringify(json)).then(
-                    response => {
-                        if (response.code == '0') {
-                            if (item == 2) {
-                                $scope.infoCompRet.identificacionSujetoRetenido = ''
-                            }
-                            tS.toastr('warning', response.message)
-                        }
-                        if (response.code == '1') {
-                            $scope.proveedores = JSON.parse(response.payload)
-                            if ($scope.proveedores.length == 1) {
-                                $scope.selectSujetoRetenido($scope.proveedores[0], false)
-                            }
-                            else {
-                                $('#searchProvModal').modal('show')
-                            }
-                            //console.log($scope.proveedores)
-                        }
-                    }, error => {
-                        console.log(error)
+                } 
+                const textSearch = (item == 1 ? $scope.infoCompRet.razonSocialSujetoRetenido : $scope.infoCompRet.identificacionSujetoRetenido)
+ 
+                showLoader();
+                proveedorSvc.search(textSearch).then(proveedores => {
+                    $scope.proveedores = proveedores;
+                    if ($scope.proveedores.length == 1) {
+                        $scope.selectSujetoRetenido($scope.proveedores[0], false)
                     }
-                )
+                    else {
+                        $('#searchProvModal').modal('show')
+                    }
+                }).finally(() => hideLoader()) 
 
             } catch (error) {
                 console.log(error)
@@ -309,7 +294,6 @@
                         if (response.code == '1') {
                             $scope.docsFounded = JSON.parse(response.payload)[0]
                             $('#docsModal').modal('show')
-                            console.log($scope.docsFounded)
                         }
                         hideLoader()
                     }, error => {
@@ -344,10 +328,6 @@
                                 $scope.docData = JSON.parse(temp[0].doc)[0]
                                 $scope.tempTaxes = JSON.parse(temp[0].taxes) || []
                                 $scope.paymentsTemp = JSON.parse(temp[0].payments) || []
-                                console.log($scope.docData)
-
-                                console.log($scope.tempTaxes)
-                                console.log($scope.paymentsTemp)
                                 $scope.totalSinImpuestos = $scope.docData.totalSinImpuestos
                                 $scope.docSustento.idDocumento = item.idDocumento
                                 $scope.docSustento.isAutomatic = $scope.docData.isAutomatic
@@ -360,7 +340,6 @@
                                 tS.toastr('warning', 'Impuestos no encontrados')
                             }
                             $('#docsModal').modal('hide')
-                            console.log(temp[0].doc)
                         }
                         hideLoader()
                     }
@@ -374,27 +353,30 @@
             }
         }
 
-        $scope.docPreview = (item) => {
+        $scope.docPreview = async (item) => {
             try {
-                console.log(item)
                 if (!item.isAutomatic) {
-                    _commonSvc.viewDetailDocument({
+                    commonSvc.viewDetailDocument({
                         id: item.idDocumento,
                         codigoDocumento: 'FC'
                     })
                     // tS.toastr('warning', 'Este documento no ha sido registrado desde el modulo de recepcion de documentos')
                     return
                 }
-                mS.getData('get', 'DocumentoRecibido/Preview/' + item.idDocumento, null, true).then(
-                    response => {
-                        $('#facturaModal').modal('show')
-                        $('#bodyFactura').html(response.payload)
-                        console.log(response)
-                    }
-                ).catch(error => {
-                    hideLoader()
-                    console.log(error)
-                })
+                let { fileCtrl, controller, F } = nombreModalCompra.DOCUMENTO_RECIBIDO;
+                let ctrl = (await import(fileCtrl))[controller];
+                let template = F.template; 
+                const params = {
+                    idDocumento: item.idDocumento
+                }
+                modalSvc.openModalCustom({
+                    controller: ctrl,
+                    template,
+                    size: 'xl',
+                    params,
+                    windowClass: 'uibModalFullScreen',
+                    isRenderRazorPartial: true
+                }) 
             } catch (error) {
                 console.log(error)
             }
@@ -645,7 +627,6 @@
 
         $scope.setTarifaImp = (item) => {
             let obj = $scope.tarifasImp.find(imp => imp.codigo == item)
-            console.log(obj)
             $scope.tax.tarifa = obj.porcentaje
         }
         $scope.setTaxValue = (item) => {
@@ -756,8 +737,6 @@
                 })
 
                 $scope.tax = {}
-                //console.log($scope.docsAdded)
-                console.log($scope.taxesAdded)
             }
         }
         $scope.editTax = (item, t, d) => {
@@ -1143,8 +1122,6 @@
                     let totalImpuesto = $scope.taxesAdded.map(item => (item.valorImpuesto)).reduce((valorActual, previous) => (Number(valorActual) + Number(previous)), 0)
                     let importeTotal = (totalBaseImp + totalImpuesto)
 
-                    console.log(importeTotal)
-
                     let totalFp = $scope.paymentsAdded.map(item => (item.total)).reduce((valorActual, previous) => (valorActual + previous), 0)
                     totalFp = totalFp + $scope.payment.total
 
@@ -1181,7 +1158,6 @@
         $scope.editPayment = (item, p, d) => {
             $scope.indexPayment = item
             $scope.payment = $scope.paymentsAdded[item]
-            console.log($scope.payment)
             document.getElementById(d.uniqueIdDoc + '-btnAddPaymentAdd').style.display = 'none'
             document.getElementById(d.uniqueIdDoc + '-btnEditPaymentSave').style.display = 'block'
             //document.getElementById(d.uniqueIdDoc + '-totalPago').disabled = true

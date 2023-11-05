@@ -1,4 +1,4 @@
-﻿using Lib.Common.Api;
+﻿using Common.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services.Common;
@@ -116,9 +116,9 @@ namespace Vet.API.Controllers
             petFounded.PetTypeId = pet.PetTypeId;
             petFounded.BreedId = pet.BreedId;
             petFounded.GenderId = pet.GenderId;
-            petFounded.Age = pet.Age;
+            //petFounded.Age = pet.Age;
             petFounded.Color = pet.Color;
-            petFounded.Weight = pet.Weight;
+            //petFounded.Weight = pet.Weight;
             petFounded.Enabled = pet.Enabled;
             petFounded.Weight = pet.Weight;
             petFounded.UpdatedAt = DateTime.Now;

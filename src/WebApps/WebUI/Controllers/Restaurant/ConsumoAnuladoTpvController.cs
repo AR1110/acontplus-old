@@ -1,5 +1,6 @@
-﻿using DataAccess;
-using Helpers;
+﻿using Common.Core.Models;
+using Common.Core.Utils;
+using DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -11,11 +12,11 @@ namespace WebUI.Controllers.Restaurant
         private readonly IConfiguration _config;
         private readonly DbAccess _db;
         private readonly LogWriter _log;
-        public ConsumoAnuladoTpvController(IConfiguration config)
+        public ConsumoAnuladoTpvController(IConfiguration config, LogWriter log)
         {
             _config = config;
             _db = new DbAccess(_config);
-            _log = new LogWriter(_config);
+            _log = log;
         }
         public IActionResult Index()
         {
@@ -29,12 +30,12 @@ namespace WebUI.Controllers.Restaurant
             {
                 await _db.SPExecute("Restaurant.ConsumoAnuladoTpv_Get");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataTableAsync();
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Get: \n" + ex.ToString());
+                _log.LogActivity("Error in Get: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener los datos");
             }
             finally
@@ -51,12 +52,12 @@ namespace WebUI.Controllers.Restaurant
             {
                 await _db.SPExecute("Restaurant.ConsumoAnuladoTpv_Insert");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while saving consumo anulado tpv: \n" + ex.ToString());
+                _log.LogActivity("Error while saving consumo anulado tpv: \n" + ex.ToString());
                 _response.Create(code: "0", "Error al guardar el consumo anulado");
             }
             finally
@@ -73,12 +74,12 @@ namespace WebUI.Controllers.Restaurant
             {
                 await _db.SPExecute("Restaurant.ConsumoAnuladoTpv_Update");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while updating consumo anulado tpv: \n" + ex.ToString());
+                _log.LogActivity("Error while updating consumo anulado tpv: \n" + ex.ToString());
                 _response.Create(code: "0", "Error al actualizar el consumo anulado");
             }
             finally
@@ -100,7 +101,7 @@ namespace WebUI.Controllers.Restaurant
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while deleting consumo anulado tpv: \n" + ex.ToString());
+                _log.LogActivity("Error while deleting consumo anulado tpv: \n" + ex.ToString());
                 _response.Create(code: "0", "Error al eliminar el consumo anulado");
             }
             finally

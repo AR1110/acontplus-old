@@ -194,11 +194,34 @@ app.factory('decodeToken', function ($localStorage, jwtHelper) {
     return decodedJwt
 })
 
+app.factory('authToken', function ($localStorage, jwtHelper) {
+    let token = {}
+    function _get({ decoded = false }) {
+        let authData = $localStorage.currentUser;
+        if (authData) {
+            if (decoded) {
+                return decodedJwt = jwtHelper.decodeToken(authData.token)
+            } else {
+                return authData;
+            }
+        }
+    }
+    token.get = _get;
+    return token;
+});
+
 app.factory('mainService', mainService);
 
-mainService.$inject = ['$http', 'Upload', 'decodeToken', 'screenSize', '$timeout'];
+mainService.$inject = [
+    '$http',
+    'Upload',
+    'decodeToken',
+    'screenSize',
+    '$timeout',
+    'authToken'
+];
 
-function mainService($http, Upload, _token, _screenSize, $timeout) {
+function mainService($http, Upload, _token, _screenSize, $timeout, authToken) {
     let service = {}
 
     function _getData(method, url, data = null, forApi = false) {
@@ -214,6 +237,25 @@ function mainService($http, Upload, _token, _screenSize, $timeout) {
     function _getDataFile(url, file, data = null, forApi = false) {
         return Upload.upload({
             url: (forApi) ? _token.urlGateway + '/gateway/' + url : url,
+            headers: {
+                'Authorization': authToken.get({ decoded: false })
+            },
+            data: {
+                file: file,
+                data: data
+            },
+        }).then(response => {
+            return response.data
+        })
+    }
+
+    function _uploadFile(method, url, file, data = null, forApi = false) {
+        return Upload.upload({
+            method: method,
+            url: (forApi) ? _token.urlGateway + '/gateway/' + url : url,
+            headers: {
+                'Authorization': authToken.get({ decoded: false })
+            },
             data: {
                 file: file,
                 data: data
@@ -253,6 +295,7 @@ function mainService($http, Upload, _token, _screenSize, $timeout) {
 
     service.getData = _getData
     service.getDataFile = _getDataFile
+    service.uploadFile = _uploadFile
     service.getFile = _getFile
     service.detectDevice = _detectDevice
     return service
@@ -279,7 +322,7 @@ app.factory('toastService', function () {
 app.factory('modalService', modalService);
 modalService.$inject = ['$uibModal', '$mdDialog'];
 
-function modalService($uibModal,  $mdDialog) {
+function modalService($uibModal, $mdDialog) {
     return {
         openModal: function (controller, template, size, params, animation = true, windowClass = null, props = {}) {
             return $uibModal.open({
@@ -329,11 +372,11 @@ function modalService($uibModal,  $mdDialog) {
 
             let templateUrl = '';
             if (isRenderRazorPartial) {
-                templateUrl = `/Home/RenderView?name=${template}`;
+                templateUrl = `/Index?name=${template}`;
             }
 
             if (!isRenderRazorPartial) {
-                templateUrl = `/Home/RenderView?name=~/Views/${template}`
+                templateUrl = `/Index?name=~/Views/${template}`
             }
 
 
@@ -366,7 +409,7 @@ function modalService($uibModal,  $mdDialog) {
         openModalSecond: function (controller, template, size, params, animation = true, windowClass = null, $scope, props = {}) {
             return $uibModal.open({
                 animation,
-                templateUrl: `/Home/RenderView?name=~/Views/${template}`,
+                templateUrl: `/Index?name=~/Views/${template}`,
                 controller,
                 controllerAs: '$ctrl',
                 scope: $scope,
@@ -389,19 +432,19 @@ function modalService($uibModal,  $mdDialog) {
             });
         },
 
-        openMdDialog: function ({controller, templateUrl, targetEvent, clickOutsideToClose=false, fullscreen=true, params}) {
-            return  $mdDialog.show({
+        openMdDialog: function ({ controller, templateUrl, targetEvent, clickOutsideToClose = false, fullscreen = true, params }) {
+            return $mdDialog.show({
                 controller,
-                templateUrl: `/Home/RenderView?name=${templateUrl}`,
+                templateUrl: `/Index?name=${templateUrl}`,
                 // Appending dialog to document.body to cover sidenav in docs app
                 // Modal dialogs should fully cover application to prevent interaction outside of dialog
                 parent: angular.element(document.body),
                 targetEvent,
-                clickOutsideToClose, 
-                fullscreen,    
+                clickOutsideToClose,
+                fullscreen,
                 locals: {
                     params
-                }               
+                }
             })
         },
         modalOptions: {}
@@ -580,9 +623,7 @@ app.filter('mapBodega', () => {
             [curr.idBodega]: curr.descripcion
         }), {
             0: 'Seleccionar bodega'
-        });
-        console.log(result)
-        console.log(idBodega, bodegas)
+        }); 
         return !idBodega ? result[0] : result[idBodega];
     };
 });

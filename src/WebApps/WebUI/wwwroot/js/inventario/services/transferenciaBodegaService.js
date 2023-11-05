@@ -93,15 +93,7 @@
         //             let establecimientoDestino = dataMain[2][0];
 
         //             let detalleDocumento = []; //
-        //             for (let item of dataMain[3]) {
-        //                 this.getDataArticuloParaCompra({
-        //                     json: item
-        //                 }).then(response => {
-        //                     item.medidas = JSON.parse(response.payload)[1]
-        //                 })
-    
-        //                 detalleDocumento.push(item)
-        //             } 
+ 
 
         //             return {
         //                 dataDocumento,

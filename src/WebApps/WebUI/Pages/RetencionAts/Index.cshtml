@@ -1,0 +1,139 @@
+﻿@page
+@model WebUI.Pages.RetencionAts.IndexModel
+@{
+    @RouteData.Values["id"]
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<div ng-controller="retencionAtsCtrl">
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h5 class="text-themecolor">Retencion 2.0 (ATS)</h5>
+        </div>
+    </div>
+    <md-card>
+        <md-card-content>
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    @await Html.PartialAsync("Shared/_InfoCompRetencion")
+                    @await Html.PartialAsync("Shared/_DocsSustento")
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    @await Html.PartialAsync("Shared/_InfoAdicional")
+                </div>
+            </div>
+        </md-card-content>
+        <div class="card-footer">
+            <button class="btn btn-success btn-lg" ng-click="save()">
+                <i class="ti-save"></i> Guardar
+            </button>
+            <button class="btn btn-warning btn-lg" ng-click="cancel()">
+                <i class="fa fa-close"></i> Cancelar
+            </button>
+            <button class="btn btn-danger btn-lg" ng-click="back()">
+                <i class="fa fa-backward"></i> Regresar
+            </button>
+        </div>
+    </md-card>
+    <!--MODALS -->
+    <div id="searchProvModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa fa-users"></i> Proveedores Encontrados</h5>
+                    <button class="close" data-dismiss="modal" title="Cerrar">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Razón Social</th>
+                                            <th>Identificación</th>
+                                            <th>N° Identificación</th>
+                                            <th>Correo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in proveedores" ng-click="selectSujetoRetenido(item, true)"
+                                            title="Seleccionar Proveedor" style="cursor: pointer;">
+                                            <td>{{item.razonSocial}}</td>
+                                            <td>{{item.descTipoIdentificacion}}</td>
+                                            <td>{{item.numeroIdentificacion}}</td>
+                                            <td>{{item.correo}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark btn-sm" data-dismiss="modal" title="Cerrar">
+                        &times;
+                        Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="docsModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa fa-list"></i> Documentos Encontrados</h5>
+                    <button class="close" data-dismiss="modal" title="Cerrar">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Documento</th>
+                                            <th>Secuencial</th>
+                                            <th>Fecha Emision</th>
+                                            <th>Opciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="item in docsFounded">
+                                            <td>{{item.documento}}</td>
+                                            <td>{{item.secuencial}}</td>
+                                            <td>{{item.fechaEmision | date: 'dd/MM/yyyy'}}</td>
+                                            <td>
+                                                <button type="button" class="btn btn-info btn-sm" ng-click="docPreview(item)" title="Ver Documento de Sustento"><i class="fa fa-eye"></i></button>
+                                                <button type="button" class="btn btn-success btn-sm" ng-click="selectDoc(item)" title="Seleccionar Documento de Sustento"><i class="fas fa-hand-point-right"></i></button>
+                                                @*<button type="submit" id="btnSubmit" class="btn btn-danger btn-sm" ng-click="exportPdf(item.idDocumento)"><i class="fa fa-file-pdf"></i> Descargar</button>*@
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark btn-sm" data-dismiss="modal" title="Cerrar">
+                        &times;
+                        Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END MODALS -->
+    <input type="text" name="idDocumentoElectronico" id="idDocumentoElectronico" value="@ViewData["ID"]" hidden />
+</div>
+
+@section Scripts {
+    <script src="~/js/factElect/controllers/retencionAtsCtrl.min.js" asp-append-version="true"></script>
+}

@@ -1,5 +1,5 @@
 import { PrivateRoutes } from "@/core/models";
-import { RoutesWithNotFound } from "@/core/utilities";
+import { ErrorBoundary, RoutesWithNotFound } from "@/core/utilities";
 import { Navigate, Route } from "react-router-dom";
 import { lazy } from "react";
 
@@ -9,6 +9,7 @@ const Order = lazy(() => import("./Order/Order"));
 
 export default function Private() {
     return (
+        <ErrorBoundary fallBackComponent={<>Error!</>}>
         <RoutesWithNotFound>
             <Route path="/" element={<MainLayout />}> 
                 <Route path="/" element={<Navigate to={PrivateRoutes.SALE} />} />
@@ -16,5 +17,6 @@ export default function Private() {
                 <Route path={PrivateRoutes.ORDER} element={<Order />} />
             </Route>
         </RoutesWithNotFound>
+        </ErrorBoundary>
     );
 }

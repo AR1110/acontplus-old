@@ -1,9 +1,9 @@
-﻿using Domain.Models;
-using Domain.ViewModels;
-using Helpers;
+﻿using System.Data;
+using Common.Core.Models;
+using Domain.Models.Administracion;
+using Domain.ViewModels.Administracion;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace DataAccess.Asignaciones
 {
@@ -16,7 +16,7 @@ namespace DataAccess.Asignaciones
         public AsignacionCajaDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _gr = new GenericResponse();
         }
 

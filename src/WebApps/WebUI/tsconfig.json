@@ -8,49 +8,44 @@
     ],
     "compilerOptions": {
         "target": "esnext",
-        // "module": "CommonJS",
         "module": "ESNext",
         "strict": false,
         "forceConsistentCasingInFileNames": false,
         "noUnusedLocals": false,
         "noUnusedParameters": false,
-        // "lib": [ "es2015", "dom" ],
         "lib": [
-            "ES2020",
+            "ESNext",
             "DOM",
             "DOM.Iterable"
         ],
         "baseUrl": ".",
         "paths": {
-            "$core/*": [
-                "App/core/*"
-            ],
             "$interfaces/*": [
-                "App/core/interfaces/*"
-            ],
-            "$services/*": [
-                "App/core/services/*"
-            ],
-            "$utils/*": [
-                "App/core/utils/*"
+                "App/lib/interfaces/*"
             ],
             "$lib/*": [
                 "App/lib/*"
             ],
-            "$routes/*": [
-                "App/routes/*"
+            "$mechanical/*": [
+                "App/routes/mechanical/*"
             ],
             "$restaurant/*": [
                 "App/routes/restaurant/*"
             ],
-            "$pet/*": [
-                "App/lib/Pet/*"
+            "$routes/*": [
+                "App/routes/*"
             ],
-            "$petbreed/*": [
-                "App/lib/PetBreed/*"
+            "$services/*": [
+                "App/lib/services/*"
             ],
-            "$petmedicalhistory/*": [
-                "App/lib/PetMedicalHistory/*"
+            "$technical-support/*": [
+                "App/routes/TechnicalSupport/*"
+            ],
+            "$utils/*": [
+                "App/lib/utils/*"
+            ],
+            "$ventas/*": [
+                "App/routes/ventas/*"
             ],
         }
     }

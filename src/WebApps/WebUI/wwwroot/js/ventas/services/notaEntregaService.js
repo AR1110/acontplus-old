@@ -1,31 +1,103 @@
-(function(e) { 
+(function () {
     'use strict';
 
-    app.factory('notaEntregaService', function($injector) {
+    app.factory('notaEntregaService', function ($injector) {
         let url = 'Venta/NotaEntrega/';
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario')
 
         let service = {};
 
-        service.getAll = function(query) {
-            
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
-                if(response.code==="0"){
+        service.getDataForm = () => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 2 }), null, true).then(response => {
+                if (response.code === "0") {
                     throw response;
                 }
-                if(response.code==="1"){
-                    let mainData = JSON.parse(response.payload) ;
+
+                if (response.code === "1") {
+
+                    let mainData = JSON.parse(response.payload);
+                    return mainData;
+                }
+            })
+        }
+
+
+        /**
+         * tipo 1: get notas entrega 
+         * tipo 2: get invoices for credit note 
+         * tipo 3: get estabs, ptos. emisiones para los filtros
+         * @returns 
+         */
+
+        service.get = (params) => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(params), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload); 
+                    if (params.tipo === 3) {
+                        let tempEstabsAndPtosEmision = mainData[0];
+                        let estadosDoc = mainData[1];
+
+                        const estabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
+                            const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
+
+                            if (!existingItem) {
+                                acc.push({
+                                    idEstablecimiento: item.idEstablecimiento,
+                                    nombreComercial: item.nombreComercial,
+                                    codEstab: item.codEstab,
+                                    defaultEstab: item.defaultEstab,
+                                    puntosEmision: [{
+                                        idPuntoEmision: item.idPuntoEmision,
+                                        ptoEmi: item.ptoEmi,
+                                        defaultPtoEmi: item.defaultPtoEmi
+                                    }]
+                                });
+                            } else {
+                                existingItem.puntosEmision.push({
+                                    idPuntoEmision: item.idPuntoEmision,
+                                    ptoEmi: item.ptoEmi,
+                                    defaultPtoEmi: item.defaultPtoEmi
+                                });
+                            }
+                            return acc;
+                        }, []);
+
+
+                        return {
+                            estabs,
+                            estadosDoc
+                        }
+                    }
+                }
+            })
+        }
+
+
+
+        service.getAll = function (query) {
+
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, { tipo: 1 })), null, true).then(response => {
+                
+                if (!response || response.code === "0") {
+                    throw response;
+                }
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload); 
                     let notaEntregaRepos = mainData[0];
-                    let {totalRecords, totalDocument, totalAbono, totalSaldo} = notaEntregaRepos[0]; 
-                    
-                    let notaEntregas = notaEntregaRepos.map(item=>{
+                    let { totalRecords, totalDocument, totalAbono, totalSaldo } = notaEntregaRepos[0];
+
+                    let notaEntregas = notaEntregaRepos.map(item => {
                         return {
                             comprobante: 'Nota de Entrega',
                             idDocumento: item.idDocumento,
                             idNotaEntrega: item.idNotaEntrega,
                             idTipoDocumento: item.idTipoDocumento,
-                            idCuentaPorCobrar : item.idCuentaPorCobrar,
+                            idCuentaPorCobrar: item.idCuentaPorCobrar,
                             idTiempoCredito: item.idTiempoCredito,
                             idCliente: item.idCliente,
                             codEstab: item.codEstab,
@@ -58,26 +130,23 @@
 
                     return {
                         notaEntregas,
-                        dataTotals: {totalRecords, totalDocument, totalAbono, totalSaldo}
+                        dataTotals: { totalRecords, totalDocument, totalAbono, totalSaldo }
                     }
                 }
             })
-        }
-
-        
-
-        service.queryMapper = function({data, cliente, detalles, historyDatosAdicionales}){
+        } 
+        service.queryMapper = function ({ data, cliente, detalles, historyDatosAdicionales }) {
 
             let notaEntrega = Object.assign({}, data);
             notaEntrega.fechaEmision = fS.formatDateTimeZone(data.fechaEmision)
             notaEntrega.fechaVencimiento = fS.formatDateTimeZone(data.fechaVencimiento)
-           
 
-            if(cliente.idCliente===0 && !cliente.razonSocialComprador && !cliente.identificacionComprador){
+
+            if (cliente.idCliente === 0 && !cliente.razonSocialComprador && !cliente.identificacionComprador) {
                 throw new Error("Datos de cliente no proporcionados")
             }
 
-            notaEntrega.idCliente = cliente.idCliente; 
+            notaEntrega.idCliente = cliente.idCliente;
             notaEntrega.identificacionComprador = cliente.identificacionComprador;
             notaEntrega.razonSocialComprador = cliente.razonSocialComprador;
             notaEntrega.direccionComprador = cliente.direccionComprador;
@@ -93,10 +162,10 @@
 
         }
 
-        service.detalleMapperTo = function(detalles) {
+        service.detalleMapperTo = function (detalles) {
             let tempDetails = [];
             let orderIndex = 1;
-    
+
             for (let item of detalles) {
                 tempDetails.push({
                     orderIndex: orderIndex++,
@@ -127,76 +196,80 @@
             return tempDetails;
         }
 
-        service.save = function(data){
-            return mS.getData('post', url + 'Insert/', data, true).then(response => {
-                if(response.code==="0"){
+        service.save = function (data) {
+            let { notaEntrega, detalle, infoAdicionalArticulo } = data;
+            let params = {
+                notaEntrega,
+                detalles: detalle,
+                infoAdicionalArticulo
+            }
+            return mS.getData('post', url + 'Insert/', { data: params }, true).then(response => {
+                if (response.code === "0") {
                     return response;
                 }
-                if(response.code==="1"){
+                if (response.code === "1") {
                     let dataRepository = JSON.parse(response.payload)[0];
-                  
+
                     let dataResponse = {
-                        ...dataRepository,                         
+                        ...dataRepository,
                         esContado: dataRepository.tiempoCredito,
                     }
-          
-                    return {                        
+
+                    return {
                         dataResponse,
-                        code: '1' ,
-                        message: 'Registrado Correctamente'                      
+                        code: '1',
+                        message: 'Registrado Correctamente'
                     }
                 }
             })
         }
 
 
-        service.update = function(id, data){
-            return mS.getData('put', url + 'Update/' + id, data, true).then(response => {
-                if(response.code==="0"){
+        service.update = function (id, data) {
+            let { notaEntrega, detalle, infoAdicionalArticulo } = data;
+            let params = {
+                notaEntrega,
+                detalles: detalle,
+                infoAdicionalArticulo
+            }
+            return mS.getData('put', url + 'Update/' + id, { data: params }, true).then(response => {
+                if (response.code === "0") {
                     return response;
                 }
-                if(response.code==="1"){
+                if (response.code === "1") {
                     return response
                 }
             })
         }
 
-        service.delete = function(id){
+        service.delete = function (id) {
             return mS.getData('delete', url + 'Delete/' + id, null, true).then(response => {
-                if(response.code==="0"){
+                if (response.code === "0") {
                     return response;
                 }
-                if(response.code==="1"){
+                if (response.code === "1") {
                     return response
                 }
             })
         }
-
-
-        //Mappers 
-
-
-
 
         //Validaciones
-        service.getTotales = function(notaEntregas) {
+        service.getTotales = function (notaEntregas) {
             let total = 0, totalAbono = 0, totalSaldo = 0;
             for (let val of notaEntregas) {
                 total += val.total;
                 totalAbono += val.abono;
                 totalSaldo += val.saldo;
-            };
+            }
             return {
-                total,  
+                total,
                 totalAbono,
-                totalSaldo 
+                totalSaldo
             }
         }
 
         return service;
 
     })
-
-
 
 })(window.angular)

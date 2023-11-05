@@ -20,80 +20,90 @@
     <div class="card">
         <div class="card-body">
             <div class="row">
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                    <div class="form-gorup">
-                        <span for="establecimiento">Establecimiento</span>
-                        <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
-                            class="form-control  border-select" ng-change="getNotaEntregas()">
-                            <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
-                                {{item.nombreComercial}}
-                            </option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                    <div class="form-group">
-                        <span for="">Rango de Fechas</span>
-                        @* <div class="input-group"> *@
-                        <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
-                            end-date="dataSearch.fechaFin"
-                            result-range-date="resultRangeFilter(result)"></date-range-filter>
-                        @* <div class="input-group-append">
-                        <div class="btn-group" data-toggle="buttons" role="group">
-                        <label class="btn btn-outline btn-info">
-                        <div class="custom-control custom-radio">
-                        <input type="radio" id="customRadio1" name="options" value="male"
-                        class="custom-control-input">
-                        <label class="custom-control-label" for="customRadio1"> <i
-                        class="ti-check text-active" aria-hidden="true"></i></label>
+                <div class="col-xl-7 col-lg-7 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            <div class="form-gorup">
+                                <span for="establecimiento">Estab: <span class="text-danger">*</span></span>
+                                <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
+                                    class="form-control  border-select" ng-change="estabFilter()">
+                                    <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
+                                        {{item.nombreComercial}}
+                                    </option>
+                                </select>
+                            </div>
                         </div>
-                        </label>
-                        <label class="btn btn-outline btn-info active">
-                        <div class="custom-control custom-radio">
-                        <input type="radio" id="customRadio2" name="options" value="female"
-                        class="custom-control-input">
-                        <label class="custom-control-label" for="customRadio2"> <i
-                        class="ti-check text-active" aria-hidden="true"></i></label>
-                        </div>
-                        </label>
-                        </div>
-                        </div>
-                        </div> *@
-                    </div>
-                </div>
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                    <div class="form-group">
-                        <span for="clienteFiltro">Cliente</span>
-                        <input type="text" id="customerInputSearch" class="form-control border-select"
-                            ng-model="cliente.nombreCliente" cliente-search-drtv on-select="onSelectCliente(result)"
-                            on-keyup-cliente="onKeyupCliente()" placeholder="Ingrese C.I o Nombre Comercial"
-                            onclick="select();">
 
-                        <script type="text/ng-template" id="autocompleteClienteTemplate.html">
+
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                            <span for="date-range-filter">Rango Fechas: </span>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <div class="custom-control custom-checkbox mr-sm-2">
+                                            <input type="checkbox" 
+                                                ng-model="dataSearch.checkBoxFecha"
+                                                   ng-disabled="!(dataSearch.idCliente>0)"
+                                                class="custom-control-input" 
+                                                id="checkBoxFecha">
+                                            <label class="custom-control-label" for="checkBoxFecha"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <date-range-filter current-date="dataSearch.fechaInicio"
+                                                   start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
+                                                   result-range-date="resultRangeFilter(result)"></date-range-filter>
+                            </div> 
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12">
+                    <div class="row">
+                        <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+                            <div class="form-group">
+                                <span for="clienteFiltro">Cliente</span>
+                                <input type="text" id="customerInputSearch" class="form-control border-select"
+                                    ng-model="cliente.nombreCliente" cliente-search-drtv
+                                    on-select="onSelectCliente(result)" on-keyup-cliente="onKeyupCliente()"
+                                    placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
+
+                                <script type="text/ng-template" id="autocompleteClienteTemplate.html">
                             <div class="autocomplete-suggestion-uib-typeahead">
                                 <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
                             </div>
                         </script>
+                            </div>
+                        </div>
+                        <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                            <div class="btn-group btn-group-sm mt-4" role="group" aria-label="Basic example">
+                                <button type="button" class="btn btn-info" ng-click="onClickBtnMore()">
+                                    <i class="fas fa-eye" uib-tooltip="Más opciones"></i>
+                                </button>
+                                <button type="button" class="btn btn-success" uib-tooltip="Recargar"
+                                    ng-click="getNotaEntregas()">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
-                    <button type="button" class="btn btn-info btm-sm mt-4" data-toggle="button" data-more="#sh"
-                        aria-pressed="false" ng-click="onClickBtnMore()">
-                        <span class="text"><i class="fas fa-eye" aria-hidden="true"
-                                uib-tooltip="Más opciones"></i></span>
-                        <span class="text-active"><i class="fas fa-eye" aria-hidden="true"
-                                uib-tooltip="Ocultar opciones"></i></span>
-                    </button>
-                    <button type="button" class="btn btn-success btm-sm mt-4" uib-tooltip="Recargar"
-                        ng-click="getNotaEntregas()">
-                        <i class="fas fa-redo"></i>
-                    </button>
                 </div>
             </div>
 
             <div class="row justify-content-between" ng-if="moreSearchOptions">
 
-                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                   <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
+                            <div class="form-gorup">
+                                <span for="ptoEmision">Pto. Emisión: <span class="text-danger">*</span> </span>
+                                <select name="ptoEmision" id="ptoEmision" ng-model="dataSearch.idPuntoEmision"
+                                    class="form-control  border-select" ng-change="getNotaEntregas()">
+                                    <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
+                                        {{item.ptoEmi}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
                         <span for="usuario">Usuario</span>
                         <input type="text" class="form-control border-select" ng-model="nombreCompleto"
@@ -114,14 +124,15 @@
                     </div>
                 </div>
 
-                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
-                        <span>Buscar por Nro. Documento:</span>
-                        <input type="text" class="form-control border-select"  ng-model="dataSearch.nroSecuencial" placeholder="Ej: 123"/>                       
+                        <span>Buscar por Nro. Doc.:</span>
+                        <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial"
+                            placeholder="Ej: 123 o 1-30" />
                     </div>
                 </div>
-                
-                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+
+                <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
                         <span>Estado:</span>
                         <select id="estadoDocumentos" class="form-control" ng-model="dataSearch.codEstado"
@@ -133,7 +144,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
                     <div class="form-group">
                         <span>Buscar</span>
                         <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
@@ -170,7 +181,8 @@
                                 <th md-column md-order-by="fechaEmision">F. Emision</th>
                                 <th md-column>F. Vcto</th>
                                 <th md-column md-order-by="nombreFiscal">Cliente</th>
-                                <th md-column md-numeric md-order-by="total" totales-venta-view="ventaPermiso">Total</th>
+                                <th md-column md-numeric md-order-by="total" totales-venta-view="ventaPermiso">Total
+                                </th>
                                 <th md-column totales-venta-view="ventaPermiso">Abono</th>
                                 <th md-column totales-venta-view="ventaPermiso">Saldo</th>
                                 <th md-column>Estado </th>
@@ -311,8 +323,8 @@
                 </md-table-container>
             </div>
         </div>
-         <div class="card-body">
-             <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+        <div class="card-body">
+            <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
                 ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
                 class="pagination" boundary-links="true" rotate="false"></ul>
         </div>
@@ -320,10 +332,10 @@
 
 </div>
 
-@section Scripts{
-    <script src="~/js/services/storageService.min.js" asp-append-version="true"></script>
-    <script src="~/js/factElect/directives/factElectDirective.min.js" asp-append-version="true"></script>
-    <script src="~/js/factElect/services/facturaService.min.js" asp-append-version="true"></script>
-    <script src="~/js/ventas/services/notaEntregaService.min.js" asp-append-version="true"></script>
-    <script src="~/js/ventas/controllers/notaEntregaCtrl.min.js" asp-append-version="true"></script>
+@section Scripts {
+        <script src="~/js/services/storageService.min.js" asp-append-version="true"></script>
+        <script src="~/js/factElect/directives/factElectDirective.min.js" asp-append-version="true"></script>
+        <script src="~/js/factElect/services/facturaService.js" asp-append-version="true"></script>
+        <script src="~/js/ventas/services/notaEntregaService.js" asp-append-version="true"></script>
+        <script src="~/js/ventas/controllers/notaEntregaCtrl.js" asp-append-version="true"></script>
 }

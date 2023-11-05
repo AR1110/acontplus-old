@@ -1,7 +1,8 @@
-﻿using Helpers;
+﻿using System.Data;
+using Common.Core.Models;
+using Common.Core.Utils;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace DataAccess.FE
 {
@@ -12,7 +13,7 @@ namespace DataAccess.FE
         public DocumentoLoteDetalleDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
         }
         private GenericResponse _response = new GenericResponse();
         public async Task<GenericResponse> GetAsync(int idRol, int idDocumentoLote)
@@ -32,7 +33,7 @@ namespace DataAccess.FE
                     if (dt.Rows.Count > 0)
                     {
                         _response.id = "1";
-                        _response.data = DataHelper.DataTableToJSON(dt);
+                        _response.data = DataConverters.DataTableToJSON(dt);
                     }
                 }
             }

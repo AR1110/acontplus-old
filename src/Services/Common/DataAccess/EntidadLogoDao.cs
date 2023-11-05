@@ -1,7 +1,7 @@
-﻿using Domain.Models;
-using Helpers;
+﻿using Common.Core.Models;
+using Domain.Models;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System.Data.SqlClient;
 
 namespace DataAccess
 {
@@ -14,7 +14,7 @@ namespace DataAccess
         public EntidadLogoDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _gr = new GenericResponse();
 
         }

@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
+		<Nullable>disable</Nullable>
 	</PropertyGroup>
 
   <ItemGroup>
@@ -22,11 +22,10 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
-    <PackageReference Include="System.Data.SqlClient" />
   </ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\Common\Lib.Common\Lib.Common.csproj" />
+		<ProjectReference Include="..\..\Common\Common.Infrastructure\Common.Infrastructure.csproj" />
 		<ProjectReference Include="..\Mechanical.Core\Mechanical.Core.csproj" />
 	</ItemGroup>
 

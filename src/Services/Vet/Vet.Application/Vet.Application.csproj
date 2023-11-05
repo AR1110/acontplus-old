@@ -8,11 +8,10 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" />
-    <PackageReference Include="ReportViewerCore.NETCore" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Lib.Common\Lib.Common.csproj" />
+    <ProjectReference Include="..\..\Common\Common.Reports\Common.Reports.csproj" />
     <ProjectReference Include="..\Vet.Core\Vet.Core.csproj" />
     <ProjectReference Include="..\Vet.Infrastructure\Vet.Infrastructure.csproj" />
   </ItemGroup>

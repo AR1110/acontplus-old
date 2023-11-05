@@ -270,28 +270,28 @@ class ModalNotaCreditoCtrl extends window.modalCompraBaseCtrl {
 export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
 
     static $inject = [
-        '$scope', 
-        '$timeout', 
-        '$uibModalInstance', 
-        'mainService', 
-        'commonService', 
+        '$scope',
+        '$timeout',
+        '$uibModalInstance',
+        'mainService',
+        'commonService',
         'facturaCompraService',
-        'modalService', 
-        'nombreModal', 
-        'toastService', 
+        'modalService',
+        'nombreModal',
+        'toastService',
         'formulario'
     ]
 
     constructor(
-        $scope, 
-        $timeout, 
-        $uibModalInstance, 
-        _mS, 
-        _commonSvc, 
+        $scope,
+        $timeout,
+        $uibModalInstance,
+        _mS,
+        _commonSvc,
         factCompraSvc,
         _modalSvc,
-        _nombreModalConst, 
-        _tS, 
+        _nombreModalConst,
+        _tS,
         _fS
     ) {
         super({
@@ -401,19 +401,19 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
     getFacturas() {
         try {
             showLoader();
-            this.factCompraSvc.findByProveedor(this.proveedor.idProveedor).then(response=> {
-                if(response.code==='0'){
+            this.factCompraSvc.findByProveedor(this.proveedor.idProveedor).then(response => {
+                if (response.code === '0') {
                     hideLoader();
                     Swal.fire({
-                        icon:'warning',
+                        icon: 'warning',
                         html: response.message
                     })
                 }
-                if(response.code==='1'){
+                if (response.code === '1') {
                     hideLoader();
-                    this.facturas = response.payload;                  
-                }                
-            }).catch(error=>{
+                    this.facturas = response.payload;
+                }
+            }).catch(error => {
                 hideLoader();
                 console.log(error);
             })
@@ -432,10 +432,10 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
         const self = this;
 
         try {
-            if((this.factura.idFactura>0)){
+            if ((this.factura.idFactura > 0)) {
                 Swal.fire({
-                    icon:'warning',
-                    html:'Seleccione la Factura'
+                    icon: 'warning',
+                    html: 'Seleccione la Factura'
                 })
                 return
             }
@@ -463,7 +463,7 @@ export class ModalNotaCreditoNuevoCtrl extends ModalNotaCreditoCtrl {
     async onSave() {
         try {
 
-            
+
 
             let textAccion = 'Guardar';
 
@@ -809,21 +809,23 @@ export class ModalNotaCreditoDetalleCtrl extends ModalNotaCreditoCtrl {
         try {
 
             let format = 'excel';
-            let dataParms = {
-                id: this.data.idIngresoBodega,
-                codEstab: this.data.codEstab,
-                codigo: 'RCD',
-                codDoc: this.TIPO_DOC.codigo,
-                format,
-            }
 
             const parameters = {
-                dataParams: JSON.stringify(dataParms)
+                dataParams: JSON.stringify({
+                    id: this.data.idIngresoBodega,
+                    codDoc: this.TIPO_DOC.codigo
+                }),
+                reportParams: JSON.stringify({
+                    codEstab: this.data.codEstab,
+                    codigo: 'RCD',
+                    format,
+                }),
+                hasService: true,
             }
 
-            this._commonSvc.getReportDynamic({
+            this._commonSvc.getReport({
                 parameters,
-                format
+                formatType: format
             })
         } catch (error) {
             console.log(error)

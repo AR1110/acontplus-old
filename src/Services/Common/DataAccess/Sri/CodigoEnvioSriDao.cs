@@ -1,9 +1,10 @@
-﻿using Helpers;
+﻿using System.Data;
+using Common.Core.Models;
+using Common.Core.Utils;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System.Data;
-using System.Data.SqlClient;
 
-namespace DataAccess
+namespace DataAccess.Sri
 {
     public class CodigoEnvioSriDao
     {
@@ -13,25 +14,25 @@ namespace DataAccess
         public CodigoEnvioSriDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _gr = new GenericResponse();
         }
         public async Task<GenericResponse> GetAsync()
         {
-            DataTable dt = new DataTable();
+            var dt = new DataTable();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("Sri.aspCodigoEnvioSriGet", con);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+                    var dataAdapter = new SqlDataAdapter(cmd);
                     dataAdapter.Fill(dt);
                     if (dt.Rows.Count > 0)
                     {
                         _gr.id = "1";
-                        _gr.data = DataHelper.DataTableToJSON(dt);
+                        _gr.data = DataConverters.DataTableToJSON(dt);
                     }
                 }
             }

@@ -1,7 +1,7 @@
-﻿using DataAccess;
+﻿using Common.Core.Models;
+using DataAccess;
 using DataAccess.Ventas;
 using Domain.ViewModels.Ventas;
-using Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -10,11 +10,12 @@ namespace WebUI.Controllers.Ventas
     public class RetencionVentaController : Controller
     {
         private readonly IConfiguration _configuration;
-
         private RetencionVentaDao _rv;
-        public RetencionVentaController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public RetencionVentaController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
+            _log = log;
             _rv = new RetencionVentaDao(_configuration);
         }
 
@@ -62,7 +63,7 @@ namespace WebUI.Controllers.Ventas
         public async Task<IActionResult> GetId(int id)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+
             GenericResponse _response = new GenericResponse();
             try
             {
@@ -73,7 +74,7 @@ namespace WebUI.Controllers.Ventas
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in GetId: \n" + ex.ToString());
+                _log.LogActivity("Error in GetId: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally

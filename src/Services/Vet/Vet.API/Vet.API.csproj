@@ -18,7 +18,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
@@ -28,7 +29,6 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-				<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" />
 		<PackageReference Include="Swashbuckle.AspNetCore" />
 	</ItemGroup>
 
@@ -39,12 +39,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Content Include="..\..\..\SharedSettings\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="..\..\..\SharedSettings\sharedsettings.Staging.json" Link="SharedSettings\sharedsettings.Staging.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="..\..\..\SharedSettings\sharedsettings.Production.json" Link="SharedSettings\sharedsettings.Production.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>

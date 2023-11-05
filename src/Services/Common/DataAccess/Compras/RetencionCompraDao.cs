@@ -1,11 +1,12 @@
-﻿using Domain.Models;
+﻿using System.Data;
+using Common.Core.Models;
+using Common.Core.Utils;
+using Domain.Models;
 using Domain.Models.InfoAdicional;
 using Domain.ViewModels;
-using Helpers;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace DataAccess.Compras
 {
@@ -20,7 +21,7 @@ namespace DataAccess.Compras
         public RetencionCompraDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _gr = new GenericResponse();
         }
 
@@ -41,7 +42,7 @@ namespace DataAccess.Compras
                     if (dt.Rows.Count > 0)
                     {
                         _gr.id = "1";
-                        _gr.data = DataHelper.DataTableToJSON(dt);
+                        _gr.data = DataConverters.DataTableToJSON(dt);
                     }
                 }
             }
@@ -159,7 +160,7 @@ namespace DataAccess.Compras
                     cmd.Parameters.AddWithValue("idPuntoEmision", data.retencionCompra.idPuntoEmision);
                     cmd.Parameters.AddWithValue("total", data.retencionCompra.total);
                     cmd.Parameters.AddWithValue("fechaEmision", data.retencionCompra.fechaEmision);
-                    cmd.Parameters.AddWithValue("concepto", DataHelper.ToDBNullOrDefault(data.retencionCompra.concepto));
+                    cmd.Parameters.AddWithValue("concepto", DataValidation.ToDBNullOrDefault(data.retencionCompra.concepto));
                     var p = JsonConvert.SerializeObject(data.dataDetalle); cmd.Parameters.Add(new SqlParameter("json", p));
                     var infoAdicional = JsonConvert.SerializeObject(data.adicional); cmd.Parameters.Add(new SqlParameter("jsonInfoAdicional", infoAdicional));
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -202,7 +203,7 @@ namespace DataAccess.Compras
                     cmd.Parameters.AddWithValue("idProveedor", data.retencionCompra.idProveedor);
                     cmd.Parameters.AddWithValue("total", data.retencionCompra.total);
                     cmd.Parameters.AddWithValue("fechaEmision", data.retencionCompra.fechaEmision);
-                    cmd.Parameters.AddWithValue("concepto", DataHelper.ToDBNullOrDefault(data.retencionCompra.concepto));
+                    cmd.Parameters.AddWithValue("concepto", DataValidation.ToDBNullOrDefault(data.retencionCompra.concepto));
                     var p = JsonConvert.SerializeObject(data.dataDetalle); cmd.Parameters.Add(new SqlParameter("json", p));
                     var infoAdicional = JsonConvert.SerializeObject(data.adicional); cmd.Parameters.Add(new SqlParameter("jsonInfoAdicional", infoAdicional));
                     cmd.CommandType = CommandType.StoredProcedure;
@@ -268,52 +269,6 @@ namespace DataAccess.Compras
 
             }
             return _gr;
-        }
-        public async Task<object[]> DataSendEmailAsync(string json)
-        {
-            var send = new Email();
-            var urlSri = "";
-            var invoiceName = "";
-            try
-            {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
-                {
-                    var cmd = new SqlCommand("Compra.Retencion_Send_Email", con);
-                    cmd.Parameters.AddWithValue("json", json);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        _gr.id = reader.GetString(0);
-                        _gr.message = reader.GetString(1);
-                        if (_gr.id == "1")
-                        {
-                            send = new Email()
-                            {
-                                from = reader.GetString(2),
-                                password = reader.GetString(3),
-                                to = reader.GetString(4),
-                                subject = reader.GetString(5),
-                                message = reader.GetString(6),
-                                cc = reader.GetString(7),
-                            };
-                            urlSri = reader.GetString(8);
-                            invoiceName = reader.GetString(9);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _gr.id = "0";
-                _gr.message = ex.Message.ToString();
-            }
-            finally
-            {
-
-            }
-            return new object[] { send, urlSri, invoiceName };
         }
     }
 }

@@ -13,10 +13,11 @@
         '$log',
         '$window',
         'modalService',
-        'uiGridConstants'
+        'uiGridConstants',
+        'proveedorService'
     ]
 
-    function precioMasivoCtrl($scope, _mS, _tS, _commonSvc, _articleSvc, _pricingUtils, _form, $interval, $log, $window, _modalSvc, uiGridConstants) {
+    function precioMasivoCtrl($scope, _mS, _tS, _commonSvc, _articleSvc, _pricingUtils, _form, $interval, $log, $window, _modalSvc, uiGridConstants, proveedorSvc) {
         _mS.detectDevice()
 
         $scope.catalogs = [
@@ -347,7 +348,7 @@
             }
         }
 
-        $scope.proveedorSearch = (textSearch) => _commonSvc.proveedorSearch(textSearch)
+        $scope.proveedorSearch = (textSearch) => proveedorSvc.search(textSearch)
         $scope.selectProveedorFiltro = (item) => {
             $scope.mainForm.rucProveedor = item.proveedor.numeroIdentificacion
             $scope.getArticles()
@@ -367,17 +368,13 @@
 
         $scope.fillGrid = (articles) => {
             $scope.gridOptions.data = articles.map(item => {
-                item.descripcion = item.descripcion
-                item.tarifa = item.tarifa
-                item.precioCosto = item.precioCosto
-                item.precioVenta = item.precioVenta
-                item.precioConIva = item.precioConIva
-                item.porcentajeUtilidad = item.porcentajeUtilidad
-                item.porcentajeIva = item.iva
-                item.ganancia = _form.roundNumber((Number(item.precioVenta) - item.precioCosto), $scope.config.nroPrecio)
-                item.estado = item.estadoTarifa
-                item.modified = false
-                return item
+                return {
+                    ...item,
+                porcentajeIva: item.iva,
+                ganancia: _form.roundNumber((Number(item.precioVenta) - item.precioCosto), $scope.config.nroPrecio),
+                estado: item.estadoTarifa,
+                modified: false
+            } 
             })
         }
 

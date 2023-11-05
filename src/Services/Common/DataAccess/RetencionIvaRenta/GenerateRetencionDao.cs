@@ -1,11 +1,11 @@
-﻿using Domain.Models;
+﻿using System.Data;
+using Common.Core.Models;
+using Domain.Models;
 using Domain.Models.Ventas;
 using Domain.ViewModels;
 using Domain.ViewModels.Ventas;
-using Helpers;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System.Data;
-using System.Data.SqlClient;
 
 namespace DataAccess.RetencionIvaRenta
 {
@@ -18,7 +18,7 @@ namespace DataAccess.RetencionIvaRenta
         public GenerateRetencionDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _gr = new GenericResponse();
         }
 

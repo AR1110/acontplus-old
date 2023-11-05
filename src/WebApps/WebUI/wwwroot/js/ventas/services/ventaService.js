@@ -3,49 +3,48 @@
  * 2. clienteService
  * 3. empleadoService 
  */
-(function() {
+(function () {
 
     'use strict';
 
-    app.factory('ventaService', function($injector){
+    app.factory('ventaService', function ($injector) {
         let service = {};
         let mS = $injector.get('mainService');
-        let fS = $injector.get('formulario');
         /**
          * 
          * @param {object} query  
          * @returns array
          */
-        service.getDataForm = function(query) {
-            return mS.getData('get', 'CatalogoVenta/?json=' + JSON.stringify(query), null, true).then(response => {
-                if(response.code==='0'){
+        service.getDataForm = function (query) {
+            return mS.getData('get', 'Venta/CatalogoVenta/?json=' + JSON.stringify(query), null, true).then(response => {
+                if (response.code === '0') {
                     throw response;
                 }
-                if(response.code==='1'){
+                if (response.code === '1') {
                     let payload = JSON.parse(response.payload);
 
-                    let estabs      = payload[0];
+                    let estabs = payload[0];
                     let ptosEmision = payload[1];
-                    let bodegas     = payload[2];
+                    let bodegas = payload[2];
                     let configVenta = payload[3][0]
-                    let decimal     =  JSON.parse(payload[4][0].jsonConfig)
-                    let configDetalle         = payload[5][0]; 
-                    let tipoIvas              = payload[6];
+                    let decimal = JSON.parse(payload[4][0].jsonConfig)
+                    let configDetalle = payload[5][0];
+                    let tipoIvas = payload[6];
                     let tarifas = payload[7];
                     let tiempoCreditos = payload[8];
                     let articuloPredeterminado = payload[9][0]
-                    let clientePredeterminado = payload[10][0];                    
+                    let clientePredeterminado = payload[10][0];
                     let permisoVenta = JSON.parse(payload[11][0].jsonPermission);
-                    let permisoArticulo =payload[12][0];
+                    let permisoArticulo = payload[12][0];
 
 
-                    let estabsMapper = estabs.map(item=>({
+                    let estabsMapper = estabs.map(item => ({
                         codEstab_Asig: item.codEstab_Asig,
                         codEstab: item.codEstab,
                         predeterminado: item.predeterminado,
                         nombreComercial: item.nombreComercial,
-                        estab: item.estab,   
-                        tarifasImpuestos: JSON.parse(item.tarifasImpuestos)                     
+                        estab: item.estab,
+                        tarifasImpuestos: JSON.parse(item.tarifasImpuestos)
                     }))
 
                     let ptosEmisionMapper = ptosEmision.map(item => ({
@@ -62,7 +61,7 @@
                         payAutomatic: configVenta.payAutomatic | true,
                     }
 
-                    let decimalMapper  = {                        
+                    let decimalMapper = {
                         nroPrecio: decimal.nroPrecio || 3,
                         nroCantidad: decimal.nroCantidad || 3,
                         nroIva: decimal.nroIva || 3,
@@ -74,12 +73,13 @@
                         importeTotal: decimal.importeTotal || 3,
                     }
 
-                    let tipoIvasMapper = tipoIvas.map(item=>({
-                            idTipoIva: item.idTipoIva,
-                            descripcion: item.descripcion,
-                            tarifa: item.tarifa,
-                            codigoPorcentaje: item.codigoPorcentaje,
-                        }))
+
+                    let tipoIvasMapper = tipoIvas.map(item => ({
+                        idTipoIva: item.idTipoIva,
+                        descripcion: item.descripcion,
+                        tarifa: item.tarifa,
+                        codigoPorcentaje: item.codigoPorcentaje,
+                    }))
 
                     let tiempoCreditosMapper = tiempoCreditos.map(item => ({
                         idTiempoCredito: item.idTiempoCredito,
@@ -88,10 +88,10 @@
                         numeroCuota: item.numeroCuota,
                     }))
 
-                    
+
                     return {
                         establecimientos: estabsMapper,
-                        ptosEmision: ptosEmisionMapper, 
+                        ptosEmision: ptosEmisionMapper,
                         bodegas,
                         configVenta: configVentaMapper,
                         decimal: decimalMapper,
@@ -104,34 +104,106 @@
                         permisoVenta,
                         permisoArticulo
                     }
-                   
+
                 }
             })
         }
 
 
-        service.getIdNotaEntrega = function (id){
-            return mS.getData('get', "/NotaEntrega/GetId?id=" + id)
-            
-            .catch(error=>{
+        service.getIdNotaEntrega = function (id) {
+            return mS.getData('get', "Venta/NotaEntrega/GetId/" + id, null, true).catch(error => {
                 console.log('sale service', error)
                 throw new Error(error)
             })
             // return mS.getData('get', 'Venta/NotaEntrega/' + 'GetId/' + id, null, true)
-            
+
             // .catch(error=>{
             //     console.log('sale service', error)
             //     throw new Error(error)
             // })
         }
 
+        service.verifyPendientAccount = (query) => {
+            let params = {
+                tipo: 5,
+                idCliente: query.idCliente
+            }
+            showLoader();
+            return mS.getData('get', 'Contabilidad/CuentaPorCobrar/?json=' + JSON.stringify(params), null, true)
+                .then(async response => {
+                    hideLoader();
+                    if (response.code === "0") {
+                        console.log(response)
+                        throw response;
+                    }
+                    if (response.code === "1") {
+                        let mainData = JSON.parse(response.payload);
+                        let pendientAccounts = mainData[0];
 
+                        if (pendientAccounts.length === 0) return false;
+
+                        let { totalImporteTotal, totalAbono, totalSaldo } = pendientAccounts.reduce((value, item) => {
+                            value.totalImporteTotal += item.importeTotal;
+                            value.totalAbono += item.abono;
+                            value.totalSaldo += item.saldo;
+                            return value;
+
+                        }, { totalImporteTotal: 0, totalAbono: 0, totalSaldo: 0 })
+
+                        let html = `<div class="table-responsive">
+                    <table class="table table-hover table-bordered table-sm">
+                        <thead>
+                            <tr>
+                                <th><small>N°</small></th>                              
+                                <th><small>Tipo. Doc.</small></th>                                                              
+                                <th><small>Total</small></th>
+                                <th><small>Abono</small></th>
+                                <th><small>Saldo</small></th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+                        let index = 1;
+                        for (let pendientAccount of pendientAccounts) {
+                            html += ` <tr>
+                        <td>${index++}</td>
+                        <td>${pendientAccount.documento}</td>                        
+                        <td>$${pendientAccount.importeTotal}</td>
+                        <td>$${pendientAccount.abono}</td>
+                        <td>$${pendientAccount.saldo}</td>
+                    </tr>
+                `
+                        }
+                        html += `</tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2">Total:</td>
+                                <td>${totalImporteTotal.toFixed(2)}</td>
+                                <td>${totalAbono.toFixed(2)}</td>
+                                <td>${totalSaldo.toFixed(2)}</td>
+                            </tr>
+                        </tfoot></table></div>`
+                        await Swal.fire({
+                            title: '<small>Cuentas pendientes</small>',
+                            icon: 'info',
+                            html,
+                            width: 800
+                        })
+
+                        return true;
+                    }
+                })
+                .catch(error => {
+                    hideLoader();
+                    throw error;
+                })
+        }
         return service;
     })
 
 
     //---------------------------------Cliente------------------------------------------
-    app.factory('clienteService', function($injector){
+    app.factory('clienteService', function ($injector) {
         let url = 'Venta/Cliente/';
         let mS = $injector.get('mainService');
         let fS = $injector.get('formulario');
@@ -140,41 +212,41 @@
         let service = {};
 
         service.getDataForm = function () {
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify({tipo: 2}), null, true)
-                    .then(response => {
-                        if(response.code==='0'){
-                            console.log('Status code 0: Get Data Form Customer')                            
-                            throw response
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 2 }), null, true)
+                .then(response => {
+                    if (response.code === '0') {
+                        console.log('Status code 0: Get Data Form Customer')
+                        throw response
+                    }
+                    if (response.code === '1') {
+                        let mainDataRepository = JSON.parse(response.payload)
+                        return {
+                            tipoIdentificacion: mainDataRepository[0],
+                            tipoContribuyentes: mainDataRepository[1],
+                            tiempoCreditos: mainDataRepository[2] || [],
+                            ciudades: mainDataRepository[3],
+                            tiposCliente: mainDataRepository[4] || [],
+                            empresas: mainDataRepository[5] || [],
+                            cargos: mainDataRepository[6] || [],
                         }
-                        if(response.code==='1'){
-                            let mainDataRepository = JSON.parse(response.payload)
-                            return {
-                                tipoIdentificacion: mainDataRepository[0],
-                                tipoContribuyentes: mainDataRepository[1],
-                                tiempoCreditos: mainDataRepository[2],
-                                ciudades: mainDataRepository[3],                            
-                                tiposCliente: mainDataRepository[4],
-                                empresas: mainDataRepository[5],
-                                cargos: mainDataRepository[6],
-                            }
-                        }
-                    }).catch(response=>{
-                        throw response;
-                    })
-            
+                    }
+                }).catch(response => {
+                    throw response;
+                })
+
         }
 
         service.getAll = function (query) {
-            query.tipo = 1; 
+            query.tipo = 1;
             return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true)
-                .then(response=>{
-                    if(response.code=="0"){
+                .then(response => {
+                    if (response.code == "0") {
                         throw response;
                     }
-                    if(response.code=="1"){ 
+                    if (response.code == "1") {
                         let clientes = JSON.parse(response.payload)[0] || [];
-                    
-                        return clientes.map(item=>{
+
+                        return clientes.map(item => {
                             return {
                                 idCliente: item.idCliente,
                                 numeroIdentificacion: item.numeroIdentificacion,
@@ -184,87 +256,86 @@
                                 correo: item.correo,
                                 estado: item.estado,
                                 consumidorFinal: item.consumidorFinal,
-                                totalRecords: item.totalRecords,
                                 validationSri: item.validationSri,
                                 tipoIdentificacion: item.tipoIdentificacion,
-                                esConsumidorFinal: item.tipoIdentificacion=='CF',
+                                esConsumidorFinal: item.tipoIdentificacion == 'CF',
                                 totalRecords: item.totalRecords,
                             }
                         })
                     }
                 })
-                .catch(error => { 
-                    console.log(error)                 
+                .catch(error => {
+                    console.log(error)
                     throw error;
                 })
         }
 
         service.save = function (data) {
             return mS.getData('post', url + 'Insert', data, true)
-            .catch(error => { 
-                console.log('Error service save customer: '+ error)                 
-                throw error;
-            })
+                .catch(error => {
+                    console.log('Error service save customer: ' + error)
+                    throw error;
+                })
         }
 
         service.update = function (id, data) {
             return mS.getData('put', url + 'Update/' + id, data, true)
-            .catch(error => { 
-                console.log('Error service update customer: '+ error)                 
-                throw error;
-            })
+                .catch(error => {
+                    console.log('Error service update customer: ' + error)
+                    throw error;
+                })
         }
 
         service.delete = function (id) {
             return mS.getData('delete', url + 'Delete/' + id, null, true)
-            .catch(error => { 
-                console.log('Error service delete customer: '+ error)                 
-                throw error;
-            })
+                .catch(error => {
+                    console.log('Error service delete customer: ' + error)
+                    throw error;
+                })
         }
 
         service.findById = function (id) {
             return mS.getData('get', url + 'FindById/' + id, null, true)
-            .then(response => {
-                if(response.code==="0"){
-                    throw response;
-                }
-                if(response.code==="1"){
-                    let dataRepository  = JSON.parse(response.payload)[0];
-          
-                    return {
-                        idCliente: dataRepository.idCliente,
-                        idTipoClienteProveedor: dataRepository.idTipoClienteProveedor,
-                        idTipoEntidad: dataRepository.idTipoEntidad,
-                        idSubContribuyente: dataRepository.idSubContribuyente,
-                        idTiempoCredito: dataRepository.idTiempoCredito,
-                        idTipoIdentificacion: dataRepository.idTipoIdentificacion,
-                        idCiudad: dataRepository.idCiudad,
-                        numeroIdentificacion: dataRepository.numeroIdentificacion,
-                        nombreFiscal: dataRepository.nombreFiscal,
-                        montoCredito: dataRepository.montoCredito,
-                        nombreComercial: dataRepository.nombreComercial,
-                        direccion: dataRepository.direccion,
-                        telefono: dataRepository.telefono,
-                        correo: dataRepository.correo,
-                        estado: dataRepository.estado,
-                        idEmpleado: dataRepository.idEmpleado,
-                        diasCredito: dataRepository.diasCredito,
-                        empleado: dataRepository.empleado,
-                        idEmpresa: dataRepository.idEmpresa,
-                        idCargo: dataRepository.idCargo,
-                        placa: dataRepository.placa,
-                        validationSri: dataRepository.validationSri,
-                        correos: dataRepository.correo ? dataRepository.correo.split(';') : [],
-                        telefonos: dataRepository.telefono ? dataRepository.telefono.split(';') : [],
-                        placas: dataRepository.placa !== '' ? dataRepository.placa.split(';') : []
-                    }                    
-                }
-            })
-            .catch(error => { 
-                console.log('Error service get customer Find by Id: '+ error)                 
-                throw error;
-            })
+                .then(response => {
+                    if (response.code === "0") {
+                        throw response;
+                    }
+                    if (response.code === "1") {
+                        let dataRepository = JSON.parse(response.payload)[0];
+
+                        return {
+                            idCliente: dataRepository.idCliente,
+                            idTipoClienteProveedor: dataRepository.idTipoClienteProveedor,
+                            idTipoEntidad: dataRepository.idTipoEntidad,
+                            idSubContribuyente: dataRepository.idSubContribuyente,
+                            idTiempoCredito: dataRepository.idTiempoCredito,
+                            idTipoIdentificacion: dataRepository.idTipoIdentificacion,
+                            idCiudad: dataRepository.idCiudad,
+                            numeroIdentificacion: dataRepository.numeroIdentificacion,
+                            nombreFiscal: dataRepository.nombreFiscal,
+                            montoCredito: dataRepository.montoCredito,
+                            nombreComercial: dataRepository.nombreComercial,
+                            direccion: dataRepository.direccion,
+                            telefono: dataRepository.telefono,
+                            correo: dataRepository.correo,
+                            estado: dataRepository.estado,
+                            idEmpleado: dataRepository.idEmpleado,
+                            diasCredito: dataRepository.diasCredito,
+                            empleado: dataRepository.empleado,
+                            idEmpresa: dataRepository.idEmpresa,
+                            idCargo: dataRepository.idCargo,
+                            placa: dataRepository.placa,
+                            validationSri: dataRepository.validationSri,
+                            correos: dataRepository.correo ? dataRepository.correo.split(';') : [],
+                            telefonos: dataRepository.telefono ? dataRepository.telefono.split(';') : [],
+                            placas: dataRepository.placa !== '' ? dataRepository.placa.split(';') : []
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.log('Error service get customer Find by Id: ' + error)
+                    throw error;
+                })
         }
 
         /**
@@ -272,21 +343,28 @@
          * @param {object} query  {textSearch}
          * @returns 
          */
-        service.search = function(query){
-            if(!query){
+        service.search = function (query) {
+            if (!query) {
                 throw new Error('No se ha proporcionado ningun parámetro')
             }
-            if(!query.hasOwnProperty('textSearch')){
+            if (!('textSearch' in query)) {
                 throw new Error(`La propiedad "textSearch" no se ha proporcionado`)
             }
 
-            return mS.getData('get', url + 'Search?json=' + JSON.stringify(query), null, true).then(response => {
-                if(response.code==='0'){
+            let text = query.textSearch ? query.textSearch.replace(/^-+|-+$| [^A-Za-z0-9.-]+/g, "") : ''
+            let obj = {
+                ...query,
+                textSearch: text
+            }
+
+
+            return mS.getData('get', url + 'Search?json=' + JSON.stringify(obj), null, true).then(response => {
+                if (response.code === '0') {
                     return response;
                 }
-                if(response.code==='1'){
+                if (response.code === '1') {
                     let clientes = JSON.parse(response.payload) || [];
-                    return clientes.map(item=>{
+                    return clientes.map(item => {
                         return {
                             idCliente: item.idCliente,
                             nombreFiscal: item.nombreFiscal,
@@ -302,13 +380,13 @@
                             tipoIdentificacion: item.tipoIdentificacion
                         }
                     })
-                }                
-            }).catch(error=>{
+                }
+            }).catch(error => {
                 throw error;
             })
         }
 
-        
+
 
 
         service.validateForm = function (data) {
@@ -316,7 +394,7 @@
             if (!data.numeroIdentificacion) {
                 tS.toastr('warning', 'Ingrese Número de Identificación')
                 return;
-            };
+            }
 
             if ($("#numeroIdentificacion").hasClass('is-invalid')) {
                 tS.toastr('warning', 'Ingrese el número de Identificación válido');
@@ -363,7 +441,7 @@
                 }
             }
 
-            if (!(data.idTiempoCredito>0)) {
+            if (!(data.idTiempoCredito > 0)) {
                 tS.toastr('warning', 'Seleccione el Tiempo Credito');
                 return
             }
@@ -378,7 +456,7 @@
             return true;
         }
 
-        
+
 
         service.checkClientByIdentification = function (query, codigoIdentificacion, callback) {
             mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response => {
@@ -386,9 +464,9 @@
                     callback(codigoIdentificacion)
                     // return response;
                 }
-                if(response.code==="1"){
-                    
-                    let clienteRepository = JSON.parse(response.payload)[0]
+                if (response.code === "1") {
+
+                    let clienteRepository = JSON.parse(response.payload)[0][0]
 
                     // return {
                     //     idCliente: clienteRepository.idCliente,
@@ -429,11 +507,11 @@
                             callback(codigoIdentificacion);
                         }
                     })
-                }                
+                }
             }).catch(error => {
                 console.log(error);
                 throw error;
-            })           
+            })
         }
 
         service.checkClientSRIByRUC = function (identificacion) {
@@ -456,24 +534,17 @@
             textChip = fS.removeAccents(textChip);
             item = textChip.toLowerCase();
         }
-
-
-        
-
-
-
         return service;
-        
+
     })
 
-    //====================================NO SUBIR HASTA QUE SE HAYA ACTUALIZADO 
-    //==========================================
-    app.factory('empleadoService', function($injector){
-        // let url = 'Venta/Empleado/';
-        let url = 'Empleado/';
+
+    app.factory('empleadoService', function ($injector) {
+        let url = 'Venta/Empleado/';
         let mS = $injector.get('mainService');
         return {
-            getAll ,
+            getAll,
+            getDataForm,
             search,
             deleteEmployee,
             save,
@@ -481,109 +552,160 @@
         }
 
         function getAll(query) {
-            return mS.getData('get', '/Empleado/Get?pageIndex=' + 1 + '&pageSize=' + 100).then(response => {
-                if(response.id ==='0'){
+            let spParams = {
+                ...query,
+                tipo: 1,
+            }
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(spParams), null, true).then(response => {
+                if (response.code === "0") {
                     throw response;
                 }
-                if(response.id=="1"){
-                    let employeesApi = response.data; 
-                    return employeesApi.map(item=>({
+                if (response.code === "1") {
+                    let employeesApi = JSON.parse(response.payload);
+                    return employeesApi.map(item => ({
                         idEmpleado: item.idEmpleado,
                         idTipoIdentificacion: item.idTipoIdentificacion,
                         nroIdentificacion: item.nroIdentificacion,
                         nombreCompleto: item.nombreCompleto,
                         estado: item.estado,
-                    })) 
+                        totalDatos: item.totalDatos,
+                    }))
                 }
             })
-            // return mS.getData('get', url + 'Get?json=' + JSON.stringify(query), null, true).then(response=>{
-            //     if(response.code==="0"){
-            //         throw response;
-            //     }
-            //     if(response.code==="1"){
-            //         let employeesApi = JSON.parse(response.payload);
-            //         return employeesApi.map(item=>({
-            //             idEmpleado: item.idEmpleado,
-            //             idTipoIdentificacion: item.idTipoIdentificacion,
-            //             nroIdentificacion: item.nroIdentificacion,
-            //             nombreCompleto: item.nombreCompleto,
-            //             estado: item.estado,
-            //             totalDatos: item.totalDatos,
-            //         }))
-            //     }
-            // })
+        }
+
+        function getDataForm() {
+            let spParams = { 
+                tipo: 2,
+            }
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(spParams), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
+                    return {
+                        tiposIdentificacion: mainData
+                    }
+                }
+            })
         }
 
         function search(json) {
-            return mS.getData('get', '/Empleado/Search?busqueda=' + json.textSearch).then(response=>{
-                if(response.id==='0'){
-                    throw response;
-                }
-                if(response.id==='1'){
-                    let employeesApi = response.data;
-                    return employeesApi.map(item=>({
-                        idEmpleado: item.idEmpleado,
-                        idTipoIdentificacion: item.idTipoIdentificacion,
-                        nroIdentificacion: item.nroIdentificacion,
-                        nombreCompleto: item.nombreCompleto,
-                        estado: item.estado,
-                    })) 
-                }
-            })
-            // return mS.getData('get', url + 'Search?json=' + JSON.stringify(json), null, true)
-            // .then(response => {
-            //     if(response.code==='0'){
-            //         throw response;
-            //     }
-            //     if(response.code==='1'){
-            //         let employeesApi = JSON.parse(response.payload); 
-            //         return employeesApi.map(item=>({
-            //             idEmpleado: item.idEmpleado,
-            //             idTipoIdentificacion: item.idTipoIdentificacion,
-            //             nroIdentificacion: item.nroIdentificacion,
-            //             nombreCompleto: item.nombreCompleto,
-            //             estado: item.estado,
-            //         })) 
-            //     }
-            // })
-            // .catch(error => { 
-            //     console.log(error)                 
-            //     throw error;
-            // })
+            return mS.getData('get', url + 'Search?json=' + JSON.stringify(json), null, true)
+                .then(response => {
+                    if (response.code === '0') {
+                        throw response;
+                    }
+                    if (response.code === '1') {
+                        let employeesApi = JSON.parse(response.payload);
+                        return employeesApi.map(item => ({
+                            idEmpleado: item.idEmpleado,
+                            idTipoIdentificacion: item.idTipoIdentificacion,
+                            nroIdentificacion: item.nroIdentificacion,
+                            nombreCompleto: item.nombreCompleto,
+                            estado: item.estado,
+                        }))
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
+                    throw error;
+                })
         }
 
         function deleteEmployee(id) {
-            return mS.getData('post', '/Empleado/Delete?idEmpleado=' + id)
-            // return mS.getData('delete', url + 'Delete/' +id, null, true);
+            return mS.getData('delete', url + 'Delete/' + id, null, true);
         }
 
         function save(data) {
-            return mS.getData('post', url + 'Post', data)
-            .catch(error => { 
-                console.log('Error service save employee: '+ error)                 
-                throw error;
-            })
-            // return mS.getData('post', url + 'Insert?json=' + JSON.stringify(data), null, true)
-            // .catch(error => { 
-            //     console.log('Error service save employee: '+ error)                 
-            //     throw error;
-            // })
+            return mS.getData('post', url + 'Insert?json=' + JSON.stringify(data), null, true)
+                .catch(error => {
+                    console.log('Error service save employee: ' + error)
+                    throw error;
+                })
         }
 
         function update(id, data) {
-            return mS.getData('put', url + 'Put?idEmpleado' + id, data)
-            .catch(error => { 
-                console.log('Error service update employee: '+ error)                 
-                throw error;
-            })
-            // return mS.getData('put', url + 'Update/' + id + '?json=' + JSON.stringify(data),null, true)
-            // .catch(error => { 
-            //     console.log('Error service update employee: '+ error)                 
-            //     throw error;
-            // })
+            return mS.getData('put', url + 'Update/' + id + '?json=' + JSON.stringify(data), null, true)
+                .catch(error => {
+                    console.log('Error service update employee: ' + error)
+                    throw error;
+                })
         }
 
-    }) 
+    })
 
+
+    app.factory('cargoService', function ($injector) {
+        let URL = 'Venta/Cargo/';
+        let mS = $injector.get('mainService');
+
+        let service = {}
+
+        service.get = (query) => {
+            return mS.getData('get', URL + '?json=' + JSON.stringify(query), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+                if (response.code === "1") {
+                    let cargos = JSON.parse(response.payload);
+                    return cargos;
+
+                }
+            })
+        }
+
+        service.post = (data) => {
+            return mS.getData('post', URL + '?json=' + JSON.stringify(data), null, true)
+        }
+
+        service.put = (id, data) => {
+            return mS.getData('put', URL + id + '?json=' + JSON.stringify(data), null, true)
+        }
+
+        service.delete = (id) => {
+            return mS.getData('delete', URL + '' + id, null, true)
+        }
+
+        return service;
+
+    })
+
+
+    app.factory('empresaService', function ($injector) {
+        let URL = 'Venta/Empresa/';
+        let mS = $injector.get('mainService');
+
+        let service = {}
+
+        service.get = (query) => {
+            return mS.getData('get', URL + '?json=' + JSON.stringify(query), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+                if (response.code === "1") {
+                    let empresas = JSON.parse(response.payload);
+                    return empresas;
+
+                }
+            })
+        }
+
+        service.post = (data) => {
+            return mS.getData('post', URL + '?json=' + JSON.stringify(data), null, true)
+        }
+
+        service.put = (id, data) => {
+            return mS.getData('put', URL + id + '?json=' + JSON.stringify(data), null, true)
+        }
+
+        service.delete = (id) => {
+            return mS.getData('delete', URL + '' + id, null, true)
+        }
+
+        return service;
+
+    })
 
 })(window.angular)

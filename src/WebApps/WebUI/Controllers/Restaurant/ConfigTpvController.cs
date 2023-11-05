@@ -1,5 +1,6 @@
-﻿using DataAccess;
-using Helpers;
+﻿using Common.Core.Models;
+using Common.Core.Utils;
+using DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using Services.Common.Logs;
 
@@ -10,16 +11,14 @@ namespace WebUI.Controllers.Restaurant
     {
         private readonly IConfiguration _config;
 
-
         private readonly LogWriter _log;
+
         private readonly DbAccess _db;
-        public ConfigTpvController(IConfiguration config)
+        public ConfigTpvController(IConfiguration config, LogWriter log)
         {
             _config = config;
-
-
-            _log = new LogWriter(_config);
             _db = new DbAccess(_config);
+            _log = log;
         }
         public IActionResult Index()
         {
@@ -37,7 +36,7 @@ namespace WebUI.Controllers.Restaurant
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Get: \n" + ex.ToString());
+                _log.LogActivity("Error in Get: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al obtener los datos");
             }
             finally
@@ -54,12 +53,12 @@ namespace WebUI.Controllers.Restaurant
             {
                 await _db.SPExecute("Restaurant.ConfigTpv_Insert");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while saving config tpv: \n" + ex.ToString());
+                _log.LogActivity("Error while saving config tpv: \n" + ex.ToString());
                 _response.Create(code: "0", "Error al guardar la configuración");
             }
             finally
@@ -76,12 +75,12 @@ namespace WebUI.Controllers.Restaurant
             {
                 await _db.SPExecute("Restaurant.ConfigTpv_Update");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("json", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
                 _response = _db.GetDefault();
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while updating config tpv: \n" + ex.ToString());
+                _log.LogActivity("Error while updating config tpv: \n" + ex.ToString());
                 _response.Create(code: "0", "Error al actualizar la configuración");
             }
             finally
@@ -103,7 +102,7 @@ namespace WebUI.Controllers.Restaurant
             }
             catch (Exception ex)
             {
-                _log.LogError("Error while updating config tpv: \n" + ex.ToString());
+                _log.LogActivity("Error while updating config tpv: \n" + ex.ToString());
                 _response.Create(code: "0", "Error al actualizar la configuración");
             }
             finally

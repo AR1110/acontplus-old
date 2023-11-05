@@ -1,6 +1,6 @@
 import {
     ModalBaseCtrl
-} from "./modalBaseCtrl.min.js?v=0.50";
+} from "./modalBaseCtrl.min.js?v=0.90";
 
 
 class ModalProformaCtrl extends ModalBaseCtrl {
@@ -90,6 +90,18 @@ class ModalProformaCtrl extends ModalBaseCtrl {
         }
     }
 
+    initiload(){
+        return this._mS.getData('get', 'Venta/Proforma/' +'Get?json=' + JSON.stringify({tipo: 2}), null, true ).then(response =>{
+            if(response.code==="0"){
+                throw response;
+            }
+             
+            if(response.code==="1"){ 
+                let mainData = JSON.parse(response.payload); 
+                return mainData;
+            }
+        }) 
+    }
 
     
     onKeyupCustomer(){
@@ -334,7 +346,7 @@ export class ModalProformaNuevoCtrl extends ModalProformaCtrl {
             if (this.establecimientos.length > 0) {
 
                 let dataEstab = this.establecimientos[0];
-                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
+                let resultsDataFormEstab = await this._commonSvc.getDataFormEstabAsig(dataEstab);
 
                 this.data.codEstab = dataEstab.codEstab;
                 this.cloneCodEstab = dataEstab.codEstab;
@@ -670,7 +682,7 @@ export class ModalProformaDetalleCtrl extends ModalProformaCtrl {
 
                 let dataEstab = this.establecimientos.find(item => item.codEstab === this.dataDocumento.codEstab)
 
-                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
+                let resultsDataFormEstab = await this._commonSvc.getDataFormEstabAsig(dataEstab);
                 this.puntosEmisiones = resultsDataFormEstab[0];
 
                 this.bodegas = resultsDataFormEstab[1];
@@ -821,7 +833,7 @@ export class ModalProformaEditarCtrl extends ModalProformaCtrl {
 
                 let dataEstab = this.establecimientos.find(item => item.codEstab === this.dataDocumento.codEstab)
 
-                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
+                let resultsDataFormEstab = await this._commonSvc.getDataFormEstabAsig(dataEstab);
                 this.puntosEmisiones = resultsDataFormEstab[0];
 
                 this.bodegas = resultsDataFormEstab[1];
@@ -1082,7 +1094,7 @@ export class ModalProformaDuplicarCtrl extends ModalProformaCtrl {
 
                 let dataEstab = this.establecimientos.find(item => item.codEstab === this.dataDocumento.codEstab)
 
-                let resultsDataFormEstab = await this.getDataFormEstabAsig(dataEstab);
+                let resultsDataFormEstab = await this._commonSvc.getDataFormEstabAsig(dataEstab);
                 this.puntosEmisiones = resultsDataFormEstab[0];
 
                 this.bodegas = resultsDataFormEstab[1];

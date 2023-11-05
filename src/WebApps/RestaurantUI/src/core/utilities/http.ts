@@ -1,14 +1,20 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios"; 
-import { AuthService } from "@/core/services";
-import { SnackbarUtility } from ".";
+import { getToken } from "@/core/services"; 
 
+const urlPrd = "https://gateway.acontplus.com/"
+//const urlPrd = 'https://gateway.acontplus.xyz/'
+//const urlPrd = 'http://18.224.78.45:5001/'
+//const urlDev = "https://localhost:7112/gateway/"
+const urlLocal = "https://localhost:7060/"
 const instance = axios.create({
-  baseURL: import.meta.env.DEV ? "https://localhost:7112/gateway/" : "http://205.209.99.71:8093/gateway/",
+  //baseURL: import.meta.env.DEV ? "https://localhost:7112/gateway/" : "https://acontplus.xyz/restaurantgateway/",
+  baseURL: import.meta.env.DEV ? urlLocal : urlPrd,
 });
 
 //   console.log("init Axios interceptor");
 const updateHeader = (request: any) => {
-  const token = "Bearer " + AuthService.getToken();
+  const token = "Bearer " + getToken();
+  
   const newHeaders = {
     Authorization: token,
     "Content-Type": "application/json",
@@ -23,7 +29,7 @@ instance.interceptors.request.use((request) => {
     // Ignorar las solicitudes que contienen "assets" en la URL
     if (request.url?.includes("assets") || request.headers?.Authorization) {
       return request;
-    }
+    } 
     return updateHeader(request);
   }
 );
@@ -51,9 +57,9 @@ instance.interceptors.response.use(
     //   // redirect();
     // }
 
-    console.log(error.code)    
+    console.log(error)    
     // SnackbarUtilities.error(getValidationError(error.code)!);
-    SnackbarUtility.error(error.message);
+    // SnackbarUtility.error(error.message);
     return Promise.reject(error);
   }
 );

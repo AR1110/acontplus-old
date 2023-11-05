@@ -1,27 +1,20 @@
-﻿using DataAccess;
-using DataAccess.Tesoreria;
-using Domain.Models;
-using Helpers;
+﻿using Common.Core.Models;
+using Common.Core.Utils;
+using DataAccess;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common;
 
-namespace WebUI.Controllers.GestionFinanciera
+namespace WebUI.Controllers.Financiero
 {
     public class ComprobanteIngresoController : Controller
     {
-        private ComprobanteIngresoDao _ci;
         private readonly IConfiguration _configuration;
 
-        private DataAccessObject _dao;
 
-        private EstadoFinancieroDao _ef;
 
         public ComprobanteIngresoController(IConfiguration configuration)
         {
             _configuration = configuration;
-            _dao = new DataAccessObject(_configuration);
-            _ef = new EstadoFinancieroDao(_configuration);
-            _ci = new ComprobanteIngresoDao(_configuration);
-
 
         }
 
@@ -35,24 +28,44 @@ namespace WebUI.Controllers.GestionFinanciera
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("json", SqlValidation.ValidateSqlString(json));
-            return Ok(DbResponse.SPDataTable(await _dao.GetDataTableAsync("GestFinanc.ComprobanteIngreso_Get", parameters)));
+            var response = new GenericResponse();
+            try
+            {
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
+                    await _db.SPExecute("GestFinanc.ComprobanteIngreso_Get");
+                    _db.AddDynamicParam("idRol", User.GetUserRoleId());
+                    _db.AddDynamicParam("json", SqlStringParam.Sanitize(json));
+                    response = _db.GetDataTableAsync();
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpDelete]
         public async Task<IActionResult> Cancel(int id, string observacion)
         {
-            GenericResponse _response = new GenericResponse();
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-            parameters.Add("idComprobanteIngreso", id);
-            parameters.Add("observacion", observacion);
-            _response = DbResponse.SPDefault(await _dao.GetDataTableAsync("GestFinanc.ComprobanteIngreso_Delete", parameters));
-            return Ok(_response);
+            var response = new GenericResponse();
+            try
+            {
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
+                    await _db.SPExecute("GestFinanc.ComprobanteIngreso_Delete");
+                    _db.AddDynamicParam("idUsuarioRol", User.GetUserRoleId());
+                    _db.AddDynamicParam("idComprobanteIngreso", id);
+                    _db.AddDynamicParam("observacion", observacion);
+                    response = _db.GetDefault();
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
-
-
     }
 }

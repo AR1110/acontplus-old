@@ -65,9 +65,10 @@
             try {
                 const modalRef = _modalSvc.openModalCustom({
                     controller: 'ModalEntidadCtrl',
-                    template: 'Entidad/_ModalEntidad.cshtml',
+                    template: '~/Pages/Entidad/Shared/_ModalEntidad.cshtml',
                     size: 'lg',
-                    params: item
+                    params: item,
+                    isRenderRazorPartial: true
                 });
                 modalRef.result.then(result => {
                     if (typeof result === 'object') {
@@ -84,9 +85,10 @@
             try {
                 const modalRef = _modalSvc.openModalCustom({
                     controller: 'ModalEntidadCtrl',
-                    template: 'Entidad/_ModalEntidadConfigSri.cshtml',
+                    template: '~/Pages/Entidad/Shared/_ModalEntidadConfigSri.cshtml',
                     size: 'lg',
-                    params: item
+                    params: item,
+                    isRenderRazorPartial: true
                 });
                 modalRef.result.then(result => {
                     if (typeof result === 'object') {

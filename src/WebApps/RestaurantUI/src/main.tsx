@@ -1,29 +1,31 @@
- 
-import ReactDOM from "react-dom/client";
-import '@fontsource/roboto/300.css';
-import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/500.css';
-import '@fontsource/roboto/700.css';
+
+import ReactDOM from "react-dom/client"; 
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('America/Guayaquil');
 
 import "./App.css";
-import App from "./App.tsx";  
-import { ThemeProvider, createTheme } from "@mui/material";
-
-const darkTheme = createTheme({
-  palette: {
-    mode: 'light',
-  },
-});
-
+import App from "./App.tsx";
+import { DarkModeProvider } from "./context/DarkModeContext.tsx";
+ 
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
 root.render(
-  // <React.StrictMode>  
-  <ThemeProvider theme={darkTheme}>
-    <App /> 
-  </ThemeProvider>
+  // <React.StrictMode>
+  <DarkModeProvider> {/*Dark or light mode */}
+    <LocalizationProvider dateAdapter={AdapterDayjs} >
+      <App />
+    </LocalizationProvider>
+  </DarkModeProvider>
+
   // </React.StrictMode>
 );

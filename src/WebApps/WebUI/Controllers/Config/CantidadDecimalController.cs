@@ -1,7 +1,8 @@
-﻿using DataAccess;
-using Domain.Models;
-using Helpers;
+﻿using Common.Core.Models;
+using Common.Core.Utils;
+using DataAccess;
 using Microsoft.AspNetCore.Mvc;
+using Services.Common;
 using Services.Common.Logs;
 
 namespace WebUI.Controllers.Config
@@ -10,31 +11,32 @@ namespace WebUI.Controllers.Config
     {
         private readonly IConfiguration _configuration;
 
-        private DataAccessObject _dao;
 
-        public CantidadDecimalController(IConfiguration configuration)
+        private readonly LogWriter _log;
+        public CantidadDecimalController(IConfiguration configuration, LogWriter log)
         {
             _configuration = configuration;
 
-            _dao = new DataAccessObject(_configuration);
+
+            _log = log;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get(string json)
         {
             DbAccess _db = new DbAccess(_configuration);
-            LogWriter _log = new LogWriter(_configuration);
+
             GenericResponse _response = new GenericResponse();
             try
             {
                 await _db.SPExecute("Config.CantidadDecimal_Get");
                 _db.AddDynamicParam("idRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
-                _db.AddDynamicParam("jsonParams", SqlValidation.ValidateSqlString(json));
+                _db.AddDynamicParam("jsonParams", SqlStringParam.Sanitize(json));
                 _response = _db.GetDataSetAsync();
             }
             catch (Exception ex)
             {
-                _log.LogError("Error in Get: \n" + ex.ToString());
+                _log.LogActivity("Error in Get: \n" + ex.ToString());
                 _response.Create(code: "0", message: "Error al Obtener los datos");
             }
             finally
@@ -47,11 +49,22 @@ namespace WebUI.Controllers.Config
         [HttpPut]
         public async Task<IActionResult> Update(string json)
         {
-            int idRol = Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value);
-            Dictionary<string, object> parameters = new Dictionary<string, object>();
-            parameters.Add("idRol", idRol);
-            parameters.Add("jsonParams", json);
-            return Ok(DbResponse.SPDefault(await _dao.GetDataTableAsync("Config.CantidadDecimal_Update", parameters)));
+            var response = new GenericResponse();
+            try
+            {
+                using (DbAccess _db = new DbAccess(_configuration))
+                {
+                    await _db.SPExecute("Config.CantidadDecimal_Update");
+                    _db.AddDynamicParam("idRol", User.GetUserRoleId());
+                    _db.AddDynamicParam("jsonParams", SqlStringParam.Sanitize(json));
+                    response = _db.GetDefault();
+                }
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

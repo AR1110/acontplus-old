@@ -2,9 +2,9 @@ export {
     ModalSubFamiliaCtrl
 }
 
-ModalSubFamiliaCtrl.$inject = ['$scope', '$uibModalInstance', 'familiaService', 'subFamiliaService', 'toastService', 'params']
+ModalSubFamiliaCtrl.$inject = ['$scope', '$uibModalInstance', 'articuloService', 'subFamiliaService', 'toastService', 'params']
 
-function ModalSubFamiliaCtrl($scope, $uibModalInstance, familiaSvc, subFamiliaSvc, tS, params) {
+function ModalSubFamiliaCtrl($scope, $uibModalInstance, articuloSvc, subFamiliaSvc, tS, params) {
 
     $scope.data = {};
     $scope.data.montoObjetivo = 0;
@@ -12,15 +12,17 @@ function ModalSubFamiliaCtrl($scope, $uibModalInstance, familiaSvc, subFamiliaSv
 
     $scope.getFamilias = function () {
         try {
-            familiaSvc.listForSelect({}).then(response => {
-                $scope.familias = response;
-            }).catch(error => {
-                console.log(error);
-            })
+            showLoader();
+            articuloSvc.getDataForForm({}).then(response => {
+                $scope.familias = response.familias;
+            }).finally(() => hideLoader())
         } catch (error) {
+            hideLoader();
             console.log(error);
         }
     }
+
+
 
     $scope.getFamilias();
 
@@ -62,10 +64,8 @@ function ModalSubFamiliaCtrl($scope, $uibModalInstance, familiaSvc, subFamiliaSv
             }
 
             showLoader();
-
-            console.log($scope.selectedFile)
-            let file = $scope.selectedFile
-            debugger;
+ 
+            let file = $scope.selectedFile 
             if ($scope.data.idSubFamilia > 0) {
                 subFamiliaSvc.update($scope.data.idSubFamilia, file, $scope.data).then($scope.successReponse)
                     .catch(err => {

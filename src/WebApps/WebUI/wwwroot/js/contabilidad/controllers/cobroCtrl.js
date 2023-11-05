@@ -360,10 +360,7 @@
 
             let dataParms = {
                 id: item.idComprobanteIngreso,
-            }
-
-
-
+            } 
             const parameters = {
                 hasService: true,
                 reportParams: JSON.stringify({

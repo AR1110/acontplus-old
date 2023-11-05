@@ -1,11 +1,11 @@
-﻿using Domain.Models.Tesoreria;
-using Domain.ViewModels.Tesoreria;
-using Helpers;
+﻿using System.Data;
+using Common.Core.Models;
+using Domain.Models.Tesoreria;
+using Domain.ViewModels.GestionFinanciera;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System.Data;
-using System.Data.SqlClient;
 
-namespace DataAccess.Tesoreria
+namespace DataAccess.GestionFinanciera
 {
     public class CobroDetalleDao
     {
@@ -16,7 +16,7 @@ namespace DataAccess.Tesoreria
         public CobroDetalleDao(IConfiguration config)
         {
             _config = config;
-            _connectionStrings = Encryption.DecryptString(_config.GetSection("KeyEncryption").Value, _config.GetConnectionString("DefaultConnection"));
+            _connectionStrings = _config.GetConnectionString("DefaultConnection");
             _gr = new GenericResponse();
         }
 
@@ -25,7 +25,7 @@ namespace DataAccess.Tesoreria
             var detalle = new List<CobroDetalleViewModel>();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("ASPCobroDetalleByDocument", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
@@ -34,7 +34,7 @@ namespace DataAccess.Tesoreria
                     cmd.Parameters.AddWithValue("idComprobante", idComprobante);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);
@@ -80,14 +80,14 @@ namespace DataAccess.Tesoreria
             var detalle = new List<CobroDetalleViewModel>();
             try
             {
-                using (SqlConnection con = new SqlConnection(_connectionStrings))
+                using (var con = new SqlConnection(_connectionStrings))
                 {
                     var cmd = new SqlCommand("ASPCobroDetalleByCobro", con);
                     cmd.Parameters.AddWithValue("idRol", idRol);
                     cmd.Parameters.AddWithValue("idCobro", idCobro);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    var reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
                         _gr.id = reader.GetString(0);

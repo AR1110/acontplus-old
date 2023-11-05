@@ -14,8 +14,10 @@ export class CommonService {
         "nombreModalLogistica",
         "articuloService",
         "empleadoService",
-        "ventaService"
+        "ventaService",
+        "clienteService"
     ];
+
 
     constructor(
         $rootScope,
@@ -32,7 +34,8 @@ export class CommonService {
         nombreModalLogistica,
         articuloSvc,
         empleadoSvc,
-        ventaSvc
+        ventaSvc,
+        clienteSvc
     ) {
         this.$rootScope = $rootScope;
         this.$http = $http;
@@ -50,6 +53,7 @@ export class CommonService {
         this.articuloSvc = articuloSvc;
         this.empleadoSvc = empleadoSvc;
         this.ventaSvc = ventaSvc;
+        this.clienteSvc = clienteSvc;
 
         // this.$http.get('/TipoDocumento/GetAll').then(({data:response})=>{
         //     this.tipoDoc = response.data.reduce((groups, item)=>{
@@ -169,11 +173,12 @@ export class CommonService {
 
     //En uso 
     getEstabAsign(json = {}) {
-        return this.mS.getData('get', '/EstabAsig/Get?json=' + JSON.stringify(json)).then(response => {
+        return this.mS.getData('get', 'Config/EstabAsig/?json=' + JSON.stringify(json), null, true).then(response => {
             if (response.code === "0") {
                 throw response
             }
-            return JSON.parse(response.payload) || [];
+            //return JSON.parse(response.payload) || [];
+            return response || []
         })
     }
 
@@ -188,53 +193,13 @@ export class CommonService {
         })
     }
 
-
-
     removeAccents(str) {
-        str = str || ''
-        return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        str = str || '';
+        //return str.replace(/[^a-z0-9]/gi, '');
+        return str.replace(/^-+|-+$| [^A-Za-z0-9.-]+/g, "");
     }
 
-
-    //Gestion de Configuracion del SISTEMA 
-    getGestionSistema(json = {}) {
-        return this.mS.getData('get', '/GestionSistema/Get?json=' + JSON.stringify(json)).then(
-            response => JSON.parse(response.payload) || []
-        )
-    }
-    // Configuración de Decimal en modulo de configuracion general 
-    getModuloDecimal(json = {}) {
-        return this.$http.get("/CantidadDecimal/Get?json=" + JSON.stringify(json))
-            .then(({
-                data: response
-            }) => JSON.parse(response.data));
-    }
-
-    //Obtenemos todas las configuraciones(decimales por modulo, tipo iva asignado a una Entidad)
-    getGestionConfig(json) {
-        return this.mS.getData('get', "/Configuracion/Get?json=" + JSON.stringify(json)).then(response => {
-
-            if (response.id === '0') {
-                toastr.warning(response)
-            }
-            return JSON.parse(response.data)
-        });
-    } 
-
-    getAllTipoIva() {
-        return this.$http.get("/TipoIva/OptionTipoIva")
-            .then(({
-                data: response
-            }) => response.data)
-    }
-
-    getAllTarifa() {
-        return this.$http.get("/Tarifa/GetAll")
-            .then(({
-                data: response
-            }) => response.data);
-    }
-
+    //revisar y eliminar posteriormente
     getAllTiempoCredito(gestion) {
         return this.$http.get("/TiempoCredito/OptionTiempoCredito?gestion=" + gestion)
             .then(({
@@ -242,70 +207,24 @@ export class CommonService {
             }) => response.data);
     }
 
-    getAllEstado(tipo) {
-        return this.$http.get("/EstadoPago/Get?type=" + tipo)
-            .then(({
-                data: response
-            }) => response.data);
-    }
-
     getEstadoDocByCodDoc(codDoc) {
-        return this.$http.get("/EstadoDocumento/Get?json=" + JSON.stringify({
+        return this.mS.getData("get", "Config/EstadoDocumento/?json=" + JSON.stringify({
             codDoc
-        }))
+        }), null, true)
             .then(({
                 data: response
-            }) => response.data || []);
-    }
-
-    getAllCiudadProvincia(json = {}) {
-        return this.$http.get("/Ciudad/Get?json=" + JSON.stringify(json)).then(({
-            data: response
-        }) => response)
-    }
-
-
-    /**
-     * Metodos Comunes 
-     * @return [0]=>
-     * @return [1]=>Entidad Financiera
-     * @return [2]=>SubEntidad Financiera 
-     * @return [3]=>Banco
-     * @return [4]=>Estado Movimiento
-     */
-
-    getGestionFinanciera(json = {}) {
-        return this.mS.getData('get', '/GestionFinanciera/Get?json=' + JSON.stringify(json)).then(response => {
-            return JSON.parse(response.payload)
-        })
+            }) => response || []);
     }
 
 
     //Buscador Empleado 
     querySearchEmpleado(textSearch) {
-        if(!textSearch && textSearch.length < 2)  return [] 
+        if (!textSearch && textSearch.length < 2) return []
 
         return this.empleadoSvc.search({
-            textSearch 
+            textSearch
         })
     }
-
-
-    /**
-     * 
-     * Médodos relacionados a los Impuestos de Estados 
-     */
-
-    getAllImpuestoEstado(json) {
-        return this.$http.get('/ImpuestoEstado/Get?json=' + JSON.stringify(json))
-            .then(({
-                data: response
-            }) => JSON.parse(response.data))
-    }
-
-
-
-
 
 
     //-------------------------------------Usuario--------------------------------
@@ -321,35 +240,9 @@ export class CommonService {
         })
     }
 
-    //--------------------------------------CONSULTA COMPRAS --------------------
-    getAllSustentoTributario() {
-        return this.$http.get('/SustentoTributario/GetAll')
-            .then(({
-                data: response
-            }) => response.data)
-    }
-
-    getAllCategoriaCompra() {
-        return this.$http.get('/CategoriaCompra/GetAll')
-            .then(({
-                data: response
-            }) => response.data)
-    }
-
-
-
-
     //---------------------------------------START CLIENTE-----------------------------------------
     clienteSearch(textSearch) {
-        return this.mS.getData('get', 'Venta/Cliente/Search?json=' + JSON.stringify({
-            textSearch
-        }), null, true).then(response => {
-            if (response.code === '0') {
-                console.warn(response)
-                return
-            }
-            return JSON.parse(response.payload) || []
-        })
+        return this.clienteSvc.search({ textSearch })
     }
 
     /**
@@ -357,304 +250,22 @@ export class CommonService {
      * @param {*} id (idCliente)
      * @returns data;
      */
+    //eliminar posteriormente (se usa en ventas)
     async getDataCliente(id) {
 
         try {
             let data = {};
-            if (id === null || id === 0 || id === undefined) return data
-
-            await this.mS.getData('get', `/Cliente/GetId?id=${id}`).then(
-                response => {
-                    if (response.code === "0") {
-                        toastr.warning(response.message, response.titleSms);
-                    }
-                    if (response.code === "1") {
-                        data = JSON.parse(response.payload)[0] || {};
-                        data.correos = data.correo ? data.correo.split(';') : [];
-                        data.telefonos = data.telefono ? data.telefono.split(';') : []
-                        data.placas = data.placa !== '' ? data.placa.split(';') : []
-                        data.response = response.data
-                    }
-                }
-            )
-
+            if (id === null || id === 0 || id === undefined) return data;
+            showLoader();
+            await this.clienteSvc.findById(id).then(response => {
+                data = response;
+            }
+            ).finally(() => hideLoader())
             return data;
-
         } catch (error) {
             console.log(error)
         }
-
-
     }
-
-
-    getDataClienteByIdCliente(idCliente) {
-        return this.$http.get("/Cliente/GetId?idCliente=" + idCliente).then(({
-            data: response
-        }) => {
-            if (response.id === "0") {
-                toastr.warning(response.message, response.titleSms);
-                return;
-            }
-            if (response.id === "1") {
-                const {
-                    cliente,
-                    nombreCompleto
-                } = response.data;
-                cliente.empleado = nombreCompleto;
-                return cliente;
-            }
-        })
-    }
-
-
-
-
-    //---------------------------------------END CLIENTE --------------------------------------  
-
-
-    //--------------------------------------START PROVEEDOR-------------------------------------
-    proveedorSearch(textSearch) {
-        return this.$http.get(`/Proveedor/SearchProveedor?busqueda=${textSearch}`)
-            .then(({
-                data: response
-            }) => response.data)
-    }
-
-    proveedorSearchGeneral(textSearch) {
-        return this.$http.get(`/Proveedor/SearchProveedor?busqueda=${textSearch}`).then(
-            response => {
-                let proveedores = response.data.data
-                if (response.data.id === '1') {
-                    return proveedores.map(({
-                        proveedor
-                    }) => proveedor)
-                }
-                return []
-            }
-        )
-    }
-
-    getDataByProveedor(idProveedor) {
-        try {
-            showLoader();
-            return this.mS.getData('get', '/Proveedor/GetId?idProveedor=' + idProveedor).then(
-                response => {
-                    if (response.id == "0") {
-                        hideLoader();
-                        toastr.warning(response.message, response.titleSms)
-                        return response
-                    }
-
-                    if (response.id == "1") {
-                        hideLoader();
-                        const item = {};
-                        const {
-                            data
-                        } = response;
-                        item.tipoIdentificacion = {
-                            idTipoIdentificacion: data.proveedor.idTipoIdentificacion,
-                            identificacion: data.tipoIdentificacion
-                        }
-
-                        Object.assign(item, data.proveedor);
-                        return item;
-                    }
-                }
-            )
-        } catch (error) {
-
-        }
-    }
-
-
-
-
-    /**
-     * Métodos relacionaddos con Almacen  *******************************************************
-     */
-
-    /**
-     * -------------------------------Eliminar Posteriormente
-     * 
-     * Función que obtiene Familias, SubFamilias, Marca, modelo
-     * @returns json 
-    
-     *@lectura const {
-            subFamilias,
-            familias,
-            medidas,
-            modelos,
-            marcas,
-            valoracionMetodos,
-            tipoArticulos,
-            tarifas,
-            etiquetaActividades
-        } = results[0]
-     */
-    getGestionAlmacen(json = {}) {
-        return this.mS.getData('get', '/Almacen/Get?json=' + JSON.stringify())
-            .then(
-                response => {
-                    const results = JSON.parse(response.payload);
-
-                    return {
-                        subFamilias: results[0],
-                        familias: results[1],
-                        medidas: results[2],
-                        modelos: results[3],
-                        marcas: results[4],
-                        valoracionMetodos: results[5],
-                        tipoArticulos: results[6],
-                        tarifas: results[7],
-                        etiquetaActividades: results[8],
-                        movimientosStocks: results[9],
-                        jsonPersmission: results[10]
-                    }
-                }
-            ).catch(
-                error => console.error(error)
-            )
-    }
-
-
-    //---------------------------------------------Almacen-------------------------
-    /**
-     *Eliminar mas adelante esta función (depuracion se encuentra en inventario/services/articuloService.js)
-     * @param {*} busqueda 
-     * @param {*} isSearchByCodigo 
-     * @returns 
-     */
-    articuloSearch(busqueda, isSearchByCodigo) {
-        const txtRemovedAccents = this.removeAccents(busqueda);
-        return this.$http.get(`/Articulo/SearchArticuloFilter?busqueda=${txtRemovedAccents}&condicion=${isSearchByCodigo}`)
-            .then(({
-                data: response
-            }) => {
-                if (response.id == "0") {
-                    toastr.warning(response.message, response.titleSms);
-                    return;
-                }
-                let {
-                    filter: articulos
-                } = response.data;
-                return articulos.length > 0 ? this.getArticuloAsTemplate(articulos) : []
-            })
-    }
-
-    getArticuloAsTemplate(articulos) {
-        articulos[0].showHeader = true; //show header table item
-        return articulos.map((val) => {
-            val.getHistorialPrecio = () => {
-                this.$http.get("/Articulo/HistoryEntradaArticulo?idArticulo=" + this.articulo.idArticulo)
-                    .then(({
-                        data: response
-                    }) => {
-                        val.historialPrecio = response.data;
-                    })
-            }
-            val.templateUrl = "viewPoperHistorialPago.html";
-            return val;
-        });
-    }
-
-
-
-    //Eliminar mas adelante esta función (depuracion se encuentra en inventario/services/articuloService.js)
-    articuloSearchGeneral({
-        textSearch,
-        code = false
-    }) {
-        const json = {
-            bySearch: this.removeAccents(textSearch),
-            code
-        }
-        // let articulos = [];
-
-        if (textSearch.length < 3) return
-
-        return this.mS.getData('get', '/Articulo/Get?json=' + JSON.stringify(json)).then(response => {
-            if (response.code === '0') {
-                throw response;
-            }
-            let articulos = JSON.parse(response.data) || []
-            // if (articulos.length > 0) {
-            //     articulos.unshift({
-            //         showHeader: true
-            //     })
-            //articulos[0].showHeader = true; //show header table item
-            //}
-            return articulos
-        })
-
-    }
-
-    //Eliminar mas adelante esta función (depuracion se encuentra en inventario/services/articuloService.js)
-    getDataArticuloParaVenta({
-        json
-    }) {
-        try {
-            showLoader();
-            return this.mS.getData('get', '/Articulo/GetIdBySale?json=' + JSON.stringify(json));
-        } catch (error) {
-            console.error(error)
-        } finally {
-            hideLoader();
-        }
-    }
-
-    //Eliminar mas adelante esta función (depuracion se encuentra en inventario/services/articuloService.js)
-    getDataArticuloParaCompra({
-        json
-    }) {
-        try {
-            showLoader();
-            return this.$http.get('/Articulo/GetIdByPurchase?json=' + JSON.stringify(json))
-                .then(({
-                    data: response
-                }) => response)
-        } catch (error) {
-            console.log(error)
-        } finally {
-            hideLoader();
-        }
-    }
-
-    //Eliminar mas adelante esta función (depuracion se encuentra en inventario/services/articuloService.js)
-    async searchArticuloByCodigo({
-        busqueda
-    }) {
-        return await this.$http.get('/Articulo/SearchArticuloFilter?busqueda=' + busqueda + '&condicion=' + true)
-            .then(({
-                data: response
-            }) => {
-                if (response.id === "0") {
-                    Swal.fire({
-                        title: `<small>${response.titleSms}</small>`,
-                        icon: 'warning',
-                        html: `<small>${response.message}</small>`,
-                        didClose: () => {
-                            $("#searchArticulo").focus();
-                        }
-                    });
-                    return
-                };
-                if (response.id === "2") {
-                    let data = {
-                        idArticulo: response.data.codigo.articulo.idArticulo,
-                        idPresentacion: response.data.codigo.idPresentacion,
-                        presentacion: response.data.codigo.presentacion
-                    };
-                    return data;
-                }
-            })
-    }
-
-
-
-
-    //--------------------------------------END ARTICLE----------------------------------------------------
-
 
 
     /**
@@ -718,9 +329,9 @@ export class CommonService {
 
     //-----------------------------METODOS RELACIONADOS AL TIPO DOCUMENTO---------------------------
 
-    //Eliminar mas Adelante 
+    //Eliminar mas Adelante en depuracion co
     getDataFormVenta() {
-        return this.mS.getData('get', '/FacturaVenta/GetDataForm?json=' + JSON.stringify({})).then(response => {
+        return this.mS.getData('get', 'FactElect/Factura/Get?json=' + JSON.stringify({ tipo: 3 }), null, true).then(response => {
             if (response.code === '0') {
                 throw response
             }
@@ -759,16 +370,11 @@ export class CommonService {
     }
 
     //-------------------------------------------------GET DATA TIPO DOCUMENTO COMPRA ---------------------
-    setUiGridDetalleCompra(detalleCompra, nombrePrecio = 'precioUnitario') {
+    setUiGridDetalleCompra(detalleCompra) {
 
         let index = 1;
         return detalleCompra.map(item => {
             item.n = index++
-
-            const data = {
-                idArticulo: item.idArticulo
-            }
-
             this.articuloSvc.findForPurchase({
                 idArticulo: item.idArticulo
             }).then(response => {
@@ -779,7 +385,7 @@ export class CommonService {
             let subTotal = item.cantidad * item.precioUnitario;
             let totalDescuento = item.cantidad * item.valorDescuento;
 
-            if (!item.hasOwnProperty("total")) {
+            if (!("total" in item)) {
                 let total = (item.precioUnitario - item.valorDescuento) * item.cantidad;
                 item.total = total;
             }
@@ -806,7 +412,7 @@ export class CommonService {
         let infoAdicionalDocumento = [];
         let datosAdicionalesArticulo = [];
 
-        const TIPO_DOC = this.tipoDoc[codigoDocumento];
+        // const TIPO_DOC = this.tipoDoc[codigoDocumento];
 
         if (!(id > 0)) {
             throw "ID DOCUMENTO NO VÁLIDO"
@@ -1041,7 +647,6 @@ export class CommonService {
         let datosAdicionalesArticulo = [];
         let factura = {}
         let actividadTipoIva = {};
-        const TIPO_DOC = this.tipoDoc[codigoDocumento];
 
         switch (codigoDocumento) {
             case "FV":
@@ -1123,7 +728,7 @@ export class CommonService {
                             idArticulo: item.idArticulo,
                             idEtiqueta: item.idEtiqueta,
                             idInfoAdicional: item.idInfoAdicional,
-                            jsonAdicional: tem.jsonAdicional && JSON.parse(item.jsonAdicional) || [],
+                            jsonAdicional: item.jsonAdicional && JSON.parse(item.jsonAdicional) || [],
                             selected: item.selected,
                             estado: item.estado
                         }))
@@ -1170,14 +775,14 @@ export class CommonService {
                 break;
 
             case "NC":
-                await this.mS.getData('get', '/NotaCreditoCliente/GetId?id=' + id).then(response => {
+                await this.mS.getData('get', 'FactElect/NotaCredito/' + '?json=' + JSON.stringify({ id: id, tipo: 4 }), null, true).then(response => {
+                    console.log(response)
                     if (response.code == "0") {
                         this.form.sweetAlert('warning', response.message)
                         throw response.message
                     }
                     if (response.code === "1") {
                         let dataMain = JSON.parse(response.payload);
-
                         let detalle = dataMain[3];
 
                         dataDocumento = dataMain[0][0];
@@ -1225,7 +830,7 @@ export class CommonService {
                 });
                 break;
         }
-        
+
         return {
             cliente,
             dataTipoDocumento,
@@ -1259,7 +864,7 @@ export class CommonService {
         if (!id) throw "ID DOCUMENTO INVÁLIDO";
 
         await this.mS.getData('get', 'Logistica/GuiaRemision/GetId/' + id, null, true).then(response => {
-            
+
             if (response.code == "0") {
                 this.form.sweetAlert('warning', response.message)
                 throw response.message
@@ -1369,10 +974,8 @@ export class CommonService {
                 establecimientoDestino = dataMain[2][0];
 
                 for (let item of dataMain[3]) {
-                    this.getDataArticuloParaCompra({
-                        json: item
-                    }).then(response => {
-                        item.medidas = JSON.parse(response.payload)[1]
+                    this.articuloSvc.findForPurchase(item).then(response => {
+                        item.medidas = response.medidas
                     })
 
                     detalleDocumento.push(item)
@@ -1392,7 +995,7 @@ export class CommonService {
         }
     }
 
-   
+
     //--------------------------------------------------REPORTE----------------------------------
     async getReport(params) {
         try {
@@ -1591,7 +1194,14 @@ export class CommonService {
 
             let urlPrinter = params[0].urlPrinter + '?rdlcProps=' + params[0].rdlcProps + '&dataSources=' + encodeURIComponent(params[0].dataSources) + '&rdlcParams=' + params[0].rdlcParams
 
-            fetch(urlPrinter).then(function (response) {
+            fetch(urlPrinter, {
+                method: 'POST',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            }).then(function (response) {
                 if (response.ok) {
                     toastr.success('Impresion correcta!', '', {
                         positionClass: 'toast-bottom-right',
@@ -1625,46 +1235,6 @@ export class CommonService {
         const barcodeData = $('#jsBarcodeImg').attr('src').replace(/^data:image\/[a-z]+;base64,/, "");
         return barcodeData;
     }
-
-
-
-
-
-    //===================================ELIMINAR MAS ADELANTE========================
-    //--------------------------------PETICIONES PARA API ADMIN-CLIENTE----------------------
-    async getDataApi({
-        method,
-        url,
-        data = null,
-        typeUrl
-    }) {
-        let urlApi = '';
-        // let urlApi = await this.$http.get('/ConnectionApiAdmin/GetUrl?typeUrl=' + typeUrl).then(({data:response})=>response)    
-
-        //IP Local 
-        // urlApi = typeUrl == 1 ? "http://localhost:7166/" : "https://localhost:7166/";
-
-        //IP Producción de Desarrollo 
-        //urlApi = typeUrl == 1 ? "http://205.209.99.71:8090/" : "http://206.72.196.229:83/";
-
-
-        //IP Producción
-        urlApi = typeUrl == 1 ? "http://206.72.196.229:81/" : "http://206.72.196.229:83/";
-
-        return this.$http({
-            method,
-            url: `${urlApi}${url}`,
-            data
-        }).then(({
-            data: response
-        }) => {
-            return response
-        }, error => {
-            console.log(error)
-        })
-    }
-
-
 
     /**
      * 
@@ -1731,6 +1301,7 @@ export class CommonService {
             let templates = {};
             let fileCtrl = '';
             let ctrl;
+            let isRenderRazorPartial = false;
 
             switch (codigoDocumento) {
                 case "FE":
@@ -1821,6 +1392,41 @@ export class CommonService {
 
                     break
 
+                case "IV":
+                    let modalParams = {}, {
+                        MODAL_FILE_PATH,
+                        MODAL_DETALLE
+                    } = this._nombreModalConst.compra_no_habitual;
+                    isRenderRazorPartial = true;
+
+
+                    controller = (await import('./../../' + MODAL_FILE_PATH))[MODAL_DETALLE['controller']]
+                    template = MODAL_DETALLE['template']
+
+                    showLoader();
+
+                    await this.mS.getData('get', 'CompraNoHabitual/' + JSON.stringify({
+                        idDocumentoIngreso: id,
+                        typeList: 4
+                    }), null, true).then(response => {
+                        if (response.code === "0") {
+                            console.log(response)
+                            hideLoader();
+                        }
+
+                        if (response.code === "1") {
+                            modalParams.params = JSON.parse(response.payload);
+                            hideLoader();
+                        }
+                    })
+
+                    params = {
+                        TIPO_REGISTRO: 'DETALLE',
+                        data: modalParams.params
+                    }
+
+
+                    break
                 case "IB":
                     let {
                         ingreso_bodega
@@ -1864,12 +1470,14 @@ export class CommonService {
             this._modalSvc.openModalCustom({
                 controller,
                 template,
-                params,
+                params: codigoDocumento == "IV" ? params.data : params,
                 size,
-                windowClass
+                windowClass,
+                isRenderRazorPartial
             })
 
         } catch (error) {
+            hideLoader()
             console.log(error)
         }
 
@@ -1881,7 +1489,7 @@ export class CommonService {
         codigoDocumento,
         size,
         windowClass = "uibModalFullScreen",
-        isRenderRazorPartial=false,
+        isRenderRazorPartial = false,
     }) {
         try {
             let controller = null,
@@ -1891,7 +1499,7 @@ export class CommonService {
                 isComplete = false;
             let fileCtrl = null;
             let ctrl;
-            
+
 
             switch (codigoDocumento) {
                 case "FV":
@@ -2010,11 +1618,10 @@ export class CommonService {
                     break
 
                 case "GR":
-                    
+
                     fileCtrl = this.nombreModalLogistica.GUIA_REMISION.fileCtrl;
                     ctrl = this.nombreModalLogistica.GUIA_REMISION.controller;
                     template = this.nombreModalLogistica.GUIA_REMISION.template;
-
                     controller = (await import(fileCtrl))[ctrl];
 
                     response = await this.getDataGuiaRemision(id);
@@ -2025,8 +1632,6 @@ export class CommonService {
                     console.log(`Detalle del Documento No definido: ${codigoDocumento}`);
                     throw 'Detalle del Documento No definido'
             }
-
-             
 
 
             this._modalSvc.openModalCustom({
@@ -2056,7 +1661,7 @@ export class CommonService {
         let result = {};
 
         showLoader();
-        await this.mS.getData('get', 'Solicitud/Check/' + JSON.stringify(jsonParams), null, true).then(response => {
+        await this.mS.getData('get', 'Config/Solicitud/Check/' + JSON.stringify(jsonParams), null, true).then(response => {
             if (response.code === "0") {
                 hideLoader();
                 this.form.sweetAlert('warning', response.message, response.titleSms);
@@ -2101,7 +1706,7 @@ export class CommonService {
                     motivo: result.value,
                     codigoAccion
                 });
-                this.mS.getData('post', 'Solicitud/Post/' + jsonParams, null, true).then(response => {                    
+                this.mS.getData('post', 'Config/Solicitud/Post/' + jsonParams, null, true).then(response => {
                     if (response.code === "0") {
                         this.form.sweetAlert('warning', response.message)
                     }
@@ -2117,7 +1722,7 @@ export class CommonService {
 
 
     updateRequestKey(codigoAccion) {
-        this.mS.getData('put', 'Solicitud/Put/' + JSON.stringify({
+        this.mS.getData('put', 'Config/Solicitud/Put/' + JSON.stringify({
             codigoAccion,
             typeOperation: 2
         }), null, true).then(response => {
@@ -2129,30 +1734,27 @@ export class CommonService {
 
     //========================================END POINT EXTERNOS================== 
     checkClientSRIByRUC = function (identificacion) {
-        return this.mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + identificacion, null, true).then(response=>{
-            console.log(response)
+        return this.mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + identificacion, null, true).then(response => {
             return response;
         })
     }
+
 
     checkClientSRIByCedula = function (identificacion) {
         return this.mS.getData('get', 'Consultas/GetCedulaSri?Ruc=' + identificacion, null, true).then(response => {
-            console.log(response)
             return response;
         })
     }
 
 
-    checkCantItem(items){
-        if(Array.isArray(items)){
+    checkCantItem(items) {
+        if (Array.isArray(items)) {
             return items.length === 75
         }
         return items.length === 50;
     }
 
 }
-
-
 
 
 app.factory("commonService", CommonService);

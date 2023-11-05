@@ -1,16 +1,14 @@
-﻿using Inventario.Core.Interfaces;
-using Inventario.Infrastructure.Data;
-using Lib.Common;
-using Lib.Common.Api;
-using Services.Lib.Common;
-using System.Data;
+﻿using System.Data;
+using Common.Core.Interfaces;
+using Common.Core.Models;
+using Common.Core.Utils;
+using Inventario.Core.Interfaces;
 
 namespace Inventario.Application.Services
 {
     public class StockFisicoService : IStockFisicoService
     {
         private readonly IADORepository _repository;
-        private readonly InventarioContext _context;
         private readonly APIResponse _response;
         public StockFisicoService(IADORepository repository)
         {
@@ -31,14 +29,14 @@ namespace Inventario.Application.Services
             }
             else
             {
-                return Converters.DataSetToJSON(ds);
+                return DataConverters.DataSetToJSON(ds);
             }
         }
         public async Task<string> AddAsync(ApiRequest request)
         {
             var parameters = new Dictionary<string, object>{
                 {"userRoleId", request.UserRoleId},
-                {"json", Converters.SerializeDictionary(request.Data)}
+                {"json", DataConverters.SerializeDictionary(request.Data)}
             };
             return await _repository.SPExecuteAsync("Inventario.StockFisico_Insert", parameters);
         }
@@ -50,7 +48,7 @@ namespace Inventario.Application.Services
             var parameters = new Dictionary<string, object>{
                 {"userRoleId", request.UserRoleId},
                 {"id", id},
-                {"json", Converters.SerializeDictionary(request.Data)}
+                {"json", DataConverters.SerializeDictionary(request.Data)}
             };
             return await _repository.SPExecuteAsync("Inventario.StockFisico_Update", request.Data);
         }
