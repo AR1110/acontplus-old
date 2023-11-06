@@ -2,9 +2,9 @@ export {
     ModalModeloCtrl
 }
 
-ModalModeloCtrl.$inject = ['$scope', '$uibModalInstance', 'marcaService', 'modeloService', 'toastService', 'params'];
+ModalModeloCtrl.$inject = ['$scope', '$uibModalInstance', 'articuloService', 'modeloService', 'toastService', 'params'];
 
-function ModalModeloCtrl($scope, $uibModalInstance, marcaSvc, modeloSvc, tS, params){
+function ModalModeloCtrl($scope, $uibModalInstance, articuloSvc, modeloSvc, tS, params){
 
     $scope.tipoRegistro = 1;
     $scope.data = {};
@@ -13,8 +13,8 @@ function ModalModeloCtrl($scope, $uibModalInstance, marcaSvc, modeloSvc, tS, par
 
     $scope.getAllMarca = function() {
         try {
-            marcaSvc.listForSelect({idMarca: 0}).then(response => {
-                $scope.marcas = response;
+            articuloSvc.getDataForForm().then(response => {
+                $scope.marcas = response.marcas
             }).catch(error => {
                 console.log(error);
             })
@@ -33,7 +33,7 @@ function ModalModeloCtrl($scope, $uibModalInstance, marcaSvc, modeloSvc, tS, par
         $scope.showStatus = !params.estado;        
     }
 
-    $scope.resultModalMarca = function(result) {
+    $scope.resultModalMarca = function() {
         $scope.getAllMarca();
     }
 

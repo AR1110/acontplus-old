@@ -20,7 +20,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-ALTER FUNCTION FactElect.F_Comprobante_07 
+CREATE OR ALTER FUNCTION FactElect.F_Comprobante_07 
 (
 	-- Add the parameters for the function here
 	@idEntidad AS INT 
