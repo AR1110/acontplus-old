@@ -85,7 +85,7 @@ BEGIN
 				,dirEstablecimiento    VARCHAR(300)'$.dirEstablecimiento'
 				,telefono              VARCHAR(150)'$.telefono'
 				,contribuyenteRimpe    VARCHAR(150)'$.contribuyenteRimpe'
-				,correo                VARCHAR(300) '$.correo'
+				,correo                VARCHAR(300)'$.correo'
 				)
 
 		IF EXISTS (SELECT 1 FROM Sri.Establecimiento WHERE ruc = @ruc AND estab = @estab)
@@ -97,7 +97,8 @@ BEGIN
 		BEGIN TRAN 
 				INSERT INTO Sri.Establecimiento
 					(codEstab
-					,canton
+					,EntidadId
+                    ,canton
 					,actividad
 					,agenteRetencion
 					,contribuyente
@@ -114,7 +115,8 @@ BEGIN
 					,usuario)
 				SELECT 
 				     @codEstab
-				    ,@canton
+				    ,@idEntidad
+                    ,@canton
 				    ,@actividad
 				    ,@agenteRetencion
 				    ,@contribuyente
