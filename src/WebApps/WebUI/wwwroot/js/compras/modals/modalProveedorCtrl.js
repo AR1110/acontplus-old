@@ -116,7 +116,7 @@ function modalProveedorCtrl($scope, $uibModalInstance, $injector, params) {
 
     function setDataSubcontribuyenteDefault() {
         let dataSubContribuyente = $scope.subcontribuyentes.find(data => data.codigo === '06');
-        if (dataTipoIdentificacion) {
+        if (dataSubContribuyente) {
             $scope.data.idSubContribuyente = dataSubContribuyente.idSubContribuyente;
         }
     }

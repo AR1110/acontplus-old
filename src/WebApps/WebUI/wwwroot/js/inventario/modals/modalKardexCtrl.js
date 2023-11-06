@@ -42,6 +42,7 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articu
     let endOfMonth = moment(thisMoment).endOf('month')
     // $scope.dataSearch.fechaInicio = startOfMonth;
     // $scope.dataSearch.fechaFin = endOfMonth;
+    console.log(startOfMonth)
 
     //https://www.daterangepicker.com/
     $scope.dateRangePicker = {
@@ -71,8 +72,10 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articu
             },
             eventHandlers: {
                 'apply.daterangepicker': function () {
-                    $scope.dataSearch.fechaInicio = $scope.dateRangePicker.date.startDate
-                    $scope.dataSearch.fechaFin = $scope.dateRangePicker.date.endDate;
+                    $scope.dataSearch.fechaInicio = fS.formatDateMoment($scope.dateRangePicker.date.startDate);
+                    $scope.dataSearch.fechaFin = fS.formatDateMoment($scope.dateRangePicker.date.endDate);
+                    // $scope.dataSearch.fechaInicio = for $scope.dateRangePicker.date.startDate
+                    // $scope.dataSearch.fechaFin = $scope.dateRangePicker.date.endDate;
                     // $scope.getComprobantes()
                     //console.log('applied')
                 }
@@ -80,8 +83,8 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articu
         }
     };
 
-    $scope.dataSearch.fechaInicio = $scope.dateRangePicker.date.startDate
-    $scope.dataSearch.fechaFin = $scope.dateRangePicker.date.endDate;
+    $scope.dataSearch.fechaInicio = startOfMonth
+    $scope.dataSearch.fechaFin = endOfMonth;
 
 
 
@@ -133,13 +136,11 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articu
         try {
             // const params = Object.assign($scope.dataSearch, {
             //     checkBoxMovement: $scope.dataSearch.movement? true: false
-            // })
+            // }) 
 
             const params = Object.assign($scope.dataSearch, {
                 checkBoxFecha: true,
-                checkBoxMovement: $scope.dataSearch.movement ? true : false,
-                fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
-                fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
+                checkBoxMovement: $scope.dataSearch.movement ? true : false, 
             })
 
             getDataKardex(params)
