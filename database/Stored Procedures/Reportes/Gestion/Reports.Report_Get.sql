@@ -74,8 +74,8 @@ BEGIN
 		END
 	IF @format = 'excel'
 		BEGIN
-			SET @format = 'EXCELOPENXML'
-			SET @fileName = @fileName+ '.xlsx'
+			SET @format = 'EXCEL'
+			SET @fileName = @fileName+ '.xls'
 			--SET @contentType = 'application/vnd.ms-excel';
 		END
 	IF @format = 'word'

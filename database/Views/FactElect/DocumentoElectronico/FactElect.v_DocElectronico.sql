@@ -21,7 +21,7 @@ CREATE OR ALTER VIEW FactElect.v_DocElectronico WITH SCHEMABINDING AS (
           ,de.numEstab estab
           ,de.ptoEmision ptoEmi
           ,de.nroDocumento secuencial
-          ,de.numEstab + '-' + de.ptoEmision + '-' + RIGHT('000000000' + CAST(de.nroDocumento AS varchar(100)), 9) serieComprobante
+          ,de.numEstab + '-' + de.ptoEmision + '-' + RIGHT('000000000' + CONVERT(VARCHAR(9), de.nroDocumento), 9) serieComprobante
           ,de.fechaEmision
           ,de.xmlAcontPlus
           ,de.xmlSri

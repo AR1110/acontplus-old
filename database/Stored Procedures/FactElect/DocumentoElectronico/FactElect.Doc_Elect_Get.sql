@@ -68,7 +68,7 @@ BEGIN
 										,de.entidad
 										,de.nombreComercial
                                         ,totalRecords  = count(*) over()
-									 FROM v_DocElectronico de WITH (NOLOCK)
+									 FROM FactElect.v_DocElectronico de WITH (NOLOCK)
 									 INNER JOIN Usuario     u WITH (NOLOCK) ON u.idUsuario = de.idUsuario
 									 WHERE de.idEntidad = @idEntidad  '
 
