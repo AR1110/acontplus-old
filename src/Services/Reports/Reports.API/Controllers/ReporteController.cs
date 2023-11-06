@@ -1,6 +1,7 @@
 ﻿using System.Data;
+using System.Text;
+using System.Web;
 using Common.Core.Interfaces;
-using Common.Core.Models;
 using Common.Core.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
@@ -30,65 +31,64 @@ namespace Reports.API.Controllers
         {
             //Request.Headers.TryGetValue("Authorization", out StringValues headerValues);
             //string jsonWebToken = headerValues.FirstOrDefault();
-            var _response = new ReportResponse();
             try
             {
-                DataSet dsParams = null;
-                DataSet ds = null;
-                var idUsuarioRol = User.GetUserRoleId();
+                string storedProcedure = "", filename = "", mimeType = "";
+                var userRoleId = User.GetUserRoleId();
 
-                dsParams = await _reportService.GetParamsAsync(new Dictionary<string, object> { { "json", SqlStringParam.Sanitize(data.reportParams) } });
+                DataSet dsParams = await _reportService.GetParamsAsync(new Dictionary<string, object> { { "json", SqlStringParam.Sanitize(data.reportParams) } });
 
                 if (dsParams.Tables[0].Rows.Count == 0)
                 {
+                    _log.LogActivity($"Can't get report params \nReportParams: {data.reportParams}");
                     return BadRequest("Can't get report params");
                 }
+
+                storedProcedure = dsParams.Tables[0].Rows[0].Field<string>("storedProcedure");
+                filename = dsParams.Tables[0].Rows[0].Field<string>("fileName");
 
                 var dataParams = new Dictionary<string, object>();
                 if (!data.hasService)
                 {
                     if (data.hasIdUsuarioRol)
                     {
-                        dataParams["idUsuarioRol"] = idUsuarioRol;
+                        dataParams["idUsuarioRol"] = userRoleId;
                     }
                     else
                     {
-                        dataParams["idRol"] = idUsuarioRol;
+                        dataParams["idRol"] = userRoleId;
                     }
                 }
 
                 dataParams["json"] = SqlStringParam.Sanitize(data.dataParams);
 
-                ds = await _reportService.GetDataAsync(dsParams.Tables[0].Rows[0].Field<string>("storedProcedure"), dataParams);
+                DataSet ds = await _reportService.GetDataAsync(storedProcedure, dataParams);
 
                 if (ds.Tables[0].Rows.Count == 0)
                 {
+                    _log.LogActivity($"Can't get report data \nReportParams: {data.reportParams}");
                     return BadRequest("Can't get report data");
                 }
 
                 var bytes = _rdlcreport.GetCustomReport(dsParams, ds);
                 if (bytes == null || bytes.Length == 0)
                 {
-                    _response = await _rdlcreport.GetErrorAsync();
+                    _log.LogActivity($"Error in rdlc generation \nReportParams: {data.reportParams}");
+                    return BadRequest($"Error in rdlc generation");
                 }
-                else
+                var provider = new FileExtensionContentTypeProvider();
+                if (!provider.TryGetContentType(filename, out mimeType))
                 {
-                    var fileName = dsParams.Tables[0].Rows[0].Field<string>("fileName");
-                    var provider = new FileExtensionContentTypeProvider();
-                    string mimeType;
-                    if (!provider.TryGetContentType(fileName, out mimeType))
-                    {
-                        mimeType = "application/octet-stream";
-                    }
-                    _response.Create(bytes, mimeType, fileName);
+                    mimeType = "application/octet-stream";
                 }
+
+                return File(bytes, mimeType, HttpUtility.UrlEncode(filename, Encoding.UTF8));
             }
             catch (Exception ex)
             {
-                _log.LogActivity("Error in Download: \n" + ex.ToString());
-                _response = await _rdlcreport.GetErrorAsync();
+                _log.LogActivity($"Error in Download: \n {ex} \nReportParams: {data.reportParams}");
+                return BadRequest($"Error in Download: {ex.Message}");
             }
-            return File(_response.FileContents, _response.ContentType, _response.FileDownloadName);
         }
         //[HttpPost("ExportExcel")]
         //public async Task<IActionResult> ExportExcel(ApiReportParamsDto data)
