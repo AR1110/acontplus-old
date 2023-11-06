@@ -37,7 +37,7 @@ BEGIN
 	DECLARE @fechaEmision DATETIME
 	DECLARE @codDoc VARCHAR(2)
 	
-
+    print convert(varchar, @idArticulo)
 	BEGIN TRY
 	
 		SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
@@ -181,16 +181,16 @@ BEGIN
 						BEGIN
 							
                             -- Articulo Fraccionado
-                            IF EXISTS (SELECT 1 FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida)
+                            IF EXISTS (SELECT 1 FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticuloStock AND idMedida = @idMedida)
                                 BEGIN
                                     SELECT TOP 1 @cantidad = @cantidad  * conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida
                                 END
                                     
 							INSERT INTO Inventario.Transaccion WITH(ROWLOCK)
 				                    (idTipoTransaccion, idArticulo, idBodega, idTipoDocumento, idDocumento, idMedida ,cantidad, precioCosto, precioUnitario, total,fechaRegistro, idUsuario)
-			                SELECT @idTipoTransaccion,@idArticulo,@idBodega,@idTipoDocumento,@idDocumento,@idMedida,@cantidad,@precioCosto,@precioUnitario,@precioTotalSimImpuestos,@fechaEmision,@idUsuario
+			                SELECT @idTipoTransaccion,@idArticuloStock,@idBodega,@idTipoDocumento,@idDocumento,@idMedida,@cantidad,@precioCosto,@precioUnitario,@precioTotalSimImpuestos,@fechaEmision,@idUsuario
 								    
-                            IF EXISTS (SELECT 1 FROM Inventario.Stock WHERE idArticulo = @idArticulo AND idBodega = @idBodega AND fechaConsolidacion >= @fechaEmision)
+                            IF EXISTS (SELECT 1 FROM Inventario.Stock WHERE idArticulo = @idArticuloStock AND idBodega = @idBodega AND fechaConsolidacion >= @fechaEmision)
                                 BEGIN
                                     SELECT @cantidad = 0       
                                 END 
@@ -198,21 +198,21 @@ BEGIN
                             -- Metodo UltimoPrecio
                             IF EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND codMetodoValoracion = 'UEPS')
                                 BEGIN
-                                    IF EXISTS (SELECT 1 FROM Inventario.Stock WHERE idArticulo = @idArticulo AND idBodega = @idBodega AND fechaUltimoCosto < @fechaEmision)
+                                    IF EXISTS (SELECT 1 FROM Inventario.Stock WHERE idArticulo = @idArticuloStock AND idBodega = @idBodega AND fechaUltimoCosto < @fechaEmision)
                                         BEGIN
-                                            SELECT TOP 1 @porcentaje = precioCosto / 2 FROM dbo.Articulo WITH (NOLOCK) WHERE idArticulo = @idArticulo  
+                                            SELECT TOP 1 @porcentaje = precioCosto / 2 FROM dbo.Articulo WITH (NOLOCK) WHERE idArticulo = @idArticuloStock  
                                                     
                                             IF @precioUnitario >= @porcentaje 
 				                                BEGIN
                                                     IF EXISTS (SELECT 1 FROM dbo.Articulo WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida AND estado = 1)
 						                                BEGIN 
-							                                UPDATE dbo.Articulo SET precioCosto = @precioUnitario, fechaModificacion = dbo.ufngetDateEcuador() WHERE idArticulo = @idArticulo
+							                                UPDATE dbo.Articulo SET precioCosto = @precioUnitario, fechaModificacion = dbo.ufngetDateEcuador() WHERE idArticulo = @idArticuloStock
 						
-							                                UPDATE dbo.ArticuloPvP SET porcentajeUtilidad = ((precioVenta / @precioUnitario) * 100) - 100 WHERE idArticulo = @idArticulo
+							                                UPDATE dbo.ArticuloPvP SET porcentajeUtilidad = ((precioVenta / @precioUnitario) * 100) - 100 WHERE idArticulo = @idArticuloStock
 						                                END 
 					                                ELSE 
 						                                BEGIN
-							                                UPDATE dbo.ArticuloFraccionado SET precioCostoFraccionado = @precioUnitario WHERE idArticulo = @idArticulo AND idMedida = @idMedida
+							                                UPDATE dbo.ArticuloFraccionado SET precioCostoFraccionado = @precioUnitario WHERE idArticulo = @idArticuloStock AND idMedida = @idMedida
 							
 						                                END
                                                 END 
@@ -220,13 +220,13 @@ BEGIN
                                         END 
                                 END
 
-                            UPDATE Inventario.Stock WITH(ROWLOCK) SET cantidad = cantidad + ISNULL(@cantidad,0) WHERE idArticulo = @idArticulo AND idBodega = @idBodega
+                            UPDATE Inventario.Stock WITH(ROWLOCK) SET cantidad = cantidad + ISNULL(@cantidad,0) WHERE idArticulo = @idArticuloStock AND idBodega = @idBodega
 
-	                        SELECT @stock = SUM(cantidad) FROM Inventario.Stock s WITH (NOLOCK) WHERE idArticulo = @idArticulo AND s.estado = 1
+	                        SELECT @stock = SUM(cantidad) FROM Inventario.Stock s WITH (NOLOCK) WHERE idArticulo = @idArticuloStock AND s.estado = 1
 
-	                        UPDATE dbo.Articulo WITH(ROWLOCK) SET stock = ISNULL(@stock,0) WHERE idArticulo = @idArticulo
+	                        UPDATE dbo.Articulo WITH(ROWLOCK) SET stock = ISNULL(@stock,0) WHERE idArticulo = @idArticuloStock
 
-                            FETCH NEXT FROM cursor_inventory INTO @idArticulo,@idBodega,@idMedida,@cantidad,@precioUnitario,@precioCosto,@precioTotalSimImpuestos
+                            FETCH NEXT FROM cursor_inventory INTO @idArticuloStock,@idBodega,@idMedida,@cantidad,@precioUnitario,@precioCosto,@precioTotalSimImpuestos
 						END
 					CLOSE cursor_inventory
 					DEALLOCATE cursor_inventory  

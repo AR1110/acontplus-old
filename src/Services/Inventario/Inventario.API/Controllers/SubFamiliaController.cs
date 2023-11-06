@@ -13,9 +13,9 @@ namespace Inventario.API.Controllers
     public class SubFamiliaController : BaseApiController
     {
         private readonly IConfiguration _configuration;
-        private readonly IStorageService _storageService;
+        private readonly IS3StorageService _storageService;
         private readonly LogWriter _log;
-        public SubFamiliaController(IConfiguration configuration, IStorageService storageService, LogWriter log)
+        public SubFamiliaController(IConfiguration configuration, IS3StorageService storageService, LogWriter log)
         {
             _configuration = configuration;
             _storageService = storageService;
@@ -80,8 +80,9 @@ namespace Inventario.API.Controllers
                     await using var memoryStream = new MemoryStream();
 
                     await file.CopyToAsync(memoryStream);
-                    var s3 = new S3Object()
+                    var s3 = new S3ObjectCustom()
                     {
+                        Region = s3file.Region,
                         BucketName = s3file.BucketName,
                         InputStream = memoryStream,
                         Name = s3file.S3ObjectKey
@@ -91,7 +92,7 @@ namespace Inventario.API.Controllers
                         Key = _configuration["AwsConfiguration:AWSAccessKey"],
                         Secret = _configuration["AwsConfiguration:AWSSecretKey"]
                     };
-                    var s3Response = await _storageService.UploadFileAsync(s3, credentials);
+                    var s3Response = await _storageService.UploadAsync(s3, credentials);
                 }
             }
             catch (Exception ex)
@@ -115,6 +116,7 @@ namespace Inventario.API.Controllers
             var data = JsonConvert.DeserializeObject<SubFamilia>(json);
 
             var s3file = new S3File();
+            bool nofile = true;
             try
             {
                 if (file != null)
@@ -122,8 +124,18 @@ namespace Inventario.API.Controllers
                     var fileExt = Path.GetExtension(file.FileName);
                     s3file.BucketName = _configuration["S3Bucket:Name"];
                     s3file.Region = _configuration["S3Bucket:Region"];
-                    s3file.S3ObjectKey = $"{User.GetIDCardCompany()}/subfamilias/{Guid.NewGuid()}{fileExt}";
-                    s3file.S3ObjectUrl = $"https://{s3file.BucketName}.s3.{s3file.Region}.amazonaws.com/{s3file.S3ObjectKey}";
+                    if (string.IsNullOrEmpty(data.S3ObjectKey))
+                    {
+                        s3file.S3ObjectKey = $"{User.GetIDCardCompany()}/subfamilias/{Guid.NewGuid()}{fileExt}";
+                        s3file.S3ObjectUrl = $"https://{s3file.BucketName}.s3.{s3file.Region}.amazonaws.com/{s3file.S3ObjectKey}";
+                        data.S3ObjectKey = s3file.S3ObjectKey;
+                        data.S3ObjectUrl = s3file.S3ObjectUrl;
+                    }
+                    else
+                    {
+                        nofile = false;
+                    }
+                   
                 }
                 await _db.SPExecute("Inventario.Subfamilia_Update");
                 _db.AddDynamicParam("idUsuarioRol", Convert.ToInt32(HttpContext.User.Claims.Single(x => x.Type == "idUsuarioRol").Value));
@@ -132,8 +144,8 @@ namespace Inventario.API.Controllers
                 _db.AddDynamicParam("descripcion", data.descripcion);
                 _db.AddDynamicParam("montoObjetivo", data.montoObjetivo);
                 _db.AddDynamicParam("estado", data.estado);
-                _db.AddDynamicParam("s3ObjectKey", s3file.S3ObjectKey ?? "");
-                _db.AddDynamicParam("s3ObjectUrl", s3file.S3ObjectUrl ?? "");
+                _db.AddDynamicParam("s3ObjectKey", data.S3ObjectKey ?? "");
+                _db.AddDynamicParam("s3ObjectUrl", data.S3ObjectUrl ?? "");
                 _response = _db.GetDefault();
                 if (_response.code == "1" && file != null)
                 {
@@ -141,8 +153,9 @@ namespace Inventario.API.Controllers
                     await using var memoryStream = new MemoryStream();
 
                     await file.CopyToAsync(memoryStream);
-                    var s3 = new S3Object()
+                    var s3 = new S3ObjectCustom()
                     {
+                        Region = s3file.Region,
                         BucketName = s3file.BucketName,
                         InputStream = memoryStream,
                         Name = s3file.S3ObjectKey
@@ -152,7 +165,15 @@ namespace Inventario.API.Controllers
                         Key = _configuration["AwsConfiguration:AWSAccessKey"],
                         Secret = _configuration["AwsConfiguration:AWSSecretKey"]
                     };
-                    var s3Response = await _storageService.UploadFileAsync(s3, credentials);
+                    if (nofile)
+                    {
+                        var s3Response = await _storageService.UploadAsync(s3, credentials);
+                    }
+                    else
+                    {
+                        s3.Name = data.S3ObjectKey;
+                        var s3Response = await _storageService.UpdateAsync(s3, credentials);
+                    }
                 }
             }
             catch (Exception ex)

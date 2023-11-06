@@ -10,8 +10,8 @@ namespace Inventario.API.Controllers.v3
     public class UploadFileController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly IStorageService _storageService;
-        public UploadFileController(IConfiguration configuration, IStorageService storageService)
+        private readonly IS3StorageService _storageService;
+        public UploadFileController(IConfiguration configuration, IS3StorageService storageService)
         {
             _configuration = configuration;
             _storageService = storageService;
@@ -55,7 +55,7 @@ namespace Inventario.API.Controllers.v3
             var directory = folderName + "/"; // "category/"
             var docName = $"{Guid.NewGuid()}{fileExt}";
             var fileName = directory + docName;
-            var s3 = new S3Object()
+            var s3 = new S3ObjectCustom()
             {
                 BucketName = "acontplus",
                 InputStream = memoryStream,
@@ -66,7 +66,7 @@ namespace Inventario.API.Controllers.v3
                 Key = _configuration["AwsConfiguration:AWSAccessKey"],
                 Secret = _configuration["AwsConfiguration:AWSSecretKey"]
             };
-            var result = await _storageService.UploadFileAsync(s3, credentials);
+            var result = await _storageService.UploadAsync(s3, credentials);
 
             if (result.StatusCode >= 200 && result.StatusCode < 300)
             {
