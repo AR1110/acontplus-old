@@ -790,7 +790,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1318,7 +1317,7 @@
             </TablixRowHierarchy>
             <DataSetName>detalleDs</DataSetName>
             <Top>31.98283mm</Top>
-            <Left>3.14325mm</Left>
+            <Left>0mm</Left>
             <Height>12mm</Height>
             <Width>289.28736mm</Width>
             <Style>
@@ -2184,7 +2183,6 @@
             </TablixRowHierarchy>
             <DataSetName>headerDs</DataSetName>
             <Top>0.21979cm</Top>
-            <Left>0.31432cm</Left>
             <Height>2.68251cm</Height>
             <Width>27.95003cm</Width>
             <ZIndex>1</ZIndex>
@@ -2202,7 +2200,7 @@
           </Border>
         </Style>
       </Body>
-      <Width>303.01408mm</Width>
+      <Width>289.28736mm</Width>
       <Page>
         <PageFooter>
           <Height>8.61408mm</Height>
@@ -2282,8 +2280,8 @@
             </Border>
           </Style>
         </PageFooter>
-        <PageHeight>29.7cm</PageHeight>
-        <PageWidth>29cm</PageWidth>
+        <PageHeight>21cm</PageHeight>
+        <PageWidth>29.7cm</PageWidth>
         <LeftMargin>0.25cm</LeftMargin>
         <RightMargin>0.25cm</RightMargin>
         <TopMargin>0.25cm</TopMargin>
@@ -2324,6 +2322,7 @@ End function
 
 
 </Code>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
   <rd:ReportUnitType>Cm</rd:ReportUnitType>
   <rd:ReportID>5e87e708-70a5-44fb-a0a0-5d5e12c2d7fc</rd:ReportID>
 </Report>

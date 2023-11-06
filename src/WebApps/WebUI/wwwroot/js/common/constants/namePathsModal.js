@@ -78,7 +78,7 @@ app.constant('nombreModalInventario', {
         template: 'ArticuloFraccionado/_ModalArticuloFraccionado.cshtml'
     },
     KARDEX: {
-        fileCtrl: '/js/inventario/modals/modalKardexCtrl.js',
+        fileCtrl: '/js/inventario/modals/modalKardexCtrl.js' + CHANGE_VERSION(),
         controllers: {
             M: 'modalKardexCtrl',
             MF: ''

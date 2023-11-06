@@ -64,7 +64,7 @@ function layoutCtrl($scope, $rootScope, $window) {
             for (let sm = 0; sm < $scope.subMenus.length; sm++) {
                 if ($scope.menus[i].idMenu == $scope.subMenus[sm].idMenu) {
 
-                    textHtml += '<li><a href="' + $scope.subMenus[sm].url + '">' + $scope.subMenus[sm].descripcion + '</a></li>';
+                    textHtml += `<li><a href="${$scope.subMenus[sm].url}"><i class="${$scope.subMenus[sm].icono}"></i> ${$scope.subMenus[sm].descripcion}</a></li>`;
                 }
             }
         }

@@ -13,11 +13,11 @@ namespace Restaurant.API.Controllers
     public class PromotionController : ControllerBase
     {
         private readonly IPromotionService _promotionService;
-        private readonly IStorageService _storageService;
+        private readonly IS3StorageService _storageService;
         private readonly IConfiguration _configuration;
 
 
-        public PromotionController(IConfiguration configuration, IPromotionService promotionService, IStorageService storage)
+        public PromotionController(IConfiguration configuration, IPromotionService promotionService, IS3StorageService storage)
         {
             _configuration = configuration;
             _promotionService = promotionService;
@@ -77,8 +77,9 @@ namespace Restaurant.API.Controllers
                     await using var memoryStream = new MemoryStream();
 
                     await file.CopyToAsync(memoryStream);
-                    var s3 = new S3Object()
+                    var s3 = new S3ObjectCustom()
                     {
+                        Region = s3file.Region,
                         BucketName = s3file.BucketName,
                         InputStream = memoryStream,
                         Name = s3file.S3ObjectKey
@@ -88,7 +89,7 @@ namespace Restaurant.API.Controllers
                         Key = _configuration["AwsConfiguration:AWSAccessKey"],
                         Secret = _configuration["AwsConfiguration:AWSSecretKey"]
                     };
-                    var s3Response = await _storageService.UploadFileAsync(s3, credentials);
+                    var s3Response = await _storageService.UploadAsync(s3, credentials);
                 }
                 return Ok(response);
             }
@@ -131,8 +132,9 @@ namespace Restaurant.API.Controllers
                     await using var memoryStream = new MemoryStream();
 
                     await file.CopyToAsync(memoryStream);
-                    var s3 = new S3Object()
+                    var s3 = new S3ObjectCustom()
                     {
+                        Region = s3file.Region,
                         BucketName = s3file.BucketName,
                         InputStream = memoryStream,
                         Name = s3file.S3ObjectKey
@@ -142,7 +144,7 @@ namespace Restaurant.API.Controllers
                         Key = _configuration["AwsConfiguration:AWSAccessKey"],
                         Secret = _configuration["AwsConfiguration:AWSSecretKey"]
                     };
-                    var s3Response = await _storageService.UploadFileAsync(s3, credentials);
+                    var s3Response = await _storageService.UploadAsync(s3, credentials);
                 }
                 return Ok(response);
             }
