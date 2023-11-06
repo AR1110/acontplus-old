@@ -121,7 +121,7 @@
 
         $scope.searchArticle = async (textSearch) => {
             return articuloSvc.search({
-                textSearch,
+                busqueda: textSearch,
                 condicion: false
             }) || []
 
