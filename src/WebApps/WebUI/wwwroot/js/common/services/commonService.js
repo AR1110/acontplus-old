@@ -1033,9 +1033,9 @@ export class CommonService {
                     // let fileName = response
                     //     .headers()["content-disposition"].split(";")[1]
                     //     .split("=")[1];
-                    let fileName = response.headers()['content-disposition'].split(';')[1].split('=')[1].replace('"', "")
-                    fileName = fileName.replace('"', "")
-                    this.FileSaver.saveAs(serverData, fileName);
+                    let filename = response.headers()['content-disposition'].split(';')[1].split('=')[1].replace('"', "")
+                    filename = filename.replace('"', "")
+                    this.FileSaver.saveAs(serverData, decodeURIComponent(filename));
                 }
             }).catch(error => {
                 hideLoader();
