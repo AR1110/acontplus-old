@@ -552,7 +552,7 @@ function modalKardexCtrl($scope, $uibModalInstance, commonSvc, kardexSvc, articu
             }),
 
             dataParams: JSON.stringify(Object.assign($scope.dataSearch, {
-                checkBoxFecha: true
+                checkBoxFecha: $scope.dataSearch.checkBoxFecha
             }))
         }
 
