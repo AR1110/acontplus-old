@@ -165,7 +165,7 @@
                     byCliente: $scope.dataSearch.idCliente,
                     checkBoxFecha: $scope.dataSearch.checkBoxFecha,
                     byUsuario: $scope.dataSearch.byUsuario,
-                    codEstado: $scope.dataSearch.codEstado,
+                    codEstado: ["", null, undefined].includes($scope.dataSearch.codEstado) ? null : $scope.dataSearch.codEstado,
                     fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
                     nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
@@ -1817,6 +1817,18 @@
                 tS.toastr('warning', 'Ingrese la Fecha de emisión');
                 return
             }
+
+            if (fS.validateDateIsAfterCurrentDate($scope.data.fechaEmision)){
+                tS.toastr('warning','La fecha de emisión del documento no puede ser posterior a la fecha actual.')
+                return
+            }
+            // let formattedDateForInsert = null;
+            // if (moment(data.fechaEmision).isBefore(new Date(), 'day')) {
+            //     formattedDateForInsert = moment(data.fechaEmision).startOf('day').toDate();
+            // } else {
+            //     formattedDateForInsert = data.fechaEmision
+            // }
+
             if (!(fS.isDateValid($scope.data.fechaVencimiento))) {
                 tS.toastr('warning', 'Seleccione la Fecha de vencimiento');
                 return
@@ -1855,21 +1867,91 @@
 
         $scope.onSave = async function () {
             try {
-                let serieComprobante = null;
+                let serieComprobante = null, titleSwal = '', htmlSwal = '', confirmButtonText = '';
+                let validateForm = isValidForm()
 
-                if (!isValidForm()) {
+                if (!validateForm) {
                     throw "Invalid form!";
                 }
 
-                if ($scope.data.idNotaEntrega > 0) {
+                if (!($scope.data.idNotaEntrega > 0)) {
                     showLoader();
                     serieComprobante = await notaEntregaSvc.generateSerieComprobante({
                         idPuntoEmision: $scope.data.idPuntoEmision,
                     })
                     hideLoader();
-                    if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"
+                    if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
+
+                    titleSwal = '<small>Guardar Nota de Entrega</small>';
+                    confirmButtonText = 'Guardar';
+                    htmlSwal = `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`;
                 } else {
                     serieComprobante = ''
+                    titleSwal = '<small>Actualizar Nota de Entrega</small>';
+                    confirmButtonText = 'Actualizar';
+                    htmlSwal = `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`;
+                }
+
+
+                const customSwal = Swal.mixin({
+                    customClass: {
+                        confirmButton: 'btn btn-success',
+                        cancelButton: 'btn btn-danger ml-2'
+                    },
+                    buttonsStyling: false
+                })
+
+                let { isConfirmed } = await customSwal.fire({
+                    title: titleSwal,
+                    html: htmlSwal,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText,
+                    cancelButtonText: 'No, cancelar!',
+                    reverseButtons: false,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                })
+
+                if (!isConfirmed) return
+
+                //Tarifa Aplicada al Documento
+                $scope.data.tarifa = $scope.tarifaImpuestoVigente.tarifa;
+
+                let query = notaEntregaSvc.queryMapper({
+                    data: $scope.data,
+                    cliente: $scope.cliente,
+                    detalles: $scope.gridOptions.data,
+                    historyDatosAdicionales: $scope.historyDatosAdicionales
+                })
+
+
+                //Registar Doc 
+                if (!($scope.data.idNotaEntrega > 0)) {
+                    showLoader();
+                    notaEntregaSvc.save(query).then(response => {
+                        if (response.code === '0') {
+                            fS.sweetAlert('warning', response.message, response.titleSms);
+                        }
+                        if (response.code === "1") {
+                            fS.sweetAlert('success', response.message, response.titleSms, 1000);
+
+                            let mainData = {
+                                isRegister: true,
+                                data: response.dataResponse,
+                            }
+                            $uibModalInstance.close(mainData)
+                        }
+                    }).catch(error => {
+                        hideLoader();
+                        console.log(error)
+                    }).finally(() => hideLoader())
+                }
+
+                //Update Doc 
+                if ($scope.data.idNotaEntrega > 0) {
+                    console.log(serieComprobante)
+
                 }
 
 

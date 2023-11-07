@@ -370,7 +370,7 @@
                     }
                 }
             })
-        } 
+        }
 
         service.getAll = function (query) {
 
@@ -429,13 +429,15 @@
             })
         }
 
-        service.generateSerieComprobante = function(){
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, { tipo: 4 })), null, true).then(response=>{
-                if(response.code==="0"){
+        service.generateSerieComprobante = function (query) {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, { tipo: 4 })), null, true).then(response => {
+                if (response.code === "0") {
                     throw response;
                 }
-                if(response.code==="1"){
-                    console.log(response)
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
+                    let data = mainData[0][0];
+                    return data.serieComprobante;
                 }
             })
         }
@@ -461,7 +463,7 @@
 
             return {
                 notaEntrega,
-                detalle: service.detalleMapperTo(detalles),
+                detalles: service.detalleMapperTo(detalles),
                 infoAdicionalArticulo: JSON.stringify(historyDatosAdicionales)
             }
 
@@ -480,7 +482,6 @@
                     idTarifa: item.idTarifa,
                     idBodega: item.idBodega,
                     idMedida: item.idMedida,
-                    idPresentacion: item.idPresentacion || 0,
                     idTipoIva: item.idTipoIva,
                     tarifa: item.tarifa,
                     codigoPorcentaje: item.codigoPorcentaje,
@@ -496,19 +497,14 @@
                     porcentajeDescuento: item.porcentajeDescuento,
                     total: item.total,
                     nota: item.nota,
+                    cantidadStock: item.cantidadStock
                 })
             }
             return tempDetails;
         }
 
         service.save = function (data) {
-            let { notaEntrega, detalle, infoAdicionalArticulo } = data;
-            let params = {
-                notaEntrega,
-                detalles: detalle,
-                infoAdicionalArticulo
-            }
-            return mS.getData('post', url + 'Insert/', { data: params }, true).then(response => {
+            return mS.getData('post', url + 'Insert/', { data }, true).then(response => {
                 if (response.code === "0") {
                     return response;
                 }
