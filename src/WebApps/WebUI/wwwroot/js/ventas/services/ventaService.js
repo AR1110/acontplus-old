@@ -201,6 +201,502 @@
         return service;
     })
 
+    /**
+     * Nota Entrega 
+     */
+
+    app.factory('notaEntregaService', function ($injector) {
+        let url = 'Venta/NotaEntrega/';
+        let mS = $injector.get('mainService');
+        let fS = $injector.get('formulario')
+
+        let service = {};
+
+        service.getDataForm = () => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify({ tipo: 2 }), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
+                    let decimal = mainData[0][0];
+                    // let decimal = mainData[1][0];
+                    let tarifasImpuesto = mainData[2];
+                    let tarifas = mainData[3];
+                    let tiemposCredito = mainData[4];
+                    // let articuloDefaultTemp = mainData[6];
+                    // let articuloDefault = {}
+                    // if(articuloDefaultTemp && articuloDefaultTemp.length>0){
+                    //     articuloDefault = articuloDefaultTemp[0];
+                    // }
+                    // let clienteDefaultTemp = mainData[7][0];
+                    // let clienteDefault = {};
+                    // if(clienteDefaultTemp && clienteDefaultTemp.length>0){
+                    //     clienteDefault = clienteDefaultTemp[0];
+                    // }
+                    let config = mainData[7][0];
+                    // let permisosTemp = mainData[9][0];
+                    // let permisoJson = JSON.parse(permisosTemp.jsonPermission);
+                    // let permisos = permisoJson && permisoJson.additional.requestAuthorizationKey
+
+                    let vendedores = mainData[8];
+                    let notificacionVenta = {
+                        notificacionVenta: false
+                    }
+                    let notificacionVentaTemp = mainData[9];
+                    notificacionVenta = notificacionVentaTemp.length === 0 ? notificacionVenta : notificacionVentaTemp[0];
+                    let tempEstabsAndPtosEmision = mainData[10];
+                    let tempBodegas = mainData[11];
+                    let tarifaImpuestoVigente = mainData[12][0];
+                    let { permisoVenta } = fS.getDataUserRol();
+                    console.log(mainData)
+                    const tempEstabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
+                        const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
+
+                        if (!existingItem) {
+                            acc.push({
+                                idEstablecimiento: item.idEstablecimiento,
+                                nombreComercial: item.nombreComercial,
+                                codEstab: item.codEstab,
+                                defaultEstab: item.defaultEstab,
+                                puntosEmision: [{
+                                    idPuntoEmision: item.idPuntoEmision,
+                                    ptoEmi: item.ptoEmi,
+                                    defaultPtoEmi: item.defaultPtoEmi
+                                }]
+                            });
+                        } else {
+                            existingItem.puntosEmision.push({
+                                idPuntoEmision: item.idPuntoEmision,
+                                ptoEmi: item.ptoEmi,
+                                defaultPtoEmi: item.defaultPtoEmi
+                            });
+                        }
+                        return acc;
+                    }, []);
+
+                    let estabs = tempEstabs.map(estab => ({
+                        ...estab,
+                        bodegas: tempBodegas.filter(bodega => (bodega.idEstablecimiento === estab.idEstablecimiento))
+                            .map(bodega => ({
+                                idBodega: bodega.idBodega,
+                                bodega: bodega.bodega,
+                                descripcion: bodega.bodega,
+                                defaultBodega: bodega.defaultBodega,
+                            }))
+                    }))
+
+                    return {
+                        estabs,
+                        tarifaImpuestoVigente,
+                        tarifasImpuesto,
+                        tiemposCredito,
+                        tarifas,
+                        permisoVenta,
+                        notificacionVenta,
+                        decimal,
+                        config,
+                        vendedores
+                    }
+
+                    // return {
+                    //     estabs,
+                    //     decimal,
+                    //     tarifasImpuesto,
+                    //     tarifas,
+                    //     tiemposCredito,
+                    //     articuloDefault,
+                    //     clienteDefault,
+                    //     config,
+                    //     permisos,
+                    //     vendedores
+                    // }
+                    // return mainData;
+                }
+            })
+        }
+
+
+        /**
+         * tipo 1: get notas entrega 
+         * tipo 2: get invoices for credit note 
+         * tipo 3: get estabs, ptos. emisiones para los filtros
+         * @returns 
+         */
+
+        service.get = (params) => {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(params), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
+                    if (params.tipo === 3) {
+                        let tempEstabsAndPtosEmision = mainData[0];
+                        let estadosDoc = mainData[1];
+
+                        const estabs = tempEstabsAndPtosEmision.reduce((acc, item) => {
+                            const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
+
+                            if (!existingItem) {
+                                acc.push({
+                                    idEstablecimiento: item.idEstablecimiento,
+                                    nombreComercial: item.nombreComercial,
+                                    codEstab: item.codEstab,
+                                    defaultEstab: item.defaultEstab,
+                                    puntosEmision: [{
+                                        idPuntoEmision: item.idPuntoEmision,
+                                        ptoEmi: item.ptoEmi,
+                                        defaultPtoEmi: item.defaultPtoEmi
+                                    }]
+                                });
+                            } else {
+                                existingItem.puntosEmision.push({
+                                    idPuntoEmision: item.idPuntoEmision,
+                                    ptoEmi: item.ptoEmi,
+                                    defaultPtoEmi: item.defaultPtoEmi
+                                });
+                            }
+                            return acc;
+                        }, []);
+
+
+                        return {
+                            estabs,
+                            estadosDoc
+                        }
+                    }
+                }
+            })
+        }
+
+        service.getAll = function (query) {
+
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, { tipo: 1 })), null, true).then(response => {
+
+                if (!response || response.code === "0") {
+                    throw response;
+                }
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
+                    let notaEntregaRepos = mainData[0];
+                    let { totalRecords, totalDocument, totalAbono, totalSaldo } = notaEntregaRepos[0];
+
+                    let notaEntregas = notaEntregaRepos.map(item => {
+                        return {
+                            comprobante: 'Nota de Entrega',
+                            idDocumento: item.idDocumento,
+                            idNotaEntrega: item.idNotaEntrega,
+                            idCuentaPorCobrar: item.idCuentaPorCobrar,
+                            codEstab: item.codEstab,
+                            telefonoEstablecimiento: item.telefonoEstablecimiento,
+                            nombreComercial: item.nombreComercial,
+                            fechaEmision: item.fechaEmision,
+                            fechaVencimiento: item.fechaVencimiento,
+                            total: item.total,
+                            serieComprobante: item.nroDocumento,
+                            nombreFiscal: item.nombreFiscal,
+                            identificacionComprador: item.identificacionComprador,
+                            correo: item.correo,
+                            telefono: item.telefono,
+                            estadoFinanciero: item.estadoFinanciero,
+                            codDoc: item.codDoc,
+                            abono: item.abono,
+                            saldo: item.saldo,
+                            style: item.style,
+                            usuario: item.usuario,
+                            codEstado: item.codEstado,
+                            tiempoCredito: item.tiempoCredito,
+                            esContado: item.tiempoCredito,
+                        }
+                    })
+
+
+                    return {
+                        notaEntregas,
+                        dataTotals: { totalRecords, totalDocument, totalAbono, totalSaldo }
+                    }
+                }
+            })
+        }
+
+        service.generateSerieComprobante = function (query) {
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, { tipo: 4 })), null, true).then(response => {
+                if (response.code === "0") {
+                    throw response;
+                }
+                if (response.code === "1") {
+                    let mainData = JSON.parse(response.payload);
+                    let data = mainData[0][0];
+                    return data.serieComprobante;
+                }
+            })
+        }
+
+        service.queryMapper = function ({ data, cliente, detalles, historyDatosAdicionales }) {
+            //
+            service.data = Object.assign({}, data);
+
+            let notaEntrega = Object.assign({}, data);
+            notaEntrega.fechaEmision = fS.formatDateTimeZone(data.fechaEmision)
+            notaEntrega.fechaVencimiento = fS.formatDateTimeZone(data.fechaVencimiento)
+
+
+            if (cliente.idCliente === 0 && !cliente.razonSocialComprador && !cliente.identificacionComprador) {
+                throw new Error("Datos de cliente no proporcionados")
+            }
+
+            notaEntrega.idCliente = cliente.idCliente;
+            notaEntrega.identificacionComprador = cliente.identificacionComprador;
+            notaEntrega.razonSocialComprador = cliente.razonSocialComprador;
+            notaEntrega.direccionComprador = cliente.direccionComprador;
+            notaEntrega.email = cliente.email;
+            notaEntrega.telefono = cliente.telefono;
+
+
+
+            return {
+                notaEntrega,
+                detalles: service.detalleMapperTo(detalles),
+                infoAdicionalArticulo: JSON.stringify(historyDatosAdicionales)
+            }
+
+        }
+
+        service.detalleMapperTo = function (detalles) {
+            let tempDetails = [];
+            let orderIndex = 1;
+
+            for (let item of detalles) {
+                tempDetails.push({
+                    orderIndex: orderIndex++,
+                    idNotaEntregaDetalle: item.idNotaEntregaDetalle || 0,
+                    idFacturaDetalle: item.idFacturaDetalle || 0,
+                    idArticulo: item.idArticulo,
+                    idTarifa: item.idTarifa,
+                    idBodega: item.idBodega,
+                    idMedida: item.idMedida,
+                    idTipoIva: item.idTipoIva,
+                    tarifa: item.tarifa,
+                    codigoPorcentaje: item.codigoPorcentaje,
+                    ice: item.ice,
+                    descripcion: item.descripcion,
+                    cantidad: item.cantidad,
+                    precioCostoNeto: item.precioCostoNeto, //❌
+                    precioUnitario: item.precioUnitario,
+                    precioVenta: item.precioUnitario,
+                    precioConIva: item.precioConIva,
+                    valorDescuento: item.valorDescuento,
+                    precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
+                    porcentajeDescuento: item.porcentajeDescuento,
+                    total: item.total,
+                    nota: item.nota, //✅
+                    cantidadStock: service.getCantidadStock(item), //✅
+                    llevaInventario: item.llevaInventario,//✅
+                    precioCosto: item.precioCosto,  //✅
+                    cantidadTransaccion: item.cantidad * item.conversion //✅
+                })
+            }
+            return tempDetails;
+        }
+
+        service.getCantidadStock = function (rowEntity) {
+            let cantidadStock = 0;
+            let dataConsolidacionFecha = rowEntity.consolidacionesFecha.find(
+                cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
+            )
+            if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
+                if (dataConsolidacionFecha.fechaConsolidacion >= service.data.fechaEmision) {
+                    cantidadStock = 0;
+                    return cantidadStock;
+                }
+            }
+            cantidadStock = rowEntity.cantidad * rowEntity.conversion;
+            return cantidadStock;
+        }
+
+
+        service.save = function (data) {
+            return mS.getData('post', url + 'Insert/', { data }, true).then(response => {
+                if (response.code === "0") {
+                    return response;
+                }
+                if (response.code === "1") {
+                    let dataRepository = JSON.parse(response.payload)[0];
+
+                    let dataResponse = {
+                        ...dataRepository,
+                        esContado: dataRepository.tiempoCredito,
+                    }
+
+                    return {
+                        dataResponse,
+                        code: '1',
+                        message: 'Registrado Correctamente'
+                    }
+                }
+            })
+        }
+
+        service.getId = function (id) {
+            return mS.getData('get', `${url}GetId/${id}`, null, true).then(response => {
+                if (response.code === "0") {
+                    console.log(response)
+                }
+                if (response.code === "1") {
+                    let mainDataApi = JSON.parse(response.payload);
+                    console.log(mainDataApi)
+                    const [
+                        comprobanteApi,
+                        clienteTempApi,
+                        itemsApi,
+                        infoAdicionalDocumento,
+                        datosAdicionalesArticuloTemp
+                    ] = mainDataApi;
+
+                    let comprobanteTemp = comprobanteApi && comprobanteApi[0] || {};
+                    let cliente = clienteTempApi && clienteTempApi[0] || {};
+
+                    let items = itemsApi.map(itemPrincipal => {
+
+                        const { fraccionado, principal, consolidacion, ...restItem} = itemPrincipal;
+                       
+                        // Medidas del artículo fraccionado del principal
+                        let medidasFraccionadoTemp = JSON.parse(fraccionado);
+
+                        // Medida principal con las tarifas
+                        let medidasPrincipalTemp = JSON.parse(principal);
+
+                        // 
+                        let consolidacionesFecha = JSON.parse(consolidacion);
+
+                        /**
+                         * Combinar los dos arrays de medidas en uno solo
+                         *
+                         * Parámetros:
+                         *  - mergedMedidasArray: El array resultante de la combinación de los dos arrays de medidas
+                         */
+                        const mergedMedidasArray = [...medidasFraccionadoTemp, ...medidasPrincipalTemp];
+
+                        /**
+                         * Ordenar el array de medidas en función de la propiedad "orden" y
+                         * establecer la propiedad "defaultMedida" en falso para todos los elementos
+                         *
+                         * Parámetros:
+                         *  - orderMedidaArray: El array de medidas ordenado
+                         */
+                        let orderMedidaArray = mergedMedidasArray.sort((a, b) => a.orden - b.orden).map(medida => ({
+                            ...medida,
+                            defaultMedida: false
+                        }));
+ 
+                        // Establecer la propiedad "defaultMedida" en true para el primer elemento del array (el que tiene el orden más bajo)
+                        orderMedidaArray[0].defaultMedida = true;
+
+
+                        /**
+                         * Obtener los datos de la medida
+                         *
+                         * Parámetros:
+                         *  - orderMedidaArray: El array de medidas ordenado
+                         *  - restItem: El artículo
+                         *
+                         * Devuelve:
+                         *  - Los datos de la medida, o un objeto vacío si la medida no se encuentra
+                         */
+                        let dataMedida = orderMedidaArray.find(m => m.idMedida === restItem.idMedida) || {};
+
+                        // Asignar los datos de la medida al artículo
+                        restItem.medidas = orderMedidaArray;
+
+                        // Asignar los datos de las tarifas obtenidos de data medida 
+                        restItem.articuloTarifas = dataMedida.tarifas || [];
+
+                        restItem.consolidacionesFecha = consolidacionesFecha;
+                        return restItem;
+                    });
+
+                    let comprobante = {
+                        ...comprobanteTemp,
+                        serieComprobante: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}-${comprobanteTemp.secuencial}`,
+                        puntoEmision: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}`,
+                        fechaEmision: fS.formatDate(comprobanteTemp.fechaEmision),
+                        fechaVencimiento: fS.formatDate(comprobanteTemp.fechaVencimiento),
+                    }
+
+                    let datosAdicionalesArticulo = datosAdicionalesArticuloTemp.map(item => ({
+                        idDocumento: item.idDocumento,
+                        idHistoryInfoAdicional: item.idHistoryInfoAdicional,
+                        idArticulo: item.idArticulo,
+                        idEtiqueta: item.idEtiqueta,
+                        idInfoAdicional: item.idInfoAdicional,
+                        jsonAdicional: item.jsonAdicional && JSON.parse(item.jsonAdicional) || [],
+                        selected: item.selected,
+                        estado: item.estado
+                    }))
+
+                    return {
+                        comprobante,
+                        cliente,
+                        items,
+                        infoAdicionalDocumento,
+                        datosAdicionalesArticulo
+                    }
+                }
+            })
+        }
+
+
+        service.update = function (id, data) {
+            let { notaEntrega, detalle, infoAdicionalArticulo } = data;
+            let params = {
+                notaEntrega,
+                detalles: detalle,
+                infoAdicionalArticulo
+            }
+            return mS.getData('put', url + 'Update/' + id, { data: params }, true).then(response => {
+                if (response.code === "0") {
+                    return response;
+                }
+                if (response.code === "1") {
+                    return response
+                }
+            })
+        }
+
+        service.delete = function (id) {
+            return mS.getData('delete', url + 'Delete/' + id, null, true).then(response => {
+                if (response.code === "0") {
+                    return response;
+                }
+                if (response.code === "1") {
+                    return response
+                }
+            })
+        }
+
+        //Validaciones
+        service.getTotales = function (notaEntregas) {
+            let total = 0, totalAbono = 0, totalSaldo = 0;
+            for (let val of notaEntregas) {
+                total += val.total;
+                totalAbono += val.abono;
+                totalSaldo += val.saldo;
+            }
+            return {
+                total,
+                totalAbono,
+                totalSaldo
+            }
+        }
+
+        return service;
+
+    })
+
+
 
     //---------------------------------Cliente------------------------------------------
     app.factory('clienteService', function ($injector) {
@@ -707,5 +1203,110 @@
         return service;
 
     })
+
+
+
+
+    app.factory('storageService', storageService)
+
+    storageService.$inject = ['$window']
+
+    function storageService($window) {
+
+        return {
+            set: function (key, value) {
+                return $window.localStorage[key] = value;
+            },
+            get: function (key, defaultValue) {
+                return $window.localStorage[key] || defaultValue;
+            },
+            setObject: function (key, value) {
+                $window.localStorage[key] = JSON.stringify(value);
+            },
+            getObject: function (key) {
+                return JSON.parse($window.localStorage[key] || '{}');
+            },
+
+
+            askToSaveDetailDoc: async function (name, valueStorage) {
+                let { isConfirmed, value } = await Swal.fire({
+                    title: '<small>Apartar Documento</small>',
+                    input: 'text',
+                    inputAttributes: {
+                        autocapitalize: 'off'
+                    },
+                    showCancelButton: true,
+                    confirmButtonText: 'Apartar',
+                    cancelButtonText: 'No, cancelar',
+                    inputValidator: (value) => {
+                        if (!value) {
+                            return 'Ingrese la descripción!'
+                        }
+
+                        if (Object.keys(this.getObject(name)).length > 0) {
+                            if (this.getObject(name)[value]) {
+                                return 'Ya existe Documento Apartado con esta descripción';
+                            }
+                        }
+                    },
+                })
+
+                if (isConfirmed) {
+                    if (Object.keys(this.getObject(name)).length > 0) {
+                        let dataInvoiceDetail = this.getObject(name)
+                        dataInvoiceDetail[value] = JSON.stringify(valueStorage);
+                        this.setObject(name, dataInvoiceDetail)
+                        toastr.success('Documento Apartado Correctamente')
+                    }
+
+                    if (Object.keys(this.getObject(name)).length === 0) {
+                        let objSave = {
+                            [value]: JSON.stringify(valueStorage)
+                        }
+                        this.setObject(name, objSave)
+                        toastr.success('Documento Apartado Correctamente')
+                    }
+
+                }
+
+                return isConfirmed;
+
+
+            },
+
+            restoreInvoiceDetail: async function (name) {
+                let dataInvoiceDetail = this.getObject(name)
+
+                const { isConfirmed, value } = await Swal.fire({
+                    title: '<small>Recuperar Detalle del Documento</small>',
+                    input: 'select',
+                    inputOptions: Object.keys(dataInvoiceDetail).reduce((obj, cur) => ({ ...obj, [cur]: cur }), {}),
+                    inputPlaceholder: 'Seleccionar el documento',
+                    showCancelButton: true,
+                    confirmButtonText: 'Recuperar detalle',
+                    cancelButtonText: 'No, cancelar',
+                    allowEscapeKey: false,
+                    allowOutsideClick: false,
+                    inputValidator: (value) => {
+                        return new Promise((resolve) => {
+                            if (value) {
+                                resolve()
+                            } else {
+                                resolve('Seleccione la opción :)')
+                            }
+                        })
+                    }
+                })
+
+
+                return {
+                    isConfirmed,
+                    value,
+                    dataInvoiceDetail
+                }
+            }
+
+        }
+    }
 
 })(window.angular)
