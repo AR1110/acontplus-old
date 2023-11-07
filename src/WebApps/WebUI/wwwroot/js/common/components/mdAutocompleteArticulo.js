@@ -102,12 +102,10 @@ class BaseSearchArticulo {
 
             showLoader();
             this.dataArticulo.idBodega = this.idBodega;
-            this.dataArticulo.tipo = 6;
-
             /**
              * return object {articulo, medidas, datosAdicionales}
              */
-            this.articuloSvc.findForSale(this.dataArticulo).then(async dataArticuloApi => {
+            this.articuloSvc.getForSale(this.dataArticulo).then(async dataArticuloApi => {
 
                 //Cuando el articulo no lleva inventario 
                 if (!dataArticuloApi.articulo.llevaInventario) {
