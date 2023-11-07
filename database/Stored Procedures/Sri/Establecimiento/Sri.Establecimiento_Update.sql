@@ -30,7 +30,6 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	DECLARE @idEntidad INT 
-	DECLARE @ruc VARCHAR(15)
 	DECLARE @canton VARCHAR(10) 
     DECLARE @actividad VARCHAR(5)
     DECLARE @agenteRetencion VARCHAR(150) 
@@ -47,8 +46,6 @@ BEGIN
 	BEGIN TRY 
 
 		SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
-
-		SELECT TOP 1 @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
 		SELECT 
 			 @canton                = canton
@@ -98,10 +95,10 @@ BEGIN
 	END TRY 
 
 	BEGIN CATCH 
-			BEGIN
-				ROLLBACK TRAN; 
-			END
-			SELECT '0'code,'Info: Error en el procedimiento: ' + ERROR_MESSAGE() as  'message'
+		BEGIN
+		    ROLLBACK TRAN; 
+		END
+		SELECT '0'code,'Info: Error en el procedimiento: ' + ERROR_MESSAGE() as  'message'
 	END CATCH
 
 END
