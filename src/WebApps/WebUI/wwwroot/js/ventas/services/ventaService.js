@@ -240,7 +240,7 @@
                     // let permisoJson = JSON.parse(permisosTemp.jsonPermission);
                     // let permisos = permisoJson && permisoJson.additional.requestAuthorizationKey
 
-                    // let vendedores = mainData[11];
+                    let vendedores = mainData[8];
                     let notificacionVenta = {
                         notificacionVenta: false
                     }
@@ -296,7 +296,8 @@
                         permisoVenta,
                         notificacionVenta,
                         decimal,
-                        config
+                        config,
+                        vendedores
                     }
 
                     // return {
@@ -369,9 +370,7 @@
                     }
                 }
             })
-        }
-
-
+        } 
 
         service.getAll = function (query) {
 
@@ -429,6 +428,18 @@
                 }
             })
         }
+
+        service.generateSerieComprobante = function(){
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, { tipo: 1 })), null, true).then(response=>{
+                if(response.code==="0"){
+                    throw response;
+                }
+                if(response.code==="1"){
+                    console.log(response)
+                }
+            })
+        }
+
         service.queryMapper = function ({ data, cliente, detalles, historyDatosAdicionales }) {
 
             let notaEntrega = Object.assign({}, data);

@@ -11,11 +11,11 @@
         formSvc.dataDocumento = {};
         formSvc.opcionEmit = "";
 
-        formSvc.loaderPost = $(".loadingoverlay"); 
+        formSvc.loaderPost = $(".loadingoverlay");
 
         formSvc.sweetAlert = function (icon, message, title = null, timer = undefined, position = 'center') {
             Swal.fire({
-                title: `<small>${title|| ''}</small>`,
+                title: `<small>${title || ''}</small>`,
                 icon,
                 html: `<small>${message}</small>`,
                 timer,
@@ -34,7 +34,7 @@
                 allowOutsideClick: false,
                 allowEscapeKey: false
             });
-        }  
+        }
         formSvc.letterInline = (text) => {
             if (text) {
                 return text.replace(/[\n\r]+/g, ' ')
@@ -64,7 +64,7 @@
             if (campo.length >= 3 && campo !== undefined) {
                 return campo.substring(0, 3).replace(/[^-A-Za-z0-9]+/g, '').toUpperCase();
             }
-        }  
+        }
 
         /* number: número a redondear
            max: máximo de dígitos fraccionables
@@ -92,8 +92,8 @@
             // return Math.trunc(number * Math.pow(10, max)) / Math.pow(10, max);
 
         }
-        
-          
+
+
         /**
          * 
          * @param {Date} fecha
@@ -105,7 +105,7 @@
             const formatDateMoment = moment.tz(fecha, "America/Guayaquil")
             return formatDateMoment.format(format);
         }
-        
+
 
         /**
          * 
@@ -120,55 +120,58 @@
         }
 
         formSvc.isDateValid = function (dateString) {
-            var date = new Date(dateString);
+            if (dateString === null) {
+                return false; // Valor nulo no es válido
+            }
+            let date = new Date(dateString);
             return date instanceof Date && !isNaN(date);
-        } 
+        }
         formSvc.meses = function () {
             let meses = [{
-                    nombre: 'Año',
-                    numero: 0
-                },
-                {
-                    nombre: 'Enero',
-                    numero: 1
-                }, {
-                    nombre: 'Febrero',
-                    numero: 2
-                }, {
-                    nombre: 'Marzo',
-                    numero: 3
-                }, {
-                    nombre: 'Abril',
-                    numero: 4
-                }, {
-                    nombre: 'Mayo',
-                    numero: 5
-                }, {
-                    nombre: 'Junio',
-                    numero: 6
-                }, {
-                    nombre: 'Julio',
-                    numero: 7
-                }, {
-                    nombre: 'Agosto',
-                    numero: 8
-                }, {
-                    nombre: 'Septiembre',
-                    numero: 9
-                }, {
-                    nombre: 'Octubre',
-                    numero: 10
-                }, {
-                    nombre: 'Noviembre',
-                    numero: 11
-                },
-                {
-                    nombre: 'Diciembre',
-                    numero: 12
-                }
+                nombre: 'Año',
+                numero: 0
+            },
+            {
+                nombre: 'Enero',
+                numero: 1
+            }, {
+                nombre: 'Febrero',
+                numero: 2
+            }, {
+                nombre: 'Marzo',
+                numero: 3
+            }, {
+                nombre: 'Abril',
+                numero: 4
+            }, {
+                nombre: 'Mayo',
+                numero: 5
+            }, {
+                nombre: 'Junio',
+                numero: 6
+            }, {
+                nombre: 'Julio',
+                numero: 7
+            }, {
+                nombre: 'Agosto',
+                numero: 8
+            }, {
+                nombre: 'Septiembre',
+                numero: 9
+            }, {
+                nombre: 'Octubre',
+                numero: 10
+            }, {
+                nombre: 'Noviembre',
+                numero: 11
+            },
+            {
+                nombre: 'Diciembre',
+                numero: 12
+            }
             ];
             return meses;
-        }  
+        }
 
         formSvc.getFechaEscrita = function (fecha) {
             let mes = this.meses();
@@ -194,7 +197,7 @@
             return fechaVencimiento;
         };
 
-        formSvc.sumarDiasAFecha = function(fecha, dia){
+        formSvc.sumarDiasAFecha = function (fecha, dia) {
             let fechaVencimiento = new Date(fecha);
             fechaVencimiento.setDate(fechaVencimiento.getDate() + dia);
             return {
@@ -245,12 +248,12 @@
 
         formSvc.isValidDate = (dateString) => {
             const date = new Date(dateString);
-          
+
             // Comprobar si la fecha es válida y si el año tiene cuatro dígitos
             return (
-              Object.prototype.toString.call(date) === '[object Date]' &&
-              !isNaN(date) &&
-              date.getFullYear().toString().length === 4
+                Object.prototype.toString.call(date) === '[object Date]' &&
+                !isNaN(date) &&
+                date.getFullYear().toString().length === 4
             );
         };
 
@@ -258,33 +261,64 @@
             return /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i.test(value);
         };
 
-      
-        formSvc.validarLongitudNroIdentificacion = function(numero) {
+
+        formSvc.validarLongitudNroIdentificacion = function (numero) {
             return numero.length === 10 || numero.length === 13;
         }
-          
-        formSvc.isNumer = function(numero) {
+
+        formSvc.isNumer = function (numero) {
             return !isNaN(numero);
         }
-          
-        formSvc.contieneSecuencia001 = function(numero) {
+
+        formSvc.contieneSecuencia001 = function (numero) {
             return numero.includes("001");
         }
 
 
-        formSvc.validAndFormatedRangeSequential = function(cadena) {
+        formSvc.validAndFormatedRangeSequential = function (cadena) {
             // Expresión regular que verifica si la cadena contiene solo números.
             var formatoValido = /^\d+$/;
-          
+
             if (formatoValido.test(cadena)) {
-              // La cadena contiene solo números, así que la formateamos a "xxx-xxx".
-              cadena = `${cadena}-${cadena}`
+                // La cadena contiene solo números, así que la formateamos a "xxx-xxx".
+                cadena = `${cadena}-${cadena}`
             }
-          
+
             // Luego, validamos que la cadena siga el formato "xxx-xxx".
             var formatoValidoFinal = /^\d+-\d+$/;
             return formatoValidoFinal.test(cadena) ? cadena : null;
-        } 
-        return formSvc; 
-    } 
+        }
+
+        formSvc.getDataUserRol = function () {
+            let userData = JSON.parse(localStorage.getItem("userData"));
+            let { permissions } = userData;
+            let permisoVentaTemp = permissions.find(pp => pp.codModule === "V");
+            let objPermissionVenta = JSON.parse(permisoVentaTemp.permission);
+            let { comprobante, detail } = objPermissionVenta;
+            const permisoVenta = {
+                comprobante: {
+                    descuento: comprobante.descuento.update,
+                    fechaEmision: comprobante.fechaEmision.update,
+                    porcentajeDescuento: comprobante.porcentajeDescuento.update,
+                    tarifa: comprobante.tarifa.update,
+                    tiempoCredito: comprobante.tiempoCredito.update
+                },
+                detalle: {
+                    descuento: detail.descuento.update,
+                    medida: detail.medida.update,
+                    porcentajeDescuento: detail.porcentajeDescuento.update,
+                    precioConIva: detail.precioConIva.update,
+                    precioUnitario: detail.precioUnitario.update,
+                    tarifa: detail.tarifa.update,
+                    tipoIva: detail.tipoIva.update
+                }
+            }
+
+            return {
+                permisoVenta
+            }
+        }
+
+        return formSvc;
+    }
 })(window.angular)

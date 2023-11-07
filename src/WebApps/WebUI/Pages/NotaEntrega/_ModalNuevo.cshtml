@@ -250,7 +250,7 @@
                             <label for="vendedor">Vendedor: <span class="text-danger">*</span></label>
                             <select name="vendedor" id="vendedor" class="form-control border-select"
                                 ng-model="data.idUsuario">
-                                <option ng-value="item.idUsuario" ng-repeat="item in usuariosVendedor">
+                                <option ng-value="item.idUsuario" ng-repeat="item in vendedores">
                                     {{item.nombreCompleto}}
                                 </option>
                             </select>
