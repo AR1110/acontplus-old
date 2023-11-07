@@ -375,58 +375,59 @@ BEGIN
 	--> Verificar datos de la venta
 	IF @tipo = 6
 		BEGIN
-				SELECT @idArticulo = idArticulo FROM OPENJSON(@json) WITH (idArticulo INT '$.idArticulo')
+		    SELECT @idArticulo = idArticulo ,@idBodega = idBodega FROM OPENJSON(@json) WITH (idArticulo INT '$.idArticulo', idBodega INT '$.idBodega')
 
-				SELECT idArticulo           = a.idArticulo
-					  ,idMedida             = ISNULL(a.idMedida,0)
-					  ,idTipoIva            = ti.idTipoIva
-					  ,codigoAuxiliar       = ISNULL(a.codigoAuxiliar, 'S/N')
-					  ,descripcion          = a.descripcion
-					  ,valorIce             = ISNULL(a.valorIce,0)
-					  ,llevaInventario      = a.llevaInventario
-					  ,datosAdicionales     = ISNULL(a.datosAdicionales, 0) 
-					  ,productoFraccionable = a.productoFraccionable
-					  ,precioCosto          = a.precioCosto
-					  ,precioSinSubsidio    = ISNULL(a.precioSinSubsidio,0)
-					  ,nombreTipoIva        = ti.descripcion
-					  ,tarifa               = ti.porcentaje
-					  ,codigoPorcentaje     = CAST(ti.codigoPorcentaje as varchar)
-					  ,codigoArticulo       = IIF(ti.porcentaje > 0,'*','')+a.codigo
-					  ,stock                = a.stock
-					  ,cantMinimaVentaPorMayor
+			SELECT idArticulo           = a.idArticulo
+				  ,idMedida             = ISNULL(a.idMedida,0)
+				  ,idTipoIva            = ti.idTipoIva
+				  ,codigoAuxiliar       = ISNULL(a.codigoAuxiliar, 'S/N')
+				  ,descripcion          = a.descripcion
+				  ,valorIce             = ISNULL(a.valorIce,0)
+				  ,llevaInventario      = a.llevaInventario
+				  ,datosAdicionales     = ISNULL(a.datosAdicionales, 0) 
+				  ,productoFraccionable = a.productoFraccionable
+				  ,precioCosto          = a.precioCosto
+				  ,precioSinSubsidio    = ISNULL(a.precioSinSubsidio,0)
+				  ,nombreTipoIva        = ti.descripcion
+				  ,tarifa               = ti.porcentaje
+				  ,codigoPorcentaje     = CAST(ti.codigoPorcentaje as varchar)
+				  ,codigoArticulo       = IIF(ti.porcentaje > 0,'*','')+a.codigo
+				  ,stock                = a.stock
+				  ,cantMinimaVentaPorMayor
 			FROM dbo.Articulo a 
 			INNER JOIN dbo.TipoIva ti WITH (NOLOCK) ON ti.idTipoIva = a.idTipoIva
 			 LEFT JOIN dbo.Medida  me WITH (NOLOCK) ON me.idMedida  = a.idMedida
 			WHERE a.idArticulo = @idArticulo
 
-			SELECT 
-				idMedida     = m.idMedida 
-			   ,descripcion  = m.descripcion
-			   ,tarifas		 = (SELECT afs.idTarifa,afs.precioVenta,afs.precioConIva,tarifa = UPPER(ta.descripcion),porcentaje = @porcentaje, ta.ventaPorMayor
-								FROM dbo.ArticuloFraccionadoPvP  afs WITH (NOLOCK)
-								INNER JOIN dbo.Tarifa             ta WITH (NOLOCK) ON ta.idTarifa = afs.idTarifa
-								WHERE afs.idArticuloFraccionado = af.idArticuloFraccionado
-								ORDER BY ta.predeterminada DESC FOR JSON PATH)
-			   ,orden = IIF(af.gestionVenta = 1,1,3)
+			SELECT idMedida     = m.idMedida 
+			      ,descripcion  = m.descripcion
+			      ,tarifas		= (SELECT afs.idTarifa,afs.precioVenta,afs.precioConIva,tarifa = UPPER(ta.descripcion),porcentaje = @porcentaje, ta.ventaPorMayor
+								   FROM dbo.ArticuloFraccionadoPvP  afs WITH (NOLOCK)
+								   INNER JOIN dbo.Tarifa             ta WITH (NOLOCK) ON ta.idTarifa = afs.idTarifa
+								   WHERE afs.idArticuloFraccionado = af.idArticuloFraccionado
+								   ORDER BY ta.predeterminada DESC FOR JSON PATH)
+			      ,orden = IIF(af.gestionVenta = 1,1,3)
+                  ,af.conversion
 			FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
 			INNER JOIN dbo.Medida         m WITH (NOLOCK) ON m.idMedida = af.idMedida
 			WHERE af.idArticulo = @idArticulo AND af.estado = 1
-		
-			UNION ALL
 
 			SELECT 
 				m.idMedida
 			   ,m.descripcion
-			   ,tarifas		 = (SELECT ap.idTarifa,ap.precioVenta,ap.precioConIva,tarifa = UPPER(ta.descripcion) ,porcentaje = @porcentaje, ta.ventaPorMayor
+			   ,tarifas		 = (SELECT ap.idTarifa,ap.precioVenta,ap.precioConIva,tarifa = UPPER(ta.descripcion) ,porcentaje = @porcentaje, ta.ventaPorMayor 
 								FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
 								INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
 								WHERE ap.idArticulo = a.idArticulo
 								ORDER BY ta.predeterminada DESC FOR JSON PATH)
 			  ,orden = 2
+              ,1 as conversion
 			FROM dbo.Articulo     a WITH (NOLOCK)
 			INNER JOIN dbo.Medida m WITH (NOLOCK) ON m.idMedida = a.idMedida
 			WHERE a.idArticulo = @idArticulo AND a.estado = 1
 			ORDER BY orden ASC
+                
+            SELECT idArticulo,idBodega,fechaConsolidacion FROM Inventario.Stock WHERE idArticulo = @idArticulo 
 
 			SELECT * FROM Compra.InfoAdicional WITH (NOLOCK) WHERE idArticulo = @idArticulo AND estado = 1
 
