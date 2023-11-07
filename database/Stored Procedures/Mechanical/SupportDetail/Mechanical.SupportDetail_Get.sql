@@ -9,7 +9,7 @@ GO
 -- Author:		Alexis Ramirez
 -- Create date: 2021-06-25
 -- Description:	SP Para leer los datos e la tabla articulo
--- Mechanical.SupportDetail_Get 157, '{"tipo": 1,"id":2}', ''
+-- Mechanical.SupportDetail_Get 157, '{"tipo": 1,"id":3}', ''
 -- =============================================
 -- DROP PROC Mechanical.SupportDetail_Get
 CREATE OR ALTER PROCEDURE Mechanical.SupportDetail_Get
@@ -45,6 +45,7 @@ BEGIN
                   ,v_s.BusinessName
                   ,v_s.idCard
                   ,v_s.codEstab
+                  ,v_s.status
 	        FROM Mechanical.v_Support v_s WITH (NOLOCK)
             WHERE Id = @Id
                         

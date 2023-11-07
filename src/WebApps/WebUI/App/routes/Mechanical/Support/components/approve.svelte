@@ -13,6 +13,7 @@
   import toast from "$utils/toast";
   import { SupportDetailService } from "$lib/services/Mechanical/support-detail-service";
   import { sharedService } from "$lib/services/shared.service";
+  import Swal from "sweetalert2";
 
   let support;
   let establishments = [];
@@ -52,6 +53,7 @@
   let tiempoCreditos = [];
   let tarifaImpuestoFactura = [];
   let timeout;
+  let statusForDisabled = 2;
 
   const onModalClose = () => {
     supportStore.update((state) => ({
@@ -111,11 +113,10 @@
       ).then((response) => {
         if (response) {
           dataArticle = response[0][0];
-          // Todo: Validate if article has llevaInventario
           let isExists = onValidateLlevaInventario(dataArticle);
 
           if (isExists) {
-            medidas = response[1].map((item) => {
+            medidas = response[2].map((item) => {
               return {
                 ...item,
                 tarifas: JSON.parse(item.tarifas),
@@ -150,7 +151,6 @@
               total: dataTarifa.precioConIva * 1,
               nota: "S/N",
             };
-
             supportDetails = [...supportDetails, obj];
 
             // Get Articles invoke.
@@ -221,24 +221,25 @@
       CODIGO_PORCENTAJE_IVA_NO_OBJETO = "6",
       CODIGO_PORCENTAJE_IVA8 = "8";
 
-    const dataTotal = supportDetails.reduce((total, itemDetails) => {
-
+    const dataTotal = supportDetails.reduce(
+      (total, itemDetails) => {
         let dataImpuesto = tipoIva.find(
           (x) => x.idTipoIva == Number(itemDetails.idTipoIva)
         );
         console.log("dataImpuesto");
         console.log(dataImpuesto);
 
-        let dataImpuestoVigente = tarifaImpuestos.find((x) => x.codigoPorcentaje == dataImpuesto.codigoPorcentaje);
-        if(dataImpuestoVigente != undefined) {
+        let dataImpuestoVigente = tarifaImpuestos.find(
+          (x) => x.codigoPorcentaje == dataImpuesto.codigoPorcentaje
+        );
+        if (dataImpuestoVigente != undefined) {
           total.valorIva = dataImpuestoVigente.tarifa;
         }
 
-        if(dataImpuestoVigente == undefined) {
-          if(dataImpuesto.codigoPorcentaje == CODIGO_PORCENTAJE_IVA8) {
-            total.valorIva = 8.00
-          }
-          else {
+        if (dataImpuestoVigente == undefined) {
+          if (dataImpuesto.codigoPorcentaje == CODIGO_PORCENTAJE_IVA8) {
+            total.valorIva = 8.0;
+          } else {
             total.valorIva = 0;
           }
         }
@@ -247,30 +248,47 @@
         itemDetails.precioUnitario = Number(itemDetails.precioUnitario);
         itemDetails.valorDescuento = Number(itemDetails.valorDescuento);
 
-        if(dataImpuestoVigente != undefined) {
-          if ( dataImpuesto.codigoPorcentaje == dataImpuestoVigente.codigoPorcentaje) {
-            total.totalImpuestoVigente += itemDetails.cantidad * itemDetails.precioUnitario;
-            total.totalImpuestoVigenteNeto += (itemDetails.precioUnitario - itemDetails.valorDescuento) * itemDetails.cantidad;
+        if (dataImpuestoVigente != undefined) {
+          if (
+            dataImpuesto.codigoPorcentaje ==
+            dataImpuestoVigente.codigoPorcentaje
+          ) {
+            total.totalImpuestoVigente +=
+              itemDetails.cantidad * itemDetails.precioUnitario;
+            total.totalImpuestoVigenteNeto +=
+              (itemDetails.precioUnitario - itemDetails.valorDescuento) *
+              itemDetails.cantidad;
           }
         }
 
         if (dataImpuesto.codigoPorcentaje == CODIGO_PORCENTAJE_IVA0) {
-          total.subTotalIvaCero += itemDetails.cantidad * itemDetails.precioUnitario;
-          total.subTotalNetoIvaCero +=  (itemDetails.precioUnitario - itemDetails.valorDescuento) * itemDetails.cantidad;
+          total.subTotalIvaCero +=
+            itemDetails.cantidad * itemDetails.precioUnitario;
+          total.subTotalNetoIvaCero +=
+            (itemDetails.precioUnitario - itemDetails.valorDescuento) *
+            itemDetails.cantidad;
         }
 
         if (dataImpuesto.codigoPorcentaje == CODIGO_PORCENTAJE_IVAEXENTO) {
-          total.subTotalExentoIva += itemDetails.cantidad * itemDetails.precioUnitario;
-          total.subTotalNetoExentoIva += (itemDetails.precioUnitario - itemDetails.valorDescuento) *itemDetails.cantidad;
+          total.subTotalExentoIva +=
+            itemDetails.cantidad * itemDetails.precioUnitario;
+          total.subTotalNetoExentoIva +=
+            (itemDetails.precioUnitario - itemDetails.valorDescuento) *
+            itemDetails.cantidad;
         }
 
         if (dataImpuesto.codigoPorcentaje == CODIGO_PORCENTAJE_IVA_NO_OBJETO) {
-          total.subTotalNoObjetoIva += itemDetails.cantidad * itemDetails.precioUnitario;
-          total.subTotalNetoNoObjetoIva += (itemDetails.precioUnitario - itemDetails.valorDescuento) * itemDetails.cantidad;
+          total.subTotalNoObjetoIva +=
+            itemDetails.cantidad * itemDetails.precioUnitario;
+          total.subTotalNetoNoObjetoIva +=
+            (itemDetails.precioUnitario - itemDetails.valorDescuento) *
+            itemDetails.cantidad;
         }
 
-        total.sumaTotalNeto += itemDetails.cantidad * itemDetails.precioUnitario;
-        total.valorDescuento += itemDetails.cantidad * itemDetails.precioUnitario;
+        total.sumaTotalNeto +=
+          itemDetails.cantidad * itemDetails.precioUnitario;
+        total.valorDescuento +=
+          itemDetails.cantidad * itemDetails.precioUnitario;
         return total;
       },
       {
@@ -301,7 +319,10 @@
     let total = dataTotal.sumaTotalNeto + iva;
 
     let importeTotal = total - dataTotal.totalDescuento;
-    importeTotal = sharedService.roundNumber(importeTotal, decimals.importeTotal);
+    importeTotal = sharedService.roundNumber(
+      importeTotal,
+      decimals.importeTotal
+    );
 
     let { valorIva, totalDescuento, ...result } = dataTotal;
 
@@ -487,7 +508,26 @@
   };
 
   // Todo: Save FACTURA
+  const showAlertFactura = () => {
+    Swal.fire({
+      title: "Guardar Factura",
+      text: "Esta Ud. seguro de Guardar este Factura de Venta?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, guardar!",
+      cancelButtonText: "No, cancelar!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        saveFactura();
+      }
+    });
+  };
+
   const saveFactura = () => {
+    if (!onValidateSaveFactura()) return;
+
     showLoader();
 
     let getTiempoCredito = tiempoCreditos[0];
@@ -541,9 +581,28 @@
     return newFechaVencimiento;
   };
 
-  const saveNotaEntrega = () => {
-    showLoader();
+  // Todo: Nota Entrega.
+  const showAlertNotaEntrega = () => {
+    Swal.fire({
+      title: "Guardar Nota Entrega",
+      text: "Esta Ud. seguro de Guardar este Nota Entrega de Venta?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sí, guardar!",
+      cancelButtonText: "No, cancelar!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        saveNotaEntrega();
+      }
+    });
+  };
 
+  const saveNotaEntrega = () => {
+    if (!onValidateSaveFactura()) return;
+
+    showLoader();
     let getTiempoCredito = tiempoCreditos[0];
     support.tarifa = tarifaImpuestoFactura[0].tarifa;
 
@@ -640,9 +699,36 @@
         });
         return (isValidate = false);
       }
+
+      if (support.status === statusForDisabled) {
+        toast({
+          type: "warning",
+          message: "El soporte ha sido finalizado. Usted no puede modificar",
+        });
+        return (isValidate = false);
+      }
+
       return isValidate;
     } catch (error) {
       console.log(error);
+      return false;
+    }
+  };
+
+  const onValidateSaveFactura = () => {
+    let isValidate = true;
+
+    try {
+      if (support.status === statusForDisabled) {
+        toast({
+          type: "warning",
+          message:
+            "Este soporte ya está finalizado. Usted no puede realizar la Factura y Nota Entrega",
+        });
+        isValidate = false;
+      }
+      return isValidate;
+    } catch (error) {
       return false;
     }
   };
@@ -775,6 +861,7 @@
                 on:blur={onBlurArticle}
                 value={valueArticle}
                 placeholder={placeholderArticle}
+                disabled={support.status === statusForDisabled}
               />
               {#if articles.length > 0}
                 <div class="floating-results list-group">
@@ -795,6 +882,7 @@
             <input
               on:blur={(e) => searchArticleCode(e)}
               id="searchArticleCode"
+              disabled={support.status === statusForDisabled}
               type="text"
               class="form-control"
               placeholder="Ej: COMP1"
@@ -806,6 +894,7 @@
                 <button
                   type="button"
                   on:click={onUpdate}
+                  disabled={support.status === statusForDisabled}
                   class="btn btn-block btn-success mt-4"
                 >
                   <i class="ti-save" /> Guardar
@@ -824,6 +913,7 @@
                   <button
                     id="btnGroupDrop1"
                     type="button"
+                    disabled={support.status === statusForDisabled}
                     class="btn btn-secondary btn-block dropdown-toggle"
                     data-toggle="dropdown"
                     aria-haspopup="true"
@@ -833,12 +923,16 @@
                   </button>
                   <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                     <!-- svelte-ignore a11y-invalid-attribute -->
-                    <a on:click={saveFactura} class="dropdown-item" href="#"
-                      >Factura</a
+                    <a
+                      on:click={showAlertFactura}
+                      class="dropdown-item"
+                      href="#">Factura</a
                     >
                     <!-- svelte-ignore a11y-invalid-attribute -->
-                    <a on:click={saveNotaEntrega} class="dropdown-item" href="#"
-                      >Nota Entrega</a
+                    <a
+                      on:click={showAlertNotaEntrega}
+                      class="dropdown-item"
+                      href="#">Nota Entrega</a
                     >
                   </div>
                 </div>

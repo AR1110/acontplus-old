@@ -1,4 +1,5 @@
 const mapperToAction = () => {
+
   const principalMapperTo = (support) => {
     const factura = {
       direccionComprador: support.direccionComprador || "",
@@ -33,8 +34,8 @@ const mapperToAction = () => {
       totalDescuento: support.totalDescuento || 0,
       totalIce: support.totalIce || 0,
       transporte: support.transporte || 0,
+      supportId: support.id || 0,
     };
-
     return factura;
   };
 
