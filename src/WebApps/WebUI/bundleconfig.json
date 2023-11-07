@@ -580,5 +580,11 @@
     "inputFiles": [
       "wwwroot/js/inventario/modals/modalKardexCtrl.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/factElect/services/docElectService.min.js",
+    "inputFiles": [
+      "wwwroot/js/factElect/services/docElectService.js"
+    ]
   }
 ]
