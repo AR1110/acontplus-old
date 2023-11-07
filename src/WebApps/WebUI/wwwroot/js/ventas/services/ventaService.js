@@ -430,7 +430,7 @@
         }
 
         service.generateSerieComprobante = function(){
-            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, { tipo: 1 })), null, true).then(response=>{
+            return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, { tipo: 4 })), null, true).then(response=>{
                 if(response.code==="0"){
                     throw response;
                 }

@@ -1853,20 +1853,25 @@
             return true;
         }
 
-        $scope.save = async function () {
+        $scope.onSave = async function () {
             try {
+                let serieComprobante = null;
+
                 if (!isValidForm()) {
                     throw "Invalid form!";
                 }
 
-                showLoader();
-                this.nroDocumentoSecuencial = await notaEntregaSvc.get({
-                    idPuntoEmision: this.data.idPuntoEmision,
-                    codigoDocumento: this.TIPO_DOC_NE.codigo,
-                })
-                hideLoader();
+                if ($scope.data.idNotaEntrega > 0) {
+                    showLoader();
+                    serieComprobante = await notaEntregaSvc.generateSerieComprobante({
+                        idPuntoEmision: $scope.data.idPuntoEmision,
+                    })
+                    hideLoader();
+                    if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"
+                } else {
+                    serieComprobante = ''
+                }
 
-                if (!this.nroDocumentoSecuencial) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"
 
 
             } catch (error) {
