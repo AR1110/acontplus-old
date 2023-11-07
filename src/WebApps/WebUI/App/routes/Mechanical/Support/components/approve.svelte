@@ -606,14 +606,22 @@
     let getTiempoCredito = tiempoCreditos[0];
     support.tarifa = tarifaImpuestoFactura[0].tarifa;
 
+    // Todo: Tiempo crédito.
     support.idTiempoCredito = getTiempoCredito.idTiempoCredito;
-    support.fechaVencimiento = getFechaVencimiento(
-      support.date,
-      getTiempoCredito.diasCredito
-    );
+    support.tipo = getTiempoCredito.tipo;
 
+    // Todo: Establecimiento.
+    support.estab = establishments.find((x) => x.codEstab === support.codEstab).estab;
+
+
+    // Todo: Fecha vencimiento
     support.date = newFormatDate(support.date);
+    support.fechaVencimiento = getFechaVencimiento(support.date, getTiempoCredito.diasCredito);
     support.fechaVencimiento = newFormatDate(support.fechaVencimiento);
+
+    // Todo: Punto Emision.
+    console.log("ptoEmisiones")
+    console.log(ptoEmisiones)
 
     let newData = {
       notaEntrega: JSON.stringify(MapperToAction.notaEntregaMapper(support)),

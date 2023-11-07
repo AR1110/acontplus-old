@@ -74,11 +74,18 @@ const mapperToAction = () => {
 
   const notaEntregaMapper = (data) => {
     const notaEntrega = {
+      idCliente: data.customerId || 0,
+      identificacionComprador: data.idCard,
+      razonSocialComprador: data.businessName || '',
+      direccionComprador: '',
+      email: '',
+      telefono: '',
+      estab: data.estab,
       codEstab: data.codEstab,
       fechaEmision: data.date,
       fechaVencimiento: data.fechaVencimiento,
-      idCliente: data.customerId || 0,
       idPuntoEmision: data.puntoEmisionId,
+      tipo: data.tipo,
       idTiempoCredito: data.idTiempoCredito,
       idUsuario: data.userAssignedId || 0,
       irbpnr: data.irbpnr,
