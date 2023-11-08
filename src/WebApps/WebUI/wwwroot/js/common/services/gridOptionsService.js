@@ -384,10 +384,7 @@
 
         }
 
-
-        service.askToa
-
-
+   
         /**
          * 
          * @param {*} items 
@@ -462,6 +459,8 @@
             return { subTotalSinImpuestos };
         }
 
+
+        
 
         return service;
 

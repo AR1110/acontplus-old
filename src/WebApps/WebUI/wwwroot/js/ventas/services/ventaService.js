@@ -502,19 +502,31 @@
             return tempDetails;
         }
 
-        service.getCantidadStock = function (rowEntity) {
+        service.getCantidadStock = function (rowEntity, fechaEmision) {
+            let fechaEmisionValidate = null;
             let cantidadStock = 0;
+
+            if (fechaEmision) {
+                fechaEmisionValidate = fechaEmision;
+            } else {
+                fechaEmisionValidate = service.data.fechaEmision;
+            }
+            if (!fechaEmisionValidate) {
+                console.warn('Para validacion del cantidad stock la fecha emision del comprobante es nula')
+            }
+
             let dataConsolidacionFecha = rowEntity.consolidacionesFecha.find(
                 cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
             )
             if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
-                if (dataConsolidacionFecha.fechaConsolidacion >= service.data.fechaEmision) {
+                if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
                     cantidadStock = 0;
                     return cantidadStock;
                 }
             }
             cantidadStock = rowEntity.cantidad * rowEntity.conversion;
-            return cantidadStock;
+            let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
+            return resultCantStock;
         }
 
 
@@ -561,8 +573,8 @@
 
                     let items = itemsApi.map(itemPrincipal => {
 
-                        const { fraccionado, principal, consolidacion, ...restItem} = itemPrincipal;
-                       
+                        const { fraccionado, principal, consolidacion, ...restItem } = itemPrincipal;
+
                         // Medidas del artículo fraccionado del principal
                         let medidasFraccionadoTemp = JSON.parse(fraccionado);
 
@@ -591,7 +603,7 @@
                             ...medida,
                             defaultMedida: false
                         }));
- 
+
                         // Establecer la propiedad "defaultMedida" en true para el primer elemento del array (el que tiene el orden más bajo)
                         orderMedidaArray[0].defaultMedida = true;
 
@@ -610,11 +622,19 @@
 
                         // Asignar los datos de la medida al artículo
                         restItem.medidas = orderMedidaArray;
-
+                        restItem.conversion = dataMedida.conversion;
                         // Asignar los datos de las tarifas obtenidos de data medida 
                         restItem.articuloTarifas = dataMedida.tarifas || [];
 
                         restItem.consolidacionesFecha = consolidacionesFecha;
+
+
+                        let subTotal = restItem.cantidad * restItem.precioUnitario || 0;
+                        let totalDescuento = restItem.cantidad * restItem.valorDescuento || 0;
+
+                        restItem.subTotal = subTotal || 0;
+                        restItem.totalDescuento = totalDescuento || 0;
+
                         return restItem;
                     });
 

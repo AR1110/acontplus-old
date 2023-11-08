@@ -813,6 +813,7 @@
         let clienteSvc = $injector.get('clienteService');
         let gridOptionsSvc = $injector.get('gridOptionsService');
         let storageSvc = $injector.get('storageService');
+        let articuloSvc = $injector.get('articuloService');
 
 
         $scope.tipoDoc = TIPO_DOC_NE;
@@ -859,7 +860,8 @@
 
         console.log(mainDataForm)
 
-        $scope.indexRow = null;
+        $scope.indexRow = null; //Indice del items del detalle 
+
         //GridOptions Invoice 
         $scope.gridOptions = {
             enableColumnMenus: false,
@@ -906,8 +908,60 @@
                     rowEntity[colDef.field] = 1;
                 }
 
+                //Verificacion del stock 
+                if (colDef.field === 'cantidad' && rowEntity.cantidad !== oldValue) {
+                    checkNotificationStock(colDef.field, rowEntity, oldValue);
+                    return
+                }
+
                 setCalculoTotales(colDef.field, rowEntity, oldValue);
             })
+        }
+
+        function checkNotificationStock(field, rowEntity, oldValue) {
+            try {
+                if (!rowEntity.llevaInventario) return;
+                showLoader();
+                articuloSvc.checkNotificationStock({
+                    idArticulo: rowEntity.idArticulo,
+                    cantidad: notaEntregaSvc.getCantidadStock(rowEntity, $scope.data.fechaEmision),
+                    idBodega: rowEntity.idBodega,
+                    idMedida: rowEntity.idMedida
+                }).then(async responseApi => {
+                    let { code, message, titleSms } = responseApi;
+                    if (code === "1") {
+                        console.log(responseApi);
+                        setCalculoTotales(field, rowEntity, oldValue);
+                        return
+                    }
+
+                    let { isConfirmed } = await Swal.fire({
+                        title: `<small>${titleSms}</small>`,
+                        icon: 'warning',
+                        html: `<small>${message}</small>`,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                    })
+
+                    if (isConfirmed) {
+                        if (code === "0") {
+                            rowEntity.cantidad = oldValue;
+                            setCalculoTotales(field, rowEntity, oldValue);
+                            $("#custom-template-md-autocomplete-articulo").focus();
+                        }
+                        if (code === "2") {
+                            setCalculoTotales(field, rowEntity, oldValue);
+                        }
+                    }
+
+                }).catch(error => {
+                    console.log(error)
+                }).finally(() => hideLoader())
+
+            } catch (error) {
+                hideLoader();
+                console.log(error);
+            }
         }
 
         $scope.setInfoEstabPtoEmi = function () {
@@ -1000,6 +1054,7 @@
 
                 $scope.cliente = cliente;
                 $scope.infoAdicionalDocumento = infoAdicionalDocumento;
+                counterGridOptions();
             }
 
 
@@ -1660,7 +1715,7 @@
         $scope.setItemArticuloEnDetalle = function (dataArticulo) {
             try {
                 $scope.dataArticulo = dataArticulo;
-
+                console.log(dataArticulo)
                 const {
                     articulo,
                     medidas,
@@ -1719,9 +1774,8 @@
                 entity.precioConIva = fS.roundNumber(tarifa.precioConIva, $scope.decimal.nroPrecio);
                 entity.cantMinimaVentaPorMayor = articulo.cantMinimaVentaPorMayor;
                 $scope.indexRow = index;
-                setCalculoTotales('precioUnitario', entity, 0);
                 focusColumnCantidad();
-                // setCantidadStock(entity)
+                setCalculoTotales('precioUnitario', entity, 0);
             } catch (error) {
                 console.log(error)
             }
@@ -1757,10 +1811,9 @@
                     $scope.gridOptions.data[$scope.indexRow],
                     $scope.gridOptions.columnDefs[index]
                 );
-                $scope.indexRow = null;
             }, 30)
 
-
+            $scope.indexRow = null;
             counterGridOptions()
         }
 
