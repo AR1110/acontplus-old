@@ -434,7 +434,7 @@ class InputSearchBarcodeCtrl extends BaseSearchArticulo {
                 }
             })
 
-        }, 500)
+        }, 800)
     }
 }
 

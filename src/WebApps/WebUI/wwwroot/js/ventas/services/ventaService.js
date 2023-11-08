@@ -299,20 +299,6 @@
                         config,
                         vendedores
                     }
-
-                    // return {
-                    //     estabs,
-                    //     decimal,
-                    //     tarifasImpuesto,
-                    //     tarifas,
-                    //     tiemposCredito,
-                    //     articuloDefault,
-                    //     clienteDefault,
-                    //     config,
-                    //     permisos,
-                    //     vendedores
-                    // }
-                    // return mainData;
                 }
             })
         }
@@ -435,7 +421,7 @@
             })
         }
 
-        service.queryMapper = function ({ data, cliente, detalles, historyDatosAdicionales }) {
+        service.queryMapper = function ({ data, cliente, detalles, itemsDeleted, historyDatosAdicionales }) {
             //
             service.data = Object.assign({}, data);
 
@@ -455,14 +441,19 @@
             notaEntrega.email = cliente.email;
             notaEntrega.telefono = cliente.telefono;
 
+            const itemsMainMapper = service.detalleMapperTo(detalles);
+            const itemsDeletedMapper = service.detalleMapperTo(itemsDeleted)
 
+            const mergeItems = [
+                ...itemsMainMapper,
+                ...itemsDeletedMapper
+            ]
 
             return {
                 notaEntrega,
-                detalles: service.detalleMapperTo(detalles),
+                detalles: mergeItems,
                 infoAdicionalArticulo: JSON.stringify(historyDatosAdicionales)
             }
-
         }
 
         service.detalleMapperTo = function (detalles) {
@@ -470,6 +461,16 @@
             let orderIndex = 1;
 
             for (let item of detalles) {
+                let cantidadStock = 0;
+                cantidadStock = service.getCantidadStock(item);
+                // if (item.idNotaEntregaDetalle > 0) {
+                //     cantidadStock = 
+                //     if(item.cantidad !== item.cantidadOriginal){
+                //         cantidadStock = 
+                //     }  
+                     
+                // }
+
                 tempDetails.push({
                     orderIndex: orderIndex++,
                     idNotaEntregaDetalle: item.idNotaEntregaDetalle || 0,
@@ -493,28 +494,47 @@
                     porcentajeDescuento: item.porcentajeDescuento,
                     total: item.total,
                     nota: item.nota, //✅
-                    cantidadStock: service.getCantidadStock(item), //✅
+                    cantidadStock, //✅
                     llevaInventario: item.llevaInventario,//✅
                     precioCosto: item.precioCosto,  //✅
-                    cantidadTransaccion: item.cantidad * item.conversion //✅
+                    cantidadTransaccion: item.cantidad * item.conversion, //✅
+                    estado: item.estado //✅
                 })
             }
             return tempDetails;
         }
 
-        service.getCantidadStock = function (rowEntity) {
+        /**
+         * 
+         * @param {*} rowEntity 
+         * @param {*} fechaEmision unicamente se envia desde el controlador de NotaEntregaCtrl
+         * @returns 
+         */
+        service.getCantidadStock = function (rowEntity, fechaEmision) {
+            let fechaEmisionValidate = null;
             let cantidadStock = 0;
+
+            if (fechaEmision) {
+                fechaEmisionValidate = fechaEmision;
+            } else {
+                fechaEmisionValidate = service.data.fechaEmision;
+            }
+            if (!fechaEmisionValidate) {
+                console.warn('Para validacion del cantidad stock la fecha emision del comprobante es nula')
+            }
+
             let dataConsolidacionFecha = rowEntity.consolidacionesFecha.find(
                 cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
             )
             if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
-                if (dataConsolidacionFecha.fechaConsolidacion >= service.data.fechaEmision) {
+                if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
                     cantidadStock = 0;
                     return cantidadStock;
                 }
             }
             cantidadStock = rowEntity.cantidad * rowEntity.conversion;
-            return cantidadStock;
+            let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
+            return resultCantStock;
         }
 
 
@@ -561,8 +581,8 @@
 
                     let items = itemsApi.map(itemPrincipal => {
 
-                        const { fraccionado, principal, consolidacion, ...restItem} = itemPrincipal;
-                       
+                        const { fraccionado, principal, consolidacion, ...restItem } = itemPrincipal;
+
                         // Medidas del artículo fraccionado del principal
                         let medidasFraccionadoTemp = JSON.parse(fraccionado);
 
@@ -591,7 +611,7 @@
                             ...medida,
                             defaultMedida: false
                         }));
- 
+
                         // Establecer la propiedad "defaultMedida" en true para el primer elemento del array (el que tiene el orden más bajo)
                         orderMedidaArray[0].defaultMedida = true;
 
@@ -610,11 +630,19 @@
 
                         // Asignar los datos de la medida al artículo
                         restItem.medidas = orderMedidaArray;
-
+                        restItem.conversion = dataMedida.conversion;
                         // Asignar los datos de las tarifas obtenidos de data medida 
                         restItem.articuloTarifas = dataMedida.tarifas || [];
 
                         restItem.consolidacionesFecha = consolidacionesFecha;
+
+
+                        let subTotal = restItem.cantidad * restItem.precioUnitario || 0;
+                        let totalDescuento = restItem.cantidad * restItem.valorDescuento || 0;
+
+                        restItem.subTotal = subTotal || 0;
+                        restItem.totalDescuento = totalDescuento || 0;
+                        restItem.cantidadOriginal = restItem.cantidad;
                         return restItem;
                     });
 
@@ -624,6 +652,7 @@
                         puntoEmision: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}`,
                         fechaEmision: fS.formatDate(comprobanteTemp.fechaEmision),
                         fechaVencimiento: fS.formatDate(comprobanteTemp.fechaVencimiento),
+                        fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision)
                     }
 
                     let datosAdicionalesArticulo = datosAdicionalesArticuloTemp.map(item => ({
@@ -650,13 +679,8 @@
 
 
         service.update = function (id, data) {
-            let { notaEntrega, detalle, infoAdicionalArticulo } = data;
-            let params = {
-                notaEntrega,
-                detalles: detalle,
-                infoAdicionalArticulo
-            }
-            return mS.getData('put', url + 'Update/' + id, { data: params }, true).then(response => {
+
+            return mS.getData('put', url + 'Update/' + id, { data }, true).then(response => {
                 if (response.code === "0") {
                     return response;
                 }

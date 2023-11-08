@@ -220,39 +220,66 @@
 
             const obj = {
                 getSubTotalSinImpuesto: function () {
-                    let total = items.map(val => val.subTotal).reduce((acc, curr) => acc + curr, 0);
-                    // return fS.roundNumber(total, decimal.nroTotalSubTotal);
-                    return total;
+                    let { totalSubSinImpuesto } = items.reduce((total, item) => {
+                        let totalSubSinImpuesto = item.cantidad * item.precioUnitario;
+                        total.totalSubSinImpuesto += totalSubSinImpuesto;
+                        return total;
+                    }, {
+                        totalSubSinImpuesto: 0
+                    })
+                    return totalSubSinImpuesto;
+                    // let total = items.map(val => val.subTotal).reduce((acc, curr) => acc + curr, 0); 
+                    // return total;
                 },
 
                 getTotalIva: function (codigoPorcentaje) {
-                    let total = 0, totalNetoIva = 0;
+                    let { totalSubSinImpuesto, totalNetoIva } = items.reduce((total, item) => {
+                        let totalSubSinImpuesto = item.cantidad * item.precioUnitario;
+                        let totalNetoIva = (item.precioUnitario - item.valorDescuento) * item.cantidad;
 
-                    for (let item of items) {
                         if (item.codigoPorcentaje === codigoPorcentaje) {
-                            total += item.subTotal
-                            totalNetoIva += item.total;
+                            total.totalSubSinImpuesto += totalSubSinImpuesto;
+                            total.totalNetoIva += totalNetoIva;
                         }
-                    }
+                        return total;
+                    }, {
+                        totalSubSinImpuesto: 0,
+                        totalNetoIva: 0
+                    })
+
+                    // for (let item of items) {
+                    //     if (item.codigoPorcentaje === codigoPorcentaje) {
+                    //         total += item.subTotal
+                    //         totalNetoIva += item.total;
+                    //     }
+                    // }
 
                     return [
-                        total = fS.roundNumber(total, decimal.nroTotalSubTotal),
+                        totalSubSinImpuesto = fS.roundNumber(totalSubSinImpuesto, decimal.nroTotalSubTotal),
                         totalNetoIva = fS.roundNumber(totalNetoIva, decimal.nroTotalSubTotal)
                     ]
                 },
 
                 //Get Total Ice 
                 getTotalIce: function () {
-
-                    let total = items.map(val => val.ice).reduce((acc, curr) => acc + curr, 0);
-                    return fS.roundNumber(total, decimal.nroTotalSubTotal)
+                    let { totalICE } = items.reduce((total, item) => {
+                        let totalIce = item.cantidad * item.ice;
+                        total.totalICE += totalIce;
+                        return total;
+                    }, { totalICE: 0 })
+                    return fS.roundNumber(totalICE, decimal.nroTotalSubTotal)
                 },
 
                 //Suma columna total 
                 getTotalDetalle: function () {
-                    let totalDetalle = items.map(val => val.total).reduce((acc, curr) => acc + curr, 0);
-                    let obj = fS.roundNumber(totalDetalle, decimal.nroTotalSubTotal);
-                    return obj;
+                    let { totalNetoIva } = items.reduce((total, item) => {
+                        let totalNetoIva = (item.precioUnitario - item.valorDescuento) * item.cantidad;
+                        total.totalNetoIva += totalNetoIva;
+                        return total;
+                    }, {
+                        totalNetoIva: 0
+                    })
+                    return fS.roundNumber(totalNetoIva, decimal.nroTotalSubTotal);
                 },
 
                 getTotalPorcentajeDescuento: function () {
@@ -275,8 +302,12 @@
                 },
 
                 getTotalDescuento: function () {
-                    let total = items.map(val => val.totalDescuento).reduce((acc, curr) => acc + curr, 0);
-                    return fS.roundNumber(total, decimal.nroTotalSubTotal);
+                    let { totalDescuento } = items.reduce((total, item) => {
+                        let totalDescuento = item.cantidad * item.valorDescuento;
+                        total.totalDescuento += totalDescuento;
+                        return total;
+                    }, { totalDescuento: 0 })
+                    return fS.roundNumber(totalDescuento, decimal.nroTotalSubTotal);
                 }
             };
 
@@ -385,9 +416,6 @@
         }
 
 
-        service.askToa
-
-
         /**
          * 
          * @param {*} items 
@@ -461,6 +489,8 @@
             console.log(subTotalSinImpuestos)
             return { subTotalSinImpuestos };
         }
+
+
 
 
         return service;
