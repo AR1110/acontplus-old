@@ -2,6 +2,6 @@
 {
     public interface IDashboardService
     {
-        Task<object> GetAsync(Dictionary<string, object> parameters);
+        Task<string> GetAsync(Dictionary<string, object> parameters);
     }
 }
