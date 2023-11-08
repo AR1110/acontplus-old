@@ -214,9 +214,13 @@
          * @param {*} object 
          * @returns object
          */
-        service.calculoTotales = function ({ items, decimal, dataTarifaImpuesto }) {
-
-            let CODIGO_PORCENTAJE_IVA_CERO = '0', CODIGO_PORCENTAJE_IVA_EXENTO = '7', CODIGO_PORCENTAJE_IVA_NO_OBJETO = '6';
+        service.calculoTotales = function (params) {
+            let { items, decimal, dataTarifaImpuesto, TAX_RATE_CODE } = params;
+            let {
+                ZERO_PERCENT,
+                NOT_SUBJECT_TO_TAX,
+                TAX_EXEMPT,
+            } = TAX_RATE_CODE; 
 
             const obj = {
                 getSubTotalSinImpuesto: function () {
@@ -313,9 +317,9 @@
 
 
             let [subTotalIva, subTotalNetoIva] = obj.getTotalIva(dataTarifaImpuesto.codigoPorcentaje);
-            let [subTotalIvaCero, subTotalNetoIvaCero] = obj.getTotalIva(CODIGO_PORCENTAJE_IVA_CERO);
-            let [subTotalExentoIva, subTotalNetoExentoIva] = obj.getTotalIva(CODIGO_PORCENTAJE_IVA_EXENTO);
-            let [subTotalNoObjetoIva, subTotalNetoNoObjetoIva] = obj.getTotalIva(CODIGO_PORCENTAJE_IVA_NO_OBJETO);
+            let [subTotalIvaCero, subTotalNetoIvaCero] = obj.getTotalIva(ZERO_PERCENT);
+            let [subTotalExentoIva, subTotalNetoExentoIva] = obj.getTotalIva(TAX_EXEMPT);
+            let [subTotalNoObjetoIva, subTotalNetoNoObjetoIva] = obj.getTotalIva(NOT_SUBJECT_TO_TAX);
 
             // let iva = subTotalNetoIva * dataTarifaImpuesto.tarifa / 100;                
 
@@ -459,6 +463,13 @@
         }
 
 
+        /**
+         * 
+         * @param {*} gridOptions 
+         * @param {*} data 
+         * @param {*} decimal 
+         * @param {*} callback calculoDef ({ rowEntity, oldValue, decimal, idTarifa, columnDefs })
+         */
         service.setPorcentajeDescuentoAll = function (gridOptions, data, decimal, callback) {
             for (let rowEntity of gridOptions.data) {
                 rowEntity.porcentajeDescuento = data.porcentajeDescuento;
@@ -467,7 +478,7 @@
                     rowEntity,
                     oldValue: 0,
                     decimal,
-                    data,
+                    idTarifa: data.idTarifa,
                     columnDefs: gridOptions.columnDefs
                 });
 

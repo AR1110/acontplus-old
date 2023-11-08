@@ -103,7 +103,8 @@
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <span>Buscar por Nro. Documento:</span>
-                        <input type="text" class="form-control border-select"  ng-model="dataSearch.nroSecuencial" placeholder="Ej: 123"/>                       
+                        <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial"
+                            placeholder="Ej: 123" />
                     </div>
                 </div>
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
@@ -229,18 +230,13 @@
 
 
 
-@section Scripts{
+@section Scripts {
 
     <!--Se usa para gestion de datos adicionales-->
     <script src="~/js/factElect/directives/factElectDirective.min.js" asp-append-version="true"></script>
 
-    <!--Se usa para listar documentos de nota emtrega-->
-    <script src="~/js/ventas/services/notaEntregaService.js" asp-append-version="true"></script>
     <!--Se usa para listar documentos de proformas-->
     <script src="~/js/ventas/services/proformaService.js" asp-append-version="true"></script>
-
-    <!--Se usa para guardar aprobacion del documento FV-->
-    <script src="~/js/factElect/services/facturaService.js" asp-append-version="true"></script>
 
     <script src="~/js/ventas/services/aprobacionDocService.js" asp-append-version="true"></script>
 

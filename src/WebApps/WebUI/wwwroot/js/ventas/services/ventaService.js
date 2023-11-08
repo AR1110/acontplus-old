@@ -1,7 +1,9 @@
 /**
  * 1. ventaService
- * 2. clienteService
- * 3. empleadoService 
+ * 2. notaEntregaService
+ * 3. clienteService
+ * 4. empleadoService 
+ * 5. cargoService
  */
 (function () {
 
@@ -461,15 +463,35 @@
             let orderIndex = 1;
 
             for (let item of detalles) {
-                let cantidadStock = 0;
-                cantidadStock = service.getCantidadStock(item);
-                // if (item.idNotaEntregaDetalle > 0) {
-                //     cantidadStock = 
-                //     if(item.cantidad !== item.cantidadOriginal){
-                //         cantidadStock = 
-                //     }  
-                     
-                // }
+
+                // Llamar a la función 'getCantidadStock' para obtener la cantidad en stock del elemento actual
+                let {
+                    cantidadStock,
+                    action
+                } = service.getCantidadStock(item);
+
+
+                if (action === 0) {
+                    // Comprobar si el elemento tiene un 'idNotaEntregaDetalle' positivo y está en estado 'activo'
+                    if (item.idNotaEntregaDetalle > 0 && item.estado) {
+                        // Verificar si 'cantidad' es igual a 'cantidadOriginal'
+                        if (item.cantidad === item.cantidadOriginal) {
+                            cantidadStock = 0;  // Si son iguales, establecer 'cantidadStock' en 0
+                        } else {
+                            // Calcular 'cantidadStock' en función de la diferencia entre 'cantidadOriginal' y 'cantidad'
+                            if (item.cantidad > item.cantidadOriginal) {
+                                cantidadStock = item.cantidadOriginal - item.cantidad;
+                            } else {
+                                cantidadStock = item.cantidadOriginal - item.cantidad;
+                            }
+                        }
+                    }
+                    if (item.idNotaEntregaDetalle > 0 && item.estado === 0) {
+                        cantidadStock = Math.abs(cantidadStock)
+                    }
+                }
+
+
 
                 tempDetails.push({
                     orderIndex: orderIndex++,
@@ -513,6 +535,7 @@
         service.getCantidadStock = function (rowEntity, fechaEmision) {
             let fechaEmisionValidate = null;
             let cantidadStock = 0;
+            let action = 0;
 
             if (fechaEmision) {
                 fechaEmisionValidate = fechaEmision;
@@ -527,14 +550,25 @@
                 cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
             )
             if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
-                if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
+                if (dataConsolidacionFecha.fechaConsolidacion > fechaEmisionValidate) {
                     cantidadStock = 0;
-                    return cantidadStock;
+                    action = 1;
+                    return {
+                        cantidadStock,
+                        isDateConsolidacionBeforeDate
+                    };
+                } else {
+                    action = 2;
                 }
             }
+
             cantidadStock = rowEntity.cantidad * rowEntity.conversion;
             let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
-            return resultCantStock;
+
+            return {
+                cantidadStock: resultCantStock,
+                action
+            };
         }
 
 
@@ -634,7 +668,10 @@
                         // Asignar los datos de las tarifas obtenidos de data medida 
                         restItem.articuloTarifas = dataMedida.tarifas || [];
 
-                        restItem.consolidacionesFecha = consolidacionesFecha;
+                        restItem.consolidacionesFecha = consolidacionesFecha.map((data)=>({ 
+                            ...data,
+                            fechaConsolidacion: data.fechaConsolidacion && new Date(data.fechaConsolidacion)
+                        }))
 
 
                         let subTotal = restItem.cantidad * restItem.precioUnitario || 0;
@@ -1227,8 +1264,6 @@
         return service;
 
     })
-
-
 
 
     app.factory('storageService', storageService)

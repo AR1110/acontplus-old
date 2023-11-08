@@ -2,8 +2,7 @@
     <div class="modal-header">
         <div class="float-left">
             <div class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" ng-model="showHeader" id="checkbox0"
-                    value="check">
+                <input type="checkbox" class="custom-control-input" ng-model="showHeader" id="checkbox0" value="check">
                 <label class="custom-control-label" for="checkbox0">Mas datos</label>
             </div>
         </div>
@@ -24,7 +23,8 @@
                 <div class="form-group">
                     <label for="establecimiento">Estab.: <span class="text-danger">*</span></label>
                     <select name="establecimiento" id="establecimiento" class="form-control border-select"
-                        ng-model="data.codEstab" ng-change="onChangeEstablecimiento()">
+                        ng-model="data.codEstab" ng-disabled="isDisabledFormField"
+                        ng-change="onChangeEstablecimiento()">
                         <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                             {{item.nombreComercial}}
                         </option>
@@ -36,7 +36,8 @@
                 <div class="form-group">
                     <label for="puntoEmision">Punto Emisión: <span class="text-danger">*</span></label>
                     <select name="puntoEmision" id="puntoEmision" class="form-control border-select"
-                        ng-model="data.idPuntoEmision" ng-change="setInfoEstabPtoEmi()">
+                        ng-model="data.idPuntoEmision" ng-disabled="isDisabledFormField"
+                        ng-change="setInfoEstabPtoEmi()">
                         <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
                             {{item.ptoEmi}}
                         </option>
@@ -49,17 +50,14 @@
                     <label for="tiempoCredito">Tiempo Crédito: <span class="text-danger">*</span></label>
                     <div class="input-group">
                         <select name="tiempoCredito" id="tiempoCedito" class="form-control border-select"
-                            ng-model="data.idTiempoCredito" 
-                            ng-change="onChangeTiempoCredito()"
-                            ng-disabled="!permisoComprobanteVenta.tiempoCredito"
-                            >
+                            ng-model="data.idTiempoCredito" ng-change="onChangeTiempoCredito()"
+                            ng-disabled="!permisoComprobanteVenta.tiempoCredito">
                             <option ng-value="item.idTiempoCredito" ng-repeat="item in tiemposCredito">
                                 {{item.descripcion}}
                             </option>
                         </select>
                         <div class="input-group-append">
-                            <button type="button" class="btn btn-secondary btn-xs"
-                                ng-click="getAllTiempoCredito()">
+                            <button type="button" class="btn btn-secondary btn-xs" ng-click="getAllTiempoCredito()">
                                 <i class="mdi mdi-cached"></i>
                             </button>
                         </div>
@@ -79,8 +77,8 @@
             <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="empleado">Empleado</label>
-                    <input type="text" name="empleado" id="empleado" class="form-control "
-                        ng-value="cliente.empleado" disabled />
+                    <input type="text" name="empleado" id="empleado" class="form-control " ng-value="cliente.empleado"
+                        disabled />
                 </div>
             </div>
         </div>
@@ -93,9 +91,9 @@
                     <div class="input-group">
 
                         <input type="text" id="clienteSearchInvoice" name="clienteSearchInvoice"
-                            class="form-control border-select" ng-model="cliente.nombreFiscal"
-                            customer-search-sale-drtv on-select="onSelectedClienteChange(result)"
-                            on-keyup="onKeyupCustomer()" function-trigger="receiveDataCustomerSRI(result)"
+                            class="form-control border-select" ng-model="cliente.nombreFiscal" customer-search-sale-drtv
+                            on-select="onSelectedClienteChange(result)" on-keyup="onKeyupCustomer()"
+                            function-trigger="receiveDataCustomerSRI(result)"
                             placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
 
                         <script type="text/ng-template" id="customerSearchSaleTemplate.html">
@@ -108,14 +106,12 @@
 
 
                             <button type="button" class="btn btn-outline-secondary btn-xs border-select"
-                                id="btnNewCustomerDocument" btn-cliente
-                                result-modal="onSelectedClienteChange(result)">
+                                id="btnNewCustomerDocument" btn-cliente result-modal="onSelectedClienteChange(result)">
                                 <i class="fa fa-plus fa-xs"></i>
                             </button>
 
-                            <button type="button" class="btn btn-outline-secondary btn-xs"
-                                ng-if="cliente.idCliente>0" btn-cliente
-                                result-modal="onSelectedClienteChange(result)" params="cliente"
+                            <button type="button" class="btn btn-outline-secondary btn-xs" ng-if="cliente.idCliente>0"
+                                btn-cliente result-modal="onSelectedClienteChange(result)" params="cliente"
                                 tabindex="-1">
                                 <i class="fa fa-edit fa-xs"></i>
                             </button>
@@ -125,8 +121,7 @@
                             </button>
 
                             <button type="button" cliente-info-popover customer="cliente" popover-placement='top'
-                                class="btn btn-outline-secondary btn-xs" ng-if="cliente.idCliente>0"
-                                tabindex="-1">
+                                class="btn btn-outline-secondary btn-xs" ng-if="cliente.idCliente>0" tabindex="-1">
                                 <i class="fa fa-info fa-xs"></i>
                             </button>
                         </div>
@@ -148,7 +143,7 @@
                     <input type="date" name="fechaEmision" id="fechaEmision" class="form-control border-select"
                         ng-model="data.fechaEmision" ng-change="onChangeFechaEmision()"
                         ng-keyup="onChangeFechaEmision()" tabindex="-1"
-                        ng-disabled="!permisoComprobanteVenta.fechaEmision" />
+                         />
                     <small class="text-info">{{data.fechaEmisionEscrita}}</small>
                 </div>
             </div>
@@ -175,8 +170,7 @@
                         </span>
                     </label>
                     <select id="tarifas" class="form-control border-select" ng-model="data.idTarifa"
-                        ng-change="onChangeTarifaGeneral()" tabindex="-1"
-                        ng-disabled="!permisoComprobanteVenta.tarifa">
+                        ng-change="onChangeTarifaGeneral()" tabindex="-1" ng-disabled="!permisoComprobanteVenta.tarifa">
                         <option ng-value="item.idTarifa" ng-repeat="item in tarifas">
                             {{item.descripcion}}
                         </option>
@@ -232,9 +226,8 @@
                 <div class="row">
                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                         <label for="">Buscar por Artículo</label>
-                        <md-autocomplete-articulo-component tipo-doc="tipoDoc"  
-                            set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)"
-                            id-bodega="data.idBodega">
+                        <md-autocomplete-articulo-component tipo-doc="tipoDoc"
+                            set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)" id-bodega="data.idBodega">
                         </md-autocomplete-articulo-component>
                     </div>
 
@@ -242,7 +235,8 @@
                         <div class="form-group">
                             <label for="searchBarcode">Buscar por Código</label>
                             <articulo-search-barcode tipo-doc="tipoDoc"
-                                set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)" id-bodega="data.idBodega"></articulo-search-barcode>
+                                set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)"
+                                id-bodega="data.idBodega"></articulo-search-barcode>
                         </div>
                     </div>
                     <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12" ng-if="config.multipleVendedor">
@@ -261,16 +255,19 @@
 
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="row justify-content-end">
-
                     <div class="col-lg-5 col-lg-5 col-md-6 col-sm-12 col-12">
-                        <button type="button" class="btn btn-block btn-lg btn-success mt-4"
-                            id="btnSaveAndUpdateDocument" ng-click="onSave()">
+                        <button ng-if="!(data.idNotaEntrega>0)" type="button"
+                            class="btn btn-block btn-lg btn-success mt-4" id="btnSaveAndUpdateDocument"
+                            ng-click="onSave()">
                             <i class="ti-save"></i> Guardar
                         </button>
+                        <button ng-if="data.idNotaEntrega>0" type="button" class="btn btn-block btn-lg btn-success mt-4"
+                            id="btnSaveAndUpdateDocument" ng-click="onSave()">
+                            <i class="ti-pencil"></i> Actualizar
+                        </button>
                     </div>
-                    <div class="col-lg-5 col-lg-5 col-md-6 col-sm-12 col-12">
-                        <button type="button" class="btn btn-block btn-lg btn-info mt-4"
-                            ng-click="onSaveInvoice()">
+                    <div class="col-lg-5 col-lg-5 col-md-6 col-sm-12 col-12" ng-if="!(isDisabledFormField)">
+                        <button type="button" class="btn btn-block btn-lg btn-info mt-4" ng-click="onSaveInvoice()">
                             <i class="ti-files"></i> Facturar
                         </button>
                     </div>
@@ -398,7 +395,7 @@
                             <div class="input-group">
                                 <input ng-model="data.porcentajeDescuento"
                                     ng-disabled="!permisoComprobanteVenta.porcentajeDescuento || gridOptions.data.length==0"
-                                    decimal class="form-control" />
+                                    decimal class="form-control border-select" />
                                 <div class="input-group-append">
                                     <button type="button" class="btn btn-secondary btn-sm"
                                         ng-click="calcularPorcentajeDescuento()">
@@ -415,7 +412,7 @@
                             <div class="input-group">
                                 <input ng-model="data.totalDescuento" id="totalDescuento"
                                     ng-disabled="!permisoComprobanteVenta.descuento || gridOptions.data.length==0"
-                                    decimal placeholder="0.00" class="form-control" />
+                                    decimal placeholder="0.00" class="form-control border-select" />
                                 <div class="input-group-append">
                                     <button type="button" class="btn btn-secondary btn-sm"
                                         ng-click="calcularDescuento()">
@@ -429,8 +426,8 @@
                     <div class="col-lg-2 col-md-6 col-sm-12 col-12">
                         <div class="form-group">
                             <label>Transporte</label>
-                            <input type="text" decimal ng-model="data.transporte"
-                                class="form-control border-select" placeholder="0.00" />
+                            <input type="text" decimal ng-model="data.transporte" class="form-control border-select"
+                                placeholder="0.00" />
                         </div>
                     </div>
 
@@ -465,14 +462,14 @@
 
                             <tr>
                                 <td class="left">
-                                    <span class="text-dark">{{tarifaImpuestoVigente.descripcion}}</span> 
+                                    <span class="text-dark">{{tarifaImpuestoVigente.descripcion}}</span>
                                     @* <select style="width: 150px;" name="impuestoTarifa" id="impuestoTarifa"
-                                        ng-model="data.tarifa" class="form-control form-control-sm border-select"
-                                        ng-change="recalculateImpuestoTarifa()"
-                                        ng-disabled="disabledImpuestoTarifa">
-                                        <option ng-value="item.tarifa" ng-repeat="item in impuestoTarifas">
-                                            {{item.descripcion}}
-                                        </option>
+                                    ng-model="data.tarifa" class="form-control form-control-sm border-select"
+                                    ng-change="recalculateImpuestoTarifa()"
+                                    ng-disabled="disabledImpuestoTarifa">
+                                    <option ng-value="item.tarifa" ng-repeat="item in impuestoTarifas">
+                                    {{item.descripcion}}
+                                    </option>
                                     </select> *@
                                 </td>
                                 <td class="right">${{data.iva}}</td>

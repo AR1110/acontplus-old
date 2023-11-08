@@ -43,14 +43,14 @@ BEGIN
 	SET @facturaCompra	   =(SELECT COUNT(*) FROM FacturaCompra WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1)
 	
 	
-	 SELECT @cantidadUsuario   as cantidadUsuario,
+	SELECT (SELECT @cantidadUsuario   as cantidadUsuario,
 		@cantidadArticulo  as cantidadArticulo,
 		@cantidadCliente   as cantidadCliente,
 		@cantidadProveedor as cantidadProveedor,
 		@facturaVenta	   as cantidadFacturaV,
 		@facturaCompra	   as cantidadFacturaC,
 		@proforma		   as cantidadProforma,
-		@notaEntrega	   as cantidadNotaEntrega
+		@notaEntrega	   as cantidadNotaEntrega FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
 
 END
 

@@ -23,8 +23,7 @@
                     toast.toastr('warning', response.message, response.titleSms);
                     return
                 }
-                let tempArray = JSON.parse(response.payload)["table"]
-                $scope.cantidad = tempArray[0];
+                $scope.cantidad = JSON.parse(response.payload)
             }).catch(error => {
                 console.log(error)
             })

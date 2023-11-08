@@ -17,6 +17,7 @@
     let facturaSvc = {};
     let ventaSvc = {};
     let gridOptionsSvc = {};
+    let TAX_RATE_CODE = {};
     let idUsuarioRol = 0;
 
     let mainDataForm = {};
@@ -51,6 +52,7 @@
         tS = $injector.get('toastService');
         fS = $injector.get('formulario');
         gridOptionsSvc = $injector.get('gridOptionsService');
+        TAX_RATE_CODE = $injector.get('TAX_RATE_CODE');
 
         idUsuarioRol = parseInt(decodeToken.idUsuarioRol)
 
@@ -701,7 +703,8 @@
                 $scope.data = Object.assign($scope.data, gridOptionsSvc.calculoTotales({
                     items: $scope.gridOptionsDetalle.data,
                     decimal: $scope.decimal,
-                    dataTarifaImpuesto: $scope.dataTarifaImpuesto
+                    dataTarifaImpuesto: $scope.dataTarifaImpuesto,
+                    TAX_RATE_CODE
                 }))
 
                 if ($scope.cliente.tipoIdentificacion === 'CF' && $scope.docDestino.codDoc === '01' && $scope.data.total > 50) {
@@ -1730,7 +1733,8 @@
                 $scope.data = Object.assign($scope.data, gridOptionsSvc.calculoTotales({
                     items: $scope.gridOptionsDetalle.data,
                     decimal: $scope.decimal,
-                    dataTarifaImpuesto: $scope.dataTarifaImpuesto
+                    dataTarifaImpuesto: $scope.dataTarifaImpuesto,
+                    TAX_RATE_CODE
                 }))
                 hideLoader();
             } catch (error) {
@@ -2106,7 +2110,8 @@
                 $scope.data = Object.assign($scope.data, gridOptionsSvc.calculoTotales({
                     items: $scope.gridOptionsDetalle.data,
                     decimal: $scope.decimal,
-                    dataTarifaImpuesto: $scope.dataTarifaImpuesto
+                    dataTarifaImpuesto: $scope.dataTarifaImpuesto,
+                    TAX_RATE_CODE
                 }))
                 hideLoader();
             } catch (error) {
@@ -2491,7 +2496,8 @@
             $scope.data = Object.assign($scope.data, gridOptionsSvc.calculoTotales({
                 items: $scope.gridOptionsDetalle.data,
                 decimal: $scope.decimal,
-                dataTarifaImpuesto: $scope.dataTarifaImpuesto
+                dataTarifaImpuesto: $scope.dataTarifaImpuesto,
+                TAX_RATE_CODE
             }))
 
             $scope.dataClone.porcentajeDescuento = $scope.data.porcentajeDescuento;
@@ -2794,7 +2800,8 @@
                 $scope.data = Object.assign($scope.data, gridOptionsSvc.calculoTotales({
                     items: $scope.gridOptionsDetalle.data,
                     decimal: $scope.decimal,
-                    dataTarifaImpuesto: $scope.dataTarifaImpuesto
+                    dataTarifaImpuesto: $scope.dataTarifaImpuesto,
+                    TAX_RATE_CODE
                 }))
                 getFechaVencimiento();
                 hideLoader();
@@ -3280,7 +3287,8 @@
             $scope.data = Object.assign($scope.data, gridOptionsSvc.calculoTotales({
                 items: $scope.gridOptionsDetalle.data,
                 decimal: $scope.decimal,
-                dataTarifaImpuesto: $scope.dataTarifaImpuesto
+                dataTarifaImpuesto: $scope.dataTarifaImpuesto,
+                TAX_RATE_CODE
             }))
 
             $scope.dataClone.porcentajeDescuento = $scope.data.porcentajeDescuento;
