@@ -5,6 +5,7 @@ CREATE OR ALTER PROCEDURE dbo.Transaccion_Handler_Init
  @codTran AS VARCHAR(2)
 ,@codDoc AS VARCHAR(2)
 ,@documentoId INT
+,@tipo INT = 1
 AS
 
 DECLARE @InitDlgHandle UNIQUEIDENTIFIER;
@@ -24,7 +25,7 @@ DECLARE @RequestMsg xml;
  
         --DECLARE @xmlParams XML 
 
-        SET @RequestMsg = (SELECT @codTran codTran, @codDoc codDoc, @documentoId documentoId FOR XML PATH ('msg'));
+        SET @RequestMsg = (SELECT @codTran codTran, @codDoc codDoc, @documentoId documentoId, @tipo tipo FOR XML PATH ('msg'));
  		 --SELECT @RequestMsg = @xmlParams;
          --print cast(@requestMsg  as varchar(max));
 

@@ -832,22 +832,6 @@
           "Port": 7295
         }
       ],
-      "DownstreamPathTemplate": "/api/EntidadConfigSri/{everything}",
-      "DownstreamScheme": "https",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "UpstreamPathTemplate": "/gateway/EntidadConfigSri/{everything}"
-    },
-    {
-      "AuthenticationOptions": {
-        "AllowedScopes": [],
-        "AuthenticationProviderKey": "Bearer"
-      },
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7295
-        }
-      ],
       "DownstreamPathTemplate": "/api/SubMenu/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
