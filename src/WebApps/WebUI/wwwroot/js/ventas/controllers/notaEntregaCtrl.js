@@ -823,6 +823,8 @@
         let gridOptionsSvc = $injector.get('gridOptionsService');
         let storageSvc = $injector.get('storageService');
         let articuloSvc = $injector.get('articuloService');
+        let TAX_RATE_CODE = $injector.get('TAX_RATE_CODE');
+        let facturaSvc = $injector.get('facturaService');
 
 
         $scope.tipoDoc = TIPO_DOC_NE;
@@ -867,6 +869,8 @@
         $scope.datosAdicionalesArticulo = []
         $scope.historyDatosAdicionales = []
 
+        //Habilitar cuando la acción es editar
+        $scope.isDisabledFormField = false;
         console.log(mainDataForm)
 
         $scope.indexRow = null; //Indice del items del detalle 
@@ -973,7 +977,7 @@
                 }).catch(error => {
                     hideLoader();
                     console.log(error)
-                }) 
+                })
 
             } catch (error) {
                 hideLoader();
@@ -1091,6 +1095,7 @@
                 } = params.data;
 
                 $scope.data = structuredClone(comprobante);
+                $scope.dataClone.fechaEmision = $scope.data.fechaEmision;
                 getFechaVencimiento();
 
                 $scope.dataClone.codEstab = $scope.data.codEstab;
@@ -1113,6 +1118,7 @@
                     selected: true,
                 }))
                 counterGridOptions();
+                $scope.isDisabledFormField = true;
             }
 
 
@@ -1577,11 +1583,17 @@
         }
 
         $scope.onChangeFechaEmision = function () {
-            if (!$scope.permisoComprobanteVenta.fechaEmision) {
-                tS.toastr('warning', 'No tienes permiso para realizar esta acción');
-                return
+            try {
+                if (!$scope.permisoComprobanteVenta.fechaEmision) {
+                    $scope.data.fechaEmision = $scope.dataClone.fechaEmision;
+                    tS.toastr('warning', 'No tienes permiso para realizar esta acción');
+                    return
+                }
+                getFechaVencimiento();
+            } catch (error) {
+                console.log(error)
+                $scope.data.fechaEmision = $scope.dataClone.fechaEmision;
             }
-            getFechaVencimiento();
         }
 
         //==============================START CUSTOMER===========================
@@ -1809,7 +1821,10 @@
                 entity.descripcion = articulo.descripcion;
 
                 //Aplica a establecimiento que llevan actividad de Tipo Alojamiento
-                if ($scope.tarifaImpuestoVigente.codigoPorcentaje === '8' && articulo.codigoPorcentaje === '2') {
+                if (
+                    $scope.tarifaImpuestoVigente.codigoPorcentaje === TAX_RATE_CODE.DIFFERENTIATED_TAX
+                    && articulo.codigoPorcentaje === TAX_RATE_CODE.TWELVE_PERCENT
+                ) {
                     let dataImpuestoTarifa = $scope.tarifasImpuesto.find(item => item.codigoPorcentaje === $scope.tarifaImpuestoVigente.codigoPorcentaje);
                     entity.idTipoIva = dataImpuestoTarifa.idTipoIva;
                     entity.codigoPorcentaje = dataImpuestoTarifa.codigoPorcentaje;
@@ -1848,19 +1863,6 @@
                 console.log(error)
             }
         }
-
-        // function setCantidadStock(rowEntity) {
-        //     let dataConsolidacionFecha = rowEntity.consolidacionesFecha.find(
-        //         cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
-        //     )
-        //     if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
-        //         if (dataConsolidacionFecha.fechaConsolidacion >= $scope.data.fechaEmision) {
-        //             rowEntity.cantidadStock = 0;
-        //             return
-        //         }
-        //     }
-        //     rowEntity.cantidadStock = rowEntity.cantidad * rowEntity.conversion;
-        // }
 
         function focusColumnCantidad() {
             let index = 0;
@@ -1920,11 +1922,11 @@
          * Calculamos todos los totales y subtotales del comprobantes 
          */
         function recalculateTotalsSimple() {
-
             $scope.data = Object.assign($scope.data, gridOptionsSvc.calculoTotales({
                 items: $scope.gridOptions.data,
                 decimal: $scope.decimal,
-                dataTarifaImpuesto: $scope.tarifaImpuestoVigente
+                dataTarifaImpuesto: $scope.tarifaImpuestoVigente,
+                TAX_RATE_CODE
             }))
 
             $scope.dataClone.porcentajeDescuento = $scope.data.porcentajeDescuento;
@@ -1944,32 +1946,16 @@
             }
 
             if ($scope.data.porcentajeDescuento <= 100) {
+
+                gridOptionsSvc.setPorcentajeDescuentoAll(
+                    $scope.gridOptions, $scope.data, $scope.decimal, gridOptionsSvc.calculoColDef
+                )
                 //redondeo del numero porcentaje 
                 $scope.data.porcentajeDescuento = fS.roundNumber($scope.data.porcentajeDescuento, $scope.decimal.nroTotalSubTotal)
-                setPorcentajeDescuentoAll($scope.data.porcentajeDescuento);
+                recalculateTotalsSimple();
             } else {
                 tS.toastr('warning', 'El Porcentaje de Descuento tiene que ser menor o igual a 100');
             }
-        }
-
-        function setPorcentajeDescuentoAll(porcentajeDescuento) {
-            for (let rowEntity of $scope.gridOptions.data) {
-                rowEntity.porcentajeDescuento = porcentajeDescuento;
-
-                //calculoColDef recibbe params obj: {rowEntity, oldValue, decimal, idTarifa, columnDefs}
-                let objCalculo = gridOptionsSvc.calculoColDef({
-                    rowEntity,
-                    oldValue: null,
-                    decimal: $scope.decimal,
-                    idTarifa: $scope.data.idTarifa,
-                    columnDefs: $scope.gridOptions.columnDefs
-                });
-
-                objCalculo["porcentajeDescuento"] && objCalculo["porcentajeDescuento"]();
-                objCalculo["calculoTotalDetalle"]();
-            }
-
-            recalculateTotalsSimple();
         }
 
         //Calcular Porcentaje  Descuento 
@@ -1989,7 +1975,11 @@
                 if ($scope.data.totalDescuento <= subTotalSinImpuestos) {
                     let porcentajeDescuento = ($scope.data.totalDescuento * 100) / subTotalSinImpuestos;
                     $scope.data.porcentajeDescuento = fS.roundNumber(porcentajeDescuento, $scope.decimal.nroDescuentoDetalle);
-                    setPorcentajeDescuentoAll($scope.data.porcentajeDescuento)
+                    //setPorcentajeDescuentoAll($scope.data.porcentajeDescuento)
+                    gridOptionsSvc.setPorcentajeDescuentoAll(
+                        $scope.gridOptions, $scope.data, $scope.decimal, gridOptionsSvc.calculoColDef
+                    )
+                    recalculateTotalsSimple();
                 } else {
                     tS.toastr('warning', 'El Valor Descuento no puede ser mayor al total');
                 }
@@ -2032,32 +2022,29 @@
                 return
             }
 
-            // if (isUpdate()) {
-            //     let fechaEmisionModificada = $scope.data.fechaEmision;
-            //     let fechaEmisionDocCreado = $scope.data.fechaEmisionDocCreado;
+            if (isUpdate()) {
+                let fechaEmisionModificada = $scope.data.fechaEmision;
+                let fechaEmisionDocCreado = $scope.data.fechaEmisionDocCreado;
+                let fechaActual = new Date();
 
-            //     // Verificar si la fecha de emisión modificada es diferente de la fecha de creación del documento
-            //     if (!fechaEmisionModificada.isSame(fechaEmisionDocCreado, 'day')) {
-            //         // Si son diferentes, comprobar si la fecha de emisión modificada es posterior a la fecha actual
-            //         if (fechaEmisionModificada.isAfter(fechaActual, 'day')) {
-            //             fS.sweetAlert('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.');
-            //         } else {
-            //             // Si es anterior a la fecha actual, establecer las horas en cero
-            //             $scope.data.fechaEmision = fechaEmisionModificada.startOf('day');
-            //             console.log('Fecha de emisión modificada con horas en cero:', fechaEmisionModificada.format('YYYY-MM-DD HH:mm:ss'));
-            //         }
-            //     } else {
-            //         // Si son iguales, conservar la fecha de emisión original
-            //         console.log('La fecha de emisión se mantiene igual:', fechaEmisionDocCreado.format('YYYY-MM-DD HH:mm:ss'));
-            //         $scope.data.fechaEmision = fechaEmisionDocCreado;
-            //     }
-            // }
-            // let formattedDateForInsert = null;
-            // if (moment(data.fechaEmision).isBefore(new Date(), 'day')) {
-            //     formattedDateForInsert = moment(data.fechaEmision).startOf('day').toDate();
-            // } else {
-            //     formattedDateForInsert = data.fechaEmision
-            // }
+                // Verificar si la fecha de emisión modificada es diferente de la fecha de creación del documento
+                if (fechaEmisionModificada.getTime() !== fechaEmisionDocCreado.getTime()) {
+
+                    //Si son diferentes, comprobar si la fecha de emisión modificada es posterior a la fecha actual
+                    if (fechaEmisionModificada > fechaActual) {
+                        fS.sweetAlert('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.');
+                        return
+                    }
+
+                    if (fechaEmisionModificada < fechaActual) {
+                        $scope.data.fechaEmision.setHours(0, 0, 0, 0);
+                    } else {
+                        $scope.data.fechaEmision = new Date();
+                    }
+                } else {
+                    $scope.data.fechaEmision = fechaEmisionDocCreado;
+                }
+            }
 
             if (!(fS.isDateValid($scope.data.fechaVencimiento))) {
                 tS.toastr('warning', 'Seleccione la Fecha de vencimiento');
@@ -2191,7 +2178,7 @@
 
                 //Update Doc 
                 if (isUpdate()) {
-                    hideLoader()
+                    showLoader()
                     notaEntregaSvc.update($scope.data.idNotaEntrega, query).then(response => {
                         if (response.code === '0') {
                             fS.sweetAlert('warning', response.message, response.titleSms);
@@ -2213,6 +2200,114 @@
             }
         }
 
+        $scope.onSaveInvoice = async function () {
+            try {
+                let serieComprobante = null, titleSwal = '', htmlSwal = '', confirmButtonText = '';
+                let validateForm = isValidForm()
+
+                if (!validateForm) {
+                    throw "Invalid form!";
+                }
+
+                if (isRegister()) {
+                    showLoader();
+                    serieComprobante = await facturaSvc.generateSerieComprobante({
+                        idPuntoEmision: $scope.data.idPuntoEmision,
+                    })
+                    hideLoader();
+                    if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
+
+                    titleSwal = '<small>Guardar Factura</small>';
+                    confirmButtonText = 'Guardar';
+                    htmlSwal = `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`;
+
+                } else if (isUpdate()) {
+                    serieComprobante = $scope.data.serieComprobante;
+                    titleSwal = '<small>Actualizar Factura</small>';
+                    confirmButtonText = 'Actualizar';
+                    htmlSwal = `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`;
+                }
+
+
+                const customSwal = Swal.mixin({
+                    customClass: {
+                        confirmButton: 'btn btn-success',
+                        cancelButton: 'btn btn-danger ml-2'
+                    },
+                    buttonsStyling: false
+                })
+
+                let { isConfirmed } = await customSwal.fire({
+                    title: titleSwal,
+                    html: htmlSwal,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText,
+                    cancelButtonText: 'No, cancelar!',
+                    reverseButtons: false,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                })
+
+                if (!isConfirmed) return
+
+                //Tarifa Aplicada al Documento
+                $scope.data.tarifa = $scope.tarifaImpuestoVigente.tarifa;
+
+                let query = facturaSvc.queryMapper({
+                    data: $scope.data,
+                    cliente: $scope.cliente,
+                    detalles: $scope.gridOptions.data,
+                    itemsDeleted: $scope.gridOptionsItemsDeleted,
+                    historyDatosAdicionales: $scope.historyDatosAdicionales
+                })
+
+
+                //Registar Doc 
+                if (isRegister()) {
+                    showLoader();
+                    notaEntregaSvc.save(query).then(response => {
+                        if (response.code === '0') {
+                            fS.sweetAlert('warning', response.message, response.titleSms);
+                        }
+                        if (response.code === "1") {
+                            fS.sweetAlert('success', response.message, response.titleSms, 1000);
+
+                            let mainData = {
+                                isRegister: true,
+                                data: response.dataResponse,
+                            }
+                            $uibModalInstance.close(mainData)
+                        }
+                    }).catch(error => {
+                        hideLoader();
+                        console.log(error)
+                    }).finally(() => hideLoader())
+                }
+
+                //Update Doc 
+                if (isUpdate()) {
+                    showLoader()
+                    notaEntregaSvc.update($scope.data.idNotaEntrega, query).then(response => {
+                        if (response.code === '0') {
+                            fS.sweetAlert('warning', response.message, response.titleSms);
+                        }
+                        if (response.code === "1") {
+                            fS.sweetAlert('success', response.message, response.titleSms, 1000);
+                            $uibModalInstance.close(response)
+                        }
+                    }).catch(error => {
+                        hideLoader();
+                        console.log(error)
+                    }).finally(() => hideLoader())
+                    console.log(serieComprobante)
+
+                }
+            } catch (error) {
+                hideLoader();
+                console.log(error)
+            }
+        }
 
         async function askToSaveStorage() {
             try {

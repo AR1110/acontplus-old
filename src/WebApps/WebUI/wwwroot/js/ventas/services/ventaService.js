@@ -1,7 +1,9 @@
 /**
  * 1. ventaService
- * 2. clienteService
- * 3. empleadoService 
+ * 2. notaEntregaService
+ * 3. clienteService
+ * 4. empleadoService 
+ * 5. cargoService
  */
 (function () {
 
@@ -462,14 +464,24 @@
 
             for (let item of detalles) {
                 let cantidadStock = 0;
+
+                // Llamar a la función 'getCantidadStock' para obtener la cantidad en stock del elemento actual
                 cantidadStock = service.getCantidadStock(item);
-                // if (item.idNotaEntregaDetalle > 0) {
-                //     cantidadStock = 
-                //     if(item.cantidad !== item.cantidadOriginal){
-                //         cantidadStock = 
-                //     }  
-                     
-                // }
+
+                // Comprobar si el elemento tiene un 'idNotaEntregaDetalle' positivo y está en estado 'activo'
+                if (item.idNotaEntregaDetalle > 0 && item.estado) {
+                    // Verificar si 'cantidad' es igual a 'cantidadOriginal'
+                    if (item.cantidad === item.cantidadOriginal) {
+                        cantidadStock = 0;  // Si son iguales, establecer 'cantidadStock' en 0
+                    } else {
+                        // Calcular 'cantidadStock' en función de la diferencia entre 'cantidadOriginal' y 'cantidad'
+                        if (item.cantidad > item.cantidadOriginal) {
+                            cantidadStock = item.cantidadOriginal - item.cantidad;
+                        } else {
+                            cantidadStock = item.cantidadOriginal - item.cantidad;
+                        }
+                    }
+                }
 
                 tempDetails.push({
                     orderIndex: orderIndex++,
@@ -1227,9 +1239,7 @@
         return service;
 
     })
-
-
-
+ 
 
     app.factory('storageService', storageService)
 
