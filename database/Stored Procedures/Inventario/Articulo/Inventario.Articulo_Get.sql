@@ -187,7 +187,7 @@ BEGIN
 	IF @tipo = 2
 		BEGIN
 
-			SELECT @bySearch = REPLACE(bySearch,SPACE(1),'%') FROM OPENJSON(@json) WITH (bySearch VARCHAR(500) '$.bySearch')
+			SELECT @bySearch = bySearch FROM OPENJSON(@json) WITH (bySearch VARCHAR(500) '$.bySearch')
 
 			IF EXISTS (SELECT 1 FROM Inventario.v_Articulo WITH (NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1 AND codigo = @bySearch )	
 				BEGIN
