@@ -665,6 +665,7 @@
                         infoAdicionalTemp = mainData[4]
                     }
 
+
                     datosAdicionalesArticulo = infoAdicionalTemp.map(item => ({
                         idArticulo: item.idArticulo,
                         idEtiqueta: item.idEtiqueta,
@@ -677,8 +678,12 @@
                         articulo,
                         medidas,
                         datosAdicionalesArticulo,
-                        consolidacionesFecha
+                        consolidacionesFecha: consolidacionesFecha.map((data) => ({
+                            ...data,
+                            fechaConsolidacion: data.fechaConsolidacion && new Date(data.fechaConsolidacion)
+                        }))
                     }
+
                 }
             })
         }

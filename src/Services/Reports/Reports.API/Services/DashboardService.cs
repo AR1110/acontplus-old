@@ -11,14 +11,9 @@ namespace Reports.API.Services
         {
             _repository = repository;
         }
-        public async Task<object> GetAsync(Dictionary<string, object> parameters)
+        public async Task<string> GetAsync(Dictionary<string, object> parameters)
         {
-            var ds = await _repository.GetDataSetAsync("Dashboard.Estadisticas_Get", parameters, true);
-            if (ds.Tables[0].Rows.Count == 0)
-            {
-                return null;
-            }
-            return DataConverters.DataSetToJSON(ds);
+            return await _repository.SPExecuteAsync("Dashboard.Estadisticas_Get", parameters);
         }
     }
 }
