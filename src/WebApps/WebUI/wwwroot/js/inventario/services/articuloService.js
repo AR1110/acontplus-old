@@ -521,6 +521,7 @@
          * @param {*} query {tipo: 6, idArticulo: 17, idBodega: 2}
          * @returns object
          */
+        //👁‍🗨👁‍🗨📛📛❌📛
         service.findForSale = function (query) {
             if (!("tipo" in query)) {
                 query.tipo = 6;
@@ -609,7 +610,7 @@
         }
 
         /**
-         * Nueva depuracion
+         * Nueva depuracion ✅✅✅✅
          */
         service.getForSale = function (obj) {
             let params = {
@@ -634,10 +635,10 @@
                     let medidasFraccionadoTemp = mainData[1];
 
                     // Medida principal con las tarifas
-                    let medidasTemp = mainData[2];
+                    let medidasPrincipalTemp = mainData[2];
 
                     // Combinar los dos arrays de medidas en uno solo
-                    const mergedMedidasArray = [...medidasFraccionadoTemp, ...medidasTemp];
+                    const mergedMedidasArray = [...medidasFraccionadoTemp, ...medidasPrincipalTemp];
 
                     /**
                      * Ordenar el array de medidas en función de la propiedad "orden" y 
