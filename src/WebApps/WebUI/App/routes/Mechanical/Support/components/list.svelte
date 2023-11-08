@@ -125,7 +125,7 @@
         </thead>
         <tbody>
           {#each supports as item}
-            <tr class={item.colorRow}>
+            <tr  class={item.colorRow}>
               <td>{item.sequence}</td>
               <td>{item.date}</td>
               <td>{item.idCard}</td>
