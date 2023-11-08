@@ -74,6 +74,7 @@ BEGIN
 			    WHERE td.TipoTransaccionId = @idTipoTransaccion
 				  AND td.TipoDocumentoId = @idTipoDocumento
 				  AND td.DocumentoId = @documentoId
+                  AND td.CantidadStock != 0
 
 			    UPDATE ar
 			    SET ar.stock = (
