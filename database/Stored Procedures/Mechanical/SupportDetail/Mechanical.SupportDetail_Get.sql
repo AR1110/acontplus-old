@@ -45,6 +45,7 @@ BEGIN
                   ,v_s.BusinessName
                   ,v_s.idCard
                   ,v_s.codEstab
+                  ,v_s.status
 	        FROM Mechanical.v_Support v_s WITH (NOLOCK)
             WHERE Id = @Id
                         
@@ -120,6 +121,7 @@ BEGIN
                     , codEstab
                     , predeterminado
                     , nombreComercial
+                    , estab
                     , tarifasImpuestos = (
 					    SELECT
 						    'IVA ' + descripcion AS descripcion,
@@ -136,7 +138,12 @@ BEGIN
             WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId 
             ORDER BY predeterminado DESC
 
-            SELECT idBodega ,idEstablecimiento, bodega, codEstab, nombreComercial , defaultBodega
+            SELECT idBodega
+                    ,idEstablecimiento
+                    ,bodega
+                    ,codEstab
+                    ,nombreComercial
+                    , defaultBodega
             FROM v_Bodega_Asign WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultBodega DESC
 
             SELECT idTipoIva,descripcion, codigo,codigoPorcentaje,porcentaje FROM TipoIva WITH (NOLOCK) WHERE estado = 1
@@ -155,7 +162,8 @@ BEGIN
             SELECT idTiempoCredito
                     ,descripcion
                     ,diasCredito
-                    ,numeroCuota 
+                    ,numeroCuota
+                    ,CAST(tipo AS INT) AS tipo
             FROM TiempoCredito WITH (NOLOCK) 
             WHERE idEntidad = @CompanyId
             AND gestion = 1 

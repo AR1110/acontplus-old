@@ -8,4 +8,5 @@ export interface Support {
     sequence: number;
     obs : string;
     userAssignedId : number;
+    status: number;
 }

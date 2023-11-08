@@ -1,4 +1,5 @@
 const mapperToAction = () => {
+
   const principalMapperTo = (support) => {
     const factura = {
       direccionComprador: support.direccionComprador || "",
@@ -33,8 +34,8 @@ const mapperToAction = () => {
       totalDescuento: support.totalDescuento || 0,
       totalIce: support.totalIce || 0,
       transporte: support.transporte || 0,
+      supportId: support.id || 0,
     };
-
     return factura;
   };
 
@@ -73,11 +74,18 @@ const mapperToAction = () => {
 
   const notaEntregaMapper = (data) => {
     const notaEntrega = {
+      idCliente: data.customerId || 0,
+      identificacionComprador: data.idCard,
+      razonSocialComprador: data.businessName || '',
+      direccionComprador: '',
+      email: '',
+      telefono: '',
+      estab: data.estab,
       codEstab: data.codEstab,
       fechaEmision: data.date,
       fechaVencimiento: data.fechaVencimiento,
-      idCliente: data.customerId || 0,
       idPuntoEmision: data.puntoEmisionId,
+      tipo: data.tipo,
       idTiempoCredito: data.idTiempoCredito,
       idUsuario: data.userAssignedId || 0,
       irbpnr: data.irbpnr,
