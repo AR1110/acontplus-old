@@ -907,7 +907,8 @@
                 permisoVenta,
                 notificacionVenta,
                 decimal,
-                config
+                config,
+                vendedores
             } = mainDataForm;
             $scope.establecimientos = estabs;
             let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
@@ -918,6 +919,7 @@
             $scope.bodegas = dataEstab.bodegas;
             $scope.tarifas = tarifas;
             $scope.tiemposCredito = tiemposCredito;
+            $scope.vendedores = vendedores;
 
             if ($scope.puntosEmision.length > 0) {
                 let dataPuntoEmision = $scope.puntosEmision.find(ptoEmi => (ptoEmi.defaultPtoEmi));
@@ -936,6 +938,13 @@
                 $scope.data.idTiempoCredito = $scope.tiemposCredito[0].idTiempoCredito;
                 $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
             }
+
+            if ($scope.vendedores.length > 0) {
+                $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario
+            } else {
+                $scope.data.idUsuario = 0;
+            }
+
             $scope.tarifasImpuesto = tarifasImpuesto;
             $scope.tarifaImpuestoVigente = tarifaImpuestoVigente;
             $scope.permisoComprobanteVenta = permisoVenta.comprobante;
@@ -1468,12 +1477,19 @@
                     if (!rowEntity.llevaInventario) continue;
 
                     rowEntity.cantidad = 0;
-                    // let objCalculo = self.uiGridInvoice.calculoColDef(rowEntity)
-                    // objCalculo["calculoTotalDetalle"]();
 
+                    let objCalculo = gridOptionsSvc.calculoColDef({
+                        rowEntity,
+                        oldValue: null,
+                        decimal: $scope.decimal,
+                        idTarifa: $scope.data.idTarifa,
+                        columnDefs: $scope.gridOptions.columnDefs
+                    });
+
+                    objCalculo["cantidad"] && objCalculo["cantidad"]();
+                    objCalculo["calculoTotalDetalle"]();
                 }
-                // self.data = Object.assign(self.data, self.uiGridInvoice.getTotales());
-                // this.$scope.$apply();                
+                recalculateTotalsSimple();
             } catch (error) {
                 console.log(error);
             }
@@ -1533,10 +1549,9 @@
                 idArticulo: 0,
                 descripcion: "",
                 cantidad: 1,
-                nombreMedida: "",
+                cantidadStock: 0,
                 codigoPorcentaje: "",
                 tarifa: 0,
-                nombreTipoIva: "",
                 articuloTarifas: [],
                 idTarifa: 0,
                 precioUnitario: 0,
@@ -1576,7 +1591,6 @@
                 }
 
                 let entity = $scope.gridOptions.data[index];
-
                 let dataMedida = medidas.find(medida => (medida.defaultMedida));
 
 
@@ -1597,7 +1611,6 @@
                     entity.tarifa = articulo.tarifa;
                 }
 
-                // entity.nombreTipoIva        = articulo.nombreTipoIva;
                 entity.ice = articulo.valorIce;
                 entity.idBodega = $scope.data.idBodega;
                 entity.llevaInventario = articulo.llevaInventario;
@@ -1605,6 +1618,7 @@
                 entity.productoFraccionable = articulo.productoFraccionable;
                 entity.medidas = medidas; //Lista Medida 
                 entity.idMedida = dataMedida.idMedida; //Medida por defecto 
+                entity.conversion = dataMedida.conversion;
 
                 entity.datosAdicionalesArticulo = datosAdicionalesArticulo; //
                 entity.consolidacionesFecha = consolidacionesFecha;
@@ -1619,9 +1633,23 @@
                 $scope.indexRow = index;
                 setCalculoTotales('precioUnitario', entity, 0);
                 focusColumnCantidad();
+                setCantidadStock(entity)
             } catch (error) {
                 console.log(error)
             }
+        }
+
+        function setCantidadStock(rowEntity) {
+            let dataConsolidacionFecha = rowEntity.consolidacionesFecha.find(
+                cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
+            )
+            if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
+                if (dataConsolidacionFecha.fechaConsolidacion >= $scope.data.fechaEmision) {
+                    rowEntity.cantidadStock = 0;
+                    return
+                }
+            }
+            rowEntity.cantidadStock = rowEntity.cantidad * rowEntity.conversion;
         }
 
         function focusColumnCantidad() {
@@ -1770,6 +1798,86 @@
             let importeTotal = total + transporte + recargo;
             $scope.data.total = importeTotal;
             return fS.roundNumber(importeTotal, $scope.decimal.importeTotal);
+        }
+
+        function isValidForm() {
+            if (!$scope.data.codEstab) {
+                tS.toastr('warning', 'Seleccione el Establecimiento');
+                return
+            }
+            if (!($scope.data.idPuntoEmision > 0)) {
+                tS.toastr('warning', 'Seleccione el Punto de Emisión');
+                return
+            }
+            if (!($scope.data.idTiempoCredito > 0)) {
+                tS.toastr('warning', 'Seleccione el Tiempo Credito');
+                return
+            }
+            if (!(fS.isDateValid($scope.data.fechaEmision))) {
+                tS.toastr('warning', 'Ingrese la Fecha de emisión');
+                return
+            }
+            if (!(fS.isDateValid($scope.data.fechaVencimiento))) {
+                tS.toastr('warning', 'Seleccione la Fecha de vencimiento');
+                return
+            }
+            if ($scope.cliente.idCliente === 0 && ("razonSocialComprador" in $scope.cliente) && ("nombreComercial")) {
+                if (!$scope.cliente.razonSocialComprador || !$scope.cliente.nombreComercial) {
+                    tS.toastr('warning', 'Seleccione el Cliente');
+                    return
+                }
+            } else if (!($scope.data.idCliente > 0)) {
+                tS.toastr('warning', 'Seleccione el Cliente');
+                return
+            }
+
+            if ($scope.gridOptions.data.length === 0) {
+                tS.toastr('warning', 'Ingrese al menon un artículo en el detalle');
+                return
+            }
+
+            if ($scope.gridOptions.data.some(row => !(row.idBodega > 0))) {
+                tS.toastr('warning', 'Seleccione la bodega en el detalle de los artículos');
+                return
+            }
+
+            if ($scope.gridOptions.data.some(item => item.articuloTarifas.some(ta => (ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor))) {
+                for (let item of $scope.gridOptions.data) {
+                    if (item.articuloTarifas.some(ta => (ta.ventaPorMayor) && item.cantidad < item.cantMinimaVentaPorMayor)) {
+                        fS.sweetAlert('warning', `Artículo ${item.descripcion}: La cantidad mínima requerida para la venta al por mayor no se ajusta a la cantidad asignada al artículo.`)
+                    }
+                }
+                return
+            }
+
+            return true;
+        }
+
+        $scope.onSave = async function () {
+            try {
+                let serieComprobante = null;
+
+                if (!isValidForm()) {
+                    throw "Invalid form!";
+                }
+
+                if ($scope.data.idNotaEntrega > 0) {
+                    showLoader();
+                    serieComprobante = await notaEntregaSvc.generateSerieComprobante({
+                        idPuntoEmision: $scope.data.idPuntoEmision,
+                    })
+                    hideLoader();
+                    if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"
+                } else {
+                    serieComprobante = ''
+                }
+
+
+
+            } catch (error) {
+                hideLoader();
+                console.log(error)
+            }
         }
 
 
