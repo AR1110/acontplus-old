@@ -463,25 +463,35 @@
             let orderIndex = 1;
 
             for (let item of detalles) {
-                let cantidadStock = 0;
 
                 // Llamar a la función 'getCantidadStock' para obtener la cantidad en stock del elemento actual
-                cantidadStock = service.getCantidadStock(item);
+                let {
+                    cantidadStock,
+                    action
+                } = service.getCantidadStock(item);
 
-                // Comprobar si el elemento tiene un 'idNotaEntregaDetalle' positivo y está en estado 'activo'
-                if (item.idNotaEntregaDetalle > 0 && item.estado) {
-                    // Verificar si 'cantidad' es igual a 'cantidadOriginal'
-                    if (item.cantidad === item.cantidadOriginal) {
-                        cantidadStock = 0;  // Si son iguales, establecer 'cantidadStock' en 0
-                    } else {
-                        // Calcular 'cantidadStock' en función de la diferencia entre 'cantidadOriginal' y 'cantidad'
-                        if (item.cantidad > item.cantidadOriginal) {
-                            cantidadStock = item.cantidadOriginal - item.cantidad;
+
+                if (action === 0) {
+                    // Comprobar si el elemento tiene un 'idNotaEntregaDetalle' positivo y está en estado 'activo'
+                    if (item.idNotaEntregaDetalle > 0 && item.estado) {
+                        // Verificar si 'cantidad' es igual a 'cantidadOriginal'
+                        if (item.cantidad === item.cantidadOriginal) {
+                            cantidadStock = 0;  // Si son iguales, establecer 'cantidadStock' en 0
                         } else {
-                            cantidadStock = item.cantidadOriginal - item.cantidad;
+                            // Calcular 'cantidadStock' en función de la diferencia entre 'cantidadOriginal' y 'cantidad'
+                            if (item.cantidad > item.cantidadOriginal) {
+                                cantidadStock = item.cantidadOriginal - item.cantidad;
+                            } else {
+                                cantidadStock = item.cantidadOriginal - item.cantidad;
+                            }
                         }
                     }
+                    if (item.idNotaEntregaDetalle > 0 && item.estado === 0) {
+                        cantidadStock = Math.abs(cantidadStock)
+                    }
                 }
+
+
 
                 tempDetails.push({
                     orderIndex: orderIndex++,
@@ -525,6 +535,7 @@
         service.getCantidadStock = function (rowEntity, fechaEmision) {
             let fechaEmisionValidate = null;
             let cantidadStock = 0;
+            let action = 0;
 
             if (fechaEmision) {
                 fechaEmisionValidate = fechaEmision;
@@ -539,14 +550,25 @@
                 cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
             )
             if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
-                if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
+                if (dataConsolidacionFecha.fechaConsolidacion > fechaEmisionValidate) {
                     cantidadStock = 0;
-                    return cantidadStock;
+                    action = 1;
+                    return {
+                        cantidadStock,
+                        isDateConsolidacionBeforeDate
+                    };
+                } else {
+                    action = 2;
                 }
             }
+
             cantidadStock = rowEntity.cantidad * rowEntity.conversion;
             let resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
-            return resultCantStock;
+
+            return {
+                cantidadStock: resultCantStock,
+                action
+            };
         }
 
 
@@ -646,7 +668,10 @@
                         // Asignar los datos de las tarifas obtenidos de data medida 
                         restItem.articuloTarifas = dataMedida.tarifas || [];
 
-                        restItem.consolidacionesFecha = consolidacionesFecha;
+                        restItem.consolidacionesFecha = consolidacionesFecha.map((data)=>({ 
+                            ...data,
+                            fechaConsolidacion: data.fechaConsolidacion && new Date(data.fechaConsolidacion)
+                        }))
 
 
                         let subTotal = restItem.cantidad * restItem.precioUnitario || 0;
@@ -1239,7 +1264,7 @@
         return service;
 
     })
- 
+
 
     app.factory('storageService', storageService)
 
