@@ -299,20 +299,6 @@
                         config,
                         vendedores
                     }
-
-                    // return {
-                    //     estabs,
-                    //     decimal,
-                    //     tarifasImpuesto,
-                    //     tarifas,
-                    //     tiemposCredito,
-                    //     articuloDefault,
-                    //     clienteDefault,
-                    //     config,
-                    //     permisos,
-                    //     vendedores
-                    // }
-                    // return mainData;
                 }
             })
         }
@@ -435,7 +421,7 @@
             })
         }
 
-        service.queryMapper = function ({ data, cliente, detalles, historyDatosAdicionales }) {
+        service.queryMapper = function ({ data, cliente, detalles, itemsDeleted, historyDatosAdicionales }) {
             //
             service.data = Object.assign({}, data);
 
@@ -455,14 +441,19 @@
             notaEntrega.email = cliente.email;
             notaEntrega.telefono = cliente.telefono;
 
+            const itemsMainMapper = service.detalleMapperTo(detalles);
+            const itemsDeletedMapper = service.detalleMapperTo(itemsDeleted)
 
+            const mergeItems = [
+                ...itemsMainMapper,
+                ...itemsDeletedMapper
+            ]
 
             return {
                 notaEntrega,
-                detalles: service.detalleMapperTo(detalles),
+                detalles: mergeItems,
                 infoAdicionalArticulo: JSON.stringify(historyDatosAdicionales)
             }
-
         }
 
         service.detalleMapperTo = function (detalles) {
@@ -470,6 +461,16 @@
             let orderIndex = 1;
 
             for (let item of detalles) {
+                let cantidadStock = 0;
+                cantidadStock = service.getCantidadStock(item);
+                // if (item.idNotaEntregaDetalle > 0) {
+                //     cantidadStock = 
+                //     if(item.cantidad !== item.cantidadOriginal){
+                //         cantidadStock = 
+                //     }  
+                     
+                // }
+
                 tempDetails.push({
                     orderIndex: orderIndex++,
                     idNotaEntregaDetalle: item.idNotaEntregaDetalle || 0,
@@ -493,15 +494,22 @@
                     porcentajeDescuento: item.porcentajeDescuento,
                     total: item.total,
                     nota: item.nota, //✅
-                    cantidadStock: service.getCantidadStock(item), //✅
+                    cantidadStock, //✅
                     llevaInventario: item.llevaInventario,//✅
                     precioCosto: item.precioCosto,  //✅
-                    cantidadTransaccion: item.cantidad * item.conversion //✅
+                    cantidadTransaccion: item.cantidad * item.conversion, //✅
+                    estado: item.estado //✅
                 })
             }
             return tempDetails;
         }
 
+        /**
+         * 
+         * @param {*} rowEntity 
+         * @param {*} fechaEmision unicamente se envia desde el controlador de NotaEntregaCtrl
+         * @returns 
+         */
         service.getCantidadStock = function (rowEntity, fechaEmision) {
             let fechaEmisionValidate = null;
             let cantidadStock = 0;
@@ -634,7 +642,7 @@
 
                         restItem.subTotal = subTotal || 0;
                         restItem.totalDescuento = totalDescuento || 0;
-
+                        restItem.cantidadOriginal = restItem.cantidad;
                         return restItem;
                     });
 
@@ -644,6 +652,7 @@
                         puntoEmision: `${comprobanteTemp.estab}-${comprobanteTemp.ptoEmi}`,
                         fechaEmision: fS.formatDate(comprobanteTemp.fechaEmision),
                         fechaVencimiento: fS.formatDate(comprobanteTemp.fechaVencimiento),
+                        fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision)
                     }
 
                     let datosAdicionalesArticulo = datosAdicionalesArticuloTemp.map(item => ({
@@ -670,13 +679,8 @@
 
 
         service.update = function (id, data) {
-            let { notaEntrega, detalle, infoAdicionalArticulo } = data;
-            let params = {
-                notaEntrega,
-                detalles: detalle,
-                infoAdicionalArticulo
-            }
-            return mS.getData('put', url + 'Update/' + id, { data: params }, true).then(response => {
+
+            return mS.getData('put', url + 'Update/' + id, { data }, true).then(response => {
                 if (response.code === "0") {
                     return response;
                 }
