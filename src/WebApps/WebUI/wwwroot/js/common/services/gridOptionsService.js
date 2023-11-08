@@ -55,6 +55,7 @@
                     rowEntity.precioConIva = fS.roundNumber(tarifa.precioConIva, decimal.nroPrecio);
                     rowEntity.porcentajeDescuento = 0;
                     rowEntity.valorDescuento = 0;
+                    rowEntity.conversion = dataMedida.conversion;
                     //  this.setTotalRow(rowEntity, index);                                  
 
                 },

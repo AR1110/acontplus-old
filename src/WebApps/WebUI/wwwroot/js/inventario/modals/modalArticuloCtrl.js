@@ -1391,7 +1391,7 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
                         break;
                     case "porcentajeUtilidad":
                         precioVenta = pricingUtils.calcularPorcentajeUtilidad(
-                            $scope.data.precioCosto,
+                            precioCosto,
                             rowEntity.porcentajeUtilidad
                         );
                         precioConIva = pricingUtils.calcularPrecioConIva(

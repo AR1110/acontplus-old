@@ -319,6 +319,18 @@
             }
         }
 
+        formSvc.validateDateIsAfterCurrentDate = function (fecha) {
+            const zonaHorariaEcuador = 'America/Guayaquil'; // Utilizamos la zona horaria de la Costa del Ecuador (ECT)
+
+            const fechaActual = moment().tz(zonaHorariaEcuador); // Obtener la fecha actual en la zona horaria de Ecuador
+            const fechaIngresada = moment.tz(fecha, 'YYYY-MM-DD', zonaHorariaEcuador); // Utilizar la zona horaria de Ecuador para la fecha ingresada
+
+            if (fechaIngresada.isValid() && fechaIngresada.isAfter(fechaActual, 'day')) {
+                return true;
+            }  
+            return false;
+        }
+
         return formSvc;
     }
 })(window.angular)

@@ -9,7 +9,7 @@
         </div>
         <div class="float-center">
             <h6><span class="font-weight-bold">Estab:</span> {{infoEstabPtoEmi.nombreComercial}} | <span
-                    class="font-weight-bold">Pto. Emisión:</span> {{infoEstabPtoEmi.ptoEmi}}</h6>
+                    class="font-weight-bold">Pto. Emisión:</span> {{infoEstabPtoEmi.puntoEmision}}</h6>
         </div>
         <div class="float-right">
             <h4><span class="float-right"><strong>Total: ${{getImporteTotal()}} </strong></span></h4>
@@ -36,7 +36,7 @@
                 <div class="form-group">
                     <label for="puntoEmision">Punto Emisión: <span class="text-danger">*</span></label>
                     <select name="puntoEmision" id="puntoEmision" class="form-control border-select"
-                        ng-model="data.idPuntoEmision">
+                        ng-model="data.idPuntoEmision" ng-change="setInfoEstabPtoEmi()">
                         <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
                             {{item.ptoEmi}}
                         </option>

@@ -144,8 +144,6 @@
 
         $scope.getNotaEntregas = async () => {
             try {
-
-
                 if ($scope.dataSearch.nroSecuencial) {
                     if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
                         $scope.dataSearch.checkBoxFecha = true;
@@ -165,7 +163,7 @@
                     byCliente: $scope.dataSearch.idCliente,
                     checkBoxFecha: $scope.dataSearch.checkBoxFecha,
                     byUsuario: $scope.dataSearch.byUsuario,
-                    codEstado: $scope.dataSearch.codEstado,
+                    codEstado: ["", null, undefined].includes($scope.dataSearch.codEstado) ? null : $scope.dataSearch.codEstado,
                     fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
                     nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
@@ -286,46 +284,22 @@
 
         $scope.openModalNew = async () => {
             try {
-                let { MODAL_FILE_CTRL, MODAL_NUEVO } = nombreModalConst.nota_entrega;
-                let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_NUEVO['controller']];
-                let template = MODAL_NUEVO['template'];
-                let params = {
-                    TIPO_REGISTRO: 'NUEVO'
-                }
-
                 modalSvc.openModalCustom({
                     controller: 'modalNotaEntregaCtrl',
-                    template: `${TEMPLATE_URL}_ModalNuevo.cshtml`,
+                    template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
                     size: 'xl',
-                    params: {},
+                    params: {
+                        action: 'NUEVO'
+                    },
                     windowClass: 'uibModalFullScreen',
                     isRenderRazorPartial: true
                 }).result.then(result => {
 
                     if (typeof result !== 'object') return
 
-                    $scope.validateOperationPrintAndPayment(result)
+                    //Pendiednte ⭕
+                    //   $scope.validateOperationPrintAndPayment(result)
                 })
-
-                // let { MODAL_FILE_CTRL, MODAL_NUEVO } = nombreModalConst.nota_entrega;
-                // let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_NUEVO['controller']];
-                // let template = MODAL_NUEVO['template'];
-                // let params = {
-                //     TIPO_REGISTRO: 'NUEVO'
-                // }
-
-                // modalSvc.openModalCustom({
-                //     controller,
-                //     template,
-                //     size: 'xl',
-                //     params,
-                //     windowClass: 'uibModalFullScreen'
-                // }).result.then(result => {
-
-                //     if (typeof result !== 'object') return
-
-                //     $scope.validateOperationPrintAndPayment(result)
-                // })
             } catch (error) {
                 console.log(error)
             }
@@ -433,47 +407,86 @@
         $scope.openModalDuplicate = async (item) => {
             try {
                 showLoader();
-                let { MODAL_FILE_CTRL, MODAL_DUPLICAR } = nombreModalConst.nota_entrega;
-                let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_DUPLICAR['controller']];
-                let template = MODAL_DUPLICAR['template'];
-
-                let response = await commonSvc.getDataTipoDocVenta({
-                    id: item.idDocumento,
-                    codigoDocumento: TIPO_DOC_NE.codigo
+                notaEntregaSvc.getId(item.idDocumento).then(response => {
+                    modalSvc.openModalCustom({
+                        controller: 'modalNotaEntregaCtrl',
+                        template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
+                        size: 'xl',
+                        params: {
+                            data: response,
+                            action: 'DUPLICAR'
+                        },
+                        windowClass: 'uibModalFullScreen',
+                        isRenderRazorPartial: true
+                    })
                 })
+                    .catch(error => {
+                        console.log(error)
+                    })
+                    .finally(() => hideLoader())
+                // modalSvc.openModalCustom({
+                //     controller: 'modalNotaEntregaCtrl',
+                //     template: `${TEMPLATE_URL}_ModalNuevo.cshtml`,
+                //     size: 'xl',
+                //     params: {
+                //         action: 'DUPLICAR'
+                //     },
+                //     windowClass: 'uibModalFullScreen',
+                //     isRenderRazorPartial: true
+                // }).result.then(result => {
 
-                if (!response.isComplete) return
+                //     if (typeof result !== 'object') return
 
-                let params = {
-                    TIPO_REGISTRO: 'DUPLICAR',
-                    data: response
-                }
-
-                modalSvc.openModalCustom({
-                    controller,
-                    template,
-                    size: 'xl',
-                    params,
-                    windowClass: 'uibModalFullScreen'
-                }).result.then(result => {
-
-                    if (typeof result !== 'object') return
-
-                    $scope.validateOperationPrintAndPayment(result)
-
-                })
-
+                //     //Pendiednte ⭕
+                //     //   $scope.validateOperationPrintAndPayment(result)
+                // })
             } catch (error) {
-
-                console.log(error)
-            } finally {
                 hideLoader();
+                console.log(error)
             }
+
+            // try {
+            //     showLoader();
+            //     let { MODAL_FILE_CTRL, MODAL_DUPLICAR } = nombreModalConst.nota_entrega;
+            //     let controller = (await import('../../' + MODAL_FILE_CTRL))[MODAL_DUPLICAR['controller']];
+            //     let template = MODAL_DUPLICAR['template'];
+
+            //     let response = await commonSvc.getDataTipoDocVenta({
+            //         id: item.idDocumento,
+            //         codigoDocumento: TIPO_DOC_NE.codigo
+            //     })
+
+            //     if (!response.isComplete) return
+
+            //     let params = {
+            //         TIPO_REGISTRO: 'DUPLICAR',
+            //         data: response
+            //     }
+
+            //     modalSvc.openModalCustom({
+            //         controller,
+            //         template,
+            //         size: 'xl',
+            //         params,
+            //         windowClass: 'uibModalFullScreen'
+            //     }).result.then(result => {
+
+            //         if (typeof result !== 'object') return
+
+            //         $scope.validateOperationPrintAndPayment(result)
+
+            //     })
+
+            // } catch (error) {
+
+            //     console.log(error)
+            // } finally {
+            //     hideLoader();
+            // }
 
         }
 
         $scope.openModalInvoiceParam = ({ controller, template, size = 'xl', params }) => {
-
             modalSvc.openModalCustom({
                 controller,
                 template,
@@ -491,8 +504,6 @@
 
         $scope.askToDelete = async (item) => {
             try {
-
-
                 if (item.anulada) {
                     fS.sweetAlert('warning', 'El documento ya se encuentra anulada');
                     return
@@ -514,7 +525,7 @@
 
                 let { isConfirmed } = await swalWithBootstrapButtons.fire({
                     title: '<small>Anular Nota de Entrega?</small>',
-                    html: `<small>Esta Ud. seguro/a de anular este Documento <b>N° ${item.nroDocumento
+                    html: `<small>Esta Ud. seguro/a de anular este Documento <b>N° ${item.serieComprobante
                         }</b></small>?`,
                     icon: 'warning',
                     showCancelButton: true,
@@ -794,13 +805,19 @@
         '$scope',
         '$uibModalInstance',
         '$timeout',
-        'ventaService',
-        'clienteService',
-        'gridOptionsService',
+        '$injector',
         'params'
     ];
-    function modalNotaEntregaCtrl($scope, $uibModalInstance, $timeout, ventaSvc, clienteSvc, gridOptionsSvc, params) {
+    function modalNotaEntregaCtrl($scope, $uibModalInstance, $timeout, $injector, params) {
+        let ventaSvc = $injector.get('ventaService');
+        let clienteSvc = $injector.get('clienteService');
+        let gridOptionsSvc = $injector.get('gridOptionsService');
+        let storageSvc = $injector.get('storageService');
+
+
         $scope.tipoDoc = TIPO_DOC_NE;
+        $scope.infoEstabPtoEmi = {};
+
         $scope.data = {
             idBodega: 0,
             idPuntoEmision: 0,
@@ -893,6 +910,15 @@
             })
         }
 
+        $scope.setInfoEstabPtoEmi = function () {
+            if ($scope.establecimientos.length > 0) {
+                $scope.infoEstabPtoEmi.nombreComercial = $scope.establecimientos.find(item => item.codEstab === $scope.data.codEstab).nombreComercial;
+            }
+
+            if ($scope.puntosEmision.length > 0) {
+                $scope.infoEstabPtoEmi.puntoEmision = $scope.puntosEmision.find(item => item.idPuntoEmision === $scope.data.idPuntoEmision).ptoEmi;
+            }
+        }
 
 
         initiload();
@@ -920,11 +946,63 @@
             $scope.tarifas = tarifas;
             $scope.tiemposCredito = tiemposCredito;
             $scope.vendedores = vendedores;
+            $scope.tarifasImpuesto = tarifasImpuesto;
+            $scope.permisoComprobanteVenta = permisoVenta.comprobante;
+            $scope.permisoDetalleVenta = permisoVenta.detalle;
+            $scope.notificacionVenta = notificacionVenta;
+            $scope.decimal = decimal;
+            $scope.config = config;
 
-            if ($scope.puntosEmision.length > 0) {
-                let dataPuntoEmision = $scope.puntosEmision.find(ptoEmi => (ptoEmi.defaultPtoEmi));
-                $scope.data.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
+
+
+            if (params && params.action === "NUEVO") {
+                if ($scope.puntosEmision.length > 0) {
+                    let dataPuntoEmision = $scope.puntosEmision.find(ptoEmi => (ptoEmi.defaultPtoEmi));
+                    $scope.data.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
+                }
+                if ($scope.tiemposCredito.length > 0) {
+                    $scope.data.idTiempoCredito = $scope.tiemposCredito[0].idTiempoCredito;
+                    $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
+                }
+
+                if ($scope.vendedores.length > 0) {
+                    $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario
+                } else {
+                    $scope.data.idUsuario = 0;
+                }
+                getFechaVencimiento();
             }
+            $scope.tarifaImpuestoVigente = tarifaImpuestoVigente;
+
+            if (params && params.action === 'DUPLICAR') {
+                const {
+                    comprobante,
+                    cliente,
+                    items,
+                    infoAdicionalDocumento,
+                } = params.data;
+                console.log(params)
+                $scope.data = structuredClone(comprobante);
+                $scope.data.fechaEmision = new Date();
+                getFechaVencimiento();
+
+                $scope.dataClone.codEstab = $scope.data.codEstab;
+                $scope.gridOptions.data = items;
+
+                $scope.data.fechaEmisionEscrita = fS.getFechaEscrita($scope.data.fechaEmision);
+                $scope.data.fechaVencimientoEscrita = fS.getFechaEscrita($scope.data.fechaVencimiento);
+
+                if ($scope.vendedores.length > 0) {
+                    $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario
+                } else {
+                    $scope.data.idUsuario = 0;
+                }
+
+                $scope.cliente = cliente;
+                $scope.infoAdicionalDocumento = infoAdicionalDocumento;
+            }
+
+
             if ($scope.bodegas.length > 0) {
                 let dataBodega = $scope.bodegas.find(bodega => (bodega.defaultBodega));
                 $scope.data.idBodega = dataBodega.idBodega;
@@ -934,26 +1012,6 @@
                 $scope.data.idTarifa = $scope.tarifas[0].idTarifa;
                 $scope.dataClone.idTarifa = $scope.data.idTarifa;
             }
-            if ($scope.tiemposCredito.length > 0) {
-                $scope.data.idTiempoCredito = $scope.tiemposCredito[0].idTiempoCredito;
-                $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
-            }
-
-            if ($scope.vendedores.length > 0) {
-                $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario
-            } else {
-                $scope.data.idUsuario = 0;
-            }
-
-            $scope.tarifasImpuesto = tarifasImpuesto;
-            $scope.tarifaImpuestoVigente = tarifaImpuestoVigente;
-            $scope.permisoComprobanteVenta = permisoVenta.comprobante;
-            $scope.permisoDetalleVenta = permisoVenta.detalle;
-            $scope.notificacionVenta = notificacionVenta;
-            $scope.decimal = decimal;
-            $scope.config = config;
-
-            getFechaVencimiento();
 
             $uibModalInstance.rendered.then(() => {
                 if ($scope.config.searchCode) {
@@ -961,7 +1019,27 @@
                 } else {
                     $("#custom-template-md-autocomplete-articulo").focus();
                 }
-            })
+            });
+
+
+            if (params.action === "NUEVO" && !($scope.data.idNotaEntrega > 0)) {
+                if (Object.keys(storageSvc.getObject("notaEntregaDetail")).length > 0) {
+                    storageSvc.restoreInvoiceDetail("notaEntregaDetail").then(result => {
+                        if (result.isConfirmed) {
+                            $scope.gridOptions.data = JSON.parse(result.dataInvoiceDetail[result.value]);
+                            delete result.dataInvoiceDetail[result.value];
+
+                            storageSvc.setObject("notaEntregaDetail", result.dataInvoiceDetail)
+
+                            recalculateTotalsSimple();
+                            $scope.$apply();
+                        }
+
+                    })
+                }
+            }
+            $scope.setInfoEstabPtoEmi();
+
         }
         function getFechaVencimiento() {
             if ($scope.data.fechaEmision && $scope.tiemposCredito.length > 0) {
@@ -975,9 +1053,9 @@
                     fechaVencimientoEscrita
                 } = fS.sumarDiasAFecha($scope.data.fechaEmision, diasCredito);
 
-                let formattedDateTime = fS.formatDateMoment(fechaVencimiento)
+                // let formattedDateTime = fS.formatDateMoment(fechaVencimiento)
 
-                $scope.data.fechaVencimiento = new Date(formattedDateTime);
+                $scope.data.fechaVencimiento = new Date(fechaVencimiento);
                 $scope.data.fechaEmisionEscrita = fechaEmisionEscrita;
                 $scope.data.fechaVencimientoEscrita = fechaVencimientoEscrita;
 
@@ -1292,6 +1370,12 @@
             $scope.$broadcast("editArticulo", item)
         }
 
+        function setIdBodegaInDetalle() {
+            for (let item of $scope.gridOptions.data) {
+                item.idBodega = $scope.data.idBodega;
+            }
+        }
+
 
         $scope.onChangeEstablecimiento = async function () {
             try {
@@ -1325,7 +1409,7 @@
                 }
 
                 let dataEstab = $scope.establecimientos.find(item => item.codEstab === $scope.data.codEstab);
-                console.log(dataEstab)
+
                 $scope.puntosEmision = dataEstab.puntosEmision;
                 $scope.bodegas = dataEstab.bodegas;
 
@@ -1350,12 +1434,17 @@
                 $scope.data.idBodega = dataBodega.idBodega;
 
                 $scope.dataClone.codEstab = $scope.data.codEstab;
+
+                setIdBodegaInDetalle();
+                resetCantidadToZeroAndRecalculateTotals();
                 setWarehouseAndIVA();
+                $scope.setInfoEstabPtoEmi();
                 $scope.$apply();
             } catch (error) {
                 console.trace(error)
             }
         }
+
 
 
         $scope.onChangeTiempoCredito = function () {
@@ -1457,9 +1546,7 @@
 
                     if ($scope.gridOptions.data.length === 0) return
 
-                    for (let item of $scope.gridOptions.data) {
-                        item.idBodega = $scope.data.idBodega;
-                    }
+                    setIdBodegaInDetalle();
                     resetCantidadToZeroAndRecalculateTotals();
                     $scope.$apply();
                 } else {
@@ -1627,30 +1714,31 @@
 
                 let tarifa = entity.articuloTarifas.find(item => item.idTarifa === $scope.data.idTarifa);
                 entity.idTarifa = $scope.data.idTarifa;
+                entity.precioCosto = articulo.precioCosto;
                 entity.precioUnitario = fS.roundNumber(tarifa.precioVenta, $scope.decimal.nroPrecio);
                 entity.precioConIva = fS.roundNumber(tarifa.precioConIva, $scope.decimal.nroPrecio);
                 entity.cantMinimaVentaPorMayor = articulo.cantMinimaVentaPorMayor;
                 $scope.indexRow = index;
                 setCalculoTotales('precioUnitario', entity, 0);
                 focusColumnCantidad();
-                setCantidadStock(entity)
+                // setCantidadStock(entity)
             } catch (error) {
                 console.log(error)
             }
         }
 
-        function setCantidadStock(rowEntity) {
-            let dataConsolidacionFecha = rowEntity.consolidacionesFecha.find(
-                cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
-            )
-            if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
-                if (dataConsolidacionFecha.fechaConsolidacion >= $scope.data.fechaEmision) {
-                    rowEntity.cantidadStock = 0;
-                    return
-                }
-            }
-            rowEntity.cantidadStock = rowEntity.cantidad * rowEntity.conversion;
-        }
+        // function setCantidadStock(rowEntity) {
+        //     let dataConsolidacionFecha = rowEntity.consolidacionesFecha.find(
+        //         cdataFecha => cdataFecha.idBodega === rowEntity.idBodega
+        //     )
+        //     if (dataConsolidacionFecha && fS.isDateValid(dataConsolidacionFecha.fechaConsolidacion)) {
+        //         if (dataConsolidacionFecha.fechaConsolidacion >= $scope.data.fechaEmision) {
+        //             rowEntity.cantidadStock = 0;
+        //             return
+        //         }
+        //     }
+        //     rowEntity.cantidadStock = rowEntity.cantidad * rowEntity.conversion;
+        // }
 
         function focusColumnCantidad() {
             let index = 0;
@@ -1817,6 +1905,18 @@
                 tS.toastr('warning', 'Ingrese la Fecha de emisión');
                 return
             }
+
+            if (fS.validateDateIsAfterCurrentDate($scope.data.fechaEmision)) {
+                tS.toastr('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.')
+                return
+            }
+            // let formattedDateForInsert = null;
+            // if (moment(data.fechaEmision).isBefore(new Date(), 'day')) {
+            //     formattedDateForInsert = moment(data.fechaEmision).startOf('day').toDate();
+            // } else {
+            //     formattedDateForInsert = data.fechaEmision
+            // }
+
             if (!(fS.isDateValid($scope.data.fechaVencimiento))) {
                 tS.toastr('warning', 'Seleccione la Fecha de vencimiento');
                 return
@@ -1826,7 +1926,7 @@
                     tS.toastr('warning', 'Seleccione el Cliente');
                     return
                 }
-            } else if (!($scope.data.idCliente > 0)) {
+            } else if (!($scope.cliente.idCliente > 0)) {
                 tS.toastr('warning', 'Seleccione el Cliente');
                 return
             }
@@ -1853,23 +1953,103 @@
             return true;
         }
 
+
+        function isRegister() {
+            return (params.action === 'NUEVO' || params.action === 'DUPLICAR');
+        }
+
+        function isUpdate() {
+            return params.action === 'EDITAR';
+        }
+
         $scope.onSave = async function () {
             try {
-                let serieComprobante = null;
+                let serieComprobante = null, titleSwal = '', htmlSwal = '', confirmButtonText = '';
+                let validateForm = isValidForm()
 
-                if (!isValidForm()) {
+                if (!validateForm) {
                     throw "Invalid form!";
                 }
 
-                if ($scope.data.idNotaEntrega > 0) {
+                if (isRegister()) {
                     showLoader();
                     serieComprobante = await notaEntregaSvc.generateSerieComprobante({
                         idPuntoEmision: $scope.data.idPuntoEmision,
                     })
                     hideLoader();
-                    if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE"
-                } else {
+                    if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
+
+                    titleSwal = '<small>Guardar Nota de Entrega</small>';
+                    confirmButtonText = 'Guardar';
+                    htmlSwal = `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`;
+
+                } else if (isUpdate()) {
                     serieComprobante = ''
+                    titleSwal = '<small>Actualizar Nota de Entrega</small>';
+                    confirmButtonText = 'Actualizar';
+                    htmlSwal = `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`;
+                }
+
+
+                const customSwal = Swal.mixin({
+                    customClass: {
+                        confirmButton: 'btn btn-success',
+                        cancelButton: 'btn btn-danger ml-2'
+                    },
+                    buttonsStyling: false
+                })
+
+                let { isConfirmed } = await customSwal.fire({
+                    title: titleSwal,
+                    html: htmlSwal,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText,
+                    cancelButtonText: 'No, cancelar!',
+                    reverseButtons: false,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false
+                })
+
+                if (!isConfirmed) return
+
+                //Tarifa Aplicada al Documento
+                $scope.data.tarifa = $scope.tarifaImpuestoVigente.tarifa;
+
+                let query = notaEntregaSvc.queryMapper({
+                    data: $scope.data,
+                    cliente: $scope.cliente,
+                    detalles: $scope.gridOptions.data,
+                    historyDatosAdicionales: $scope.historyDatosAdicionales
+                })
+
+
+                //Registar Doc 
+                if (isRegister()) {
+                    showLoader();
+                    notaEntregaSvc.save(query).then(response => {
+                        if (response.code === '0') {
+                            fS.sweetAlert('warning', response.message, response.titleSms);
+                        }
+                        if (response.code === "1") {
+                            fS.sweetAlert('success', response.message, response.titleSms, 1000);
+
+                            let mainData = {
+                                isRegister: true,
+                                data: response.dataResponse,
+                            }
+                            $uibModalInstance.close(mainData)
+                        }
+                    }).catch(error => {
+                        hideLoader();
+                        console.log(error)
+                    }).finally(() => hideLoader())
+                }
+
+                //Update Doc 
+                if (isUpdate()) {
+                    console.log(serieComprobante)
+
                 }
 
 
@@ -1881,7 +2061,53 @@
         }
 
 
+        async function askToSaveStorage() {
+            try {
+                await storageSvc.askToSaveDetailDoc("notaEntregaDetail", $scope.gridOptions.data);
+                $uibModalInstance.close();
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+
+
         $scope.closeModal = () => {
+            if ($scope.gridOptions.data.length > 0) {
+                const swalWithBootstrapButtons = Swal.mixin({
+                    customClass: {
+                        confirmButton: 'btn btn-success',
+                        denyButton: 'btn btn-info ml-2',
+                        cancelButton: 'btn btn-danger ml-2'
+                    },
+                    buttonsStyling: false
+                })
+
+                swalWithBootstrapButtons.fire({
+                    title: 'Salir ?',
+                    html: "<small>Tienes un documento en proceso, desea salir ahora?</small>",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    showConfirmButton: true,
+                    showDenyButton: true,
+                    confirmButtonText: 'Apartar',
+                    denyButtonText: 'Si, salir',
+                    cancelButtonText: 'No, cancelar!',
+                    focusDeny: true,
+                    reverseButtons: false
+                }).then(result => {
+
+                    if (result.isConfirmed) {
+                        askToSaveStorage();
+                    }
+
+                    if (result.isDenied) {
+                        $uibModalInstance.close();
+                    }
+
+                })
+                return
+            }
             $uibModalInstance.close();
         }
     }

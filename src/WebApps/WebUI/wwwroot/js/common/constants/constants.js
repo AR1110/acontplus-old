@@ -25,7 +25,7 @@ app.constant('nombreModalCommon', {
 app.constant('nombreModalInventario', {
     ARTICULO: {
         //fileCtrl: '/js/modal/modalArticuloCtrl.min.js' + CHANGE_VERSION(),
-        fileCtrl: '/js/inventario/modals/modalArticuloCtrl.min.js' + CHANGE_VERSION(),
+        fileCtrl: '/js/inventario/modals/modalArticuloCtrl.js' + CHANGE_VERSION(),
         controllers: {
             'LG': 'ModalArticuloGeneralCtrl',
             //'M': 'ModalArticuloCtrl',
