@@ -25,7 +25,7 @@
                 }
 
                 if (response.code === "1") {
-                    let mainData = JSON.parse(response.payload) 
+                    let mainData = JSON.parse(response.payload)
                     if (params.tipo === 1) {
                         return mainData[0];
                     }
@@ -84,11 +84,11 @@
         }
 
         service.updateXml = (id) => {
-            if(!(id>0)){
+            if (!(id > 0)) {
                 throw 'id no valido'
             }
             return mS.getData('put', `${URL}${id}`, null, true)
-        } 
+        }
 
         service.downloadXml = function (id) {
             return mS.getFile('get', `${URL}GetXmlSri/${id}`, null, true).then(response => {
@@ -101,8 +101,8 @@
 
 
         //Retencion ATS 
-        service.retencionAtsCancel = ()=>{
-            if(!(id>0)){
+        service.retencionAtsCancel = (id) => {
+            if (!(id > 0)) {
                 throw 'id no valido'
             }
             return mS.getData('put', `${URL_RETENCION_ATS}Cancel/${id}`, null, true)
