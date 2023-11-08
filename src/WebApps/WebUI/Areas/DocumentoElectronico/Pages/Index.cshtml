@@ -1,7 +1,7 @@
 ﻿@page
 @model WebUI.Areas.DocumentoElectronico.Pages.IndexModel
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers 
-@{ 
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -21,7 +21,7 @@
                     <div class="form-group">
                         <label for="establecimiento">Estab: <span class="text-danger">*</span></label>
                         <select name="establecimiento" id="establecimiento" class="form-control border-select"
-                            ng-model="dataSearch.codEstab" ng-change="onchangeEstablecimiento()"> 
+                            ng-model="dataSearch.codEstab" ng-change="onchangeEstablecimiento()">
                             <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                                 {{item.nombreComercial}}
                             </option>
@@ -32,7 +32,7 @@
                     <div class="form-group">
                         <label for="puntoEmision">Punto Emisión: <span class="text-danger">*</span> </label>
                         <select name="puntoEmision" id="puntoEmision" class="form-control border-select"
-                            ng-model="dataSearch.idPuntoEmision" ng-change="getComprobantes()"> 
+                            ng-model="dataSearch.idPuntoEmision" ng-change="getComprobantes()">
                             <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
                                 {{item.ptoEmi}}
                             </option>
@@ -40,32 +40,31 @@
                     </div>
                 </div>
 
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12"> 
-                     <label for="date-range-filter">Rango Fechas: </label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">
-                                        <div class="custom-control custom-checkbox mr-sm-2">
-                                            <input type="checkbox" 
-                                                ng-model="dataSearch.checkBoxDate"
-                                                   ng-disabled="!(dataSearch.identificacionReceptor)"
-                                                class="custom-control-input" 
-                                                id="checkBoxDate">
-                                            <label class="custom-control-label" for="checkBoxDate"></label>
-                                        </div>
-                                    </div>
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                    <label for="date-range-filter">Rango Fechas: </label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <div class="custom-control custom-checkbox mr-sm-2">
+                                    <input type="checkbox" ng-model="dataSearch.checkBoxDate"
+                                        ng-disabled="!(dataSearch.identificacionReceptor)" class="custom-control-input"
+                                        id="checkBoxDate">
+                                    <label class="custom-control-label" for="checkBoxDate"></label>
                                 </div>
-
-                                <date-range-filter current-date="dataSearch.fechaInicio"
-                                                   start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
-                                                   result-range-date="resultRangeFilter(result)"></date-range-filter>
                             </div>
+                        </div>
+
+                        <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
+                            end-date="dataSearch.fechaFin"
+                            result-range-date="resultRangeFilter(result)"></date-range-filter>
+                    </div>
                 </div>
 
                 <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <label for="tipoDoc">Tipo Doc:</label>
-                        <select name="tipoDoc" id="tipoDoc" class="form-control b-0" ng-model="dataSearch.codDoc" ng-change="onSelectTipoDoc()">
+                        <select name="tipoDoc" id="tipoDoc" class="form-control b-0" ng-model="dataSearch.codDoc"
+                            ng-change="onSelectTipoDoc()">
                             <option value="">Todos</option>
                             <option ng-value="item.codDoc" ng-repeat="item in tiposDocumento">
                                 {{item.descripcion}}
@@ -92,8 +91,8 @@
                 <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <label>Buscar por Nro. Doc.:</label>
-                        <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial" 
-                               placeholder="Ej: 123 o 1-30" />
+                        <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial"
+                            placeholder="Ej: 123 o 1-30" />
                     </div>
                 </div>
                 <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12" ng-show="dataSearch.codDoc">
@@ -183,10 +182,10 @@
                             </button>
                         </span>
                         @* <span class="form-group pull-left page-size form-inline">
-                            <button type="button" class="btn btn-warning ml-2" uib-tooltip="Correo Comprobantes"
-                                tooltip-placement="top" ng-click="estadoCorreoComprobantes()">
-                                <i class="mdi mdi-contact-mail"></i> Correo
-                            </button>
+                        <button type="button" class="btn btn-warning ml-2" uib-tooltip="Correo Comprobantes"
+                        tooltip-placement="top" ng-click="estadoCorreoComprobantes()">
+                        <i class="mdi mdi-contact-mail"></i> Correo
+                        </button>
                         </span> *@
                     </div>
 
@@ -236,7 +235,8 @@
                         <tbody md-body>
                             <tr md-row md-auto-select="false" md-select="item" ng-disabled="!(item.codEstado===2)"
                                 md-on-select="onSelectComprobante"
-                                ng-repeat="item in comprobantes | orderBy: dataSearch.order | filter: textSearch " ng-class="item.style">
+                                ng-repeat="item in comprobantes | orderBy: dataSearch.order | filter: textSearch "
+                                ng-class="item.style">
 
                                 <td md-cell>
                                     <md-menu>
@@ -370,10 +370,9 @@
 
     <button class="btn btn-warning btn-lg" ng-if="tipo > 0" ng-click="refresh()">
         <i class="fa fa-close"></i> Cancelar
-    </button> 
+    </button>
 
 </div>
-@section Scripts{
-    <script src="~/js/factElect/services/docElectService.js" asp-append-version="true"></script>
+@section Scripts {
     <script src="~/js/factElect/controllers/documentoElectronicoCtrl.min.js" asp-append-version="true"></script>
 }

@@ -434,7 +434,7 @@ class InputSearchBarcodeCtrl extends BaseSearchArticulo {
                 }
             })
 
-        }, 500)
+        }, 800)
     }
 }
 
@@ -455,13 +455,13 @@ app.component('mdAutocompleteArticuloComponent', {
 });
 
 
+// ng - focus="$ctrl.focusDescripcionArticulo('#inputBarcode')"
 app.component("articuloSearchBarcode", {
     template: `<input  type="text" autocomplete="off"
                        class="form-control border-select" 
                        ng-model="$ctrl.searchText"  
                        ng-enter="$ctrl.getDataArticuloByEnterCode()"     
-                       id="inputBarcode" 
-                       ng-focus="$ctrl.focusDescripcionArticulo('#inputBarcode')" 
+                       id="inputBarcode"
                        placeholder="Ej: COMP1"> 
                 `,
     bindings: {

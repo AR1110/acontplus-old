@@ -1,5 +1,5 @@
 ﻿@page
-@model WebUI.Pages.GuiaRemision.IndexModel 
+@model WebUI.Pages.GuiaRemision.IndexModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "Index";
@@ -26,103 +26,102 @@
         <div class="card">
             <div class="card-body">
                 <div class="row">
-                     <div class="col-xl-7 col-lg-7 col-md-6 col-sm-12 col-12">
+                    <div class="col-xl-7 col-lg-7 col-md-6 col-sm-12 col-12">
                         <div class="row">
                             <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-                        <div class="form-gorup">
-                            <span for="establecimiento">Estab: <span class="text-danger">*</span></span>
-                            <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
-                                    class="form-control  border-select" ng-change="estabFilter()">
-                                <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
-                                    {{item.nombreComercial}}
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-                        <span for="date-range-filter">Rango Fechas: </span>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">
-                                        <div class="custom-control custom-checkbox mr-sm-2">
-                                            <input type="checkbox" 
-                                                ng-model="dataSearch.checkBoxDate"
-                                                   ng-disabled="!(dataSearch.byCliente>0)"
-                                                class="custom-control-input" 
-                                                id="checkBoxDate">
-                                            <label class="custom-control-label" for="checkBoxDate"></label>
+                                <div class="form-gorup">
+                                    <span for="establecimiento">Estab: <span class="text-danger">*</span></span>
+                                    <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
+                                        class="form-control  border-select" ng-change="estabFilter()">
+                                        <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
+                                            {{item.nombreComercial}}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+                                <span for="date-range-filter">Rango Fechas: </span>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <div class="custom-control custom-checkbox mr-sm-2">
+                                                <input type="checkbox" ng-model="dataSearch.checkBoxDate"
+                                                    ng-disabled="!(dataSearch.byCliente>0)" class="custom-control-input"
+                                                    id="checkBoxDate">
+                                                <label class="custom-control-label" for="checkBoxDate"></label>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <date-range-filter current-date="dataSearch.fechaInicio"
-                                                   start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
-                                                   result-range-date="resultRangeFilter(result)"></date-range-filter>
+                                    <date-range-filter current-date="dataSearch.fechaInicio"
+                                        start-date="dataSearch.fechaInicio" end-date="dataSearch.fechaFin"
+                                        result-range-date="resultRangeFilter(result)"></date-range-filter>
+                                </div>
                             </div>
-                    </div>
                         </div>
 
-                     </div>
-                     <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12">
+                    </div>
+                    <div class="col-xl-5 col-lg-5 col-md-6 col-sm-12 col-12">
                         <div class="row">
                             <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
-                        <div class="form-group">
-                            <span for="clienteFiltro">Cliente</span>
-                            <input type="text" id="clienteSearchFiltro" autocomplete="off" name="clienteSearchFiltro"
-                                   class="form-control border-select" placeholder="Ingrese C.I o Nombre Fiscal"
-                                   ng-model="modelTextSearch" typeahead-wait-ms="10"
-                                   ng-keyup="onKeyupClienteSearchFiltro()"
-                                   uib-typeahead="a as a.nombreFiscal for a in clienteSearch($viewValue)"
-                                   typeahead-loading="clienteFiltro.loading" typeahead-no-results="clienteFiltro.noResults"
-                                   typeahead-template-url="clienteSearchFiltro.html" typeahead-editable="false"
-                                   typeahead-on-select="selectedClienteSearchFiltro($item)" onClick="select();" />
+                                <div class="form-group">
+                                    <span for="clienteFiltro">Cliente</span>
+                                    <input type="text" id="clienteSearchFiltro" autocomplete="off"
+                                        name="clienteSearchFiltro" class="form-control border-select"
+                                        placeholder="Ingrese C.I o Nombre Fiscal" ng-model="modelTextSearch"
+                                        typeahead-wait-ms="10" ng-keyup="onKeyupClienteSearchFiltro()"
+                                        uib-typeahead="a as a.nombreFiscal for a in clienteSearch($viewValue)"
+                                        typeahead-loading="clienteFiltro.loading"
+                                        typeahead-no-results="clienteFiltro.noResults"
+                                        typeahead-template-url="clienteSearchFiltro.html" typeahead-editable="false"
+                                        typeahead-on-select="selectedClienteSearchFiltro($item)" onClick="select();" />
 
-                            <script type="text/ng-template" id="clienteSearchFiltro.html">
+                                    <script type="text/ng-template" id="clienteSearchFiltro.html">
                                 <div class="autocomplete-suggestion-uib-typeahead">
                                     <span class="item-title">
                                         <b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}
                                     </span>
                                 </div>
                             </script>
-                        </div>
-                    </div>
-                    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
-                        <div class="btn-group btn-group-sm mt-4" role="group" aria-label="Basic example">
-                                <button type="button" class="btn btn-info" ng-click="onClickBtnMore()">
-                                    <i class="fas fa-eye" uib-tooltip="Más opciones"></i>
-                                </button>
-                                <button type="button" class="btn btn-success" uib-tooltip="Recargar"
-                                        ng-click="getGuiasRemision()">
-                                    <i class="fas fa-redo"></i>
-                                </button>
+                                </div>
                             </div>
-                    </div>
+                            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+                                <div class="btn-group btn-group-sm mt-4" role="group" aria-label="Basic example">
+                                    <button type="button" class="btn btn-info" ng-click="onClickBtnMore()">
+                                        <i class="fas fa-eye" uib-tooltip="Más opciones"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-success" uib-tooltip="Recargar"
+                                        ng-click="getGuiasRemision()">
+                                        <i class="fas fa-redo"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                     </div>                    
+                    </div>
                 </div>
 
                 <div class="row justify-content-between" ng-if="moreSearchOptions">
-                      <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
-                    <div class="form-gorup">
-                        <span for="ptoEmision">Pto. Emisión: <span class="text-danger">*</span> </span>
-                        <select name="ptoEmision" id="ptoEmision" ng-model="dataSearch.idPuntoEmision"
+                    <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
+                        <div class="form-gorup">
+                            <span for="ptoEmision">Pto. Emisión: <span class="text-danger">*</span> </span>
+                            <select name="ptoEmision" id="ptoEmision" ng-model="dataSearch.idPuntoEmision"
                                 class="form-control  border-select" ng-change="getGuiasRemision()">
-                            <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
-                                {{item.ptoEmi}}
-                            </option>
-                        </select>
+                                <option ng-value="item.idPuntoEmision" ng-repeat="item in puntosEmision">
+                                    {{item.ptoEmi}}
+                                </option>
+                            </select>
+                        </div>
                     </div>
-                </div>
                     <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
                         <div class="form-group">
                             <span for="usuario">Usuario</span>
                             <input type="text" class="form-control border-select" ng-model="nombreCompleto"
-                                   ng-keyup="onKeyupUsuarioSearch()"
-                                   uib-typeahead="u as u.nombreCompleto for u in usuarioSearch($viewValue)"
-                                   typeahead-editable="false" placeholder="Buscar Usuario" autocomplete="off"
-                                   typeahead-template-url="usuarioSearchTemplate.html"
-                                   typeahead-no-results="usuarioSearch.noResults"
-                                   typeahead-on-select="selectedUsuarioSearch($item)">
+                                ng-keyup="onKeyupUsuarioSearch()"
+                                uib-typeahead="u as u.nombreCompleto for u in usuarioSearch($viewValue)"
+                                typeahead-editable="false" placeholder="Buscar Usuario" autocomplete="off"
+                                typeahead-template-url="usuarioSearchTemplate.html"
+                                typeahead-no-results="usuarioSearch.noResults"
+                                typeahead-on-select="selectedUsuarioSearch($item)">
 
                             <script type="text/ng-template" id="usuarioSearchTemplate.html">
                                 <div class="autocomplete-suggestion-uib-typeahead">
@@ -135,18 +134,18 @@
                     </div>
 
                     <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
-                    <div class="form-group">
-                        <span>Buscar por Nro. Doc.:</span>
-                        <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial" 
-                               placeholder="Ej: 123 o 1-30" />
+                        <div class="form-group">
+                            <span>Buscar por Nro. Doc.:</span>
+                            <input type="text" class="form-control border-select" ng-model="dataSearch.nroSecuencial"
+                                placeholder="Ej: 123 o 1-30" />
+                        </div>
                     </div>
-                </div>
 
-                     <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
+                    <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
                         <div class="form-group">
                             <span>Estado:</span>
                             <select id="estadoDocumentos" class="form-control" ng-model="dataSearch.codEstado"
-                                    ng-change="getGuiasRemision()">
+                                ng-change="getGuiasRemision()">
                                 <option value="">Todos</option>
                                 <option ng-value="item.codigo" ng-repeat="item in estadosDocumento">
                                     {{item.descripcion}}
@@ -158,7 +157,7 @@
                         <div class="form-group">
                             <span>Buscar</span>
                             <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
-                                   ng-model="dataSearch.bySearch" placeholder="Ej: 001-002">
+                                ng-model="dataSearch.bySearch" placeholder="Ej: 001-002">
                         </div>
                     </div>
                 </div>
@@ -188,7 +187,7 @@
                                     ng-if="accion.editar || accion.anular || accion.reporte || accion.enviarSri || accion.enviarCorreo">
                                     <md-menu>
                                         <md-button aria-label="Open demo menu" class="md-icon-button"
-                                                   ng-click="$mdMenu.open($event)">
+                                            ng-click="$mdMenu.open($event)">
                                             <icon class="mdi mdi-menu"></icon>
                                         </md-button>
                                         <md-menu-content class="md-dense">
@@ -203,7 +202,7 @@
 
                                             <md-menu-item ng-if="accion.editar">
                                                 <md-button ng-click="openModalEdit(item)"
-                                                           ng-disabled="item.anulada || item.autorizada">
+                                                    ng-disabled="item.anulada || item.autorizada">
                                                     <span md-menu-align-target>
                                                         <i class="ti-pencil"></i>
                                                         Editar
@@ -251,7 +250,6 @@
 </div>
 
 @section Scripts {
-        <script src="~/js/logistica/services/logisticaService.js" asp-append-version="true"></script>
-    @* <script src="~/js/controllers/logistica/guiaRemisionCtrl.js" asp-append-version="true"></script> *@
-        <script src="~/js/logistica/controllers/guiaRemisionCtrl.min.js" asp-append-version="true"></script>
+    <script src="~/js/logistica/services/logisticaService.js" asp-append-version="true"></script>
+    <script src="~/js/logistica/controllers/guiaRemisionCtrl.min.js" asp-append-version="true"></script>
 }

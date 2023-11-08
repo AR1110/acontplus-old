@@ -297,7 +297,8 @@
 
         //======================================MODAL CUOTA================================================ 
         $scope.openModalCuota = async (item) => {
-            try {
+            try { 
+
                 let modalParams = {
                     controller: 'modalCuotaCtrl',
                     template: FILE_PATH_PARTIAL_UI + 'Shared/_ModalCuota.cshtml',
@@ -305,15 +306,14 @@
                     isRenderRazorPartial: true
                 }
 
-                let spParams = { 
-                    idCuentaPorPagar: item.idCuentaPorPagar, 
-                    tipo: 2 
-                }
+                let spParams = JSON.stringify({ idCuentaPorPagar: item.idCuentaPorPagar, tipo: 2 })
 
 
                 showLoader();
-                cuentaPorPagarSvc.get(spParams).then(response=>{
-                    let cuotas = response.cuotas; 
+                _mS.getData('get', 'CuentaPorPagar?json=' + spParams, null, true).then(response => {
+
+                    let cuotas = response.payload ? JSON.parse(response.payload)[0] : []
+
                     modalParams.params = {
                         cuotas,
                         data: {
@@ -327,10 +327,31 @@
                     let modalRef = _modalSvc.openModalCustom(modalParams);
                     modalRef.result.then(res => {
                         if (typeof res === 'object') {
-                            $scope.initialLoad(); 
+                            $scope.initialLoad();
+
                         }
                     })
-                }).finally(()=>hideLoader()) 
+                    hideLoader()
+                })
+                // cuentaPorPagarSvc.get(spParams).then(response=>{
+                //     let cuotas = response.cuotas; 
+                //     modalParams.params = {
+                //         cuotas,
+                //         data: {
+                //             ...item,
+                //             id: item.idCuentaPorPagar,
+                //             codPago: item.codPago,
+                //             numeroIdentificacion: item.identificacion
+                //         },
+                //     }
+
+                //     let modalRef = _modalSvc.openModalCustom(modalParams);
+                //     modalRef.result.then(res => {
+                //         if (typeof res === 'object') {
+                //             $scope.initialLoad(); 
+                //         }
+                //     })
+                // }).finally(()=>hideLoader()) 
             } catch (error) {
                 hideLoader()
                 console.log(error)
