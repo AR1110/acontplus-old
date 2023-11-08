@@ -11,6 +11,7 @@ DECLARE @idTipoDocumento INT
 DECLARE @codTran VARCHAR(2)
 DECLARE @codDoc VARCHAR(2)
 DECLARE @documentoId INT 
+DECLARE @tipo INT = 1
 
 WHILE (1 = 1)
 BEGIN
@@ -33,9 +34,10 @@ BEGIN
 
 		--declare @targetpProcedure nvarchar(100);
 		--set @targetpProcedure = CAST(@RecvReqMsg AS nvarchar(100))
-		SELECT @codTran = nref.value('(codTran)[1]', 'VARCHAR(2)')
-			,@codDoc = nref.value('(codDoc)[1]', 'VARCHAR(2)')
-			,@documentoId = nref.value('(documentoId)[1]', 'INT')
+		SELECT @codTran     = nref.value('(codTran)[1]', 'VARCHAR(2)')
+			  ,@codDoc      = nref.value('(codDoc)[1]', 'VARCHAR(2)')
+			  ,@documentoId = nref.value('(documentoId)[1]', 'INT')
+			  ,@tipo        = nref.value('(tipo)[1]', 'INT')
 		FROM @RecvReqMsg.nodes('/msg') AS R(nref);
 
 		--IF LEN(@targetpProcedure) > 0
@@ -46,34 +48,32 @@ BEGIN
         PRINT @RecvReqMsgName
 		IF (@RecvReqMsgName = 'StockRequestMessage')
 		    BEGIN
-			    SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion
-			    FROM Inventario.TipoTransaccion WITH (NOLOCK)
-			    WHERE codigo = @codTran
+			    SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = @codTran
 
-			    SELECT TOP 1 @idTipoDocumento = idTipoDocumento
-			    FROM Inventario.TipoDocumento WITH (NOLOCK)
-			    WHERE codigo = @codDoc
+			    SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = @codDoc
 
-			    INSERT INTO Inventario.Transaccion (idTipoTransaccion,idArticulo,idBodega,idTipoDocumento,idDocumento,idMedida,idTarifa,cantidad,precioUnitario
-                                                    ,precioCosto,total,fechaRegistro,idUsuario
-				    )
-			    SELECT [TipoTransaccionId],[ProductId],[BodegaId],[TipoDocumentoId],[DocumentoId],[MedidaId],[TarifaId],[Cantidad],[PrecioUnitario]
-                                                    ,[PrecioCosto],[Total],[FechaRegistro],[idUsuario]
+                --> En caso de Actualizar una transaccion
+                IF @tipo = 2
+                    BEGIN
+                        DELETE FROM Inventario.Transaccion WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumento AND idDocumento = @documentoId
+                    END 
+
+			    INSERT INTO Inventario.Transaccion 
+                      (idTipoTransaccion,idArticulo,idBodega,idTipoDocumento,idDocumento,idMedida,idTarifa,cantidad,precioUnitario,precioCosto,total,fechaRegistro,idUsuario)
+			    SELECT [TipoTransaccionId],[ProductId],[BodegaId],[TipoDocumentoId],[DocumentoId],[MedidaId],[TarifaId],[Cantidad],[PrecioUnitario],[PrecioCosto],[Total],[FechaRegistro],[idUsuario]
 			    FROM Inventario.TransaccionTemp WITH(NOLOCK)
 			    WHERE estado = 1
-				    AND TipoTransaccionId = @idTipoTransaccion
-				    AND TipoDocumentoId = @idTipoDocumento
-				    AND DocumentoId = @documentoId
+				  AND TipoTransaccionId = @idTipoTransaccion
+				  AND TipoDocumentoId = @idTipoDocumento
+				  AND DocumentoId = @documentoId
 
 			    UPDATE st
-			    SET st.cantidad = st.cantidad - ISNULL(td.Cantidad, 0)
-			    FROM Inventario.Stock st WITH (ROWLOCK)
-			    INNER JOIN Inventario.TransaccionTemp td ON td.ProductId = st.idArticulo
-				    AND td.BodegaId = st.idBodega
-			    WHERE td.estado = 1
-				    AND td.TipoTransaccionId = @idTipoTransaccion
-				    AND td.TipoDocumentoId = @idTipoDocumento
-				    AND td.DocumentoId = @documentoId
+			    SET st.cantidad = st.cantidad + ISNULL(td.CantidadStock, 0)
+			    FROM Inventario.Stock                 st WITH (ROWLOCK)
+			    INNER JOIN Inventario.TransaccionTemp td WITH (ROWLOCK) ON td.ProductId = st.idArticulo AND td.BodegaId = st.idBodega
+			    WHERE td.TipoTransaccionId = @idTipoTransaccion
+				  AND td.TipoDocumentoId = @idTipoDocumento
+				  AND td.DocumentoId = @documentoId
 
 			    UPDATE ar
 			    SET ar.stock = (
@@ -85,11 +85,12 @@ BEGIN
 			    WHERE ar.idArticulo IN (
 					    SELECT t.ProductId
 					    FROM Inventario.TransaccionTemp t
-					    WHERE t.estado = 1
-						    AND t.TipoTransaccionId = @idTipoTransaccion
-						    AND t.TipoDocumentoId = @idTipoDocumento
-						    AND t.DocumentoId = @documentoId
+					    WHERE t.TipoTransaccionId = @idTipoTransaccion
+						  AND t.TipoDocumentoId = @idTipoDocumento
+						  AND t.DocumentoId = @documentoId
 					    )
+
+                UPDATE Inventario.TransaccionTemp SET estado = 2 WHERE TipoTransaccionId = @idTipoTransaccion AND TipoDocumentoId = @idTipoDocumento AND DocumentoId = @documentoId
 		END
 		--ELSE IF @RecvReqMsgName = N'https://schemas.microsoft.com/SQL/ServiceBroker/EndDialog'
 		--    BEGIN
