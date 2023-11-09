@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -11,19 +12,20 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import { Outlet, useNavigate } from 'react-router-dom';
+import Stack from '@mui/material/Stack';
 import { PrivateRoutes, PublicRoutes } from '@/core/models';
 import { useAuthStore } from '@/stores/authStore'; 
-import ModeToggleButton from '@/core/components/ModeToggleButton';
- 
+import ModeToggleButton from '@/core/components/ModeToggleButton'; 
 
 const pages = ['Pedidos'];
 const settings = ['Cerrar sesión'];
+ 
 
 function MainLayout() {
     const navigate = useNavigate(); 
     const dataEstab = useAuthStore(state => state.dataEstab);
     const closeSession = useAuthStore(state => state.logOut);
+    console.log(dataEstab)
     
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
@@ -157,10 +159,15 @@ function MainLayout() {
                                 </Button>
                             ))}
                         </Box>
-
-                        <Typography sx={{ display: { xs: 'flex' }, mr: 1 }} variant="body2">
-                            Estab: {dataEstab?.nombreComercial}
-                        </Typography>
+                        <Stack>
+                             <Typography   variant="body2">
+                             Estab: {dataEstab?.nombreComercial} 
+                        </Typography> 
+                        <Typography variant="body2"> 
+                            <span>Usuario: {dataEstab?.usuario}</span>
+                        </Typography>                            
+                        </Stack> 
+                          
                         <Box sx={{ flexGrow: 0 }}>
                         <ModeToggleButton />
                             <Tooltip title="Open settings">
