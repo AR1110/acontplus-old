@@ -183,7 +183,7 @@ BEGIN
                             -- Articulo Fraccionado
                             IF EXISTS (SELECT 1 FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticuloStock AND idMedida = @idMedida)
                                 BEGIN
-                                    SELECT TOP 1 @cantidad = @cantidad  * conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida
+                                    SELECT TOP 1 @cantidad = @cantidad  * conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticuloStock AND idMedida = @idMedida
                                 END
                                     
 							INSERT INTO Inventario.Transaccion WITH(ROWLOCK)
