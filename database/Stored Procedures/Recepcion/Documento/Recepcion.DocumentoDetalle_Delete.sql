@@ -26,6 +26,7 @@ CREATE PROCEDURE Recepcion.DocumentoDetalle_Delete	@idUsuarioRol INT,@id INT
 AS
 BEGIN
 	SET NOCOUNT ON; 
+	set language spanish;
 	DECLARE @idEntidad INT , @idUsuario INT
 	DECLARE @idDocumento INT ,@fechaEmision DATETIME
 
@@ -44,14 +45,6 @@ BEGIN
 		BEGIN TRAN
 
 			DELETE FROM Recepcion.Doc_Detalle_Impuesto WHERE idDocumentoDetalle = @id
-			
-			DELETE FROM Recepcion.DocumentoDetalle WHERE idDocumentoDetalle = @id
-			
-			IF NOT EXISTS(SELECT 1 FROM Recepcion.DocumentoDetalle WHERE idDocumento = @idDocumento)
-				BEGIN
-					UPDATE Recepcion.DocumentoRecibido SET complete = 0 WHERE idDocumento = @idDocumento
-				END
-
 
             IF EXISTS (SELECT 1 FROM Recepcion.DocumentoDetalle t INNER JOIN Articulo a WITH(NOLOCK) ON t.idArticulo = a.idArticulo WHERE t.idDocumento = @idDocumento  AND a.llevaInventario = 1)
 				BEGIN
@@ -62,12 +55,12 @@ BEGIN
 
                     -- variables 
 
-			        SELECT TOP 1 @codDoc = CASE WHEN codDoc = '01' THEN 'FE' WHEN codDoc = '04' THEN 'NC' END , @fechaEmision = fechaEmision FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento
+			        SELECT TOP 1 @codDoc = CASE WHEN codDoc = '01' THEN 'FE' WHEN codDoc = '04' THEN 'NC' END , @fechaEmision = cast(fechaEmision as date) FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento
 
                     SELECT TOP 1 @idArticulo = idArticulo
                                 ,@idBodega   = idBodega 
                                 ,@idMedida   = idMedida
-                                ,@cantidad   = cantidad * IIF(@codDoc = '01',-1,1)
+                                ,@cantidad   = cantidad * IIF(@codDoc = 'FE',-1,1)
                     FROM Recepcion.DocumentoDetalle WITH (NOLOCK) WHERE idDocumentoDetalle = @id
 
 			        SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo  = @codDoc
@@ -94,7 +87,13 @@ BEGIN
 
 	                UPDATE dbo.Articulo WITH(ROWLOCK) SET stock = ISNULL(@stock,0) WHERE idArticulo = @idArticulo
 				END 
+					
+                DELETE FROM Recepcion.DocumentoDetalle WHERE idDocumentoDetalle = @id
 
+                IF NOT EXISTS(SELECT 1 FROM Recepcion.DocumentoDetalle WHERE idDocumento = @idDocumento)
+				    BEGIN
+					    UPDATE Recepcion.DocumentoRecibido SET complete = 0 WHERE idDocumento = @idDocumento
+				    END
 		COMMIT TRAN
 		SELECT '1' code, 'Articulo eliminado exitosamente del stock' as 'message'
 	END TRY
