@@ -25,7 +25,7 @@
         decodeToken
     ) {
 
-        $scope.typeSend = 'SRI'; 
+        $scope.typeSend = 'SRI';
 
 
         const TIPO_DOC_FV = _commonSvc.tipoDoc['FV'];
@@ -134,37 +134,41 @@
 
 
         $scope.getTotales = () => {
-            let total = 0,
-                totalAbono = 0,
-                totalSaldo = 0;
-            for (let val of $scope.facturas) {
-                if (val.estadoFinanciero !== 'Anulada') {
-                    total += val.total;
-                    totalAbono += val.abono;
-                    totalSaldo += val.saldo;
-                }
-            }
+            let { total,
+                totalAbono,
+                totalSaldo } = $scope.facturas.reduce((total, factura) => {
+                    if (factura.codEstado !== 'A') {
+                        total.total += factura.total;
+                        total.totalAbono += factura.abono;
+                        total.totalSaldo += factura.saldo;
+                    }
+                    return total;
+                }, {
+                    total: 0,
+                    totalAbono: 0,
+                    totalSaldo: 0
+                })
             $scope.total = _fS.roundNumber(total, 5);
             $scope.totalAbono = _fS.roundNumber(totalAbono, 5);
             $scope.totalSaldo = _fS.roundNumber(totalSaldo, 5);
         }
 
- 
+
 
         $scope.getFacturas = function () {
 
             try {
 
-                if($scope.dataSearch.nroSecuencial){
-                    if(!_fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)){
+                if ($scope.dataSearch.nroSecuencial) {
+                    if (!_fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
                         $scope.dataSearch.checkBoxFecha = true;
                         _tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
                         return
                     }
-                    if(!($scope.dataSearch.idCliente>0)){
+                    if (!($scope.dataSearch.idCliente > 0)) {
                         $scope.dataSearch.checkBoxFecha = false;
                     }
-                } 
+                }
 
                 let dataSearch = {
                     tipo: 1,
@@ -228,7 +232,7 @@
                 hideLoader();
             })
 
-            facturaSvc.getDataForm().then(result => { 
+            facturaSvc.getDataForm().then(result => {
                 $scope.jsonPermission = JSON.parse(result[9][0].jsonPermission)
             })
 
