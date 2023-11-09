@@ -9,17 +9,19 @@ import { useSaleStore } from '@/stores';
 import { DOC_TYPE } from '@/core/constants'; 
 
 const actions = [
-    { icon: <FileCopyIcon color='warning' />, codDoc: "NE", name: 'Nota Entrega' },
-    { icon: <FileCopyIcon color='primary' />, codDoc: "FV", name: 'Factura' },
-    { icon: <SaveIcon color='success' />, codDoc: "OR", name: 'Guardar' },
+    { icon: <FileCopyIcon color='warning' />, codDoc: DOC_TYPE.NE, name: 'Nota Entrega' },
+    { icon: <FileCopyIcon color='primary' />, codDoc: DOC_TYPE.FV, name: 'Factura' },
+    { icon: <SaveIcon color='success' />, codDoc: DOC_TYPE.OR, name: 'Guardar' },
     { icon: <RemoveIcon color='error' />, codDoc: "D", name: 'Limpiar' },
 ];
+  
 
 export default function CartMobileAction() {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(!open);
     const handleClose = () => setOpen(false);
  
+
     const { save } = useSaleStore(state => ({
         save: state.save,
         items: state.items,
@@ -31,8 +33,8 @@ export default function CartMobileAction() {
     //Even Navigation 
     const navigation = useSaleStore(state => state.navigation); 
 
-    const handleTypeAction = (codDoc: string) => {
-        if (codDoc === DOC_TYPE.OR) {
+    const handleTypeAction = (codDoc: string) => { 
+        if (codDoc === "D") {
             resetForm();
             navigation.closeDialogCustom();
             return
