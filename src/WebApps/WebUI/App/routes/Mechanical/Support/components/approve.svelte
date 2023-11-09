@@ -148,6 +148,7 @@
               idMedida: dataMedida.idMedida,
               conversion: dataMedida.conversion,
               cantidad: 1,
+              cantidadOriginal: 1,
               precioVenta: dataTarifa.precioVenta,
               precioSinSubsidio: 0,
               precioUnitario: dataTarifa.precioVenta,
@@ -159,6 +160,9 @@
               nota: "S/N",
             };
             supportDetails = [...supportDetails, obj];
+
+            console.log("supportDetails");
+            console.log(supportDetails);
             getTotales();
           }
         }
@@ -463,7 +467,10 @@
       ).precioConIva;
       item.decimals = decimals;
       item.total = item.cantidad * item.precioUnitario;
-      item.fechaConsolidaciones = fechaConsolidaciones.filter((x) => x.idArticulo === item.idArticulo);
+      item.fechaConsolidaciones = fechaConsolidaciones.filter(
+        (x) => x.idArticulo === item.idArticulo
+      );
+      item.cantidadOriginal = item.cantidad;
     });
   };
 
@@ -511,7 +518,7 @@
     }
   };
 
-  // Todo: Save FACTURA
+  // ======================== Action for Factura =========================
   const showAlertFactura = () => {
     Swal.fire({
       title: "Guardar Factura",
@@ -543,8 +550,8 @@
       getTiempoCredito.diasCredito
     );
 
-    support.date = newFormatDate(support.date);
-    support.fechaVencimiento = newFormatDate(support.fechaVencimiento);
+    //support.date = newFormatDate(support.date);
+    //support.fechaVencimiento = newFormatDate(support.fechaVencimiento);
 
     let data = {
       factura: JSON.stringify(MapperToAction.principalMapperTo(support)),
@@ -567,11 +574,11 @@
       });
   };
 
-  const newFormatDate = (date: string) => {
-    let splitDate = date.split("-");
-    let newDate = `${splitDate[0]}-${splitDate[1]}-${splitDate[2]}`;
-    return newDate;
-  };
+  // const newFormatDate = (date: string) => {
+  //   let splitDate = date.split("-");
+  //   let newDate = `${splitDate[0]}-${splitDate[1]}-${splitDate[2]}`;
+  //   return newDate;
+  // };
 
   const getFechaVencimiento = function (fechaEmision, dia) {
     let fechaVencimiento = new Date(fechaEmision);
@@ -585,11 +592,33 @@
     return newFechaVencimiento;
   };
 
-  // Todo: Nota Entrega.
-  const showAlertNotaEntrega = () => {
+  // ======================== Action for NotaEntrega =========================
+
+  // ======================== GenerateNumberOfSerie ======================
+  const generateSerieNumberNotaEntrega = function () {
+    showLoader();
+    let params = {
+      tipo: 4,
+      idPuntoEmision: support.puntoEmisionId,
+    };
+    NotaEntregaService.get(JSON.stringify(params))
+      .then((response) => {
+        if (response) {
+          let payload = JSON.parse(response.payload);
+          let serieComprobante = payload[0][0].serieComprobante;
+
+          showAlertNotaEntrega(serieComprobante);
+        }
+      })
+      .finally(() => {
+        hideLoader();
+      });
+  };
+
+  const showAlertNotaEntrega = (serieComprobante) => {
     Swal.fire({
       title: "Guardar Nota Entrega",
-      text: "Esta Ud. seguro de Guardar este Nota Entrega de Venta?",
+      text: `¿Esta Ud. seguro de Guardar este Nota Entrega N° ${serieComprobante}?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -610,7 +639,7 @@
     support.tarifa = tarifaImpuestoFactura[0].tarifa;
 
     // Todo: Format new date.
-    support.date = newFormatDate(support.date);
+    //support.date = newFormatDate(support.date);
 
     // Todo: Tiempo crédito.
     support.idTiempoCredito = getTiempoCredito.idTiempoCredito;
@@ -626,10 +655,10 @@
       support.date,
       getTiempoCredito.diasCredito
     );
-    support.fechaVencimiento = newFormatDate(support.fechaVencimiento);
+    //support.fechaVencimiento = newFormatDate(support.fechaVencimiento);
 
     let newData = {
-      notaEntrega: MapperToAction.notaEntregaMapper(support),
+      notaEntrega: MapperToAction.principalMapperTo(support),
       detalles: MapperToAction.detalleNotaEntrega(supportDetails, support.date),
       infoAdicionalArticulo: [],
     };
@@ -651,7 +680,7 @@
       });
   };
 
-  // Todo: Save DETALLES
+  // ======================== Action for SOPORTE =========================
   const onUpdate = () => {
     if (!onValidate()) return;
 
@@ -688,6 +717,7 @@
       });
   };
 
+  // ======================== VALIDATIONS =========================
   const onValidate = () => {
     let isValidate = true;
     try {
@@ -744,6 +774,7 @@
     }
   };
 
+  // ======================== Init Modal =========================
   supportStore.subscribe((values) => {
     support = values.support;
     supportDetails = values.supportDetails;
@@ -942,7 +973,7 @@
                     >
                     <!-- svelte-ignore a11y-invalid-attribute -->
                     <a
-                      on:click={showAlertNotaEntrega}
+                      on:click={generateSerieNumberNotaEntrega}
                       class="dropdown-item"
                       href="#">Nota Entrega</a
                     >
