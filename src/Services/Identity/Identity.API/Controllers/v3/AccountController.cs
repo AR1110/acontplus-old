@@ -1,7 +1,9 @@
 ﻿using Common.Core.Models;
 using Identity.API.Dtos;
+using Identity.Core.Entities;
 using Identity.Core.Interfaces;
 using Identity.Core.Models;
+using Identity.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -15,6 +17,8 @@ namespace Identity.API.Controllers.v3
     [ApiVersion("3.0")]
     public class AccountController : ControllerBase
     {
+        private readonly ApplicationDbContext _context;
+
         private readonly IConfiguration _config;
         private readonly ITokenService _tokenService;
         private readonly IAccountService _accountService;
@@ -22,12 +26,14 @@ namespace Identity.API.Controllers.v3
         public AccountController(IConfiguration config,
                 ITokenService tokenService,
                 LogWriter log,
-                IAccountService accountService)
+                IAccountService accountService,
+                            ApplicationDbContext context)
         {
             _config = config;
             _tokenService = tokenService;
             _log = log;
             _accountService = accountService;
+            _context = context;
         }
 
         [AllowAnonymous]
@@ -46,18 +52,18 @@ namespace Identity.API.Controllers.v3
                     {
                         userData.ForEach(x => x.UrlGateway = _config["ApiGateways:Acontplus"]);
 
-                        var jwtToken = _tokenService.CreateToken(userData.FirstOrDefault());
+                        var token = _tokenService.CreateToken(userData.FirstOrDefault());
 
-                        if (jwtToken != null)
+                        if (token == null || string.IsNullOrEmpty(token))
                         {
-                            _log.LogActivity("Login successful jwt: " + jwtToken);
-                        }
-                        else
-                        {
+                            _log.LogActivity("Error al generar el token in restaurant: " + _response.payload);
                             return BadRequest("Error al iniciar session");
                         }
 
-                        userData.ForEach(x => x.Token = jwtToken);
+                        userData.ForEach(x => x.Token = token);
+
+                        _context.LoginHistories.Add(new LoginHistory { UserId = userData[0].UserId, Username = userData[0].Username, UserRoleId = userData[0].UserRoleId, UserAgent = authRequest.UserAgent, Token = token });
+                        await _context.SaveChangesAsync();
 
                         return Ok(new
                         {
@@ -71,6 +77,11 @@ namespace Identity.API.Controllers.v3
                         });
                     }
                 }
+                else
+                {
+                    _context.loginFaileds.Add(new LoginFailed { UserAgent = authRequest.UserAgent, Username = authRequest.Username, Password = authRequest.Password });
+                    await _context.SaveChangesAsync();
+                }
                 return Ok(_response);
             }
             catch (Exception ex)
@@ -81,21 +92,23 @@ namespace Identity.API.Controllers.v3
         }
         [AllowAnonymous]
         [HttpPost("createToken")]
-        public IActionResult CreateToken([FromBody] UserData userData)
+        public async Task<IActionResult> CreateToken([FromBody] UserData userData)
         {
             try
             {
                 userData.UrlGateway = _config["ApiGateways:Acontplus"];
-                var jwtToken = _tokenService.CreateToken(userData);
-                if (jwtToken != null)
+                var token = _tokenService.CreateToken(userData);
+                if (token == null || string.IsNullOrEmpty(token))
                 {
-                    _log.LogActivity("Login successful: userRoleId" + Convert.ToString(userData.UserRoleId) + " \n jwt: " + jwtToken);
+                    _log.LogActivity("Error al generar el token en Restaurant: " + JsonConvert.SerializeObject(userData));
+                    return BadRequest("Error al iniciar session");
                 }
                 else
                 {
-                    return BadRequest("Error al iniciar session");
+                    _context.LoginHistories.Add(new LoginHistory { UserId = userData.UserId, Username = userData.Username, UserRoleId = userData.UserRoleId, UserAgent = userData.UserAgent, Token = token });
+                    await _context.SaveChangesAsync();
                 }
-                userData.Token = jwtToken;
+                userData.Token = token;
                 return Ok(new
                 {
                     code = "1",

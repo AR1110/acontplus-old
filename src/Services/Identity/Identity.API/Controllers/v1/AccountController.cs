@@ -62,7 +62,7 @@ namespace Identity.API.Controllers.v1
 
                         if (token == null || string.IsNullOrEmpty(token))
                         {
-                            _log.LogActivity("Error al generar el token: " + _response.payload);
+                            _log.LogActivity("Error al generar el token en Acontplus Web: " + _response.payload);
                             return BadRequest("Error al iniciar session");
                         }
 
@@ -111,21 +111,21 @@ namespace Identity.API.Controllers.v1
         }
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult CreateToken([FromBody] UserData userData)
+        public async Task<IActionResult> CreateToken([FromBody] UserData userData)
         {
             try
             {
                 userData.UrlGateway = _config["ApiGateways:Acontplus"];
                 var token = _tokenService.CreateToken(userData);
-                if (token == null)
+                if (token == null || string.IsNullOrEmpty(token))
                 {
                     _log.LogActivity("Error al generar el token: " + JsonConvert.SerializeObject(userData));
                     return BadRequest("Error al iniciar session");
                 }
                 else
                 {
-                    _context.LoginHistories.Add(new LoginHistory { UserId = userData.UserId, Username = userData.Username, UserRoleId = userData.UserRoleId, UserAgent = userData.UserAgent, Token = token });
-                    _context.SaveChanges();
+                   _context.LoginHistories.Add(new LoginHistory { UserId = userData.UserId, Username = userData.Username, UserRoleId = userData.UserRoleId, UserAgent = userData.UserAgent, Token = token });
+                   await _context.SaveChangesAsync();
                 }
                 userData.Token = token;
                 return Ok(new

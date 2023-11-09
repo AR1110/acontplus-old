@@ -9,7 +9,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
-import { useNavigate } from 'react-router-dom';
+import { json, useNavigate } from 'react-router-dom';
 import { PrivateRoutes } from "@/core/models";
 import background from '/assets/images/background/background.jpeg';
 import { SnackbarUtility } from '@/core/utilities';
@@ -18,7 +18,6 @@ import { hideLoader, showLoader } from '@/spinner';
 import EstabsDialog from './EstabsDialog';
 import Copyright from './Copyright';
 import { useState } from 'react';
-
 
 
 const LoginPage = () => {
@@ -43,13 +42,14 @@ const LoginPage = () => {
   const formik = useFormik({
     initialValues: {
       username: '',
-      password: '', 
+      password: '',
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
       showLoader();
-      authService.login(values.username, values.password).then(response => {
-        
+      const agent = navigator.userAgent;
+      authService.login(values.username, values.password, JSON.stringify({ application: "Restaurant", browser: agent })).then(response => {
+
         if (response.code === "0" || response.id === "0") {
           SnackbarUtility.warning(response.message);
         }
@@ -57,19 +57,19 @@ const LoginPage = () => {
           const userRoles = JSON.parse(response.payload);
           const establecimientos = userRoles.flatMap((userRole: any) => userRole.establecimientos)
 
-          if (establecimientos.length > 1) { 
+          if (establecimientos.length > 1) {
             setEstabDialogParms(userRoles)
             setOpen(true);
-          } else { 
+          } else {
             SnackbarUtility.success("Inciando Sessión");
             const dataLogin = userRoles[0];
-        
+
             setToken(dataLogin.token)
             setUserData(dataLogin);
             setEstabs(dataLogin.establecimientos);
             navigate(`/${PrivateRoutes.PRIVATE}`, { replace: true });
-          } 
-        } 
+          }
+        }
       }).finally(() => {
         hideLoader();
       })
