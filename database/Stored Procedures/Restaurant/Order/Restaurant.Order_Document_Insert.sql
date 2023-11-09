@@ -84,7 +84,9 @@ BEGIN
         envioSri        BIT NULL DEFAULT 0,
         idArticulo      INT NULL DEFAULT 0,
         [description]   VARCHAR(500) NULL ,
-        remainingQuantity NUMERIC(18,5)
+        remainingQuantity NUMERIC(18,5),
+        cantidadStock NUMERIC (18,5) NOT NULL,
+        cantidadTransaccion NUMERIC(18,5) NOT NULL
     )
     
     DECLARE @tblTaxes AS TABLE (
@@ -723,11 +725,13 @@ BEGIN
                 ,precioUnitario            NUMERIC(18,5)
                 ,precioCosto               NUMERIC(18,5) 
                 ,precioTotalSinImpuesto    NUMERIC(18,5)
+                ,cantidadStock NUMERIC (18,5) NOT NULL
+                ,cantidadTransaccion NUMERIC(18,5) NOT NULL
             )
 
             --INSERT ITEMS
-            INSERT INTO @tblInventory(idArticulo, idBodega, idMedida, idTarifa, cantidad, precioUnitario, precioCosto, precioTotalSinImpuesto)
-            SELECT a.idArticulo, bodegaId, a.idMedida, i.feeId, i.quantity, i.price, a.precioCosto, i.total
+            INSERT INTO @tblInventory(idArticulo, idBodega, idMedida, idTarifa, cantidad, precioUnitario, precioCosto, precioTotalSinImpuesto, cantidadStock, cantidadTransaccion)
+            SELECT a.idArticulo, bodegaId, a.idMedida, i.feeId, i.quantity, i.price, a.precioCosto, i.total, cantidadStock, cantidadTransaccion
             FROM @tblItems i
             INNER JOIN Restaurant.v_Item ri ON i.itemId = ri.Id
             INNER JOIN Articulo a WITH (NOLOCK) ON ri.idArticulo = a.idArticulo 
@@ -776,27 +780,19 @@ BEGIN
             
             IF EXISTS (SELECT 1 FROM @tblInventory)
                 BEGIN
-                    DECLARE cursor_inventory CURSOR LOCAL FOR
-                   
-                    SELECT idArticulo, idBodega, idMedida, idTarifa, cantidad, precioUnitario, precioCosto, precioTotalSinImpuesto FROM @tblInventory
+                    DECLARE @idTipoTransaccion  INT ,@idTipoDocumentoIv INT
 
-                    OPEN cursor_inventory
-                        FETCH NEXT FROM cursor_inventory INTO @idArticulo
-                                                            , @idBodega
-                                                            , @idMedida
-                                                            , @idTarifa
-                                                            , @cantidad
-                                                            , @precioUnitario
-                                                            , @precioCosto
-                                                            , @precioTotalSinImpuesto
-                        WHILE @@FETCH_STATUS = 0
-                            BEGIN
-                                EXEC Inventario.Transaccion_Insert 'S', @codDocTran, @fechaEmision, @documentoId,  @idArticulo, @idBodega ,@idMedida,@idTarifa,@cantidad,@precioUnitario,@precioCosto,@precioTotalSinImpuesto, @userId
-                                FETCH NEXT FROM cursor_inventory INTO @idArticulo,@idBodega,@idMedida, @idTarifa,@cantidad,@precioUnitario,@precioCosto,@precioTotalSinImpuesto
-                            END
-                    CLOSE cursor_inventory
-                    DEALLOCATE cursor_inventory  
+                    SELECT TOP 1 @idTipoDocumentoIv = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = @codDocTran
+
+                    SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'S'
+
+                    INSERT INTO Inventario.TransaccionTemp([TipoTransaccionId], [ProductId], [BodegaId], [TipoDocumentoId], [DocumentoId], [MedidaId], [TarifaId], [Cantidad], [CantidadStock], [PrecioUnitario], [PrecioCosto], [Total], [FechaRegistro], [idUsuario])
+			        SELECT @idTipoTransaccion, idArticulo, idBodega, @idTipoDocumentoIv, @documentoId, idMedida, idTarifa, cantidadTransaccion, cantidadStock, precioCosto, precioUnitario, precioTotalSinImpuesto, @fechaEmision, @userId 
+                    FROM @tblInventory
+
+                   EXEC dbo.Transaccion_Handler_Init 'S', @codDocTran, @documentoId, DEFAULT
                 END
+
         END
 
     SET @serieDocument = (SELECT Common.ufnGetSerieDocument(@estab, @ptoEmi, @nroDocumento, DEFAULT))
