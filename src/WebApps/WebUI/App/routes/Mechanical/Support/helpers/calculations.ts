@@ -100,9 +100,6 @@ const calculations = () => {
   };
 
   const calculateTotal = async (cell) => {
-    console.log("calculateTotal");
-    console.log(cell);
-
     const row = cell.getRow().getData();
     const decimal = row.decimals[0];
 
@@ -124,6 +121,7 @@ const calculations = () => {
       cell.getRow().update({
         tarifas: articuloTarifas,
         idTarifa: articuloTarifas[0].idTarifa,
+        conversion: dataMedida.conversion,
         precioUnitario: sS.roundNumber(
           articuloTarifas[0].precioVenta,
           decimal.nroPrecio

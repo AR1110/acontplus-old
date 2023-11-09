@@ -9,7 +9,7 @@ GO
 -- Author:		Alexis Ramirez
 -- Create date: 2021-06-25
 -- Description:	SP Para leer los datos e la tabla articulo
--- Mechanical.SupportDetail_Get 157, '{"tipo": 1,"id":2}', ''
+-- Mechanical.SupportDetail_Get 157, '{"tipo": 1,"id": 2}', ''
 -- =============================================
 -- DROP PROC Mechanical.SupportDetail_Get
 CREATE OR ALTER PROCEDURE Mechanical.SupportDetail_Get
@@ -32,7 +32,7 @@ BEGIN
         BEGIN
             SELECT @Id = Id FROM OPENJSON(@json) WITH (Id INT '$.id')
 
-            SET @tableNames = 'support,supportDetail,medidas,establecimiento,bodega,tipoIva,decimal,ptoEmision,tiempoCredito,tarifaImpuesto'
+            SET @tableNames = 'support,supportDetail,medidas,fechaConsolidaciones,establecimiento,bodega,tipoIva,decimal,ptoEmision,tiempoCredito,tarifaImpuesto'
 
             SELECT v_s.Id
                   ,v_s.PuntoEmisionId
@@ -44,6 +44,9 @@ BEGIN
                   ,v_s.UserAssignedId                  
                   ,v_s.BusinessName
                   ,v_s.idCard
+                  ,v_s.Address
+                  ,v_s.Telephone
+                  ,v_s.Email
                   ,v_s.codEstab
                   ,v_s.status
 	        FROM Mechanical.v_Support v_s WITH (NOLOCK)
@@ -92,6 +95,7 @@ BEGIN
 								ORDER BY ta.predeterminada DESC FOR JSON PATH
                                 )
 			   ,orden = IIF(af.gestionVenta = 1,1,3)
+               ,af.conversion
 			FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
 			INNER JOIN dbo.Medida         m WITH (NOLOCK) ON m.idMedida = af.idMedida
 			WHERE af.idArticulo IN (SELECT ArticuloId FROM Mechanical.SupportDetail md WITH (NOLOCK) WHERE md.SupportId = @Id)
@@ -112,10 +116,17 @@ BEGIN
 								WHERE ap.idArticulo = a.idArticulo
 								ORDER BY ta.predeterminada DESC FOR JSON PATH)
 			  ,orden = 2
+              ,conversion = 0
 			FROM dbo.Articulo     a WITH (NOLOCK)
 			INNER JOIN dbo.Medida m WITH (NOLOCK) ON m.idMedida = a.idMedida
 			WHERE a.idArticulo IN (SELECT ArticuloId FROM Mechanical.SupportDetail md WITH (NOLOCK) WHERE md.SupportId = @Id )
 			ORDER BY orden ASC
+            
+            SELECT idArticulo
+                    ,idBodega
+                    ,fechaConsolidacion 
+            FROM Inventario.Stock 
+            WHERE idArticulo IN (SELECT ArticuloId FROM Mechanical.SupportDetail md WITH (NOLOCK) WHERE md.SupportId = @Id)
             
             SELECT idEstablecimiento
                     , codEstab
