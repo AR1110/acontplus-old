@@ -62,6 +62,16 @@ BEGIN
                 IF @tipo = 3
                     BEGIN
                         UPDATE Inventario.Transaccion SET estado = 0 WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumento AND idDocumento = @documentoId
+                        
+                        --> Actualizar Stock
+			            UPDATE st SET st.cantidad = st.cantidad + ISNULL(td.CantidadAnulada, 0)
+			            FROM Inventario.Stock                 st WITH (ROWLOCK)
+			            INNER JOIN Inventario.TransaccionTemp td WITH (ROWLOCK) ON td.ProductId = st.idArticulo AND td.BodegaId = st.idBodega
+			            WHERE td.TipoTransaccionId = @idTipoTransaccion
+				          AND td.TipoDocumentoId = @idTipoDocumento
+				          AND td.DocumentoId = @documentoId
+                          AND td.CantidadStock != 0
+                    
                     END 
 
                 --> Insertamos solo en el proceso de Editar o Crear una Transaccion
@@ -85,23 +95,24 @@ BEGIN
 				          AND td.DocumentoId = @documentoId
                           AND td.CantidadStock != 0
 
-			            UPDATE ar
-			            SET ar.stock = (
-					            SELECT SUM(s.cantidad)
-					            FROM Inventario.Stock s WITH (NOLOCK)
-					            WHERE s.idArticulo = ar.idArticulo
-					            )
-			            FROM dbo.Articulo ar WITH (ROWLOCK)
-			            WHERE ar.idArticulo IN (
-					            SELECT t.ProductId
-					            FROM Inventario.TransaccionTemp t
-					            WHERE t.TipoTransaccionId = @idTipoTransaccion
-						          AND t.TipoDocumentoId = @idTipoDocumento
-						          AND t.DocumentoId = @documentoId
-					            )
-
-                        UPDATE Inventario.TransaccionTemp SET estado = 2 WHERE TipoTransaccionId = @idTipoTransaccion AND TipoDocumentoId = @idTipoDocumento AND DocumentoId = @documentoId AND estado = 1
+                        UPDATE Inventario.TransaccionTemp SET estado = 2 WHERE TipoTransaccionId = @idTipoTransaccion AND TipoDocumentoId = @idTipoDocumento AND DocumentoId = @documentoId 
                     END 
+
+                --> Actualizar Stock General
+                UPDATE ar
+			    SET ar.stock = (
+					    SELECT SUM(s.cantidad)
+					    FROM Inventario.Stock s WITH (NOLOCK)
+					    WHERE s.idArticulo = ar.idArticulo
+					    )
+			    FROM dbo.Articulo ar WITH (ROWLOCK)
+			    WHERE ar.idArticulo IN (
+					    SELECT t.ProductId
+					    FROM Inventario.TransaccionTemp t
+					    WHERE t.TipoTransaccionId = @idTipoTransaccion
+						    AND t.TipoDocumentoId = @idTipoDocumento
+						    AND t.DocumentoId = @documentoId
+					    )
 		END
         END CONVERSATION @RecvReqDlgHandle;
         COMMIT TRAN
