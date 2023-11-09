@@ -52,6 +52,7 @@
   let ptoEmisionesTemp = [];
   let tiempoCreditos = [];
   let tarifaImpuestoFactura = [];
+  let fechaConsolidaciones = [];
   let timeout;
   let statusForDisabled = 2;
 
@@ -100,9 +101,11 @@
   };
 
   const selectArticle = (e) => {
-    console.log(e);
     let dataArticle = {};
     let medidas = [];
+    let fechaConsolidaciones = [];
+
+    // Todo: Clear array's.
     articles = [];
     valueArticle = "";
 
@@ -113,6 +116,8 @@
       ).then((response) => {
         if (response) {
           dataArticle = response[0][0];
+          fechaConsolidaciones = response[3];
+
           let isExists = onValidateLlevaInventario(dataArticle);
 
           if (isExists) {
@@ -135,11 +140,13 @@
               tarifas: dataMedida.tarifas,
               tipoIvas: tipoIva,
               medidas: medidas,
+              fechaConsolidaciones,
               orderIndex: 0,
               ...dataArticle,
               idTarifa: dataTarifa.idTarifa,
               idBodega: idBodega,
               idMedida: dataMedida.idMedida,
+              conversion: dataMedida.conversion,
               cantidad: 1,
               precioVenta: dataTarifa.precioVenta,
               precioSinSubsidio: 0,
@@ -152,8 +159,6 @@
               nota: "S/N",
             };
             supportDetails = [...supportDetails, obj];
-
-            // Get Articles invoke.
             getTotales();
           }
         }
@@ -226,8 +231,6 @@
         let dataImpuesto = tipoIva.find(
           (x) => x.idTipoIva == Number(itemDetails.idTipoIva)
         );
-        console.log("dataImpuesto");
-        console.log(dataImpuesto);
 
         let dataImpuestoVigente = tarifaImpuestos.find(
           (x) => x.codigoPorcentaje == dataImpuesto.codigoPorcentaje
@@ -460,6 +463,7 @@
       ).precioConIva;
       item.decimals = decimals;
       item.total = item.cantidad * item.precioUnitario;
+      item.fechaConsolidaciones = fechaConsolidaciones.filter((x) => x.idArticulo === item.idArticulo);
     });
   };
 
@@ -526,7 +530,7 @@
   };
 
   const saveFactura = () => {
-    if (!onValidateSaveFactura()) return;
+    if (!validateFacturaInSave()) return;
 
     showLoader();
 
@@ -565,7 +569,7 @@
 
   const newFormatDate = (date: string) => {
     let splitDate = date.split("-");
-    let newDate = `${splitDate[2]}-${splitDate[1]}-${splitDate[0]}`;
+    let newDate = `${splitDate[0]}-${splitDate[1]}-${splitDate[2]}`;
     return newDate;
   };
 
@@ -600,37 +604,37 @@
   };
 
   const saveNotaEntrega = () => {
-    if (!onValidateSaveFactura()) return;
+    if (!validateFacturaInSave()) return;
 
-    showLoader();
     let getTiempoCredito = tiempoCreditos[0];
     support.tarifa = tarifaImpuestoFactura[0].tarifa;
+
+    // Todo: Format new date.
+    support.date = newFormatDate(support.date);
 
     // Todo: Tiempo crédito.
     support.idTiempoCredito = getTiempoCredito.idTiempoCredito;
     support.tipo = getTiempoCredito.tipo;
 
     // Todo: Establecimiento.
-    support.estab = establishments.find((x) => x.codEstab === support.codEstab).estab;
-
+    support.estab = establishments.find(
+      (x) => x.codEstab === support.codEstab
+    ).estab;
 
     // Todo: Fecha vencimiento
-    support.date = newFormatDate(support.date);
-    support.fechaVencimiento = getFechaVencimiento(support.date, getTiempoCredito.diasCredito);
+    support.fechaVencimiento = getFechaVencimiento(
+      support.date,
+      getTiempoCredito.diasCredito
+    );
     support.fechaVencimiento = newFormatDate(support.fechaVencimiento);
 
-    // Todo: Punto Emision.
-    console.log("ptoEmisiones")
-    console.log(ptoEmisiones)
-
     let newData = {
-      notaEntrega: JSON.stringify(MapperToAction.notaEntregaMapper(support)),
-      detalles: JSON.stringify(
-        MapperToAction.detalleNotaEntrega(supportDetails)
-      ),
-      infoAdicionalArticulo: JSON.stringify([]),
+      notaEntrega: MapperToAction.notaEntregaMapper(support),
+      detalles: MapperToAction.detalleNotaEntrega(supportDetails, support.date),
+      infoAdicionalArticulo: [],
     };
 
+    showLoader();
     NotaEntregaService.post({ data: newData })
       .then((response) => {
         if (response) {
@@ -715,7 +719,6 @@
         });
         return (isValidate = false);
       }
-
       return isValidate;
     } catch (error) {
       console.log(error);
@@ -723,7 +726,7 @@
     }
   };
 
-  const onValidateSaveFactura = () => {
+  const validateFacturaInSave = () => {
     let isValidate = true;
 
     try {
@@ -752,6 +755,7 @@
     ptoEmisionesTemp = values.ptoEmisiones;
     tiempoCreditos = values.tiempoCreditos;
     tarifaImpuestoFactura = values.tarifaImpuestos;
+    fechaConsolidaciones = values.fechaConsolidaciones;
 
     initialPushData();
     selectCodEstab();

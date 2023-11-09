@@ -941,9 +941,10 @@
             try {
                 if (!rowEntity.llevaInventario) return;
                 showLoader();
+                let { cantidadStock } = notaEntregaSvc.getCantidadStock(rowEntity, $scope.data.fechaEmision)
                 articuloSvc.checkNotificationStock({
                     idArticulo: rowEntity.idArticulo,
-                    cantidad: notaEntregaSvc.getCantidadStock(rowEntity, $scope.data.fechaEmision),
+                    cantidad: cantidadStock,
                     idBodega: rowEntity.idBodega,
                     idMedida: rowEntity.idMedida
                 }).then(async responseApi => {
@@ -1474,6 +1475,7 @@
 
                     //Recalculamos los totales 
                     setCalculoTotales("cantidad", rowEntity, 0);
+                    counterGridOptions();
                     $scope.$apply();
                 }
 
@@ -1583,17 +1585,17 @@
         }
 
         $scope.onChangeFechaEmision = function () {
-            try {
-                if (!$scope.permisoComprobanteVenta.fechaEmision) {
-                    $scope.data.fechaEmision = $scope.dataClone.fechaEmision;
-                    tS.toastr('warning', 'No tienes permiso para realizar esta acción');
-                    return
-                }
-                getFechaVencimiento();
-            } catch (error) {
-                console.log(error)
-                $scope.data.fechaEmision = $scope.dataClone.fechaEmision;
-            }
+            // try {
+            //     if (!$scope.permisoComprobanteVenta.fechaEmision) {
+            //         $scope.data.fechaEmision = $scope.dataClone.fechaEmision;
+            //         tS.toastr('warning', 'No tienes permiso para realizar esta acción');
+            //         return
+            //     }
+            //     getFechaVencimiento();
+            // } catch (error) {
+            //     console.log(error)
+            //     $scope.data.fechaEmision = $scope.dataClone.fechaEmision;
+            // }
         }
 
         //==============================START CUSTOMER===========================
@@ -1785,7 +1787,8 @@
                 total: 0,
                 nota: "S/N",
                 llevaInventario: false,
-                datosAdicionales: false
+                datosAdicionales: false,
+                estado: 1
             }
             $scope.gridOptions.data.push(obj)
         }

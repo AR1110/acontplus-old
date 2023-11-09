@@ -1,5 +1,4 @@
 const mapperToAction = () => {
-
   const principalMapperTo = (support) => {
     const factura = {
       direccionComprador: support.direccionComprador || "",
@@ -76,23 +75,23 @@ const mapperToAction = () => {
     const notaEntrega = {
       idCliente: data.customerId || 0,
       identificacionComprador: data.idCard,
-      razonSocialComprador: data.businessName || '',
-      direccionComprador: '',
-      email: '',
-      telefono: '',
+      razonSocialComprador: data.businessName || "",
+      direccionComprador: data.address,
+      email: data.email || "",
+      telefono: data.telephone || "",
       estab: data.estab,
       codEstab: data.codEstab,
-      fechaEmision: data.date,
-      fechaVencimiento: data.fechaVencimiento,
-      idPuntoEmision: data.puntoEmisionId,
-      tipo: data.tipo,
-      idTiempoCredito: data.idTiempoCredito,
+      fechaEmision: newFormatDate(data.date) || new Date(),
+      fechaVencimiento: newFormatDate(data.fechaVencimiento) || new Date(),
+      idPuntoEmision: data.puntoEmisionId || 0,
+      tipo: data.tipo || "",
+      idTiempoCredito: data.idTiempoCredito || 0,
       idUsuario: data.userAssignedId || 0,
-      irbpnr: data.irbpnr,
-      iva: data.iva,
-      porcentajeDescuento: data.porcentajeDescuento,
-      propina: data.propina,
-      recargo: data.recargo,
+      irbpnr: data.irbpnr || 0,
+      iva: data.iva || 0,
+      porcentajeDescuento: data.porcentajeDescuento || 0,
+      propina: data.propina || 0,
+      recargo: data.recargo || 0,
       subTotalExentoIva: data.subTotalExentoIva || 0,
       subTotalIva: data.subTotalIva || 0,
       subTotalIvaCero: data.subTotalIvaCero || 0,
@@ -111,7 +110,7 @@ const mapperToAction = () => {
     return notaEntrega;
   };
 
-  const detalleNotaEntrega = (data) => {
+  const detalleNotaEntrega = (data, fecheEmision) => {
     const tempDetails = [];
     let orderIndex = 1;
 
@@ -128,23 +127,70 @@ const mapperToAction = () => {
         idTipoIva: item.idTipoIva,
         tarifa: item.tarifa,
         codigoPorcentaje: item.codigoPorcentaje,
-        ice:  item.ice || 0,
+        ice: item.ice || 0,
         descripcion: item.descripcion,
-        cantidad: item.cantidad,
+        cantidad: item.cantidad * -1,
         precioUnitario: item.precioUnitario || 0,
         precioVenta: item.precioVenta || 0,
+        precioCosto: item.precioCosto || 0,
         precioConIva: item.precioConIva || 0,
         valorDescuento: item.valorDescuento || 0,
         precioTotalSinImpuesto: item.precioTotalSinImpuesto || 0,
         porcentajeDescuento: item.porcentajeDescuento || 0,
         total: item.total || 0,
-        nota: "S/N"
+        nota: "S/N",
+        llevaInventario: item.llevaInventario || false,
+        cantidadStock: getCantidadStock(item, fecheEmision) || 0,
+        cantidadTransaccion: item.cantidad * item.conversion || 0,
       });
     }
     return tempDetails;
-  }
+  };
 
-  return { principalMapperTo, detalleMapperTo, notaEntregaMapper, detalleNotaEntrega };
+  const getCantidadStock = (item, fechaEmision) => {
+    let fechaEmisionValidate = null;
+    let cantidadStock = 0;
+
+    if (fechaEmision) {
+      fechaEmisionValidate = fechaEmision;
+    }
+    if (!fechaEmisionValidate) {
+      console.warn(
+        "Para validacion del cantidad stock la fecha emision del comprobante es nula"
+      );
+    }
+
+    const dataConsolidacionFecha = item.fechaConsolidaciones.find(
+      (cdataFecha) => cdataFecha.idBodega === item.idBodega
+    );
+
+    if (dataConsolidacionFecha) {
+      if (dataConsolidacionFecha.fechaConsolidacion >= fechaEmisionValidate) {
+        cantidadStock = 0;
+        return cantidadStock;
+      }
+    }
+
+    cantidadStock = item.cantidad * item.conversion;
+    const resultCantStock = cantidadStock < 0 ? cantidadStock : -cantidadStock;
+
+    return resultCantStock;
+  };
+
+  const newFormatDate = (date: string) => {
+    const splitDate = date.split("-");
+    const newDate = `${splitDate[2]}-${splitDate[1]}-${splitDate[0]}`;
+    console.log(`NewDate ${newDate}`);
+
+    return newDate;
+  };
+
+  return {
+    principalMapperTo,
+    detalleMapperTo,
+    notaEntregaMapper,
+    detalleNotaEntrega,
+  };
 };
 
 export const MapperToAction = mapperToAction();
