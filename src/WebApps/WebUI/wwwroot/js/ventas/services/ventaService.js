@@ -555,7 +555,7 @@
                     action = 1;
                     return {
                         cantidadStock,
-                        isDateConsolidacionBeforeDate
+                        action
                     };
                 } else {
                     action = 2;

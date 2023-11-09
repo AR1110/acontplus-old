@@ -166,14 +166,22 @@ class ModalFacturaCtrl extends ModalBaseCtrl {
 
             let dataMedida = medidas[0];
 
-            let index = 0;
+            let index = 0; 
+            let findIndexById = this.gridOptions.data.findIndex(item => item.llevaInventario && item.idArticulo === articulo.idArticulo);
 
-            if ([null, undefined].includes(this.indexRow)) {
+            if (findIndexById === -1) {
                 self.addRow();
                 index = this.gridOptions.data.findIndex(value => value.idArticulo === 0);
             } else {
-                index = this.indexRow;
-            }
+                index = findIndexById
+            }            
+
+            // if ([null, undefined].includes(this.indexRow)) {
+            //     self.addRow();
+            //     index = this.gridOptions.data.findIndex(value => value.idArticulo === 0);
+            // } else {
+            //     index = this.indexRow;
+            // }
 
             let entity = self.gridOptions.data[index];
 

@@ -69,13 +69,13 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
 
     $scope.onKeyupClienteSearchFiltro = function () {
         if (!$scope.modelTextSearch) {
-            $scope.dataSearch.byCliente = 0;
+            $scope.dataSearch.idCliente = 0;
             $scope.dataSearch.checkBoxFecha = true;
         }
     }
 
     $scope.selectedClienteSearchFiltro = function (item) {
-        $scope.dataSearch.byCliente = item.idCliente;
+        $scope.dataSearch.idCliente = item.idCliente;
         $scope.dataSearch.checkBoxFecha = true;
         $scope.getProformas();
     }
@@ -132,18 +132,18 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
     $scope.getProformas = async () => {
 
         try {
-            
-            if($scope.dataSearch.nroSecuencial){
-                if(!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)){
+
+            if ($scope.dataSearch.nroSecuencial) {
+                if (!fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)) {
                     $scope.dataSearch.checkBoxFecha = true;
                     tS.toastr('error', 'Define correctamente el número de secuencial o el rango de número secuencial!')
                     return
                 }
-                if(!($scope.dataSearch.idCliente>0)){
+                if (!($scope.dataSearch.idCliente > 0)) {
                     $scope.dataSearch.checkBoxFecha = false;
                 }
-            } 
-            
+            }
+
             showLoader();
             $scope.proformas = [];
             $scope.total = $scope.sumarColumnaTotal();
@@ -153,26 +153,26 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
                 checkBoxFecha: $scope.dataSearch.checkBoxFecha,
                 codEstab: $scope.dataSearch.codEstab,
                 idPuntoEmision: $scope.dataSearch.idPuntoEmision,
-                byCliente: $scope.dataSearch.byCliente,
+                byCliente: $scope.dataSearch.idCliente,
                 byUsuario: $scope.dataSearch.byUsuario,
                 fechaInicio: fS.formatDateTimeZone($scope.dataSearch.fechaInicio),
                 fechaFin: fS.formatDateTimeZone($scope.dataSearch.fechaFin),
                 nroSecuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial),
                 pageIndex: $scope.dataSearch.pageIndex,
-                pageSize: $scope.dataSearch.pageSize, 
+                pageSize: $scope.dataSearch.pageSize,
             }
 
-            proformaSvc.getAll(dataSearch).then(response => { 
+            proformaSvc.getAll(dataSearch).then(response => {
                 let { proformas, dataTotals } = response;
                 $scope.proformas = proformas;
                 $scope.cloneProformas = JSON.parse(JSON.stringify($scope.proformas));
                 $scope.dataSearch.totalRecords = dataTotals.totalRecords;
                 $scope.total = fS.roundNumber(dataTotals.totalDocument, 5);
 
-            }).catch(error => { 
+            }).catch(error => {
                 $scope.dataSearch.totalRecords = 0;
                 console.log(error)
-            }).finally(()=>hideLoader())
+            }).finally(() => hideLoader())
 
 
 
@@ -186,8 +186,8 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
 
     $scope.initiload = () => {
         showLoader();
-        proformaSvc.get({ tipo: 3 }).then(response => { 
-            $scope.establecimientos = response.estabs; 
+        proformaSvc.get({ tipo: 3 }).then(response => {
+            $scope.establecimientos = response.estabs;
 
             if ($scope.establecimientos.length > 0) {
                 let dataEstab = $scope.establecimientos.find(estab => (estab.defaultEstab));
@@ -197,7 +197,7 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
                 $scope.getProformas();
             }
 
-        }).finally(() => hideLoader()) 
+        }).finally(() => hideLoader())
 
         proformaSvc.getDataForm().then(result => {
             $scope.jsonPermission = JSON.parse(result[9][0].jsonPermission)
@@ -206,14 +206,14 @@ function proformaCtrl($scope, $filter, commonSvc, proformaSvc, clienteSvc, modal
     }
     $scope.initiload();
 
-    $scope.estabFilter = function(){
-        let dataEstab = $scope.establecimientos.find(estab=>estab.codEstab===$scope.dataSearch.codEstab);
+    $scope.estabFilter = function () {
+        let dataEstab = $scope.establecimientos.find(estab => estab.codEstab === $scope.dataSearch.codEstab);
         $scope.puntosEmision = dataEstab.puntosEmision;
-        if($scope.puntosEmision.length>0){
-            $scope.dataSearch.idPuntoEmision = $scope.puntosEmision.find(pto=>(pto.defaultPtoEmi)).idPuntoEmision;
+        if ($scope.puntosEmision.length > 0) {
+            $scope.dataSearch.idPuntoEmision = $scope.puntosEmision.find(pto => (pto.defaultPtoEmi)).idPuntoEmision;
             $scope.getProformas();
-        }else{
-            fS.sweetAlert('warning', "No posee puntos de emisión asignadas!"); 
+        } else {
+            fS.sweetAlert('warning', "No posee puntos de emisión asignadas!");
         }
     }
 

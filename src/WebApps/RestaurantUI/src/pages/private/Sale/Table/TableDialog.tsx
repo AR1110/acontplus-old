@@ -107,11 +107,12 @@ const TableDialog = (props: SimpleDialogProps) => {
 
 
     const handleButtonClick = (table: TableReadDto) => { 
+        const dataRoom = rooms.find(room=>room.id===table.roomId); 
         setOrder({
             ...order,
             tableId: table.tableId,
             table: {
-                tableName: table.description,
+                tableName: `${dataRoom?.description} - ${table.description}`,
                 numberTable: table.numberTable
             }
         }) 
@@ -168,13 +169,12 @@ const TableDialog = (props: SimpleDialogProps) => {
         } 
     }
 
-    const handleChangeRoom = (event: SyntheticEvent, newValue: number) => {
+    const handleChangeRoom = (_: SyntheticEvent, newValue: number) => {
         const dataRoom:any =  tempRooms.current[newValue]
         const tempTablesFiltered =  tempTables.current.filter(table => table.roomId === dataRoom.id); 
         setTables(() => tempTablesFiltered) 
         setRoomId(() => dataRoom.floorId);
-        setValue(newValue);
-        console.log(event)
+        setValue(newValue); 
   };
     return (
         <Dialog onClose={handleClose} open={open} fullWidth={true}>

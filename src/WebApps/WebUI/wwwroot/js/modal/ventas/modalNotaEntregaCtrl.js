@@ -551,7 +551,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
                     this.setCustomerData(item);
                 } else {
                     this.setCustomerData(item);
-                } 
+                }
             } else {
                 this.setCustomerData(item)
             }
@@ -785,7 +785,7 @@ export class ModalNotaEntregaNuevoCtrl extends ModalNotaEntregaCtrl {
 
         } catch (error) {
             console.log(error)
-        }  
+        }
     }
 
 
@@ -1215,7 +1215,7 @@ export class ModalNotaEntregaEditarCtrl extends ModalNotaEntregaCtrl {
                     this.setCustomerData(item);
                 } else {
                     this.setCustomerData(item);
-                } 
+                }
             } else {
                 this.setCustomerData(item)
             }
@@ -1568,7 +1568,7 @@ export class ModalNotaEntregaDuplicarCtrl extends ModalNotaEntregaCtrl {
                     this.setCustomerData(item);
                 } else {
                     this.setCustomerData(item);
-                } 
+                }
             } else {
                 this.setCustomerData(item)
             }
