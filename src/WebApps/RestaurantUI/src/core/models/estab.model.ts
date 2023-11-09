@@ -13,6 +13,7 @@ export interface Establecimiento {
     dirEstablecimiento: string;
     contribuyenteRimpe: string;
     actividad: string;
+    usuario?: string
 }
 
 export const estabInitialState: Establecimiento = {
@@ -29,5 +30,6 @@ export const estabInitialState: Establecimiento = {
     dirEstablecimiento: "",
     contribuyenteRimpe: "",
     actividad: "",
-    entidad: ""
+    entidad: "",
+    usuario: ''
 }

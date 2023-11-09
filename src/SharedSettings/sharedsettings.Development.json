@@ -9,14 +9,14 @@
     //"DefaultConnection": "/8Xc98JLU4+4fA0YsGHXmaGZxA4S6TJFQFZdu8R52HWulPtagiCwl6QqPz1GTQEJOQ7Jwqe2aQG46hAK5lA4xWsn0XEMBPoM4x5qOGk8VbPraOQMwYbKkgQvNGXnLmBX2NX61l6WvU7GsgOPMBH9VjyIKxJ1Mi+xEHNINc1vMPAXCAro6rjW4Q4EOFurHIrn7kfZ8WXu9k2PQYzDMY6uf02EF+cxtnHBGxwW4Uq2F1s="
 
     //AWS Dev
-    "DefaultConnection": "Server=52.14.110.123;Database=Acontplus;Trusted_Connection=False;MultipleActiveResultSets=true;user id=sa;pwd=Acontplus.c0m;Trusted_Connection=False;TrustServerCertificate=True;"
+    //"DefaultConnection": "Server=52.14.110.123;Database=Acontplus;Trusted_Connection=False;MultipleActiveResultSets=true;user id=sa;pwd=Acontplus.c0m;Trusted_Connection=False;TrustServerCertificate=True;"
 
 
     //AWS Staging
     //"DefaultConnection": "Server=18.224.78.45;Database=Acontplus;Trusted_Connection=False;MultipleActiveResultSets=true;user id=sa;pwd=Acontplus.c0m;Trusted_Connection=False;TrustServerCertificate=True;"
 
     //server prd
-    //"DefaultConnection": "Server=34.207.9.208;Database=Acontplus;Trusted_Connection=False;MultipleActiveResultSets=true;user id=sa;pwd=Acontplus.c0m;Trusted_Connection=False;TrustServerCertificate=True;"
+    "DefaultConnection": "Server=34.207.9.208;Database=Acontplus;Trusted_Connection=False;MultipleActiveResultSets=true;user id=sa;pwd=Acontplus.c0m;Trusted_Connection=False;TrustServerCertificate=True;"
 
   },
   "ApiGateways": {
