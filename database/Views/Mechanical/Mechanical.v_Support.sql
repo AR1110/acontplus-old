@@ -21,6 +21,9 @@ CREATE OR ALTER VIEW Mechanical.v_Support WITH SCHEMABINDING AS (
           ,ve.Engine
           ,ct.TradeName
           ,ct.BusinessName
+          ,ct.[Address]
+          ,ct.Telephone
+          ,ct.Email
           ,pt.ptoEmi
           ,es.estab
           ,es.idEstablecimiento as EstablecimientoId
@@ -36,5 +39,5 @@ CREATE OR ALTER VIEW Mechanical.v_Support WITH SCHEMABINDING AS (
     INNER JOIN Mechanical.VehicleType    vt WITH (NOLOCK) ON vt.Id             = ve.VehicleTypeId
     INNER JOIN dbo.Cliente               cl WITH (NOLOCK) ON cl.idCliente      = st.CustomerId
     INNER JOIN dbo.Usuario               us WITH (NOLOCK) ON us.idUsuario      = st.UserAssignedId
-     LEFT JOIN Customer.Customer         ct WITH (NOLOCK) ON ct.Id             = cl.CustomerId 
+    LEFT JOIN Customer.Customer          ct WITH (NOLOCK) ON ct.Id             = cl.CustomerId 
  )

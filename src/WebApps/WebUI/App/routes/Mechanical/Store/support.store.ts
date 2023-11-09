@@ -23,6 +23,7 @@ type State = {
   supportDetails: any;
   establishments: any;
   measures: any;
+  fechaConsolidaciones: any;
   warehouses: any;
   tipoIva: any;
   decimals: any;
@@ -82,6 +83,7 @@ const initialState: State = {
   supportDetails: [],
   establishments: [],
   measures: [],
+  fechaConsolidaciones: [],
   warehouses: [],
   tipoIva: [],
   decimals: [],
@@ -160,6 +162,7 @@ const cretaeSupport = () => {
             support: response["support"][0],
             supportDetails: response["supportDetail"],
             measures: response["medidas"],
+            fechaConsolidaciones: response["fechaConsolidaciones"],
             establishments: response["establecimiento"],
             warehouses: response["bodega"],
             tipoIva: response["tipoIva"],

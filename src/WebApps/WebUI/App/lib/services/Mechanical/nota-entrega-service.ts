@@ -15,7 +15,6 @@ async function get(params) {
 }
 
 async function post(data) {
-  console.log(data);
   return await client.post(`${url}Insert`, data).then(
     (responseAxios) => {
       if (responseAxios.status == 200)
