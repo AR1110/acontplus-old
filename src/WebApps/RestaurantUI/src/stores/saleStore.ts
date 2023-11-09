@@ -107,7 +107,7 @@ export const useSaleStore = create<State & Actions>((set, get) => ({
             })
         )
     },
-    setItemSearch: (itemSearch) => {
+    setItemSearch: (itemSearch) => { 
         set({
             itemSearch
         })
