@@ -3,10 +3,14 @@ import { Pagination } from '@mui/material'
 import React, { useState } from 'react'
 import usePagination from '../hooks/Pagination';
 import { itemSearchInitialState } from '@/core/models';
+import useFetchItems from '../hooks/useFetchItems.hook';
 
 function ItemPagination() {
     const itemList = useSaleStore(state => state.collectionItems);
     const setItemSearch = useSaleStore(state => state.setItemSearch);
+
+    const setCollectionItems = useSaleStore(state => state.setCollectionItems);
+    const { fetchItem } = useFetchItems()
     const itemSearch = useSaleStore(state => state.itemSearch);
 
     const [page, setPage] = useState(1);
@@ -18,12 +22,17 @@ function ItemPagination() {
     const handleChange = (page: number) => {
         setPage(page);
         _DATA.jump(page);
-        setItemSearch({
+        const paramsQuery = {
             ...itemSearchInitialState,
-            checkSubFamilia: true,
+            ...itemSearch,  
             pageIndex: page
-          })
-    }; 
+        }
+        setItemSearch(paramsQuery) 
+
+        fetchItem(paramsQuery).then(response => {
+            setCollectionItems(response)
+        })
+    };
 
     return (
         <Pagination
